@@ -45,7 +45,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
  */
 public class GPXReading {//extends AbstractReadingTests{
 
-    private final GPXDataStore store;
+    private final GPXFeatureStore store;
     private final Set<Name> names = new HashSet<Name>();
     private final List<ExpectedResult> expecteds = new ArrayList<ExpectedResult>();
 
@@ -54,7 +54,7 @@ public class GPXReading {//extends AbstractReadingTests{
         final File file = File.createTempFile("temp", "gpx");
         file.delete();
         //file.deleteOnExit();
-        store = new GPXDataStore(file);
+        store = new GPXFeatureStore(file);
 
         final GeometryFactory gf = new GeometryFactory();
 
@@ -108,7 +108,7 @@ public class GPXReading {//extends AbstractReadingTests{
     }
 
 //    @Override
-//    protected synchronized DataStore getDataStore() {
+//    protected synchronized FeatureStore getDataStore() {
 //        return store;
 //    }
 //

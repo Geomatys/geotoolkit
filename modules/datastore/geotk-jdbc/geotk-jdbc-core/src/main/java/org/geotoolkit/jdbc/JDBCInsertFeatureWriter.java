@@ -41,7 +41,7 @@ public class JDBCInsertFeatureWriter extends JDBCFeatureReader implements Featur
     private final Collection<SimpleFeature> toAdd;
     ResultSetFeature last;
 
-    public JDBCInsertFeatureWriter(final String sql, final Connection cx, final JDBCDataStore store,
+    public JDBCInsertFeatureWriter(final String sql, final Connection cx, final JDBCFeatureStore store,
             final Name groupName, final SimpleFeatureType type, final PrimaryKey pkey, final Hints hints)
             throws SQLException, IOException, DataStoreException {
         super(sql, cx, store, groupName, type, pkey, hints);
@@ -54,7 +54,7 @@ public class JDBCInsertFeatureWriter extends JDBCFeatureReader implements Featur
         toAdd = (batchInsert) ? new ArrayList<SimpleFeature>() : null;
     }
 
-    public JDBCInsertFeatureWriter(final PreparedStatement ps, final Connection cx, final JDBCDataStore store,
+    public JDBCInsertFeatureWriter(final PreparedStatement ps, final Connection cx, final JDBCFeatureStore store,
             final Name groupName, final SimpleFeatureType type, final PrimaryKey pkey, final Hints hints)
             throws SQLException, IOException, DataStoreException {
         super( ps, cx, store, groupName, type, pkey, hints );
@@ -99,7 +99,7 @@ public class JDBCInsertFeatureWriter extends JDBCFeatureReader implements Featur
             toAdd.add(FeatureUtilities.copy(last));
             if(toAdd.size() > 1000){
                 try {
-                    dataStore.insert(toAdd, featureType, st.getConnection());
+                    featureStore.insert(toAdd, featureType, st.getConnection());
                 } catch (DataStoreException e) {
                     throw new FeatureStoreRuntimeException(e);
                 } catch (SQLException e) {
@@ -109,9 +109,9 @@ public class JDBCInsertFeatureWriter extends JDBCFeatureReader implements Featur
             }
         }else{
             try {
-                dataStore.insert(last, featureType, st.getConnection());
+                featureStore.insert(last, featureType, st.getConnection());
 
-                //the datastore sets as userData, grab it and update the fid
+                //the featurestore sets as userData, grab it and update the fid
                 String fid = (String) last.getUserData().get( "fid" );
                 last.setID( fid );
             } catch (DataStoreException e) {
@@ -128,9 +128,9 @@ public class JDBCInsertFeatureWriter extends JDBCFeatureReader implements Featur
         if(batchInsert && !toAdd.isEmpty()){
             try {
                 //do the insert
-                dataStore.insert(toAdd, featureType, st.getConnection());
+                featureStore.insert(toAdd, featureType, st.getConnection());
 
-                //the datastore sets as userData, grab it and update the fid
+                //the featurestore sets as userData, grab it and update the fid
                 //String fid = (String) last.getUserData().get( "fid" );
                 //last.setID( fid );
             } catch (DataStoreException e) {

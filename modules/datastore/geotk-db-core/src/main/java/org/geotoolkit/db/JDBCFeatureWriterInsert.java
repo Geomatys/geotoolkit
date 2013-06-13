@@ -105,7 +105,7 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
         }else{
             try {
                 store.insert(last, type, cx);
-                //the datastore sets as userData, grab it and update the fid
+                //the featurestore sets as userData, grab it and update the fid
                 id = (String) last.getUserData().get("fid");
             } catch (DataStoreException e) {
                 throw new FeatureStoreRuntimeException(e);

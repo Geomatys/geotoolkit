@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.Collections;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.jdbc.JDBCDataStore;
+import org.geotoolkit.jdbc.JDBCFeatureStore;
 import org.geotoolkit.jdbc.JDBCDataStoreFactory;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
@@ -37,7 +37,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
-public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
+public class PostgisNGFeatureStoreFactory extends JDBCDataStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "postgis";
@@ -82,7 +82,7 @@ public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
     }
     
     @Override
-    protected SQLDialect createSQLDialect(final JDBCDataStore dataStore) {
+    protected SQLDialect createSQLDialect(final JDBCFeatureStore dataStore) {
         return new PostGISDialect(dataStore);
     }
 
@@ -115,27 +115,27 @@ public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
     }
 
     @Override
-    public JDBCDataStore open(final ParameterValueGroup params)
+    public JDBCFeatureStore open(final ParameterValueGroup params)
         throws DataStoreException {
         checkCanProcessWithError(params);
-        JDBCDataStore dataStore = super.open(params);
+        JDBCFeatureStore featureStore = super.open(params);
 
         final PostGISDialect dialect;
 
         // setup the ps dialect if need be
         final Boolean usePs = (Boolean) params.parameter(PREPARED_STATEMENTS.getName().toString()).getValue();
         if(Boolean.TRUE.equals(usePs)) {
-            dialect = new PostGISPSDialect(dataStore);
-            dataStore.setDialect(dialect);
+            dialect = new PostGISPSDialect(featureStore);
+            featureStore.setDialect(dialect);
         }else{
-            dialect = (PostGISDialect) dataStore.getDialect();
+            dialect = (PostGISDialect) featureStore.getDialect();
         }
 
         // setup loose bbox
         final Boolean loose = (Boolean) params.parameter(LOOSEBBOX.getName().toString()).getValue();
         dialect.setLooseBBOXEnabled(loose == null || Boolean.TRUE.equals(loose));
         
-        return dataStore;
+        return featureStore;
     }
 
     @Override

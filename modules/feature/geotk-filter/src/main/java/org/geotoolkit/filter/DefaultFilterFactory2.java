@@ -198,7 +198,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
             firstException = ex;
         }
 
-        //TODO : Datastore from geotools sucks, they dont even provide the authority name sometimes !!!
+        //TODO : featurestore from geotools sucks, they dont even provide the authority name sometimes !!!
         // we are forced add the two next tests
 
         if(crs == null && !srs.startsWith("CRS:") && !srs.startsWith("EPSG:")){

@@ -24,10 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
-import org.geotoolkit.client.Server;
 import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
-import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
@@ -41,12 +39,12 @@ import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
 
 /**
- * Datastore factory for WFS client.
+ * FeatureStore factory for WFS client.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WFSDataStoreFactory extends AbstractFeatureStoreFactory implements ServerFactory{
+public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implements ServerFactory{
 
     /** factory identification **/
     public static final String NAME = "wfs";

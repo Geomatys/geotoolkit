@@ -73,7 +73,7 @@ public abstract class JDBCTestSetup {
     protected void setUpData() throws Exception {
     }
 
-    protected void setUpDataStore(final JDBCDataStore dataStore) {
+    protected void setUpDataStore(final JDBCFeatureStore dataStore) {
     }
 
     public void tearDown() throws Exception {
@@ -194,7 +194,7 @@ public abstract class JDBCTestSetup {
         initializeDataSource( dataSource, db );
         
         // return a closeable data source (DisposableDataSource interface)
-        // so that the connection pool will be tore down on datastore dispose
+        // so that the connection pool will be tore down on featurestore dispose
         return new DBCPDataSource(dataSource);
     }
 
@@ -214,7 +214,7 @@ public abstract class JDBCTestSetup {
 
     protected abstract JDBCDataStoreFactory createDataStoreFactory();
     
-    protected final SQLDialect createSQLDialect(final JDBCDataStore dataStore) {
+    protected final SQLDialect createSQLDialect(final JDBCFeatureStore dataStore) {
         return null;
     }
 }

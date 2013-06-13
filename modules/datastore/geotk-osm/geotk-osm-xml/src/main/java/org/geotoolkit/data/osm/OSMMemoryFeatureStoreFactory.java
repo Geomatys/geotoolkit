@@ -15,18 +15,21 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.osm.bin;
+package org.geotoolkit.data.osm;
+
+import java.net.URL;
 
 import java.util.Collections;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ResourceInternationalString;
 
 import org.opengis.metadata.Identifier;
@@ -36,15 +39,15 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Datastore factory for Open Street Map Binary files (*.obm).
+ * OSM XML featurestore factory.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMBinDataStoreFactory extends AbstractFileFeatureStoreFactory{
+public class OSMMemoryFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     /** factory identification **/
-    public static final String NAME = "osm-bin";
+    public static final String NAME = "osm-xml";
     public static final DefaultServiceIdentification IDENTIFICATION;
     static {
         IDENTIFICATION = new DefaultServiceIdentification();
@@ -55,61 +58,59 @@ public class OSMBinDataStoreFactory extends AbstractFileFeatureStoreFactory{
     }
     
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
-    private static final String[] EXTENSIONS = new String[]{".obm"};
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("OSMBinParameters",IDENTIFIER,URLP,NAMESPACE);
+            new DefaultParameterDescriptorGroup("OSMMemoryParameters",IDENTIFIER,URLP);
 
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/osm_bin/bundle", "datastoreDescription");
+        return new ResourceInternationalString("org/geotoolkit/osm_xml/bundle", "datastoreDescription");
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/osm_bin/bundle", "datastoreTitle");
+        return new ResourceInternationalString("org/geotoolkit/osm_xml/bundle", "datastoreTitle");
     }
+    
+    
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS_DESCRIPTOR;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String[] getFileExtensions() {
-        return EXTENSIONS;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
-        throw new UnsupportedOperationException("Not supported yet.");
+        final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
+                
+        final String path = url.toString();
+        final int slash = Math.max(0, path.lastIndexOf('/') + 1);
+        int dot = path.indexOf('.', slash);
+        if (dot < 0) {
+            dot = path.length();
+        }
+        final String name = path.substring(slash, dot);
+        try {
+            return new OSMMemoryFeatureStore(params,IOUtilities.toFile(url, null));
+        } catch (Exception ex) {
+            throw new DataStoreException(ex);
+        }
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
-        throw new DataStoreException("Creation of OSMbin datastore not supported yet.");
+        return open(params);
+    }
+
+    @Override
+    public String[] getFileExtensions() {
+        return new String[] {".osm"};
     }
 
 }

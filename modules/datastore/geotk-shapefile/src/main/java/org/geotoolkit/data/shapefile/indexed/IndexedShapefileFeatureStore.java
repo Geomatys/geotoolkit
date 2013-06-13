@@ -33,8 +33,8 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.shapefile.FeatureIDReader;
-import org.geotoolkit.data.shapefile.ShapefileDataStore;
-import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.ShapefileFeatureReader;
 import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
@@ -77,7 +77,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
- * A DataStore implementation which allows reading and writing from Shapefiles.
+ * A FeatureStore implementation which allows reading and writing from Shapefiles.
  * 
  * @author Ian Schneider
  * @author Tommaso Nolli
@@ -85,7 +85,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * 
  * @module pending
  */
-public class IndexedShapefileDataStore extends ShapefileDataStore {
+public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
     private static final Comparator<Identifier> IDENTIFIER_COMPARATOR = new Comparator<Identifier>(){
         @Override
@@ -103,7 +103,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * 
      * @param url The URL of the shp file to use for this DataSource.
      */
-    public IndexedShapefileDataStore(final URL url)
+    public IndexedShapefileFeatureStore(final URL url)
             throws MalformedURLException,DataStoreException {
         this(url, null, false, true, IndexType.QIX,null);
     }
@@ -114,7 +114,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @param url The URL of the shp file to use for this DataSource.
      * @param namespace DOCUMENT ME!
      */
-    public IndexedShapefileDataStore(final URL url, final String namespace)
+    public IndexedShapefileFeatureStore(final URL url, final String namespace)
             throws MalformedURLException,DataStoreException {
         this(url, namespace, false, true, IndexType.QIX,null);
     }
@@ -126,7 +126,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @param useMemoryMappedBuffer enable/disable memory mapping of files
      * @param createIndex enable/disable automatic index creation if needed
      */
-    public IndexedShapefileDataStore(final URL url, final boolean useMemoryMappedBuffer,
+    public IndexedShapefileFeatureStore(final URL url, final boolean useMemoryMappedBuffer,
             final boolean createIndex) throws MalformedURLException,DataStoreException {
         this(url, null, useMemoryMappedBuffer, createIndex, IndexType.QIX,null);
     }
@@ -143,7 +143,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * 
      * @throws MalformedURLException
      */
-    public IndexedShapefileDataStore(final URL url, final String namespace, final boolean useMemoryMappedBuffer,
+    public IndexedShapefileFeatureStore(final URL url, final String namespace, final boolean useMemoryMappedBuffer,
             final boolean createIndex, final IndexType treeType, final Charset dbfCharset)
             throws MalformedURLException,DataStoreException {
         super(url, namespace, useMemoryMappedBuffer, dbfCharset);
@@ -158,7 +158,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             }
         } catch (IOException e) {
             this.treeType = IndexType.NONE;
-            ShapefileDataStoreFactory.LOGGER.log(Level.WARNING, e
+            ShapefileFeatureStoreFactory.LOGGER.log(Level.WARNING, e
                     .getLocalizedMessage());
         }
         try {
@@ -167,7 +167,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                 IndexedFidWriter.generate(shpFiles);
             }
         } catch (IOException e) {
-            ShapefileDataStoreFactory.LOGGER.log(Level.WARNING, e
+            ShapefileFeatureStoreFactory.LOGGER.log(Level.WARNING, e
                     .getLocalizedMessage());
         }
 
@@ -500,7 +500,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                     try {
                         read.close();
                     } catch (IOException e) {
-                        ShapefileDataStoreFactory.LOGGER.log(Level.WARNING,
+                        ShapefileFeatureStoreFactory.LOGGER.log(Level.WARNING,
                                 "could not close stream", e);
                     }
                 }

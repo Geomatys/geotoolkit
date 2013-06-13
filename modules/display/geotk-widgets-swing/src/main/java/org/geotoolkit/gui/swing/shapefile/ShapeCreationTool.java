@@ -40,8 +40,8 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 
 import org.geotoolkit.data.FileFeatureStoreFactory;
-import org.geotoolkit.data.shapefile.ShapefileDataStore;
-import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.gui.swing.crschooser.JCRSChooser;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -81,14 +81,14 @@ public class ShapeCreationTool extends JPanel {
     private void createShape(final String name) {
         try {
             // Create the DataStoreFactory
-            final FileFeatureStoreFactory factory = new ShapefileDataStoreFactory();
+            final FileFeatureStoreFactory factory = new ShapefileFeatureStoreFactory();
 
-            // Create a Map object used by our DataStore Factory
+            // Create a Map object used by our FeatureStore Factory
             // NOTE: file.toURI().toURL() is used because file.toURL() is deprecated
             final Map<String, Serializable> map = Collections.singletonMap("url", (Serializable)file.toURI().toURL());
 
-            // Create the ShapefileDataStore from our factory based on our Map object
-            final ShapefileDataStore myData = (ShapefileDataStore) factory.create(map);
+            // Create the ShapefileFeatureStore from our factory based on our Map object
+            final ShapefileFeatureStore myData = (ShapefileFeatureStore) factory.create(map);
 
             // Tell this shapefile what type of data it will store
             final StringBuilder buffer = new StringBuilder();
@@ -125,7 +125,7 @@ public class ShapeCreationTool extends JPanel {
             // Create the Shapefile (empty at this point)
             myData.createSchema(featureType.getName(),featureType);
 
-            // Tell the DataStore what type of Coordinate Reference System (CRS) to use
+            // Tell the featurestore what type of Coordinate Reference System (CRS) to use
             //myData.forceSchemaCRS(crs);
 
             myData.dispose();

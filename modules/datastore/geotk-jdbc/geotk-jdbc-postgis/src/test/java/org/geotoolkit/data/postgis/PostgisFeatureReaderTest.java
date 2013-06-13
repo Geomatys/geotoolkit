@@ -35,7 +35,7 @@ public class PostgisFeatureReaderTest extends JDBCFeatureReaderTest {
 //        System.out.println("###################size1 "+sizeDatastore1+"###########");
 //        int sizeDatastore2 = dataStore2.getNames().size();
 //        System.out.println("###################size2 "+sizeDatastore2+"###########");
-        assertEquals(dataStore.getNames().size(), dataStore2.getNames().size());
+        assertEquals(featureStore.getNames().size(), featureStore2.getNames().size());
         
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         DefaultName name3 = new DefaultName("http://www.geotoolkit.org/test", "Type3");
@@ -44,15 +44,15 @@ public class PostgisFeatureReaderTest extends JDBCFeatureReaderTest {
         builder.add(new DefaultName("http://type3.com", "att1"), String.class);
         builder.add(new DefaultName("http://type3.com", "att2"), Integer.class);
         final SimpleFeatureType sft1 = builder.buildSimpleFeatureType();
-        dataStore.createSchema(name3,sft1);
-        assertFalse(dataStore.getNames().size()==dataStore2.getNames().size());
+        featureStore.createSchema(name3,sft1);
+        assertFalse(featureStore.getNames().size()==featureStore2.getNames().size());
 //        sizeDatastore1 = dataStore.getNames().size();
 //        System.out.println("###################size1 "+sizeDatastore1+"###########");
 //        sizeDatastore2 = dataStore2.getNames().size();
 //        System.out.println("###################size2 "+sizeDatastore2+"###########");
-        dataStore2.refreshMetaModel();
-        assertEquals(dataStore.getNames().size(), dataStore2.getNames().size());
-        dataStore.deleteSchema(name3);
+        featureStore2.refreshMetaModel();
+        assertEquals(featureStore.getNames().size(), featureStore2.getNames().size());
+        featureStore.deleteSchema(name3);
     }
 
 }

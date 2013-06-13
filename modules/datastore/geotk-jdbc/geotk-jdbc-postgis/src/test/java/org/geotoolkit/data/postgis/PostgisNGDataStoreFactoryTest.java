@@ -18,7 +18,7 @@ package org.geotoolkit.data.postgis;
 
 import java.io.IOException;
 
-import static org.geotoolkit.data.postgis.PostgisNGDataStoreFactory.PORT;
+import static org.geotoolkit.data.postgis.PostgisNGFeatureStoreFactory.PORT;
 import static org.geotoolkit.jdbc.JDBCDataStoreFactory.DATABASE;
 import static org.geotoolkit.jdbc.JDBCDataStoreFactory.IDENTIFIER;
 import static org.geotoolkit.jdbc.JDBCDataStoreFactory.HOST;
@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.geotoolkit.jdbc.JDBCDataStore;
+import org.geotoolkit.jdbc.JDBCFeatureStore;
 import org.geotoolkit.jdbc.JDBCTestSetup;
 import org.geotoolkit.jdbc.JDBCTestSupport;
 import org.geotoolkit.storage.DataStoreException;
@@ -43,7 +43,7 @@ public class PostgisNGDataStoreFactoryTest extends JDBCTestSupport {
     }
     
     public void testCreateConnection() throws DataStoreException, IOException {
-        PostgisNGDataStoreFactory factory = new PostgisNGDataStoreFactory();
+        PostgisNGFeatureStoreFactory factory = new PostgisNGFeatureStoreFactory();
         
         Properties db = new Properties();
         db.load(getClass().getResourceAsStream("factory.properties"));
@@ -57,7 +57,7 @@ public class PostgisNGDataStoreFactoryTest extends JDBCTestSupport {
         params.put(IDENTIFIER.getName().toString(), "postgis");
 
         assertTrue(factory.canProcess(params));
-        JDBCDataStore store = (JDBCDataStore) factory.open(params);
+        JDBCFeatureStore store = (JDBCFeatureStore) factory.open(params);
         assertNotNull(store);
         try {
             // check dialect

@@ -27,7 +27,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.Identifier;
 
-public class DataStoreWritingDemo {
+public class FeatureStoreWritingDemo {
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
@@ -37,7 +37,7 @@ public class DataStoreWritingDemo {
         final GeometryFactory gf = new GeometryFactory();
 
 
-        //start by creating a memory datastore for this test -----------------------------
+        //start by creating a memory featurestore for this test -----------------------------
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Fish");
         ftb.add("name", String.class);
@@ -47,7 +47,7 @@ public class DataStoreWritingDemo {
         final SimpleFeatureType type = ftb.buildSimpleFeatureType();
 
 
-        //create the datastore ---------------------------------------------------------
+        //create the featurestore ---------------------------------------------------------
         final FeatureStore store = new MemoryFeatureStore();
         store.createSchema(type.getName(), type);
 
@@ -56,7 +56,7 @@ public class DataStoreWritingDemo {
         // ADDING RECORDS //////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////
 
-        //working directly on the datastore --------------------------------------------
+        //working directly on the featurestore --------------------------------------------
         //best performance
         final FeatureWriter writer = store.getFeatureWriterAppend(type.getName());
         Feature feature = writer.next();
@@ -77,7 +77,7 @@ public class DataStoreWritingDemo {
 
 
         //passing a collection -----------------------------------------------------------
-        //used to copy values from one datastore to another
+        //used to copy values from one featurestore to another
         FeatureCollection toAdd = FeatureStoreUtilities.collection("collectionID", type);
 
         feature = FeatureUtilities.defaultFeature(type, "");
@@ -126,7 +126,7 @@ public class DataStoreWritingDemo {
         // REMOVING RECORDS ////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////
 
-        //on the datastore ------------------------------------------------------------
+        //on the featurestore ------------------------------------------------------------
         Set<Identifier> ids = new HashSet<Identifier>();
         ids.add(new DefaultFeatureId("Fish.1"));
         store.removeFeatures(type.getName(), FF.id(ids));

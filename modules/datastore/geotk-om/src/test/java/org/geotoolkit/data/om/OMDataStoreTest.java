@@ -32,7 +32,7 @@ import java.util.Set;
 import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.data.om.OMDataStoreFactory;
+import org.geotoolkit.data.om.OMFeatureStoreFactory;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -67,8 +67,8 @@ public class OMDataStoreTest extends AbstractReadingTests{
 
             final Map params = new HashMap<String, Object>();
             params.put("dbtype", "OM");
-            params.put(OMDataStoreFactory.SGBDTYPE.getName().toString(), "derby");
-            params.put(OMDataStoreFactory.DERBYURL.getName().toString(), url);
+            params.put(OMFeatureStoreFactory.SGBDTYPE.getName().toString(), "derby");
+            params.put(OMFeatureStoreFactory.DERBYURL.getName().toString(), url);
 
             store = FeatureStoreFinder.open(params);
 

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Johann Sorel
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.dbf;
+package org.geotoolkit.data.csv;
 
 import java.util.Collections;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
@@ -33,17 +33,21 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
+import static org.geotoolkit.data.csv.CSVFeatureStore.*;
+
 /**
- * DBF datastore factory. handle only reading actually.
- * Todo : handle feature writer.
+ * CSV featurestore factory.
  *
- * @author Johann Sorel
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DbaseDataStoreFactory extends AbstractFileFeatureStoreFactory {
+public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
+    
+    
+    
     /** factory identification **/
-    public static final String NAME = "dbf";
+    public static final String NAME = "csv";
     public static final DefaultServiceIdentification IDENTIFICATION;
     static {
         IDENTIFICATION = new DefaultServiceIdentification();
@@ -52,68 +56,55 @@ public class DbaseDataStoreFactory extends AbstractFileFeatureStoreFactory {
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-
+    
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+    
+    /**
+     * Optional - the separator character
+     */
+    public static final ParameterDescriptor<Character> SEPARATOR = createDescriptor("separator",
+                    new ResourceInternationalString(BUNDLE_PATH,"paramSeparatorAlias"),
+                    new ResourceInternationalString(BUNDLE_PATH,"paramSeparatorRemarks"),
+                    Character.class,null,';',null,null,null,false);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("DBFParameters",
-                IDENTIFIER,URLP,NAMESPACE);
+            new DefaultParameterDescriptorGroup("CSVParameters",
+                IDENTIFIER,URLP,NAMESPACE,SEPARATOR);
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/dbf/bundle", "databaseDescription");
+        return new ResourceInternationalString("org/geotoolkit/csv/bundle", "datastoreDescription");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/dbf/bundle", "databaseTitle");
+        return new ResourceInternationalString("org/geotoolkit/csv/bundle", "datastoreTitle");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS_DESCRIPTOR;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
-        return new DbaseFileDataStore(params);
+        return new CSVFeatureStore(params);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         return open(params);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String[] getFileExtensions() {
-        return new String[] {".dbf"};
+        return new String[] {".csv"};
     }
-
+    
 }

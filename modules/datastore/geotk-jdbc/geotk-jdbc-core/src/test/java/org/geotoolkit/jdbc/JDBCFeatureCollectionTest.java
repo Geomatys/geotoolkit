@@ -43,7 +43,7 @@ public abstract class JDBCFeatureCollectionTest extends JDBCTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
-        collection = dataStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname("ft1")));
+        collection = featureStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname("ft1")));
     }
 
     public void testIterator() throws Exception {
@@ -88,7 +88,7 @@ public abstract class JDBCFeatureCollectionTest extends JDBCTestSupport {
     }
 
     public void testSubCollection() throws Exception {
-        FilterFactory ff = dataStore.getFilterFactory();
+        FilterFactory ff = featureStore.getFilterFactory();
         Filter f = ff.equals(ff.property(aname("intProperty")), ff.literal(1));
 
         assertEquals(3, collection.size());

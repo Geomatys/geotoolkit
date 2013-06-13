@@ -156,20 +156,20 @@ public abstract class AbstractReadingTests{
                     continue check;
                 }
             }
-            throw new Exception("A typename has no matching Name, datastore is not consistent.");
+            throw new Exception("A typename has no matching Name, featurestore is not consistent.");
         }
 
         //check error on wrong type names---------------------------------------
         try{
             store.getFeatureType(new DefaultName("http://not", "exist"));
-            throw new Exception("Asking for a schema that doesnt exist should have raised a datastore exception.");
+            throw new Exception("Asking for a schema that doesnt exist should have raised a featurestore exception.");
         }catch(DataStoreException ex){
             //ok
         }
 
         try{
             store.getFeatureType("not-exist_stuff");
-            throw new Exception("Asking for a schema that doesnt exist should have raised a datastore exception.");
+            throw new Exception("Asking for a schema that doesnt exist should have raised a featurestore exception.");
         }catch(DataStoreException ex){
             //ok
         }
@@ -252,7 +252,7 @@ public abstract class AbstractReadingTests{
         query = QueryBuilder.all(new DefaultName(candidate.name.getNamespaceURI(), candidate.name.getLocalPart()+"fgresfds_not_exist"));
         try{
             store.getFeatureReader(query);
-            throw new Exception("Asking for a reader without a wrong name should raise a datastore exception.");
+            throw new Exception("Asking for a reader without a wrong name should raise a featurestore exception.");
         }catch(DataStoreException ex){
             //ok
         }
@@ -260,7 +260,7 @@ public abstract class AbstractReadingTests{
         query = QueryBuilder.all(new DefaultName(candidate.name.getNamespaceURI()+"resfsdfsdf_not_exist", candidate.name.getLocalPart()));
         try{
             store.getFeatureReader(query);
-            throw new Exception("Asking for a reader without a wrong namespace should raise a datastore exception.");
+            throw new Exception("Asking for a reader without a wrong namespace should raise a featurestore exception.");
         }catch(DataStoreException ex){
             //ok
         }

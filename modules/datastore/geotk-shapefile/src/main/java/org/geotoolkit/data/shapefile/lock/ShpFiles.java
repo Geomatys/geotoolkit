@@ -29,9 +29,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
-import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
-import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.ENCODING;
-import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.LOGGER;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
+import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.ENCODING;
+import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.LOGGER;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.QIX;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.SHP;
 import org.geotoolkit.gui.swing.tree.Trees;
@@ -549,7 +549,7 @@ public final class ShpFiles {
             try {
                 return files[0].toURI().toURL();
             } catch (MalformedURLException e) {
-                ShapefileDataStoreFactory.LOGGER.log(Level.SEVERE, "", e);
+                ShapefileFeatureStoreFactory.LOGGER.log(Level.SEVERE, "", e);
             }
         }
         return null;

@@ -678,7 +678,7 @@ public final class FeatureTypeUtilities {
      * This is a 'suitable replacement for extracting the expected field length of an attribute
      * absed on its "facets" (ie Filter describing type restrictions);
      * <p>
-     * This code is copied from the ShapefileDataStore where it was written (probably by dzwiers).
+     * This code is copied from the ShapefileFeatureStore where it was written (probably by dzwiers).
      * Cholmes is providing documentation.
      * </p>
      *

@@ -51,12 +51,12 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 public abstract class JDBCDataStoreTest extends JDBCTestSupport {
     public void testGetNames() throws DataStoreException {
-        String[] typeNames = dataStore.getTypeNames();
+        String[] typeNames = featureStore.getTypeNames();
         assertTrue(new HashSet(Arrays.asList(typeNames)).contains(tname("ft1")));
     }
 
     public void testGetSchema() throws Exception {
-        SimpleFeatureType ft1 = (SimpleFeatureType) dataStore.getFeatureType(tname("ft1"));
+        SimpleFeatureType ft1 = (SimpleFeatureType) featureStore.getFeatureType(tname("ft1"));
         assertNotNull(ft1);
 
         assertNotNull(ft1.getDescriptor(aname("geometry")));
@@ -73,16 +73,16 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
 
     public void testCreateSchema() throws Exception {
         FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        builder.setName(dataStore.getNamespaceURI(), tname("ft2"));
+        builder.setName(featureStore.getNamespaceURI(), tname("ft2"));
         builder.add(aname("id"), Integer.class,1,1,false,FeatureTypeBuilder.PRIMARY_KEY);
         builder.add(aname("geometry"), Geometry.class, CRS.decode("EPSG:4326"));
         builder.add(aname("intProperty"), Integer.class);
         builder.add(aname("dateProperty"), Date.class);
 
         SimpleFeatureType featureType = builder.buildSimpleFeatureType();
-        dataStore.createSchema(featureType.getName(),featureType);
+        featureStore.createSchema(featureType.getName(),featureType);
 
-        SimpleFeatureType ft2 = (SimpleFeatureType) dataStore.getFeatureType(tname("ft2"));
+        SimpleFeatureType ft2 = (SimpleFeatureType) featureStore.getFeatureType(tname("ft2"));
         
         //JD: making the comparison a bit more lax
         //asertEquals(ft2,featureType);
@@ -91,7 +91,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         // GEOT-2031
         assertNotSame(ft2, featureType);
 
-        Connection cx = dataStore.getDataSource().getConnection();
+        Connection cx = featureStore.getDataSource().getConnection();
         Statement st = cx.createStatement();
         ResultSet rs = null;
 
@@ -99,12 +99,12 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
             StringBuilder sql = new StringBuilder();
             sql.append("SELECT * FROM ");
 
-            if (dataStore.getDatabaseSchema() != null) {
-                dataStore.getDialect().encodeSchemaName(dataStore.getDatabaseSchema(), sql);
+            if (featureStore.getDatabaseSchema() != null) {
+                featureStore.getDialect().encodeSchemaName(featureStore.getDatabaseSchema(), sql);
                 sql.append(".");
             }
 
-            dataStore.getDialect().encodeTableName("ft2", sql);
+            featureStore.getDialect().encodeTableName("ft2", sql);
             rs = st.executeQuery(sql.toString());
         } catch (SQLException e) {
             throw e;
@@ -122,7 +122,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
 
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        builder.setName(dataStore.getNamespaceURI(), tname("ft2"));
+        builder.setName(featureStore.getNamespaceURI(), tname("ft2"));
         builder.add(aname("geometry"), Geometry.class, DefaultGeographicCRS.WGS84);
 
         atb.reset();
@@ -144,13 +144,13 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
 
         
         SimpleFeatureType featureType = builder.buildSimpleFeatureType();
-        dataStore.createSchema(featureType.getName(), featureType);
+        featureStore.createSchema(featureType.getName(), featureType);
         
-        SimpleFeatureType ft2 = (SimpleFeatureType) dataStore.getFeatureType(tname("ft2"));
+        SimpleFeatureType ft2 = (SimpleFeatureType) featureStore.getFeatureType(tname("ft2"));
         //assertEquals(ft2, featureType);
         
         //grab a writer
-        FeatureWriter w = dataStore.getFeatureWriter( nsname("ft2"), Filter.INCLUDE);
+        FeatureWriter w = featureStore.getFeatureWriter( nsname("ft2"), Filter.INCLUDE);
         w.hasNext();
 
         //a generic id should have been added, offset index by one
@@ -220,15 +220,15 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
     }
     
     public void testGetFeatureSource() throws Exception {
-        FeatureCollection<SimpleFeature> featureSource = dataStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname("ft1")));
+        FeatureCollection<SimpleFeature> featureSource = featureStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname("ft1")));
         assertNotNull(featureSource);
     }
 
     public void testGetFeatureReader() throws Exception {
-        GeometryFactory gf = dataStore.getGeometryFactory();
+        GeometryFactory gf = featureStore.getGeometryFactory();
 
-        Query query = QueryBuilder.all(dataStore.getFeatureType(tname("ft1")).getName());
-        FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(query);
+        Query query = QueryBuilder.all(featureStore.getFeatureType(tname("ft1")).getName());
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader = featureStore.getFeatureReader(query);
 
         for (int i = 0; i < 3; i++) {
             assertTrue(reader.hasNext());
@@ -250,7 +250,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         final QueryBuilder builder = new QueryBuilder(query);
         builder.setProperties(new String[] { aname("intProperty") });
         query = builder.buildQuery();
-        reader = dataStore.getFeatureReader(query);
+        reader = featureStore.getFeatureReader(query);
 
         for (int i = 0; i < 3; i++) {
             assertTrue(reader.hasNext());
@@ -262,12 +262,12 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         assertFalse(reader.hasNext());
         reader.close();
 
-        FilterFactory ff = dataStore.getFilterFactory();
+        FilterFactory ff = featureStore.getFilterFactory();
         Filter f = ff.equals(ff.property(aname("intProperty")), ff.literal(1));
         builder.setFilter(f);
         query = builder.buildQuery();
 
-        reader = dataStore.getFeatureReader(query);
+        reader = featureStore.getFeatureReader(query);
 
         for (int i = 0; i < 1; i++) {
             assertTrue(reader.hasNext());
@@ -280,7 +280,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
     }
 
     public void testGetFeatureWriter() throws Exception {
-        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = dataStore.getFeatureWriter(nsname("ft1"),Filter.INCLUDE);
+        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = featureStore.getFeatureWriter(nsname("ft1"),Filter.INCLUDE);
 
         while (writer.hasNext()) {
             SimpleFeature feature = writer.next();
@@ -290,8 +290,8 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
 
         writer.close();
 
-        Query query = QueryBuilder.all(dataStore.getFeatureType(tname("ft1")).getName());
-        FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(query);
+        Query query = QueryBuilder.all(featureStore.getFeatureType(tname("ft1")).getName());
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader = featureStore.getFeatureReader(query);
         assertTrue(reader.hasNext());
 
         while (reader.hasNext()) {
@@ -303,16 +303,16 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
     }
 
     public void testGetFeatureWriterWithFilter() throws Exception {
-        FilterFactory ff = dataStore.getFilterFactory();
+        FilterFactory ff = featureStore.getFilterFactory();
 
         Filter f = ff.equals(ff.property(aname("intProperty")), ff.literal(100));
-        FeatureCollection<SimpleFeature> features = dataStore.createSession(false).getFeatureCollection(
+        FeatureCollection<SimpleFeature> features = featureStore.createSession(false).getFeatureCollection(
                 QueryBuilder.filtered(nsname("ft1"), f));
         assertEquals(0, features.size());
 
         f = ff.equals(ff.property(aname("intProperty")), ff.literal(1));
 
-        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = dataStore.getFeatureWriter(nsname("ft1"), f);
+        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = featureStore.getFeatureWriter(nsname("ft1"), f);
 
         while (writer.hasNext()) {
             SimpleFeature feature = writer.next();
@@ -323,12 +323,12 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         writer.close();
 
         f = ff.equals(ff.property(aname("intProperty")), ff.literal(100));
-        features = dataStore.createSession(false).getFeatureCollection(QueryBuilder.filtered(nsname("ft1"), f));
+        features = featureStore.createSession(false).getFeatureCollection(QueryBuilder.filtered(nsname("ft1"), f));
         assertEquals(1, features.size());
     }
 
     public void testGetFeatureWriterAppend() throws Exception {
-        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = dataStore.getFeatureWriterAppend(nsname("ft1"));
+        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = featureStore.getFeatureWriterAppend(nsname("ft1"));
 
         for (int i = 3; i < 6; i++) {
             SimpleFeature feature = writer.next();
@@ -338,7 +338,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
 
         writer.close();
 
-        FeatureCollection<SimpleFeature> features = dataStore.
+        FeatureCollection<SimpleFeature> features = featureStore.
                 createSession(false).getFeatureCollection(QueryBuilder.all(nsname("ft1")));
         assertEquals(6, features.size());
     }

@@ -27,7 +27,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.jdbc.JDBCDataStore;
+import org.geotoolkit.jdbc.JDBCFeatureStore;
 import org.geotoolkit.data.jdbc.PreparedFilterToSQL;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -43,7 +43,7 @@ public abstract class AbstractPreparedStatementSQLDialect extends AbstractSQLDia
 
     protected static final char CHAR_INTEROGATION = '?';
 
-    protected AbstractPreparedStatementSQLDialect(final JDBCDataStore dataStore) {
+    protected AbstractPreparedStatementSQLDialect(final JDBCFeatureStore dataStore) {
         super(dataStore);
     }
     
@@ -86,7 +86,7 @@ public abstract class AbstractPreparedStatementSQLDialect extends AbstractSQLDia
             if ( converted != null ) {
                 value = converted;
             } else {
-                dataStore.getLogger().warning( "Unable to convert " + value + " to " + binding.getName() );
+                featureStore.getLogger().warning( "Unable to convert " + value + " to " + binding.getName() );
             }
         }
         

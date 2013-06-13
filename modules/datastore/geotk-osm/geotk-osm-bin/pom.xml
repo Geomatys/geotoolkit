@@ -24,10 +24,10 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-osm-bin</artifactId>
   <packaging>jar</packaging>
-  <name>Datastore OSM binary</name>
+  <name>FeatureStore OSM binary</name>
 
   <description>
-    Datastore implementation for open street map binary files format.
+    FeatureStore implementation for open street map binary files format.
   </description>
 
 
@@ -55,7 +55,7 @@
   <dependencies>
       <dependency>
           <groupId>org.geotoolkit.pending</groupId>
-          <artifactId>geotk-datastore-core</artifactId>
+          <artifactId>geotk-featurestore-core</artifactId>
           <version>${project.version}</version>
       </dependency>
   </dependencies>

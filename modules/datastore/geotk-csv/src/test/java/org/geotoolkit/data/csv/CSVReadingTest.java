@@ -50,7 +50,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
  */
 public class CSVReadingTest extends AbstractReadingTests{
 
-    private final CSVDataStore store;
+    private final CSVFeatureStore store;
     private final Set<Name> names = new HashSet<Name>();
     private final List<ExpectedResult> expecteds = new ArrayList<ExpectedResult>();
 
@@ -58,7 +58,7 @@ public class CSVReadingTest extends AbstractReadingTests{
 
         final File file = File.createTempFile("temp2", "csv");
         file.deleteOnExit();
-        store = new CSVDataStore(file, "http://test.com",';');
+        store = new CSVFeatureStore(file, "http://test.com",';');
 
         final GeometryFactory gf = new GeometryFactory();
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();

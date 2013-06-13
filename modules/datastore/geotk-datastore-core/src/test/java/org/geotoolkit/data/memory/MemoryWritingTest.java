@@ -68,7 +68,7 @@ public class MemoryWritingTest {
         StorageCountListener listener = new StorageCountListener();
 
 
-        //test on the datastore with feature writer ////////////////////////////
+        //test on the featurestore with feature writer ////////////////////////////
         store.addStorageListener(listener);
 
         final FeatureWriter writer = store.getFeatureWriterAppend(type.getName());

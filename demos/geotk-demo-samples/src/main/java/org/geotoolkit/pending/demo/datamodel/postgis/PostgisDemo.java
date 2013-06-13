@@ -4,7 +4,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
-import org.geotoolkit.data.postgis.PostgisNGDataStoreFactory;
+import org.geotoolkit.data.postgis.PostgisNGFeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.gui.swing.go2.JMap2DFrame;
 import org.geotoolkit.map.MapBuilder;
@@ -21,14 +21,14 @@ public class PostgisDemo {
     public static void main(String[] args) throws DataStoreException {
         Demos.init();
         
-        System.out.println(PostgisNGDataStoreFactory.PARAMETERS_DESCRIPTOR);
+        System.out.println(PostgisNGFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
-        final ParameterValueGroup parameters = PostgisNGDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(PostgisNGDataStoreFactory.HOST, parameters).setValue("hote");
-        Parameters.getOrCreate(PostgisNGDataStoreFactory.PORT, parameters).setValue(5432);
-        Parameters.getOrCreate(PostgisNGDataStoreFactory.DATABASE, parameters).setValue("base");
-        Parameters.getOrCreate(PostgisNGDataStoreFactory.USER, parameters).setValue("user");
-        Parameters.getOrCreate(PostgisNGDataStoreFactory.PASSWORD, parameters).setValue("secret");
+        final ParameterValueGroup parameters = PostgisNGFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        Parameters.getOrCreate(PostgisNGFeatureStoreFactory.HOST, parameters).setValue("hote");
+        Parameters.getOrCreate(PostgisNGFeatureStoreFactory.PORT, parameters).setValue(5432);
+        Parameters.getOrCreate(PostgisNGFeatureStoreFactory.DATABASE, parameters).setValue("base");
+        Parameters.getOrCreate(PostgisNGFeatureStoreFactory.USER, parameters).setValue("user");
+        Parameters.getOrCreate(PostgisNGFeatureStoreFactory.PASSWORD, parameters).setValue("secret");
         
         final FeatureStore store = FeatureStoreFinder.open(parameters);
         

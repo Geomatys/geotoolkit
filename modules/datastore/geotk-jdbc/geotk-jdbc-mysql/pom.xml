@@ -18,10 +18,10 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-jdbc-mysql</artifactId>
   <packaging>jar</packaging>
-  <name>Datastore JDBC MySQL</name>
+  <name>FeatureStore JDBC MySQL</name>
 
   <description>
-    DataStore for MySQL database.
+    FeatureStore for MySQL database.
   </description>
 
 

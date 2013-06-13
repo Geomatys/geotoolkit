@@ -26,8 +26,8 @@ import java.util.Map;
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.shapefile.ShapefileDataStore;
-import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 import org.geotoolkit.test.TestData;
 
@@ -39,11 +39,11 @@ import static org.junit.Assert.*;
  */
 public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSupport {
     
-    private ShapefileDataStoreFactory factory;
+    private ShapefileFeatureStoreFactory factory;
 
     @Before
     public void setUp() throws Exception {
-        factory = new ShapefileDataStoreFactory();
+        factory = new ShapefileFeatureStoreFactory();
     }
 
     /*
@@ -53,7 +53,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
     @Test
     public void testCanProcessMap() throws Exception {
         Map map = new HashMap();
-        map.put(ShapefileDataStoreFactory.URLP.getName().toString(), ShapeTestData
+        map.put(ShapefileFeatureStoreFactory.URLP.getName().toString(), ShapeTestData
                 .url(IndexedShapefileDataStoreTest.STATE_POP));
         assertTrue(factory.canProcess(map));
     }
@@ -66,8 +66,8 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
     public void testCreateDataStoreMap() throws Exception {
         testCreateDataStore(true);
 
-        ShapefileDataStore ds1 = testCreateDataStore(true, true);
-        ShapefileDataStore ds2 = testCreateDataStore(true, true);
+        ShapefileFeatureStore ds1 = testCreateDataStore(true, true);
+        ShapefileFeatureStore ds2 = testCreateDataStore(true, true);
 
         assertNotSame(ds1, ds2);
 
@@ -75,18 +75,18 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
         assertNotSame(ds1, ds2);
     }
 
-    private ShapefileDataStore testCreateDataStore(final boolean createIndex)
+    private ShapefileFeatureStore testCreateDataStore(final boolean createIndex)
             throws Exception {
         return testCreateDataStore(true, createIndex);
     }
 
     @Test
     public void testNamespace() throws Exception {
-        ShapefileDataStoreFactory factory = new ShapefileDataStoreFactory();
+        ShapefileFeatureStoreFactory factory = new ShapefileFeatureStoreFactory();
         Map map = new HashMap();
         String namespace = "http://jesse.com";
-        map.put(ShapefileDataStoreFactory.NAMESPACE.getName().toString(), namespace);
-        map.put(ShapefileDataStoreFactory.URLP.getName().toString(), ShapeTestData
+        map.put(ShapefileFeatureStoreFactory.NAMESPACE.getName().toString(), namespace);
+        map.put(ShapefileFeatureStoreFactory.URLP.getName().toString(), ShapeTestData
                 .url(IndexedShapefileDataStoreTest.STATE_POP));
 
         FeatureStore store = factory.open(map);
@@ -97,33 +97,33 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
                 .getNamespaceURI());
     }
 
-    private ShapefileDataStore testCreateDataStore(final boolean newDS,
+    private ShapefileFeatureStore testCreateDataStore(final boolean newDS,
             final boolean createIndex) throws Exception {
         copyShapefiles(IndexedShapefileDataStoreTest.STATE_POP);
         Map map = new HashMap();
-        map.put(ShapefileDataStoreFactory.URLP.getName().toString(), TestData.url(AbstractTestCaseSupport.class,
+        map.put(ShapefileFeatureStoreFactory.URLP.getName().toString(), TestData.url(AbstractTestCaseSupport.class,
                 IndexedShapefileDataStoreTest.STATE_POP));
-        map.put(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.getName().toString(),
+        map.put(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString(),
                 createIndex ? Boolean.TRUE : Boolean.FALSE);
 
-        ShapefileDataStore ds;
+        ShapefileFeatureStore ds;
 
         if (newDS) {
             // This may provided a warning if the file already is created
-            ds = (ShapefileDataStore) factory.create(map);
+            ds = (ShapefileFeatureStore) factory.create(map);
         } else {
-            ds = (ShapefileDataStore) factory.open(map);
+            ds = (ShapefileFeatureStore) factory.open(map);
         }
 
-        if (ds instanceof IndexedShapefileDataStore) {
-            IndexedShapefileDataStore indexed = (IndexedShapefileDataStore) ds;
+        if (ds instanceof IndexedShapefileFeatureStore) {
+            IndexedShapefileFeatureStore indexed = (IndexedShapefileFeatureStore) ds;
             testDataStore(IndexType.QIX, createIndex, indexed);
         }
         return ds;
     }
 
     private void testDataStore(final IndexType treeType, final boolean createIndex,
-            final IndexedShapefileDataStore ds) {
+            final IndexedShapefileFeatureStore ds) {
         assertNotNull(ds);
         assertEquals(treeType, ds.treeType);
         assertEquals(treeType != IndexType.NONE, ds.useIndex);
@@ -135,8 +135,8 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
      */
     @Test
     public void testCreateNewDataStore() throws Exception {
-        ShapefileDataStore ds1 = testCreateDataStore(true, false);
-        ShapefileDataStore ds2 = testCreateDataStore(true, true);
+        ShapefileFeatureStore ds1 = testCreateDataStore(true, false);
+        ShapefileFeatureStore ds2 = testCreateDataStore(true, true);
 
         assertNotSame(ds1, ds2);
     }
@@ -157,8 +157,8 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
     @Test
     public void testGetParametersInfo() {
         //check that we have those two parameters descriptors.
-        factory.getParametersDescriptor().descriptor(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.getName().toString());
-        factory.getParametersDescriptor().descriptor(ShapefileDataStoreFactory.URLP.getName().toString());
+        factory.getParametersDescriptor().descriptor(ShapefileFeatureStoreFactory.CREATE_SPATIAL_INDEX.getName().toString());
+        factory.getParametersDescriptor().descriptor(ShapefileFeatureStoreFactory.URLP.getName().toString());
     }
 
     /*
@@ -189,7 +189,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
         copyShapefiles(IndexedShapefileDataStoreTest.STATE_POP);
         FeatureStore ds = factory.createDataStore(TestData.url(AbstractTestCaseSupport.class,
                 IndexedShapefileDataStoreTest.STATE_POP));
-        testDataStore(IndexType.QIX, true, (IndexedShapefileDataStore) ds);
+        testDataStore(IndexType.QIX, true, (IndexedShapefileFeatureStore) ds);
     }
 
 }

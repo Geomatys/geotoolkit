@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FileFeatureStoreFactory;
-import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
+import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -50,9 +50,9 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Implementation of the DataStore service provider interface for Shapefiles.
+ * Implementation of the featurestore service provider interface for Shapefiles.
  * <p>
- * The specific implementation of ShapefileDataStore created by this class is
+ * The specific implementation of ShapefileFeatureStore created by this class is
  * not specified. For more information on the connection parameters please
  * review the following public Param constants.
  * <ul>
@@ -67,7 +67,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ShapefileDataStoreFactory extends AbstractFileFeatureStoreFactory implements FileFeatureStoreFactory {
+public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactory implements FileFeatureStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "shapefile";
@@ -136,7 +136,7 @@ public class ShapefileDataStoreFactory extends AbstractFileFeatureStoreFactory i
     }
 
     /**
-     * Describes the type of data the datastore returned by this factory works
+     * Describes the type of data the featurestore returned by this factory works
      * with.
      *
      * @return String a human readable description of the type of restore
@@ -148,11 +148,11 @@ public class ShapefileDataStoreFactory extends AbstractFileFeatureStoreFactory i
     }
 
     /**
-     * Test to see if this datastore is available, if it has all the appropriate
+     * Test to see if this featurestore is available, if it has all the appropriate
      * libraries to construct a datastore.
      *
-     * This datastore just checks for the ShapefileDataStore,
-     * IndexedShapefileDataStore and Geometry implementations.
+     * This featurestore just checks for the ShapefileDataStore,
+     * IndexedShapefileFeatureStore and Geometry implementations.
      *
      * @return <tt>true</tt> if and only if this factory is available to
      *         open DataStores.
@@ -161,8 +161,8 @@ public class ShapefileDataStoreFactory extends AbstractFileFeatureStoreFactory i
     public ConformanceResult availability() {
         final DefaultConformanceResult result = new DefaultConformanceResult();
         try {
-            ShapefileDataStore.class.getName();
-            IndexedShapefileDataStore.class.getName();
+            ShapefileFeatureStore.class.getName();
+            IndexedShapefileFeatureStore.class.getName();
             Geometry.class.getName();
             result.setPass(true);
         } catch (Exception e) {
@@ -237,11 +237,11 @@ public class ShapefileDataStoreFactory extends AbstractFileFeatureStoreFactory i
 
         try {
             if (createIndex) {
-                return new IndexedShapefileDataStore(url, namespace, useMemoryMappedBuffer, createIndex, IndexType.QIX, dbfCharset);
+                return new IndexedShapefileFeatureStore(url, namespace, useMemoryMappedBuffer, createIndex, IndexType.QIX, dbfCharset);
             } else if (treeIndex != IndexType.NONE) {
-                return new IndexedShapefileDataStore(url, namespace, useMemoryMappedBuffer, false, treeIndex, dbfCharset);
+                return new IndexedShapefileFeatureStore(url, namespace, useMemoryMappedBuffer, false, treeIndex, dbfCharset);
             } else {
-                return new ShapefileDataStore(url, namespace, useMemoryMappedBuffer, dbfCharset);
+                return new ShapefileFeatureStore(url, namespace, useMemoryMappedBuffer, dbfCharset);
             }
         } catch (MalformedURLException mue) {
             throw new DataStoreException("Url for shapefile malformed: " + url, mue);
@@ -287,9 +287,9 @@ public class ShapefileDataStoreFactory extends AbstractFileFeatureStoreFactory i
 
         try {
             if (createIndex) {
-                return new IndexedShapefileDataStore(url, namespace, useMemoryMappedBuffer, true, IndexType.QIX, dbfCharset);
+                return new IndexedShapefileFeatureStore(url, namespace, useMemoryMappedBuffer, true, IndexType.QIX, dbfCharset);
             } else {
-                return new ShapefileDataStore(url, namespace, useMemoryMappedBuffer, dbfCharset);
+                return new ShapefileFeatureStore(url, namespace, useMemoryMappedBuffer, dbfCharset);
             }
         } catch (MalformedURLException mue) {
             throw new DataStoreException("Url for shapefile malformed: " + url, mue);

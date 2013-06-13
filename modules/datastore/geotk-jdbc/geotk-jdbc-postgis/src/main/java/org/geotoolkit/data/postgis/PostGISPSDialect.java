@@ -29,7 +29,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 
-import org.geotoolkit.jdbc.JDBCDataStore;
+import org.geotoolkit.jdbc.JDBCFeatureStore;
 import org.geotoolkit.data.jdbc.PreparedFilterToSQL;
 import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
 import org.geotoolkit.util.Converters;
@@ -38,7 +38,7 @@ import org.geotoolkit.util.Converters;
 public class PostGISPSDialect extends PostGISDialect implements PreparedStatementSQLDialect {
 
 
-    public PostGISPSDialect(final JDBCDataStore store) {
+    public PostGISPSDialect(final JDBCFeatureStore store) {
         super(store);
     }
 
@@ -72,7 +72,7 @@ public class PostGISPSDialect extends PostGISDialect implements PreparedStatemen
             if ( converted != null ) {
                 value = converted;
             } else {
-                dataStore.getLogger().warning( "Unable to convert " + value + " to " + binding.getName() );
+                featureStore.getLogger().warning( "Unable to convert " + value + " to " + binding.getName() );
             }
         }
 

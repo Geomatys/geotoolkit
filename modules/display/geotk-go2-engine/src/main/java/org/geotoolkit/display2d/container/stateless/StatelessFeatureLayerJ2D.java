@@ -374,7 +374,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
         //final Envelope layerBounds = layer.getBounds();
         //we better not do any call to the layer bounding box before since it can be
-        //really expensive, the datastore is the best placed to check if he might
+        //really expensive, the featurestore is the best placed to check if he might
         //optimize the filter.
         //if( ((BoundingBox)bbox).contains(new DefaultBoundingBox(layerBounds))){
             //the layer bounds overlaps the bbox, no need for a spatial filter

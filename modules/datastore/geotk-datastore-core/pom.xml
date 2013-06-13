@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>datastore</artifactId>
+    <artifactId>featurestore</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
 
@@ -22,9 +22,9 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>geotk-datastore-core</artifactId>
+  <artifactId>geotk-featurestore-core</artifactId>
   <packaging>jar</packaging>
-  <name>Datastore Core</name>
+  <name>FeatureStore Core</name>
 
 
   <!-- =========================================================== -->

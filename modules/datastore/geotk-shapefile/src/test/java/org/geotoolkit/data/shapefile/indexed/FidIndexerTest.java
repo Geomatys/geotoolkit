@@ -38,7 +38,7 @@ public class FidIndexerTest extends FIDTestCase {
         IndexedFidWriter.generate(shpFiles);
         final AccessManager locker = shpFiles.createLocker();
 
-        final IndexedShapefileDataStore ds = new IndexedShapefileDataStore(backshp
+        final IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(backshp
                 .toURI().toURL(), null, false, false, IndexType.NONE,null);
 
         long features = ds.getCount(QueryBuilder.all(ds.getNames().iterator().next()));

@@ -34,7 +34,7 @@ import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.io.Closeable;
 
-import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
+import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
 
 /**
  * This object reads from a file the fid of a feature in a shapefile.

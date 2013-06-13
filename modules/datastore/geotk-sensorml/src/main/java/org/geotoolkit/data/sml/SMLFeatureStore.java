@@ -79,7 +79,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class SMLDataStore extends AbstractFeatureStore {
+public class SMLFeatureStore extends AbstractFeatureStore {
 
     private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
                         new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
@@ -167,7 +167,7 @@ public class SMLDataStore extends AbstractFeatureStore {
 
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
 
-    public SMLDataStore(final ParameterValueGroup params, final ManageableDataSource source) {
+    public SMLFeatureStore(final ParameterValueGroup params, final ManageableDataSource source) {
         super(params);
         this.source = source;
         initTypes();
@@ -175,7 +175,7 @@ public class SMLDataStore extends AbstractFeatureStore {
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(SMLDataStoreFactory.NAME);
+        return FeatureStoreFinder.getFactoryById(SMLFeatureStoreFactory.NAME);
     }
 
     public Connection getConnection() throws SQLException {

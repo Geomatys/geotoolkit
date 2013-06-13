@@ -19,7 +19,7 @@ package org.geotoolkit.wfs;
 import java.util.Iterator;
 import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.client.ServerFinder;
-import org.geotoolkit.data.wfs.WFSDataStoreFactory;
+import org.geotoolkit.data.wfs.WFSFeatureStoreFactory;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 
@@ -41,7 +41,7 @@ public class WFSServerFactoryTest {
         
         boolean found = false;
         while (ite.hasNext()){
-            if(ite.next() instanceof WFSDataStoreFactory){
+            if(ite.next() instanceof WFSFeatureStoreFactory){
                 found = true;
             }
         }

@@ -60,7 +60,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DbaseFileDataStore extends AbstractFeatureStore{
+public class DbaseFileFeatureStore extends AbstractFeatureStore{
 
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
@@ -70,14 +70,14 @@ public class DbaseFileDataStore extends AbstractFeatureStore{
 
     private SimpleFeatureType featureType;
 
-    public DbaseFileDataStore(final File f, final String namespace) throws MalformedURLException, DataStoreException{
+    public DbaseFileFeatureStore(final File f, final String namespace) throws MalformedURLException, DataStoreException{
         this(toParameters(f, namespace));
     }
 
-    public DbaseFileDataStore(final ParameterValueGroup params) throws DataStoreException{
+    public DbaseFileFeatureStore(final ParameterValueGroup params) throws DataStoreException{
         super(params);
 
-        final URL url = (URL) params.parameter(DbaseDataStoreFactory.URLP.getName().toString()).getValue();
+        final URL url = (URL) params.parameter(DbaseFeatureStoreFactory.URLP.getName().toString()).getValue();
         try {
             this.file = new File(url.toURI());
         } catch (URISyntaxException ex) {
@@ -95,9 +95,9 @@ public class DbaseFileDataStore extends AbstractFeatureStore{
 
     private static ParameterValueGroup toParameters(final File f,
             final String namespace) throws MalformedURLException{
-        final ParameterValueGroup params = DbaseDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(DbaseDataStoreFactory.URLP, params).setValue(f.toURI().toURL());
-        Parameters.getOrCreate(DbaseDataStoreFactory.NAMESPACE, params).setValue(namespace);
+        final ParameterValueGroup params = DbaseFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        Parameters.getOrCreate(DbaseFeatureStoreFactory.URLP, params).setValue(f.toURI().toURL());
+        Parameters.getOrCreate(DbaseFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
         return params;
     }
 
@@ -106,7 +106,7 @@ public class DbaseFileDataStore extends AbstractFeatureStore{
      */
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(DbaseDataStoreFactory.NAME);
+        return FeatureStoreFinder.getFactoryById(DbaseFeatureStoreFactory.NAME);
     }
 
     private synchronized void checkExist() throws DataStoreException{

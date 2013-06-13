@@ -40,9 +40,9 @@ import org.opengis.filter.identity.Identifier;
  * <p>
  * FID filter validation is meant to wipe out non valid feature ids from {@link Id} filters. This is
  * so in order to avoid sending feature ids down to DataStores that are not valid as per the
- * specific FeatureType fid structure. Since this is structure is usually DataStore specific, some
+ * specific FeatureType fid structure. Since this is structure is usually FeatureStore specific, some
  * times being a strategy based on how the feature type primary key is generated, fid validation is
- * abstracted out to the {@link FIDValidator} interface so when a DataStore is about to send a query
+ * abstracted out to the {@link FIDValidator} interface so when a FeatureStore is about to send a query
  * down to the backend it van provide this visitor with a validator specific for the feature type
  * fid structure being queried.
  * </p>

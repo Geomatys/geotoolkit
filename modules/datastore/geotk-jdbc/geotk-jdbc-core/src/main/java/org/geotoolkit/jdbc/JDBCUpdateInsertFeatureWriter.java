@@ -36,13 +36,13 @@ public class JDBCUpdateInsertFeatureWriter extends JDBCUpdateFeatureWriter {
 
     JDBCInsertFeatureWriter inserter;
     
-    public JDBCUpdateInsertFeatureWriter(final String sql, final Connection cx, final JDBCDataStore store,
+    public JDBCUpdateInsertFeatureWriter(final String sql, final Connection cx, final JDBCFeatureStore store,
             final Name groupName, final SimpleFeatureType type, final PrimaryKey pkey, final Hints hints)
             throws SQLException, IOException, DataStoreException{
         super(sql, cx, store, groupName, type, pkey,hints);
     }
     
-    public JDBCUpdateInsertFeatureWriter(final PreparedStatement ps, final Connection cx, final JDBCDataStore store,
+    public JDBCUpdateInsertFeatureWriter(final PreparedStatement ps, final Connection cx, final JDBCFeatureStore store,
             final Name groupName, final SimpleFeatureType type, final PrimaryKey pkey, final Name[] attributeNames, final Hints hints)
             throws SQLException, IOException, DataStoreException{
         super(ps, cx, store, groupName, type, pkey, hints);

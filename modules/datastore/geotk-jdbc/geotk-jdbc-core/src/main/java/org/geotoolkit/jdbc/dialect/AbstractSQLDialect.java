@@ -74,7 +74,7 @@ import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 import org.geotoolkit.filter.capability.DefaultTemporalCapabilities;
 import org.geotoolkit.filter.capability.DefaultTemporalOperators;
-import org.geotoolkit.jdbc.JDBCDataStore;
+import org.geotoolkit.jdbc.JDBCFeatureStore;
 import org.opengis.filter.expression.Literal;
 
 import static org.apache.sis.util.ArgumentChecks.*;
@@ -84,7 +84,7 @@ import org.opengis.filter.capability.TemporalOperator;
 import org.opengis.filter.capability.TemporalOperators;
 
 /**
- * The driver used by JDBCDataStore to directly communicate with the database.
+ * The driver used by JDBCFeatureStore to directly communicate with the database.
  * <p>
  * This class encapsulates all the database specific operations that JDBCDataStore
  * needs to function. It is implemented on a per-database basis.
@@ -191,28 +191,28 @@ public abstract class AbstractSQLDialect implements SQLDialect{
     }
 
     /**
-     * The datastore using the dialect
+     * The featurestore using the dialect
      */
-    protected final JDBCDataStore dataStore;
+    protected final JDBCFeatureStore featureStore;
 
     protected final String escape;
 
     /**
      * Creates the dialect.
-     * @param dataStore The dataStore using the dialect.
+     * @param deatureStore The featurestore using the dialect.
      */
-    protected AbstractSQLDialect(final JDBCDataStore dataStore) {
-        this(dataStore,"\"");
+    protected AbstractSQLDialect(final JDBCFeatureStore deatureStore) {
+        this(deatureStore,"\"");
     }
 
     /**
      * Creates the dialect.
-     * @param dataStore The dataStore using the dialect.
+     * @param featureStore The featurestore using the dialect.
      */
-    protected AbstractSQLDialect(final JDBCDataStore dataStore, final String escape) {
-        ensureNonNull("datastore", dataStore);
+    protected AbstractSQLDialect(final JDBCFeatureStore featureStore, final String escape) {
+        ensureNonNull("datastore", featureStore);
         ensureNonNull("name escape", escape);
-        this.dataStore = dataStore;
+        this.featureStore = featureStore;
         this.escape = escape;
     }
 
@@ -355,8 +355,8 @@ public abstract class AbstractSQLDialect implements SQLDialect{
     public void encodeValue(final Object value, final Class type, final StringBuilder sql) {
 
         //turn the value into a literal and use FilterToSQL to encode it
-        final Literal literal = dataStore.getFilterFactory().literal(value);
-        final FilterToSQL filterToSQL = dataStore.createFilterToSQL(null);
+        final Literal literal = featureStore.getFilterFactory().literal(value);
+        final FilterToSQL filterToSQL = featureStore.createFilterToSQL(null);
 
         final StringWriter w = new StringWriter();
         filterToSQL.setWriter(w);
@@ -650,7 +650,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
     }
 
     /**
-     * Registers the java type to sql type mappings that the datastore uses when
+     * Registers the java type to sql type mappings that the featurestore uses when
      * reading and writing objects to and from the database.
      * * <p>
      * This method register the basic type.

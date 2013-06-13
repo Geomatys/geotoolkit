@@ -50,7 +50,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.jdbc.JDBCDataStore;
+import org.geotoolkit.jdbc.JDBCFeatureStore;
 import org.geotoolkit.jdbc.dialect.AbstractSQLDialect;
 import org.geotoolkit.jdbc.reverse.DataBaseModel;
 import org.geotoolkit.jdbc.reverse.SchemaMetaModel;
@@ -69,7 +69,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.postgresql.jdbc4.Jdbc4ResultSetMetaData;
 
-import static org.geotoolkit.jdbc.AbstractJDBCDataStore.*;
+import static org.geotoolkit.jdbc.AbstractJDBCFeatureStore.*;
 
 
 public class PostGISDialect extends AbstractSQLDialect {
@@ -139,7 +139,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                         //set the real crs
                         geom.setUserData(createCRS(geom.getSRID(), null));
                     } catch (SQLException ex) {
-                        dataStore.getLogger().log(Level.WARNING, ex.getLocalizedMessage(),ex);
+                        featureStore.getLogger().log(Level.WARNING, ex.getLocalizedMessage(),ex);
                     }
                 }
             }
@@ -151,7 +151,7 @@ public class PostGISDialect extends AbstractSQLDialect {
     private boolean estimatedExtentsEnabled = false;
     private Version version = null;
 
-    public PostGISDialect(final JDBCDataStore dataStore) {
+    public PostGISDialect(final JDBCFeatureStore dataStore) {
         super(dataStore);
         //register the base mapping
         initBaseClassToSqlMappings(classToSqlTypeMappings);
@@ -278,7 +278,7 @@ public class PostGISDialect extends AbstractSQLDialect {
 
         double res = 0;
         if(hints != null){
-            double[] ress = (double[]) hints.get(JDBCDataStore.RESAMPLING);
+            double[] ress = (double[]) hints.get(JDBCFeatureStore.RESAMPLING);
             if(ress != null){
                 res = Math.min(ress[0], ress[1]);
             }
@@ -389,8 +389,8 @@ public class PostGISDialect extends AbstractSQLDialect {
                     gType = result.getString(1);
                 }
             } finally {
-                dataStore.closeSafe(result);
-                dataStore.closeSafe(statement);
+                featureStore.closeSafe(result);
+                featureStore.closeSafe(statement);
             }
         }
 
@@ -432,8 +432,8 @@ public class PostGISDialect extends AbstractSQLDialect {
                 srid = result.getInt(1);
             }
         } finally {
-            dataStore.closeSafe(result);
-            dataStore.closeSafe(statement);
+            featureStore.closeSafe(result);
+            featureStore.closeSafe(statement);
         }
 
         // TODO: implement inference from the first feature
@@ -471,17 +471,17 @@ public class PostGISDialect extends AbstractSQLDialect {
                 sb.append(schemaName).append("\".\"");
             sb.append(tableName).append("\"', '").append(columnName).append("')");
             final String sql = sb.toString();
-            dataStore.getLogger().fine(sql);
+            featureStore.getLogger().fine(sql);
             final ResultSet rs = st.executeQuery(sql);
             try {
                 if (rs.next()) {
                     return rs.getString(1);
                 }
             } finally {
-                dataStore.closeSafe(rs);
+                featureStore.closeSafe(rs);
             }
         } finally {
-            dataStore.closeSafe(st);
+            featureStore.closeSafe(st);
         }
 
         return null;
@@ -494,17 +494,17 @@ public class PostGISDialect extends AbstractSQLDialect {
         try {
             final String sql = "SELECT nextval('" + sequenceName + "')";
 
-            dataStore.getLogger().fine(sql);
+            featureStore.getLogger().fine(sql);
             final ResultSet rs = st.executeQuery(sql);
             try {
                 if (rs.next()) {
                     return rs.getLong(1);
                 }
             } finally {
-                dataStore.closeSafe(rs);
+                featureStore.closeSafe(rs);
             }
         } finally {
-            dataStore.closeSafe(st);
+            featureStore.closeSafe(st);
         }
 
         return null;
@@ -555,7 +555,7 @@ public class PostGISDialect extends AbstractSQLDialect {
         Statement statement = null;
         ResultSet result = null;        
         try {
-            cx = dataStore.getDataSource().getConnection();
+            cx = featureStore.getDataSource().getConnection();
             statement = cx.createStatement();
             result = statement.executeQuery("SELECT postgis_lib_version();");
 
@@ -567,7 +567,7 @@ public class PostGISDialect extends AbstractSQLDialect {
         } catch(SQLException ex){
             LOGGER.log(Level.WARNING, ex.getMessage(),ex);
         } finally {
-            dataStore.closeSafe(cx,statement,result);
+            featureStore.closeSafe(cx,statement,result);
         }
         
         return version;
@@ -583,7 +583,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                 request.append(schemaName).append(".");
             }
             request.append("postgis_version()");
-            dataStore.getLogger().fine(request.toString());
+            featureStore.getLogger().fine(request.toString());
 
             final ResultSet rs = st.executeQuery(request.toString());
             try {
@@ -591,10 +591,10 @@ public class PostGISDialect extends AbstractSQLDialect {
                     return rs.getString(1);
                 }
             } finally {
-                dataStore.closeSafe(rs);
+                featureStore.closeSafe(rs);
             }
         } finally {
-            dataStore.closeSafe(st);
+            featureStore.closeSafe(st);
         }
         return null;
     }
@@ -634,9 +634,9 @@ public class PostGISDialect extends AbstractSQLDialect {
 
                     // lookup or reverse engineer the srid
                     int srid = -1;
-                    if (gd.getUserData().get(JDBCDataStore.JDBC_NATIVE_SRID) != null) {
+                    if (gd.getUserData().get(JDBCFeatureStore.JDBC_NATIVE_SRID) != null) {
                         srid = (Integer) gd.getUserData().get(
-                                JDBCDataStore.JDBC_NATIVE_SRID);
+                                JDBCFeatureStore.JDBC_NATIVE_SRID);
                     } else if (gd.getCoordinateReferenceSystem() != null) {
                         try {
                             final Integer result = IdentifiedObjects.lookupEpsgCode(gd.getCoordinateReferenceSystem(), true);
@@ -735,7 +735,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                 cx.commit();
             }
         } finally {
-            dataStore.closeSafe(st);
+            featureStore.closeSafe(st);
         }
     }
 
@@ -868,13 +868,13 @@ public class PostGISDialect extends AbstractSQLDialect {
                 atb.setName(ensureGMLNS(namespace, columnName));
                 Connection cx = null;
                 try {
-                    cx = dataStore.getDataSource().getConnection();
+                    cx = featureStore.getDataSource().getConnection();
                     buildMapping(atb, cx, typeName, type,
                             schemaName, tableName, columnName);
                 } catch (SQLException e) {
                     throw new DataStoreException("Error occurred analyzing column : " + columnName, e);
                 } finally {
-                    dataStore.closeSafe(cx);
+                    featureStore.closeSafe(cx);
                 }
 
                 if(Geometry.class.isAssignableFrom(atb.getBinding())){

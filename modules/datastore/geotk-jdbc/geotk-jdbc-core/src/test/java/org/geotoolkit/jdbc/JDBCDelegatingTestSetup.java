@@ -57,7 +57,7 @@ public class JDBCDelegatingTestSetup extends JDBCTestSetup {
     }
     
     @Override
-    protected void setUpDataStore(final JDBCDataStore dataStore) {
+    protected void setUpDataStore(final JDBCFeatureStore dataStore) {
         delegate.setUpDataStore(dataStore);
     }
 

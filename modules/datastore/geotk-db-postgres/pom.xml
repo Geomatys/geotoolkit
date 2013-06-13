@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>datastore</artifactId>
+    <artifactId>featurestore</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
 
@@ -72,7 +72,7 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-datastore-core</artifactId>
+      <artifactId>geotk-featurestore-core</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>

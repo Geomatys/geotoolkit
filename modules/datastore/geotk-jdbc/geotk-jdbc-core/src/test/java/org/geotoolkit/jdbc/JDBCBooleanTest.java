@@ -28,13 +28,13 @@ public abstract class JDBCBooleanTest extends JDBCTestSupport {
     protected abstract JDBCBooleanTestSetup createTestSetup();
 
     public void testGetSchema() throws Exception {
-        SimpleFeatureType ft = (SimpleFeatureType) dataStore.getFeatureType( tname("b") );
+        SimpleFeatureType ft = (SimpleFeatureType) featureStore.getFeatureType( tname("b") );
         assertEquals( Boolean.class, ft.getDescriptor("boolProperty").getType().getBinding() );
     }
     
     public void testGetFeatures() throws Exception {
-        Query query = QueryBuilder.all(dataStore.getFeatureType("b").getName());
-        FeatureReader r = dataStore.getFeatureReader( query );
+        Query query = QueryBuilder.all(featureStore.getFeatureType("b").getName());
+        FeatureReader r = featureStore.getFeatureReader( query );
         r.hasNext();
         
         SimpleFeature f = (SimpleFeature) r.next();

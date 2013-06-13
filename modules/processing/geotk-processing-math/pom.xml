@@ -60,7 +60,7 @@
 
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-datastore-core</artifactId>
+            <artifactId>geotk-featurestore-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 

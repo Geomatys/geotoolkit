@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.geotoolkit.pending</groupId>
-        <artifactId>datastore</artifactId>
+        <artifactId>featurestore</artifactId>
         <version>4.x-SNAPSHOT</version>
     </parent>
 
@@ -20,8 +20,8 @@
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-kml</artifactId>
     <packaging>jar</packaging>
-    <name>Datastore KML</name>
-    <description>Datastore Keyhole Markup Language</description>
+    <name>FeatureStore KML</name>
+    <description>FeatureStore Keyhole Markup Language</description>
     <licenses>
         <license>
             <name>Lesser General Public License (LGPL)</name>
@@ -64,7 +64,7 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-datastore-core</artifactId>
+            <artifactId>geotk-featurestore-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

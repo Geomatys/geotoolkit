@@ -102,7 +102,7 @@ public final class ReferenceToFeatureCollectionConverter extends AbstractReferen
 //                final Map<String, Serializable> parameters = new HashMap<String, Serializable>();
 //                parameters.put("url", new URL(href));
 //
-//                final DataStore store = DataStoreFinder.get(parameters);
+//                final FeatureStore store = DataStoreFinder.get(parameters);
 //
 //                if (store == null) {
 //                    throw new NonconvertibleObjectException("Invalid URL");

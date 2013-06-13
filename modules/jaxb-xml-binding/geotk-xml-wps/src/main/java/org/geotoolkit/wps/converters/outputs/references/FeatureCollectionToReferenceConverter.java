@@ -135,9 +135,9 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
         } catch (XMLStreamException ex) {
             throw new NonconvertibleObjectException("Stax exception while writing the feature collection", ex);
         } catch (DataStoreException ex) {
-            throw new NonconvertibleObjectException("DataStore exception while writing the feature collection", ex);
+            throw new NonconvertibleObjectException("FeatureStore exception while writing the feature collection", ex);
         } catch (FeatureStoreRuntimeException ex) {
-            throw new NonconvertibleObjectException("DataStoreRuntimeException exception while writing the feature collection", ex);
+            throw new NonconvertibleObjectException("FeatureStoreRuntimeException exception while writing the feature collection", ex);
         } finally {
             try {
                 if (featureWriter != null) {

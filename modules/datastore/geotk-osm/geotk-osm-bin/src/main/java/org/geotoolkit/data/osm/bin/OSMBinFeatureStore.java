@@ -42,22 +42,22 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 
 /**
- * Open Street Map datastore for binary files (*.obm)
+ * Open Street Map featurestore for binary files (*.obm)
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMBinDataStore extends AbstractFeatureStore{
+public class OSMBinFeatureStore extends AbstractFeatureStore{
 
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
 
-    public OSMBinDataStore(final URL filePath){
+    public OSMBinFeatureStore(final URL filePath){
         super(null);
     }
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(OSMBinDataStoreFactory.NAME);
+        return FeatureStoreFinder.getFactoryById(OSMBinFeatureStoreFactory.NAME);
     }
     
     /**

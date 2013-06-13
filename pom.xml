@@ -596,7 +596,7 @@
                   <packages>org.geotoolkit.feature*</packages>
                 </group>
                 <group>
-                  <title>Feature DataStore</title>
+                  <title>Feature FeatureStore</title>
                   <packages>org.geotoolkit.data*</packages>
                 </group>
                 <group>

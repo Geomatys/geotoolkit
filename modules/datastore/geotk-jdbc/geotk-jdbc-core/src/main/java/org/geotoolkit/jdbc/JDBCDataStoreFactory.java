@@ -34,7 +34,6 @@ import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.util.ResourceInternationalString;
 
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
@@ -136,7 +135,7 @@ public abstract class JDBCDataStoreFactory extends AbstractFeatureStoreFactory {
     }
 
     @Override
-    public JDBCDataStore open(final ParameterValueGroup params) throws DataStoreException {
+    public JDBCFeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         // namespace
         String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
@@ -145,17 +144,17 @@ public abstract class JDBCDataStoreFactory extends AbstractFeatureStoreFactory {
             namespace = "http://geotoolkit.org";
         }
 
-        final JDBCDataStore dataStore = new DefaultJDBCDataStore(params,getDatabaseID());
+        final JDBCFeatureStore featureStore = new DefaultJDBCFeatureStore(params,getDatabaseID());
 
         // dialect
-        final SQLDialect dialect = createSQLDialect(dataStore);
-        dataStore.setDialect(dialect);
+        final SQLDialect dialect = createSQLDialect(featureStore);
+        featureStore.setDialect(dialect);
 
         // datasource
         // check if the DATASOURCE parameter was supplied, it takes precendence
         final DataSource ds = (DataSource) params.parameter(DATASOURCE.getName().toString()).getValue();
         try {
-            dataStore.setDataSource((ds != null) ? ds : createDataSource(params, dialect));
+            featureStore.setDataSource((ds != null) ? ds : createDataSource(params, dialect));
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
@@ -163,24 +162,24 @@ public abstract class JDBCDataStoreFactory extends AbstractFeatureStoreFactory {
         // fetch size
         Integer fetchSize = (Integer) params.parameter(FETCHSIZE.getName().toString()).getValue();
         if (fetchSize != null && fetchSize > 0) {
-            dataStore.setFetchSize(fetchSize);
+            featureStore.setFetchSize(fetchSize);
         }
 
         //database schema
         final String schema = (String) params.parameter(SCHEMA.getName().toString()).getValue();
 
         if (schema != null) {
-            dataStore.setDatabaseSchema(schema);
+            featureStore.setDatabaseSchema(schema);
         }
 
         // factories
-        dataStore.setFilterFactory(FactoryFinder.getFilterFactory(null));
-        dataStore.setGeometryFactory(new GeometryFactory());
-        dataStore.setFeatureTypeFactory(new DefaultFeatureTypeFactory());
-        dataStore.setFeatureFactory(FactoryFinder.getFeatureFactory(
+        featureStore.setFilterFactory(FactoryFinder.getFilterFactory(null));
+        featureStore.setGeometryFactory(new GeometryFactory());
+        featureStore.setFeatureTypeFactory(new DefaultFeatureTypeFactory());
+        featureStore.setFeatureFactory(FactoryFinder.getFeatureFactory(
                 new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class)));
 
-        return dataStore;
+        return featureStore;
     }
 
 
@@ -190,7 +189,7 @@ public abstract class JDBCDataStoreFactory extends AbstractFeatureStoreFactory {
     }
 
     /**
-     * Determines if the datastore is available.
+     * Determines if the featurestore is available.
      * <p>
      * Subclasses may with to override or extend this method. This implementation
      * checks whether the jdbc driver class (provided by {@link #getDriverClassName()}
@@ -226,12 +225,12 @@ public abstract class JDBCDataStoreFactory extends AbstractFeatureStoreFactory {
     protected abstract String getDriverClassName();
 
     /**
-     * Creates the dialect that the datastore uses for communication with the
+     * Creates the dialect that the featurestore uses for communication with the
      * underlying database.
      *
-     * @param dataStore The datastore.
+     * @param featureStore The datastore.
      */
-    protected abstract SQLDialect createSQLDialect(final JDBCDataStore dataStore);
+    protected abstract SQLDialect createSQLDialect(final JDBCFeatureStore featureStore);
 
     /**
      * Creates the datasource for the data store.

@@ -21,13 +21,13 @@ import java.util.Properties;
 
 import org.geotoolkit.data.postgis.PostGISPSDialect;
 import org.geotoolkit.data.postgis.PostGISTestSetup;
-import org.geotoolkit.jdbc.JDBCDataStore;
+import org.geotoolkit.jdbc.JDBCFeatureStore;
 
 
 public class PostGISPSTestSetup extends PostGISTestSetup {
 
     @Override
-    protected void setUpDataStore(final JDBCDataStore dataStore) {
+    protected void setUpDataStore(final JDBCFeatureStore dataStore) {
         super.setUpDataStore(dataStore);
         
         // for this test we need a PS based dialect

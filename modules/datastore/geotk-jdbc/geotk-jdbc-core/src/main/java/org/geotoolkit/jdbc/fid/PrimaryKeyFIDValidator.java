@@ -17,7 +17,7 @@
 package org.geotoolkit.jdbc.fid;
 
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor.FIDValidator;
-import org.geotoolkit.jdbc.DefaultJDBCDataStore;
+import org.geotoolkit.jdbc.DefaultJDBCFeatureStore;
 
 
 /**
@@ -29,9 +29,9 @@ import org.geotoolkit.jdbc.DefaultJDBCDataStore;
 public class PrimaryKeyFIDValidator implements FIDValidator {
 
     private final PrimaryKey key;
-    private final DefaultJDBCDataStore store;
+    private final DefaultJDBCFeatureStore store;
 
-    public PrimaryKeyFIDValidator(final DefaultJDBCDataStore store, final PrimaryKey key) {
+    public PrimaryKeyFIDValidator(final DefaultJDBCFeatureStore store, final PrimaryKey key) {
         this.store = store;
         this.key = key;
     }

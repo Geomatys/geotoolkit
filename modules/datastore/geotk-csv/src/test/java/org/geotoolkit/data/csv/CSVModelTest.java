@@ -34,7 +34,7 @@ import org.geotoolkit.storage.DataStoreException;
  */
 public class CSVModelTest extends AbstractModelTests{
 
-    private final CSVDataStore store;
+    private final CSVFeatureStore store;
     private final List<Class> geometries = new ArrayList<Class>();
     private final List<Class> attributs = new ArrayList<Class>();
 
@@ -46,7 +46,7 @@ public class CSVModelTest extends AbstractModelTests{
 
         File f = File.createTempFile("temp", "csv");
         f.deleteOnExit();
-        store = new CSVDataStore(f, "http://geotoolkit.org", ';');
+        store = new CSVFeatureStore(f, "http://geotoolkit.org", ';');
     }
 
     @Override

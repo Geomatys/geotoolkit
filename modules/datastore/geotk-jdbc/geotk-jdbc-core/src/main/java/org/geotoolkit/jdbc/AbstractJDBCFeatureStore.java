@@ -39,7 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractJDBCDataStore extends AbstractFeatureStore implements JDBCDataStore{
+public abstract class AbstractJDBCFeatureStore extends AbstractFeatureStore implements JDBCFeatureStore{
 
     /**
      * Factory used to create feature types
@@ -71,7 +71,7 @@ public abstract class AbstractJDBCDataStore extends AbstractFeatureStore impleme
      */
     protected int fetchSize;
 
-    public AbstractJDBCDataStore(final ParameterValueGroup params) {
+    public AbstractJDBCFeatureStore(final ParameterValueGroup params) {
         super(params);
     }
 

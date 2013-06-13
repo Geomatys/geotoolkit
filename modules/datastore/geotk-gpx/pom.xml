@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.geotoolkit.pending</groupId>
-        <artifactId>datastore</artifactId>
+        <artifactId>featurestore</artifactId>
         <version>4.x-SNAPSHOT</version>
     </parent>
 
@@ -20,8 +20,8 @@
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-gpx</artifactId>
     <packaging>jar</packaging>
-    <name>Datastore GPX</name>
-    <description>Datastore and reader GPX</description>
+    <name>FeatureStore GPX</name>
+    <description>FeatureStore and reader GPX</description>
     <licenses>
         <license>
             <name>Lesser General Public License (LGPL)</name>
@@ -54,7 +54,7 @@
     <dependencies>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-datastore-core</artifactId>
+            <artifactId>geotk-featurestore-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -75,7 +75,7 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-datastore-core</artifactId>
+            <artifactId>geotk-featurestore-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>

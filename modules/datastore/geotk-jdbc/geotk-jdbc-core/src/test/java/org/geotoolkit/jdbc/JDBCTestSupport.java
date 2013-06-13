@@ -87,8 +87,8 @@ public abstract class JDBCTestSupport extends TestCase {
     }
 
     protected JDBCTestSetup setup;
-    protected JDBCDataStore dataStore;
-    protected JDBCDataStore dataStore2;
+    protected JDBCFeatureStore featureStore;
+    protected JDBCFeatureStore featureStore2;
     protected SQLDialect dialect;
     
     /**
@@ -142,7 +142,7 @@ public abstract class JDBCTestSupport extends TestCase {
         //initialize the data
         setup.setUpData();
 
-        //create the dataStore        
+        //create the featurestore        
         final JDBCDataStoreFactory factory = setup.createDataStoreFactory();
         final ParameterDescriptorGroup desc = factory.getParametersDescriptor();
         final ParameterValueGroup param = desc.createValue();
@@ -163,13 +163,13 @@ public abstract class JDBCTestSupport extends TestCase {
         Parameters.getOrCreate(JDBCDataStoreFactory.USER, param2).setValue("");
         Parameters.getOrCreate(JDBCDataStoreFactory.PASSWORD, param2).setValue("");
         
-        dataStore = (JDBCDataStore) factory.open( param );
-        dataStore2 = (JDBCDataStore) factory.open( param2 );
+        featureStore = (JDBCFeatureStore) factory.open( param );
+        featureStore2 = (JDBCFeatureStore) factory.open( param2 );
         
-        setup.setUpDataStore(dataStore);
-        dataStore2.setDatabaseSchema("public");
+        setup.setUpDataStore(featureStore);
+        featureStore2.setDatabaseSchema("public");
         
-        dialect = dataStore.getDialect();
+        dialect = featureStore.getDialect();
     }
 
     protected abstract JDBCTestSetup createTestSetup();
@@ -177,13 +177,13 @@ public abstract class JDBCTestSupport extends TestCase {
     @Override
     protected void tearDown() throws Exception {
         setup.tearDown();
-        dataStore.dispose();
-        dataStore2.dispose();
+        featureStore.dispose();
+        featureStore2.dispose();
         super.tearDown();
     }
     
     /**
-     * Returns the table name as the datastore understands it (some datastore are incapable of supporting
+     * Returns the table name as the featurestore understands it (some featurestore are incapable of supporting
      * mixed case names for example)
      */
     protected String tname( final String raw ) {
@@ -195,7 +195,7 @@ public abstract class JDBCTestSupport extends TestCase {
      */
     protected Name nsname( final String raw ) {
         try {
-            for (Name n : dataStore.getNames()) {
+            for (Name n : featureStore.getNames()) {
                 if(n.getLocalPart().equalsIgnoreCase(raw)){
                     return n;
                 }
@@ -208,7 +208,7 @@ public abstract class JDBCTestSupport extends TestCase {
 
     
     /**
-     * Returns the attribute name as the datastore understands it (some datastore are incapable of supporting
+     * Returns the attribute name as the featurestore understands it (some featurestore are incapable of supporting
      * mixed case names for example)
      */
     protected String aname( final String raw ) {
@@ -216,7 +216,7 @@ public abstract class JDBCTestSupport extends TestCase {
     }
     
     /**
-     * Returns the attribute name as the datastore understands it (some datastore are incapable of supporting
+     * Returns the attribute name as the featurestore understands it (some featurestore are incapable of supporting
      * mixed case names for example)
      */
     protected Name aname( final Name raw ) {
@@ -225,7 +225,7 @@ public abstract class JDBCTestSupport extends TestCase {
     
     /**
      * Checkes the two feature types are equal, taking into consideration the eventual modification
-     * the datastore had to perform in order to actually manage the type (change in names case, for example)
+     * the featurestore had to perform in order to actually manage the type (change in names case, for example)
      */
     protected void assertFeatureTypesEqual(final SimpleFeatureType expected, final SimpleFeatureType actual) {
         for (int i = 0; i < expected.getAttributeCount(); i++) {
@@ -245,7 +245,7 @@ public abstract class JDBCTestSupport extends TestCase {
 
     /**
      * Checkes the two feature types are equal, taking into consideration the eventual modification
-     * the datastore had to perform in order to actually manage the type (change in names case, for example)
+     * the featurestore had to perform in order to actually manage the type (change in names case, for example)
      */
     protected void assertAttributesEqual(final AttributeDescriptor expected, final AttributeDescriptor actual) {
         assertEquals(aname(expected.getName()).getLocalPart(), actual.getName().getLocalPart()); //ignore namespace

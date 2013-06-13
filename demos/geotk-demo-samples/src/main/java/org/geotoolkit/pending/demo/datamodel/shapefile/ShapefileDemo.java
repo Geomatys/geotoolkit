@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStoreException;
@@ -18,10 +18,10 @@ public class ShapefileDemo {
         Demos.init();
         
         //create using a Parameters object--------------------------------------
-        System.out.println(ShapefileDataStoreFactory.PARAMETERS_DESCRIPTOR);
+        System.out.println(ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
         
-        final ParameterValueGroup parameters = ShapefileDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(ShapefileDataStoreFactory.URLP,parameters).setValue(
+        final ParameterValueGroup parameters = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        Parameters.getOrCreate(ShapefileFeatureStoreFactory.URLP,parameters).setValue(
                 ShapefileDemo.class.getResource("/data/world/Countries.shp"));
         
         final FeatureStore store1 = FeatureStoreFinder.open(parameters);        

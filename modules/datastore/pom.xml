@@ -22,12 +22,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>datastore</artifactId>
+  <artifactId>featurestore</artifactId>
   <packaging>pom</packaging>
-  <name>Datastore</name>
+  <name>FeatureStore</name>
 
   <description>
-    Projects group for pending datastores services.
+    Projects group for pending featurestores services.
   </description>
 
 

@@ -83,7 +83,7 @@ public final class MapBuilder {
     /**
      * Create an empty map layer without any datas. It can be useful in different
      * kind of applications, like holding a space in the map context for a layer
-     * when a datastore is unavailable.
+     * when a featurestore is unavailable.
      * @return EmptyMapLayer
      */
     public static EmptyMapLayer createEmptyMapLayer(){

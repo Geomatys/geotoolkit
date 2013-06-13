@@ -289,7 +289,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
         final Expression upperBound = filter.getUpperBoundary();
         if (lowerBound == null || upperBound == null || expr == null) {
             // Well, one of the boundaries is null, so I guess
-            // we're saying that *no* datastore could support this.
+            // we're saying that *no* featurestore could support this.
             postStack.addFirst(filter);
             return null;
         }

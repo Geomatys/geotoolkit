@@ -70,7 +70,7 @@ import java.sql.Statement;
  */
 public interface FIDMapper extends Serializable {
     /**
-     * This method will be called by JDBCDataStore when creating new tables to
+     * This method will be called by JDBCFeatureStore when creating new tables to
      * give the FID mapper an opportunity to initialize needed data
      * structures, such as support tables, sequences, and so on.
      */
@@ -192,7 +192,7 @@ public interface FIDMapper extends Serializable {
      * </p>
      *
      * <p>
-     * When this method returns true, it's up to the datastore to decide what
+     * When this method returns true, it's up to the featurestore to decide what
      * to do, but a sane policy may be to prevent Feature writing
      * </p>
      *

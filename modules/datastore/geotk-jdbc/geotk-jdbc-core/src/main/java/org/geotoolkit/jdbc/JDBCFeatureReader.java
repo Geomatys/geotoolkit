@@ -84,7 +84,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     /**
      * the datastore
      */
-    protected DefaultJDBCDataStore dataStore; //can be set to null when reader is closed.
+    protected DefaultJDBCFeatureStore featureStore; //can be set to null when reader is closed.
     /**
      * schema of features
      */
@@ -123,20 +123,20 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     protected Boolean next;
 
 
-    public JDBCFeatureReader(final String sql, final Connection cx, final JDBCDataStore store, 
+    public JDBCFeatureReader(final String sql, final Connection cx, final JDBCFeatureStore store, 
             final Name groupName, final SimpleFeatureType featureType, final PrimaryKey pkey, final Hints hints )
             throws SQLException, IOException, DataStoreException{
         this(sql,cx,null, store, featureType, pkey, hints, groupName);
     }
 
-    public JDBCFeatureReader(final PreparedStatement st, final Connection cx, final JDBCDataStore store, 
+    public JDBCFeatureReader(final PreparedStatement st, final Connection cx, final JDBCFeatureStore store, 
             final Name groupName, final SimpleFeatureType featureType, final PrimaryKey pkey, final Hints hints)
             throws SQLException, IOException, DataStoreException{
         this(null,cx,st,store, featureType, pkey, hints, groupName);
     }
 
     private JDBCFeatureReader(final String sql, final Connection cx, final PreparedStatement st,
-            final JDBCDataStore store, final SimpleFeatureType featureType,
+            final JDBCFeatureStore store, final SimpleFeatureType featureType,
             final PrimaryKey pkey, final Hints hints,final Name groupName)
             throws SQLException, IOException, DataStoreException{
 
@@ -162,7 +162,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         assert(creationStack = new IllegalStateException().fillInStackTrace()) != null;
 
         // init base fields
-        this.dataStore = (DefaultJDBCDataStore) store;
+        this.featureStore = (DefaultJDBCFeatureStore) store;
         
         this.hints = (hints == null) ? new Hints() : hints;
 
@@ -180,7 +180,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
 
         if (gf == null) {
             // fall back on one privided by datastore
-            gf = dataStore.getGeometryFactory();
+            gf = featureStore.getGeometryFactory();
         }
         this.geometryFactory = gf;
                 
@@ -201,7 +201,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
 
     public JDBCFeatureReader(final JDBCFeatureReader other) throws SQLException {
         this.featureType = other.featureType;
-        this.dataStore = other.dataStore;
+        this.featureStore = other.featureStore;
         this.hints = other.hints;
         this.geometryFactory = other.geometryFactory;
         this.fidBase = other.fidBase;
@@ -241,7 +241,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     }
 
     protected void ensureOpen() throws FeatureStoreRuntimeException {
-        if ( dataStore == null ) {
+        if ( featureStore == null ) {
             throw new FeatureStoreRuntimeException( "reader already closed" );
         }
     }
@@ -278,7 +278,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
 
                         //read the geometry
                         try {
-                            value = dataStore.getDialect().decodeGeometryValue(
+                            value = featureStore.getDialect().decodeGeometryValue(
                                     gatt, rs, i + 1, geometryFactory, stcx);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
@@ -356,9 +356,9 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     
     @Override
     public void close() throws FeatureStoreRuntimeException {
-        if( dataStore != null ) {
+        if( featureStore != null ) {
             //clean up
-            dataStore.closeSafe(cx,st,rs);
+            featureStore.closeSafe(cx,st,rs);
         }else {
             //means we are already closed... should we throw an exception?
         }
@@ -372,14 +372,14 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
      */
     protected void cleanup() {
         //throw away state
-        dataStore = null; //we set it to null to now when the reader has been closed
+        featureStore = null; //we set it to null to now when the reader has been closed
         next = null;
     }
 
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        if (dataStore != null) {
+        if (featureStore != null) {
             LOGGER.warning(
                 "UNCLOSED ITERATOR : There is code leaving JDBC feature reader/writer open, " +
                 "this may cause memory leaks or data integrity problems !");
@@ -437,7 +437,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             final ResultSetMetaData md = rs.getMetaData();
 
             //get the primary key
-            key = dataStore.getMetaModel().getPrimaryKey(featureType.getName());
+            key = featureStore.getMetaModel().getPrimaryKey(featureType.getName());
             final int count = md.getColumnCount();
 
             //set up values
@@ -547,8 +547,8 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                             if (att instanceof GeometryDescriptor) {
                                 GeometryDescriptor gatt = (GeometryDescriptor) att;
                                 try {
-                                    return dataStore.getDialect().decodeGeometryValue(
-                                            gatt, rs, rsindex, dataStore.getGeometryFactory(), st.getConnection());
+                                    return featureStore.getDialect().decodeGeometryValue(
+                                            gatt, rs, rsindex, featureStore.getGeometryFactory(), st.getConnection());
                                 } catch (IOException ex) {
                                     throw  new RuntimeException(ex);
                                 }

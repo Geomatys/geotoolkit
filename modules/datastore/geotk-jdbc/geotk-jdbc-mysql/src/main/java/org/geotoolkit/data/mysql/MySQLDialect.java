@@ -27,7 +27,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import org.geotoolkit.data.jdbc.FilterToSQL;
-import org.geotoolkit.jdbc.JDBCDataStore;
+import org.geotoolkit.jdbc.JDBCFeatureStore;
 import org.geotoolkit.jdbc.dialect.AbstractSQLDialect;
 
 import org.opengis.feature.type.GeometryDescriptor;
@@ -35,7 +35,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 
 public class MySQLDialect extends AbstractSQLDialect {
 
-    public MySQLDialect(final JDBCDataStore dataStore) {
+    public MySQLDialect(final JDBCFeatureStore dataStore) {
         super(dataStore,"`");
         //register the base mapping
         initBaseClassToSqlMappings(classToSqlTypeMappings);

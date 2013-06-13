@@ -1,2 +1,2 @@
-org.geotoolkit.data.shapefile.ShapefileDataStoreFactory
-org.geotoolkit.data.shapefile.ShapefileFolderDataStoreFactory
+org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory
+org.geotoolkit.data.shapefile.ShapefileFolderFeatureStoreFactory

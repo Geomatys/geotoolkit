@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JFileChooser;
-import org.geotoolkit.data.postgis.PostgisNGDataStoreFactory;
+import org.geotoolkit.data.postgis.PostgisNGFeatureStoreFactory;
 
 /**
  *
@@ -43,12 +43,12 @@ public class JOSMDBConfigPane extends javax.swing.JPanel {
     public Map<String,Serializable> getDBConnectionParameters(){
         final HashMap<String,Serializable> params = new HashMap<String, Serializable>();
         params.put("dbtype", "postgisng");
-        params.put(PostgisNGDataStoreFactory.HOST.getName().getCode(), guiHost.getText());
-        params.put(PostgisNGDataStoreFactory.PORT.getName().getCode(), Integer.parseInt(guiPort.getText()));
-        params.put(PostgisNGDataStoreFactory.SCHEMA.getName().getCode(), guiSchema.getText());
-        params.put(PostgisNGDataStoreFactory.DATABASE.getName().getCode(), guiDatabase.getText());
-        params.put(PostgisNGDataStoreFactory.USER.getName().getCode(), guiUser.getText());
-        params.put(PostgisNGDataStoreFactory.PASSWORD.getName().getCode(), new String(guiPassword.getPassword()));
+        params.put(PostgisNGFeatureStoreFactory.HOST.getName().getCode(), guiHost.getText());
+        params.put(PostgisNGFeatureStoreFactory.PORT.getName().getCode(), Integer.parseInt(guiPort.getText()));
+        params.put(PostgisNGFeatureStoreFactory.SCHEMA.getName().getCode(), guiSchema.getText());
+        params.put(PostgisNGFeatureStoreFactory.DATABASE.getName().getCode(), guiDatabase.getText());
+        params.put(PostgisNGFeatureStoreFactory.USER.getName().getCode(), guiUser.getText());
+        params.put(PostgisNGFeatureStoreFactory.PASSWORD.getName().getCode(), new String(guiPassword.getPassword()));
         return params;
     }
 

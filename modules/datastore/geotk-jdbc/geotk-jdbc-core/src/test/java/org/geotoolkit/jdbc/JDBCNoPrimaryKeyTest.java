@@ -45,17 +45,17 @@ public abstract class JDBCNoPrimaryKeyTest extends JDBCTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
         
-        lakeSchema = FeatureTypeUtilities.createType(dataStore.getNamespaceURI() + "." + LAKE,
+        lakeSchema = FeatureTypeUtilities.createType(featureStore.getNamespaceURI() + "." + LAKE,
                 ID + ":0," + GEOM + ":Polygon," + NAME +":String");
     }
     
     public void testSchema() throws Exception {
-        SimpleFeatureType ft =  (SimpleFeatureType) dataStore.getFeatureType(tname(LAKE));
+        SimpleFeatureType ft =  (SimpleFeatureType) featureStore.getFeatureType(tname(LAKE));
         assertFeatureTypesEqual(lakeSchema, ft);
     }
     
     public void testReadFeatures() throws Exception {
-        FeatureCollection fc = dataStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname(LAKE)));
+        FeatureCollection fc = featureStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname(LAKE)));
         assertEquals(1, fc.size());
         FeatureIterator<SimpleFeature> fr = fc.iterator();
         assertTrue(fr.hasNext());
@@ -66,7 +66,7 @@ public abstract class JDBCNoPrimaryKeyTest extends JDBCTestSupport {
     
     public void testGetBounds() throws Exception {
         // GEOT-2067 Make sure it's possible to compute bounds out of a view
-        JTSEnvelope2D reference = (JTSEnvelope2D) dataStore.getEnvelope(QueryBuilder.all(nsname(LAKE)));
+        JTSEnvelope2D reference = (JTSEnvelope2D) featureStore.getEnvelope(QueryBuilder.all(nsname(LAKE)));
         assertEquals(12.0, reference.getMinX());
         assertEquals(16.0, reference.getMaxX());
         assertEquals(4.0, reference.getMinY());
@@ -80,13 +80,13 @@ public abstract class JDBCNoPrimaryKeyTest extends JDBCTestSupport {
      */
     public void testReadOnly() throws Exception {
         try { 
-            dataStore.getFeatureWriter(nsname(LAKE),Filter.INCLUDE);
+            featureStore.getFeatureWriter(nsname(LAKE),Filter.INCLUDE);
             fail("Should not be able to pick a writer without a pk");
         } catch(Exception e) {
             // ok, fine
         }
 
-        assertFalse(dataStore.isWritable(nsname(LAKE)));
+        assertFalse(featureStore.isWritable(nsname(LAKE)));
     }
     
 

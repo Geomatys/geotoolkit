@@ -91,7 +91,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CSVDataStore extends AbstractFeatureStore{
+public class CSVFeatureStore extends AbstractFeatureStore{
 
     static final String BUNDLE_PATH = "org/geotoolkit/csv/bundle";
     
@@ -104,20 +104,20 @@ public class CSVDataStore extends AbstractFeatureStore{
 
     private SimpleFeatureType featureType;
 
-    public CSVDataStore(final File f, final String namespace, final char separator) throws MalformedURLException, DataStoreException{
+    public CSVFeatureStore(final File f, final String namespace, final char separator) throws MalformedURLException, DataStoreException{
         this(toParameters(f, namespace, separator));
     }
     
-    public CSVDataStore(final ParameterValueGroup params) throws DataStoreException{
+    public CSVFeatureStore(final ParameterValueGroup params) throws DataStoreException{
         super(params);
         
-        final URL url = (URL) params.parameter(CSVDataStoreFactory.URLP.getName().toString()).getValue();
+        final URL url = (URL) params.parameter(CSVFeatureStoreFactory.URLP.getName().toString()).getValue();
         try {
             this.file = new File(url.toURI());
         } catch (URISyntaxException ex) {
             throw new DataStoreException(ex);
         }
-        this.separator = (Character) params.parameter(CSVDataStoreFactory.SEPARATOR.getName().toString()).getValue();
+        this.separator = (Character) params.parameter(CSVFeatureStoreFactory.SEPARATOR.getName().toString()).getValue();
                 
         final String path = url.toString();
         final int slash = Math.max(0, path.lastIndexOf('/') + 1);
@@ -131,16 +131,16 @@ public class CSVDataStore extends AbstractFeatureStore{
 
     private static ParameterValueGroup toParameters(final File f, 
             final String namespace, final Character separator) throws MalformedURLException{
-        final ParameterValueGroup params = CSVDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(CSVDataStoreFactory.URLP, params).setValue(f.toURL());
-        Parameters.getOrCreate(CSVDataStoreFactory.NAMESPACE, params).setValue(namespace);
-        Parameters.getOrCreate(CSVDataStoreFactory.SEPARATOR, params).setValue(separator);
+        final ParameterValueGroup params = CSVFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        Parameters.getOrCreate(CSVFeatureStoreFactory.URLP, params).setValue(f.toURL());
+        Parameters.getOrCreate(CSVFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
+        Parameters.getOrCreate(CSVFeatureStoreFactory.SEPARATOR, params).setValue(separator);
         return params;
     }
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(CSVDataStoreFactory.NAME);
+        return FeatureStoreFinder.getFactoryById(CSVFeatureStoreFactory.NAME);
     }
     
     private synchronized void checkExist() throws DataStoreException{
@@ -202,9 +202,9 @@ public class CSVDataStore extends AbstractFeatureStore{
                               crs = CRS.decode(name);
                               type = Geometry.class;
                           } catch (NoSuchAuthorityCodeException ex) {
-                              java.util.logging.Logger.getLogger(CSVDataStore.class.getName()).log(Level.SEVERE, null, ex);
+                              java.util.logging.Logger.getLogger(CSVFeatureStore.class.getName()).log(Level.SEVERE, null, ex);
                           } catch (FactoryException ex) {
-                              java.util.logging.Logger.getLogger(CSVDataStore.class.getName()).log(Level.SEVERE, null, ex);
+                              java.util.logging.Logger.getLogger(CSVFeatureStore.class.getName()).log(Level.SEVERE, null, ex);
                           }
                       }
                   }
@@ -279,7 +279,7 @@ public class CSVDataStore extends AbstractFeatureStore{
             }
             output = new BufferedWriter(new FileWriter(file));
             defaultNamespace = type.getName().getNamespaceURI();
-            Parameters.getOrCreate(CSVDataStoreFactory.NAMESPACE, parameters).setValue(defaultNamespace);
+            Parameters.getOrCreate(CSVFeatureStoreFactory.NAMESPACE, parameters).setValue(defaultNamespace);
             name = type.getName().getLocalPart();
             output.write(createHeader(type));
         } catch (IOException ex) {
@@ -322,7 +322,7 @@ public class CSVDataStore extends AbstractFeatureStore{
                     try {
                         reader.close();
                     } catch (IOException ex) {
-                        java.util.logging.Logger.getLogger(CSVDataStore.class.getName()).log(Level.SEVERE, null, ex);
+                        java.util.logging.Logger.getLogger(CSVFeatureStore.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }

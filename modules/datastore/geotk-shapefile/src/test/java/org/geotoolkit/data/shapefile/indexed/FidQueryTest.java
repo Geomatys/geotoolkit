@@ -56,7 +56,7 @@ import org.junit.Ignore;
 public class FidQueryTest extends FIDTestCase {
     
 
-    private IndexedShapefileDataStore ds;
+    private IndexedShapefileFeatureStore ds;
 
     private static final FilterFactory2 fac = (FilterFactory2) FactoryFinder.getFilterFactory(null);
     private Map<String, SimpleFeature> fids = new HashMap<String, SimpleFeature>();
@@ -71,7 +71,7 @@ public class FidQueryTest extends FIDTestCase {
         super.setUp();
 
         final URL url = backshp.toURI().toURL();
-        ds = new IndexedShapefileDataStore(url, null, false, true, IndexType.QIX,null);
+        ds = new IndexedShapefileFeatureStore(url, null, false, true, IndexType.QIX,null);
         numFeatures = 0;
         name = ds.getNames().iterator().next();
         session = ds.createSession(true);

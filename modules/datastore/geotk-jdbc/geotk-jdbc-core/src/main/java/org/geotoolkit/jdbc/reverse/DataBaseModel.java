@@ -42,8 +42,8 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.jdbc.DefaultJDBCDataStore;
-import org.geotoolkit.jdbc.JDBCDataStore;
+import org.geotoolkit.jdbc.DefaultJDBCFeatureStore;
+import org.geotoolkit.jdbc.JDBCFeatureStore;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
 import org.geotoolkit.jdbc.fid.PrimaryKeyColumn;
 import org.geotoolkit.jdbc.fid.PrimaryKey;
@@ -64,7 +64,7 @@ import org.opengis.feature.type.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.geotoolkit.jdbc.reverse.MetaDataConstants.*;
-import static org.geotoolkit.jdbc.AbstractJDBCDataStore.*;
+import static org.geotoolkit.jdbc.AbstractJDBCFeatureStore.*;
 import org.geotoolkit.jdbc.JDBCDataStoreFactory;
 import org.geotoolkit.parameter.Parameters;
 
@@ -87,7 +87,7 @@ public final class DataBaseModel {
             new DefaultName("flag"), Collections.EMPTY_LIST, false, false, Collections.EMPTY_LIST, null, null);
 
 
-    private final DefaultJDBCDataStore store;
+    private final DefaultJDBCFeatureStore store;
     private final Map<Name,PrimaryKey> pkIndex = new HashMap<Name, PrimaryKey>();
     private final Map<Name,FeatureType> typeIndex = new HashMap<Name, FeatureType>();
     private Map<String,SchemaMetaModel> schemas = null;
@@ -96,7 +96,7 @@ public final class DataBaseModel {
     //metadata getSuperTable query is not implemented on all databases
     private Boolean handleSuperTableMetadata = null;
 
-    public DataBaseModel(final DefaultJDBCDataStore store){
+    public DataBaseModel(final DefaultJDBCFeatureStore store){
         this.store = store;
     }
 
@@ -631,7 +631,7 @@ public final class DataBaseModel {
 
                         atb.setCRS(crs);
                         if(srid != null){
-                            adb.addUserData(JDBCDataStore.JDBC_NATIVE_SRID, srid);
+                            adb.addUserData(JDBCFeatureStore.JDBC_NATIVE_SRID, srid);
                         }
                         adb.setType(atb.buildGeometryType());
                         adb.findBestDefaultValue();

@@ -15,46 +15,33 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.csv;
+package org.geotoolkit.data.gpx;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import javax.measure.unit.Unit;
-
-import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ResourceInternationalString;
-
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.IdentifiedObject;
-
-import static org.geotoolkit.data.csv.CSVDataStore.*;
 
 /**
- * CSV datastore factory.
+ * GPX featurestore factory.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CSVDataStoreFactory extends AbstractFileFeatureStoreFactory {
+public class GPXFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
-    
-    
-    
     /** factory identification **/
-    public static final String NAME = "csv";
+    public static final String NAME = "gpx";
     public static final DefaultServiceIdentification IDENTIFICATION;
     static {
         IDENTIFICATION = new DefaultServiceIdentification();
@@ -66,17 +53,9 @@ public class CSVDataStoreFactory extends AbstractFileFeatureStoreFactory {
     
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
     
-    /**
-     * Optional - the separator character
-     */
-    public static final ParameterDescriptor<Character> SEPARATOR = createDescriptor("separator",
-                    new ResourceInternationalString(BUNDLE_PATH,"paramSeparatorAlias"),
-                    new ResourceInternationalString(BUNDLE_PATH,"paramSeparatorRemarks"),
-                    Character.class,null,';',null,null,null,false);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("CSVParameters",
-                IDENTIFIER,URLP,NAMESPACE,SEPARATOR);
+            new DefaultParameterDescriptorGroup("GPXParameters",IDENTIFIER,URLP);
 
     @Override
     public Identification getIdentification() {
@@ -85,12 +64,12 @@ public class CSVDataStoreFactory extends AbstractFileFeatureStoreFactory {
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/csv/bundle", "datastoreDescription");
+        return new ResourceInternationalString("org/geotoolkit/gpx/bundle", "datastoreDescription");
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/csv/bundle", "datastoreTitle");
+        return new ResourceInternationalString("org/geotoolkit/gpx/bundle", "datastoreTitle");
     }
 
     @Override
@@ -101,7 +80,7 @@ public class CSVDataStoreFactory extends AbstractFileFeatureStoreFactory {
     @Override
     public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
-        return new CSVDataStore(params);
+        return new GPXFeatureStore(params);
     }
 
     @Override
@@ -111,7 +90,7 @@ public class CSVDataStoreFactory extends AbstractFileFeatureStoreFactory {
 
     @Override
     public String[] getFileExtensions() {
-        return new String[] {".csv"};
+        return new String[] {".gpx"};
     }
-    
+
 }

@@ -101,7 +101,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @module pending
  */
-public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
+public final class DefaultJDBCFeatureStore extends AbstractJDBCFeatureStore {
 
     private static enum EditMode{
         UPDATE,
@@ -114,7 +114,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     final SQLQueryBuilder queryBuilder = new SQLQueryBuilder(this);
     private final String factoryId;
 
-    DefaultJDBCDataStore(final ParameterValueGroup params,final String factoryId){
+    DefaultJDBCFeatureStore(final ParameterValueGroup params,final String factoryId){
         super(params);
         this.factoryId =factoryId;
     }
@@ -638,7 +638,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
         if ((postFilter != null) && (postFilter != Filter.INCLUDE)) {
             try {
-                //calculate manually, dont use datastore optimization
+                //calculate manually, dont use featurestore optimization
                 getLogger().fine("Calculating size manually");
                 return FeatureStoreUtilities.calculateCount(getFeatureReader(query));
             } catch (Exception e) {
@@ -646,7 +646,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             }
         } else {
             //no post filter, we have a preFilter, or preFilter is null..
-            // either way we can use the datastore optimization
+            // either way we can use the featurestore optimization
             final Connection cx;
             try {
                 cx = getDataSource().getConnection();
@@ -739,7 +739,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         if ((postFilter != null) && (postFilter != Filter.INCLUDE)
                 || (query.getMaxFeatures() != null && !canLimitOffset)
                 || (query.getStartIndex() > 0 && !canLimitOffset) ){
-            //calculate manually, don't use datastore optimization
+            //calculate manually, don't use featurestore optimization
             getLogger().fine("Calculating bounds manually");
 
             // grab a reader
@@ -748,7 +748,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             return FeatureStoreUtilities.calculateEnvelope(getFeatureReader(builder.buildQuery()));
         } else {
             //post filter was null... pre can be set or null... either way
-            // use datastore optimization
+            // use featurestore optimization
             final QueryBuilder builder = new QueryBuilder(query);
             builder.setFilter(preFilter);
             return getEnvelope(type, builder.buildQuery());
@@ -1001,11 +1001,11 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         }
 
         if(!(featureType instanceof SimpleFeatureType)){
-            throw new DataStoreException("JDBC datastore can handle only simple feature types.");
+            throw new DataStoreException("JDBC featurestore can handle only simple feature types.");
         }
 
         if(!featureType.getName().equals(typeName)){
-            throw new DataStoreException("JDBC datastore can only hold typename same as feature type name.");
+            throw new DataStoreException("JDBC featurestore can only hold typename same as feature type name.");
         }
 
         if(getNames().contains(typeName)){
@@ -1296,7 +1296,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     @Override
     protected void finalize() throws Throwable {
         if (source != null) {
-            getLogger().severe("There's code using JDBC based datastore and " +
+            getLogger().severe("There's code using JDBC based featurestore and " +
                     "not disposing them. This may lead to temporary loss of database connections. " +
                     "Please make sure all data access code calls DataStore.dispose() " +
                     "before freeing all references to it");

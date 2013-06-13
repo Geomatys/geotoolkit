@@ -40,7 +40,7 @@ import org.opengis.filter.spatial.BinarySpatialOperator;
 import org.opengis.geometry.Envelope;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.jdbc.JDBCDataStore;
+import org.geotoolkit.jdbc.JDBCFeatureStore;
 import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
 
 import static org.apache.sis.util.ArgumentChecks.*;
@@ -258,7 +258,7 @@ public class PreparedFilterToSQL extends FilterToSQL {
             // not been specified (convention -> the default geometry)
             final AttributeDescriptor descriptor = (AttributeDescriptor) property.evaluate(featureType);
             if (descriptor instanceof GeometryDescriptor) {
-                currentSRID = (Integer) descriptor.getUserData().get(JDBCDataStore.JDBC_NATIVE_SRID);
+                currentSRID = (Integer) descriptor.getUserData().get(JDBCFeatureStore.JDBC_NATIVE_SRID);
             }
         }
 

@@ -78,7 +78,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OMDataStore extends AbstractFeatureStore {
+public class OMFeatureStore extends AbstractFeatureStore {
     /** the feature factory */
     private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
                         new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
@@ -106,7 +106,7 @@ public class OMDataStore extends AbstractFeatureStore {
     private static final String SQL_DELETE_SAMPLING_POINT = "DELETE FROM \"observation\".\"sampling_points\" WHERE \"id\" = ?";
 
 
-    public OMDataStore(final ParameterValueGroup params, final ManageableDataSource source) {
+    public OMFeatureStore(final ParameterValueGroup params, final ManageableDataSource source) {
         super(params);
         this.source = source;
         initTypes();
@@ -114,7 +114,7 @@ public class OMDataStore extends AbstractFeatureStore {
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(OMDataStoreFactory.NAME);
+        return FeatureStoreFinder.getFactoryById(OMFeatureStoreFactory.NAME);
     }
 
     private Connection getConnection() throws SQLException{

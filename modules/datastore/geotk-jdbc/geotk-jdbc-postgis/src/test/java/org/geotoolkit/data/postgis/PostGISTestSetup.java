@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.postgis;
 
-import org.geotoolkit.jdbc.JDBCDataStore;
+import org.geotoolkit.jdbc.JDBCFeatureStore;
 import org.geotoolkit.jdbc.JDBCDataStoreFactory;
 import org.geotoolkit.jdbc.JDBCTestSetup;
 
@@ -24,7 +24,7 @@ import org.geotoolkit.jdbc.JDBCTestSetup;
 public class PostGISTestSetup extends JDBCTestSetup {
 
     @Override
-    protected void setUpDataStore(final JDBCDataStore dataStore) {
+    protected void setUpDataStore(final JDBCFeatureStore dataStore) {
         super.setUpDataStore(dataStore);
         
         // the unit tests assume a non loose behaviour
@@ -59,7 +59,7 @@ public class PostGISTestSetup extends JDBCTestSetup {
 
     @Override
     protected JDBCDataStoreFactory createDataStoreFactory() {
-        return new PostgisNGDataStoreFactory();
+        return new PostgisNGFeatureStoreFactory();
     }
 
 }

@@ -25,13 +25,13 @@ public class ListAllFactoriesDemo {
             System.out.println(factory.getDescription());
             
             //display the parameter requiered to open a new instance
-            //of datastore of this type
+            //of featurestore of this type
             final ParameterDescriptorGroup description = factory.getParametersDescriptor();
             System.out.println(description);
             System.out.println("\n\n");
             
             
-            //if we wanted to created a new datastore of this type we would proceed
+            //if we wanted to created a new featurestore of this type we would proceed
             //like this :
             /*
             final ParameterValueGroup params = description.createValue();

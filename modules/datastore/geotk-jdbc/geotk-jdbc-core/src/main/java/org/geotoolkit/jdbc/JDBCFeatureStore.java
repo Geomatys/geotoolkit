@@ -43,7 +43,7 @@ import org.opengis.filter.FilterFactory;
  *
  * @module pending
  */
-public interface JDBCDataStore extends FeatureStore {
+public interface JDBCFeatureStore extends FeatureStore {
 
     public static final Key RESAMPLING = new org.geotoolkit.factory.Hints.Key(Object.class);
 

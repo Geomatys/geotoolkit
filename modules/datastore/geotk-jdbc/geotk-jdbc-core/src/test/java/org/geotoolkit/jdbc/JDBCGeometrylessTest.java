@@ -27,7 +27,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 
 /**
- * Checks the datastore can operate against geometryless tables
+ * Checks the featurestore can operate against geometryless tables
  * @author Andrea Aime - OpenGeo
  *
  * @module pending
@@ -51,26 +51,26 @@ public abstract class JDBCGeometrylessTest extends JDBCTestSupport {
         super.setUp();
 
         FeatureTypeBuilder sftb = new FeatureTypeBuilder();
-        sftb.setName(dataStore.getNamespaceURI(), PERSON);
-        sftb.add(new DefaultName(dataStore.getNamespaceURI(), ID), Integer.class,1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
-        sftb.add(new DefaultName(dataStore.getNamespaceURI(), NAME), String.class,1,1,true,null);
-        sftb.add(new DefaultName(dataStore.getNamespaceURI(), AGE), Integer.class,1,1,true,null);
+        sftb.setName(featureStore.getNamespaceURI(), PERSON);
+        sftb.add(new DefaultName(featureStore.getNamespaceURI(), ID), Integer.class,1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
+        sftb.add(new DefaultName(featureStore.getNamespaceURI(), NAME), String.class,1,1,true,null);
+        sftb.add(new DefaultName(featureStore.getNamespaceURI(), AGE), Integer.class,1,1,true,null);
         personSchema = sftb.buildSimpleFeatureType();
         
         sftb.reset();
-        sftb.setName(dataStore.getNamespaceURI(), ZIPCODE);
-        sftb.add(new DefaultName(dataStore.getNamespaceURI(), ID), Integer.class,1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
-        sftb.add(new DefaultName(dataStore.getNamespaceURI(), CODE), String.class,1,1,true,null);
+        sftb.setName(featureStore.getNamespaceURI(), ZIPCODE);
+        sftb.add(new DefaultName(featureStore.getNamespaceURI(), ID), Integer.class,1,1,false, FeatureTypeBuilder.PRIMARY_KEY);
+        sftb.add(new DefaultName(featureStore.getNamespaceURI(), CODE), String.class,1,1,true,null);
         zipCodeSchema = sftb.buildSimpleFeatureType();
     }
 
     public void testPersonSchema() throws Exception {
-        SimpleFeatureType ft =  (SimpleFeatureType) dataStore.getFeatureType(tname(PERSON));
+        SimpleFeatureType ft =  (SimpleFeatureType) featureStore.getFeatureType(tname(PERSON));
         assertFeatureTypesEqual(personSchema, ft);
     }
     
     public void testReadFeatures() throws Exception {
-        FeatureCollection fc = dataStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname(PERSON)));
+        FeatureCollection fc = featureStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname(PERSON)));
         assertEquals(2, fc.size());
         FeatureIterator<SimpleFeature> fr = fc.iterator();
         assertTrue(fr.hasNext());
@@ -82,13 +82,13 @@ public abstract class JDBCGeometrylessTest extends JDBCTestSupport {
     }
     
     public void testGetBounds() throws Exception {
-        JTSEnvelope2D env = (JTSEnvelope2D) dataStore.getEnvelope(QueryBuilder.all(nsname(PERSON)));
+        JTSEnvelope2D env = (JTSEnvelope2D) featureStore.getEnvelope(QueryBuilder.all(nsname(PERSON)));
         assertNull(env);
     }
     
     public void testCreate() throws Exception {
-        dataStore.createSchema(zipCodeSchema.getName(),zipCodeSchema);
-        SimpleFeatureType result = (SimpleFeatureType)dataStore.getFeatureType(tname(ZIPCODE));
+        featureStore.createSchema(zipCodeSchema.getName(),zipCodeSchema);
+        SimpleFeatureType result = (SimpleFeatureType)featureStore.getFeatureType(tname(ZIPCODE));
         assertFeatureTypesEqual(zipCodeSchema, result);
     }
 }

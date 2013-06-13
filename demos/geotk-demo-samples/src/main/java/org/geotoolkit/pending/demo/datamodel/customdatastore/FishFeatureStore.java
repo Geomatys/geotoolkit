@@ -35,13 +35,13 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
 
-public class FishDataStore extends AbstractFeatureStore{
+public class FishFeatureStore extends AbstractFeatureStore{
 
 
     private final File storage;
     private final SimpleFeatureType type;
 
-    public FishDataStore(ParameterValueGroup params) throws DataStoreException{
+    public FishFeatureStore(ParameterValueGroup params) throws DataStoreException{
         super(params);
 
         URL url = (URL) params.parameter(FishDatastoreFactory.URLP.getName().toString()).getValue();

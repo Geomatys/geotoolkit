@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.shapefile;
+package org.geotoolkit.data.dbf;
 
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FileFeatureStoreFactory;
@@ -26,46 +26,58 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
- * DataStore for a folder of Shapefiles.
+ * FeatureStore for a folder of DBF files.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ShapefileFolderDataStoreFactory extends AbstractFolderFeatureStoreFactory{
+public class DbaseFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFactory{
 
     /** factory identification **/
-    public static final DefaultServiceIdentification IDENTIFICATION = derivateIdentification(ShapefileDataStoreFactory.IDENTIFICATION);
+    public static final DefaultServiceIdentification IDENTIFICATION = derivateIdentification(DbaseFeatureStoreFactory.IDENTIFICATION);
     public static final String NAME = IDENTIFICATION.getCitation().getTitle().toString();
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            derivateDescriptor(IDENTIFIER,ShapefileDataStoreFactory.PARAMETERS_DESCRIPTOR);
+            derivateDescriptor(IDENTIFIER,DbaseFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
-    public ShapefileFolderDataStoreFactory(){
+
+    public DbaseFolderFeatureStoreFactory(){
         super(PARAMETERS_DESCRIPTOR);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FileFeatureStoreFactory getSingleFileFactory() {
-        return FeatureStoreFinder.getAllFactories(ShapefileDataStoreFactory.class).iterator().next();
+        return FeatureStoreFinder.getAllFactories(DbaseFeatureStoreFactory.class).iterator().next();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "datastoreFolderDescription");
+        return new ResourceInternationalString("org/geotoolkit/dbf/bundle", "databaseFolderDescription");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "datastoreFolderTitle");
+        return new ResourceInternationalString("org/geotoolkit/dbf/bundle", "databaseFolderTitle");
     }
-
 
 
 }

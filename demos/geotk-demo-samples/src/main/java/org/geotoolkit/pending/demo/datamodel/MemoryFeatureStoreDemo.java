@@ -12,7 +12,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.FeatureType;
 
-public class MemoryDataStoreDemo {
+public class MemoryFeatureStoreDemo {
 
     public static void main(String[] args) throws DataStoreException {
         Demos.init();
@@ -30,7 +30,7 @@ public class MemoryDataStoreDemo {
         store.createSchema(type.getName(), type);
 
 
-        //query the datastore like any other
+        //query the featurestore like any other
         final Session session = store.createSession(true);
         final Query query = QueryBuilder.all(type.getName());
         final FeatureCollection collection = session.getFeatureCollection(query);

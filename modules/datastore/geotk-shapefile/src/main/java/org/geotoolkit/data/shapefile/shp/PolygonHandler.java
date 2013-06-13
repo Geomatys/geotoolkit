@@ -34,7 +34,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.storage.DataStoreException;
 
-import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
+import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
 
 /**
  * Wrapper for a Shapefile polygon.

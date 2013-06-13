@@ -7,7 +7,7 @@ import com.vividsolutions.jts.geom.Point;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.data.shapefile.ShapefileDataStore;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.referencing.CRS;
@@ -20,8 +20,8 @@ public class CreateShapefileDemo {
     
     public static void main(String[] args) throws Exception {
         
-        //create a datastore toward the wanted path
-        final ShapefileDataStore store = new ShapefileDataStore(new URL("file:/tmp/test.shp"));
+        //create a featurestore toward the wanted path
+        final ShapefileFeatureStore store = new ShapefileFeatureStore(new URL("file:/tmp/test.shp"));
         
         //create the feature type needed
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();

@@ -28,7 +28,7 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 
 /**
- * Factory for datastore process
+ * Factory for featurestore process
  * Factory name : "datastore"
  * 
  * @author Johann Sorel (Geomatys)

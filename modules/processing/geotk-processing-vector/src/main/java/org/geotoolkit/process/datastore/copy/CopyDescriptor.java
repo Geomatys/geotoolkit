@@ -104,7 +104,7 @@ public final class CopyDescriptor extends VectorDescriptor {
     public static final ProcessDescriptor INSTANCE = new CopyDescriptor();
 
     private CopyDescriptor() {
-        super(NAME, "Copy features from one datastore to another.", INPUT_DESC, OUTPUT_DESC);
+        super(NAME, "Copy features from one featurestore to another.", INPUT_DESC, OUTPUT_DESC);
     }
 
     /**

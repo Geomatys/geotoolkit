@@ -636,7 +636,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
             throw new DataStoreException("Type name can not be null.");
         }
         if(!featureType.getName().equals(typeName)){
-            throw new DataStoreException("JDBC datastore can only hold typename same as feature type name.");
+            throw new DataStoreException("JDBC featurestore can only hold typename same as feature type name.");
         }
         if(getNames().contains(typeName)){
             throw new DataStoreException("Type name "+ typeName + " already exists.");

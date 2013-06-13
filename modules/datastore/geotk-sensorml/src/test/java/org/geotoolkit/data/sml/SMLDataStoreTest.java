@@ -111,8 +111,8 @@ public class SMLDataStoreTest extends AbstractReadingTests{
 
             final Map params = new HashMap<String, Object>();
             params.put("dbtype", "SML");
-            params.put(SMLDataStoreFactory.SGBDTYPE.getName().toString(), "derby");
-            params.put(SMLDataStoreFactory.DERBYURL.getName().toString(), url);
+            params.put(SMLFeatureStoreFactory.SGBDTYPE.getName().toString(), "derby");
+            params.put(SMLFeatureStoreFactory.DERBYURL.getName().toString(), url);
             store = FeatureStoreFinder.open(params);
 
 

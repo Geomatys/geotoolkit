@@ -66,59 +66,59 @@ public class WebFeatureServer extends AbstractServer implements FeatureStore{
     private static final Logger LOGGER = Logging.getLogger(WebFeatureServer.class);
 
     private WFSCapabilities capabilities;
-    private WFSDataStore store = null; //created when needed
+    private WFSFeatureStore store = null; //created when needed
 
     public WebFeatureServer(final URL serverURL, final String version) {
         this(serverURL,null,version);
     }
 
     public WebFeatureServer(final URL serverURL, final ClientSecurity security, final String version) {
-        this(create(WFSDataStoreFactory.PARAMETERS_DESCRIPTOR, serverURL, security));
+        this(create(WFSFeatureStoreFactory.PARAMETERS_DESCRIPTOR, serverURL, security));
         if(version.equals("1.1.0")){
-            Parameters.getOrCreate(WFSDataStoreFactory.VERSION, parameters).setValue(version);
+            Parameters.getOrCreate(WFSFeatureStoreFactory.VERSION, parameters).setValue(version);
         }else{
             throw new IllegalArgumentException("unknowned version : "+ version);
         }
-        Parameters.getOrCreate(WFSDataStoreFactory.POST_REQUEST, parameters).setValue(false);
+        Parameters.getOrCreate(WFSFeatureStoreFactory.POST_REQUEST, parameters).setValue(false);
         this.capabilities = null;
     }
 
     public WebFeatureServer(final URL serverURL, final ClientSecurity security, final WFSVersion version, final boolean usePost) {
-        this(create(WFSDataStoreFactory.PARAMETERS_DESCRIPTOR, serverURL, security));
+        this(create(WFSFeatureStoreFactory.PARAMETERS_DESCRIPTOR, serverURL, security));
         if(version == null){
             throw new IllegalArgumentException("unknowned version : "+ version);
         }
-        Parameters.getOrCreate(WFSDataStoreFactory.VERSION, parameters).setValue(version);
-        Parameters.getOrCreate(WFSDataStoreFactory.POST_REQUEST, parameters).setValue(usePost);
+        Parameters.getOrCreate(WFSFeatureStoreFactory.VERSION, parameters).setValue(version);
+        Parameters.getOrCreate(WFSFeatureStoreFactory.POST_REQUEST, parameters).setValue(usePost);
         this.capabilities = null;
     }
 
     public WebFeatureServer(final ParameterValueGroup params) {
         super(params);
-        Parameters.getOrCreate(WFSDataStoreFactory.VERSION, parameters).setValue("1.1.0");
-        parameters.parameter(WFSDataStoreFactory.POST_REQUEST.getName().getCode());
+        Parameters.getOrCreate(WFSFeatureStoreFactory.VERSION, parameters).setValue("1.1.0");
+        parameters.parameter(WFSFeatureStoreFactory.POST_REQUEST.getName().getCode());
     }
 
     @Override
-    public WFSDataStoreFactory getFactory() {
-        return (WFSDataStoreFactory)ServerFinder.getFactoryById(WFSDataStoreFactory.NAME);
+    public WFSFeatureStoreFactory getFactory() {
+        return (WFSFeatureStoreFactory)ServerFinder.getFactoryById(WFSFeatureStoreFactory.NAME);
     }
 
     public WFSVersion getVersion(){
-        return WFSVersion.fromCode(Parameters.value(WFSDataStoreFactory.VERSION, parameters));
+        return WFSVersion.fromCode(Parameters.value(WFSFeatureStoreFactory.VERSION, parameters));
     }
 
     public boolean getUsePost(){
-        return Parameters.value(WFSDataStoreFactory.POST_REQUEST, parameters);
+        return Parameters.value(WFSFeatureStoreFactory.POST_REQUEST, parameters);
     }
 
     public boolean getLongitudeFirst(){
-        return Parameters.getOrCreate(WFSDataStoreFactory.LONGITUDE_FIRST, parameters).booleanValue();
+        return Parameters.getOrCreate(WFSFeatureStoreFactory.LONGITUDE_FIRST, parameters).booleanValue();
     }
 
     private synchronized FeatureStore getStore() {
         if(store == null){
-            store = new WFSDataStore(this);
+            store = new WFSFeatureStore(this);
         }
         return store;
     }
@@ -251,7 +251,7 @@ public class WebFeatureServer extends AbstractServer implements FeatureStore{
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // DataStore methods ///////////////////////////////////////////////////////
+    // FeatureStore methods ///////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
     @Override

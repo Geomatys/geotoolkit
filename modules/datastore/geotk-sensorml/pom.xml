@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.geotoolkit.pending</groupId>
-        <artifactId>datastore</artifactId>
+        <artifactId>featurestore</artifactId>
         <version>4.x-SNAPSHOT</version>
     </parent>
 
@@ -20,8 +20,8 @@
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-sensorML</artifactId>
     <packaging>jar</packaging>
-    <name>Datastore SensorML</name>
-    <description>Datastore SensorML</description>
+    <name>FeatureStore SensorML</name>
+    <description>FeatureStore SensorML</description>
     <licenses>
         <license>
             <name>Lesser General Public License (LGPL)</name>
@@ -60,7 +60,7 @@
 
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-datastore-core</artifactId>
+            <artifactId>geotk-featurestore-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>

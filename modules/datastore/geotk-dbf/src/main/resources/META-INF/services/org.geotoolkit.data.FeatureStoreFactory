@@ -1,2 +1,2 @@
-org.geotoolkit.data.dbf.DbaseDataStoreFactory
-org.geotoolkit.data.dbf.DbaseFolderDataStoreFactory
+org.geotoolkit.data.dbf.DbaseFeatureStoreFactory
+org.geotoolkit.data.dbf.DbaseFolderFeatureStoreFactory

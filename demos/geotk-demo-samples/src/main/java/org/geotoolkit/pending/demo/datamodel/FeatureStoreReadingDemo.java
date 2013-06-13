@@ -10,11 +10,11 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.postgis.PostgisNGDataStoreFactory;
+import org.geotoolkit.data.postgis.PostgisNGFeatureStoreFactory;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.CRS;
@@ -26,7 +26,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
-public class DataStoreReadingDemo {
+public class FeatureStoreReadingDemo {
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
@@ -84,7 +84,7 @@ public class DataStoreReadingDemo {
 
         //we must know the parameters
         final Map<String,Serializable> parameters = new HashMap<String, Serializable>();
-        parameters.put("url", DataStoreReadingDemo.class.getResource("/data/world/Countries.shp"));
+        parameters.put("url", FeatureStoreReadingDemo.class.getResource("/data/world/Countries.shp"));
 
         final FeatureStore store = FeatureStoreFinder.open(parameters);
         return store;
@@ -93,11 +93,11 @@ public class DataStoreReadingDemo {
     private static FeatureStore createUsingParameterGroup() throws DataStoreException{
 
         //find out how to describe things
-        System.out.println(ShapefileDataStoreFactory.PARAMETERS_DESCRIPTOR);
-        System.out.println(PostgisNGDataStoreFactory.PARAMETERS_DESCRIPTOR);
+        System.out.println(ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
+        System.out.println(PostgisNGFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
-        final ParameterValueGroup parameters = ShapefileDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        parameters.parameter("url").setValue(DataStoreReadingDemo.class.getResource("/data/world/Countries.shp"));
+        final ParameterValueGroup parameters = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        parameters.parameter("url").setValue(FeatureStoreReadingDemo.class.getResource("/data/world/Countries.shp"));
         
         final FeatureStore store = FeatureStoreFinder.open(parameters);
         return store;

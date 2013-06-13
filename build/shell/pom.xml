@@ -69,7 +69,7 @@
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-coverageio-geotiff</artifactId>  <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-coverageio-dimap</artifactId>    <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-dbf</artifactId>                 <version>${project.version}</version></dependency>
-        <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-datastore-core</artifactId>      <version>${project.version}</version></dependency>
+        <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-featurestore-core</artifactId>   <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-engine-core</artifactId>         <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-feature</artifactId>             <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-filter</artifactId>              <version>${project.version}</version></dependency>

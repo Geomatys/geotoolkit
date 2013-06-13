@@ -25,7 +25,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.indexed.FIDTestCase;
 import org.geotoolkit.data.shapefile.indexed.IndexType;
-import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
+import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
@@ -94,7 +94,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
         int expectedCount = 0;
         final Set<String> expectedFids = new LinkedHashSet<String>();
         
-        final IndexedShapefileDataStore ds = new IndexedShapefileDataStore(backshp.toURI().toURL(), null,
+        final IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(backshp.toURI().toURL(), null,
                 true, true, IndexType.NONE,null);
         final FeatureIterator<SimpleFeature> features = ds.getFeatureReader(QueryBuilder.all(ds.getNames().iterator().next()));
         while (features.hasNext()) {
@@ -117,7 +117,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
     public void testFindAllFidsReverseOrder() throws Exception {
         int expectedCount = 0;
         final Set<String> expectedFids = new TreeSet<String>(Collections.reverseOrder());
-        final IndexedShapefileDataStore ds = new IndexedShapefileDataStore(backshp.toURI().toURL(), null,
+        final IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(backshp.toURI().toURL(), null,
                 true, true, IndexType.NONE,null);
         final FeatureIterator<SimpleFeature> features = ds.getFeatureReader(QueryBuilder.all(ds.getNames().iterator().next()));
         while (features.hasNext()) {

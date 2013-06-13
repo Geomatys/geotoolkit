@@ -45,7 +45,7 @@ import org.opengis.util.FactoryException;
  */
 public class DBFReadingTest extends AbstractReadingTests{
 
-    private final DbaseFileDataStore store;
+    private final DbaseFileFeatureStore store;
     private final Set<Name> names = new HashSet<Name>();
     private final List<ExpectedResult> expecteds = new ArrayList<ExpectedResult>();
 
@@ -53,7 +53,7 @@ public class DBFReadingTest extends AbstractReadingTests{
 
         final File file = new File("src/test/resources/org/geotoolkit/data/dbf/sample.dbf");
         final String ns = "http://test.com";
-        store = new DbaseFileDataStore(file, ns);
+        store = new DbaseFileFeatureStore(file, ns);
 
         for(Name n : store.getNames()){
             FeatureType ft = store.getFeatureType(n);

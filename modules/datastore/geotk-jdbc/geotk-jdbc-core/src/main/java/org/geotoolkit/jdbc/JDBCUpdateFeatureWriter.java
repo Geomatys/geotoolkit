@@ -42,7 +42,7 @@ public class JDBCUpdateFeatureWriter extends JDBCFeatureReader implements
 
     ResultSetFeature last;
     
-    public JDBCUpdateFeatureWriter(final String sql, final Connection cx, final JDBCDataStore store,
+    public JDBCUpdateFeatureWriter(final String sql, final Connection cx, final JDBCFeatureStore store,
             final Name groupName, final SimpleFeatureType type, final PrimaryKey pkey, final Hints hints)
             throws SQLException, IOException,DataStoreException {
         
@@ -50,7 +50,7 @@ public class JDBCUpdateFeatureWriter extends JDBCFeatureReader implements
         last = new ResultSetFeature( rs, cx );
     }
     
-    public JDBCUpdateFeatureWriter(final PreparedStatement ps, final Connection cx, final JDBCDataStore store,
+    public JDBCUpdateFeatureWriter(final PreparedStatement ps, final Connection cx, final JDBCFeatureStore store,
             final Name groupName, final SimpleFeatureType type, final PrimaryKey pkey, final Hints hints)
             throws SQLException, IOException, DataStoreException {
         
@@ -77,10 +77,10 @@ public class JDBCUpdateFeatureWriter extends JDBCFeatureReader implements
     
     @Override
     public void remove() throws FeatureStoreRuntimeException {
-        final Filter filter = dataStore.getFilterFactory().id(
+        final Filter filter = featureStore.getFilterFactory().id(
                 Collections.singleton(last.getIdentifier()));
         try {
-            dataStore.delete(featureType, filter, st.getConnection());
+            featureStore.delete(featureType, filter, st.getConnection());
         } catch (SQLException e) {
             throw new FeatureStoreRuntimeException(e);
         } catch (IOException e) {
@@ -92,11 +92,11 @@ public class JDBCUpdateFeatureWriter extends JDBCFeatureReader implements
     public void write() throws FeatureStoreRuntimeException {
         try {
             //figure out what the fid is
-            final PrimaryKey key = dataStore.getMetaModel().getPrimaryKey(featureType.getName());
+            final PrimaryKey key = featureStore.getMetaModel().getPrimaryKey(featureType.getName());
             final String fid = PrimaryKey.encodeFID(key, rs);
 
-            final Id filter = dataStore.getFilterFactory()
-                                 .id(Collections.singleton(dataStore.getFilterFactory()
+            final Id filter = featureStore.getFilterFactory()
+                                 .id(Collections.singleton(featureStore.getFilterFactory()
                                                                     .featureId(fid)));
 
             //figure out which attributes changed
@@ -110,7 +110,7 @@ public class JDBCUpdateFeatureWriter extends JDBCFeatureReader implements
             }
 
             //do the write
-            dataStore.update(featureType, changes, filter, st.getConnection());
+            featureStore.update(featureType, changes, filter, st.getConnection());
         } catch (Exception e) {
             throw new FeatureStoreRuntimeException(e);
         }

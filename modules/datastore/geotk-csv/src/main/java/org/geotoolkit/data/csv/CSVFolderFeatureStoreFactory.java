@@ -14,8 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.dbf;
+package org.geotoolkit.data.csv;
 
+import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
@@ -25,25 +26,26 @@ import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
+import static org.geotoolkit.data.csv.CSVFeatureStore.*;
+
 /**
- * DataStore for a folder of DBF files.
+ * FeatureStore for a folder of CSV files.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DbaseFolderDataStoreFactory extends AbstractFolderFeatureStoreFactory{
+public class CSVFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFactory{
 
     /** factory identification **/
-    public static final DefaultServiceIdentification IDENTIFICATION = derivateIdentification(DbaseDataStoreFactory.IDENTIFICATION);
+    public static final DefaultServiceIdentification IDENTIFICATION = derivateIdentification(CSVFeatureStoreFactory.IDENTIFICATION);
     public static final String NAME = IDENTIFICATION.getCitation().getTitle().toString();
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            derivateDescriptor(IDENTIFIER,DbaseDataStoreFactory.PARAMETERS_DESCRIPTOR);
+            derivateDescriptor(IDENTIFIER,CSVFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
-
-    public DbaseFolderDataStoreFactory(){
+    public CSVFolderFeatureStoreFactory(){
         super(PARAMETERS_DESCRIPTOR);
     }
 
@@ -60,7 +62,7 @@ public class DbaseFolderDataStoreFactory extends AbstractFolderFeatureStoreFacto
      */
     @Override
     public FileFeatureStoreFactory getSingleFileFactory() {
-        return FeatureStoreFinder.getAllFactories(DbaseDataStoreFactory.class).iterator().next();
+        return FeatureStoreFinder.getAllFactories(CSVFeatureStoreFactory.class).iterator().next();
     }
 
     /**
@@ -68,7 +70,7 @@ public class DbaseFolderDataStoreFactory extends AbstractFolderFeatureStoreFacto
      */
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/dbf/bundle", "databaseFolderDescription");
+        return new ResourceInternationalString(BUNDLE_PATH, "datastoreFolderDescription");
     }
 
     /**
@@ -76,8 +78,6 @@ public class DbaseFolderDataStoreFactory extends AbstractFolderFeatureStoreFacto
      */
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/dbf/bundle", "databaseFolderTitle");
+        return new ResourceInternationalString(BUNDLE_PATH, "datastoreFolderTitle");
     }
-
-
 }

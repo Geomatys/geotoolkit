@@ -88,7 +88,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WFSDataStore extends AbstractFeatureStore{
+public class WFSFeatureStore extends AbstractFeatureStore{
 
     private static final AtomicLong NS_INC = new AtomicLong();
 
@@ -100,7 +100,7 @@ public class WFSDataStore extends AbstractFeatureStore{
     private final Map<String,String> prefixes = new HashMap<String, String>();
 
 
-    public WFSDataStore(WebFeatureServer server){
+    public WFSFeatureStore(WebFeatureServer server){
         super(server.getConfiguration());
         
         this.server = server;
@@ -204,16 +204,16 @@ public class WFSDataStore extends AbstractFeatureStore{
 	}
     
     public boolean getUsePost(){        
-        return Parameters.value(WFSDataStoreFactory.POST_REQUEST, parameters);
+        return Parameters.value(WFSFeatureStoreFactory.POST_REQUEST, parameters);
     }
     
     public boolean getLongitudeFirst(){
-        return Parameters.getOrCreate(WFSDataStoreFactory.LONGITUDE_FIRST, parameters).booleanValue();
+        return Parameters.getOrCreate(WFSFeatureStoreFactory.LONGITUDE_FIRST, parameters).booleanValue();
     }
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(WFSDataStoreFactory.NAME);
+        return FeatureStoreFinder.getFactoryById(WFSFeatureStoreFactory.NAME);
     }
 
     @Override

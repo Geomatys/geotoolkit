@@ -55,7 +55,7 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
     public void setUp() throws Exception {
         shpFiles = new ShpFiles(ShapeTestData.url(TEST_FILE));
         final AccessManager locker = shpFiles.createLocker();
-        dbf = locker.getDBFReader(false, ShapefileDataStore.DEFAULT_STRING_CHARSET);
+        dbf = locker.getDBFReader(false, ShapefileFeatureStore.DEFAULT_STRING_CHARSET);
     }
 
     @Test
@@ -89,7 +89,7 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
     public void testRowVsEntry() throws Exception {
         Object[] attrs = new Object[dbf.getHeader().getNumFields()];
         final AccessManager locker = shpFiles.createLocker();
-        DbaseFileReader dbf2 = locker.getDBFReader(false, ShapefileDataStore.DEFAULT_STRING_CHARSET);
+        DbaseFileReader dbf2 = locker.getDBFReader(false, ShapefileFeatureStore.DEFAULT_STRING_CHARSET);
         while (dbf.hasNext()) {
             final DbaseFileReader.Row r1 = dbf.next();
             final DbaseFileReader.Row r2 = dbf2.next();
@@ -171,7 +171,7 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
         dbf.close();
         final ShpFiles tempShpFiles = new ShpFiles(f);
         final AccessManager locker = tempShpFiles.createLocker();
-        DbaseFileReader r = locker.getDBFReader(false, ShapefileDataStore.DEFAULT_STRING_CHARSET);
+        DbaseFileReader r = locker.getDBFReader(false, ShapefileFeatureStore.DEFAULT_STRING_CHARSET);
         int cnt = 0;
         while (r.hasNext()) {
             cnt++;

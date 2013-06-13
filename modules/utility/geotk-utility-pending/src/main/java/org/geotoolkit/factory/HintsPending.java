@@ -75,7 +75,7 @@ public final class HintsPending extends Hints {
     /**
      * When adding features in a datastore, it is not always necessary to have 
      * the returned id of the inserted feature.
-     * JDBC datastore for exemple are much more efficient when inserting datas
+     * JDBC featurestore for exemple are much more efficient when inserting datas
      * in batch mode. setting this value to false may bring a huge performance
      * gain.
      * 
@@ -84,7 +84,7 @@ public final class HintsPending extends Hints {
     public static final Key UPDATE_ID_ON_INSERT = new Key(Boolean.class);
 
     /**
-     * An implementation of datastore might use some properties of the feature type
+     * An implementation of featurestore might use some properties of the feature type
      * to generate the feature id. To avoid some unexpected modification it
      * might be usefull to hide thoses fields.
      */
@@ -103,8 +103,8 @@ public final class HintsPending extends Hints {
 
 
     /**
-     * This flag indicates that the datastore can ignore features which are smaller
-     * than the given resolution. Datastore are supposed to
+     * This flag indicates that the featurestore can ignore features which are smaller
+     * than the given resolution. FeatureStore are supposed to
      * try to conform to this request only if it doesnt requiere to much work.
      * For exemple when exploring a quad tree, tiles can be ignored when there bbox
      * is to small or when the feature bbox can be read before.

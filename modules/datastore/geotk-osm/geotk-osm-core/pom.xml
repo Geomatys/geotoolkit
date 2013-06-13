@@ -24,7 +24,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-osm-core</artifactId>
   <packaging>jar</packaging>
-  <name>Datastore OSM core</name>
+  <name>FeatureStore OSM core</name>
 
   <description>
     Open Street Map model classes.

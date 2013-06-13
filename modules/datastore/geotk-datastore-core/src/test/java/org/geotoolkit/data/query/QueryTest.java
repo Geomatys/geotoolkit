@@ -356,7 +356,7 @@ public class QueryTest extends TestCase{
     }
 
     /**
-     * Test that cross datastore queries works correctly.
+     * Test that cross featurestore queries works correctly.
      */
     @Test
     public void testInnerJoinQuery() throws Exception{
@@ -421,7 +421,7 @@ public class QueryTest extends TestCase{
     }
 
     /**
-     * Test that cross datastore queries works correctly.
+     * Test that cross featurestore queries works correctly.
      */
     @Test
     public void testOuterLeftQuery() throws Exception{
@@ -497,7 +497,7 @@ public class QueryTest extends TestCase{
     }
 
     /**
-     * Test that cross datastore queries works correctly.
+     * Test that cross featurestore queries works correctly.
      */
     @Test
     public void testOuterRightQuery() throws Exception{

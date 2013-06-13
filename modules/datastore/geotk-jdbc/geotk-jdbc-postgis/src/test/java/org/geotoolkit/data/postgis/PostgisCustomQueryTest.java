@@ -23,7 +23,7 @@ import org.geotoolkit.data.memory.ExtendedFeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.jdbc.JDBCDataStore;
+import org.geotoolkit.jdbc.JDBCFeatureStore;
 import org.geotoolkit.jdbc.JDBCTestSetup;
 import org.geotoolkit.jdbc.JDBCTestSupport;
 import org.geotoolkit.referencing.CRS;
@@ -47,12 +47,12 @@ public class PostgisCustomQueryTest extends JDBCTestSupport{
     @Test
     public void testDefinition() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
         
-        final ExtendedFeatureStore store = new ExtendedFeatureStore(dataStore);        
+        final ExtendedFeatureStore store = new ExtendedFeatureStore(featureStore);        
         final Name name = DefaultName.valueOf("{http://www.geotoolkit.org/test}extsql");        
         assertFalse(store.getNames().contains(name));
         
         //add a new query
-        final Query query = QueryBuilder.language(JDBCDataStore.CUSTOM_SQL, "SELECT geometry ,\"intProperty\" FROM custom",name);    
+        final Query query = QueryBuilder.language(JDBCFeatureStore.CUSTOM_SQL, "SELECT geometry ,\"intProperty\" FROM custom",name);    
         store.addQuery(query);
         assertTrue(store.getNames().contains(name));
         
@@ -71,12 +71,12 @@ public class PostgisCustomQueryTest extends JDBCTestSupport{
     @Test
     public void testRenamedDefinition() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
         
-        final ExtendedFeatureStore store = new ExtendedFeatureStore(dataStore);        
+        final ExtendedFeatureStore store = new ExtendedFeatureStore(featureStore);        
         final Name name = DefaultName.valueOf("{http://www.geotoolkit.org/test}extsql");        
         assertFalse(store.getNames().contains(name));
         
         //add a new query
-        final Query query = QueryBuilder.language(JDBCDataStore.CUSTOM_SQL, 
+        final Query query = QueryBuilder.language(JDBCFeatureStore.CUSTOM_SQL, 
                 "SELECT geometry as geo ,\"intProperty\" as it FROM custom",name);    
         store.addQuery(query);
         assertTrue(store.getNames().contains(name));
@@ -95,12 +95,12 @@ public class PostgisCustomQueryTest extends JDBCTestSupport{
     @Test
     public void testRead() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
         
-        final ExtendedFeatureStore store = new ExtendedFeatureStore(dataStore);        
+        final ExtendedFeatureStore store = new ExtendedFeatureStore(featureStore);        
         final Name name = DefaultName.valueOf("{http://www.geotoolkit.org/test}extsql");        
         assertFalse(store.getNames().contains(name));
         
         //add a new query
-        final Query query = QueryBuilder.language(JDBCDataStore.CUSTOM_SQL, 
+        final Query query = QueryBuilder.language(JDBCFeatureStore.CUSTOM_SQL, 
                 "SELECT geometry as geo ,\"intProperty\" as it FROM custom",name);    
         store.addQuery(query);
         assertTrue(store.getNames().contains(name));

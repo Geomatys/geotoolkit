@@ -25,7 +25,7 @@ import net.iharder.Base64;
 import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
-import org.geotoolkit.jdbc.JDBCDataStore;
+import org.geotoolkit.jdbc.JDBCFeatureStore;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -156,7 +156,7 @@ public class PostgisFilterToSQL extends FilterToSQL {
                     .evaluate(featureType);
             if (descriptor instanceof GeometryDescriptor) {
                 currentSRID = (Integer) descriptor.getUserData().get(
-                        JDBCDataStore.JDBC_NATIVE_SRID);
+                        JDBCFeatureStore.JDBC_NATIVE_SRID);
             }
         }
 

@@ -77,7 +77,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
             td.build();
         }
 
-        dataStore.setDatabaseSchema(null);
+        featureStore.setDatabaseSchema(null);
     }
 
     @Override
@@ -90,7 +90,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 
     public void testGetFeatureTypes() {
         try {
-            String[] names = dataStore.getTypeNames();
+            String[] names = featureStore.getTypeNames();
             assertTrue(contains(names, tname("road")));
             assertTrue(contains(names, tname("river")));
         } catch (DataStoreException e) {
@@ -101,7 +101,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 
     public void testgetFeatureTypeRoad() throws Exception {
         SimpleFeatureType expected = td.roadType;
-        SimpleFeatureType actual = (SimpleFeatureType) dataStore.getFeatureType(nsname("road"));
+        SimpleFeatureType actual = (SimpleFeatureType) featureStore.getFeatureType(nsname("road"));
         assertEquals("name", aname(expected.getName()), actual.getName());
 
         // assertEquals( "compare", 0, DataUtilities.compare( expected, actual ));
@@ -124,7 +124,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 
     public void testgetFeatureTypeRiver() throws Exception {
         SimpleFeatureType expected = td.riverType;
-        SimpleFeatureType actual = (SimpleFeatureType) dataStore.getFeatureType(nsname("river"));
+        SimpleFeatureType actual = (SimpleFeatureType) featureStore.getFeatureType(nsname("river"));
         assertEquals("name", aname(expected.getName()), actual.getName());
 
         // assertEquals( "compare", 0, DataUtilities.compare( expected, actual ));
@@ -147,9 +147,9 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         ftb.add(aname("the_geom"), Point.class, crs);
 
         SimpleFeatureType newFT = ftb.buildSimpleFeatureType();
-        dataStore.createSchema(newFT.getName(),newFT);
+        featureStore.createSchema(newFT.getName(),newFT);
 
-        SimpleFeatureType newSchema = (SimpleFeatureType) dataStore.getFeatureType(featureTypeName);
+        SimpleFeatureType newSchema = (SimpleFeatureType) featureStore.getFeatureType(featureTypeName);
         assertNotNull(newSchema);
         assertEquals(3, newSchema.getAttributeCount());
     }
@@ -162,8 +162,8 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     public void testGetFeatureReaderLake() throws IOException, Exception {
         FeatureReader<SimpleFeatureType, SimpleFeature> reader;
 
-        Query q = QueryBuilder.all(dataStore.getFeatureType(tname("lake")).getName());
-        reader = dataStore.getFeatureReader(q);
+        Query q = QueryBuilder.all(featureStore.getFeatureType(tname("lake")).getName());
+        reader = featureStore.getFeatureReader(q);
 
         assertNotNull(reader);
         try {
@@ -182,10 +182,10 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         GeometryTypeFunction geomTypeExpr = new GeometryTypeFunction(factory.property(aname("geom")));
 
         PropertyIsEqualTo filter = factory.equals(geomTypeExpr, factory.literal("Polygon"));
-        Query q = QueryBuilder.filtered(dataStore.getFeatureType(tname("road")).getName(),filter);
+        Query q = QueryBuilder.filtered(featureStore.getFeatureType(tname("road")).getName(),filter);
 
         try{
-            reader = dataStore.getFeatureReader(q);
+            reader = featureStore.getFeatureReader(q);
             assertNotNull(reader);
             assertFalse(reader.hasNext());
         }finally{
@@ -195,9 +195,9 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         }
 
         filter = factory.equal(geomTypeExpr, factory.literal("LineString"),false, MatchAction.ANY);
-        q = QueryBuilder.filtered(dataStore.getFeatureType(tname("road")).getName(),filter);
+        q = QueryBuilder.filtered(featureStore.getFeatureType(tname("road")).getName(),filter);
         try{
-            reader = dataStore.getFeatureReader(q);
+            reader = featureStore.getFeatureReader(q);
             assertTrue(reader.hasNext());
         }finally{
             if(reader != null){
@@ -216,14 +216,14 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         PropertyIsEqualTo filter = factory.equals(geomTypeExpr, factory.literal("Polygon"));
 
         final QueryBuilder builder = new QueryBuilder();
-        builder.setTypeName(dataStore.getFeatureType(tname("road")).getName());
+        builder.setTypeName(featureStore.getFeatureType(tname("road")).getName());
         builder.setFilter(filter);
         builder.setProperties(new String[]{aname("id")});
         Query query = builder.buildQuery();
 
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = null;
         try{
-             reader = dataStore.getFeatureReader(query);
+             reader = featureStore.getFeatureReader(query);
             // if the above statement didn't throw an exception, we're content
             assertNotNull(reader);
             reader.close();
@@ -237,7 +237,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         builder.setFilter(filter);
         query = builder.buildQuery();
         try{
-            reader = dataStore.getFeatureReader(query);
+            reader = featureStore.getFeatureReader(query);
             assertTrue(reader.hasNext());
         }finally{
             if(reader != null){
@@ -251,21 +251,21 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         throws Exception {
         // this is here to avoid http://jira.codehaus.org/browse/GEOT-1069
         // to come up again
-        SimpleFeatureType type = (SimpleFeatureType) dataStore.getFeatureType(tname("river"));
+        SimpleFeatureType type = (SimpleFeatureType) featureStore.getFeatureType(tname("river"));
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = null;
 
         FilterFactory ff = FactoryFinder.getFilterFactory(null);
         PropertyIsEqualTo f = ff.equals(ff.property(aname("flow")), ff.literal(4.5));
 
         final QueryBuilder builder = new QueryBuilder();
-        builder.setTypeName(dataStore.getFeatureType(tname("river")).getName());
+        builder.setTypeName(featureStore.getFeatureType(tname("river")).getName());
         builder.setFilter(f);
         builder.setProperties(new String[]{aname("geom")});
         Query q = builder.buildQuery();
 
         // with GEOT-1069 an exception is thrown here
         try{
-            reader = dataStore.getFeatureReader(q);
+            reader = featureStore.getFeatureReader(q);
             assertTrue(reader.hasNext());
             assertEquals(1, reader.getFeatureType().getAttributeCount());
             reader.next();
@@ -281,7 +281,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         throws Exception {
         // this is here to avoid http://jira.codehaus.org/browse/GEOT-1069
         // to come up again
-        SimpleFeatureType type = (SimpleFeatureType) dataStore.getFeatureType(tname("river"));
+        SimpleFeatureType type = (SimpleFeatureType) featureStore.getFeatureType(tname("river"));
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = null;
 
         FilterFactory ff = FactoryFinder.getFilterFactory(null);
@@ -290,14 +290,14 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         PropertyIsEqualTo f = ff.equals(ceil, ff.literal(5));
 
         final QueryBuilder builder = new QueryBuilder();
-        builder.setTypeName(dataStore.getFeatureType(tname("river")).getName());
+        builder.setTypeName(featureStore.getFeatureType(tname("river")).getName());
         builder.setFilter(f);
         builder.setProperties(new String[]{aname("geom")});
         Query q = builder.buildQuery();
 
         // with GEOT-1069 an exception is thrown here
         try{
-            reader = dataStore.getFeatureReader(q);
+            reader = featureStore.getFeatureReader(q);
             assertTrue(reader.hasNext());
             assertEquals(1, reader.getFeatureType().getAttributeCount());
             reader.next();
@@ -316,14 +316,14 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         PropertyIsEqualTo f = ff.equals(ff.property("invalidAttribute"), ff.literal(5));
 
         QueryBuilder builder = new QueryBuilder();
-        builder.setTypeName(dataStore.getFeatureType(tname("river")).getName());
+        builder.setTypeName(featureStore.getFeatureType(tname("river")).getName());
         builder.setFilter(f);
         builder.setProperties(new String[]{aname("geom")});
         Query q = builder.buildQuery();
 
         // make sure a complaint related to the invalid filter is thrown here
         try {
-            reader = dataStore.getFeatureReader(q);
+            reader = featureStore.getFeatureReader(q);
             fail("This query should have failed, it contains an invalid filter");
         } catch(Exception e) {
             // fine
@@ -427,22 +427,22 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 
     public void testGetFeatureReaderFilterAutoCommit()
         throws NoSuchElementException, IOException, Exception {
-        SimpleFeatureType type = (SimpleFeatureType) dataStore.getFeatureType(tname("road"));
+        SimpleFeatureType type = (SimpleFeatureType) featureStore.getFeatureType(tname("road"));
          FeatureReader<SimpleFeatureType, SimpleFeature> reader;
 
-        reader = dataStore.getFeatureReader(QueryBuilder.filtered(type.getName(),Filter.INCLUDE));
+        reader = featureStore.getFeatureReader(QueryBuilder.filtered(type.getName(),Filter.INCLUDE));
         assertFalse(reader instanceof GenericFilterFeatureIterator);
         assertEquals(type, reader.getFeatureType());
         assertEquals(td.roadFeatures.length, count(reader));
         reader.close();
 
-        reader = dataStore.getFeatureReader(QueryBuilder.filtered(type.getName(),Filter.EXCLUDE));
+        reader = featureStore.getFeatureReader(QueryBuilder.filtered(type.getName(),Filter.EXCLUDE));
         assertFalse(reader.hasNext());
         assertEquals(type, reader.getFeatureType());
         assertEquals(0, count(reader));
         reader.close();
 
-        reader = dataStore.getFeatureReader(QueryBuilder.filtered(type.getName(),td.rd1Filter));
+        reader = featureStore.getFeatureReader(QueryBuilder.filtered(type.getName(),td.rd1Filter));
 
         // assertTrue(reader instanceof FilteringFeatureReader);
         assertEquals(type, reader.getFeatureType());
@@ -515,7 +515,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 //    }
 
     public void testGetFeatureWriterClose() throws Exception {
-        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = dataStore.getFeatureWriter(nsname("road"), Filter.INCLUDE);
+        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = featureStore.getFeatureWriter(nsname("road"), Filter.INCLUDE);
 
         writer.close();
 
@@ -571,7 +571,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     }
 
     public void testGetFeaturesWriterAdd() throws IOException, Exception {
-        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = dataStore.getFeatureWriter(nsname("road"),Filter.INCLUDE);
+        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = featureStore.getFeatureWriter(nsname("road"),Filter.INCLUDE);
         SimpleFeature feature;
 
         while (writer.hasNext()) {
@@ -613,7 +613,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         throws NoSuchElementException, IOException, Exception {
         FeatureWriter<SimpleFeatureType, SimpleFeature> writer;
 
-        writer = dataStore.getFeatureWriter(nsname("road"),Filter.INCLUDE);
+        writer = featureStore.getFeatureWriter(nsname("road"),Filter.INCLUDE);
         assertEquals(td.roadFeatures.length, count(writer));
 
         // writer.close(); called by count.
@@ -623,7 +623,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         throws Exception {
         FeatureWriter<SimpleFeatureType, SimpleFeature> writer;
 
-        writer = dataStore.getFeatureWriterAppend(nsname("road"));
+        writer = featureStore.getFeatureWriterAppend(nsname("road"));
         assertEquals(0, count(writer));
 
         // writer.close(); called by count
@@ -633,9 +633,9 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
      * Test for FeatureWriter getFeatureWriter(String, boolean, Transaction)
      *
      * @todo REVISIT:
-     * JDBCDataStore currently does not return these proper instanceof's. If we want to guarantee
+     * JDBCFeatureStore currently does not return these proper instanceof's. If we want to guarantee
      * that people can't append to a request with a FeatureWriter then we could add the
-     * functionality to JDBCDataStore by having getFeatureWriter(.. Filter ...) check to see if the
+     * functionality to JDBCFeatureStore by having getFeatureWriter(.. Filter ...) check to see if the
      * FeatureWriter returned is instanceof FilteringFeatureWriter, and if not then just wrap it in
      * a FilteringFeatureWriter(writer, Filter.INCLUDE). I think it'd be a bit of unnecessary
      * overhead, but if we want it it's easy to do. It will guarantee that calls with Filter won't
@@ -645,18 +645,18 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     public void testGetFeatureWriterFilter()
         throws NoSuchElementException, IOException, Exception {
         FeatureWriter<SimpleFeatureType, SimpleFeature> writer;
-        writer = dataStore.getFeatureWriter(nsname("road"), Filter.EXCLUDE);
+        writer = featureStore.getFeatureWriter(nsname("road"), Filter.EXCLUDE);
 
         // see task above
         // assertTrue(writer instanceof EmptyFeatureWriter);
         assertEquals(0, count(writer));
 
-        writer = dataStore.getFeatureWriter(nsname("road"), Filter.INCLUDE);
+        writer = featureStore.getFeatureWriter(nsname("road"), Filter.INCLUDE);
 
         // assertFalse(writer instanceof FilteringFeatureWriter);
         assertEquals(td.roadFeatures.length, count(writer));
 
-        writer = dataStore.getFeatureWriter(nsname("road"), td.rd1Filter);
+        writer = featureStore.getFeatureWriter(nsname("road"), td.rd1Filter);
 
         // assertTrue(writer instanceof FilteringFeatureWriter);
         assertEquals(1, count(writer));
@@ -682,7 +682,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 //    }
 
 //    This kind of test is obsolete since we don't have transaction anymore.
-//    The session system being independant from the datastore this behavior is guarantee.
+//    The session system being independant from the featurestore this behavior is guarantee.
 //
 //    /**
 //     * Test two transactions one removing feature, and one adding a feature.
@@ -852,8 +852,8 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     // Feature Source Testing
     public void testGetFeatureSourceRoad() throws Exception {
         Name name = nsname("road");
-        SimpleFeatureType sft = (SimpleFeatureType) dataStore.getFeatureType(name);
-        FeatureCollection<SimpleFeature> road = dataStore.createSession(false).getFeatureCollection(QueryBuilder.all(name));
+        SimpleFeatureType sft = (SimpleFeatureType) featureStore.getFeatureType(name);
+        FeatureCollection<SimpleFeature> road = featureStore.createSession(false).getFeatureCollection(QueryBuilder.all(name));
 
         assertFeatureTypesEqual(td.roadType, sft);
 
@@ -922,7 +922,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     public void testGetFeatureSourceRiver()
         throws NoSuchElementException, IOException, Exception {
 
-        FeatureCollection<SimpleFeature> all = dataStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname("river")));
+        FeatureCollection<SimpleFeature> all = featureStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname("river")));
         assertFeatureTypesEqual(td.riverType, (SimpleFeatureType) all.getFeatureType());
         assertEquals(2, all.size());
 
@@ -941,7 +941,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     // Feature Store Testing
     //
     public void testGetFeatureStoreModifyFeatures1() throws DataStoreException {
-        Session session = dataStore.createSession(false);
+        Session session = featureStore.createSession(false);
         Name typename = nsname("road");
         
         Object changed = new Integer(5);
@@ -956,7 +956,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     }
 
     public void testGetFeatureStoreModifyFeatures2() throws DataStoreException {
-        Session session = dataStore.createSession(false);
+        Session session = featureStore.createSession(false);
         Name typename = nsname("road");
 
         FilterFactory factory = FactoryFinder.getFilterFactory(null);
@@ -982,7 +982,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
      * @throws IOException
      */
     public void testGetFeatureStoreModifyFeatures3() throws DataStoreException {
-        Session session = dataStore.createSession(false);
+        Session session = featureStore.createSession(false);
         Name typename = nsname("road");
 
         FilterFactory ff = FactoryFinder.getFilterFactory(null);
@@ -993,7 +993,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     }
 
     public void testGetFeatureStoreRemoveFeatures() throws Exception {
-        Session session = dataStore.createSession(false);
+        Session session = featureStore.createSession(false);
         Name typename = nsname("road");
 
         session.removeFeatures(typename,td.rd1Filter);
@@ -1002,7 +1002,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     }
 
     public void testGetFeatureStoreRemoveAllFeatures() throws Exception {
-        Session session = dataStore.createSession(false);
+        Session session = featureStore.createSession(false);
         Name typename = nsname("road");
 
         session.removeFeatures(typename,Filter.INCLUDE);
@@ -1010,7 +1010,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     }
 
     public void testGetFeatureStoreAddFeatures() throws Exception {
-        Session session = dataStore.createSession(false);
+        Session session = featureStore.createSession(false);
         Name typename = nsname("road");
 
         session.addFeatures(typename,Collections.singleton(td.newRoad));
@@ -1019,7 +1019,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 
     public void testGetFeatureStoreSetFeatures()
         throws NoSuchElementException, IOException, Exception {
-        Session session = dataStore.createSession(false);
+        Session session = featureStore.createSession(false);
         Name typename = nsname("road");
 
         assertEquals(3, count(tname("road")));
@@ -1149,7 +1149,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     int count(final String typeName) throws Exception {
         // return count(reader(typeName));
         // makes use of optimization if any
-        return (int) dataStore.getCount(QueryBuilder.all(nsname(typeName)));
+        return (int) featureStore.getCount(QueryBuilder.all(nsname(typeName)));
     }
 
     /**
@@ -1281,12 +1281,12 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     }
 
     FeatureReader<SimpleFeatureType, SimpleFeature> reader(final String typeName) throws Exception {
-        Query query = QueryBuilder.filtered(dataStore.getFeatureType(typeName).getName(), Filter.INCLUDE);
-        return dataStore.getFeatureReader(query);
+        Query query = QueryBuilder.filtered(featureStore.getFeatureType(typeName).getName(), Filter.INCLUDE);
+        return featureStore.getFeatureReader(query);
     }
 
     FeatureWriter<SimpleFeatureType, SimpleFeature> writer(final String typeName) throws Exception {
-        return dataStore.getFeatureWriter(nsname(typeName),Filter.INCLUDE);
+        return featureStore.getFeatureWriter(nsname(typeName),Filter.INCLUDE);
     }
 
     /**

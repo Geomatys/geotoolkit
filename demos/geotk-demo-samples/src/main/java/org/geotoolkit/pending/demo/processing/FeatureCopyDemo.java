@@ -4,8 +4,8 @@ package org.geotoolkit.pending.demo.processing;
 import java.net.URL;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.data.postgis.PostgisNGDataStoreFactory;
-import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
+import org.geotoolkit.data.postgis.PostgisNGFeatureStoreFactory;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.datastore.copy.CopyDescriptor;
@@ -18,12 +18,12 @@ public class FeatureCopyDemo {
     
     public static void main(String[] args) throws Exception {
         
-        final ParameterValueGroup shpParams = ShapefileDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        final ParameterValueGroup shpParams = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         ParametersExt.getOrCreateValue(shpParams,"url").setValue(new URL("file:/...someshapefile"));
         
         final FeatureStore source = FeatureStoreFinder.open(shpParams);
         
-        final ParameterValueGroup pgParams = PostgisNGDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        final ParameterValueGroup pgParams = PostgisNGFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         ParametersExt.getOrCreateValue(pgParams,"host").setValue("host");
         ParametersExt.getOrCreateValue(pgParams,"port").setValue(5432);
         ParametersExt.getOrCreateValue(pgParams,"database").setValue("database");

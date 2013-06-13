@@ -39,7 +39,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Copy feature from one datastore to another.
+ * Copy feature from one featurestore to another.
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)

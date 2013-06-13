@@ -97,7 +97,7 @@ import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ShapefileDataStore extends AbstractFeatureStore{
+public class ShapefileFeatureStore extends AbstractFeatureStore{
 
     // This is the default character as specified by the DBF specification
     public static final Charset DEFAULT_STRING_CHARSET = DbaseFileReader.DEFAULT_STRING_CHARSET;
@@ -118,7 +118,7 @@ public class ShapefileDataStore extends AbstractFeatureStore{
      * @throws NullPointerException DOCUMENT ME!
      * @throws DataStoreException If computation of related URLs (dbf,shx) fails.
      */
-    public ShapefileDataStore(final URL url) throws DataStoreException,MalformedURLException {
+    public ShapefileFeatureStore(final URL url) throws DataStoreException,MalformedURLException {
         this(url, null);
     }
 
@@ -130,7 +130,7 @@ public class ShapefileDataStore extends AbstractFeatureStore{
      * @param url
      * @param namespace
      */
-    public ShapefileDataStore(final URL url, final String namespace)
+    public ShapefileFeatureStore(final URL url, final String namespace)
             throws DataStoreException,MalformedURLException {
         this(url, namespace, false, DEFAULT_STRING_CHARSET);
     }
@@ -145,20 +145,20 @@ public class ShapefileDataStore extends AbstractFeatureStore{
      * @param useMemoryMapped : default is true
      * @param dbfCharset : if null default will be ShapefileDataStore.DEFAULT_STRING_CHARSET
      */
-    public ShapefileDataStore(final URL url, final String namespace, final boolean useMemoryMapped,
+    public ShapefileFeatureStore(final URL url, final String namespace, final boolean useMemoryMapped,
             Charset dbfCharset) throws MalformedURLException, DataStoreException {
         this(toParameter(url, namespace, useMemoryMapped, dbfCharset));
     }
     
-    public ShapefileDataStore(final ParameterValueGroup params) throws MalformedURLException, DataStoreException {
+    public ShapefileFeatureStore(final ParameterValueGroup params) throws MalformedURLException, DataStoreException {
         super(params);
         
         final URL url = (URL) params.parameter(
-                ShapefileDataStoreFactory.URLP.getName().toString()).getValue();
+                ShapefileFeatureStoreFactory.URLP.getName().toString()).getValue();
         final Boolean useMemoryMapped = (Boolean) params.parameter(
-                ShapefileDataStoreFactory.MEMORY_MAPPED.getName().toString()).getValue();
+                ShapefileFeatureStoreFactory.MEMORY_MAPPED.getName().toString()).getValue();
         Charset dbfCharset = (Charset) params.parameter(
-                ShapefileDataStoreFactory.DBFCHARSET.getName().toString()).getValue();
+                ShapefileFeatureStoreFactory.DBFCHARSET.getName().toString()).getValue();
                 
         shpFiles = new ShpFiles(url);
 
@@ -177,17 +177,17 @@ public class ShapefileDataStore extends AbstractFeatureStore{
     
     private static ParameterValueGroup toParameter(final URL url, final String namespace, 
             final boolean useMemoryMapped, Charset dbfCharset){
-        final ParameterValueGroup params = ShapefileDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(ShapefileDataStoreFactory.URLP, params).setValue(url);
-        Parameters.getOrCreate(ShapefileDataStoreFactory.NAMESPACE, params).setValue(namespace);
-        Parameters.getOrCreate(ShapefileDataStoreFactory.MEMORY_MAPPED, params).setValue(useMemoryMapped);
-        Parameters.getOrCreate(ShapefileDataStoreFactory.DBFCHARSET, params).setValue(dbfCharset);        
+        final ParameterValueGroup params = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        Parameters.getOrCreate(ShapefileFeatureStoreFactory.URLP, params).setValue(url);
+        Parameters.getOrCreate(ShapefileFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
+        Parameters.getOrCreate(ShapefileFeatureStoreFactory.MEMORY_MAPPED, params).setValue(useMemoryMapped);
+        Parameters.getOrCreate(ShapefileFeatureStoreFactory.DBFCHARSET, params).setValue(dbfCharset);        
         return params;
     }
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(ShapefileDataStoreFactory.NAME);
+        return FeatureStoreFinder.getFactoryById(ShapefileFeatureStoreFactory.NAME);
     }
 
     @Override
@@ -406,11 +406,11 @@ public class ShapefileDataStore extends AbstractFeatureStore{
 
     /**
      * Set the FeatureType of this DataStore. This method will delete any
-     * existing local resources or throw an IOException if the DataStore is
+     * existing local resources or throw an IOException if the featurestore is
      * remote.
      *
      * @param featureType The desired FeatureType.
-     * @throws DataStoreException If the DataStore is remote.
+     * @throws DataStoreException If the featurestore is remote.
      *
      * @todo must synchronize this properly
      */
@@ -429,7 +429,7 @@ public class ShapefileDataStore extends AbstractFeatureStore{
         }
 
         if(!featureType.getName().equals(typeName)){
-            throw new DataStoreException("Shapefile datastore can only hold typename same as feature type name.");
+            throw new DataStoreException("Shapefile featurestore can only hold typename same as feature type name.");
         }
 
 
@@ -552,10 +552,10 @@ public class ShapefileDataStore extends AbstractFeatureStore{
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Obtain the FeatureType of the given name. ShapefileDataStore contains
+     * Obtain the FeatureType of the given name. ShapefileFeatureStore contains
      * only one FeatureType.
      *
-     * @return The FeatureType that this DataStore contains.
+     * @return The FeatureType that this featurestore contains.
      * @throws IOException If a type by the requested name is not present.
      */
     private synchronized SimpleFeatureType buildSchema(final String namespace) throws DataStoreException {

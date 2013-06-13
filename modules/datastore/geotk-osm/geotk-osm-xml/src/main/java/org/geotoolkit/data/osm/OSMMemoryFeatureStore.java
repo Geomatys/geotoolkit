@@ -74,7 +74,7 @@ import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMMemoryDataStore extends AbstractFeatureStore{
+public class OSMMemoryFeatureStore extends AbstractFeatureStore{
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
@@ -121,7 +121,7 @@ public class OSMMemoryDataStore extends AbstractFeatureStore{
 
     private final MemoryFeatureStore memoryStore;
 
-    public OSMMemoryDataStore(final ParameterValueGroup params, 
+    public OSMMemoryFeatureStore(final ParameterValueGroup params, 
             final Object input) throws IOException, XMLStreamException, DataStoreException{
         super(params);
         memoryStore = new MemoryFeatureStore();
@@ -154,7 +154,7 @@ public class OSMMemoryDataStore extends AbstractFeatureStore{
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(OSMMemoryDataStoreFactory.NAME);
+        return FeatureStoreFinder.getFactoryById(OSMMemoryFeatureStoreFactory.NAME);
     }
     
     @Override

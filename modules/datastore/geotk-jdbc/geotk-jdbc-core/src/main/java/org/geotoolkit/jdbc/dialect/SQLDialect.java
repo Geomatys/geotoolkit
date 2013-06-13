@@ -43,7 +43,7 @@ import org.geotoolkit.storage.DataStoreException;
 
 
 /**
- * The driver used by JDBCDataStore to directly communicate with the database.
+ * The driver used by JDBCFeatureStore to directly communicate with the database.
  * <p>
  * This class encapsulates all the database specific operations that JDBCDataStore
  * needs to function. It is implemented on a per-database basis.
@@ -97,7 +97,7 @@ import org.geotoolkit.storage.DataStoreException;
 public interface SQLDialect {
 
     /**
-     * The sql type to java type mappings that the datastore uses when reading
+     * The sql type to java type mappings that the featurestore uses when reading
      * and writing objects to and from the database.
      * <p>
      * These mappings are derived from {@link SQLDialect#registerSqlTypeToClassMappings(java.util.Map)}
@@ -118,7 +118,7 @@ public interface SQLDialect {
     Map<String, Class> getSqlTypeNameToClassMappings();
 
     /**
-     * The java type to sql type mappings that the datastore uses when reading
+     * The java type to sql type mappings that the featurestore uses when reading
      * and writing objects to and from the database.
      * <p>
      * These mappings are derived from {@link SQLDialect#registerClassToSqlMappings(Map)}
@@ -342,7 +342,7 @@ public interface SQLDialect {
         throws IOException;
 
     /**
-     * Creates the filter encoder to be used by the datastore when encoding
+     * Creates the filter encoder to be used by the featurestore when encoding
      * query predicates.
      * <p>
      * Sublcasses can override this method to return a subclass of {@link FilterToSQL}
@@ -541,7 +541,7 @@ public interface SQLDialect {
      * <p>
      * A common case is creating an auto incrementing sequence for the primary
      * key of a table. It should be noted that all tables created through the
-     * datastore use the column "fid" as the primary key.
+     * featurestore use the column "fid" as the primary key.
      * </p>
      * <p>
      * A direct connection to the database is provided (<tt>cx</tt>). This

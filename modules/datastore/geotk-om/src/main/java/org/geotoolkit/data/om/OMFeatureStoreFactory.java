@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,33 +15,36 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.sml;
+package org.geotoolkit.data.om;
 
-import java.io.IOException;
-import java.util.Collections;
-
-import org.apache.commons.dbcp.BasicDataSource;
-
-import org.geotoolkit.data.AbstractFeatureStoreFactory;
-import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.jdbc.DBCPDataSource;
-import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
+import org.opengis.metadata.Identifier;
+import java.util.Collections;
+import org.geotoolkit.parameter.Parameters;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.parameter.ParameterDescriptor;
+import org.apache.commons.dbcp.BasicDataSource;
+
+import java.io.IOException;
+import java.util.logging.Logger;
+
+import org.geotoolkit.data.AbstractFeatureStoreFactory;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.jdbc.ManageableDataSource;
+import org.geotoolkit.jdbc.DBCPDataSource;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.util.ResourceInternationalString;
 
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.quality.ConformanceResult;
-import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+
+import static org.geotoolkit.jdbc.JDBCDataStoreFactory.*;
+import org.geotoolkit.util.ResourceInternationalString;
 
 /**
  *
@@ -49,10 +52,10 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class SMLDataStoreFactory extends AbstractFeatureStoreFactory {
+public class OMFeatureStoreFactory extends AbstractFeatureStoreFactory {
 
     /** factory identification **/
-    public static final String NAME = "sml";
+    public static final String NAME = "om";
     public static final DefaultServiceIdentification IDENTIFICATION;
     static {
         IDENTIFICATION = new DefaultServiceIdentification();
@@ -74,26 +77,26 @@ public class SMLDataStoreFactory extends AbstractFeatureStoreFactory {
      * Parameter identifying the OM datastore
      */
     public static final ParameterDescriptor<String> DBTYPE =
-            new DefaultParameterDescriptor<String>("dbtype","DbType",String.class, "SML",true);
+             new DefaultParameterDescriptor<String>("dbtype","DbType",String.class, "OM", true);
 
     /**
      * Parameter for database type (postgres, derby, ...)
      */
     public static final ParameterDescriptor<String> SGBDTYPE =
-            new DefaultParameterDescriptor<String>(Collections.singletonMap("name", "sgbdtype"),
+             new DefaultParameterDescriptor<String>(Collections.singletonMap("name", "sgbdtype"),
             String.class, new String[]{"derby","postgres"},null,null,null,null,true);
 
     /**
      * Parameter for database url for derby database
      */
     public static final ParameterDescriptor<String> DERBYURL =
-             new DefaultParameterDescriptor<String>("derbyurl","DerbyURL",String.class, null, false);
+             new DefaultParameterDescriptor<String>("derbyurl","DerbyURL",String.class, null,false);
 
     /**
      * Parameter for database host
      */
     public static final ParameterDescriptor<String> HOST =
-             new DefaultParameterDescriptor<String>("host","Host", String.class, "localhost", false);
+             new DefaultParameterDescriptor<String>("host","Host", String.class, "localhost",false);
 
     /**
      * Parameter for database name
@@ -105,7 +108,7 @@ public class SMLDataStoreFactory extends AbstractFeatureStoreFactory {
      * Parameter for database user name
      */
     public static final ParameterDescriptor<String> USER =
-             new DefaultParameterDescriptor<String>("user","User", String.class, null, false);
+             new DefaultParameterDescriptor<String>("user","User", String.class, null,false);
 
     /**
      * Parameter for database user password
@@ -114,8 +117,10 @@ public class SMLDataStoreFactory extends AbstractFeatureStoreFactory {
              new DefaultParameterDescriptor<String>("password","Password", String.class, null, false);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("SMLParameters",
+            new DefaultParameterDescriptorGroup("OMParameters",
                 IDENTIFIER,DBTYPE,HOST,PORT,DATABASE,USER,PASSWD,NAMESPACE, SGBDTYPE, DERBYURL);
+
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.om");
 
     @Override
     public Identification getIdentification() {
@@ -127,15 +132,13 @@ public class SMLDataStoreFactory extends AbstractFeatureStoreFactory {
      */
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/sml/bundle", "datastoreDescription");
+        return new ResourceInternationalString("org/geotoolkit/om/bundle", "datastoreDescription");
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/sml/bundle", "datastoreTitle");
+        return new ResourceInternationalString("org/geotoolkit/om/bundle", "datastoreTitle");
     }
-    
-    
 
     /**
      * {@inheritDoc }
@@ -150,7 +153,7 @@ public class SMLDataStoreFactory extends AbstractFeatureStoreFactory {
         boolean valid = super.canProcess(params);
         if(valid){
             Object value = params.parameter(DBTYPE.getName().toString()).getValue();
-            if("SML".equals(value)){
+            if("OM".equals(value)){
                 Object sgbdtype = Parameters.value(SGBDTYPE, params);
 
                 if("derby".equals(sgbdtype)){
@@ -199,7 +202,7 @@ public class SMLDataStoreFactory extends AbstractFeatureStoreFactory {
             dataSource.setAccessToUnderlyingConnectionAllowed(true);
 
             final ManageableDataSource source = new DBCPDataSource(dataSource);
-            return new SMLDataStore(params,source);
+            return new OMFeatureStore(params,source);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
@@ -231,11 +234,13 @@ public class SMLDataStoreFactory extends AbstractFeatureStoreFactory {
             return "jdbc:postgresql" + "://" + host + ":" + port + "/" + db;
         }
     }
-   
+
     @Override
     public ConformanceResult availability() {
         DefaultConformanceResult result =  new DefaultConformanceResult();
         result.setPass(true);
         return result;
     }
+   
+
 }

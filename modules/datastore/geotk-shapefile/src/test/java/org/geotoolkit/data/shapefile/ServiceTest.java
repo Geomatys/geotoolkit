@@ -48,7 +48,7 @@ public class ServiceTest extends AbstractTestCaseSupport {
         boolean found = false;
         while (list.hasNext()) {
             FeatureStoreFactory fac = (FeatureStoreFactory) list.next();
-            if (fac instanceof ShapefileDataStoreFactory) {
+            if (fac instanceof ShapefileFeatureStoreFactory) {
                 found = true;
                 assertNotNull(fac.getDescription());
                 break;
@@ -58,7 +58,7 @@ public class ServiceTest extends AbstractTestCaseSupport {
     }
 
     /**
-     * Ensure that we can open a DataStore using url OR string url.
+     * Ensure that we can open a featurestore using url OR string url.
      */
     @Test
     public void testShapefileDataStore() throws Exception {
@@ -75,7 +75,7 @@ public class ServiceTest extends AbstractTestCaseSupport {
         HashMap params = new HashMap();
         params.put("url", "aaa://bbb.ccc");
         try {
-            ShapefileDataStoreFactory f = new ShapefileDataStoreFactory();
+            ShapefileFeatureStoreFactory f = new ShapefileFeatureStoreFactory();
             f.open(params);
             fail("did not throw error");
         } catch (DataStoreException ioe) {

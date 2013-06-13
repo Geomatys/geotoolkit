@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
-import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
+import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.junit.After;
 import org.junit.Before;
@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
 public class PolygonLazySearchCollectionTest extends AbstractTestCaseSupport {
 
     private File file;
-    private IndexedShapefileDataStore ds;
+    private IndexedShapefileFeatureStore ds;
     private QuadTree tree;
     private DataReader dr;
     private Iterator iterator;
@@ -46,7 +46,7 @@ public class PolygonLazySearchCollectionTest extends AbstractTestCaseSupport {
     @Before
     public void setUp() throws Exception {
         file = copyShapefiles("shapes/statepop.shp");
-        ds = new IndexedShapefileDataStore(file.toURI().toURL());
+        ds = new IndexedShapefileFeatureStore(file.toURI().toURL());
         ds.buildQuadTree(0);
         final Object[] v = LineLazySearchCollectionTest.openQuadTree(file);
         tree = (QuadTree) v[0];

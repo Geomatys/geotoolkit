@@ -22,9 +22,9 @@ import java.util.Collections;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.jdbc.DefaultJDBCDataStore;
+import org.geotoolkit.jdbc.DefaultJDBCFeatureStore;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.jdbc.JDBCDataStore;
+import org.geotoolkit.jdbc.JDBCFeatureStore;
 import org.geotoolkit.jdbc.JDBCDataStoreFactory;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
@@ -45,7 +45,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class MySQLDataStoreFactory extends JDBCDataStoreFactory {
+public class MySQLFeatureStoreFactory extends JDBCDataStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "mysql";
@@ -84,7 +84,7 @@ public class MySQLDataStoreFactory extends JDBCDataStoreFactory {
     }
 
     @Override
-    protected SQLDialect createSQLDialect(final JDBCDataStore dataStore) {
+    protected SQLDialect createSQLDialect(final JDBCFeatureStore dataStore) {
         return new MySQLDialect(dataStore);
     }
 
@@ -117,23 +117,23 @@ public class MySQLDataStoreFactory extends JDBCDataStoreFactory {
     }
 
     @Override
-    public JDBCDataStore open(final ParameterValueGroup params)
+    public JDBCFeatureStore open(final ParameterValueGroup params)
         throws DataStoreException {
         checkCanProcessWithError(params);
-        JDBCDataStore dataStore = super.open(params);
+        JDBCFeatureStore featureStore = super.open(params);
 
         final MySQLDialect dialect;
 
         // setup the ps dialect if need be
         final Boolean usePs = (Boolean) params.parameter(PREPARED_STATEMENTS.getName().toString()).getValue();
         if(Boolean.TRUE.equals(usePs)) {
-            dialect = new MySQLPSDialect(dataStore);
-            dataStore.setDialect(dialect);
+            dialect = new MySQLPSDialect(featureStore);
+            featureStore.setDialect(dialect);
         }else{
-            dialect = (MySQLDialect) dataStore.getDialect();
+            dialect = (MySQLDialect) featureStore.getDialect();
         }
 
-        return dataStore;
+        return featureStore;
     }
 
     @Override

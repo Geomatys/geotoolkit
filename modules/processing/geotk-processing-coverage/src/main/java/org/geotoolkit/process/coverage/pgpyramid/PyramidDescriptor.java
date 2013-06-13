@@ -96,7 +96,7 @@ public class PyramidDescriptor extends AbstractProcessDescriptor{
                                       /*OUTPUT*/
     /**************************************************************************/
     /**
-     * Datastore where pyrami is stored.
+     * FeatureStore where pyrami is stored.
      */
     public static final ParameterDescriptor<CoverageStore> OUT_COVERAGESTORE =
             new DefaultParameterDescriptor<CoverageStore>("out_coverage_store",

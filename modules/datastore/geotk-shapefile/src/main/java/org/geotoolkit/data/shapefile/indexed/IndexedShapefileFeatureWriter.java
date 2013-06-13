@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
+import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.ShapefileFeatureWriter;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
@@ -37,7 +37,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
+import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
 
 /**
  * A FeatureWriter for ShapefileDataStore. Uses a write and annotate technique
@@ -49,20 +49,20 @@ import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
  */
 class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
 
-    private IndexedShapefileDataStore indexedShapefileDataStore;
+    private IndexedShapefileFeatureStore indexedShapefileFeatureStore;
     private IndexedFidWriter fidWriter;
 
     private String currentFid;
 
     public IndexedShapefileFeatureWriter(final String typeName, final ShpFiles shpFiles,
             final IndexedShapefileAttributeReader attsReader,
-             final FeatureReader<SimpleFeatureType, SimpleFeature> featureReader, final IndexedShapefileDataStore datastore,
+             final FeatureReader<SimpleFeatureType, SimpleFeature> featureReader, final IndexedShapefileFeatureStore featurestore,
              final Charset charset)
             throws DataStoreException,IOException {
         super(typeName, shpFiles, attsReader, featureReader, charset);
         
-        this.indexedShapefileDataStore = datastore;
-        if (!datastore.indexUseable(FIX)) {
+        this.indexedShapefileFeatureStore = featurestore;
+        if (!featurestore.indexUseable(FIX)) {
             this.fidWriter = IndexedFidWriter.EMPTY_WRITER;
         } else {
             final StorageFile storageFile = getLocker().getStorageFile(FIX);
@@ -128,20 +128,20 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
 
         try {
             if (shpFiles.isLocal()) {
-                if (indexedShapefileDataStore.needsGeneration(ShpFileType.FIX)) {
+                if (indexedShapefileFeatureStore.needsGeneration(ShpFileType.FIX)) {
                     IndexedFidWriter.generate(shpFiles);
                 }
 
                 deleteFile(ShpFileType.QIX);
 
-                if (indexedShapefileDataStore.treeType == IndexType.QIX) {
-                    indexedShapefileDataStore
-                            .buildQuadTree(indexedShapefileDataStore.maxDepth);
+                if (indexedShapefileFeatureStore.treeType == IndexType.QIX) {
+                    indexedShapefileFeatureStore
+                            .buildQuadTree(indexedShapefileFeatureStore.maxDepth);
                 }
             }
         } catch (Throwable e) {
-            indexedShapefileDataStore.treeType = IndexType.NONE;
-            ShapefileDataStoreFactory.LOGGER.log(Level.WARNING,
+            indexedShapefileFeatureStore.treeType = IndexType.NONE;
+            ShapefileFeatureStoreFactory.LOGGER.log(Level.WARNING,
                     "Error creating Spatial index", e);
         }
     }
@@ -152,8 +152,8 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
         try{
             fidWriter.close();
         }catch(Throwable e){
-            indexedShapefileDataStore.treeType = IndexType.NONE;
-            ShapefileDataStoreFactory.LOGGER.log(Level.WARNING,
+            indexedShapefileFeatureStore.treeType = IndexType.NONE;
+            ShapefileFeatureStoreFactory.LOGGER.log(Level.WARNING,
                     "Error creating Feature ID index", e);
         }
     }

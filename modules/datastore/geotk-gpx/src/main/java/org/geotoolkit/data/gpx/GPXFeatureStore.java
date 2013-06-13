@@ -69,20 +69,20 @@ import static org.geotoolkit.data.gpx.model.GPXModelConstants.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GPXDataStore extends AbstractFeatureStore{
+public class GPXFeatureStore extends AbstractFeatureStore{
 
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
 
     private final File file;
 
-    public GPXDataStore(final File f) throws MalformedURLException, DataStoreException{
+    public GPXFeatureStore(final File f) throws MalformedURLException, DataStoreException{
         this(toParameter(f));
     }
     
-    public GPXDataStore(final ParameterValueGroup params) throws DataStoreException{
+    public GPXFeatureStore(final ParameterValueGroup params) throws DataStoreException{
         super(params);
-        final URL url = (URL) params.parameter(GPXDataStoreFactory.URLP.getName().toString()).getValue();
+        final URL url = (URL) params.parameter(GPXFeatureStoreFactory.URLP.getName().toString()).getValue();
         try {
             this.file = IOUtilities.toFile(url, null);
         } catch (IOException ex) {
@@ -91,14 +91,14 @@ public class GPXDataStore extends AbstractFeatureStore{
     }
     
     private static ParameterValueGroup toParameter(final File f) throws MalformedURLException{
-        final ParameterValueGroup params = GPXDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(GPXDataStoreFactory.URLP, params).setValue(f.toURL());
+        final ParameterValueGroup params = GPXFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        Parameters.getOrCreate(GPXFeatureStoreFactory.URLP, params).setValue(f.toURL());
         return params;
     }
 
     @Override
     public FeatureStoreFactory getFactory() {
-        return FeatureStoreFinder.getFactoryById(GPXDataStoreFactory.NAME);
+        return FeatureStoreFinder.getFactoryById(GPXFeatureStoreFactory.NAME);
     }
 
     public MetaData getGPXMetaData() throws DataStoreException{
