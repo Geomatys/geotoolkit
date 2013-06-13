@@ -102,7 +102,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
-        store.createSchema(sft.getName(), sft);
+        store.createFeatureType(sft.getName(), sft);
         final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("RailWay");
         //final SimpleFeatureType targetType = sft;
 
@@ -154,7 +154,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
-        store.createSchema(sft.getName(), sft);
+        store.createFeatureType(sft.getName(), sft);
         final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Natural");
         //final SimpleFeatureType targetType = sft;
 
@@ -206,7 +206,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
-        store.createSchema(sft.getName(), sft);
+        store.createFeatureType(sft.getName(), sft);
         final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Building");
         //final SimpleFeatureType targetType = sft;
 
@@ -258,7 +258,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
-        store.createSchema(sft.getName(), sft);
+        store.createFeatureType(sft.getName(), sft);
         final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Landuse");
         //final SimpleFeatureType targetType = sft;
 
@@ -310,7 +310,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
-        store.createSchema(sft.getName(), sft);
+        store.createFeatureType(sft.getName(), sft);
         final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Leisure");
         //final SimpleFeatureType targetType = sft;
 
@@ -362,7 +362,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
-        store.createSchema(sft.getName(), sft);
+        store.createFeatureType(sft.getName(), sft);
         final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Waterway");
         //final SimpleFeatureType targetType = sft;
 
@@ -414,7 +414,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         sftb.add("geometry", LineString.class, EPSG_4326);
         sftb.add("type", String.class);
         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
-        store.createSchema(sft.getName(), sft);
+        store.createFeatureType(sft.getName(), sft);
         final SimpleFeatureType targetType = (SimpleFeatureType) store.getFeatureType("Highway");
         //final SimpleFeatureType targetType = sft;
 

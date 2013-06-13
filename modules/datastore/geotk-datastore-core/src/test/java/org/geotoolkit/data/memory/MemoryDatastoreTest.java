@@ -97,7 +97,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.add("att1", String.class);
         final SimpleFeatureType type1 = builder.buildSimpleFeatureType();
 
-        store.createSchema(name,type1);
+        store.createFeatureType(name,type1);
 
         names = store.getNames();
         assertEquals(1,names.size());
@@ -123,7 +123,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.add("att2", Double.class);
         SimpleFeatureType type2 = builder.buildSimpleFeatureType();
 
-        store.updateSchema(name, type2);
+        store.updateFeatureType(name, type2);
 
         names = store.getNames();
         assertEquals(1,names.size());
@@ -137,7 +137,7 @@ public class MemoryDatastoreTest extends TestCase{
 
 
         try{
-            store.updateSchema(new DefaultName("http://not", "exist"),type2);
+            store.updateFeatureType(new DefaultName("http://not", "exist"),type2);
             throw new Exception("Updating a schema that doesnt exist should have raised an error");
         }catch(Exception ex){
             //ok
@@ -148,13 +148,13 @@ public class MemoryDatastoreTest extends TestCase{
         names = store.getNames();
         assertEquals(1,names.size());
 
-        store.deleteSchema(name);
+        store.deleteFeatureType(name);
 
         names = store.getNames();
         assertEquals(0,names.size());
 
         try{
-            store.deleteSchema(new DefaultName("http://not", "exist"));
+            store.deleteFeatureType(new DefaultName("http://not", "exist"));
             throw new Exception("Deleting a schema that doesnt exist should have raised an error");
         }catch(Exception ex){
             //ok
@@ -173,7 +173,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.setName(name);
         builder.add("att1", String.class);
         final SimpleFeatureType type = builder.buildSimpleFeatureType();
-        store.createSchema(name,type);
+        store.createFeatureType(name,type);
 
 
         //test reader with no features in datastore
@@ -294,7 +294,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.add("double", Double.class);
         builder.add("date", Date.class);
         final SimpleFeatureType type = builder.buildSimpleFeatureType();
-        store.createSchema(name,type);
+        store.createFeatureType(name,type);
         final QueryBuilder qb = new QueryBuilder(name);
 
         //create a few features
@@ -582,7 +582,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.add("geometry", Point.class, CRS.decode("EPSG:27582"));
         builder.add("string", String.class);
         final SimpleFeatureType type = builder.buildSimpleFeatureType();
-        store.createSchema(name,type);
+        store.createFeatureType(name,type);
         final QueryBuilder qb = new QueryBuilder(name);
 
         //create a few features
@@ -673,7 +673,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.add("att1", String.class);
         final SimpleFeatureType type1 = builder.buildSimpleFeatureType();
 
-        store.createSchema(name,type1);
+        store.createFeatureType(name,type1);
 
         names = store.getNames();
         assertEquals(1,names.size());
@@ -721,7 +721,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.add("SetAtt", Set.class);
         final SimpleFeatureType type1 = builder.buildSimpleFeatureType();
 
-        store.createSchema(name,type1);
+        store.createFeatureType(name,type1);
 
         names = store.getNames();
         assertEquals(1,names.size());
@@ -804,7 +804,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.add("SetAtt", Set.class);
         final SimpleFeatureType type1 = builder.buildSimpleFeatureType();
 
-        store.createSchema(name,type1);
+        store.createFeatureType(name,type1);
 
         store.isWritable(name);
 

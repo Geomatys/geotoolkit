@@ -95,7 +95,7 @@ public abstract class JDBCGeometryTest extends JDBCTestSupport {
         ftb.add(aname("geom"), geomClass, crs);
 
         SimpleFeatureType newFT = ftb.buildSimpleFeatureType();
-        featureStore.createSchema(newFT.getName(), newFT);
+        featureStore.createFeatureType(newFT.getName(), newFT);
 
         SimpleFeatureType newSchema = (SimpleFeatureType) featureStore.getFeatureType(featureTypeName);
         assertNotNull(newSchema);

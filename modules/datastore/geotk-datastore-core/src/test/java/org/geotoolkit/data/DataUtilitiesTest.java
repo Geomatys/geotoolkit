@@ -65,9 +65,9 @@ public class DataUtilitiesTest {
         builder.add("att_string", String.class);
         SimpleFeatureType sft3 = builder.buildSimpleFeatureType();
 
-        store.createSchema(sft1.getName(), sft1);
-        store.createSchema(sft2.getName(), sft2);
-        store.createSchema(sft3.getName(), sft3);
+        store.createFeatureType(sft1.getName(), sft1);
+        store.createFeatureType(sft2.getName(), sft2);
+        store.createFeatureType(sft3.getName(), sft3);
 
         FeatureWriter writer = store.getFeatureWriterAppend(name1);
         for(int i=0; i<10; i++){

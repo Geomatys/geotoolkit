@@ -342,7 +342,7 @@ public class CSVFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         checkExist();
         if(this.featureType != null){
             throw new DataStoreException("Can only have one feature type in CSV dataStore.");
@@ -366,7 +366,7 @@ public class CSVFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public void deleteSchema(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final Name typeName) throws DataStoreException {
         typeCheck(typeName); //raise error is type doesnt exist
 
         final SimpleFeatureType oldSchema = featureType;
@@ -384,10 +384,10 @@ public class CSVFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         typeCheck(typeName); //raise error is type doesnt exist
-        deleteSchema(typeName);
-        createSchema(typeName, featureType);
+        deleteFeatureType(typeName);
+        createFeatureType(typeName, featureType);
     }
 
     @Override

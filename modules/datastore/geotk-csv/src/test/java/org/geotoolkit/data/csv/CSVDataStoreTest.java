@@ -87,7 +87,7 @@ public class CSVDataStoreTest {
         ftb.add("stringProp", String.class);
         ftb.add("geometryProp", Geometry.class, DefaultGeographicCRS.WGS84);
         SimpleFeatureType sft = ftb.buildSimpleFeatureType();
-        ds.createSchema(sft.getName(), sft);
+        ds.createFeatureType(sft.getName(), sft);
         Name name = ds.getNames().iterator().next();
 
         assertEquals(1, ds.getNames().size());

@@ -127,16 +127,16 @@ public interface FeatureStore {
     Set<Name> getNames() throws DataStoreException;
 
     /**
-     * Create a new schema.
+     * Create a new feature type.
      *
      * @param typeName , new type name
      * @param featureType , new type schema
      * @throws DataStoreException if schema already exist or can not create schema.
      */
-    void createSchema(Name typeName, FeatureType featureType) throws DataStoreException;
+    void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException;
 
     /**
-     * Update a schema, should preserve attribute with the same
+     * Update a feature type, should preserve attribute with the same
      * name and set default values to new attributes.
      * If the attributes type have changed, the feature store should do the best
      * effort to try to convert values.
@@ -145,15 +145,15 @@ public interface FeatureStore {
      * @param featureType , new type schema
      * @throws DataStoreException if schema does not exist or can not be modified.
      */
-    void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException;
+    void updateFeatureType(Name typeName, FeatureType featureType) throws DataStoreException;
 
     /**
-     * Delete a schema.
+     * Delete feature type with given name.
      * 
      * @param typeName , type name to delete
      * @throws DataStoreException if schema does not exist or can not be deleted.
      */
-    void deleteSchema(Name typeName) throws DataStoreException;
+    void deleteFeatureType(Name typeName) throws DataStoreException;
 
     /**
      * Convenient way to aquire a schema by ignoring the namespace.

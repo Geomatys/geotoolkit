@@ -31,7 +31,7 @@ public class CreateShapefileDemo {
         final FeatureType type = ftb.buildFeatureType();
         
         //add this model in the datastore
-        store.createSchema(type.getName(), type);
+        store.createFeatureType(type.getName(), type);
         
         //create and store a feature
         final List<Feature> features = new ArrayList<Feature>();

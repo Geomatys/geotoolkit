@@ -91,7 +91,7 @@ public class SessionTest{
         builder.add("double", Double.class);
         builder.add("date", Date.class);
         final SimpleFeatureType type = builder.buildSimpleFeatureType();
-        store.createSchema(name,type);
+        store.createFeatureType(name,type);
 
         //create a few features
         FeatureWriter writer = store.getFeatureWriterAppend(name);

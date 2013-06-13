@@ -49,7 +49,7 @@ public class FeatureStoreWritingDemo {
 
         //create the featurestore ---------------------------------------------------------
         final FeatureStore store = new MemoryFeatureStore();
-        store.createSchema(type.getName(), type);
+        store.createFeatureType(type.getName(), type);
 
 
         ////////////////////////////////////////////////////////////////////////////////

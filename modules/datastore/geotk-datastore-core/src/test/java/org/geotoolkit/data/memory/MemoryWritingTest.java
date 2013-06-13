@@ -42,7 +42,7 @@ public class MemoryWritingTest {
         ftb.add("att", String.class);
         type = ftb.buildFeatureType();
 
-        store.createSchema(type.getName(), type);
+        store.createFeatureType(type.getName(), type);
 
     }
 

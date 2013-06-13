@@ -130,7 +130,7 @@ public class MapLayerTest extends TestCase{
         SimpleFeatureType type = builder.buildSimpleFeatureType();
 
         FeatureStore ds = new MemoryFeatureStore();
-        ds.createSchema(name,type);
+        ds.createFeatureType(name,type);
         FeatureCollection<SimpleFeature> fs = ds.createSession(true).getFeatureCollection(QueryBuilder.all(name));
 
 

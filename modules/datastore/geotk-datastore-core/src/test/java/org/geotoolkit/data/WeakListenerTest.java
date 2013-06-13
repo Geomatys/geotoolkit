@@ -93,12 +93,12 @@ public class WeakListenerTest {
         final FeatureStoreListener.Weak ref = new FeatureStoreListener.Weak(listener);
         ref.registerSource(store);
 
-        store.createSchema(type1.getName(), type1);
+        store.createFeatureType(type1.getName(), type1);
         assertEquals(1, count.get());
         listener = null;
         System.gc();
 
-        store.createSchema(type2.getName(), type2);
+        store.createFeatureType(type2.getName(), type2);
         //listener should have desapear now, so the event should not have been send
         assertEquals(1, count.get());
     }

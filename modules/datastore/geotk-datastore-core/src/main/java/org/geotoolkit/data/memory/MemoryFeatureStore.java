@@ -200,7 +200,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public synchronized void createSchema(final Name name, final FeatureType featureType) throws DataStoreException {
+    public synchronized void createFeatureType(final Name name, final FeatureType featureType) throws DataStoreException {
         if(singleTypeLock) throw new DataStoreException(
                 "Memory feature store is in single type mode. Schema modification are not allowed.");
 
@@ -224,7 +224,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public synchronized void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public synchronized void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         if(singleTypeLock) throw new DataStoreException(
                 "Memory feature store is in single type mode. Schema modification are not allowed.");
 
@@ -253,7 +253,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public synchronized void deleteSchema(final Name typeName) throws DataStoreException {
+    public synchronized void deleteFeatureType(final Name typeName) throws DataStoreException {
         if(singleTypeLock) throw new DataStoreException(
                 "Memory feature store is in single type mode. Schema modification are not allowed.");
 

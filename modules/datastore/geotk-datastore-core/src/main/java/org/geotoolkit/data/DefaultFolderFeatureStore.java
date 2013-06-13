@@ -164,7 +164,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc}
      */
     @Override
-    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
 
         if(typeName == null){
             throw new DataStoreException("Type name can not be null.");
@@ -188,7 +188,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore{
         }
 
         final FeatureStore store = singleFileFactory.create(params);
-        store.createSchema(typeName, featureType);
+        store.createFeatureType(typeName, featureType);
         stores.put(typeName, store);
     }
 
@@ -196,7 +196,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore{
      * Unsupported, throws a {@link DataStoreException}.
      */
     @Override
-    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
@@ -204,7 +204,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore{
      * Unsupported, throws a {@link DataStoreException}.
      */
     @Override
-    public void deleteSchema(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final Name typeName) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
 

@@ -123,7 +123,7 @@ public class ShapeCreationTool extends JPanel {
             final FeatureType featureType = FeatureTypeUtilities.createType(name, buffer.toString());
 
             // Create the Shapefile (empty at this point)
-            myData.createSchema(featureType.getName(),featureType);
+            myData.createFeatureType(featureType.getName(),featureType);
 
             // Tell the featurestore what type of Coordinate Reference System (CRS) to use
             //myData.forceSchemaCRS(crs);

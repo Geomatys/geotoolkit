@@ -80,7 +80,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         builder.add(aname("dateProperty"), Date.class);
 
         SimpleFeatureType featureType = builder.buildSimpleFeatureType();
-        featureStore.createSchema(featureType.getName(),featureType);
+        featureStore.createFeatureType(featureType.getName(),featureType);
 
         SimpleFeatureType ft2 = (SimpleFeatureType) featureStore.getFeatureType(tname("ft2"));
         
@@ -144,7 +144,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
 
         
         SimpleFeatureType featureType = builder.buildSimpleFeatureType();
-        featureStore.createSchema(featureType.getName(), featureType);
+        featureStore.createFeatureType(featureType.getName(), featureType);
         
         SimpleFeatureType ft2 = (SimpleFeatureType) featureStore.getFeatureType(tname("ft2"));
         //assertEquals(ft2, featureType);

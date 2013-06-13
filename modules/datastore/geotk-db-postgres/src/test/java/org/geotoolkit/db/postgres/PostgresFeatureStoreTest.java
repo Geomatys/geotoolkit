@@ -290,7 +290,7 @@ public class PostgresFeatureStoreTest {
         for(Name n : store.getNames()){
             VersionControl vc = store.getVersioning(n);
             vc.dropVersioning();
-            store.deleteSchema(n);
+            store.deleteFeatureType(n);
         }
         assertTrue(store.getNames().isEmpty());
         store.dispose();
@@ -306,7 +306,7 @@ public class PostgresFeatureStoreTest {
         reload(true);
         
         final FeatureType refType = FTYPE_SIMPLE;        
-        store.createSchema(refType.getName(), refType);        
+        store.createFeatureType(refType.getName(), refType);        
         assertEquals(1, store.getNames().size());
         
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
@@ -348,7 +348,7 @@ public class PostgresFeatureStoreTest {
         reload(true);
         
         final FeatureType refType = FTYPE_ARRAY;        
-        store.createSchema(refType.getName(), refType);        
+        store.createFeatureType(refType.getName(), refType);        
         assertEquals(1, store.getNames().size());
         
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
@@ -391,7 +391,7 @@ public class PostgresFeatureStoreTest {
         reload(true);
         
         final FeatureType refType = FTYPE_ARRAY2;        
-        store.createSchema(refType.getName(), refType);        
+        store.createFeatureType(refType.getName(), refType);        
         assertEquals(1, store.getNames().size());
         
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
@@ -434,7 +434,7 @@ public class PostgresFeatureStoreTest {
         reload(true);
                 
         final FeatureType refType = FTYPE_GEOMETRY;        
-        store.createSchema(refType.getName(), refType);        
+        store.createFeatureType(refType.getName(), refType);        
         assertEquals(1, store.getNames().size());
         
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
@@ -491,7 +491,7 @@ public class PostgresFeatureStoreTest {
         reload(false);
         
         final FeatureType refType = FTYPE_COMPLEX;        
-        store.createSchema(refType.getName(), refType);        
+        store.createFeatureType(refType.getName(), refType);        
         assertEquals(1, store.getNames().size());
          
         final Name name = store.getNames().iterator().next();
@@ -505,7 +505,7 @@ public class PostgresFeatureStoreTest {
         reload(false);
         
         final FeatureType refType = FTYPE_COMPLEX2;        
-        store.createSchema(refType.getName(), refType);        
+        store.createFeatureType(refType.getName(), refType);        
         assertEquals(1, store.getNames().size());
         
         final Name name = store.getNames().iterator().next();
@@ -519,7 +519,7 @@ public class PostgresFeatureStoreTest {
         reload(false);
         
         final FeatureType refType = FTYPE_COMPLEX3;        
-        store.createSchema(refType.getName(), refType);        
+        store.createFeatureType(refType.getName(), refType);        
         assertEquals(1, store.getNames().size());
         
         final Name name = store.getNames().iterator().next();
@@ -558,7 +558,7 @@ public class PostgresFeatureStoreTest {
     public void testSimpleInsert() throws DataStoreException, VersioningException{
         reload(true);
             
-        store.createSchema(FTYPE_SIMPLE.getName(), FTYPE_SIMPLE);
+        store.createFeatureType(FTYPE_SIMPLE.getName(), FTYPE_SIMPLE);
         FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
         
         Feature feature = FeatureUtilities.defaultFeature(resType, "0");
@@ -597,7 +597,7 @@ public class PostgresFeatureStoreTest {
         
         // SECOND TEST for NAN values ------------------------------------------
         reload(true);            
-        store.createSchema(FTYPE_SIMPLE.getName(), FTYPE_SIMPLE);
+        store.createFeatureType(FTYPE_SIMPLE.getName(), FTYPE_SIMPLE);
         resType = store.getFeatureType(store.getNames().iterator().next());
         
         feature = FeatureUtilities.defaultFeature(resType, "0");
@@ -641,7 +641,7 @@ public class PostgresFeatureStoreTest {
     public void testArrayInsert() throws DataStoreException, VersioningException{
         reload(true);
             
-        store.createSchema(FTYPE_ARRAY.getName(), FTYPE_ARRAY);
+        store.createFeatureType(FTYPE_ARRAY.getName(), FTYPE_ARRAY);
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
         
         final Feature feature = FeatureUtilities.defaultFeature(resType, "0");
@@ -684,7 +684,7 @@ public class PostgresFeatureStoreTest {
     public void testArray2Insert() throws DataStoreException, VersioningException{
         reload(true);
             
-        store.createSchema(FTYPE_ARRAY2.getName(), FTYPE_ARRAY2);
+        store.createFeatureType(FTYPE_ARRAY2.getName(), FTYPE_ARRAY2);
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
         
         final Feature feature = FeatureUtilities.defaultFeature(resType, "0");
@@ -768,7 +768,7 @@ public class PostgresFeatureStoreTest {
         ////////////////////////////////////////////////////////////////////////
         
         
-        store.createSchema(FTYPE_GEOMETRY.getName(), FTYPE_GEOMETRY);
+        store.createFeatureType(FTYPE_GEOMETRY.getName(), FTYPE_GEOMETRY);
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
         
         final Feature feature = FeatureUtilities.defaultFeature(resType, "0");
@@ -831,7 +831,7 @@ public class PostgresFeatureStoreTest {
         reload(false);
         final GeometryFactory gf = new GeometryFactory();
             
-        store.createSchema(FTYPE_COMPLEX.getName(), FTYPE_COMPLEX);
+        store.createFeatureType(FTYPE_COMPLEX.getName(), FTYPE_COMPLEX);
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
         
         final Feature voyage = FeatureUtilities.defaultFeature(resType, "0");
@@ -912,7 +912,7 @@ public class PostgresFeatureStoreTest {
     public void testComplex2Insert() throws DataStoreException, VersioningException{
         reload(false);
             
-        store.createSchema(FTYPE_COMPLEX2.getName(), FTYPE_COMPLEX2);
+        store.createFeatureType(FTYPE_COMPLEX2.getName(), FTYPE_COMPLEX2);
         final FeatureType soundingType = store.getFeatureType(store.getNames().iterator().next());
         final PropertyDescriptor recordType = soundingType.getDescriptor("records");
         final PropertyDescriptor dataType = ((ComplexType)recordType.getType()).getDescriptor("datas");
@@ -1023,7 +1023,7 @@ public class PostgresFeatureStoreTest {
     public void testComplex3Insert() throws DataStoreException, VersioningException{
         reload(false);
             
-        store.createSchema(FTYPE_COMPLEX3.getName(), FTYPE_COMPLEX3);
+        store.createFeatureType(FTYPE_COMPLEX3.getName(), FTYPE_COMPLEX3);
         final FeatureType recordType = store.getFeatureType(store.getNames().iterator().next());
         final PropertyDescriptor data1Type = recordType.getDescriptor("data1");
         final PropertyDescriptor data2Type = recordType.getDescriptor("data2");
@@ -1081,7 +1081,7 @@ public class PostgresFeatureStoreTest {
         reload(false);
         final GeometryFactory gf = new GeometryFactory();
             
-        store.createSchema(FTYPE_COMPLEX.getName(), FTYPE_COMPLEX);
+        store.createFeatureType(FTYPE_COMPLEX.getName(), FTYPE_COMPLEX);
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
         
         final Feature voyage = FeatureUtilities.defaultFeature(resType, "0");

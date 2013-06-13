@@ -415,7 +415,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore{
      * @todo must synchronize this properly
      */
     @Override
-    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         if (!shpFiles.isLocal()) {
             throw new DataStoreException("Cannot create FeatureType on remote shapefile");
         }
@@ -535,7 +535,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Can not update shapefile schema.");
     }
 
@@ -543,7 +543,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public void deleteSchema(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final Name typeName) throws DataStoreException {
         throw new DataStoreException("Can not delete shapefile schema.");
     }
 

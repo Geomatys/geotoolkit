@@ -73,7 +73,7 @@ public class CSVReadingTest extends AbstractReadingTests{
         builder.add(new DefaultName(namespace,"intProp"), Integer.class);
         builder.add(new DefaultName(namespace,"doubleProp"), Double.class);
         final SimpleFeatureType type3 = builder.buildSimpleFeatureType();
-        store.createSchema(name,type3);
+        store.createFeatureType(name,type3);
 
         //create a few features
         FeatureWriter writer = store.getFeatureWriterAppend(name);

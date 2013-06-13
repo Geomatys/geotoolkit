@@ -44,7 +44,7 @@ public class PostgisFeatureReaderTest extends JDBCFeatureReaderTest {
         builder.add(new DefaultName("http://type3.com", "att1"), String.class);
         builder.add(new DefaultName("http://type3.com", "att2"), Integer.class);
         final SimpleFeatureType sft1 = builder.buildSimpleFeatureType();
-        featureStore.createSchema(name3,sft1);
+        featureStore.createFeatureType(name3,sft1);
         assertFalse(featureStore.getNames().size()==featureStore2.getNames().size());
 //        sizeDatastore1 = dataStore.getNames().size();
 //        System.out.println("###################size1 "+sizeDatastore1+"###########");
@@ -52,7 +52,7 @@ public class PostgisFeatureReaderTest extends JDBCFeatureReaderTest {
 //        System.out.println("###################size2 "+sizeDatastore2+"###########");
         featureStore2.refreshMetaModel();
         assertEquals(featureStore.getNames().size(), featureStore2.getNames().size());
-        featureStore.deleteSchema(name3);
+        featureStore.deleteFeatureType(name3);
     }
 
 }

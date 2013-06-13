@@ -17,7 +17,6 @@
 package org.geotoolkit.process.datastore.copy;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureCollection;
@@ -133,11 +132,11 @@ public class Copy extends AbstractProcess {
 
         if(target.getNames().contains(name)) {
             if(erase) {
-                target.deleteSchema(name);
-                target.createSchema(name, type);
+                target.deleteFeatureType(name);
+                target.createFeatureType(name, type);
             }
         }else{
-            target.createSchema(name, type);
+            target.createFeatureType(name, type);
         }
         
         //get the created name, namespace might change
@@ -158,11 +157,11 @@ public class Copy extends AbstractProcess {
 
         if(target.getNames().contains(name)) {
             if(erase) {
-                target.deleteSchema(name);
-                target.createSchema(name, type);
+                target.deleteFeatureType(name);
+                target.createFeatureType(name, type);
             }
         }else{
-            target.createSchema(name, type);
+            target.createFeatureType(name, type);
         }
 
         final Hints hints = new Hints();

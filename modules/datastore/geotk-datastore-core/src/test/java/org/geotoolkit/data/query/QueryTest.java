@@ -79,7 +79,7 @@ public class QueryTest extends TestCase{
         builder.add(new DefaultName("http://type1.com", "att1"), String.class);
         builder.add(new DefaultName("http://type1.com", "att2"), Integer.class);
         final SimpleFeatureType sft1 = builder.buildSimpleFeatureType();
-        store.createSchema(name1,sft1);
+        store.createFeatureType(name1,sft1);
 
         FeatureWriter fw = store.getFeatureWriterAppend(name1);
         SimpleFeature sf = (SimpleFeature) fw.next();
@@ -122,7 +122,7 @@ public class QueryTest extends TestCase{
         builder.add(new DefaultName("http://type2.com", "att3"), Integer.class);
         builder.add(new DefaultName("http://type2.com", "att4"), Double.class);
         final SimpleFeatureType sft2 = builder.buildSimpleFeatureType();
-        store.createSchema(name2,sft2);
+        store.createFeatureType(name2,sft2);
 
         fw = store.getFeatureWriterAppend(name2);
         sf = (SimpleFeature) fw.next();

@@ -994,7 +994,7 @@ public final class DefaultJDBCFeatureStore extends AbstractJDBCFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
 
         if(typeName == null){
             throw new DataStoreException("Type name can not be null.");
@@ -1045,7 +1045,7 @@ public final class DefaultJDBCFeatureStore extends AbstractJDBCFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void updateSchema(final Name typeName, final FeatureType newft) throws DataStoreException {
+    public void updateFeatureType(final Name typeName, final FeatureType newft) throws DataStoreException {
         final FeatureType oldft = getFeatureType(typeName);
 
         //we only handle adding or removing columns
@@ -1096,7 +1096,7 @@ public final class DefaultJDBCFeatureStore extends AbstractJDBCFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void deleteSchema(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final Name typeName) throws DataStoreException {
         final FeatureType featureType = getFeatureType(typeName);
 
         //execute the drop table statement

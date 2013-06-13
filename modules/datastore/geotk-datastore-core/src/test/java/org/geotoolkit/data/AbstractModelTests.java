@@ -81,7 +81,7 @@ public abstract class AbstractModelTests {
             store.addStorageListener(storeListen);
             session.addStorageListener(sessionListen);
 
-            store.createSchema(sft.getName(), sft);
+            store.createFeatureType(sft.getName(), sft);
 
             final SimpleFeatureType type = (SimpleFeatureType) store.getFeatureType(name);
             assertNotNull(type);
@@ -127,7 +127,7 @@ public abstract class AbstractModelTests {
             store.addStorageListener(storeListen);
             session.addStorageListener(sessionListen);
 
-            store.deleteSchema(nsname);
+            store.deleteFeatureType(nsname);
 
             //check listeners
 //            assertEquals(1, storeListen.numManageEvent);

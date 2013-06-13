@@ -153,7 +153,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
         // write features
         ShapefileFeatureStoreFactory make = new ShapefileFeatureStoreFactory();
         FeatureStore s = make.create(Collections.singletonMap("url", tmpFile.toURI().toURL()));
-        s.createSchema(type.getName(),type);
+        s.createFeatureType(type.getName(),type);
         Name typeName = type.getName();
 
         Session session = s.createSession(true);

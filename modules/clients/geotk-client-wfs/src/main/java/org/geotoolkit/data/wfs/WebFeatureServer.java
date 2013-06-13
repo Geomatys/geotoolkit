@@ -285,18 +285,18 @@ public class WebFeatureServer extends AbstractServer implements FeatureStore{
     }
 
     @Override
-    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
-        getStore().createSchema(typeName, featureType);
+    public void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+        getStore().createFeatureType(typeName, featureType);
     }
 
     @Override
-    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
-        getStore().updateSchema(typeName, featureType);
+    public void updateFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+        getStore().updateFeatureType(typeName, featureType);
     }
 
     @Override
-    public void deleteSchema(Name typeName) throws DataStoreException {
-        getStore().deleteSchema(typeName);
+    public void deleteFeatureType(Name typeName) throws DataStoreException {
+        getStore().deleteFeatureType(typeName);
     }
 
     @Override

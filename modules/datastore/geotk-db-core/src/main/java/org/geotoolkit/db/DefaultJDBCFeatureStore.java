@@ -629,7 +629,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
      * @throws DataStoreException 
      */
     @Override
-    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         ensureOpen();
         
         if(typeName == null){
@@ -742,7 +742,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
     }
 
     @Override
-    public void updateSchema(final Name typeName, final FeatureType newft) throws DataStoreException {
+    public void updateFeatureType(final Name typeName, final FeatureType newft) throws DataStoreException {
         ensureOpen();
         final FeatureType oldft = getFeatureType(typeName);
 
@@ -791,7 +791,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
     }
 
     @Override
-    public void deleteSchema(final Name typeName) throws DataStoreException{
+    public void deleteFeatureType(final Name typeName) throws DataStoreException{
         ensureOpen();
         final FeatureType featureType = getFeatureType(typeName);
         final Set<ComplexType> visited = new HashSet<ComplexType>();

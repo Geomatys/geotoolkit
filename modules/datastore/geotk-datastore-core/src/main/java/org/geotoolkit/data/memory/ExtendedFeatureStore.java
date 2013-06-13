@@ -106,28 +106,28 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         if(getQueryNames().contains(typeName)){
             throw new DataStoreException("Type for name "+typeName +" already exist.");
         }
-        wrapped.createSchema(typeName, featureType);
+        wrapped.createFeatureType(typeName, featureType);
     }
 
     @Override
-    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         if(getQueryNames().contains(typeName)){
             throw new DataStoreException("Type for name "+typeName +" is a stred query, it can not be updated.");
         }
-        wrapped.updateSchema(typeName, featureType);
+        wrapped.updateFeatureType(typeName, featureType);
         featureTypes.clear();
     }
 
     @Override
-    public void deleteSchema(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final Name typeName) throws DataStoreException {
         if(getQueryNames().contains(typeName)){
             removeQuery(typeName);
         }
-        wrapped.deleteSchema(typeName);
+        wrapped.deleteFeatureType(typeName);
         featureTypes.clear();
     }
 

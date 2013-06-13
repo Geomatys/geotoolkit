@@ -620,7 +620,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     private void writeFeatures(final IndexedShapefileFeatureStore s, final Collection<SimpleFeature> fc)
             throws Exception {
         final SimpleFeatureType type = fc.iterator().next().getFeatureType();
-        s.createSchema(type.getName(),type);
+        s.createFeatureType(type.getName(),type);
 
         final FeatureWriter<SimpleFeatureType, SimpleFeature> fw = s.getFeatureWriter(type.getName(),Filter.INCLUDE);
         final Iterator<SimpleFeature> it = fc.iterator();
@@ -659,7 +659,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         // write features
         IndexedShapefileFeatureStore s = new IndexedShapefileFeatureStore(tmpFile
                 .toURI().toURL());
-        s.createSchema(type.getName(),type);
+        s.createFeatureType(type.getName(),type);
         writeFeatures(s, features);
 
         s.dispose();

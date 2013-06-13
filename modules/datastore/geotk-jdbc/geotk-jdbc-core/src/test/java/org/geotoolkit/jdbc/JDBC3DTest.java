@@ -160,7 +160,7 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
      * @throws Exception
      */
     public void testCreateSchemaAndInsert() throws Exception {
-        featureStore.createSchema(poly3DType.getName(),poly3DType);
+        featureStore.createFeatureType(poly3DType.getName(),poly3DType);
         SimpleFeatureType actualSchema = (SimpleFeatureType) featureStore.getFeatureType(nsname(POLY3D));
         assertFeatureTypesEqual(poly3DType, actualSchema);
         assertEquals(new Integer(4359), actualSchema.getGeometryDescriptor().getUserData().get(

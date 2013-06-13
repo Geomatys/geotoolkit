@@ -278,7 +278,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Schema creation not supported.");
     }
 
@@ -286,7 +286,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Schema update not supported.");
     }
 
@@ -294,7 +294,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public void deleteSchema(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final Name typeName) throws DataStoreException {
         throw new DataStoreException("Schema deletion not supported.");
     }
 

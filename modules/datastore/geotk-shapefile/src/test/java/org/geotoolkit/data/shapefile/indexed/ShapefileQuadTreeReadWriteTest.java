@@ -123,7 +123,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         FeatureStore s;
         s = createDataStore(maker, tmp.toURI().toURL(), memorymapped);
 
-        s.createSchema(type.getName(),type);
+        s.createFeatureType(type.getName(),type);
 
         Session session = s.createSession(true);
         session.addFeatures(type.getName(),one);
@@ -154,7 +154,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         FeatureStore s;
         s = createDataStore(maker, tmp.toURI().toURL(), memorymapped);
 
-        s.createSchema(type.getName(),type);
+        s.createFeatureType(type.getName(),type);
 
         Session session = s.createSession(true);
         session.addFeatures(type.getName(),one);

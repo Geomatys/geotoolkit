@@ -210,7 +210,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
         shapefile = (ShapefileFeatureStore) maker.open(params);
 
-        shapefile.createSchema(typeName,type);
+        shapefile.createFeatureType(typeName,type);
 
         Session session = shapefile.createSession(true);
         session.addFeatures(typeName, original);

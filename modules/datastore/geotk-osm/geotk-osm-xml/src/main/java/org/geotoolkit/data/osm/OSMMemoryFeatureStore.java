@@ -125,9 +125,9 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
             final Object input) throws IOException, XMLStreamException, DataStoreException{
         super(params);
         memoryStore = new MemoryFeatureStore();
-        memoryStore.createSchema(TYPE_NODE.getName(), TYPE_NODE);
-        memoryStore.createSchema(TYPE_WAY.getName(), TYPE_WAY);
-        memoryStore.createSchema(TYPE_RELATION.getName(), TYPE_RELATION);
+        memoryStore.createFeatureType(TYPE_NODE.getName(), TYPE_NODE);
+        memoryStore.createFeatureType(TYPE_WAY.getName(), TYPE_WAY);
+        memoryStore.createFeatureType(TYPE_RELATION.getName(), TYPE_RELATION);
 
         final OSMXMLReader reader = new OSMXMLReader();
         try{
@@ -140,7 +140,7 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
                     final FeatureType ft = feature.getType();
 
                     if(!memoryStore.getNames().contains(ft.getName())){
-                        memoryStore.createSchema(ft.getName(), ft);
+                        memoryStore.createFeatureType(ft.getName(), ft);
                     }
 
                     memoryStore.addFeatures(ft.getName(), Collections.singleton(feature));
@@ -208,17 +208,17 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("New schema creation not allowed on GPX files.");
     }
 
     @Override
-    public void deleteSchema(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final Name typeName) throws DataStoreException {
         throw new DataStoreException("Delete schema not allowed on GPX files.");
     }
 
     @Override
-    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Update schema not allowed on GPX files.");
     }
 

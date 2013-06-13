@@ -182,17 +182,17 @@ public class GPXFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("New schema creation not allowed on GPX files.");
     }
 
     @Override
-    public void deleteSchema(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final Name typeName) throws DataStoreException {
         throw new DataStoreException("Delete schema not allowed on GPX files.");
     }
 
     @Override
-    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Update schema not allowed on GPX files.");
     }
 

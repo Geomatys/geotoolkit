@@ -152,13 +152,13 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
     }
     
      @Override
-    public void deleteSchema(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final Name typeName) throws DataStoreException {
         try {
             getVersioning(typeName).dropVersioning();
         } catch (VersioningException ex) {
             throw new DataStoreException(ex);
         }
-         super.deleteSchema(typeName);
+         super.deleteFeatureType(typeName);
         
     }
     

@@ -27,7 +27,7 @@ public class MemoryFeatureStoreDemo {
         ftb.add("type", String.class);
         ftb.add("the_geom", Point.class, DefaultGeographicCRS.WGS84);
         final FeatureType type = ftb.buildFeatureType();
-        store.createSchema(type.getName(), type);
+        store.createFeatureType(type.getName(), type);
 
 
         //query the featurestore like any other

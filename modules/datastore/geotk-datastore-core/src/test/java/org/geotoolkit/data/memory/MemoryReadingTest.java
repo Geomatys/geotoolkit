@@ -63,7 +63,7 @@ public class MemoryReadingTest extends AbstractReadingTests{
         names.add(name);
         expecteds.add(new ExpectedResult(name,type1,0,null));
 
-        store.createSchema(name,type1);
+        store.createFeatureType(name,type1);
 
         //second schema --------------------------------------------------------
         name = new DefaultName("http://test.com", "TestSchema2");
@@ -73,7 +73,7 @@ public class MemoryReadingTest extends AbstractReadingTests{
         builder.add("double", Double.class);
         builder.add("date", Date.class);
         final SimpleFeatureType type2 = builder.buildSimpleFeatureType();
-        store.createSchema(name,type2);
+        store.createFeatureType(name,type2);
 
         //create a few features
         FeatureWriter writer = store.getFeatureWriterAppend(name);
@@ -110,7 +110,7 @@ public class MemoryReadingTest extends AbstractReadingTests{
         builder.add("geometry", Point.class, CRS.decode("EPSG:27582"));
         builder.add("string", String.class);
         final SimpleFeatureType type3 = builder.buildSimpleFeatureType();
-        store.createSchema(name,type3);
+        store.createFeatureType(name,type3);
 
         //create a few features
         writer = store.getFeatureWriterAppend(name);

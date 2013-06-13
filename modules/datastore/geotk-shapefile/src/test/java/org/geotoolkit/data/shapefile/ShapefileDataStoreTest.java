@@ -240,7 +240,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         URL toURL = file.toURI().toURL();
         ShapefileFeatureStore ds = new ShapefileFeatureStore(toURL);
         SimpleFeatureType toCreate = FeatureTypeUtilities.createType("test", "geom:MultiPolygon");
-        ds.createSchema(toCreate.getName(),toCreate);
+        ds.createFeatureType(toCreate.getName(),toCreate);
 
         assertEquals("test", ds.getTypeNames()[0]);
 
@@ -269,7 +269,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         CoordinateReferenceSystem crs = featureType.getGeometryDescriptor().getCoordinateReferenceSystem();
         assertNotNull( crs );
 
-        ds.createSchema(featureType.getName(),featureType);
+        ds.createFeatureType(featureType.getName(),featureType);
 
         assertEquals("test", ds.getFeatureType(ds.getTypeNames()[0]).getName().getLocalPart());
 
@@ -426,7 +426,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         File tempFile = getTempFile();
         ShapefileFeatureStore shapefileFeatureStore = new ShapefileFeatureStore(tempFile.toURI().toURL());
-        shapefileFeatureStore.createSchema(featureType.getName(),featureType);
+        shapefileFeatureStore.createFeatureType(featureType.getName(),featureType);
 
         FeatureWriter<SimpleFeatureType, SimpleFeature> featureWriter = shapefileFeatureStore.getFeatureWriter(
                 shapefileFeatureStore.getName(),Filter.INCLUDE);
@@ -620,7 +620,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         File tmpFile = getTempFile();
         tmpFile.createNewFile();
         ShapefileFeatureStore s = new ShapefileFeatureStore(tmpFile.toURI().toURL());
-        s.createSchema(type.getName(),type);
+        s.createFeatureType(type.getName(),type);
 
 //        // was failing in GEOT-2427
 //        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = s.getFeatureWriter(s.getNames().iterator().next(),Filter.INCLUDE);
@@ -697,7 +697,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         final SimpleFeatureType sft = fc.iterator().next().getFeatureType();
 
-        s.createSchema(sft.getName(), sft);
+        s.createFeatureType(sft.getName(), sft);
         FeatureWriter<SimpleFeatureType, SimpleFeature> fw = s.getFeatureWriter(sft.getName(),Filter.INCLUDE);
         Iterator<SimpleFeature> it = fc.iterator();
         while (it.hasNext()) {
@@ -733,7 +733,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         // write features
         ShapefileFeatureStore shapeFeatureStore = new ShapefileFeatureStore(tmpFile.toURI().toURL());
-        shapeFeatureStore.createSchema(type.getName(),type);
+        shapeFeatureStore.createFeatureType(type.getName(),type);
         writeFeatures(shapeFeatureStore, features);
 
         // read features

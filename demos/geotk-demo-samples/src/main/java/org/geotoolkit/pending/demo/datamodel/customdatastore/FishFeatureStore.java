@@ -98,17 +98,17 @@ public class FishFeatureStore extends AbstractFeatureStore{
     ///////////////////////////////////////////////////////////////
 
     @Override
-    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
     @Override
-    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
     @Override
-    public void deleteSchema(Name typeName) throws DataStoreException {
+    public void deleteFeatureType(Name typeName) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 

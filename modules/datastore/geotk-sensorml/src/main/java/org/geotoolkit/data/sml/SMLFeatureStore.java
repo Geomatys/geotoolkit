@@ -363,7 +363,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -371,7 +371,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -379,7 +379,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void deleteSchema(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final Name typeName) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 

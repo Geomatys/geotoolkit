@@ -87,7 +87,7 @@ public abstract class JDBCGeometrylessTest extends JDBCTestSupport {
     }
     
     public void testCreate() throws Exception {
-        featureStore.createSchema(zipCodeSchema.getName(),zipCodeSchema);
+        featureStore.createFeatureType(zipCodeSchema.getName(),zipCodeSchema);
         SimpleFeatureType result = (SimpleFeatureType)featureStore.getFeatureType(tname(ZIPCODE));
         assertFeatureTypesEqual(zipCodeSchema, result);
     }

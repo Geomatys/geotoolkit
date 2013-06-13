@@ -100,7 +100,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         IndexedShapefileFeatureStore s;
         s = new IndexedShapefileFeatureStore(tmp.toURI().toURL(), memorymapped, true);
 
-        s.createSchema(type.getName(),type);
+        s.createFeatureType(type.getName(),type);
 
         Session session = s.createSession(true);
         session.addFeatures(type.getName(),one);
@@ -132,7 +132,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         s = (IndexedShapefileFeatureStore) new IndexedShapefileFeatureStore(tmp.toURI().toURL(),
                 memorymapped, true);
 
-        s.createSchema(type.getName(),type);
+        s.createFeatureType(type.getName(),type);
 
         Session session = s.createSession(true);
         session.addFeatures(s.getName(),one);

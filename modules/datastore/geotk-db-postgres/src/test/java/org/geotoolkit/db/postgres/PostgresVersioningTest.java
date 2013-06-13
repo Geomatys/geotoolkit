@@ -138,7 +138,7 @@ public class PostgresVersioningTest {
         for(Name n : store.getNames()){
             VersionControl vc = store.getVersioning(n);
             vc.dropVersioning();
-            store.deleteSchema(n);
+            store.deleteFeatureType(n);
         }
         assertTrue(store.getNames().isEmpty());
         store.dispose();
@@ -168,7 +168,7 @@ public class PostgresVersioningTest {
         
         //create table
         final FeatureType refType = FTYPE_SIMPLE;        
-        store.createSchema(refType.getName(), refType);        
+        store.createFeatureType(refType.getName(), refType);        
         assertEquals(1, store.getNames().size());
         
         assertNotNull(store.getQueryCapabilities());
@@ -424,7 +424,7 @@ public class PostgresVersioningTest {
         final QueryBuilder qb = new QueryBuilder();
         
         final FeatureType refType = FTYPE_SIMPLE;        
-        store.createSchema(refType.getName(), refType);        
+        store.createFeatureType(refType.getName(), refType);        
         final VersionControl vc = store.getVersioning(refType.getName());
         
         ////////////////////////////////////////////////////////////////////////
@@ -544,7 +544,7 @@ public class PostgresVersioningTest {
         final QueryBuilder qb = new QueryBuilder();
         
         final FeatureType refType = FTYPE_SIMPLE;        
-        store.createSchema(refType.getName(), refType);        
+        store.createFeatureType(refType.getName(), refType);        
         final VersionControl vc = store.getVersioning(refType.getName());
         
         ////////////////////////////////////////////////////////////////////////
@@ -715,7 +715,7 @@ public class PostgresVersioningTest {
         
         //create table
         final FeatureType refType = FTYPE_SIMPLE;        
-        store.createSchema(refType.getName(), refType);        
+        store.createFeatureType(refType.getName(), refType);        
         assertEquals(1, store.getNames().size());
         
         //get version control
@@ -859,7 +859,7 @@ public class PostgresVersioningTest {
         
         //create table
         final FeatureType refType = FTYPE_SIMPLE;        
-        store.createSchema(refType.getName(), refType);        
+        store.createFeatureType(refType.getName(), refType);        
         assertEquals(1, store.getNames().size());
         
         //get version control
@@ -1072,7 +1072,7 @@ public class PostgresVersioningTest {
         for(Name n : store2.getNames()) {
             VersionControl vc = store2.getVersioning(n);
             vc.dropVersioning();
-            store2.deleteSchema(n);
+            store2.deleteFeatureType(n);
         }
         assertTrue(store2.getNames().isEmpty());
         
@@ -1082,7 +1082,7 @@ public class PostgresVersioningTest {
         
         
         //-------------- create table in public schema --------------------
-        store.createSchema(refType.getName(), refType);        
+        store.createFeatureType(refType.getName(), refType);        
         assertEquals(1, store.getNames().size());
         assertTrue(store2.getNames().isEmpty());
         
@@ -1099,7 +1099,7 @@ public class PostgresVersioningTest {
         assertTrue(versions.isEmpty());
         
         //--------------------- table creation in public2 schema ---------------
-        store2.createSchema(refType.getName(), refType);
+        store2.createFeatureType(refType.getName(), refType);
         assertEquals(1, store2.getNames().size());
         
         //get version control
