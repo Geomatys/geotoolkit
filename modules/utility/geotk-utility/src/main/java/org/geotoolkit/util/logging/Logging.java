@@ -407,7 +407,7 @@ public final class Logging extends Static {
     public void forceMonolineConsoleOutput(final Level level) {
         final Logger logger = Logger.getLogger(name); // Really Java logging, not the redirected one.
         synchronized (EMPTY) {
-            final MonolineFormatter f = MonolineFormatter.configureConsoleHandler(logger, level);
+            final org.apache.sis.util.logging.MonolineFormatter f = MonolineFormatter.configureConsoleHandler(logger, level);
             if (f != null) {
                 f.setSourceFormat("class:short");
             }
