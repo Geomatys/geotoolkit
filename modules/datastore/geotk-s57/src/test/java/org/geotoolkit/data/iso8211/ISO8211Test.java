@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
@@ -74,6 +75,7 @@ public class ISO8211Test {
             + "2500;&   2-D Coordinate field*YCOO!XCOO(2b24)"
             + "2500;&   3-D Coordinate field*YCOO!XCOO!VE3D(3b24)";
     
+    @Ignore
     @Test
     public void DDRCalculateMetricsTest() throws IOException{
         final ISO8211Reader reader = new ISO8211Reader();
