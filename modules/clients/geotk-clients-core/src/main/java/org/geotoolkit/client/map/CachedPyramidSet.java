@@ -120,7 +120,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
     public abstract Request getTileRequest(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException;
 
     public TileReference getTile(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
-        final String formatmime = (String) hints.get(PyramidSet.HINT_FORMAT);
+        final String formatmime = (hints==null)? null : (String) hints.get(PyramidSet.HINT_FORMAT);
         ImageReaderSpi spi = null;
         if(formatmime!=null){
             try {
