@@ -33,6 +33,7 @@ import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Exceptions;
 import org.apache.sis.util.Classes;
+import org.apache.sis.util.logging.MonolineFormatter;
 
 
 /**
@@ -407,7 +408,7 @@ public final class Logging extends Static {
     public void forceMonolineConsoleOutput(final Level level) {
         final Logger logger = Logger.getLogger(name); // Really Java logging, not the redirected one.
         synchronized (EMPTY) {
-            final MonolineFormatter f = MonolineFormatter.configureConsoleHandler(logger, level);
+            final MonolineFormatter f = MonolineFormatter.install(logger, level);
             if (f != null) {
                 f.setSourceFormat("class:short");
             }
