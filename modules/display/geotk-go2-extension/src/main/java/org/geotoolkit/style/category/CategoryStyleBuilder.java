@@ -34,7 +34,7 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;

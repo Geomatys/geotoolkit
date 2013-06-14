@@ -24,13 +24,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.io.TableAppender;
+import org.apache.sis.util.Utilities;
 
 import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
-import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.Utilities;
 
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.IllegalAttributeException;
@@ -323,13 +323,13 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
         }
 
         //make a nice table to display
-        final TableWriter tablewriter = new TableWriter(writer);
-        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
-        tablewriter.write("@id\t"+getID()+"\n");
+        final TableAppender tablewriter = new TableAppender(writer);
+        tablewriter.writeHorizontalSeparator();
+        tablewriter.append("@id\t"+getID()+"\n");
 
         for(Property prop : getProperties()){
-            tablewriter.write(DefaultName.toJCRExtendedForm(prop.getName()));
-            tablewriter.write("\t");
+            tablewriter.append(DefaultName.toJCRExtendedForm(prop.getName()));
+            tablewriter.append("\t");
             Object value = prop.getValue();
             if(value != null && value.getClass().isArray()){
                 value = Utilities.deepToString(value);
@@ -337,11 +337,11 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
                 value = String.valueOf(value);
             }
 
-            tablewriter.write((String)value);
-            tablewriter.write("\n");
+            tablewriter.append((String)value);
+            tablewriter.append("\n");
         }
 
-        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+        tablewriter.writeHorizontalSeparator();
 
         try {
             tablewriter.flush();

@@ -117,7 +117,7 @@ public class DefaultNameTest {
     @Test
     public void testSerialize(){
         Name name = DefaultName.valueOf("{geotk}test");
-        assertSerializable(name);
+        assertSerializedEquals(name);
     }
 
 }

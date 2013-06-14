@@ -18,12 +18,12 @@
 package org.geotoolkit.data.session;
 
 import java.util.Collections;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreListener;
 import org.geotoolkit.data.FeatureStoreManagementEvent;
 import org.geotoolkit.storage.AbstractStorage;
-import org.geotoolkit.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;

@@ -37,7 +37,7 @@ public class WeakPropertyChangeListener extends WeakReference<PropertyChangeList
 
     public WeakPropertyChangeListener(final Object source, final PropertyChangeListener ref) {
         super(ref, ReferenceQueueConsumer.DEFAULT.queue);
-        ArgumentChecks.ensureNonNull("source", source);
+        org.apache.sis.util.ArgumentChecks.ensureNonNull("source", source);
         registerSource(source);
     }
 

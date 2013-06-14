@@ -37,9 +37,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
-import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.temporal.Position;
 import org.opengis.util.InternationalString;
 

@@ -21,13 +21,13 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
-import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
 
 /**

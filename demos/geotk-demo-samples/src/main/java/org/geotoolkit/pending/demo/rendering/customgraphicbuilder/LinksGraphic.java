@@ -24,7 +24,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;

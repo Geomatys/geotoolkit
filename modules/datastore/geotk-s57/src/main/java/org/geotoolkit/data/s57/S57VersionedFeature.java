@@ -22,7 +22,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionHistory;
 import org.geotoolkit.version.Versioned;

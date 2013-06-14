@@ -25,7 +25,7 @@ import java.util.concurrent.BlockingQueue;
 import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.TileReference;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.DirectPosition;
 
 /**

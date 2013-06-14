@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.GZIPInputStream;
-import org.geotoolkit.io.TableWriter;
+import org.apache.sis.io.TableAppender;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.util.StringUtilities;
@@ -259,17 +259,17 @@ public abstract class AbstractRequest implements Request {
             }
         } catch(IOException ex) {
             final StringWriter writer = new StringWriter();
-            final TableWriter tablewriter = new TableWriter(writer);
+            final TableAppender tablewriter = new TableAppender(writer);
 
-            tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+            tablewriter.writeHorizontalSeparator();
 
             for(Entry<String,List<String>> entry : cnx.getHeaderFields().entrySet()){
-                tablewriter.write((entry.getKey()!= null)? entry.getKey() : "null");
-                tablewriter.write('\t');
-                tablewriter.write(StringUtilities.toCommaSeparatedValues(entry.getValue()));
-                tablewriter.write('\n');
+                tablewriter.append((entry.getKey()!= null)? entry.getKey() : "null");
+                tablewriter.append('\t');
+                tablewriter.append(StringUtilities.toCommaSeparatedValues(entry.getValue()));
+                tablewriter.append('\n');
             }
-            tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+            tablewriter.writeHorizontalSeparator();
 
             try {
                 tablewriter.flush();

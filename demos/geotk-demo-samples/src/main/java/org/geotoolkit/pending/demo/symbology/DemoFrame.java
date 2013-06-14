@@ -23,7 +23,7 @@ import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.JXTree;

@@ -19,7 +19,7 @@ package org.geotoolkit.db;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.factory.Hints;
 import org.opengis.feature.Feature;

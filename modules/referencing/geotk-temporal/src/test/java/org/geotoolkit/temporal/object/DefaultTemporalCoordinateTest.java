@@ -17,12 +17,11 @@
  */
 package org.geotoolkit.temporal.object;
 
-import org.geotoolkit.temporal.object.DefaultTemporalCoordinate;
 import java.util.GregorianCalendar;
+import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.reference.DefaultTemporalCoordinateSystem;
-import org.geotoolkit.util.SimpleInternationalString;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.temporal.reference;
 
-import org.geotoolkit.temporal.reference.DefaultOrdinalEra;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;

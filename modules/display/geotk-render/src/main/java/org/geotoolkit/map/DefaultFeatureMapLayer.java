@@ -31,7 +31,7 @@ import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.NumberRange;

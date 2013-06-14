@@ -18,7 +18,7 @@ package org.geotoolkit.data.shapefile.shp;
 
 import java.nio.ByteBuffer;
 
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 /**
  * Wrapper for a Shapefile Null geometry.

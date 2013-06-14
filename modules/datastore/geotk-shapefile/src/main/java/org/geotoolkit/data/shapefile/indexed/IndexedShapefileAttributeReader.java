@@ -25,7 +25,7 @@ import org.geotoolkit.data.shapefile.ShapefileAttributeReader;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.index.CloseableCollection;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 import org.opengis.feature.type.PropertyDescriptor;
 

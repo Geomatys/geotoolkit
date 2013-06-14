@@ -32,7 +32,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterNotFoundException;

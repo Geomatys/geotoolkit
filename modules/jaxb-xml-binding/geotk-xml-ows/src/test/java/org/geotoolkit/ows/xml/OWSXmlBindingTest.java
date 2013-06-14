@@ -17,6 +17,7 @@
 package org.geotoolkit.ows.xml;
 
 // J2SE dependencies
+import java.io.IOException;
 import org.geotoolkit.ows.xml.v110.ExceptionReport;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -27,6 +28,8 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.test.XMLComparator;
 
 // Geotoolkit dependencies
 import org.geotoolkit.util.logging.Logging;
@@ -35,6 +38,7 @@ import org.geotoolkit.xml.MarshallerPool;
 //Junit dependencies
 import org.junit.*;
 import static org.junit.Assert.*;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -82,7 +86,7 @@ public class OWSXmlBindingTest {
      * @throws JAXBException
      */
     @Test
-    public void exceptionMarshalingTest() throws JAXBException {
+    public void exceptionMarshalingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
 
         /*
          * Test marshalling exception report 110
@@ -104,11 +108,8 @@ public class OWSXmlBindingTest {
         "        <ns2:ExceptionText>some error</ns2:ExceptionText>"               + '\n' +
         "    </ns2:Exception>"                                                    + '\n' +
         "</ns2:ExceptionReport>"                                                  + '\n';
-
-        LOGGER.log(Level.FINER, "result: {0}", result);
-        LOGGER.log(Level.FINER, "expected: {0}", expResult);
-        assertEquals(expResult, result);
-
+        final XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.compare();
 
     }
 

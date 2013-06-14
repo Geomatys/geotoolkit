@@ -27,7 +27,7 @@ import org.geotoolkit.jdbc.JDBCFeatureStore;
 import org.geotoolkit.jdbc.JDBCTestSetup;
 import org.geotoolkit.jdbc.JDBCTestSupport;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.junit.Test;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;

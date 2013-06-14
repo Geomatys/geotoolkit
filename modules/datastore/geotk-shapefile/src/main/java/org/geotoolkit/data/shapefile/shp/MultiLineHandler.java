@@ -26,7 +26,7 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import java.nio.DoubleBuffer;
 
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 /**
  * The default JTS handler for shapefile. Currently uses the default JTS

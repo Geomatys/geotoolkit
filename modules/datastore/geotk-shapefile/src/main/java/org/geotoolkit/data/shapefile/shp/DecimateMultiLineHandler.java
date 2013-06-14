@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 
 import com.vividsolutions.jts.geom.LineString;
 import java.nio.DoubleBuffer;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 
 /**

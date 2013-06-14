@@ -79,7 +79,7 @@ public class UnionTest extends AbstractProcessTest {
 
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultList();
-
+        
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
         assertEquals(featureListOut.getID(), featureListResult.getID());
         assertEquals(featureListOut.size(), featureListResult.size());
@@ -441,16 +441,17 @@ public class UnionTest extends AbstractProcessTest {
         featureList.add(myFeature);
 
 
+        //POLYGON ((8 5, 8 7, 7 7, 7 8, 9 8, 9 4, 8 4, 8 5))
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
+                    new Coordinate(8, 5),
+                    new Coordinate(8, 7),
                     new Coordinate(7, 7),
                     new Coordinate(7, 8),
                     new Coordinate(9, 8),
                     new Coordinate(9, 4),
                     new Coordinate(8, 4),
-                    new Coordinate(8, 5),
-                    new Coordinate(8, 7),
-                    new Coordinate(7, 7)
+                    new Coordinate(8, 5)
                 });
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "feature12");

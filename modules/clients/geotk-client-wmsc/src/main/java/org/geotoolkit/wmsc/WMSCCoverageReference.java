@@ -25,7 +25,7 @@ import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.wms.WMSCoverageReference;
 import org.geotoolkit.wmsc.model.WMSCPyramidSet;
 import org.opengis.feature.type.Name;

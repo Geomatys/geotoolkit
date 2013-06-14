@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.observation;
 
+import java.io.IOException;
 import org.geotoolkit.observation.xml.v100.ProcessType;
 import org.geotoolkit.observation.xml.v100.ObservationType;
 import java.io.StringReader;
@@ -27,6 +28,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v311.PointPropertyType;
@@ -50,6 +53,7 @@ import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -91,7 +95,7 @@ public class ObservationXMLBindingTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void marshallingTest() throws JAXBException {
+    public void marshallingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
 
         DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
         PointType location     = new PointType("point-ID", pos);
@@ -170,7 +174,8 @@ public class ObservationXMLBindingTest {
                            "        </swe:DataArray>" + '\n' +
                            "    </om:result>" + '\n' +
                            "</om:Observation>\n";
-        assertEquals(expResult, result);
+        XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.compare();
 
 
         UnitOfMeasureEntry uom  = new UnitOfMeasureEntry("m", "meters", "distance", null);
@@ -224,8 +229,9 @@ public class ObservationXMLBindingTest {
                            "        <om:value>7.0</om:value>" + '\n' +
                            "    </om:result>" + '\n' +
                            "</om:Measurement>\n";
+        comparator = new XMLComparator(expResult, result);
+        comparator.compare();
         
-        assertEquals(expResult, result);
         
         ObservationCollectionType collection = new ObservationCollectionType();
         collection.add(measmt);

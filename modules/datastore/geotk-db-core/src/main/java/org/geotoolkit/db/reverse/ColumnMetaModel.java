@@ -28,7 +28,7 @@ import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 /**
  * Description of a table column.

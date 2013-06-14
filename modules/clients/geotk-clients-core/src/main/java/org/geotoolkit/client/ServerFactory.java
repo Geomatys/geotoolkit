@@ -20,7 +20,7 @@ package org.geotoolkit.client;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptorGroup;

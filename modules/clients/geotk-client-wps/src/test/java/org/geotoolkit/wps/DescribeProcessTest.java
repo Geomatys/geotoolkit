@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -23,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.wps.v100.DescribeProcess100;
@@ -30,6 +33,7 @@ import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.DescribeProcess;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -70,7 +74,7 @@ public class DescribeProcessTest {
     }
 
    @Test
-   public void testRequestAndMarshall(){
+   public void testRequestAndMarshall() throws IOException, ParserConfigurationException, SAXException{
         try {
             final List<String> identifiers = new ArrayList<String>();
             identifiers.add("identifier1");
@@ -101,7 +105,8 @@ public class DescribeProcessTest {
                     + "    <ows:Identifier>identifier2</ows:Identifier>\n"
                     + "    <ows:Identifier>identifier3</ows:Identifier>\n"
                     + "</wps:DescribeProcess>\n";
-            assertEquals(expectedMarshalledRequest, result);
+            final XMLComparator comparator = new XMLComparator(expectedMarshalledRequest, result);
+            comparator.compare();
             WPSMarshallerPool.getInstance().release(marshaller);
         } catch (JAXBException ex) {
             fail(ex.getLocalizedMessage());

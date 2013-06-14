@@ -9,7 +9,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.feature.type.FeatureType;
 
 public class MemoryFeatureStoreDemo {

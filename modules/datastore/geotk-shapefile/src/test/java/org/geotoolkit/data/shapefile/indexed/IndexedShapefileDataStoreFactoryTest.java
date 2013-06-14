@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;

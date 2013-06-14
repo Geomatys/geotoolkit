@@ -18,10 +18,9 @@ package org.geotoolkit.coverage.memory;
 
 import java.awt.Dimension;
 import java.util.Map;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.Pyramid;
-import org.geotoolkit.coverage.TileReference;
-import org.geotoolkit.storage.DataStoreException;
 import org.opengis.geometry.DirectPosition;
 
 /**

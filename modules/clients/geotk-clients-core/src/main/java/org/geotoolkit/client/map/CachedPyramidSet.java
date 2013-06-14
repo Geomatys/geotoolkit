@@ -48,7 +48,7 @@ import org.geotoolkit.client.Request;
 import org.geotoolkit.client.Server;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.security.DefaultClientSecurity;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.image.io.XImageIO;
@@ -120,7 +120,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
     public abstract Request getTileRequest(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException;
 
     public TileReference getTile(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
-        final String formatmime = (hints==null)? null : (String) hints.get(PyramidSet.HINT_FORMAT);
+        final String formatmime = (hints==null) ? null : (String) hints.get(PyramidSet.HINT_FORMAT);
         ImageReaderSpi spi = null;
         if(formatmime!=null){
             try {

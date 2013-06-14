@@ -20,7 +20,7 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.apache.sis.util.ArgumentChecks;

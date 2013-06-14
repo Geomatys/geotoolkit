@@ -64,7 +64,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.StringUtilities;

@@ -46,7 +46,7 @@ import org.geotoolkit.data.s57.model.S57FileReader;
 import org.geotoolkit.data.s57.model.S57Object;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;

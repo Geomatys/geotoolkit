@@ -71,7 +71,7 @@ public class BinaryExpressionTest {
         result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
-        assertSerializable(exp); //test serialize
+        assertSerializedEquals(exp); //test serialize
 
     }
 
@@ -110,7 +110,7 @@ public class BinaryExpressionTest {
         result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
-        assertSerializable(exp); //test serialize
+        assertSerializedEquals(exp); //test serialize
 
     }
 
@@ -149,7 +149,7 @@ public class BinaryExpressionTest {
         result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
-        assertSerializable(exp); //test serialize
+        assertSerializedEquals(exp); //test serialize
 
     }
 
@@ -188,7 +188,7 @@ public class BinaryExpressionTest {
         result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
 
-        assertSerializable(exp); //test serialize
+        assertSerializedEquals(exp); //test serialize
 
     }
 

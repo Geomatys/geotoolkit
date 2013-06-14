@@ -53,7 +53,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.GeotkClipboard;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.Filter;

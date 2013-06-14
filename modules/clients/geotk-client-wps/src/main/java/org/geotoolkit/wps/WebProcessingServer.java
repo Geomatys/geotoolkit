@@ -45,7 +45,7 @@ import org.geotoolkit.process.ProcessingRegistry;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.DefaultInternationalString;
+import org.apache.sis.util.iso.DefaultInternationalString;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.ObjectConverter;

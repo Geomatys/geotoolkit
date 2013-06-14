@@ -25,7 +25,7 @@ import org.geotoolkit.coverage.memory.MemoryCoverageReader;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterNotFoundException;

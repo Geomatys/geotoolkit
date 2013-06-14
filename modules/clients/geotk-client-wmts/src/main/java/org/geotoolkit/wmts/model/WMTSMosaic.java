@@ -27,7 +27,7 @@ import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.TileReference;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.wmts.WMTSUtilities;

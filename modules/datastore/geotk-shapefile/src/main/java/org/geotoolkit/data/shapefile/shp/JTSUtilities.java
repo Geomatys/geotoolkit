@@ -27,7 +27,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 /**
  * A collection of utility methods for use with JTS and the shapefile package.

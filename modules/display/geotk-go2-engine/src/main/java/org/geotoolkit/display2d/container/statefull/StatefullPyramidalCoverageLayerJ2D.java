@@ -41,7 +41,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import static org.geotoolkit.storage.StorageListener.LOGGER;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;

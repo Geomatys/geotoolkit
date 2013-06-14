@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.io.TableAppender;
 import org.geotoolkit.data.dbf.DbaseFileReader;
 import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
@@ -39,8 +40,7 @@ import org.geotoolkit.data.shapefile.indexed.RecordNumberTracker;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.io.Closeable;
-import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 
 /**
@@ -299,10 +299,10 @@ public final class AccessManager {
         
         try{
             final StringWriter writer = new StringWriter();
-            final TableWriter tb = new TableWriter(writer);
-            tb.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+            final TableAppender tb = new TableAppender(writer);
+            tb.writeHorizontalSeparator();
             tb.append("type\topen\tpath\tholder\n");
-            tb.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+            tb.writeHorizontalSeparator();
             
             tb.append("Reading\n");
             for(final AccessEntry entry : readEntries){
@@ -310,16 +310,15 @@ public final class AccessManager {
                 tb.append('\n');
             }
         
-            tb.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
+            tb.writeHorizontalSeparator();
             
             tb.append("Writing\n");
             for(final AccessEntry entry : writeEntries){
                 tb.append(entry.toString());
                 tb.append('\n');
             }
-            tb.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+            tb.writeHorizontalSeparator();
             tb.flush();
-            tb.close();
             sb.append(writer.getBuffer().toString()).append("\n");
             
         }catch(IOException ex){

@@ -18,7 +18,7 @@ package org.geotoolkit.style;
 
 
 import java.util.Objects;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import javax.measure.unit.Unit;
 
 import org.opengis.style.Description;

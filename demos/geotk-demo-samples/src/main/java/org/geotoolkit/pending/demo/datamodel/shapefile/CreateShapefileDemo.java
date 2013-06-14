@@ -11,7 +11,7 @@ import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 

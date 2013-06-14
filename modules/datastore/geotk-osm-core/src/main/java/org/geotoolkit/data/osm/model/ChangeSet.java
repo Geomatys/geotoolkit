@@ -24,9 +24,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.io.TableWriter;
 
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.io.TableAppender;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -106,21 +106,21 @@ public class ChangeSet {
     @Override
     public String toString() {
         final StringWriter writer = new StringWriter();
-        final TableWriter tablewriter = new TableWriter(writer);
+        final TableAppender tablewriter = new TableAppender(writer);
 
-        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
-        tablewriter.write("OSM-CHANGESET\t \n");
-        tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
-        tablewriter.write("ID\t"+getId()+"\n");
-        tablewriter.write("User\t"+getUser()+"\n");
-        tablewriter.write("Open\t"+getOpen()+"\n");
-        tablewriter.write("Created at\t"+new Date(getTimestamp())+"\n");
-        tablewriter.write("Envelope\t"+getEnv()+"\n");
-        tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
+        tablewriter.writeHorizontalSeparator();
+        tablewriter.append("OSM-CHANGESET\t \n");
+        tablewriter.writeHorizontalSeparator();
+        tablewriter.append("ID\t"+getId()+"\n");
+        tablewriter.append("User\t"+getUser()+"\n");
+        tablewriter.append("Open\t"+getOpen()+"\n");
+        tablewriter.append("Created at\t"+new Date(getTimestamp())+"\n");
+        tablewriter.append("Envelope\t"+getEnv()+"\n");
+        tablewriter.writeHorizontalSeparator();
         for(Tag t : getTags()){
-            tablewriter.write(t.getK()+"\t"+t.getV()+"\n");
+            tablewriter.append(t.getK()+"\t"+t.getV()+"\n");
         }
-        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+        tablewriter.writeHorizontalSeparator();
 
         try {
             tablewriter.flush();

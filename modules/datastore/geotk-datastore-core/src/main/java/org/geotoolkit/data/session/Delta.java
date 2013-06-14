@@ -18,10 +18,10 @@
 package org.geotoolkit.data.session;
 
 import java.util.Map;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
 

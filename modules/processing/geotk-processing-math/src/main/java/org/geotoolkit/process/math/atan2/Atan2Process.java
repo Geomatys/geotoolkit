@@ -17,8 +17,6 @@
 package org.geotoolkit.process.math.atan2;
 
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.util.DefaultInternationalString;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.process.math.atan2.Atan2Descriptor.*;

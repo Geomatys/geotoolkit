@@ -16,11 +16,14 @@
  */
 package org.geotoolkit.wcs.xml;
 
+import java.io.IOException;
 import java.util.Arrays;
 import org.geotoolkit.wcs.xml.v100.GetCoverageType;
 import java.io.StringWriter;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.test.XMLComparator;
 
 //Junit dependencies
 import org.geotoolkit.ows.xml.v110.CodeType;
@@ -28,6 +31,7 @@ import org.geotoolkit.wcs.xml.v100.OutputType;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -65,7 +69,7 @@ public class WcsXMLBindingTest {
      * @throws JAXBException
      */
     @Test
-    public void marshallingTest111() throws JAXBException {
+    public void marshallingTest111() throws JAXBException, IOException, ParserConfigurationException, SAXException {
 
         org.geotoolkit.wcs.xml.v111.RangeSubsetType.FieldSubset field = new org.geotoolkit.wcs.xml.v111.RangeSubsetType.FieldSubset("id1", "NEAREST");
         org.geotoolkit.wcs.xml.v111.RangeSubsetType dsub = new org.geotoolkit.wcs.xml.v111.RangeSubsetType(Arrays.asList(field));
@@ -97,7 +101,8 @@ public class WcsXMLBindingTest {
                          + "    </ns5:RangeSubset>" + '\n'
                          + "    <ns5:Output store=\"false\" format=\"EPSG:4326\"/>" + '\n'
                          + "</ns5:GetCoverage>" + '\n';
-        assertEquals(expResult, result);
+        final XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.compare();
 
     }
 
@@ -107,7 +112,7 @@ public class WcsXMLBindingTest {
      * @throws JAXBException
      */
     @Test
-    public void marshallingTest100() throws JAXBException {
+    public void marshallingTest100() throws JAXBException, IOException, ParserConfigurationException, SAXException {
 
         GetCoverageType getCoverage = new GetCoverageType("source1", null, null, "nearest neighbor", new OutputType("image/png", "EPSG:4326"));
 
@@ -134,7 +139,8 @@ public class WcsXMLBindingTest {
                            "        <wcs:format>image/png</wcs:format>" + '\n' +
                            "    </wcs:output>" + '\n' +
                            "</wcs:GetCoverage>" + '\n' ;
-        assertEquals(expResult, result);
+        final XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.compare();
 
     }
 }

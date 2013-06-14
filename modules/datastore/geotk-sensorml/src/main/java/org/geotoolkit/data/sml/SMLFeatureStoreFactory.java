@@ -24,7 +24,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.jdbc.DBCPDataSource;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
@@ -34,7 +34,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.util.ResourceInternationalString;
+import org.apache.sis.util.iso.ResourceInternationalString;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;

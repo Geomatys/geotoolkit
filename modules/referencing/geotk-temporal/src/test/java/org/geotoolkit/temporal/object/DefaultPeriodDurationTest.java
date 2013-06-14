@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.temporal.object;
 
-import org.geotoolkit.temporal.object.DefaultPeriodDuration;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.junit.After;
 import org.junit.Before;

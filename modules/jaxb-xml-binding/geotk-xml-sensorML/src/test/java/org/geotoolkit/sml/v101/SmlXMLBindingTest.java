@@ -46,6 +46,7 @@ import org.geotoolkit.swe.xml.v101.UomPropertyType;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import org.apache.sis.test.XMLComparator;
 
 //Junit dependencies
 import org.geotoolkit.gml.xml.v311.CodeType;
@@ -81,6 +82,8 @@ import org.geotoolkit.sml.xml.v101.Term;
 import org.geotoolkit.swe.xml.v101.QuantityRange;
 import org.junit.*;
 import static org.junit.Assert.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Node;
 
 
 /**
@@ -621,10 +624,15 @@ public class SmlXMLBindingTest {
 
         String expResult = out.toString();
 
-        expResult = expResult.substring(expResult.indexOf("<sml:member>"));
-        result    = result.substring(result.indexOf("<sml:member"));
-
-        assertEquals(expResult, result);
+        expResult = expResult.substring(expResult.indexOf("<sml:member>")).replaceAll("</sml:SensorML>", "");
+        result    = result.substring(result.indexOf("<sml:member")).replaceAll("</sml:SensorML>", "");
+        final XMLComparator comparator = new XMLComparator(expResult, result){
+            @Override
+            protected strictfp void compareAttributeNode(Attr expected, Node actual) {
+                super.compareAttributeNode(expected, actual);
+            }
+        };
+        comparator.compare();
 
         SensorMLMarshallerPool.getInstance().release(m);
     }

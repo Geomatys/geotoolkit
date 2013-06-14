@@ -24,6 +24,7 @@ import javax.xml.datatype.Duration;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import org.apache.sis.test.XMLComparator;
 
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.gml.xml.v321.DirectPositionListType;
@@ -39,6 +40,7 @@ import org.geotoolkit.xml.MarshallerPool;
 //Junit dependencies
 import org.junit.*;
 import static org.junit.Assert.*;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -102,7 +104,16 @@ public class GmlXMLBindingTest {
                            "    <ns3:lowerCorner>-30.711 134.196</ns3:lowerCorner>" + '\n' +
                            "    <ns3:upperCorner>-30.702 134.205</ns3:upperCorner>" + '\n' +
                            "</ns3:Envelope>" + '\n' ;
-        assertEquals(expResult, result);
+        XMLComparator comparator = new XMLComparator(expResult, result){
+            @Override
+            protected strictfp void compareNames(Node expected, Node actual) {
+                final String[] exArray = expected.getNodeName().split(":");
+                final String[] acArray = actual.getNodeName().split(":");
+                assertEquals(exArray.length, acArray.length);
+                assertEquals(exArray[exArray.length-1], acArray[acArray.length-1]);
+            }
+        };
+        comparator.compare();
 
         Duration d1 = javax.xml.datatype.DatatypeFactory.newInstance().newDuration("P2D");
 
@@ -134,7 +145,16 @@ public class GmlXMLBindingTest {
         expResult = "<ns3:LineStringSegment >" + '\n' +
                     "    <ns3:posList>1.0 1.1 1.2</ns3:posList>" + '\n' +
                     "</ns3:LineStringSegment>" + '\n' ;
-        assertEquals(expResult, result);
+        comparator = new XMLComparator(expResult, result){
+            @Override
+            protected strictfp void compareNames(Node expected, Node actual) {
+                final String[] exArray = expected.getNodeName().split(":");
+                final String[] acArray = actual.getNodeName().split(":");
+                assertEquals(exArray.length, acArray.length);
+                assertEquals(exArray[exArray.length-1], acArray[acArray.length-1]);
+            }
+        };
+        comparator.compare();
 
         ls = new LineStringSegmentType();
         DirectPositionType pos1 = new DirectPositionType(Arrays.asList(1.1, 1.2));
@@ -155,7 +175,16 @@ public class GmlXMLBindingTest {
                     "    <ns3:pos>1.1 1.2</ns3:pos>" + '\n' +
                     "    <ns3:pos>2.3 48.1</ns3:pos>" + '\n' +
                     "</ns3:LineStringSegment>" + '\n' ;
-        assertEquals(expResult, result);
+        comparator = new XMLComparator(expResult, result){
+            @Override
+            protected strictfp void compareNames(Node expected, Node actual) {
+                final String[] exArray = expected.getNodeName().split(":");
+                final String[] acArray = actual.getNodeName().split(":");
+                assertEquals(exArray.length, acArray.length);
+                assertEquals(exArray[exArray.length-1], acArray[acArray.length-1]);
+            }
+        };
+        comparator.compare();
 
     }
 

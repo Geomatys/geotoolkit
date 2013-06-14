@@ -19,7 +19,6 @@ package org.geotoolkit.coverage;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.feature.type.Name;
 import java.awt.Image;
@@ -30,6 +29,7 @@ import java.awt.image.WritableRaster;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.storage.DataStoreException;
 
 /**
  * @author Johann Sorel (Geomatys)

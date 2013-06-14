@@ -49,7 +49,7 @@ import java.util.logging.Level;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;

@@ -21,7 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.junit.Test;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;

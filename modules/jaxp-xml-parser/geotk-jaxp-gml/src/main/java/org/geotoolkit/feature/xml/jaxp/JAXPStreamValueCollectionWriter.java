@@ -36,7 +36,7 @@ import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.geotoolkit.gml.xml.v321.ObjectFactory;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.xml.Namespaces;
 import org.opengis.feature.Attribute;

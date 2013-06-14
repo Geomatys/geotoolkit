@@ -21,7 +21,7 @@ import java.awt.Point;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 

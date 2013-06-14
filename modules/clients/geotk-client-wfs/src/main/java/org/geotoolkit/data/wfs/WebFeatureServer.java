@@ -38,7 +38,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;

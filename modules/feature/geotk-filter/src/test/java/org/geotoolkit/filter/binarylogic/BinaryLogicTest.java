@@ -65,7 +65,7 @@ public class BinaryLogicTest {
         filters.add(filter1);
         filters.add(filter3);
         and = FF.and(filters);
-        assertSerializable(and); //test serialize
+        assertSerializedEquals(and); //test serialize
 
     }
 
@@ -102,7 +102,7 @@ public class BinaryLogicTest {
         filters.add(filter1);
         filters.add(filter3);
         or = FF.or(filters);
-        assertSerializable(or); //test serialize
+        assertSerializedEquals(or); //test serialize
 
     }
 

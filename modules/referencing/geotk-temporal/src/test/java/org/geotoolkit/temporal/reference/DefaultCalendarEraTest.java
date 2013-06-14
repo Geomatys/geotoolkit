@@ -17,11 +17,10 @@
  */
 package org.geotoolkit.temporal.reference;
 
-import org.geotoolkit.temporal.reference.DefaultCalendarEra;
-import org.geotoolkit.temporal.reference.DefaultTemporalReferenceSystem;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.object.DefaultCalendarDate;
@@ -29,7 +28,6 @@ import org.geotoolkit.temporal.object.DefaultInstant;
 import org.geotoolkit.temporal.object.DefaultJulianDate;
 import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.geotoolkit.temporal.object.DefaultPosition;
-import org.geotoolkit.util.SimpleInternationalString;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

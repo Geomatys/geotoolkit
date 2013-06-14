@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sampling;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.StringReader;
@@ -26,6 +27,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.FeatureCollectionType;
 import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
@@ -40,6 +43,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -80,7 +84,7 @@ public class SamplingXMLBindingTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void marshallingTest() throws JAXBException {
+    public void marshallingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
 
         final DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
         final PointType location = new PointType("point-ID", pos);
@@ -108,7 +112,8 @@ public class SamplingXMLBindingTest {
                            "        </gml:Point>" + '\n' +
                            "    </sampling:position>" + '\n' +
                            "</sampling:SamplingPoint>" + '\n' ;
-        assertEquals(expResult, result);
+        XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.compare();
         
         final ObjectFactory facto = new ObjectFactory();
         FeatureCollectionType collection = new FeatureCollectionType();
@@ -142,7 +147,8 @@ public class SamplingXMLBindingTest {
                            "        </sampling:SamplingPoint>" + '\n' +
                            "    </gml:featureMember>" + '\n' +
                            "</gml:FeatureCollection>" + '\n' ;
-        assertEquals(expResult, result);
+        comparator = new XMLComparator(expResult, result);
+        comparator.compare();
     }
 
     /**

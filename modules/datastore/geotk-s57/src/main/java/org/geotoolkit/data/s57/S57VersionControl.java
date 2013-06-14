@@ -25,7 +25,7 @@ import java.util.TimeZone;
 import org.geotoolkit.data.s57.model.DataSetIdentification;
 import org.geotoolkit.data.s57.model.S57FileReader;
 import org.geotoolkit.data.s57.model.S57Object;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.version.AbstractVersionControl;
 
 /**

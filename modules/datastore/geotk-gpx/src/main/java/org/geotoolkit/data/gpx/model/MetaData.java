@@ -24,8 +24,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import org.apache.sis.io.TableAppender;
 
-import org.geotoolkit.io.TableWriter;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -97,48 +97,48 @@ public class MetaData {
     @Override
     public String toString() {
         final StringWriter writer = new StringWriter();
-        final TableWriter tablewriter = new TableWriter(writer);
+        final TableAppender tablewriter = new TableAppender(writer);
 
-        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
-        tablewriter.write("GPX-Metadata\t \n");
-        tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
+        tablewriter.writeHorizontalSeparator();
+        tablewriter.append("GPX-Metadata\t \n");
+        tablewriter.writeHorizontalSeparator();
 
-        tablewriter.write("Name\t"+getName()+"\n");
-        tablewriter.write("Desc\t"+getDescription()+"\n");
-        tablewriter.write("Time\t"+getTime()+"\n");
-        tablewriter.write("Keywords\t"+getKeywords()+"\n");
-        tablewriter.write("Bounds\t"+getBounds()+"\n");
+        tablewriter.append("Name\t"+getName()+"\n");
+        tablewriter.append("Desc\t"+getDescription()+"\n");
+        tablewriter.append("Time\t"+getTime()+"\n");
+        tablewriter.append("Keywords\t"+getKeywords()+"\n");
+        tablewriter.append("Bounds\t"+getBounds()+"\n");
 
         final Person person = getPerson();
         if(person != null){
-            tablewriter.write("Person - Name\t"+person.getName()+"\n");
-            tablewriter.write("Person - EMail\t"+person.getEmail()+"\n");
-            tablewriter.write("Person - Link\t"+person.getLink()+"\n");
+            tablewriter.append("Person - Name\t"+person.getName()+"\n");
+            tablewriter.append("Person - EMail\t"+person.getEmail()+"\n");
+            tablewriter.append("Person - Link\t"+person.getLink()+"\n");
         }else{
-            tablewriter.write("Person\t"+person+"\n");
+            tablewriter.append("Person\t"+person+"\n");
         }
 
         final CopyRight copyright = getCopyRight();
         if(copyright != null){
-            tablewriter.write("CopyRight - Author\t"+copyright.getAuthor()+"\n");
-            tablewriter.write("CopyRight - Year\t"+copyright.getYear()+"\n");
-            tablewriter.write("CopyRight - License\t"+copyright.getLicense()+"\n");
+            tablewriter.append("CopyRight - Author\t"+copyright.getAuthor()+"\n");
+            tablewriter.append("CopyRight - Year\t"+copyright.getYear()+"\n");
+            tablewriter.append("CopyRight - License\t"+copyright.getLicense()+"\n");
         }else{
-            tablewriter.write("CopyRight\t"+copyright+"\n");
+            tablewriter.append("CopyRight\t"+copyright+"\n");
         }
 
-        tablewriter.write("Links\t");
+        tablewriter.append("Links\t");
         final List<URI> links = getLinks();
         if(links.isEmpty()){
-            tablewriter.write("None\n");
+            tablewriter.append("None\n");
         }else{
-            tablewriter.write("\n");
+            tablewriter.append("\n");
             for(final URI uri : getLinks()){
-                tablewriter.write("\t"+uri+"\n");
+                tablewriter.append("\t"+uri+"\n");
             }
         }
         
-        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+        tablewriter.writeHorizontalSeparator();
 
         try {
             tablewriter.flush();

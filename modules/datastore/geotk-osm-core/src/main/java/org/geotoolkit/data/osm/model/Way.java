@@ -26,8 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.geotoolkit.io.TableWriter;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.io.TableAppender;
 
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -86,26 +86,26 @@ public class Way extends IdentifiedElement{
     @Override
     public String toString() {
         final StringWriter writer = new StringWriter();
-        final TableWriter tablewriter = new TableWriter(writer);
+        final TableAppender tablewriter = new TableAppender(writer);
 
-        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
-        tablewriter.write("OSM-WAY\t \n");
-        tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
-        tablewriter.write("nodes count\t"+nodes.size()+"\n");
+        tablewriter.writeHorizontalSeparator();
+        tablewriter.append("OSM-WAY\t \n");
+        tablewriter.writeHorizontalSeparator();
+        tablewriter.append("nodes count\t"+nodes.size()+"\n");
         for(int i=0;i<nodes.size();i++){
-            tablewriter.write("node " +i +"\t"+nodes.get(i)+"\n");
+            tablewriter.append("node " +i +"\t"+nodes.get(i)+"\n");
         }
-        tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
-        tablewriter.write("ID\t"+getId()+"\n");
-        tablewriter.write("ChangeSet\t"+getChangeset()+"\n");
-        tablewriter.write("User\t"+getUser()+"\n");
-        tablewriter.write("TimeStamp\t"+new Date(getTimestamp())+"\n");
-        tablewriter.write("version\t"+getVersion()+"\n");
-        tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
+        tablewriter.writeHorizontalSeparator();
+        tablewriter.append("ID\t"+getId()+"\n");
+        tablewriter.append("ChangeSet\t"+getChangeset()+"\n");
+        tablewriter.append("User\t"+getUser()+"\n");
+        tablewriter.append("TimeStamp\t"+new Date(getTimestamp())+"\n");
+        tablewriter.append("version\t"+getVersion()+"\n");
+        tablewriter.writeHorizontalSeparator();
         for(Tag t : getTags()){
-            tablewriter.write(t.getK()+"\t"+t.getV()+"\n");
+            tablewriter.append(t.getK()+"\t"+t.getV()+"\n");
         }
-        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+        tablewriter.writeHorizontalSeparator();
 
         try {
             tablewriter.flush();

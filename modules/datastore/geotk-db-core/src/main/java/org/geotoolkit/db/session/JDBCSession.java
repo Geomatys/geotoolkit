@@ -28,7 +28,7 @@ import org.geotoolkit.data.session.ModifyDelta;
 import org.geotoolkit.data.session.RemoveDelta;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.version.Version;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;

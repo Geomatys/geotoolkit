@@ -22,10 +22,10 @@ import java.io.StringWriter;
 import java.util.*;
 
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.util.Classes;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.io.TableAppender;
 
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AssociationType;
@@ -207,19 +207,19 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
 
         //make a nice table to display
         final StringWriter writer = new StringWriter();
-        final TableWriter tablewriter = new TableWriter(writer);
-        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
-        tablewriter.write("name\t min\t max\t nillable\t type\t CRS\t UserData\n");
-        tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
+        final TableAppender tablewriter = new TableAppender(writer);
+        tablewriter.writeHorizontalSeparator();
+        tablewriter.append("name\t min\t max\t nillable\t type\t CRS\t UserData\n");
+        tablewriter.writeHorizontalSeparator();
 
         final Collection<PropertyDescriptor> descs = getDescriptors();
         final Set<Name> loops = new HashSet<Name>();
         loops.add(this.getName());
         for (PropertyDescriptor property : descs) {
-            tablewriter.write(toString(property,loops));
-            tablewriter.write('\n');
+            tablewriter.append(toString(property,loops));
+            tablewriter.append('\n');
         }
-        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+        tablewriter.writeHorizontalSeparator();
         try {
             tablewriter.flush();
             writer.flush();

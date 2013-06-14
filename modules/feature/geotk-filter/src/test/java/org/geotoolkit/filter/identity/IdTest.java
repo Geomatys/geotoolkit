@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.filter.identity;
 
-import org.geotoolkit.test.Commons;
 import org.junit.Test;
 import org.opengis.filter.identity.FeatureId;
 
@@ -41,7 +40,7 @@ public class IdTest {
 
         FeatureId id1 = FF.featureId(strid);
         FeatureId id2 = FF.featureId(strid);
-        assertSerializable(id1); //test serialize
+        assertSerializedEquals(id1); //test serialize
 
         assertEquals(strid, id1.getID());
         assertEquals(id1, id2);

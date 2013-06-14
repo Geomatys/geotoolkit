@@ -17,13 +17,11 @@
  */
 package org.geotoolkit.temporal.reference;
 
-import org.geotoolkit.temporal.reference.DefaultTemporalReferenceSystem;
-import org.geotoolkit.temporal.reference.DefaultClock;
 import java.util.Collection;
+import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.object.DefaultClockTime;
-import org.geotoolkit.util.SimpleInternationalString;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

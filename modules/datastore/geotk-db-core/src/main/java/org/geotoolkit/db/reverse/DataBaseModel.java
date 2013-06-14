@@ -55,7 +55,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.ModifiableFeatureTypeFactory;
 import org.geotoolkit.feature.type.ModifiableType;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.feature.type.*;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;

@@ -385,30 +385,24 @@ public class RegroupTest extends AbstractProcessTest {
 
         Feature myFeature1;
         Point pt1 = GF.createPoint(new Coordinate(3, 6));
-        Point pt2 = GF.createPoint(new Coordinate(4, 7));
-        Point pt3 = GF.createPoint(new Coordinate(5, 4));
-        Point pt4 = GF.createPoint(new Coordinate(5.5, 6.5));
+        MultiPoint multPt = GF.createMultiPoint(
+                new Coordinate[]{
+                    new Coordinate(5.0, 4.0),
+                    new Coordinate(3.0, 6.0),
+                    new Coordinate(4.0, 7.0),
+                    new Coordinate(5.5, 6.5)
+                });
         LineString line1 = GF.createLineString(
                 new Coordinate[]{
                     new Coordinate(8.0, 0.0),
-                    new Coordinate(7.4, 0.6)
-                });
-        LineString line2 = GF.createLineString(
-                new Coordinate[]{
-                    new Coordinate(7.4, 0.6),
                     new Coordinate(5.0, 3.0)
                 });
         LineString line3 = GF.createLineString(
                 new Coordinate[]{
                     new Coordinate(7.0, 0.0),
-                    new Coordinate(7.4, 0.6)
-                });
-        LineString line4 = GF.createLineString(
-                new Coordinate[]{
-                    new Coordinate(7.4, 0.6),
                     new Coordinate(9.0, 3.0)
                 });
-        GeometryCollection collec = GF.createGeometryCollection(new Geometry[]{pt1, pt2, pt3, pt4, line1, line2, line3, line4});
+        GeometryCollection collec = GF.createGeometryCollection(new Geometry[]{line1, multPt, line3});
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("type", "office");
         sfb.set("geom2", collec);
@@ -427,7 +421,7 @@ public class RegroupTest extends AbstractProcessTest {
         Polygon poly = GF.createPolygon(ring, null);
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("type", "church");
-        sfb.set("geom2", GF.createGeometryCollection(new Geometry[]{pt1, poly}));
+        sfb.set("geom2", GF.createGeometryCollection(new Geometry[]{poly, pt1}));
         myFeature2 = sfb.buildFeature("type-church");
         featureList.add(myFeature2);
 

@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.sql;
 import java.awt.Image;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverageReference;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
@@ -29,7 +30,6 @@ import org.geotoolkit.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -223,6 +223,7 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
             throw new DataStoreException("Coverage is not writable.");
         }
 
+        @Override
         public Image getLegend() throws DataStoreException {
             return null;
         }

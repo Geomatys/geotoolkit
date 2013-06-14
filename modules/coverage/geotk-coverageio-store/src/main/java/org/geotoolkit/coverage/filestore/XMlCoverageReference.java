@@ -17,19 +17,18 @@
 package org.geotoolkit.coverage.filestore;
 
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.AbstractPyramidalModel;
+import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.Pyramid;
 
-import org.geotoolkit.coverage.*;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

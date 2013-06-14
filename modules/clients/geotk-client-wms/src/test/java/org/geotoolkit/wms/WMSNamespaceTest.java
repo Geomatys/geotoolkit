@@ -24,7 +24,7 @@ import javax.xml.bind.JAXBException;
 
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.wms.xml.WMSVersion;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 import org.junit.Test;
 

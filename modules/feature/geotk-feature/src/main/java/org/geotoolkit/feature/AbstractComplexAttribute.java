@@ -19,7 +19,6 @@ package org.geotoolkit.feature;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,12 +27,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import java.util.Set;
-import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.Utilities;
-import org.apache.sis.util.ArraysExt;
+import org.apache.sis.io.TableAppender;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.apache.sis.util.Classes;
+import org.apache.sis.util.Utilities;
 
 import org.opengis.feature.Association;
 import org.opengis.feature.ComplexAttribute;
@@ -185,15 +182,15 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
 
         //make a nice table to display
         final StringWriter writer = new StringWriter();
-        final TableWriter tablewriter = new TableWriter(writer);
-        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
-        tablewriter.write("name\tid\tvalue\n");
-        tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
+        final TableAppender tablewriter = new TableAppender(writer);
+        tablewriter.writeHorizontalSeparator();
+        tablewriter.append("name\tid\tvalue\n");
+        tablewriter.writeHorizontalSeparator();
 
         final Set<FeatureId> visited = new HashSet<FeatureId>();
         toString(tablewriter, this, null, true, depth, maxarray, visited);
 
-        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+        tablewriter.writeHorizontalSeparator();
         try {
             tablewriter.flush();
             writer.flush();
@@ -220,13 +217,13 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      * @param path
      * @param last node of the tree
      */
-    private static void toString(final TableWriter tablewriter, final Property property,
+    private static void toString(final TableAppender tablewriter, final Property property,
             final Integer index, final boolean last, final int depth, final int maxArray,
             final Set<FeatureId> visited,final String... path){
 
         //draw the path.
         for(String t : path){
-            tablewriter.write(t);
+            tablewriter.append(t);
         }
 
         //write property name
@@ -237,27 +234,27 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         }
 
         if(name != null){
-            tablewriter.write(DefaultName.toJCRExtendedForm(name));
+            tablewriter.append(DefaultName.toJCRExtendedForm(name));
         }
 
         //write the index if one
         if(index != null){
-            tablewriter.write('[');
-            tablewriter.write(index.toString());
-            tablewriter.write(']');
+            tablewriter.append('[');
+            tablewriter.append(index.toString());
+            tablewriter.append(']');
         }
 
         if(property instanceof Association){
-            tablewriter.write("  <ASSO> ");
+            tablewriter.append("  <ASSO> ");
             //check if we already visited this element
             //with complex type and associations this can happen
             final Object value = property.getValue();
             if(value instanceof Feature){
                 final Feature f = (Feature) value;
                 if(visited.contains(f.getIdentifier())){
-                    tablewriter.write(" <CYCLIC> \t");
-                    tablewriter.write(f.getIdentifier().getID());
-                    tablewriter.write("\n");
+                    tablewriter.append(" <CYCLIC> \t");
+                    tablewriter.append(f.getIdentifier().getID());
+                    tablewriter.append("\n");
                     return;
                 }
             }
@@ -266,7 +263,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
             //with complex type and associations this can happen
             final Feature f = (Feature) property;
             if(visited.contains(f.getIdentifier())){
-                tablewriter.write(" <CYCLIC> \t\t \n");
+                tablewriter.append(" <CYCLIC> \t\t \n");
                 return;
             }
             visited.add(f.getIdentifier());
@@ -275,23 +272,23 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         //check if we reached depth limit
         if( (depth <= 1 && (property.getType() instanceof ComplexType || property.getType() instanceof AssociationType))
             || depth == 0 ){
-            tablewriter.write(" ⋅⋅⋅ \t\t \n");
+            tablewriter.append(" ⋅⋅⋅ \t\t \n");
             return;
         }
 
 
 
 
-        tablewriter.write('\t');
+        tablewriter.append('\t');
 
         final PropertyType pt = property.getType();
         if(pt instanceof ComplexType){
             //show id in value column if a feature
             if(property instanceof Feature){
-                tablewriter.write(((Feature)property).getIdentifier().getID());
+                tablewriter.append(((Feature)property).getIdentifier().getID());
             }
 
-            tablewriter.write('\n');
+            tablewriter.append('\n');
 
             final ComplexType ct = (ComplexType) pt;
             final ComplexAttribute ca = (ComplexAttribute)property;
@@ -328,10 +325,10 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
                             if(i==maxArray){
                                 //do not display to much values if there are plenty
                                 final String[] ep = append(subPath, (k+n+1==nbProperty)?END:CROSS);
-                                for(String t : ep) tablewriter.write(t);
-                                tablewriter.write("... ");
-                                tablewriter.write(Integer.toString(n));
-                                tablewriter.write(" elements... \n");
+                                for(String t : ep) tablewriter.append(t);
+                                tablewriter.append("... ");
+                                tablewriter.append(Integer.toString(n));
+                                tablewriter.append(" elements... \n");
                                 nb += n-i;
                                 break;
 
@@ -358,7 +355,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
 
         }else if(pt instanceof AssociationType){
             //no value
-            tablewriter.write('\n');
+            tablewriter.append('\n');
 
             //encode association value
             final Property ca = (Property) property.getValue();
@@ -379,9 +376,9 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
                 strValue = strValue.substring(0, 100) +" ...";
             }
 
-            tablewriter.write("\t");
-            tablewriter.write(strValue);
-            tablewriter.write('\n');
+            tablewriter.append("\t");
+            tablewriter.append(strValue);
+            tablewriter.append('\n');
         }
     }
 

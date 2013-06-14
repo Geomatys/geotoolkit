@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.Converters;
 
 /**

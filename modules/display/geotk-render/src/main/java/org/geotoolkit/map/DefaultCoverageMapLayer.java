@@ -26,7 +26,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.geometry.ImmutableEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import org.apache.sis.util.NullArgumentException;
 import org.opengis.feature.type.Name;

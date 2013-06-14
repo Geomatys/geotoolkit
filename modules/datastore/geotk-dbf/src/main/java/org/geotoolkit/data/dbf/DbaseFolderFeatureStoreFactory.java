@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.data.dbf;
 
+import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;

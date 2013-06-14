@@ -23,7 +23,7 @@ import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.dialect.SQLQueryBuilder;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;

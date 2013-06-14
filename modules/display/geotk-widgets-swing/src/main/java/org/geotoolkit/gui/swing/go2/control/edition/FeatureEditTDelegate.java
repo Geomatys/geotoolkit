@@ -37,7 +37,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.feature.Feature;
 import org.opengis.feature.GeometryAttribute;

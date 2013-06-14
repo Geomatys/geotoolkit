@@ -39,7 +39,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.jdbc.reverse.DataBaseModel;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 
 /**

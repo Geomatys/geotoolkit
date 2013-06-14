@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;

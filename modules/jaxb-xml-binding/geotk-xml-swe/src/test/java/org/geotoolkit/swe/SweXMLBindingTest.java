@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe;
 
+import java.io.IOException;
 import java.io.StringReader;
 import org.geotoolkit.swe.xml.v101.AbstractDataComponentType;
 import java.util.List;
@@ -26,6 +27,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.swe.xml.v101.AnyScalarPropertyType;
 import org.geotoolkit.swe.xml.v101.DataArrayType;
 import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
@@ -41,6 +44,7 @@ import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -84,7 +88,7 @@ public class SweXMLBindingTest {
      * @throws JAXBException
      */
     @Test
-    public void marshallingTest() throws JAXBException {
+    public void marshallingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
 
         Text text = new Text("definition", "some value");
 
@@ -138,7 +142,8 @@ public class SweXMLBindingTest {
                     "    </swe:encoding>" + '\n' +
                     "</swe:DataArray>" + '\n';
 
-        assertEquals(expResult, result);
+        final XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.compare();
         
     
         ObjectFactory factory = new ObjectFactory();

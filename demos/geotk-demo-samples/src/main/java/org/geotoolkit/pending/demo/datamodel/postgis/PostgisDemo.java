@@ -11,7 +11,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;

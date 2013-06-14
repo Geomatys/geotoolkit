@@ -75,6 +75,7 @@ public class ISO8211Test {
             + "2500;&   2-D Coordinate field*YCOO!XCOO(2b24)"
             + "2500;&   3-D Coordinate field*YCOO!XCOO!VE3D(3b24)";
     
+    //TODO
     @Ignore
     @Test
     public void DDRCalculateMetricsTest() throws IOException{

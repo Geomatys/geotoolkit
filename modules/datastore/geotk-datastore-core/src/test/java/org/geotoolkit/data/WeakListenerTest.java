@@ -19,10 +19,10 @@ package org.geotoolkit.data;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.storage.DataStoreException;
 
 import org.junit.After;
 import org.junit.AfterClass;

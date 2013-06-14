@@ -17,12 +17,12 @@
 package org.geotoolkit.data.memory;
 
 import java.util.Map;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.storage.DataStoreException;
 import org.apache.sis.util.Classes;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;

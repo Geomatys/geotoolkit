@@ -19,7 +19,7 @@ package org.geotoolkit.db.reverse;
 import java.util.Collection;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;

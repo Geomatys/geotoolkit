@@ -17,7 +17,7 @@
 package org.geotoolkit.client;
 
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;

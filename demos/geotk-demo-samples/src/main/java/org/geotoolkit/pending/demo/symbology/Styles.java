@@ -21,7 +21,7 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.style.MutableFeatureTypeStyle;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;

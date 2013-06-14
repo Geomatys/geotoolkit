@@ -25,7 +25,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 import static org.junit.Assert.*;
 

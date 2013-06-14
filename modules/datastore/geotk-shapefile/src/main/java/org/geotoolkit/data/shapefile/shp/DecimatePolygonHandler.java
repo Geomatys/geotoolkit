@@ -25,7 +25,7 @@ import java.nio.DoubleBuffer;
 import java.util.List;
 
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 
 /**

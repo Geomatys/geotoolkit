@@ -34,7 +34,7 @@ public class SwingEventPassThrough implements MouseInputListener,MouseWheelListe
     private final Component source;
     
     public SwingEventPassThrough(final Component source){
-        ArgumentChecks.ensureNonNull("source", source);
+        org.apache.sis.util.ArgumentChecks.ensureNonNull("source", source);
         this.source = source;
         source.addMouseListener(this);
         source.addMouseMotionListener(this);

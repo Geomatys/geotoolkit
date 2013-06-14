@@ -29,7 +29,7 @@ import static org.geotoolkit.db.JDBCFeatureStore.CUSTOM_SQL;
 import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import org.geotoolkit.db.dialect.SQLQueryBuilder;
 import org.geotoolkit.internal.sql.ScriptRunner;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.feature.type.FeatureType;

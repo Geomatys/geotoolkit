@@ -29,13 +29,12 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Objects;
 import net.jcip.annotations.ThreadSafe;
+import org.apache.sis.util.Locales;
 import org.apache.sis.util.collection.Containers;
 import org.apache.sis.util.iso.AbstractInternationalString;
 
 import org.opengis.util.InternationalString;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Locales;
-import org.geotoolkit.util.Utilities;
 
 
 /**

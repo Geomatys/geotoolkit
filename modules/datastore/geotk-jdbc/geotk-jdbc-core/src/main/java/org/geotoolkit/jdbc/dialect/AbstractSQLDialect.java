@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.jdbc.dialect;
 
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.jdbc.reverse.DataBaseModel;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.opengis.filter.PropertyIsBetween;

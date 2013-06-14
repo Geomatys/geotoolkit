@@ -26,8 +26,8 @@ import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.XmlFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
+import static org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.SimpleConverter;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.opengis.feature.type.FeatureType;
@@ -79,10 +79,10 @@ public abstract class AbstractComplexInputConverter<T> extends WPSDefaultConvert
                     featureReader = new JAXPStreamFeatureReader(featureTypes);
                 }
             } else {
-                featureReader.setReadEmbeddedFeatureType(true);
+                featureReader.getProperties().put(READ_EMBEDDED_FEATURE_TYPE, true);
             }
         } catch(JAXBException ex) {
-            featureReader.setReadEmbeddedFeatureType(true);
+            featureReader.getProperties().put(READ_EMBEDDED_FEATURE_TYPE, true);
         }
         return featureReader;
     }

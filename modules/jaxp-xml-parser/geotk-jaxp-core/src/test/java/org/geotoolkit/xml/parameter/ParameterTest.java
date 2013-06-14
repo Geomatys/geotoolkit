@@ -27,7 +27,6 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.util.DefaultInternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -35,6 +34,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.GeneralParameterValue;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
+import org.apache.sis.util.iso.DefaultInternationalString;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -95,9 +95,12 @@ public class ParameterTest {
         assertParameterRead(FINAL);
 
         // level 3 : equality of descriptors
+       // assertTrue(FINAL_DESC.equals(INITIAL_DESC));
+//        assertTrue(((DefaultParameterDescriptorGroup)FINAL_DESC).equals(INITIAL_DESC, ComparisonMode.IGNORE_METADATA));
         assertEquals(FINAL_DESC, INITIAL_DESC);
 
         // level 4 : equality of values
+//        Assert.assertParameterEquals((ParameterValueGroup)FINAL, (ParameterValueGroup)INITIAL, 0);
         assertEquals(FINAL, INITIAL);
     }
 
@@ -118,7 +121,7 @@ public class ParameterTest {
         assertTrue(globalDescritorGroup.descriptors().get(0) instanceof ParameterDescriptorGroup);
         final ParameterDescriptorGroup descriptorGroup = (ParameterDescriptorGroup) globalDescritorGroup.descriptors().get(0);
         assertEquals("nameDG",descriptorGroup.getName().getCode());
-        assertEquals(new DefaultInternationalString("yokoyoko"),descriptorGroup.getRemarks());
+        assertEquals("yokoyoko",descriptorGroup.getRemarks().toString());
 
         assertEquals(7, descriptorGroup.descriptors().size());
 
@@ -269,7 +272,7 @@ public class ParameterTest {
             descriptor1, descriptor2, descriptor3, descriptor4, descriptor5, descriptor6, descriptor7};
         final Map<String, Object> properties = new HashMap<String, Object>();
         properties.put("name", "nameDG");
-        properties.put("remarks", "yokoyoko");
+        properties.put("remarks", new DefaultInternationalString("yokoyoko"));
         final ParameterDescriptorGroup descriptorGroup = new DefaultParameterDescriptorGroup(
                 properties, 1, 2, descriptors);
         final GeneralParameterValue[] valueGroup = new GeneralParameterValue[]{

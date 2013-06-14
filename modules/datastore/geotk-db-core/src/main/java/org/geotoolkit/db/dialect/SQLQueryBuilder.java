@@ -35,7 +35,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.filter.visitor.FIDFixVisitor;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AssociationDescriptor;

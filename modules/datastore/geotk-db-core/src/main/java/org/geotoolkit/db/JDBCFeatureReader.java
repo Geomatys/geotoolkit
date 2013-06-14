@@ -28,7 +28,7 @@ import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;

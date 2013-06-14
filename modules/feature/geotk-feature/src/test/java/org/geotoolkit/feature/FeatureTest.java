@@ -100,7 +100,7 @@ public class FeatureTest {
         assertTrue(GF.createPoint(new Coordinate(50, 60)).equalsExact((Geometry) feature.getDefaultGeometryProperty().getValue()));
 
         //test serialize
-        assertSerializable(feature);
+        assertSerializedEquals(feature);
 
         //test it doesn't have a descriptor
         assertNull(feature.getDescriptor());
@@ -136,7 +136,7 @@ public class FeatureTest {
         assertTrue(GF.createPoint(new Coordinate(50, 60)).equalsExact((Geometry) feature.getDefaultGeometryProperty().getValue()));
 
         //test serialize
-        assertSerializable(feature);
+        assertSerializedEquals(feature);
 
         //test it doesn't have a descriptor
         assertNull(feature.getDescriptor());

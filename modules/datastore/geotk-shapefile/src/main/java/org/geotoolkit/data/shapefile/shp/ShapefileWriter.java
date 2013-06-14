@@ -23,7 +23,7 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 
 import org.geotoolkit.data.shapefile.shx.ShxWriter;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;

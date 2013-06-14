@@ -25,7 +25,7 @@ import java.nio.charset.Charset;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
@@ -41,7 +41,7 @@ import java.util.Collections;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.util.ResourceInternationalString;
+import org.apache.sis.util.iso.ResourceInternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.quality.ConformanceResult;

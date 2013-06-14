@@ -141,6 +141,7 @@ import java.util.logging.Logger;
 import javax.measure.unit.Unit;
 import javax.media.jai.Warp;
 import javax.media.jai.WarpAffine;
+import org.geotoolkit.util.SimpleInternationalString;
 
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -184,7 +185,6 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.geometry.DirectPosition;

@@ -17,12 +17,12 @@
 
 package org.geotoolkit.data;
 
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.iterator.CheckCloseFeatureIterator;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.storage.DataStoreException;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

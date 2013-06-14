@@ -18,10 +18,10 @@
 package org.geotoolkit.temporal.object;
 
 import java.util.Objects;
+import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.reference.DefaultTemporalReferenceSystem;
-import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.temporal.IndeterminateValue;
 import org.opengis.temporal.TemporalPosition;
 import org.opengis.temporal.TemporalReferenceSystem;

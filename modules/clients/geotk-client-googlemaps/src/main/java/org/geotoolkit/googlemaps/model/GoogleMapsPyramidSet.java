@@ -32,7 +32,7 @@ import org.geotoolkit.googlemaps.GetMapRequest;
 import org.geotoolkit.googlemaps.GoogleCoverageReference;
 import org.geotoolkit.googlemaps.StaticGoogleMapsServer;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;

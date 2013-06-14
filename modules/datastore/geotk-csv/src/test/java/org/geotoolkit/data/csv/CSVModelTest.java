@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.data.AbstractModelTests;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 /**
  *

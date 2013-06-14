@@ -50,7 +50,7 @@ import org.geotoolkit.jdbc.fid.NullPrimaryKey;
 import org.geotoolkit.jdbc.fid.PrimaryKey;
 import org.geotoolkit.jdbc.fid.PrimaryKeyColumn;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

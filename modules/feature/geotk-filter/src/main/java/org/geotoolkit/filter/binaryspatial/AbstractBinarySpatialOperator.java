@@ -24,10 +24,10 @@ import java.io.Serializable;
 import java.util.logging.Logger;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.measure.Units;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
 

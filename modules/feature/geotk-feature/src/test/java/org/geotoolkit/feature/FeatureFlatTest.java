@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import static org.apache.sis.test.Assert.assertSerializedEquals;
 
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -94,7 +95,7 @@ public class FeatureFlatTest extends TestCase {
             ((String) testFeature.getAttribute("testString")).equals("test string data"));
 
         //test serialize
-        Assert.assertSerializable(testFeature);
+        assertSerializedEquals(testFeature);
 
     }
 
@@ -165,7 +166,7 @@ public class FeatureFlatTest extends TestCase {
         assertEquals(gc.getEnvelopeInternal().getMaxY(), f.getBounds().getMaxY());
 
         //test serialize
-        Assert.assertSerializable(f);
+        assertSerializedEquals(f);
     }
 
     public void testClone() {

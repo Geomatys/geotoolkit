@@ -189,7 +189,7 @@
                                     <sml:parameter name="accuracy" xlink:role="urn:x-ogc:def:sensor:OGC:accuracy">
                                         <swe:Quantity definition="urn:x-ogc:def:sensor:OGC:absoluteAccuracy">
                                             <swe:uom code="Cel"/>
-                                            <swe:value>0.0020</swe:value>
+                                            <swe:value>0.002</swe:value>
                                         </swe:Quantity>
                                     </sml:parameter>
                                 </sml:ParameterList>

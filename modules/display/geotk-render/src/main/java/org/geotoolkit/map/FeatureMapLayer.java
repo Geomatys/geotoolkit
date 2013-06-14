@@ -21,7 +21,7 @@ import java.util.List;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.measure.Range;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;

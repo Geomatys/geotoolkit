@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.process.coverage.reducetodomain;
 
-import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;

@@ -12,10 +12,7 @@ package org.opengis.feature.catalog;
 
 import java.util.List;
 import org.opengis.annotation.Extension;
-import org.opengis.annotation.UML;
 import org.opengis.util.LocalName;
-import static org.opengis.annotation.Obligation.*;
-import static org.opengis.annotation.Specification.*;
 
 /**
  * class of real world phenomena with common properties.

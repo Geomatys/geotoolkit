@@ -30,7 +30,7 @@ import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.process.coverage.metadataextractor.ExtractionDescriptor.*;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.coverage.Coverage;
 import org.opengis.metadata.Metadata;

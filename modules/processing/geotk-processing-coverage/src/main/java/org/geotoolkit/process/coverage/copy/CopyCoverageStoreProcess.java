@@ -64,7 +64,7 @@ import org.geotoolkit.process.coverage.reducetodomain.ReduceToDomainDescriptor;
 import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.feature.type.Name;

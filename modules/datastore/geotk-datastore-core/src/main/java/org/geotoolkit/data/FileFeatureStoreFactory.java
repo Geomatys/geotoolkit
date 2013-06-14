@@ -17,7 +17,7 @@
 package org.geotoolkit.data;
 
 import java.net.URL;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 /**
  * FileFeatureStoreFactory for working with formats based on a single URL.

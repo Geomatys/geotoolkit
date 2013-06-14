@@ -18,7 +18,7 @@ import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 import org.opengis.feature.type.Name;
 import org.opengis.filter.FilterFactory;

@@ -18,7 +18,7 @@ package org.geotoolkit.data.shapefile.shp;
 
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 /**
  * Decimation while reading

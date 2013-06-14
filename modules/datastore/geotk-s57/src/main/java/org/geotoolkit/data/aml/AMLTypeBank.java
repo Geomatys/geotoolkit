@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import org.geotoolkit.data.s57.annexe.S57TypeBank;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.FileUtilities;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;

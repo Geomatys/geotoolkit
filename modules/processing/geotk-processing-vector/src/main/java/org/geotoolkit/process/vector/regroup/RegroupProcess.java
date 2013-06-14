@@ -17,11 +17,12 @@
 package org.geotoolkit.process.vector.regroup;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import java.util.ListIterator;
 
 import org.geotoolkit.data.FeatureCollection;
@@ -155,8 +156,8 @@ public class RegroupProcess extends AbstractProcess {
     static Feature regroupFeature(final String regroupAttribute, final Object attributeValue,
             final FeatureType newFeatureType, String geometryName, final FeatureCollection<Feature> filtredList) {
 
-        Geometry regroupGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
-
+        final List<Geometry> geoms = new ArrayList<>();
+        
         final FeatureIterator<Feature> featureIter = filtredList.iterator();
         try {
             while (featureIter.hasNext()) {
@@ -169,7 +170,8 @@ public class RegroupProcess extends AbstractProcess {
                     if (property.getDescriptor() instanceof GeometryDescriptor) {
                         //if it's the property we needed
                         if (property.getName().getLocalPart().equals(geometryName)) {
-                            regroupGeometry = regroupGeometry.union((Geometry) property.getValue());
+                            Geometry candidate = (Geometry) property.getValue();
+                            geoms.add(candidate);
                         }
                     }
                 }
@@ -177,6 +179,9 @@ public class RegroupProcess extends AbstractProcess {
         } finally {
             featureIter.close();
         }
+        
+        Geometry regroupGeometry = new GeometryFactory().buildGeometry(geoms);
+        
         Feature resultFeature = null;
         //In case
         if(regroupAttribute == null && attributeValue == null) {

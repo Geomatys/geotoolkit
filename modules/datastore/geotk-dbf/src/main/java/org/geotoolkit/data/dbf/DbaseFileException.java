@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.dbf;
 
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.Exceptions;
 
 

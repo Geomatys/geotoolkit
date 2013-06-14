@@ -49,7 +49,7 @@ import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.process.ProcessListenerAdapter;
 import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.Feature;
 import org.opengis.geometry.DirectPosition;

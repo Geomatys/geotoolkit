@@ -21,11 +21,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.geotoolkit.util.SimpleInternationalString;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.function.other.OtherFunctionFactory;
-import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.AttributeType;

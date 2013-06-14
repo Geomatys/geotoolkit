@@ -17,9 +17,9 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Image;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.storage.StorageListener;
 import org.opengis.feature.type.Name;
 

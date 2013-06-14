@@ -18,8 +18,8 @@ package org.geotoolkit.feature.type;
 
 import java.util.Collection;
 import java.util.List;
-import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.ArraysExt;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -47,7 +47,7 @@ public class ModifiableComplexType extends DefaultComplexType implements Modifia
     @Override
     public void changeProperty(final int index, PropertyDescriptor desc) {
         if(desc==null){
-            descriptors = XArrays.remove(descriptors, index, 1);
+            descriptors = ArraysExt.remove(descriptors, index, 1);
         }else{
             descriptors[index] = desc;
         }

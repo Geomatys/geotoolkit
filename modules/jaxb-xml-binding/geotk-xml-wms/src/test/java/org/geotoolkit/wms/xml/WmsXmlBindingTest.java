@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wms.xml;
 
+import java.io.IOException;
 import org.geotoolkit.wms.xml.v111.VendorSpecificCapabilities;
 import java.io.StringReader;
 import java.util.List;
@@ -28,10 +29,14 @@ import java.net.URI;
 import org.opengis.util.NameFactory;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.test.XMLComparator;
+import org.apache.sis.util.iso.DefaultInternationalString;
 
 import org.geotoolkit.inspire.xml.vs.ExtendedCapabilitiesType;
 import org.geotoolkit.inspire.xml.vs.LanguagesType;
@@ -48,7 +53,6 @@ import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.naming.DefaultNameFactory;
 import org.geotoolkit.service.ServiceTypeImpl;
 import org.geotoolkit.temporal.object.DefaultPeriod;
-import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.wms.xml.v111.BoundingBox;
@@ -62,6 +66,7 @@ import org.opengis.metadata.citation.PresentationForm;
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.maintenance.ScopeCode;
 import static org.junit.Assert.*;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -163,7 +168,7 @@ public class WmsXmlBindingTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void WMSCMarshallingTest() throws JAXBException {
+    public void WMSCMarshallingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
         String expResult =
         "<Capability >" + '\n' +
         "    <VendorSpecificCapabilities>" + '\n' +
@@ -224,7 +229,8 @@ public class WmsXmlBindingTest {
         //we remove the xmlmns
         result = StringUtilities.removeXmlns(result);
 
-        assertEquals(expResult, result);
+        final XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.compare();
 
     }
 
@@ -425,7 +431,8 @@ public class WmsXmlBindingTest {
 
         org.geotoolkit.internal.jaxb.gml.GMLAdapter.IDs.removeUUID(period);
 
-        assertEquals(expResult, result);
+        final XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.compare();
 
     }
 
@@ -633,7 +640,7 @@ public class WmsXmlBindingTest {
         // Perform the same change in our expected result in order to allow comparison.
         cresult.setExplanation(new SimpleInternationalString(cresult.getExplanation().toString()));
 
-        assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getExplanation(), result.getInspireExtendedCapabilities().getConformity().getExplanation());
+        assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getExplanation().toString(), result.getInspireExtendedCapabilities().getConformity().getExplanation().toString());
         assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getSpecification().getCollectiveTitle(), result.getInspireExtendedCapabilities().getConformity().getSpecification().getCollectiveTitle());
         assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getSpecification().getCitedResponsibleParties(), result.getInspireExtendedCapabilities().getConformity().getSpecification().getCitedResponsibleParties());
         assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getSpecification().getAlternateTitles(), result.getInspireExtendedCapabilities().getConformity().getSpecification().getAlternateTitles());

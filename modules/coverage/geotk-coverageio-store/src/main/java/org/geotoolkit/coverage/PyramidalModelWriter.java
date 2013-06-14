@@ -17,11 +17,9 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
 import java.util.AbstractQueue;
 import java.util.Collection;
 import java.util.Iterator;
@@ -31,6 +29,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -46,7 +45,6 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;

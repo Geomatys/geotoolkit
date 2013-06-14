@@ -20,7 +20,7 @@ package org.geotoolkit.xml;
 
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
-import org.geotoolkit.test.xml.DomComparator;
+import org.apache.sis.test.XMLComparator;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
@@ -41,12 +41,12 @@ public class DomCompare {
      */
     public static void compare(final Object expected, final Object result)
             throws ParserConfigurationException, SAXException, IOException{
-        final DomComparator comparator = new DomComparator(expected, result);
+        final XMLComparator comparator = new XMLComparator(expected, result);
         comparator.compare();
     }
 
     public static void compareNode(final Node expected, final Node result){
-        final DomComparator comparator = new DomComparator(expected, result);
+        final XMLComparator comparator = new XMLComparator(expected, result);
         comparator.compare();
     }
 

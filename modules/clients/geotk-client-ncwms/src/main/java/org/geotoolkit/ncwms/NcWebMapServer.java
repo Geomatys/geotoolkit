@@ -27,7 +27,7 @@ import org.geotoolkit.ncwms.v130.NcGetLegend130;
 import org.geotoolkit.ncwms.v130.NcGetMap130;
 import org.geotoolkit.ncwms.v130.NcGetTimeseries130;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.geotoolkit.wms.WebMapServer;

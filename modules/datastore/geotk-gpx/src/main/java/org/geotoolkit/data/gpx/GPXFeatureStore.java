@@ -47,7 +47,7 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;

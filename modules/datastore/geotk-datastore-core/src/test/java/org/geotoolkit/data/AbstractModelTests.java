@@ -18,11 +18,11 @@
 package org.geotoolkit.data;
 
 import java.util.List;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.storage.DataStoreException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.feature.simple.SimpleFeatureType;

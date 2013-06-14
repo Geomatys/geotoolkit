@@ -17,6 +17,7 @@
 package org.geotoolkit.ogc.xml;
 
 // J2SE dependencies
+import java.io.IOException;
 import org.opengis.filter.sort.SortOrder;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -29,6 +30,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.test.XMLComparator;
 
 // Geotoolkit dependencies
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
@@ -50,6 +53,7 @@ import org.geotoolkit.xml.MarshallerPool;
 //Junit dependencies
 import org.junit.*;
 import static org.junit.Assert.*;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -96,7 +100,7 @@ public class FilterXMLBindingTest {
      * @throws JAXBException
      */
     @Test
-    public void filterMarshalingTest() throws JAXBException {
+    public void filterMarshalingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
 
         /*
          * Test marshalling spatial filter
@@ -129,7 +133,8 @@ public class FilterXMLBindingTest {
 
         LOGGER.log(Level.FINER, "result: {0}", result);
         LOGGER.log(Level.FINER, "expected: {0}", expResult);
-        assertEquals(expResult, result);
+        final XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.compare();
 
 
 

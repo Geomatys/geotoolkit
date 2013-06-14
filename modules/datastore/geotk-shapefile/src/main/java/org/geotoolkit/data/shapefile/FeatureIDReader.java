@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 /**
  * Generator of Feature id for datastores.

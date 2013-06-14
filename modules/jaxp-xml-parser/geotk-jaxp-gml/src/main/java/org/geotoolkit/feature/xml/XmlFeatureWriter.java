@@ -18,7 +18,7 @@ package org.geotoolkit.feature.xml;
 
 import java.io.IOException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 /**
  * A interface to serialize feature or featureCollection in XML.

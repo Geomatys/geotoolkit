@@ -24,7 +24,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Id;

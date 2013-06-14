@@ -46,7 +46,7 @@ import org.geotoolkit.jdbc.fid.NullPrimaryKey;
 import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
 import org.geotoolkit.jdbc.reverse.DataBaseModel;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureReader;

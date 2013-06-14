@@ -23,6 +23,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 
 import org.geotoolkit.util.StringUtilities;
@@ -87,12 +88,13 @@ public class SosXMLBindingTest {
         result = result.substring(result.indexOf("?>") + 3);
         //we remove the xmlmns
         result = StringUtilities.removeXmlns(result);
-        result = result.replace("ns12", "sos");
+        result = result.replace("ns20", "sos");
 
         String expResult = "<sos:InsertObservationResponse >" + '\n' +
                            "    <sos:observation>new-id</sos:observation>"  + '\n' +
                            "</sos:InsertObservationResponse>" + '\n' ;
-        assertEquals(expResult, result);
+        final XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.compare();
 
     }
 

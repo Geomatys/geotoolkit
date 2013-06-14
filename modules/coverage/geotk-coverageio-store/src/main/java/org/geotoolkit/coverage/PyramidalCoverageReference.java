@@ -20,7 +20,7 @@ import java.awt.Dimension;
 import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 

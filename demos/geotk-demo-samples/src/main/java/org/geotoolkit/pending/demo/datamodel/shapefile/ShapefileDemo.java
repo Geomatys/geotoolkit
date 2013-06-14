@@ -9,7 +9,7 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.parameter.ParameterValueGroup;
 
 public class ShapefileDemo {

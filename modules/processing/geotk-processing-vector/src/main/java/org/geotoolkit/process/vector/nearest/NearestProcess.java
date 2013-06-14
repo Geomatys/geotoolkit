@@ -34,7 +34,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.vector.VectorProcessUtils;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;

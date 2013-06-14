@@ -27,7 +27,7 @@ import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.TileReference;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.wms.xml.v111.BoundingBox;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;

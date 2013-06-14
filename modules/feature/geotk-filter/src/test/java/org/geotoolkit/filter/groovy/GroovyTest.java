@@ -23,7 +23,6 @@ import javax.script.ScriptException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.FilterTestConstants;
 import org.geotoolkit.filter.function.groovy.GroovyFunctionFactory;
-import org.geotoolkit.filter.function.javascript.JavaScriptFunctionFactory;
 import static org.geotoolkit.test.Assert.*;
 
 import org.junit.After;
@@ -84,7 +83,7 @@ public class GroovyTest {
                          "if(x<0) x = 10;" +
                          "return x;");
         gvFunction = ff.function(GroovyFunctionFactory.GROOVY, exp);
-        assertSerializable(gvFunction); //test serialize
+        assertSerializedEquals(gvFunction); //test serialize
 
         List<Expression> exps = gvFunction.getParameters();
         PropertyName property1 = (PropertyName) exps.get(1);
@@ -115,7 +114,7 @@ public class GroovyTest {
                 + " return str;\n"
                 + "}\n");
         Function gvFunction = ff.function(GroovyFunctionFactory.GROOVY, exp);
-        assertSerializable(gvFunction); //test serialize
+        assertSerializedEquals(gvFunction); //test serialize
 
         List<Expression> exps = gvFunction.getParameters();
         PropertyName property1 = (PropertyName) exps.get(1);

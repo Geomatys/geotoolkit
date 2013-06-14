@@ -24,6 +24,7 @@ import javax.xml.datatype.Duration;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import org.apache.sis.test.XMLComparator;
 
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.gml.xml.v311.DirectPositionListType;
@@ -102,7 +103,8 @@ public class GmlXMLBindingTest {
                            "    <gml:lowerCorner>-30.711 134.196</gml:lowerCorner>" + '\n' +
                            "    <gml:upperCorner>-30.702 134.205</gml:upperCorner>" + '\n' +
                            "</gml:Envelope>" + '\n' ;
-        assertEquals(expResult, result);
+        final XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.compare();
 
         Duration d1 = javax.xml.datatype.DatatypeFactory.newInstance().newDuration("P2D");
 

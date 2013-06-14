@@ -72,7 +72,7 @@ import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -464,8 +464,6 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         } catch (SchemaException ex) {
             throw new DataStoreException(ex);
         } catch (SQLException ex) {
-            throw new DataStoreException(ex);
-        } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
     }

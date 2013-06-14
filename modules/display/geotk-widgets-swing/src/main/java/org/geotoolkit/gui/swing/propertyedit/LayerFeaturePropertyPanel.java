@@ -69,7 +69,7 @@ import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.version.Version;

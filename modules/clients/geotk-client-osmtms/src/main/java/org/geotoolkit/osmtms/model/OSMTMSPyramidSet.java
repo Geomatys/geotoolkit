@@ -27,7 +27,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.osmtms.GetTileRequest;
 import org.geotoolkit.osmtms.OSMTileMapServer;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

@@ -20,11 +20,14 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.StringUtilities;
@@ -35,6 +38,7 @@ import org.geotoolkit.wps.xml.v100.Execute;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.util.FactoryException;
+import org.xml.sax.SAXException;
 
 /**
  * Testing class for GetCapabilities requests of WPS client, in version 1.0.0.
@@ -50,7 +54,7 @@ public class ExecuteTest {
     }
 
     @Test
-    public void testRequestAndMarshall() {
+    public void testRequestAndMarshall() throws IOException, ParserConfigurationException, SAXException {
         try {
             final List<Double> corner = new ArrayList<Double>();
             corner.add(10.0);
@@ -85,7 +89,8 @@ public class ExecuteTest {
 
             String result = StringUtilities.removeXmlns(stringWriter.toString());
             String expected = expectedRequest();
-            assertEquals(expected, result);
+            final XMLComparator comparator = new XMLComparator(expected, result);
+            comparator.compare();
 
              WPSMarshallerPool.getInstance().release(marshaller);
         } catch (FactoryException ex) {

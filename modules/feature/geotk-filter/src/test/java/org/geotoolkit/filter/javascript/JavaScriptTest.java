@@ -83,7 +83,7 @@ public class JavaScriptTest {
                          "if(x<0) x = 10;" +
                          "x;");
         jsFunction = ff.function(JavaScriptFunctionFactory.JAVASCRIPT, exp);
-        assertSerializable(jsFunction); //test serialize
+        assertSerializedEquals(jsFunction); //test serialize
 
         List<Expression> exps = jsFunction.getParameters();
         PropertyName property1 = (PropertyName) exps.get(1);

@@ -44,7 +44,7 @@ import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AssociationDescriptor;

@@ -17,11 +17,10 @@
  */
 package org.geotoolkit.temporal.object;
 
-import org.geotoolkit.temporal.object.DefaultCalendarDate;
+import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.reference.DefaultTemporalReferenceSystem;
-import org.geotoolkit.util.SimpleInternationalString;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -33,7 +33,7 @@ import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.quadtree.LazyTyleSearchIterator;
 import org.geotoolkit.index.quadtree.LazyTyleSearchIterator.Buffered;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;

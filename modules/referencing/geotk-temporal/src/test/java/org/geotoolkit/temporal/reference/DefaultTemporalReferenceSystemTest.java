@@ -17,17 +17,16 @@
  */
 package org.geotoolkit.temporal.reference;
 
-import org.geotoolkit.temporal.reference.DefaultTemporalReferenceSystem;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
+import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.util.SimpleInternationalString;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

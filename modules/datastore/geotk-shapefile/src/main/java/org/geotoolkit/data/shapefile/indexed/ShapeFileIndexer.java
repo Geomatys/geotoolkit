@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.lock.AccessManager;

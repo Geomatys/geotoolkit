@@ -17,6 +17,7 @@
 package org.geotoolkit.csw.xml;
 
 // J2SE dependencies
+import java.io.IOException;
 import java.util.logging.Level;
 import org.geotoolkit.util.StringUtilities;
 import java.io.StringReader;
@@ -34,6 +35,8 @@ import javax.xml.bind.Unmarshaller;
 
 // Constellation dependencies
 import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.csw.xml.v202.AbstractRecordType;
 import org.geotoolkit.csw.xml.v202.BriefRecordType;
 import org.geotoolkit.csw.xml.v202.Capabilities;
@@ -70,6 +73,7 @@ import org.geotoolkit.xml.MarshallerPool;
 //Junit dependencies
 import org.junit.*;
 import static org.junit.Assert.*;
+import org.xml.sax.SAXException;
 
 /**
  * A Test suite verifying that the Record are correctly marshalled/unmarshalled
@@ -1009,7 +1013,7 @@ public class CswXMLBindingTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void getRecordsMarshalingTest() throws JAXBException {
+    public void getRecordsMarshalingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
         Marshaller marshaller = pool.acquireMarshaller();
         
          /*
@@ -1053,8 +1057,8 @@ public class CswXMLBindingTest {
         "                </ogc:Not>"                                                    + '\n' +
         "            </ogc:Filter>"                                                     + '\n' +
         "        </csw:Constraint>"                                                     + '\n' +
-        "    </csw:Query>"                                                              + '\n' +
-        "</csw:GetRecords>" + '\n';
+        "    </csw:Query>"                                                              + '\n' ;
+        //"</csw:GetRecords>" + '\n';
         LOGGER.finer("RESULT:\n" + result);
         
         //we remove the 2 first line because the xlmns are not always in the same order.
@@ -1063,10 +1067,12 @@ public class CswXMLBindingTest {
         
         result = result.substring(result.indexOf('\n') + 1);
         result = result.substring(result.indexOf('\n') + 1);
+        result = result.replaceAll("</csw:GetRecords>", "");
         
         LOGGER.finer("RESULT:\n" + result);
         LOGGER.finer("EXPRESULT:\n" + expResult);
-        assertEquals(expResult, result);
+        XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.compare();
 
          /*
          * Test marshalling csw getRecordByIdResponse v2.0.0
@@ -1102,8 +1108,8 @@ public class CswXMLBindingTest {
         "                </ogc:Not>"                                                    + '\n' +
         "            </ogc:Filter>"                                                     + '\n' +
         "        </cat:Constraint>"                                                     + '\n' +
-        "    </cat:Query>"                                                              + '\n' +
-        "</cat:GetRecords>" + '\n';
+        "    </cat:Query>"                                                              + '\n';
+        //"</cat:GetRecords>" + '\n';
         LOGGER.finer("RESULT:\n" + result);
 
         //we remove the 2 first line because the xlmns are not always in the same order.
@@ -1112,10 +1118,14 @@ public class CswXMLBindingTest {
 
         result = result.substring(result.indexOf('\n') + 1);
         result = result.substring(result.indexOf('\n') + 1);
+        result = result.replaceAll("</cat:GetRecords>", "");
 
         LOGGER.finer("RESULT:\n" + result);
         LOGGER.finer("EXPRESULT:\n" + expResult);
-        assertEquals(expResult, result);
+        
+        comparator = new XMLComparator(expResult, result);
+        comparator.compare();
+        
         pool.release(marshaller);
     }
     
@@ -1228,7 +1238,7 @@ public class CswXMLBindingTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void updateMarshalingTest() throws JAXBException {
+    public void updateMarshalingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
 
         Marshaller marshaller = pool.acquireMarshaller();
         
@@ -1289,7 +1299,8 @@ public class CswXMLBindingTest {
 
         result = StringUtilities.removeXmlns(result);
 
-        assertEquals(expResult, result);
+        XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.compare();
 
         /**
          * Test 3 : Complex recordProperty (GeographicBoundingBox)
@@ -1337,7 +1348,8 @@ public class CswXMLBindingTest {
 
         result = StringUtilities.removeXmlns(result);
 
-        assertEquals(expResult, result);
+        comparator = new XMLComparator(expResult, result);
+        comparator.compare();
         
         pool.release(marshaller);
     }

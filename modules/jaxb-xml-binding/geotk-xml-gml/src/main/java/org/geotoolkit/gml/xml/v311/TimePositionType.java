@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
@@ -30,9 +29,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
-import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.temporal.Position;
 import org.opengis.util.InternationalString;
 

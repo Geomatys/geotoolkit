@@ -18,13 +18,11 @@
 package org.geotoolkit.filter.function;
 
 
-import org.geotoolkit.test.Commons;
 import org.geotoolkit.filter.function.other.LengthFunction;
 import org.geotoolkit.filter.function.other.OtherFunctionFactory;
 import org.junit.Test;
 
 import org.opengis.filter.expression.Function;
-import org.opengis.filter.spatial.BBOX;
 
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
@@ -47,7 +45,7 @@ public class FunctionTest {
 
         Function f = FF.function(OtherFunctionFactory.EXPRESSION_VALUE_LENGHT, FF.property("."));
         assertTrue(f instanceof LengthFunction);
-        assertSerializable(f); //test serialize
+        assertSerializedEquals(f); //test serialize
 
     }
 

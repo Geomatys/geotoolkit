@@ -57,7 +57,7 @@ import org.geotoolkit.jdbc.reverse.SchemaMetaModel;
 import org.geotoolkit.jdbc.reverse.TableMetaModel;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;

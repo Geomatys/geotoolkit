@@ -21,7 +21,7 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.converters.outputs.complex.AbstractComplexOutputConverter;
 import org.geotoolkit.wps.io.WPSIO;

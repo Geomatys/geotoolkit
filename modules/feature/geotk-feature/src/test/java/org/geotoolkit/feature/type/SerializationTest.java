@@ -22,10 +22,10 @@ import java.util.Collections;
 import java.util.Collection;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.util.SimpleInternationalString;
 
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.util.SimpleInternationalString;
 import static org.geotoolkit.test.Assert.*;
 
 import org.junit.Test;
@@ -56,53 +56,53 @@ public class SerializationTest {
         //test attribut type
         AttributeType attType = new DefaultAttributeType(DefaultName.valueOf("attType"),
                 String.class, true, true, null, null, new SimpleInternationalString("i18n"));
-        assertSerializable(attType);
+        assertSerializedEquals(attType);
 
         //test association type
         AssociationType assoType = new DefaultAssociationType(
                 DefaultName.valueOf("asso"), attType, true,
                 null, null, new SimpleInternationalString("i18n"));
-        assertSerializable(assoType);
+        assertSerializedEquals(assoType);
 
         //test association type
         AssociationDescriptor assoDesc = new DefaultAssociationDescriptor(
                 assoType, DefaultName.valueOf("assoDesc"), 0, 1, false);
-        assertSerializable(assoDesc);
+        assertSerializedEquals(assoDesc);
 
         //test attribute descriptor
         AttributeDescriptor attDesc = new DefaultAttributeDescriptor(
                 attType, DefaultName.valueOf("attDesc"), 0, 1, true, null);
-        assertSerializable(attDesc);
+        assertSerializedEquals(attDesc);
 
         //test geometry type
         GeometryType geomtype = new DefaultGeometryType(DefaultName.valueOf("geomType"),
                 Geometry.class, DefaultGeographicCRS.WGS84, true, true, null,
                 attType, new SimpleInternationalString("i18n"));
-        assertSerializable(geomtype);
+        assertSerializedEquals(geomtype);
 
         //test property descriptor
         GeometryDescriptor geomDesc = new DefaultGeometryDescriptor(geomtype,
                 DefaultName.valueOf("geomdesc"), 0, 1, true, null);
-        assertSerializable(geomDesc);
+        assertSerializedEquals(geomDesc);
 
         //test complexe type
         ComplexType comType = new DefaultComplexType(DefaultName.valueOf("comType"),
                 (Collection)Collections.singleton(geomDesc), true, true, null, attType, null);
-        assertSerializable(comType);
+        assertSerializedEquals(comType);
 
         //test schema
         Schema schema = new DefaultSchema("http://geotoolkit.org");
-        assertSerializable(schema);
+        assertSerializedEquals(schema);
 
         //test profile
         DefaultProfile profile = new DefaultProfile(schema, Collections.singleton(DefaultName.valueOf("profile")));
-        assertSerializable(profile);
+        assertSerializedEquals(profile);
 
 
-        assertSerializable(BasicFeatureTypes.FEATURE);
-        assertSerializable(BasicFeatureTypes.LINE);
-        assertSerializable(BasicFeatureTypes.POINT);
-        assertSerializable(BasicFeatureTypes.POLYGON);
+        assertSerializedEquals(BasicFeatureTypes.FEATURE);
+        assertSerializedEquals(BasicFeatureTypes.LINE);
+        assertSerializedEquals(BasicFeatureTypes.POINT);
+        assertSerializedEquals(BasicFeatureTypes.POLYGON);
 
     }
 }

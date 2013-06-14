@@ -60,7 +60,7 @@ import org.geotoolkit.index.Data;
 import org.geotoolkit.index.TreeException;
 import org.geotoolkit.index.quadtree.*;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.NullProgressListener;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

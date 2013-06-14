@@ -31,7 +31,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.geotoolkit.feature.xml.Utils;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.wfs.Delete;
 import org.geotoolkit.data.wfs.IdentifierGenerationOption;

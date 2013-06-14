@@ -31,6 +31,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -40,7 +41,6 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;

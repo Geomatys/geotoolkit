@@ -1,7 +1,8 @@
 
 package org.geotoolkit.pending.demo;
 
-import org.geotoolkit.measure.AngleFormat;
+import org.apache.sis.measure.AngleFormat;
+
 
 /**
  * Commons coding questions might find some answers here.

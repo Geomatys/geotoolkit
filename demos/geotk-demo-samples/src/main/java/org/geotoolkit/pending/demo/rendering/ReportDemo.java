@@ -54,7 +54,7 @@ import org.geotoolkit.report.graphic.legend.LegendDef;
 import org.geotoolkit.report.graphic.map.MapDef;
 import org.geotoolkit.report.graphic.northarrow.NorthArrowDef;
 import org.geotoolkit.report.graphic.scalebar.ScaleBarDef;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;

@@ -148,7 +148,7 @@ public class BinaryComparisonTest {
         filter = FF.equals(property, falseliteral);
         assertFalse(filter.evaluate(CANDIDATE_1));
 
-        assertSerializable(filter); //test serialize
+        assertSerializedEquals(filter); //test serialize
 
     }
 
@@ -280,7 +280,7 @@ public class BinaryComparisonTest {
 //        filter = FF.greater(underLiteral,property);
 //        assertFalse(filter.evaluate(FEATURE_1));
 
-        assertSerializable(filter); //test serialize
+        assertSerializedEquals(filter); //test serialize
 
     }
 
@@ -394,7 +394,7 @@ public class BinaryComparisonTest {
         filter = FF.greaterOrEqual(underLiteral,property);
         assertFalse(filter.evaluate(CANDIDATE_1));
 
-        assertSerializable(filter); //test serialize
+        assertSerializedEquals(filter); //test serialize
 
     }
 
@@ -508,7 +508,7 @@ public class BinaryComparisonTest {
         filter = FF.less(underLiteral,property);
         assertTrue(filter.evaluate(CANDIDATE_1));
 
-        assertSerializable(filter); //test serialize
+        assertSerializedEquals(filter); //test serialize
 
     }
 
@@ -622,7 +622,7 @@ public class BinaryComparisonTest {
         filter = FF.lessOrEqual(underLiteral,property);
         assertTrue(filter.evaluate(CANDIDATE_1));
 
-        assertSerializable(filter); //test serialize
+        assertSerializedEquals(filter); //test serialize
 
     }
 
@@ -731,7 +731,7 @@ public class BinaryComparisonTest {
         filter = FF.notEqual(property, falseliteral);
         assertTrue(filter.evaluate(CANDIDATE_1));
 
-        assertSerializable(filter); //test serialize
+        assertSerializedEquals(filter); //test serialize
 
     }
 
@@ -749,7 +749,7 @@ public class BinaryComparisonTest {
         filter = FF.equal(property, rightliteral, true, MatchAction.ANY);
         assertFalse(filter.evaluate(CANDIDATE_1));
 
-        assertSerializable(filter); //test serialize
+        assertSerializedEquals(filter); //test serialize
 
     }
 

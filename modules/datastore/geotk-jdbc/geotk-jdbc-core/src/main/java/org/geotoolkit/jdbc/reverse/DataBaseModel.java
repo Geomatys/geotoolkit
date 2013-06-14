@@ -40,7 +40,7 @@ import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.jdbc.DefaultJDBCFeatureStore;
 import org.geotoolkit.jdbc.JDBCFeatureStore;
