@@ -17,7 +17,6 @@
 package org.geotoolkit.wps;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
@@ -30,13 +29,17 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
+import org.geotoolkit.ows.xml.v110.ExceptionReport;
+import org.geotoolkit.ows.xml.v110.ExceptionType;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.parameter.ExtendedParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.*;
 import org.geotoolkit.process.Process;
@@ -79,11 +82,22 @@ import org.opengis.util.NoSuchIdentifierException;
 public class WebProcessingServer extends AbstractServer implements ProcessingRegistry {
 
     private static final Logger LOGGER = Logging.getLogger(WebProcessingServer.class);
+    private static final long TIMEOUT_CAPS = 10000L;
+
+    /**
+     * A key for {@link ExtendedParameterDescriptor} user data map. Specify the format to use for parameter, using {FormatSupport} object.
+     */
+    private static final String USE_FORMAT_KEY = "format";
+
     //process descriptors
     private final Map<String, ProcessDescriptor> descriptors = new HashMap<String, ProcessDescriptor>();
-    private boolean isDescriptorsRequested = false;
+    /** A map whose key is a process identifier, and value a boolean to specify if it supports outputs as reference (true) or not (false). */
+    private final Map<String, Boolean> storageSupported = new HashMap<String, Boolean>();
+    /** A map whose key is a process identifier, and value a boolean to specify if it supports status (true) or not (false). */
+    private final Map<String, Boolean> statusSupported = new HashMap<String, Boolean>();
+    private boolean descriptorsCached = false;
     private WPSCapabilitiesType capabilities;
-    
+
     private String storageDirectory;
     private String storageURL;
 
@@ -109,7 +123,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
          * @param version
          * @return The enum which matches with the given string.
          * @throws IllegalArgumentException if the enum class does not contain any enum types for the given string
-         * value.
+         *                                  value.
          */
         public static WPSVersion getVersion(final String version) {
             for (WPSVersion vers : values()) {
@@ -134,7 +148,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
      * @param serverURL
      * @param version
      */
-    public WebProcessingServer(final URL serverURL, final String version) {
+    public WebProcessingServer(final URL serverURL, final String version) throws CapabilitiesException {
         this(serverURL, null, version);
     }
 
@@ -142,35 +156,39 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
      * Constructor
      *
      * @param serverURL
+     * @param security
      * @param version
      */
-    public WebProcessingServer(final URL serverURL, final ClientSecurity security, final String version) {
+    public WebProcessingServer(final URL serverURL, final ClientSecurity security, final String version) throws CapabilitiesException {
         super(create(WPSServerFactory.PARAMETERS, serverURL, security));
         if (version.equals("1.0.0")) {
             Parameters.getOrCreate(WPSServerFactory.VERSION, parameters).setValue(WPSVersion.v100.getCode());
         } else {
-            throw new IllegalArgumentException("Unknowned version : " + version);
+            throw new IllegalArgumentException("Unknown version : " + version);
         }
-        this.capabilities = null;
+        getCapabilities();
     }
 
     /**
      * Constructor
      *
      * @param serverURL
+     * @param security
      * @param version
      */
-    public WebProcessingServer(final URL serverURL, final ClientSecurity security, final WPSVersion version) {
+    public WebProcessingServer(final URL serverURL, final ClientSecurity security, final WPSVersion version) throws CapabilitiesException {
         super(create(WPSServerFactory.PARAMETERS, serverURL, security));
         if (version == null) {
-            throw new IllegalArgumentException("Unknowned version : " + version);
+            throw new IllegalArgumentException("Unknown version : " + version);
         }
         Parameters.getOrCreate(WPSServerFactory.VERSION, parameters).setValue(version);
-        this.capabilities = null;
+
+        getCapabilities();
     }
 
-    public WebProcessingServer(ParameterValueGroup params) {
+    public WebProcessingServer(ParameterValueGroup params) throws CapabilitiesException {
         super(params);
+        getCapabilities();
     }
 
     @Override
@@ -200,15 +218,16 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
     public void setStorageURL(String storageURL) {
         this.storageURL = storageURL;
     }
-    
+
     /**
      * @return WPSCapabilitiesType : WPS server capabilities
      */
-    public WPSCapabilitiesType getCapabilities() {
+    public WPSCapabilitiesType getCapabilities() throws CapabilitiesException {
 
         if (capabilities != null) {
             return capabilities;
         }
+
         //Thread to prevent infinite request on a server
         final Thread thread = new Thread() {
 
@@ -219,31 +238,25 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                     final InputStream is = createGetCapabilities().getResponseStream();
                     unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
                     capabilities = ((JAXBElement<WPSCapabilitiesType>) unmarshaller.unmarshal(is)).getValue();
+                    WPSMarshallerPool.getInstance().release(unmarshaller);
+                    is.close();
                 } catch (Exception ex) {
                     capabilities = null;
-                    try {
-                        LOGGER.log(Level.WARNING, "Wrong URL, the server doesn't answer : " + createGetCapabilities().getURL().toString(), ex);
-                    } catch (MalformedURLException ex1) {
-                        LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
-                    }
-                } finally {
-                    if (unmarshaller != null) {
-                        WPSMarshallerPool.getInstance().release(unmarshaller);
-                    }
+                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 }
             }
         };
         thread.start();
-        final long start = System.currentTimeMillis();
+
         try {
-            thread.join(10000);
+            thread.join(TIMEOUT_CAPS);
         } catch (InterruptedException ex) {
-            LOGGER.log(Level.WARNING, "The thread to obtain GetCapabilities doesn't answer.", ex);
-        }
-        if ((System.currentTimeMillis() - start) > 10000) {
-            LOGGER.log(Level.WARNING, "TimeOut error, the server takes too much time to answer. ");
+            throw new CapabilitiesException("GetCapabilities takes too much time. Abort.");
         }
 
+        if (capabilities == null) {
+            throw new CapabilitiesException("A problem occured while getting Service capabilities.");
+        }
         return capabilities;
     }
 
@@ -266,29 +279,19 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                     final InputStream request = describe.getResponseStream();
                     unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
                     description[0] = (ProcessDescriptions) unmarshaller.unmarshal(request);
+                    WPSMarshallerPool.getInstance().release(unmarshaller);
+                    request.close();
                 } catch (Exception ex) {
                     description[0] = null;
-                    try {
-                        LOGGER.log(Level.WARNING, "Wrong URL, the server doesn't answer : " + describe.getURL().toString(), ex);
-                    } catch (MalformedURLException ex1) {
-                        LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
-                    }
-                } finally {
-                    if (unmarshaller != null) {
-                        WPSMarshallerPool.getInstance().release(unmarshaller);
-                    }
+                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 }
             }
         };
         thread.start();
-        final long start = System.currentTimeMillis();
         try {
-            thread.join(10000);
+            thread.join(TIMEOUT_CAPS);
         } catch (InterruptedException ex) {
-            LOGGER.log(Level.WARNING, "The thread to obtain GetCapabilities doesn't answer.", ex);
-        }
-        if ((System.currentTimeMillis() - start) > 10000) {
-            LOGGER.log(Level.WARNING, "TimeOut error, the server takes too much time to answer. ");
+            LOGGER.log(Level.WARNING, "The thread to obtain describeProcess doesn't answer.", ex);
         }
 
         return description[0];
@@ -305,7 +308,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
             case v100:
                 return new GetCapabilities100(serverURL.toString(), getClientSecurity());
             default:
-                throw new IllegalArgumentException("Version was not defined");
+                throw new IllegalArgumentException("Version not defined or unsupported.");
         }
     }
 
@@ -319,7 +322,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
             case v100:
                 return new DescribeProcess100(serverURL.toString(), getClientSecurity());
             default:
-                throw new IllegalArgumentException("Version was not defined");
+                throw new IllegalArgumentException("Version was not defined or unsupported.");
         }
     }
 
@@ -333,7 +336,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
             case v100:
                 return new Execute100(serverURL.toString(), getClientSecurity());
             default:
-                throw new IllegalArgumentException("Version was not defined");
+                throw new IllegalArgumentException("Version was not defined or unsupported.");
         }
     }
 
@@ -368,215 +371,252 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
     }
 
     private void checkDescriptors() {
-        if (!isDescriptorsRequested) {
+        if (!descriptorsCached) {
             requestDescriptors();
         }
     }
 
     private void requestDescriptors() {
-        getCapabilities();
-        if (capabilities.getProcessOfferings() != null) {
-            final List<ProcessBriefType> processBrief = capabilities.getProcessOfferings().getProcess();
+        if (capabilities.getProcessOfferings() == null) {
+            return;
+        }
+        final List<ProcessBriefType> processBrief = capabilities.getProcessOfferings().getProcess();
 
-            for (final ProcessBriefType processBriefType : processBrief) {
+        for (final ProcessBriefType processBriefType : processBrief) {
 
-                final String processIdentifier = processBriefType.getIdentifier().getValue();
-                final InternationalString processAbstract = new DefaultInternationalString(processBriefType.getAbstract().getValue());
-                final List<ParameterDescriptor> inputDescriptors = new ArrayList<ParameterDescriptor>();
-                final List<ParameterDescriptor> outputDescriptors = new ArrayList<ParameterDescriptor>();
-                final Map<String, String> inputTypes = new HashMap<String, String>();
+            final String processIdentifier = processBriefType.getIdentifier().getValue();
+            final InternationalString processAbstract = new DefaultInternationalString(processBriefType.getAbstract().getValue());
+            final List<ParameterDescriptor> inputDescriptors = new ArrayList<ParameterDescriptor>();
+            final List<ParameterDescriptor> outputDescriptors = new ArrayList<ParameterDescriptor>();
+            final Map<String, String> inputTypes = new HashMap<String, String>();
 
-                boolean supportedIO = true;
+            final ProcessDescriptions wpsProcessDescriptions = getDescribeProcess(Collections.singletonList(processIdentifier));
+            if (wpsProcessDescriptions.getProcessDescription() == null) {
+                continue;
+            }
 
-                final ProcessDescriptions wpsProcessDescriptions = getDescribeProcess(Collections.singletonList(processIdentifier));
-                if (wpsProcessDescriptions.getProcessDescription() != null) {
-                    final ProcessDescriptionType wpsProcessDesc = wpsProcessDescriptions.getProcessDescription().get(0);
+            final ProcessDescriptionType wpsProcessDesc = wpsProcessDescriptions.getProcessDescription().get(0);
 
-                    if (wpsProcessDesc.getDataInputs() != null) {
-                        final List<InputDescriptionType> inputDescriptionList = wpsProcessDesc.getDataInputs().getInput();
-                        final List<OutputDescriptionType> outputDescriptionList = wpsProcessDesc.getProcessOutputs().getOutput();
+            // INPUTS
+            if (wpsProcessDesc.getDataInputs() != null) {
+                final List<InputDescriptionType> inputDescriptionList = wpsProcessDesc.getDataInputs().getInput();
 
-                        // INPUTS
-                        for (final InputDescriptionType inputDesc : inputDescriptionList) {
-                            final String inputName = inputDesc.getIdentifier().getValue();
-                            final String inputAbstract = inputDesc.getAbstract().getValue();
-                            final Integer max = Integer.valueOf(inputDesc.getMaxOccurs().intValue());
-                            final Integer min = Integer.valueOf(inputDesc.getMinOccurs().intValue());
+                for (final InputDescriptionType inputDesc : inputDescriptionList) {
+                    final String inputName = inputDesc.getIdentifier().getValue();
+                    final String inputAbstract = inputDesc.getAbstract().getValue();
+                    final Integer max = Integer.valueOf(inputDesc.getMaxOccurs().intValue());
+                    final Integer min = Integer.valueOf(inputDesc.getMinOccurs().intValue());
 
-                            final Map<String, String> properties = new HashMap<String, String>();
-                            properties.put("name", inputName);
-                            properties.put("remarks", inputAbstract);
+                    final Map<String, String> properties = new HashMap<String, String>();
+                    properties.put("name", inputName);
+                    properties.put("remarks", inputAbstract);
 
-                            final SupportedComplexDataInputType complexInput = inputDesc.getComplexData();
-                            final LiteralInputType literalInput = inputDesc.getLiteralData();
-                            final SupportedCRSsType bboxInput = inputDesc.getBoundingBoxData();
+                    final SupportedComplexDataInputType complexInput = inputDesc.getComplexData();
+                    final LiteralInputType literalInput = inputDesc.getLiteralData();
+                    final SupportedCRSsType bboxInput = inputDesc.getBoundingBoxData();
 
+                    if (complexInput != null) {
+                        final ComplexDataCombinationType complexDefault = complexInput.getDefault();
+                        if (complexDefault != null && complexDefault.getFormat() != null) {
+                            String mime     = complexDefault.getFormat().getMimeType();
+                            String encoding = complexDefault.getFormat().getEncoding();
+                            String schema   = complexDefault.getFormat().getSchema();
 
-                            if (complexInput != null) {
-                                final ComplexDataCombinationType complexDefault = complexInput.getDefault();
-                                if (complexDefault != null && complexDefault.getFormat() != null) {
-                                    final String mime = complexDefault.getFormat().getMimeType(); 
-                                    final String encoding = complexDefault.getFormat().getEncoding();
-                                    final String schema = complexDefault.getFormat().getSchema();
-
-                                    final Class clazz = WPSIO.findClass(WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX, mime, encoding, schema, null);
-                                    if (clazz == null) {
-                                        LOGGER.log(Level.WARNING, "Input complex class for "+inputName+" not found.");
-                                        supportedIO = false;
+                            /**
+                             * Make a first try on default format, as it should be the more stable. If we don't support
+                             * default format, we check the other supported formats until we find one we can use.
+                             */
+                            Class clazz = WPSIO.findClass(WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX, mime, encoding, schema, null);
+                            if (clazz == null) {
+                                for (ComplexDataDescriptionType currentDesc : complexInput.getSupported().getFormat()) {
+                                    mime     = currentDesc.getMimeType();
+                                    encoding = currentDesc.getEncoding();
+                                    schema   = currentDesc.getSchema();
+                                    clazz    = WPSIO.findClass(WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX, mime, encoding, schema, null);
+                                    if (clazz != null) {
                                         break;
                                     }
-                                    inputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, null, null, null, null, min != 0));
-                                    inputTypes.put(inputName, "complex");
-                                } else {
-                                    LOGGER.log(Level.WARNING, "No defaut format for complex input "+inputName+".");
-                                    supportedIO = false;
                                 }
-                            }
-                            
-                            if (literalInput != null) {
-                                final DomainMetadataType inputType = literalInput.getDataType();
-                                final Class clazz = WPSIO.findClass(WPSIO.IOType.INPUT, WPSIO.FormChoice.LITERAL, null, null, null, inputType);
-                                final String defaultValue = literalInput.getDefaultValue();
-                                final SupportedUOMsType inputUom = literalInput.getUOMs();
-                                Unit unit = null;
-                                if (inputUom != null) {
-                                    unit = Unit.valueOf(inputUom.getDefault().getUOM().getValue());
-                                }
-                                
-                                WPSObjectConverter converter = null;
-                                try {
-                                    converter = WPSIO.getConverter(clazz, WPSIO.IOType.INPUT, WPSIO.FormChoice.LITERAL);
-                                    if (converter == null) {
-                                        LOGGER.log(Level.WARNING, "Can't find the converter for the default literal input value.");
-                                        supportedIO = false;
-                                        break;
-                                    }
-                                } catch (NonconvertibleObjectException ex) {
-                                    LOGGER.log(Level.WARNING, "Can't find the converter for the default literal input value.", ex);
-                                    supportedIO = false;
-                                    break;
-                                }
-                               
-                                //At this state the converter can't be null.
-                                try {
-                                    inputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, converter.convert(defaultValue, null), null, null, unit, min != 0));
-                                    inputTypes.put(inputName, "literal");
-                                } catch (NonconvertibleObjectException ex2) {
-                                    LOGGER.log(Level.WARNING, "Can't convert the default literal input value.", ex2);
-                                    supportedIO = false;
+                                if (clazz == null) {
+                                    LOGGER.log(Level.WARNING, "No compatible format found for output (id: " +
+                                            inputName + ", process (id: " + processIdentifier + ") is skipped.");
                                     break;
                                 }
                             }
-                            
-                            if (bboxInput != null) {
-                                inputDescriptors.add(new DefaultParameterDescriptor(properties, Envelope.class, null, null, null, null, null, min != 0));
-                                inputTypes.put(inputName, "bbox");
-                            }
+
+                            final WPSIO.FormatSupport support = new WPSIO.FormatSupport(clazz, WPSIO.IOType.INPUT, mime, encoding, schema, false);
+                            inputDescriptors.add(new ExtendedParameterDescriptor(
+                                    properties, clazz, null, null, null, null, null, true, Collections.singletonMap(USE_FORMAT_KEY, (Object) support)));
+                            inputTypes.put(inputName, "complex");
+
+                        } else {
+                            LOGGER.log(Level.WARNING, "Invalid describeProcess. No default format specified for input " +
+                                    inputName + ". Process " + processIdentifier + ") is skipped.");
+                            break;
                         }
 
-                        if (supportedIO) {
-                            //OUTPUTS
-                            for (final OutputDescriptionType outputDesc : outputDescriptionList) {
-                                final String outputName = outputDesc.getIdentifier().getValue();
-                                final String outputAbstract = outputDesc.getAbstract().getValue();
-
-                                final SupportedComplexDataType complexOutput = outputDesc.getComplexOutput();
-                                final LiteralOutputType literalOutput = outputDesc.getLiteralOutput();
-                                final SupportedCRSsType bboxOutput = outputDesc.getBoundingBoxOutput();
-
-                                final Map<String, String> properties = new HashMap<String, String>();
-                                properties.put("name", outputName);
-                                properties.put("remarks", outputAbstract);
-
-                                if (complexOutput != null) {
-                                    final ComplexDataCombinationType complexDefault = complexOutput.getDefault();
-                                    if (complexDefault != null && complexDefault.getFormat() != null) {
-                                        final String mime = complexDefault.getFormat().getMimeType(); 
-                                        final String encoding = complexDefault.getFormat().getEncoding();
-                                        final String schema = complexDefault.getFormat().getSchema();
-
-                                        final Class clazz = WPSIO.findClass(WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX, mime, encoding, schema, null);
-                                        if (clazz == null) {
-                                            LOGGER.log(Level.WARNING, "Output complex class for "+outputName+" not found.");
-                                            supportedIO = false;
-                                            break;
-                                        }
-                                        
-                                        outputDescriptors.add(new DefaultParameterDescriptor(outputName, outputAbstract, clazz, null, true));
-                                    } else  {
-                                        LOGGER.log(Level.WARNING, "No defaut format for complex output "+outputName+".");
-                                        supportedIO = false;
-                                    }
-                                }
-                                
-                                if (literalOutput != null) {
-                                    final DomainMetadataType inputType = literalOutput.getDataType();
-                                    final Class clazz = WPSIO.findClass(WPSIO.IOType.OUTPUT, WPSIO.FormChoice.LITERAL, null, null, null, inputType);
-                                    final SupportedUOMsType inputUom = literalOutput.getUOMs();
-                                    Unit unit = null;
-                                    if (inputUom != null) {
-                                        unit = Unit.valueOf(inputUom.getDefault().getUOM().getValue());
-                                    }
-
-                                    outputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, null, null, null, unit, true));
-                                }
-                                if (bboxOutput != null) {
-                                    outputDescriptors.add(new DefaultParameterDescriptor(properties, Envelope.class, null, null, null, null, null, true));
-                                }
-                            }
+                    } else if (literalInput != null) {
+                        final DomainMetadataType inputType = literalInput.getDataType();
+                        final Class clazz = WPSIO.findClass(WPSIO.IOType.INPUT, WPSIO.FormChoice.LITERAL, null, null, null, inputType);
+                        final String defaultValue = literalInput.getDefaultValue();
+                        final SupportedUOMsType inputUom = literalInput.getUOMs();
+                        Unit unit = null;
+                        if (inputUom != null) {
+                            unit = Unit.valueOf(inputUom.getDefault().getUOM().getValue());
                         }
+
+                        WPSObjectConverter converter = null;
+                        try {
+                            converter = WPSIO.getConverter(clazz, WPSIO.IOType.INPUT, WPSIO.FormChoice.LITERAL);
+                            if (converter == null) {
+                                LOGGER.log(Level.WARNING, "Can't find the converter for the default literal input value.");
+                                break;
+                            }
+                        } catch (NonconvertibleObjectException ex) {
+                            LOGGER.log(Level.WARNING, "Can't find the converter for the default literal input value.", ex);
+                            break;
+                        }
+
+                        //At this state the converter can't be null.
+                        try {
+                            inputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, converter.convert(defaultValue, null), null, null, unit, min != 0));
+                            inputTypes.put(inputName, "literal");
+                        } catch (NonconvertibleObjectException ex2) {
+                            LOGGER.log(Level.WARNING, "Can't convert the default literal input value.", ex2);
+                            break;
+                        }
+                    } else if (bboxInput != null) {
+                        inputDescriptors.add(new DefaultParameterDescriptor(properties, Envelope.class, null, null, null, null, null, min != 0));
+                        inputTypes.put(inputName, "bbox");
+                    } else {
+                        LOGGER.log(Level.WARNING, "Unidentifiable input (id: " + inputName + ", process is (id: " + processIdentifier + ") skipped.");
+                        break;
                     }
                 }
+            }
 
-                if (supportedIO) {
-                    final ParameterDescriptorGroup inputs = new DefaultParameterDescriptorGroup("inputs",
-                            inputDescriptors.toArray(new DefaultParameterDescriptor[inputDescriptors.size()]));
-                    final ParameterDescriptorGroup outputs = new DefaultParameterDescriptorGroup("ouptuts",
-                            outputDescriptors.toArray(new DefaultParameterDescriptor[outputDescriptors.size()]));
+            //OUTPUTS
+            if (wpsProcessDesc.getProcessOutputs() != null) {
 
-                    //Process Descriptor creation
-                    final ProcessDescriptor processDesc = new AbstractProcessDescriptor(processIdentifier, getIdentification(), processAbstract, inputs, outputs) {
+                final List<OutputDescriptionType> outputDescriptionList = wpsProcessDesc.getProcessOutputs().getOutput();
+                for (final OutputDescriptionType outputDesc : outputDescriptionList) {
+                    final String outputName = outputDesc.getIdentifier().getValue();
+                    final String outputAbstract = outputDesc.getAbstract().getValue();
 
-                        @Override
-                        public Process createProcess(ParameterValueGroup input) {
+                    final SupportedComplexDataType complexOutput = outputDesc.getComplexOutput();
+                    final LiteralOutputType literalOutput = outputDesc.getLiteralOutput();
+                    final SupportedCRSsType bboxOutput = outputDesc.getBoundingBoxOutput();
 
-                            //Process creation
-                            Process proc = new AbstractProcess(this, input) {
+                    final Map<String, String> properties = new HashMap<String, String>();
+                    properties.put("name", outputName);
+                    properties.put("remarks", outputAbstract);
 
-                                @Override
-                                protected void execute() throws ProcessException {
+                    if (complexOutput != null) {
+                        final ComplexDataCombinationType complexDefault = complexOutput.getDefault();
+                        // If default format is missing, describe process is not valid, we stop here.
+                        if (complexDefault != null && complexDefault.getFormat() != null) {
+                            String mime     = complexDefault.getFormat().getMimeType();
+                            String encoding = complexDefault.getFormat().getEncoding();
+                            String schema   = complexDefault.getFormat().getSchema();
 
-                                    final Execute exec = createRequest(getInput(), getDescriptor(), inputTypes);
-                                    final ExecuteResponse response = sendRequest(exec, this);
-                                    fillOutputs(outputParameters, getDescriptor(), response);
+                            /**
+                             * Make a first try on default format, as it should be the more stable. If we don't support
+                             * default format, we check the other supported formats until we find one we can use.
+                             */
+                            Class clazz = WPSIO.findClass(WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX, mime, encoding, schema, null);
+                            if (clazz == null) {
+                                for (ComplexDataDescriptionType currentDesc : complexOutput.getSupported().getFormat()) {
+                                    mime     = currentDesc.getMimeType();
+                                    encoding = currentDesc.getEncoding();
+                                    schema   = currentDesc.getSchema();
+                                    clazz    = WPSIO.findClass(WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX, mime, encoding, schema, null);
+                                    if (clazz != null) {
+                                        break;
+                                    }
                                 }
-                            };
-                            return proc;
-                        }
-                    };
 
-                    descriptors.put(processIdentifier, processDesc);
-                } else {
-                    LOGGER.log(Level.WARNING, "Process " + processIdentifier + " not supported.");
+                                if (clazz == null) {
+                                    LOGGER.log(Level.WARNING, "No compatible format found for output (id: " +
+                                            outputName + ", process (id: " + processIdentifier + ") is skipped.");
+                                    break;
+                                }
+                            }
+
+                            final WPSIO.FormatSupport support = new WPSIO.FormatSupport(clazz, WPSIO.IOType.OUTPUT, mime, encoding, schema, false);
+                            outputDescriptors.add(new ExtendedParameterDescriptor(
+                                    outputName, outputAbstract, clazz, null, true, Collections.singletonMap(USE_FORMAT_KEY, (Object) support)));
+                        } else {
+                            LOGGER.log(Level.WARNING, "Invalid describeProcess. No default format specified for output " +
+                                    outputName + ". Process " + processIdentifier + ") is skipped.");
+                            break;
+                        }
+
+                    } else if (literalOutput != null) {
+                        final DomainMetadataType inputType = literalOutput.getDataType();
+                        final Class clazz = WPSIO.findClass(WPSIO.IOType.OUTPUT, WPSIO.FormChoice.LITERAL, null, null, null, inputType);
+                        final SupportedUOMsType inputUom = literalOutput.getUOMs();
+                        Unit unit = null;
+                        if (inputUom != null) {
+                            unit = Unit.valueOf(inputUom.getDefault().getUOM().getValue());
+                        }
+                        outputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, null, null, null, unit, true));
+
+                    } else if (bboxOutput != null) {
+                        outputDescriptors.add(new DefaultParameterDescriptor(properties, Envelope.class, null, null, null, null, null, true));
+
+                    } else {
+                        LOGGER.log(Level.WARNING, "Unidentifiable output (id: " + outputName + ", process is (id: " + processIdentifier + ") skipped.");
+                        break;
+                    }
                 }
             }
+
+            final ParameterDescriptorGroup inputs = new DefaultParameterDescriptorGroup("inputs",
+                    inputDescriptors.toArray(new DefaultParameterDescriptor[inputDescriptors.size()]));
+            final ParameterDescriptorGroup outputs = new DefaultParameterDescriptorGroup("ouptuts",
+                    outputDescriptors.toArray(new DefaultParameterDescriptor[outputDescriptors.size()]));
+
+            //Process Descriptor creation
+            final ProcessDescriptor processDesc = new AbstractProcessDescriptor(processIdentifier, getIdentification(), processAbstract, inputs, outputs) {
+
+                @Override
+                public Process createProcess(ParameterValueGroup input) {
+
+                    //Process creation
+                    Process proc = new AbstractProcess(this, input) {
+
+                        @Override
+                        protected void execute() throws ProcessException {
+
+                            final Execute exec = createRequest(getInput(), getDescriptor(), inputTypes);
+                            final ExecuteResponse response = sendExecuteRequest(exec, this);
+                            fillOutputs(outputParameters, getDescriptor(), response);
+                        }
+                    };
+                    return proc;
+                }
+            };
+
+            storageSupported.put(processIdentifier, wpsProcessDesc.isStoreSupported());
+            statusSupported.put(processIdentifier, wpsProcessDesc.isStatusSupported());
+            descriptors.put(processIdentifier, processDesc);
         }
     }
 
     /**
      * Make a WPS Execute request from {@link ParameterValueGroup values}.
-     * 
+     *
      * @param inputs
      * @param descriptor
      * @param inputTypes
      * @return
-     * @throws ProcessException 
+     * @throws ProcessException
      */
     public Execute createRequest(final ParameterValueGroup inputs, final ProcessDescriptor descriptor,
-            final Map<String, String> inputTypes) throws ProcessException {
-        
+                                 final Map<String, String> inputTypes) throws ProcessException {
+
         try {
-           
+
             final List<GeneralParameterDescriptor> inputParamDesc = inputs.getDescriptor().descriptors();
             final List<GeneralParameterDescriptor> outputParamDesc = descriptor.getOutputDescriptor().descriptors();
 
@@ -595,33 +635,39 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                     final Class inputClazz = inputDesc.getValueClass();
                     final Object value = inputs.parameter(inputIdentifier).getValue();
                     final String unit = inputDesc.getUnit() != null ? inputDesc.getUnit().toString() : null;
-                    
+
                     if ("literal".equals(type)) {
                         wpsIN.add(new WPSInputLiteral(inputIdentifier, String.valueOf(value), WPSConvertersUtils.getDataTypeString(inputClazz), unit));
-                        
+
                     } else if ("bbox".equals(type)) {
                         final Envelope envelop = (Envelope) value;
                         final String crs = envelop.getCoordinateReferenceSystem().getName().getCode();
                         final int dim = envelop.getDimension();
-                        
+
                         final List<Double> lower = new ArrayList<Double>();
-                        final List<Double> upper = new ArrayList<Double>(); 
+                        final List<Double> upper = new ArrayList<Double>();
                         for (int i = 0; i < dim; i++) {
                             lower.add(Double.valueOf(envelop.getLowerCorner().getOrdinate(i)));
                             upper.add(Double.valueOf(envelop.getUpperCorner().getOrdinate(i)));
                         }
-                        
-                        wpsIN.add(new WPSInputBoundingBox(inputIdentifier,lower, upper, crs, dim));
-                        
+
+                        wpsIN.add(new WPSInputBoundingBox(inputIdentifier, lower, upper, crs, dim));
+
                     } else if ("complex".equals(type)) {
-                        //get the defaults mimeType/encoding/schema for the requested input class.
-                        final WPSIO.FormatSupport support = WPSIO.getDefaultFormats(inputClazz, WPSIO.IOType.OUTPUT);
-                        if (support != null) {
-                            final String mime = support.getMimeType();
-                            final String encoding = support.getEncoding();
-                            final String schema = support.getSchema();
-                            wpsIN.add(new WPSInputComplex(inputIdentifier, value, inputClazz, encoding, schema, mime));
+                        String mime     = null;
+                        String encoding = null;
+                        String schema   = null;
+                        if (inputGeneDesc instanceof ExtendedParameterDescriptor) {
+                            final Map<String, Object> userMap = ((ExtendedParameterDescriptor) inputGeneDesc).getUserObject();
+                            if(userMap.containsKey(USE_FORMAT_KEY)) {
+                                final WPSIO.FormatSupport support = (WPSIO.FormatSupport) userMap.get(USE_FORMAT_KEY);
+                                mime     = support.getMimeType();
+                                encoding = support.getEncoding();
+                                schema   = support.getSchema();
+                            }
                         }
+
+                        wpsIN.add(new WPSInputComplex(inputIdentifier, value, inputClazz, encoding, schema, mime));
                     }
                 }
             }
@@ -632,8 +678,23 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
             for (final GeneralParameterDescriptor outputGeneDesc : outputParamDesc) {
                 if (outputGeneDesc instanceof ParameterDescriptor) {
                     final ParameterDescriptor outputDesc = (ParameterDescriptor) outputGeneDesc;
-                    
-                    wpsOUT.add(new WPSOutput(outputDesc.getName().getCode()));
+
+                    final String outputIdentifier = outputDesc.getName().getCode();
+                    final Class outputClazz = outputDesc.getValueClass();
+                    String mime     = null;
+                    String encoding = null;
+                    String schema   = null;
+                    if (outputDesc instanceof ExtendedParameterDescriptor) {
+                        final Map<String, Object> userMap = ((ExtendedParameterDescriptor) outputDesc).getUserObject();
+                        if(userMap.containsKey(USE_FORMAT_KEY)) {
+                            final WPSIO.FormatSupport support = (WPSIO.FormatSupport) userMap.get(USE_FORMAT_KEY);
+                            mime     = support.getMimeType();
+                            encoding = support.getEncoding();
+                            schema   = support.getSchema();
+                        }
+                    }
+
+                    wpsOUT.add(new WPSOutput(outputIdentifier, encoding, schema, mime, null, false));
                 }
             }
 
@@ -642,9 +703,10 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
             exec100.setInputs(wpsIN);
             exec100.setOutputs(wpsOUT);
             exec100.setStorageDirectory(storageDirectory);
+            exec100.setOutputStorage(false);
             exec100.setStorageURL(storageURL);
             return exec100.makeRequest();
-            
+
         } catch (NonconvertibleObjectException ex) {
             throw new ProcessException("Error during conversion step.", null, ex);
         }
@@ -652,93 +714,156 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
 
     /**
      * Send the Execute request to the server URL an return the unmarshalled response.
-     * 
-     * @param exec the request
+     *
+     * @param exec    the request
      * @param process process used for throw ProcessException
      * @return ExecuteResponse.
-     * @throws ProcessException is can't reach the server or if there is an error during Marshalling/Unmarshalling request 
-     * or response.
+     * @throws ProcessException is can't reach the server or if there is an error during Marshalling/Unmarshalling request
+     *                          or response.
      */
-    private ExecuteResponse sendRequest(final Execute exec, final Process process) throws ProcessException {
-        
-        final MarshallerPool pool = WPSMarshallerPool.getInstance();
-        Unmarshaller unmarshaller = null;
-        Marshaller marshaller = null;
-        InputStream requestIS = null;
-        OutputStream requestOS = null;
-
+    private ExecuteResponse sendExecuteRequest(final Execute exec, final Process process) throws ProcessException {
         try {
-            unmarshaller = pool.acquireUnmarshaller();
-            marshaller = pool.acquireMarshaller();
-
-            // Build the request content (POST method)
-            final StringWriter content = new StringWriter();
-            marshaller.marshal(exec, content);
-
-            // Make request
-            final ClientSecurity security = getClientSecurity();
-            security.secure(serverURL);
-            final URLConnection conec = serverURL.openConnection();
-            conec.setRequestProperty("content-type", "text/xml");
-            conec.setConnectTimeout(60);
-            conec.setDoOutput(true);
-            security.secure(conec);
-
-            // Write request content
-            requestOS = conec.getOutputStream();
-            security.encrypt(requestOS);
-            final OutputStreamWriter writer = new OutputStreamWriter(requestOS);
-            writer.write(content.toString());
-            writer.flush();
-
-            // Parse the response
-            requestIS = security.decrypt(conec.getInputStream());
-            final Object respObj = unmarshaller.unmarshal(requestIS);
+            final Object respObj = sendSecuredRequestInPost(exec);
 
             if (respObj instanceof ExecuteResponse) {
+                checkResult((ExecuteResponse) respObj, process);
                 return (ExecuteResponse) respObj;
             }
 
+            if (respObj instanceof ExceptionReport) {
+                final ExceptionReport report = (ExceptionReport) respObj;
+                final ExceptionType excep = report.getException().get(0);
+                throw new ProcessException("Exception when executing the process.", process, new Exception(excep.toString()));
+            }
             throw new ProcessException("Invalid response type.", process, null);
 
         } catch (JAXBException ex) {
             throw new ProcessException("Error when trying to parse the Execute response xml: ", process, ex);
         } catch (IOException ex) {
             throw new ProcessException("Error when trying to send request to the WPS server :", process, ex);
-        } finally {
+        }
+    }
+
+    /**
+     * A Function to ensure response object is success or failure. Otherwise, we request continually statusLocation until
+     * we reach wanted result.
+     * @param respObj The execute response given by service.
+     */
+    private void checkResult(ExecuteResponse respObj, final Process process) {
+        StatusType status = respObj.getStatus();
+        if (status.getProcessFailed() != null || status.getProcessSucceeded() != null) {
+            return;
+        }
+
+        String statusLocation = respObj.getStatusLocation();
+    }
+
+    /**
+     * Send a secured request to the server URL in POST mode and return the unmarshalled response.
+     *
+     * @param request Request
+     * @return Response of this request
+     * @throws ProcessException is can't reach the server or if there is an
+     *                          error during Marshalling/Unmarshalling request or response.
+     */
+    public Object sendSecuredRequestInPost(final Object request) throws JAXBException, IOException {
+        final MarshallerPool pool = WPSMarshallerPool.getInstance();
+        Unmarshaller unmarshaller;
+        Marshaller marshaller;
+        InputStream requestIS;
+        OutputStream requestOS;
+
+        unmarshaller = pool.acquireUnmarshaller();
+        marshaller = pool.acquireMarshaller();
+
+        // Build the request content (POST method)
+        final StringWriter content = new StringWriter();
+        marshaller.marshal(request, content);
+
+        // Make request
+        final ClientSecurity security = getClientSecurity();
+        security.secure(serverURL);
+        final URLConnection conec = serverURL.openConnection();
+        conec.setRequestProperty("content-type", "text/xml");
+        conec.setConnectTimeout(60);
+        conec.setDoOutput(true);
+        security.secure(conec);
+
+        // Write request content
+        requestOS = conec.getOutputStream();
+        security.encrypt(requestOS);
+        final OutputStreamWriter writer = new OutputStreamWriter(requestOS);
+        writer.write(content.toString());
+        writer.flush();
+
+        // Parse the response
+        requestIS = security.decrypt(conec.getInputStream());
+        final Object response = unmarshaller.unmarshal(requestIS);
+        if (response instanceof JAXBElement) {
+            return ((JAXBElement) response).getValue();
+        }
+
+        pool.release(unmarshaller);
+        pool.release(marshaller);
+
+        requestOS.close();
+        requestIS.close();
+
+        return response;
+    }
+
+    /**
+     * Send a secured request to the server URL in GET mode and return the unmarshalled response.
+     *
+     * @param url Request
+     * @return Response of this request
+     * @throws ProcessException is can't reach the server or if there is an
+     *                          error during Marshalling/Unmarshalling request or response.
+     */
+    public Object sendSecuredRequestInGet(final URL url) throws JAXBException, IOException {
+        final ClientSecurity security = getClientSecurity();
+        security.secure(url);
+
+        final MarshallerPool pool = WPSMarshallerPool.getInstance();
+        Unmarshaller unmarshaller = null;
+        InputStream in = null;
+        try {
+            unmarshaller = pool.acquireUnmarshaller();
+            in = url.openStream();
+            final Object response = unmarshaller.unmarshal(in);
+
             pool.release(unmarshaller);
-            pool.release(marshaller);
-            try {
-                if (requestIS != null) {
-                    requestIS.close();
-                }
-                if (requestOS != null) {
-                    requestOS.close();
-                }
-            } catch (IOException ex) {
-                LOGGER.log(Level.WARNING, "Can't close stream.", ex);
+
+            if (response instanceof JAXBElement) {
+                return ((JAXBElement) response).getValue();
+            }
+            return response;
+        } finally {
+            if (in != null) {
+                in.close();
             }
         }
     }
-    
+
     /**
-     * Fill {@link ParameterValueGroup parameters} of the process using the WPS {@link ExecuteResponse response}.
-     * 
+     * Fill {@link ParameterValueGroup parameters} of the process using the WPS
+     * {@link ExecuteResponse response}.
+     *
      * @param outputs
      * @param descriptor
      * @param response
      * @throws ProcessException if data conversion fails.
      */
-    public void fillOutputs(final ParameterValueGroup outputs, final ProcessDescriptor descriptor, final ExecuteResponse response) 
+    public void fillOutputs(final ParameterValueGroup outputs, final ProcessDescriptor descriptor, final ExecuteResponse response)
             throws ProcessException {
         ArgumentChecks.ensureNonNull("response", response);
-        
+
         if (response.getProcessOutputs() != null) {
-            
+
             final List<OutputDataType> wpsOutputs = response.getProcessOutputs().getOutput();
-            
+
             for (final OutputDataType output : wpsOutputs) {
-                
+
                 final ParameterDescriptor outDesc = (ParameterDescriptor) descriptor.getOutputDescriptor().descriptor(output.getIdentifier().getValue());
                 final Class clazz = outDesc.getValueClass();
                 
@@ -746,13 +871,13 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                  * Reference
                  */
                 if (output.getReference() != null) {
-                    
+
                     try {
                         outputs.parameter(output.getIdentifier().getValue()).setValue(WPSConvertersUtils.convertFromReference(output.getReference(), clazz));
                     } catch (NonconvertibleObjectException ex) {
                         throw new ProcessException(ex.getMessage(), null, ex);
                     }
-                    
+
                 } else {
                     final DataType outputType = output.getData();
                     
@@ -766,13 +891,13 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                             final int dim = bbox.getDimensions();
                             final List<Double> lower = bbox.getLowerCorner();
                             final List<Double> upper = bbox.getUpperCorner();
-                            
+
                             final GeneralEnvelope envelope = new GeneralEnvelope(crs);
                             for (int i = 0; i < dim; i++) {
                                 envelope.setRange(i, lower.get(i), upper.get(i));
                             }
                             outputs.parameter(output.getIdentifier().getValue()).setValue(envelope);
-                            
+
                         } catch (FactoryException ex) {
                             throw new ProcessException(ex.getMessage(), null, ex);
                         } 
@@ -781,7 +906,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                     * Complex
                     */
                     } else if (outputType.getComplexData() != null) {
-                        
+
                         try {
                             outputs.parameter(output.getIdentifier().getValue()).setValue(WPSConvertersUtils.convertFromComplex(outputType.getComplexData(), clazz));
                         } catch (NonconvertibleObjectException ex) {

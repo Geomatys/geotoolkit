@@ -124,8 +124,8 @@ public abstract class AbstractExecute extends AbstractRequest implements Execute
      * {@inheritDoc }
      */
     @Override
-    public void setOutputStorage(boolean outStrorage) {
-        this.storage = outStrorage;
+    public void setOutputStorage(boolean outStorage) {
+        this.storage = outStorage;
     }
 
     /**

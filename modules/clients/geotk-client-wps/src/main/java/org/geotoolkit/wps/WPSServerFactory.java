@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
+import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Server;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
@@ -103,7 +104,11 @@ public class WPSServerFactory extends AbstractServerFactory{
     @Override
     public Server open(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
-        return new WebProcessingServer(params);
+        try {
+            return new WebProcessingServer(params);
+        } catch (CapabilitiesException e) {
+            throw new DataStoreException("Unable to initialize WPS client.", e);
+        }
     }
 
 }
