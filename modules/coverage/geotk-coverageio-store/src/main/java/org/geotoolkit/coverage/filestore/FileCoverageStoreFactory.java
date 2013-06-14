@@ -26,7 +26,7 @@ import java.util.Map;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;

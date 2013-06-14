@@ -24,7 +24,7 @@ import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.coverage.CoverageProcessingRegistry;
-import org.apache.sis.util.iso.ResourceInternationalString;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterDescriptor;

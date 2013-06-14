@@ -44,7 +44,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.jdbc.JDBCDataStoreFactory.*;
-import org.apache.sis.util.iso.ResourceInternationalString;
+import org.geotoolkit.util.ResourceInternationalString;
 
 /**
  *

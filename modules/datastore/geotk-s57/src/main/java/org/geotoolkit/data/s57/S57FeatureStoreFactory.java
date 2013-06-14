@@ -19,7 +19,7 @@ package org.geotoolkit.data.s57;
 
 import java.net.URL;
 import java.util.Collections;
-import org.apache.sis.util.iso.ResourceInternationalString;
+import org.geotoolkit.util.ResourceInternationalString;
 
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.createFixedIdentifier;

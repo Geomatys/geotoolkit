@@ -19,7 +19,7 @@ package org.geotoolkit.gui.swing.resource;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import org.apache.sis.util.iso.ResourceInternationalString;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.util.InternationalString;
 
 /**

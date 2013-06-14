@@ -18,7 +18,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.Collections;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
