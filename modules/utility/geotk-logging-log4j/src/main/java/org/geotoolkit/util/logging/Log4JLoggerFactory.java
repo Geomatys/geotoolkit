@@ -18,6 +18,7 @@
 package org.geotoolkit.util.logging;
 
 import java.util.logging.Logger;
+import org.apache.sis.util.logging.LoggerFactory;
 
 
 /**
@@ -35,14 +36,6 @@ import java.util.logging.Logger;
  */
 public class Log4JLoggerFactory extends LoggerFactory<org.apache.log4j.Logger> {
     /**
-     * The unique instance of this factory.
-     *
-     * @deprecated Replaced by the {@code META-INF/services} discovery mechanism.
-     */
-    @Deprecated
-    private static Log4JLoggerFactory factory;
-
-    /**
      * Constructs a default factory.
      *
      * @throws NoClassDefFoundError if Apache {@code Log} class was not found on the classpath.
@@ -52,19 +45,11 @@ public class Log4JLoggerFactory extends LoggerFactory<org.apache.log4j.Logger> {
     }
 
     /**
-     * Returns the unique instance of this factory.
-     *
-     * @return The unique instance of this factory.
-     * @throws NoClassDefFoundError if Apache {@code Log} class was not found on the classpath.
-     *
-     * @deprecated Replaced by the {@code META-INF/services} discovery mechanism.
+     * Returns the name of the logging framework.
      */
-    @Deprecated
-    public static synchronized Log4JLoggerFactory getInstance() throws NoClassDefFoundError {
-        if (factory == null) {
-            factory = new Log4JLoggerFactory();
-        }
-        return factory;
+    @Override
+    public String getName() {
+        return "Apache Log4J";
     }
 
     /**

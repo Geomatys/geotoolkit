@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.Jdk14Logger;
+import org.apache.sis.util.logging.LoggerFactory;
 
 
 /**
@@ -38,14 +39,6 @@ import org.apache.commons.logging.impl.Jdk14Logger;
  */
 public class CommonsLoggerFactory extends LoggerFactory<Log> {
     /**
-     * The unique instance of this factory.
-     *
-     * @deprecated Replaced by the {@code META-INF/services} discovery mechanism.
-     */
-    @Deprecated
-    private static CommonsLoggerFactory factory;
-
-    /**
      * Constructs a default factory.
      *
      * @throws NoClassDefFoundError if Apache {@code Log} class was not found on the classpath.
@@ -55,19 +48,11 @@ public class CommonsLoggerFactory extends LoggerFactory<Log> {
     }
 
     /**
-     * Returns the unique instance of this factory.
-     *
-     * @return The unique instance of this factory.
-     * @throws NoClassDefFoundError if Apache {@code Log} class was not found on the classpath.
-     *
-     * @deprecated Replaced by the {@code META-INF/services} discovery mechanism.
+     * Returns the name of the logging framework.
      */
-    @Deprecated
-    public static synchronized CommonsLoggerFactory getInstance() throws NoClassDefFoundError {
-        if (factory == null) {
-            factory = new CommonsLoggerFactory();
-        }
-        return factory;
+    @Override
+    public String getName() {
+        return "Apache Commons logging";
     }
 
     /**
