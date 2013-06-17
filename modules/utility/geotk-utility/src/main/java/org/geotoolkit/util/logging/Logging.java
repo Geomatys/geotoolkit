@@ -19,7 +19,6 @@ package org.geotoolkit.util.logging;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.Handler;
@@ -27,12 +26,11 @@ import java.util.logging.LogRecord;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.SimpleFormatter;
 
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArraysExt;
-import org.apache.sis.util.Exceptions;
-import org.apache.sis.util.Classes;
+import org.apache.sis.util.logging.LoggerFactory;
+import org.apache.sis.util.logging.MonolineFormatter;
 
 
 /**
@@ -67,7 +65,10 @@ import org.apache.sis.util.Classes;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.util.logging.Logging}.
  */
+@Deprecated
 public final class Logging extends Static {
     /**
      * Compares {@link Logging} or {@link String} objects for alphabetical order.
@@ -87,7 +88,10 @@ public final class Logging extends Static {
 
     /**
      * Logging configuration that apply to all packages.
+     *
+     * @deprecated No replacement.
      */
+    @Deprecated
     public static final Logging ALL = new Logging();
     static { // Must be run after ALL assignation and before GEOTOOLKIT (or any other Logging) creation.
         ALL.scanLoggerFactory();
@@ -95,7 +99,10 @@ public final class Logging extends Static {
 
     /**
      * Logging configuration that apply only to {@code org.geotoolkit} packages.
+     *
+     * @deprecated No replacement.
      */
+    @Deprecated
     public static final Logging GEOTOOLKIT = getLogging("org.geotoolkit");
 
     /**
@@ -121,12 +128,6 @@ public final class Logging extends Static {
      * @see #setLoggerFactory
      */
     private LoggerFactory<?> factory;
-
-    /**
-     * {@code true} if every {@link Logging} instances use the same {@link LoggerFactory}.
-     * This is an optimization for a very common case.
-     */
-    private static boolean sameLoggerFactory = true;
 
     /**
      * Creates an instance for the root logger. This constructor should not be used
@@ -171,13 +172,7 @@ public final class Logging extends Static {
      * @since 3.20 (derived from 3.00)
      */
     public static void log(final Class<?> classe, final String method, final LogRecord record) {
-        record.setSourceClassName(classe.getCanonicalName());
-        record.setSourceMethodName(method);
-        final Logger logger = getLogger(classe);
-        if (record.getLoggerName() == null) {
-            record.setLoggerName(logger.getName());
-        }
-        logger.log(record);
+        org.apache.sis.util.logging.Logging.log(classe, method, record);
     }
 
     /**
@@ -190,14 +185,7 @@ public final class Logging extends Static {
      * @since 2.5
      */
     public static Logger getLogger(Class<?> classe) {
-        Class<?> outer;
-        while ((outer = classe.getEnclosingClass()) != null) {
-            classe = outer;
-        }
-        String name = classe.getName();
-        final int separator = name.lastIndexOf('.');
-        name = (separator >= 1) ? name.substring(0, separator) : "";
-        return getLogger(name);
+        return org.apache.sis.util.logging.Logging.getLogger(classe);
     }
 
     /**
@@ -214,20 +202,7 @@ public final class Logging extends Static {
      * @return A logger for the specified name.
      */
     public static Logger getLogger(final String name) {
-        synchronized (EMPTY) {
-            final Logging logging = sameLoggerFactory ? ALL : getLogging(name, false);
-            if (logging != null) { // Paranoiac check ('getLogging' should not returns null).
-                final LoggerFactory<?> factory = logging.factory;
-                assert getLogging(name, false).factory == factory : name;
-                if (factory != null) {
-                    final Logger logger = factory.getLogger(name);
-                    if (logger != null) {
-                        return logger;
-                    }
-                }
-            }
-        }
-        return Logger.getLogger(name);
+        return org.apache.sis.util.logging.Logging.getLogger(name);
     }
 
     /**
@@ -241,7 +216,10 @@ public final class Logging extends Static {
      *
      * @param name The base logger name.
      * @return The logging instance for the given name.
+     *
+     * @deprecated No replacement.
      */
+    @Deprecated
     public static Logging getLogging(final String name) {
         synchronized (EMPTY) {
             return getLogging(name, true);
@@ -302,9 +280,7 @@ public final class Logging extends Static {
      * @return The current logger factory.
      */
     public LoggerFactory<?> getLoggerFactory() {
-        synchronized (EMPTY) {
-            return factory;
-        }
+        return org.apache.sis.util.logging.Logging.getLoggerFactory();
     }
 
     /**
@@ -319,35 +295,7 @@ public final class Logging extends Static {
      */
     @Configuration
     public void setLoggerFactory(final LoggerFactory<?> factory) {
-        synchronized (EMPTY) {
-            this.factory = factory;
-            for (int i=0; i<children.length; i++) {
-                children[i].setLoggerFactory(factory);
-            }
-            sameLoggerFactory = sameLoggerFactory(ALL.children, ALL.factory); // NOSONAR: really want static field.
-        }
-    }
-
-    /**
-     * Returns {@code true} if all children use the specified factory.
-     * Used in order to detect a possible optimization for this very common case.
-     */
-    private static boolean sameLoggerFactory(final Logging[] children, final LoggerFactory<?> factory) {
-        assert Thread.holdsLock(EMPTY);
-        for (int i=0; i<children.length; i++) {
-            final Logging logging = children[i];
-            if (logging.factory != factory || !sameLoggerFactory(logging.children, factory)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Wraps a unchecked {@link NoClassDefFoundError} into a checked {@link ClassNotFoundException}.
-     */
-    private static ClassNotFoundException factoryNotFound(String name, NoClassDefFoundError error) {
-        return new ClassNotFoundException(Errors.format(Errors.Keys.FACTORY_NOT_FOUND_1, name), error);
+        org.apache.sis.util.logging.Logging.setLoggerFactory(factory);
     }
 
     /**
@@ -367,18 +315,12 @@ public final class Logging extends Static {
      * new {@code LoggerFactory}s are added later on the classpath of a running JVM.
      *
      * @since 3.00
+     *
+     * @deprecated No replacement.
      */
+    @Deprecated
     @Configuration
     public void scanLoggerFactory() {
-        LoggerFactory<?> factory = null;
-        for (final LoggerFactory<?> found : ServiceLoader.load(LoggerFactory.class)) {
-            if (factory == null) {
-                factory = found;
-            } else {
-                factory = new DualLoggerFactory(factory, found);
-            }
-        }
-        setLoggerFactory(factory);
     }
 
     /**
@@ -402,12 +344,15 @@ public final class Logging extends Static {
      *
      * @see <a href="http://java.sun.com/javase/6/docs/technotes/guides/logging/overview.html">Java Logging Overview</a>
      * @see org.geotoolkit.lang.Setup
+     *
+     * @deprecated Moved to MonolineFormatter.install
      */
+    @Deprecated
     @Configuration
     public void forceMonolineConsoleOutput(final Level level) {
         final Logger logger = Logger.getLogger(name); // Really Java logging, not the redirected one.
         synchronized (EMPTY) {
-            final org.apache.sis.util.logging.MonolineFormatter f = MonolineFormatter.configureConsoleHandler(logger, level);
+            final MonolineFormatter f = MonolineFormatter.install(logger, level);
             if (f != null) {
                 f.setSourceFormat("class:short");
             }
@@ -434,7 +379,10 @@ public final class Logging extends Static {
      * @since 3.18
      *
      * @see Handler#flush()
+     *
+     * @deprecated No replacement.
      */
+    @Deprecated
     public void flush() {
         for (Logger logger=getLogger(name); logger!=null; logger=logger.getParent()) {
             for (final Handler handler : logger.getHandlers()) {
@@ -463,7 +411,7 @@ public final class Logging extends Static {
      *         doesn't log anything at the {@link Level#WARNING WARNING} level.
      */
     public static boolean unexpectedException(final Logger logger, final Throwable error) {
-        return unexpectedException(logger, null, null, error, Level.WARNING);
+        return org.apache.sis.util.logging.Logging.unexpectedException(logger, error);
     }
 
     /**
@@ -499,8 +447,7 @@ public final class Logging extends Static {
     public static boolean unexpectedException(final Logger logger, final Class<?> classe,
                                               final String method, final Throwable error)
     {
-        final String classname = (classe != null) ? classe.getName() : null;
-        return unexpectedException(logger, classname, method, error, Level.WARNING);
+        return org.apache.sis.util.logging.Logging.unexpectedException(logger, classe, method, error);
     }
 
     /**
@@ -518,131 +465,7 @@ public final class Logging extends Static {
      * @see #recoverableException(Class, String, Throwable)
      */
     public static boolean unexpectedException(Class<?> classe, String method, Throwable error) {
-        return unexpectedException((Logger) null, classe, method, error);
-    }
-
-    /**
-     * Implementation of {@link #unexpectedException(Logger, Class, String, Throwable)}.
-     *
-     * @param logger  Where to log the error, or {@code null}.
-     * @param classe  The fully qualified class name where the error occurred, or {@code null}.
-     * @param method  The method where the error occurred, or {@code null}.
-     * @param error   The error.
-     * @param level   The logging level.
-     * @return {@code true} if the error has been logged, or {@code false} if the logger
-     *         doesn't log anything at the specified level.
-     */
-    private static boolean unexpectedException(Logger logger, String classe, String method,
-                                               final Throwable error, final Level level)
-    {
-        /*
-         * Checks if loggable, inferring the logger from the classe name if needed.
-         */
-        if (error == null) {
-            return false;
-        }
-        if (logger == null && classe != null) {
-            final int separator = classe.lastIndexOf('.');
-            final String paquet = (separator >= 1) ? classe.substring(0, separator-1) : "";
-            logger = getLogger(paquet);
-        }
-        if (logger != null && !logger.isLoggable(level)) {
-            return false;
-        }
-        /*
-         * Loggeable, so complete the null argument from the stack trace if we can.
-         */
-        if (logger==null || classe==null || method==null) {
-            String paquet = (logger != null) ? logger.getName() : null;
-            final StackTraceElement[] elements = error.getStackTrace();
-            for (int i=0; i<elements.length; i++) {
-                /*
-                 * Searches for the first stack trace element with a classname matching the
-                 * expected one. We compare preferably against the name of the class given
-                 * in argument, or against the logger name (taken as the package name) otherwise.
-                 */
-                final StackTraceElement element = elements[i];
-                final String classname = element.getClassName();
-                if (classe != null) {
-                    if (!classname.equals(classe)) {
-                        continue;
-                    }
-                } else if (paquet != null) {
-                    if (!classname.startsWith(paquet)) {
-                        continue;
-                    }
-                    final int length = paquet.length();
-                    if (classname.length() > length) {
-                        // We expect '.' but we accept also '$' or end of string.
-                        final char separator = classname.charAt(length);
-                        if (Character.isJavaIdentifierPart(separator)) {
-                            continue;
-                        }
-                    }
-                }
-                /*
-                 * Now that we have a stack trace element from the expected class (or any
-                 * element if we don't know the class), make sure that we have the right method.
-                 */
-                final String methodName = element.getMethodName();
-                if (method != null && !methodName.equals(method)) {
-                    continue;
-                }
-                /*
-                 * Now computes every values that are null, and stop the loop.
-                 */
-                if (paquet == null) {
-                    final int separator = classname.lastIndexOf('.');
-                    paquet = (separator >= 1) ? classname.substring(0, separator-1) : "";
-                    logger = getLogger(paquet);
-                    if (!logger.isLoggable(level)) {
-                        return false;
-                    }
-                }
-                if (classe == null) {
-                    classe = classname;
-                }
-                if (method == null) {
-                    method = methodName;
-                }
-                break;
-            }
-            /*
-             * The logger may stay null if we have been unable to find a suitable
-             * stack trace. Fallback on the global logger.
-             */
-            if (logger == null) {
-                logger = getLogger(Logger.GLOBAL_LOGGER_NAME);
-                if (!logger.isLoggable(level)) {
-                    return false;
-                }
-            }
-        }
-        /*
-         * Now prepare the log message. If we have been unable to figure out a source class and
-         * method name, we will fallback on Java logging default mechanism, which may returns a
-         * less relevant name than our attempt to use the logger name as the package name.
-         */
-        final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(error));
-        String message = error.getLocalizedMessage();
-        if (message != null) {
-            buffer.append(": ").append(message);
-        }
-        message = buffer.toString();
-        message = Exceptions.formatChainedMessages(null, message, error);
-        final LogRecord record = new LogRecord(level, message);
-        if (classe != null) {
-            record.setSourceClassName(classe);
-        }
-        if (method != null) {
-            record.setSourceMethodName(method);
-        }
-        if (level.intValue() > 500) {
-            record.setThrown(error);
-        }
-        record.setLoggerName(logger.getName());
-        logger.log(record);
-        return true;
+        return org.apache.sis.util.logging.Logging.unexpectedException(classe, method, error);
     }
 
     /**
@@ -663,7 +486,7 @@ public final class Logging extends Static {
     public static boolean recoverableException(final Class<?> classe, final String method,
                                                final Throwable error)
     {
-        return recoverableException(null, classe, method, error);
+        return org.apache.sis.util.logging.Logging.recoverableException(classe, method, error);
     }
 
     /**
@@ -686,8 +509,7 @@ public final class Logging extends Static {
     public static boolean recoverableException(final Logger logger, final Class<?> classe,
                                                final String method, final Throwable error)
     {
-        final String classname = (classe != null) ? classe.getName() : null;
-        return unexpectedException(logger, classname, method, error, Level.FINE);
+        return org.apache.sis.util.logging.Logging.recoverableException(logger, classe, method, error);
     }
 
     /**
@@ -710,7 +532,6 @@ public final class Logging extends Static {
     public static boolean severeException(final Logger logger, final Class<?> classe,
                                           final String method, final Throwable error)
     {
-        final String classname = (classe != null) ? classe.getName() : null;
-        return unexpectedException(logger, classname, method, error, Level.SEVERE);
+        return org.apache.sis.util.logging.Logging.severeException(logger, classe, method, error);
     }
 }
