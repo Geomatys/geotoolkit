@@ -17,6 +17,7 @@
 package org.geotoolkit.wps;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
@@ -95,6 +96,14 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
     private final Map<String, Boolean> storageSupported = new HashMap<String, Boolean>();
     /** A map whose key is a process identifier, and value a boolean to specify if it supports status (true) or not (false). */
     private final Map<String, Boolean> statusSupported = new HashMap<String, Boolean>();
+
+    /**
+     * A map to specify for each process if we should ask its outputs as reference. Key is process identifier, and value
+     * a boolean : true if we want references, false otherwise. It's important to notice that even if we set a value to
+     * true, references will be used ONLY if this process can handle it (check it with {@link WebProcessingServer#supportStorage(String)}.
+     */
+    private final Map<String, Boolean> outputAsReference = new HashMap<String, Boolean>();
+
     private boolean descriptorsCached = false;
     private WPSCapabilitiesType capabilities;
 
@@ -597,10 +606,87 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                 }
             };
 
-            storageSupported.put(processIdentifier, wpsProcessDesc.isStoreSupported());
-            statusSupported.put(processIdentifier, wpsProcessDesc.isStatusSupported());
-            descriptors.put(processIdentifier, processDesc);
+            storageSupported .put(processIdentifier, wpsProcessDesc.isStoreSupported());
+            statusSupported  .put(processIdentifier, wpsProcessDesc.isStatusSupported());
+            outputAsReference.put(processIdentifier, Boolean.FALSE);
+            descriptors      .put(processIdentifier, processDesc);
         }
+
+        descriptorsCached = true;
+    }
+
+    /**
+     * Specify if you want outputs sent back as references for the process identified by given name.
+     * @param processId The identifier of the process wanted.
+     * @param asReference True if you want references in output, false otherwise.
+     * @throws NoSuchIdentifierException If we can't find a process matching given name.
+     */
+    public void setOutputsAsReference(final String processId, final boolean asReference) throws NoSuchIdentifierException {
+        checkDescriptors();
+        final Boolean supportReference = storageSupported.get(processId);
+        if(supportReference == null) {
+            throw new NoSuchIdentifierException("No process descriptor for name :", processId);
+        }
+
+        outputAsReference.put(processId, supportReference && asReference);
+    }
+
+    /**
+     * Check the current output settings for this process.
+     * @param processId The name of the process to check.
+     * @return True if the process return its outputs as reference, false otherwise.
+     * @throws NoSuchIdentifierException If we can't find a process matching given name.
+     */
+    public boolean isOutputAsReference(final String processId) throws NoSuchIdentifierException {
+        checkDescriptors();
+        final Boolean asRef = outputAsReference.get(processId);
+        if(asRef == null) {
+            throw new NoSuchIdentifierException("No process descriptor for name :", processId);
+        }
+        return asRef;
+    }
+
+    /**
+     * Set all processes to send (or not) references for its outputs. Default behaviour is no reference. An important
+     * fact is that references are going to be used only if the process support storage (see
+     * {@link WebProcessingServer#supportStorage(String)}).
+     * @param choice True if you want reference as output, false otherwise.
+     */
+    public void setOutputAsReferenceForAll(final boolean choice) {
+        checkDescriptors();
+        for (Map.Entry<String, Boolean> current : outputAsReference.entrySet()) {
+            current.setValue(choice && storageSupported.get(current.getKey()));
+        }
+    }
+
+    /**
+     * Inform the user if the process identified by given String can return outputs as reference or not.
+     * @param processId The name of the process to check.
+     * @return True if this process can use reference for its outputs, false otherwise.
+     * @throws NoSuchIdentifierException If we can't find the named process on WPS server, or if we can't manage it.
+     */
+    public boolean supportStorage(final String processId) throws NoSuchIdentifierException {
+        checkDescriptors();
+        final Boolean result = storageSupported.get(processId);
+        if (result == null) {
+            throw new NoSuchIdentifierException("No process descriptor for name :", processId);
+        }
+        return result;
+    }
+
+    /**
+     * Inform the user if the process identified by given String can do quick updates of its status document.
+     * @param processId The name of the process to check.
+     * @return True if this process can update status before process ending, false otherwise.
+     * @throws NoSuchIdentifierException If we can't find the named process on WPS server, or if we can't manage it.
+     */
+    public boolean supportStatus(final String processId) throws NoSuchIdentifierException {
+        checkDescriptors();
+        final Boolean result = statusSupported.get(processId);
+        if (result == null) {
+            throw new NoSuchIdentifierException("No process descriptor for name :", processId);
+        }
+        return result;
     }
 
     /**
@@ -622,6 +708,10 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
 
             final List<AbstractWPSInput> wpsIN = new ArrayList<AbstractWPSInput>();
             final List<WPSOutput> wpsOUT = new ArrayList<WPSOutput>();
+
+            final String processId = descriptor.getIdentifier().getCode();
+
+            final boolean asReference = outputAsReference.get(processId);
 
             /*
              * INPUTS
@@ -694,16 +784,18 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                         }
                     }
 
-                    wpsOUT.add(new WPSOutput(outputIdentifier, encoding, schema, mime, null, false));
+                    wpsOUT.add(new WPSOutput(outputIdentifier, encoding, schema, mime, null, asReference));
                 }
             }
 
             final Execute100 exec100 = new Execute100(serverURL.toString(), null);
-            exec100.setIdentifier(descriptor.getIdentifier().getCode());
+            exec100.setIdentifier(processId);
             exec100.setInputs(wpsIN);
             exec100.setOutputs(wpsOUT);
             exec100.setStorageDirectory(storageDirectory);
-            exec100.setOutputStorage(false);
+            exec100.setOutputStorage(asReference);
+            // Status can be activated only if we ask outputs as references.
+            exec100.setOutputStatus(asReference && statusSupported.get(processId));
             exec100.setStorageURL(storageURL);
             return exec100.makeRequest();
 
@@ -723,10 +815,10 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
      */
     private ExecuteResponse sendExecuteRequest(final Execute exec, final Process process) throws ProcessException {
         try {
-            final Object respObj = sendSecuredRequestInPost(exec);
+            Object respObj = sendSecuredRequestInPost(exec);
 
             if (respObj instanceof ExecuteResponse) {
-                checkResult((ExecuteResponse) respObj, process);
+                respObj = checkResult((ExecuteResponse) respObj);
                 return (ExecuteResponse) respObj;
             }
 
@@ -737,10 +829,14 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
             }
             throw new ProcessException("Invalid response type.", process, null);
 
+        } catch (ProcessException e) {
+            throw e;
         } catch (JAXBException ex) {
             throw new ProcessException("Error when trying to parse the Execute response xml: ", process, ex);
         } catch (IOException ex) {
             throw new ProcessException("Error when trying to send request to the WPS server :", process, ex);
+        } catch (Exception e) {
+            throw new ProcessException(e.getMessage(), process, e);
         }
     }
 
@@ -749,13 +845,41 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
      * we reach wanted result.
      * @param respObj The execute response given by service.
      */
-    private void checkResult(ExecuteResponse respObj, final Process process) {
+    private ExecuteResponse checkResult(ExecuteResponse respObj) throws IOException, JAXBException, InterruptedException {
         StatusType status = respObj.getStatus();
         if (status.getProcessFailed() != null || status.getProcessSucceeded() != null) {
-            return;
+            return respObj;
         }
 
-        String statusLocation = respObj.getStatusLocation();
+        final Unmarshaller unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
+
+        final ClientSecurity security = getClientSecurity();
+        final URL statusLocation = security.secure(new URL(respObj.getStatusLocation()));
+        Object tmpResponse;
+        int timeLapse = 1000;
+        /*
+         * We start querying distant status location. To be aware of process success (or failure), we keep doing request
+         * over time, until we get the right content. The time interval used for checking increase at each request, to
+         * avoid overloading.
+         */
+        while(true) {
+            timeLapse = timeLapse*2;
+            synchronized (this) {
+                wait(timeLapse);
+            }
+            tmpResponse = unmarshaller.unmarshal(security.decrypt(statusLocation.openStream()));
+            if (tmpResponse instanceof JAXBElement) {
+                tmpResponse = ((JAXBElement) tmpResponse).getValue();
+            }
+
+            if (tmpResponse instanceof ExecuteResponse) {
+                status = ((ExecuteResponse) tmpResponse).getStatus();
+                if (status.getProcessFailed() != null || status.getProcessSucceeded() != null) {
+                    respObj = (ExecuteResponse) tmpResponse;
+                    return respObj;
+                }
+            }
+        }
     }
 
     /**
