@@ -232,12 +232,27 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * @since 2.5
      */
     public GridCoverage2D(final CharSequence             name,
-                          final PlanarImage             image,
+                          final RenderedImage           image,
                                 GridGeometry2D   gridGeometry,
                           final GridSampleDimension[]   bands,
                           final GridCoverage[]        sources,
                           final Map<?,?>           properties,
                           final Hints                   hints)
+            throws IllegalArgumentException
+    {
+        this(name, PlanarImage.wrapRenderedImage(image), gridGeometry, bands, sources, properties, hints);
+    }
+
+    /**
+     * Implementation of the public constructor, with the image type forced to {@code PlanarImage}.
+     */
+    private GridCoverage2D(final CharSequence             name,
+                           final PlanarImage             image,
+                                 GridGeometry2D   gridGeometry,
+                           final GridSampleDimension[]   bands,
+                           final GridCoverage[]        sources,
+                           final Map<?,?>           properties,
+                           final Hints                   hints)
             throws IllegalArgumentException
     {
         super(name, gridGeometry.getCoordinateReferenceSystem(), sources, image, properties);
