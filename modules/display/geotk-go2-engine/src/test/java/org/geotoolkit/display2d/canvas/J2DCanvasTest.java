@@ -18,6 +18,7 @@
 package org.geotoolkit.display2d.canvas;
 
 import java.awt.Dimension;
+import java.awt.geom.NoninvertibleTransformException;
 import java.util.Date;
 
 import org.geotoolkit.display.exception.PortrayalException;
@@ -29,6 +30,7 @@ import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -44,9 +46,9 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class NDEnvelopeTest {
+public class J2DCanvasTest {
 
-    public NDEnvelopeTest() {
+    public J2DCanvasTest() {
     }
 
     @BeforeClass
@@ -122,5 +124,16 @@ public class NDEnvelopeTest {
 
      }
 
+     @Test
+     public void testObjectToDisplayTrs() throws Exception{
+         final J2DCanvas canvas = new J2DCanvasBuffered(DefaultGeographicCRS.WGS84, new Dimension(360,180));
+         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+         env.setRange(0, -180, +180);
+         env.setRange(1, -90, +90);
+         canvas.getController().setVisibleArea(env);
+         
+         final AffineTransform2D objtoDisp = canvas.getObjectiveToDisplay();
+         assertEquals(new AffineTransform2D(1, 0, 0, -1, 180, 90), objtoDisp);
+     }
          
 }

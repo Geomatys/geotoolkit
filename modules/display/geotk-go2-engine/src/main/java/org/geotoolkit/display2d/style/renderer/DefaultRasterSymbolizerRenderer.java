@@ -39,15 +39,12 @@ import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
 import javax.media.jai.RenderedOp;
 import javax.media.jai.operator.BandSelectDescriptor;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.processing.CoverageProcessingException;
-import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -58,7 +55,7 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.style.function.CompatibleColorModel;
 import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
-import org.geotoolkit.display2d.style.raster.StatisticOp;
+import org.geotoolkit.process.coverage.copy.StatisticOp;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
 import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -77,7 +74,6 @@ import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Jenks;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
-import org.opengis.coverage.Coverage;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -174,20 +170,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                         if(width<=0 || height<=0){
                             dataCoverage = null;
                         }else{
-                            final GeneralGridEnvelope ge = new GeneralGridEnvelope(
-                                    new int[]{0,0}, 
-                                    new int[]{width,height},
-                                    false);
-                            final AffineTransform gridToCrs = new AffineTransform(renderingContext.getDisplayToObjective());
-                            gridToCrs.translate((int)dispEnv.getMinimum(0), (int)dispEnv.getMinimum(1));
-                            final GridGeometry2D gridgeom = new GridGeometry2D(
-                                    ge, PixelOrientation.UPPER_LEFT, 
-                                    new AffineTransform2D(gridToCrs), targetCRS, null);
-
                             isReprojected = true;
-                            //TODO we should provide the gridgeometry, but there is a 1/2 pixel displacement
-                            //dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage, targetCRS, gridgeom, null);
-                            dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage, targetCRS, null, null);
+                            dataCoverage = GO2Utilities.resample(dataCoverage,targetCRS);
                         }
                     }
                 }

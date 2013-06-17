@@ -103,6 +103,11 @@ import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.filter.binding.Binding;
 import org.geotoolkit.filter.binding.Bindings;
+import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.process.coverage.resample.Resample2Descriptor;
+import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -119,6 +124,7 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.cs.AxisDirection;
@@ -263,7 +269,7 @@ public final class GO2Utilities {
             final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
             if(!CRS.equalsIgnoreMetadata(candidate2D,renderingContext.getObjectiveCRS2D()) ){
                 sameCRS = false;
-                dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage.view(ViewType.NATIVE), renderingContext.getObjectiveCRS2D());
+                dataCoverage = GO2Utilities.resample(dataCoverage.view(ViewType.NATIVE),renderingContext.getObjectiveCRS2D());
 
                 if(dataCoverage != null){
                     dataCoverage = dataCoverage.view(ViewType.RENDERED);
@@ -796,6 +802,17 @@ public final class GO2Utilities {
         return reader.read(0, params);
     }
 
+    public static GridCoverage2D resample(final Coverage dataCoverage, final CoordinateReferenceSystem targetCRS) throws ProcessException{
+        final ProcessDescriptor desc = Resample2Descriptor.INSTANCE;
+        final ParameterValueGroup params = desc.getInputDescriptor().createValue();
+        ParametersExt.getOrCreateValue(params, Resample2Descriptor.IN_COVERAGE.getName().getCode()).setValue(dataCoverage);
+        ParametersExt.getOrCreateValue(params, Resample2Descriptor.IN_COORDINATE_REFERENCE_SYSTEM.getName().getCode()).setValue(targetCRS);
+
+        final org.geotoolkit.process.Process process = desc.createProcess(params);
+        final ParameterValueGroup result = process.call();
+        return (GridCoverage2D) result.parameter("result").getValue();
+    }
+    
     ////////////////////////////////////////////////////////////////////////////
     // some scale utility methods //////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////

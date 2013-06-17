@@ -17,6 +17,7 @@
 package org.geotoolkit.process.coverage.pyramid;
 
 import java.awt.Dimension;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapContext;
@@ -26,7 +27,6 @@ import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.coverage.CoverageProcessingRegistry;
-import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;

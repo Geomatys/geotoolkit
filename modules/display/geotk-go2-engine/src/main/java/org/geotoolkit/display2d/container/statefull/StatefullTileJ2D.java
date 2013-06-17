@@ -36,6 +36,7 @@ import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.processing.Operations;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRule;
@@ -44,6 +45,7 @@ import org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapItem;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.ImageIOUtilities;
@@ -252,7 +254,11 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
         GridCoverage2D coverage = (GridCoverage2D) gcb.build();
         
         if(needReproject){
-            coverage = (GridCoverage2D) Operations.DEFAULT.resample(coverage.view(ViewType.NATIVE), objCRS2D);
+            try {
+                coverage = GO2Utilities.resample(coverage.view(ViewType.NATIVE),objCRS2D);
+            } catch (ProcessException ex) {
+                Logger.getLogger(StatefullTileJ2D.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
                 
         return coverage;        
