@@ -30,6 +30,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
@@ -50,6 +51,8 @@ import org.opengis.feature.type.PropertyType;
  */
 public class ArrayEditor extends PropertyValueEditor implements ActionListener{
 
+    private static final String BUNDLE_PATH = "org/geotoolkit/gui/swing/resource/Bundle";
+    private static final String UNDEFINED_KEY = "undefined";
     private final List<PropertyValueEditor> editors = new ArrayList<PropertyValueEditor>();
     private final JButton guiButton = new JButton("...");
     private final JLabel guiLabel = new JLabel();
@@ -65,7 +68,11 @@ public class ArrayEditor extends PropertyValueEditor implements ActionListener{
     }
 
     private void updateText(){
-        guiLabel.setText(Utilities.deepToString(value));
+        if (value != null) {
+            guiLabel.setText(Utilities.deepToString(value));
+        } else {
+            guiLabel.setText(new ResourceInternationalString(BUNDLE_PATH, UNDEFINED_KEY).toString());
+        }
     }
 
     /**
