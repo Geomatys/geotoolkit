@@ -32,7 +32,6 @@ import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.resources.Errors;
-import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -189,9 +188,10 @@ final class TransformGrid {
      * @param  domain The domain of validity in source coordinates.
      * @return The warp for the given transform.
      * @throws TransformException If at least one point in the given domain can not be transformed.
+     * @throws ArithmeticException If this method does not converge.
      */
     public static TransformGrid create(final MathTransform2D transform, final Rectangle domain)
-            throws TransformException
+            throws TransformException, ArithmeticException
     {
         if (transform instanceof AffineTransform) {
             return create((AffineTransform) transform);
@@ -202,19 +202,10 @@ final class TransformGrid {
         final double ymax = domain.getMaxY();
         final Point2D.Double point = new Point2D.Double(); // Multi-purpose buffer.
         final Matrix2 upperLeft, upperRight, lowerLeft, lowerRight;
-        try {
-            point.x = xmin; point.y = ymax; upperLeft  = derivative(transform, point);
-            point.x = xmax; point.y = ymax; upperRight = derivative(transform, point);
-            point.x = xmin; point.y = ymin; lowerLeft  = derivative(transform, point);
-            point.x = xmax; point.y = ymin; lowerRight = derivative(transform, point);
-        } catch (TransformException e) {
-            /*
-             * Typically happen when the transform does not support the derivative function,
-             * in which case we will fallback on the generic (but slow) adapter.
-             */
-            Logging.recoverableException(TransformGrid.class, "create", e);
-            return null;
-        }
+        point.x = xmin; point.y = ymax; upperLeft  = derivative(transform, point);
+        point.x = xmax; point.y = ymax; upperRight = derivative(transform, point);
+        point.x = xmin; point.y = ymin; lowerLeft  = derivative(transform, point);
+        point.x = xmax; point.y = ymin; lowerRight = derivative(transform, point);
         /*
          * The tolerance factor is scaled as below. The explanation below is for
          * a one-dimensional case, but the two dimensional case works on the same
@@ -255,19 +246,10 @@ final class TransformGrid {
          * The (m₃ - m₁) value is the maximal difference to be accepted
          * in the coefficients of the derivative matrix to be compared.
          */
-        final Dimension depth;
-        try {
-            final double tol = 2 * TOLERANCE;
-            depth = depth(transform, point,
-                    new DoubleDimension2D(tol / (xmax - xmin), tol / (ymax - ymin)),
-                    xmin, xmax, ymin, ymax, upperLeft, upperRight, lowerLeft, lowerRight);
-        } catch (ArithmeticException e) {
-            /*
-             * The method does not converge.
-             */
-            Logging.recoverableException(TransformGrid.class, "create", e);
-            return null;
-        }
+        final Dimension depth = depth(transform, point,
+                new DoubleDimension2D(2 * TOLERANCE / (xmax - xmin),
+                                      2 * TOLERANCE / (ymax - ymin)),
+                xmin, xmax, ymin, ymax, upperLeft, upperRight, lowerLeft, lowerRight);
         if (depth.width == 0 && depth.height == 0) {
             /*
              * The transform is approximatively affine. Compute the matrix coefficients using
