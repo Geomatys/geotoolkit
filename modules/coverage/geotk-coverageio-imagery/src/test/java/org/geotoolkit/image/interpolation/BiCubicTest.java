@@ -80,7 +80,7 @@ public class BiCubicTest extends InterpolationTest {
         for (int y = miny+1; y < miny + height-2; y++) {
             for (int x = minx+1; x < minx + width-2; x++) {
                 // interpolation verification at integer pixel position.
-                interpolVal = interpol.interpolate(x, y)[0];
+                interpolVal = interpol.interpolate(x, y,0);
                 assertTrue(Math.abs(rastertest.getSampleDouble(x, y, 0) - interpolVal) <= 1E-12);
             }
         }
@@ -88,7 +88,7 @@ public class BiCubicTest extends InterpolationTest {
         for (int y = miny+1; y < miny + height-2; y++) {
             for (int x = minx+1; x < minx + width-2; x++) {
                 // interpolation verification at integer pixel position.
-                interpolVal = interpol.interpolate(x, y)[0];
+                interpolVal = interpol.interpolate(x, y,0);
                 assertTrue(Math.abs(rastertest.getSampleDouble(x, y, 0) - interpolVal) <= 1E-12);
             }
         }
@@ -207,7 +207,7 @@ public class BiCubicTest extends InterpolationTest {
         final int minY    = raster.getMinY();
         final int rW      = raster.getWidth();
         final int rH      = raster.getHeight();
-        double[] jaiInter, inter;
+        double[] jaiInter;
 
         javax.media.jai.Interpolation jaiInterpol = (keys) ? new InterpolationBicubic2(8) : new InterpolationBicubic(8);
         PixelIterator pixelIterator = PixelIteratorFactory.createDefaultIterator(raster);
@@ -219,11 +219,12 @@ public class BiCubicTest extends InterpolationTest {
                 for (int nx = 0; nx<100; nx++) {
                     x = minX + 1 + nx*0.01;
                     y = minY + 1 + ny*0.01;
-                    inter = interpol.interpolate(x, y);
+                    
                     jaiInter = getJAIInterpolate(jaiInterpol, raster, x, y, rW, rH, numBand);
                     for (int b2 = 0; b2 <numBand; b2++) {
-                        tolerance = ((inter[b2]+jaiInter[b2])/2)*1E-2;//1%
-                        assertTrue(Math.abs(inter[b2]-jaiInter[b2]) <= tolerance);
+                        double inter = interpol.interpolate(x, y, b2);
+                        tolerance = ((inter+jaiInter[b2])/2)*1E-2;//1%
+                        assertTrue(Math.abs(inter-jaiInter[b2]) <= tolerance);
                     }
                 }
             }

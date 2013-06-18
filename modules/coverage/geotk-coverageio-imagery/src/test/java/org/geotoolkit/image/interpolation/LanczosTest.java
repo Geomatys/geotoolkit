@@ -70,13 +70,13 @@ public class LanczosTest extends InterpolationTest {
         for (int y = miny; y < miny + height-1; y++) {
             for (int x = minx; x < minx + width-1; x++) {
                 // interpolation verification at integer pixel position.
-                interpolXDeb = interpol.interpolate(x, y)[0];
+                interpolXDeb = interpol.interpolate(x, y, 0);
                 assertTrue(Math.abs(rastertest.getSampleDouble(x, y, 0) - interpolXDeb) <= 1E-12);
-                interpolXEnd = interpol.interpolate(x+1, y)[0];
+                interpolXEnd = interpol.interpolate(x+1, y, 0);
                 assertTrue(Math.abs(rastertest.getSampleDouble(x+1, y, 0) - interpolXEnd) <= 1E-12);
-                interpolYDeb = interpol.interpolate(x, y+1)[0];
+                interpolYDeb = interpol.interpolate(x, y+1, 0);
                 assertTrue(Math.abs(rastertest.getSampleDouble(x, y+1, 0) - interpolYDeb) <= 1E-12);
-                interpolYEnd = interpol.interpolate(x+1, y+1)[0];
+                interpolYEnd = interpol.interpolate(x+1, y+1, 0);
                 assertTrue(Math.abs(rastertest.getSampleDouble(x+1, y+1, 0) - interpolYEnd) <= 1E-12);
             }
         }

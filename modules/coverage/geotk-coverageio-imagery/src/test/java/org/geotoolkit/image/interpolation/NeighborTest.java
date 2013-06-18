@@ -35,62 +35,62 @@ public class NeighborTest extends InterpolationTest {
 
     @Test
     public void lowLCornerTest() {
-        double[] resulTest = interpol.interpolate(-0.7, -0.6);
-        assertTrue(resulTest[0] == 0);
+        double resulTest = interpol.interpolate(-0.7, -0.6, 0);
+        assertTrue(resulTest == 0);
 
-        resulTest = interpol.interpolate(-0.4, -0.6);
-        assertTrue(resulTest[0] == 1);
+        resulTest = interpol.interpolate(-0.4, -0.6, 0);
+        assertTrue(resulTest == 1);
 
-        resulTest = interpol.interpolate(-0.7, -0.4);
-        assertTrue(resulTest[0] == 3);
+        resulTest = interpol.interpolate(-0.7, -0.4, 0);
+        assertTrue(resulTest == 3);
 
-        resulTest = interpol.interpolate(-0.4, -0.2);
-        assertTrue(resulTest[0] == 4);
+        resulTest = interpol.interpolate(-0.4, -0.2, 0);
+        assertTrue(resulTest == 4);
     }
 
     @Test
     public void lowRCornerTest() {
-        double[] resulTest = interpol.interpolate(0.7, -0.6);
-        assertTrue(resulTest[0] == 2);
+        double resulTest = interpol.interpolate(0.7, -0.6, 0);
+        assertTrue(resulTest == 2);
 
-        resulTest = interpol.interpolate(0.4, -0.6);
-        assertTrue(resulTest[0] == 1);
+        resulTest = interpol.interpolate(0.4, -0.6, 0);
+        assertTrue(resulTest == 1);
 
-        resulTest = interpol.interpolate(0.7, -0.4);
-        assertTrue(resulTest[0] == 5);
+        resulTest = interpol.interpolate(0.7, -0.4, 0);
+        assertTrue(resulTest == 5);
 
-        resulTest = interpol.interpolate(0.4, -0.2);
-        assertTrue(resulTest[0] == 4);
+        resulTest = interpol.interpolate(0.4, -0.2, 0);
+        assertTrue(resulTest == 4);
     }
 
     @Test
     public void uppLCornerTest() {
-        double[] resulTest = interpol.interpolate(-0.7, 0.6);
-        assertTrue(resulTest[0] == 6);
+        double resulTest = interpol.interpolate(-0.7, 0.6, 0);
+        assertTrue(resulTest == 6);
 
-        resulTest = interpol.interpolate(-0.4, 0.6);
-        assertTrue(resulTest[0] == 7);
+        resulTest = interpol.interpolate(-0.4, 0.6, 0);
+        assertTrue(resulTest == 7);
 
-        resulTest = interpol.interpolate(-0.7, 0.4);
-        assertTrue(resulTest[0] == 3);
+        resulTest = interpol.interpolate(-0.7, 0.4, 0);
+        assertTrue(resulTest == 3);
 
-        resulTest = interpol.interpolate(-0.4, 0.2);
-        assertTrue(resulTest[0] == 4);
+        resulTest = interpol.interpolate(-0.4, 0.2, 0);
+        assertTrue(resulTest == 4);
     }
 
     @Test
     public void uppRCornerTest() {
-        double[] resulTest = interpol.interpolate(0.7, 0.6);
-        assertTrue(resulTest[0] == 8);
+        double resulTest = interpol.interpolate(0.7, 0.6, 0);
+        assertTrue(resulTest == 8);
 
-        resulTest = interpol.interpolate(0.4, 0.6);
-        assertTrue(resulTest[0] == 7);
+        resulTest = interpol.interpolate(0.4, 0.6, 0);
+        assertTrue(resulTest == 7);
 
-        resulTest = interpol.interpolate(0.7, 0.4);
-        assertTrue(resulTest[0] == 5);
+        resulTest = interpol.interpolate(0.7, 0.4, 0);
+        assertTrue(resulTest == 5);
 
-        resulTest = interpol.interpolate(0.4, 0.2);
-        assertTrue(resulTest[0] == 4);
+        resulTest = interpol.interpolate(0.4, 0.2, 0);
+        assertTrue(resulTest == 4);
     }
 
     @Test

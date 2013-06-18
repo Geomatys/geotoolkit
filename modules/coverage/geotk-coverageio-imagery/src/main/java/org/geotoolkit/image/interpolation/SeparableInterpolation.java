@@ -50,22 +50,19 @@ abstract class SeparableInterpolation extends Interpolation {
      * @return interpolate value from x, y pixel coordinate.
      */
     @Override
-    public double[] interpolate(double x, double y) {
+    public double interpolate(double x, double y, int b) {
         checkInterpolate(x, y);
         setInterpolateMin(x, y);
         final int wX = minX + windowSide;
         final int hY = minY + windowSide;
-        for (int b = 0; b<numBands; b++) {
-            for (int dy = minY; dy < hY; dy++) {
-                for (int dx = minX; dx < wX; dx++) {
-                    pixelIterator.moveTo(dx, dy, b);
-                    tabInteRow[dx - minX] = pixelIterator.getSampleDouble();
-                }
-                tabInteCol[dy-minY] = interpolate1D(minX, x, tabInteRow);
+        for (int dy = minY; dy < hY; dy++) {
+            for (int dx = minX; dx < wX; dx++) {
+                pixelIterator.moveTo(dx, dy, b);
+                tabInteRow[dx - minX] = pixelIterator.getSampleDouble();
             }
-            result[b] = interpolate1D(minY, y, tabInteCol);
+            tabInteCol[dy-minY] = interpolate1D(minX, x, tabInteRow);
         }
-        return result;
+        return interpolate1D(minY, y, tabInteCol);
     }
 
     /**

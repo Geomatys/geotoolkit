@@ -19,6 +19,8 @@ package org.geotoolkit.process.coverage.resample;
 
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
@@ -376,10 +378,16 @@ final class Resampler2D {
         //// =======>>  STEP 4: Applies the JAI operation ("Affine", "Warp", etc)  <<====== ////
         ////                                                                                ////
         ////////////////////////////////////////////////////////////////////////////////////////
-        final Interpolation interpolator = Interpolation.create(PixelIteratorFactory.createDefaultIterator(sourceImage,sourceBB), interpolationType, 2);
         
-        final Resample resample = new Resample(allSteps2D.inverse(), targetImage, interpolator, new double[targetImage.getSampleModel().getNumBands()]);
-        resample.fillImage();
+//        if(allSteps2D instanceof AffineTransform){
+//            
+//            final AffineTransformOp op = new AffineTransformOp((AffineTransform)allSteps2D, null);
+//            op.filter(sourceImage.getTile(0, 0), targetRaster);
+//        }else{
+            final Interpolation interpolator = Interpolation.create(PixelIteratorFactory.createDefaultIterator(sourceImage,sourceBB), interpolationType, 2);
+            final Resample resample = new Resample(allSteps2D.inverse(), targetImage, interpolator, new double[targetImage.getSampleModel().getNumBands()]);
+            resample.fillImage();
+//        }
         
         final GridCoverage2D targetCoverage = create(sourceCoverage, targetImage, targetGG, finalView, hints);
         return targetCoverage;

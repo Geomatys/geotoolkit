@@ -153,7 +153,7 @@ public class BenchMarkInterpolation {
             if (i==4)temDeb = System.currentTimeMillis();
             for (double y = miny; y<miny+height; y+=pasy) {
                 for(double x = minx; x<minx+width; x+=pasx){
-                    interpolation.interpolate(x, y);
+                    interpolation.interpolate(x, y,0);
                 }
             }
             if(i>=4)Thread.sleep(loopSleepMilli);

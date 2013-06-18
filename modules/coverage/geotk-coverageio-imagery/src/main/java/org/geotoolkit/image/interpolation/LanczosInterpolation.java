@@ -108,29 +108,25 @@ public class LanczosInterpolation extends Interpolation {
      * from pixel coordinates with side length equal to 2 * lanczos window.
      */
     @Override
-    public double[] interpolate(double x, double y) {
+    public double interpolate(double x, double y, int b) {
         checkInterpolate(x, y);
         setInterpolateMin(x, y);
         final int hY = minY + windowSide;
         final int wX = minX + windowSide;
         int dy, dx;
-        double interpol;
-        for (int b = 0; b<numBands; b++) {
-            interpol = 0;
-            for (dy = minY; dy < hY; dy++) {
-                for (dx = minX; dx < wX; dx++) {
-                    pixelIterator.moveTo(dx, dy, b);
-                    interpol += pixelIterator.getSampleDouble() * getLCZt(dx, x) * getLCZt(dy, y);
-                }
+        double interpol = 0;
+        for (dy = minY; dy < hY; dy++) {
+            for (dx = minX; dx < wX; dx++) {
+                pixelIterator.moveTo(dx, dy, b);
+                interpol += pixelIterator.getSampleDouble() * getLCZt(dx, x) * getLCZt(dy, y);
             }
-            if (interpol < minValue) {
-                interpol = minValue;
-            } else if (interpol > maxValue) {
-                interpol = maxValue;
-            }
-            result[b] = interpol;
         }
-        return result;
+        if (interpol < minValue) {
+            interpol = minValue;
+        } else if (interpol > maxValue) {
+            interpol = maxValue;
+        }
+        return interpol;
     }
 
     /**

@@ -67,7 +67,7 @@ public class BilinearTest extends InterpolationTest {
                 max = Math.max(Math.max(v00  , v01), Math.max(v10, v11));
                 for (double y = mpy; y<mpy+1;y += 0.1) {
                     for (double x = mpx; x<mpx+1;x += 0.1) {
-                        vInter = interpol.interpolate(x, y)[0];
+                        vInter = interpol.interpolate(x, y, 0);
                         jaiInter = jaiInterpol.interpolate(v00, v01, v10, v11, (float)(x-mpx), (float)(y-mpy));
                         assertTrue(vInter >= (min - 1E-15) && vInter <= max + 1E-15);
                         assertTrue(Math.abs(vInter - jaiInter) <= 1E-7);
@@ -84,20 +84,20 @@ public class BilinearTest extends InterpolationTest {
      */
     @Test
     public void lowLCornerTest() {
-        double[] resulTest = interpol.interpolate(-0.5, -1);
-        assertTrue(resulTest[0] == 0.5);
+        double resulTest = interpol.interpolate(-0.5, -1, 0);
+        assertTrue(resulTest == 0.5);
 
-        resulTest = interpol.interpolate(0, -0.5);
-        assertTrue(resulTest[0] == 2.5);
+        resulTest = interpol.interpolate(0, -0.5, 0);
+        assertTrue(resulTest == 2.5);
 
-        resulTest = interpol.interpolate(-1, -0.5);
-        assertTrue(resulTest[0] == 1.5);
+        resulTest = interpol.interpolate(-1, -0.5, 0);
+        assertTrue(resulTest == 1.5);
 
-        resulTest = interpol.interpolate(-0.5, 0);
-        assertTrue(resulTest[0] == 3.5);
+        resulTest = interpol.interpolate(-0.5, 0, 0);
+        assertTrue(resulTest == 3.5);
 
-        resulTest = interpol.interpolate(-0.5, -0.5);
-        assertTrue(resulTest[0] == 2);
+        resulTest = interpol.interpolate(-0.5, -0.5, 0);
+        assertTrue(resulTest == 2);
     }
 
     /**
@@ -107,17 +107,17 @@ public class BilinearTest extends InterpolationTest {
      */
     @Test
     public void lowRCornerTest() {
-        double[] resulTest = interpol.interpolate(0.5, -1);
-        assertTrue(resulTest[0] == 1.5);
+        double resulTest = interpol.interpolate(0.5, -1, 0);
+        assertTrue(resulTest == 1.5);
 
-        resulTest = interpol.interpolate(1, -0.5);
-        assertTrue(resulTest[0] == 3.5);
+        resulTest = interpol.interpolate(1, -0.5, 0);
+        assertTrue(resulTest == 3.5);
 
-        resulTest = interpol.interpolate(0, -0.5);
-        assertTrue(resulTest[0] == 2.5);
+        resulTest = interpol.interpolate(0, -0.5, 0);
+        assertTrue(resulTest == 2.5);
 
-        resulTest = interpol.interpolate(0.5, -0.5);
-        assertTrue(resulTest[0] == 3);
+        resulTest = interpol.interpolate(0.5, -0.5, 0);
+        assertTrue(resulTest == 3);
     }
 
     /**
@@ -127,17 +127,17 @@ public class BilinearTest extends InterpolationTest {
      */
     @Test
     public void uppLCornerTest() {
-        double[] resulTest = interpol.interpolate(-0.5, 1);
-        assertTrue(resulTest[0] == 6.5);
+        double resulTest = interpol.interpolate(-0.5, 1, 0);
+        assertTrue(resulTest == 6.5);
 
-        resulTest = interpol.interpolate(-1, 0.5);
-        assertTrue(resulTest[0] == 4.5);
+        resulTest = interpol.interpolate(-1, 0.5, 0);
+        assertTrue(resulTest == 4.5);
 
-        resulTest = interpol.interpolate(0, 0.5);
-        assertTrue(resulTest[0] == 5.5);
+        resulTest = interpol.interpolate(0, 0.5, 0);
+        assertTrue(resulTest == 5.5);
 
-        resulTest = interpol.interpolate(-0.5, 0.5);
-        assertTrue(resulTest[0] == 5);
+        resulTest = interpol.interpolate(-0.5, 0.5, 0);
+        assertTrue(resulTest == 5);
     }
 
     /**
@@ -147,17 +147,17 @@ public class BilinearTest extends InterpolationTest {
      */
     @Test
     public void uppRCornerTest() {
-        double[] resulTest = interpol.interpolate(0.5, 0);
-        assertTrue(resulTest[0] == 4.5);
+        double resulTest = interpol.interpolate(0.5, 0, 0);
+        assertTrue(resulTest == 4.5);
 
-        resulTest = interpol.interpolate(1, 0.5);
-        assertTrue(resulTest[0] == 6.5);
+        resulTest = interpol.interpolate(1, 0.5, 0);
+        assertTrue(resulTest == 6.5);
 
-        resulTest = interpol.interpolate(0.5, 1);
-        assertTrue(resulTest[0] == 7.5);
+        resulTest = interpol.interpolate(0.5, 1, 0);
+        assertTrue(resulTest == 7.5);
 
-        resulTest = interpol.interpolate(0.5, 0.5);
-        assertTrue(resulTest[0] == 6);
+        resulTest = interpol.interpolate(0.5, 0.5, 0);
+        assertTrue(resulTest == 6);
     }
 
     /**

@@ -104,7 +104,7 @@ public abstract class Interpolation {
      * @param y pixel y coordinate.
      * @return interpolate value from x, y pixel coordinate.
      */
-    public abstract double[] interpolate(double x, double y);
+    public abstract double interpolate(double x, double y, int band);
 
     /**
      * <p>Find minimum and maximum pixels values for each band.<br/>
@@ -232,7 +232,7 @@ public abstract class Interpolation {
         final int mx = boundary.x;
         final int my = boundary.y;
         if (x < mx || x >= mx + boundary.width || y < my || y >= my + boundary.height)
-            throw new IllegalArgumentException("coordinates out of iterate area boundary : "+boundary);
+            throw new IllegalArgumentException("coordinates out of iterate area boundary : "+boundary +" given coord is "+x+" "+y);
     }
 
     /**

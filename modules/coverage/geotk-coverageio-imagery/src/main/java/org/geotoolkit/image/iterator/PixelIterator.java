@@ -319,7 +319,7 @@ public abstract class PixelIterator {
         if (x < areaIterateMinX || x >= areaIterateMaxX
             ||  y < areaIterateMinY || y >= areaIterateMaxY)
                 throw new IllegalArgumentException("coordinate out of iteration area define by: "
-                        +"("+areaIterateMinX+", "+areaIterateMinY+")"+" ; ("+areaIterateMaxX+", "+areaIterateMaxY+")");
+                        +"("+areaIterateMinX+", "+areaIterateMinY+")"+" ; ("+areaIterateMaxX+", "+areaIterateMaxY+") given coord is "+x+" "+y);
         if (b<0 || b>=fixedNumBand)
             throw new IllegalArgumentException("band index out of numband border define by: [0;"+fixedNumBand+"]");
     }

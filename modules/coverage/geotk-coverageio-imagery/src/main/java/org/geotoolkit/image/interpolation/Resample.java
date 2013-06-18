@@ -157,40 +157,38 @@ public class Resample {
     }
 
     /**
-     * Compute interpolation value from source image.
-     *
-     * @param x destination pixel coordinate.
-     * @param y destination pixel coordinate.
-     * @return interpolation value from source image.
-     * @throws TransformException
-     */
-    private double[] getSourcePixelValue(double x, double y) throws TransformException {
-        destCoords[0] = x;
-        destCoords[1] = y;
-        invertMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
-        final int src0 = (int) srcCoords[0];
-        final int src1 = (int) srcCoords[1];
-        if (src0 < minSourceX || src0 > maxSourceX
-         || src1 < minSourceY || src1 > maxSourceY) {
-            return fillValue;
-        }
-        return interpol.interpolate(src0, src1);
-    }
-
-    /**
      * Fill destination image from source image pixel interpolation.
      */
     public void fillImage() throws TransformException {
         int band;
-        double[] destPixValue;
+        int src0;
+        int src1;
+        
         while (destIterator.next()) {
             band = 0;
-            destPixValue = getSourcePixelValue(destIterator.getX(), destIterator.getY());
-            destIterator.setSampleDouble(destPixValue[0]);
-            while (++band != numBands) {
-                destIterator.next();
-                destIterator.setSampleDouble(destPixValue[band]);
+            //Compute interpolation value from source image.
+            destCoords[0] = destIterator.getX();
+            destCoords[1] = destIterator.getY();
+            invertMathTransform.transform(destCoords, 0, srcCoords, 0, 1);
+            src0 = (int) srcCoords[0];
+            src1 = (int) srcCoords[1];
+            
+            //check out of range
+            if (src0 < minSourceX || src0 > maxSourceX
+                || src1 < minSourceY || src1 > maxSourceY) {
+                destIterator.setSampleDouble(fillValue[band]);
+                while (++band != numBands) {
+                    destIterator.next();
+                    destIterator.setSampleDouble(fillValue[band]);
+                }
+            }else{
+                destIterator.setSampleDouble(interpol.interpolate(src0, src1, band));
+                while (++band != numBands) {
+                    destIterator.next();
+                    destIterator.setSampleDouble(interpol.interpolate(src0, src1, band));
+                }
             }
+            
         }
     }
 }
