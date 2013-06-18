@@ -391,7 +391,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
         }
         final List<ProcessBriefType> processBrief = capabilities.getProcessOfferings().getProcess();
 
-        for (final ProcessBriefType processBriefType : processBrief) {
+scan:   for (final ProcessBriefType processBriefType : processBrief) {
 
             final String processIdentifier = processBriefType.getIdentifier().getValue();
             final InternationalString processAbstract = new DefaultInternationalString(processBriefType.getAbstract().getValue());
@@ -449,7 +449,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                                 if (clazz == null) {
                                     LOGGER.log(Level.WARNING, "No compatible format found for output (id: " +
                                             inputName + ", process (id: " + processIdentifier + ") is skipped.");
-                                    break;
+                                    continue scan;
                                 }
                             }
 
@@ -461,7 +461,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                         } else {
                             LOGGER.log(Level.WARNING, "Invalid describeProcess. No default format specified for input " +
                                     inputName + ". Process " + processIdentifier + ") is skipped.");
-                            break;
+                            continue scan;
                         }
 
                     } else if (literalInput != null) {
@@ -479,11 +479,11 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                             converter = WPSIO.getConverter(clazz, WPSIO.IOType.INPUT, WPSIO.FormChoice.LITERAL);
                             if (converter == null) {
                                 LOGGER.log(Level.WARNING, "Can't find the converter for the default literal input value.");
-                                break;
+                                continue scan;
                             }
                         } catch (NonconvertibleObjectException ex) {
                             LOGGER.log(Level.WARNING, "Can't find the converter for the default literal input value.", ex);
-                            break;
+                            continue scan;
                         }
 
                         //At this state the converter can't be null.
@@ -492,14 +492,14 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                             inputTypes.put(inputName, "literal");
                         } catch (NonconvertibleObjectException ex2) {
                             LOGGER.log(Level.WARNING, "Can't convert the default literal input value.", ex2);
-                            break;
+                            continue scan;
                         }
                     } else if (bboxInput != null) {
                         inputDescriptors.add(new DefaultParameterDescriptor(properties, Envelope.class, null, null, null, null, null, min != 0));
                         inputTypes.put(inputName, "bbox");
                     } else {
                         LOGGER.log(Level.WARNING, "Unidentifiable input (id: " + inputName + ", process is (id: " + processIdentifier + ") skipped.");
-                        break;
+                        continue scan;
                     }
                 }
             }
@@ -547,7 +547,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                                 if (clazz == null) {
                                     LOGGER.log(Level.WARNING, "No compatible format found for output (id: " +
                                             outputName + ", process (id: " + processIdentifier + ") is skipped.");
-                                    break;
+                                    continue scan;
                                 }
                             }
 
@@ -557,7 +557,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                         } else {
                             LOGGER.log(Level.WARNING, "Invalid describeProcess. No default format specified for output " +
                                     outputName + ". Process " + processIdentifier + ") is skipped.");
-                            break;
+                            continue scan;
                         }
 
                     } else if (literalOutput != null) {
@@ -575,7 +575,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
 
                     } else {
                         LOGGER.log(Level.WARNING, "Unidentifiable output (id: " + outputName + ", process is (id: " + processIdentifier + ") skipped.");
-                        break;
+                        continue scan;
                     }
                 }
             }
