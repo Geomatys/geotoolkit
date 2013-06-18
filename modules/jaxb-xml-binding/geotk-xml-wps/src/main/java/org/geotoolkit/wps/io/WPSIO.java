@@ -172,6 +172,11 @@ public final class WPSIO {
         FORMATSUPPORTS.add(new FormatSupport(File.class, IOType.BOTH, WPSMimeType.APP_ZIP_BIS.val(), null, null, true));
         FORMATSUPPORTS.add(new FormatSupport(File.class, IOType.BOTH, WPSMimeType.APP_GZIP.val(), null, null, true));
 
+        FORMATSUPPORTS.add(new FormatSupport(File.class, IOType.BOTH, WPSMimeType.APP_OCTET.val(), WPSEncoding.BASE64.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(File.class, IOType.BOTH, WPSMimeType.APP_ZIP.val(), WPSEncoding.BASE64.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(File.class, IOType.BOTH, WPSMimeType.APP_ZIP_BIS.val(), WPSEncoding.BASE64.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(File.class, IOType.BOTH, WPSMimeType.APP_GZIP.val(), WPSEncoding.BASE64.getValue(), null, true));
+
         FORMATSUPPORTS.add(new FormatSupport(Unit.class, IOType.INPUT, null, WPSEncoding.UTF8.getValue(), null, true));
 
         FORMATSUPPORTS.add(new FormatSupport(SortBy[].class, IOType.INPUT, null, WPSEncoding.UTF8.getValue(), null, true));

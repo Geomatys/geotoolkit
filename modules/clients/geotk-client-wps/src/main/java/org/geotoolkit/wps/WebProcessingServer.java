@@ -412,7 +412,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
 
                 for (final InputDescriptionType inputDesc : inputDescriptionList) {
                     final String inputName = inputDesc.getIdentifier().getValue();
-                    final String inputAbstract = inputDesc.getAbstract().getValue();
+                    final String inputAbstract = (inputDesc.getAbstract() == null)? "No description available" : inputDesc.getAbstract().getValue();
                     final Integer max = Integer.valueOf(inputDesc.getMaxOccurs().intValue());
                     final Integer min = Integer.valueOf(inputDesc.getMinOccurs().intValue());
 
@@ -510,7 +510,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                 final List<OutputDescriptionType> outputDescriptionList = wpsProcessDesc.getProcessOutputs().getOutput();
                 for (final OutputDescriptionType outputDesc : outputDescriptionList) {
                     final String outputName = outputDesc.getIdentifier().getValue();
-                    final String outputAbstract = outputDesc.getAbstract().getValue();
+                    final String outputAbstract = (outputDesc.getAbstract() == null)? "No description available" : outputDesc.getAbstract().getValue();
 
                     final SupportedComplexDataType complexOutput = outputDesc.getComplexOutput();
                     final LiteralOutputType literalOutput = outputDesc.getLiteralOutput();
