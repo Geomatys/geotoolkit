@@ -18,6 +18,8 @@ package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.measure.unit.NonSI;
@@ -33,7 +35,7 @@ import org.opengis.feature.type.PropertyType;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class UnitEditor extends PropertyValueEditor {
+public class UnitEditor extends PropertyValueEditor implements ActionListener {
 
     private final JComboBox component = new JComboBox();
 
@@ -70,8 +72,6 @@ public class UnitEditor extends PropertyValueEditor {
 
     }
 
-
-
     @Override
     public boolean canHandle(PropertyType candidate) {
         return Unit.class.equals(candidate.getBinding());
@@ -89,6 +89,11 @@ public class UnitEditor extends PropertyValueEditor {
     @Override
     public Object getValue() {
         return component.getSelectedItem();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        valueChanged();
     }
 
 }

@@ -116,6 +116,7 @@ public class StyleEditor extends PropertyValueEditor implements ActionListener{
         }
 
         updateText();
+        valueChanged();
     }
 
 }

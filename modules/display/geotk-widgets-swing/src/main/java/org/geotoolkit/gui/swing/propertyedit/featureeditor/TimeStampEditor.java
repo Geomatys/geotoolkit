@@ -27,7 +27,6 @@ import java.util.GregorianCalendar;
 import javax.swing.JSpinner;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import static org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor.PROP_VALUE;
 import org.jdesktop.swingx.JXDatePicker;
 import org.opengis.feature.type.PropertyType;
 
@@ -89,11 +88,11 @@ public class TimeStampEditor extends PropertyValueEditor implements ActionListen
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        firePropertyChange(PROP_VALUE, null, getValue());
+        valueChanged();
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        firePropertyChange(PROP_VALUE, null, getValue());
+        valueChanged();
     }
 }

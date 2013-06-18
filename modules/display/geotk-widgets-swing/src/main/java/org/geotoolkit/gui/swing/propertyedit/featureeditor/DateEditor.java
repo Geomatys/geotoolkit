@@ -55,7 +55,7 @@ public class DateEditor extends PropertyValueEditor implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        firePropertyChange(PROP_VALUE, null, getValue());
+        valueChanged();
     }
 
 }

@@ -153,6 +153,7 @@ public class ArrayEditor extends PropertyValueEditor implements ActionListener{
         }
 
         updateText();
+        valueChanged();
     }
 
 }

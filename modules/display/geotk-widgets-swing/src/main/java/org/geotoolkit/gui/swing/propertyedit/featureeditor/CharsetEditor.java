@@ -30,7 +30,7 @@ import org.opengis.feature.type.PropertyType;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class CharsetEditor extends PropertyValueEditor implements ActionListener{
+public class CharsetEditor extends PropertyValueEditor implements ActionListener {
 
     private final JComboBox component = new JComboBox();
 
@@ -64,7 +64,7 @@ public class CharsetEditor extends PropertyValueEditor implements ActionListener
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        firePropertyChange(PROP_VALUE, null, getValue());
+        valueChanged();
     }
 
 }

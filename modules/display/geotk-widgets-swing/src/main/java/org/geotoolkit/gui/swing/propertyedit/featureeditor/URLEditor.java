@@ -29,14 +29,17 @@ import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.opengis.feature.type.PropertyType;
 
 /**
- *
+ * Throw PropertyChange event when TextField text change.
+ * 
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class URLEditor extends PropertyValueEditor implements ActionListener{
+public class URLEditor extends PropertyValueEditor implements ActionListener, DocumentListener {
 
     private final JTextField component = new JTextField();
     private final JButton chooseButton = new JButton("...");
@@ -45,6 +48,7 @@ public class URLEditor extends PropertyValueEditor implements ActionListener{
         super(new BorderLayout());
         add(BorderLayout.CENTER, component);
         add(BorderLayout.EAST, chooseButton);
+        component.getDocument().addDocumentListener(this);
         chooseButton.addActionListener(this);
         chooseButton.setMargin(new Insets(0, 0, 0, 0));
     }
@@ -90,6 +94,21 @@ public class URLEditor extends PropertyValueEditor implements ActionListener{
                 component.setText(f.toURI().toString());
             }
         }
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        valueChanged();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        valueChanged();
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        valueChanged();
     }
 
 }

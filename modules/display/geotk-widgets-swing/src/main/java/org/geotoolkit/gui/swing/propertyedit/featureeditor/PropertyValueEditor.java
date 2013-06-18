@@ -40,6 +40,13 @@ public abstract class PropertyValueEditor extends JPanel {
     public abstract void setValue(final PropertyType type, Object value);
 
     public abstract Object getValue();
+    
+    /**
+     * Fire property changed event with new property value.
+     */
+    public void valueChanged() {
+        firePropertyChange(PROP_VALUE, null, getValue());
+    }
 
     /**
      * Create a copy of this editor.

@@ -18,6 +18,8 @@ package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.util.InternationalString;
@@ -26,7 +28,7 @@ import org.opengis.util.InternationalString;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class InternationalStringEditor extends PropertyValueEditor {
+public class InternationalStringEditor extends PropertyValueEditor implements DocumentListener {
 
     private final JTextField textField = new JTextField();
     private JTextField current = null;
@@ -44,6 +46,7 @@ public class InternationalStringEditor extends PropertyValueEditor {
     public void setValue(PropertyType type, Object value) {
         removeAll();
         add(BorderLayout.CENTER, textField);
+        textField.getDocument().addDocumentListener(this);
         current = textField;
         if (value instanceof InternationalString) {
             current.setText(((InternationalString) value).toString());
@@ -55,6 +58,21 @@ public class InternationalStringEditor extends PropertyValueEditor {
     @Override
     public Object getValue() {
         return new SimpleInternationalString(current.getText());
+    }
+    
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        valueChanged();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        valueChanged();
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        valueChanged();
     }
 
 }

@@ -17,12 +17,12 @@
 package org.geotoolkit.gui.swing.propertyedit;
 
 import java.awt.BorderLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JPanel;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.ArrayEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.BooleanEditor;
@@ -45,12 +45,16 @@ import org.opengis.feature.Property;
 import org.opengis.feature.type.PropertyType;
 
 /**
- * Edit a single property.
+ * Edit a single property. 
+ * When value in property editor change, JAttributeEditor will fire a 
+ * property change event with property name <code>#VALUE_CHANGE_EVENT</code>
  *
  * @author Johann Sorel (Geomatys)
  */
-public class JAttributeEditor extends JPanel{
+public class JAttributeEditor extends JPanel implements PropertyChangeListener {
 
+    public static final String VALUE_CHANGE_EVENT = "value";
+    
     private final List<PropertyValueEditor> editors = new CopyOnWriteArrayList<PropertyValueEditor>();
     private PropertyValueEditor editor;
     private Property property = null;
@@ -70,12 +74,16 @@ public class JAttributeEditor extends JPanel{
     public void setProperty(Property property) {
         this.property = property;
 
+        if (editor != null) {
+            editor.removePropertyChangeListener(this);
+        }
         removeAll();
 
-        if(this.property != null){
+        if (this.property != null) {
             editor = getEditor(editors,this.property.getType());
             if(editor != null){
                 editor.setValue(property.getType(), property.getValue());
+                editor.addPropertyChangeListener(this);
                 add(BorderLayout.CENTER,editor);
             }
         }
@@ -131,6 +139,13 @@ public class JAttributeEditor extends JPanel{
             }
         }
         return null;
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (PropertyValueEditor.PROP_VALUE.equals(evt.getPropertyName())) {
+            firePropertyChange(VALUE_CHANGE_EVENT, evt.getOldValue(), evt.getNewValue());
+        }
     }
 
 }

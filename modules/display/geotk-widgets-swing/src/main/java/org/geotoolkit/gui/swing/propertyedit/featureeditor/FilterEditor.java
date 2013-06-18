@@ -98,6 +98,7 @@ public class FilterEditor extends PropertyValueEditor implements ActionListener{
         }
 
         updateText();
+        valueChanged();
     }
 
 }
