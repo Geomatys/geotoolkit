@@ -44,7 +44,7 @@ public class MIFManager {
     /**
      * A pattern frequently used to find MIF categories (for words without digit).
      */
-    public static final Pattern ALPHA_PATTERN = Pattern.compile("[a-zA-Z_]+");
+    public static final Pattern ALPHA_PATTERN = Pattern.compile("[a-zA-Z_]\\w*");
 
     /** To manage accesses to file. */
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
