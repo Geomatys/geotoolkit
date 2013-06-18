@@ -469,7 +469,10 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
 
                     } else if (literalInput != null) {
                         final DomainMetadataType inputType = literalInput.getDataType();
-                        final Class clazz = WPSIO.findClass(WPSIO.IOType.INPUT, WPSIO.FormChoice.LITERAL, null, null, null, inputType);
+                        Class clazz = WPSIO.findClass(WPSIO.IOType.INPUT, WPSIO.FormChoice.LITERAL, null, null, null, inputType);
+                        if (clazz == null) {
+                            clazz = String.class;
+                        }
                         final String defaultValue = literalInput.getDefaultValue();
                         final SupportedUOMsType inputUom = literalInput.getUOMs();
                         Unit unit = null;
@@ -565,7 +568,10 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
 
                     } else if (literalOutput != null) {
                         final DomainMetadataType inputType = literalOutput.getDataType();
-                        final Class clazz = WPSIO.findClass(WPSIO.IOType.OUTPUT, WPSIO.FormChoice.LITERAL, null, null, null, inputType);
+                        Class clazz = WPSIO.findClass(WPSIO.IOType.OUTPUT, WPSIO.FormChoice.LITERAL, null, null, null, inputType);
+                        if (clazz == null) {
+                            clazz = String.class;
+                        }
                         final SupportedUOMsType inputUom = literalOutput.getUOMs();
                         Unit unit = null;
                         if (inputUom != null) {
