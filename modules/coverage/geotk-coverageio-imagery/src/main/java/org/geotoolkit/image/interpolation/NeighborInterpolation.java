@@ -47,7 +47,7 @@ public class NeighborInterpolation extends Interpolation {
     @Override
     public double[] interpolate(double x, double y) {
         checkInterpolate(x, y);
-        pixelIterator.moveTo((int) Math.round(x), (int) Math.round(y), 0);
+        pixelIterator.moveTo((int) (x + Math.copySign(0.5, x)), (int) (y + Math.copySign(0.5, y)), 0);
         int bands = 0;
         while (bands++ != numBands) {
             result[bands - 1] = pixelIterator.getSampleDouble();

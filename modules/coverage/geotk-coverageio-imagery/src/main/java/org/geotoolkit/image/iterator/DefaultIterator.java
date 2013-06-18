@@ -95,7 +95,7 @@ class DefaultIterator extends PixelIterator {
      */
     @Override
     public boolean next() {
-        if (++band == numBand) {
+        if (++band == rasterNumBand) {
             band = 0;
             if (++x == maxX) {
                 if (++y == maxY) {
@@ -126,7 +126,7 @@ class DefaultIterator extends PixelIterator {
         this.y    = Math.max(areaIterateMinY, cRMinY);
         this.maxX          = Math.min(areaIterateMaxX, cRMinX + currentRaster.getWidth());
         this.maxY          = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight());
-        this.numBand       = this.currentRaster.getNumBands();
+        this.rasterNumBand = this.currentRaster.getNumBands();
     }
 
     /**
@@ -180,7 +180,7 @@ class DefaultIterator extends PixelIterator {
             tMaxX = tMaxY = 1;
         } else {
             this.x    = this.y    = this.band    = 0;
-            this.maxX = this.maxY = this.numBand = 1;
+            this.maxX = this.maxY = this.rasterNumBand = 1;
             this.tX   = tMinX - 1;
             this.tY   = tMinY;
         }

@@ -65,9 +65,8 @@ class RowMajorIterator extends PixelIterator{
      */
     RowMajorIterator(final RenderedImage renderedImage, final Rectangle subArea) {
         super(renderedImage, subArea);
-        this.renderedImage = renderedImage;
         //initialize attributs to first iteration
-        this.numBand = this.maxX = this.maxY = 1;
+        this.rasterNumBand = this.maxX = this.maxY = 1;
         this.tY = tMinY - 1;
         this.tX = tMaxX - 1;
     }
@@ -77,7 +76,7 @@ class RowMajorIterator extends PixelIterator{
      */
     @Override
     public boolean next() {
-        if (++band == numBand) {
+        if (++band == rasterNumBand) {
             band = 0;
             if (++x == maxX) {
                 if (++tX == tMaxX) {
@@ -96,7 +95,7 @@ class RowMajorIterator extends PixelIterator{
                 final int cRMinX = currentRaster.getMinX();
                 this.x = Math.max(areaIterateMinX, cRMinX);
                 this.maxX = Math.min(areaIterateMaxX, cRMinX + currentRaster.getWidth());
-                this.numBand = currentRaster.getNumBands();
+                this.rasterNumBand = currentRaster.getNumBands();
             }
         }
         return true;
@@ -118,7 +117,7 @@ class RowMajorIterator extends PixelIterator{
     @Override
     public void rewind() {
         this.x    = this.y    = this.band    = 0;
-        this.maxX = this.maxY = this.numBand = 1;
+        this.maxX = this.maxY = this.rasterNumBand = 1;
         this.tX = tMaxX - 1;
         this.tY = tMinY - 1;
     }
@@ -209,7 +208,7 @@ class RowMajorIterator extends PixelIterator{
         final int cRMinY = currentRaster.getMinY();
         this.maxX = Math.min(areaIterateMaxX, cRMinX + currentRaster.getWidth());
         this.maxY = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight());
-        this.numBand = currentRaster.getNumBands();
+        this.rasterNumBand = currentRaster.getNumBands();
         this.x = x;
         this.y = y;
         this.band = b;// -1;

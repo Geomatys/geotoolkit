@@ -103,13 +103,13 @@ abstract class DefaultDirectIterator extends PixelIterator{
         this.crMinY = raster.getMinY();
 
         if (subArea != null) {
-            this.maxBanks  = (areaIterateMaxX - crMinX)*numBand + (areaIterateMaxY-crMinY-1) * scanLineStride;
-            this.cursorStep = scanLineStride - (areaIterateMaxX - areaIterateMinX)*numBand;
-            this.dataCursor = baseCursor = (areaIterateMinX - crMinX) * numBand + (areaIterateMinY-crMinY) * scanLineStride - 1;
-            this.maxX = (areaIterateMaxX-crMinX) * numBand + (areaIterateMinY-crMinY) * scanLineStride;
+            this.maxBanks  = (areaIterateMaxX - crMinX)*rasterNumBand + (areaIterateMaxY-crMinY-1) * scanLineStride;
+            this.cursorStep = scanLineStride - (areaIterateMaxX - areaIterateMinX)*rasterNumBand;
+            this.dataCursor = baseCursor = (areaIterateMinX - crMinX) * rasterNumBand + (areaIterateMinY-crMinY) * scanLineStride - 1;
+            this.maxX = (areaIterateMaxX-crMinX) * rasterNumBand + (areaIterateMinY-crMinY) * scanLineStride;
         } else {
-            this.maxX = rasterWidth * numBand;
-            this.maxBanks   = rasterWidth * numBand + (raster.getHeight()-1) * scanLineStride;
+            this.maxX = rasterWidth * rasterNumBand;
+            this.maxBanks   = rasterWidth * rasterNumBand + (raster.getHeight()-1) * scanLineStride;
             this.dataCursor = baseCursor = -1;
             this.cursorStep = 0;
             this.band       = -1;
@@ -132,7 +132,7 @@ abstract class DefaultDirectIterator extends PixelIterator{
             throw new IllegalArgumentException("DefaultDirectIterator constructor : sample model not conform");
         }
         this.rasterWidth = renderedImage.getTileWidth();
-        this.numBand = sampleM.getNumBands();
+        this.rasterNumBand = sampleM.getNumBands();
         //initialize attributs to first iteration
         this.maxBanks = this.maxX = 1;
         this.tY       = tMinY;
@@ -177,12 +177,12 @@ abstract class DefaultDirectIterator extends PixelIterator{
         final int miny  = Math.max(areaIterateMinY, crMinY) - crMinY;
         final int maxx  = Math.min(areaIterateMaxX, crMinX + rasterWidth) - crMinX;
         final int maxy  = Math.min(areaIterateMaxY, crMinY + currentRaster.getHeight()) - crMinY;
-        this.maxBanks   = maxx*numBand + (maxy-1) * scanLineStride;
+        this.maxBanks   = maxx*rasterNumBand + (maxy-1) * scanLineStride;
 
         //step
-        this.cursorStep = scanLineStride - (maxx - minx) * numBand;
-        this.dataCursor = baseCursor = minx * numBand + miny * scanLineStride;
-        this.maxX       = baseCursor + (maxx - minx) * numBand;
+        this.cursorStep = scanLineStride - (maxx - minx) * rasterNumBand;
+        this.dataCursor = baseCursor = minx * rasterNumBand + miny * scanLineStride;
+        this.maxX       = baseCursor + (maxx - minx) * rasterNumBand;
     }
 
     /**
@@ -190,7 +190,7 @@ abstract class DefaultDirectIterator extends PixelIterator{
      */
     @Override
     public int getX() {
-        return crMinX + dataCursor % scanLineStride / numBand;
+        return crMinX + dataCursor % scanLineStride / rasterNumBand;
     }
 
     /**
@@ -212,7 +212,7 @@ abstract class DefaultDirectIterator extends PixelIterator{
             tX = tY = 0;
             tMaxX = tMaxY = 1;
             this.dataCursor = baseCursor;
-            this.maxX  = baseCursor + 1 + (areaIterateMaxX - areaIterateMinX) * numBand;
+            this.maxX  = baseCursor + 1 + (areaIterateMaxX - areaIterateMinX) * rasterNumBand;
         } else {
             this.maxX = this.maxBanks = 1;
             this.dataCursor = 0;
@@ -240,8 +240,8 @@ abstract class DefaultDirectIterator extends PixelIterator{
                 updateCurrentRaster(tX, tY);
             }
         }
-        this.dataCursor = (x - crMinX) * numBand        + (y - crMinY) * scanLineStride + b;// - 1;
-        this.maxX       = (y - crMinY) * scanLineStride + (Math.min(areaIterateMaxX, crMinX + rasterWidth) - crMinX)*numBand;
+        this.dataCursor = (x - crMinX) * rasterNumBand        + (y - crMinY) * scanLineStride + b;// - 1;
+        this.maxX       = (y - crMinY) * scanLineStride + (Math.min(areaIterateMaxX, crMinX + rasterWidth) - crMinX)*rasterNumBand;
     }
 
     /**

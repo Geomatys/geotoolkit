@@ -80,8 +80,6 @@ abstract class RowMajorDirectIterator extends PixelIterator {
      */
     RowMajorDirectIterator(final RenderedImage renderedImage, final Rectangle subArea) {
         super(renderedImage, subArea);
-        ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
-        this.renderedImage = renderedImage;
         final SampleModel sampleM = renderedImage.getSampleModel();
         if (sampleM instanceof ComponentSampleModel) {
             this.scanLineStride = ((ComponentSampleModel)sampleM).getScanlineStride();
@@ -89,7 +87,7 @@ abstract class RowMajorDirectIterator extends PixelIterator {
             throw new IllegalArgumentException("RowMajorDirectIterator constructor : sample model not conform");
         }
         this.rasterWidth = renderedImage.getTileWidth();
-        this.numBand = sampleM.getNumBands();
+        this.rasterNumBand = sampleM.getNumBands();
         //initialize attributs to first iteration
         this.row     = this.areaIterateMinY - 1;
         this.maxY    = this.row + 1;
@@ -115,10 +113,10 @@ abstract class RowMajorDirectIterator extends PixelIterator {
             }
             updateCurrentRaster(tX, tY);
             this.cRMinX    = currentRaster.getMinX();
-            this.maxX      = (Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX)*numBand;
+            this.maxX      = (Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX)*rasterNumBand;
             final int step = (row - cRMinY) * scanLineStride;
             this.maxX     +=  step;
-            dataCursor     = (Math.max(areaIterateMinX, cRMinX) - cRMinX)*numBand + step;
+            dataCursor     = (Math.max(areaIterateMinX, cRMinX) - cRMinX)*rasterNumBand + step;
         }
         return true;
     }
@@ -139,7 +137,7 @@ abstract class RowMajorDirectIterator extends PixelIterator {
      */
     @Override
     public int getX() {
-        return cRMinX + dataCursor % scanLineStride/numBand;
+        return cRMinX + dataCursor % scanLineStride/rasterNumBand;
     }
 
     /**
@@ -183,12 +181,12 @@ abstract class RowMajorDirectIterator extends PixelIterator {
 //        this.cRMinY = currentRaster.getMinY();
         this.row = y;
         final int step = (row - cRMinY) * scanLineStride;
-        this.maxX = (Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX) * numBand;
+        this.maxX = (Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX) * rasterNumBand;
         this.maxX += step;
 
         //initialize row
         this.maxY = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight());
-        this.dataCursor = (x - cRMinX) * numBand + step + b;// - 1;
+        this.dataCursor = (x - cRMinX) * rasterNumBand + step + b;// - 1;
     }
 
     /**

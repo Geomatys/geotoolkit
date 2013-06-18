@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 
-import javax.media.jai.PlanarImage;
-
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.datum.PixelInCell;
@@ -121,7 +119,7 @@ final class Resampler2D {
          * The resampling may have been performed on the geophysics view.
          * Try to restore the original view.
          */
-        GridCoverage2D coverage = new GridCoverage2D(source.getName(), PlanarImage.wrapRenderedImage(image), geometry, sampleDimensions,
+        GridCoverage2D coverage = new GridCoverage2D(source.getName(), image, geometry, sampleDimensions,
               new GridCoverage2D[] {source}, null, hints);
         coverage = coverage.view(finalView);
         return coverage;

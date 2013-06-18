@@ -62,12 +62,18 @@ public abstract class PixelIterator {
     /**
      * RenderedImage which is followed by Iterator.
      */
-    protected RenderedImage renderedImage;
+    protected final RenderedImage renderedImage;
 
     /**
-     * Number of raster band .
+     * Number of band.
      */
-    protected int numBand;
+    protected final int fixedNumBand;
+    
+    /**
+     * Number of raster band.
+     * WARNING ! this is used a bit everywhere in iterator as a 'updateTileRaster' flag.
+     */
+    protected int rasterNumBand;
 
     /**
      * The X coordinate of the bottom-right pixel of this current raster.
@@ -124,6 +130,7 @@ public abstract class PixelIterator {
     PixelIterator(final Raster raster, final Rectangle subArea) {
         ArgumentChecks.ensureNonNull("Raster : ", raster);
         this.currentRaster = raster;
+        this.renderedImage = null;
         final int minx  = raster.getMinX();
         final int miny  = raster.getMinY();
         final int maxx  = minx + raster.getWidth();
@@ -144,7 +151,8 @@ public abstract class PixelIterator {
             this.areaIterateMaxX = maxx;
             this.areaIterateMaxY = maxy;
         }
-        this.numBand = raster.getNumBands();
+        this.rasterNumBand = raster.getNumBands();
+        this.fixedNumBand = this.rasterNumBand;
         if(areaIterateMinX > areaIterateMaxX || areaIterateMinY > areaIterateMaxY)
             throw new IllegalArgumentException("invalid subArea coordinate no intersection between it and raster"+raster+subArea);
         this.band = -1;
@@ -200,7 +208,8 @@ public abstract class PixelIterator {
         this.tMaxY = (areaIterateMaxY - rIminY + rITHeight - 1) / rITHeight + rIMinTileY;
 
         //initialize attributs to first iteration
-        this.numBand = this.maxY = this.maxX = 1;
+        this.rasterNumBand = this.maxY = this.maxX = 1;
+        this.fixedNumBand = renderedImage.getSampleModel().getNumBands();
     }
 
     /**
@@ -311,9 +320,8 @@ public abstract class PixelIterator {
             ||  y < areaIterateMinY || y >= areaIterateMaxY)
                 throw new IllegalArgumentException("coordinate out of iteration area define by: "
                         +"("+areaIterateMinX+", "+areaIterateMinY+")"+" ; ("+areaIterateMaxX+", "+areaIterateMaxY+")");
-        SampleModel sampleM = (renderedImage == null) ? currentRaster.getSampleModel() : renderedImage.getSampleModel() ;
-        if (b<0 || b>=sampleM.getNumBands())
-            throw new IllegalArgumentException("band index out of numband border define by: [0;"+sampleM.getNumBands()+"]");
+        if (b<0 || b>=fixedNumBand)
+            throw new IllegalArgumentException("band index out of numband border define by: [0;"+fixedNumBand+"]");
     }
 
     /**
@@ -322,10 +330,7 @@ public abstract class PixelIterator {
      * @return the number of bands (samples per pixel) from current raster or Image.
      */
     public int getNumBands() {
-//        return (renderedImage == null) ? currentRaster.getNumBands()
-//              : renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getNumBands();
-        return (renderedImage == null) ? currentRaster.getNumBands()
-              : renderedImage.getSampleModel().getNumBands();
+        return fixedNumBand;
     }
 
     /**

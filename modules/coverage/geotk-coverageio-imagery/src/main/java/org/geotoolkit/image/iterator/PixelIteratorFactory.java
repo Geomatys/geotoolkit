@@ -36,19 +36,7 @@ public final class PixelIteratorFactory {
      * @return adapted {@link PixelIterator}.
      */
     public static PixelIterator createDefaultIterator(final Raster raster) {
-        final SampleModel sampleM = raster.getSampleModel();
-        if (sampleM instanceof ComponentSampleModel ) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands()
-             && ((ComponentSampleModel)sampleM).getBankIndices().length == 1
-             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
-                switch (sampleM.getDataType()) {
-                    case DataBuffer.TYPE_BYTE  : return new DefaultDirectByteIterator(raster, null);
-                    case DataBuffer.TYPE_FLOAT : return new DefaultDirectFloatIterator(raster, null);
-                    default : return new DefaultIterator(raster, null);
-                }
-            }
-        }
-        return new DefaultIterator(raster, null);
+        return createDefaultIterator(raster, null);
     }
 
     /**
@@ -81,19 +69,7 @@ public final class PixelIteratorFactory {
      * @return adapted      {@link PixelIterator}.
      */
     public static PixelIterator createDefaultIterator(final RenderedImage renderedImage) {
-        final SampleModel sampleM = renderedImage.getSampleModel();
-        if (sampleM instanceof ComponentSampleModel) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands()
-             && ((ComponentSampleModel)sampleM).getBankIndices().length == 1
-             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
-                switch (sampleM.getDataType()) {
-                    case DataBuffer.TYPE_BYTE  : return new DefaultDirectByteIterator(renderedImage, null);
-                    case DataBuffer.TYPE_FLOAT : return new DefaultDirectFloatIterator(renderedImage, null);
-                    default : return new DefaultIterator(renderedImage, null);
-                }
-            }
-        }
-        return new DefaultIterator(renderedImage, null);
+       return createDefaultIterator(renderedImage, null);
     }
 
     /**
@@ -104,6 +80,10 @@ public final class PixelIteratorFactory {
      * @return adapted      {@link PixelIterator}.
      */
     public static PixelIterator createDefaultIterator(final RenderedImage renderedImage, final Rectangle subReadArea) {
+        if(isSingleRaster(renderedImage)){
+            return createDefaultIterator(renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()), subReadArea);
+        }
+        
         final SampleModel sampleM = renderedImage.getSampleModel();
         if (sampleM instanceof ComponentSampleModel ) {
             if (sampleM.getNumDataElements() == sampleM.getNumBands()
@@ -324,4 +304,8 @@ public final class PixelIteratorFactory {
         return true;
     }
 
+    private static boolean isSingleRaster(final RenderedImage renderedImage){
+        return renderedImage.getNumXTiles()==1 && renderedImage.getNumYTiles()==1;
+    }
+    
 }

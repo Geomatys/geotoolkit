@@ -76,7 +76,7 @@ public abstract class Interpolation {
     /**
      * Interpolation results table.
      */
-    protected double[] result;
+    protected final double[] result;
 
     /**
      * Build an Interpolate object.

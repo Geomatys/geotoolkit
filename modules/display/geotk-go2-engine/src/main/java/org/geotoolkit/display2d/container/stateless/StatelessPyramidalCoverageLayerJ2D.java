@@ -60,6 +60,7 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.Cancellable;
 import org.geotoolkit.util.ImageIOUtilities;
+import org.opengis.coverage.SampleDimension;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
@@ -382,7 +383,12 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         final GridEnvelope2D ge = new GridEnvelope2D(0, 0, image.getWidth(), image.getHeight());
         final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelInCell.CELL_CORNER, trs, tileCRS, null);
         gcb.setGridGeometry(gridgeo);
-        gcb.setRenderedImage(image);        
+        gcb.setRenderedImage(image);
+        final SampleDimension[] sampleDims = new SampleDimension[image.getSampleModel().getNumBands()];
+        for(int i=0;i<sampleDims.length;i++){
+            sampleDims[i] = new GridSampleDimension(String.valueOf(i));
+        }
+        gcb.setSampleDimensions(sampleDims);
         final GridCoverage2D coverage = (GridCoverage2D) gcb.build();
         
         
