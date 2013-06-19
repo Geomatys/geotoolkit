@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.math;
 
-import java.util.Arrays;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.resources.Errors;
@@ -33,19 +32,6 @@ import org.geotoolkit.resources.Errors;
  * @module
  */
 public final class XMath extends Static {
-    /**
-     * The sequence of prime numbers computed so far. Will be expanded as needed.
-     * We limit ourself to 16 bits numbers because they are sufficient for computing
-     * divisors of any 32 bits number.
-     */
-    private static short[] primes = new short[] {2, 3};
-
-    /**
-     * Maximum length allowed for the {@link #primes} array. This is the index
-     * of the first prime number that can not be stored as 16 bits unsigned.
-     */
-    private static final int MAX_PRIMES_LENGTH = 6542;
-
     /**
      * Do not allow instantiation of this class.
      */
@@ -119,51 +105,5 @@ public final class XMath extends Static {
             value = -value;
         }
         return value;
-    }
-
-    /**
-     * Returns the <var>i</var><sup>th</sup> prime number. This method returns (2, 3, 5, 7, 11...)
-     * for index (0, 1, 2, 3, 4, ...). This method is designed for relatively small prime numbers
-     * only; don't use it for large values.
-     *
-     * @param  index The prime number index, starting at index 0 for prime number 2.
-     * @return The prime number at the specified index.
-     * @throws IndexOutOfBoundsException if the specified index is too large.
-     *
-     * @ess MathFunctions#nextPrimeNumber(int)
-     * @see java.math.BigInteger#isProbablePrime
-     *
-     * @deprecated No public replacement. {@link MathFunctions#nextPrimeNumber(int)} is the closest replacement.
-     */
-    @Deprecated
-    public static synchronized int primeNumber(final int index) throws IndexOutOfBoundsException {
-        // 6541 is the largest index returning a 16 bits unsigned prime number.
-        if (index < 0 || index >= MAX_PRIMES_LENGTH) {
-            throw new IndexOutOfBoundsException(String.valueOf(index));
-        }
-        short[] primes = XMath.primes;
-        if (index >= primes.length) {
-            int i = primes.length;
-            int n = primes[i - 1] & 0xFFFF;
-            primes = Arrays.copyOf(primes, Math.min((index | 0xF) + 1, MAX_PRIMES_LENGTH));
-            do {
-next:           while (true) {
-                    n += 2;
-                    for (int j=1; j<i; j++) {
-                        if (n % (primes[j] & 0xFFFF) == 0) {
-                            continue next;
-                        }
-                        // We could stop the search at the first value greater than sqrt(n), but
-                        // given that the array is relatively short (because we limit ourself to
-                        // 16 bits prime numbers), it probably doesn't worth.
-                    }
-                    assert n < 0xFFFF : i;
-                    primes[i] = (short) n;
-                    break;
-                }
-            } while (++i < primes.length);
-            XMath.primes = primes;
-        }
-        return primes[index] & 0xFFFF;
     }
 }

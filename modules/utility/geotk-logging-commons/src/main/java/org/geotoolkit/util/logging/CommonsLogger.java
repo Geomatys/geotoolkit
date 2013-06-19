@@ -19,6 +19,7 @@ package org.geotoolkit.util.logging;
 
 import java.util.logging.Level;
 import org.apache.commons.logging.Log;
+import org.apache.sis.util.logging.LoggerAdapter;
 
 
 /**

@@ -164,26 +164,6 @@ public final class XmlUtilities extends Static {
     }
 
     /**
-     * Parses a date value from a string.
-     * This method should be used only for occasional parsing.
-     *
-     * @param  date The date to parse, or {@code null}.
-     * @return The parsed date, or {@code null} if the given string was null.
-     * @throws IllegalArgumentException If string parameter does not conform to
-     *         XML Schema Part 2: Datatypes for {@code xsd:dateTime}.
-     *
-     * @see DatatypeConverter#parseDateTime(String)
-     *
-     * @since 3.06
-     *
-     * @deprecated Moved to SIS as {@link org.apache.sis.internal.jdk8.JDK8#parseDateTime(String, boolean)}.
-     */
-    @Deprecated
-    public static Date parseDateTime(final String date) throws IllegalArgumentException {
-        return org.apache.sis.internal.jdk8.JDK8.parseDateTime(date, false);
-    }
-
-    /**
      * Formats a date value in a string, assuming UTC timezone and Canada locale.
      * This method should be used only for occasional formatting.
      *

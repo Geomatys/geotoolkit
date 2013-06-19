@@ -36,14 +36,6 @@ import static javax.xml.datatype.DatatypeConstants.FIELD_UNDEFINED;
  */
 public final strictfp class XmlUtilitiesTest extends LocaleDependantTestBase {
     /**
-     * Tests the {@link XmlUtilities#parseDateTime(String)} method.
-     */
-    @Test
-    public void testParseDateTime() {
-        assertEquals(1230786000000L, XmlUtilities.parseDateTime("2009-01-01T06:00:00+01:00").getTime());
-    }
-
-    /**
      * Tests the {@link XmlUtilities#toXML} method.
      */
     @Test
