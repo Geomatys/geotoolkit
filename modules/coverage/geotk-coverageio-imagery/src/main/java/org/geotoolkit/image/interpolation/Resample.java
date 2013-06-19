@@ -17,16 +17,10 @@
 package org.geotoolkit.image.interpolation;
 
 import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
 import java.awt.image.WritableRenderedImage;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 
@@ -38,8 +32,6 @@ import org.opengis.referencing.operation.TransformException;
  * @author Martin Desruisseaux (Geomatys).
  */
 public class Resample {
-
-    private static final Logger LOGGER = Logging.getLogger(Resample.class);
     
     /**
      * Transform multi-dimensional point (in our case pixel coordinate) from target image
@@ -107,7 +99,7 @@ public class Resample {
      * <p>Fill destination image from interpolation of source pixels.<br/>
      * Source pixel coordinate is obtained from invert transformation of destination pixel coordinates.</p>
      *
-     * @param mathTransform Transformation use to transform source point to target point.
+     * @param mathTransform Transformation use to transform target point to source point.
      * @param imageDest image will be fill by image source pixel interpolation.
      * @param interpol Interpolation use to interpolate source image pixels.
      * @param fillValue contains value use when pixel transformation is out of source image boundary.
@@ -122,7 +114,7 @@ public class Resample {
      * <p>Fill destination image area from interpolation of source pixels.<br/>
      * Source pixel coordinate is obtained from invert transformation of destination pixel coordinates.</p>
      *
-     * @param mathTransform Transformation use to transform source point to target point.
+     * @param mathTransform Transformation use to transform target point to source point.
      * @param imageDest image will be fill by image source pixel interpolation.
      * @param resampleArea destination image area within pixels are resample.
      * @param interpol Interpolation use to interpolate source image pixels.
@@ -137,7 +129,7 @@ public class Resample {
                 : "destination image numbands different from source image numbands";
         this.destIterator        = PixelIteratorFactory.createDefaultWriteableIterator(imageDest, imageDest, resampleArea);
         this.fillValue           = fillValue;
-        this.invertMathTransform = mathTransform.inverse();
+        this.invertMathTransform = mathTransform;
         this.imageDest           = imageDest;
         this.interpol            = interpol;
         final Rectangle bound    = interpol.getBoundary();
@@ -148,20 +140,7 @@ public class Resample {
         srcCoords  = new double[2];
         destCoords = new double[2];
         
-        if(!(invertMathTransform instanceof AffineTransform)){
-            //try to use a grid transform to improve performances
-            try{
-                final TransformGrid tr = TransformGrid.create((MathTransform2D)invertMathTransform, new Rectangle(imageDest.getWidth(),imageDest.getHeight()) );
-                if(tr.globalTransform!=null){
-                    this.invertMathTransform = new AffineTransform2D(tr.globalTransform);
-                }else{
-                    this.invertMathTransform = new GridMathTransform(tr);
-                }
-            }catch(ArithmeticException ex){
-                //could not be optimized
-                LOGGER.log(Level.FINE, ex.getMessage());
-            }
-        }   
+        
     }
 
     /**

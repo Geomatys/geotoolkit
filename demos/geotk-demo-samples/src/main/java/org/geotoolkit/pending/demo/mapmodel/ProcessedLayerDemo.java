@@ -78,7 +78,7 @@ public class ProcessedLayerDemo {
         
         final ParameterValueGroup parameters = ResampleDescriptor.INSTANCE.getInputDescriptor().createValue();
         Parameters.getOrCreate(ResampleDescriptor.IN_COVERAGE, parameters).setValue(baseData.read(0, null));
-        Parameters.getOrCreate(ResampleDescriptor.IN_ENVELOPE, parameters).setValue(env);
+        Parameters.getOrCreate(ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM, parameters).setValue(env.getCoordinateReferenceSystem());
         
         final ProcessedCoverageReference processed = new ProcessedCoverageReference();
         processed.setProcessDescriptor(ResampleDescriptor.INSTANCE);

@@ -147,7 +147,7 @@ public class ResampleTest {
         /*
          * Resampling
          */
-        Resample resample = new Resample(mathTransform, targetImage, interpolation, new double[]{0, 0, 0});
+        Resample resample = new Resample(mathTransform.inverse(), targetImage, interpolation, new double[]{0, 0, 0});
         resample.fillImage();
         Raster coverageRaster = targetImage.getTile(0, 0);
 
@@ -203,7 +203,7 @@ public class ResampleTest {
         /*
          * Resampling
          */
-        final Resample resample = new Resample(mathTransform, targetImage, interpolation, new double[]{0, 0, 0});
+        final Resample resample = new Resample(mathTransform.inverse(), targetImage, interpolation, new double[]{0, 0, 0});
         resample.fillImage();
         final Raster coverageRaster = targetImage.getTile(0, 0);
 
@@ -258,7 +258,7 @@ public class ResampleTest {
         /*
          * Resampling
          */
-        final Resample resample = new Resample(mathTransform, targetImage, interpolation, new double[]{0, 0, 0});
+        final Resample resample = new Resample(mathTransform.inverse(), targetImage, interpolation, new double[]{0, 0, 0});
         resample.fillImage();
         final Raster coverageRaster = targetImage.getTile(0, 0);
 

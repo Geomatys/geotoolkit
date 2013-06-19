@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.interpolation;
+package org.geotoolkit.process.coverage.resample;
 
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform2D;
 import org.opengis.referencing.operation.Matrix;

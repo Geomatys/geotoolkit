@@ -107,7 +107,7 @@ import org.geotoolkit.filter.binding.Bindings;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.process.coverage.resample.Resample2Descriptor;
+import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
@@ -804,10 +804,10 @@ public final class GO2Utilities {
     }
 
     public static GridCoverage2D resample(final Coverage dataCoverage, final CoordinateReferenceSystem targetCRS) throws ProcessException{
-        final ProcessDescriptor desc = Resample2Descriptor.INSTANCE;
+        final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();
-        ParametersExt.getOrCreateValue(params, Resample2Descriptor.IN_COVERAGE.getName().getCode()).setValue(dataCoverage);
-        ParametersExt.getOrCreateValue(params, Resample2Descriptor.IN_COORDINATE_REFERENCE_SYSTEM.getName().getCode()).setValue(targetCRS);
+        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COVERAGE.getName().getCode()).setValue(dataCoverage);
+        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM.getName().getCode()).setValue(targetCRS);
 
         final org.geotoolkit.process.Process process = desc.createProcess(params);
         final ParameterValueGroup result = process.call();

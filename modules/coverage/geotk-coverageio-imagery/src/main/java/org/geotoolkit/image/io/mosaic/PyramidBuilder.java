@@ -294,7 +294,7 @@ public class PyramidBuilder {
                                     final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(renderImage), interpolationCase, lanczosWindow);
                                     destImg = new TiledImage(0, 0, tileWidth, tileHeight, 0, 0, sm, cm);
                                     //resampling object
-                                    final Resample resample  = new Resample(mt,(WritableRenderedImage) destImg, interpolation, fillValue);//noninvert
+                                    final Resample resample  = new Resample(mt.inverse(),(WritableRenderedImage) destImg, interpolation, fillValue);//noninvert
                                     //fill empty resampled image
                                     resample.fillImage();
                                 }
@@ -417,7 +417,7 @@ public class PyramidBuilder {
                 mttranslate.setTransform(1.0/subsamplingX, 0, 0, 1.0/subsamplingY, iminx, iminy);
                 areaTile.setBounds(iminx, iminy, imgw, imgh);
                 //resampling object
-                final Resample resample  = new Resample(MathTransforms.linear(mttranslate), intersectTile, areaTile, interpolation, fillValue);
+                final Resample resample  = new Resample(MathTransforms.linear(mttranslate).inverse(), intersectTile, areaTile, interpolation, fillValue);
                 //fill empty resampled image
                 resample.fillImage();
             }
