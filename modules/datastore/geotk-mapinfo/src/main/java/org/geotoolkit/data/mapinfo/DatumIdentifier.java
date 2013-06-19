@@ -1,20 +1,19 @@
 package org.geotoolkit.data.mapinfo;
 
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.InternalUtilities;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
-import org.geotoolkit.referencing.factory.epsg.DirectEpsgFactory;
-import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
-import org.opengis.referencing.datum.*;
+import org.opengis.referencing.datum.DatumAuthorityFactory;
+import org.opengis.referencing.datum.Ellipsoid;
+import org.opengis.referencing.datum.GeodeticDatum;
+import org.opengis.referencing.datum.PrimeMeridian;
 import org.opengis.util.FactoryException;
 
-import javax.measure.unit.Unit;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.HashMap;

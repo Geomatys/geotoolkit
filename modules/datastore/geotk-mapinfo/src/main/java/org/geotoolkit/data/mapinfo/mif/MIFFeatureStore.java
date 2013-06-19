@@ -1,5 +1,6 @@
 package org.geotoolkit.data.mapinfo.mif;
 
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.*;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
@@ -9,7 +10,6 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -99,7 +99,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
         try {
             manager.addSchema(typeName, featureType);
         } catch (URISyntaxException e) {
@@ -111,7 +111,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Can not update MIF schema.");
     }
 
@@ -119,7 +119,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public void deleteSchema(Name typeName) throws DataStoreException {
+    public void deleteFeatureType(Name typeName) throws DataStoreException {
         manager.deleteSchema(typeName);
         removeFeatures(typeName, null);
     }
@@ -218,13 +218,6 @@ public class MIFFeatureStore extends AbstractFeatureStore {
         manager.refreshMetaModel();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void refreshMetaModel(DefaultName name) throws DataStoreException {
-        refreshMetaModel();
-    }
 
     /**
      * MIF file defines a delimiter character to separate values into the MID file. This function allows user to redefine it.

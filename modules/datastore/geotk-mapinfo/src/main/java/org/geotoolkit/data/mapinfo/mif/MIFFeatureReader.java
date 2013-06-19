@@ -1,9 +1,9 @@
 package org.geotoolkit.data.mapinfo.mif;
 
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.Strings;

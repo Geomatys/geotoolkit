@@ -8,13 +8,9 @@ import org.geotoolkit.data.mapinfo.mif.MIFFeatureStore;
 import org.geotoolkit.data.mapinfo.mif.MIFFeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.FileUtilities;
-import org.opengis.feature.Feature;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
@@ -98,7 +94,7 @@ public class MifDemo {
                     // First we must specify we must add a featureType to the store. If no base Type have already been
                     // specified, the given feature type parent will be used. Else, we check that given type is compliant
                     // with stored base type.
-                    writingStore.createSchema(typeName, fType);
+                    writingStore.createFeatureType(typeName, fType);
                     writingStore.addFeatures(typeName, collection);
                 }
             }

@@ -7,7 +7,6 @@ import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.*;
-import org.opengis.style.Stroke;
 
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;

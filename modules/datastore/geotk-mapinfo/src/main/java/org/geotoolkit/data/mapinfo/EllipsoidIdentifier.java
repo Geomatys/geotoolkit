@@ -1,7 +1,6 @@
 package org.geotoolkit.data.mapinfo;
 
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.util.ArgumentChecks;

@@ -9,8 +9,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.geotoolkit.pending</groupId>
-        <artifactId>datastore</artifactId>
-        <version>3.20-CG2A-LIFE-1.0-SNAPSHOT</version>
+        <artifactId>featurestore</artifactId>
+        <version>4.x-SNAPSHOT</version>
     </parent>
 
 
@@ -53,7 +53,7 @@
     <dependencies>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-datastore-core</artifactId>
+            <artifactId>geotk-featurestore-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

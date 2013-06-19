@@ -1,7 +1,5 @@
 package org.geotoolkit.data.mapinfo;
 
-import org.geotoolkit.data.mapinfo.mif.MIFUtils;
-
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
