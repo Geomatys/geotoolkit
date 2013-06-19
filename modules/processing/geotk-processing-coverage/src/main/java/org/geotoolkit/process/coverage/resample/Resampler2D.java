@@ -271,15 +271,15 @@ final class Resampler2D {
              *       have already detected that this resample is not doing anything.
              */
             if (!targetGG.isDefined(GridGeometry2D.GRID_TO_CRS)) {
-                step1    = sourceGG.getGridToCRS(CORNER); // Really sourceGG, not targetGG
+                step1    = sourceGG.getGridToCRS(PixelOrientation.CENTER); // Really sourceGG, not targetGG
                 step2    = MathTransforms.identity(step1.getTargetDimensions());
                 step3    = step1.inverse();
                 allSteps = MathTransforms.identity(step1.getSourceDimensions());
                 targetGG = new GridGeometry2D(targetGG.getExtent(), step1, targetCRS);
             } else {
-                step1    = targetGG.getGridToCRS(CORNER);
+                step1    = targetGG.getGridToCRS(PixelOrientation.CENTER);
                 step2    = MathTransforms.identity(step1.getTargetDimensions());
-                step3    = sourceGG.getGridToCRS(CORNER).inverse();
+                step3    = sourceGG.getGridToCRS(PixelOrientation.CENTER).inverse();
                 allSteps = mtFactory.createConcatenatedTransform(step1, step3);
                 if (!targetGG.isDefined(GridGeometry2D.EXTENT)) {
                     /*
@@ -379,18 +379,24 @@ final class Resampler2D {
         ////                                                                                ////
         ////////////////////////////////////////////////////////////////////////////////////////
         
+//        //try to optimize resample using java wrap operation
 //        if(allSteps2D instanceof AffineTransform){
-//            
-//            final AffineTransformOp op = new AffineTransformOp((AffineTransform)allSteps2D, null);
-//            op.filter(sourceImage.getTile(0, 0), targetRaster);
-//        }else{
-            final Interpolation interpolator = Interpolation.create(PixelIteratorFactory.createDefaultIterator(sourceImage,sourceBB), interpolationType, 2);
-            final Resample resample = new Resample(allSteps2D.inverse(), targetImage, interpolator, new double[targetImage.getSampleModel().getNumBands()]);
-            resample.fillImage();
+//            if(sourceImage instanceof BufferedImage){
+//                final AffineTransformOp op = new AffineTransformOp((AffineTransform)allSteps2D, null);
+//                op.filter((BufferedImage)sourceImage, targetImage);
+//                return create(sourceCoverage, targetImage, targetGG, finalView, hints);
+//            }else if(sourceImage.getNumXTiles()==1 && sourceImage.getNumYTiles()==1){
+//                final AffineTransformOp op = new AffineTransformOp((AffineTransform)allSteps2D, null);
+//                op.filter(sourceImage.getTile(0, 0), targetRaster);
+//                return create(sourceCoverage, targetImage, targetGG, finalView, hints);
+//            }
 //        }
         
-        final GridCoverage2D targetCoverage = create(sourceCoverage, targetImage, targetGG, finalView, hints);
-        return targetCoverage;
+        final Interpolation interpolator = Interpolation.create(PixelIteratorFactory.createDefaultIterator(sourceImage,sourceBB), interpolationType, 2);
+        final Resample resample = new Resample(allSteps2D.inverse(), targetImage, interpolator, new double[targetImage.getSampleModel().getNumBands()]);
+        resample.fillImage();
+        
+        return create(sourceCoverage, targetImage, targetGG, finalView, hints);
     }
 
     /**

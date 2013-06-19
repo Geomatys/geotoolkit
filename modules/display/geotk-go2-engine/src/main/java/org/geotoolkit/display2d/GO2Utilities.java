@@ -60,6 +60,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.OperationDescriptor;
 import javax.media.jai.OperationRegistry;
 import javax.media.jai.registry.RIFRegistry;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -894,6 +895,45 @@ public final class GO2Utilities {
         return 1/coeff;
     }
 
+    /**
+     * Compute Euclidean distance between a point and a line define by 2 points (ptA, ptB).
+     * 
+     * @param point
+     * @param ptA
+     * @param ptB 
+     */
+    public static double euclidianDistance(final double[] point, final double[] ptA, final double[] ptB) {
+        ArgumentChecks.ensureNonNull("point", point);
+        ArgumentChecks.ensureNonNull("dp1", ptA);
+        ArgumentChecks.ensureNonNull("dp2", ptB);
+        final int dimension = point.length;
+        if (ptA.length != dimension || ptB.length != dimension)
+            throw new IllegalArgumentException("All points should have same dimension.");
+        if (dimension == 2) {
+            final double u0 = ptB[0] - ptA[0];
+            final double u1 = ptB[1] - ptA[1];
+            return Math.abs((point[0]-ptA[0])*u1 - (point[1]-ptB[1])*u0)/ (u0*u0+u1*u1);
+        } else {
+            double dist = 0;
+            double normU = 0;
+            int prodCursorMin = 0;
+            int prodCursorMax = 1;
+            for (int i = 0; i < dimension; i++) {
+                if (++prodCursorMax == dimension) prodCursorMax = 0;
+                if (++prodCursorMin == dimension) prodCursorMin = 0;
+                final double ui = ptB[i] - ptA[i];
+                normU += ui * ui;
+                final double uCMax = ptB[prodCursorMax]    - ptA[prodCursorMax];
+                final double uCMin = ptB[prodCursorMin]    - ptA[prodCursorMin];
+                final double vMAMax = point[prodCursorMax] - ptA[prodCursorMax];
+                final double vMAMin = point[prodCursorMin] - ptA[prodCursorMin];
+                final double di = Math.abs(vMAMin*uCMax - vMAMax*uCMin);
+                dist += di*di;
+            }
+            return Math.sqrt(dist / normU);
+        }
+    }
+    
     ////////////////////////////////////////////////////////////////////////////
     // information about styles ////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////

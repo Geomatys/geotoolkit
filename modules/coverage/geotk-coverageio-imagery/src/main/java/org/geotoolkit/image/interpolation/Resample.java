@@ -17,10 +17,16 @@
 package org.geotoolkit.image.interpolation;
 
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.image.WritableRenderedImage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 
@@ -33,11 +39,13 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class Resample {
 
+    private static final Logger LOGGER = Logging.getLogger(Resample.class);
+    
     /**
      * Transform multi-dimensional point (in our case pixel coordinate) from target image
      * {@code CoordinateReferenceSystem} to source image {@code CoordinateReferenceSystem}.
      */
-    private final MathTransform invertMathTransform;
+    private MathTransform invertMathTransform;
 
     /**
      * Image in which image source pixel interpolation result is push.
@@ -105,24 +113,9 @@ public class Resample {
      * @param fillValue contains value use when pixel transformation is out of source image boundary.
      * @throws NoninvertibleTransformException if it is impossible to invert {@code MathTransform} parameter.
      */
-    public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, Interpolation interpol, double[] fillValue) throws NoninvertibleTransformException {
-        this.numBands = interpol.getNumBands();
-        if (fillValue.length != numBands)
-            throw new IllegalArgumentException("fillValue table length and numbands are different : "+fillValue.length+" numbands = "+this.numBands);
-        assert(numBands == imageDest.getWritableTile(imageDest.getMinTileX(), imageDest.getMinTileY()).getNumBands())
-                : "destination image numbands different from source image numbands";
-        this.destIterator        = PixelIteratorFactory.createDefaultWriteableIterator(imageDest, imageDest);
-        this.fillValue           = fillValue;
-        this.invertMathTransform = mathTransform.inverse();
-        this.imageDest           = imageDest;
-        this.interpol            = interpol;
-        final Rectangle bound    = interpol.getBoundary();
-        minSourceX = bound.x;
-        minSourceY = bound.y;
-        maxSourceX = minSourceX + bound.width  - 1;
-        maxSourceY = minSourceY + bound.height - 1;
-        srcCoords  = new double[2];
-        destCoords = new double[2];
+    public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, Interpolation interpol, double[] fillValue) throws NoninvertibleTransformException, TransformException {
+        this(mathTransform,imageDest,null,interpol,fillValue);
+        
     }
 
     /**
@@ -136,7 +129,7 @@ public class Resample {
      * @param fillValue contains value use when pixel transformation is out of source image boundary.
      * @throws NoninvertibleTransformException if it is impossible to invert {@code MathTransform} parameter.
      */
-    public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, Rectangle resampleArea, Interpolation interpol, double[] fillValue) throws NoninvertibleTransformException {
+    public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, Rectangle resampleArea, Interpolation interpol, double[] fillValue) throws NoninvertibleTransformException, TransformException {
         this.numBands = interpol.getNumBands();
         if (fillValue.length != numBands)
             throw new IllegalArgumentException("fillValue table length and numbands are different : "+fillValue.length+" numbands = "+this.numBands);
@@ -154,6 +147,21 @@ public class Resample {
         maxSourceY = minSourceY + bound.height - 1;
         srcCoords  = new double[2];
         destCoords = new double[2];
+        
+        if(!(invertMathTransform instanceof AffineTransform)){
+            //try to use a grid transform to improve performances
+            try{
+                final TransformGrid tr = TransformGrid.create((MathTransform2D)invertMathTransform, new Rectangle(imageDest.getWidth(),imageDest.getHeight()) );
+                if(tr.globalTransform!=null){
+                    this.invertMathTransform = new AffineTransform2D(tr.globalTransform);
+                }else{
+                    this.invertMathTransform = new GridMathTransform(tr);
+                }
+            }catch(ArithmeticException ex){
+                //could not be optimized
+                LOGGER.log(Level.FINE, ex.getMessage());
+            }
+        }   
     }
 
     /**

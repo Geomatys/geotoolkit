@@ -107,19 +107,7 @@ public final class PixelIteratorFactory {
      * @return adapted        {@link PixelIterator} .
      */
     public static PixelIterator createDefaultWriteableIterator(final Raster raster, final WritableRaster writeableRaster) {
-        final SampleModel sampleM = raster.getSampleModel();
-        if (sampleM instanceof ComponentSampleModel ) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands()
-             && ((ComponentSampleModel)sampleM).getBankIndices().length == 1
-             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
-                switch (sampleM.getDataType()) {
-                    case DataBuffer.TYPE_BYTE  : return new DefaultWritableDirectByteIterator(raster, writeableRaster, null);
-                    case DataBuffer.TYPE_FLOAT : return new DefaultWritableDirectFloatIterator(raster, writeableRaster, null);
-                    default : return new DefaultWritableIterator(raster, writeableRaster, null);
-                }
-            }
-        }
-        return new DefaultWritableIterator(raster, writeableRaster, null);
+        return createDefaultWriteableIterator(raster, writeableRaster, null);
     }
 
     /**
@@ -155,19 +143,7 @@ public final class PixelIteratorFactory {
      * @return adapted              {@link PixelIterator}.
      */
     public static PixelIterator createDefaultWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage) {
-        final SampleModel sampleM = renderedImage.getSampleModel();
-        if (sampleM instanceof ComponentSampleModel ) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands()
-             && ((ComponentSampleModel)sampleM).getBankIndices().length == 1
-             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
-                switch (sampleM.getDataType()) {
-                    case DataBuffer.TYPE_BYTE  : return new DefaultWritableDirectByteIterator(renderedImage, writableRenderedImage, null);
-                    case DataBuffer.TYPE_FLOAT : return new DefaultWritableDirectFloatIterator(renderedImage, writableRenderedImage, null);
-                    default : return new DefaultWritableIterator(renderedImage, writableRenderedImage, null);
-                }
-            }
-        }
-        return new DefaultWritableIterator(renderedImage, writableRenderedImage, null);
+        return createDefaultWriteableIterator(renderedImage, writableRenderedImage, null);
     }
 
     /**
@@ -205,19 +181,7 @@ public final class PixelIteratorFactory {
      * @return adapted      {@link PixelIterator}.
      */
     public static PixelIterator createRowMajorIterator(final RenderedImage renderedImage) {
-        final SampleModel sampleM = renderedImage.getSampleModel();
-        if (sampleM instanceof ComponentSampleModel) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands()
-             && ((ComponentSampleModel)sampleM).getBankIndices().length == 1
-             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
-                switch (sampleM.getDataType()) {
-                    case DataBuffer.TYPE_BYTE  : return new RowMajorDirectByteIterator(renderedImage, null);
-                    case DataBuffer.TYPE_FLOAT : return new RowMajorDirectFloatIterator(renderedImage, null);
-                    default : return new RowMajorIterator(renderedImage, null);
-                }
-            }
-        }
-        return new RowMajorIterator(renderedImage, null);
+        return createRowMajorIterator(renderedImage, null);
     }
 
     /**
@@ -253,19 +217,7 @@ public final class PixelIteratorFactory {
      * @return adapted              {@link PixelIterator}.
      */
     public static PixelIterator createRowMajorWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage) {
-        final SampleModel sampleM = renderedImage.getSampleModel();
-        if (sampleM instanceof ComponentSampleModel) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands()
-             && ((ComponentSampleModel)sampleM).getBankIndices().length == 1
-             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
-                switch (sampleM.getDataType()) {
-                    case DataBuffer.TYPE_BYTE  : return new RowMajorWritableDirectByteIterator(renderedImage, writableRenderedImage, null);
-                    case DataBuffer.TYPE_FLOAT : return new RowMajorWritableDirectFloatIterator(renderedImage, writableRenderedImage, null);
-                    default : return new RowMajorWritableIterator(renderedImage, writableRenderedImage, null);
-                }
-            }
-        }
-        return new RowMajorWritableIterator(renderedImage, writableRenderedImage, null);
+        return createRowMajorWriteableIterator(renderedImage, writableRenderedImage, null);
     }
 
     /**
