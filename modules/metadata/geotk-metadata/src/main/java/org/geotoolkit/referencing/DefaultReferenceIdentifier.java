@@ -40,7 +40,7 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.xml.Namespaces;
 import org.apache.sis.util.Deprecable;
 import org.apache.sis.util.iso.DefaultInternationalString;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.internal.jaxb.metadata.CI_Citation;
 import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;

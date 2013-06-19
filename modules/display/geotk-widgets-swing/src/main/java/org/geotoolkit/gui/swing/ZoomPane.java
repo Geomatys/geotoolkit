@@ -37,7 +37,7 @@ import java.beans.PropertyChangeListener;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.gui.swing.event.ZoomChangeEvent;
 import org.geotoolkit.gui.swing.event.ZoomChangeListener;

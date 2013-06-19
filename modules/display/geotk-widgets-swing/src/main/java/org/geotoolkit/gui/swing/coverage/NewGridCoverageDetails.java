@@ -55,7 +55,7 @@ import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Disposable;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.io.CoverageStoreException;

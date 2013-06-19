@@ -20,7 +20,7 @@ package org.geotoolkit.resources;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

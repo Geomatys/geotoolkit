@@ -41,7 +41,7 @@ import org.opengis.referencing.operation.*;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;

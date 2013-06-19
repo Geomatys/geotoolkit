@@ -43,7 +43,7 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.Disposable;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
 import org.apache.sis.util.logging.PerformanceLevel;
 import org.apache.sis.util.Classes;

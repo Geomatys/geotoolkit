@@ -49,7 +49,7 @@ import javax.media.jai.RegistryElementDescriptor;
 
 import org.apache.sis.measure.Angle;
 import org.apache.sis.measure.AngleFormat;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.gui.swing.image.KernelEditor;
 import org.geotoolkit.internal.swing.SwingUtilities;

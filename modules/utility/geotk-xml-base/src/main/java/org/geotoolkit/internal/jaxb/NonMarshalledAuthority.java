@@ -27,7 +27,7 @@ import java.lang.reflect.Field;
 import org.opengis.metadata.Identifier;
 
 import org.apache.sis.internal.simple.SimpleCitation;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.xml.IdentifierSpace;
 
 import static org.geotoolkit.util.collection.XCollections.addIfNonNull;

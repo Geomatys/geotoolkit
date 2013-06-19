@@ -54,7 +54,7 @@ import java.io.ObjectInputStream;
 
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.swing.ExceptionMonitor;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;

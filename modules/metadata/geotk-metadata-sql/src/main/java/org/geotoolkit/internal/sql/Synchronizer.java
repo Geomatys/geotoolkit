@@ -37,7 +37,7 @@ import java.util.logging.LogRecord;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 

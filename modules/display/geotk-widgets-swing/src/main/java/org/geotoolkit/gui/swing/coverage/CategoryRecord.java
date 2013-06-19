@@ -36,7 +36,7 @@ import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.image.io.PaletteFactory;

@@ -28,7 +28,7 @@ import java.util.prefs.Preferences;
 import org.geotoolkit.internal.OS;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.internal.storage.IOUtilities;
 
 

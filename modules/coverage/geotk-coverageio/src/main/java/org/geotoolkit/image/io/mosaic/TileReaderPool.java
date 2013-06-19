@@ -28,7 +28,7 @@ import java.util.Locale;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.io.IOUtilities;
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;

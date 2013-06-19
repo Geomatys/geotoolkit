@@ -27,7 +27,7 @@ import org.apache.sis.util.Classes;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.SpatialImageWriter;
 import org.geotoolkit.image.io.WarningProducer;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

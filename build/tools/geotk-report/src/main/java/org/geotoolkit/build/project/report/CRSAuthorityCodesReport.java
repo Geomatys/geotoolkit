@@ -39,7 +39,7 @@ import org.opengis.referencing.datum.VerticalDatumType;
 import org.opengis.test.report.AuthorityCodesReport;
 
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 

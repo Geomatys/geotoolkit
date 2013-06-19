@@ -36,7 +36,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.resources.Errors;

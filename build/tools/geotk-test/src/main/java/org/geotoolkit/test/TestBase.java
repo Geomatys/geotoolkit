@@ -93,11 +93,11 @@ public abstract strictfp class TestBase {
     private static final StringWriter buffer;
 
     /**
-     * Invokes a method of {@link org.geotoolkit.util.logging.Logging#GEOTOOLKIT}.
+     * Invokes a method of {@link org.apache.sis.util.logging.Logging#GEOTOOLKIT}.
      */
     private static void invokeLogging(final String method, final Class<?>[] argTypes, final Object[] argValues) {
         try {
-            final Class<?> logging = Class.forName("org.geotoolkit.util.logging.Logging");
+            final Class<?> logging = Class.forName("org.apache.sis.util.logging.Logging");
             logging.getMethod(method, argTypes).invoke(logging.getField("GEOTOOLKIT").get(null), argValues);
         } catch (ReflectiveOperationException e) {
             System.err.println(e);

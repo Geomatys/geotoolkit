@@ -27,7 +27,7 @@ import javax.sql.DataSource;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.geotoolkit.internal.Threads;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 

@@ -39,7 +39,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.referencing.CRS;

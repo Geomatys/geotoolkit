@@ -36,7 +36,7 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.NadconTransform;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

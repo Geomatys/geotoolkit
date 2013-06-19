@@ -39,7 +39,7 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.internal.util.Citations;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import static org.apache.sis.util.Utilities.deepEquals;
 

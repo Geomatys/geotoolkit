@@ -27,7 +27,7 @@ import org.opengis.temporal.Instant;
 import org.opengis.temporal.TemporalPrimitive;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.internal.TemporalUtilities;
 import org.geotoolkit.internal.jaxb.XmlUtilities;

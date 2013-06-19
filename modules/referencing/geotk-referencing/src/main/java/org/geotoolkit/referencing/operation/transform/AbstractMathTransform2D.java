@@ -33,7 +33,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.operation.MathTransforms;
 

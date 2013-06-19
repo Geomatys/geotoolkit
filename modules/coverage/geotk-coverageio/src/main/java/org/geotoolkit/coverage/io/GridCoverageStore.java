@@ -46,7 +46,7 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Localized;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
 import org.apache.sis.util.logging.PerformanceLevel;
 import org.geotoolkit.resources.Errors;

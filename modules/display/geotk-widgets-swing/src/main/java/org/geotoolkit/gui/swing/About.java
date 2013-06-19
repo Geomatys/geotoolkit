@@ -53,7 +53,7 @@ import javax.media.jai.JAI;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.DaemonThread;

@@ -59,7 +59,7 @@ import org.opengis.coverage.Coverage;
 
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.coverage.grid.GridCoverage2D;

@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import javax.sql.DataSource;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;

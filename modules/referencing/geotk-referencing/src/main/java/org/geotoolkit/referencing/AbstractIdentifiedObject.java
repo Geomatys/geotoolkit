@@ -52,7 +52,7 @@ import org.apache.sis.util.Deprecable;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.LenientComparable;
 import org.apache.sis.util.iso.DefaultInternationalString;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.jaxb.gco.StringConverter;
 import org.geotoolkit.internal.jaxb.referencing.RS_Identifier;

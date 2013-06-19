@@ -22,7 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.test.gui.SwingTestBase;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import org.junit.*;
 import static org.junit.Assert.*;

@@ -45,7 +45,7 @@ import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.Disposable;
 import org.geotoolkit.util.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Locales;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;

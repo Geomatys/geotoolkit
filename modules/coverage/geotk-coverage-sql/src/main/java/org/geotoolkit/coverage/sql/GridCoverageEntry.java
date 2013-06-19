@@ -56,7 +56,7 @@ import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.sql.table.DefaultEntry;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
 import org.geotoolkit.internal.referencing.CRSUtilities;

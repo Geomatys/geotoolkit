@@ -32,7 +32,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.AbstractTableModel;
 import javax.imageio.spi.ImageReaderSpi;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.process.ProgressController;
 import org.geotoolkit.image.io.mosaic.Tile;

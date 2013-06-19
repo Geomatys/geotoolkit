@@ -32,7 +32,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.internal.util.UnmodifiableArrayList;

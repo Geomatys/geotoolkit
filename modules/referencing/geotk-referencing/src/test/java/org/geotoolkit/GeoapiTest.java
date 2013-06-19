@@ -46,7 +46,7 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import static org.opengis.test.CalculationType.*;
 import static org.opengis.test.ToleranceModifiers.*;
@@ -89,7 +89,6 @@ public final strictfp class GeoapiTest extends TestSuite implements Implementati
      * is often used for many services.
      */
     static {
-        Logging.GEOTOOLKIT.forceMonolineConsoleOutput(null);
         setFactories(NameFactory.class,                getNameFactory                   (null));
         setFactories(CSFactory.class,                  getCSFactory                     (null));
         setFactories(CRSFactory.class,                 getCRSFactory                    (null));

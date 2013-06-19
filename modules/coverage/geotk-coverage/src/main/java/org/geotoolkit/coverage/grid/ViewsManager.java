@@ -51,7 +51,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.processing.AbstractCoverageProcessor;

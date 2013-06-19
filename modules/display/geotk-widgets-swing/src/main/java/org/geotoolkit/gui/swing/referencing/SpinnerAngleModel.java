@@ -36,7 +36,7 @@ import org.apache.sis.measure.Longitude;
 import org.apache.sis.measure.AngleFormat;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

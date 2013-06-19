@@ -34,7 +34,7 @@ import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.LenientComparable;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Classes;
 import org.apache.sis.metadata.KeyNamePolicy;

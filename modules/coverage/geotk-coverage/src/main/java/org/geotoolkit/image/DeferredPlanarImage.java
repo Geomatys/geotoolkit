@@ -35,7 +35,7 @@ import javax.media.jai.TileComputationListener;
 
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Disposable;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.WeakValueHashMap;
 import org.geotoolkit.internal.image.ColorUtilities;

@@ -51,7 +51,7 @@ import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.Deprecable;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 import org.geotoolkit.metadata.iso.citation.Citations;

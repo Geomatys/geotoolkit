@@ -48,7 +48,7 @@ import org.jdesktop.swingx.decorator.HighlightPredicate;
 
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Disposable;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
 
 

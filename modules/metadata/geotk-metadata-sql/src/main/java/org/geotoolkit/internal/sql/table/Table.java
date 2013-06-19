@@ -29,7 +29,7 @@ import java.util.logging.LogRecord;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.sis.util.Localized;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.logging.PerformanceLevel;
 import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.resources.Vocabulary;

@@ -47,7 +47,7 @@ import org.apache.sis.util.Classes;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 

@@ -27,7 +27,7 @@ import org.w3c.dom.Node;
 
 import org.apache.sis.util.CharSequences;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.metadata.ValueRestriction;

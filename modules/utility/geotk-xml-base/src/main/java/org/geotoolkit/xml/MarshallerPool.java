@@ -31,7 +31,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.jaxb.RegisterableTypes;
 import org.geotoolkit.internal.jaxb.RegisterableAdapter;
 import org.geotoolkit.internal.jaxb.gco.GO_CharacterString;

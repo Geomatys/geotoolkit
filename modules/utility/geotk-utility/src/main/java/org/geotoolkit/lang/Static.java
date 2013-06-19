@@ -99,7 +99,7 @@ package org.geotoolkit.lang;
  * <tr><th colspan="2" bgcolor="lightblue">Loggings and exceptions</th></tr>
  * <tr><td>{@link org.geotoolkit.util.ArgumentChecks}</td>
  *     <td>Perform argument checks and throw {@link IllegalArgumentException} if needed.</td></tr>
- * <tr><td>{@link org.geotoolkit.util.logging.Logging}</td>
+ * <tr><td>{@link org.apache.sis.util.logging.Logging}</td>
  *     <td>Get a {@linkplain java.util.logging.Logger logger}, which may be a wrapper around <cite>Apache Commons Logging</cite>.</td></tr>
  * <tr><td>{@link org.geotoolkit.util.Exceptions}</td>
  *     <td>Paint a stack trace in a {@link java.awt.Graphics2D}.</td></tr>

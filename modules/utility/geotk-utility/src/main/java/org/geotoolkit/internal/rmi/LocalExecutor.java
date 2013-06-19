@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 
 import org.geotoolkit.internal.Threads;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

@@ -46,7 +46,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 
 import org.geotoolkit.lang.Configuration;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;

@@ -18,7 +18,7 @@
 package org.geotoolkit.internal.image.io;
 
 import java.util.Properties;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.SetupService;
 import ucar.nc2.dataset.NetcdfDataset;
 

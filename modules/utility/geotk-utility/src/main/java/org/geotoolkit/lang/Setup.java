@@ -24,7 +24,8 @@ import javax.imageio.spi.IIORegistry;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.logging.MonolineFormatter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.internal.SetupService;
 import org.geotoolkit.internal.io.Installation;
@@ -190,7 +191,7 @@ public final class Setup extends Static {
         if ("server".equalsIgnoreCase(get(properties, "platform", "desktop"))) {
             Installation.allowSystemPreferences = false;
         } else {
-            Logging.ALL.forceMonolineConsoleOutput(null);
+            MonolineFormatter.install();
         }
         /*
          * Following are normally not needed, since the factory registry scans automatically

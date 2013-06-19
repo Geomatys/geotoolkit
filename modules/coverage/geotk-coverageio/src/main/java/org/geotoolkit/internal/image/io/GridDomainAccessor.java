@@ -32,7 +32,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.datum.PixelInCell;
 
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;

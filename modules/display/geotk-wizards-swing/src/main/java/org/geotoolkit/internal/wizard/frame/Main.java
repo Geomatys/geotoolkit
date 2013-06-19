@@ -55,7 +55,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Wizards;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

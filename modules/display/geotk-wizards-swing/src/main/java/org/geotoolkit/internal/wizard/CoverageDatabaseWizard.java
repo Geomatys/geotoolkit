@@ -57,7 +57,7 @@ import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Wizards;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Descriptions;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.io.Host;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.internal.sql.PostgisInstaller;

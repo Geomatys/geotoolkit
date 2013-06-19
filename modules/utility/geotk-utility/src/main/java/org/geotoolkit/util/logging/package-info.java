@@ -21,12 +21,12 @@
  * This package provides:
  * <p>
  * <ul>
- *   <li>A {@link org.geotoolkit.util.logging.Logging} utility class with static methods for
+ *   <li>A {@link org.apache.sis.util.logging.Logging} utility class with static methods for
  *       fetching a logger (see <cite>Choosing a logging framework</cite> below) or logging an
  *       exception.</li>
- *   <li>A {@link org.geotoolkit.util.logging.PerformanceLevel} with configurable levels for
+ *   <li>A {@link org.apache.sis.util.logging.PerformanceLevel} with configurable levels for
  *       logging the duration of lengthly processes.</li>
- *   <li>A {@link org.geotoolkit.util.logging.MonolineFormatter} for formatting the log
+ *   <li>A {@link org.apache.sis.util.logging.MonolineFormatter} for formatting the log
  *       records on single line with colors, for easier reading on the console output.</li>
  * </ul>
  *
@@ -46,7 +46,7 @@
  *
  * {@section Note for Geotk developers}
  * All Geotk code should fetch their logger through a call to our custom
- * {@link org.geotoolkit.util.logging.Logging#getLogger(String)} method, <strong>not</strong>
+ * {@link org.apache.sis.util.logging.Logging#getLogger(String)} method, <strong>not</strong>
  * the standard {@link java.util.logging.Logger#getLogger(String)} method. This is necessary in
  * order to give Geotk a chance to redirect log events to an other logging framework.
  *

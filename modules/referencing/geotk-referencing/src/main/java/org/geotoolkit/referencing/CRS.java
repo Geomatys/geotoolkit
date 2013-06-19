@@ -42,7 +42,7 @@ import org.geotoolkit.lang.Static;
 import org.apache.sis.util.Version;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.Factories;

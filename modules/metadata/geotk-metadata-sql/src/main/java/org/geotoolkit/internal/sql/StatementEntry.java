@@ -20,7 +20,7 @@ package org.geotoolkit.internal.sql;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

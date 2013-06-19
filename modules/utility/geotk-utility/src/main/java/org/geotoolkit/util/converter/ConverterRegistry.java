@@ -29,7 +29,7 @@ import org.apache.sis.util.Numbers;
 import org.apache.sis.util.Classes;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 

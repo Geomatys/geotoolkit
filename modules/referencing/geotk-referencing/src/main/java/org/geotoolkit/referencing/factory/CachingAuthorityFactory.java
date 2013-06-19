@@ -59,7 +59,7 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.Exceptions;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.internal.referencing.NilReferencingObject;
 

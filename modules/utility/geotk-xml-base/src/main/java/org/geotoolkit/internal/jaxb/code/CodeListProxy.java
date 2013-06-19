@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.opengis.util.CodeList;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.resources.Locales;

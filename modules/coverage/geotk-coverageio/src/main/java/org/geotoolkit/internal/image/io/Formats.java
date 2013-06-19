@@ -89,7 +89,7 @@ public final class Formats extends Static {
 
         /**
          * Invoked when a recoverable error occurred. Implementors will typically delegate to
-         * {@link org.geotoolkit.util.logging.Logging#recoverableException(Class, String, Throwable)}
+         * {@link org.apache.sis.util.logging.Logging#recoverableException(Class, String, Throwable)}
          * with appropriate class an method name.
          *
          * @param error The error which occurred.

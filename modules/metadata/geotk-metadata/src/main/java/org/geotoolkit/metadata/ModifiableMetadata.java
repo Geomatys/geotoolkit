@@ -31,7 +31,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.util.CodeList;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.CheckedArrayList;
 import org.geotoolkit.util.collection.CheckedHashSet;

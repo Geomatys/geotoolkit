@@ -30,7 +30,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.IdentifiedObject;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.swing.FastComboBox;
 
 

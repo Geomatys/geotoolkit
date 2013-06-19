@@ -26,7 +26,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.io.IOException;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 

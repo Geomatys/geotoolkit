@@ -39,7 +39,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.coverage.grid.GridEnvelope;
 
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.iso.Types;
 import org.apache.sis.internal.util.UnmodifiableArrayList;

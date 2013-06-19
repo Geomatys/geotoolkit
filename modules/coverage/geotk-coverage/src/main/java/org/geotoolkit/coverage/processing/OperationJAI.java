@@ -68,7 +68,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.iso.AbstractInternationalString;
 import org.geotoolkit.resources.Errors;
 

@@ -24,7 +24,7 @@ import java.util.StringTokenizer;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

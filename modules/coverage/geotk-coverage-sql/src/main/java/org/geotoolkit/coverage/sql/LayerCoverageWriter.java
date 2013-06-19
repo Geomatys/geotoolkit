@@ -34,7 +34,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.operation.MathTransform2D;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
