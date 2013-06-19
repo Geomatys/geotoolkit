@@ -376,6 +376,7 @@ public class AlbersEqualArea extends MapProjection {
             new NamedIdentifier(Citations.GEOTIFF, "CT_AlbersEqualArea"),
             new IdentifierCode (Citations.GEOTIFF,  11),
             new NamedIdentifier(Citations.PROJ4,   "aea"),
+            new IdentifierCode (Citations.MAP_INFO, 9),
             new NamedIdentifier(Citations.S57,     "Albert equal area"),
             new NamedIdentifier(Citations.S57,     "ALA"),
             new IdentifierCode (Citations.S57,      1),

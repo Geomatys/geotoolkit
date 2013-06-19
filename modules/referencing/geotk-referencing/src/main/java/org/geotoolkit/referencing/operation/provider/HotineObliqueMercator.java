@@ -538,6 +538,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
             PARAMETERS = UniversalParameters.createDescriptorGroup(
                 new ReferenceIdentifier[] {
                     new NamedIdentifier(Citations.ESRI, "Hotine_Oblique_Mercator_Two_Point_Natural_Origin"),
+                    new IdentifierCode(Citations.MAP_INFO, 7),
                     sameNameAs(Citations.GEOTOOLKIT, HotineObliqueMercator.PARAMETERS)
             }, null, param.toArray(new ParameterDescriptor<?>[param.size()]),
             MapProjectionDescriptor.ADD_EARTH_RADIUS);

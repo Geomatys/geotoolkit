@@ -251,7 +251,8 @@ public class Polyconic extends MapProjection {
             new NamedIdentifier(Citations.EPSG,    "American Polyconic"),
             new IdentifierCode (Citations.EPSG,     9818), // The ellipsoidal case
             new NamedIdentifier(Citations.GEOTIFF, "CT_Polyconic"),
-            new IdentifierCode (Citations.GEOTIFF,  22)
+            new IdentifierCode (Citations.GEOTIFF,  22),
+            new IdentifierCode (Citations.MAP_INFO, 27)
         }, excludes, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             LATITUDE_OF_ORIGIN, CENTRAL_MERIDIAN,

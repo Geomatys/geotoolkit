@@ -394,6 +394,7 @@ public class LambertConformal2SP extends MapProjection {
             new NamedIdentifier(Citations.NETCDF,  "LambertConformal"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertConfConic_2SP"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertConfConic"),
+            new IdentifierCode (Citations.MAP_INFO, 3),
             new IdentifierCode (Citations.GEOTIFF,  9), // The same code is used for 1SP.
                      sameNameAs(Citations.PROJ4,    LambertConformal1SP.PARAMETERS),
             new NamedIdentifier(Citations.S57,     "Lambert conformal conic"),
@@ -638,6 +639,7 @@ public class LambertConformal2SP extends MapProjection {
                 new NamedIdentifier(Citations.ESRI, "Lambert_Conformal_Conic_2SP_Belgium"),
                 new NamedIdentifier(Citations.EPSG, "Lambert Conic Conformal (2SP Belgium)"),
                 new IdentifierCode (Citations.EPSG,  9803),
+                new IdentifierCode (Citations.MAP_INFO, 19),
                         sameNameAs(Citations.GEOTOOLKIT, LambertConformal2SP.PARAMETERS)
             }, new Citation[] { // Authorities to exclude from the parameter descriptors.
                 Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4

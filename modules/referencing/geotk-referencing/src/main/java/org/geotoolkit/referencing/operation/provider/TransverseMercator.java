@@ -326,6 +326,7 @@ public class TransverseMercator extends MapProjection {
             new NamedIdentifier(Citations.GEOTIFF,  "CT_TransverseMercator"),
             new IdentifierCode (Citations.GEOTIFF,   1),
             new NamedIdentifier(Citations.PROJ4,    "tmerc"),
+            new IdentifierCode (Citations.MAP_INFO,  8),
             new NamedIdentifier(Citations.S57,      "Transverse Mercator"),
             new NamedIdentifier(Citations.S57,      "TME"),
             new IdentifierCode (Citations.S57,       13),

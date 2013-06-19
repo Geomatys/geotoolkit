@@ -325,6 +325,8 @@ public class Mercator1SP extends MapProjection {
             new NamedIdentifier(Citations.GEOTIFF, "CT_Mercator"),
             new IdentifierCode (Citations.GEOTIFF,  7),
             new NamedIdentifier(Citations.PROJ4,   "merc"),
+            new IdentifierCode (Citations.MAP_INFO, 10),
+            new IdentifierCode (Citations.MAP_INFO, 26),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.CYLINDRICAL_MERCATOR_PROJECTION))
         }, excludes, new ParameterDescriptor<?>[] {
