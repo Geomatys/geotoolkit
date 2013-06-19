@@ -90,6 +90,7 @@ public final class Citations extends Static {
         c.freeze();
         MAP_INFO = c;
     }
+
     /**
      * The <A HREF="http://www.iso.org/">International Organization for Standardization</A>
      * organisation. An {@linkplain Citation#getAlternateTitles alternate title} for this
