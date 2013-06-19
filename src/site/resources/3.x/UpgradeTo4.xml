@@ -55,6 +55,10 @@
       <replacefilter token="org.geotoolkit.util.collection.WeakHashSet"             value="org.apache.sis.util.collection.WeakHashSet"/>
       <replacefilter token="org.geotoolkit.util.collection.WeakValueHashMap"        value="org.apache.sis.util.collection.WeakValueHashMap"/>
       <replacefilter token="org.geotoolkit.util.collection.XCollection"             value="org.apache.sis.util.collection.Containers"/>
+      <replacefilter token="org.geotoolkit.util.logging.LoggerAdapter"              value="org.apache.sis.util.logging.LoggerAdapter"/>
+      <replacefilter token="org.geotoolkit.util.logging.Logging"                    value="org.apache.sis.util.logging.Logging"/>
+      <replacefilter token="org.geotoolkit.util.logging.MonolineFormatter"          value="org.apache.sis.util.logging.MonolineFormatter"/>
+      <replacefilter token="org.geotoolkit.util.logging.PerformanceLevel"           value="org.apache.sis.util.logging.PerformanceLevel"/>
       <replacefilter token="org.geotoolkit.xml.XLink"                               value="org.apache.sis.xml.XLink"/>
       <replacefilter token="org.geotoolkit.xml.NilReason"                           value="org.apache.sis.xml.NilReason"/>
     </replace>
