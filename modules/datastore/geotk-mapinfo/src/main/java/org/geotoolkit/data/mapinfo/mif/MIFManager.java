@@ -26,9 +26,6 @@ import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.util.NullArgumentException;
-import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.*;
@@ -46,6 +43,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.NullArgumentException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Read types of .mif file, and manage readers / writers (from mif/mid mapinfo exchange format).

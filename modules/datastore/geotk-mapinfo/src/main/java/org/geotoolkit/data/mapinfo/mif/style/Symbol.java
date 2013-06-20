@@ -19,7 +19,6 @@ package org.geotoolkit.data.mapinfo.mif.style;
 import org.geotoolkit.data.mapinfo.mif.geometry.MIFPointBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.style.DefaultDescription;
-import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.feature.type.Name;
 import org.opengis.style.Description;
 import org.opengis.style.Graphic;
@@ -30,6 +29,7 @@ import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 import java.awt.*;
 import java.util.regex.Pattern;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
 /**
  * Class Description

@@ -23,7 +23,6 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
-import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.datum.GeodeticDatum;
@@ -34,6 +33,7 @@ import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  * A class which binds mapinfo datum codes with equivalent epsg code.

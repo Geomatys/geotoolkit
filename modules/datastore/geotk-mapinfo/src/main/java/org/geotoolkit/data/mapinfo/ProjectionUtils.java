@@ -19,9 +19,6 @@ package org.geotoolkit.data.mapinfo;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.geometry.DirectPosition2D;
-import org.geotoolkit.geometry.Envelope2D;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
@@ -32,7 +29,6 @@ import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
 import org.geotoolkit.referencing.operation.provider.UniversalParameters;
-import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicExtent;
@@ -55,6 +51,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.sis.geometry.DirectPosition2D;
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.util.ArgumentChecks;
 
 import static org.geotoolkit.data.mapinfo.ProjectionParameters.getProjectionParameters;
 

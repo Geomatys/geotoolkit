@@ -22,7 +22,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
@@ -34,6 +33,7 @@ import org.opengis.referencing.operation.MathTransform;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  * Used for {@link org.geotoolkit.data.mapinfo.mif.MIFUtils.GeometryType}, to allow us pass a method for building geometry as

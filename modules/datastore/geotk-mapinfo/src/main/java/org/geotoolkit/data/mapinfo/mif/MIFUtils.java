@@ -19,8 +19,6 @@ package org.geotoolkit.data.mapinfo.mif;
 import com.vividsolutions.jts.geom.*;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.geometry.*;
-import org.geotoolkit.geometry.Envelope2D;
-import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -38,6 +36,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  * Utility methods and constants for mif/mid parsing.

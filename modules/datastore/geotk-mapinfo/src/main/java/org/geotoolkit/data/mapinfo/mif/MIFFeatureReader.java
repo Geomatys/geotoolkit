@@ -20,7 +20,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.Strings;
 import org.opengis.feature.Feature;
@@ -39,6 +38,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  * MIF reader which is designed to browse data AND ONLY data, it's to say geometry data from MIF file, and all data from

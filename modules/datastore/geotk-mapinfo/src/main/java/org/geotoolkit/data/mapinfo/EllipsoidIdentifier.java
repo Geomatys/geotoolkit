@@ -19,7 +19,6 @@ package org.geotoolkit.data.mapinfo;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.util.FactoryException;
@@ -27,6 +26,7 @@ import org.opengis.util.FactoryException;
 import javax.measure.unit.SI;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.util.ArgumentChecks;
 
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 

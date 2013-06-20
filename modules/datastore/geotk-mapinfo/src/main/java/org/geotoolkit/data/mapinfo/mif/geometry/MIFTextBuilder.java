@@ -27,8 +27,6 @@ import org.geotoolkit.data.mapinfo.mif.style.LabelLine;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.geometry.Envelope2D;
-import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -43,6 +41,8 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  * A class which manage MIF text geometry.

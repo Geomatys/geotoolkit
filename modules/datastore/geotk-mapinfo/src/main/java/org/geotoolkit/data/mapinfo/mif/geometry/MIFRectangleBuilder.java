@@ -25,8 +25,6 @@ import org.geotoolkit.data.mapinfo.mif.style.Brush;
 import org.geotoolkit.data.mapinfo.mif.style.Pen;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
-import org.geotoolkit.geometry.Envelope2D;
-import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -40,6 +38,8 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
+import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  * The class used to build Feature from MIF rectangle or MIF Round rectangle.

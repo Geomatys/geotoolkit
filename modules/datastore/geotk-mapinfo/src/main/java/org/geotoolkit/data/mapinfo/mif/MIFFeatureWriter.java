@@ -20,7 +20,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.feature.Feature;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.type.FeatureType;
@@ -28,6 +27,7 @@ import org.opengis.feature.type.FeatureType;
 import java.io.*;
 import java.util.UUID;
 import java.util.logging.Level;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  * An iterator to write features into MIF/MID files.
