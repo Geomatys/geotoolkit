@@ -24,7 +24,7 @@ import org.postgresql.ds.PGSimpleDataSource;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.PresentationForm;
 
-import org.geotoolkit.metadata.MetadataStandard;
+import org.apache.sis.metadata.MetadataStandard;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
 import org.geotoolkit.internal.sql.DefaultDataSource;

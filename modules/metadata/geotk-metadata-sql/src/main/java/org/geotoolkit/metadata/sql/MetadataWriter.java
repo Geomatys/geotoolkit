@@ -39,7 +39,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.ResponsibleParty;
 
 import org.apache.sis.metadata.ValueExistencePolicy;
-import org.geotoolkit.metadata.MetadataStandard;
+import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.internal.util.Citations;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.IdentifierGenerator;
@@ -354,8 +354,8 @@ public class MetadataWriter extends MetadataSource {
         for (final String column : asMap.keySet()) {
             if (!columns.contains(column)) {
                 if (colTypes == null) {
-                    colTypes  = standard.asTypeMap(implementationType, ELEMENT_TYPE,        UML_IDENTIFIER);
-                    colTables = standard.asTypeMap(implementationType, DECLARING_INTERFACE, UML_IDENTIFIER);
+                    colTypes  = standard.asTypeMap(implementationType, UML_IDENTIFIER, ELEMENT_TYPE);
+                    colTables = standard.asTypeMap(implementationType, UML_IDENTIFIER, DECLARING_INTERFACE);
                 }
                 /*
                  * We have found a column to add. Check if the column actually needs to be added

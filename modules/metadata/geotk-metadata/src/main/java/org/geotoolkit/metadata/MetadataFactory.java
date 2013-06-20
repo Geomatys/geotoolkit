@@ -23,9 +23,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import net.jcip.annotations.ThreadSafe;
-
 import org.opengis.util.FactoryException;
-
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.metadata.KeyNamePolicy;
+import org.apache.sis.metadata.ValueExistencePolicy;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.resources.Errors;
@@ -213,7 +214,8 @@ public class MetadataFactory extends Factory {
                     }
                     continue;
                 }
-                final Map<String,Object> asMap = standard.asMap(metadata);
+                final Map<String,Object> asMap = standard.asValueMap(metadata,
+                        KeyNamePolicy.JAVABEANS_PROPERTY, ValueExistencePolicy.NON_EMPTY);
                 try {
                     asMap.putAll(properties);
                 } catch (RuntimeException e) {

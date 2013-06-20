@@ -66,12 +66,12 @@ import org.opengis.util.GenericName;
 import org.geotoolkit.lang.Builder;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
+import org.apache.sis.util.iso.Types;
 import org.apache.sis.metadata.KeyNamePolicy;
-import org.apache.sis.metadata.ValueExistencePolicy;
 import org.apache.sis.metadata.TypeValuePolicy;
-import org.geotoolkit.metadata.ValueRestriction;
-import org.geotoolkit.metadata.MetadataStandard;
+import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.metadata.UnmodifiableMetadataException;
+import org.geotoolkit.metadata.ValueRestriction;
 import org.geotoolkit.resources.Errors;
 
 import static javax.imageio.metadata.IIOMetadataFormat.*;
@@ -79,7 +79,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.toElementName;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.NAME_POLICY;
 import static org.geotoolkit.internal.image.io.GridDomainAccessor.ARRAY_ATTRIBUTE_NAME;
-import org.apache.sis.util.iso.Types;
 
 
 /**
@@ -473,13 +472,13 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
         boolean hasChilds = false;
         Obligation obligation = Obligation.FORBIDDEN; // If there is no child.
         final Map<String,String> methods, identifiers;
-        final Map<String,ValueRestriction> restrictions;
+        final Map<String, ExtendedElementInformation> restrictions;
         final Map<String,Class<?>> propertyTypes, elementTypes;
-        methods       = standard.asNameMap       (type, KeyNamePolicy.  METHOD_NAME,    NAME_POLICY);
-        identifiers   = standard.asNameMap       (type, KeyNamePolicy.  UML_IDENTIFIER, NAME_POLICY);
-        propertyTypes = standard.asTypeMap       (type, TypeValuePolicy.PROPERTY_TYPE,  NAME_POLICY);
-        elementTypes  = standard.asTypeMap       (type, TypeValuePolicy.ELEMENT_TYPE,   NAME_POLICY);
-        restrictions  = standard.asRestrictionMap(type, ValueExistencePolicy.NON_NULL,  NAME_POLICY);
+        methods       = standard.asNameMap       (type, NAME_POLICY, KeyNamePolicy.  METHOD_NAME);
+        identifiers   = standard.asNameMap       (type, NAME_POLICY, KeyNamePolicy.  UML_IDENTIFIER);
+        propertyTypes = standard.asTypeMap       (type, NAME_POLICY, TypeValuePolicy.PROPERTY_TYPE);
+        elementTypes  = standard.asTypeMap       (type, NAME_POLICY, TypeValuePolicy.ELEMENT_TYPE);
+        restrictions  = standard.asInformationMap(type, NAME_POLICY);
         final boolean isComplete = (incompletes != null) && !incompletes.contains(type);
         for (final Map.Entry<String,Class<?>> entry : elementTypes.entrySet()) {
             final Class<?> candidate = entry.getValue();
@@ -490,7 +489,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
                 continue;
             }
             if (standard.isMetadata(candidate) && !CodeList.class.isAssignableFrom(candidate)) {
-                final ValueRestriction vr = restrictions.get(entry.getKey());
+                final ValueRestriction vr = ValueRestriction.create(restrictions.get(entry.getKey()));
                 if (vr != null) {
                     final Obligation c = vr.obligation;
                     if (c != null) {
@@ -537,7 +536,7 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
         metadata.addElement(standard, type, elementName, parentName, childPolicy, 0, 1);
         for (final Map.Entry<String,Class<?>> entry : propertyTypes.entrySet()) {
             String childName = entry.getKey();
-            final ValueRestriction vr = restrictions.get(childName);
+            final ValueRestriction vr = ValueRestriction.create(restrictions.get(childName));
             int min = 0, max = 1;
             if (vr != null && vr.obligation != null) {
                 switch (vr.obligation) {

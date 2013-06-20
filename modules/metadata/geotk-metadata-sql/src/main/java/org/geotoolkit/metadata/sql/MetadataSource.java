@@ -41,7 +41,7 @@ import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.StatementEntry;
 import org.apache.sis.metadata.ValueExistencePolicy;
 import org.apache.sis.metadata.KeyNamePolicy;
-import org.geotoolkit.metadata.MetadataStandard;
+import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.util.collection.WeakValueHashMap;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.util.converter.ObjectConverter;
@@ -267,7 +267,7 @@ public class MetadataSource implements AutoCloseable {
      *         interface of the expected package.
      */
     final Map<String,Object> asMap(final Object metadata) throws ClassCastException {
-        return standard.asMap(metadata, ValueExistencePolicy.ALL, KeyNamePolicy.UML_IDENTIFIER);
+        return standard.asValueMap(metadata, KeyNamePolicy.UML_IDENTIFIER, ValueExistencePolicy.ALL);
     }
 
     /**
