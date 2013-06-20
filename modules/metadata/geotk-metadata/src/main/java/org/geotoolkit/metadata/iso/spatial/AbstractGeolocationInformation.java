@@ -45,7 +45,10 @@ import org.geotoolkit.xml.Namespaces;
  *
  * @since 3.03
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "AbstractMI_GeolocationInformation_Type", propOrder={
     "qualityInfo"

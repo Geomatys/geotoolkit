@@ -42,7 +42,10 @@ import org.geotoolkit.util.SimpleInternationalString;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "CI_Series_Type", propOrder={
     "name",

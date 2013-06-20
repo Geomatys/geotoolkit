@@ -55,7 +55,10 @@ import org.geotoolkit.internal.referencing.ProxyForMetadata;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "EX_TemporalExtent_Type")
 @XmlRootElement(name = "EX_TemporalExtent")

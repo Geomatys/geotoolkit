@@ -36,7 +36,10 @@ import org.opengis.metadata.quality.NonQuantitativeAttributeAccuracy;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "DQ_NonQuantitativeAttributeAccuracy_Type")
 @XmlRootElement(name = "DQ_NonQuantitativeAttributeAccuracy")

@@ -52,7 +52,10 @@ import static org.geotoolkit.internal.jaxb.MarshalContext.filterIdentifiers;
  *
  * @since 3.03
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "MI_Objective_Type", propOrder={
     "identifiers",

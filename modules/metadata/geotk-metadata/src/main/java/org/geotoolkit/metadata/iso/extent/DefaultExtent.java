@@ -59,7 +59,10 @@ import org.geotoolkit.resources.Errors;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "EX_Extent_Type", propOrder={
     "description",

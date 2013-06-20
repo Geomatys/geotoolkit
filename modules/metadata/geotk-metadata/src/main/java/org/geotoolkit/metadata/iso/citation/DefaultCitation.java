@@ -61,7 +61,10 @@ import static org.geotoolkit.internal.jaxb.MarshalContext.filterIdentifiers;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "CI_Citation_Type", propOrder={
     "title",

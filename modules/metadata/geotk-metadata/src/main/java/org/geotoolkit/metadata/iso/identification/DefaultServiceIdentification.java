@@ -39,7 +39,10 @@ import org.geotoolkit.xml.Namespaces;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "MD_ServiceIdentification_Type")
 @XmlRootElement(name = "SV_ServiceIdentification", namespace = Namespaces.SRV) // Prefix is really SV_ according ISO 19115 corrigendum.

@@ -49,7 +49,10 @@ import org.geotoolkit.xml.Namespaces;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "LI_ProcessStep_Type", propOrder={
     "description",

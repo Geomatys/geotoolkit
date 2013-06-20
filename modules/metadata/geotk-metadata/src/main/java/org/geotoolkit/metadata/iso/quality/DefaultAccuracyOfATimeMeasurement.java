@@ -36,7 +36,10 @@ import org.opengis.metadata.quality.AccuracyOfATimeMeasurement;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "DQ_AccuracyOfATimeMeasurement_Type")
 @XmlRootElement(name = "DQ_AccuracyOfATimeMeasurement")

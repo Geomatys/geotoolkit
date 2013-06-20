@@ -43,7 +43,10 @@ import org.opengis.metadata.extent.SpatialTemporalExtent;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "EX_SpatialTemporalExtent_Type")
 @XmlRootElement(name = "EX_SpatialTemporalExtent")
