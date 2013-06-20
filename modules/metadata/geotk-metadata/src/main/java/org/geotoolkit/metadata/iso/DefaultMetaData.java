@@ -50,7 +50,7 @@ import org.opengis.metadata.spatial.SpatialRepresentation;
 import org.opengis.referencing.ReferenceSystem;
 
 import org.geotoolkit.internal.jaxb.MarshalContext;
-import org.geotoolkit.internal.jaxb.gmd.PT_Locale;
+import org.apache.sis.internal.jaxb.code.PT_Locale;
 import org.geotoolkit.xml.Namespaces;
 
 

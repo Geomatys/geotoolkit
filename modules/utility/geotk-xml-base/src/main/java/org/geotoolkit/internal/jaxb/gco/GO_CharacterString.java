@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.gmd.PT_FreeText;
-import org.geotoolkit.internal.jaxb.gmd.LanguageCode;
-import org.geotoolkit.internal.jaxb.gmd.Country;
+import org.apache.sis.internal.jaxb.gmd.LanguageCode;
+import org.apache.sis.internal.jaxb.gmd.Country;
 import org.geotoolkit.internal.jaxb.gmx.Anchor;
 
 
