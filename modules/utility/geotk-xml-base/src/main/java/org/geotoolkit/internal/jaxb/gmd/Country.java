@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.apache.sis.util.Locales;
-import org.geotoolkit.internal.jaxb.code.CodeListProxy;
+import org.apache.sis.internal.jaxb.gmd.CodeListProxy;
 import org.geotoolkit.internal.jaxb.gco.GO_CharacterString;
 import org.geotoolkit.internal.jaxb.gco.CharSequenceAdapter;
 
@@ -75,7 +75,7 @@ public final class Country extends GO_CharacterString {
      * For private use by {@link #create(Locale, Locale)} only.
      */
     private Country(final String code, final String text) {
-        proxy = new CodeListProxy("ML_gmxCodelists.xml", "Country", code, text);
+//      proxy = new CodeListProxy("ML_gmxCodelists.xml", "Country", code, text);
     }
 
     /**

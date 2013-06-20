@@ -31,7 +31,7 @@ import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Locales;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.jaxb.MarshalContext;
-import org.geotoolkit.internal.jaxb.code.MD_CharacterSetCode;
+import org.apache.sis.internal.jaxb.code.MD_CharacterSetCode;
 
 
 /**

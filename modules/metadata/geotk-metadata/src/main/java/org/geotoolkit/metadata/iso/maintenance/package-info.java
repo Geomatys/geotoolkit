@@ -73,6 +73,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.gco.*;
-import org.geotoolkit.internal.jaxb.code.*;
+import org.apache.sis.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.gts.TM_PeriodDuration;
 import org.geotoolkit.internal.jaxb.metadata.*;

@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 import org.geotoolkit.resources.Locales;
 import org.geotoolkit.internal.jaxb.MarshalContext;
-import org.geotoolkit.internal.jaxb.code.CodeListProxy;
+import org.apache.sis.internal.jaxb.gmd.CodeListProxy;
 import org.geotoolkit.internal.jaxb.gco.GO_CharacterString;
 import org.geotoolkit.internal.jaxb.gco.CharSequenceAdapter;
 
@@ -77,7 +77,7 @@ public final class LanguageCode extends GO_CharacterString {
      * For private use by {@link #create(Locale, Locale)} only.
      */
     private LanguageCode(final String code, final String text) {
-        proxy = new CodeListProxy("ML_gmxCodelists.xml", "LanguageCode", code, text);
+//      proxy = new CodeListProxy("ML_gmxCodelists.xml", "LanguageCode", code, text);
     }
 
     /**
