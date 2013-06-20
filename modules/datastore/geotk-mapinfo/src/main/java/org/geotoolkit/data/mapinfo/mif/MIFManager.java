@@ -46,6 +46,7 @@ import java.util.regex.Pattern;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 
 /**
  * Read types of .mif file, and manage readers / writers (from mif/mid mapinfo exchange format).
@@ -252,10 +253,17 @@ public class MIFManager {
             flushHeader();
         }
 
-        // If the given type has not been added as is as base type, we try to put it into our childTypes.
+       // If the given type has not been added as is as base type, we try to put it into our childTypes.
        if(!isBaseType) {
-            if (MIFUtils.identifyFeature(toAdd) != null) {
-                mifChildTypes.add(toAdd);
+           FeatureType childType = toAdd;
+           if(toAdd.getSuper() == null || !FeatureTypeUtilities.equals((FeatureType)toAdd.getSuper(), mifBaseType)) {
+               FeatureTypeBuilder builder = new FeatureTypeBuilder();
+               builder.copy(toAdd);
+               builder.setSuperType(mifBaseType);
+               childType = builder.buildFeatureType();
+           }
+            if (MIFUtils.identifyFeature(childType) != null) {
+                mifChildTypes.add(childType);
             } else {
                 throw new DataStoreException("The geometry for the given type is not supported for MIF geometry");
             }
