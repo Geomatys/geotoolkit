@@ -20,18 +20,10 @@
  */
 package org.geotoolkit.metadata.iso.quality;
 
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import net.jcip.annotations.ThreadSafe;
-
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.quality.Result;
 import org.opengis.metadata.quality.PositionalAccuracy;
-import org.opengis.metadata.quality.GriddedDataPositionalAccuracy;
-import org.opengis.metadata.quality.AbsoluteExternalPositionalAccuracy;
-import org.opengis.metadata.quality.RelativeInternalPositionalAccuracy;
-
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Descriptions;
 
@@ -49,15 +41,8 @@ import org.geotoolkit.resources.Descriptions;
  * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @Deprecated
-@ThreadSafe
-@XmlType(name = "AbstractDQ_PositionalAccuracy_Type")
 @XmlRootElement(name = "DQ_PositionalAccuracy")
-@XmlSeeAlso({
-    DefaultAbsoluteExternalPositionalAccuracy.class,
-    DefaultGriddedDataPositionalAccuracy.class,
-    DefaultRelativeInternalPositionalAccuracy.class
-})
-public class AbstractPositionalAccuracy extends AbstractElement implements PositionalAccuracy {
+public class AbstractPositionalAccuracy extends org.apache.sis.metadata.iso.quality.AbstractPositionalAccuracy {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -120,39 +105,5 @@ public class AbstractPositionalAccuracy extends AbstractElement implements Posit
      */
     public AbstractPositionalAccuracy(final Result result) {
         super(result);
-    }
-
-    /**
-     * Returns a Geotk metadata implementation with the same values than the given arbitrary
-     * implementation. If the given object is {@code null}, then this method returns {@code null}.
-     * Otherwise if the given object is already a Geotk implementation, then the given object is
-     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
-     * attribute values of the given object, using a <cite>shallow</cite> copy operation
-     * (i.e. attributes are not cloned).
-     * <p>
-     * This method checks for the {@link GriddedDataPositionalAccuracy},
-     * {@link AbsoluteExternalPositionalAccuracy} and {@link RelativeInternalPositionalAccuracy}
-     * sub-interfaces. If one of those interfaces is found, then this method delegates to the
-     * corresponding {@code castOrCopy} static method. If the given object implements more than one
-     * of the above-cited interfaces, then the {@code castOrCopy} method to be used is unspecified.
-     *
-     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return A Geotk implementation containing the values of the given object (may be the
-     *         given object itself), or {@code null} if the argument was null.
-     *
-     * @since 3.18
-     */
-    public static AbstractPositionalAccuracy castOrCopy(final PositionalAccuracy object) {
-        if (object instanceof AbsoluteExternalPositionalAccuracy) {
-            return DefaultAbsoluteExternalPositionalAccuracy.castOrCopy((AbsoluteExternalPositionalAccuracy) object);
-        }
-        if (object instanceof GriddedDataPositionalAccuracy) {
-            return DefaultGriddedDataPositionalAccuracy.castOrCopy((GriddedDataPositionalAccuracy) object);
-        }
-        if (object instanceof RelativeInternalPositionalAccuracy) {
-            return DefaultRelativeInternalPositionalAccuracy.castOrCopy((RelativeInternalPositionalAccuracy) object);
-        }
-        return (object == null) || (object instanceof AbstractPositionalAccuracy)
-                ? (AbstractPositionalAccuracy) object : new AbstractPositionalAccuracy(object);
     }
 }

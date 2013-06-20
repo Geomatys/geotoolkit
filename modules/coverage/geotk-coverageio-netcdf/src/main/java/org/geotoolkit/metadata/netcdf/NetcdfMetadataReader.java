@@ -62,6 +62,7 @@ import org.opengis.metadata.identification.TopicCategory;
 import org.opengis.metadata.identification.KeywordType;
 import org.opengis.metadata.identification.Keywords;
 import org.opengis.metadata.extent.Extent;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 import org.opengis.util.NameFactory;
 
@@ -69,6 +70,7 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.image.io.WarningProducer;
@@ -93,10 +95,11 @@ import org.apache.sis.metadata.iso.distribution.DefaultDistribution;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicDescription;
 import org.apache.sis.metadata.iso.extent.DefaultVerticalExtent;
-import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
+import org.apache.sis.metadata.iso.extent.DefaultTemporalExtent;
 import org.apache.sis.metadata.iso.quality.DefaultDataQuality;
 import org.apache.sis.metadata.iso.lineage.DefaultLineage;
 import org.geotoolkit.referencing.adapters.NetcdfCRSBuilder;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.resources.Errors;
 
@@ -899,7 +902,16 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             if (extent == null) {
                 extent = new DefaultExtent();
             }
-            extent.getTemporalElements().add(new DefaultTemporalExtent(startTime, endTime));
+            final GeneralEnvelope env = new GeneralEnvelope(DefaultTemporalCRS.JAVA);
+            env.setRange(0, (startTime != null) ? startTime.getTime() : Double.NaN,
+                              (endTime != null) ?   endTime.getTime() : Double.NaN);
+            final DefaultTemporalExtent e = new DefaultTemporalExtent();
+            try {
+                e.setBounds(env);
+            } catch (TransformException ex) {
+                throw new AssertionError(ex); // Should never happen.
+            }
+            extent.getTemporalElements().add(e);
         }
         final String identifier = getStringValue(GEOGRAPHIC_IDENTIFIER);
         if (identifier != null) {

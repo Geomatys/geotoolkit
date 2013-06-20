@@ -17,7 +17,8 @@
  */
 package org.geotoolkit.internal.referencing;
 
-import java.awt.geom.Rectangle2D;
+import java.util.Date;
+import java.util.logging.LogRecord;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -32,21 +33,27 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.geometry.Envelope;
 
+import org.opengis.temporal.TemporalPrimitive;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.TransformPathNotFoundException;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
-import org.geotoolkit.metadata.iso.extent.DefaultVerticalExtent;
-import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
-import org.geotoolkit.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.extent.DefaultVerticalExtent;
+import org.apache.sis.metadata.iso.extent.DefaultTemporalExtent;
+import org.apache.sis.metadata.iso.extent.DefaultSpatialTemporalExtent;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.internal.metadata.ReferencingServices;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.internal.InternalUtilities.isPoleToPole;
+import org.geotoolkit.internal.TemporalUtilities;
+import static org.apache.sis.metadata.iso.ISOMetadata.LOGGER;
 
 
 /**
@@ -60,7 +67,7 @@ import static org.geotoolkit.internal.InternalUtilities.isPoleToPole;
  * @since 2.4
  * @module
  */
-public final class ProxyForMetadataImpl extends ProxyForMetadata implements ChangeListener {
+public final class ProxyForMetadataImpl extends ReferencingServices implements ChangeListener {
     /**
      * The coordinate operation factory to be used for transforming the envelope. We will fetch
      * a lenient factory because {@link GeographicBoundingBox} are usually for approximative
@@ -101,41 +108,6 @@ public final class ProxyForMetadataImpl extends ProxyForMetadata implements Chan
     }
 
     /**
-     * Initializes a geographic bounding box from the specified rectangle having the specified CRS.
-     * If the CRS is not null, then the rectangle will be projected to a geographic CRS. Otherwise,
-     * the rectangle is assumed already in appropriate CRS.
-     *
-     * @param  bounds The source rectangle.
-     * @param  crs The rectangle CRS, or {@code null}.
-     * @param  target The target bounding box.
-     * @throws TransformException If the given rectangle can't be transformed to a geographic CRS.
-     */
-    @Override
-    public void copy(Rectangle2D bounds, CoordinateReferenceSystem crs,
-            final DefaultGeographicBoundingBox target) throws TransformException
-    {
-        if (crs != null) {
-            crs = CRS.getHorizontalCRS(crs);
-            if (crs == null) {
-                throw new TransformPathNotFoundException(Errors.format(
-                        Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));
-            } else {
-                final CoordinateReferenceSystem targetCRS = CRSUtilities.getStandardGeographicCRS2D(crs);
-                if (!CRS.equalsIgnoreMetadata(crs, targetCRS)) {
-                    final CoordinateOperation op;
-                    try {
-                        op = getFactory().createOperation(crs, targetCRS);
-                    } catch (FactoryException e) {
-                        throw new TransformPathNotFoundException(e);
-                    }
-                    bounds = Envelopes.transform(op, bounds, null);
-                }
-            }
-        }
-        target.setBounds(bounds);
-    }
-
-    /**
      * Initializes a geographic bounding box from the specified envelope. If the envelope contains
      * a CRS, then the bounding box will be projected to a geographic CRS. Otherwise, the envelope
      * is assumed already in appropriate CRS.
@@ -145,7 +117,7 @@ public final class ProxyForMetadataImpl extends ProxyForMetadata implements Chan
      * @throws TransformException If the given envelope can't be transformed.
      */
     @Override
-    public void copy(Envelope envelope, final DefaultGeographicBoundingBox target)
+    public void setBounds(Envelope envelope, final DefaultGeographicBoundingBox target)
             throws TransformException
     {
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
@@ -207,14 +179,14 @@ public final class ProxyForMetadataImpl extends ProxyForMetadata implements Chan
      * @throws TransformException If no vertical component can be extracted from the given envelope.
      */
     @Override
-    public void copy(final Envelope envelope, final DefaultVerticalExtent target) throws TransformException {
+    public void setBounds(final Envelope envelope, final DefaultVerticalExtent target) throws TransformException {
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
         final VerticalCRS verticalCRS = CRS.getVerticalCRS(crs);
         if (verticalCRS == null && envelope.getDimension() != 1) {
             throw new TransformPathNotFoundException(Errors.format(
                     Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));
         }
-        copy(envelope, target, crs, verticalCRS);
+        setBounds(envelope, target, crs, verticalCRS);
     }
 
     /**
@@ -226,20 +198,20 @@ public final class ProxyForMetadataImpl extends ProxyForMetadata implements Chan
      * @throws TransformException If no temporal component can be extracted from the given envelope.
      */
     @Override
-    public void copy(final Envelope envelope, final DefaultTemporalExtent target) throws TransformException {
+    public void setBounds(final Envelope envelope, final DefaultTemporalExtent target) throws TransformException {
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
         final TemporalCRS temporalCRS = CRS.getTemporalCRS(crs);
         if (temporalCRS == null) {
             throw new TransformPathNotFoundException(Errors.format(
                     Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));
         }
-        copy(envelope, target, crs, temporalCRS);
+        setBounds(envelope, target, crs, temporalCRS);
     }
 
     /**
      * Implementation of the public {@code copy} methods for the vertical extent.
      */
-    private void copy(final Envelope envelope, final DefaultVerticalExtent target,
+    private void setBounds(final Envelope envelope, final DefaultVerticalExtent target,
             final CoordinateReferenceSystem crs, final VerticalCRS verticalCRS)
             throws TransformException
     {
@@ -253,9 +225,9 @@ public final class ProxyForMetadataImpl extends ProxyForMetadata implements Chan
     }
 
     /**
-     * Implementation of the public {@code copy} methods for the temporal extent.
+     * Implementation of the public {@code setBounds} methods for the temporal extent.
      */
-    private void copy(final Envelope envelope, final DefaultTemporalExtent target,
+    private void setBounds(final Envelope envelope, final DefaultTemporalExtent target,
             final CoordinateReferenceSystem crs, final TemporalCRS temporalCRS)
             throws TransformException
     {
@@ -263,9 +235,32 @@ public final class ProxyForMetadataImpl extends ProxyForMetadata implements Chan
                 crs.getCoordinateSystem(), temporalCRS.getCoordinateSystem());
         if (dim >= 0) {
             final DefaultTemporalCRS converter = DefaultTemporalCRS.castOrCopy(temporalCRS);
-            target.setStartTime(converter.toDate(envelope.getMinimum(dim)));
-            target.setEndTime  (converter.toDate(envelope.getMaximum(dim)));
+            Date tmin = converter.toDate(envelope.getMinimum(dim));
+            Date tmax = converter.toDate(envelope.getMaximum(dim));
+            if (tmax == null) {
+                tmax = tmin;
+            }
+            if (tmax != null) try {
+                final TemporalPrimitive value;
+                if (tmin == null || tmin.equals(tmax)) {
+                    value = TemporalUtilities.createInstant(tmax);
+                } else {
+                    value = TemporalUtilities.createPeriod(tmin, tmax);
+                }
+                target.setExtent(value);
+            } catch (FactoryNotFoundException e) {
+                final LogRecord record = TemporalUtilities.createLog(e);
+                record.setSourceClassName(DefaultTemporalExtent.class.getCanonicalName());
+                record.setSourceMethodName("getExtent");
+                record.setLoggerName(LOGGER.getName());
+                LOGGER.log(record);
+            }
         }
+    }
+
+    @Override
+    public void setBounds(Envelope envelope, DefaultSpatialTemporalExtent target) throws TransformException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**
@@ -277,24 +272,24 @@ public final class ProxyForMetadataImpl extends ProxyForMetadata implements Chan
      * @throws TransformException If a coordinate transformation was required and failed.
      */
     @Override
-    public void copy(final Envelope envelope, final DefaultExtent target) throws TransformException {
+    public void addElements(final Envelope envelope, final DefaultExtent target) throws TransformException {
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
         if (CRS.getHorizontalCRS(crs) != null) {
             final DefaultGeographicBoundingBox extent = new DefaultGeographicBoundingBox();
             extent.setInclusion(Boolean.TRUE);
-            copy(envelope, extent);
+            setBounds(envelope, extent);
             target.getGeographicElements().add(extent);
         }
         final VerticalCRS verticalCRS = CRS.getVerticalCRS(crs);
         if (verticalCRS != null) {
             final DefaultVerticalExtent extent = new DefaultVerticalExtent();
-            copy(envelope, extent, crs, verticalCRS);
+            setBounds(envelope, extent, crs, verticalCRS);
             target.getVerticalElements().add(extent);
         }
         final TemporalCRS temporalCRS = CRS.getTemporalCRS(crs);
         if (temporalCRS != null) {
             final DefaultTemporalExtent extent = new DefaultTemporalExtent();
-            copy(envelope, extent, crs, temporalCRS);
+            setBounds(envelope, extent, crs, temporalCRS);
             target.getTemporalElements().add(extent);
         }
     }

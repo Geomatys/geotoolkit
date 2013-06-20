@@ -17,19 +17,16 @@
  */
 package org.geotoolkit.metadata.iso.citation;
 
+import java.util.Collections;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
 import java.io.InvalidObjectException;
-import net.jcip.annotations.ThreadSafe;
-
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.citation.PresentationForm;
-
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.xml.IdentifierSpace;
-
-import static java.util.Collections.singleton;
+import org.apache.sis.xml.IdentifierSpace;
 
 
 /**
@@ -44,7 +41,6 @@ import static java.util.Collections.singleton;
  * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @Deprecated
-@ThreadSafe
 class CitationConstant extends DefaultCitation {
     /**
      * For cross-version compatibility.
@@ -109,7 +105,7 @@ class CitationConstant extends DefaultCitation {
      */
     final void setAlternateTitle(final String title) {
         assert !title.equals(getTitle().toString(null)) : title;
-        setAlternateTitles(singleton(new SimpleInternationalString(title)));
+        setAlternateTitles(Collections.singleton(new SimpleInternationalString(title)));
     }
 
     /**
@@ -117,7 +113,7 @@ class CitationConstant extends DefaultCitation {
      */
     private void setIdentifier(final String identifier) {
         if (identifier != null) {
-            setIdentifiers(singleton(new DefaultIdentifier(identifier)));
+            setIdentifiers(Collections.singleton(new DefaultIdentifier(identifier)));
         }
     }
 
@@ -125,7 +121,7 @@ class CitationConstant extends DefaultCitation {
      * Sets the presentation form to the given value. Any previous values are overwritten.
      */
     final void setPresentationForm(final PresentationForm form) {
-        setPresentationForms(singleton(form));
+        setPresentationForms(Collections.singleton(form));
     }
 
     /**

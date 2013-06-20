@@ -21,18 +21,17 @@
 package org.geotoolkit.metadata.iso.citation;
 
 import java.net.URI;
-
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.OnLineFunction;
 import org.opengis.metadata.citation.PresentationForm;
-
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.xml.IdentifierSpace;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.xml.IdentifierSpace;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
@@ -583,7 +582,7 @@ public final class Citations extends Static {
      * @category Code space
      * @since 3.19
      */
-    public static final IdentifierSpace<String> ISBN = DefaultCitation.ISBN;
+    public static final IdentifierSpace<String> ISBN = org.apache.sis.metadata.iso.citation.Citations.ISBN;
 
     /**
      * <cite>International Standard Serial Number</cite> (ISSN) defined by
@@ -596,7 +595,7 @@ public final class Citations extends Static {
      * @category Code space
      * @since 3.19
      */
-    public static final IdentifierSpace<String> ISSN = DefaultCitation.ISSN;
+    public static final IdentifierSpace<String> ISSN = org.apache.sis.metadata.iso.citation.Citations.ISSN;
 
     /**
      * Unknown authority, vendor or specification.

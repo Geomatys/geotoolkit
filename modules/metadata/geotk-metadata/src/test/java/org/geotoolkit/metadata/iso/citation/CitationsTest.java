@@ -25,6 +25,7 @@ import java.lang.reflect.Modifier;
 
 import org.apache.sis.test.DependsOn;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.UnmodifiableMetadataException;
 
 import org.junit.*;
