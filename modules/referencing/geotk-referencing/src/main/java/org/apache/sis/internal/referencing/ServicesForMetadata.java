@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.internal.referencing;
+package org.apache.sis.internal.referencing;
 
 import java.util.Date;
 import java.util.logging.LogRecord;
@@ -49,10 +49,11 @@ import org.apache.sis.metadata.iso.extent.DefaultTemporalExtent;
 import org.apache.sis.metadata.iso.extent.DefaultSpatialTemporalExtent;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.internal.metadata.ReferencingServices;
+import org.geotoolkit.internal.TemporalUtilities;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.internal.InternalUtilities.isPoleToPole;
-import org.geotoolkit.internal.TemporalUtilities;
 import static org.apache.sis.metadata.iso.ISOMetadata.LOGGER;
 
 
@@ -67,7 +68,7 @@ import static org.apache.sis.metadata.iso.ISOMetadata.LOGGER;
  * @since 2.4
  * @module
  */
-public final class ProxyForMetadataImpl extends ReferencingServices implements ChangeListener {
+public final class ServicesForMetadata extends ReferencingServices implements ChangeListener {
     /**
      * The coordinate operation factory to be used for transforming the envelope. We will fetch
      * a lenient factory because {@link GeographicBoundingBox} are usually for approximative
@@ -80,7 +81,7 @@ public final class ProxyForMetadataImpl extends ReferencingServices implements C
      * Creates a new instance. This constructor is invoked by reflection only, in the
      * {@link #getInstance()} method.
      */
-    ProxyForMetadataImpl() {
+    ServicesForMetadata() {
         Factories.addChangeListener(this);
     }
 
