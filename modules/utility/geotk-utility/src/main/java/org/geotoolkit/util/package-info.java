@@ -28,7 +28,7 @@
  *         {@link org.geotoolkit.util.MeasurementRange}.</li>
  *
  *     <li>Various implementations of {@link org.opengis.util.InternationalString}:
- *         {@link org.geotoolkit.util.SimpleInternationalString},
+ *         {@link org.apache.sis.util.iso.SimpleInternationalString},
  *         {@link org.geotoolkit.util.DefaultInternationalString},
  *         {@link org.geotoolkit.util.ResourceInternationalString}.</li>
  *   </ul></li>

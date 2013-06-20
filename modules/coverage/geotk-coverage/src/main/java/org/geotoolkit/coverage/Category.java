@@ -31,7 +31,7 @@ import org.geotoolkit.math.XMath;
 import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.util.NumberRange;
 import org.apache.sis.util.Numbers;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.Types;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
@@ -445,7 +445,7 @@ public class Category implements Serializable {
         ensureNonNull("name",  name);
         ensureNonNull("range", range);
         Class<? extends Number> type = range.getElementType();
-        this.name      = SimpleInternationalString.wrap(name);
+        this.name      = Types.toInternationalString(name);
         this.ARGB      = ARGB;
         this.range     = range;
         boolean minInc = range.isMinIncluded();

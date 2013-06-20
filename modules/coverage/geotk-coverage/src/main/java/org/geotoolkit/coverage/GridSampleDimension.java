@@ -41,7 +41,7 @@ import org.opengis.util.InternationalString;
 
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.Types;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.resources.Errors;
@@ -650,7 +650,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
          * sample dimension.
          */
         if (description != null) {
-            this.description = SimpleInternationalString.wrap(description);
+            this.description = Types.toInternationalString(description);
         } else {
             // we need to build one. Let's use the category list in
             // order to build the name of the sample dimension

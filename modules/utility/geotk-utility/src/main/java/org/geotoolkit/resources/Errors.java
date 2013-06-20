@@ -1487,7 +1487,7 @@ public final class Errors extends IndexedResourceBundle {
      * @since 3.05
      */
     public static InternationalString formatInternational(final int key, final Object arg) {
-        return new org.geotoolkit.util.SimpleInternationalString(format(key, arg));
+        return new org.apache.sis.util.iso.SimpleInternationalString(format(key, arg));
     }
 
     /**
@@ -1505,7 +1505,7 @@ public final class Errors extends IndexedResourceBundle {
      * @since 3.05
      */
     public static InternationalString formatInternational(final int key, final Object... args) {
-        return new org.geotoolkit.util.SimpleInternationalString(format(key, args));
+        return new org.apache.sis.util.iso.SimpleInternationalString(format(key, args));
     }
 
     /**

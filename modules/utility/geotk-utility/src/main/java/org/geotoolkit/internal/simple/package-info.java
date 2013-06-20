@@ -27,7 +27,7 @@
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.19
  *
- * @see org.geotoolkit.util.SimpleInternationalString
+ * @see org.apache.sis.util.iso.SimpleInternationalString
  *
  * @since 3.19
  * @module

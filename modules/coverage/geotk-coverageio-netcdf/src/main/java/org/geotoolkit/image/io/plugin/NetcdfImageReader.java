@@ -1288,6 +1288,15 @@ public class NetcdfImageReader extends FileImageReader implements
     }
 
     /**
+     * Invoked by the NetCDF library for reporting progress
+     *
+     * @param message A description of the operation being executed.
+     * @param progress The progress (not necessarily a percentage).
+     */
+    public void setProgress(String message, int progress) {
+    }
+
+    /**
      * Invoked by the NetCDF library when an error occurred during the read operation.
      * Users should not invoke this method directly.
      *

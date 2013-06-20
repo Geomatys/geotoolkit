@@ -1899,7 +1899,7 @@ public final class Vocabulary extends IndexedResourceBundle {
      *       {@code toString(Locale)} is invoked.
      */
     public static InternationalString formatInternational(final int key, final Object arg) {
-        return new org.geotoolkit.util.SimpleInternationalString(format(key, arg));
+        return new org.apache.sis.util.iso.SimpleInternationalString(format(key, arg));
     }
 
     /**
@@ -1915,7 +1915,7 @@ public final class Vocabulary extends IndexedResourceBundle {
      *       {@code toString(Locale)} is invoked.
      */
     public static InternationalString formatInternational(final int key, final Object... args) {
-        return new org.geotoolkit.util.SimpleInternationalString(format(key, args));
+        return new org.apache.sis.util.iso.SimpleInternationalString(format(key, args));
     }
 
     /**
