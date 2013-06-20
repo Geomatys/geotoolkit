@@ -21,16 +21,14 @@ import java.util.Arrays;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.xml.bind.JAXBException;
-
 import org.geotoolkit.xml.XML;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
-
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+
+import static org.apache.sis.test.Assert.*;
 import static org.apache.sis.test.TestUtilities.getSingleton;
 
 
@@ -65,7 +63,7 @@ public final strictfp class XMLBindingsTest {
 
         String expected = TestData.readText(this, RESOURCE_FILE);
         String actual = XML.marshal(metadata);
-        assertDomEquals(expected, actual, "xmlns:*", "xsi:schemaLocation");
+        assertXmlEquals(expected, actual, "xmlns:*", "xsi:schemaLocation");
     }
 
     /**

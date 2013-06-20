@@ -38,20 +38,20 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.xml.Namespaces;
+import org.apache.sis.util.Locales;
 import org.apache.sis.util.Deprecable;
 import org.apache.sis.util.iso.DefaultInternationalString;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.internal.jaxb.metadata.CI_Citation;
-import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
-import org.geotoolkit.internal.jaxb.gco.StringAdapter;
+import org.apache.sis.internal.jaxb.metadata.CI_Citation;
+import org.apache.sis.internal.jaxb.metadata.ReferenceSystemMetadata;
+import org.apache.sis.internal.jaxb.gco.StringAdapter;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.IdentifiedObject.REMARKS_KEY;
-import org.apache.sis.util.Locales;
 
 
 /**

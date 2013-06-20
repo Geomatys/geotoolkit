@@ -24,6 +24,8 @@ import org.opengis.referencing.ReferenceSystem;
 import org.geotoolkit.internal.jaxb.RegisterableAdapter;
 import org.geotoolkit.metadata.fra.FRA_DirectReferenceSystem;
 import org.geotoolkit.metadata.fra.FRA_IndirectReferenceSystem;
+import org.apache.sis.internal.jaxb.metadata.RS_ReferenceSystem;
+import org.apache.sis.internal.jaxb.metadata.ReferenceSystemMetadata;
 
 
 /**

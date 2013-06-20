@@ -40,7 +40,7 @@ import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.datum.VerticalDatumType;
 
-import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
+import org.apache.sis.internal.jaxb.metadata.ReferenceSystemMetadata;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -65,8 +65,8 @@ import org.geotoolkit.test.TestData;
 
 import org.junit.*;
 
-import static org.geotoolkit.test.Commons.getSingleton;
 import static org.geotoolkit.referencing.Assert.*;
+import static org.apache.sis.test.TestUtilities.getSingleton;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.ReferenceSystem.SCOPE_KEY;
 
@@ -117,7 +117,7 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
         pool.release(marshaller);
         final String result = sw.toString();
         final String expected = TestData.readText(this, GEOGRAPHIC_CRS_XML);
-        assertDomEquals(expected, result, "xmlns:*", "xsi:schemaLocation");
+        assertXmlEquals(expected, result, "xmlns:*", "xsi:schemaLocation");
     }
 
     /**
@@ -165,7 +165,7 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
         marshaller.marshal(metadata, sw);
         final String result = sw.toString();
         final String expected = TestData.readText(this, VERTICAL_CRS_XML);
-        assertDomEquals(expected, result, "xmlns:*", "xsi:schemaLocation");
+        assertXmlEquals(expected, result, "xmlns:*", "xsi:schemaLocation");
         /*
          * Tests again with an older GML version, which include the datum type element.
          * Checks that this element is present in GML 3.1 and absent in latest GML.
