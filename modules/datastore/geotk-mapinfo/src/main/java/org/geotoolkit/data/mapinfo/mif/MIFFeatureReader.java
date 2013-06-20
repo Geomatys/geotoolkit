@@ -298,7 +298,7 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
                 mifStream = MIFUtils.openInConnection(master.getMIFPath());
             }
             if(mifScanner == null) {
-                mifScanner = new Scanner(mifStream);
+                mifScanner = new Scanner(mifStream, MIFUtils.DEFAULT_CHARSET);
                 repositionMIFReader();
             }
         }
@@ -308,7 +308,7 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
                 midStream = MIFUtils.openInConnection(master.getMIDPath());
             }
             if(midScanner == null) {
-                midScanner = new Scanner(midStream);
+                midScanner = new Scanner(midStream, MIFUtils.DEFAULT_CHARSET);
 
                 // Reposition the scanner.
                 int midPosition = 0;

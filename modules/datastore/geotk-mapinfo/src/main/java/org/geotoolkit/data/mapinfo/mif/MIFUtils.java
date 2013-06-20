@@ -31,6 +31,8 @@ import java.util.Scanner;
  */
 public final class MIFUtils {
 
+    public static final String DEFAULT_CHARSET = "ISO-8859-1";
+
     private static final int MAX_CHAR_LENGTH = 255;
 
     private static final DecimalFormat NUM_FORMAT = new DecimalFormat();
@@ -38,6 +40,8 @@ public final class MIFUtils {
     static {
         NUM_FORMAT.setGroupingUsed(false);
         NUM_FORMAT.setDecimalSeparatorAlwaysShown(false);
+        NUM_FORMAT.setMaximumFractionDigits(10);
+        NUM_FORMAT.setMaximumIntegerDigits(10);
     }
 
     /**

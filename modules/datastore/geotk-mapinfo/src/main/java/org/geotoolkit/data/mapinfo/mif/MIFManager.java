@@ -44,7 +44,7 @@ public class MIFManager {
     /**
      * A pattern frequently used to find MIF categories (for words without digit).
      */
-    public static final Pattern ALPHA_PATTERN = Pattern.compile("[a-zA-Z_]\\w*");
+    public static final Pattern ALPHA_PATTERN = Pattern.compile("[\\p{L}_][\\p{javaLetterOrDigit}_]*");
 
     /** To manage accesses to file. */
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
@@ -407,7 +407,7 @@ public class MIFManager {
 
             RWLock.readLock().lock();
             mifStream = MIFUtils.openInConnection(mifPath);
-            mifScanner = new Scanner(mifStream);
+            mifScanner = new Scanner(mifStream, MIFUtils.DEFAULT_CHARSET);
 
             // A trigger to tell us if all mandatory categories have been parsed.
             boolean columnsParsed = false;
@@ -526,7 +526,7 @@ public class MIFManager {
             try {
                 mifScanner.close();
                 RWLock.readLock().lock();
-                mifScanner = new Scanner(MIFUtils.openInConnection(mifPath));
+                mifScanner = new Scanner(MIFUtils.openInConnection(mifPath), MIFUtils.DEFAULT_CHARSET);
                 buildDataTypes();
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Reading types from MIF file failed.", e);
