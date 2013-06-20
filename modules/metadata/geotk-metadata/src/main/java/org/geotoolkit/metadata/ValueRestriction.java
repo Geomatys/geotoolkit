@@ -56,7 +56,10 @@ import org.geotoolkit.resources.Errors;
  *
  * @since 3.04
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.metadata.MetadataStandard#asInformationMap}.
  */
+@Deprecated
 @Immutable
 public class ValueRestriction implements Serializable {
     /**

@@ -79,7 +79,10 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata} package.
  */
+@Deprecated
 @ThreadSafe
 public final class MetadataStandard {
     /**

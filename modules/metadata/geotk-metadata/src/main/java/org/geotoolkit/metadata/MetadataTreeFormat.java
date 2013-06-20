@@ -114,7 +114,10 @@ import static org.geotoolkit.metadata.AbstractMetadata.LOGGER;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.util.collection.TreeTableFormat}.
  */
+@Deprecated
 public class MetadataTreeFormat extends Format {
     /**
      * For cross-version compatibility.
