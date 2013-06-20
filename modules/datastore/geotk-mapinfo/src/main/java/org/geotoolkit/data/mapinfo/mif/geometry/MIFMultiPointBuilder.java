@@ -73,7 +73,7 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
                 seq = new PackedCoordinateSequence.Double(coords, 2);
             }
 
-            toFill.getProperty(NAME).setValue(GEOMETRY_FACTORY.createMultiPoint(seq));
+            toFill.getDefaultGeometryProperty().setValue(GEOMETRY_FACTORY.createMultiPoint(seq));
 
             if(scanner.hasNext(Symbol.SYMBOL_PATTERN) && toFill.getType().getDescriptors().contains(SYMBOL_DESCRIPTOR)) {
                 String args = scanner.next()+scanner.nextLine();

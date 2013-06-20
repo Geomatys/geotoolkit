@@ -82,7 +82,7 @@ public class MIFRegionBuilder extends MIFGeometryBuilder {
             polygons[polygonCount] = GEOMETRY_FACTORY.createPolygon(ring, null);
         }
 
-        toFill.getProperty(NAME).setValue(GEOMETRY_FACTORY.createMultiPolygon(polygons));
+        toFill.getDefaultGeometryProperty().setValue(GEOMETRY_FACTORY.createMultiPolygon(polygons));
 
 
         if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getDescriptors().contains(PEN)) {

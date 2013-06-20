@@ -75,7 +75,7 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
     private Scanner midScanner = null;
 
     /**
-     * Counters : feature counter (Mid and mif lines are not equal for the same feature.
+     * Counters : feature counter (Mid and mif lines are not equal for the same feature).
      */
     int mifCounter = 0;
     int midCounter = 0;
@@ -87,8 +87,12 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
     boolean readMid = false;
     boolean readMif = false;
 
-    MIFManager master;
-    FeatureType readType;
+    final MIFManager master;
+    final FeatureType readType;
+
+    final MIFUtils.GeometryType geometryType;
+    final String geometryId;
+    final Pattern geometryPattern;
 
     public MIFFeatureReader(MIFManager parent, Name typeName) throws DataStoreException {
         ArgumentChecks.ensureNonNull("Parent reader", parent);
@@ -100,6 +104,13 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
 
         if(readType.getGeometryDescriptor() != null) {
             readMif = true;
+            geometryType = MIFUtils.identifyFeature(readType);
+            geometryId = geometryType.name();
+            geometryPattern = Pattern.compile(geometryId, Pattern.CASE_INSENSITIVE);
+        } else {
+            geometryType = null;
+            geometryId = null;
+            geometryPattern = null;
         }
     }
 
@@ -128,12 +139,11 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
 
             // We check the MIF file first, because it will define the feature count to reach the next good typed data.
             if(readMif) {
-                final String geomId = readType.getGeometryDescriptor().getLocalName();
                 String currentPattern;
                 while(mifScanner.hasNextLine()) {
                     currentPattern = mifScanner.findInLine(GEOMETRY_ID_PATTERN);
-                    if(geomId.equalsIgnoreCase(currentPattern)) {
-                        parseGeometry(geomId, resFeature, master.getTransform());
+                    if(geometryId.equalsIgnoreCase(currentPattern)) {
+                        geometryType.readGeometry(mifScanner, resFeature, master.getTransform());
                         break;
                         // We must check if we're on a Geometry naming line to increment the counter of past geometries.
                     } else if(currentPattern != null) {
@@ -187,19 +197,6 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
         return resFeature;
     }
 
-    /**
-     * Parse the geometry pointed by this reader scanner.
-     * @param geomId The ID (REGION, POLYLINE, etc) of the geometry to parse.
-     * @param toFill The feature to put built geometry into. Can't be null.
-     * @param transform A math transform to apply to read geometry.
-     * @throws DataStoreException If a problem occurs while parsing geometry.
-     */
-    private void parseGeometry(String geomId, Feature toFill, MathTransform transform) throws DataStoreException {
-        final String upperId = geomId.toUpperCase();
-        MIFUtils.GeometryType builder = MIFUtils.getGeometryType(geomId);
-        builder.readGeometry(mifScanner, toFill, transform);
-
-    }
 
     /**
      * {@inheritDoc}
@@ -219,10 +216,8 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
 
             if (readMif) {
                 // Check the MapInfo geometry typename to see if there's some next in the file.
-                String geomName = readType.getGeometryDescriptor().getLocalName();
-                Pattern geomPattern = Pattern.compile(geomName, Pattern.CASE_INSENSITIVE);
                 while(mifScanner.hasNext()) {
-                    if (mifScanner.hasNext(geomPattern)) {
+                    if (mifScanner.hasNext(geometryPattern)) {
                         mifNext = true;
                         break;
                     } else {

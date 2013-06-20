@@ -127,7 +127,7 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
             }
             final Envelope env = new Envelope(seq.getCoordinate(0), seq.getCoordinate(1));
 
-            toFill.getProperty(NAME).setValue(env);
+            toFill.getDefaultGeometryProperty().setValue(env);
         } catch (Exception e) {
             throw new DataStoreException("Unable to build envelope from given data", e);
         }

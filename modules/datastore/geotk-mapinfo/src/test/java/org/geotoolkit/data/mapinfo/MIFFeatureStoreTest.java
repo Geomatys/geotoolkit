@@ -81,7 +81,6 @@ public class MIFFeatureStoreTest {
      * 
      * @throws Exception 
      */
-    @Ignore
     @Test
     public void testCreate() throws Exception{
 
@@ -167,7 +166,7 @@ public class MIFFeatureStoreTest {
             reader.close();
         }
 
-        assertEquals(3, number);
+        assertEquals(2, number);
 
     }
 

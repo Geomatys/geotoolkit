@@ -90,7 +90,7 @@ public final class MIFPointBuilder extends MIFGeometryBuilder {
         }
         final Point pt = GEOMETRY_FACTORY.createPoint(result);
 
-        toFill.getProperty(NAME).setValue(pt);
+        toFill.getDefaultGeometryProperty().setValue(pt);
 
         // Style
         if(scanner.hasNext(Symbol.SYMBOL_PATTERN) && toFill.getType().getDescriptors().contains(SYMBOL_DESCRIPTOR)) {

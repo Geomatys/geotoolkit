@@ -87,7 +87,7 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
                 seq = new PackedCoordinateSequence.Double(linePts, 2);
             }
             final Envelope line = new Envelope(seq.getCoordinate(0), seq.getCoordinate(1));
-            toFill.getProperty(NAME).setValue(line);
+            toFill.getDefaultGeometryProperty().setValue(line);
 
             // Get arc angles
             Double beginAngle = Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN));

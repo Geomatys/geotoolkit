@@ -112,7 +112,7 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
                 lineTab[lineCount] = GEOMETRY_FACTORY.createLineString(seq);
             }
 
-            toFill.getProperty(NAME).setValue(GEOMETRY_FACTORY.createMultiLineString(lineTab));
+            toFill.getDefaultGeometryProperty().setValue(GEOMETRY_FACTORY.createMultiLineString(lineTab));
 
         } catch (InputMismatchException ex) {
             throw new DataStoreException("Line is not properly defined : not enough points found.", ex);

@@ -68,7 +68,7 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
         final CoordinateSequence seq = new PackedCoordinateSequence.Double(linePts, 2);
         final LineString line = GEOMETRY_FACTORY.createLineString(seq);
 
-        toFill.getProperty(NAME).setValue(line);
+        toFill.getDefaultGeometryProperty().setValue(line);
 
         if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getDescriptors().contains(PEN)) {
             String args = scanner.next()+scanner.nextLine();
