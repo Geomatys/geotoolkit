@@ -50,6 +50,7 @@ import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import static org.geotoolkit.internal.coverage.CoverageUtilities.hasRenderingCategories;
+import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
@@ -86,7 +87,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  */
 public class ResampleProcess extends AbstractProcess {
-    
+        
     private static final Logger LOGGER = Logging.getLogger(ResampleProcess.class);
     
     /**
@@ -307,7 +308,8 @@ public class ResampleProcess extends AbstractProcess {
          *                   ^              ^
          *                 step 1         step 3
          */
-        final MathTransform step1, step2, step3, allSteps, allSteps2D;
+        MathTransform allSteps, allSteps2D;
+        final MathTransform step1, step2, step3 ;
         if (CRS.equalsIgnoreMetadata(sourceCRS, targetCRS)) {
             /*
              * Note: targetGG should not be null, otherwise 'existingCoverage(...)' should
@@ -422,8 +424,15 @@ public class ResampleProcess extends AbstractProcess {
         ////                                                                                ////
         ////////////////////////////////////////////////////////////////////////////////////////
         
+        if(allSteps2D.isIdentity()){
+            //we can directly copy raster to raster
+            targetRaster.setDataElements(0, 0, sourceImage.getData());
+            return create(sourceCoverage, targetImage, targetGG, finalView, hints);
+        }
+        
         //try to optimize resample using java wrap operation
         if(canUseJavaInterpolation(sourceImage, allSteps2D, interpolationType)){
+            allSteps2D = PixelTranslation.translate(allSteps2D, PixelOrientation.CENTER,PixelOrientation.UPPER_LEFT,0,1);
             return resampleUsingJava(sourceCoverage, sourceImage, interpolationType, 
                                allSteps2D, targetImage, targetGG, finalView, hints);
         }
@@ -438,12 +447,15 @@ public class ResampleProcess extends AbstractProcess {
                 if(tr.globalTransform!=null){
                     //we can completly replace it by an affine transform
                     targetToSource = new AffineTransform2D(tr.globalTransform);
-                    final MathTransform inv = targetToSource.inverse();
-                    //try to optimize resample using java wrap operation
-                    if(canUseJavaInterpolation(sourceImage, inv, interpolationType)){
-                        return resampleUsingJava(sourceCoverage, sourceImage, interpolationType, 
-                                           inv, targetImage, targetGG, finalView, hints);
-                    }
+                    targetToSource = PixelTranslation.translate(targetToSource, PixelOrientation.UPPER_LEFT,PixelOrientation.UPPER_LEFT,0,1);
+                    
+                    // we should be able to use Java affine op here, but this produces plenty of artifact
+                    // since the transform is approximative, artifact = white pixels on tile borders
+                    //if(canUseJavaInterpolation(sourceImage, targetToSource, interpolationType)){
+                    //    MathTransform inv = targetToSource.inverse();
+                    //    return resampleUsingJava(sourceCoverage, sourceImage, interpolationType, 
+                    //                       inv, targetImage, targetGG, finalView, hints);
+                    //}
                 }else{
                     targetToSource = new GridMathTransform(tr);
                 }

@@ -39,6 +39,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
+import org.apache.sis.geometry.GeneralEnvelope;
 
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -54,7 +55,6 @@ import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -381,11 +381,14 @@ public class PortrayalServiceTest {
         final GeneralEnvelope covenv = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
         covenv.setRange(0, -180, 180);
         covenv.setRange(1, -90, 90);
-        final BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+        final BufferedImage img = new BufferedImage(360, 180, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = img.createGraphics();
         g.setColor(Color.RED);
         g.fill(new Rectangle(0, 0, 360, 180));
-        final GridCoverage2D coverage = GCF.create("test1", img, covenv);
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setEnvelope(covenv);
+        gcb.setRenderedImage(img);
+        final GridCoverage2D coverage = gcb.getGridCoverage2D();
         final MapLayer layer = MapBuilder.createCoverageLayer(coverage, SF.style(SF.rasterSymbolizer()), "");
         final MapContext context = MapBuilder.createContext();
         context.layers().add(layer);
@@ -411,7 +414,7 @@ public class PortrayalServiceTest {
         raster.getPixel(359, 359, pixel);   assertArrayEquals(white, pixel);
         raster.getPixel(0, 359, pixel);     assertArrayEquals(white, pixel);
         raster.getPixel(180, 0, pixel);     assertArrayEquals(red, pixel);
-        raster.getPixel(180, 358, pixel);   assertArrayEquals(red, pixel);
+        raster.getPixel(180, 359, pixel);   assertArrayEquals(red, pixel);
         raster.getPixel(0, 180, pixel);     assertArrayEquals(white, pixel);
         raster.getPixel(359, 180, pixel);   assertArrayEquals(white, pixel);
 
