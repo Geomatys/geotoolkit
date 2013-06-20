@@ -40,7 +40,7 @@ import org.opengis.util.NameFactory;
 
 import org.geotoolkit.test.TestBase;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.DefaultMetadata;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
 
 /**
  * Tests XML marshalling of custom implementation of metadata interfaces. The custom implementations
- * need to be converted to implementations from the {@link org.geotoolkit.metadata.iso} package by
+ * need to be converted to implementations from the {@link org.apache.sis.metadata.iso} package by
  * the JAXB converters.
  *
  * @author Damiano Albani (for code snippet on the mailing list)

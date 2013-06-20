@@ -28,8 +28,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.metadata.iso.extent.DefaultExtent;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 
 import ucar.unidata.geoloc.LatLonRect;
 import ucar.unidata.geoloc.Projection;

@@ -18,7 +18,7 @@
 package org.geotoolkit.internal.jaxb.metadata.direct;
 
 import org.opengis.metadata.identification.Keywords;
-import org.geotoolkit.metadata.iso.identification.DefaultKeywords;
+import org.apache.sis.metadata.iso.identification.DefaultKeywords;
 
 
 /**

@@ -64,10 +64,10 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.citation.DefaultContact;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
-import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
+import org.apache.sis.metadata.iso.citation.DefaultContact;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
+import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static javax.media.jai.registry.RenderedRegistryMode.MODE_NAME;

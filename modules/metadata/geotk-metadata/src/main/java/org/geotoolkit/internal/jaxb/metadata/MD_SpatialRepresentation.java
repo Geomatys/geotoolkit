@@ -26,7 +26,7 @@ import org.opengis.metadata.spatial.SpatialRepresentation;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 import org.geotoolkit.internal.jaxb.gmi.MI_Georectified;
 import org.geotoolkit.internal.jaxb.gmi.MI_Georeferenceable;
-import org.geotoolkit.metadata.iso.spatial.AbstractSpatialRepresentation;
+import org.apache.sis.metadata.iso.spatial.AbstractSpatialRepresentation;
 
 
 /**

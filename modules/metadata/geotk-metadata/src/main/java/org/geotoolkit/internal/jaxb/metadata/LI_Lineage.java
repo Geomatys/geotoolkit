@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.lineage.Lineage;
-import org.geotoolkit.metadata.iso.lineage.DefaultLineage;
+import org.apache.sis.metadata.iso.lineage.DefaultLineage;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 

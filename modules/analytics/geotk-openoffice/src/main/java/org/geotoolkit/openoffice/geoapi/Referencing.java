@@ -53,11 +53,11 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.openoffice.MethodInfo;
 import org.geotoolkit.openoffice.Formulas;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.metadata.iso.extent.Extents;
 
 
 /**
@@ -343,7 +343,7 @@ public final class Referencing extends Formulas implements XReferencing {
             if (description != null) {
                 return description.toString(getJavaLocale());
             }
-            final GeographicBoundingBox box = DefaultExtent.getGeographicBoundingBox(validArea);
+            final GeographicBoundingBox box = Extents.getGeographicBoundingBox(validArea);
             if (box != null) {
                 return box.toString();
             }
@@ -365,7 +365,7 @@ public final class Referencing extends Formulas implements XReferencing {
             reportException("getBoundingBox", exception, THROW_EXCEPTION);
             return getFailure(4,4);
         }
-        final GeographicBoundingBox box = DefaultExtent.getGeographicBoundingBox(validArea);
+        final GeographicBoundingBox box = Extents.getGeographicBoundingBox(validArea);
         if (box == null) {
             return getFailure(4,4);
         }

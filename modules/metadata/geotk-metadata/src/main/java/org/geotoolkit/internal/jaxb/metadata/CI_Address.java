@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.citation.Address;
-import org.geotoolkit.metadata.iso.citation.DefaultAddress;
+import org.apache.sis.metadata.iso.citation.DefaultAddress;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 

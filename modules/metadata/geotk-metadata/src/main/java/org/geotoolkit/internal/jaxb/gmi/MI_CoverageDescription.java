@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.gmi;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.content.CoverageDescription;
-import org.geotoolkit.metadata.iso.content.DefaultCoverageDescription;
+import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 

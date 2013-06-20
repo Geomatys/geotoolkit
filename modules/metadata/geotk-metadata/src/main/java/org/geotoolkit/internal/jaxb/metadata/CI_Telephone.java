@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.citation.Telephone;
-import org.geotoolkit.metadata.iso.citation.DefaultTelephone;
+import org.apache.sis.metadata.iso.citation.DefaultTelephone;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 

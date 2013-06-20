@@ -42,7 +42,7 @@
  * <p>
  * In ISO 19139 terminology:
  * <ul>
- *   <li>the public classes defined in the {@code org.geotoolkit.metadata.iso} packages are defined
+ *   <li>the public classes defined in the {@code org.apache.sis.metadata.iso} packages are defined
  *       as {@code Foo_Type} in ISO 19139, where <var>Foo</var> is the ISO name of a class.</li>
  *   <li>the internal classes defined in this package are defined as {@code Foo_PropertyType} in
  *       ISO 19139 schemas.</li>

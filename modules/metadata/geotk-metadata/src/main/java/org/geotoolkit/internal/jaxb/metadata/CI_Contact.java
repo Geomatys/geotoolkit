@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.citation.Contact;
-import org.geotoolkit.metadata.iso.citation.DefaultContact;
+import org.apache.sis.metadata.iso.citation.DefaultContact;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 

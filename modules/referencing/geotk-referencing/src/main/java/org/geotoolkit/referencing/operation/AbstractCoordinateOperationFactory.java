@@ -94,7 +94,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     /**
      * The identifier for a transformation which is a datum shift.
      *
-     * @see org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_APPLIED
+     * @see org.apache.sis.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_APPLIED
      */
     protected static final ReferenceIdentifier DATUM_SHIFT =
             new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.DATUM_SHIFT));
@@ -106,7 +106,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      * 1 kilometre error. This transformation is allowed only if the factory was created with
      * {@link Hints#LENIENT_DATUM_SHIFT} set to {@link Boolean#TRUE}.
      *
-     * @see org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_OMITTED
+     * @see org.apache.sis.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_OMITTED
      */
     protected static final ReferenceIdentifier ELLIPSOID_SHIFT =
             new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.ELLIPSOID_SHIFT));

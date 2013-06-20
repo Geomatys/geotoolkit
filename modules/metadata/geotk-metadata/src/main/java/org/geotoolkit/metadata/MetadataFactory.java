@@ -48,7 +48,7 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  *   <li><p>If no suitable factory is found, then {@code MetadataFactory} will try to instantiate
  *       a metadata implementation directly using {@link Class#newInstance()}. The class can be an
  *       interface like {@link org.opengis.metadata.citation.Citation} or its implementation class
- *       like {@link org.geotoolkit.metadata.iso.citation.DefaultCitation}.
+ *       like {@link org.apache.sis.metadata.iso.citation.DefaultCitation}.
  *       The keys in the map shall be the {@linkplain KeyNamePolicy#UML_IDENTIFIER UML identifiers}
  *       or the {@linkplain KeyNamePolicy#JAVABEANS_PROPERTY Java Beans name} of metadata properties,
  *       for example {@code "title"} for the value to be returned by

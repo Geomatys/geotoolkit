@@ -160,7 +160,7 @@ public abstract class AbstractMetadata implements LenientComparable {
      *
      * @return {@code true} if this metadata is empty.
      *
-     * @see org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox#isEmpty()
+     * @see org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox#isEmpty()
      *
      * @since 3.20
      */
@@ -319,13 +319,13 @@ public abstract class AbstractMetadata implements LenientComparable {
 
     /**
      * Returns the class of the given metadata, ignoring Geotk private classes like
-     * {@link org.geotoolkit.metadata.iso.citation.CitationConstant}.
+     * {@link org.apache.sis.metadata.iso.citation.CitationConstant}.
      *
      * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-48">GEOTK-48</a>
      */
     private static Class<?> getClass(final Object metadata) {
         Class<?> type = metadata.getClass();
-        while (!Modifier.isPublic(type.getModifiers()) && type.getName().startsWith("org.geotoolkit.metadata.iso.")) {
+        while (!Modifier.isPublic(type.getModifiers()) && type.getName().startsWith("org.apache.sis.metadata.iso.")) {
             type = type.getSuperclass();
         }
         return type;

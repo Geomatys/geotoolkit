@@ -42,7 +42,7 @@ import org.geotoolkit.util.NumberRange;
 import org.apache.sis.util.Numbers;
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.referencing.operation.provider.*;
 import org.geotoolkit.referencing.CRS;
 

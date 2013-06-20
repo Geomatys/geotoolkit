@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 
 import org.opengis.metadata.constraint.Constraints;
 
-import org.geotoolkit.metadata.iso.constraint.DefaultConstraints;
+import org.apache.sis.metadata.iso.constraint.DefaultConstraints;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 

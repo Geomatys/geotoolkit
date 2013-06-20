@@ -23,7 +23,7 @@ import javax.xml.bind.JAXBException;
 import org.geotoolkit.xml.XML;
 import org.geotoolkit.xml.IdentifierMap;
 import org.geotoolkit.xml.IdentifierSpace;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.util.CharSequences;
 
 import org.junit.*;

@@ -74,13 +74,13 @@ public final class XML extends Static {
      *
      * {@section Special case}
      * If the object to be marshalled is an instance of
-     * {@link org.geotoolkit.metadata.iso.DefaultMetadata}, then the value given to its
-     * {@link org.geotoolkit.metadata.iso.DefaultMetadata#setLanguage setLanguage(Locale)}
+     * {@link org.apache.sis.metadata.iso.DefaultMetadata}, then the value given to its
+     * {@link org.apache.sis.metadata.iso.DefaultMetadata#setLanguage setLanguage(Locale)}
      * method will have precedence over this property. This behavior is compliant with
      * INSPIRE rules.
      *
      * @see Marshaller#setProperty(String, Object)
-     * @see org.geotoolkit.metadata.iso.DefaultMetadata#setLanguage(Locale)
+     * @see org.apache.sis.metadata.iso.DefaultMetadata#setLanguage(Locale)
      *
      * @since 3.17
      */

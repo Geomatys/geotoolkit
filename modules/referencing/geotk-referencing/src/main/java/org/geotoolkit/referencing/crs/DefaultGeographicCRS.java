@@ -40,7 +40,7 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.measure.Measure;
-import org.geotoolkit.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.cs.AxisRangeType;

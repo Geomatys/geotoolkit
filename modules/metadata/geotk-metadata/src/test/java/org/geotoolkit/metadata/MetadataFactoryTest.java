@@ -24,7 +24,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.PresentationForm;
 
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
 
 import org.junit.*;
 import static org.junit.Assert.*;

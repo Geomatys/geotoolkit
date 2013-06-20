@@ -23,7 +23,7 @@ import org.geotoolkit.internal.jaxb.UUIDs;
 
 /**
  * The {@code gco:ObjectIdentification} XML attribute group is included by all metadata types
- * defined in the {@link org.geotoolkit.metadata.iso} packages. The attributes of interest
+ * defined in the {@link org.apache.sis.metadata.iso} packages. The attributes of interest
  * defined in this group are {@code id} and {@code uuid}.
  * <p>
  * This {@code gco:ObjectIdentification} group is complementary to {@code gco:ObjectReference},

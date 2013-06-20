@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.gmi;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.spatial.Georeferenceable;
-import org.geotoolkit.metadata.iso.spatial.DefaultGeoreferenceable;
+import org.apache.sis.metadata.iso.spatial.DefaultGeoreferenceable;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 

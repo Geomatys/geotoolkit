@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.gmi;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.lineage.ProcessStep;
-import org.geotoolkit.metadata.iso.lineage.DefaultProcessStep;
+import org.apache.sis.metadata.iso.lineage.DefaultProcessStep;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 

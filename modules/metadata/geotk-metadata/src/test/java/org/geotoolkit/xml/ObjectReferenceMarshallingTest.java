@@ -28,11 +28,12 @@ import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.test.TestBase;
 import org.apache.sis.xml.XLink;
+import org.apache.sis.xml.IdentifierSpace;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.LenientComparable;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.metadata.iso.citation.DefaultSeries;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultSeries;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.internal.jaxb.gco.ObjectIdentification;
 
 import org.junit.*;

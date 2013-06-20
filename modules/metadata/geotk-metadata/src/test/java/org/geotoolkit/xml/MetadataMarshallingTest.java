@@ -32,22 +32,25 @@ import org.opengis.metadata.quality.EvaluationMethodType;
 import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.metadata.spatial.CellGeometry;
 
-import org.geotoolkit.metadata.iso.*;
-import org.geotoolkit.metadata.iso.spatial.*;
-import org.geotoolkit.metadata.iso.quality.*;
-import org.geotoolkit.metadata.iso.lineage.*;
-import org.geotoolkit.metadata.iso.citation.*;
-import org.geotoolkit.metadata.iso.distribution.*;
-import org.geotoolkit.metadata.iso.identification.*;
+import org.apache.sis.metadata.iso.*;
+import org.apache.sis.metadata.iso.spatial.*;
+import org.apache.sis.metadata.iso.quality.*;
+import org.apache.sis.metadata.iso.lineage.*;
+import org.apache.sis.metadata.iso.citation.*;
+import org.apache.sis.metadata.iso.distribution.*;
+import org.apache.sis.metadata.iso.identification.*;
 import org.apache.sis.util.iso.DefaultInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.metadata.iso.citation.Citations;
 
 import org.junit.*;
 
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.LocaleDependantTestBase;
+
 import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.TestUtilities.getSingleton;
 
 
 /**
@@ -112,7 +115,8 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
         metadata.setCharacterSet(CharacterSet.UTF_8);
         metadata.setDateStamp(new Date(1260961229580L));
         metadata.setContacts(Arrays.asList(
-            DefaultResponsibleParty.GEOTOOLKIT, DefaultResponsibleParty.OPEN_GIS
+            getSingleton(Citations.GEOTOOLKIT.getCitedResponsibleParties()),
+            getSingleton(Citations.OPEN_GIS.getCitedResponsibleParties())
         ));
         metadata.setMetadataStandardVersion("ISO-19115");
         /*
@@ -134,7 +138,7 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
          */
         final DefaultCitation citation = new DefaultCitation();
         citation.setTitle(new SimpleInternationalString("Geotoolkit.org"));
-        citation.setCitedResponsibleParties(Arrays.asList(DefaultResponsibleParty.GEOTOOLKIT));
+        citation.setCitedResponsibleParties(Arrays.asList(getSingleton(Citations.GEOTOOLKIT.getCitedResponsibleParties())));
         citation.setDates(Arrays.asList(new DefaultCitationDate(new Date(1178748000000L), DateType.CREATION)));
         final DefaultDataIdentification identification = new DefaultDataIdentification();
         identification.setCitation(citation);
@@ -181,7 +185,7 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
          */
         final DefaultDistribution distribution = new DefaultDistribution();
         distribution.setDistributors(Arrays.asList(
-            new DefaultDistributor(DefaultResponsibleParty.GEOTOOLKIT)
+            new DefaultDistributor(getSingleton(Citations.GEOTOOLKIT.getCitedResponsibleParties()))
         ));
         metadata.setDistributionInfo(distribution);
         /*

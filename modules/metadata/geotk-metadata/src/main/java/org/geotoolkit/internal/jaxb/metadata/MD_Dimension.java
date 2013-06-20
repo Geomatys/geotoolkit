@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.spatial.Dimension;
-import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
+import org.apache.sis.metadata.iso.spatial.DefaultDimension;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 

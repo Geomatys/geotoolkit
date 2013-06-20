@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.maintenance.ScopeDescription;
-import org.geotoolkit.metadata.iso.maintenance.DefaultScopeDescription;
+import org.apache.sis.metadata.iso.maintenance.DefaultScopeDescription;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 

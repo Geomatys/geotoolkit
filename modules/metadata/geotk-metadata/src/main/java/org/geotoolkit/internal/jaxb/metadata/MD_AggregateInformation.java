@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.identification.AggregateInformation;
-import org.geotoolkit.metadata.iso.identification.DefaultAggregateInformation;
+import org.apache.sis.metadata.iso.identification.DefaultAggregateInformation;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 

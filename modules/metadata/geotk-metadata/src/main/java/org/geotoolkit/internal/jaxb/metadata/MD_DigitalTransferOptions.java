@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.distribution.DigitalTransferOptions;
-import org.geotoolkit.metadata.iso.distribution.DefaultDigitalTransferOptions;
+import org.apache.sis.metadata.iso.distribution.DefaultDigitalTransferOptions;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 

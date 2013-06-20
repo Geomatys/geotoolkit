@@ -18,7 +18,7 @@
 package org.geotoolkit.internal.jaxb;
 
 import java.util.Collection;
-import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.DefaultMetadata;
 
 
 /**

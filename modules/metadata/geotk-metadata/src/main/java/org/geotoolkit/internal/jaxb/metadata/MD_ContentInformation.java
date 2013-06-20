@@ -26,7 +26,7 @@ import org.opengis.metadata.content.ImageDescription;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 import org.geotoolkit.internal.jaxb.gmi.MI_ImageDescription;
 import org.geotoolkit.internal.jaxb.gmi.MI_CoverageDescription;
-import org.geotoolkit.metadata.iso.content.AbstractContentInformation;
+import org.apache.sis.metadata.iso.content.AbstractContentInformation;
 
 
 /**

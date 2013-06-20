@@ -35,7 +35,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
 
 
 /**

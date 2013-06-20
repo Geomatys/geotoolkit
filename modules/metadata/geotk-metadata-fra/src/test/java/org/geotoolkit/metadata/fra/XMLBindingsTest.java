@@ -24,12 +24,14 @@ import javax.xml.bind.JAXBException;
 
 import org.geotoolkit.xml.XML;
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.metadata.iso.DefaultMetadata;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
+import org.geotoolkit.metadata.iso.citation.Citations;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.TestUtilities.getSingleton;
 
 
 /**
@@ -58,7 +60,7 @@ public final strictfp class XMLBindingsTest {
     public void marshallingTest() throws IOException, JAXBException {
         final DefaultMetadata metadata = new DefaultMetadata();
         final FRA_DirectReferenceSystem refSys = new FRA_DirectReferenceSystem(
-                new DefaultCitation(DefaultResponsibleParty.EPSG), null, "4326");
+                new DefaultCitation(getSingleton(Citations.EPSG.getCitedResponsibleParties())), null, "4326");
         metadata.setReferenceSystemInfo(Arrays.asList(refSys));
 
         String expected = TestData.readText(this, RESOURCE_FILE);
@@ -80,7 +82,7 @@ public final strictfp class XMLBindingsTest {
             result = (DefaultMetadata) XML.unmarshal(in);
         }
         final FRA_DirectReferenceSystem refSys = new FRA_DirectReferenceSystem(
-                new DefaultCitation(DefaultResponsibleParty.EPSG), null, "4326");
+                new DefaultCitation(getSingleton(Citations.EPSG.getCitedResponsibleParties())), null, "4326");
 
         final DefaultMetadata expected = new DefaultMetadata();
         expected.setReferenceSystemInfo(Arrays.asList(refSys));

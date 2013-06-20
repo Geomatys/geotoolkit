@@ -18,7 +18,7 @@
 package org.geotoolkit.internal.jaxb.metadata.direct;
 
 import org.opengis.metadata.citation.OnlineResource;
-import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
+import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
 
 
 /**

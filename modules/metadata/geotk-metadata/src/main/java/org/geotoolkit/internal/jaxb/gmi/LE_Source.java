@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.gmi;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.lineage.Source;
-import org.geotoolkit.metadata.iso.lineage.DefaultSource;
+import org.apache.sis.metadata.iso.lineage.DefaultSource;
 
 
 /**

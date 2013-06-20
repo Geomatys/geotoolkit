@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.identification.Resolution;
-import org.geotoolkit.metadata.iso.identification.DefaultResolution;
+import org.apache.sis.metadata.iso.identification.DefaultResolution;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 

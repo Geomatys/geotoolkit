@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.ReferenceIdentifier;
 
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 

@@ -79,7 +79,7 @@ public final class NonMarshalledAuthority<T> extends SimpleCitation implements I
     /**
      * Ordinal values for switch statements. The constant defined here shall
      * mirror the constants defined in the {@link IdentifierSpace} interface
-     * and {@link org.geotoolkit.metadata.iso.citation.DefaultCitation} class.
+     * and {@link org.apache.sis.metadata.iso.citation.DefaultCitation} class.
      */
     public static final int ID=0, UUID=1, HREF=2, XLINK=3, ISSN=4, ISBN=5;
     // If more codes are added, please update readResolve() below.
@@ -218,7 +218,7 @@ public final class NonMarshalledAuthority<T> extends SimpleCitation implements I
      */
     private static IdentifierSpace<?> getCitation(final String name) throws ObjectStreamException {
         try {
-            final Field field = Class.forName("org.geotoolkit.metadata.iso.citation.DefaultCitation").getDeclaredField(name);
+            final Field field = Class.forName("org.apache.sis.metadata.iso.citation.DefaultCitation").getDeclaredField(name);
             field.setAccessible(true);
             return (IdentifierSpace<?>) field.get(null);
         } catch (ReflectiveOperationException e) {

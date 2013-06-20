@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.EnvironmentalRecord;
-import org.geotoolkit.metadata.iso.acquisition.DefaultEnvironmentalRecord;
+import org.apache.sis.metadata.iso.acquisition.DefaultEnvironmentalRecord;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 

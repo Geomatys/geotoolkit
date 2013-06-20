@@ -75,27 +75,27 @@ import org.geotoolkit.image.io.WarningProducer;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.image.io.NetcdfVariable;
-import org.geotoolkit.metadata.iso.DefaultMetadata;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.metadata.iso.citation.*;
-import org.geotoolkit.metadata.iso.constraint.DefaultLegalConstraints;
-import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
-import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
-import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
-import org.geotoolkit.metadata.iso.identification.DefaultKeywords;
-import org.geotoolkit.metadata.iso.content.DefaultBand;
-import org.geotoolkit.metadata.iso.content.DefaultRangeElementDescription;
-import org.geotoolkit.metadata.iso.content.DefaultCoverageDescription;
-import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
-import org.geotoolkit.metadata.iso.distribution.DefaultDistributor;
-import org.geotoolkit.metadata.iso.distribution.DefaultDistribution;
-import org.geotoolkit.metadata.iso.extent.DefaultExtent;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicDescription;
-import org.geotoolkit.metadata.iso.extent.DefaultVerticalExtent;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.citation.*;
+import org.apache.sis.metadata.iso.constraint.DefaultLegalConstraints;
+import org.apache.sis.metadata.iso.spatial.DefaultDimension;
+import org.apache.sis.metadata.iso.spatial.DefaultGridSpatialRepresentation;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.metadata.iso.identification.DefaultKeywords;
+import org.apache.sis.metadata.iso.content.DefaultBand;
+import org.apache.sis.metadata.iso.content.DefaultRangeElementDescription;
+import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
+import org.apache.sis.metadata.iso.content.DefaultImageDescription;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.metadata.iso.distribution.DefaultDistributor;
+import org.apache.sis.metadata.iso.distribution.DefaultDistribution;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicDescription;
+import org.apache.sis.metadata.iso.extent.DefaultVerticalExtent;
 import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
-import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
-import org.geotoolkit.metadata.iso.lineage.DefaultLineage;
+import org.apache.sis.metadata.iso.quality.DefaultDataQuality;
+import org.apache.sis.metadata.iso.lineage.DefaultLineage;
 import org.geotoolkit.referencing.adapters.NetcdfCRSBuilder;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.resources.Errors;
@@ -731,7 +731,8 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             final Set<InternationalString> words, final String type)
     {
         if (words != null) {
-            final DefaultKeywords keywords = new DefaultKeywords(words);
+            final DefaultKeywords keywords = new DefaultKeywords();
+            keywords.setKeywords(words);
             keywords.setType(Types.forCodeName(KeywordType.class, type, true));
             addTo.getDescriptiveKeywords().add(keywords);
         }
@@ -756,7 +757,8 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                 }
             }
             if (!words.isEmpty()) {
-                keywords = new DefaultKeywords(words);
+                keywords = new DefaultKeywords();
+                keywords.setKeywords(words);
                 keywords.setType(type);
                 final String vocabulary = getStringValue(group, standard ? STANDARD_NAME_VOCABULARY : VOCABULARY);
                 if (vocabulary != null) {
@@ -904,7 +906,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             if (extent == null) {
                 extent = new DefaultExtent();
             }
-            extent.getGeographicElements().add(new DefaultGeographicDescription(identifier));
+            extent.getGeographicElements().add(new DefaultGeographicDescription(null, identifier));
         }
         return extent;
     }

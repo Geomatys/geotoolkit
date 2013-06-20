@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.extent.TemporalExtent;
-import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
+import org.apache.sis.metadata.iso.extent.DefaultTemporalExtent;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 

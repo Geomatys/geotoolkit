@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.quality.DataQuality;
-import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
+import org.apache.sis.metadata.iso.quality.DefaultDataQuality;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 

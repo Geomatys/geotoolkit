@@ -110,7 +110,7 @@ import static org.apache.sis.math.MathFunctions.isSameSign;
  *
  * @see Envelope2D
  * @see org.geotoolkit.geometry.jts.ReferencedEnvelope
- * @see org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox
+ * @see org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox
  *
  * @since 1.2
  * @module

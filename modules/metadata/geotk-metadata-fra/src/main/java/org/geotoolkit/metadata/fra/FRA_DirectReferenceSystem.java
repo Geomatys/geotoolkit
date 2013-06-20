@@ -19,7 +19,6 @@ package org.geotoolkit.metadata.fra;
 
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.ReferenceSystem;
@@ -44,12 +43,11 @@ import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @version 3.21
  *
  * @since 3.00
  * @module
  */
-@ThreadSafe
 @XmlType(name = "FRA_DirectReferenceSystem_Type")
 @XmlRootElement(name= "FRA_DirectReferenceSystem")
 public class FRA_DirectReferenceSystem extends ReferenceSystemMetadata {

@@ -21,9 +21,9 @@ import java.util.Arrays;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.test.TestBase;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.metadata.iso.lineage.DefaultSource;
-import org.geotoolkit.metadata.iso.lineage.DefaultLineage;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.lineage.DefaultSource;
+import org.apache.sis.metadata.iso.lineage.DefaultLineage;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;

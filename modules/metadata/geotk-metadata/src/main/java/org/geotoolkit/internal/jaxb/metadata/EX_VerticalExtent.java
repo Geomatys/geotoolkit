@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.extent.VerticalExtent;
-import org.geotoolkit.metadata.iso.extent.DefaultVerticalExtent;
+import org.apache.sis.metadata.iso.extent.DefaultVerticalExtent;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 

@@ -175,7 +175,7 @@ public class MarshallerPool {
      * The separator character for the packages is the colon.
      *
      * @param  packages         The packages in which JAXB will search for annotated classes to be bound,
-     *                          for example {@code "org.geotoolkit.metadata.iso:org.geotoolkit.metadata.iso.citation"}.
+     *                          for example {@code "org.apache.sis.metadata.iso:org.apache.sis.metadata.iso.citation"}.
      * @throws JAXBException    If the JAXB context can not be created.
      */
     public MarshallerPool(final String packages) throws JAXBException {
@@ -189,7 +189,7 @@ public class MarshallerPool {
      *
      * @param  properties    The set of properties to be given to the pool.
      * @param  packages      The packages in which JAXB will search for annotated classes to be bound,
-     *                       for example {@code "org.geotoolkit.metadata.iso:org.geotoolkit.metadata.iso.citation"}.
+     *                       for example {@code "org.apache.sis.metadata.iso:org.apache.sis.metadata.iso.citation"}.
      * @throws JAXBException If the JAXB context can not be created.
      *
      * @since 3.04

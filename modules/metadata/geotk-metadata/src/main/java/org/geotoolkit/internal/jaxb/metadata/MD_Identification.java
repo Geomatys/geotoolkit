@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 
 import org.opengis.metadata.identification.Identification;
 
-import org.geotoolkit.metadata.iso.identification.AbstractIdentification;
+import org.apache.sis.metadata.iso.identification.AbstractIdentification;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 

@@ -14,8 +14,8 @@ import org.opengis.metadata.citation.PresentationForm;
 
 import org.geotoolkit.xml.XML;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
 
 
 /**

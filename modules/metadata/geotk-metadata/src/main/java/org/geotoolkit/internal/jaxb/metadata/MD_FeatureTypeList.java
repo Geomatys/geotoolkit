@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.FeatureTypeList;
-import org.geotoolkit.metadata.iso.DefaultFeatureTypeList;
+import org.apache.sis.metadata.iso.DefaultFeatureTypeList;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 

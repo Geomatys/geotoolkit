@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.gmi;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.spatial.Georectified;
-import org.geotoolkit.metadata.iso.spatial.DefaultGeorectified;
+import org.apache.sis.metadata.iso.spatial.DefaultGeorectified;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 

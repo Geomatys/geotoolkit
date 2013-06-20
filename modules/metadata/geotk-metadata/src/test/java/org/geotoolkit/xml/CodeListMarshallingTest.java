@@ -32,7 +32,7 @@ import org.opengis.metadata.identification.TopicCategory;
 
 import org.apache.sis.util.CharSequences;
 import org.geotoolkit.test.LocaleDependantTestBase;
-import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;

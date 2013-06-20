@@ -128,7 +128,7 @@ public final class MetadataStandard {
         final String[] prefix = {"Default", "Abstract"};
         final String[] acronyms = {"CoordinateSystem", "CS", "CoordinateReferenceSystem", "CRS"};
         ISO_19111 = new MetadataStandard("ISO 19111", "org.opengis.referencing.", "org.geotoolkit.referencing.",  prefix, acronyms);
-        ISO_19115 = new MetadataStandard("ISO 19115", "org.opengis.metadata.",    "org.geotoolkit.metadata.iso.", prefix, null);
+        ISO_19115 = new MetadataStandard("ISO 19115", "org.opengis.metadata.",    "org.apache.sis.metadata.iso.", prefix, null);
         ISO_19119 = new MetadataStandard("ISO 19119", "org.opengis.service.",  null, null, null);
         ISO_19123 = new MetadataStandard("ISO 19123", "org.opengis.coverage.", null, null, null);
         INSTANCES = new MetadataStandard[] {

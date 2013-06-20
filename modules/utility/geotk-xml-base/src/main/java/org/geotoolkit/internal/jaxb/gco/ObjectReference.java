@@ -37,7 +37,7 @@ import org.geotoolkit.internal.jaxb.MarshalContext;
  * <p>
  * This {@code gco:ObjectReference} group is complementary to {@code gco:ObjectIdentification},
  * which define the {@code id} and {@code uuid} attributes to be supported by all metadata
- * implementations in the public {@link org.geotoolkit.metadata.iso} package and sub-packages.
+ * implementations in the public {@link org.apache.sis.metadata.iso} package and sub-packages.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.19

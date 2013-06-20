@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.lineage.ProcessStep;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 import org.geotoolkit.internal.jaxb.gmi.LE_ProcessStep;
-import org.geotoolkit.metadata.iso.lineage.DefaultProcessStep;
+import org.apache.sis.metadata.iso.lineage.DefaultProcessStep;
 
 
 /**

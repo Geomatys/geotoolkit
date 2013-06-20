@@ -30,9 +30,9 @@ import org.opengis.metadata.content.ImagingCondition;
 
 import org.apache.sis.test.DependsOn;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.metadata.iso.acquisition.DefaultInstrument;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
+import org.apache.sis.metadata.iso.acquisition.DefaultInstrument;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.content.DefaultImageDescription;
 
 import org.junit.*;
 
@@ -79,7 +79,7 @@ public final strictfp class SpatialMetadataTest {
         assertNull(description.getCompressionGenerationQuantity());
         assertSame("The metadata should be cached", description, metadata.getInstanceForType(ImageDescription.class));
         /*
-         * Test the copy to an org.geotoolkit.metadata.iso object.
+         * Test the copy to an org.apache.sis.metadata.iso object.
          * Note that the following warning is emmited:
          *
          *    org.opengis.metadata.content.ImageDescription getAttributeDescription
@@ -126,7 +126,7 @@ public final strictfp class SpatialMetadataTest {
         assertEquals("getType()",      type,      instrument.getType());
         assertEquals("getCitations()", citations, instrument.getCitations());
         /*
-         * Test the copy to an org.geotoolkit.metadata.iso object.
+         * Test the copy to an org.apache.sis.metadata.iso object.
          * Note that the following warning is emmited:
          *
          *    org.opengis.metadata.acquisition.Instrument getMountedOn

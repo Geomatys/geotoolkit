@@ -243,7 +243,7 @@ public class MetadataTreeFormat extends Format {
      * type is inferred by the {@linkplain NamedTreeNode name} of the given root node.
      * For example if the current {@linkplain #standard} is {@link MetadataStandard#ISO_19115}
      * and the name of the given root node is {@code "Metadata"}, then the default implementation
-     * will instantiate a new {@link org.geotoolkit.metadata.iso.DefaultMetadata} object.
+     * will instantiate a new {@link org.apache.sis.metadata.iso.DefaultMetadata} object.
      * <p>
      * Note that in current implementation, there is a very limited amount of names that the
      * {@link #getTypeForName(String)} method can recognize. Users may need to override the

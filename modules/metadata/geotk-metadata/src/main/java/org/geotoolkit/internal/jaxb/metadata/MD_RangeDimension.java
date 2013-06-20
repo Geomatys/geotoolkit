@@ -24,7 +24,7 @@ import org.opengis.metadata.content.RangeDimension;
 
 import org.geotoolkit.internal.jaxb.gmi.MI_Band;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
-import org.geotoolkit.metadata.iso.content.DefaultRangeDimension;
+import org.apache.sis.metadata.iso.content.DefaultRangeDimension;
 
 
 /**

@@ -277,7 +277,7 @@ public class Hints extends RenderingHints {
      * If this hint is set to {@code TRUE}, then the users are encouraged to check the
      * {@linkplain CoordinateOperation#getCoordinateOperationAccuracy coordinate operation accuracy}
      * for every transformation created. If the set of operation accuracy contains
-     * {@link org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_OMITTED
+     * {@link org.apache.sis.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_OMITTED
      * DATUM_SHIFT_OMITTED}, this means that an "ellipsoid shift" were applied without real datum
      * shift method available, and the transformed coordinates may have one kilometer error. The
      * application should warn the user (e.g. popup a message dialog box) in such case.

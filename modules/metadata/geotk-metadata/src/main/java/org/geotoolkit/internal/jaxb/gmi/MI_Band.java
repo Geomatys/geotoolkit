@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.gmi;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.content.Band;
-import org.geotoolkit.metadata.iso.content.DefaultBand;
+import org.apache.sis.metadata.iso.content.DefaultBand;
 
 
 /**

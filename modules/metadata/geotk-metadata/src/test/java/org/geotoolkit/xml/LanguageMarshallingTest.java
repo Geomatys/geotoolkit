@@ -27,7 +27,7 @@ import java.io.StringWriter;
 
 import org.opengis.metadata.identification.DataIdentification;
 
-import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.geotoolkit.test.LocaleDependantTestBase;
 
 import org.junit.*;

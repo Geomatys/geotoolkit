@@ -29,7 +29,7 @@ import org.opengis.util.GenericName;
 import org.apache.sis.util.CharSequences;
 import org.geotoolkit.test.TestBase;
 import org.geotoolkit.naming.DefaultNameFactory;
-import org.geotoolkit.metadata.iso.content.DefaultFeatureCatalogueDescription;
+import org.apache.sis.metadata.iso.content.DefaultFeatureCatalogueDescription;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;

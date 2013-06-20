@@ -28,7 +28,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.parameter.InvalidParameterValueException;
 
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;

@@ -17,7 +17,7 @@
  */
 
 /**
- * Extends some classes from the {@link org.geotoolkit.metadata.iso} package in order
+ * Extends some classes from the {@link org.apache.sis.metadata.iso} package in order
  * to give them the {@code "gts"} namespace. This is required for XML (un)marshalling
  * because GeoAPI merged some classes which were dissociated in the ISO specifications.
  * The GeoAPI merge were done in order to simplify the conceptual model for developers,
@@ -25,7 +25,7 @@
  * conceptual reasons.
  * <p>
  * In Geotk implementation, users need to care only about the public classes defined in
- * the {@link org.geotoolkit.metadata.iso} package. When marshalling, the adapters will
+ * the {@link org.apache.sis.metadata.iso} package. When marshalling, the adapters will
  * inspect the properties that are ISO 19115-2 extensions and copy automatically the
  * {@code "gmd"} metadata into a {@code "gmi"} metadata if any ISO 19115-2 property is
  * non-null or non-empty. This work is performed by a {@code castOrCopy} static method

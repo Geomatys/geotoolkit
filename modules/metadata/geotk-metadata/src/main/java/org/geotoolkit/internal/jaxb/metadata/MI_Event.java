@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.Event;
-import org.geotoolkit.metadata.iso.acquisition.DefaultEvent;
+import org.apache.sis.metadata.iso.acquisition.DefaultEvent;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 

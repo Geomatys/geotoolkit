@@ -26,12 +26,12 @@ import org.opengis.metadata.citation.PresentationForm;
 
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static org.apache.sis.test.TestUtilities.getSingleton;
 
 
 /**
@@ -129,8 +129,8 @@ public final strictfp class MetadataWriterTest {
         assertEquals("OGC",   source.search(Citations.OGC));
         assertEquals("Geotk", source.search(Citations.GEOTOOLKIT));
         assertNull(source.search(Citations.ESRI));
-        assertNull(source.search(DefaultResponsibleParty.ESRI));
-        assertEquals("EPSG", source.search(DefaultResponsibleParty.EPSG));
+        assertNull(source.search(getSingleton(Citations.ESRI.getCitedResponsibleParties())));
+        assertEquals("EPSG", source.search(getSingleton(Citations.EPSG.getCitedResponsibleParties())));
     }
 
     /**
