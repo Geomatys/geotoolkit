@@ -78,8 +78,8 @@ public class ResampleTest extends AbstractProcessTest {
         //create a process
         //set the input parameters
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
-        input.parameter("coverage").setValue(coverage);
-        input.parameter("crs").setValue(CRS.decode("EPSG:3395"));
+        input.parameter("Source").setValue(coverage);
+        input.parameter("CoordinateReferenceSystem").setValue(CRS.decode("EPSG:3395"));
         final Process p = desc.createProcess(input);
         ParameterValueGroup output = null;
         try {

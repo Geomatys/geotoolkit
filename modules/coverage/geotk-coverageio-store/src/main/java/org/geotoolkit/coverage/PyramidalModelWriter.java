@@ -472,7 +472,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             tileAreaWork.setBounds(tminx - minidx, tminy - minidy, tmaxx - tminx, tmaxy - tminy);
             
             try {
-                final Resample resample = new Resample(destImgToCrsCoverage.inverse(), currentlyTile, tileAreaWork, interpolation, new double[nbBand]);
+                final Resample resample = new Resample(destImgToCrsCoverage, currentlyTile, tileAreaWork, interpolation, new double[nbBand]);
                 resample.fillImage();
                 pm.writeTile(pyramid.getId(), mosaic.getId(), idx, idy, currentlyTile);
             } catch (Exception ex) {

@@ -282,7 +282,7 @@ public class PyramidCoverageBuilder {
                     final MathTransform2D gridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0 + sx * (destMinX + 0.5), max1 - sy * (destMinY + 0.5)).inverse();
                     final MathTransform mt                = MathTransforms.concatenate(destCrs_to_covGrid, gridDest_to_crs);
 
-                    final Resample resample = new Resample(mt, destImg, interpolation, fill);
+                    final Resample resample = new Resample(mt.inverse(), destImg, interpolation, fill);
                     resample.fillImage();
                     pm.writeTile(pyramidID, mosaicId, cTX, cTY, destImg);
                 }
