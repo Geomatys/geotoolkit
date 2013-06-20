@@ -20,8 +20,8 @@
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-mapinfo</artifactId>
     <packaging>jar</packaging>
-    <name>Datastore MapInfo</name>
-    <description>Datastore for MapInfo native (TAB) and exchange (MIF/MID) file formats.</description>
+    <name>FeatureStore MapInfo</name>
+    <description>Featurestore for MapInfo exchange (MIF/MID) file formats.</description>
     <licenses>
         <license>
             <name>Lesser General Public License (LGPL)</name>
