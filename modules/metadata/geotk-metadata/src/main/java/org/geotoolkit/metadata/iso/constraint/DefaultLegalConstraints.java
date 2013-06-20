@@ -41,7 +41,10 @@ import org.opengis.metadata.constraint.LegalConstraints;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "MD_LegalConstraints_Type", propOrder={
     "accessConstraints",

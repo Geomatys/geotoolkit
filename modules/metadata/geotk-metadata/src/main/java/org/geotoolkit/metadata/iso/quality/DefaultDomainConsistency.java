@@ -36,7 +36,10 @@ import org.opengis.metadata.quality.DomainConsistency;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "DQ_DomainConsistency_Type")
 @XmlRootElement(name = "DQ_DomainConsistency")

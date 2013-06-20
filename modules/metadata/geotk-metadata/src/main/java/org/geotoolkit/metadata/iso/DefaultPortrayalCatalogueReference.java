@@ -40,7 +40,10 @@ import org.opengis.metadata.PortrayalCatalogueReference;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "MD_PortrayalCatalogueReference_Type")
 @XmlRootElement(name = "MD_PortrayalCatalogueReference")

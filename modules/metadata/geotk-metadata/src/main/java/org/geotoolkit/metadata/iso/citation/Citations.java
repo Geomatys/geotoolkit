@@ -64,7 +64,10 @@ import static java.util.Collections.singleton;
  *
  * @since 2.2
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 public final class Citations extends Static {
     /**
      * Do not allows instantiation of this class.

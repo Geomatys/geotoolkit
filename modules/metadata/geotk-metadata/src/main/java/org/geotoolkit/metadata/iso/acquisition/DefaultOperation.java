@@ -50,7 +50,10 @@ import org.geotoolkit.internal.jaxb.NonMarshalledAuthority;
  *
  * @since 3.03
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "MI_Operation_Type", propOrder={
     "description",

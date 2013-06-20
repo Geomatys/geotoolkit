@@ -43,7 +43,10 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "MD_AggregateInformation_Type", propOrder={
     "aggregateDataSetName", "aggregateDataSetIdentifier", "associationType", "initiativeType"

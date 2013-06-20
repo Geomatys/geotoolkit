@@ -38,7 +38,10 @@ import org.geotoolkit.xml.Namespaces;
  *
  * @since 3.03
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "QE_Usability_Type")
 @XmlRootElement(name = "QE_Usability", namespace = Namespaces.GMI)

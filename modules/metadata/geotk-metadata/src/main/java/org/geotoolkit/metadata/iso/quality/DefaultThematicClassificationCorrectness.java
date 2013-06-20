@@ -36,7 +36,10 @@ import org.opengis.metadata.quality.ThematicClassificationCorrectness;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "DQ_ThematicClassificationCorrectness_Type")
 @XmlRootElement(name = "DQ_ThematicClassificationCorrectness")

@@ -39,7 +39,10 @@ import org.opengis.metadata.citation.Citation;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "MD_Identifier_Type", propOrder={
     "code",

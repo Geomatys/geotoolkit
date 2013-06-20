@@ -48,7 +48,10 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @Workaround(library="JDK", version="1.6")
 @XmlRootElement(name = "DQ_AbsoluteExternalPositionalAccuracy")

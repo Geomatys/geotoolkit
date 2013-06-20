@@ -45,7 +45,10 @@ import org.geotoolkit.resources.Descriptions;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
+@Deprecated
 @ThreadSafe
 @XmlType(name = "AbstractDQ_PositionalAccuracy_Type")
 @XmlRootElement(name = "DQ_PositionalAccuracy")
