@@ -18,7 +18,7 @@
 package org.geotoolkit.math;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 import static java.lang.StrictMath.*;
 
 
@@ -121,6 +121,6 @@ public final strictfp class ComplexTest {
     @Test
     public void testSerialization() {
         final Complex local = new Complex(5.6, 7.8);
-        assertNotSame(local, assertSerializable(local));
+        assertNotSame(local, assertSerializedEquals(local));
     }
 }

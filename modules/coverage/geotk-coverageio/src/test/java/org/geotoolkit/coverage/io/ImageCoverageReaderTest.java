@@ -33,7 +33,7 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.metadata.Metadata;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
@@ -116,7 +116,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
         final Metadata metadata = reader.getMetadata();
         final String xml = XML.marshal(metadata);
         assertFalse("Nothing to write.", xml.isEmpty());
-        assertDomEquals(TestData.url(ImageCoverageReaderTest.class, "MatrixMetadata.xml"),
+        assertXmlEquals(TestData.url(ImageCoverageReaderTest.class, "MatrixMetadata.xml"),
                 xml, 0.0001, "xmlns:*", "xsi:schemaLocation");
     }
 

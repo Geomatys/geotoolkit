@@ -133,9 +133,9 @@ public final strictfp class CoordinateSystemAxisTest extends ReferencingTestBase
      */
     @Test
     public void testSerialization() {
-        assertSerializable(X);
-        assertSerializable(GEOCENTRIC_X);
-        assertSerializable(GEODETIC_LONGITUDE);
+        assertSerializedEquals(X);
+        assertSerializedEquals(GEOCENTRIC_X);
+        assertSerializedEquals(GEODETIC_LONGITUDE);
     }
 
     /**

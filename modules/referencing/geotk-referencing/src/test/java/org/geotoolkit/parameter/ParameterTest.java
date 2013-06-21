@@ -32,7 +32,7 @@ import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 import org.geotoolkit.test.referencing.ParameterTestBase;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 import static org.opengis.test.Validators.*;
 import static java.lang.StrictMath.*;
 
@@ -93,7 +93,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
             // This is the expected exception.
             assertEquals("Test", exception.getParameterName());
         }
-        assertNotSame(parameter, assertSerializable(parameter));
+        assertNotSame(parameter, assertSerializedEquals(parameter));
     }
 
     /**
@@ -166,7 +166,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
             // This is the expected exception.
             assertEquals("Test", exception.getParameterName());
         }
-        assertNotSame(parameter, assertSerializable(parameter));
+        assertNotSame(parameter, assertSerializedEquals(parameter));
     }
 
     /**
@@ -241,7 +241,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
             // This is the expected exception.
             assertEquals("Test", exception.getParameterName());
         }
-        assertNotSame(parameter, assertSerializable(parameter));
+        assertNotSame(parameter, assertSerializedEquals(parameter));
     }
 
     /**

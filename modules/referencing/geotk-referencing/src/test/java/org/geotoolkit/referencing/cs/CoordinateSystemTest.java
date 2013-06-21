@@ -30,7 +30,7 @@ import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 import static org.geotoolkit.referencing.cs.DefaultTimeCS.*;
 import static org.geotoolkit.referencing.cs.DefaultVerticalCS.*;
 import static org.geotoolkit.referencing.cs.DefaultCartesianCS.*;
@@ -90,10 +90,10 @@ public final strictfp class CoordinateSystemTest extends ReferencingTestBase {
      */
     @Test
     public void testSerialization() {
-        assertSerializable(PROJECTED);
-        assertSerializable(GEOCENTRIC);
-        assertSerializable(GEODETIC_2D);
-        assertSerializable(GEODETIC_3D);
+        assertSerializedEquals(PROJECTED);
+        assertSerializedEquals(GEOCENTRIC);
+        assertSerializedEquals(GEODETIC_2D);
+        assertSerializedEquals(GEODETIC_3D);
     }
 
     /**

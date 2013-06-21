@@ -40,7 +40,7 @@ import org.apache.sis.metadata.iso.citation.DefaultSeries;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -99,7 +99,7 @@ public final strictfp class ObjectReferenceMarshallingTest extends TestBase {
         assertNull  ("uuid",                map.get(IdentifierSpace.UUID));
 
         final String actual = XML.marshal(citation);
-        assertDomEquals(xml, actual, "xmlns:*");
+        assertXmlEquals(xml, actual, "xmlns:*");
         assertEquals(citation, XML.unmarshal(actual));
     }
 
@@ -219,7 +219,7 @@ public final strictfp class ObjectReferenceMarshallingTest extends TestBase {
 //                series, ObjectIdentification.UUIDs.lookup(UUID.fromString(uuid)));
 
         final String actual = XML.marshal(citation);
-        assertDomEquals(xml, actual, "xmlns:*");
+        assertXmlEquals(xml, actual, "xmlns:*");
         assertEquals(citation, XML.unmarshal(actual));
         /*
          * Tests again using a reference to the above series.

@@ -21,7 +21,7 @@ import javax.measure.unit.SI;
 import javax.measure.converter.ConversionException;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 import org.apache.sis.test.DependsOn;
 
 
@@ -78,7 +78,7 @@ public final strictfp class MeasurementRangeTest {
     public void testSerialization() {
         NumberRange<Float> r1 = MeasurementRange.create(1000f, 2000f, SI.METRE);
         NumberRange<Float> r2 = MeasurementRange.create(1.5f, 3f, SI.KILOMETRE);
-        assertNotSame(r1, assertSerializable(r1));
-        assertNotSame(r2, assertSerializable(r2));
+        assertNotSame(r1, assertSerializedEquals(r1));
+        assertNotSame(r2, assertSerializedEquals(r2));
     }
 }

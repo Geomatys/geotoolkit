@@ -28,7 +28,7 @@ import org.apache.sis.xml.Namespaces;
 import org.apache.sis.xml.XML;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -58,7 +58,7 @@ public final strictfp class ImageryMarshallingTest extends TestBase {
          * Consequently the XML name shall be "gmd:LI_Source".
          */
         String actual = XML.marshal(lineage);
-        assertDomEquals(
+        assertXmlEquals(
             "<gmd:LI_Lineage xmlns:gmd=\"" + Namespaces.GMD + "\">\n" +
             "  <gmd:source>\n" +
             "    <gmd:LI_Source>\n" +
@@ -73,7 +73,7 @@ public final strictfp class ImageryMarshallingTest extends TestBase {
          */
         source.setProcessedLevel(new DefaultIdentifier("DummyLevel"));
         actual = XML.marshal(lineage);
-        assertDomEquals(
+        assertXmlEquals(
             "<gmd:LI_Lineage xmlns:gmd=\"" + Namespaces.GMD + "\">\n" +
             "  <gmd:source>\n" +
             "    <gmi:LE_Source>\n" +

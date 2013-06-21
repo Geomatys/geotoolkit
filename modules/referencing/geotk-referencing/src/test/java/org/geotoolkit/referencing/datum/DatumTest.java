@@ -142,7 +142,7 @@ public final strictfp class DatumTest extends ReferencingTestBase {
      */
     @Test
     public void testSerialization() {
-        assertSerializable(GREENWICH);
-        assertSerializable(WGS84);
+        assertSerializedEquals(GREENWICH);
+        assertSerializedEquals(WGS84);
     }
 }

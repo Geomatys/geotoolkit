@@ -19,7 +19,7 @@ package org.geotoolkit.util.collection;
 
 import java.util.*;
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 import static java.lang.StrictMath.*;
 
 
@@ -75,7 +75,7 @@ public final strictfp class IntegerListTest {
         }
         assertEquals(copy, list);
         assertEquals(copy.hashCode(), list.hashCode());
-        assertNotSame(list, assertSerializable(list));
+        assertNotSame(list, assertSerializedEquals(list));
         /*
          * Tests cloning and removal of values.
          */

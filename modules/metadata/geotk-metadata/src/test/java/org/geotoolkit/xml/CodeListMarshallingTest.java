@@ -38,7 +38,7 @@ import org.geotoolkit.test.LocaleDependantTestBase;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -105,7 +105,7 @@ public final strictfp class CodeListMarshallingTest extends LocaleDependantTestB
          * our own MarshallerPool.
          */
         final String actual = XML.marshal(rp);
-        assertDomEquals(expected, actual, "xmlns:*");
+        assertXmlEquals(expected, actual, "xmlns:*");
     }
 
     /**
@@ -127,7 +127,7 @@ public final strictfp class CodeListMarshallingTest extends LocaleDependantTestB
                 "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas")); // Intentionally omit trailing '/'.
         final String actual = marshal(marshaller, rp);
         pool.recycle(marshaller);
-        assertDomEquals(expected, actual, "xmlns:*");
+        assertXmlEquals(expected, actual, "xmlns:*");
     }
 
     /**
@@ -147,7 +147,7 @@ public final strictfp class CodeListMarshallingTest extends LocaleDependantTestB
         CitationDate ci = (CitationDate) XML.unmarshal(expected);
         assertEquals(DateType.CREATION, ci.getDateType());
         String actual = marshal(marshaller, ci);
-        assertDomEquals(expected, actual, "xmlns:*");
+        assertXmlEquals(expected, actual, "xmlns:*");
         /*
          * Tests again using the Englisg locale.
          */
@@ -156,7 +156,7 @@ public final strictfp class CodeListMarshallingTest extends LocaleDependantTestB
         ci = (CitationDate) XML.unmarshal(expected);
         assertEquals(DateType.CREATION, ci.getDateType());
         actual = marshal(marshaller, ci);
-        assertDomEquals(expected, actual, "xmlns:*");
+        assertXmlEquals(expected, actual, "xmlns:*");
 
         pool.recycle(marshaller);
     }

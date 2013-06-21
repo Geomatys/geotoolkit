@@ -26,7 +26,7 @@ import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -83,7 +83,7 @@ public final strictfp class FreeTextMarshallingTest extends TestBase {
         final Citation citation = (Citation) XML.unmarshal(expected);
         assertEquals(getExpectedI18N(), citation.getTitle());
         final String actual = XML.marshal(citation);
-        assertDomEquals(expected, actual, "xmlns:*");
+        assertXmlEquals(expected, actual, "xmlns:*");
     }
 
     /**

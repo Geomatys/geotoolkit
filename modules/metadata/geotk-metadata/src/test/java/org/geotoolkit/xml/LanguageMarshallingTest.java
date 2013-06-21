@@ -34,7 +34,7 @@ import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.geotoolkit.test.LocaleDependantTestBase;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -94,7 +94,7 @@ public final strictfp class LanguageMarshallingTest extends LocaleDependantTestB
         /*
          * Reformat and test against the original XML.
          */
-        assertDomEquals(xml, XML.marshal(id), "xmlns:*");
+        assertXmlEquals(xml, XML.marshal(id), "xmlns:*");
     }
 
     /**
@@ -110,7 +110,7 @@ public final strictfp class LanguageMarshallingTest extends LocaleDependantTestB
         /*
          * Reformat and test against the expected XML.
          */
-        assertDomEquals(getDataIdentificationXML(true), XML.marshal(id), "xmlns:*");
+        assertXmlEquals(getDataIdentificationXML(true), XML.marshal(id), "xmlns:*");
     }
 
     /**
@@ -130,11 +130,11 @@ public final strictfp class LanguageMarshallingTest extends LocaleDependantTestB
         final MarshallerPool pool = new MarshallerPool(null);
         final Marshaller marshaller = pool.acquireMarshaller();
         assertNull(marshaller.getProperty(XML.STRING_SUBSTITUTES));
-        assertDomEquals(inspire, marshal(marshaller, id), "xmlns:*");
+        assertXmlEquals(inspire, marshal(marshaller, id), "xmlns:*");
 
         marshaller.setProperty(XML.STRING_SUBSTITUTES, "dummy,language,foo");
         assertEquals("language", marshaller.getProperty(XML.STRING_SUBSTITUTES));
-        assertDomEquals(simpler, marshal(marshaller, id), "xmlns:*");
+        assertXmlEquals(simpler, marshal(marshaller, id), "xmlns:*");
         pool.recycle(marshaller);
     }
 

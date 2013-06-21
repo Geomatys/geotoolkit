@@ -50,7 +50,7 @@ import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.LocaleDependantTestBase;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 import static org.apache.sis.test.TestUtilities.getSingleton;
 
 
@@ -248,7 +248,7 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
          */
         final String xml = XML.marshal(metadata);
         assertFalse("Nothing to write.", xml.isEmpty());
-        assertDomEquals(TestData.url(MetadataMarshallingTest.class, "Metadata.xml"),
+        assertXmlEquals(TestData.url(MetadataMarshallingTest.class, "Metadata.xml"),
                 xml, "xmlns:*", "xsi:schemaLocation");
 
         final Object obj = XML.unmarshal(xml);
@@ -287,7 +287,7 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
          */
         final String xml = XML.marshal(process);
         assertFalse("Empty XML.", xml.isEmpty());
-        assertDomEquals(TestData.url(MetadataMarshallingTest.class, "ProcessStep.xml"),
+        assertXmlEquals(TestData.url(MetadataMarshallingTest.class, "ProcessStep.xml"),
                 xml, "xmlns:*", "xsi:schemaLocation");
         /*
          * Validation tests.
@@ -335,6 +335,6 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
          */
         assertInstanceOf("Wrong value for <gmd:result>", DefaultConformanceResult.class,
                 ((AbstractElement) obj).getResults().iterator().next());
-        assertDomEquals(xml, XML.marshal(obj), "xmlns:*", "xsi:schemaLocation", "xsi:type");
+        assertXmlEquals(xml, XML.marshal(obj), "xmlns:*", "xsi:schemaLocation", "xsi:type");
     }
 }

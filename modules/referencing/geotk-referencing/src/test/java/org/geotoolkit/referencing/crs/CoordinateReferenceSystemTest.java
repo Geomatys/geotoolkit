@@ -118,7 +118,7 @@ public final strictfp class CoordinateReferenceSystemTest extends ReferencingTes
      */
     @Test
     public void testSerialization() {
-        assertSerializable(WGS84);
-        assertSerializable(WGS84_3D);
+        assertSerializedEquals(WGS84);
+        assertSerializedEquals(WGS84_3D);
     }
 }

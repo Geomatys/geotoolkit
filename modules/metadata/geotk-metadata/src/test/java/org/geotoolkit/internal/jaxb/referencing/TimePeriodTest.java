@@ -29,7 +29,7 @@ import org.junit.*;
 import org.apache.sis.internal.jaxb.XmlUtilities;
 import org.geotoolkit.test.LocaleDependantTestBase;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -102,7 +102,7 @@ public final strictfp class TimePeriodTest extends LocaleDependantTestBase {
         final TimeInstant instant = createTimeInstant("1992-01-01 00:00:00");
         marshaller.marshal(instant, buffer);
         final String actual = buffer.toString();
-        assertDomEquals(expected, actual, "xmlns:*", "xsi:schemaLocation");
+        assertXmlEquals(expected, actual, "xmlns:*", "xsi:schemaLocation");
         final TimeInstant test = (TimeInstant) unmarshaller.unmarshal(new StringReader(actual));
         assertEquals("1992-01-01 00:00:00", format(XmlUtilities.toDate(test.timePosition)));
     }
@@ -144,7 +144,7 @@ public final strictfp class TimePeriodTest extends LocaleDependantTestBase {
         period.end   = end;
         marshaller.marshal(period, buffer);
         final String actual = buffer.toString();
-        assertDomEquals(expected, actual, "xmlns:*", "xsi:schemaLocation");
+        assertXmlEquals(expected, actual, "xmlns:*", "xsi:schemaLocation");
         final TimePeriod test = (TimePeriod) unmarshaller.unmarshal(new StringReader(actual));
         if (verifyValues) {
             assertEquals("1992-01-01 00:00:00", format(XmlUtilities.toDate(test.begin.calendar())));

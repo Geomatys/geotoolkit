@@ -25,7 +25,7 @@ import javax.media.jai.JAI;
 
 import org.junit.*;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -61,8 +61,8 @@ public final strictfp class HintsTest {
      */
     @Test
     public void testKeySerialization() {
-        assertSame(Hints.CS_FACTORY,    assertSerializable(Hints.CS_FACTORY));
-        assertSame(Hints.DATUM_FACTORY, assertSerializable(Hints.DATUM_FACTORY));
+        assertSame(Hints.CS_FACTORY,    assertSerializedEquals(Hints.CS_FACTORY));
+        assertSame(Hints.DATUM_FACTORY, assertSerializedEquals(Hints.DATUM_FACTORY));
     }
 
     /**

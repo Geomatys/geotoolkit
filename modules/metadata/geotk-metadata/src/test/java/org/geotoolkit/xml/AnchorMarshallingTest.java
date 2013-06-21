@@ -27,7 +27,7 @@ import org.apache.sis.xml.XLink;
 import org.apache.sis.xml.XML;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -107,6 +107,6 @@ public final strictfp class AnchorMarshallingTest extends LocaleDependantTestBas
         assertEquals(XLink.Type.LOCATOR, anchor.getType());
 
         final String actual = XML.marshal(address);
-        assertDomEquals(expected, actual, "xmlns:*");
+        assertXmlEquals(expected, actual, "xmlns:*");
     }
 }

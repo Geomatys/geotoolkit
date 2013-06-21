@@ -27,7 +27,7 @@ import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -73,7 +73,7 @@ public final strictfp class NilReasonMarshallingTest extends TestBase {
         assertNull("All attributes are expected to be null.", series.getName());
 
         final String actual = XML.marshal(citation);
-        assertDomEquals(expected, actual, "xmlns:*");
+        assertXmlEquals(expected, actual, "xmlns:*");
         assertEquals(citation, XML.unmarshal(actual));
     }
 
@@ -108,7 +108,7 @@ public final strictfp class NilReasonMarshallingTest extends TestBase {
         assertNull("All attributes are expected to be null.", series.getName());
 
         final String actual = XML.marshal(citation);
-        assertDomEquals(expected, actual, "xmlns:*");
+        assertXmlEquals(expected, actual, "xmlns:*");
         assertEquals(citation, XML.unmarshal(actual));
     }
 
@@ -143,7 +143,7 @@ public final strictfp class NilReasonMarshallingTest extends TestBase {
         assertNull("All attributes are expected to be null.", series.getName());
 
         final String actual = XML.marshal(citation);
-        assertDomEquals(expected, actual, "xmlns:*");
+        assertXmlEquals(expected, actual, "xmlns:*");
         assertEquals(citation, XML.unmarshal(actual));
     }
 }

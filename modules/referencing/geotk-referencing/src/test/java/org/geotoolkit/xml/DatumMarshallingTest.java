@@ -25,6 +25,7 @@ import javax.measure.unit.SI;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.JAXBContext;
 
 import org.apache.sis.xml.XML;
 import org.apache.sis.xml.Namespaces;
@@ -33,8 +34,7 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.internal.jaxb.referencing.SecondDefiningParameter;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
-import javax.xml.bind.JAXBContext;
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -88,7 +88,7 @@ public final strictfp class DatumMarshallingTest {
             pool.recycle(marshaller);
             xml = writer.toString();
         }
-        assertDomEquals(
+        assertXmlEquals(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<gml:SecondDefiningParameter xmlns:gml=\"http://www.opengis.net/gml\">\n" +
             "  <gml:semiMinorAxis uom=\"http://schemas.opengis.net/iso/19139/20070417/resources/uom/gmxUom.xml#xpointer(//*[@gml:id='m'])\">6371000.0</gml:semiMinorAxis>\n" +

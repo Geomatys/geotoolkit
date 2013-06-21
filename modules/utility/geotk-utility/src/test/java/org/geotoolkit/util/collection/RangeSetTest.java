@@ -27,7 +27,7 @@ import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.Performance;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -251,7 +251,7 @@ public final strictfp class RangeSetTest {
         ranges.add(12.0, 12.5);
         ranges.add(18.0, 18.5);
         ranges.add(19.0, 20.0);
-        assertNotSame(ranges, assertSerializable(ranges));
+        assertNotSame(ranges, assertSerializedEquals(ranges));
     }
 
     /**

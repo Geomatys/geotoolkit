@@ -29,7 +29,7 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.UnmodifiableMetadataException;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -82,7 +82,7 @@ public final strictfp class CitationsTest {
         }
         assertFalse(constants.isEmpty());
         for (final Object constant : constants) {
-            assertSame("Deserialization shall give the singleton.", constant, assertSerializable(constant));
+            assertSame("Deserialization shall give the singleton.", constant, assertSerializedEquals(constant));
         }
     }
 
