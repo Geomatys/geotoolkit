@@ -41,6 +41,12 @@ public abstract class PropertyValueEditor extends JPanel {
 
     public abstract Object getValue();
     
+    @Override
+    public abstract void setEnabled(boolean enabled);
+    
+    @Override
+    public abstract boolean isEnabled();
+    
     /**
      * Fire property changed event with new property value.
      */

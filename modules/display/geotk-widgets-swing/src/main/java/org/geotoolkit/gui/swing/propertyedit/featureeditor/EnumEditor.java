@@ -62,4 +62,13 @@ public class EnumEditor extends PropertyValueEditor implements ActionListener{
         valueChanged();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        component.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return component.isEnabled();
+    }
 }

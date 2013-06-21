@@ -60,4 +60,13 @@ public class BooleanEditor extends PropertyValueEditor implements ChangeListener
         valueChanged();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        component.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return component.isEnabled();
+    }
 }

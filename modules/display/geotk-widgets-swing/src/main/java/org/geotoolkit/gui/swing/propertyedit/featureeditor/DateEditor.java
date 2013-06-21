@@ -58,4 +58,13 @@ public class DateEditor extends PropertyValueEditor implements ActionListener{
         valueChanged();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        datePicker.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return datePicker.isEnabled();
+    }
 }

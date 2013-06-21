@@ -95,4 +95,14 @@ public class TimeStampEditor extends PropertyValueEditor implements ActionListen
     public void stateChanged(ChangeEvent e) {
         valueChanged();
     }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        datePicker.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return datePicker.isEnabled();
+    }
 }

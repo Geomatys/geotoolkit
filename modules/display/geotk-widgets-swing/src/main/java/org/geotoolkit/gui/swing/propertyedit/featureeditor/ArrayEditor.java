@@ -163,4 +163,14 @@ public class ArrayEditor extends PropertyValueEditor implements ActionListener{
         valueChanged();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        guiButton.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return guiButton.isEnabled();
+    }
+
 }

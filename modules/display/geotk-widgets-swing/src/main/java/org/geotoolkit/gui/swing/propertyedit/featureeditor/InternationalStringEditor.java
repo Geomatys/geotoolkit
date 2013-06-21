@@ -75,4 +75,13 @@ public class InternationalStringEditor extends PropertyValueEditor implements Do
         valueChanged();
     }
 
+     @Override
+    public void setEnabled(boolean enabled) {
+        current.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return current.isEnabled();
+    }
 }

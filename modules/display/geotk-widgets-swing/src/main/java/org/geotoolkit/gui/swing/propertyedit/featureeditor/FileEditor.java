@@ -98,4 +98,15 @@ public class FileEditor extends PropertyValueEditor implements ActionListener, D
     public void changedUpdate(DocumentEvent e) {
         valueChanged();
     }
+    
+    @Override
+    public void setEnabled(boolean enabled) {
+        component.setEnabled(enabled);
+        chooseButton.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return component.isEnabled() && chooseButton.isEnabled();
+    }
 }

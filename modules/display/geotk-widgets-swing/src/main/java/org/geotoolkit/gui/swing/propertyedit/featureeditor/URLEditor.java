@@ -111,4 +111,15 @@ public class URLEditor extends PropertyValueEditor implements ActionListener, Do
         valueChanged();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        component.setEnabled(enabled);
+        chooseButton.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return component.isEnabled() && chooseButton.isEnabled();
+    }
+
 }

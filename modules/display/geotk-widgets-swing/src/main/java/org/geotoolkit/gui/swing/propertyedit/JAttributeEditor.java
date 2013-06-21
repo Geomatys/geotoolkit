@@ -50,6 +50,7 @@ import org.opengis.feature.type.PropertyType;
  * property change event with property name <code>#VALUE_CHANGE_EVENT</code>
  *
  * @author Johann Sorel (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  */
 public class JAttributeEditor extends JPanel implements PropertyChangeListener {
 
@@ -148,4 +149,23 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Transfer enable request to editor.
+     * @param enabled 
+     */
+    @Override
+    public void setEnabled(boolean enabled) {
+        if (editor != null) {
+            editor.setEnabled(enabled);
+        }
+    }
+    
+    @Override
+    public boolean isEnabled() {
+        if (editor != null) {
+           return editor.isEnabled();
+        } 
+        return false;
+    }
+    
 }

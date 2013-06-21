@@ -90,4 +90,13 @@ public class CRSEditor extends PropertyValueEditor implements PropertyChangeList
         component.removePropertyChangeListener(this);
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        component.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return component.isEnabled();
+    }
 }

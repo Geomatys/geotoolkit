@@ -82,4 +82,14 @@ public class StringEditor extends PropertyValueEditor implements DocumentListene
         valueChanged();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        current.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() { 
+        return current.isEnabled();
+    }
+
 }
