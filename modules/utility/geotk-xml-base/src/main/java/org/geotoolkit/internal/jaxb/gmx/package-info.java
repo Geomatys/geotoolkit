@@ -41,5 +41,5 @@ import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.internal.jaxb.gco.InternationalStringConverter;
-import org.geotoolkit.xml.Namespaces;
+import org.apache.sis.internal.jaxb.gco.InternationalStringConverter;
+import org.apache.sis.xml.Namespaces;
