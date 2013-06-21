@@ -27,7 +27,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Position;
 
-import org.geotoolkit.xml.Namespaces;
+import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.geotoolkit.internal.jaxb.gml.GMLAdapter;

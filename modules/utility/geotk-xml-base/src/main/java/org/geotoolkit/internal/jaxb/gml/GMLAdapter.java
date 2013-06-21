@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.gml;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.geotoolkit.internal.jaxb.UUIDs;
-import org.geotoolkit.xml.Namespaces;
+import org.apache.sis.xml.Namespaces;
 
 
 /**

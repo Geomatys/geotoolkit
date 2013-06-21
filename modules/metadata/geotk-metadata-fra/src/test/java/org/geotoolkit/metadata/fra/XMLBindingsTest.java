@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.xml.XML;
+import org.apache.sis.xml.XML;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.DefaultMetadata;

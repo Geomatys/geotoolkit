@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.geometry;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import org.geotoolkit.xml.Namespaces;
+import org.apache.sis.xml.Namespaces;
 
 import org.opengis.geometry.Geometry;
 

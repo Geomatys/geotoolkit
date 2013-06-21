@@ -46,7 +46,7 @@ import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageReaderTest;
 import org.geotoolkit.image.SampleModels;
-import org.geotoolkit.xml.XML;
+import org.apache.sis.xml.XML;
 
 
 /**

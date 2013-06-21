@@ -55,7 +55,7 @@ public final class FRA_ReferenceSystemAdapter extends RS_ReferenceSystem impleme
     }
 
     /**
-     * Invoked when a new adapter is created by {@link org.geotoolkit.xml.MarshallerPool}.
+     * Invoked when a new adapter is created by {@link org.apache.sis.xml.MarshallerPool}.
      *
      * @param marshaller The marshaller to be configured.
      */
@@ -65,7 +65,7 @@ public final class FRA_ReferenceSystemAdapter extends RS_ReferenceSystem impleme
     }
 
     /**
-     * Invoked when a new adapter is created by {@link org.geotoolkit.xml.MarshallerPool}.
+     * Invoked when a new adapter is created by {@link org.apache.sis.xml.MarshallerPool}.
      *
      * @param unmarshaller The marshaller to be configured.
      */

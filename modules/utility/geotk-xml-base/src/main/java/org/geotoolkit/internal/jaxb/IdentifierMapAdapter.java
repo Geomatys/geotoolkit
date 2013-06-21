@@ -33,15 +33,15 @@ import org.opengis.metadata.citation.Citation;
 
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnsupportedImplementationException;
-import org.geotoolkit.xml.IdentifierSpace;
-import org.geotoolkit.xml.IdentifierMap;
+import org.apache.sis.xml.IdentifierSpace;
+import org.apache.sis.xml.IdentifierMap;
 
 import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
  * A map of identifiers which can be used as a helper class for
- * {@link org.geotoolkit.xml.IdentifiedObject} implementations.
+ * {@link org.apache.sis.xml.IdentifiedObject} implementations.
  * <p>
  * This class works as a wrapper around a collection of identifiers. Because all operations
  * are performed by an iteration over the collection elements, this implementation is
@@ -76,7 +76,7 @@ import static org.apache.sis.util.collection.Containers.hashMapCapacity;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.19
  *
- * @see org.geotoolkit.xml.IdentifiedObject
+ * @see org.apache.sis.xml.IdentifiedObject
  *
  * @since 3.18
  * @module

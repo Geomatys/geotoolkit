@@ -88,7 +88,7 @@ package org.geotoolkit.lang;
  * <tr><th colspan="2" bgcolor="lightblue">Input / Output (including CRS, XML, images)</th></tr>
  * <tr><td>{@link org.geotoolkit.image.io.XImageIO}</td>
  *     <td>Get an {@link javax.imageio.ImageReader} for the given input, or an {@link javax.imageio.ImageWriter} for the given image.</td></tr>
- * <tr><td>{@link org.geotoolkit.xml.XML}</td>
+ * <tr><td>{@link org.apache.sis.xml.XML}</td>
  *     <td>Marshall or unmarshall ISO 19115 objects.</td></tr>
  * <tr><td>{@link org.geotoolkit.io.wkt.PrjFiles}</td>
  *     <td>Read/write {@code ".prj"} files to/from {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem Coordinate Reference System} objects.</td></tr>

@@ -61,7 +61,7 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 import net.jcip.annotations.ThreadSafe;
 import net.jcip.annotations.Immutable;
-import org.geotoolkit.xml.Namespaces;
+import org.apache.sis.xml.Namespaces;
 
 import static org.apache.sis.util.Utilities.deepEquals;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;

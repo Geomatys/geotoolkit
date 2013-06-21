@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  */
 public interface RegisterableAdapter {
     /**
-     * Invoked when a new adapter is created by {@link org.geotoolkit.xml.MarshallerPool}.
+     * Invoked when a new adapter is created by {@link org.apache.sis.xml.MarshallerPool}.
      * Typical implementations will be as below:
      *
      * {@preformat java
@@ -51,7 +51,7 @@ public interface RegisterableAdapter {
     void register(Marshaller marshaller) throws JAXBException;
 
     /**
-     * Invoked when a new adapter is created by {@link org.geotoolkit.xml.MarshallerPool}.
+     * Invoked when a new adapter is created by {@link org.apache.sis.xml.MarshallerPool}.
      * Typical implementations will be as below:
      *
      * {@preformat java

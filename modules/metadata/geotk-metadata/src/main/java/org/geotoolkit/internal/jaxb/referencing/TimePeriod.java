@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.temporal.Period;
 
-import org.geotoolkit.xml.Namespaces;
+import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.internal.jaxb.gml.GMLAdapter;
 import org.geotoolkit.lang.Workaround;

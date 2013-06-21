@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 
-import org.geotoolkit.xml.Namespaces;
+import org.apache.sis.xml.Namespaces;
 
 
 /**

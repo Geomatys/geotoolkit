@@ -31,7 +31,7 @@ import org.apache.sis.util.Classes;
  * included in this text group because that string should be already included in
  * the {@code <gco:CharacterString>} element of the parent {@link FreeText}  (at
  * least in default behavior - actually the above may not be true anymore if the
- * marshaller {@link org.geotoolkit.xml.XML#LOCALE} property has been set).
+ * marshaller {@link org.apache.sis.xml.XML#LOCALE} property has been set).
  * <p>
  * The {@code TextGroup} name suggest that this object can contains many localized
  * strings. It was done that way prior Geotk 3.17. However it appears that despite

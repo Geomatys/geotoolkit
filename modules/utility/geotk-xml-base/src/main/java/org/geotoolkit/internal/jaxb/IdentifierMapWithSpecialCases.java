@@ -25,7 +25,7 @@ import java.util.Objects;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 
-import org.geotoolkit.xml.IdentifierSpace;
+import org.apache.sis.xml.IdentifierSpace;
 import org.apache.sis.xml.XLink;
 
 

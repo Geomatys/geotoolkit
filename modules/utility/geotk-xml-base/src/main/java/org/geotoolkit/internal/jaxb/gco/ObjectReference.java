@@ -21,9 +21,9 @@ import java.util.UUID;
 
 import org.apache.sis.xml.XLink;
 import org.geotoolkit.xml.ObjectLinker;
-import org.geotoolkit.xml.IdentifierMap;
-import org.geotoolkit.xml.IdentifierSpace;
-import org.geotoolkit.xml.IdentifiedObject;
+import org.apache.sis.xml.IdentifierMap;
+import org.apache.sis.xml.IdentifierSpace;
+import org.apache.sis.xml.IdentifiedObject;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.internal.jaxb.SpecializedIdentifier;
 import org.geotoolkit.internal.jaxb.MarshalContext;

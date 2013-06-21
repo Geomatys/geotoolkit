@@ -27,8 +27,8 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 
 import org.apache.sis.xml.XLink;
-import org.geotoolkit.xml.IdentifierMap;
-import org.geotoolkit.xml.IdentifierSpace;
+import org.apache.sis.xml.IdentifierMap;
+import org.apache.sis.xml.IdentifierSpace;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.internal.util.Citations;

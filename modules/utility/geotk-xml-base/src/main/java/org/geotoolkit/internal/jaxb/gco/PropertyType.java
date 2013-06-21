@@ -28,10 +28,10 @@ import java.lang.reflect.Type;
 import org.apache.sis.xml.XLink;
 import org.apache.sis.xml.NilObject;
 import org.apache.sis.xml.NilReason;
-import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.xml.IdentifierMap;
-import org.geotoolkit.xml.IdentifierSpace;
-import org.geotoolkit.xml.IdentifiedObject;
+import org.apache.sis.xml.Namespaces;
+import org.apache.sis.xml.IdentifierMap;
+import org.apache.sis.xml.IdentifierSpace;
+import org.apache.sis.xml.IdentifiedObject;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.apache.sis.util.iso.SimpleInternationalString;
 

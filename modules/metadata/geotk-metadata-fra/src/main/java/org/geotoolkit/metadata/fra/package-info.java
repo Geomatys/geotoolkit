@@ -43,5 +43,5 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
-import org.geotoolkit.xml.Namespaces;
+import org.apache.sis.xml.Namespaces;
 import org.apache.sis.internal.jaxb.metadata.CI_Citation;

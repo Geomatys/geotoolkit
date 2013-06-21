@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
-import org.geotoolkit.xml.Namespaces;
+import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.gmd.PT_FreeText;
 import org.apache.sis.internal.jaxb.gmd.LanguageCode;
 import org.apache.sis.internal.jaxb.gmd.Country;

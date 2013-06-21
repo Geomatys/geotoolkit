@@ -37,7 +37,7 @@ import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.xml.Namespaces;
+import org.apache.sis.xml.Namespaces;
 import org.apache.sis.util.Locales;
 import org.apache.sis.util.Deprecable;
 import org.apache.sis.util.iso.DefaultInternationalString;

@@ -28,7 +28,7 @@ import org.opengis.metadata.Identifier;
 
 import org.apache.sis.internal.simple.SimpleCitation;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.xml.IdentifierSpace;
+import org.apache.sis.xml.IdentifierSpace;
 
 import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
 

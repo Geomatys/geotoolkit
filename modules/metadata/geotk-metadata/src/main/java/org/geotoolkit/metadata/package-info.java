@@ -50,7 +50,7 @@
  * as a tree} for use in Swing or other GUI applications.
  * <p>
  * ISO 19115 metadata can be marshalled and unmarshalled in XML using the
- * {@link org.geotoolkit.xml.XML} convenience methods.
+ * {@link org.apache.sis.xml.XML} convenience methods.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.19

@@ -96,7 +96,7 @@ public final class PT_FreeText extends GO_CharacterString {
      * @param text An international string which could have several translations embedded for the
      *             same text.
      *
-     * @see org.geotoolkit.xml.XML#LOCALE
+     * @see org.apache.sis.xml.XML#LOCALE
      */
     private PT_FreeText(final DefaultInternationalString text) {
         super(text.toString(MarshalContext.getLocale()));

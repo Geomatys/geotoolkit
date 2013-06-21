@@ -44,7 +44,7 @@
 @XmlAccessorType(XmlAccessType.NONE)
 package org.geotoolkit.internal.jaxb.referencing;
 
-import org.geotoolkit.xml.Namespaces;
+import org.apache.sis.xml.Namespaces;
 import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlSchema;

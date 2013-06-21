@@ -99,7 +99,7 @@ public final class MarshalContext {
 
     /**
      * The base URL of ISO 19139 (or other standards) schemas. The valid values
-     * are documented in the {@link org.geotoolkit.xml.XML#SCHEMAS} property.
+     * are documented in the {@link org.apache.sis.xml.XML#SCHEMAS} property.
      *
      * @since 3.17
      */
@@ -160,7 +160,7 @@ public final class MarshalContext {
 
     /**
      * If marshalling, filters the given collection of identifiers in order to omit any identifiers
-     * for which the authority is one of the {@link org.geotoolkit.xml.IdentifierSpace} constants.
+     * for which the authority is one of the {@link org.apache.sis.xml.IdentifierSpace} constants.
      *
      * @param  identifiers The identifiers to filter, or {@code null}.
      * @return The identifiers to marshal, or {@code null} if none.
@@ -241,10 +241,10 @@ public final class MarshalContext {
 
     /**
      * Returns the base URL of ISO 19139 (or other standards) schemas. The valid values
-     * are documented in the {@link org.geotoolkit.xml.XML#SCHEMAS} property.
+     * are documented in the {@link org.apache.sis.xml.XML#SCHEMAS} property.
      *
      * @param  key One of the value documented in the "<cite>Map key</cite>" column of
-     *         {@link org.geotoolkit.xml.XML#SCHEMAS}.
+     *         {@link org.apache.sis.xml.XML#SCHEMAS}.
      * @return The base URL of the schema, or {@code null} if none were specified.
      *
      * @since 3.17
@@ -266,7 +266,7 @@ public final class MarshalContext {
      * identifier.
      *
      * @param  key One of the value documented in the "<cite>Map key</cite>" column of
-     *         {@link org.geotoolkit.xml.XML#SCHEMAS}. Typical value is {@code "gmd"}.
+     *         {@link org.apache.sis.xml.XML#SCHEMAS}. Typical value is {@code "gmd"}.
      * @param  directory The directory to concatenate, for example {@code "resources/uom"}
      *         or {@code "resources/Codelist"} (<strong>no trailing {@code '/'}</strong>).
      * @param  file The XML file, for example {@code "gmxUom.xml"}, {@code "gmxCodelists.xml"}
@@ -303,7 +303,7 @@ public final class MarshalContext {
     /**
      * Creates a new Gregorian calendar for the current timezone and locale. If no locale or
      * timezone were explicitely set, then the default ones are used as documented in the
-     * {@link org.geotoolkit.xml.XML#TIMEZONE} constant.
+     * {@link org.apache.sis.xml.XML#TIMEZONE} constant.
      *
      * @return A Gregorian calendar initialized with the current timezone and locale.
      *
