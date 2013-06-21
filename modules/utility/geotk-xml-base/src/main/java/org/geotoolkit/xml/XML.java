@@ -51,7 +51,10 @@ import org.geotoolkit.lang.Static;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Moved to SIS as {@link org.apache.sis.xml.XML}.
  */
+@Deprecated
 public final class XML extends Static {
     /**
      * Allows client code to specify the locale to use for marshalling
