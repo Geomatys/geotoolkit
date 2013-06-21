@@ -27,6 +27,9 @@ import java.io.StringWriter;
 
 import org.opengis.metadata.identification.DataIdentification;
 
+import org.apache.sis.xml.XML;
+import org.apache.sis.xml.Namespaces;
+import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.geotoolkit.test.LocaleDependantTestBase;
 
@@ -124,7 +127,7 @@ public final strictfp class LanguageMarshallingTest extends LocaleDependantTestB
         /*
          * We have to create a MarshallerPool in order to apply the desired configuration.
          */
-        final MarshallerPool pool = new MarshallerPool(MarshallerPool.defaultClassesToBeBound());
+        final MarshallerPool pool = new MarshallerPool(null);
         final Marshaller marshaller = pool.acquireMarshaller();
         assertNull(marshaller.getProperty(XML.STRING_SUBSTITUTES));
         assertDomEquals(inspire, marshal(marshaller, id), "xmlns:*");
@@ -132,7 +135,7 @@ public final strictfp class LanguageMarshallingTest extends LocaleDependantTestB
         marshaller.setProperty(XML.STRING_SUBSTITUTES, "dummy,language,foo");
         assertEquals("language", marshaller.getProperty(XML.STRING_SUBSTITUTES));
         assertDomEquals(simpler, marshal(marshaller, id), "xmlns:*");
-        pool.release(marshaller);
+        pool.recycle(marshaller);
     }
 
     /**

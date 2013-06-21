@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.gml;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.geotoolkit.internal.jaxb.UUIDs;
+import org.apache.sis.util.Version;
 import org.apache.sis.xml.Namespaces;
 
 
@@ -39,6 +40,14 @@ import org.apache.sis.xml.Namespaces;
  * @module
  */
 public abstract class GMLAdapter {
+    /**
+     * A GML version suitable for calls to {@link #versionGML(Version)}.
+     *
+     * @since 3.21
+     */
+    public static final Version GML_3_0 = new Version("3.0"),
+                                GML_3_2 = new Version("3.2");
+
     /**
      * The GML identifiers associated to the wrapped objects. This is different than the
      * map of UUIDs maintained by {@link UUIDs#DEFAULT}.

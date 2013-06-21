@@ -30,8 +30,8 @@ import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.internal.TemporalUtilities;
-import org.geotoolkit.internal.jaxb.XmlUtilities;
-import org.geotoolkit.internal.jaxb.gco.PropertyType;
+import org.apache.sis.internal.jaxb.XmlUtilities;
+import org.apache.sis.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -87,7 +87,6 @@ public final class TM_Primitive extends PropertyType<TM_Primitive, TemporalPrimi
      *
      * @return The time period, or {@code null}.
      */
-    @Override
     @XmlElement(name = "TimePeriod")
     public TimePeriod getElement() {
         if (!skip()) {

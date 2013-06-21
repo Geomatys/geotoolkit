@@ -32,6 +32,7 @@ import org.opengis.metadata.quality.EvaluationMethodType;
 import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.metadata.spatial.CellGeometry;
 
+import org.apache.sis.xml.XML;
 import org.apache.sis.metadata.iso.*;
 import org.apache.sis.metadata.iso.spatial.*;
 import org.apache.sis.metadata.iso.quality.*;

@@ -21,6 +21,8 @@ import java.util.Locale;
 import javax.xml.bind.JAXBException;
 import org.opengis.metadata.citation.Citation;
 import org.apache.sis.util.iso.DefaultInternationalString;
+import org.apache.sis.xml.XML;
+import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.test.TestBase;
 
 import org.junit.*;

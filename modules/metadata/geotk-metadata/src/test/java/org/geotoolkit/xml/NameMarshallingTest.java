@@ -27,6 +27,7 @@ import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 
 import org.apache.sis.util.CharSequences;
+import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.test.TestBase;
 import org.geotoolkit.naming.DefaultNameFactory;
 import org.apache.sis.metadata.iso.content.DefaultFeatureCatalogueDescription;
@@ -57,11 +58,11 @@ public final strictfp class NameMarshallingTest extends TestBase {
         /*
          * Marshall now.
          */
-        final MarshallerPool pool = new MarshallerPool(metadata.getClass());
+        final MarshallerPool pool = new MarshallerPool(null);
         final Marshaller marshaller = pool.acquireMarshaller();
         final StringWriter out = new StringWriter();
         marshaller.marshal(metadata, out);
-        pool.release(marshaller);
+        pool.recycle(marshaller);
         String xml = out.toString();
         /*
          * Takes only the name parts, discards the remainding of XML.

@@ -30,6 +30,9 @@ import org.opengis.metadata.citation.CitationDate;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.identification.TopicCategory;
 
+import org.apache.sis.xml.XML;
+import org.apache.sis.xml.Namespaces;
+import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.util.CharSequences;
 import org.geotoolkit.test.LocaleDependantTestBase;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
@@ -118,12 +121,12 @@ public final strictfp class CodeListMarshallingTest extends LocaleDependantTestB
         /*
          * We have to create a MarshallerPool in order to apply the desired configuration.
          */
-        final MarshallerPool pool = new MarshallerPool(MarshallerPool.defaultClassesToBeBound());
+        final MarshallerPool pool = new MarshallerPool(null);
         final Marshaller marshaller = pool.acquireMarshaller();
         marshaller.setProperty(XML.SCHEMAS, Collections.singletonMap("gmd",
                 "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas")); // Intentionally omit trailing '/'.
         final String actual = marshal(marshaller, rp);
-        pool.release(marshaller);
+        pool.recycle(marshaller);
         assertDomEquals(expected, actual, "xmlns:*");
     }
 
@@ -134,7 +137,7 @@ public final strictfp class CodeListMarshallingTest extends LocaleDependantTestB
      */
     @Test
     public void testLocalization() throws JAXBException {
-        final MarshallerPool pool = new MarshallerPool(MarshallerPool.defaultClassesToBeBound());
+        final MarshallerPool pool = new MarshallerPool(null);
         final Marshaller marshaller = pool.acquireMarshaller();
         /*
          * First, test using the French locale.
@@ -155,7 +158,7 @@ public final strictfp class CodeListMarshallingTest extends LocaleDependantTestB
         actual = marshal(marshaller, ci);
         assertDomEquals(expected, actual, "xmlns:*");
 
-        pool.release(marshaller);
+        pool.recycle(marshaller);
     }
 
     /**
@@ -165,7 +168,7 @@ public final strictfp class CodeListMarshallingTest extends LocaleDependantTestB
      */
     @Test
     public void testExtraCodes() throws JAXBException {
-        final MarshallerPool pool = new MarshallerPool(DefaultDataIdentification.class);
+        final MarshallerPool pool = new MarshallerPool(null);
         final Marshaller marshaller = pool.acquireMarshaller();
         final DefaultDataIdentification id = new DefaultDataIdentification();
         id.setTopicCategories(Arrays.asList(
@@ -174,7 +177,7 @@ public final strictfp class CodeListMarshallingTest extends LocaleDependantTestB
                 TopicCategory.valueOf("test"))); // New code
 
         final String xml = marshal(marshaller, id);
-        pool.release(marshaller);
+        pool.recycle(marshaller);
 
         // "OCEANS" is marshalled as "oceans" because is contains a UML id, which is lower-case.
         assertEquals(2, CharSequences.count(xml, "<gmd:MD_TopicCategoryCode>oceans</gmd:MD_TopicCategoryCode>"));

@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.gco;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.opengis.util.RecordType;
+import org.apache.sis.internal.jaxb.gco.PropertyType;
 import org.geotoolkit.naming.DefaultRecordType;
 
 
@@ -74,7 +75,6 @@ public final class GO_RecordType extends PropertyType<GO_RecordType, RecordType>
      *
      * @return The metadata to be marshalled.
      */
-    @Override
     @XmlElement(name = "RecordType")
     public DefaultRecordType getElement() {
         if (skip()) return null;

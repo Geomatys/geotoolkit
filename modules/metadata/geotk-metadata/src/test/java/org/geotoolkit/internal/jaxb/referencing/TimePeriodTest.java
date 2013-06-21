@@ -23,9 +23,10 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.junit.*;
-import org.geotoolkit.internal.jaxb.XmlUtilities;
+import org.apache.sis.internal.jaxb.XmlUtilities;
 import org.geotoolkit.test.LocaleDependantTestBase;
 
 import static org.geotoolkit.test.Assert.*;
@@ -80,9 +81,9 @@ public final strictfp class TimePeriodTest extends LocaleDependantTestBase {
     /**
      * Creates a new time instant for the given date.
      */
-    private TimeInstant createTimeInstant(final String date) {
+    private TimeInstant createTimeInstant(final String date) throws DatatypeConfigurationException {
         final TimeInstant instant = new TimeInstant();
-        instant.timePosition = XmlUtilities.toXML(date(date));
+        instant.timePosition = XmlUtilities.toXML(null, date(date));
         return instant;
     }
 
@@ -90,9 +91,10 @@ public final strictfp class TimePeriodTest extends LocaleDependantTestBase {
      * Tests time instant.
      *
      * @throws JAXBException If an error occurred while marshalling.
+     * @throws DatatypeConfigurationException Should never happen.
      */
     @Test
-    public void testTimeInstant() throws JAXBException {
+    public void testTimeInstant() throws JAXBException, DatatypeConfigurationException {
         final String expected =
             "<gml:TimeInstant gml:id=\"extent\">\n" + // TODO: gml:id is arbitrary.
             "  <gml:timePosition>1992-01-01T01:00:00.000+01:00</gml:timePosition>\n" +

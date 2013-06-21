@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.temporal.Period;
 
 import org.apache.sis.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.MarshalContext;
+import org.apache.sis.internal.jaxb.Context;
 import org.geotoolkit.internal.jaxb.gml.GMLAdapter;
 import org.geotoolkit.lang.Workaround;
 
@@ -89,7 +89,7 @@ public final class TimePeriod extends GMLAdapter {
     public TimePeriod(final Period period) {
         super(period);
         if (period != null) {
-            if (MarshalContext.versionGML(MarshalContext.GML_3_0)) {
+            if (Context.isGMLVersion(Context.current(), GML_3_0)) {
                 begin = new TimePeriodBound.GML3(period.getBeginning(), "before");
                 end   = new TimePeriodBound.GML3(period.getEnding(), "after");
             } else {

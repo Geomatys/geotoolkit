@@ -90,6 +90,5 @@ import org.apache.sis.xml.Namespaces;
 import org.apache.sis.internal.jaxb.gco.*;
 import org.apache.sis.internal.jaxb.code.*;
 import org.apache.sis.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.gco.UnitAdapter;
-import org.geotoolkit.internal.jaxb.gco.GO_DateTime;
+import org.apache.sis.internal.jaxb.gco.UnitAdapter;
 import org.geotoolkit.internal.jaxb.gco.GO_RecordType;

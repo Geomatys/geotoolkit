@@ -32,7 +32,7 @@ import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.iso.Types;
-import org.geotoolkit.internal.jaxb.XmlUtilities;
+import org.apache.sis.internal.jdk8.JDK8;
 import org.geotoolkit.util.NumberRange;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
@@ -451,7 +451,7 @@ public class MetadataNodeAccessor extends MetadataNodeParser {
         if (value != null) {
             final Class<?> type = value.getClass();
             if (Date.class.isAssignableFrom(type)) {
-                asText = XmlUtilities.printDateTime((Date) value);
+                asText = JDK8.printDateTime((Date) value);
             } else if (isFormattable(type)) {
                 asText = value.toString();
             } else if (isFormattable(type.getComponentType())) {

@@ -29,8 +29,10 @@ import org.opengis.temporal.Position;
 
 import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.lang.Workaround;
-import org.geotoolkit.internal.jaxb.XmlUtilities;
+import org.apache.sis.internal.jaxb.XmlUtilities;
 import org.geotoolkit.internal.jaxb.gml.GMLAdapter;
+import javax.xml.datatype.DatatypeConfigurationException;
+import org.apache.sis.internal.jaxb.Context;
 
 
 /**
@@ -93,10 +95,16 @@ public final class TimeInstant extends GMLAdapter {
         if (instant != null) {
             final Position position = instant.getPosition();
             if (position != null) {
-                final XMLGregorianCalendar date = XmlUtilities.toXML(position.getDate());
-                if (date != null) {
-                    XmlUtilities.trimTime(date, false);
-                    return date;
+                final Context context = Context.current();
+                try {
+                    final XMLGregorianCalendar date = XmlUtilities.toXML(context, position.getDate());
+                    if (date != null) {
+                        XmlUtilities.trimTime(date, false);
+                        return date;
+                    }
+                } catch (DatatypeConfigurationException e) {
+                    // TODO: values shall not be null.
+                    Context.warningOccured(context, null, GMLAdapter.class, null, e, true);
                 }
             }
         }

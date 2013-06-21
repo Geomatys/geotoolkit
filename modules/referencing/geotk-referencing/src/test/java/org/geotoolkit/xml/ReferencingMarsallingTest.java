@@ -40,6 +40,8 @@ import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.datum.VerticalDatumType;
 
+import org.apache.sis.xml.XML;
+import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.internal.jaxb.metadata.ReferenceSystemMetadata;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -69,6 +71,7 @@ import static org.geotoolkit.referencing.Assert.*;
 import static org.apache.sis.test.TestUtilities.getSingleton;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.ReferenceSystem.SCOPE_KEY;
+import javax.xml.bind.JAXBContext;
 
 
 /**
@@ -111,10 +114,10 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
     public void testGeographicCRSMarshalling() throws JAXBException, IOException {
         final GeographicCRS     crs = createGeographicCRS();
         final StringWriter       sw = new StringWriter();
-        final MarshallerPool   pool = new MarshallerPool(DefaultGeographicCRS.class);
+        final MarshallerPool   pool = new MarshallerPool(JAXBContext.newInstance(DefaultGeographicCRS.class), null);
         final Marshaller marshaller = pool.acquireMarshaller();
         marshaller.marshal(crs, sw);
-        pool.release(marshaller);
+        pool.recycle(marshaller);
         final String result = sw.toString();
         final String expected = TestData.readText(this, GEOGRAPHIC_CRS_XML);
         assertXmlEquals(expected, result, "xmlns:*", "xsi:schemaLocation");
@@ -129,13 +132,13 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
      */
     @Test
     public void testGeographicCRSUnmarshalling() throws JAXBException, IOException {
-        final MarshallerPool pool = new MarshallerPool(DefaultGeographicCRS.class);
+        final MarshallerPool pool = new MarshallerPool(JAXBContext.newInstance(DefaultGeographicCRS.class), null);
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final Object obj;
         try (InputStream in = TestData.openStream(this, GEOGRAPHIC_CRS_XML)) {
             obj = unmarshaller.unmarshal(in);
         } finally {
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
         assertTrue(obj instanceof DefaultGeographicCRS);
         final DefaultGeographicCRS result = (DefaultGeographicCRS) obj;
@@ -160,7 +163,7 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
     public void testVerticalCRSMarshalling() throws JAXBException, IOException {
         final DefaultMetadata metadata = createMetadataWithVerticalCRS();
         final StringWriter          sw = new StringWriter();
-        final MarshallerPool      pool = new MarshallerPool(DefaultMetadata.class);
+        final MarshallerPool      pool = new MarshallerPool(JAXBContext.newInstance(DefaultMetadata.class), null);
         final Marshaller    marshaller = pool.acquireMarshaller();
         marshaller.marshal(metadata, sw);
         final String result = sw.toString();
@@ -174,7 +177,7 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
         marshaller.setProperty(XML.GML_VERSION, "3.1");
         marshaller.marshal(metadata, sw);
         final String result31 = sw.toString();
-        pool.release(marshaller);
+        pool.recycle(marshaller);
         assertTrue(result31.contains("<gml:verticalDatumType>depth</gml:verticalDatumType>"));
         assertFalse(result.contains("verticalDatumType"));
     }
@@ -187,14 +190,14 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
      */
     @Test
     public void testVerticalCRSUnmarshalling() throws JAXBException, IOException {
-        final MarshallerPool pool = new MarshallerPool(DefaultMetadata.class);
+        final MarshallerPool pool = new MarshallerPool(JAXBContext.newInstance(DefaultMetadata.class), null);
         final DefaultMetadata expected = createMetadataWithVerticalCRS();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final Object obj;
         try (InputStream in = TestData.openStream(this, VERTICAL_CRS_XML)) {
             obj = unmarshaller.unmarshal(in);
         }
-        pool.release(unmarshaller);
+        pool.recycle(unmarshaller);
         assertTrue(obj instanceof DefaultMetadata);
         final DefaultMetadata result = (DefaultMetadata) obj;
         final ReferenceIdentifier expectedID = getSingleton(expected.getReferenceSystemInfo()).getName();

@@ -35,7 +35,7 @@ import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.internal.jaxb.gco.CharSequenceAdapter;
+import org.apache.sis.internal.jaxb.gco.CharSequenceAdapter;
 import org.apache.sis.xml.Namespaces;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;

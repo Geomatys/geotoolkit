@@ -35,7 +35,8 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.apache.sis.util.StringBuilders;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.jaxb.MarshalContext;
+import org.apache.sis.internal.jaxb.Context;
+import org.geotoolkit.internal.jaxb.gml.GMLAdapter;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
 import static org.geotoolkit.util.Utilities.hash;
@@ -256,7 +257,7 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
      */
     @XmlElement(name = "verticalDatumType")
     private VerticalDatumType getMarshalled() {
-        return (MarshalContext.versionGML(MarshalContext.GML_3_2)) ? null : getVerticalDatumType();
+        return (Context.isGMLVersion(Context.current(), GMLAdapter.GML_3_2)) ? null : getVerticalDatumType();
     }
 
     /**

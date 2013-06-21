@@ -82,5 +82,4 @@ import org.apache.sis.internal.jaxb.gco.*;
 import org.apache.sis.internal.jaxb.gmd.*;
 import org.apache.sis.internal.jaxb.code.*;
 import org.apache.sis.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.gmd.GO_URL;
-import org.geotoolkit.internal.jaxb.gco.GO_DateTime;
+import org.apache.sis.internal.jaxb.gmd.GO_URL;

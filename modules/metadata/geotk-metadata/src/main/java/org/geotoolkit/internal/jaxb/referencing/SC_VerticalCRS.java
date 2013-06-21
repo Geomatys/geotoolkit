@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.referencing;
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
-import org.geotoolkit.internal.jaxb.gco.PropertyType;
+import org.apache.sis.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -76,7 +76,6 @@ public final class SC_VerticalCRS extends PropertyType<SC_VerticalCRS, VerticalC
      *
      * @return The metadata to be marshalled.
      */
-    @Override
     @XmlElement(name = "VerticalCRS")
     public DefaultVerticalCRS getElement() {
         return skip() ? null : DefaultVerticalCRS.castOrCopy(metadata);

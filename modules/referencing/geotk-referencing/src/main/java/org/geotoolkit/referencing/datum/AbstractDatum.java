@@ -40,7 +40,7 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.jaxb.gco.DateAsLongAdapter;
+import org.apache.sis.internal.jaxb.gco.DateAsLongAdapter;
 
 import static org.apache.sis.util.Utilities.deepEquals;
 

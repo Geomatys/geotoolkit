@@ -24,6 +24,8 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.lineage.DefaultSource;
 import org.apache.sis.metadata.iso.lineage.DefaultLineage;
+import org.apache.sis.xml.Namespaces;
+import org.apache.sis.xml.XML;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;

@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.referencing;
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.cs.TimeCS;
 import org.geotoolkit.referencing.cs.DefaultTimeCS;
-import org.geotoolkit.internal.jaxb.gco.PropertyType;
+import org.apache.sis.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -75,7 +75,6 @@ public final class CS_TimeCS extends PropertyType<CS_TimeCS, TimeCS> {
      *
      * @return The metadata to be marshalled.
      */
-    @Override
     @XmlElement(name = "TimeCS")
     public DefaultTimeCS getElement() {
         return skip() ? null : DefaultTimeCS.castOrCopy(metadata);

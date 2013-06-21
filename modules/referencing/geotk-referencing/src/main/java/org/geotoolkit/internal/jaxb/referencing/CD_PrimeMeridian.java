@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.referencing;
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.datum.PrimeMeridian;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
-import org.geotoolkit.internal.jaxb.gco.PropertyType;
+import org.apache.sis.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -74,7 +74,6 @@ public final class CD_PrimeMeridian extends PropertyType<CD_PrimeMeridian, Prime
      *
      * @return The metadata to be marshalled.
      */
-    @Override
     @XmlElement(name = "Ellipsoid")
     public DefaultPrimeMeridian getElement() {
         return skip() ? null : DefaultPrimeMeridian.castOrCopy(metadata);

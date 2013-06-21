@@ -41,6 +41,7 @@ import org.opengis.util.NameFactory;
 import org.geotoolkit.test.TestBase;
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.xml.XML;
 
 import org.junit.*;
 import static org.junit.Assert.*;
