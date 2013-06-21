@@ -1,4 +1,5 @@
 org.geotoolkit.display2d.ext.vectorfield.GridMarkRendererService
 org.geotoolkit.display2d.ext.dimrange.DimRangeRendererService
 org.geotoolkit.display2d.ext.pattern.PatternRendererService
+org.geotoolkit.display2d.ext.cellular.CellRendererService
 

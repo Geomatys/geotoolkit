@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,24 +14,30 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.ext.vectorfield;
+package org.geotoolkit.display2d.ext.cellular;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.measure.unit.NonSI;
 import org.geotoolkit.style.AbstractExtensionSymbolizer;
 import org.geotoolkit.style.StyleConstants;
+import org.opengis.style.Rule;
 
 /**
- * VectorField symbolizer, to render wind arrows
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
  */
-public class VectorFieldSymbolizer extends AbstractExtensionSymbolizer {
+public class CellSymbolizer extends AbstractExtensionSymbolizer {
 
-    public static final String NAME = "VectorField";
+    public static final String NAME = "Cell";
+    
+    private final int cellSize;
+    private List<? extends Rule> rules;
 
-    public VectorFieldSymbolizer(){
-        super(NonSI.PIXEL,"","vectorField",StyleConstants.DEFAULT_DESCRIPTION);
+    public CellSymbolizer(int cellSize, List<? extends Rule> rules){
+        super(NonSI.PIXEL,"","Cell",StyleConstants.DEFAULT_DESCRIPTION);
+        this.cellSize = cellSize;
+        this.rules = rules;
     }
 
     @Override
@@ -39,4 +45,12 @@ public class VectorFieldSymbolizer extends AbstractExtensionSymbolizer {
         return NAME;
     }
 
+    public int getCellSize() {
+        return cellSize;
+    }
+
+    public List<? extends Rule> getRules() {
+        return rules;
+    }
+    
 }

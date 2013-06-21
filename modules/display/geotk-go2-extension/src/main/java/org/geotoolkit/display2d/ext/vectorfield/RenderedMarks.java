@@ -244,21 +244,19 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
      * unscaled. Other marks will be rendered with scaled versions of their shapes.
      */
     public double getTypicalAmplitude() {
-        synchronized (getTreeLock()) {
-            if (!(typicalAmplitude>0)) {
-                int n=0;
-                double rms=0;
-                for (final MarkIterator it = getMarkIterator(); it.next();) {
-                    final double v = it.amplitude();
-                    if (!Double.isNaN(v)) {
-                        rms += v*v;
-                        n++;
-                    }
+        if (!(typicalAmplitude>0)) {
+            int n=0;
+            double rms=0;
+            for (final MarkIterator it = getMarkIterator(); it.next();) {
+                final double v = it.amplitude();
+                if (!Double.isNaN(v)) {
+                    rms += v*v;
+                    n++;
                 }
-                typicalAmplitude = (n>0) ? Math.sqrt(rms/n) : 1;
             }
-            return typicalAmplitude;
+            typicalAmplitude = (n>0) ? Math.sqrt(rms/n) : 1;
         }
+        return typicalAmplitude;
     }
 
     /**
@@ -745,23 +743,21 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
      * @see #GLYPHS_MASK
      */
     protected void invalidate(final int mask) {
-        synchronized (getTreeLock()) {
-            final int toClear = validMask & mask;
-            validMask &= ~mask;
-            if ((toClear & AREAS_MASK)!=0 && areaShapes!=null) {
-                Arrays.fill(areaShapes,  null);
-            }
-            if ((toClear & MARKS_MASK)!=0 && markShapes!=null) {
-                Arrays.fill(markShapes,  null);
-                Arrays.fill(markTransforms, 0);
-            }
-            if ((toClear & GLYPHS_MASK)!=0 && glyphVectors!=null) {
-                Arrays.fill(glyphVectors, null);
-                Arrays.fill(glyphPositions,  0);
-            }
-            if (toClear != 0) {
-                boundingBox = null;
-            }
+        final int toClear = validMask & mask;
+        validMask &= ~mask;
+        if ((toClear & AREAS_MASK)!=0 && areaShapes!=null) {
+            Arrays.fill(areaShapes,  null);
+        }
+        if ((toClear & MARKS_MASK)!=0 && markShapes!=null) {
+            Arrays.fill(markShapes,  null);
+            Arrays.fill(markTransforms, 0);
+        }
+        if ((toClear & GLYPHS_MASK)!=0 && glyphVectors!=null) {
+            Arrays.fill(glyphVectors, null);
+            Arrays.fill(glyphPositions,  0);
+        }
+        if (toClear != 0) {
+            boundingBox = null;
         }
     }
 
@@ -817,7 +813,6 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
      * couche ne sera plus affichée avant un certain temps.
      */
     void clearCache() {
-        assert Thread.holdsLock(getTreeLock());
         validMask        = 0;
         glyphVectors     = null;
         glyphPositions   = null;
