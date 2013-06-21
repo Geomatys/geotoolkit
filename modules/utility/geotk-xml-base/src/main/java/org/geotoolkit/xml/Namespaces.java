@@ -35,7 +35,10 @@ import org.geotoolkit.lang.Static;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Moved to SIS as {@link org.apache.sis.xml.Namespaces}.
  */
+@Deprecated
 public final class Namespaces extends Static {
     /**
      * Do not allow instantiation of this class.

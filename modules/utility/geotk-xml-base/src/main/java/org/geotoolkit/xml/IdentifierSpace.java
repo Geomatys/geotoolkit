@@ -55,7 +55,10 @@ import org.geotoolkit.internal.jaxb.NonMarshalledAuthority;
  *
  * @since 3.18
  * @module
+ *
+ * @deprecated Moved to SIS as {@link org.apache.sis.xml.IdentifierSpace}.
  */
+@Deprecated
 public interface IdentifierSpace<T> extends Citation {
     /**
      * A standard GML attribute available on every object-with-identity. Its type is
