@@ -31,6 +31,7 @@ import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
 import org.geotoolkit.process.coverage.metadataextractor.ExtractionDescriptor;
 import org.geotoolkit.process.coverage.pgpyramid.PyramidDescriptor;
 import org.geotoolkit.process.coverage.reducetodomain.ReduceToDomainDescriptor;
+import org.geotoolkit.process.coverage.reformat.ReformatDescriptor;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.process.coverage.tiling.TilingDescriptor;
@@ -69,6 +70,7 @@ public class CoverageProcessingRegistry extends AbstractProcessingRegistry{
               CopyCoverageStoreDescriptor.INSTANCE,
               StraightenDescriptor.INSTANCE,
               ReduceToDomainDescriptor.INSTANCE,
+              ReformatDescriptor.INSTANCE,
               PyramidDescriptor.INSTANCE);
     }
 
