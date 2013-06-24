@@ -67,7 +67,7 @@ import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ArraysExt;
 
-import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR;
+import static org.apache.sis.util.iso.DefaultNameSpace.DEFAULT_SEPARATOR;
 
 
 /**

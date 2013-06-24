@@ -41,7 +41,7 @@ import org.opengis.parameter.InvalidParameterValueException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.naming.DefaultNameFactory;
+import org.apache.sis.util.iso.DefaultNameFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.util.collection.WeakValueHashMap;
 
@@ -87,7 +87,7 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
      * The factory for creating new generic names.
      * Will be obtained when first needed.
      */
-    private static DefaultNameFactory nameFactory;
+    private static NameFactory nameFactory;
     static {
         Factories.addChangeListener(new ChangeListener() {
             @Override public void stateChanged(ChangeEvent e) {
@@ -255,9 +255,9 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
      * @return The name factory.
      * @category Generic name
      */
-    static DefaultNameFactory getNameFactory() {
+    static NameFactory getNameFactory() {
         // No need to synchronize; this is not a big deal if we ask twice.
-        DefaultNameFactory factory = nameFactory;
+        NameFactory factory = nameFactory;
         if (factory == null) {
             nameFactory = factory = (DefaultNameFactory) FactoryFinder.getNameFactory(
                     new Hints(Hints.NAME_FACTORY, DefaultNameFactory.class));

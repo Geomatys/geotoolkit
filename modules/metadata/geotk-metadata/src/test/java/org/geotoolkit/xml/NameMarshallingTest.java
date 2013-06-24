@@ -29,7 +29,7 @@ import org.opengis.util.GenericName;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.test.TestBase;
-import org.geotoolkit.naming.DefaultNameFactory;
+import org.apache.sis.util.iso.DefaultNameFactory;
 import org.apache.sis.metadata.iso.content.DefaultFeatureCatalogueDescription;
 
 import org.junit.*;

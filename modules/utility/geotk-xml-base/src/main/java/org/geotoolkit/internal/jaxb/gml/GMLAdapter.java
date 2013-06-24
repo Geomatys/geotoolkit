@@ -73,7 +73,7 @@ public abstract class GMLAdapter {
      * </ul>
      *
      * @see <a href="https://www.seegrid.csiro.au/wiki/bin/view/AppSchemas/GmlIdentifiers">GML identifiers</a>
-     * @see org.geotoolkit.internal.jaxb.gco.PropertyType#uuid
+     * @see org.apache.sis.internal.jaxb.gco.PropertyType#uuid
      */
     @XmlID
     @XmlAttribute(required = true, namespace = Namespaces.GML)

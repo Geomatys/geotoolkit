@@ -47,14 +47,15 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.parameter.InvalidParameterValueException;
 
-import static org.opengis.referencing.IdentifiedObject.REMARKS_KEY;
+import org.apache.sis.util.Locales;
 import org.apache.sis.util.Deprecable;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.LenientComparable;
 import org.apache.sis.util.iso.DefaultInternationalString;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.internal.jaxb.gco.StringConverter;
+import org.apache.sis.util.iso.Types;
+import org.apache.sis.internal.jaxb.gco.StringConverter;
 import org.geotoolkit.internal.jaxb.referencing.RS_Identifier;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.resources.Loggings;
@@ -65,9 +66,9 @@ import org.apache.sis.xml.Namespaces;
 
 import static org.apache.sis.util.Utilities.deepEquals;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static org.opengis.referencing.IdentifiedObject.REMARKS_KEY;
 import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
 import static org.geotoolkit.internal.referencing.CRSUtilities.getReferencingGroup;
-import org.apache.sis.util.Locales;
 
 
 /**
@@ -316,7 +317,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
                 // -------------------------------------------------------------------
                 case 92902992: {
                     if (key.equals(ALIAS_KEY)) {
-                        alias = NamedIdentifier.getNameFactory().toArray(value);
+                        alias = Types.toGenericNames(value, NamedIdentifier.getNameFactory());
                         continue nextKey;
                     }
                     break;

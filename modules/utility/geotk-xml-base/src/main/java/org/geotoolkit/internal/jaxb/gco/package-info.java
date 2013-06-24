@@ -55,13 +55,13 @@
  *   <ul>
  *     <li>Implement the ISO 19139 {@code Foo_Type}, where <var>Foo</var> is the ISO name of a class.</li>
  *     <li>Contains the {@code gco:ObjectIdentification} group of attributes ({@code id}, {@code uuid}).</li>
- *     <li>May be subclasses of {@link org.geotoolkit.internal.jaxb.gco.ObjectIdentification} (but this is not always possible).</li>
+ *     <li>May be subclasses of {@link org.apache.sis.internal.jaxb.gco.ObjectIdentification} (but this is not always possible).</li>
  *   </ul></p></li>
  *   <li><p><code>org.geotoolkit.<b>internal.jaxb</b></code> private packages:
  *   <ul>
- *     <li>Implement the ISO 19139 {@code Foo_PropertyType} as subclasses of the {@link org.geotoolkit.internal.jaxb.gco.PropertyType} class.</li>
+ *     <li>Implement the ISO 19139 {@code Foo_PropertyType} as subclasses of the {@link org.apache.sis.internal.jaxb.gco.PropertyType} class.</li>
  *     <li>Contains the {@code gco:ObjectReference} group of attributes ({@code xlink}, {@code uuidref}).</li>
- *     <li>Attributes are declared in the {@link org.geotoolkit.internal.jaxb.gco.ObjectReference} Java class.</li>
+ *     <li>Attributes are declared in the {@link org.apache.sis.internal.jaxb.gco.ObjectReference} Java class.</li>
  *    </ul></p></li>
  * </ul>
  * <p>
@@ -95,7 +95,7 @@
  * Do NOT define a package-level adapter for InternationalString,
  * because such adapter shall NOT apply to GO_CharacterString.getAnchor().
  */
-package org.geotoolkit.internal.jaxb.gco;
+package org.apache.sis.internal.jaxb.gco;
 
 import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlNsForm;

@@ -33,7 +33,7 @@ import org.opengis.referencing.IdentifiedObject;
 
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.naming.DefaultNameSpace;
+import org.apache.sis.util.iso.DefaultNameSpace;
 import org.apache.sis.util.collection.BackingStoreException;
 
 import static org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory.*;

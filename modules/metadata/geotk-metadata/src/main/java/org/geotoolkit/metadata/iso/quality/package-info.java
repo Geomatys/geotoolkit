@@ -91,4 +91,4 @@ import org.apache.sis.internal.jaxb.gco.*;
 import org.apache.sis.internal.jaxb.code.*;
 import org.apache.sis.internal.jaxb.metadata.*;
 import org.apache.sis.internal.jaxb.gco.UnitAdapter;
-import org.geotoolkit.internal.jaxb.gco.GO_RecordType;
+import org.apache.sis.internal.jaxb.gco.GO_RecordType;

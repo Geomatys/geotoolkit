@@ -45,7 +45,7 @@ import org.geotoolkit.resources.Descriptions;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
-import org.geotoolkit.naming.DefaultNameSpace;
+import org.apache.sis.util.iso.DefaultNameSpace;
 
 
 /**
