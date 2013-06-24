@@ -57,7 +57,10 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.util.iso} package.
  */
+@Deprecated
 @Immutable
 public class DefaultNameSpace implements NameSpace, Serializable {
     /**

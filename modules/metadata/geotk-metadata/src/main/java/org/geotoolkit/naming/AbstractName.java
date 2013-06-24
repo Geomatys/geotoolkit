@@ -59,7 +59,10 @@ import org.apache.sis.util.iso.SimpleInternationalString;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.util.iso} package.
  */
+@Deprecated
 @XmlType(name = "GenericName")
 public abstract class AbstractName implements GenericName, Serializable {
     /**

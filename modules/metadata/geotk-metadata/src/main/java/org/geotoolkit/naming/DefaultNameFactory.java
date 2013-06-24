@@ -58,7 +58,10 @@ import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.util.iso} package.
  */
+@Deprecated
 @ThreadSafe
 public class DefaultNameFactory extends Factory implements NameFactory {
     /**
