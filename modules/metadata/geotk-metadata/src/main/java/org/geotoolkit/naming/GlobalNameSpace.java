@@ -34,7 +34,10 @@ import net.jcip.annotations.Immutable;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.util.iso} package.
  */
+@Deprecated
 @Immutable
 final class GlobalNameSpace extends DefaultNameSpace {
     /**

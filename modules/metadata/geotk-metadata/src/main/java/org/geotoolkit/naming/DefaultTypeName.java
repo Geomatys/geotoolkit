@@ -42,7 +42,10 @@ import org.opengis.util.MemberName;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.util.iso} package.
  */
+@Deprecated
 @Immutable
 @XmlRootElement(name = "TypeName")
 public class DefaultTypeName extends DefaultLocalName implements TypeName {

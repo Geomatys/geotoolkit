@@ -59,7 +59,10 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.util.iso} package.
  */
+@Deprecated
 @Immutable
 @XmlRootElement(name = "LocalName")
 public class DefaultLocalName extends AbstractName implements LocalName {
