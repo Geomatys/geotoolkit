@@ -17,10 +17,12 @@
  */
 package org.geotoolkit.internal.jaxb.referencing;
 
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.crs.VerticalCRS;
+import org.apache.sis.internal.jaxb.AdapterReplacement;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
-import org.apache.sis.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -35,7 +37,7 @@ import org.apache.sis.internal.jaxb.gco.PropertyType;
  * @since 3.00
  * @module
  */
-public final class SC_VerticalCRS extends PropertyType<SC_VerticalCRS, VerticalCRS> {
+public final class SC_VerticalCRS extends org.apache.sis.internal.jaxb.gml.SC_VerticalCRS implements AdapterReplacement {
     /**
      * Empty constructor for JAXB only.
      */
@@ -52,22 +54,30 @@ public final class SC_VerticalCRS extends PropertyType<SC_VerticalCRS, VerticalC
     }
 
     /**
-     * Returns the Vertical CRS value wrapped by a {@code gml:VerticalCRS} tags.
-     *
-     * @param value The value to marshall.
-     * @return The adapter which wraps the metadata value.
+     * Replaces the {@code sis-metadata} adapter by this adapter.
      */
     @Override
-    protected SC_VerticalCRS wrap(final VerticalCRS value) {
-        return new SC_VerticalCRS(value);
+    public void register(final Marshaller marshaller) {
+        marshaller.setAdapter(SC_VerticalCRS.class, this);
     }
 
     /**
-     * Returns the GeoAPI interface which is bound by this adapter.
+     * Replaces the {@code sis-metadata} adapter by this adapter.
      */
     @Override
-    protected Class<VerticalCRS> getBoundType() {
-        return VerticalCRS.class;
+    public void register(final Unmarshaller unmarshaller) {
+        unmarshaller.setAdapter(SC_VerticalCRS.class, this);
+    }
+
+    /**
+     * Returns the Vertical CRS value wrapped by a {@code gml:VerticalCRS} tags.
+     *
+     * @param value The value to marshal.
+     * @return The adapter which wraps the metadata value.
+     */
+    @Override
+    protected org.apache.sis.internal.jaxb.gml.SC_VerticalCRS wrap(final VerticalCRS value) {
+        return new SC_VerticalCRS(value);
     }
 
     /**

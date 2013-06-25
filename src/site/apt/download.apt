@@ -112,7 +112,6 @@ Downloading Geotoolkit.org Binaries
 |                                        | • jcip-annotations.jar\            |                           |
 |                                        | • geoapi-pending.jar\              |                           |
 |                                        | • geotk-utility.jar\               |                           |
-|                                        | • geotk-xml-base.jar\              |                           |
 |                                        | • geotk-metadata.jar\              |                           |
 *----------------------------------------+------------------------------------+---------------------------+
 | <<<geotk-bundle-referencing.pack.gz>>> | <All the metadata pack plus:>\     | • Java 6\                 |

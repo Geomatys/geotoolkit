@@ -76,5 +76,5 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.apache.sis.xml.Namespaces;
 import org.apache.sis.internal.jaxb.gco.*;
 import org.apache.sis.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.referencing.*;
+import org.apache.sis.internal.jaxb.gml.*;
 import org.apache.sis.internal.jaxb.geometry.GM_Object;

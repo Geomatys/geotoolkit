@@ -55,7 +55,7 @@ import org.apache.sis.util.iso.DefaultInternationalString;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.iso.Types;
-import org.apache.sis.internal.jaxb.gco.StringConverter;
+import org.geotoolkit.internal.jaxb.gco.StringConverter;
 import org.geotoolkit.internal.jaxb.referencing.RS_Identifier;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.resources.Loggings;

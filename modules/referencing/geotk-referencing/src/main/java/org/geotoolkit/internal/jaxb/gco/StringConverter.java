@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.apache.sis.internal.jaxb.gco;
+package org.geotoolkit.internal.jaxb.gco;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 

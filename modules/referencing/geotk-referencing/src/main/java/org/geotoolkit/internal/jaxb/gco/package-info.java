@@ -95,7 +95,7 @@
  * Do NOT define a package-level adapter for InternationalString,
  * because such adapter shall NOT apply to GO_CharacterString.getAnchor().
  */
-package org.apache.sis.internal.jaxb.gco;
+package org.geotoolkit.internal.jaxb.gco;
 
 import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlNsForm;

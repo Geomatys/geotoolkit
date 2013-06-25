@@ -90,7 +90,6 @@ public class PackerSpecificMojo extends AbstractMojo {
                     "jcip-annotations-*.jar",
                     "geoapi-pending-*.jar",
                     "geotk-utility-"  + VERSION + ".jar",
-                    "geotk-xml-base-" + VERSION + ".jar",
                     "geotk-metadata-" + VERSION + ".jar"
             });
             packer.addPack(metadata, referencing, new String[] {

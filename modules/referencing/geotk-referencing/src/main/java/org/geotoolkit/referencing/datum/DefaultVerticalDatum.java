@@ -36,7 +36,7 @@ import org.apache.sis.util.StringBuilders;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.internal.jaxb.Context;
-import org.geotoolkit.internal.jaxb.gml.GMLAdapter;
+import org.apache.sis.internal.jaxb.gml.GMLAdapter;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
 import static org.geotoolkit.util.Utilities.hash;
