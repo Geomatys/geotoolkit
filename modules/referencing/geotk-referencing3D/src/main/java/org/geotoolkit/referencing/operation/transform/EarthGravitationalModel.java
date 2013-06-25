@@ -130,12 +130,6 @@ public class EarthGravitationalModel extends VerticalTransform {
     private final double[] aClenshaw, bClenshaw, as;
 
     /**
-     * Temporary buffer for use by {@link #heightOffset} only. Allocated once for ever
-     * for avoiding too many objects creation / destruction.
-     */
-    private final double[] cr, sr, s11, s12;
-
-    /**
      * Creates a model for the specified datum and maximum degree and order.
      * In current version, only {@linkplain DefaultGeodeticDatum#WGS84 WGS84}
      * and {@linkplain DefaultGeodeticDatum#WGS72 WGS72} datum are supported.
@@ -249,10 +243,6 @@ public class EarthGravitationalModel extends VerticalTransform {
         cnmGeopCoef = new double[geopCoefLength];
         snmGeopCoef = new double[geopCoefLength];
         as          = new double[nmax + 1];
-        cr          = new double[nmax + 1];
-        sr          = new double[nmax + 1];
-        s11         = new double[nmax + 3];
-        s12         = new double[nmax + 3];
     }
 
     /**
@@ -267,7 +257,7 @@ public class EarthGravitationalModel extends VerticalTransform {
     }
 
     /**
-     * Loads the coefficients from the specified binary file. Callers must invoke {@link #initialize}
+     * Loads the coefficients from the specified binary file. Callers must invoke {@link #initialize()}
      * after this method in order to initialize the internal <cite>clenshaw arrays</cite>.
      *
      * @param  filename The filename (e.g. {@code "EGM180.nor"}, relative to this class directory.
@@ -361,6 +351,10 @@ public class EarthGravitationalModel extends VerticalTransform {
         } else {
             gravn = grava * (1.0 + star * sin2φ) + 0.000023461 * (sin2φ * sin2φ);
         }
+        final double[] cr  = new double[nmax + 1];
+        final double[] sr  = new double[nmax + 1];
+        final double[] s11 = new double[nmax + 3];
+        final double[] s12 = new double[nmax + 3];
         sr[0]=0; sr[1]=sin(λ);
         cr[0]=1; cr[1]=cos(λ);
         for (int j=2; j<=nmax; j++) {
