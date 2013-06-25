@@ -16,11 +16,8 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -28,29 +25,9 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class HilbertRTree2DTest extends SpatialTreeTest {
+public class HilbertRTree2DTest extends HilbertRtreeTest {
 
     public HilbertRTree2DTest() throws IllegalArgumentException, TransformException {
         super(new HilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean checkBoundaryNode(final Node node) {
-        final List<Envelope> lS = new ArrayList<Envelope>();
-        if (node.isLeaf()) {
-            for (Node no : node.getChildren()) {
-                if (!no.isEmpty()) {
-                    lS.addAll(no.getEntries());
-                }
-            }
-        } else {
-            for (Node no : node.getChildren()) {
-                lS.add(no.getBoundary());
-            }
-        }
-        return (DefaultTreeUtils.getEnveloppeMin(lS).equals(node.getBoundary()));
     }
 }

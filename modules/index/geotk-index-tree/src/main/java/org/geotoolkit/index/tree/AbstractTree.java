@@ -20,6 +20,7 @@ import java.util.Iterator;
 import org.geotoolkit.index.tree.calculator.*;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -42,16 +43,30 @@ public abstract class AbstractTree implements Tree{
     /**
      * To create an R-Tree use {@linkplain TreeFactory}.
      */
+    @Deprecated
     protected AbstractTree(int nbMaxElement, CoordinateReferenceSystem crs, NodeFactory nodefactory) {
         ArgumentChecks.ensureNonNull("Create Tree : CRS", crs);
         ArgumentChecks.ensureNonNull("Create NodeFactory : nodefactory", nodefactory);
-        ArgumentChecks.ensureStrictlyPositive("Create Tree : maxElements", nbMaxElement);
+        ArgumentChecks.ensureBetween("Create Tree : maxElements", 2, Integer.MAX_VALUE, nbMaxElement);
         this.calculator = new CalculatorND();
         this.nodefactory  = nodefactory;
         this.nbMaxElement = nbMaxElement;
         this.crs = crs;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Deprecated
+    @Override
+    public void search(Envelope regionSearch, TreeVisitor visitor) throws IllegalArgumentException {
+        search(DefaultTreeUtils.getCoords(regionSearch), visitor);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Deprecated
     @Override
     public void insert(Envelope entry) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("insert : entry", entry);
@@ -59,8 +74,71 @@ public abstract class AbstractTree implements Tree{
         for (int d = 0; d < dim; d++)
             if (Double.isNaN(entry.getMinimum(d)) || Double.isNaN(entry.getMaximum(d)))
                 throw new IllegalArgumentException("entry Envelope contain at least one NAN value");
+        insert(entry, DefaultTreeUtils.getCoords(entry));
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void insertAll(Iterator<? extends Envelope> itr) {
+        while (itr.hasNext()) {
+            insert(itr.next());
+        }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Deprecated
+    @Override
+    public boolean delete(Envelope entry) throws IllegalArgumentException {
+        return delete(entry, DefaultTreeUtils.getCoords(entry));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Deprecated
+    @Override
+    public void deleteAll(Iterator<? extends Envelope> itr){
+        while (itr.hasNext()) {
+            delete(itr.next());
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Deprecated
+    @Override
+    public boolean remove(Envelope entry) throws IllegalArgumentException {
+        return remove(entry, DefaultTreeUtils.getCoords(entry));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Deprecated
+    @Override
+    public void removeAll(Iterator<? extends Envelope> itr){
+        while (itr.hasNext()) {
+            remove(itr.next());
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void insert(Object object, double... coordinates) throws IllegalArgumentException {
+        ArgumentChecks.ensureNonNull("insert : object", object);
+        ArgumentChecks.ensureNonNull("insert : coordinates", coordinates);
+        for (double d : coordinates)
+            if (Double.isNaN(d))
+                throw new IllegalArgumentException("coordinates contain at least one NAN value");
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -120,36 +198,6 @@ public abstract class AbstractTree implements Tree{
      * {@inheritDoc}
      */
     @Override
-    public void insertAll(Iterator<? extends Envelope> itr) {
-        while(itr.hasNext()) {
-            insert((Envelope)itr.next());
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void deleteAll(Iterator<? extends Envelope> itr) {
-        while(itr.hasNext()) {
-            delete((Envelope)itr.next());
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void removeAll(Iterator<? extends Envelope> itr) {
-        while(itr.hasNext()) {
-            remove((Envelope)itr.next());
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void clear() {
         setRoot(null);
     }
@@ -173,12 +221,12 @@ public abstract class AbstractTree implements Tree{
      * {@inheritDoc}
      */
     @Override
-    public Envelope getExtent() {
+    public double[] getExtent() {
         final Node node = getRoot();
-        if(node == null){
+        if (node == null) {
             return null;
-        }else{
-            return node.getBoundary();
+        } else {
+            return node.getBoundary().clone();
         }
     }
 }

@@ -16,11 +16,12 @@
  */
 package org.geotoolkit.index.tree.calculator;
 
+import java.util.Arrays;
 import java.util.List;
 import org.geotoolkit.index.tree.Node;
 import org.apache.sis.util.ArgumentChecks;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 
 /**
  * Define a generic Calculator to define computing rules of tree.
@@ -31,54 +32,55 @@ import org.opengis.geometry.Envelope;
 public abstract class Calculator {
 
     /**
+     * @param nodeA
+     * @param nodeB
+     * @return distance between nodeA, nodeB.
+     */
+    @Deprecated
+    public abstract double getDistance(final Node nodeA, final Node nodeB);
+    
+    /**
      * @param envelop
      * @return envelop bulk or area.
      */
-    public abstract double getSpace(final Envelope envelop);
+    public abstract double getSpace(final double[] envelope);
 
     /**
      * @param envelop
      * @return evelop edge.
      */
-    public abstract double getEdge(final Envelope envelop);
+    public abstract double getEdge(final double[] envelope);
 
     /**
      * @param envelopA
      * @param envelopB
      * @return distance between envelopA, envelopB.
      */
-    public abstract double getDistance(final Envelope envelopA, final Envelope envelopB);
+    public abstract double getDistanceEnvelope(final double[] envelopeA, final double[] envelopeB);
 
     /**
      * @param positionA
      * @param positionB
      * @return distance between positionA, positionB.
      */
-    public abstract double getDistance(final DirectPosition positionA, final DirectPosition positionB);
-
-    /**
-     * @param nodeA
-     * @param nodeB
-     * @return distance between nodeA, nodeB.
-     */
-    public abstract double getDistance(final Node nodeA, final Node nodeB);
+    public abstract double getDistancePoint(final double[] positionA, final double[] positionB);
 
     /**
      * @param envelopA
      * @param envelopB
      * @return overlaps between envelopA, envelopB.
      */
-    public abstract double getOverlaps(final Envelope envelopA, final Envelope envelopB);
+    public abstract double getOverlaps(final double[] envelopeA, final double[] envelopeB);
 
     /**
-     * <blockquote><font size=-1> <strong>NOTE : In case of narrowing, negative
-     * value is returned.</strong> </font></blockquote>
+     * <blockquote><font size=-1> <strong>NOTE : In case of narrowing, value between 0 and 1 
+     * is returned.</strong> </font></blockquote>
      *
      * @param envMin
      * @param envMax
      * @return enlargement from envMin to envMax.
      */
-    public abstract double getEnlargement(final Envelope envMin, final Envelope envMax);
+    public abstract double getEnlargement(final double[] envelopeMin, final double[] envelopeMax);
 
     /**
      * Sort elements list.
@@ -88,14 +90,18 @@ public abstract class Calculator {
      * @param list : elements which will be sorted.
      * @return sorted list.
      */
-    public List sortList(int index, boolean lowerOrUpper, List list) {
+    public void sortList(int index, boolean lowerOrUpper, List list, List<Object> listObject) {
         ArgumentChecks.ensureNonNull("list", list);
-        if (list.isEmpty()) return list;
+        if (list.isEmpty()) return ;
         boolean alreadySort;
         final boolean isNode = (list.get(0) instanceof Node);
-        if (!isNode) assert (list.get(0) instanceof Envelope) : "objects should be instance of Envelope if they aren't Node";
+        if (isNode) assert(listObject == null):"listObject should be null.";        
+        
+        if (!isNode) {
+            assert (list.get(0) instanceof double[]) : "objects should be instance of double[] if they aren't Node.";
+        }
         final int siz = list.size();
-        Envelope env1, env2;
+        double[] env1, env2;
         double val1, val2;
         
         for (int bornMin = 0; bornMin < siz-1; bornMin++) {
@@ -105,23 +111,23 @@ public abstract class Calculator {
                     env1 = ((Node)list.get(id2)).getBoundary();
                     env2 = ((Node)list.get(id2-1)).getBoundary();
                 } else {
-                    env1 = ((Envelope)list.get(id2));
-                    env2 = ((Envelope)list.get(id2-1));
+                    env1 = (double[])list.get(id2);
+                    env2 = (double[])list.get(id2-1);
                 }
                 if (lowerOrUpper) {
-                    val1 = env1.getMinimum(index);
-                    val2 = env2.getMinimum(index);
+                    val1 = getMinimum(env1, index);
+                    val2 = getMinimum(env2, index);
                 } else {
-                    val1 = env1.getMaximum(index);
-                    val2 = env2.getMaximum(index);
+                    val1 = getMaximum(env1, index);
+                    val2 = getMaximum(env2, index);
                 }
                 if (val2 > val1) {
                     alreadySort = false;
                     list.add(id2-1, list.remove(id2));
+                    if (!isNode && listObject != null) listObject.add(id2-1,listObject.remove(id2));
                 }
             }
             if (alreadySort) break;
         }
-        return list;
     }
 }

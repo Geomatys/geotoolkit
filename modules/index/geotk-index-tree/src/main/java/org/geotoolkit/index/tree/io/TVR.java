@@ -16,7 +16,8 @@
  */
 package org.geotoolkit.index.tree.io;
 
-/**Util methods from TreeVisitorResult.
+/**
+ * Util methods from TreeVisitorResult.
  *
  * @author Rémi Marechal (Geomatys).
  */

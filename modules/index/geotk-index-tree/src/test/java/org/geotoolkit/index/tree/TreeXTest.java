@@ -29,14 +29,15 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 
-/**Test static TreeX methods.
+/**
+ * Test static TreeX methods.
  * Intersect test is already effectuate by tree test suite.
  *
  * @author Rémi Maréchal (Geomatys).
  */
 public class TreeXTest extends TreeTest {
 
-    List<Envelope> listSearch = new ArrayList<Envelope>();
+    List listSearch = new ArrayList();
     TreeVisitor defVisit = new DefaultTreeVisitor(listSearch);
     Tree tree = new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D);
 

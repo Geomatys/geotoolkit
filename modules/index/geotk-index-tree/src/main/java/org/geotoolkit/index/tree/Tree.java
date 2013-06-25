@@ -17,7 +17,6 @@
 package org.geotoolkit.index.tree;
 
 import java.util.Iterator;
-import java.util.List;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.opengis.geometry.Envelope;
@@ -45,6 +44,7 @@ public interface Tree {
      * @param result List of Entr(y)(ies).
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
+    @Deprecated
     void search(Envelope regionSearch, TreeVisitor visitor) throws IllegalArgumentException;
 
     /**
@@ -53,6 +53,7 @@ public interface Tree {
      * @param Entry to insert into tree.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
+    @Deprecated
     void insert(Envelope entry) throws IllegalArgumentException;
 
     /**
@@ -61,6 +62,7 @@ public interface Tree {
      * @param Iterator to insert into tree.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
+    @Deprecated
     void insertAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException;
 
     /**
@@ -69,6 +71,7 @@ public interface Tree {
      * @param Entry to delete.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
+    @Deprecated
     boolean delete(Envelope entry) throws IllegalArgumentException;
 
     /**
@@ -77,6 +80,7 @@ public interface Tree {
      * @param Iterator to delete.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
+    @Deprecated
     void deleteAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException;
 
 
@@ -89,6 +93,7 @@ public interface Tree {
      * @param Entry to delete.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
+    @Deprecated
     boolean remove(Envelope entry) throws IllegalArgumentException;
 
 
@@ -101,7 +106,49 @@ public interface Tree {
      * @param Entry to delete.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
+    @Deprecated
     void removeAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException;
+    
+    /**
+     * Find some {@code Entry} which intersect regionSearch parameter
+     * and add them into result {@code List} parameter.
+     *
+     * <blockquote><font size=-1>
+     * <strong>NOTE: if no result found, the list passed in parameter is unchanged.</strong>
+     * </font></blockquote>
+     *
+     * @param regionSearch Define the region to find Shape within tree.
+     * @param result List of Entr(y)(ies).
+     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
+     */
+    void search(double[] regionSearch, TreeVisitor visitor) throws IllegalArgumentException;
+
+    /**
+     * Insert a {@code Entry} into Rtree.
+     *
+     * @param Entry to insert into tree.
+     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
+     */
+    void insert(Object object, double... coordinates) throws IllegalArgumentException;
+
+    /**
+     * Find a {@code Envelope} (entry) into the tree and delete it.
+     *
+     * @param Entry to delete.
+     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
+     */
+    boolean delete(Object object, double... coordinates) throws IllegalArgumentException;
+
+    /**Find a {@code Envelope} (entry) from Iterator into the tree and delete it.
+     *
+     * <blockquote><font size=-1>
+     * <strong>NOTE: comparison to remove entry is based from them references.</strong>
+     * </font></blockquote>
+     *
+     * @param Entry to delete.
+     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
+     */
+    boolean remove(Object object, double... coordinates) throws IllegalArgumentException;
 
     /**
      * @return max number authorized by tree cells.
@@ -152,8 +199,8 @@ public interface Tree {
      *
      * @return all tree data set boundary.
      */
-    Envelope getExtent();
-
+    double[] getExtent();
+    
     /**Create a node in accordance with this properties.
      *
      * @param tree pointer on Tree.
@@ -163,5 +210,5 @@ public interface Tree {
      * @param coordinates lower upper bounding box coordinates table.
      * @return appropriate Node from tree.
      */
-    Node createNode(Tree tree, Node parent, List<Node> listChildren, List<Envelope> listEntries, double ...coordinates) throws IllegalArgumentException;
+    Node createNode(Tree tree, Node parent, Node[] children, Object[] objects, double[][] coordinates) throws IllegalArgumentException;
 }

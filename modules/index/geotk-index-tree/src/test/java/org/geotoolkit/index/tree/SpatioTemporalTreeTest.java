@@ -80,7 +80,7 @@ public class SpatioTemporalTreeTest extends TreeTest{
             tree.insert(ge);
         }
     }
-
+    
     @Test
     public void testHilbert(){
         CoordinateReferenceSystem crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, CARTESIAN_2DCRS});
@@ -176,8 +176,8 @@ public class SpatioTemporalTreeTest extends TreeTest{
     public void test(){
         final GeneralEnvelope areaSearch1 = new GeneralEnvelope(crs);
         initAreaSearch(areaSearch1, 0, 9);
-        final List<Envelope> listSearch = new ArrayList<Envelope>();
-        final List<Envelope> listRef = new ArrayList<Envelope>();
+        final List listSearch = new ArrayList();
+        final List listRef = new ArrayList();
         final TreeVisitor tv = new DefaultTreeVisitor(listSearch);
         listRef.addAll(lResult.get(0));
         tree.search(areaSearch1, tv);

@@ -18,7 +18,6 @@ package org.geotoolkit.index.tree.io;
 
 import java.util.Collection;
 import org.geotoolkit.index.tree.Node;
-import org.opengis.geometry.Envelope;
 
 /**Define default visitor.
  *
@@ -26,8 +25,8 @@ import org.opengis.geometry.Envelope;
  */
 public class DefaultTreeVisitor implements TreeVisitor {
 
-    final Collection<Envelope>resultList;
-    public DefaultTreeVisitor(final Collection<Envelope> resultList) {
+    final Collection<Object>resultList;
+    public DefaultTreeVisitor(final Collection<Object> resultList) {
         this.resultList = resultList;
     }
 
@@ -37,7 +36,7 @@ public class DefaultTreeVisitor implements TreeVisitor {
     }
 
     @Override
-    public TreeVisitorResult visit(Envelope element) {
+    public TreeVisitorResult visit(Object element) {
         resultList.add(element);
         return TreeVisitorResult.CONTINUE;
     }

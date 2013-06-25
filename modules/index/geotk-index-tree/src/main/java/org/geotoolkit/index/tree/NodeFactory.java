@@ -16,10 +16,6 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.util.List;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Envelope;
-
 /**
  * Create {@code Node}.
  *
@@ -36,5 +32,7 @@ public interface NodeFactory {
      * @param coordinates lower upper bounding box coordinates table.
      * @return appropriate Node from tree.
      */
-    Node createNode(final Tree tree, final Node parent, final DirectPosition lowerCorner, final DirectPosition upperCorner, final List<Node> children, final List<Envelope> entries);
+    
+    Node createNode(final Tree tree, final Node parent, final double[] lowerCorner, final double[] upperCorner, 
+            final Node[] children, final Object[] objects, final double[][] objectsCoordinates);
 }

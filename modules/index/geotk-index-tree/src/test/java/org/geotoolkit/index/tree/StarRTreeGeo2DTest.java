@@ -20,7 +20,8 @@ import org.geotoolkit.index.tree.star.StarRTree;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.operation.TransformException;
 
-/**Create R*Tree test suite in geographic 3D space.
+/**
+ * Create R*Tree test suite in geographic 3D space.
  *
  * @author Rémi Marechal (Geomatys).
  */

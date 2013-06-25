@@ -18,15 +18,16 @@ package org.geotoolkit.index.tree.io;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Tree;
 import org.apache.sis.util.ArgumentChecks;
-import org.opengis.geometry.Envelope;
 
-/**Create TreeWriter object.
+/**
+ * Create TreeWriter object.
  *
  * <br/>
  * Example : <br/>
@@ -62,7 +63,8 @@ public class TreeWriter {
     public TreeWriter() {
     }
 
-    /**Set the output for this writer.<br/>
+    /**
+     * Set the output for this writer.<br/>
      * Handle types are :<br/>
      * - java.io.File<br/>
      * - java.io.OutputStream<br/>
@@ -109,70 +111,86 @@ public class TreeWriter {
      */
     private void serializeNode(final Node root, final DataOutputStream dops) throws IOException {
         nodeToBinary(root, dops);
-        for (Node child : root.getChildren()) {
-            serializeNode(child, dops);
+        final int nbChild = root.getChildCount();
+        for (int i = 0; i < nbChild; i++) {
+            serializeNode(root.getChild(i), dops);
         }
     }
 
-    /**Write node in binary.
+    /**
+     * Write node in binary.
      *
      * @param node
      * @param dops
      * @throws IOException
      */
     private void nodeToBinary(final Node node, final DataOutputStream dops) throws IOException {
-        final List<Node> listChild = node.getChildren();
-        final List<Envelope> listEntries = new ArrayList<Envelope>(node.getEntries());
-        final int nbrSubNode = listChild.size();
+        final List<Object> listEntries = new ArrayList<Object>();
+        final List<double[]> listCoordinates = new ArrayList<double[]>();
         dops.writeInt(index.get(node));
-        final Envelope bound = node.getBoundary();
-        final int dim = bound.getDimension();
-        dops.writeInt(dim);
-
-        for(int i = 0; i<dim; i++){
-            dops.writeDouble(bound.getLowerCorner().getOrdinate(i));
+        final double[] bound = node.getBoundary();
+        final int dim = bound.length;
+        dops.writeInt(dim >> 1);
+        
+        for (int i = 0; i < dim; i++) {
+            dops.writeDouble(bound[i]);
         }
-        for(int i = 0; i<dim; i++){
-            dops.writeDouble(bound.getUpperCorner().getOrdinate(i));
-        }
-        if(node.isLeaf()){
+        if (node.isLeaf()) {
             dops.writeInt(0);
-            for(Node no : node.getChildren()){
-                listEntries.addAll(no.getEntries());
+            int nbCell = node.getChildCount();
+            for (int i = 0; i < nbCell; i++) {
+                final Node cuCell = node.getChild(i);
+                listEntries.addAll(Arrays.asList(cuCell.getObjects()));
+                listCoordinates.addAll(Arrays.asList(cuCell.getCoordinates()));
             }
+            listEntries.addAll(Arrays.asList(node.getObjects()));
+            listCoordinates.addAll(Arrays.asList(node.getCoordinates()));
+            final int siz = listEntries.size();
+            assert siz == listCoordinates.size() : "tree writer : node to binary : listEntries and listCoordinates should have same length.";
             dops.writeInt(listEntries.size());
-            for (Envelope gEnv : listEntries) {
+            for (int i = 0; i < siz; i++) {
                 final ByteArrayOutputStream temp = new ByteArrayOutputStream();
                 final ObjectOutputStream ost = new ObjectOutputStream(temp);
-                ost.writeObject(gEnv);
+                
+                //write object boundary
+                final double[] objBound = listCoordinates.get(i);
+                for (int bi = 0; bi < dim; bi++) {
+                    dops.writeDouble(objBound[bi]);
+                }
+                //write object
+                ost.writeObject(listEntries.get(i));
                 temp.flush();
                 final byte[] array = temp.toByteArray();
                 dops.writeInt(array.length);
                 dops.write(array);
             }
-        }else{
-            dops.writeInt(nbrSubNode);
-            for (Node child : listChild) {
-                dops.writeInt(index.get(child));
+        } else {
+            final int nbChild = node.getChildCount();
+            dops.writeInt(nbChild);
+            for (int i = 0; i < nbChild; i++) {
+                dops.writeInt(index.get(node.getChild(i)));
             }
             dops.writeInt(0);
         }
     }
 
-    /**Find all tree node and affect an id for each them.
+    /**
+     * Find all tree node and affect an id for each them.
      *
      * @param node tree root node.
      */
     private void createIndex(final Node node) {
         ArgumentChecks.ensureNonNull("createIndex : tree", node);
         index.put(node, inc);
-        for (Node child : node.getChildren()) {
+        final int nbChild = node.getChildCount();
+        for (int i = 0; i < nbChild; i++) {
             inc++;
-            createIndex(child);
+            createIndex(node.getChild(i));
         }
     }
 
-    /**Release potential locks or opened stream.
+    /**
+     * Release potential locks or opened stream.
      * Must be called when the writer is not needed anymore.
      * It should not be used after this method has been called.
      */
@@ -183,7 +201,8 @@ public class TreeWriter {
         dataOPStream.close();
     }
 
-    /**Close potential previous stream and cache if there are some.
+    /**
+     * Close potential previous stream and cache if there are some.
      * This way the writer can be reused for a different output later.
      * The underlying stax writer will be closed.
      */
@@ -195,7 +214,8 @@ public class TreeWriter {
         inc = 0;
     }
 
-    /**To write one time without TreeWriter re-utilization.
+    /**
+     * To write one time without TreeWriter re-utilization.
      *
      * @param tree
      * @param output

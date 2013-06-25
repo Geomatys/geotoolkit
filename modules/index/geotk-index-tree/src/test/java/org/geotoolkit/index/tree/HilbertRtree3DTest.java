@@ -16,40 +16,17 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 /**Create Hilbert R-Tree test suite in 3D Cartesian space.
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class HilbertRtree3DTest extends SpatialTreeTest {
+public class HilbertRtree3DTest extends HilbertRtreeTest {
 
     public HilbertRtree3DTest() throws TransformException {
         super(new HilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_3D));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean checkBoundaryNode(final Node node) {
-        final List<Envelope> lS = new ArrayList<Envelope>();
-        if (node.isLeaf()) {
-            for (Node no : node.getChildren()) {
-                if (!no.isEmpty()) {
-                    lS.addAll(no.getEntries());
-                }
-            }
-        } else {
-            for (Node no : node.getChildren()) {
-                lS.add(no.getBoundary());
-            }
-        }
-        return (DefaultTreeUtils.getEnveloppeMin(lS).equals(node.getBoundary()));
     }
 }

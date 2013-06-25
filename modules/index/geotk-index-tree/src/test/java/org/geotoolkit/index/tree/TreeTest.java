@@ -20,17 +20,20 @@ import java.util.List;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-/**Class which contains tree test utils methods.
+/**
+ * Class which contains tree test utils methods.
  *
  * @author Rémi Maréchal (Géomatys).
  */
 public abstract class TreeTest {
 
-    /**Compare 2 lists elements.
+    /**
+     * Compare 2 lists elements.
      *
      * <blockquote><font size=-1> <strong> NOTE: return {@code true} if listA
      * and listB are empty. </strong> </font></blockquote>
@@ -40,7 +43,7 @@ public abstract class TreeTest {
      * @throws IllegalArgumentException if listA or ListB is null.
      * @return true if listA contains same elements from listB.
      */
-    protected boolean compareList(final List<Envelope> listA, final List<Envelope> listB) {
+    protected boolean compareList(final List listA, final List listB) {
         ArgumentChecks.ensureNonNull("compareList : listA", listA);
         ArgumentChecks.ensureNonNull("compareList : listB", listB);
 
@@ -48,8 +51,10 @@ public abstract class TreeTest {
         if (listA.size() != listB.size()) return false;
 
         boolean shapequals = false;
-        for (Envelope shs : listA) {
-            for (Envelope shr : listB) {
+        for (Object objA : listA) {
+            final Envelope shs = (Envelope) objA;
+            for (Object objB : listB) {
+                final Envelope shr = (Envelope) objB;
                 if (new GeneralEnvelope(shs).equals(shr, 1E-9, false)) {
                     shapequals = true;
                     break;
@@ -62,34 +67,38 @@ public abstract class TreeTest {
     }
     
     /**
+     * Return boundary of all element union from list parameter.
+     * 
+     * @param list
+     * @return boundary of all elements union from list parameter.
+     */
+    protected double[] getEnvelopeMin(final List<Envelope> list) {
+        ArgumentChecks.ensureNonNull("compareList : listA", list);
+        assert(!list.isEmpty()):"list to get envelope min should not be empty.";
+        final double[] ge = DefaultTreeUtils.getCoords(list.get(0));
+        for (int i = 1; i < list.size();i++) {
+            DefaultTreeUtils.add(ge, DefaultTreeUtils.getCoords(list.get(i)));
+        }
+        return ge;
+    }
+    
+    /**
      * Find all entries number in a {@link Tree}.
      * 
      * @param tree where to looking for entries.
      * @return all entries number in a {@link Tree}.
      */
     protected boolean checkTreeElts(Tree tree) {
-        return tree.getElementsNumber() == countElement(tree.getRoot(), 0);
+        final int treeElement = tree.getElementsNumber();
+        if (tree instanceof HilbertRTree) {
+            return DefaultTreeUtils.countEltsInHilbertNode(tree.getRoot(), 0) == treeElement;
+        }
+        return DefaultTreeUtils.countElementsRecursively(tree.getRoot(), 0) == treeElement;
     }
     
-    /**
-     * Compute recursively entries number contained in a {@link Node}.
-     * 
-     * @param node current within entries are. 
-     * @param count current count.
-     * @return entries number contained in a {@link Node}.
-     */
-    private int countElement(Node node, int count){
-        if ((node.getEntries() == null || node.getEntries().isEmpty()) && !node.getChildren().isEmpty()) {
-            for (Node nod : node.getChildren()) {
-                count = countElement(nod, count);
-            }
-        } else {
-            count += node.getEntries().size();
-        }
-        return count;
-    }
 
-    /**Create a default adapted test entry({@code GeneralEnvelope}).
+    /**
+     * Create a default adapted test entry({@code GeneralEnvelope}).
      *
      * @param position the median of future entry.
      * @return {@code GeneralEnvelope} entry.

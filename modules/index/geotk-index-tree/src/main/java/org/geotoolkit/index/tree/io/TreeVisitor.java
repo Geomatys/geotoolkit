@@ -17,7 +17,6 @@
 package org.geotoolkit.index.tree.io;
 
 import org.geotoolkit.index.tree.Node;
-import org.opengis.geometry.Envelope;
 
 
 /**Tree visitor.
@@ -26,5 +25,5 @@ import org.opengis.geometry.Envelope;
  */
 public interface TreeVisitor {
     TreeVisitorResult filter(Node node);
-    TreeVisitorResult visit(Envelope element);
+    TreeVisitorResult visit(Object element);
 }

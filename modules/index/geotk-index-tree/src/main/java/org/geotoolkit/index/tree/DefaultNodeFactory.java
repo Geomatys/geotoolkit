@@ -16,10 +16,6 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.util.List;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Envelope;
-
 /**
  * Create appropriate {@code Node} to R-Tree.
  *
@@ -33,13 +29,12 @@ public final class DefaultNodeFactory implements NodeFactory {
     public static final NodeFactory INSTANCE = new DefaultNodeFactory();
     
     private DefaultNodeFactory(){}
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public Node createNode(final Tree tree, final Node parent, final DirectPosition lowerCorner, final DirectPosition upperCorner, final List<Node> children, final List<Envelope> entries) {
-        return new DefaultNode(tree, parent, lowerCorner, upperCorner, children, entries);
+    public Node createNode(Tree tree, Node parent, double[] lowerCorner, double[] upperCorner, Node[] children, Object[] objects, double[][] objectsCoordinates) {
+        return new DefaultNode(tree, parent, lowerCorner, upperCorner, children, objects, objectsCoordinates);
     }
-
 }

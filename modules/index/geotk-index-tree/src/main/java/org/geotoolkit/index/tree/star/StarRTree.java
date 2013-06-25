@@ -17,13 +17,12 @@
 package org.geotoolkit.index.tree.star;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.geometry.GeneralEnvelope;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.*;
 import org.geotoolkit.index.tree.calculator.Calculator;
-import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import static org.geotoolkit.index.tree.io.TVR.*;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeVisitorResult;
@@ -31,14 +30,13 @@ import org.geotoolkit.index.tree.NodeFactory;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
- * Create R*Tree in Euclidean space.
+ * Create R*Tree.
  *
  * @author Rémi Maréchal (Geomatys)
  * @author Johann Sorel  (Geomatys).
@@ -72,126 +70,173 @@ public class StarRTree extends AbstractTree {
      * @param nodefactory  : made to create tree {@code Node}.
      * @return R*Tree.
      */
+    @Deprecated
     public StarRTree(int nbMaxElement, CoordinateReferenceSystem crs, NodeFactory nodefactory) {
         super(nbMaxElement, crs, nodefactory);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    @Deprecated
+//    public void search(final Envelope regionSearch, TreeVisitor visitor) throws IllegalArgumentException{
+//        ArgumentChecks.ensureNonNull("search : region search", regionSearch);
+//        ArgumentChecks.ensureNonNull("search : visitor", visitor);
+//        if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
+//            throw new MismatchedReferenceSystemException();
+//        }
+//        final Node root = this.getRoot();
+//        if(root != null){
+//            nodeSearch(root, getCoords(regionSearch), visitor);
+//        }
+//    }
+    
     @Override
-    public void search(final Envelope regionSearch, TreeVisitor visitor) throws IllegalArgumentException{
+    public void search(double[] regionSearch, TreeVisitor visitor) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
         ArgumentChecks.ensureNonNull("search : visitor", visitor);
-        if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
-            throw new MismatchedReferenceSystemException();
-        }
         final Node root = this.getRoot();
-        if(root != null){
+        if (root != null && !root.isEmpty()) {
             nodeSearch(root, regionSearch, visitor);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Deprecated
+//    @Override
+//    public void insert(final Envelope entry) throws IllegalArgumentException {
+//        super.insert(entry);
+//        if (!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) {
+//            throw new MismatchedReferenceSystemException();
+//        }
+//        super.eltCompteur++;
+//        final Node root = getRoot();
+//        final int dim = entry.getDimension();
+//        final double[] coords = new double[2 * dim];
+//        System.arraycopy(entry.getLowerCorner().getCoordinate(), 0, coords, 0, dim);
+//        System.arraycopy(entry.getUpperCorner().getCoordinate(), 0, coords, dim, dim);
+//        if (root == null || root.isEmpty()) {
+//            setRoot(createNode(this, null, null, new Object[]{entry}, new double[][]{getCoords(entry)}));
+//        } else {
+//            nodeInsert(root, entry, getCoords(entry));
+//        }
+//    }
+    
     @Override
-    public void insert(final Envelope entry) throws IllegalArgumentException {
-        super.insert(entry);
-        if (!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) {
-            throw new MismatchedReferenceSystemException();
-        }
+    public void insert(Object object, double... coordinates) throws IllegalArgumentException {
+        super.insert(object, coordinates);
         super.eltCompteur++;
-        final Node root = getRoot();
-        final int dim = entry.getDimension();
-        final double[] coords = new double[2 * dim];
-        System.arraycopy(entry.getLowerCorner().getCoordinate(), 0, coords, 0, dim);
-        System.arraycopy(entry.getUpperCorner().getCoordinate(), 0, coords, dim, dim);
+        final Node root       = getRoot();
         if (root == null || root.isEmpty()) {
-            setRoot(createNode(this, null, null, UnmodifiableArrayList.wrap(new Envelope[] {entry}), coords));
+            setRoot(createNode(this, null, null, new Object[]{object}, new double[][]{coordinates}));
         } else {
-            nodeInsert(root, entry);
+            nodeInsert(root, object, coordinates);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    @Deprecated
+//    public boolean delete(final Envelope entry) throws IllegalArgumentException {
+//        ArgumentChecks.ensureNonNull("delete : entry", entry);
+//        if (!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) {
+//            throw new MismatchedReferenceSystemException();
+//        }
+//        final Node root = getRoot();
+//        if (root != null) return deleteNode(root, entry, getCoords(entry));
+//        return false;
+//    }
+    
     @Override
-    public boolean delete(final Envelope entry) throws IllegalArgumentException {
-        ArgumentChecks.ensureNonNull("delete : entry", entry);
-        if (!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) {
-            throw new MismatchedReferenceSystemException();
-        }
+    public boolean delete(Object object, double... coordinates) throws IllegalArgumentException {
+        ArgumentChecks.ensureNonNull("remove : object", object);
+        ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
         final Node root = getRoot();
-        if (root != null) return deleteNode(root, entry);
+        if (root != null) return deleteNode(root, object, coordinates);
+        return false;
+    }
+
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    @Deprecated
+//    public boolean remove(final Envelope entry) throws IllegalArgumentException{
+//        ArgumentChecks.ensureNonNull("remove : entry", entry);
+//        if (!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) {
+//            throw new MismatchedReferenceSystemException();
+//        }
+//        final Node root = getRoot();
+//        if (root != null) return removeNode(root, entry, getCoords(entry));
+//        return false;
+//    }
+    
+    @Override
+    public boolean remove(Object object, double... coordinates) throws IllegalArgumentException {
+        ArgumentChecks.ensureNonNull("remove : object", object);
+        ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
+        final Node root = getRoot();
+        if (root != null) return removeNode(root, object, coordinates);
         return false;
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean remove(final Envelope entry) throws IllegalArgumentException{
-        ArgumentChecks.ensureNonNull("remove : entry", entry);
-        if (!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) {
-            throw new MismatchedReferenceSystemException();
-        }
-        final Node root = getRoot();
-        if (root != null) return removeNode(root, entry);
-        return false;
-    }
-
-    /**Find all {@code Envelope} which intersect regionSearch parameter in {@code Node}.
+     * Find all {@code Envelope} which intersect regionSearch parameter in {@code Node}.
      *
      * @param candidate current Node
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
      */
-    private static TreeVisitorResult nodeSearch(final Node candidate, final Envelope regionSearch, final TreeVisitor visitor) {
+    private static TreeVisitorResult nodeSearch(final Node candidate, final double[] regionSearch, final TreeVisitor visitor) {
         final TreeVisitorResult tvr = visitor.filter(candidate);
-        if(isTerminate(tvr))return tvr;
-        final Envelope bound = candidate.getBoundary();
+        if (isTerminate(tvr)) return tvr;
+        final double[] bound = candidate.getBoundary();
         if(bound != null){
             if(regionSearch == null) {
                 if(candidate.isLeaf()) {
-                    for(Envelope env : candidate.getEntries()) {
-                        final TreeVisitorResult tvrTemp = visitor.visit(env);
-                        if(isTerminate(tvrTemp))return tvrTemp;
-                        if(isSkipSibling(tvrTemp))break;
+                    for(int i = 0; i < candidate.getObjectCount(); i++) {
+                        final Object obj = candidate.getObject(i);
+                        final TreeVisitorResult tvrTemp = visitor.visit(obj);
+                        if (isTerminate(tvrTemp)) return tvrTemp;
+                        if (isSkipSibling(tvrTemp)) break;
                     }
-                }else{
-                    if(!isSkipSubTree(tvr)) {
-                        for(Node nod : candidate.getChildren()) {
-                            final TreeVisitorResult tvrTemp = nodeSearch(nod, null, visitor);
-                            if(isTerminate(tvrTemp))return tvrTemp;
-                            if(isSkipSibling(tvrTemp))break;
+                } else {
+                    if (!isSkipSubTree(tvr)) {
+                        for (int i = 0, s = candidate.getChildCount(); i < s; i++) {
+                            final TreeVisitorResult tvrTemp = nodeSearch(candidate.getChild(i), null, visitor);
+                            if (isTerminate(tvrTemp)) return tvrTemp;
+                            if (isSkipSibling(tvrTemp)) break;
                         }
                     }
 
                 }
-            }else{
-                final GeneralEnvelope rS = new GeneralEnvelope(regionSearch);
-                if(rS.contains(bound, true)) {
+            } else {
+                if(contains(regionSearch, bound, true)) {
                     nodeSearch(candidate, null, visitor);
-                }else if(rS.intersects(bound, true)){
-                    if(candidate.isLeaf()){
-                        for(Envelope gn : candidate.getEntries()) {
+                } else if (intersects(regionSearch, bound, true)) {
+                    if (candidate.isLeaf()) {
+                        for(int i = 0, s = candidate.getCoordsCount(); i < s; i++) {
+                            final double[] coords = candidate.getCoordinate(i);
                             TreeVisitorResult tvrTemp = null;
-                            if(rS.intersects(gn, true)){
-                                tvrTemp = visitor.visit(gn);
+                            if (intersects(regionSearch, coords, true)) {
+                                tvrTemp = visitor.visit(candidate.getObject(i));
                             }
                             if(tvrTemp != null){
-                                if(isTerminate(tvrTemp))return tvrTemp;
-                                if(isSkipSibling(tvrTemp))break;
+                                if (isTerminate(tvrTemp)) return tvrTemp;
+                                if (isSkipSibling(tvrTemp)) break;
                             }
                         }
                     }else{
                         if(!isSkipSubTree(tvr)){
-                            for(Node child : candidate.getChildren()) {
-                                final TreeVisitorResult tvrTemp = nodeSearch(child, regionSearch, visitor);
-                                if(isTerminate(tvrTemp))return tvrTemp;
-                                if(isSkipSibling(tvrTemp))break;
+                            for(int i = 0, s = candidate.getChildCount(); i < s; i++) {
+                                final TreeVisitorResult tvrTemp = nodeSearch(candidate.getChild(i), regionSearch, visitor);
+                                if (isTerminate(tvrTemp)) return tvrTemp;
+                                if (isSkipSibling(tvrTemp)) break;
                             }
                         }
                     }
@@ -213,55 +258,62 @@ public class StarRTree extends AbstractTree {
      * @throws IllegalArgumentException if {@code Node} candidate is null.
      * @throws IllegalArgumentException if {@code Envelope} entry is null.
      */
-    private static void nodeInsert(final Node candidate, final Envelope entry) throws IllegalArgumentException {
-        if(candidate.isLeaf()){
-            candidate.getEntries().add(entry);
+    private static void nodeInsert(final Node candidate, final Object object, final double[] coordinate ) throws IllegalArgumentException {
+        assert candidate.checkInternal() : "nodeInsert : candidate not conform";
+        if (candidate.isLeaf()) {
+            candidate.addElement(object, coordinate);
         }else{
-            nodeInsert(chooseSubTree(candidate, entry), entry);
+            nodeInsert(chooseSubTree(candidate, coordinate), object, coordinate);
+            candidate.setBound(null);
         }
-
+        assert candidate.checkInternal() : "nodeInsert : after insert candidate not conform";
         final StarRTree tree = (StarRTree) candidate.getTree();
         final int maxElmts = tree.getMaxElements();
         if (DefaultTreeUtils.countElements(candidate) > maxElmts && tree.getIA()) {
             tree.setIA(false);
-            final List<Envelope> lsh30 = getElementAtMore33PerCent(candidate);
-            for (Envelope ent : lsh30) {
-                deleteNode(candidate, ent);
+            final LinkedList<Object> listObjects  = new LinkedList<Object>();
+            final LinkedList<double[]> listCoords = new LinkedList<double[]>();
+            getElementAtMore33PerCent(candidate, listObjects, listCoords);
+            final int siz = listCoords.size();
+            assert (siz == listObjects.size()) :"getElementAtMore33Percent : nodeInsert : lists should have same size.";
+            for (int i = 0; i< siz; i++) {
+                deleteNode(candidate, listObjects.get(i), listCoords.get(i));
             }
-            for (Envelope ent : lsh30) {
-                tree.insert(ent);
+            for (int i = 0; i< siz; i++) {
+                tree.insert(listObjects.get(i), listCoords.get(i));
             }
             tree.setIA(true);
         }
-
-        if(!candidate.isLeaf()){
-            final List<Node> children = candidate.getChildren();
-            if(children.get(0).isLeaf()){
-                for(int i = 0, l1 = children.size()-1; i<l1; i++){
-                    for(int j = i+1; j<l1+1; j++){
-                        final Node nodeA = children.get(i);
-                        final Node nodeB = children.get(j);
-                        if(new GeneralEnvelope(nodeA.getBoundary()).intersects(nodeB.getBoundary(), false)
+        assert candidate.checkInternal() : "nodeInsert : after insert again candidate not conform";
+        if (!candidate.isLeaf()) {
+            if (candidate.getChild(0).isLeaf()) {
+                for (int i = 0, l1 = candidate.getChildCount() - 1; i < l1; i++) {
+                    for (int j = i + 1; j < l1 + 1; j++) {
+                        final Node nodeA = candidate.getChild(i);
+                        final Node nodeB = candidate.getChild(j);
+                        if(//new GeneralEnvelope(nodeA.getBoundary()).intersects(nodeB.getBoundary(), false)
+                                intersects(nodeA.getBoundary(), nodeB.getBoundary(), false)
                                 && nodeA.isLeaf() && nodeB.isLeaf()
-                                &&nodeA.getEntries().size()>1&&nodeB.getEntries().size()>1){
+                                &&nodeA.getCoordsCount() > 1 && nodeB.getCoordsCount() > 1){
                             branchGrafting(nodeA, nodeB);
                         }
                     }
                 }
             }
-            for(int i =0,len = children.size(); i<len; i++){
-                if (DefaultTreeUtils.countElements(children.get(i)) > candidate.getTree().getMaxElements()) {
-                    final Node child = children.remove(i);
+            for (int i = 0,len = candidate.getChildCount(); i < len; i++) {
+                if (DefaultTreeUtils.countElements(candidate.getChild(i)) > candidate.getTree().getMaxElements()) {
+                    final Node child = candidate.removeChild(i);
                     final List<Node> l = nodeSplit(child);
                     final Node l0 = l.get(0);
                     final Node l1 = l.get(1);
                     l0.setParent(candidate);
                     l1.setParent(candidate);
-                    children.addAll(l);
+                    candidate.addChild(l0);
+                    candidate.addChild(l1);
                 }
             }
         }
-
+        assert candidate.checkInternal() : "nodeInsert : after split or branch grafting candidate not conform";
         if (candidate.getParent() == null) {
             if (DefaultTreeUtils.countElements(candidate) > candidate.getTree().getMaxElements()) {
                 List<Node> l = nodeSplit(candidate);
@@ -269,14 +321,16 @@ public class StarRTree extends AbstractTree {
                 final Node l1 = l.get(1);
                 l0.setParent(candidate);
                 l1.setParent(candidate);
-                candidate.getEntries().clear();
-                candidate.getChildren().clear();
-                candidate.getChildren().addAll(l);
+                candidate.clear();
+                candidate.addChild(l0);
+                candidate.addChild(l1);
             }
         }
+        assert candidate.checkInternal() : "nodeInsert : at end candidate not conform";
     }
-
-    /**Find appropriate {@code Node} to insert {@code Envelope} entry.
+    
+    /**
+     * Find appropriate {@code Node} to insert {@code Envelope} entry.
      * <blockquote><font size=-1>
      * <strong>To define appropriate Node, R*Tree criterion are :
      *      - require minimum area enlargement to cover {@code Envelope} entry.
@@ -289,41 +343,40 @@ public class StarRTree extends AbstractTree {
      * @throws IllegalArgumentException if {@code Node} listSubnode is empty.
      * @return {@code Node} which will be appropriate to contain entry.
      */
-    private static Node chooseSubTree(final Node parent, final Envelope entry) {
+    private static Node chooseSubTree(final Node parent, final double[] coordinate) {
+        assert parent.checkInternal() : "chooseSubTree : begin candidate not conform";
+        final Node[] childrenList = parent.getChildren();
 
-        final List<Node> childrenList = parent.getChildren();
-
-        if (childrenList.isEmpty()) {
+        if (childrenList == null) {
             throw new IllegalArgumentException("impossible to find subtree from empty list");
         }
 
-        final int size = childrenList.size();
+        final int size = parent.getChildCount();
         if (size == 1) {
-            return childrenList.get(0);
+            return childrenList[0];
         }
         final Calculator calc = parent.getTree().getCalculator();
-        if(childrenList.get(0).isLeaf()){
+        if (childrenList[0].isLeaf()) {
             final List<Node> listOverZero = new ArrayList<Node>();
             double overlapsRef = -1;
             int index = -1;
             double overlapsTemp = 0;
-            for(int i = 0; i < size; i++){
-                final GeneralEnvelope gnTemp = new GeneralEnvelope(childrenList.get(i).getBoundary());
-                gnTemp.add(entry);
-                for(int j = 0; j < size; j++){
-                    if(i != j){
-                        final Envelope gET = childrenList.get(j).getBoundary();
-                        overlapsTemp += calc.getOverlaps(gnTemp, gET);
+            for (int i = 0; i < size; i++) {
+                final double[] gnTemp = childrenList[i].getBoundary().clone();
+                add(gnTemp, coordinate);
+                for (int j = 0; j < size; j++) {
+                    if (i != j) {
+                        overlapsTemp += calc.getOverlaps(gnTemp, childrenList[j].getBoundary());
                     }
                 }
-                if(overlapsTemp == 0){
-                    listOverZero.add(childrenList.get(i));
-                }else{
-                    if((overlapsTemp<overlapsRef) || overlapsRef==-1){
+                if (overlapsTemp == 0) {
+                    listOverZero.add(childrenList[i]);
+                } else {
+                    if ((overlapsTemp < overlapsRef) || overlapsRef == -1) {
                         overlapsRef = overlapsTemp;
                         index = i;
-                    }else if(overlapsTemp == overlapsRef){
-                        if(DefaultTreeUtils.countElements(childrenList.get(i))<DefaultTreeUtils.countElements(childrenList.get(index))) {
+                    } else if (overlapsTemp == overlapsRef) {
+                        if (DefaultTreeUtils.countElements(childrenList[i]) < DefaultTreeUtils.countElements(childrenList[index])) {
                             overlapsRef = overlapsTemp;
                             index = i;
                         }
@@ -331,50 +384,54 @@ public class StarRTree extends AbstractTree {
                 }
                 overlapsTemp = 0;
             }
-            if(!listOverZero.isEmpty()) {
+            if (!listOverZero.isEmpty()) {
                 double areaRef = -1;
                 int indexZero = -1;
                 double areaTemp;
-                for(int i = 0, s = listOverZero.size(); i<s;i++) {
-                    final GeneralEnvelope gE = new GeneralEnvelope(listOverZero.get(i).getBoundary());
-                    gE.add(entry);
-                    areaTemp = calc.getEdge(gE);
-                    if(areaTemp<areaRef || areaRef == -1){
+                double[] entryBound ;
+                for (int i = 0, s = listOverZero.size(); i<s; i++) {
+                    entryBound = coordinate.clone();
+                    add(entryBound, listOverZero.get(i).getBoundary());
+                    areaTemp = calc.getEdge(entryBound);
+                    if (areaTemp < areaRef || areaRef == -1) {
                         areaRef = areaTemp;
                         indexZero = i;
                     }
                 }
                 return listOverZero.get(indexZero);
             }
-            if(index == -1){
+            if (index == -1) {
                 throw new IllegalStateException("chooseSubTree : no subLeaf find");
             }
-            return childrenList.get(index);
+            return childrenList[index];
         }
 
-        for (Node no : childrenList) {
-            if (new GeneralEnvelope(no.getBoundary()).contains(entry, true)) {
+        for (int i = 0; i < size; i++) {
+            final Node no = childrenList[i];
+            if (contains(no.getBoundary(), coordinate, true)) {
                 return no;
             }
         }
 
         double enlargRef = -1;
         int indexEnlarg = -1;
-        for(int i = 0, s = childrenList.size(); i<s;i++) {
-            final Node n3d = childrenList.get(i);
-            final Envelope gEN = n3d.getBoundary();
-            final GeneralEnvelope GE = new GeneralEnvelope(gEN);
-            GE.add(entry);
+        for(int i = 0; i < size; i++) {
+            final Node n3d = childrenList[i];
+            final double[] gEN = n3d.getBoundary().clone();
+            final double[] GE = gEN.clone();
+            add(GE, coordinate);
             double enlargTemp = calc.getEnlargement(gEN, GE);
-            if(enlargTemp<enlargRef || enlargRef == -1){
-                enlargRef = enlargTemp;
+            if (enlargTemp < enlargRef || enlargRef == -1) {
+                enlargRef   = enlargTemp;
                 indexEnlarg = i;
             }
         }
-        return childrenList.get(indexEnlarg);
+        assert parent.checkInternal() : "chooseSubTree : end candidate not conform";
+        return childrenList[indexEnlarg];
     }
-
-    /**Compute and define how to split {@code Node} candidate.
+    
+    /**
+     * Compute and define how to split {@code Node} candidate.
      *
      * <blockquote><font size=-1>
      * <strong>NOTE: To choose which {@code Node} couple, split algorithm sorts the entries (for tree leaf), or {@code Node} (for tree branch)
@@ -385,93 +442,200 @@ public class StarRTree extends AbstractTree {
      * @return Two appropriate {@code Node} in List in accordance with R*Tree split properties.
      */
     private static List<Node> nodeSplit(final Node candidate) throws IllegalArgumentException {
-
+        assert candidate.checkInternal() : "nodeSplit : begin candidate not conform";
         final int splitIndex = defineSplitAxis(candidate);
         final boolean isLeaf = candidate.isLeaf();
         final Tree tree = candidate.getTree();
         final Calculator calc = tree.getCalculator();
-        List eltList;
-        eltList = (isLeaf) ? candidate.getEntries() : candidate.getChildren() ;
+        List eltList = new ArrayList();
+        List<Object> listObjects = null;
+        
+        // debug
+        if (isLeaf) {
+            for (int i = 0; i < candidate.getCoordsCount(); i++) {
+                Object obj = candidate.getObject(i);
+                assert (Arrays.equals(getCoords((Envelope)obj), candidate.getCoordinate(i))) : "check before split wrong envelope coordinates.";
+            }
+        }
+        
+        Object[] objects = null;
+        double[][] coordinates = null;
+        if (isLeaf) {
+            objects     = candidate.getObjects().clone();
+            coordinates = candidate.getCoordinates().clone();
+        }
+        
+        if (isLeaf) {
+            listObjects = new ArrayList<Object>();
+            for (int i = 0, s = candidate.getCoordsCount(); i < s; i++) {
+                eltList.add(candidate.getCoordinate(i));
+                listObjects.add(candidate.getObject(i));
+            }
+        } else {
+            for (int i = 0, s = candidate.getChildCount(); i < s; i++) {
+                eltList.add(candidate.getChild(i));
+            }
+        }
         final int size = eltList.size();
-        final double size04 = size*0.4;
-        final int demiSize = (int) ((size04>=1)?size04:1);
+        final double size04 = size * 0.4;
+        final int demiSize = (int) ((size04 >= 1) ? size04 : 1);
         final List splitListA = new ArrayList();
         final List splitListB = new ArrayList();
-        final List<CoupleGE> listCGE = new ArrayList<CoupleGE>();
-        GeneralEnvelope gESPLA, gESPLB;
+        double[] gESPLA, gESPLB;
         double bulkTemp;
         double bulkRef = -1;
-        CoupleGE coupleGE;
+//        CoupleGE coupleGE;
         int index = 0;
-        int lower_or_upper = 0;
+        boolean lower_or_upper = true;
         int cut2;
-        for(int lu = 0; lu<2; lu++) {
-            eltList = (lu == 0) ? calc.sortList(splitIndex, true, eltList):calc.sortList(splitIndex, false, eltList);
-            for(int cut = demiSize; cut<=size - demiSize;cut++) {
-                for(int i = 0; i<cut; i++) {
+        
+        List<Integer> cutList = new ArrayList<Integer>();
+        List<Boolean> luList  = new ArrayList<Boolean>();
+        List<double[]> gESPLAList = new ArrayList<double[]>();
+        List<double[]> gESPLBList = new ArrayList<double[]>();
+        
+        //compute with lower and after upper
+        for(int lu = 0; lu < 2; lu++) {
+            calc.sortList(splitIndex, (lu == 0), eltList, listObjects);
+            for(int cut = demiSize; cut <= size - demiSize; cut++) {
+                for(int i = 0; i < cut; i++) {
                     splitListA.add(eltList.get(i));
                 }
-                for(int j = cut; j<size; j++) {
+                for(int j = cut; j < size; j++) {
                     splitListB.add(eltList.get(j));
                 }
                 cut2 = size - cut;
-                if(isLeaf) {
-                    gESPLA = new GeneralEnvelope((Envelope)splitListA.get(0));
-                    gESPLB = new GeneralEnvelope((Envelope)splitListB.get(0));
-                    for(int i = 1; i<cut;i++) {
-                        gESPLA.add((Envelope)splitListA.get(i));
+                if (isLeaf) {
+                    gESPLA = ((double[]) splitListA.get(0)).clone();
+                    gESPLB = ((double[]) splitListB.get(0)).clone();
+                    for(int i = 1; i < cut; i++) {
+                        add(gESPLA, (double[])splitListA.get(i));
                     }
-                    for(int i = 1; i<cut2;i++) {
-                        gESPLB.add((Envelope)splitListB.get(i));
+                    for(int i = 1; i < cut2; i++) {
+                        add(gESPLB, (double[])splitListB.get(i));
                     }
-                }else{
-                    gESPLA = new GeneralEnvelope(((Node)splitListA.get(0)).getBoundary());
-                    gESPLB = new GeneralEnvelope(((Node)splitListB.get(0)).getBoundary());
-                    for(int i = 1; i<cut;i++) {
-                        gESPLA.add(((Node)splitListA.get(i)).getBoundary());
+                } else {
+                    gESPLA = ((Node)splitListA.get(0)).getBoundary().clone();
+                    gESPLB = ((Node)splitListB.get(0)).getBoundary().clone();
+                    for (int i = 1; i < cut; i++) {
+                        add(gESPLA, ((Node)splitListA.get(i)).getBoundary());
                     }
-                    for(int i = 1; i<cut2;i++) {
-                        gESPLB.add(((Node)splitListB.get(i)).getBoundary());
+                    for (int i = 1; i < cut2; i++) {
+                        add(gESPLB, ((Node)splitListB.get(i)).getBoundary());
                     }
                 }
-                coupleGE = new CoupleGE(gESPLA, gESPLB, calc);
-                bulkTemp = coupleGE.getOverlaps();
-                if(bulkTemp<bulkRef || bulkRef == -1) {
+                bulkTemp = calc.getOverlaps(gESPLA, gESPLB);
+                //get best index and lower are upper
+                if (bulkTemp < bulkRef || bulkRef == -1) {
                     bulkRef = bulkTemp;
                     index = cut;
-                    lower_or_upper = lu;
-                }else if(bulkTemp == 0) {
-                    coupleGE.setUserProperty("cut", cut);
-                    coupleGE.setUserProperty("lower_or_upper", lu);
-                    listCGE.add(coupleGE);
+                    lower_or_upper = (lu == 0);
+                }else if (bulkTemp == 0) {
+                    cutList.add(cut);
+                    luList.add((lu == 0));
+                    gESPLAList.add(gESPLA);
+                    gESPLBList.add(gESPLB);
                 }
                 splitListA.clear();
                 splitListB.clear();
             }
         }
-
-        if(!listCGE.isEmpty()) {
+        
+        if (!cutList.isEmpty()) {
+            final int s = cutList.size();
+            //paranoiac assert
+            assert (s                    == luList.size() 
+                    && gESPLAList.size() == gESPLBList.size() 
+                    && s                 == gESPLAList.size()) : "splitNode : couple lists haven't got same size";
             double areaRef = -1;
             double areaTemp;
-            for(CoupleGE cge : listCGE) {
-                areaTemp = cge.getEdge();
-                if(areaTemp<areaRef || areaRef == -1) {
+            for(int id = 0; id < s; id++) {
+                areaTemp = calc.getEdge(gESPLAList.get(id)) + calc.getEdge(gESPLBList.get(id));
+                if(areaTemp < areaRef || areaRef == -1) {
                     areaRef = areaTemp;
-                    index = (Integer) cge.getUserProperty("cut");
-                    lower_or_upper = (Integer) cge.getUserProperty("lower_or_upper");
+                    index = cutList.get(id);
+                    lower_or_upper = luList.get(id);
                 }
             }
         }
-        eltList = (lower_or_upper == 0) ? calc.sortList(splitIndex, true, eltList):calc.sortList(splitIndex, false, eltList);
-        for(int i = 0; i<index; i++) {
-            splitListA.add(eltList.get(i));
+        calc.sortList(splitIndex, lower_or_upper, eltList, listObjects);
+        Node[] nodeA = null, nodeB = null;
+        double[][] coordA = null, coordB = null;
+        Object[] objA = null, objB = null;
+        
+        if (isLeaf) {
+            coordA = new double[index][];
+            objA = new Object[index];
+            for(int i = 0; i < index; i++) {
+                coordA[i] = (double[]) eltList.get(i);
+                objA[i] = listObjects.get(i);
+            }
+            coordB = new double[size - index][];
+            objB = new Object[size - index];
+            int ib = 0;
+            for(int i = index; i < size; i++) {
+                coordB[ib] = (double[]) eltList.get(i);
+                objB[ib++] = listObjects.get(i);
+            }
+        } else {
+            nodeA = new Node[index];
+            for(int i = 0; i < index; i++) {
+                nodeA[i] = (Node) eltList.get(i);
+            }
+            nodeB = new Node[size - index];
+            int ib = 0;
+            for (int i = index; i < size; i++) {
+                nodeB[ib++] = (Node) eltList.get(i);
+            }
         }
-        for(int i=index; i<size; i++) {
-            splitListB.add(eltList.get(i));
+        
+        // check debug
+        if (isLeaf) {
+            for (int i = 0; i < coordA.length; i++) {
+                Object cuObj = objA[i];
+                double[] cuCoord = coordA[i];
+                //cherche dans tableau
+                for (int ib = 0; ib < candidate.getCoordsCount(); ib++) {
+                    if (cuObj == objects[ib]) {
+                        assert(Arrays.equals(cuCoord, coordinates[ib])) : "splitnode : coordA : should be same as candidate elements.";
+                    }
+                }
+            }
+            for (int i = 0; i < coordA.length; i++) {
+                Envelope env = (Envelope) objA[i];
+                assert(Arrays.equals(coordA[i], getCoords(env))):"element A should have same envelope";
+            }
+            for (int i = 0; i < coordB.length; i++) {
+                Object cuObj = objB[i];
+                double[] cuCoord = coordB[i];
+                //cherche dans tableau
+                for (int ib = 0; ib < candidate.getCoordsCount(); ib++) {
+                    if (cuObj == objects[ib]) {
+                        assert(Arrays.equals(cuCoord, coordinates[ib])) : "splitnode : coordB : should be same as candidate elements.";
+                    }
+                }
+            }
+            for (int i = 0; i < coordB.length; i++) {
+                Envelope env = (Envelope) objB[i];
+                assert(Arrays.equals(coordB[i], getCoords(env))):"element B should have same envelope";
+            }
         }
-        if(isLeaf) return UnmodifiableArrayList.wrap(new Node[] {tree.createNode(tree, null, null, splitListA), tree.createNode(tree, null, null, splitListB)});
-        final Node resultA = (Node) ((splitListA.size() == 1)?splitListA.get(0):tree.createNode(tree, null, splitListA, null));
-        final Node resultB = (Node) ((splitListB.size() == 1)?splitListB.get(0):tree.createNode(tree, null, splitListB, null));
+        
+        final int maxElts = tree.getMaxElements();
+        if (isLeaf) {
+            assert objA.length <= maxElts :"objA length should be lesser than max size permit by tree.";
+            assert objB.length <= maxElts :"objB length should be lesser than max size permit by tree.";
+            assert coordA.length <= maxElts :"coordA lengèth should be lesser than max size permit by tree.";
+            assert coordB.length <= maxElts :"coordB length should be lesser than max size permit by tree.";
+        } else {
+            assert nodeA.length <= maxElts :"nodeA length should be lesser than max size permit by tree.";
+            assert nodeB.length <= maxElts :"nodeB length should be lesser than max size permit by tree.";
+        }
+        
+//        ((DefaultNode)candidate).checkInternal();//////debug-----------------------------------------
+        if(isLeaf) return UnmodifiableArrayList.wrap(new Node[] {tree.createNode(tree, null, null, objA, coordA), tree.createNode(tree, null, null, objB, coordB)});
+        final Node resultA = (Node) ((nodeA.length == 1) ? nodeA[0] : tree.createNode(tree, null, nodeA, null, null));
+        final Node resultB = (Node) ((nodeB.length == 1) ? nodeB[0] : tree.createNode(tree, null, nodeB, null, null));
         return UnmodifiableArrayList.wrap(new Node[] {resultA, resultB});
     }
 
@@ -492,9 +656,22 @@ public class StarRTree extends AbstractTree {
      */
     private static int defineSplitAxis(final Node candidate) {
         ArgumentChecks.ensureNonNull("candidate : ", candidate);
+        assert candidate.checkInternal() : "defineSplitAxis : begin candidate not conform";
+        
         final boolean isLeaf = candidate.isLeaf();
-        List eltList;
-        eltList = (isLeaf) ? candidate.getEntries() : candidate.getChildren();
+        List<double[]> eltList = new ArrayList<double[]>();
+        if (isLeaf) {
+            final int coordCount = candidate.getCoordsCount();
+            for (int i = 0; i < coordCount; i++) {
+                eltList.add(candidate.getCoordinate(i));
+            }
+        } else {
+            final int chCount = candidate.getChildCount();
+            for (int i = 0; i < chCount; i++) {
+                eltList.add(candidate.getChild(i).getBoundary());
+            }
+        }
+        
         final AbstractTree tree = (AbstractTree)candidate.getTree();
         final Calculator calc = tree.getCalculator();
         final int size = eltList.size();
@@ -502,40 +679,38 @@ public class StarRTree extends AbstractTree {
         final int demiSize = (int) ((size04 >= 1)?size04:1);
         final List splitListA = new ArrayList();
         final List splitListB = new ArrayList();
-        GeneralEnvelope gESPLA, gESPLB;
+        double[] gESPLA, gESPLB;
         double bulkTemp;
         double bulkRef = Double.POSITIVE_INFINITY;
         int index = 0;
-
-        final GeneralEnvelope globalEltsArea = getEnveloppeMin(eltList);
-        final int dim = globalEltsArea.getDimension();
-
+        final double[] globalEltsArea = getEnvelopeMin(eltList);
+        final int dim = globalEltsArea.length/2;//decal bit
+        
         // if glogaleArea.span(currentDim) == 0 || if all elements have same span
         // value as global area on current ordinate, impossible to split on this axis.
         unappropriateOrdinate :
         for (int indOrg = 0; indOrg < dim; indOrg++) {
-            final double globalSpan = globalEltsArea.getSpan(indOrg);
+            final double globalSpan = getSpan(globalEltsArea, indOrg);
             boolean isSameSpan = true;
             //check if its possible to split on this currently ordinate.
-            for (Object elt : eltList) {
-                final Envelope envElt = (isLeaf) ? (Envelope) elt : ((Node)elt).getBoundary();
-                if (!(Math.abs(envElt.getSpan(indOrg) - globalSpan) <= 1E-9)) {
+            for (double[] elt : eltList) {
+                if (!(Math.abs(getSpan(elt, indOrg) - globalSpan) <= 1E-9)) {
                     isSameSpan = false;
                     break;
                 }
             }
             if (globalSpan <= 1E-9 || isSameSpan) continue unappropriateOrdinate;
-
             bulkTemp = 0;
             for (int left_or_right = 0; left_or_right < 2; left_or_right++) {
-                eltList = (left_or_right == 0) ? calc.sortList(indOrg, true, eltList) : calc.sortList(indOrg, false, eltList);
+                if (left_or_right == 0) calc.sortList(indOrg, true, eltList, null);
+                else calc.sortList(indOrg, false, eltList, null);
                 for (int cut = demiSize, sdem = size - demiSize; cut <= sdem; cut++) {
                     splitListA.clear();
                     splitListB.clear();
-                    for (int i = 0; i<cut; i++)  splitListA.add(eltList.get(i));
-                    for (int j = cut;j<size;j++) splitListB.add(eltList.get(j));
-                    gESPLA     = getEnveloppeMin(splitListA);
-                    gESPLB     = getEnveloppeMin(splitListB);
+                    for (int i = 0; i < cut; i++)  splitListA.add(eltList.get(i));
+                    for (int j = cut; j < size; j++) splitListB.add(eltList.get(j));
+                    gESPLA     = getEnvelopeMin(splitListA);
+                    gESPLB     = getEnvelopeMin(splitListB);
                     bulkTemp  += calc.getEdge(gESPLA);
                     bulkTemp  += calc.getEdge(gESPLB);
                 }
@@ -545,6 +720,7 @@ public class StarRTree extends AbstractTree {
                 index = indOrg;
             }
         }
+        assert candidate.checkInternal() : "defineSplitAxis : end candidate not conform";
         return index;
     }
 
@@ -560,25 +736,78 @@ public class StarRTree extends AbstractTree {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private static boolean deleteNode(final Node candidate, final Envelope entry) throws IllegalArgumentException{
+    private static boolean deleteNode(final Node candidate, final Object object, final double... coordinates) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("DeleteNode : Node candidate", candidate);
-        ArgumentChecks.ensureNonNull("DeleteNode : Node entry", entry);
-        if(new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)) {
+        ArgumentChecks.ensureNonNull("DeleteNode : object", object);
+        ArgumentChecks.ensureNonNull("DeleteNode : coordinates", coordinates);
+        assert candidate.checkInternal() : "deleteNode : begin candidate not conform";
+        
+        if(intersects(candidate.getBoundary(), coordinates, true)) {
             if(candidate.isLeaf()) {
-                final boolean removed = candidate.getEntries().remove(entry);
-                if(removed) {
+                boolean removed = false;
+                // paranoiac assert
+                final int sc = candidate.getCoordsCount();
+                assert (sc == candidate.getObjectCount()) :"deleteNode : coordinates and objects stored should have same size.";
+                for (int i = sc - 1; i >= 0; i--) {
+                    if (Arrays.equals(candidate.getCoordinate(i), coordinates)) { // faire un && logic
+                        if (candidate.getObject(i).equals(object)) {
+                            removed = true;
+                            candidate.removeCoordinate(i);
+                            candidate.removeObject(i);
+                            break;// found
+                        }
+                    }
+                }
+                
+                if (removed) {
                     final AbstractTree tree = ((AbstractTree)candidate.getTree());
-                    tree.setElementsNumber(tree.getElementsNumber()-1);
+                    tree.setElementsNumber(tree.getElementsNumber() - 1);
                     trim(candidate);
                     return true;
                 }
-            }else{
-                for(Node no : candidate.getChildren()) {
-                    final boolean removed = deleteNode(no, entry);
+            } else {
+                for(int i = candidate.getChildCount() - 1; i >= 0;i--) {
+                    final boolean removed = deleteNode(candidate.getChild(i), object, coordinates);
                     if(removed) return true;
                 }
             }
+            assert candidate.checkInternal() : "deleteNode : at end after trim candidate not conform";
         }
+        return false;
+    }
+    
+    /**
+     * Travel {@code Tree}, find {@code Envelope} entry if it exist and delete it.
+     *
+     * <blockquote><font size=-1>
+     * <strong>NOTE: Moreover {@code Tree} is condensate after a deletion to stay conform about R-Tree properties.</strong>
+     * </font></blockquote>
+     *
+     * @param candidate {@code Node}  where to delete.
+     * @param entry {@code Envelope} to delete.
+     * @throws IllegalArgumentException if candidate or entry is null.
+     * @return true if entry is find and deleted else false.
+     */
+    @Deprecated
+    private static boolean deleteNode(final Node candidate, final Envelope entry) throws IllegalArgumentException{
+        ArgumentChecks.ensureNonNull("DeleteNode : Node candidate", candidate);
+        ArgumentChecks.ensureNonNull("DeleteNode : Node entry", entry);
+//        if(intersects(candidate.getBoundary(), getCoords(entry, null), true)) {
+//            if(candidate.isLeaf()) {
+//                final boolean removed = candidate.getEntries().remove(entry);
+//                if(removed) {
+//                    final AbstractTree tree = ((AbstractTree)candidate.getTree());
+//                    tree.setElementsNumber(tree.getElementsNumber()-1);
+//                    trim(candidate);
+//                    return true;
+//                }
+//            }else{
+//                for(Node no : candidate.getChildren()) {
+//                    final boolean removed = deleteNode(no, entry);
+//                    if(removed) return true;
+//                }
+//            }
+//        }
         return false;
     }
 
@@ -594,29 +823,36 @@ public class StarRTree extends AbstractTree {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private static boolean removeNode(final Node candidate, final Envelope entry) throws IllegalArgumentException{
+    private static boolean removeNode(final Node candidate, final Object object, final double... coordinates) throws IllegalArgumentException{
         ArgumentChecks.ensureNonNull("removeNode : Node candidate", candidate);
         ArgumentChecks.ensureNonNull("removeNode : Node candidate", candidate);
-        if(new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)){
-            if(candidate.isLeaf()){
-                final List<Envelope> l = candidate.getEntries();
+        assert candidate.checkInternal() : "removeNode : begin candidate not conform";
+        
+        if(intersects(candidate.getBoundary(), coordinates, true)){
+            if (candidate.isLeaf()) {
                 boolean removed = false;
-                for(int i = l.size()-1; i>=0; i--){
-                    if(l.get(i).equals(entry)){
-                        removed = true;
-                        l.remove(i);
-                        break;
+                final int sc = candidate.getCoordsCount();
+                assert (sc == candidate.getObjectCount()) :"removeNode : coordinates and objects stored should have same size.";
+                for (int i = sc - 1; i >= 0; i--) {
+                    if (Arrays.equals(candidate.getCoordinate(i), coordinates)) { // faire un && logic
+                        if (object == candidate.getObject(i)) {
+                            candidate.removeCoordinate(i);
+                            candidate.removeObject(i);
+                            removed = true;
+                            break; //found
+                        }
                     }
                 }
+                
                 if(removed) {
                     final AbstractTree tree = ((AbstractTree)candidate.getTree());
                     tree.setElementsNumber(tree.getElementsNumber()-1);
                     trim(candidate);
                     return true;
                 }
-            }else{
-                for(Node no : candidate.getChildren()) {
-                    final boolean removed = removeNode(no, entry);
+            } else {
+                for(int i = candidate.getChildCount() - 1; i >= 0;i--) {
+                    final boolean removed = removeNode(candidate.getChild(i), object, coordinates);
                     if(removed) return true;
                 }
             }
@@ -633,30 +869,59 @@ public class StarRTree extends AbstractTree {
      */
     private static void trim(final Node candidate) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("trim : Node candidate", candidate);
-        final List<Node> children = candidate.getChildren();
+        
+        List<double[]> reinsertListCoords = null;
+        List<Object> reinsertListObjects = null;
         final AbstractTree tree = ((AbstractTree)candidate.getTree());
-        final List<Envelope> reinsertList = new ArrayList<Envelope>();
-        for(int i = children.size()-1; i>=0; i--) {
-            final Node child = children.get(i);
-            final List<Envelope> childList = child.getEntries();
-            final int siz = childList.size();
-            if(child.isEmpty()) {
-                children.remove(i);
-            }else if(child.getChildren().size() ==1) {
-                final Node n = children.remove(i);
-                for(Node n2d : n.getChildren()){
-                    n2d.setParent(candidate);
+        if (!candidate.isLeaf()) {
+            for(int i = candidate.getChildCount() - 1; i >= 0; i--) {
+                final Node currentChild = candidate.getChild(i);
+                // empty child
+                if (currentChild.isEmpty()) {
+                    candidate.removeChild(i);
+                } else { // check another conditions
+                    if (currentChild.isLeaf()) {
+                        // paranoiac assert
+                        final int countCoords = currentChild.getCoordsCount();
+                        assert (countCoords == currentChild.getObjectCount()) :"trim : candidate child should have coord and object with same length.";
+                        // stored elements number < max elements / 3
+                        if (countCoords <= tree.getMaxElements() / 3) {
+                            if (reinsertListCoords == null) {
+                                reinsertListCoords = new LinkedList<double[]>();
+                                reinsertListObjects = new LinkedList<Object>();
+                            }
+                            for (int ic = 0; ic < countCoords; ic++) {
+                                reinsertListCoords.add(currentChild.getCoordinate(ic));
+                                reinsertListObjects.add(currentChild.getObject(ic));
+                            }
+                            tree.setElementsNumber(tree.getElementsNumber()-countCoords);
+                            currentChild.clear();
+                            candidate.removeChild(i);
+                        }
+                    } else {
+                        // child have a single sub-child
+                        if (currentChild.getChildCount() == 1) {
+                            final Node reinsertNode = currentChild.removeChild(0);
+                            currentChild.clear();
+                            candidate.removeChild(i);
+                            reinsertNode.setParent(candidate);
+                            candidate.addChild(reinsertNode);
+                        }
+                    }
                 }
-                children.addAll(n.getChildren());
-            }else if(child.isLeaf() && siz<=tree.getMaxElements()/3) {
-                reinsertList.addAll(childList);
-                tree.setElementsNumber(tree.getElementsNumber()-siz);
-                children.remove(i);
             }
         }
-        if(candidate.getParent()!=null) trim(candidate.getParent());
-        for(Envelope ent : reinsertList){
-            tree.insert(ent);
+        if(candidate.getParent() != null) trim (candidate.getParent());
+        // re-insert after trim
+        if (reinsertListCoords != null) {
+            assert (reinsertListObjects != null) : "trim : listObjects should not be null.";
+            final int reSize = reinsertListCoords.size();
+            assert (reSize == reinsertListObjects.size()) :"reinsertLists should have same size";
+            for (int i = 0; i < reSize; i++) {
+                tree.insert(reinsertListObjects.get(i), reinsertListCoords.get(i));
+            }
+        } else {
+            assert (reinsertListObjects == null) : "trim : listObjects should be null.";
         }
     }
 
@@ -671,56 +936,82 @@ public class StarRTree extends AbstractTree {
      */
     private static void branchGrafting(final Node nodeA, final Node nodeB ) throws IllegalArgumentException {
         if(!nodeA.isLeaf() || !nodeB.isLeaf()) throw new IllegalArgumentException("branchGrafting : not leaf");
-        final List<Envelope> entriesA = nodeA.getEntries();
-        final List<Envelope> entriesB = nodeB.getEntries();
-        List<Envelope> listGlobale = new ArrayList<Envelope>(entriesA);
-        listGlobale.addAll(entriesB);
-        entriesA.clear();
-        entriesB.clear();
-        final int size = listGlobale.size();
-        if(size == 0) throw new IllegalArgumentException("branchGrafting : empty list");
+        assert nodeA.getParent() == nodeB.getParent() : "branchGrafting : NodeA and NodeB should have same parent.";
+        assert nodeA.getParent().checkInternal()      : "branchGrafting : nodeA and B parent not conform.";
+        assert nodeA.checkInternal()                  : "branchGrafting : at begin candidate not conform";
+        assert nodeB.checkInternal()                  : "branchGrafting : at begin candidate not conform";
+        final int sa = nodeA.getCoordsCount();
+        final int sb = nodeB.getCoordsCount();
+        List<double[]> listCoords = new LinkedList<double[]>();
+        List<Object> listObject = new LinkedList<Object>();
+        
+        for (int i = 0; i < sa; i++) {
+            listCoords.add(nodeA.getCoordinate(i));
+            listObject.add(nodeA.getObject(i));
+        }
+        for (int i = 0; i < sb; i++) {
+            listCoords.add(nodeB.getCoordinate(i));
+            listObject.add(nodeB.getObject(i));
+        }
+        
+        //paranoiac assert
+        final int size = listCoords.size();
+        assert (size == listObject.size()) : "branch grafting : listcoords and listobjects should have same size.";
+        if (size == 0) throw new IllegalArgumentException("branchGrafting : empty list");
         final AbstractTree tree = (AbstractTree)nodeA.getTree();
+        final int maxEltsPermit = tree.getMaxElements();
         final Calculator calc = tree.getCalculator();
-        final GeneralEnvelope globalE = getEnveloppeMin(listGlobale);
-        final int dim = globalE.getDimension();
-        double lengthDimRef = -1;
+        final double[] globalE = getEnvelopeMin(listCoords);
+        final int dim = globalE.length/2;//decal bit
+        double lengthDimRef = Double.NEGATIVE_INFINITY;
         int indexSplit = -1;
-        for(int i = 0; i<dim; i++) {
-            double lengthDimTemp = globalE.getSpan(i);
-            if(lengthDimTemp>lengthDimRef) {
+        for (int i = 0; i < dim; i++) {
+            double lengthDimTemp = getSpan(globalE, i);
+            if (lengthDimTemp > lengthDimRef) {
                 lengthDimRef = lengthDimTemp;
                 indexSplit = i;
             }
         }
         assert indexSplit != -1 : "BranchGrafting : indexSplit not find"+ indexSplit;
-        listGlobale = calc.sortList(indexSplit, true, listGlobale);
-        final GeneralEnvelope envA = new GeneralEnvelope(listGlobale.get(0));
-        final GeneralEnvelope envB = new GeneralEnvelope(listGlobale.get(0));
-        int envAInc = 1;
+        calc.sortList(indexSplit, true, listCoords, listObject);
+        final double[] envA = listCoords.get(0);
+        final double[] envB = listCoords.get(0);
         double overLapsRef = -1;
         int index = -1;
-        final int size04 = (int)((size*0.4 >= 1) ? size*0.4 : 1);
-        for(int cut = size04,n=size-size04; cut<n; cut++) {
-            for(;envAInc<cut; envAInc++) {
-                envA.add(listGlobale.get(envAInc));
+        final int size04 = (int)((size * 0.4 >= 1) ? size * 0.4 : 1);
+        for(int cut = size04, n = size - size04; cut < n; cut++) {
+            final double[] envAC = envA.clone();//system .arraycopy moin couteux
+            final double[] envBC = envB.clone();
+            for(int i = 1; i < cut; i++) {
+                add(envAC, listCoords.get(i));
             }
-            envB.setEnvelope(listGlobale.get(cut));
-            for(int i = cut+1; i<size; i++) {
-                envB.add(listGlobale.get(i));
+            for(int i = cut + 1; i < size; i++) {
+                add(envBC, listCoords.get(i));
             }
-            double overLapsTemp = calc.getOverlaps(envA, envB);
-            if(overLapsTemp < overLapsRef || overLapsRef == -1){
+            double overLapsTemp = calc.getOverlaps(envAC, envBC);
+            if(overLapsTemp < overLapsRef || overLapsRef == -1){//Double.positiveinfinity
                 overLapsRef = overLapsTemp;
                 index = cut;
             }
         }
         assert index != -1 : "branchGrafting : index cut out of bound";
-        for(int i = 0; i<index; i++) {
-            nodeA.getEntries().add(listGlobale.get(i));
+        //index not wrong a split is better.
+        if (index > maxEltsPermit || (size-index) > maxEltsPermit) return;
+        // clear nodes
+        nodeA.clear();
+        nodeB.clear();
+        
+        // fill node
+        for(int i = 0; i < index; i++) {
+            nodeA.addElement(listObject.get(i), listCoords.get(i));
         }
-        for(int i = index; i<size; i++) {
-            nodeB.getEntries().add(listGlobale.get(i));
+        for(int i = index; i < size; i++) {
+            nodeB.addElement(listObject.get(i), listCoords.get(i));
         }
+        assert nodeA.getParent() == nodeB.getParent() : "branchGrafting : NodeA and NodeB should have same parent.";
+        assert nodeA.getParent().checkInternal()      : "branchGrafting : nodeA and B parent not conform.";
+        assert nodeA.checkInternal()                  : "branchGrafting : at end candidate not conform";
+        assert nodeB.checkInternal()                  : "branchGrafting : at end candidate not conform";
     }
 
     /**Get statement from re-insert state.
@@ -737,50 +1028,83 @@ public class StarRTree extends AbstractTree {
     private void setIA(boolean insertAgain) {
         this.insertAgain = insertAgain;
     }
-
-    /**Recover lesser 33% largest of {@code Node} candidate within it.
+    
+    /**
+     * Recover lesser 33% largest of {@code Node} candidate within it.
      *
      * @throws IllegalArgumentException if {@code Node} candidate is null.
      * @return all Entry within subNodes at more 33% largest of this {@code Node}.
      */
-    private static List<Envelope> getElementAtMore33PerCent(final Node candidate) {
+    private static void getElementAtMore33PerCent(final Node candidate, LinkedList<Object> listObjects, final LinkedList<double[]> listCoords) {
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidate", candidate);
+        ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : listObjects", listObjects);
+        ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : listCoords", listCoords);
+        assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
+        final double[] canBound = candidate.getBoundary();
+        final double[] candidateCentroid = getMedian(canBound);
         final Calculator calc = candidate.getTree().getCalculator();
-        final List<Envelope> lsh = new ArrayList<Envelope>();
-        final TreeVisitor tvrSearch = new DefaultTreeVisitor(lsh);
-        final Envelope boundGE = candidate.getBoundary();
-        final DirectPosition candidateCentroid = getMedian(boundGE);
-        final double distPermit = calc.getDistance(boundGE.getLowerCorner(), boundGE.getUpperCorner()) / 1.666666666;
-        nodeSearch(candidate, boundGE, tvrSearch);
-        for (int i = lsh.size() - 1; i >= 0; i--) {
-            if (calc.getDistance(candidateCentroid, DefaultTreeUtils.getMedian(lsh.get(i))) < distPermit) lsh.remove(i);
+        final double distPermit = calc.getDistancePoint(getLowerCorner(canBound), getUpperCorner(canBound)) / 1.666666666;
+        getElementAtMore33PerCent(candidate, candidateCentroid, distPermit, listObjects, listCoords);
+        assert candidate.checkInternal() : "getElementAtMore33PerCent : end candidate not conform";
+    }
+    
+    /**
+     * Recover lesser 33% largest of {@code Node} candidate within it.
+     *
+     * @throws IllegalArgumentException if {@code Node} candidate is null.
+     * @return all Entry within subNodes at more 33% largest of this {@code Node}.
+     */
+    private static void getElementAtMore33PerCent(final Node candidate, double[] candidateCentroid, double distancePermit, LinkedList<Object> listObjects, final LinkedList<double[]> listCoords) {
+        ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidateCentroid", candidateCentroid);
+        ArgumentChecks.ensureStrictlyPositive("getElementsAtMore33PerCent : distancePermit", distancePermit);
+        assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
+        final Calculator calc = candidate.getTree().getCalculator();
+        if (candidate.isLeaf()) {
+            final int coordCount = candidate.getCoordsCount();
+            for (int i = 0; i < coordCount; i++) {
+                final double[] cuCoord = candidate.getCoordinate(i);
+                if (calc.getDistancePoint(candidateCentroid, getMedian(cuCoord)) >= distancePermit) {
+                    listObjects.add(candidate.getObject(i));
+                    listCoords.add(candidate.getCoordinate(i));
+                }
+            }
+        } else {
+            final int childCount = candidate.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                getElementAtMore33PerCent(candidate.getChild(i), candidateCentroid, distancePermit, listObjects, listCoords);
+            }
         }
-        return lsh;
+        assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Node createNode(Tree tree, Node parent, List<Node> listChildren, List<Envelope> listEntries, double... coordinates) {
-        final int ddim = coordinates.length;
-
-        if((ddim % 2) != 0) throw new IllegalArgumentException("coordinate dimension is not correct");
-        if(ddim == 0) return nodefactory.createNode(tree, parent, null, null,listChildren, listEntries);
-
-        final int dim = coordinates.length/2;
+    public Node createNode(Tree tree, Node parent, Node[] children, Object[] objects, double[][] coordinates) {
+        if (coordinates != null && ((coordinates[0].length % 2) != 0)) 
+            throw new IllegalArgumentException("coordinate dimension is not correct");
+        
+        double[] bound = null;
+        if (children != null) {
+            assert (objects == null && coordinates == null) : "impossible to create node which contain Node and elements.";
+            bound = children[0].getBoundary().clone();
+            for (int i = 1, l = children.length; i < l; i++) {
+                add(bound, children[i].getBoundary());
+            }
+        } else if (objects != null && coordinates != null) {
+            assert (objects.length == coordinates.length) : "BasicRTree.createNode : object and coordinates tables should have same length.";
+            bound = coordinates[0].clone();
+            for (int i = 1, l = coordinates.length; i < l; i++) {
+                add(bound, coordinates[i]);
+            }
+        }
+        if (bound == null) return new DefaultNode(tree, parent, null, null, children, objects, coordinates);
+        final int dim = bound.length >> 1;
         final double[] dp1Coords = new double[dim];
         final double[] dp2Coords = new double[dim];
-
-        System.arraycopy(coordinates, 0, dp1Coords, 0, dim);
-        System.arraycopy(coordinates, dim, dp2Coords, 0, dim);
-
-        final DirectPosition dp1 = new GeneralDirectPosition(crs);
-        final DirectPosition dp2 = new GeneralDirectPosition(crs);
-        for(int i =0; i<dim; i++) {
-            dp1.setOrdinate(i, dp1Coords[i]);
-            dp2.setOrdinate(i, dp2Coords[i]);
-        }
-        return nodefactory.createNode(tree, parent, dp1, dp2,listChildren, listEntries);
+        System.arraycopy(bound, 0, dp1Coords, 0, dim);
+        System.arraycopy(bound, dim, dp2Coords, 0, dim);
+        return new DefaultNode(tree, parent, dp1Coords, dp2Coords,children, objects, coordinates);
     }
 }

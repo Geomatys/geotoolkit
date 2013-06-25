@@ -16,11 +16,8 @@
  */
 package org.geotoolkit.index.tree.calculator;
 
-import org.apache.sis.geometry.GeneralEnvelope;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.Node;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Envelope;
 
 /**
  * {@link Calculator} defined to compute multi-dimensionnal geometric operations.
@@ -34,62 +31,56 @@ public class CalculatorND extends Calculator {
      * {@inheritDoc }.
      */
     @Override
-    public double getSpace(Envelope envelop) { 
-        final int dim = envelop.getDimension();
-        if (dim <= 2) return getGeneralEnvelopArea(envelop);
-        return getGeneralEnvelopBulk(envelop);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public double getEdge(Envelope envelop) {
-        final int dim = envelop.getDimension();
-        if (dim <= 2) return getGeneralEnvelopPerimeter(envelop);
-        return getGeneralEnvelopArea(envelop);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public double getDistance(Envelope envelopA, Envelope envelopB) {
-        return getDistance(getMedian(envelopA), getMedian(envelopB));
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public double getDistance(DirectPosition positionA, DirectPosition positionB) {
-        return getDistanceBetween2DirectPosition(positionA, positionB);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
     public double getDistance(Node nodeA, Node nodeB) {
-        return getDistance(nodeA.getBoundary(), nodeB.getBoundary());
+        return getDistanceBetween2Envelopes(nodeA.getBoundary(), nodeB.getBoundary());
     }
 
     /**
      * {@inheritDoc }.
      */
     @Override
-    public double getOverlaps(Envelope envelopA, Envelope envelopB) {
-        final int dim = envelopA.getDimension();
-        assert (dim == envelopB.getDimension()) : "dimension not equals";
-        final GeneralEnvelope union = new GeneralEnvelope(envelopA);
-        union.add(envelopB);
-        final GeneralEnvelope intersection = new GeneralEnvelope(envelopA);
-        intersection.intersects(envelopB, true);
+    public double getSpace(double[] envelope) {
+        return (envelope.length/2 <= 2) ? getArea(envelope) : getBulk(envelope);//decal bit
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public double getEdge(double[] envelope) {
+        return (envelope.length/2 <= 2) ? getPerimeter(envelope) : getArea(envelope);//decal bit
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public double getDistanceEnvelope(double[] envelopeA, double[] envelopeB) {
+        return getDistanceBetween2Envelopes(envelopeA, envelopeB);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public double getDistancePoint(double[] positionA, double[] positionB) {
+        return getDistanceBetween2Positions(positionA, positionB);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public double getOverlaps(double[] envelopeA, double[] envelopeB) {
+        int dim = envelopeA.length;
+        assert (dim == envelopeB.length) : "dimension not equals";
+        dim = dim >> 1;
         double ratio = 1;
-        for (int d = 0; d < dim; d++) {
-            final double denominator = union.getSpan(d);
+        for (int low = 0, upp = dim; low < dim; low++, upp++) {
+            final double numerator   = Math.min(envelopeB[upp], envelopeA[upp]) - Math.max(envelopeB[low], envelopeA[low]);
+            final double denominator = Math.max(envelopeB[upp], envelopeA[upp]) - Math.min(envelopeB[low], envelopeA[low]);
             if (denominator <= 1E-12) continue;
-            ratio *= (intersection.getSpan(d) / denominator);
+            ratio *= (numerator / denominator);//intersection/union
         }
         return ratio;
     }
@@ -98,17 +89,18 @@ public class CalculatorND extends Calculator {
      * {@inheritDoc }.
      */
     @Override
-    public double getEnlargement(Envelope envMin, Envelope envMax) {
-        final int dim = envMin.getDimension();
-        assert (dim == envMax.getDimension()) : "dimension not equals";
+    public double getEnlargement(double[] envelopeMin, double[] envelopeMax) {
+        int dim = envelopeMin.length;
+        assert (dim == envelopeMax.length) : "dimension not equals";
+        dim = dim >> 1;
+        final double[] union = envelopeMax.clone();
         //paranoiacUnion
-        final GeneralEnvelope union = new GeneralEnvelope(envMin);
-        union.add(envMax);//normaly equal to envMax.
+        add(union, envelopeMin);//normaly equal to envMax.
         double ratio = 1;
-        for (int d = 0; d < dim; d++) {
-            final double denominator = envMin.getSpan(d);
+        for (int low = 0, upp = dim; low < dim; low++, upp++) {
+            final double denominator = envelopeMin[upp] - envelopeMin[low];
             if (denominator <= 1E-12) continue;
-            ratio *= (union.getSpan(d) / denominator);
+            ratio *= ((union[upp] - union[low]) / denominator);
         }
         return ratio;
     }
