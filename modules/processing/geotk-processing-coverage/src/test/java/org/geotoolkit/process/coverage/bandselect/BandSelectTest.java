@@ -14,12 +14,11 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.coverage.reformat;
+package org.geotoolkit.process.coverage.bandselect;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -27,37 +26,27 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.junit.Test;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.util.NoSuchIdentifierException;
 import static org.junit.Assert.*;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Test reformat process.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
-public class ReformatTest {
-    
-    private static final double DELTA = 0.00000001;
-    
+public class BandSelectTest {
+ 
     @Test
-    public void testIntToDouble() throws NoSuchIdentifierException, ProcessException{
+    public void selectTest() throws Exception{
         
-        final BufferedImage inputImage = new BufferedImage(100, 20, BufferedImage.TYPE_3BYTE_BGR);
+        final BufferedImage inputImage = new BufferedImage(100, 100, BufferedImage.TYPE_4BYTE_ABGR);
         final Graphics2D g = inputImage.createGraphics();
-        g.setColor(Color.RED);
-        g.fillRect(0, 0, 50, 10);
-        g.setColor(Color.BLUE);
-        g.fillRect(50, 0, 50, 10);
-        g.setColor(Color.GREEN);
-        g.fillRect(0, 10, 50, 10);
-        g.setColor(Color.BLACK);
-        g.fillRect(50, 10, 50, 10);
+        g.setColor(new Color(100, 30, 50));
+        g.fillRect(0, 0, 50, 100);
+        g.setColor(new Color(80, 200, 10));
+        g.fillRect(50, 0, 50, 100);
         
         final SampleModel inSampleModel = inputImage.getSampleModel();
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
@@ -66,12 +55,12 @@ public class ReformatTest {
         gcb.setEnvelope(0,0,500,30);
         final GridCoverage2D inCoverage = (GridCoverage2D) gcb.build();
         
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "reformat");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "bandselect");
         assertNotNull(desc);
         
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();
         params.parameter("coverage").setValue(inCoverage);
-        params.parameter("datatype").setValue(DataBuffer.TYPE_DOUBLE);
+        params.parameter("bands").setValue(new int[]{0,2});
         
         final Process process = desc.createProcess(params);
         final ParameterValueGroup result = process.call();
@@ -85,24 +74,21 @@ public class ReformatTest {
         final SampleModel outSampleModel = outImage.getSampleModel();
         assertEquals(inputImage.getWidth(), outImage.getWidth());
         assertEquals(inputImage.getHeight(), outImage.getHeight());
-        assertEquals(inSampleModel.getNumBands(), outSampleModel.getNumBands());
-        assertEquals(DataBuffer.TYPE_DOUBLE, outSampleModel.getDataType());
-        assertFalse(inSampleModel.getDataType() == outSampleModel.getDataType());
+        assertEquals(2, outSampleModel.getNumBands());
+        assertEquals(inSampleModel.getDataType(), outSampleModel.getDataType());
         
         //check values
         final Raster outRaster = outImage.getData();
-        final double[] sample = new double[3];
-        final double[] red = new double[]{255,0,0};
-        final double[] blue = new double[]{0,0,255};
-        final double[] green = new double[]{0,255,0};
-        final double[] black = new double[]{0,0,0};
-        for(int y=0;y<20;y++){
+        final int[] sample = new int[2];
+        final int[] color1 = new int[]{100,50};
+        final int[] color2 = new int[]{80, 10};
+        for(int y=0;y<100;y++){
             for(int x=0;x<100;x++){
                 outRaster.getPixel(x, y, sample);
                 if(x<50){
-                    assertArrayEquals("coord "+x+","+y,(y<10)?red:green, sample,DELTA);
+                    assertArrayEquals("coord "+x+","+y,color1, sample);
                 }else{
-                    assertArrayEquals("coord "+x+","+y,(y<10)?blue:black, sample,DELTA);
+                    assertArrayEquals("coord "+x+","+y,color2, sample);
                 }
             }
         }

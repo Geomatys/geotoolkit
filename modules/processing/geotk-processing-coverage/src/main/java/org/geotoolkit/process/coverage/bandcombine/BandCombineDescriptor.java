@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.coverage.combine;
+package org.geotoolkit.process.coverage.bandcombine;
 
 import java.util.HashMap;
 import java.util.Map;

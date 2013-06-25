@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.coverage.combine;
+package org.geotoolkit.process.coverage.bandcombine;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -33,7 +33,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
-import static org.geotoolkit.process.coverage.combine.BandCombineDescriptor.*;
+import static org.geotoolkit.process.coverage.bandcombine.BandCombineDescriptor.*;
 import org.geotoolkit.process.coverage.reformat.GrayScaleColorModel;
 import static org.geotoolkit.process.coverage.reformat.ReformatProcess.createRaster;
 import org.geotoolkit.util.ArgumentChecks;
@@ -118,12 +118,26 @@ public class BandCombineProcess extends AbstractProcess {
         
         //copy datas        
         final PixelIterator writeIte = PixelIteratorFactory.createDefaultWriteableIterator(raster, raster);
+        final double[] pixel = new double[nbtotalbands];
         while(writeIte.next()){
+            //read pixel from all input iterators
+            int tband = -1;
             for(int i=0;i<readItes.length;i++){
+                int sband = 0;
                 readItes[i].next();
-                for(int b=0;b<nbBands[i];b++){
-                    writeIte.setSampleDouble(readItes[i].getSampleDouble());
+                pixel[++tband] = readItes[i].getSampleDouble();
+                while (++sband != nbBands[i]) {
+                    readItes[i].next();
+                    pixel[++tband] = readItes[i].getSampleDouble();
                 }
+            }
+            
+            //write pixel
+            tband = 0;
+            writeIte.setSampleDouble(pixel[tband]);
+            while (++tband != pixel.length) {
+                writeIte.next();
+                writeIte.setSampleDouble(pixel[tband]);
             }
         }
         
