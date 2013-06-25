@@ -339,6 +339,10 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
             subBuffer = cachedExternal.getImage(candidateSize,coeff,hints);
         }
 
+        if(subBuffer==null){
+            //may happen if image is too small
+            return null;
+        }
 
         //no operation to append to image, return the buffer directly ----------------------------
         if( candidateRotation == 0 && candidateOpacity == 1 ) return subBuffer;
@@ -359,6 +363,10 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
             maxSizeY = (int) trs.getBounds2D().getHeight();
         }
 
+        if(maxSizeX<=0 || maxSizeY<=0){
+            return null;
+        }
+        
         final BufferedImage buffer = new BufferedImage( maxSizeX , maxSizeY, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g2 = (Graphics2D) buffer.getGraphics();
         if(hints != null){

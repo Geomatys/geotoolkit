@@ -50,7 +50,12 @@ public class LabelingUtilities {
                     }else{
                         final PointCandidate pc1 = (PointCandidate) c1;
                         final PointCandidate pc2 = (PointCandidate) c2;
-                        return (int) ((pc2.x + pc2.y) - (pc1.x + pc1.y) +0.5);
+                        int d = (int) ((pc2.x + pc2.y) - (pc1.x + pc1.y) +0.5);
+                        if(d==0){
+                            //we need to dissociate them
+                            return System.identityHashCode(c1) - System.identityHashCode(c2);
+                        }
+                        return d;
                     }
                 }else{
                     return diff;

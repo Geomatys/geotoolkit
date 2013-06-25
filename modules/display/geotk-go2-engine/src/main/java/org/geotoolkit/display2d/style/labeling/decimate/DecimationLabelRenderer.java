@@ -43,26 +43,7 @@ import org.geotoolkit.display2d.style.labeling.candidate.PointCandidate;
  */
 public class DecimationLabelRenderer extends DefaultLabelRenderer{
     
-    private final SortedSet<Candidate> candidates = Collections.synchronizedSortedSet(new TreeSet<Candidate>(LabelingUtilities.XY_COMPARATOR){
-        
-        public boolean add(final LabelDescriptor label) {
-
-            if(label instanceof PointLabelDescriptor){
-                final PointCandidate pc = (PointCandidate)pointRenderer.generateCandidat((PointLabelDescriptor) label);
-                if(pc == null) return true;
-                pc.setPriority(1);
-                if(!LabelingUtilities.intersects(pc,candidates)){
-                    candidates.add(pc);
-                }                  
-            }else if(label instanceof LinearLabelDescriptor){
-                final LinearCandidate lc = (LinearCandidate)LinearRenderer.generateCandidat((LinearLabelDescriptor) label);
-                lc.setPriority(1);
-                candidates.add(lc);
-            }
-            return true;
-        }
-        
-    });
+    private final SortedSet<Candidate> candidates = new TreeSet<Candidate>(LabelingUtilities.XY_COMPARATOR);
 
     private final List<LabelLayer> layers = new ArrayList<LabelLayer>();
 
@@ -120,6 +101,7 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
                 LinearRenderer.render(candidate);
             }
         }
+        
         layers.clear();
     }
 
@@ -135,7 +117,6 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
 
             @Override
             public boolean add(LabelDescriptor label) {
-
                 if(label instanceof PointLabelDescriptor){
                     final PointCandidate pc = (PointCandidate)pointRenderer.generateCandidat((PointLabelDescriptor) label);
                     if(pc == null) return true;
@@ -143,7 +124,8 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
                     synchronized(candidates){
                         if(!LabelingUtilities.intersects(pc,candidates)){
                             candidates.add(pc);
-                        }                  
+                        }else{
+                        }
                     }
                 }else if(label instanceof LinearLabelDescriptor){
                     final LinearCandidate lc = (LinearCandidate)LinearRenderer.generateCandidat((LinearLabelDescriptor) label);
