@@ -41,6 +41,7 @@ public class CharsetEditor extends PropertyValueEditor implements ActionListener
         final List<Charset> sets = new ArrayList<Charset>(Charset.availableCharsets().values());
         component.setModel(new ListComboBoxModel(sets));
         component.addActionListener(this);
+        component.addFocusListener(this);
     }
 
     @Override

@@ -37,6 +37,7 @@ public class StringEditor extends PropertyValueEditor implements DocumentListene
         super(new BorderLayout());
         add(BorderLayout.CENTER, textField);
         textField.getDocument().addDocumentListener(this);
+        textField.addFocusListener(this);
     }
 
     @Override

@@ -87,6 +87,7 @@ public class NumberEditor extends PropertyValueEditor implements ChangeListener 
                 component.setModel(new SpinnerNumberModel(0, null, null, 1));
             }
 
+            ((JSpinner.DefaultEditor) component.getEditor()).getTextField().addFocusListener(this);
             //todo extract min/max values from filter
         }
 

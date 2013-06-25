@@ -49,6 +49,7 @@ public class FilterEditor extends PropertyValueEditor implements ActionListener{
         add(BorderLayout.CENTER, guiLabel);
         add(BorderLayout.EAST, guiButton);
         guiButton.addActionListener(this);
+        guiButton.addFocusListener(this);
         guiButton.setMargin(new Insets(0, 0, 0, 0));
     }
 

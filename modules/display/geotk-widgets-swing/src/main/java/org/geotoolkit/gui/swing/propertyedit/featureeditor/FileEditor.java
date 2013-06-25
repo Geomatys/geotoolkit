@@ -44,7 +44,9 @@ public class FileEditor extends PropertyValueEditor implements ActionListener, D
         add(BorderLayout.CENTER, component);
         add(BorderLayout.EAST, chooseButton);
         component.getDocument().addDocumentListener(this);
+        component.addFocusListener(this);
         chooseButton.addActionListener(this);
+        chooseButton.addFocusListener(this);
         chooseButton.setMargin(new Insets(0, 0, 0, 0));
     }
 

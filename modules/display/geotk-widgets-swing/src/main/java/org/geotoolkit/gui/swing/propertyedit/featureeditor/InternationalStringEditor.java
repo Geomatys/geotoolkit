@@ -47,6 +47,7 @@ public class InternationalStringEditor extends PropertyValueEditor implements Do
         removeAll();
         add(BorderLayout.CENTER, textField);
         textField.getDocument().addDocumentListener(this);
+        textField.addFocusListener(this);
         current = textField;
         if (value instanceof InternationalString) {
             current.setText(((InternationalString) value).toString());

@@ -17,6 +17,8 @@
 package org.geotoolkit.gui.swing.propertyedit;
 
 import java.awt.BorderLayout;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -55,7 +57,7 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
  */
-public class JAttributeEditor extends JPanel implements PropertyChangeListener {
+public class JAttributeEditor extends JPanel implements PropertyChangeListener, FocusListener {
 
     //Event name fired in PropertyChange
     public static final String VALUE_CHANGE_EVENT = "value";
@@ -99,6 +101,7 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener {
             if(editor != null){
                 editor.setValue(property.getType(), property.getValue());
                 editor.addPropertyChangeListener(this);
+                editor.addFocusListener(this);
                 add(BorderLayout.CENTER,editor);
             } else {
                 add(BorderLayout.CENTER, notSupportedTF);
@@ -189,5 +192,27 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener {
      */
     public boolean isEditorFound() {
         return editor != null;
+    }
+
+    /**
+     * Forward focus gained event.
+     * @param e 
+     */
+    @Override
+    public void focusGained(FocusEvent e) {
+        for (FocusListener listeners : getFocusListeners()) {
+            listeners.focusGained(e);
+        }
+    }
+
+    /**
+     * Forward focus lost event.
+     * @param e 
+     */
+    @Override
+    public void focusLost(FocusEvent e) {
+        for (FocusListener listeners : getFocusListeners()) {
+            listeners.focusLost(e);
+        }
     }
 }

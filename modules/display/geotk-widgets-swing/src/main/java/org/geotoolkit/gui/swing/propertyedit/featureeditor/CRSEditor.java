@@ -37,6 +37,7 @@ public class CRSEditor extends PropertyValueEditor implements PropertyChangeList
         super(new BorderLayout());
         add(BorderLayout.CENTER, component);
         component.addPropertyChangeListener(this);
+        component.addFocusListener(this);
     }
 
     @Override

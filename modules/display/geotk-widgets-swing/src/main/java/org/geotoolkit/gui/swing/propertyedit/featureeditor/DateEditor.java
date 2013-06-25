@@ -36,6 +36,7 @@ public class DateEditor extends PropertyValueEditor implements ActionListener{
         add(BorderLayout.CENTER, datePicker);
         datePicker.setOpaque(false);
         datePicker.addActionListener(this);
+        datePicker.getEditor().addFocusListener(this);
     }
 
     @Override

@@ -50,6 +50,7 @@ public class URLEditor extends PropertyValueEditor implements ActionListener, Do
         add(BorderLayout.EAST, chooseButton);
         component.getDocument().addDocumentListener(this);
         chooseButton.addActionListener(this);
+        chooseButton.addFocusListener(this);
         chooseButton.setMargin(new Insets(0, 0, 0, 0));
     }
 

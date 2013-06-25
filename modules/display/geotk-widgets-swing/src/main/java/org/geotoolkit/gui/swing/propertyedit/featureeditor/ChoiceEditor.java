@@ -44,6 +44,7 @@ public class ChoiceEditor extends PropertyValueEditor implements ActionListener{
         super(new BorderLayout());
         add(BorderLayout.CENTER, guiCombo);
         guiCombo.addActionListener(this);
+        guiCombo.addFocusListener(this);
         guiLabel.setOpaque(false);
         setOpaque(false);
     }

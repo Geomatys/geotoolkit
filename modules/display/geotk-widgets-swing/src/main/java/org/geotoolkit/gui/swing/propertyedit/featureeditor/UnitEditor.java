@@ -44,7 +44,8 @@ public class UnitEditor extends PropertyValueEditor implements ActionListener {
 
         final List<Unit> units = new ArrayList<Unit>(SI.getInstance().getUnits());
         units.addAll(NonSI.getInstance().getUnits());
-
+        
+        component.addFocusListener(this);
         component.setModel(new ListComboBoxModel(units));
         component.setRenderer(new DefaultListCellRenderer(){
 

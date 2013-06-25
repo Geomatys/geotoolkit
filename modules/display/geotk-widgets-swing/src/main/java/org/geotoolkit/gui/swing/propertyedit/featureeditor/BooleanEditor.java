@@ -37,6 +37,7 @@ public class BooleanEditor extends PropertyValueEditor implements ChangeListener
         add(BorderLayout.CENTER, component);
         component.setOpaque(false);
         component.addChangeListener(this);
+        component.addFocusListener(this);
     }
 
     @Override

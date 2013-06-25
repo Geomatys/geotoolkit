@@ -17,6 +17,8 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.LayoutManager;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import javax.swing.JPanel;
 import org.opengis.feature.type.PropertyType;
 
@@ -24,7 +26,7 @@ import org.opengis.feature.type.PropertyType;
  *
  * @author Johann Sorel
  */
-public abstract class PropertyValueEditor extends JPanel {
+public abstract class PropertyValueEditor extends JPanel implements FocusListener {
 
     public static final String PROP_VALUE = "value";
 
@@ -54,6 +56,28 @@ public abstract class PropertyValueEditor extends JPanel {
         firePropertyChange(PROP_VALUE, null, getValue());
     }
 
+    /**
+     * Forward focus gained event.
+     * @param e 
+     */
+    @Override
+    public void focusGained(FocusEvent e) {
+        for (FocusListener listeners : getFocusListeners()) {
+            listeners.focusGained(e);
+        }
+    }
+
+    /**
+     * Forward focus lost event.
+     * @param e 
+     */
+    @Override
+    public void focusLost(FocusEvent e) {
+        for (FocusListener listeners : getFocusListeners()) {
+            listeners.focusLost(e);
+        }
+    }
+    
     /**
      * Create a copy of this editor.
      * @return PropertyValueEditor

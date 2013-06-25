@@ -47,10 +47,15 @@ public class TimeStampEditor extends PropertyValueEditor implements ActionListen
         add(BorderLayout.EAST, minutes);
         datePicker.setOpaque(false);
         datePicker.addActionListener(this);
+        datePicker.getEditor().addFocusListener(this);
+        
         hours.setOpaque(false);
         hours.addChangeListener(this);
+        ((JSpinner.DefaultEditor) hours.getEditor()).getTextField().addFocusListener(this);
+        
         minutes.setOpaque(false);
         minutes.addChangeListener(this);
+        ((JSpinner.DefaultEditor) minutes.getEditor()).getTextField().addFocusListener(this);
         
     }
 
