@@ -61,7 +61,10 @@ import static org.opengis.referencing.IdentifiedObject.REMARKS_KEY;
  *
  * @since 3.03 (derived from 2.6)
  * @module
+ *
+ * @deprecated Moved to {@link org.apache.sis.metadata.iso.ImmutableIdentifier}.
  */
+@Deprecated
 @Immutable
 @XmlRootElement(name = "RS_Identifier", namespace = Namespaces.GMD)
 public class DefaultReferenceIdentifier implements ReferenceIdentifier, Deprecable, Serializable {
