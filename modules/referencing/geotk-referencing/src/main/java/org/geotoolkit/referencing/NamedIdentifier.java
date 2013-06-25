@@ -42,7 +42,8 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.util.iso.DefaultNameFactory;
-import org.geotoolkit.metadata.iso.citation.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.apache.sis.util.collection.WeakValueHashMap;
 
 
@@ -72,7 +73,7 @@ import org.apache.sis.util.collection.WeakValueHashMap;
  * @module
  */
 @Immutable
-public class NamedIdentifier extends DefaultReferenceIdentifier implements GenericName {
+public class NamedIdentifier extends ImmutableIdentifier implements GenericName {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -125,7 +126,7 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
 
     /**
      * Constructs an identifier from a set of properties. The content of the properties map is used
-     * as described in the {@linkplain DefaultReferenceIdentifier#DefaultReferenceIdentifier(Map)
+     * as described in the {@linkplain ImmutableIdentifier#ImmutableIdentifier(Map)
      * super-class constructor}.
      *
      * @param  properties The properties to be given to this identifier.
@@ -179,24 +180,7 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
      * @param version   The version, or {@code null} if none.
      */
     public NamedIdentifier(final Citation authority, final String code, final String version) {
-        super(authority, getCodeSpace(authority), code, version, null);
-    }
-
-    /**
-     * Implementation of the constructor. The remarks in the {@code properties} map will be
-     * parsed only if the {@code standalone} argument is set to {@code true}, i.e. this
-     * identifier is being constructed as a standalone object. If {@code false}, then this
-     * identifier is assumed to be constructed from inside the {@link AbstractIdentifiedObject}
-     * constructor.
-     *
-     * @param properties The properties to parse, as described in the public constructor.
-     * @param standalone {@code true} for parsing "remarks" as well.
-     *
-     * @throws InvalidParameterValueException if a property has an invalid value.
-     * @throws IllegalArgumentException if a property is invalid for some other reason.
-     */
-    NamedIdentifier(final Map<String,?> properties, final boolean standalone) throws IllegalArgumentException {
-        super(properties, standalone);
+        super(authority, Citations.getIdentifier(authority), code, version, null);
     }
 
     /**
@@ -212,7 +196,7 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
      */
     private synchronized GenericName getName() {
         if (name == null) {
-            name = createName(authority, code);
+            name = createName(super.getAuthority(), super.getCode());
         }
         return name;
     }
@@ -231,10 +215,11 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
             return factory.createLocalName(null, code);
         }
         final CharSequence title;
+        final String codeSpace = super.getCodeSpace();
         if (codeSpace != null) {
             title = codeSpace;
         } else {
-            title = getShortestTitle(authority);
+            title = Citations.getIdentifier(authority);
         }
         NameSpace scope;
         synchronized (SCOPES) {

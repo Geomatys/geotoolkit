@@ -36,7 +36,7 @@ import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
@@ -939,7 +939,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
                     final Map<String,Object> properties = new HashMap<>(6);
                     properties.put(ReferenceIdentifier.CODESPACE_KEY, authority);
                     properties.put(ReferenceIdentifier.CODE_KEY, name);
-                    final ReferenceIdentifier id = new DefaultReferenceIdentifier(properties);
+                    final ReferenceIdentifier id = new ImmutableIdentifier(properties);
                     return Collections.<String,Object>singletonMap(IdentifiedObject.NAME_KEY, id);
                 }
             }

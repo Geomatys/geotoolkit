@@ -42,7 +42,7 @@ import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.internal.referencing.Identifier3D;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
@@ -633,7 +633,7 @@ search:     for (final CoordinateReferenceSystem source : sources) {
     private static Map<String,?> getTemporaryName(final IdentifiedObject source) {
         final ReferenceIdentifier id = source.getName();
         return Collections.singletonMap(IdentifiedObject.NAME_KEY,
-                new DefaultReferenceIdentifier(null, // Null because we are inventing a code.
+                new ImmutableIdentifier(null, // Null because we are inventing a code.
                     id.getCodeSpace(), id.getCode() + " (3D)"));
     }
 }

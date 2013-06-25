@@ -34,7 +34,7 @@ import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.test.report.OperationParametersReport;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 
 import static org.geotoolkit.metadata.iso.citation.Citations.*;
@@ -178,8 +178,8 @@ public final class ProjectionParametersReport extends OperationParametersReport 
         for (final Map.Entry<String,String[]> entry : row.names.entrySet()) {
             final String authority = entry.getKey();
             for (final GenericName candidate : operation.getAlias()) {
-                if (candidate instanceof DefaultReferenceIdentifier) {
-                    final DefaultReferenceIdentifier identifier = (DefaultReferenceIdentifier) candidate;
+                if (candidate instanceof ImmutableIdentifier) {
+                    final ImmutableIdentifier identifier = (ImmutableIdentifier) candidate;
                     if (identifier.isDeprecated() && authority.equalsIgnoreCase(identifier.getCodeSpace())) {
                         final String[] codes = entry.getValue();
                         final String deprecated = identifier.getCode();

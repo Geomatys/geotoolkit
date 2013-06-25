@@ -71,7 +71,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
@@ -965,11 +965,11 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             code = code.trim();
             final InternationalString edition = authority.getEdition();
             final String version = (edition!=null) ? edition.toString() : null;
-            final DefaultReferenceIdentifier identifier;
+            final ImmutableIdentifier identifier;
             if (deprecated) {
                 identifier = new DeprecatedCode(authority, "EPSG", code, version, null);
             } else {
-                identifier = new DefaultReferenceIdentifier(authority, "EPSG", code, version, null);
+                identifier = new ImmutableIdentifier(authority, "EPSG", code, version, null);
             }
             properties.put(IdentifiedObject.IDENTIFIERS_KEY, identifier);
         }

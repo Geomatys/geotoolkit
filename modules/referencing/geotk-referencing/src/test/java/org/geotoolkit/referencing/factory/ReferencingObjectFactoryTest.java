@@ -48,7 +48,7 @@ import org.geotoolkit.referencing.crs.CoordinateReferenceSystemTest;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
@@ -233,7 +233,7 @@ public final strictfp class ReferencingObjectFactoryTest extends ReferencingTest
             }
             assertTrue(classification, mt instanceof AbstractMathTransform);
             final AbstractMathTransform amt = (AbstractMathTransform) mt;
-            if (!((DefaultReferenceIdentifier) method.getName()).isDeprecated()) {
+            if (!((ImmutableIdentifier) method.getName()).isDeprecated()) {
                 assertEquals(classification, amt.getParameterDescriptors().getName().getCode());
             }
             param = amt.getParameterValues();

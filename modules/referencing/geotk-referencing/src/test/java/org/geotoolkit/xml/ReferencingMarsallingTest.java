@@ -52,7 +52,7 @@ import org.apache.sis.metadata.iso.extent.DefaultVerticalExtent;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.apache.sis.metadata.iso.spatial.DefaultGeometricObjects;
 import org.apache.sis.metadata.iso.spatial.DefaultVectorSpatialRepresentation;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
@@ -239,7 +239,7 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
          */
         final String code = "World Geodetic System 84";
         final DefaultCitation authority = new DefaultCitation(Citations.GEOTOOLKIT);
-        final DefaultReferenceIdentifier identifier = new DefaultReferenceIdentifier(authority, "EPSG", code);
+        final ImmutableIdentifier identifier = new ImmutableIdentifier(authority, "EPSG", code);
         final ReferenceSystemMetadata rs = new ReferenceSystemMetadata(identifier);
         metadata.setReferenceSystemInfo(Collections.singleton(rs));
         /*
@@ -247,23 +247,23 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
          */
         final Map<String, Object> properties = new HashMap<>();
         properties.put(SCOPE_KEY, null);
-        properties.put(NAME_KEY, new DefaultReferenceIdentifier(null, null, "Depth"));
+        properties.put(NAME_KEY, new ImmutableIdentifier(null, null, "Depth"));
         final DefaultVerticalDatum datum = new DefaultVerticalDatum(properties, VerticalDatumType.DEPTH);
         /*
          * Vertical Coordinate System.
          */
         properties.clear();
-        properties.put(NAME_KEY, new DefaultReferenceIdentifier(null, null, "meters"));
+        properties.put(NAME_KEY, new ImmutableIdentifier(null, null, "meters"));
         final DefaultCoordinateSystemAxis axis = new DefaultCoordinateSystemAxis(properties, "meters",
                 AxisDirection.DOWN, SI.METRE);
 
         properties.clear();
-        properties.put(NAME_KEY, new DefaultReferenceIdentifier(null, null, "meters"));
+        properties.put(NAME_KEY, new ImmutableIdentifier(null, null, "meters"));
         final DefaultVerticalCS cs = new DefaultVerticalCS(properties, axis);
 
         properties.clear();
         properties.put(SCOPE_KEY, null);
-        properties.put(NAME_KEY, new DefaultReferenceIdentifier(null, null, "idvertCRS"));
+        properties.put(NAME_KEY, new ImmutableIdentifier(null, null, "idvertCRS"));
         final DefaultVerticalCRS vcrs = new DefaultVerticalCRS(properties, datum, cs);
         /*
          * Geographic Extent.
@@ -299,37 +299,37 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
         /*
          * Build the datum.
          */
-        properties.put(NAME_KEY, new DefaultReferenceIdentifier(null, null, "Greenwich"));
+        properties.put(NAME_KEY, new ImmutableIdentifier(null, null, "Greenwich"));
         final DefaultPrimeMeridian primeMeridian = new DefaultPrimeMeridian(properties, 0.0, NonSI.DEGREE_ANGLE);
 
         properties.clear();
-        properties.put(NAME_KEY, new DefaultReferenceIdentifier(null, null, "WGS84"));
+        properties.put(NAME_KEY, new ImmutableIdentifier(null, null, "WGS84"));
         final DefaultEllipsoid ellipsoid = DefaultEllipsoid.createFlattenedSphere(properties, 6378137.0, 298.257223563, SI.METRE);
 
         properties.clear();
-        properties.put(NAME_KEY, new DefaultReferenceIdentifier(null, null, "World Geodetic System 1984"));
+        properties.put(NAME_KEY, new ImmutableIdentifier(null, null, "World Geodetic System 1984"));
         properties.put(DefaultGeodeticDatum.IDENTIFIERS_KEY,
-                new DefaultReferenceIdentifier(Citations.fromName("EPSG"), "EPSG", "6326"));
+                new ImmutableIdentifier(Citations.fromName("EPSG"), "EPSG", "6326"));
         final DefaultGeodeticDatum datum = new DefaultGeodeticDatum(properties, ellipsoid, primeMeridian);
         /*
          * Build the coordinate system.
          */
         properties.clear();
-        properties.put(NAME_KEY, new DefaultReferenceIdentifier(null, null, "Geodetic latitude"));
+        properties.put(NAME_KEY, new ImmutableIdentifier(null, null, "Geodetic latitude"));
         final DefaultCoordinateSystemAxis axisLat = new DefaultCoordinateSystemAxis(properties, "\u03C6",
                 AxisDirection.NORTH, NonSI.DEGREE_ANGLE);
 
         properties.clear();
-        properties.put(NAME_KEY, new DefaultReferenceIdentifier(null, null, "Geodetic longitude"));
+        properties.put(NAME_KEY, new ImmutableIdentifier(null, null, "Geodetic longitude"));
         final DefaultCoordinateSystemAxis axisLon = new DefaultCoordinateSystemAxis(properties, "\u03BB",
                 AxisDirection.EAST, NonSI.DEGREE_ANGLE);
 
         properties.clear();
-        properties.put(NAME_KEY, new DefaultReferenceIdentifier(null, null, "Géodésique 2D"));
+        properties.put(NAME_KEY, new ImmutableIdentifier(null, null, "Géodésique 2D"));
         final DefaultEllipsoidalCS cs = new DefaultEllipsoidalCS(properties, axisLon, axisLat);
 
         properties.clear();
-        properties.put(NAME_KEY, new DefaultReferenceIdentifier(null, null, "WGS84(DD)"));
+        properties.put(NAME_KEY, new ImmutableIdentifier(null, null, "WGS84(DD)"));
 
         return new DefaultGeographicCRS(properties, datum, cs);
     }

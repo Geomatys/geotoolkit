@@ -25,7 +25,7 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.ReferenceIdentifier;
 
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
@@ -59,7 +59,7 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
  * @since 3.16
  * @module
  */
-public final class Identifier3D extends DefaultReferenceIdentifier {
+public final class Identifier3D extends ImmutableIdentifier {
     /**
      * For cross-version compatibility.
      */

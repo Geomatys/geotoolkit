@@ -34,7 +34,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
@@ -142,8 +142,8 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
         param.parameter("semi_minor").setValue(6378137);
         final ReferenceIdentifier[] identifiers = {
             new NamedIdentifier(Citations.IGNF, "MILLER"),
-            new DefaultReferenceIdentifier(Citations.EPSG, "EPSG", "310642901"), // Unofficial
-            new DefaultReferenceIdentifier(Citations.EPSG, "EPSG", "54003") // Unofficial
+            new ImmutableIdentifier(Citations.EPSG, "EPSG", "310642901"), // Unofficial
+            new ImmutableIdentifier(Citations.EPSG, "EPSG", "54003") // Unofficial
         };
         properties.clear();
         properties.put(ProjectedCRS.NAME_KEY, identifiers[0]);

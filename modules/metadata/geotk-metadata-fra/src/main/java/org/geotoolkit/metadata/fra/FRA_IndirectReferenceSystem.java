@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.ReferenceIdentifier;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.apache.sis.internal.jaxb.metadata.ReferenceSystemMetadata;
 
 
@@ -90,6 +90,6 @@ public class FRA_IndirectReferenceSystem extends ReferenceSystemMetadata {
      *          Identifier code or name, optionally from a controlled list or pattern defined by a code space.
      */
     public FRA_IndirectReferenceSystem(final Citation authority, final String codespace, final String code) {
-        super(new DefaultReferenceIdentifier(authority, codespace, code));
+        super(new ImmutableIdentifier(authority, codespace, code));
     }
 }

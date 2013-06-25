@@ -20,7 +20,7 @@ package org.geotoolkit.internal.referencing;
 import net.jcip.annotations.Immutable;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 
 
 /**
@@ -33,7 +33,7 @@ import org.geotoolkit.referencing.DefaultReferenceIdentifier;
  * @module
  */
 @Immutable
-public final class DeprecatedCode extends DefaultReferenceIdentifier {
+public final class DeprecatedCode extends ImmutableIdentifier {
     /**
      * For cross-version compatibility.
      */

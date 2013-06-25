@@ -55,7 +55,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.io.wkt.Symbols;
 import org.geotoolkit.io.wkt.MathTransformParser;
 import org.geotoolkit.referencing.cs.AbstractCS;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.factory.ReferencingFactory;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
@@ -343,8 +343,8 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
      */
     static boolean isDeprecated(final OperationMethod method, final String name) {
         for (final GenericName id : method.getAlias()) {
-            if (id instanceof DefaultReferenceIdentifier) {
-                final DefaultReferenceIdentifier df = (DefaultReferenceIdentifier) id;
+            if (id instanceof ImmutableIdentifier) {
+                final ImmutableIdentifier df = (ImmutableIdentifier) id;
                 if (name.equals(df.getCode())) {
                     return df.isDeprecated();
                 }
