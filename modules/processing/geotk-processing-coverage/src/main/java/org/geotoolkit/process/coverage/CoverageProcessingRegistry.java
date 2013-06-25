@@ -83,8 +83,4 @@ public class CoverageProcessingRegistry extends AbstractProcessingRegistry{
         return IDENTIFICATION;
     }
 
-    public static void main(String[] args){
-        new CoverageProcessingRegistry();
-    }
-
 }

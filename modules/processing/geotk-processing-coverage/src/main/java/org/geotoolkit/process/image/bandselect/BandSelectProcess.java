@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.coverage.bandselect;
+package org.geotoolkit.process.image.bandselect;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -24,18 +24,15 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.util.Hashtable;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
-import static org.geotoolkit.process.coverage.bandselect.BandSelectDescriptor.*;
-import static org.geotoolkit.process.image.reformat.ReformatProcess.createRaster;
+import static org.geotoolkit.process.image.bandselect.BandSelectDescriptor.*;
 import org.geotoolkit.process.image.reformat.GrayScaleColorModel;
+import static org.geotoolkit.process.image.reformat.ReformatProcess.createRaster;
 import org.geotoolkit.util.ArgumentChecks;
 
 /**
@@ -52,10 +49,9 @@ public class BandSelectProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
 
-        final GridCoverage2D inputCoverage = (GridCoverage2D) Parameters.getOrCreate(IN_COVERAGE, inputParameters).getValue();
+        final RenderedImage inputImage = (RenderedImage) Parameters.getOrCreate(IN_IMAGE, inputParameters).getValue();
         final int[] bands = (int[]) Parameters.getOrCreate(IN_BANDS, inputParameters).getValue();
         
-        final RenderedImage inputImage = inputCoverage.getRenderedImage();
         final SampleModel inputSampleModel = inputImage.getSampleModel();
         final int inputNbBand = inputSampleModel.getNumBands();
         final int inputType = inputSampleModel.getDataType();
@@ -83,10 +79,8 @@ public class BandSelectProcess extends AbstractProcess {
         //TODO try to reuse java colormodel if possible
         //create a temporary fallback colormodel which will always work
         final int nbbitsPerSample = DataBuffer.getDataTypeSize(inputType);
-        final GridSampleDimension gridSample = inputCoverage.getSampleDimension(0);
         //extract grayscale min/max from sample dimension
-        final ColorModel graycm = new GrayScaleColorModel(nbbitsPerSample, 
-                gridSample.getMinimumValue(), gridSample.getMaximumValue());
+        final ColorModel graycm = new GrayScaleColorModel(nbbitsPerSample,0,10);
         
         final BufferedImage resultImage = new BufferedImage(graycm, raster, false, new Hashtable<Object, Object>());
         
@@ -115,14 +109,8 @@ public class BandSelectProcess extends AbstractProcess {
                 writeIte.setSampleDouble(pixel[bands[trgBandIdx]]);
             }
         }
-        
-        //rebuild coverage
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setRenderedImage(resultImage);
-        gcb.setGridGeometry(inputCoverage.getGridGeometry());
-        final GridCoverage2D resultCoverage = gcb.getGridCoverage2D();
-        
-        Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(resultCoverage);
+                
+        Parameters.getOrCreate(OUT_IMAGE, outputParameters).setValue(resultImage);
     }
     
 }
