@@ -378,7 +378,9 @@ public final class DataBaseModel {
 
 
             if (cols.isEmpty()) {
-                store.getLogger().log(Level.FINE, "No primary key found for {0}.", tableName);
+                if (Table.VALUE_TYPE_TABLE.equals(tableType)) {
+                    store.getLogger().log(Level.FINE, "No primary key found for {0}.", tableName);
+                }
                 table.key = new NullPrimaryKey(tableName);
             } else {
                 table.key = new PrimaryKey(tableName, cols);
