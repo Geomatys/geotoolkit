@@ -9,16 +9,9 @@
 
   This script has three targets:
 
-  - packages (default): process entities for which only the package
-             name is different, typically in import statements. The
-             class names are unchanged.
-
-  - classes: process entities for which the package and class names
-             are different. Developer will need to manually replace
-             the class usages in the modified files.
-
-  - methods: rename some static methods after the classes have been
-             renamed.
+  - packages (default): Renames only fully qualified names.
+  - classes: Renames some classes after the packages have been renamed.
+  - methods: rename some static methods after the classes have been renamed.
 -->
 <project name="Upgrade" default="packages">
   <target name="packages">
@@ -47,19 +40,23 @@
       <replacefilter token="org.geotoolkit.metadata.UnmodifiableMetadataException"  value="org.apache.sis.metadata.UnmodifiableMetadataException"/>
       <replacefilter token="org.geotoolkit.metadata.iso"                            value="org.apache.sis.metadata.iso"/>
       <replacefilter token="org.geotoolkit.naming"                                  value="org.apache.sis.util.iso"/>
+      <replacefilter token="org.geotoolkit.referencing.DefaultReferenceIdentifier"  value="org.apache.sis.metadata.iso.ImmutableIdentifier"/>
       <replacefilter token="org.geotoolkit.storage.DataStoreException"              value="org.apache.sis.storage.DataStoreException"/>
       <replacefilter token="org.geotoolkit.util.AbstractInternationalString"        value="org.apache.sis.util.iso.AbstractInternationalString"/>
       <replacefilter token="org.geotoolkit.util.ArgumentChecks"                     value="org.apache.sis.util.ArgumentChecks"/>
       <replacefilter token="org.geotoolkit.util.Characters"                         value="org.apache.sis.util.Characters"/>
       <replacefilter token="org.geotoolkit.util.ComparisonMode"                     value="org.apache.sis.util.ComparisonMode"/>
       <replacefilter token="org.geotoolkit.util.Disposable"                         value="org.apache.sis.util.Disposable"/>
+      <replacefilter token="org.geotoolkit.util.GeoAPI"                             value="org.apache.sis.util.iso.Types"/>
       <replacefilter token="org.geotoolkit.util.LenientComparable"                  value="org.apache.sis.util.LenientComparable"/>
       <replacefilter token="org.geotoolkit.util.Localized"                          value="org.apache.sis.util.Localized"/>
       <replacefilter token="org.geotoolkit.util.Version;"                           value="org.apache.sis.util.Version;"/> <!-- Not to confuse with Versioned. -->
       <replacefilter token="org.geotoolkit.util.NullArgumentException"              value="org.apache.sis.util.NullArgumentException"/>
       <replacefilter token="org.geotoolkit.util.Range"                              value="org.apache.sis.measure.Range"/>
       <replacefilter token="org.geotoolkit.util.SimpleInternationalString"          value="org.apache.sis.util.iso.SimpleInternationalString"/>
+      <replacefilter token="org.geotoolkit.util.Strings"                            value="org.apache.sis.util.CharSequences"/>
       <replacefilter token="org.geotoolkit.util.UnsupportedImplementationException" value="org.apache.sis.util.UnsupportedImplementationException"/>
+      <replacefilter token="org.geotoolkit.util.XArrays"                            value="org.apache.sis.util.ArraysExt"/>
       <replacefilter token="org.geotoolkit.util.converter.Classes"                  value="org.apache.sis.util.Classes"/>
       <replacefilter token="org.geotoolkit.util.converter.Numbers"                  value="org.apache.sis.util.Numbers"/>
       <replacefilter token="org.geotoolkit.util.collection.BackingStoreException"   value="org.apache.sis.util.collection.BackingStoreException"/>
@@ -97,10 +94,11 @@
   <target name="classes">
     <replace dir="${user.dir}" summary="yes">
       <include name="**/*.java"/>
-      <replacefilter token="org.geotoolkit.util.GeoAPI"                             value="org.apache.sis.util.iso.Types"/>
-      <replacefilter token="org.geotoolkit.util.Strings"                            value="org.apache.sis.util.CharSequences"/>
-      <replacefilter token="org.geotoolkit.util.XArrays"                            value="org.apache.sis.util.ArraysExt"/>
-      <replacefilter token="org.geotoolkit.xml.ObjectConverters"                    value="org.apache.sis.xml.ValueConverter"/>
+      <replacefilter token="DefaultReferenceIdentifier" value="ImmutableIdentifier"/>
+      <replacefilter token="GeoAPI"                     value="Types"/>
+      <replacefilter token="ObjectConverters"           value="ValueConverter"/>
+      <replacefilter token="Strings"                    value="CharSequences"/>
+      <replacefilter token="XArrays"                    value="ArraysExt"/>
     </replace>
   </target>
 
