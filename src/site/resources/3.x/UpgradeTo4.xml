@@ -30,10 +30,13 @@
       <replacefilter token="org.geotoolkit.geometry.Envelope2D"                     value="org.apache.sis.geometry.Envelope2D"/>
       <replacefilter token="org.geotoolkit.image.io.stream.ChannelImageInputStream" value="org.apache.sis.internal.storage.ChannelImageInputStream"/>
       <replacefilter token="org.geotoolkit.internal.jaxb.code"                      value="org.apache.sis.internal.jaxb.code"/>
+      <replacefilter token="org.geotoolkit.internal.jaxb.gco"                       value="org.apache.sis.internal.jaxb.gco"/>
       <replacefilter token="org.geotoolkit.internal.jaxb.gmd"                       value="org.apache.sis.internal.jaxb.gmd"/>
       <replacefilter token="org.geotoolkit.internal.jaxb.gmi"                       value="org.apache.sis.internal.jaxb.gmi"/>
+      <replacefilter token="org.geotoolkit.internal.jaxb.gml"                       value="org.apache.sis.internal.jaxb.gml"/>
       <replacefilter token="org.geotoolkit.internal.jaxb.gmt"                       value="org.apache.sis.internal.jaxb.gmt"/>
       <replacefilter token="org.geotoolkit.internal.jaxb.metadata"                  value="org.apache.sis.internal.jaxb.metadata"/>
+      <replacefilter token="org.geotoolkit.internal.jaxb.referencing"               value="org.apache.sis.internal.jaxb.gml"/>
       <replacefilter token="org.geotoolkit.metadata.AbstractMetadata"               value="org.apache.sis.metadata.AbstractMetadata"/>
       <replacefilter token="org.geotoolkit.metadata.InvalidMetadataException"       value="org.apache.sis.metadata.InvalidMetadataException"/>
       <replacefilter token="org.geotoolkit.metadata.KeyNamePolicy"                  value="org.apache.sis.metadata.KeyNamePolicy"/>
@@ -43,6 +46,7 @@
       <replacefilter token="org.geotoolkit.metadata.TypeValuePolicy"                value="org.apache.sis.metadata.TypeValuePolicy"/>
       <replacefilter token="org.geotoolkit.metadata.UnmodifiableMetadataException"  value="org.apache.sis.metadata.UnmodifiableMetadataException"/>
       <replacefilter token="org.geotoolkit.metadata.iso"                            value="org.apache.sis.metadata.iso"/>
+      <replacefilter token="org.geotoolkit.naming"                                  value="org.apache.sis.util.iso"/>
       <replacefilter token="org.geotoolkit.storage.DataStoreException"              value="org.apache.sis.storage.DataStoreException"/>
       <replacefilter token="org.geotoolkit.util.AbstractInternationalString"        value="org.apache.sis.util.iso.AbstractInternationalString"/>
       <replacefilter token="org.geotoolkit.util.ArgumentChecks"                     value="org.apache.sis.util.ArgumentChecks"/>
