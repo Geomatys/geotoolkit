@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.ArrayEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.BooleanEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.CRSEditor;
@@ -41,8 +42,10 @@ import org.geotoolkit.gui.swing.propertyedit.featureeditor.StyleEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.TimeStampEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.URLEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.UnitEditor;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.PropertyType;
+import org.opengis.util.InternationalString;
 
 /**
  * Edit a single property. 
@@ -54,8 +57,17 @@ import org.opengis.feature.type.PropertyType;
  */
 public class JAttributeEditor extends JPanel implements PropertyChangeListener {
 
+    //Event name fired in PropertyChange
     public static final String VALUE_CHANGE_EVENT = "value";
     
+    /*
+     * Not supported text gived to notSupported TextField.
+     */
+    private static final String BUNDLE_PATH = "org/geotoolkit/gui/swing/resource/Bundle";
+    private static final String NOT_SUPPORTED_KEY = "notSupported";
+    private static final InternationalString NOT_SUPPORTED = new ResourceInternationalString(BUNDLE_PATH, NOT_SUPPORTED_KEY);
+    
+    private final JTextField notSupportedTF;
     private final List<PropertyValueEditor> editors = new CopyOnWriteArrayList<PropertyValueEditor>();
     private PropertyValueEditor editor;
     private Property property = null;
@@ -63,6 +75,8 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener {
     public JAttributeEditor(){
         setLayout(new BorderLayout());
         editors.addAll(createDefaultEditorList());
+        notSupportedTF = new JTextField(NOT_SUPPORTED.toString());
+        notSupportedTF.setEnabled(false);
     }
 
     public Property getProperty() {
@@ -86,6 +100,8 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener {
                 editor.setValue(property.getType(), property.getValue());
                 editor.addPropertyChangeListener(this);
                 add(BorderLayout.CENTER,editor);
+            } else {
+                add(BorderLayout.CENTER, notSupportedTF);
             }
         }
 
@@ -168,4 +184,10 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener {
         return false;
     }
     
+    /**
+     * @return true if an editor is found, or false otherwise.
+     */
+    public boolean isEditorFound() {
+        return editor != null;
+    }
 }
