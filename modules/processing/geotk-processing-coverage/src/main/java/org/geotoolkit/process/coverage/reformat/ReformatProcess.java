@@ -71,39 +71,10 @@ public class ReformatProcess extends AbstractProcess {
         final int nbBand = inputSampleModel.getNumBands();
         final Point upperLeft = new Point(inputImage.getMinX(), inputImage.getMinY());
         final WritableRaster raster;
-        if(inputSampleModel.getNumBands() == 1){
-            if(inputType == DataBuffer.TYPE_BYTE || inputType == DataBuffer.TYPE_USHORT || inputType == DataBuffer.TYPE_INT){
-                raster = WritableRaster.createBandedRaster(inputType, width, height, nbBand, upperLeft);
-            }else{
-                //create it ourself
-                final DataBuffer buffer;
-                if(inputType == DataBuffer.TYPE_SHORT) buffer = new DataBufferShort(width*height);
-                else if(inputType == DataBuffer.TYPE_FLOAT) buffer = new DataBufferFloat(width*height);
-                else if(inputType == DataBuffer.TYPE_DOUBLE) buffer = new DataBufferDouble(width*height);
-                else throw new ProcessException("Type not supported "+inputType, this, null);
-                final int[] zero = new int[1];
-                //TODO create our own raster factory to avoid JAI
-                raster = RasterFactory.createBandedRaster(buffer, width, height, width, zero, zero, upperLeft);
-            }
-            
-        }else{
-            if(inputType == DataBuffer.TYPE_BYTE || inputType == DataBuffer.TYPE_USHORT){
-                raster = WritableRaster.createInterleavedRaster(inputType, width, height, nbBand, upperLeft);
-            }else{
-                //create it ourself
-                final DataBuffer buffer;
-                if(inputType == DataBuffer.TYPE_SHORT) buffer = new DataBufferShort(width*height*nbBand);
-                else if(inputType == DataBuffer.TYPE_FLOAT) buffer = new DataBufferFloat(width*height*nbBand);
-                else if(inputType == DataBuffer.TYPE_DOUBLE) buffer = new DataBufferDouble(width*height*nbBand);
-                else throw new ProcessException("Type not supported "+inputType, this, null);
-                final int[] bankIndices = new int[nbBand];
-                final int[] bandOffsets = new int[nbBand];
-                for(int i=1;i<nbBand;i++){
-                    bandOffsets[i] = bandOffsets[i-1] + width*height;
-                }
-                //TODO create our own raster factory to avoid JAI
-                raster = RasterFactory.createBandedRaster(buffer, width, height, width, bankIndices, bandOffsets, upperLeft);
-            }
+        try{
+            raster = createRaster(inputType, width, height, nbBand, upperLeft);
+        }catch(IllegalArgumentException ex){
+            throw new ProcessException(ex.getMessage(), this, ex);
         }
         
         //TODO try to reuse java colormodel if possible
@@ -121,7 +92,6 @@ public class ReformatProcess extends AbstractProcess {
         final PixelIterator readIte = PixelIteratorFactory.createDefaultIterator(inputImage);
         final PixelIterator writeIte = PixelIteratorFactory.createDefaultWriteableIterator(raster, raster);
         while(readIte.next() && writeIte.next()){
-//            System.out.println(readIte.getX()+" "+readIte.getY());
             for(int i=0;i<nbBand;i++){
                 writeIte.setSampleDouble(readIte.getSampleDouble());
             }
@@ -134,6 +104,45 @@ public class ReformatProcess extends AbstractProcess {
         final GridCoverage2D resultCoverage = gcb.getGridCoverage2D();
         
         Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(resultCoverage);
+    }
+    
+    public static WritableRaster createRaster(int inputType, int width, int height, int nbBand, Point upperLeft) throws IllegalArgumentException{
+        final WritableRaster raster;
+        if(nbBand == 1){
+            if(inputType == DataBuffer.TYPE_BYTE || inputType == DataBuffer.TYPE_USHORT || inputType == DataBuffer.TYPE_INT){
+                raster = WritableRaster.createBandedRaster(inputType, width, height, nbBand, upperLeft);
+            }else{
+                //create it ourself
+                final DataBuffer buffer;
+                if(inputType == DataBuffer.TYPE_SHORT) buffer = new DataBufferShort(width*height);
+                else if(inputType == DataBuffer.TYPE_FLOAT) buffer = new DataBufferFloat(width*height);
+                else if(inputType == DataBuffer.TYPE_DOUBLE) buffer = new DataBufferDouble(width*height);
+                else throw new IllegalArgumentException("Type not supported "+inputType);
+                final int[] zero = new int[1];
+                //TODO create our own raster factory to avoid JAI
+                raster = RasterFactory.createBandedRaster(buffer, width, height, width, zero, zero, upperLeft);
+            }
+            
+        }else{
+            if(inputType == DataBuffer.TYPE_BYTE || inputType == DataBuffer.TYPE_USHORT){
+                raster = WritableRaster.createInterleavedRaster(inputType, width, height, nbBand, upperLeft);
+            }else{
+                //create it ourself
+                final DataBuffer buffer;
+                if(inputType == DataBuffer.TYPE_SHORT) buffer = new DataBufferShort(width*height*nbBand);
+                else if(inputType == DataBuffer.TYPE_FLOAT) buffer = new DataBufferFloat(width*height*nbBand);
+                else if(inputType == DataBuffer.TYPE_DOUBLE) buffer = new DataBufferDouble(width*height*nbBand);
+                else throw new IllegalArgumentException("Type not supported "+inputType);
+                final int[] bankIndices = new int[nbBand];
+                final int[] bandOffsets = new int[nbBand];
+                for(int i=1;i<nbBand;i++){
+                    bandOffsets[i] = bandOffsets[i-1] + width*height;
+                }
+                //TODO create our own raster factory to avoid JAI
+                raster = RasterFactory.createBandedRaster(buffer, width, height, width, bankIndices, bandOffsets, upperLeft);
+            }
+        }
+        return raster;
     }
     
 }

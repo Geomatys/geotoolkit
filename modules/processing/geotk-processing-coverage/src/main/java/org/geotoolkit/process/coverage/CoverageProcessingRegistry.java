@@ -23,6 +23,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.process.AbstractProcessingRegistry;
 import org.geotoolkit.process.coverage.bandcombiner.CombinerDescriptor;
+import org.geotoolkit.process.coverage.combine.BandCombineDescriptor;
 import org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor;
 import org.geotoolkit.process.coverage.coveragetofeatures.CoverageToFeaturesDescriptor;
 import org.geotoolkit.process.coverage.coveragetovector.CoverageToVectorDescriptor;
@@ -70,6 +71,7 @@ public class CoverageProcessingRegistry extends AbstractProcessingRegistry{
               CopyCoverageStoreDescriptor.INSTANCE,
               StraightenDescriptor.INSTANCE,
               ReduceToDomainDescriptor.INSTANCE,
+              BandCombineDescriptor.INSTANCE,
               ReformatDescriptor.INSTANCE,
               PyramidDescriptor.INSTANCE);
     }

@@ -142,7 +142,6 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         ftb.add("geom", Point.class,coverage.getCoordinateReferenceSystem2D());
         for(int b=0,n=nbBand;b<n;b++){
             final String name = coverage.getSampleDimension(b).getDescription().toString();
-            System.out.println(name);
             ftb.add(name+"_count",double.class);
             ftb.add(name+"_min",double.class);
             ftb.add(name+"_mean",double.class);
