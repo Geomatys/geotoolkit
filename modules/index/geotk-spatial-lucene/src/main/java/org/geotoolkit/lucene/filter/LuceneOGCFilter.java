@@ -99,7 +99,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
         boolean reverse = false;
         boolean distanceFilter = false;
         final List<Envelope> results = new ArrayList<Envelope>();
-        final TreeVisitor treeVisitor = new DefaultTreeVisitor(results);
+        final TreeVisitor treeVisitor = new DefaultTreeVisitor((Collection)results);
         if (tree != null) {
             /*
              * For distance buffer filter no envelope only mode

@@ -4,6 +4,7 @@ package org.geotoolkit.pending.demo.tree;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -65,7 +66,7 @@ public class TreeDemo {
         final List<Envelope> resultList = new ArrayList<Envelope>();
 
         //Create Tree Visitor to know what we do search result------------------
-        final TreeVisitor treevisitor = new DefaultTreeVisitor(resultList);
+        final TreeVisitor treevisitor = new DefaultTreeVisitor((Collection)resultList);
 
         //Create area search----------------------------------------------------
         final GeneralEnvelope areaSearch = new GeneralEnvelope(crs);

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.lucene;
 
+import java.util.*;
 import java.util.logging.Level;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -26,14 +27,8 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
@@ -255,7 +250,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
 
         //we perform a retree query
         List<Envelope> docs = new ArrayList<Envelope>();
-        final TreeVisitor treevisitor = new DefaultTreeVisitor(docs);
+        final TreeVisitor treevisitor = new DefaultTreeVisitor((Collection)docs);
         rTree.search(env, treevisitor);
 
         int nbResults = docs.size();
