@@ -22,7 +22,6 @@ import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.process.AbstractProcessingRegistry;
-import org.geotoolkit.process.coverage.bandcombiner.CombinerDescriptor;
 import org.geotoolkit.process.coverage.bandcombine.BandCombineDescriptor;
 import org.geotoolkit.process.coverage.bandselect.BandSelectDescriptor;
 import org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor;
@@ -66,7 +65,6 @@ public class CoverageProcessingRegistry extends AbstractProcessingRegistry{
               TilingDescriptor.INSTANCE,
               KrigingDescriptor.INSTANCE,
               ExtractionDescriptor.INSTANCE,
-              CombinerDescriptor.INSTANCE,
               IsolineDescriptor.INSTANCE,
               ResampleDescriptor.INSTANCE,
               CopyCoverageStoreDescriptor.INSTANCE,

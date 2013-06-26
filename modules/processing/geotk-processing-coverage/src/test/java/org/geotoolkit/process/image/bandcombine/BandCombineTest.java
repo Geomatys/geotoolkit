@@ -18,17 +18,22 @@ package org.geotoolkit.process.image.bandcombine;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * Image band combine test.
@@ -79,6 +84,70 @@ public class BandCombineTest {
         }
         
     }
+    
+    @Test
+    public void rgbCombineText() throws NoSuchIdentifierException, ProcessException{
+        final int WIDTH = 10;
+        final int HEIGHT = 10;
+        final int SIZE = WIDTH*HEIGHT;
+        
+        final byte[] redTable = new byte[SIZE];
+        final byte[] greenTable = new byte[SIZE];
+        final byte[] blueTable = new byte[SIZE];
+
+        //set colors
+        for (int j = 0; j < HEIGHT / 3; j++) {
+            for (int i = 0; i < WIDTH; i++) {
+                redTable[j * WIDTH + i] = (byte) 127;
+            }
+        }
+
+        for (int j = HEIGHT / 3; j < (HEIGHT - HEIGHT / 3); j++) {
+            for (int i = 0; i < WIDTH; i++) {
+                redTable[j * WIDTH + i] = (byte) 127;
+                greenTable[j * WIDTH + i] = (byte) 127;
+            }
+        }
+
+        for (int j = (HEIGHT - HEIGHT / 3); j < HEIGHT; j++) {
+            for (int i = 0; i < WIDTH; i++) {
+                greenTable[j * WIDTH + i] = (byte) 127;
+            }
+        }
+
+        DataBuffer buffer = new DataBufferByte(redTable, SIZE);
+        WritableRaster raster = WritableRaster.createBandedRaster(buffer, WIDTH, HEIGHT, WIDTH, new int[1], new int[1], new Point(0, 0));
+        BufferedImage red = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_GRAY);
+        red.setData(raster);
+
+        buffer = new DataBufferByte(greenTable, SIZE);
+        raster = WritableRaster.createBandedRaster(buffer, WIDTH, HEIGHT, WIDTH, new int[1], new int[1], new Point(0, 0));
+        BufferedImage green = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_GRAY);
+        green.setData(raster);
+
+        buffer = new DataBufferByte(blueTable, SIZE);
+        raster = WritableRaster.createBandedRaster(buffer, WIDTH, HEIGHT, WIDTH, new int[1], new int[1], new Point(0, 0));
+        BufferedImage blue = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_GRAY);
+        blue.setData(raster);
+
+        
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("image", "bandcombine");
+        assertNotNull(desc);
+        
+        final ParameterValueGroup params = desc.getInputDescriptor().createValue();
+        params.parameter("images").setValue(new RenderedImage[]{red,green,blue});
+        
+        final Process process = desc.createProcess(params);
+        final ParameterValueGroup result = process.call();
+        
+        //check result image
+        final RenderedImage outImage = (RenderedImage) result.parameter("result").getValue();
+        assertNotNull(outImage);
+
+        //expect a rgb color model
+        
+    }
+    
     
     private static RenderedImage create(int type, Color color1, Color color2){
         final BufferedImage inputImage = new BufferedImage(100, 100, type);

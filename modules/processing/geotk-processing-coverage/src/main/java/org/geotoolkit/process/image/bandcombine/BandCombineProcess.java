@@ -19,6 +19,7 @@ package org.geotoolkit.process.image.bandcombine;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -97,12 +98,25 @@ public class BandCombineProcess extends AbstractProcess {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
         
-        //TODO try to reuse java colormodel if possible
-        //create a temporary fallback colormodel which will always work
-        final int nbbitsPerSample = DataBuffer.getDataTypeSize(sampleType);
-        final ColorModel graycm = new GrayScaleColorModel(nbbitsPerSample, 0, 1);
+        //try to reuse a java color model for better performances
+        ColorModel cm = null;
+        if(sampleType == DataBuffer.TYPE_BYTE){
+            if(nbtotalbands == 3){
+                //assume it's a RGB model
+                //TODO
+            }else if(nbtotalbands == 4){
+                //assume it's a RGBA model
+                //TODO
+            }
+        }
         
-        final BufferedImage resultImage = new BufferedImage(graycm, raster, false, new Hashtable<Object, Object>());
+        if(cm == null){
+            //create a fallback grayscale colormodel which will always work
+            final int nbbitsPerSample = DataBuffer.getDataTypeSize(sampleType);
+            cm = new GrayScaleColorModel(nbbitsPerSample, 0, 1);
+        }
+        
+        final BufferedImage resultImage = new BufferedImage(cm, raster, false, new Hashtable<Object, Object>());
         
         //copy datas        
         final PixelIterator writeIte = PixelIteratorFactory.createDefaultWriteableIterator(raster, raster);
