@@ -54,6 +54,7 @@ import org.geotoolkit.lucene.filter.LuceneOGCFilter;
 import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.FileUtilities;
+import org.opengis.geometry.MismatchedReferenceSystemException;
 
 // GeoAPI dependencies
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -503,6 +504,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             } catch (TransformException ex) {
                 LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
             } catch (FactoryException ex) {
+                LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
+            } catch (MismatchedReferenceSystemException ex) {
                 LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
             }
         }
