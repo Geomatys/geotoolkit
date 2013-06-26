@@ -56,7 +56,7 @@ public class BandCombineDescriptor extends AbstractProcessDescriptor {
     
     static {
         Map<String, Object> propertiesInCov = new HashMap<String, Object>();
-        propertiesInCov.put(IdentifiedObject.NAME_KEY,        "imagess");
+        propertiesInCov.put(IdentifiedObject.NAME_KEY,        "images");
         propertiesInCov.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/image/bundle", "bandcombine.inImages"));
         propertiesInCov.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/image/bundle", "bandcombine.inImagesDesc"));
         IN_IMAGES = new DefaultParameterDescriptor<RenderedImage[]>(propertiesInCov, RenderedImage[].class, null, null, null, null, null, true);

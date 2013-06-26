@@ -16,25 +16,20 @@
  */
 package org.geotoolkit.process.coverage.bandselect;
 
-import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
-import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
 import java.util.Hashtable;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.process.Process;
 import org.geotoolkit.process.AbstractProcess;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.process.coverage.bandselect.BandSelectDescriptor.*;
-import static org.geotoolkit.process.image.reformat.ReformatProcess.createRaster;
 import org.geotoolkit.process.image.reformat.GrayScaleColorModel;
 import org.geotoolkit.util.ArgumentChecks;
 
@@ -51,76 +46,35 @@ public class BandSelectProcess extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
-
         final GridCoverage2D inputCoverage = (GridCoverage2D) Parameters.getOrCreate(IN_COVERAGE, inputParameters).getValue();
         final int[] bands = (int[]) Parameters.getOrCreate(IN_BANDS, inputParameters).getValue();
         
-        final RenderedImage inputImage = inputCoverage.getRenderedImage();
-        final SampleModel inputSampleModel = inputImage.getSampleModel();
-        final int inputNbBand = inputSampleModel.getNumBands();
-        final int inputType = inputSampleModel.getDataType();
         
-        //check band indexes
-        for(int targetIndex=0;targetIndex<bands.length;targetIndex++){
-            if(bands[targetIndex] >= inputNbBand){
-                //wrong index, no band for this index
-                throw new ProcessException("Invalid band index "+bands[targetIndex]+" , image only have "+inputNbBand+" bands", this, null);
-            }
-        }
+        // CALL IMAGE BAND SELECT //////////////////////////////////////////////
+        final ProcessDescriptor imageSelectDesc = org.geotoolkit.process.image.bandselect.BandSelectDescriptor.INSTANCE;
+        final ParameterValueGroup params = imageSelectDesc.getInputDescriptor().createValue();
+        params.parameter("image").setValue(inputCoverage.getRenderedImage());
+        params.parameter("bands").setValue(bands);
+        final Process process = imageSelectDesc.createProcess(params);
+        BufferedImage resultImage = (BufferedImage)process.call().parameter("result").getValue();
         
-        //create the output image
-        final int width = inputImage.getWidth();
-        final int height = inputImage.getHeight();
-        final int nbBand = bands.length;
-        final Point upperLeft = new Point(inputImage.getMinX(), inputImage.getMinY());
-        final WritableRaster raster;
-        try{
-            raster = createRaster(inputType, width, height, nbBand, upperLeft);
-        }catch(IllegalArgumentException ex){
-            throw new ProcessException(ex.getMessage(), this, ex);
-        }
         
+        // BUILD A BETTER COLOR MODEL //////////////////////////////////////////
         //TODO try to reuse java colormodel if possible
-        //create a temporary fallback colormodel which will always work
-        final int nbbitsPerSample = DataBuffer.getDataTypeSize(inputType);
-        final GridSampleDimension gridSample = inputCoverage.getSampleDimension(0);
         //extract grayscale min/max from sample dimension
-        final ColorModel graycm = new GrayScaleColorModel(nbbitsPerSample, 
+        final GridSampleDimension gridSample = inputCoverage.getSampleDimension(0);
+        final ColorModel graycm = new GrayScaleColorModel(
+                DataBuffer.getDataTypeSize(resultImage.getSampleModel().getDataType()), 
                 gridSample.getMinimumValue(), gridSample.getMaximumValue());
+        resultImage = new BufferedImage(graycm, resultImage.getRaster(), false, new Hashtable<Object, Object>());
         
-        final BufferedImage resultImage = new BufferedImage(graycm, raster, false, new Hashtable<Object, Object>());
         
-        //copy datas
-        final PixelIterator readIte = PixelIteratorFactory.createDefaultIterator(inputImage);
-        final PixelIterator writeIte = PixelIteratorFactory.createDefaultWriteableIterator(raster, raster);
-        final double[] pixel = new double[inputNbBand];
-        
-        int srcBandIdx = 0;
-        int trgBandIdx = 0;
-        while (readIte.next() && writeIte.next()) {
-            srcBandIdx = 0;
-            trgBandIdx = 0;
-            
-            //read source pixels
-            pixel[srcBandIdx] = readIte.getSampleDouble();
-            while (++srcBandIdx != inputNbBand) {
-                readIte.next();
-                pixel[srcBandIdx] = readIte.getSampleDouble();
-            }
-            
-            //write target pixels
-            writeIte.setSampleDouble(pixel[bands[trgBandIdx]]);
-            while (++trgBandIdx != bands.length) {
-                writeIte.next();
-                writeIte.setSampleDouble(pixel[bands[trgBandIdx]]);
-            }
-        }
-        
-        //rebuild coverage
+        // REBUILD COVERAGE ////////////////////////////////////////////////////
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(resultImage);
         gcb.setGridGeometry(inputCoverage.getGridGeometry());
         final GridCoverage2D resultCoverage = gcb.getGridCoverage2D();
+        
         
         Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(resultCoverage);
     }
