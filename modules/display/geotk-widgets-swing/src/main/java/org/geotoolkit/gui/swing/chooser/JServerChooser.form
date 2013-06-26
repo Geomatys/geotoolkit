@@ -54,7 +54,7 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="guiInfoLabel" pref="327" max="32767" attributes="0"/>
+                      <Component id="guiInfoLabel" pref="267" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="guiConnect" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -86,7 +86,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="guiConnect">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Connect"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="chooserserver.connect" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="guiConnectActionPerformed"/>
@@ -110,17 +112,6 @@
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
             <Component class="org.jdesktop.swingx.JXList" name="guiList">
-              <Properties>
-                <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
-                  <StringArray count="5">
-                    <StringItem index="0" value="Item 1"/>
-                    <StringItem index="1" value="Item 2"/>
-                    <StringItem index="2" value="Item 3"/>
-                    <StringItem index="3" value="Item 4"/>
-                    <StringItem index="4" value="Item 5"/>
-                  </StringArray>
-                </Property>
-              </Properties>
             </Component>
           </SubComponents>
         </Container>

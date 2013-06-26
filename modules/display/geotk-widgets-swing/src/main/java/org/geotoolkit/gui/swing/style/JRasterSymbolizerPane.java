@@ -29,28 +29,36 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
+import org.opengis.style.ChannelSelection;
+import org.opengis.style.ColorMap;
+import org.opengis.style.LineSymbolizer;
 import org.opengis.style.OverlapBehavior;
+import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Symbolizer;
 
 /**
- * Raster Sybolizer edition panel
+ * Raster Symbolizer edition panel
  *
- * @author  Johann Sorel
+ * @author Johann Sorel
  * @module pending
  */
 public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> {
 
     private MapLayer layer = null;
-    private Symbolizer outLine = null;
     private RasterSymbolizer oldSymbolizer;
+    private Symbolizer outLine = null;
+    private ChannelSelection channelSelection = null;
+    private ColorMap colorMap = null;
 
     /** Creates new form RasterStylePanel
      * @param layer the layer style to edit
@@ -95,22 +103,27 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             //guiOverLap.parse(symbol.getOverlapBehavior());
             guiContrast.parse(symbol.getContrastEnhancement());
             guiRelief.parse(symbol.getShadedRelief());
-                                    
-//            outLine = symbol.getImageOutline();
-//            if(outLine == null){
-//                guinone.setSelected(true);
-//            }else if(outLine instanceof LineSymbolizer){
-//                guiLine.setSelected(true);
-//            }else if(outLine instanceof PolygonSymbolizer){
-//                guiPolygon.setSelected(true);
-//            }
-//            testOutLine();
             
-            //handle by a button
-            //symbol.getChannelSelection();
-            symbol.getColorMap();
+            outLine = symbol.getImageOutline();
+            channelSelection = symbol.getChannelSelection();
+            colorMap = symbol.getColorMap();
             
+        }else{
+            outLine = null;
+            colorMap = null;
+            channelSelection = null;
         }
+        
+        butLineSymbolizer.setEnabled(false);
+        butPolygonSymbolizer.setEnabled(false);
+        if(outLine instanceof LineSymbolizer){
+            guiLine.setSelected(true);
+        }else if(outLine instanceof LineSymbolizer){
+            guiPolygon.setSelected(true);
+        }else{
+            guinone.setSelected(true);
+        }
+        
     }
 
     /**
@@ -124,31 +137,14 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                 (oldSymbolizer!=null) ? oldSymbolizer.getDescription() : StyleConstants.DEFAULT_DESCRIPTION,
                 guiUOM.create(),
                 guiOpacity.create(),
-                (oldSymbolizer!=null) ? oldSymbolizer.getChannelSelection() : null,
+                channelSelection,
                 (oldSymbolizer!=null) ? oldSymbolizer.getOverlapBehavior() : OverlapBehavior.AVERAGE, 
-                (oldSymbolizer!=null) ? oldSymbolizer.getColorMap() : null, 
+                colorMap, 
                 guiContrast.create(), 
                 guiRelief.create(), 
-                (oldSymbolizer!=null) ? oldSymbolizer.getImageOutline() : null );
+                outLine);
     
     }
-
-    private void testOutLine(){
-//        if(guinone.isSelected()){
-//            butLineSymbolizer.setEnabled(false);
-//            butPolygonSymbolizer.setEnabled(false);
-//            outLine = null;
-//        }else if(guiLine.isSelected()){
-//            butLineSymbolizer.setEnabled(true);
-//            butPolygonSymbolizer.setEnabled(false);     
-//            outLine = new StyleBuilder().createLineSymbolizer();
-//        }else if(guiPolygon.isSelected()){
-//            butLineSymbolizer.setEnabled(false);
-//            butPolygonSymbolizer.setEnabled(true);      
-//            outLine = new StyleBuilder().createPolygonSymbolizer();
-//        }
-    }
-    
     
     /** This method is called from within the constructor to
      * initialize the form.
@@ -197,7 +193,6 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         jPanel1.setOpaque(false);
 
         butChannels.setText(MessageBundle.getString("edit")); // NOI18N
-        butChannels.setBorderPainted(false);
         butChannels.setPreferredSize(new Dimension(79, 22));
         butChannels.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -390,81 +385,56 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
     }// </editor-fold>//GEN-END:initComponents
 
     private void butPolygonSymbolizerActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_butPolygonSymbolizerActionPerformed
-//        JDialog dia = new JDialog();
-//        dia.setModal(true);
-//        
-//        JPolygonSymbolizerPane pane = new JPolygonSymbolizerPane();
-//        pane.setEdited((PolygonSymbolizer)outLine);
-//        pane.setLayer(layer);
-//        
-//        dia.getContentPane().add(pane);
-//        
-//        dia.pack();
-//        dia.setLocationRelativeTo(butLineSymbolizer);
-//        dia.setVisible(true);
-//        
-//        outLine = pane.getEdited();
+        
+        final JPolygonSymbolizerPane pane = new JPolygonSymbolizerPane();
+        pane.setLayer(layer);
+        pane.parse((PolygonSymbolizer)outLine);
+        
+        if(JOptionDialog.show(this, pane, JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+            outLine = pane.create();
+        }
     }//GEN-LAST:event_butPolygonSymbolizerActionPerformed
 
     private void butLineSymbolizerActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_butLineSymbolizerActionPerformed
-//        JDialog dia = new JDialog();
-//        dia.setModal(true);
-//        
-//        JLineSymbolizerPane pane = new JLineSymbolizerPane();
-//        pane.setEdited((LineSymbolizer)outLine);
-//        pane.setLayer(layer);
-//        
-//        dia.getContentPane().add(pane);
-//        
-//        dia.pack();
-//        dia.setLocationRelativeTo(butLineSymbolizer);
-//        dia.setVisible(true);
-//        
-//        outLine = pane.getEdited();
+        final JLineSymbolizerPane pane = new JLineSymbolizerPane();
+        pane.setLayer(layer);
+        pane.parse((LineSymbolizer)outLine);
+        
+        if(JOptionDialog.show(this, pane, JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+            outLine = pane.create();
+        }
     }//GEN-LAST:event_butLineSymbolizerActionPerformed
 
     private void guiLineActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiLineActionPerformed
-        testOutLine();
-        firePropertyChange(PROPERTY_TARGET, null, create());
+        if(!(outLine instanceof LineSymbolizer)) outLine = null;
+        butLineSymbolizer.setEnabled(true);
+        butPolygonSymbolizer.setEnabled(false);
         
 }//GEN-LAST:event_guiLineActionPerformed
 
     private void guinoneActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guinoneActionPerformed
-       testOutLine();
+       outLine = null;
        firePropertyChange(PROPERTY_TARGET, null, create());
     }//GEN-LAST:event_guinoneActionPerformed
 
     private void guiPolygonActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiPolygonActionPerformed
-        testOutLine();
-        firePropertyChange(PROPERTY_TARGET, null, create());
+        if(!(outLine instanceof PolygonSymbolizer)) outLine = null;
+        butLineSymbolizer.setEnabled(false);
+        butPolygonSymbolizer.setEnabled(true);
     }//GEN-LAST:event_guiPolygonActionPerformed
 
     private void butChannelsActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_butChannelsActionPerformed
         
-//        JDialog dia = new JDialog();
-//        
-//        JChannelSelectionPane pane = new JChannelSelectionPane();
-//        pane.setLayer(layer);
-//        
-//        if(symbol != null){
-//            pane.setEdited(symbol.getChannelSelection());
-//        }
-//        
-//        dia.setContentPane(pane);
-//        dia.pack();
-//        dia.setLocationRelativeTo(butChannels);
-//        dia.setModal(true);
-//        dia.setVisible(true);
-//        
-//        if(symbol == null){
-//            symbol =  new StyleBuilder().createRasterSymbolizer();
-//        }
-//        symbol.setChannelSelection(pane.getEdited());        
+        final JChannelSelectionPane pane = new JChannelSelectionPane();
+        pane.setLayer(layer);
+        pane.parse(channelSelection);
         
+        if(JOptionDialog.show(this, pane, JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+            channelSelection = pane.create();
+        }
     }//GEN-LAST:event_butChannelsActionPerformed
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-        // TODO add your handling code here:
         if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
             firePropertyChange(PROPERTY_TARGET, null, create());
             parse(create());

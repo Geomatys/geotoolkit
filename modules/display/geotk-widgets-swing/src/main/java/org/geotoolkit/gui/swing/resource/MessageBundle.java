@@ -38,13 +38,25 @@ public class MessageBundle {
      */
     public static String getString(final String key){
         try{
-            return BUNDLE.getString(key);
+            String text =  BUNDLE.getString(key);
+            if(text.startsWith("$")){
+                text = getString(text.substring(1));
+            }
+            return text;
         }catch(MissingResourceException ex){
             return "Missing key : "+key;
         }
     }
 
     public static InternationalString getI18NString(final String key){
+        try{
+            String text =  BUNDLE.getString(key);
+            if(text.startsWith("$")){
+                return getI18NString(text.substring(1));
+            }
+        }catch(MissingResourceException ex){
+            throw new RuntimeException("Missing resource key : "+key,ex);
+        }
         return new ResourceInternationalString(PATH, key);
     }
 

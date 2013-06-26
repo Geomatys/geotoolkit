@@ -17,6 +17,7 @@
 package org.geotoolkit.style;
 
 import java.util.Arrays;
+import java.util.Objects;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.SelectedChannelType;
@@ -102,7 +103,7 @@ public class DefaultChannelSelection implements ChannelSelection{
 
         DefaultChannelSelection other = (DefaultChannelSelection) obj;
 
-        return this.gray.equals(other.gray)
+        return Objects.equals(this.gray,other.gray)
                 && Arrays.equals(this.rgb, other.rgb);
 
     }

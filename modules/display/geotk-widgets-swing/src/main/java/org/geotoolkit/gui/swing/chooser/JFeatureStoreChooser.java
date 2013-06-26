@@ -141,9 +141,9 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
 
         guiEditPane.setLayout(new java.awt.BorderLayout());
 
-        guiCreateNew.setText(MessageBundle.getString("createNew"));
+        guiCreateNew.setText(MessageBundle.getString("chooserfeaturestore.new")); // NOI18N
 
-        guiConnect.setText("Connect");
+        guiConnect.setText(MessageBundle.getString("chooserfeaturestore.connect")); // NOI18N
         guiConnect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiConnectActionPerformed(evt);
@@ -159,7 +159,7 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
             .addGroup(guiConfigLayout.createSequentialGroup()
                 .addComponent(guiCreateNew)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(guiInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
+                .addComponent(guiInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(guiConnect))
             .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
@@ -178,12 +178,6 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
         guiSplit.setRightComponent(guiConfig);
 
         jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-        guiList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         jScrollPane2.setViewportView(guiList);
 
         guiSplit.setLeftComponent(jScrollPane2);
@@ -208,7 +202,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             store = getFeatureStore();
             chooser.setSource(store);
             guiInfoLabel.setForeground(Color.GREEN);
-            guiInfoLabel.setText("ok");
+            guiInfoLabel.setText(MessageBundle.getString("chooserfeaturestore.ok"));
         } catch (DataStoreException ex) {
             guiInfoLabel.setForeground(Color.RED);
             guiInfoLabel.setText(""+ex.getMessage());
