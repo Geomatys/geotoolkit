@@ -173,7 +173,7 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
             final String schema = store.getDatabaseSchema();
             while (rs.next()) {
                 final String currentSchema = rs.getString(1);
-                if (currentSchema.contains(schema)) {
+                if (currentSchema.equals(schema)) {
                     throw new DataStoreException("Schema " + schema+ " already exist. Unable to create DataStore.");
                 }
             }
