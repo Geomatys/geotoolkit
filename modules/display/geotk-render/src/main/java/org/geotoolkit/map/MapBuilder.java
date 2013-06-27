@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.map;
 
+import java.util.Arrays;
 import java.util.Collection;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.DefaultCoverageReference;

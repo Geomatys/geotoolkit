@@ -45,6 +45,14 @@ public class StyleFunctionFactory implements FunctionFactory{
      * {@inheritDoc }
      */
     @Override
+    public String getIdentifier() {
+        return "style";
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String[] getNames() {
         return NAMES;
     }

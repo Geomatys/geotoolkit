@@ -177,7 +177,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         ftb.setName("cell");
         ftb.add("geom", Point.class,crs);
         for(int b=0,n=nbBand;b<n;b++){
-            String name = ""+b;
+            String name = "band_"+b;
             ftb.add(name+"_count",double.class);
             ftb.add(name+"_min",double.class);
             ftb.add(name+"_mean",double.class);

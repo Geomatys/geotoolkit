@@ -89,6 +89,14 @@ public class MathFunctionFactory implements FunctionFactory{
      * {@inheritDoc }
      */
     @Override
+    public String getIdentifier() {
+        return "math";
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String[] getNames() {
         return NAMES;
     }

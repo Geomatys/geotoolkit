@@ -43,6 +43,14 @@ public class JavaScriptFunctionFactory implements FunctionFactory{
      * {@inheritDoc }
      */
     @Override
+    public String getIdentifier() {
+        return "javascript";
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String[] getNames() {
         return NAMES;
     }

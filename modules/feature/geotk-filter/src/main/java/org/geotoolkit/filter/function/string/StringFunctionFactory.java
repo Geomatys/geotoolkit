@@ -62,6 +62,14 @@ public class StringFunctionFactory implements FunctionFactory{
      * {@inheritDoc }
      */
     @Override
+    public String getIdentifier() {
+        return "string";
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String[] getNames() {
         return NAMES;
     }

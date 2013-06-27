@@ -77,6 +77,14 @@ public class OtherFunctionFactory implements FunctionFactory{
      * {@inheritDoc }
      */
     @Override
+    public String getIdentifier() {
+        return "other";
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String[] getNames() {
         return NAMES;
     }

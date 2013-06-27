@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display2d.ext.cellular;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -66,21 +67,27 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
     }
 
     @Override
+    public Rectangle2D glyphPreferredSize(CachedCellSymbolizer symbol, MapLayer layer) {
+        
+        //fake layer
+        layer = mimicCellLayer(layer);
+        
+        Dimension dim = new Dimension(5,5);
+        for(CachedRule r : symbol.getCachedRules()){
+            dim = DefaultGlyphService.glyphPreferredSize(r.getSource(), dim, layer);
+        }
+        dim.width = dim.width*2;
+        dim.height = dim.height*2;
+        return new Rectangle2D.Double(0, 0, dim.width, dim.height);
+    }
+    
+    @Override
     public void glyph(Graphics2D g, Rectangle2D rect, CachedCellSymbolizer symbol, MapLayer layer) {
         final double halfwidth = rect.getWidth()/2;
         final double halfheight = rect.getHeight()/2;
         
         //fake layer
-        if(layer instanceof CoverageMapLayer){
-            try {
-                final SimpleFeatureType sft = CellSymbolizer.buildCellType((CoverageMapLayer)layer);
-                layer = MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection("", sft), GO2Utilities.STYLE_FACTORY.style());
-            } catch (DataStoreException ex) {
-                //not important
-            }
-        }else{
-            layer = null;
-        }
+        layer = mimicCellLayer(layer);
         
         glyphBlock(g, new Rectangle.Double(rect.getX(),           rect.getY(),            halfwidth, halfheight), symbol, layer);
         glyphBlock(g, new Rectangle.Double(rect.getX(),           rect.getY()+halfheight, halfwidth, halfheight), symbol, layer);
@@ -92,6 +99,21 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
         for(CachedRule r : symbol.getCachedRules()){
             DefaultGlyphService.render(r.getSource(), rect, g, layer);
         }
+    }
+    
+    private static MapLayer mimicCellLayer(MapLayer layer){
+        //fake layer
+        if(layer instanceof CoverageMapLayer){
+            try {
+                final SimpleFeatureType sft = CellSymbolizer.buildCellType((CoverageMapLayer)layer);
+                layer = MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection("", sft), GO2Utilities.STYLE_FACTORY.style());
+            } catch (DataStoreException ex) {
+                //not important
+            }
+        }else{
+            layer = null;
+        }
+        return layer;
     }
     
 }
