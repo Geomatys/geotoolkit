@@ -970,7 +970,12 @@ public final class GO2Utilities {
 
     public static <T> T evaluate(final Expression exp, final Object candidate, final Class<T> type, final T defaultValue ){
         T value;
-        if(exp == null || (value = exp.evaluate(candidate, type)) == null){
+        try{
+            if(exp == null || (value = exp.evaluate(candidate, type)) == null){
+                value = defaultValue;
+            }
+        }catch(IllegalArgumentException ex){
+            //if functions or candidate do not have the proper field we will have a IllegalArgumentException
             value = defaultValue;
         }
         return value;

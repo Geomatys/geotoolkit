@@ -17,19 +17,13 @@
 package org.geotoolkit.display2d.ext.cellular;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-import java.awt.Color;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -40,13 +34,10 @@ import org.geotoolkit.coverage.processing.CoverageProcessingException;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.GO2Hints;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.DefaultProjectedFeature;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
@@ -54,12 +45,10 @@ import org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer;
 import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.extractQuery;
 import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.fixEnvelopeWithQuery;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.math.Statistics;
@@ -136,23 +125,8 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         final RenderedImage image = coverage.getRenderedImage();
         final int nbBand = image.getSampleModel().getNumBands();
         
-        //prepare the cell feature type
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName("cell");
-        ftb.add("geom", Point.class,coverage.getCoordinateReferenceSystem2D());
-        for(int b=0,n=nbBand;b<n;b++){
-            String name = coverage.getSampleDimension(b).getDescription().toString();
-            name = ""+b;
-            ftb.add(name+"_count",double.class);
-            ftb.add(name+"_min",double.class);
-            ftb.add(name+"_mean",double.class);
-            ftb.add(name+"_max",double.class);
-            ftb.add(name+"_range",double.class);
-            ftb.add(name+"_rms",double.class);
-            ftb.add(name+"_sum",double.class);
-        }
-        
-        final SimpleFeatureType cellType = ftb.buildSimpleFeatureType();
+        //prepare the cell feature type        
+        final SimpleFeatureType cellType = CellSymbolizer.buildCellType(coverage);
         final Object[] values = new Object[1+7*nbBand];
         final SimpleFeature feature = new DefaultSimpleFeature(cellType, new DefaultFeatureId("cell-n"), values, false);
         final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(), null);

@@ -80,6 +80,7 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.JRasterColorMapStyleP
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.style.JCellSymbolizerPane;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -191,6 +192,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         styles.addPropertyPanel(MessageBundle.getString("analyze_vector"),new JClassificationIntervalStylePanel());
         styles.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JClassificationJenksPanel());
         styles.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JRasterColorMapStylePanel());
+        styles.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JCellSymbolizerPane());
         styles.addPropertyPanel(MessageBundle.getString("sld"),new JAdvancedStylePanel());
         styles.addPropertyPanel(MessageBundle.getString("sld"),new JSLDImportExportPanel());
         lstproperty.add(styles);

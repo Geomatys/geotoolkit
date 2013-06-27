@@ -34,6 +34,7 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.JRasterColorMapStyleP
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.style.JCellSymbolizerPane;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.DefaultMutableStyle;
@@ -104,6 +105,7 @@ public class StyleEditor extends PropertyValueEditor implements ActionListener{
         editors.addPropertyPanel(MessageBundle.getString("analyze_vector"),new JClassificationIntervalStylePanel());
         editors.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JClassificationJenksPanel());
         editors.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JRasterColorMapStylePanel());
+        editors.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JCellSymbolizerPane());
         editors.addPropertyPanel(MessageBundle.getString("sld"),new JAdvancedStylePanel());
         editors.addPropertyPanel(MessageBundle.getString("sld"),new JSLDImportExportPanel());
         editors.setTarget(layer);

@@ -104,7 +104,10 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
             throw new PortrayalException("Could not calculate display projected geometry",ex);
         }
 
-        if(geom instanceof Point || geom instanceof MultiPoint){
+        if(geom == null){
+            //no geometry
+            return;
+        }else if(geom instanceof Point || geom instanceof MultiPoint){
 
             //TODO use generalisation on multipoints
 

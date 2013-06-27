@@ -189,10 +189,10 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             }
         });
 
-        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("general"))); // NOI18N
+        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("style.rastersymbolizer.general"))); // NOI18N
         jPanel1.setOpaque(false);
 
-        butChannels.setText(MessageBundle.getString("edit")); // NOI18N
+        butChannels.setText(MessageBundle.getString("style.rastersymbolizer.edit")); // NOI18N
         butChannels.setPreferredSize(new Dimension(79, 22));
         butChannels.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -201,7 +201,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         });
 
         jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel3.setText(MessageBundle.getString("channels")); // NOI18N
+        jLabel3.setText(MessageBundle.getString("style.rastersymbolizer.channels")); // NOI18N
 
         guiOverLap.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -210,10 +210,10 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         });
 
         jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel2.setText(MessageBundle.getString("overlap")); // NOI18N
+        jLabel2.setText(MessageBundle.getString("style.rastersymbolizer.overlap")); // NOI18N
 
         jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel1.setText(MessageBundle.getString("opacity")); // NOI18N
+        jLabel1.setText(MessageBundle.getString("style.rastersymbolizer.opacity")); // NOI18N
 
         guiOpacity.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -277,12 +277,12 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
 
         jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {butChannels, jLabel3});
 
-        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("outline"))); // NOI18N
+        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("style.rastersymbolizer.outline"))); // NOI18N
         jPanel2.setOpaque(false);
 
         grpOutline.add(guinone);
         guinone.setSelected(true);
-        guinone.setText(MessageBundle.getString("none")); // NOI18N
+        guinone.setText(MessageBundle.getString("style.rastersymbolizer.none")); // NOI18N
         guinone.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guinoneActionPerformed(evt);
@@ -290,7 +290,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         });
 
         grpOutline.add(guiLine);
-        guiLine.setText(MessageBundle.getString("line")); // NOI18N
+        guiLine.setText(MessageBundle.getString("style.rastersymbolizer.line")); // NOI18N
         guiLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiLineActionPerformed(evt);
@@ -298,14 +298,14 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         });
 
         grpOutline.add(guiPolygon);
-        guiPolygon.setText(MessageBundle.getString("polygon")); // NOI18N
+        guiPolygon.setText(MessageBundle.getString("style.rastersymbolizer.polygon")); // NOI18N
         guiPolygon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiPolygonActionPerformed(evt);
             }
         });
 
-        butPolygonSymbolizer.setText(MessageBundle.getString("edit")); // NOI18N
+        butPolygonSymbolizer.setText(MessageBundle.getString("style.rastersymbolizer.edit")); // NOI18N
         butPolygonSymbolizer.setBorderPainted(false);
         butPolygonSymbolizer.setEnabled(false);
         butPolygonSymbolizer.setPreferredSize(new Dimension(79, 20));
@@ -315,7 +315,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             }
         });
 
-        butLineSymbolizer.setText(MessageBundle.getString("edit")); // NOI18N
+        butLineSymbolizer.setText(MessageBundle.getString("style.rastersymbolizer.edit")); // NOI18N
         butLineSymbolizer.setBorderPainted(false);
         butLineSymbolizer.setEnabled(false);
         butLineSymbolizer.setPreferredSize(new Dimension(79, 20));
@@ -338,9 +338,9 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                             .addComponent(guiLine)
                             .addComponent(guiPolygon))
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
-                            .addComponent(butLineSymbolizer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(butPolygonSymbolizer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING, false)
+                            .addComponent(butPolygonSymbolizer, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(butLineSymbolizer, GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))))
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -359,7 +359,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                 .addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(butPolygonSymbolizer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(guiPolygon))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         GroupLayout layout = new GroupLayout(this);

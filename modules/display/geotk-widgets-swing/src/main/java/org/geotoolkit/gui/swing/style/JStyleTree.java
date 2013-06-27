@@ -303,7 +303,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
                     final BufferedImage img = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
                     DefaultGlyphService.render(symb, new Rectangle(dim),img.createGraphics(),null);
                     final Icon ico = new ImageIcon(img);
-                    lbl.setText("");
+                    lbl.setText(symb.getName()==null?"":symb.getName());
                     lbl.setIcon(ico);
                 }
             }

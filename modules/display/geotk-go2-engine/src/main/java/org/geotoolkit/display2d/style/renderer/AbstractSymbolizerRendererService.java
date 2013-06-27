@@ -26,7 +26,10 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -80,4 +83,13 @@ public abstract class AbstractSymbolizerRendererService<S extends Symbolizer, C 
         return renderer.hit(graphic, mask, filter);
     }
 
+    protected Object mimicObject(MapLayer layer){
+        if(layer instanceof FeatureMapLayer){
+            final FeatureType ft = ((FeatureMapLayer)layer).getCollection().getFeatureType();
+            return FeatureUtilities.defaultFeature(ft, "id-0");
+        }else{
+            return null;
+        }
+    }
+    
 }
