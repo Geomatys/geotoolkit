@@ -19,15 +19,20 @@ package org.geotoolkit.db.session;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.session.AddDelta;
 import org.geotoolkit.data.session.DefaultSession;
+import org.geotoolkit.data.session.Delta;
 import org.geotoolkit.data.session.ModifyDelta;
 import org.geotoolkit.data.session.RemoveDelta;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
+import org.geotoolkit.storage.AbstractStorage;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.version.Version;
 import org.opengis.feature.Feature;
@@ -83,6 +88,12 @@ public class JDBCSession extends DefaultSession {
 
     @Override
     public synchronized void commit() throws DataStoreException {
+        final List<Delta> deltas = getDiff().getDeltas();
+        final Set<Name> deltaChanges = new HashSet<Name>();
+        for (Delta delta : deltas) {
+            deltaChanges.add(delta.getType());
+        }
+
         getDiff().commit(store);
         
         //everything is ok, close transaction and diff
@@ -96,6 +107,10 @@ public class JDBCSession extends DefaultSession {
         closeTransaction();
         
         fireSessionChanged();
+
+        for (Name deltaChange : deltaChanges) {
+            ((AbstractStorage)store).forwardContentEvent(FeatureStoreContentEvent.createUpdateEvent(store, deltaChange, null));
+        }
     }
 
     public synchronized Connection getTransaction() throws DataStoreException{

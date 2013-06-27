@@ -16,21 +16,18 @@
  */
 package org.geotoolkit.db;
 
-import org.geotoolkit.db.session.JDBCSession;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,6 +55,7 @@ import org.geotoolkit.db.reverse.InsertRelation;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.db.reverse.RelationMetaModel;
 import org.geotoolkit.db.reverse.TableMetaModel;
+import org.geotoolkit.db.session.JDBCSession;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
@@ -601,12 +599,15 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
             getLogger().log(Level.FINE, "Updating feature: {0}", sql);
             stmt = cx.createStatement();
             stmt.execute(sql);
+
+            if (cx.getAutoCommit()) {
+                fireFeaturesUpdated(featureType.getName(), null);
+            }
         } catch (SQLException e) {
             throw new DataStoreException("Error occured updating features",e);
         } finally {
             JDBCFeatureStoreUtilities.closeSafe(getLogger(),null,stmt,null);
         }
-        fireFeaturesUpdated(featureType.getName(), null);
     }
     
     @Override
@@ -938,14 +939,15 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
                 final String sql = getQueryBuilder().insertSQL(featureType, features, nextKeyValues, cx);
                 st.executeUpdate(sql);
 
+                if (cx.getAutoCommit()) {
+                    fireFeaturesAdded(featureType.getName(), null);
+                }
             } catch (SQLException e) {
                 throw new DataStoreException("Error inserting features",e);
             } finally {
                 JDBCFeatureStoreUtilities.closeSafe(getLogger(),st);
             }
         }
-
-        fireFeaturesAdded(featureType.getName(), null);
     }
 
     protected void insert(final ComplexAttribute feature, final ComplexType featureType,
@@ -1013,14 +1015,16 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
                 final String fid = featureType.getName().getLocalPart() + "." + PrimaryKey.encodeFID(nextKeyValues);
                 feature.getUserData().put("fid", fid);
 
+                if (cx.getAutoCommit()) {
+                    fireFeaturesAdded(featureType.getName(), null);
+                }
             //st.executeBatch();
             } catch (SQLException ex) {
-            throw new DataStoreException("Failed to intert features : "+ex.getMessage()+"\nSQL Query :"+sql, ex);
+                throw new DataStoreException("Failed to intert features : "+ex.getMessage()+"\nSQL Query :"+sql, ex);
             } finally {
                 JDBCFeatureStoreUtilities.closeSafe(getLogger(),stmt);
             }
         }
-        fireFeaturesAdded(featureType.getName(), null);
     }
 
     /**
@@ -1076,12 +1080,15 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
             sql = getQueryBuilder().updateSQL(featureType, changes, filter);
             stmt = cx.createStatement();
             stmt.execute(sql);
+
+            if (cx.getAutoCommit()) {
+                fireFeaturesUpdated(featureType.getName(), null);
+            }
         } catch (SQLException ex) {
             throw new DataStoreException("Failed to update features : "+ex.getMessage()+"\nSQL Query :"+sql, ex);
         } finally {
             JDBCFeatureStoreUtilities.closeSafe(getLogger(),stmt);
         }
-        fireFeaturesUpdated(featureType.getName(), null);
     }
 
     protected void delete(final FeatureType featureType, final Filter filter, final Connection cx)
@@ -1093,12 +1100,15 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
             sql = getQueryBuilder().deleteSQL(featureType, filter);
             stmt = cx.createStatement();
             stmt.execute(sql);
+
+            if (cx.getAutoCommit()) {
+                fireFeaturesDeleted(featureType.getName(), null);
+            }
         } catch (SQLException ex) {
             throw new DataStoreException("Failed to delete features : "+ex.getMessage()+"\nSQL Query :"+sql, ex);
         } finally {
             JDBCFeatureStoreUtilities.closeSafe(getLogger(),stmt);
         }
-        fireFeaturesDeleted(featureType.getName(), null);
     }
 
     
