@@ -16,12 +16,13 @@
  */
 package org.geotoolkit.display2d.ext.cellular;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.display2d.style.CachedTextSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.opengis.style.Rule;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableRule;
 
 /**
  *
@@ -30,7 +31,9 @@ import org.opengis.style.Rule;
  */
 public class CachedCellSymbolizer extends CachedSymbolizer<CellSymbolizer>{
 
-    private CachedRule[] cached = null;
+    private CachedPointSymbolizer cps = null;
+    private CachedTextSymbolizer cs = null;
+    private CachedRule cr = null;
     
     public CachedCellSymbolizer(final CellSymbolizer symbol,
             final SymbolizerRendererService<CellSymbolizer,? extends CachedSymbolizer<CellSymbolizer>> renderer){
@@ -52,12 +55,22 @@ public class CachedCellSymbolizer extends CachedSymbolizer<CellSymbolizer>{
     protected void evaluate() {
         if(!isNotEvaluated) return;
 
-        final List<? extends Rule> rules = styleElement.getRules();
-        cached = new CachedRule[rules.size()];
-        for(int i=0;i<cached.length;i++){
-            cached[i] = new CachedRule(rules.get(i), null);
+        final MutableRule r = new DefaultStyleFactory().rule();
+        
+        
+        if(styleElement.getPointSymbolizer()!=null){
+            r.symbolizers().add(styleElement.getPointSymbolizer());
         }
         
+        if(styleElement.getTextSymbolizer()!=null){
+            r.symbolizers().add(styleElement.getTextSymbolizer());
+        }
+        
+        if(styleElement.getFilter()!=null){
+            r.setFilter(styleElement.getFilter());
+        }
+        
+        cr = new CachedRule(r, null);
         isNotEvaluated = false;
     }
 
@@ -66,9 +79,9 @@ public class CachedCellSymbolizer extends CachedSymbolizer<CellSymbolizer>{
         return true;
     }
 
-    public CachedRule[] getCachedRules() {
+    public CachedRule getCachedRule() {
         evaluate();
-        return cached;
+        return cr;
     }
     
 }

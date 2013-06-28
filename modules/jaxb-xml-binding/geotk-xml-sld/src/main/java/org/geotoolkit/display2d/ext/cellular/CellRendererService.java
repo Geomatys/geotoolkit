@@ -73,9 +73,9 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
         layer = mimicCellLayer(layer);
         
         Dimension dim = new Dimension(5,5);
-        for(CachedRule r : symbol.getCachedRules()){
-            dim = DefaultGlyphService.glyphPreferredSize(r.getSource(), dim, layer);
-        }
+        final CachedRule r = symbol.getCachedRule();
+        dim = DefaultGlyphService.glyphPreferredSize(r.getSource(), dim, layer);
+        
         dim.width = dim.width*2;
         dim.height = dim.height*2;
         return new Rectangle2D.Double(0, 0, dim.width, dim.height);
@@ -96,9 +96,8 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
     }
     
     private void glyphBlock(Graphics2D g, Rectangle2D rect, CachedCellSymbolizer symbol, MapLayer layer){
-        for(CachedRule r : symbol.getCachedRules()){
-            DefaultGlyphService.render(r.getSource(), rect, g, layer);
-        }
+        final CachedRule r = symbol.getCachedRule();
+        DefaultGlyphService.render(r.getSource(), rect, g, layer);
     }
     
     private static MapLayer mimicCellLayer(MapLayer layer){

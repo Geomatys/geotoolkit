@@ -135,7 +135,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         
         //iterator on image  
         final CellIterator ite = new CellIterator(image,decimateX,decimateY);
-        final CachedRule[] rules = symbol.getCachedRules();
+        final CachedRule rule = symbol.getCachedRule();
         final CanvasMonitor monitor = renderingContext.getMonitor();
         
         while(ite.next()){
@@ -159,11 +159,9 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                     values[++i] = stats[b].sum();
                 }
                                 
-                for(CachedRule rule : rules){
-                    if(rule.getFilter() == null || rule.getFilter().evaluate(feature)){
-                        for(CachedSymbolizer cs : rule.symbolizers()){
-                            cs.getRenderer().createRenderer(cs, renderingContext).portray(pf);
-                        }
+                if(rule.getFilter() == null || rule.getFilter().evaluate(feature)){
+                    for(CachedSymbolizer cs : rule.symbolizers()){
+                        cs.getRenderer().createRenderer(cs, renderingContext).portray(pf);
                     }
                 }
                 

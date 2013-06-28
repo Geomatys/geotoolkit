@@ -17,7 +17,6 @@
 package org.geotoolkit.display2d.ext.cellular;
 
 import com.vividsolutions.jts.geom.Point;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,23 +35,25 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.se.xml.v110.RuleType;
+import org.geotoolkit.ogc.xml.v110.FilterType;
+import org.geotoolkit.se.xml.v110.PointSymbolizerType;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
+import org.geotoolkit.se.xml.v110.TextSymbolizerType;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.ExtensionSymbolizer;
-import org.opengis.style.Rule;
+import org.opengis.style.PointSymbolizer;
 import org.opengis.style.StyleVisitor;
+import org.opengis.style.TextSymbolizer;
 import org.opengis.util.FactoryException;
 
 /**
@@ -60,27 +61,51 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CellularSymbolizerType")
-@XmlRootElement(name="CellularSymbolizer",namespace="http://geotoolkit.org")
+@XmlType(name = "CellSymbolizerType")
+@XmlRootElement(name="CellSymbolizer",namespace="http://geotoolkit.org")
 public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolizer{
 
     private static final Logger LOGGER = Logging.getLogger(CellSymbolizer.class);
     public static final String NAME = "Cell";
     
+    @XmlElement(name = "CellSize",namespace="http://geotoolkit.org")
     private int cellSize;
     @XmlTransient
-    private List<Rule> rules;
+    private Filter filter;
+    @XmlTransient
+    private PointSymbolizer pointSymbolizer;
+    @XmlTransient
+    private TextSymbolizer textSymbolizer;
     
-    @XmlElement(name = "Rule",namespace="http://geotoolkit.org")
-    private List<RuleType> jaxRules;
+    @XmlElement(name = "Filter", namespace = "http://www.opengis.net/ogc")
+    private FilterType filterType;
+    
+    @XmlElement(name = "PointSymbolizer",namespace="http://geotoolkit.org")
+    private PointSymbolizerType pointSymbolizerType;
+    @XmlElement(name = "TextSymbolizer",namespace="http://geotoolkit.org")
+    private TextSymbolizerType textSymbolizerType;
 
 
     public CellSymbolizer() {
     }
 
-    public CellSymbolizer(int cellSize, List<? extends Rule> rules){
+    public CellSymbolizer(int cellSize, Filter filter, PointSymbolizer ps, TextSymbolizer ts){
         this.cellSize = cellSize;
-        this.rules = (List)rules;
+        this.filter = filter;
+        this.pointSymbolizer = ps;
+        this.textSymbolizer = ts;
+        
+        final StyleXmlIO util = new StyleXmlIO();
+        if(filter!=null){
+            this.filterType = util.getTransformerXMLv110().visit(filter);
+        }
+        if(ps!=null){
+            this.pointSymbolizerType = util.getTransformerXMLv110().visit(ps,null).getValue();
+        }
+        if(ts!=null){
+            this.textSymbolizerType = util.getTransformerXMLv110().visit(ts,null).getValue();
+        }
+        
     }
 
     @Override
@@ -98,31 +123,84 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         return NAME;
     }
 
+    public void setCellSize(int cellSize) {
+        this.cellSize = cellSize;
+    }
+
     public int getCellSize() {
         return cellSize;
     }
 
-    public List<Rule> getRules() {
-        if(rules != null){
-            return rules;
+    public Filter getFilter() {
+        if(filter!=null){
+            return filter;
         }
-        rules = new ArrayList<Rule>();
         
-        if(jaxRules != null){
+        if(filterType!=null){
             final StyleXmlIO util = new StyleXmlIO();
             try {
-                for(RuleType rt : jaxRules){
-                    final Rule r = util.getTransformer110().visitRule(rt);
-                    rules.add(r);
-                };
+                filter = util.getTransformer110().visitFilter(filterType);
             } catch (FactoryException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
         
-        return rules;
+        return filter;
     }
     
+    public PointSymbolizer getPointSymbolizer() {
+        if(pointSymbolizer!=null){
+            return pointSymbolizer;
+        }
+        
+        if(pointSymbolizerType!=null){
+            final StyleXmlIO util = new StyleXmlIO();
+            pointSymbolizer = util.getTransformer110().visit(pointSymbolizerType);
+        }
+        
+        return pointSymbolizer;
+    }
+    
+    public TextSymbolizer getTextSymbolizer() {
+        if(textSymbolizer!=null){
+            return textSymbolizer;
+        }
+        
+        if(textSymbolizerType!=null){
+            final StyleXmlIO util = new StyleXmlIO();
+            textSymbolizer = util.getTransformer110().visit(textSymbolizerType);
+        }
+        
+        return textSymbolizer;
+    }
+
+    public FilterType getFilterType() {
+        return filterType;
+    }
+
+    public void setfilterType(FilterType jaxfilter) {
+        this.filterType = jaxfilter;
+        this.filter = null;
+    }
+
+    public PointSymbolizerType getPointSymbolizerType() {
+        return pointSymbolizerType;
+    }
+
+    public void setPointSymbolizerType(PointSymbolizerType jaxpointSymbolizer) {
+        this.pointSymbolizerType = jaxpointSymbolizer;
+        this.pointSymbolizer = null;
+    }
+
+    public TextSymbolizerType getTextSymbolizerType() {
+        return textSymbolizerType;
+    }
+
+    public void setTextSymbolizerType(TextSymbolizerType jaxtextSymbolizer) {
+        this.textSymbolizerType = jaxtextSymbolizer;
+        this.textSymbolizer = null;
+    }
+
     @Override
     public Map<String, Expression> getParameters() {
         final Map<String,Expression> config = new HashMap<String, Expression>();
@@ -187,6 +265,11 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
             ftb.add(name+"_sum",double.class);
         }
         return ftb.buildSimpleFeatureType();
+    }
+
+    @Override
+    public String toString() {
+        return "CellSymbolizer";
     }
     
 }
