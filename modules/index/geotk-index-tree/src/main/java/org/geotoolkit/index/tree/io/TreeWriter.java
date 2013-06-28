@@ -91,19 +91,21 @@ public class TreeWriter {
 
     }
 
-    /**Write tree in binary.
+    /**
+     * Write tree in binary.
      *
      * @param tree
      * @throws IOException
      */
     public void write(final Tree tree) throws IOException {
         final Node root = (Node)tree.getRoot();
-        if(root == null)return;
+        if (root == null) return;
         createIndex(root);
         serializeNode(root, dataOPStream);
     }
 
-    /**Write all node to binary.
+    /**
+     * Write all node to binary.
      *
      * @param root
      * @param dops
@@ -111,9 +113,11 @@ public class TreeWriter {
      */
     private void serializeNode(final Node root, final DataOutputStream dops) throws IOException {
         nodeToBinary(root, dops);
-        final int nbChild = root.getChildCount();
-        for (int i = 0; i < nbChild; i++) {
-            serializeNode(root.getChild(i), dops);
+        if (!root.isLeaf()) {
+            final int nbChild = root.getChildCount();
+            for (int i = 0; i < nbChild; i++) {
+                serializeNode(root.getChild(i), dops);
+            }
         }
     }
 
@@ -140,11 +144,16 @@ public class TreeWriter {
             int nbCell = node.getChildCount();
             for (int i = 0; i < nbCell; i++) {
                 final Node cuCell = node.getChild(i);
-                listEntries.addAll(Arrays.asList(cuCell.getObjects()));
-                listCoordinates.addAll(Arrays.asList(cuCell.getCoordinates()));
+                if (!cuCell.isEmpty()) {
+                    listEntries.addAll(Arrays.asList(Arrays.copyOf(cuCell.getObjects(), cuCell.getCoordsCount())));
+                    listCoordinates.addAll(Arrays.asList(Arrays.copyOf(cuCell.getCoordinates(), cuCell.getCoordsCount())));
+                }
             }
-            listEntries.addAll(Arrays.asList(node.getObjects()));
-            listCoordinates.addAll(Arrays.asList(node.getCoordinates()));
+            final int nodCoordCount = node.getCoordsCount();
+            if (nodCoordCount != 0) {
+                listEntries.addAll(Arrays.asList(Arrays.copyOf(node.getObjects(), nodCoordCount)));
+                listCoordinates.addAll(Arrays.asList(Arrays.copyOf(node.getCoordinates(), nodCoordCount)));
+            }
             final int siz = listEntries.size();
             assert siz == listCoordinates.size() : "tree writer : node to binary : listEntries and listCoordinates should have same length.";
             dops.writeInt(listEntries.size());
@@ -159,7 +168,7 @@ public class TreeWriter {
                 }
                 //write object
                 ost.writeObject(listEntries.get(i));
-                temp.flush();
+                ost.flush();
                 final byte[] array = temp.toByteArray();
                 dops.writeInt(array.length);
                 dops.write(array);

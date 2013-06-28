@@ -52,14 +52,13 @@ public class HilbertNode extends DefaultNode {
 
     public HilbertNode(Tree tree, Node parent, double[] lowerCorner, double[] upperCorner, Node[] children, Object[] objects, double[][] coordinates) {
         super(tree, parent, lowerCorner, upperCorner, children, null, null);
-        
-        if (children != null) {
-            setUserProperty(PROP_ISLEAF, false);
-            setUserProperty(PROP_HILBERT_ORDER, 0);
-        } else {
-            assert (children == null) :"createNode : children should be null.";
+        setUserProperty(PROP_ISLEAF, false);
+        setUserProperty(PROP_HILBERT_ORDER, 0);
+        if (objects != null) {
+            assert coordinates != null : "create node : coordinates should not be null.";
+            assert (children == null) : "createNode : children should be null.";
             final int len = coordinates.length;
-            assert (len == objects.length) : "createNode : coordinates and objects should have samme length.";
+            assert (len == objects.length) : "createNode : coordinates and objects should have same length.";
             // create a Hilbert leaf
             final double[] bound = getEnvelopeMin(coordinates);
             final int dim = bound.length >> 1;
@@ -84,19 +83,19 @@ public class HilbertNode extends DefaultNode {
             }
             
             //case where splitting method lost a dimension and overmuch elements for n-1 dimension.
-//            if (hOrder > ((HilbertRTree)tree).getHilbertOrder()) {
-//                createBasicHL(result, 0, bound.clone());//a voir si on peut pas kill le clone()
-//                for (int i = 0; i < len; i++) {
-//                    insertNode(result, objects[i], coordinates[i]);
-//                }
-//            } else {
-//                result.setUserProperty(PROP_ISLEAF, true);
-//                createBasicHL(result, hOrder, bound.clone());
-//                for (int i = 0; i < len; i++) {
-//                    result.setBound(bound);
-//                    chooseSubtree(result, coordinates[i]).addElement(objects[i], coordinates[i]);
-//                }
-//            }
+//////            if (hOrder > ((HilbertRTree)tree).getHilbertOrder()) {
+//////                createBasicHL(result, 0, bound.clone());//a voir si on peut pas kill le clone()
+//////                for (int i = 0; i < len; i++) {
+//////                    insertNode(result, objects[i], coordinates[i]);
+//////                }
+//////            } else {
+//////                result.setUserProperty(PROP_ISLEAF, true);
+//////                createBasicHL(result, hOrder, bound.clone());
+//////                for (int i = 0; i < len; i++) {
+//////                    result.setBound(bound);
+//////                    chooseSubtree(result, coordinates[i]).addElement(objects[i], coordinates[i]);
+//////                }
+//////            }
         }
     }
 

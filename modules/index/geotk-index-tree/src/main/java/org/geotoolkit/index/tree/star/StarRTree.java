@@ -27,11 +27,8 @@ import static org.geotoolkit.index.tree.io.TVR.*;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeVisitorResult;
 import org.geotoolkit.index.tree.NodeFactory;
-import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
@@ -74,24 +71,10 @@ public class StarRTree extends AbstractTree {
     public StarRTree(int nbMaxElement, CoordinateReferenceSystem crs, NodeFactory nodefactory) {
         super(nbMaxElement, crs, nodefactory);
     }
-
-//    /**
-//     * {@inheritDoc}
-//     */
-//    @Override
-//    @Deprecated
-//    public void search(final Envelope regionSearch, TreeVisitor visitor) throws IllegalArgumentException{
-//        ArgumentChecks.ensureNonNull("search : region search", regionSearch);
-//        ArgumentChecks.ensureNonNull("search : visitor", visitor);
-//        if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
-//            throw new MismatchedReferenceSystemException();
-//        }
-//        final Node root = this.getRoot();
-//        if(root != null){
-//            nodeSearch(root, getCoords(regionSearch), visitor);
-//        }
-//    }
     
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void search(double[] regionSearch, TreeVisitor visitor) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
@@ -101,30 +84,10 @@ public class StarRTree extends AbstractTree {
             nodeSearch(root, regionSearch, visitor);
         }
     }
-
-//    /**
-//     * {@inheritDoc}
-//     */
-//    @Deprecated
-//    @Override
-//    public void insert(final Envelope entry) throws IllegalArgumentException {
-//        super.insert(entry);
-//        if (!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) {
-//            throw new MismatchedReferenceSystemException();
-//        }
-//        super.eltCompteur++;
-//        final Node root = getRoot();
-//        final int dim = entry.getDimension();
-//        final double[] coords = new double[2 * dim];
-//        System.arraycopy(entry.getLowerCorner().getCoordinate(), 0, coords, 0, dim);
-//        System.arraycopy(entry.getUpperCorner().getCoordinate(), 0, coords, dim, dim);
-//        if (root == null || root.isEmpty()) {
-//            setRoot(createNode(this, null, null, new Object[]{entry}, new double[][]{getCoords(entry)}));
-//        } else {
-//            nodeInsert(root, entry, getCoords(entry));
-//        }
-//    }
-    
+        
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void insert(Object object, double... coordinates) throws IllegalArgumentException {
         super.insert(object, coordinates);
@@ -136,22 +99,10 @@ public class StarRTree extends AbstractTree {
             nodeInsert(root, object, coordinates);
         }
     }
-
-//    /**
-//     * {@inheritDoc}
-//     */
-//    @Override
-//    @Deprecated
-//    public boolean delete(final Envelope entry) throws IllegalArgumentException {
-//        ArgumentChecks.ensureNonNull("delete : entry", entry);
-//        if (!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) {
-//            throw new MismatchedReferenceSystemException();
-//        }
-//        final Node root = getRoot();
-//        if (root != null) return deleteNode(root, entry, getCoords(entry));
-//        return false;
-//    }
-    
+        
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public boolean delete(Object object, double... coordinates) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("remove : object", object);
@@ -160,22 +111,10 @@ public class StarRTree extends AbstractTree {
         if (root != null) return deleteNode(root, object, coordinates);
         return false;
     }
-
-//    /**
-//     * {@inheritDoc}
-//     */
-//    @Override
-//    @Deprecated
-//    public boolean remove(final Envelope entry) throws IllegalArgumentException{
-//        ArgumentChecks.ensureNonNull("remove : entry", entry);
-//        if (!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) {
-//            throw new MismatchedReferenceSystemException();
-//        }
-//        final Node root = getRoot();
-//        if (root != null) return removeNode(root, entry, getCoords(entry));
-//        return false;
-//    }
-    
+        
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public boolean remove(Object object, double... coordinates) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("remove : object", object);
@@ -450,21 +389,6 @@ public class StarRTree extends AbstractTree {
         List eltList = new ArrayList();
         List<Object> listObjects = null;
         
-        // debug
-        if (isLeaf) {
-            for (int i = 0; i < candidate.getCoordsCount(); i++) {
-                Object obj = candidate.getObject(i);
-                assert (Arrays.equals(getCoords((Envelope)obj), candidate.getCoordinate(i))) : "check before split wrong envelope coordinates.";
-            }
-        }
-        
-        Object[] objects = null;
-        double[][] coordinates = null;
-        if (isLeaf) {
-            objects     = candidate.getObjects().clone();
-            coordinates = candidate.getCoordinates().clone();
-        }
-        
         if (isLeaf) {
             listObjects = new ArrayList<Object>();
             for (int i = 0, s = candidate.getCoordsCount(); i < s; i++) {
@@ -484,7 +408,6 @@ public class StarRTree extends AbstractTree {
         double[] gESPLA, gESPLB;
         double bulkTemp;
         double bulkRef = -1;
-//        CoupleGE coupleGE;
         int index = 0;
         boolean lower_or_upper = true;
         int cut2;
@@ -589,38 +512,6 @@ public class StarRTree extends AbstractTree {
             }
         }
         
-        // check debug
-        if (isLeaf) {
-            for (int i = 0; i < coordA.length; i++) {
-                Object cuObj = objA[i];
-                double[] cuCoord = coordA[i];
-                //cherche dans tableau
-                for (int ib = 0; ib < candidate.getCoordsCount(); ib++) {
-                    if (cuObj == objects[ib]) {
-                        assert(Arrays.equals(cuCoord, coordinates[ib])) : "splitnode : coordA : should be same as candidate elements.";
-                    }
-                }
-            }
-            for (int i = 0; i < coordA.length; i++) {
-                Envelope env = (Envelope) objA[i];
-                assert(Arrays.equals(coordA[i], getCoords(env))):"element A should have same envelope";
-            }
-            for (int i = 0; i < coordB.length; i++) {
-                Object cuObj = objB[i];
-                double[] cuCoord = coordB[i];
-                //cherche dans tableau
-                for (int ib = 0; ib < candidate.getCoordsCount(); ib++) {
-                    if (cuObj == objects[ib]) {
-                        assert(Arrays.equals(cuCoord, coordinates[ib])) : "splitnode : coordB : should be same as candidate elements.";
-                    }
-                }
-            }
-            for (int i = 0; i < coordB.length; i++) {
-                Envelope env = (Envelope) objB[i];
-                assert(Arrays.equals(coordB[i], getCoords(env))):"element B should have same envelope";
-            }
-        }
-        
         final int maxElts = tree.getMaxElements();
         if (isLeaf) {
             assert objA.length <= maxElts :"objA length should be lesser than max size permit by tree.";
@@ -632,7 +523,6 @@ public class StarRTree extends AbstractTree {
             assert nodeB.length <= maxElts :"nodeB length should be lesser than max size permit by tree.";
         }
         
-//        ((DefaultNode)candidate).checkInternal();//////debug-----------------------------------------
         if(isLeaf) return UnmodifiableArrayList.wrap(new Node[] {tree.createNode(tree, null, null, objA, coordA), tree.createNode(tree, null, null, objB, coordB)});
         final Node resultA = (Node) ((nodeA.length == 1) ? nodeA[0] : tree.createNode(tree, null, nodeA, null, null));
         final Node resultB = (Node) ((nodeB.length == 1) ? nodeB[0] : tree.createNode(tree, null, nodeB, null, null));
@@ -775,41 +665,6 @@ public class StarRTree extends AbstractTree {
         }
         return false;
     }
-    
-    /**
-     * Travel {@code Tree}, find {@code Envelope} entry if it exist and delete it.
-     *
-     * <blockquote><font size=-1>
-     * <strong>NOTE: Moreover {@code Tree} is condensate after a deletion to stay conform about R-Tree properties.</strong>
-     * </font></blockquote>
-     *
-     * @param candidate {@code Node}  where to delete.
-     * @param entry {@code Envelope} to delete.
-     * @throws IllegalArgumentException if candidate or entry is null.
-     * @return true if entry is find and deleted else false.
-     */
-    @Deprecated
-    private static boolean deleteNode(final Node candidate, final Envelope entry) throws IllegalArgumentException{
-        ArgumentChecks.ensureNonNull("DeleteNode : Node candidate", candidate);
-        ArgumentChecks.ensureNonNull("DeleteNode : Node entry", entry);
-//        if(intersects(candidate.getBoundary(), getCoords(entry, null), true)) {
-//            if(candidate.isLeaf()) {
-//                final boolean removed = candidate.getEntries().remove(entry);
-//                if(removed) {
-//                    final AbstractTree tree = ((AbstractTree)candidate.getTree());
-//                    tree.setElementsNumber(tree.getElementsNumber()-1);
-//                    trim(candidate);
-//                    return true;
-//                }
-//            }else{
-//                for(Node no : candidate.getChildren()) {
-//                    final boolean removed = deleteNode(no, entry);
-//                    if(removed) return true;
-//                }
-//            }
-//        }
-        return false;
-    }
 
     /**
      * Travel {@code Tree}, find {@code Entry} if it exist and delete it from reference.
@@ -860,7 +715,8 @@ public class StarRTree extends AbstractTree {
         return false;
     }
 
-    /**Condense R-Tree.
+    /**
+     * Condense R-Tree.
      *
      * Condense made, travel up from leaf to tree trunk.
      *

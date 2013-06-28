@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree;
+package org.geotoolkit.index.tree.io;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +32,9 @@ import org.geotoolkit.index.tree.io.TreeWriter;
 import org.geotoolkit.index.tree.star.StarRTree;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.index.tree.Node;
+import org.geotoolkit.index.tree.TestedEnvelope3D;
+import org.geotoolkit.index.tree.Tree;
 import static org.junit.Assert.assertTrue;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -66,7 +69,6 @@ public class ReaderWriterTest {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    @Ignore
     @Test
     public void basicRTreeTest() throws IOException, ClassNotFoundException, TransformException {
         setBasicRTree();
@@ -81,7 +83,6 @@ public class ReaderWriterTest {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    @Ignore
     @Test
     public void starRTreeTest() throws IOException, ClassNotFoundException, TransformException {
         setStarRTree();
@@ -96,7 +97,6 @@ public class ReaderWriterTest {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    @Ignore
     @Test
     public void hilbertRTreeTest() throws IOException, ClassNotFoundException, TransformException {
         setHilbertRTree();
@@ -105,7 +105,6 @@ public class ReaderWriterTest {
         testTree();
     }
 
-    @Ignore
     @Test
     public void multiTest() throws IOException, ClassNotFoundException, TransformException {
         final TreeWriter treeW = new TreeWriter();
@@ -227,8 +226,8 @@ public class ReaderWriterTest {
     private void countNode(final Node node, int count) {
         ArgumentChecks.ensureNonNull("countNode : node", node);
         count++;
-        for (Node nod : node.getChildren()) {
-            countNode(nod, count);
+        for (int i = 0, s = node.getChildCount(); i < s; i++) {
+            countNode(node.getChild(i), count);
         }
     }
 
@@ -258,8 +257,8 @@ public class ReaderWriterTest {
         if (node.isLeaf()) {
             listLeaf.add(node);
         } else {
-            for (Node nod : node.getChildren()) {
-                getLeaf(nod, listLeaf);
+            for (int i = 0, s = node.getChildCount(); i < s; i++) {
+                getLeaf(node.getChild(i), listLeaf);
             }
         }
     }
@@ -322,18 +321,28 @@ public class ReaderWriterTest {
         
         for (int i = 0, s = nodeA.getChildCount(); i < s; i++) {
             final Node cuCell = nodeA.getChild(i);
-            listCoordsA.addAll(Arrays.asList(Arrays.copyOf(cuCell.getCoordinates(), cuCell.getCoordsCount())));
-            listObjA.addAll(Arrays.asList(Arrays.copyOf(cuCell.getObjects(), cuCell.getObjectCount())));
+            if (!cuCell.isEmpty()) {
+                listCoordsA.addAll(Arrays.asList(Arrays.copyOf(cuCell.getCoordinates(), cuCell.getCoordsCount())));
+                listObjA.addAll(Arrays.asList(Arrays.copyOf(cuCell.getObjects(), cuCell.getObjectCount())));
+            }
         }
         for (int i = 0, s = nodeB.getChildCount(); i < s; i++) {
             final Node cuCell = nodeB.getChild(i);
-            listCoordsB.addAll(Arrays.asList(Arrays.copyOf(cuCell.getCoordinates(), cuCell.getCoordsCount())));
-            listObjB.addAll(Arrays.asList(Arrays.copyOf(cuCell.getObjects(), cuCell.getObjectCount())));
+            if (!cuCell.isEmpty()) {
+                listCoordsB.addAll(Arrays.asList(Arrays.copyOf(cuCell.getCoordinates(), cuCell.getCoordsCount())));
+                listObjB.addAll(Arrays.asList(Arrays.copyOf(cuCell.getObjects(), cuCell.getObjectCount())));
+            }
         }
-        listCoordsA.addAll(Arrays.asList(Arrays.copyOf(nodeA.getCoordinates(), nodeA.getCoordsCount())));
-        listObjA.addAll(Arrays.asList(Arrays.copyOf(nodeA.getObjects(), nodeA.getObjectCount())));
-        listCoordsB.addAll(Arrays.asList(Arrays.copyOf(nodeB.getCoordinates(), nodeB.getCoordsCount())));
-        listObjB.addAll(Arrays.asList(Arrays.copyOf(nodeB.getObjects(), nodeB.getObjectCount())));
+        final int nodeACoorCount = nodeA.getCoordsCount();
+        if (nodeACoorCount != 0) {
+            listCoordsA.addAll(Arrays.asList(Arrays.copyOf(nodeA.getCoordinates(), nodeACoorCount)));
+            listObjA.addAll(Arrays.asList(Arrays.copyOf(nodeA.getObjects(), nodeACoorCount)));
+        }
+        final int nodeBCoordCount = nodeB.getCoordsCount();
+        if (nodeBCoordCount != 0) {
+            listCoordsB.addAll(Arrays.asList(Arrays.copyOf(nodeB.getCoordinates(), nodeBCoordCount)));
+            listObjB.addAll(Arrays.asList(Arrays.copyOf(nodeB.getObjects(), nodeBCoordCount)));
+        }   
         return compareList(listCoordsA, listCoordsB) && compareList(listObjA, listObjB);
     }
 

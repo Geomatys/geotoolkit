@@ -166,9 +166,12 @@ public class TreeReader {
                 tabChild[i] = dips.readInt();
             }
             final int nbrEntries = dips.readInt();// nbr elements
-            final double[][] tabCoords = new double[nbrEntries][];
-            final Object[] tabEntries = new Object[nbrEntries];
-            
+            double[][] tabCoords = null;
+            Object[] tabEntries = null;
+            if (nbrEntries > 0) {
+                tabCoords = new double[nbrEntries][];
+                tabEntries = new Object[nbrEntries];
+            }
             for (int i = 0; i < nbrEntries; i++) {
                 final double[] objCoords = new double[dim];
                 for (int idc = 0; idc < dim; idc++) {

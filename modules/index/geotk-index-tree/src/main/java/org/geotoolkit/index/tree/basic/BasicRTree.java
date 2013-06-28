@@ -74,7 +74,10 @@ public class BasicRTree extends AbstractTree {
         super(maxElements, crs, nodefactory);
         this.choice = choice;
     }
-    
+        
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void search(double[] regionSearch, TreeVisitor visitor) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
@@ -82,7 +85,10 @@ public class BasicRTree extends AbstractTree {
         final Node root = getRoot();
         if (root != null && !root.isEmpty()) nodeSearch(root, visitor, regionSearch);
     }
-
+    
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void insert(Object object, double... coordinates) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("insert : object", object);
@@ -96,7 +102,10 @@ public class BasicRTree extends AbstractTree {
             nodeInsert(root, object, coordinates);
         }
     }
-
+    
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public boolean delete(Object object, double... coordinates) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("delete : object", object);
@@ -105,7 +114,10 @@ public class BasicRTree extends AbstractTree {
         if (root != null) return deleteNode(root, object, coordinates);
         return false;
     }
-
+    
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public boolean remove(Object object, double... coordinates) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("remove : object", object);
