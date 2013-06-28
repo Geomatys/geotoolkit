@@ -21,10 +21,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Collection;
 import javax.xml.bind.JAXBException;
 
-import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.maintenance.ScopeCode;
 import org.opengis.metadata.identification.CharacterSet;
@@ -36,7 +34,6 @@ import org.apache.sis.xml.XML;
 import org.apache.sis.metadata.iso.*;
 import org.apache.sis.metadata.iso.spatial.*;
 import org.apache.sis.metadata.iso.quality.*;
-import org.apache.sis.metadata.iso.lineage.*;
 import org.apache.sis.metadata.iso.citation.*;
 import org.apache.sis.metadata.iso.distribution.*;
 import org.apache.sis.metadata.iso.identification.*;
@@ -46,7 +43,6 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 
 import org.junit.*;
 
-import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.LocaleDependantTestBase;
 
@@ -55,19 +51,17 @@ import static org.apache.sis.test.TestUtilities.getSingleton;
 
 
 /**
- * A test class for annotations written in the Metadata module.
- * First, it marshalls all annotations in a XML temporary file, starting with the
- * {@link DefaultMetadata} class as root element. Then, the temporary XML file is
- * unmarshalled, in order to get a {@code DefaultMetadata} object. Finally some
- * fields of this object are compared with the original value.
+ * A test class for (un)marshalling of various Metadata objects.
+ * First, it marshals all elements in a XML temporary buffer, starting with the {@link DefaultMetadata} class as
+ * root element. Then, the temporary XML buffer is unmarshaled, in order to get a {@code DefaultMetadata} object.
+ * Finally some fields of this object are compared with the original value.
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 4.0
  *
  * @since 2.5
  */
-@DependsOn({CodeListMarshallingTest.class, FreeTextMarshallingTest.class})
 public final strictfp class MetadataMarshallingTest extends LocaleDependantTestBase {
     /**
      * Generates a XML tree using the annotations on the {@link DefaultMetadata} class,
@@ -263,78 +257,5 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
         assertEquals(metadata.getIdentificationInfo(), dataUnmarsh.getIdentificationInfo());
         assertEquals(metadata.getDataQualityInfo(),    dataUnmarsh.getDataQualityInfo());
         assertEquals(metadata,                         dataUnmarsh);
-    }
-
-    /**
-     * Tests the marshalling of {@link DefaultProcessStep}.
-     * This metadata mixes elements from ISO 19115 and ISO 19115-2 standards.
-     *
-     * @throws IOException If an error occurred while reading the XML file.
-     * @throws JAXBException If an error occurred during the creation of the JAXB context,
-     *                       or during marshalling / unmarshalling processes.
-     *
-     * @since 3.07
-     */
-    @Test
-    public void testProcessStep() throws IOException, JAXBException {
-        final DefaultProcessing info = new DefaultProcessing();
-        info.setProcedureDescription(new SimpleInternationalString("Some procedure."));
-        final DefaultProcessStep process = new DefaultProcessStep();
-        process.setDescription(new SimpleInternationalString("Some process step."));
-        process.setProcessingInformation(info);
-        /*
-         * XML marshalling.
-         */
-        final String xml = XML.marshal(process);
-        assertFalse("Empty XML.", xml.isEmpty());
-        assertXmlEquals(TestData.url(MetadataMarshallingTest.class, "ProcessStep.xml"),
-                xml, "xmlns:*", "xsi:schemaLocation");
-        /*
-         * Validation tests.
-         */
-        final Object obj = XML.unmarshal(xml);
-        assertTrue(obj instanceof DefaultProcessStep);
-        assertEquals(process, obj);
-    }
-
-    /**
-     * Tests the unmarshalling of a text group with a default {@code <gco:CharacterString>}
-     * element. This test is somewhat a duplicate of {@link FreeTextMarshallingTest}, but
-     * the context is more elaborated.
-     *
-     * @throws IOException   If an error occurred while reading the XML file.
-     * @throws JAXBException If an error occurred during the creation of the JAXB context,
-     *                       or during marshalling / unmarshalling processes.
-     *
-     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-107">GEOTK-107</a>
-     * @see FreeTextMarshallingTest
-     *
-     * @since 3.14
-     */
-    @Test
-    public void testTextGroup() throws IOException, JAXBException {
-        final String xml = TestData.readText(MetadataMarshallingTest.class, "PositionalAccuracy.xml");
-        final Object obj = XML.unmarshal(xml);
-        assertTrue(obj instanceof AbstractElement);
-
-        final Collection<InternationalString> nameOfMeasures = ((AbstractElement) obj).getNamesOfMeasure();
-        assertEquals(1, nameOfMeasures.size());
-        final InternationalString nameOfMeasure = nameOfMeasures.iterator().next();
-
-        assertEquals("Mesure qualité quantitative de type pourcentage de représentation de la "
-                + "classe par rapport à la surface totale", nameOfMeasure.toString(Locale.FRENCH));
-        assertEquals("Mesure qualité quantitative de type pourcentage de représentation de la "
-                + "classe par rapport à la surface totale", nameOfMeasure.toString());
-        assertEquals("Quantitative quality measure focusing on the effective class percent "
-                + "regarded to the total surface size", nameOfMeasure.toString(null));
-        assertEquals("Quantitative quality measure focusing on the effective class percent "
-                + "regarded to the total surface size", nameOfMeasure.toString(Locale.ENGLISH));
-        /*
-         * Opportunist test. While it was not the purpose of this test, the above metadata
-         * needs to contain a "result" element in order to pass XML validation test.
-         */
-        assertInstanceOf("Wrong value for <gmd:result>", DefaultConformanceResult.class,
-                ((AbstractElement) obj).getResults().iterator().next());
-        assertXmlEquals(xml, XML.marshal(obj), "xmlns:*", "xsi:schemaLocation", "xsi:type");
     }
 }

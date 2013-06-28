@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 
 import org.opengis.util.LocalName;
 import org.opengis.util.ScopedName;
@@ -59,7 +60,6 @@ import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.internal.converter.SurjectiveConverter;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
-import org.geotoolkit.internal.jaxb.gco.StringConverter;
 import org.geotoolkit.internal.jaxb.referencing.RS_Identifier;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.resources.Loggings;
@@ -496,7 +496,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      */
     @XmlID
     @XmlAttribute(name = "id", namespace = Namespaces.GML, required = true)
-    @XmlJavaTypeAdapter(StringConverter.class)
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     final String getID() {
         ReferenceIdentifier id = getIdentifier(null);
         if (id == null) {
