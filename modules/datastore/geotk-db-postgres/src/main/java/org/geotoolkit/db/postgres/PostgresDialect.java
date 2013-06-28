@@ -574,13 +574,25 @@ final class PostgresDialect extends AbstractSQLDialect{
 
         if(res > 0){
             if (dimensions > 2) {
-                sql.append("ST_AsEWKB(ST_simplify(");
-                encodeColumnName(sql, gatt.getLocalName());
-                sql.append(",").append(res).append(")");
+                if (((Comparable)getVersion(null).getMajor()).compareTo((Comparable)Integer.valueOf(2)) >= 0) {
+                    sql.append("ST_AsEWKB(st_simplifyPreserveTopology(");
+                    encodeColumnName(sql, gatt.getLocalName());
+                    sql.append(",").append(res).append(")");
+                } else {
+                    sql.append("ST_AsEWKB(st_simplify(");
+                    encodeColumnName(sql, gatt.getLocalName());
+                    sql.append(",").append(res).append(")");
+                }
             } else {
-                sql.append("ST_AsBinary(ST_simplify(");
-                encodeColumnName(sql, gatt.getLocalName());
-                sql.append(",").append(res).append(")");
+                if (((Comparable)getVersion(null).getMajor()).compareTo((Comparable)Integer.valueOf(2)) >= 0) {
+                    sql.append("ST_AsBinary(st_simplifyPreserveTopology(");
+                    encodeColumnName(sql, gatt.getLocalName());
+                    sql.append(",").append(res).append(")");
+                } else {
+                    sql.append("ST_AsBinary(st_simplify(");
+                    encodeColumnName(sql, gatt.getLocalName());
+                    sql.append(",").append(res).append(")"); 
+                }
             }
             sql.append(") ");
         }else{
