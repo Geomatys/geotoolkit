@@ -39,6 +39,7 @@ public class MathFunctionFactory implements FunctionFactory{
     public static final String COS                  = "cos";
     public static final String EXP                  = "exp";
     public static final String FLOOR                = "floor";
+    public static final String HYPOT                = "hypot";
     public static final String IEEE_REMAINDER       = "IEEEremainder";
     public static final String LOG                  = "log";
     public static final String MAX                  = "max";
@@ -67,6 +68,7 @@ public class MathFunctionFactory implements FunctionFactory{
          COS,
          EXP,
          FLOOR,
+         HYPOT,
          IEEE_REMAINDER,
          LOG,
          MAX,
@@ -83,6 +85,14 @@ public class MathFunctionFactory implements FunctionFactory{
          TO_RADIANS};
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getIdentifier() {
+        return "math";
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -106,6 +116,7 @@ public class MathFunctionFactory implements FunctionFactory{
         else if(name.equals(COS))               return new CosFunction(parameters[0]);
         else if(name.equals(EXP))               return new ExpFunction(parameters[0]);
         else if(name.equals(FLOOR))             return new FloorFunction(parameters[0]);
+        else if(name.equals(HYPOT))             return new HypotFunction(parameters[0],parameters[1]);
         else if(name.equals(IEEE_REMAINDER))    return new IEEERemainderFunction(parameters[0],parameters[1]);
         else if(name.equals(LOG))               return new LogFunction(parameters[0]);
         else if(name.equals(MAX))               return new MaxFunction(parameters[0],parameters[1]);

@@ -24,14 +24,17 @@ import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.opengis.feature.type.PropertyType;
 
 /**
+ * Throw PropertyChange event when TextField text change.
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class FileEditor extends PropertyValueEditor implements ActionListener{
+public class FileEditor extends PropertyValueEditor implements ActionListener, DocumentListener {
 
     private final JTextField component = new JTextField();
     private final JButton chooseButton = new JButton("...");
@@ -40,7 +43,10 @@ public class FileEditor extends PropertyValueEditor implements ActionListener{
         super(new BorderLayout());
         add(BorderLayout.CENTER, component);
         add(BorderLayout.EAST, chooseButton);
+        component.getDocument().addDocumentListener(this);
+        component.addFocusListener(this);
         chooseButton.addActionListener(this);
+        chooseButton.addFocusListener(this);
         chooseButton.setMargin(new Insets(0, 0, 0, 0));
     }
 
@@ -75,7 +81,34 @@ public class FileEditor extends PropertyValueEditor implements ActionListener{
             final File f = chooser.getSelectedFile();
             if(f!=null){
                 setValue(null, f);
+                valueChanged();
             }
         }
+    }
+    
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        valueChanged();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        valueChanged();
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        valueChanged();
+    }
+    
+    @Override
+    public void setEnabled(boolean enabled) {
+        component.setEnabled(enabled);
+        chooseButton.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return component.isEnabled() && chooseButton.isEnabled();
     }
 }

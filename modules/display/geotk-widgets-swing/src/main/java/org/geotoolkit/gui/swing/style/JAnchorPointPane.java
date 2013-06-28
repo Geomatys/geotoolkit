@@ -105,10 +105,10 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint>{
         guiY = new JNumberExpressionPane();
 
         jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel1.setText(MessageBundle.getString("x")); // NOI18N
+        jLabel1.setText(MessageBundle.getString("style.anchorpoint.x")); // NOI18N
 
         jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel2.setText(MessageBundle.getString("y")); // NOI18N
+        jLabel2.setText(MessageBundle.getString("style.anchorpoint.y")); // NOI18N
 
         guiX.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {

@@ -21,6 +21,8 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.geotoolkit.util.Converters;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.PropertyType;
@@ -29,7 +31,7 @@ import org.opengis.feature.type.PropertyType;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class NumberEditor extends PropertyValueEditor {
+public class NumberEditor extends PropertyValueEditor implements ChangeListener {
 
     private final JSpinner component = new JSpinner();
     private Class expected;
@@ -39,6 +41,7 @@ public class NumberEditor extends PropertyValueEditor {
         add(BorderLayout.CENTER, component);
         component.setModel(new SpinnerNumberModel(0d, null, null, 1));
         component.setBorder(null);
+        component.addChangeListener(this);
     }
 
     @Override
@@ -84,6 +87,7 @@ public class NumberEditor extends PropertyValueEditor {
                 component.setModel(new SpinnerNumberModel(0, null, null, 1));
             }
 
+            ((JSpinner.DefaultEditor) component.getEditor()).getTextField().addFocusListener(this);
             //todo extract min/max values from filter
         }
 
@@ -106,6 +110,21 @@ public class NumberEditor extends PropertyValueEditor {
             return Converters.convert(val, expected);
         }
         return val;
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        valueChanged();
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        component.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return component.isEnabled();
     }
 
 }

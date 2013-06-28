@@ -251,21 +251,7 @@ public class RenderedGridMarks extends RenderedMarks {
                 
         setAutoDecimation(20, 20);
     }
-   
-
-    private GridCoverage2D reSample(final GridCoverage2D coverage, final CoordinateReferenceSystem crs){
-        
-        RenderedImage rendered = coverage.getRenderedImage();
-        GridGeometry2D gridGeom = coverage.getGridGeometry();
-        MathTransform transform = gridGeom.getGridToCRS2D();
-        GridSampleDimension[] bands = coverage.getSampleDimensions();
-        
-        GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
-        GridCoverage2D coverage2 = factory.create("resample2D", rendered, crs, transform, bands, null, null);
-        
-        return coverage2;
-    }
-    
+       
     
     /**
      * Set the grid coverage for this graphic.
@@ -307,76 +293,6 @@ public class RenderedGridMarks extends RenderedMarks {
     }
 
     /**
-     * Set the bands to use for querying mark values.
-     *
-     * @param  bands The band. This array length should 0, 1 or 2. A length of 0 is equivalents
-     *         to a call to <code>{@link #setVisible setVisible}(false)</code>.
-     * @throws IllegalArgumentException if the array length is illegal, or if a band is greater than
-     *         the number of bands in the {@linkplain #getGridCoverage underlying grid coverage}.
-     */
-    public void setBands(final int[] bands) throws IllegalArgumentException {
-        final int[] oldBands;
-        synchronized (getTreeLock()) {
-            final int max = (coverage!=null) ? image.getNumBands() : Integer.MAX_VALUE;
-            for (int i=0; i<bands.length; i++) {
-                final int band = bands[i];
-                if (band<0 || band>=max) {
-                    throw new IllegalArgumentException("No such band: "+band);
-                    // TODO: localize
-                }
-            }
-            oldBands = getBands();
-            switch (bands.length) {
-                default: {
-                    // TODO: localize
-                    throw new IllegalArgumentException("Can't renderer more than 2 bands.");
-                }
-                case 2: {
-                    bandX = bands[0];
-                    bandY = bands[1];
-                    if (markShape == DEFAULT_SHAPE_1D) {
-                        markShape  = DEFAULT_SHAPE_2D;
-                    }
-                    break;
-                }
-                case 1: {
-                    bandX = bandY = bands[0];
-                    if (markShape == DEFAULT_SHAPE_2D) {
-                        markShape  = DEFAULT_SHAPE_1D;
-                    }
-                    break;
-                }
-                case 0: {
-                    bandX = bandY = 0;
-                    setVisible(false);
-                    if (markShape == DEFAULT_SHAPE_2D) {
-                        markShape  = DEFAULT_SHAPE_1D;
-                    }
-                    break;
-                }
-            }
-            numBands = bands.length;
-            clearCache();
-//            repaint();         //--------------------------------------------------------------------------------------
-        }
-//        listeners.firePropertyChange("bands", oldBands, bands);    //--------------------------------------------------------------------------------------
-    }
-
-    /**
-     * Returns the bands to use for querying mark values.
-     */
-    public int[] getBands() {
-        synchronized (getTreeLock()) {
-            switch (numBands) {
-                default: throw new AssertionError(numBands); // Should not happen.
-                case  2: return new int[] {bandX, bandY};
-                case  1: return new int[] {bandX};
-                case  0: return new int[] {};
-            }
-        }
-    }
-
-    /**
      * Set a decimation factor. A value greater than 1 will reduces the number of points
      * iterated by the {@link MarkIterator}. Note that points are not actually decimated,
      * but rather averaged. For example a "decimation" factor of 2 will average two neighbor
@@ -389,15 +305,11 @@ public class RenderedGridMarks extends RenderedMarks {
         ensureStrictlyPositive("decimateX", decimateX);
         ensureStrictlyPositive("decimateY", decimateY);
         if (decimateX!=this.decimateX || decimateY!=this.decimateY) {
-            synchronized (getTreeLock()) {
-                                
-                autoDecimate   = false;
-                this.decimateX = decimateX;
-                this.decimateY = decimateY;
-                decimate = (decimateX!=1 || decimateY!=1);
-                clearCache();
-//                repaint();     //--------------------------------------------------------------------------------------
-            }
+            autoDecimate   = false;
+            this.decimateX = decimateX;
+            this.decimateY = decimateY;
+            decimate = (decimateX!=1 || decimateY!=1);
+            clearCache();
         }
     }
 
@@ -514,7 +426,6 @@ public class RenderedGridMarks extends RenderedMarks {
      */
     @Override
     final int getCount() {
-        assert Thread.holdsLock(getTreeLock());
         if (image==null || numBands==0) {
             return 0;
         }
@@ -546,39 +457,33 @@ public class RenderedGridMarks extends RenderedMarks {
      */
     @Override
     public double getTypicalAmplitude() {
-        //TODO find a way to personalize the arrow size
-        //keep commun arrow size, for foss4g demo
-        //return 0.27d;
-        
-        synchronized (getTreeLock()) {
-            if (!(typicalAmplitude > 0)) {
-                double sum = 0;
-                int  count = 0;
-                final RectIter iter = RectIterFactory.create(image, null);
-                if (!iter.finishedLines()) do {
-                    iter.startPixels();
-                    if (!iter.finishedPixels()) do {
-                        final double x = iter.getSampleDouble(bandX);
-                        final double y = iter.getSampleDouble(bandY);
-                        final double s = x*x + y*y;
-                        if (!Double.isNaN(s)) {
-                            sum += s;
-                            count++;
-                        }
+        if (!(typicalAmplitude > 0)) {
+            double sum = 0;
+            int  count = 0;
+            final RectIter iter = RectIterFactory.create(image, null);
+            if (!iter.finishedLines()) do {
+                iter.startPixels();
+                if (!iter.finishedPixels()) do {
+                    final double x = iter.getSampleDouble(bandX);
+                    final double y = iter.getSampleDouble(bandY);
+                    final double s = x*x + y*y;
+                    if (!Double.isNaN(s)) {
+                        sum += s;
+                        count++;
                     }
-                    while (!iter.nextPixelDone());
-                } while (!iter.nextLineDone());
-                if (numBands == 1) {
-                    typicalAmplitude = Math.pow(sum/(2*count), 0.25);
-                } else {
-                    typicalAmplitude = Math.sqrt(sum/count);
                 }
-                if (!(typicalAmplitude > 0)) {
-                    typicalAmplitude = 1;
-                }
+                while (!iter.nextPixelDone());
+            } while (!iter.nextLineDone());
+            if (numBands == 1) {
+                typicalAmplitude = Math.pow(sum/(2*count), 0.25);
+            } else {
+                typicalAmplitude = Math.sqrt(sum/count);
             }
-            return typicalAmplitude;
+            if (!(typicalAmplitude > 0)) {
+                typicalAmplitude = 1;
+            }
         }
+        return typicalAmplitude;
     }
 
     /**
@@ -595,7 +500,6 @@ public class RenderedGridMarks extends RenderedMarks {
                                 final MathTransform2D coverageToObjective,
                                 final AffineTransform objectiveToDisplay)
     {
-        assert Thread.holdsLock(getTreeLock());
         Rectangle2D visibleArea = new Rectangle2D.Double(
                 zoomableBounds.x      - VISIBLE_AREA_EXTENSION,
                 zoomableBounds.y      - VISIBLE_AREA_EXTENSION,
@@ -638,8 +542,6 @@ public class RenderedGridMarks extends RenderedMarks {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         if (autoDecimate) {
-                        
-            assert Thread.holdsLock(getTreeLock());
             final AffineTransform tr;
             try {
                 // TODO: handle the case where gridToCRS is not affine.
@@ -733,10 +635,8 @@ public class RenderedGridMarks extends RenderedMarks {
      */
     @Override
     public void dispose() {
-        synchronized (getTreeLock()) {
-            clearCoverage();
-            super.dispose();
-        }
+        clearCoverage();
+        super.dispose();
     }
 
     /**
@@ -833,7 +733,6 @@ public class RenderedGridMarks extends RenderedMarks {
             if (clip == null) {
                 return true;
             }
-            assert Thread.holdsLock(getTreeLock());
             final int decWidth = image.getWidth()/decimateX;
             return clip.contains(index%decWidth, index/decWidth);
         }
@@ -842,7 +741,6 @@ public class RenderedGridMarks extends RenderedMarks {
          * Calcule les composantes <var>x</var> et <var>y</var> du vecteur à l'index spécifié.
          */
         private void compute() {
-            assert Thread.holdsLock(getTreeLock());
             int    count = 0;
             int    sumI  = 0;
             int    sumJ  = 0;
@@ -886,7 +784,6 @@ public class RenderedGridMarks extends RenderedMarks {
          */
         @Override
         public Point2D position() throws TransformException {
-            assert Thread.holdsLock(getTreeLock());
             final Point2D point;
             
             if (!decimate) {
@@ -911,7 +808,6 @@ public class RenderedGridMarks extends RenderedMarks {
         @Override
         public double amplitude() {
             double amplitude = 0;
-            assert Thread.holdsLock(getTreeLock());
             if (!valid) {
                 compute();
             }
@@ -933,7 +829,6 @@ public class RenderedGridMarks extends RenderedMarks {
          */
         @Override
         public double direction() {
-            assert Thread.holdsLock(getTreeLock());
             if (!valid) {
                 compute();
             }

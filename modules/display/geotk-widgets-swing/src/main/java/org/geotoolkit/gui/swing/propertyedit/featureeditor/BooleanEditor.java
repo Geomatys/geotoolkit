@@ -20,13 +20,15 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JCheckBox;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.opengis.feature.type.PropertyType;
 
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class BooleanEditor extends PropertyValueEditor implements ActionListener{
+public class BooleanEditor extends PropertyValueEditor implements ChangeListener {
 
     private final JCheckBox component = new JCheckBox();
 
@@ -34,7 +36,8 @@ public class BooleanEditor extends PropertyValueEditor implements ActionListener
         super(new BorderLayout());
         add(BorderLayout.CENTER, component);
         component.setOpaque(false);
-        component.addActionListener(this);
+        component.addChangeListener(this);
+        component.addFocusListener(this);
     }
 
     @Override
@@ -54,8 +57,17 @@ public class BooleanEditor extends PropertyValueEditor implements ActionListener
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        firePropertyChange(PROP_VALUE, null, getValue());
+    public void stateChanged(ChangeEvent e) {
+        valueChanged();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        component.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return component.isEnabled();
+    }
 }

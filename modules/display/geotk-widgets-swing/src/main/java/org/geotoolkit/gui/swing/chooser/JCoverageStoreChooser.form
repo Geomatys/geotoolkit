@@ -25,7 +25,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="guiSplit" alignment="0" pref="646" max="32767" attributes="0"/>
+          <Component id="guiSplit" alignment="0" pref="649" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -53,21 +53,24 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="1" attributes="0">
-                      <Component id="guiInfoLabel" pref="327" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="guiCreateNew" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="guiInfoLabel" pref="146" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="guiConnect" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="guiEditPane" alignment="0" pref="401" max="32767" attributes="0"/>
+                  <Component id="guiEditPane" alignment="0" pref="404" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="guiEditPane" pref="370" max="32767" attributes="0"/>
+                      <Component id="guiEditPane" pref="338" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="guiInfoLabel" alignment="3" min="-2" max="-2" attributes="1"/>
+                          <Component id="guiCreateNew" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="guiConnect" alignment="3" min="-2" max="-2" attributes="1"/>
                       </Group>
                   </Group>
@@ -79,6 +82,13 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
             </Container>
+            <Component class="javax.swing.JCheckBox" name="guiCreateNew">
+              <Properties>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="choosercoveragestore.new" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+            </Component>
             <Component class="javax.swing.JTextField" name="guiInfoLabel">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
@@ -86,7 +96,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="guiConnect">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Connect"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="choosercoveragestore.connect" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="guiConnectActionPerformed"/>
@@ -94,7 +106,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JScrollPane" name="scr">
+        <Container class="javax.swing.JScrollPane" name="jScrollPane2">
           <Properties>
             <Property name="horizontalScrollBarPolicy" type="int" value="31"/>
           </Properties>
@@ -110,17 +122,6 @@
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
             <Component class="org.jdesktop.swingx.JXList" name="guiList">
-              <Properties>
-                <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
-                  <StringArray count="5">
-                    <StringItem index="0" value="Item 1"/>
-                    <StringItem index="1" value="Item 2"/>
-                    <StringItem index="2" value="Item 3"/>
-                    <StringItem index="3" value="Item 4"/>
-                    <StringItem index="4" value="Item 5"/>
-                  </StringArray>
-                </Property>
-              </Properties>
             </Component>
           </SubComponents>
         </Container>

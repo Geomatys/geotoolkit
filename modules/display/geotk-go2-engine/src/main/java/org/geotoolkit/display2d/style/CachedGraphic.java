@@ -21,6 +21,7 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import org.geotoolkit.display.shape.TransformedShape;
@@ -339,6 +340,10 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
             subBuffer = cachedExternal.getImage(candidateSize,coeff,hints);
         }
 
+        if(subBuffer==null){
+            //may happen if image is too small
+            return null;
+        }
 
         //no operation to append to image, return the buffer directly ----------------------------
         if( candidateRotation == 0 && candidateOpacity == 1 ) return subBuffer;
@@ -355,10 +360,15 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
             TransformedShape trs = new TransformedShape();
             trs.setOriginalShape(rect);
             trs.rotate(candidateRotation);
-            maxSizeX = (int) trs.getBounds2D().getWidth();
-            maxSizeY = (int) trs.getBounds2D().getHeight();
+            final Rectangle2D rotatedRect = trs.getBounds2D();
+            maxSizeX = (int) rotatedRect.getWidth();
+            maxSizeY = (int) rotatedRect.getHeight();
         }
 
+        if(maxSizeX<=0 || maxSizeY<=0){
+            return null;
+        }
+        
         final BufferedImage buffer = new BufferedImage( maxSizeX , maxSizeY, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g2 = (Graphics2D) buffer.getGraphics();
         if(hints != null){

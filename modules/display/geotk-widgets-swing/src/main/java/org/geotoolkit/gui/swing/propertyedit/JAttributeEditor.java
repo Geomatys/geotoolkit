@@ -17,13 +17,16 @@
 package org.geotoolkit.gui.swing.propertyedit;
 
 import java.awt.BorderLayout;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.ArrayEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.BooleanEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.CRSEditor;
@@ -41,16 +44,32 @@ import org.geotoolkit.gui.swing.propertyedit.featureeditor.StyleEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.TimeStampEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.URLEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.UnitEditor;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.PropertyType;
+import org.opengis.util.InternationalString;
 
 /**
- * Edit a single property.
+ * Edit a single property. 
+ * When value in property editor change, JAttributeEditor will fire a 
+ * property change event with property name <code>#VALUE_CHANGE_EVENT</code>
  *
  * @author Johann Sorel (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  */
-public class JAttributeEditor extends JPanel{
+public class JAttributeEditor extends JPanel implements PropertyChangeListener, FocusListener {
 
+    //Event name fired in PropertyChange
+    public static final String VALUE_CHANGE_EVENT = "value";
+    
+    /*
+     * Not supported text gived to notSupported TextField.
+     */
+    private static final String BUNDLE_PATH = "org/geotoolkit/gui/swing/resource/Bundle";
+    private static final String NOT_SUPPORTED_KEY = "notSupported";
+    private static final InternationalString NOT_SUPPORTED = new ResourceInternationalString(BUNDLE_PATH, NOT_SUPPORTED_KEY);
+    
+    private final JTextField notSupportedTF;
     private final List<PropertyValueEditor> editors = new CopyOnWriteArrayList<PropertyValueEditor>();
     private PropertyValueEditor editor;
     private Property property = null;
@@ -58,6 +77,8 @@ public class JAttributeEditor extends JPanel{
     public JAttributeEditor(){
         setLayout(new BorderLayout());
         editors.addAll(createDefaultEditorList());
+        notSupportedTF = new JTextField(NOT_SUPPORTED.toString());
+        notSupportedTF.setEnabled(false);
     }
 
     public Property getProperty() {
@@ -70,13 +91,20 @@ public class JAttributeEditor extends JPanel{
     public void setProperty(Property property) {
         this.property = property;
 
+        if (editor != null) {
+            editor.removePropertyChangeListener(this);
+        }
         removeAll();
 
-        if(this.property != null){
+        if (this.property != null) {
             editor = getEditor(editors,this.property.getType());
             if(editor != null){
                 editor.setValue(property.getType(), property.getValue());
+                editor.addPropertyChangeListener(this);
+                editor.addFocusListener(this);
                 add(BorderLayout.CENTER,editor);
+            } else {
+                add(BorderLayout.CENTER, notSupportedTF);
             }
         }
 
@@ -133,4 +161,58 @@ public class JAttributeEditor extends JPanel{
         return null;
     }
 
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (PropertyValueEditor.PROP_VALUE.equals(evt.getPropertyName())) {
+            firePropertyChange(VALUE_CHANGE_EVENT, evt.getOldValue(), evt.getNewValue());
+        }
+    }
+
+    /**
+     * Transfer enable request to editor.
+     * @param enabled 
+     */
+    @Override
+    public void setEnabled(boolean enabled) {
+        if (editor != null) {
+            editor.setEnabled(enabled);
+        }
+    }
+    
+    @Override
+    public boolean isEnabled() {
+        if (editor != null) {
+           return editor.isEnabled();
+        } 
+        return false;
+    }
+    
+    /**
+     * @return true if an editor is found, or false otherwise.
+     */
+    public boolean isEditorFound() {
+        return editor != null;
+    }
+
+    /**
+     * Forward focus gained event.
+     * @param e 
+     */
+    @Override
+    public void focusGained(FocusEvent e) {
+        for (FocusListener listeners : getFocusListeners()) {
+            listeners.focusGained(e);
+        }
+    }
+
+    /**
+     * Forward focus lost event.
+     * @param e 
+     */
+    @Override
+    public void focusLost(FocusEvent e) {
+        for (FocusListener listeners : getFocusListeners()) {
+            listeners.focusLost(e);
+        }
+    }
 }

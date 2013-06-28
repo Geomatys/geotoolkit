@@ -22,7 +22,8 @@ import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.process.AbstractProcessingRegistry;
-import org.geotoolkit.process.coverage.bandcombiner.CombinerDescriptor;
+import org.geotoolkit.process.coverage.bandcombine.BandCombineDescriptor;
+import org.geotoolkit.process.coverage.bandselect.BandSelectDescriptor;
 import org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor;
 import org.geotoolkit.process.coverage.coveragetofeatures.CoverageToFeaturesDescriptor;
 import org.geotoolkit.process.coverage.coveragetovector.CoverageToVectorDescriptor;
@@ -31,6 +32,7 @@ import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
 import org.geotoolkit.process.coverage.metadataextractor.ExtractionDescriptor;
 import org.geotoolkit.process.coverage.pgpyramid.PyramidDescriptor;
 import org.geotoolkit.process.coverage.reducetodomain.ReduceToDomainDescriptor;
+import org.geotoolkit.process.coverage.reformat.ReformatDescriptor;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.process.coverage.tiling.TilingDescriptor;
@@ -63,22 +65,20 @@ public class CoverageProcessingRegistry extends AbstractProcessingRegistry{
               TilingDescriptor.INSTANCE,
               KrigingDescriptor.INSTANCE,
               ExtractionDescriptor.INSTANCE,
-              CombinerDescriptor.INSTANCE,
               IsolineDescriptor.INSTANCE,
               ResampleDescriptor.INSTANCE,
               CopyCoverageStoreDescriptor.INSTANCE,
               StraightenDescriptor.INSTANCE,
               ReduceToDomainDescriptor.INSTANCE,
+              BandSelectDescriptor.INSTANCE,
+              BandCombineDescriptor.INSTANCE,
+              ReformatDescriptor.INSTANCE,
               PyramidDescriptor.INSTANCE);
     }
 
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
-    }
-
-    public static void main(String[] args){
-        new CoverageProcessingRegistry();
     }
 
 }

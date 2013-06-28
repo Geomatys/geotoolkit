@@ -76,7 +76,7 @@ public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRen
     public void glyph(final Graphics2D g2d, final Rectangle2D rectangle, final CachedPointSymbolizer symbol, final MapLayer layer) {
         g2d.setClip(rectangle);
         
-        final Object feature = null;
+        final Object feature = mimicObject(layer);
         final float coeff = 1;
         final BufferedImage img = symbol.getImage(feature, coeff, null);
         if(img == null) return;

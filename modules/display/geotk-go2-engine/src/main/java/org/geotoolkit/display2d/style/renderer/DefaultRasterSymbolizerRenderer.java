@@ -307,7 +307,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @param coverageCRS CoverageMapLayer CRS
      * @return fixed resolutions or input resolution if coverageCRS is null.
      */
-    private double[] fixResolutionWithCRS(double[] resolution, CoordinateReferenceSystem coverageCRS) {
+    public static  double[] fixResolutionWithCRS(double[] resolution, CoordinateReferenceSystem coverageCRS) {
         if (coverageCRS != null) {
             final double[] tempRes = new double[coverageCRS.getCoordinateSystem().getDimension()];
             for (int i=0; i < tempRes.length; i++) {

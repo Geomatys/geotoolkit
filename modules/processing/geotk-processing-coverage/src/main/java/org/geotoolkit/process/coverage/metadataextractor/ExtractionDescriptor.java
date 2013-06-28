@@ -39,16 +39,6 @@ import org.opengis.referencing.IdentifiedObject;
 public class ExtractionDescriptor extends AbstractProcessDescriptor {
 
     public static final String NAME = "extractor";
-    public static final String BUNDLE_PATH = "org/geotoolkit/process/coverage/bundle";
-
-    /**
-     * Following attributes are the keys for international description fields.
-     * (See @Process_package/bundle.properties).
-     */
-    protected static final String IN_DESC_KEY  = "extractDescription";
-    protected static final String IN_TITLE_KEY = "inCoverageTitle";
-    protected static final String OUT_DESC_KEY  = "outMetadataDescription";
-    protected static final String OUT_TITLE_KEY = "outMetadataTitle";
 
     /**
      * Mandatory - Coverage to process
@@ -67,16 +57,16 @@ public class ExtractionDescriptor extends AbstractProcessDescriptor {
     static {
         Map<String, Object> propertiesIn = new HashMap<String, Object>();
         propertiesIn.put(IdentifiedObject.NAME_KEY,        "Source");
-        propertiesIn.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString(BUNDLE_PATH, IN_TITLE_KEY));
-        propertiesIn.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString(BUNDLE_PATH, IN_DESC_KEY));
+        propertiesIn.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "metaextract.inCoverage"));
+        propertiesIn.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "metaextract.inCoverageDesc"));
 
         IN_SOURCE  = new DefaultParameterDescriptor<Object>(propertiesIn, Object.class, null, null, null, null, null, true);
         INPUT_DESC = new DefaultParameterDescriptorGroup(NAME+"InputParameters", IN_SOURCE);
 
         Map<String, Object> propertiesOut = new HashMap<String, Object>();
         propertiesOut.put(IdentifiedObject.NAME_KEY,        "Result");
-        propertiesOut.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString(BUNDLE_PATH, OUT_TITLE_KEY));
-        propertiesOut.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString(BUNDLE_PATH, OUT_DESC_KEY));
+        propertiesOut.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "metaextract.outMeta"));
+        propertiesOut.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "metaextract.outMetaDesc"));
 
         OUT_METADATA = new DefaultParameterDescriptor<Metadata>(propertiesOut, Metadata.class, null, null, null, null, null, true);
         OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_METADATA);

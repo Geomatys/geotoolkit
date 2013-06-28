@@ -34,6 +34,7 @@ public class EnumEditor extends PropertyValueEditor implements ActionListener{
     public EnumEditor() {
         super(new BorderLayout());
         add(BorderLayout.CENTER, component);
+        component.addFocusListener(this);
     }
 
     @Override
@@ -59,7 +60,16 @@ public class EnumEditor extends PropertyValueEditor implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        firePropertyChange(PROP_VALUE, null, getValue());
+        valueChanged();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        component.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return component.isEnabled();
+    }
 }

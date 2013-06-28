@@ -98,6 +98,14 @@ public class GeometryFunctionFactory implements FunctionFactory {
      * {@inheritDoc }
      */
     @Override
+    public String getIdentifier() {
+        return "geometry";
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public String[] getNames() {
         return NAMES;
     }

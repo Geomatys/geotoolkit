@@ -19,13 +19,15 @@ package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 import java.awt.BorderLayout;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import org.opengis.feature.type.PropertyType;
 
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class StringEditor extends PropertyValueEditor {
+public class StringEditor extends PropertyValueEditor implements DocumentListener {
 
     private final JTextField textField = new JTextField();
     private final JPasswordField passwordField = new JPasswordField();
@@ -34,6 +36,8 @@ public class StringEditor extends PropertyValueEditor {
     public StringEditor() {
         super(new BorderLayout());
         add(BorderLayout.CENTER, textField);
+        textField.getDocument().addDocumentListener(this);
+        textField.addFocusListener(this);
     }
 
     @Override
@@ -62,6 +66,31 @@ public class StringEditor extends PropertyValueEditor {
     @Override
     public Object getValue() {
         return current.getText();
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        valueChanged();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        valueChanged();
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        valueChanged();
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        current.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() { 
+        return current.isEnabled();
     }
 
 }

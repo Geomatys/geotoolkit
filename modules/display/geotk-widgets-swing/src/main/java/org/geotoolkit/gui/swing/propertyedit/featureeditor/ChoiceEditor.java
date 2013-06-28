@@ -44,6 +44,7 @@ public class ChoiceEditor extends PropertyValueEditor implements ActionListener{
         super(new BorderLayout());
         add(BorderLayout.CENTER, guiCombo);
         guiCombo.addActionListener(this);
+        guiCombo.addFocusListener(this);
         guiLabel.setOpaque(false);
         setOpaque(false);
     }
@@ -115,7 +116,16 @@ public class ChoiceEditor extends PropertyValueEditor implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        firePropertyChange(PROP_VALUE, null, getValue());
+        valueChanged();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        guiCombo.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return guiCombo.isEnabled();
+    }
 }

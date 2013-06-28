@@ -166,6 +166,10 @@ public class CachedExternal extends Cache<ExternalGraphic>{
             final float aspect = (float)(cachedImage.getHeight()) / size.floatValue() ;
             final float maxwidth = cachedImage.getWidth() / aspect;
 
+            if((int)(maxwidth+0.5f)<=0 || (int)(size.floatValue()) <= 0){
+                return null;
+            }
+            
             final BufferedImage buffer = new BufferedImage( (int)(maxwidth+0.5f), (int)(size.floatValue()), BufferedImage.TYPE_INT_ARGB);
             final Graphics2D g2 = (Graphics2D) buffer.getGraphics();
             if(hints != null) g2.setRenderingHints(hints);

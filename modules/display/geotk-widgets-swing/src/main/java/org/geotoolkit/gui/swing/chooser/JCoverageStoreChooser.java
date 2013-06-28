@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.filestore;
+package org.geotoolkit.gui.swing.chooser;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -31,7 +31,7 @@ import javax.swing.event.ListSelectionListener;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
-import org.geotoolkit.gui.swing.filestore.JServerChooser.FactoryCellRenderer;
+import org.geotoolkit.gui.swing.chooser.JServerChooser.FactoryCellRenderer;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
@@ -142,11 +142,11 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
 
         guiEditPane.setLayout(new java.awt.BorderLayout());
 
-        guiCreateNew.setText(MessageBundle.getString("createNew"));
+        guiCreateNew.setText(MessageBundle.getString("choosercoveragestore.new")); // NOI18N
 
         guiInfoLabel.setEditable(false);
 
-        guiConnect.setText("Connect");
+        guiConnect.setText(MessageBundle.getString("choosercoveragestore.connect")); // NOI18N
         guiConnect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiConnectActionPerformed(evt);
@@ -160,7 +160,7 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
             .addGroup(guiConfigLayout.createSequentialGroup()
                 .addComponent(guiCreateNew)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(guiInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                .addComponent(guiInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(guiConnect))
             .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
@@ -203,7 +203,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             store = getCoverageStore();
             chooser.setSource(store);
             guiInfoLabel.setForeground(Color.GREEN);
-            guiInfoLabel.setText("ok");
+            guiInfoLabel.setText(MessageBundle.getString("choosercoveragestore.ok"));
         } catch (DataStoreException ex) {
             guiInfoLabel.setForeground(Color.RED);
             guiInfoLabel.setText(""+ex.getMessage());

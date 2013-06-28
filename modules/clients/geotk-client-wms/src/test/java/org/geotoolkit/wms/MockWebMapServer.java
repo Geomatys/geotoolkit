@@ -19,8 +19,12 @@ package org.geotoolkit.wms;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSMarshallerPool;
 import org.geotoolkit.wms.xml.WMSVersion;
@@ -34,6 +38,7 @@ import org.geotoolkit.xml.MarshallerPool;
  */
 public class MockWebMapServer extends WebMapServer{
 
+    private final static Logger LOGGER = Logging.getLogger(MockWebMapServer.class);
     private final AbstractWMSCapabilities capa111;
     private final AbstractWMSCapabilities capa130;
 
@@ -45,7 +50,10 @@ public class MockWebMapServer extends WebMapServer{
         try{
             capa111 = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource("/org/geotoolkit/wms/wms111.xml"));
             capa130 = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource("/org/geotoolkit/wms/wms130.xml"));
-        }finally{
+        } catch (JAXBException ex) {
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+            throw ex;
+        } finally {
             pool.release(unmarshaller);
         }
         

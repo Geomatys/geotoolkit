@@ -26,7 +26,7 @@ import org.geotoolkit.style.StyleConstants;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class VectorFieldSymbolizer extends AbstractExtensionSymbolizer{
+public class VectorFieldSymbolizer extends AbstractExtensionSymbolizer {
 
     public static final String NAME = "VectorField";
 

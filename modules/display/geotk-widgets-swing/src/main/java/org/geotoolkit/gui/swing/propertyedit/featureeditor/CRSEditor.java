@@ -17,6 +17,8 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import org.geotoolkit.gui.swing.referencing.AuthorityCodesComboBox;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.feature.type.PropertyType;
@@ -27,13 +29,15 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class CRSEditor extends PropertyValueEditor {
+public class CRSEditor extends PropertyValueEditor implements PropertyChangeListener {
 
     private final AuthorityCodesComboBox component = new AuthorityCodesComboBox();
 
     public CRSEditor() {
         super(new BorderLayout());
         add(BorderLayout.CENTER, component);
+        component.addPropertyChangeListener(this);
+        component.addFocusListener(this);
     }
 
     @Override
@@ -73,4 +77,27 @@ public class CRSEditor extends PropertyValueEditor {
         }
     }
 
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals(AuthorityCodesComboBox.SELECTED_CODE_PROPERTY)) {
+            valueChanged();
+        }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        //avoid memory leaks by removing listener.
+        component.removePropertyChangeListener(this);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        component.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return component.isEnabled();
+    }
 }

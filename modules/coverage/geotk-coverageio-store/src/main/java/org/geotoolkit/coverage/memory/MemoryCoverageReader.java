@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.coverage.memory;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
@@ -47,7 +48,7 @@ public class MemoryCoverageReader extends GridCoverageReader {
 
     @Override
     public List<GridSampleDimension> getSampleDimensions(final int i) throws CoverageStoreException, CancellationException {
-        return Collections.singletonList(coverage.getSampleDimension(i));
+        return Arrays.asList(coverage.getSampleDimensions());
     }
 
     @Override

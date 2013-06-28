@@ -11,6 +11,14 @@ public class IMRFunctionFactory implements FunctionFactory{
 
     public static final String DENSITY = "density";
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getIdentifier() {
+        return "imr";
+    }
+    
     @Override
     public String[] getNames() {
         return new String[]{DENSITY};

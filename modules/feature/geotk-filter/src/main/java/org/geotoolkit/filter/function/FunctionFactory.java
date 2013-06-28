@@ -31,6 +31,12 @@ import org.opengis.filter.expression.Literal;
 public interface FunctionFactory {
 
     /**
+     * Factory name.
+     * @return String
+     */
+    String getIdentifier();
+    
+    /**
      * @return Names of the created functions.
      */
     String[] getNames();

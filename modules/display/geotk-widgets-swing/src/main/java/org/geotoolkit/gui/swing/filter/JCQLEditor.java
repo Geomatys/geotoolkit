@@ -20,9 +20,7 @@ package org.geotoolkit.gui.swing.filter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -31,6 +29,12 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.filter.function.FunctionFactory;
 import org.geotoolkit.filter.function.Functions;
@@ -58,23 +62,36 @@ public class JCQLEditor extends javax.swing.JPanel{
     public JCQLEditor() {
         initComponents();
 
-        final List<String> functions = new ArrayList<String>();
-        for(FunctionFactory ff : Functions.getFactories()){
-            functions.addAll(Arrays.asList(ff.getNames()));
-        }
-        Collections.sort(functions);
+        final DefaultMutableTreeNode root = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode("root");
         
-        guiFunctions.setModel(new ListComboBoxModel(functions));
-        guiFunctions.addListSelectionListener(new ListSelectionListener() {
+        for(FunctionFactory ff : Functions.getFactories()){
+            final DefaultMutableTreeNode fnode = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode(ff.getIdentifier());
+            for(String str : ff.getNames()){
+                final DefaultMutableTreeNode enode = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode(str);
+                fnode.add(enode);
+            }
+            root.add(fnode);
+        }
+        
+        guiFunctions.setModel(new DefaultTreeModel(root));
+        guiFunctions.setRootVisible(false);
+        guiFunctions.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        guiFunctions.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
             @Override
-            public void valueChanged(ListSelectionEvent e) {
-                Object ob = guiFunctions.getSelectedValue();
+            public void valueChanged(TreeSelectionEvent e) {
+                
+                TreePath ob = guiFunctions.getSelectionPath();
                 if(ob != null){
-                    guiCQL.insertText(" "+ob.toString()+"()");
-                    guiFunctions.clearSelection();
+                    final DefaultMutableTreeNode node = (DefaultMutableTreeNode) ob.getLastPathComponent();
+                    if(node.getChildCount()==0){
+                        guiCQL.insertText(" "+node.getUserObject().toString()+"()");
+                        guiFunctions.clearSelection();
+                    }
+                    
                 }
             }
         });
+        
         guiProperties.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -170,7 +187,7 @@ public class JCQLEditor extends javax.swing.JPanel{
             .addGroup(guiPropertiesPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jXTitledSeparator6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(guiScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
+            .addComponent(guiScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
         );
         guiPropertiesPaneLayout.setVerticalGroup(
             guiPropertiesPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -190,7 +207,7 @@ public class JCQLEditor extends javax.swing.JPanel{
 
         jXTitledSeparator1.setTitle(MessageBundle.getString("operand")); // NOI18N
 
-        jPanel3.setLayout(new java.awt.GridLayout());
+        jPanel3.setLayout(new java.awt.GridLayout(1, 0));
 
         jButton1.setText(" + ");
         jButton1.setBorderPainted(false);
@@ -471,7 +488,7 @@ public class JCQLEditor extends javax.swing.JPanel{
                     .addComponent(jXTitledSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jXTitledSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jXTitledSeparator4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         guiFilterOpsLayout.setVerticalGroup(
             guiFilterOpsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -489,8 +506,7 @@ public class JCQLEditor extends javax.swing.JPanel{
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        guiFunctions.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane2.setViewportView(guiFunctions);
+        jScrollPane3.setViewportView(guiFunctions);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -503,7 +519,7 @@ public class JCQLEditor extends javax.swing.JPanel{
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jXTitledSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jXTitledSeparator5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-            .addComponent(jScrollPane2)
+            .addComponent(jScrollPane3)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -516,7 +532,7 @@ public class JCQLEditor extends javax.swing.JPanel{
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jXTitledSeparator5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE))
         );
 
         jScrollPane1.setViewportView(jPanel2);
@@ -528,7 +544,7 @@ public class JCQLEditor extends javax.swing.JPanel{
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private final org.geotoolkit.cql.JCQLTextPane guiCQL = new org.geotoolkit.cql.JCQLTextPane();
     private final javax.swing.JPanel guiFilterOps = new javax.swing.JPanel();
-    private final javax.swing.JList guiFunctions = new javax.swing.JList();
+    private final javax.swing.JTree guiFunctions = new javax.swing.JTree();
     private final javax.swing.JList guiProperties = new javax.swing.JList();
     private final javax.swing.JPanel guiPropertiesPane = new javax.swing.JPanel();
     private final javax.swing.JScrollPane guiScroll = new javax.swing.JScrollPane();
@@ -582,7 +598,7 @@ public class JCQLEditor extends javax.swing.JPanel{
     private final javax.swing.JPanel jPanel5 = new javax.swing.JPanel();
     private final javax.swing.JPanel jPanel6 = new javax.swing.JPanel();
     private final javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
-    private final javax.swing.JScrollPane jScrollPane2 = new javax.swing.JScrollPane();
+    private final javax.swing.JScrollPane jScrollPane3 = new javax.swing.JScrollPane();
     private final javax.swing.JSplitPane jSplitPane1 = new javax.swing.JSplitPane();
     private final org.jdesktop.swingx.JXTitledSeparator jXTitledSeparator1 = new org.jdesktop.swingx.JXTitledSeparator();
     private final org.jdesktop.swingx.JXTitledSeparator jXTitledSeparator2 = new org.jdesktop.swingx.JXTitledSeparator();

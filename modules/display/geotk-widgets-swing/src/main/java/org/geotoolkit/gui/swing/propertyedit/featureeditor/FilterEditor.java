@@ -49,6 +49,7 @@ public class FilterEditor extends PropertyValueEditor implements ActionListener{
         add(BorderLayout.CENTER, guiLabel);
         add(BorderLayout.EAST, guiButton);
         guiButton.addActionListener(this);
+        guiButton.addFocusListener(this);
         guiButton.setMargin(new Insets(0, 0, 0, 0));
     }
 
@@ -98,6 +99,16 @@ public class FilterEditor extends PropertyValueEditor implements ActionListener{
         }
 
         updateText();
+        valueChanged();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        guiButton.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return guiButton.isEnabled();
+    }
 }

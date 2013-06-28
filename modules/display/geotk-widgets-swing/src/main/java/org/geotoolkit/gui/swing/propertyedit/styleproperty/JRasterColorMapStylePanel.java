@@ -389,7 +389,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
                 if(mustInterpolation){
                     for(int i=0,n=names.size();i<n;i++){
-                        final List<MeasurementRange<?>> ranges = reader.getSampleValueRanges(i);
+                        final List<MeasurementRange<?>> ranges = null;//reader.getSampleValueRanges(i);
                         if(ranges != null && !ranges.isEmpty()){
                             for(MeasurementRange r : ranges){
                                 final double min = r.getMinimum();

@@ -27,7 +27,6 @@ import java.util.GregorianCalendar;
 import javax.swing.JSpinner;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import static org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor.PROP_VALUE;
 import org.jdesktop.swingx.JXDatePicker;
 import org.opengis.feature.type.PropertyType;
 
@@ -48,10 +47,15 @@ public class TimeStampEditor extends PropertyValueEditor implements ActionListen
         add(BorderLayout.EAST, minutes);
         datePicker.setOpaque(false);
         datePicker.addActionListener(this);
+        datePicker.getEditor().addFocusListener(this);
+        
         hours.setOpaque(false);
         hours.addChangeListener(this);
+        ((JSpinner.DefaultEditor) hours.getEditor()).getTextField().addFocusListener(this);
+        
         minutes.setOpaque(false);
         minutes.addChangeListener(this);
+        ((JSpinner.DefaultEditor) minutes.getEditor()).getTextField().addFocusListener(this);
         
     }
 
@@ -89,11 +93,21 @@ public class TimeStampEditor extends PropertyValueEditor implements ActionListen
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        firePropertyChange(PROP_VALUE, null, getValue());
+        valueChanged();
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        firePropertyChange(PROP_VALUE, null, getValue());
+        valueChanged();
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        datePicker.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return datePicker.isEnabled();
     }
 }
