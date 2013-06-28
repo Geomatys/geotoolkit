@@ -14,29 +14,28 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.filestore;
+package org.geotoolkit.gui.swing.chooser;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.*;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.geotoolkit.client.Server;
-import org.geotoolkit.client.ServerFactory;
-import org.geotoolkit.client.ServerFinder;
+import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFactory;
-import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.data.FileFeatureStoreFactory;
-import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
+import org.geotoolkit.coverage.CoverageStoreFinder;
+import org.geotoolkit.gui.swing.chooser.JServerChooser.FactoryCellRenderer;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
-import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
@@ -45,19 +44,19 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Panel allowing to choose a server and configure it among the
- * declared ServerFactories.
+ * Panel allowing to choose a coverage store and configure it among the
+ * declared CoverageStoreFactories.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class JServerChooser extends javax.swing.JPanel {
+public class JCoverageStoreChooser extends javax.swing.JPanel {
 
     private static final Logger LOGGER = Logging.getLogger(JCoverageStoreChooser.class);
 
-    private static final Comparator<ServerFactory> SORTER = new Comparator<ServerFactory>() {
+    private static final Comparator<CoverageStoreFactory> SORTER = new Comparator<CoverageStoreFactory>() {
         @Override
-        public int compare(ServerFactory o1, ServerFactory o2) {
+        public int compare(CoverageStoreFactory o1, CoverageStoreFactory o2) {
             return o1.getDisplayName().toString().compareTo(o2.getDisplayName().toString());
         }
     };
@@ -65,11 +64,12 @@ public class JServerChooser extends javax.swing.JPanel {
     private final JFeatureOutLine guiEditor = new JFeatureOutLine();
     private final JLayerChooser chooser = new JLayerChooser();
 
-    public JServerChooser() {
+    public JCoverageStoreChooser() {
         initComponents();
         guiEditPane.add(BorderLayout.CENTER,new JScrollPane(guiEditor));
 
-        final List<ServerFactory> factories = new ArrayList<ServerFactory>(ServerFinder.getAvailableFactories(null));
+        final List<CoverageStoreFactory> factories = new ArrayList<CoverageStoreFactory>(
+                CoverageStoreFinder.getAvailableFactories(null));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );
@@ -78,7 +78,7 @@ public class JServerChooser extends javax.swing.JPanel {
         guiList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                final ServerFactory factory = (ServerFactory) guiList.getSelectedValue();
+                final CoverageStoreFactory factory = (CoverageStoreFactory) guiList.getSelectedValue();
                 final ParameterValueGroup param = factory.getParametersDescriptor().createValue();
                 guiEditor.setEdited(param);
             }
@@ -97,21 +97,24 @@ public class JServerChooser extends javax.swing.JPanel {
         }
     }
 
-    public Server getServer() throws DataStoreException{
-        final ServerFactory factory = (ServerFactory) guiList.getSelectedValue();
+    public CoverageStore getCoverageStore() throws DataStoreException{
+        final CoverageStoreFactory factory = (CoverageStoreFactory) guiList.getSelectedValue();
 
         if(factory == null){
             return null;
         }
 
         final ParameterValueGroup param = guiEditor.getEditedAsParameter(factory.getParametersDescriptor());
-        return factory.open(param);
+        if(guiCreateNew.isSelected()){
+            return factory.create(param);
+        }else{
+            return factory.open(param);
+        }
     }
 
     public List<MapLayer> getSelectedLayers() throws DataStoreException{
         return chooser.getLayers();
     }
-
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -126,9 +129,10 @@ public class JServerChooser extends javax.swing.JPanel {
         guiSplit = new javax.swing.JSplitPane();
         guiConfig = new javax.swing.JPanel();
         guiEditPane = new javax.swing.JPanel();
+        guiCreateNew = new javax.swing.JCheckBox();
         guiInfoLabel = new javax.swing.JTextField();
         guiConnect = new javax.swing.JButton();
-        scr = new javax.swing.JScrollPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
         guiList = new org.jdesktop.swingx.JXList();
 
         guiLayerSplit.setDividerSize(5);
@@ -137,6 +141,8 @@ public class JServerChooser extends javax.swing.JPanel {
         guiSplit.setDividerSize(5);
 
         guiEditPane.setLayout(new java.awt.BorderLayout());
+
+        guiCreateNew.setText(MessageBundle.getString("createNew"));
 
         guiInfoLabel.setEditable(false);
 
@@ -151,40 +157,37 @@ public class JServerChooser extends javax.swing.JPanel {
         guiConfig.setLayout(guiConfigLayout);
         guiConfigLayout.setHorizontalGroup(
             guiConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, guiConfigLayout.createSequentialGroup()
-                .addComponent(guiInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
+            .addGroup(guiConfigLayout.createSequentialGroup()
+                .addComponent(guiCreateNew)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(guiInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(guiConnect))
-            .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
+            .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
         );
         guiConfigLayout.setVerticalGroup(
             guiConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, guiConfigLayout.createSequentialGroup()
-                .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
+                .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(guiConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(guiInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(guiCreateNew)
                     .addComponent(guiConnect)))
         );
 
         guiSplit.setRightComponent(guiConfig);
 
-        scr.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane2.setViewportView(guiList);
 
-        guiList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        scr.setViewportView(guiList);
-
-        guiSplit.setLeftComponent(scr);
+        guiSplit.setLeftComponent(jScrollPane2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(guiSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 646, Short.MAX_VALUE)
+            .addComponent(guiSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 649, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -194,10 +197,10 @@ public class JServerChooser extends javax.swing.JPanel {
 
 private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiConnectActionPerformed
 
-        Server store = null;
+        CoverageStore store = null;
         try {
             chooser.setSource(null);
-            store = getServer();
+            store = getCoverageStore();
             chooser.setSource(store);
             guiInfoLabel.setForeground(Color.GREEN);
             guiInfoLabel.setText("ok");
@@ -212,12 +215,13 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel guiConfig;
     private javax.swing.JButton guiConnect;
+    private javax.swing.JCheckBox guiCreateNew;
     private javax.swing.JPanel guiEditPane;
     private javax.swing.JTextField guiInfoLabel;
     private javax.swing.JSplitPane guiLayerSplit;
     private org.jdesktop.swingx.JXList guiList;
     private javax.swing.JSplitPane guiSplit;
-    private javax.swing.JScrollPane scr;
+    private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -226,7 +230,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
      * @return
      * @throws DataStoreException
      */
-    public static List<Server> showDialog() throws DataStoreException{
+    public static List<CoverageStore> showDialog() throws DataStoreException{
         return showDialog(Collections.EMPTY_LIST);
     }
 
@@ -248,12 +252,12 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
      * @return
      * @throws DataStoreException
      */
-    public static List<Server> showDialog(List<PropertyValueEditor> editors) throws DataStoreException{
+    public static List<CoverageStore> showDialog(List<PropertyValueEditor> editors) throws DataStoreException{
         return showDialog(editors, false);
     }
 
     private static List showDialog(List<PropertyValueEditor> editors, boolean layerVisible) throws DataStoreException{
-        final JServerChooser chooser = new JServerChooser();
+        final JCoverageStoreChooser chooser = new JCoverageStoreChooser();
         if(editors != null){
             chooser.guiEditor.getEditors().addAll(editors);
         }
@@ -262,98 +266,19 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         final int res = JOptionDialog.show(null, chooser, JOptionPane.OK_OPTION);
         
         if (JOptionPane.OK_OPTION == res) {
-            if (layerVisible) {
+            if(layerVisible){
                 return chooser.getSelectedLayers();
-            } else {
-                final Server store = chooser.getServer();
-                if (store == null) {
+            }else{
+                final CoverageStore store = chooser.getCoverageStore();
+                if(store == null){
                     return Collections.EMPTY_LIST;
-                } else {
+                }else{
                     return Collections.singletonList(store);
                 }
             }
         } else {
             return Collections.EMPTY_LIST;
         }
-    }
-
-    static class FactoryCellRenderer extends DefaultListCellRenderer{
-
-        @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
-            String name = "";
-            String desc = "";
-
-            if(value instanceof ServerFactory){
-                final ServerFactory factory = (ServerFactory) value;
-                name = String.valueOf(factory.getDisplayName());
-                desc = String.valueOf(factory.getDescription());
-            }else if(value instanceof FeatureStoreFactory){
-                final FeatureStoreFactory factory = (FeatureStoreFactory) value;
-                name = String.valueOf(factory.getDisplayName());
-                desc = String.valueOf(factory.getDescription());
-            }else if(value instanceof CoverageStoreFactory){
-                final CoverageStoreFactory factory = (CoverageStoreFactory) value;
-                name = String.valueOf(factory.getDisplayName());
-                desc = String.valueOf(factory.getDescription());
-            }
-
-            final String txt = "<html><b>"+name+"</b><br/>"
-                        + "<font size=\"0.5em\"><i>&nbsp&nbsp&nbsp "+desc+"</i></font></html>";
-            lbl.setText(txt);
-            lbl.setIcon(findIcon(value));
-
-            return lbl;
-        }
-
-    }
-
-    private static final ImageIcon EMPTY_24 = new ImageIcon(new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB));
-
-    private static ImageIcon findIcon(Object candidate){
-
-        ImageIcon icon = EMPTY_24;
-        String name = "";
-        if(candidate instanceof ServerFactory){
-            name = ((ServerFactory)candidate).getDisplayName().toString().toLowerCase();
-            icon = IconBundle.getIcon("24_server");
-        }else if(candidate instanceof CoverageStoreFactory){
-            name = ((CoverageStoreFactory)candidate).getDisplayName().toString().toLowerCase();
-            icon = IconBundle.getIcon("24_folder_img");
-        }else if(candidate instanceof FeatureStoreFactory){
-            name = ((FeatureStoreFactory)candidate).getDisplayName().toString().toLowerCase();
-            icon = IconBundle.getIcon("24_store");
-        }
-
-        final String classname = candidate.getClass().getName().toLowerCase();
-
-        //knowned cases
-        if(name.contains("google")){
-            icon = IconBundle.getIcon("24_google");
-        }else if(name.contains("osm")){
-            icon = IconBundle.getIcon("24_osm");
-        }else if(name.contains("orient")){
-            icon = IconBundle.getIcon("24_orientdb");
-        }else if(name.contains("ign")){
-            icon = IconBundle.getIcon("24_ign");
-        }else if(name.contains("ogc")){
-            icon = IconBundle.getIcon("24_ogc");
-        }else if(classname.contains("coveragesql")){
-            icon = IconBundle.getIcon("24_database");
-        }else if(classname.contains("mysql")){
-            icon = IconBundle.getIcon("24_database");
-        }else if(classname.contains("post")){
-            icon = IconBundle.getIcon("24_database");
-        }else if(candidate instanceof AbstractFolderFeatureStoreFactory){
-            icon = IconBundle.getIcon("24_folder_doc");
-        }else if(candidate instanceof FileFeatureStoreFactory){
-            icon = IconBundle.getIcon("24_doc");
-        }
-
-
-        return icon;
     }
 
 }

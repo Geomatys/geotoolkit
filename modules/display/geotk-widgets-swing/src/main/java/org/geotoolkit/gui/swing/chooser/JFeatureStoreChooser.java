@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.filestore;
+package org.geotoolkit.gui.swing.chooser;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -28,10 +28,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.geotoolkit.coverage.CoverageStore;
-import org.geotoolkit.coverage.CoverageStoreFactory;
-import org.geotoolkit.coverage.CoverageStoreFinder;
-import org.geotoolkit.gui.swing.filestore.JServerChooser.FactoryCellRenderer;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.gui.swing.chooser.JServerChooser.FactoryCellRenderer;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
@@ -44,19 +44,19 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Panel allowing to choose a coverage store and configure it among the
- * declared CoverageStoreFactories.
+ * Panel allowing to choose a data store and configure it among the
+ * declared DataStoreFactories.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class JCoverageStoreChooser extends javax.swing.JPanel {
+public class JFeatureStoreChooser extends javax.swing.JPanel {
 
-    private static final Logger LOGGER = Logging.getLogger(JCoverageStoreChooser.class);
+    private static final Logger LOGGER = Logging.getLogger(JFeatureStoreChooser.class);
 
-    private static final Comparator<CoverageStoreFactory> SORTER = new Comparator<CoverageStoreFactory>() {
+    private static final Comparator<FeatureStoreFactory> SORTER = new Comparator<FeatureStoreFactory>() {
         @Override
-        public int compare(CoverageStoreFactory o1, CoverageStoreFactory o2) {
+        public int compare(FeatureStoreFactory o1, FeatureStoreFactory o2) {
             return o1.getDisplayName().toString().compareTo(o2.getDisplayName().toString());
         }
     };
@@ -64,12 +64,11 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
     private final JFeatureOutLine guiEditor = new JFeatureOutLine();
     private final JLayerChooser chooser = new JLayerChooser();
 
-    public JCoverageStoreChooser() {
+    public JFeatureStoreChooser() {
         initComponents();
         guiEditPane.add(BorderLayout.CENTER,new JScrollPane(guiEditor));
 
-        final List<CoverageStoreFactory> factories = new ArrayList<CoverageStoreFactory>(
-                CoverageStoreFinder.getAvailableFactories(null));
+        final List<FeatureStoreFactory> factories = new ArrayList<FeatureStoreFactory>(FeatureStoreFinder.getAvailableFactories(null));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );
@@ -78,7 +77,7 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
         guiList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                final CoverageStoreFactory factory = (CoverageStoreFactory) guiList.getSelectedValue();
+                final FeatureStoreFactory factory = (FeatureStoreFactory) guiList.getSelectedValue();
                 final ParameterValueGroup param = factory.getParametersDescriptor().createValue();
                 guiEditor.setEdited(param);
             }
@@ -97,8 +96,8 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
         }
     }
 
-    public CoverageStore getCoverageStore() throws DataStoreException{
-        final CoverageStoreFactory factory = (CoverageStoreFactory) guiList.getSelectedValue();
+    public FeatureStore getFeatureStore() throws DataStoreException{
+        final FeatureStoreFactory factory = (FeatureStoreFactory) guiList.getSelectedValue();
 
         if(factory == null){
             return null;
@@ -130,8 +129,8 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
         guiConfig = new javax.swing.JPanel();
         guiEditPane = new javax.swing.JPanel();
         guiCreateNew = new javax.swing.JCheckBox();
-        guiInfoLabel = new javax.swing.JTextField();
         guiConnect = new javax.swing.JButton();
+        guiInfoLabel = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         guiList = new org.jdesktop.swingx.JXList();
 
@@ -144,14 +143,14 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
 
         guiCreateNew.setText(MessageBundle.getString("createNew"));
 
-        guiInfoLabel.setEditable(false);
-
         guiConnect.setText("Connect");
         guiConnect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiConnectActionPerformed(evt);
             }
         });
+
+        guiInfoLabel.setEditable(false);
 
         javax.swing.GroupLayout guiConfigLayout = new javax.swing.GroupLayout(guiConfig);
         guiConfig.setLayout(guiConfigLayout);
@@ -160,25 +159,31 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
             .addGroup(guiConfigLayout.createSequentialGroup()
                 .addComponent(guiCreateNew)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(guiInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+                .addComponent(guiInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(guiConnect))
-            .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+            .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
         );
         guiConfigLayout.setVerticalGroup(
             guiConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, guiConfigLayout.createSequentialGroup()
-                .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
+                .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(guiConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(guiInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(guiCreateNew)
-                    .addComponent(guiConnect)))
+                    .addComponent(guiConnect)
+                    .addComponent(guiInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         guiSplit.setRightComponent(guiConfig);
 
         jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        guiList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
         jScrollPane2.setViewportView(guiList);
 
         guiSplit.setLeftComponent(jScrollPane2);
@@ -187,7 +192,7 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(guiSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 649, Short.MAX_VALUE)
+            .addComponent(guiSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 685, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -197,10 +202,10 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
 
 private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiConnectActionPerformed
 
-        CoverageStore store = null;
+        FeatureStore store = null;
         try {
             chooser.setSource(null);
-            store = getCoverageStore();
+            store = getFeatureStore();
             chooser.setSource(store);
             guiInfoLabel.setForeground(Color.GREEN);
             guiInfoLabel.setText("ok");
@@ -224,14 +229,26 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 
+
     /**
      * Display a modal dialog.
      *
      * @return
      * @throws DataStoreException
      */
-    public static List<CoverageStore> showDialog() throws DataStoreException{
+    public static List<FeatureStore> showDialog() throws DataStoreException{
         return showDialog(Collections.EMPTY_LIST);
+    }
+
+    /**
+     * Display a modal dialog.
+     *
+     * @param editors : additional FeatureOutline editors
+     * @return
+     * @throws DataStoreException
+     */
+    public static List<FeatureStore> showDialog(List<PropertyValueEditor> editors) throws DataStoreException{
+        return showDialog(editors, false);
     }
 
     /**
@@ -245,22 +262,11 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         return showDialog(editors, true);
     }
 
-    /**
-     * Display a modal dialog.
-     *
-     * @param editors : additional FeatureOutline editors
-     * @return
-     * @throws DataStoreException
-     */
-    public static List<CoverageStore> showDialog(List<PropertyValueEditor> editors) throws DataStoreException{
-        return showDialog(editors, false);
-    }
-
     private static List showDialog(List<PropertyValueEditor> editors, boolean layerVisible) throws DataStoreException{
-        final JCoverageStoreChooser chooser = new JCoverageStoreChooser();
+        final JFeatureStoreChooser chooser = new JFeatureStoreChooser();
         if(editors != null){
             chooser.guiEditor.getEditors().addAll(editors);
-        }
+        }        
         chooser.setLayerSelectionVisible(layerVisible);
         
         final int res = JOptionDialog.show(null, chooser, JOptionPane.OK_OPTION);
@@ -269,7 +275,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             if(layerVisible){
                 return chooser.getSelectedLayers();
             }else{
-                final CoverageStore store = chooser.getCoverageStore();
+                final FeatureStore store = chooser.getFeatureStore();
                 if(store == null){
                     return Collections.EMPTY_LIST;
                 }else{
@@ -279,6 +285,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         } else {
             return Collections.EMPTY_LIST;
         }
+        
     }
 
 }
