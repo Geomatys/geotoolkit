@@ -22,6 +22,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.logging.Level;
 import javax.swing.ImageIcon;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.display2d.ext.cellular.CellSymbolizer;
@@ -34,7 +35,6 @@ import static org.geotoolkit.gui.swing.style.StyleElementEditor.getStyleFactory;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -43,7 +43,6 @@ import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
-import org.openide.util.Exceptions;
 
 /**
  * Cell Symbolizer editor.

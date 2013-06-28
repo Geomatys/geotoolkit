@@ -40,6 +40,11 @@ public class GroovyFunctionFactory implements FunctionFactory{
         NAMES = new String[]{GROOVY};
     }
 
+    @Override
+    public String getIdentifier() {
+        return GROOVY;
+    }
+    
     /**
      * Test if groovy shell is available.
      * @return true if available.
