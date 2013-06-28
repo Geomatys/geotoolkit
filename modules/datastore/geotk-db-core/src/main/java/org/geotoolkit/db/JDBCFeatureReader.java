@@ -83,7 +83,11 @@ public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
         this.cx = cnx;
         this.st = cx.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
         this.st.setFetchSize(store.getFetchSize());
-        this.rs = this.st.executeQuery(sql);
+        try {
+            this.rs = this.st.executeQuery(sql);
+        } catch (SQLException sqle){
+            throw new SQLException(sqle.getMessage()+" with query :"+ sql,sqle);
+        }
         this.hints = hints;
         this.release = release;
     }
