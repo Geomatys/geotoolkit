@@ -21,6 +21,8 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.ImagingOpException;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
@@ -30,6 +32,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import javax.media.jai.util.ImagingException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
@@ -433,8 +436,12 @@ public class ResampleProcess extends AbstractProcess {
         //try to optimize resample using java wrap operation
         if(canUseJavaInterpolation(sourceImage, allSteps2D, interpolationType)){
             allSteps2D = PixelTranslation.translate(allSteps2D, PixelOrientation.CENTER,PixelOrientation.UPPER_LEFT,0,1);
-            return resampleUsingJava(sourceCoverage, sourceImage, interpolationType, 
-                               allSteps2D, targetImage, targetGG, finalView, hints);
+            try{
+                return resampleUsingJava(sourceCoverage, sourceImage, interpolationType, 
+                                   allSteps2D, targetImage, targetGG, finalView, hints);
+            }catch(ImagingOpException ex){
+                LOGGER.log(Level.WARNING, "Resampling process : Failed to use java affine resampling.");
+            }
         }
         
         MathTransform targetToSource = allSteps2D;
@@ -483,7 +490,11 @@ public class ResampleProcess extends AbstractProcess {
      * @return 
      */
     private static boolean canUseJavaInterpolation(RenderedImage sourceImage, 
-            MathTransform trs, InterpolationCase interpolation){        
+            MathTransform trs, InterpolationCase interpolation){
+        final int datatype = sourceImage.getSampleModel().getDataType();;
+        if(!(datatype == DataBuffer.TYPE_BYTE || datatype == DataBuffer.TYPE_INT)){
+            return false;
+        }
         return interpolation != InterpolationCase.LANCZOS && trs instanceof AffineTransform && 
               ((sourceImage instanceof BufferedImage) || (sourceImage.getNumXTiles()==1 && sourceImage.getNumYTiles()==1));
     }

@@ -29,6 +29,7 @@ import org.geotoolkit.process.coverage.coveragetofeatures.CoverageToFeaturesDesc
 import org.geotoolkit.process.coverage.coveragetovector.CoverageToVectorDescriptor;
 import org.geotoolkit.process.coverage.isoline.IsolineDescriptor;
 import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
+import org.geotoolkit.process.coverage.merge.MergeDescriptor;
 import org.geotoolkit.process.coverage.metadataextractor.ExtractionDescriptor;
 import org.geotoolkit.process.coverage.pgpyramid.PyramidDescriptor;
 import org.geotoolkit.process.coverage.reducetodomain.ReduceToDomainDescriptor;
@@ -73,6 +74,7 @@ public class CoverageProcessingRegistry extends AbstractProcessingRegistry{
               BandSelectDescriptor.INSTANCE,
               BandCombineDescriptor.INSTANCE,
               ReformatDescriptor.INSTANCE,
+              MergeDescriptor.INSTANCE,
               PyramidDescriptor.INSTANCE);
     }
 

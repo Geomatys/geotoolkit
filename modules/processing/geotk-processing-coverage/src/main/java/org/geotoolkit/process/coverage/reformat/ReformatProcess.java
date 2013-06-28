@@ -22,6 +22,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.util.Hashtable;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -33,7 +34,6 @@ import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.process.coverage.reformat.ReformatDescriptor.*;
 import org.geotoolkit.process.image.reformat.GrayScaleColorModel;
-import org.geotoolkit.util.ArgumentChecks;
 
 /**
  *
