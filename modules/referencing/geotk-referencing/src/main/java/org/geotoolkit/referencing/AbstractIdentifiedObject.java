@@ -113,15 +113,19 @@ public class AbstractIdentifiedObject extends FormattableObject implements Ident
 
     /**
      * Filter out the map entries to be given to {@link NamedIdentifier}.
+     *
+     * @todo Actually replaces NAME_KEY by CODE_KEY, but we should check if CODE_KEY exists before?
      */
     private static final ObjectConverter<String,String> EXCLUDE_NAME = new SurjectiveConverter<String,String>() {
         @Override public Class<String> getSourceClass() {return String.class;}
         @Override public Class<String> getTargetClass() {return String.class;}
         @Override public String apply(final String key) {
-            if (key != null && (key.equalsIgnoreCase(NAME_KEY) ||
-                    key.regionMatches(true, 0, REMARKS_KEY, 0, REMARKS_KEY.length())))
-            {
-                return null;
+            if (key != null) {
+                if (key.equalsIgnoreCase(NAME_KEY)) {
+                    return Identifier.CODE_KEY;
+                } else if (key.regionMatches(true, 0, REMARKS_KEY, 0, REMARKS_KEY.length())) {
+                    return null;
+                }
             }
             return key;
         }
