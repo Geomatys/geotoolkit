@@ -63,8 +63,9 @@ public class BandSelectProcess extends AbstractProcess {
         //TODO try to reuse java colormodel if possible
         //extract grayscale min/max from sample dimension
         final GridSampleDimension gridSample = inputCoverage.getSampleDimension(0);
-        final ColorModel graycm = new GrayScaleColorModel(
-                DataBuffer.getDataTypeSize(resultImage.getSampleModel().getDataType()), 
+        final ColorModel graycm = GrayScaleColorModel.create(
+                resultImage.getSampleModel().getDataType(), 
+                resultImage.getSampleModel().getNumBands(),
                 gridSample.getMinimumValue(), gridSample.getMaximumValue());
         resultImage = new BufferedImage(graycm, resultImage.getRaster(), false, new Hashtable<Object, Object>());
         

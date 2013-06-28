@@ -78,8 +78,9 @@ public class BandCombineProcess extends AbstractProcess {
         //extract grayscale min/max from sample dimension
         SampleDimension gridSample = inputCoverage[0].getSampleDimension(0);
         GridGeometry gridGeometry = ((GridCoverage2D)inputCoverage[0]).getGridGeometry();
-        final ColorModel graycm = new GrayScaleColorModel(
-                DataBuffer.getDataTypeSize(resultImage.getSampleModel().getDataType()), 
+        final ColorModel graycm = GrayScaleColorModel.create(
+                resultImage.getSampleModel().getDataType(),
+                resultImage.getSampleModel().getNumBands(),
                 gridSample.getMinimumValue(), gridSample.getMaximumValue());
         resultImage = new BufferedImage(graycm, resultImage.getRaster(), false, new Hashtable<Object, Object>());
         

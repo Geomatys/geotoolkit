@@ -34,7 +34,6 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterValueGroup;
@@ -49,21 +48,8 @@ public class MergeTest {
     
     private static final double DELTA = 0.000001;
     
-    @Ignore
     @Test
     public void mergeTest() throws NoSuchAuthorityCodeException, FactoryException, ProcessException{
-        
-//        JAI Bug test case
-//        final DataBuffer db = new DataBufferFloat(4);
-//        final ColorModel cm = new GrayScaleColorModel(4, 0, 1);
-//        final WritableRaster raster = RasterFactory.createBandedRaster(db, 2, 2, 2, new int[1], new int[1], new Point(0, 0));
-//        final BufferedImage inputImage1 = new BufferedImage(cm,raster,false, new Hashtable<>());
-//        final GridCoverageBuilder gcb1 = new GridCoverageBuilder();
-//        gcb1.setRenderedImage(inputImage1);
-//        gcb1.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
-//        gcb1.setEnvelope(-180,-90,+180,+90);
-//        final GridCoverage2D inCoverage1 = (GridCoverage2D) gcb1.build();
-//        CoverageUtilities.preferredViewAfterOperation(inCoverage1);
         
         //first image, CRS:84, 3 bytes, 4x scale
         final BufferedImage inputImage1 = new BufferedImage(1440, 720, BufferedImage.TYPE_3BYTE_BGR);
@@ -125,7 +111,7 @@ public class MergeTest {
         
         //check values
         final Raster outRaster = outImage.getData();
-        final float[] sample = new float[2];
+        final float[] sample = new float[4];
         for(int y=0;y<90;y++){
             for(int x=0;x<90;x++){
                 outRaster.getPixel(x, y, sample);

@@ -75,9 +75,8 @@ public class ReformatProcess extends AbstractProcess {
         
         //TODO try to reuse java colormodel if possible
         //create a temporary fallback colormodel which will always work
-        final int nbbitsPerSample = DataBuffer.getDataTypeSize(inputType);
         //extract grayscale min/max from sample dimension
-        final ColorModel graycm = new GrayScaleColorModel(nbbitsPerSample,0,1);
+        final ColorModel graycm = GrayScaleColorModel.create(inputType,nbBand,0,1);
         
         
         final BufferedImage resultImage = new BufferedImage(graycm, raster, false, new Hashtable<Object, Object>());

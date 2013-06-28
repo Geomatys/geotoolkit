@@ -16,83 +16,25 @@
  */
 package org.geotoolkit.process.image.reformat;
 
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
 import java.awt.image.ColorModel;
-import java.awt.image.Raster;
-import java.awt.image.SampleModel;
-import java.lang.reflect.Array;
+import java.awt.image.ComponentColorModel;
+import org.geotoolkit.internal.image.ScaledColorSpace;
 
 /**
  * A grayscale color model.
  * 
- * 
  * @author Johann Sorel (Geomatys)
  */
-public class GrayScaleColorModel extends ColorModel {
+public final class GrayScaleColorModel {
 
-    private final int band;
-    private final double min;
-    private final double max;
-
-    public GrayScaleColorModel(int bits, double min, double max) {
-        this(bits,0,min,max);
-    }
+    private GrayScaleColorModel(){}
     
-    public GrayScaleColorModel(int bits, int band, double min, double max) {
-        super(bits);
-        this.min = min;
-        this.max = max;
-        this.band = band;
-    }
-    
-    @Override
-    public boolean isCompatibleRaster(Raster raster) {
-        return true;
-    }
-
-    @Override
-    public boolean isCompatibleSampleModel(SampleModel sm) {
-        return true;
-    }
-    
-    @Override
-    public int getRGB(Object inData) {
-        final Number value;
-        if(inData instanceof Number){
-            value = (Number) inData;
-        }else if(inData.getClass().isArray()){
-            value = (Number) Array.get(inData, band);
-        }else{
-            throw new UnsupportedOperationException("Can not extract value from type : " + inData.getClass());
-        }
-        double dv = value.doubleValue();
-        if(Double.isNaN(dv)) dv=min;
-        else if(dv<min) dv=min;
-        else if(dv>max) dv=max;
-        
-        //interpolate color
-        int gray = (int)(255 * ((dv-min)/(max-min)));
-        int rgb = 255<<24 | gray<<16 | gray<<8 | gray;
-        return rgb;
-    }
-    
-    @Override
-    public int getRed(int pixel) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public int getGreen(int pixel) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public int getBlue(int pixel) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public int getAlpha(int pixel) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public static ColorModel create(int dataType, int band, double min, double max){
+        final ColorSpace colors = new ScaledColorSpace(band, 0, min, max);
+        final ColorModel cm = new ComponentColorModel(colors, false, false, Transparency.OPAQUE, dataType);
+        return cm;
     }
     
 }

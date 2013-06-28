@@ -19,7 +19,6 @@ package org.geotoolkit.process.image.bandselect;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
@@ -78,9 +77,8 @@ public class BandSelectProcess extends AbstractProcess {
         
         //TODO try to reuse java colormodel if possible
         //create a temporary fallback colormodel which will always work
-        final int nbbitsPerSample = DataBuffer.getDataTypeSize(inputType);
         //extract grayscale min/max from sample dimension
-        final ColorModel graycm = new GrayScaleColorModel(nbbitsPerSample,0,10);
+        final ColorModel graycm = GrayScaleColorModel.create(inputType,nbBand,0,10);
         
         final BufferedImage resultImage = new BufferedImage(graycm, raster, false, new Hashtable<Object, Object>());
         

@@ -19,7 +19,6 @@ package org.geotoolkit.process.image.bandcombine;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -112,8 +111,7 @@ public class BandCombineProcess extends AbstractProcess {
         
         if(cm == null){
             //create a fallback grayscale colormodel which will always work
-            final int nbbitsPerSample = DataBuffer.getDataTypeSize(sampleType);
-            cm = new GrayScaleColorModel(nbbitsPerSample, 0, 1);
+            cm = GrayScaleColorModel.create(sampleType, nbtotalbands, 0, 1);
         }
         
         final BufferedImage resultImage = new BufferedImage(cm, raster, false, new Hashtable<Object, Object>());
