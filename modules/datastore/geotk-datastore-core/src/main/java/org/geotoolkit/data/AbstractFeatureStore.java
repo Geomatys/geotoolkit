@@ -276,9 +276,21 @@ public abstract class AbstractFeatureStore extends AbstractStorage implements Fe
                     names.add(desc.getName());
                 }
             }
+            
+            if(names.isEmpty()){
+                //no geometry field
+                return null;
+            }
+            
             final QueryBuilder qb = new QueryBuilder(query);
             qb.setProperties(names.toArray(new Name[names.size()]));
             query = qb.buildQuery();
+        }
+        
+        
+        final Name[] wantedProp = query.getPropertyNames();
+        if(wantedProp.length==0){
+            return null;
         }
         
         final FeatureReader reader = getFeatureReader(query);

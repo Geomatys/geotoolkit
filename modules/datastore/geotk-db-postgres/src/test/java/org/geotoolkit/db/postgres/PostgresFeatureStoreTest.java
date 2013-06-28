@@ -526,7 +526,7 @@ public class PostgresFeatureStoreTest {
         final FeatureType created = store.getFeatureType(name);
         lazyCompare(refType, created);
     }
-    
+        
     private void lazyCompare(final PropertyType refType, final PropertyType candidate){
         final Name name = refType.getName();
         assertEquals(refType.getName().getLocalPart(), name.getLocalPart());
