@@ -21,6 +21,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.logging.Level;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -31,7 +32,6 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.style.Rule;
 
