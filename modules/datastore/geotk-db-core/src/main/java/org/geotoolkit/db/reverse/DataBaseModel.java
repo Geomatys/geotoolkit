@@ -795,7 +795,8 @@ public final class DataBaseModel {
                         }
                     }
 
-                    final ComplexType foreignType = schema.getTable(relation.getForeignTable()).getType(TableMetaModel.View.TABLE);
+                    final ComplexType foreignType = schemas.get(relation.getForeignSchema())
+                            .getTable(relation.getForeignTable()).getType(TableMetaModel.View.TABLE);
                     final PropertyDescriptor propDesc = foreignType.getDescriptor(relation.getForeignColumn());
                     final boolean unique = Boolean.TRUE.equals(propDesc.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_UNIQUE));
                     adb.reset();

@@ -31,6 +31,8 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -84,6 +86,7 @@ import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import static org.junit.Assert.*;
+import org.opengis.feature.type.AssociationType;
 
 /**
  *
@@ -245,7 +248,7 @@ public class PostgresFeatureStoreTest {
         
     }
     
-    private FeatureStore store;
+    private PostgresFeatureStore store;
     
     public PostgresFeatureStoreTest(){
     }
@@ -286,7 +289,7 @@ public class PostgresFeatureStoreTest {
         
         //open in complex type to delete all types
         ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
-        store = FeatureStoreFinder.open(params);        
+        store = (PostgresFeatureStore) FeatureStoreFinder.open(params);        
         for(Name n : store.getNames()){
             VersionControl vc = store.getVersioning(n);
             vc.dropVersioning();
@@ -297,7 +300,7 @@ public class PostgresFeatureStoreTest {
         
         //reopen the way it was asked
         ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(simpleType);
-        store = FeatureStoreFinder.open(params);
+        store = (PostgresFeatureStore) FeatureStoreFinder.open(params);
         assertTrue(store.getNames().isEmpty());
     }
     
@@ -526,6 +529,40 @@ public class PostgresFeatureStoreTest {
         final FeatureType created = store.getFeatureType(name);
         lazyCompare(refType, created);
     }
+    
+    @Test
+    public void testCrossSchemaRelation() throws DataStoreException, VersioningException, SQLException{
+        reload(false);
+        
+        final Connection cnx = store.getDataSource().getConnection();
+        cnx.createStatement().executeUpdate("CREATE TABLE \"localtable\" (id serial, other integer);");
+        cnx.createStatement().executeUpdate("DROP SCHEMA  IF EXISTS someothertestschema CASCADE;");
+        cnx.createStatement().executeUpdate("CREATE SCHEMA someothertestschema;");
+        cnx.createStatement().executeUpdate("CREATE TABLE \"someothertestschema\".\"othertable\" (ident serial PRIMARY KEY, field double precision);");
+        cnx.createStatement().executeUpdate("ALTER TABLE \"localtable\" ADD FOREIGN KEY (other) REFERENCES someothertestschema.othertable(ident)");
+        cnx.close();
+        
+        store.refreshMetaModel();
+        
+        final FeatureType ft = store.getFeatureType("localtable");
+        
+        assertEquals("localtable", ft.getName().getLocalPart());
+        assertEquals(2,ft.getDescriptors().size());
+        assertNotNull(ft.getDescriptor("id"));
+        assertEquals(Integer.class, ft.getDescriptor("id").getType().getBinding());
+        final PropertyDescriptor desc = ft.getDescriptor("other");
+        assertNotNull(desc);
+        assertTrue(desc.getType() instanceof AssociationType);
+        assertTrue(((AssociationType)desc.getType()).getRelatedType() instanceof ComplexType);
+        final ComplexType ct = (ComplexType) ((AssociationType)desc.getType()).getRelatedType();
+        assertEquals(3,ct.getDescriptors().size());
+        assertNotNull(ct.getDescriptor("ident"));
+        assertEquals(Integer.class, ct.getDescriptor("ident").getType().getBinding());
+        assertNotNull(ct.getDescriptor("field"));
+        assertEquals(Double.class, ct.getDescriptor("field").getType().getBinding());
+        
+    }
+    
         
     private void lazyCompare(final PropertyType refType, final PropertyType candidate){
         final Name name = refType.getName();
