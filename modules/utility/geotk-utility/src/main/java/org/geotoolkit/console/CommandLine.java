@@ -329,7 +329,7 @@ public abstract class CommandLine implements Runnable {
             }
         }
         arguments = ArraysExt.resize(arguments, count);
-        MonolineFormatter.install(null, debug ? Level.FINER : null);
+        MonolineFormatter.install(Logging.getLogger(""), debug ? Level.FINER : null);
         if (explicitEncoding) {
             for (final Handler handler : Logging.getLogger("org.geotoolkit").getHandlers()) {
                 if (handler.getClass() == ConsoleHandler.class) try {
