@@ -58,7 +58,7 @@ public final class SC_VerticalCRS extends org.apache.sis.internal.jaxb.gml.SC_Ve
      */
     @Override
     public void register(final Marshaller marshaller) {
-        marshaller.setAdapter(SC_VerticalCRS.class, this);
+        marshaller.setAdapter(org.apache.sis.internal.jaxb.gml.SC_VerticalCRS.class, this);
     }
 
     /**
@@ -66,7 +66,7 @@ public final class SC_VerticalCRS extends org.apache.sis.internal.jaxb.gml.SC_Ve
      */
     @Override
     public void register(final Unmarshaller unmarshaller) {
-        unmarshaller.setAdapter(SC_VerticalCRS.class, this);
+        unmarshaller.setAdapter(org.apache.sis.internal.jaxb.gml.SC_VerticalCRS.class, this);
     }
 
     /**

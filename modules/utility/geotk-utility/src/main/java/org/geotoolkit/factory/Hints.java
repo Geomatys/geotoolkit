@@ -402,12 +402,12 @@ public class Hints extends RenderingHints {
      * Version number of the requested service. This hint is used for example in order to get
      * a {@linkplain org.opengis.referencing.crs.CRSAuthorityFactory CRS authority factory}
      * backed by a particular version of EPSG database. The value should be an instance of
-     * {@link org.geotoolkit.util.Version}.
+     * {@link org.apache.sis.util.Version}.
      *
      * @since 2.4
      * @category Referencing
      */
-    public static final Key VERSION = new Key("org.geotoolkit.util.Version");
+    public static final Key VERSION = new Key("org.apache.sis.util.Version");
 
 
 

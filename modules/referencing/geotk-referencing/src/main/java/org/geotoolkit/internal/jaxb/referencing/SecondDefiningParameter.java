@@ -53,8 +53,8 @@ public final class SecondDefiningParameter {
      * We distinguish those two cases by the unit: if the measure is the inverse flattening,
      * then the unit must be {@link Unit#ONE}.
      *
-     * @see Ellipsoid#getSemiMinorAxis
-     * @see Ellipsoid#getInverseFlattening
+     * @see Ellipsoid#getSemiMinorAxis()
+     * @see Ellipsoid#getInverseFlattening()
      */
     public Measure measure;
 

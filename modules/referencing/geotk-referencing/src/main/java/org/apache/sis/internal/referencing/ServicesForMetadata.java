@@ -78,10 +78,9 @@ public final class ServicesForMetadata extends ReferencingServices implements Ch
     private CoordinateOperationFactory factory;
 
     /**
-     * Creates a new instance. This constructor is invoked by reflection only, in the
-     * {@link #getInstance()} method.
+     * Creates a new instance. This constructor is invoked by reflection only.
      */
-    ServicesForMetadata() {
+    public ServicesForMetadata() {
         Factories.addChangeListener(this);
     }
 

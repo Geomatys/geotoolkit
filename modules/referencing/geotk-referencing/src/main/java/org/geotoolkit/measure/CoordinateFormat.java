@@ -504,6 +504,7 @@ public class CoordinateFormat extends Format {
     private AngleFormat getAngleFormat() {
         if (angleFormat == null) {
             angleFormat = AngleFormat.getInstance(locale);
+            angleFormat.applyPattern("DD°MM.m′");
         }
         return angleFormat;
     }
