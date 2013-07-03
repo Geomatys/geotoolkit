@@ -18,6 +18,7 @@
 package org.geotoolkit.feature.xml.jaxp;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
 import java.util.logging.Level;
@@ -43,6 +44,7 @@ import org.opengis.feature.Attribute;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.util.FactoryException;
 
@@ -139,7 +141,29 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
                 writer.writeEndElement();
             }
 
-        } else if (valueA instanceof com.vividsolutions.jts.geom.Geometry) {
+        } else if (valueA != null && valueA.getClass().isArray()) {
+            final int length = Array.getLength(valueA);
+            for (int i = 0; i < length; i++){
+                writer.writeStartElement("wfs", "member", WFS_NAMESPACE);
+                final Object value = Array.get(valueA, i);
+                final String textValue;
+                if (value != null && value.getClass().isArray()) { // matrix
+                    final StringBuilder sb = new StringBuilder();
+                    final int length2 = Array.getLength(value);
+                    for (int j = 0; j < length2; j++) {
+                        final Object subValue = Array.get(value, j);
+                        sb.append(Utils.getStringValue(subValue)).append(" ");
+                    }
+                    textValue = sb.toString();
+                } else {
+                    textValue = Utils.getStringValue(value);
+                }
+                writer.writeCharacters(textValue);
+                writer.writeEndElement();
+
+            }
+
+         } else if (valueA instanceof com.vividsolutions.jts.geom.Geometry) {
             writer.writeStartElement("wfs", "member", WFS_NAMESPACE);
 
             AbstractGeometry gmlGeometry = null;
@@ -178,7 +202,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
 
     private void writeValue(final Object value) throws XMLStreamException {
         if (value instanceof ComplexAttribute) {
-            final JAXPStreamFeatureWriter featureWriter = new JAXPStreamFeatureWriter("3.2.1", "2.0.0",null);
+            final JAXPStreamFeatureWriter featureWriter = new JAXPStreamFeatureWriter("3.2.1", "2.0.0", null);
             try {
                 featureWriter.write(value, getWriter());
             } catch (IOException ex) {
@@ -187,10 +211,10 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
                 LOGGER.log(Level.WARNING, null, ex);
             }
         } else if (value instanceof Attribute) {
-            final Attribute att   = (Attribute) value;
+            final Attribute att = (Attribute) value;
             final Object attValue = att.getValue();
             if (attValue instanceof Collection) {
-                for (Object o : (Collection)attValue) {
+                for (Object o : (Collection) attValue) {
                     writer.writeStartElement(att.getName().getNamespaceURI(), att.getName().getLocalPart());
                     writer.writeCharacters(Utils.getStringValue(o));
                     writer.writeEndElement();

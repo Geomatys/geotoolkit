@@ -17,6 +17,7 @@
 package org.geotoolkit.feature.xml.jaxp;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -199,6 +200,36 @@ public class ElementFeatureWriter {
                             element.setPrefix(prefix.prefix);
                         }
                         rootElement.appendChild(element);
+                    }
+
+                } else if (valueA != null && valueA.getClass().isArray() && !(typeA instanceof GeometryType)) {
+                    final int length = Array.getLength(valueA);
+                    for (int i = 0; i < length; i++){
+                        final Element element;
+                        if (namespaceProperty != null) {
+                            element = document.createElementNS(namespaceProperty, nameProperty);
+                        } else {
+                            element = document.createElement(nameProperty);
+                        }
+                        final Object value = Array.get(valueA, i);
+                        final String textValue;
+                        if (value != null && value.getClass().isArray()) { // matrix
+                            final StringBuilder sb = new StringBuilder();
+                            final int length2 = Array.getLength(value);
+                            for (int j = 0; j < length2; j++) {
+                                final Object subValue = Array.get(value, j);
+                                sb.append(Utils.getStringValue(subValue)).append(" ");
+                            }
+                            textValue = sb.toString();
+                        } else {
+                            textValue = Utils.getStringValue(value);
+                        }
+                        element.setTextContent(textValue);
+                        if (prefix != null) {
+                            element.setPrefix(prefix.prefix);
+                        }
+                        rootElement.appendChild(element);
+
                     }
 
                 } else if (valueA instanceof Map && !(typeA instanceof GeometryType)) {

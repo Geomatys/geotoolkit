@@ -18,6 +18,7 @@
 package org.geotoolkit.feature.xml.jaxp;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -240,6 +241,32 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                         }
                         writer.writeCharacters(Utils.getStringValue(value));
                         writer.writeEndElement();
+                    }
+
+                } else if (valueA != null && valueA.getClass().isArray() && !(typeA instanceof GeometryType)) {
+                    final int length = Array.getLength(valueA);
+                    for (int i = 0; i < length; i++){
+                        if (namespaceProperty != null) {
+                            writer.writeStartElement(namespaceProperty, nameProperty);
+                        } else {
+                            writer.writeStartElement(nameProperty);
+                        }
+                        final Object value = Array.get(valueA, i);
+                        final String textValue;
+                        if (value != null && value.getClass().isArray()) { // matrix
+                            final StringBuilder sb = new StringBuilder();
+                            final int length2 = Array.getLength(value);
+                            for (int j = 0; j < length2; j++) {
+                                final Object subValue = Array.get(value, j);
+                                sb.append(Utils.getStringValue(subValue)).append(" ");
+                            }
+                            textValue = sb.toString();
+                        } else {
+                            textValue = Utils.getStringValue(value);
+                        }
+                        writer.writeCharacters(textValue);
+                        writer.writeEndElement();
+                        
                     }
 
                 } else if (valueA instanceof Map && !(typeA instanceof GeometryType)) {
