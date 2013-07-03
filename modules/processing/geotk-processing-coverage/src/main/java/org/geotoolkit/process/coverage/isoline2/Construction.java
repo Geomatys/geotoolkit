@@ -23,6 +23,7 @@ public final class Construction {
     private final Edge edge2;
     private final double level;
     private boolean locked = false;
+    private Exception lockStack = null;
 
     public Construction(double level) {
         edge1 = new Edge(true);
@@ -43,7 +44,11 @@ public final class Construction {
     }
     
     public Geometry toGeometry(){
-        if(locked) throw new IllegalStateException("Construction has been merged, should not be used anymore.");
+        if(locked){
+            lockStack.printStackTrace();
+            throw new IllegalStateException("Construction has been merged, should not be used anymore.");
+        }
+        if(lst.size()==1) return null;
         final Coordinate[] coords = lst.toArray(new Coordinate[lst.size()]);
         return GF.createLineString(coords);
     }
@@ -81,6 +86,8 @@ public final class Construction {
         }
         
         other.locked = true;
+        other.lockStack = new Exception();
+        other.lockStack.fillInStackTrace();
         other.lst = this.lst;
         return;
     }
@@ -102,20 +109,38 @@ public final class Construction {
     
     public void update(Boundary bnd){
         if(bnd==null) return;
-        if(bnd.HMiddle!=null && bnd.HMiddle.getConstruction().equals(this)){
-            if(bnd.HMiddle.atEnd){
-                bnd.HMiddle = (edge1.atEnd) ? edge1 : edge2;
+        bnd.VTop = update(bnd.VTop);
+        bnd.VMiddle = update(bnd.VMiddle);
+        bnd.VBottom = update(bnd.VBottom);
+        bnd.HLeft = update(bnd.HLeft);
+        bnd.HMiddle = update(bnd.HMiddle);
+        bnd.HRight = update(bnd.HRight);
+        
+//        if(bnd.HMiddle!=null && bnd.HMiddle.getConstruction().equals(this)){
+//            if(bnd.HMiddle.atEnd){
+//                bnd.HMiddle = (edge1.atEnd) ? edge1 : edge2;
+//            }else{
+//                bnd.HMiddle = (!edge1.atEnd) ? edge1 : edge2;
+//            }
+//        }
+//        if(bnd.VMiddle!=null && bnd.VMiddle.getConstruction().equals(this)){
+//            if(bnd.VMiddle.atEnd){
+//                bnd.VMiddle = (edge1.atEnd) ? edge1 : edge2;
+//            }else{
+//                bnd.VMiddle = (!edge1.atEnd) ? edge1 : edge2;
+//            }
+//        }
+    }
+    
+    private Edge update(Edge edge){
+        if(edge != null && edge.getConstruction().equals(this)){
+            if(edge.atEnd){
+                return (edge1.atEnd) ? edge1 : edge2;
             }else{
-                bnd.HMiddle = (!edge1.atEnd) ? edge1 : edge2;
+                return (!edge1.atEnd) ? edge1 : edge2;
             }
         }
-        if(bnd.VMiddle!=null && bnd.VMiddle.getConstruction().equals(this)){
-            if(bnd.VMiddle.atEnd){
-                bnd.VMiddle = (edge1.atEnd) ? edge1 : edge2;
-            }else{
-                bnd.VMiddle = (!edge1.atEnd) ? edge1 : edge2;
-            }
-        }
+        return edge;
     }
     
     public final class Edge{
