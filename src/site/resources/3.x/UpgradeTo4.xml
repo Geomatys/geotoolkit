@@ -50,12 +50,14 @@
       <replacefilter token="org.geotoolkit.util.GeoAPI"                             value="org.apache.sis.util.iso.Types"/>
       <replacefilter token="org.geotoolkit.util.LenientComparable"                  value="org.apache.sis.util.LenientComparable"/>
       <replacefilter token="org.geotoolkit.util.Localized"                          value="org.apache.sis.util.Localized"/>
-      <replacefilter token="org.geotoolkit.util.Version;"                           value="org.apache.sis.util.Version;"/> <!-- Not to confuse with Versioned. -->
+      <replacefilter token="org.geotoolkit.util.MeasurementRange"                   value="org.apache.sis.measure.MeasurementRange"/>
       <replacefilter token="org.geotoolkit.util.NullArgumentException"              value="org.apache.sis.util.NullArgumentException"/>
+      <replacefilter token="org.geotoolkit.util.NumberRange"                        value="org.apache.sis.measure.NumberRange"/>
       <replacefilter token="org.geotoolkit.util.Range"                              value="org.apache.sis.measure.Range"/>
       <replacefilter token="org.geotoolkit.util.SimpleInternationalString"          value="org.apache.sis.util.iso.SimpleInternationalString"/>
       <replacefilter token="org.geotoolkit.util.Strings"                            value="org.apache.sis.util.CharSequences"/>
       <replacefilter token="org.geotoolkit.util.UnsupportedImplementationException" value="org.apache.sis.util.UnsupportedImplementationException"/>
+      <replacefilter token="org.geotoolkit.util.Version;"                           value="org.apache.sis.util.Version;"/> <!-- Not to confuse with Versioned. -->
       <replacefilter token="org.geotoolkit.util.XArrays"                            value="org.apache.sis.util.ArraysExt"/>
       <replacefilter token="org.geotoolkit.util.converter.Classes"                  value="org.apache.sis.util.Classes"/>
       <replacefilter token="org.geotoolkit.util.converter.Numbers"                  value="org.apache.sis.util.Numbers"/>
