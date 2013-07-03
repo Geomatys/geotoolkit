@@ -22,10 +22,8 @@ import java.io.Serializable;
 import java.io.ObjectStreamException;
 import java.io.InvalidObjectException;
 import org.opengis.metadata.citation.ResponsibleParty;
-import org.opengis.metadata.citation.PresentationForm;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
-import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.xml.IdentifierSpace;
 
 
@@ -101,27 +99,12 @@ class CitationConstant extends DefaultCitation {
     }
 
     /**
-     * Sets the alternative title.
-     */
-    final void setAlternateTitle(final String title) {
-        assert !title.equals(getTitle().toString(null)) : title;
-        setAlternateTitles(Collections.singleton(new SimpleInternationalString(title)));
-    }
-
-    /**
      * Sets the identifier. This is used as a convenience method for the creation of constants.
      */
     private void setIdentifier(final String identifier) {
         if (identifier != null) {
             setIdentifiers(Collections.singleton(new DefaultIdentifier(identifier)));
         }
-    }
-
-    /**
-     * Sets the presentation form to the given value. Any previous values are overwritten.
-     */
-    final void setPresentationForm(final PresentationForm form) {
-        setPresentationForms(Collections.singleton(form));
     }
 
     /**

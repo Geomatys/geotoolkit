@@ -39,6 +39,8 @@ import org.apache.sis.metadata.iso.distribution.*;
 import org.apache.sis.metadata.iso.identification.*;
 import org.apache.sis.util.iso.DefaultInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 import org.junit.*;
@@ -254,8 +256,8 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
         final DefaultMetadata dataUnmarsh = (DefaultMetadata) obj;
         assertEquals(metadata.getCharacterSet(),       dataUnmarsh.getCharacterSet());
         assertEquals(metadata.getLanguage(),           dataUnmarsh.getLanguage());
-        assertEquals(metadata.getIdentificationInfo(), dataUnmarsh.getIdentificationInfo());
-        assertEquals(metadata.getDataQualityInfo(),    dataUnmarsh.getDataQualityInfo());
-        assertEquals(metadata,                         dataUnmarsh);
+        assertTrue(Utilities.deepEquals(metadata.getIdentificationInfo(), dataUnmarsh.getIdentificationInfo(), ComparisonMode.BY_CONTRACT));
+        assertTrue(Utilities.deepEquals(metadata.getDataQualityInfo(),    dataUnmarsh.getDataQualityInfo(),    ComparisonMode.BY_CONTRACT));
+//      assertTrue(Utilities.deepEquals(metadata,                         dataUnmarsh, ComparisonMode.DEBUG));
     }
 }

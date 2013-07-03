@@ -198,7 +198,10 @@ public class MetadataFactory extends Factory {
         Exception failure = null;
         for (final MetadataStandard standard : standards) {
             if (standard.isMetadata(type)) {
-                final Class<?> impl = standard.getImplementation(type);
+                Class<?> impl = standard.getImplementation(type);
+                if (impl == null) {
+                    impl = type; // Will try to instantiate the type directly.
+                }
                 final Object metadata;
                 try {
                     metadata = impl.newInstance();

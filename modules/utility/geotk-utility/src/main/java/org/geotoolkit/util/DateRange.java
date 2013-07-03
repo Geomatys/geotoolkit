@@ -143,4 +143,39 @@ public class DateRange extends Range<Date> {
     public Date getMaxValue() {
         return clone(super.getMaxValue());
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 3.20
+     */
+    @Override
+    public DateRange union(final Range<Date> range) throws IllegalArgumentException {
+        return cast(super.union(range));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 3.20
+     */
+    @Override
+    public DateRange intersect(final Range<Date> range) throws IllegalArgumentException {
+        return cast(super.intersect(range));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 3.20
+     */
+    @Override
+    public DateRange[] subtract(final Range<Date> range) throws IllegalArgumentException {
+        final Range<Date>[] ranges = super.subtract(range);
+        final DateRange[] result = new DateRange[ranges.length];
+        for (int i=0; i<result.length; i++) {
+            result[i] = cast(ranges[i]);
+        }
+        return result;
+    }
 }
