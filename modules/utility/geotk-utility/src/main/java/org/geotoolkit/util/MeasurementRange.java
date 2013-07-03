@@ -42,8 +42,11 @@ import static org.apache.sis.util.Numbers.*;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated moved to Apache SIS as {@link org.apache.sis.measure.MeasurementRange}.
  */
 @Immutable
+@Deprecated
 public class MeasurementRange<T extends Number & Comparable<? super T>> extends NumberRange<T> {
     /**
      * Serial number for inter-operability with different versions.
