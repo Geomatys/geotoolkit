@@ -63,7 +63,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.MeasurementRange;
+import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.math.Statistics;
 import org.apache.sis.measure.Units;
 import org.apache.sis.measure.Angle;

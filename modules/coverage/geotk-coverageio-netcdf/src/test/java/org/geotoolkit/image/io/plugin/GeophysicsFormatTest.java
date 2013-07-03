@@ -27,7 +27,7 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -183,19 +183,19 @@ public final strictfp class GeophysicsFormatTest extends NetcdfImageReaderTestBa
         Category category = categories.get(0);
         NumberRange<?> range = category.getRange();
         assertEquals("temp", category.getName().toString());
-        assertEquals("temp", -2.0, range.getMinimum(), 0.0);
-        assertEquals("temp", 30.0, range.getMaximum(), 0.0);
+        assertEquals("temp", -2.0, range.getMinDouble(), 0.0);
+        assertEquals("temp", 30.0, range.getMaxDouble(), 0.0);
         //
         // "No data" category.
         //
         category = categories.get(1);
         range = category.getRange();
-        assertTrue(Double.isNaN(range.getMinimum()));
-        assertTrue(Double.isNaN(range.getMaximum()));
+        assertTrue(Double.isNaN(range.getMinDouble()));
+        assertTrue(Double.isNaN(range.getMaxDouble()));
         category = category.geophysics(false);
         range = category.getRange();
-        assertEquals(-99.99, range.getMinimum(), 0.001);
-        assertEquals(-99.99, range.getMaximum(), 0.001);
+        assertEquals(-99.99, range.getMinDouble(), 0.001);
+        assertEquals(-99.99, range.getMaxDouble(), 0.001);
         //
         // The raster should contains only values in the [-2 .. 30] range.
         // If some -99.99 values have not been properly converted to NaN,

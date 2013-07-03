@@ -39,7 +39,7 @@ import javax.swing.table.TableColumn;
 
 import org.opengis.metadata.content.TransferFunctionType;
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.gui.swing.ListTableModel;

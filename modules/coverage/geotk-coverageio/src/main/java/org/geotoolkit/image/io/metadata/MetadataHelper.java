@@ -46,8 +46,8 @@ import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.Localized;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.MeasurementRange;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.factory.FactoryFinder;
@@ -792,7 +792,7 @@ public class MetadataHelper implements Localized {
      */
     private static boolean overlap(final List<Category> categories, final NumberRange<?> range) {
         for (final Category category : categories) {
-            if (range.intersects(category.getRange())) {
+            if (range.intersectsAny(category.getRange())) {
                 return true;
             }
         }

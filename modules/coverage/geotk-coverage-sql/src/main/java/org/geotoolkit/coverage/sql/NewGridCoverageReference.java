@@ -48,7 +48,7 @@ import org.apache.sis.measure.Range;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Localized;
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
@@ -112,7 +112,7 @@ public final class NewGridCoverageReference {
      * The range of sample values to use if no transfer function is defined.
      * Note that the value 0 is reserved for "no data".
      */
-    private static final NumberRange<Integer> PACKED_RANGE = NumberRange.create(1, 255);
+    private static final NumberRange<Integer> PACKED_RANGE = NumberRange.create(1, true, 255, true);
 
     /**
      * The originating database.

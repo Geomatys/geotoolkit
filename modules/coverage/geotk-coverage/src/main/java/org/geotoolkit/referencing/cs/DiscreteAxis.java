@@ -31,7 +31,7 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 
 
 /**

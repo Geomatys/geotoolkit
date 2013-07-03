@@ -60,7 +60,7 @@ import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.ArraysExt;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
@@ -353,11 +353,11 @@ final class GridCoverageLoader extends ImageCoverageReader {
                 for (final Category category : band.getCategories()) {
                     final NumberRange<?> r = category.getRange();
                     if (category.isQuantitative()) {
-                        range = (range == null) ? r : range.union(r);
+                        range = (range == null) ? r : range.unionAny(r);
                         tf = new TransferFunction(category, locale);
                     } else {
-                        final int lower = (int) Math.round(r.getMinimum(true));
-                        final int upper = (int) Math.round(r.getMaximum(true));
+                        final int lower = (int) Math.round(r.getMinDouble(true));
+                        final int upper = (int) Math.round(r.getMaxDouble(true));
                         for (int i=lower; i<=upper; i++) {
                             if (fillValuesCount >= fillValues.length) {
                                 fillValues = Arrays.copyOf(fillValues, fillValuesCount*2);

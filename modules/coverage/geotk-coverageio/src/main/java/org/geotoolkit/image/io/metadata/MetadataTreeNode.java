@@ -26,7 +26,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
@@ -296,7 +296,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
             // Consider MIN|MAX_VALUE as unbounded.
             if (min == Integer.MIN_VALUE) min = null;
             if (max == Integer.MAX_VALUE) max = null;
-            occurrences = new NumberRange<>(Integer.class, min, max);
+            occurrences = new NumberRange<>(Integer.class, min, true, max, true);
         }
         return occurrences;
     }
@@ -484,10 +484,10 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
                 }
                 final NumberRange<?> range = r.range;
                 // We know we can cast to Comparable since 'value' is an instance of 'type'.
-                if (range != null && !range.contains((Comparable<?>) value)) {
+                if (range != null && !((NumberRange) range).contains((Comparable) value)) {
                     throw new IllegalArgumentException(Errors.getResources(tree.getLocale())
                             .getString(Errors.Keys.VALUE_OUT_OF_BOUNDS_3,
-                            value, range.getMinimum(true), range.getMaximum(true)));
+                            value, range.getMinDouble(true), range.getMaxDouble(true)));
                 }
             }
         } else {

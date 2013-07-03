@@ -29,7 +29,7 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.math.XMath;
 import org.apache.sis.math.MathFunctions;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Numbers;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.resources.Errors;
@@ -97,7 +97,7 @@ public class Category implements Serializable {
     private static final NumberRange<Byte> BYTE_0;
     static {
         final Byte index = 0;
-        BYTE_0 = NumberRange.create(index, index);
+        BYTE_0 = NumberRange.create(index, true, index, true);
     }
 
     /**
@@ -106,7 +106,7 @@ public class Category implements Serializable {
     private static final NumberRange<Byte> BYTE_1;
     static {
         final Byte index = 1;
-        BYTE_1 = NumberRange.create(index, index);
+        BYTE_1 = NumberRange.create(index, true, index, true);
     }
 
     /**
@@ -248,7 +248,7 @@ public class Category implements Serializable {
      */
     @SuppressWarnings({"unchecked","rawtypes"})
     private Category(final CharSequence name, final int[] ARGB, final Number sample) {
-        this(name, ARGB, new NumberRange(sample.getClass(), sample, sample), null);
+        this(name, ARGB, new NumberRange(sample.getClass(), sample, true, sample, true), null);
         assert Double.isNaN(inverse.minimum) : inverse.minimum;
         assert Double.isNaN(inverse.maximum) : inverse.maximum;
     }
@@ -682,8 +682,8 @@ public class Category implements Serializable {
     private static int[] toARGB(final Color color, final NumberRange<?> sampleValueRange) {
         int sample = 0;
         if (color == null && sampleValueRange != null) {
-            sample = (int) Math.round(sampleValueRange.getMinimum(true));
-            if (sample != Math.round(sampleValueRange.getMaximum(true))) {
+            sample = (int) Math.round(sampleValueRange.getMinDouble(true));
+            if (sample != Math.round(sampleValueRange.getMaxDouble(true))) {
                 return DEFAULT;
             }
         }

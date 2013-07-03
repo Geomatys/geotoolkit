@@ -53,7 +53,7 @@ import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;

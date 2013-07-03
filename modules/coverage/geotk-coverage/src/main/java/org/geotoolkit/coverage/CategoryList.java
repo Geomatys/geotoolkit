@@ -46,7 +46,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.iso.AbstractInternationalString;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 
 import static java.lang.Double.NaN;
 import static java.lang.Double.isNaN;
@@ -238,7 +238,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
                     throw new IllegalArgumentException(Errors.format(Errors.Keys.RANGE_OVERLAP_4, args));
                 }
                 // Checks if there is a gap between this category and the previous one.
-                if (!isNaN(minimum) && minimum != previous.getRange().getMaximum(false)) {
+                if (!isNaN(minimum) && minimum != previous.getRange().getMaxDouble(false)) {
                     hasGaps = true;
                 }
             }
@@ -530,9 +530,9 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         if (range == null) {
             for (final Category category : categories) {
                 final NumberRange<?> extent = category.getRange();
-                if (!isNaN(extent.getMinimum()) && !isNaN(extent.getMaximum())) {
+                if (!isNaN(extent.getMinDouble()) && !isNaN(extent.getMaxDouble())) {
                     if (range != null) {
-                        range = range.union(extent);
+                        range = range.unionAny(extent);
                     } else {
                         range = extent;
                     }
@@ -553,8 +553,8 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         final NumberRange<?> range = getRange();
         buffer.append('[');
         if (range != null) {
-            format(range.getMinimum(), false, locale, buffer).append(" \u2026 "); // " ... "
-            format(range.getMaximum(), true,  locale, buffer);
+            format(range.getMinDouble(), false, locale, buffer).append(" \u2026 "); // " ... "
+            format(range.getMaxDouble(), true,  locale, buffer);
         } else {
             final Unit<?> unit = getUnits();
             if (unit != null) {

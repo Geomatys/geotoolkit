@@ -22,7 +22,7 @@ import java.util.Comparator;
 import java.awt.Dimension;
 
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.display.shape.XRectangle2D;
 
 import static java.lang.Double.NaN;
@@ -87,8 +87,8 @@ final class GridCoverageComparator extends XRectangle2D implements Comparator<Gr
         scaleX = scaleY = NaN;
         setRect(regionOfInterest.getHorizontalRange());
         final NumberRange<?> zRange = regionOfInterest.getVerticalRange();
-        zmin = zRange.getMinimum();
-        zmax = zRange.getMaximum();
+        zmin = zRange.getMinDouble();
+        zmax = zRange.getMaxDouble();
         setTimeRange(regionOfInterest.getTimeRange());
         // scaleX and scaleY are not used by this instance.
     }

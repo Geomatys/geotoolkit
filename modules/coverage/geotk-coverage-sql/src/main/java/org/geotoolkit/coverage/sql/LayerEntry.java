@@ -52,8 +52,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.util.Localized;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.MeasurementRange;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.internal.util.CollectionsExt;
 import org.geotoolkit.util.collection.FrequencySortedSet;
@@ -580,7 +580,8 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                             }
                             try {
                                 for (int i=0; i<length; i++) {
-                                    ranges[i] = ranges[i].union(candidates[i]);
+                                    // TODO: Cast may fail if range is fully included in candidate.
+                                    ranges[i] = (MeasurementRange<?>) ranges[i].unionAny(candidates[i]);
                                 }
                             } catch (IllegalArgumentException e) {
                                 // May occurs if the units are not convertible.
@@ -658,15 +659,15 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                      * is found, keep the best match for the requested range.
                      */
                     if (convertedRange != null) {
-                        final double min    = convertedRange.getMinimum();
-                        final double max    = convertedRange.getMaximum();
+                        final double min    = convertedRange.getMinDouble();
+                        final double max    = convertedRange.getMaxDouble();
                         final double center = 0.5 * (min + max);
                         if (!Double.isNaN(center)) {
                             final Category candidate = sd.getCategory(center);
                             if (candidate != null) {
                                 final NumberRange<?> r = candidate.getRange();
-                                final double cmin = r.getMinimum();
-                                final double cmax = r.getMaximum();
+                                final double cmin = r.getMinDouble();
+                                final double cmax = r.getMaxDouble();
                                 final double fit =
                                         (Math.min(cmax, max) - Math.max(cmin, min)) - // Intersection area
                                         (Math.max(cmax, max) - Math.min(cmin, min) - (max - min)); // Area outside requested range.

@@ -28,7 +28,7 @@ import java.sql.SQLException;
 import org.opengis.referencing.operation.MathTransform1D;
 
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.Category;
@@ -208,8 +208,8 @@ final class FormatTable extends SingletonTable<FormatEntry> {
         if (Numbers.isInteger(type)) {
             if (!range.isMaxIncluded() || !range.isMinIncluded() || type != Integer.class) {
                 range = new NumberRange<>(Integer.class,
-                        (int) Math.floor(range.getMinimum(true)), true,
-                        (int) Math.ceil (range.getMaximum(true)), true);
+                        (int) Math.floor(range.getMinDouble(true)), true,
+                        (int) Math.ceil (range.getMaxDouble(true)), true);
             }
         }
         return range;

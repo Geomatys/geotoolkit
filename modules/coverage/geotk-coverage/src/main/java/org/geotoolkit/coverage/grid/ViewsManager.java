@@ -50,7 +50,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -465,8 +465,8 @@ testLinear: for (int i=0; i<numBands; i++) {
                         if (toGeo) {
                             canRescale = false;
                             final NumberRange<?> target = sourceCategory.geophysics(true).getRange();
-                            offset = target.getMinimum();
-                            if (doubleToRawLongBits(offset) != doubleToRawLongBits(target.getMaximum())) {
+                            offset = target.getMinDouble();
+                            if (doubleToRawLongBits(offset) != doubleToRawLongBits(target.getMaxDouble())) {
                                 canPiecewise = false;
                                 break testLinear;
                             }
@@ -475,8 +475,8 @@ testLinear: for (int i=0; i<numBands; i++) {
                             canPiecewise = false;
                             assert !packedCategory.equals(sourceCategory) : packedCategory;
                             final NumberRange<?> range = packedCategory.getRange();
-                            if (range.getMinimum(true) == 0 && range.getMaximum(true) == 0) {
-                                assert isNaN(sourceCategory.getRange().getMinimum()) : sourceCategory;
+                            if (range.getMinDouble(true) == 0 && range.getMaxDouble(true) == 0) {
+                                assert isNaN(sourceCategory.getRange().getMinDouble()) : sourceCategory;
                                 conditional = true;
                                 continue;
                             }
@@ -517,8 +517,8 @@ testLinear: for (int i=0; i<numBands; i++) {
                     }
                     // Computes breakpoints.
                     final NumberRange<?> range = sourceCategory.getRange();
-                    final double  minimum = range.getMinimum(true);
-                    final double  maximum = range.getMaximum(true);
+                    final double  minimum = range.getMinDouble(true);
+                    final double  maximum = range.getMaxDouble(true);
                     final float sourceMin = (float) minimum;
                     final float sourceMax = (float) maximum;
                     final float targetMin = (float)(minimum * scale + offset);
@@ -551,7 +551,7 @@ testLinear: for (int i=0; i<numBands; i++) {
                     targetBreakpoints[jbp  ] = targetMin;
                     targetBreakpoints[jbp+1] = targetMax;
                     jbp += 2;
-                    expectedSource = range.getMaximum(false);
+                    expectedSource = range.getMaxDouble(false);
                     expectedTarget = expectedSource * scale + offset;
                 }
                 breakpoints[i][0] = sourceBreakpoints = ArraysExt.resize(sourceBreakpoints, jbp);

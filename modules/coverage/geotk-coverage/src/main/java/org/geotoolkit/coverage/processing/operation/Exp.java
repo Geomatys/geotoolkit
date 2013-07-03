@@ -20,7 +20,7 @@ package org.geotoolkit.coverage.processing.operation;
 import javax.media.jai.operator.ExpDescriptor;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.processing.OperationJAI;
 
 
@@ -76,8 +76,8 @@ public class Exp extends OperationJAI {
     @Override
     protected NumberRange<?> deriveRange(final NumberRange<?>[] ranges, final Parameters parameters) {
         final NumberRange<?> range = ranges[0];
-        final double min = Math.exp(range.getMinimum());
-        final double max = Math.exp(range.getMaximum());
-        return NumberRange.create(min, max);
+        final double min = Math.exp(range.getMinDouble());
+        final double max = Math.exp(range.getMaxDouble());
+        return NumberRange.create(min, true, max, true);
     }
 }

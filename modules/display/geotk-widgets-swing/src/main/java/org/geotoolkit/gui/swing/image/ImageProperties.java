@@ -61,7 +61,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Classes;
 import org.apache.sis.measure.RangeFormat;
 import org.geotoolkit.resources.Vocabulary;

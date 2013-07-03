@@ -24,7 +24,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.metadata.content.TransferFunctionType;
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.referencing.operation.MathTransforms;
@@ -92,8 +92,8 @@ public final class TransferFunction {
     public TransferFunction(final Category category, final Locale locale) {
         this.locale = locale; // Must be before the call to any 'check' method.
         final NumberRange<?> range = category.getRange();
-        minimum = (int) Math.round(range.getMinimum(true));
-        maximum = (int) Math.round(range.getMaximum(true));
+        minimum = (int) Math.round(range.getMinDouble(true));
+        maximum = (int) Math.round(range.getMaxDouble(true));
         MathTransform1D function = category.getSampleToGeophysics();
         if (function != null) {
             isQuantitative = true;

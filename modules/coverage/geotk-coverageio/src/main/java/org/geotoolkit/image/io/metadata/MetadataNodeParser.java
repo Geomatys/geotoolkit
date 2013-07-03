@@ -52,7 +52,7 @@ import org.geotoolkit.internal.image.io.Warnings;
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.Localized;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.metadata.iso.citation.Citations;

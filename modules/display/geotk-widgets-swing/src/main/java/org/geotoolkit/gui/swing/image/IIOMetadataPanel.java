@@ -37,7 +37,7 @@ import javax.imageio.metadata.IIOMetadataFormatImpl;
 import org.jdesktop.swingx.JXTreeTable;
 
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.image.io.metadata.MetadataTreeNode;
 import org.geotoolkit.image.io.metadata.MetadataTreeTable;

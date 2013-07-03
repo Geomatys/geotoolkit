@@ -48,7 +48,7 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.util.GenericName;
 import org.apache.sis.util.ArraysExt;
 
-import org.geotoolkit.util.MeasurementRange;
+import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.measure.Measure;

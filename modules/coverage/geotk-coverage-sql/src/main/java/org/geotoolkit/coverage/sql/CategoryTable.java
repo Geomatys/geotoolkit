@@ -36,7 +36,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransformFactory;
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.internal.coverage.TransferFunction;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
@@ -187,7 +187,7 @@ final class CategoryTable extends Table {
                      * 2) quantitative and linear, or 3) quantitative and logarithmic.
                      */
                     Category category;
-                    final NumberRange<?> range = NumberRange.create(lower, upper);
+                    final NumberRange<?> range = NumberRange.create(lower, true, upper, true);
                     if (!isQuantifiable) {
                         // Qualitative category.
                         if (colors == null) {

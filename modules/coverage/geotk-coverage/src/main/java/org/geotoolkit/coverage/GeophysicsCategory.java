@@ -27,7 +27,7 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 
 
 /**
@@ -96,10 +96,10 @@ final class GeophysicsCategory extends Category {
             final NumberRange<?>  r  = inverse.range;
             boolean minIncluded = r.isMinIncluded();
             boolean maxIncluded = r.isMaxIncluded();
-            double min  = tr.transform(r.getMinimum());
-            double max  = tr.transform(r.getMaximum());
-            double min2 = tr.transform(r.getMinimum(!minIncluded));
-            double max2 = tr.transform(r.getMaximum(!maxIncluded));
+            double min  = tr.transform(r.getMinDouble());
+            double max  = tr.transform(r.getMaxDouble());
+            double min2 = tr.transform(r.getMinDouble(!minIncluded));
+            double max2 = tr.transform(r.getMaxDouble(!maxIncluded));
             if ((minIncluded ? min2 : min) > (maxIncluded ? max2 : max)) {
                 final double  tmp, tmp2;
                 final boolean tmpIncluded;
@@ -223,16 +223,16 @@ final class GeophysicsCategory extends Category {
          * Returns the minimum value with the specified inclusive or exclusive state.
          */
         @Override
-        public double getMinimum(final boolean inclusive) {
-            return (inclusive == isMinIncluded()) ? getMinimum() : minimum2;
+        public double getMinDouble(final boolean inclusive) {
+            return (inclusive == isMinIncluded()) ? getMinDouble() : minimum2;
         }
 
         /**
          * Returns the maximum value with the specified inclusive or exclusive state.
          */
         @Override
-        public double getMaximum(final boolean inclusive) {
-            return (inclusive == isMaxIncluded()) ? getMaximum() : maximum2;
+        public double getMaxDouble(final boolean inclusive) {
+            return (inclusive == isMaxIncluded()) ? getMaxDouble() : maximum2;
         }
     }
 }

@@ -37,8 +37,8 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.MeasurementRange;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.measure.MeasurementRange;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.image.ColorUtilities;
@@ -397,8 +397,8 @@ public class ColorMap implements Serializable {
                 Logging.unexpectedException(AbstractCoverageProcessor.LOGGER, ColorMap.class, "recolor", e);
                 return null; // This is allowed by this method contract.
             }
-            minimum = scale.getMinimum();
-            maximum = scale.getMaximum();
+            minimum = scale.getMinDouble();
+            maximum = scale.getMaxDouble();
             MathTransform1D tr = category.getSampleToGeophysics();
             if (tr != null) try {
                 tr = tr.inverse();
@@ -409,11 +409,11 @@ public class ColorMap implements Serializable {
                 return null; // This is allowed by this method contract.
             }
         } else {
-            minimum = scale.getMinimum();
-            maximum = scale.getMaximum();
+            minimum = scale.getMinDouble();
+            maximum = scale.getMaxDouble();
             final NumberRange<?> range = category.getRange();
-            final double lower  = range.getMinimum();
-            final double extent = range.getMaximum() - lower;
+            final double lower  = range.getMinDouble();
+            final double extent = range.getMaxDouble() - lower;
             minimum     = (minimum / 100) * extent + lower;
             maximum     = (maximum / 100) * extent + lower;
             minIncluded &= range.isMinIncluded();

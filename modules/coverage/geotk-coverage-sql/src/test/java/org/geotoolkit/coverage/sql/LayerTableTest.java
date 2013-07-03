@@ -30,7 +30,7 @@ import java.text.SimpleDateFormat;
 import org.opengis.geometry.Envelope;
 
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.util.MeasurementRange;
+import org.apache.sis.measure.MeasurementRange;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 
@@ -192,8 +192,8 @@ public final strictfp class LayerTableTest extends CatalogTestBase {
         final List<MeasurementRange<?>> validRanges = entry.getSampleValueRanges();
         assertNotNull(validRanges);
         assertEquals(1, validRanges.size());
-        assertEquals(-3.0, validRanges.get(0).getMinimum(true), EPS);
-        assertEquals(40.0, validRanges.get(0).getMaximum(true), EPS);
+        assertEquals(-3.0, validRanges.get(0).getMinDouble(true), EPS);
+        assertEquals(40.0, validRanges.get(0).getMaxDouble(true), EPS);
         table.release();
     }
 
@@ -211,10 +211,10 @@ public final strictfp class LayerTableTest extends CatalogTestBase {
         final List<MeasurementRange<?>> validRanges = entry.getSampleValueRanges();
         assertNotNull(validRanges);
         assertEquals(2, validRanges.size());
-        assertEquals(-1.91, validRanges.get(0).getMinimum(true), EPS);
-        assertEquals( 1.90, validRanges.get(0).getMaximum(true), EPS);
-        assertEquals(-1.91, validRanges.get(1).getMinimum(true), EPS);
-        assertEquals( 1.90, validRanges.get(1).getMaximum(true), EPS);
+        assertEquals(-1.91, validRanges.get(0).getMinDouble(true), EPS);
+        assertEquals( 1.90, validRanges.get(0).getMaxDouble(true), EPS);
+        assertEquals(-1.91, validRanges.get(1).getMinDouble(true), EPS);
+        assertEquals( 1.90, validRanges.get(1).getMaxDouble(true), EPS);
         table.release();
     }
 

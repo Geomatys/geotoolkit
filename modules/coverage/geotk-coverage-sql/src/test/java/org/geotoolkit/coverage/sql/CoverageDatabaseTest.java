@@ -26,7 +26,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.MeasurementRange;
+import org.apache.sis.measure.MeasurementRange;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
@@ -162,8 +162,8 @@ public final strictfp class CoverageDatabaseTest extends CatalogTestBase {
         final List<MeasurementRange<?>> ranges = database.getSampleValueRanges(TEMPERATURE).result();
         assertEquals("Expected only one band.", 1, ranges.size());
         final MeasurementRange<?> range = ranges.get(0);
-        assertEquals(-2.85, range.getMinimum(), EPS);
-        assertEquals(35.25, range.getMaximum(), EPS);
+        assertEquals(-2.85, range.getMinDouble(), EPS);
+        assertEquals(35.25, range.getMaxDouble(), EPS);
     }
 
     /**

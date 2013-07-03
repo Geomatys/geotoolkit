@@ -37,7 +37,7 @@ import org.geotoolkit.image.io.plugin.TextMatrixImageReader;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.apache.sis.geometry.AbstractEnvelope;
-import org.geotoolkit.util.MeasurementRange;
+import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.Range;
 
 import org.junit.*;
@@ -235,9 +235,9 @@ public final strictfp class WritableGridCoverageTableTest extends CatalogTestBas
         assertNotNull(range);
         assertEquals(1, range.length);
         // The minimum value is actually -1.893, but we didn't specified the pad value.
-        assertEquals(-9999,  range[0].getMinimum(true), 1E-4);
-        assertEquals(31.140, range[0].getMaximum(true), 1E-4);
-        assertNull(range[0].getUnits());
+        assertEquals(-9999,  range[0].getMinDouble(true), 1E-4);
+        assertEquals(31.140, range[0].getMaxDouble(true), 1E-4);
+        assertNull(range[0].unit());
     }
 
     /**

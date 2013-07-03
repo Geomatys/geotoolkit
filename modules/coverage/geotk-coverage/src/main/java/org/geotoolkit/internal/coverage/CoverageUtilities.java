@@ -49,7 +49,7 @@ import org.geotoolkit.coverage.grid.RenderedCoverage;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 
 
 /**
@@ -146,8 +146,8 @@ public final class CoverageUtilities extends Static {
             final SampleDimension band = coverage.getSampleDimension(i);
             if (band instanceof GridSampleDimension) {
                 final NumberRange<?> range = ((GridSampleDimension) band).getBackground().getRange();
-                final double min = range.getMinimum();
-                final double max = range.getMaximum();
+                final double min = range.getMinDouble();
+                final double max = range.getMaxDouble();
                 if (range.isMinIncluded()) {
                     background[i] = min;
                 } else if (range.isMaxIncluded()) {

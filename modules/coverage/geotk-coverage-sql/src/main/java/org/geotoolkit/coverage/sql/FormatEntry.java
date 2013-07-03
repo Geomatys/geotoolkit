@@ -36,7 +36,7 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.image.io.metadata.SampleDomain;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.MeasurementRange;
+import org.apache.sis.measure.MeasurementRange;
 import org.geotoolkit.internal.sql.table.DefaultEntry;
 
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
@@ -215,8 +215,8 @@ final class FormatEntry extends DefaultEntry {
              * minimal and maximal values are the result of a computation, not a stored value.
              */
             ranges[i] = MeasurementRange.create(
-                    adjustForRoundingError(band.getMinimumValue()),
-                    adjustForRoundingError(band.getMaximumValue()),
+                    adjustForRoundingError(band.getMinimumValue()), true,
+                    adjustForRoundingError(band.getMaximumValue()), true,
                     band.getUnits());
         }
         return ranges;

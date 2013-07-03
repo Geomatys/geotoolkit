@@ -35,7 +35,7 @@ import org.opengis.metadata.content.TransferFunctionType;
 import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.coverage.Category;
@@ -300,7 +300,7 @@ public class CategoryRecord implements Cloneable, Serializable {
             if (min != null && min <= 0) min = 1;
             if (max != null && max <= 0) max = min;
         }
-        return new NumberRange<>(Integer.class, min, max);
+        return new NumberRange<>(Integer.class, min, true, max, true);
     }
 
     /**
@@ -325,7 +325,7 @@ public class CategoryRecord implements Cloneable, Serializable {
             if (min != null && min <= 0) min = Double.MIN_VALUE;
             if (max != null && max <= 0) max = min;
         }
-        return new NumberRange<>(Double.class, min, max);
+        return new NumberRange<>(Double.class, min, true, max, true);
     }
 
     /**
@@ -335,7 +335,7 @@ public class CategoryRecord implements Cloneable, Serializable {
      */
     public NumberRange<Integer> getSampleRange() {
         if (sampleRange == null) {
-            sampleRange = NumberRange.create(sampleMin, sampleMax);
+            sampleRange = NumberRange.create(sampleMin, true, sampleMax, true);
         }
         return sampleRange;
     }
@@ -419,7 +419,7 @@ public class CategoryRecord implements Cloneable, Serializable {
                 min = MathFunctions.pow10(min);
                 max = MathFunctions.pow10(max);
             }
-            valueRange = NumberRange.create(min, max);
+            valueRange = NumberRange.create(min, true, max, true);
         }
         return valueRange;
     }
@@ -449,8 +449,8 @@ public class CategoryRecord implements Cloneable, Serializable {
                 break;
             }
         }
-        double ymin = (minimum != null) ? minimum.doubleValue() : getValueRange().getMinimum(true);
-        double ymax = (maximum != null) ? maximum.doubleValue() : getValueRange().getMaximum(true);
+        double ymin = (minimum != null) ? minimum.doubleValue() : getValueRange().getMinDouble(true);
+        double ymax = (maximum != null) ? maximum.doubleValue() : getValueRange().getMaxDouble(true);
         if (ymin > ymax) {
             final double tmp = ymin;
             ymin = ymax;

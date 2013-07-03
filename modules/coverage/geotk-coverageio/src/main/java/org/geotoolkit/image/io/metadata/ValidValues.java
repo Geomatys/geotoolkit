@@ -20,7 +20,7 @@ package org.geotoolkit.image.io.metadata;
 import javax.imageio.metadata.IIOMetadataFormat;
 
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.metadata.ValueRestriction;
 

@@ -25,7 +25,7 @@ import java.sql.PreparedStatement;
 import java.awt.geom.Dimension2D;
 import java.io.IOException;
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.RangeSet;
 import org.apache.sis.internal.util.CollectionsExt;
 import org.geotoolkit.internal.sql.table.Database;
@@ -521,7 +521,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
         final int extent = results.getInt(indexOf(query.spatialExtent));
         final GridGeometryEntry geometry = getGridGeometryTable().getEntry(extent);
         final NumberRange<?> verticalRange = envelope.getVerticalRange();
-        final double z = 0.5*(verticalRange.getMinimum() + verticalRange.getMaximum());
+        final double z = 0.5*(verticalRange.getMinDouble() + verticalRange.getMaxDouble());
         return new GridCoverageIdentifier(series, filename, index,
                 geometry.indexOfNearestAltitude(z), geometry);
     }

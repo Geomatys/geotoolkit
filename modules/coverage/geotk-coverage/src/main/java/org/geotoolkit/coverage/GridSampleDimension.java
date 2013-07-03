@@ -40,7 +40,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.iso.Types;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
@@ -438,7 +438,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
                 name = value.toString();
             }
             @SuppressWarnings({"unchecked","rawtypes"})
-            final NumberRange<?> range = new NumberRange(value.getClass(), value, value);
+            final NumberRange<?> range = new NumberRange(value.getClass(), value, true, value, true);
             final Color[] colors = ColorUtilities.subarray(palette, intValue, intValue + 1);
             categoryList.add(new Category(name, colors, range, (MathTransform1D) null));
         }
@@ -476,7 +476,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
                     max    = Numbers.cast(max, classe);
                 }
                 @SuppressWarnings({"unchecked","rawtypes"})
-                final NumberRange<?> range = new NumberRange(classe, min, max);
+                final NumberRange<?> range = new NumberRange(classe, min, true, max, true);
                 final Color[] colors = ColorUtilities.subarray(palette, lower, upper);
                 categoryList.add(new Category(name, colors, range, (MathTransform1D) null));
                 lower = upper;
@@ -537,8 +537,8 @@ public class GridSampleDimension implements SampleDimension, Serializable {
             boolean maxIncluded = true;
             for (int i = categoryList.size(); --i >= 0;) {
                 final NumberRange<?> range = categoryList.get(i).getRange();
-                final double min = range.getMinimum();
-                final double max = range.getMaximum();
+                final double min = range.getMinDouble();
+                final double max = range.getMaxDouble();
                 if (max-minimum < maximum-min) {
                     if (max >= minimum) {
                         // We are loosing some sample values in

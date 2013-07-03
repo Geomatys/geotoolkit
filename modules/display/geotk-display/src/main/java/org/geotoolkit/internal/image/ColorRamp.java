@@ -49,7 +49,7 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.MeasurementRange;
+import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.display.axis.Graduation;
@@ -249,7 +249,7 @@ public class ColorRamp implements Serializable {
      */
     public final void setGraduation(final MeasurementRange<?> range, final MathTransform1D sampleToGeophysics) {
         setGraduation(range != null ? createDefaultGraduation(graduation, sampleToGeophysics,
-                range.getMinimum(), range.getMaximum(), range.getUnits(), getLocale()) : null);
+                range.getMinDouble(), range.getMaxDouble(), range.unit(), getLocale()) : null);
     }
 
     /**

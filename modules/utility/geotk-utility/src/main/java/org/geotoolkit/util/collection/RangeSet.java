@@ -37,7 +37,7 @@ import org.apache.sis.measure.Range;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
@@ -859,7 +859,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
     @SuppressWarnings({"unchecked","rawtypes"})
     private Range<T> newRange(final T lower, final T upper) {
         if (isNumeric) {
-            return new NumberRange(elementClass, (Number) lower, (Number) upper);
+            return new NumberRange(elementClass, (Number) lower, true, (Number) upper, true);
         } else if (isDate) {
             return (Range) new DateRange((Date) (Comparable) lower, (Date) (Comparable) upper);
         } else {

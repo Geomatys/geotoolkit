@@ -43,7 +43,7 @@ import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.Disposable;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Locales;
@@ -785,8 +785,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
                 }
                 double minimum, maximum;
                 if (range != null) {
-                    minimum = range.getMinimum();
-                    maximum = range.getMaximum();
+                    minimum = range.getMinDouble();
+                    maximum = range.getMaxDouble();
                     if (!isFloat) {
                         // If the metadata do not contain any information about the range,
                         // treat as if we use the maximal range allowed by the data type.
@@ -795,7 +795,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
                     }
                     final double extent = maximum - minimum;
                     if (extent >= 0 && (isFloat || extent <= (ceil - floor))) {
-                        allRanges = (allRanges != null) ? allRanges.union(range) : range;
+                        allRanges = (allRanges != null) ? allRanges.unionAny(range) : range;
                     } else {
                         // Use range.getMin/MaxValue() because they may be integers rather than doubles.
                         Warnings.log(this, null, SpatialImageReader.class, "getImageType",
@@ -927,7 +927,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
          * the highest data value and the highest no-data value.
          */
         if (visibleRange == null) {
-            visibleRange = (allRanges != null) ? allRanges : NumberRange.create(floor, ceil);
+            visibleRange = (allRanges != null) ? allRanges : NumberRange.create(floor, true, ceil, true);
         }
         PaletteFactory factory = null;
         if (parameters instanceof SpatialImageReadParam) {
@@ -937,8 +937,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
             factory = PaletteFactory.getDefault();
         }
         factory.setWarningLocale(locale);
-        final double minimum = visibleRange.getMinimum();
-        final double maximum = visibleRange.getMaximum();
+        final double minimum = visibleRange.getMinDouble();
+        final double maximum = visibleRange.getMaxDouble();
         final Palette palette;
         if (isFloat) {
             assert visibleConverter.getOffset() == 0 : visibleConverter;

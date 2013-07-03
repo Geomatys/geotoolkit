@@ -38,7 +38,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.apache.sis.util.ArraysExt;
 
 import org.apache.sis.util.Deprecable;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Numbers;
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
@@ -312,7 +312,7 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
                     (Number) descriptor.getMinimumValue(), true,
                     (Number) descriptor.getMaximumValue(), true);
             if (range == null) {
-                range = new NumberRange<>(Double.class, null, null);
+                range = new NumberRange<>(Double.class, null, false, null, false);
             }
             lines.add("      <tr><td><b>Value range:</b>" + "</td><td>" + range + unit + "</td></tr>");
         }

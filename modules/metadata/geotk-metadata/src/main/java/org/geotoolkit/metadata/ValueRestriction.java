@@ -25,7 +25,7 @@ import org.opengis.annotation.Obligation;
 
 import org.opengis.metadata.ExtendedElementInformation;
 import org.opengis.util.InternationalString;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.WeakHashSet;
 
@@ -182,7 +182,7 @@ public class ValueRestriction implements Serializable {
         /*
          * If the value is not outside the range, set the range to null.
          */
-        if (value == null || range == null || (value instanceof Number && range.contains((Number) value))) {
+        if (value == null || range == null || (value instanceof Number && range.containsAny((Number) value))) {
             range = null;
             changed = true;
         }

@@ -48,7 +48,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import org.apache.sis.util.Localized;
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.MeasurementRange;
+import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;

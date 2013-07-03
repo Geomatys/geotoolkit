@@ -22,8 +22,8 @@ import javax.measure.unit.SI;
 
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.measure.NumberRange;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -118,7 +118,7 @@ public final strictfp class ColorMapTest {
      */
     @Test
     public void testRelativeRange() {
-        map.setRelativeRange("Temperature", NumberRange.create(20, 70));
+        map.setRelativeRange("Temperature", NumberRange.create(20, true, 70, true));
         assertSame(band, map.recolor(band, ARGB));
         assertEquals(Color.GRAY  .getRGB(), ARGB[  0]);
         assertEquals(Color.GREEN .getRGB(), ARGB[  1]);
@@ -137,7 +137,7 @@ public final strictfp class ColorMapTest {
      */
     @Test
     public void testGeophysicsRange() {
-        map.setGeophysicsRange("Temperature", MeasurementRange.create(5, 20, SI.CELSIUS));
+        map.setGeophysicsRange("Temperature", MeasurementRange.create(5, true, 20, true, SI.CELSIUS));
         assertSame(band, map.recolor(band, ARGB));
         assertEquals(Color.GRAY  .getRGB(), ARGB[  0]);
         assertEquals(Color.GREEN .getRGB(), ARGB[  1]);

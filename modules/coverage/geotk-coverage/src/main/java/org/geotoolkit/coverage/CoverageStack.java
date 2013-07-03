@@ -54,7 +54,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.util.collection.FrequencySortedSet;
@@ -313,8 +313,8 @@ public class CoverageStack extends AbstractCoverage {
             if (range == null) {
                 final Envelope envelope = getEnvelope();
                 final int zDimension = envelope.getDimension() - 1;
-                range = NumberRange.create(envelope.getMinimum(zDimension),
-                                           envelope.getMaximum(zDimension));
+                range = NumberRange.create(envelope.getMinimum(zDimension), true,
+                                           envelope.getMaximum(zDimension), true);
             }
             return range;
         }
@@ -806,8 +806,8 @@ public class CoverageStack extends AbstractCoverage {
                     maximum = candidate.getMaximum(i);
                 } else if (i == zDimension) {
                     final NumberRange<?> range = element.getZRange();
-                    minimum = range.getMinimum();
-                    maximum = range.getMaximum();
+                    minimum = range.getMinDouble();
+                    maximum = range.getMaxDouble();
                 } else {
                     minimum = NEGATIVE_INFINITY;
                     maximum = POSITIVE_INFINITY;
@@ -891,7 +891,7 @@ public class CoverageStack extends AbstractCoverage {
      * Returns {@code true} if the specified z-value is inside the specified range.
      */
     private static boolean contains(final NumberRange<?> range, final double z) {
-        return z >= range.getMinimum() && z <= range.getMaximum();
+        return z >= range.getMinDouble() && z <= range.getMaxDouble();
     }
 
     /**
@@ -1143,7 +1143,7 @@ public class CoverageStack extends AbstractCoverage {
                      * The requested z is after the last coverage's central z.
                      * Maybe it is not after the last coverage's upper z. Check...
                      */
-                    if (elements[index].getZRange().contains(Z)) {
+                    if (elements[index].getZRange().containsAny(Z)) {
                         load(index);
                         return true;
                     }
@@ -1154,7 +1154,7 @@ public class CoverageStack extends AbstractCoverage {
                  * The requested z is before the first coverage's central z.
                  * Maybe it is not before the first coverage's lower z. Check...
                  */
-                if (elements[index].getZRange().contains(Z)) {
+                if (elements[index].getZRange().containsAny(Z)) {
                     load(index);
                     return true;
                 }
@@ -1168,8 +1168,8 @@ public class CoverageStack extends AbstractCoverage {
                 final Element        upperElement = elements[index  ];
                 final NumberRange<?> lowerRange   = lowerElement.getZRange();
                 final NumberRange<?> upperRange   = upperElement.getZRange();
-                final double         lowerEnd     = lowerRange.getMaximum();
-                final double         upperStart   = upperRange.getMinimum();
+                final double         lowerEnd     = lowerRange.getMaxDouble();
+                final double         upperStart   = upperRange.getMinDouble();
                 if (lowerEnd + lagTolerance >= upperStart) {
                     if (interpolationEnabled) {
                         load(lowerElement, upperElement);
@@ -1181,11 +1181,11 @@ public class CoverageStack extends AbstractCoverage {
                     }
                     return true;
                 }
-                if (lowerRange.contains(Z)) {
+                if (lowerRange.containsAny(Z)) {
                     load(index-1);
                     return true;
                 }
-                if (upperRange.contains(Z)) {
+                if (upperRange.containsAny(Z)) {
                     load(index);
                     return true;
                 }
