@@ -19,7 +19,6 @@ package org.geotoolkit.internal.jaxb.referencing;
 
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.apache.sis.internal.jaxb.AdapterReplacement;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
@@ -32,7 +31,7 @@ import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 4.01
  *
  * @since 3.00
  * @module
@@ -86,18 +85,8 @@ public final class SC_VerticalCRS extends org.apache.sis.internal.jaxb.gml.SC_Ve
      *
      * @return The metadata to be marshalled.
      */
-    @XmlElement(name = "VerticalCRS")
-    public DefaultVerticalCRS getElement() {
+    @Override
+    public Object getElement() {
         return skip() ? null : DefaultVerticalCRS.castOrCopy(metadata);
-    }
-
-    /**
-     * Sets the value for the {@link DefaultVerticalCRS}.
-     * This method is systematically called at unmarshalling-time by JAXB.
-     *
-     * @param metadata The unmarshalled metadata.
-     */
-    public void setElement(final DefaultVerticalCRS metadata) {
-        this.metadata = metadata;
     }
 }
