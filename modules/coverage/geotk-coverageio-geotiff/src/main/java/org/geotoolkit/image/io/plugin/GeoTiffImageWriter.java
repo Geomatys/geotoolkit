@@ -168,7 +168,7 @@ public class GeoTiffImageWriter extends ImageWriterAdapter{
         public Spi(final ImageWriterSpi main) {
             super(main);
             names           = new String[] {"geotiff"};
-            MIMETypes       = new String[] {"image/x-geotiff"};
+            MIMETypes       = new String[] {"image/x-geotiff", "image/tiff;subtype=geotiff"};
             pluginClassName = "org.geotoolkit.image.io.plugin.GeoTiffImageWriter";
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
