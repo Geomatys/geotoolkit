@@ -232,10 +232,12 @@ public class Isoline2 extends AbstractProcess {
 //                if(urCorner){
 //                    STop = top.HLeft;
 //                    STop.add(UR);
-//                }else if(crossHp!=null){
-//                    SMiddle = top.HLeft;
-//                    SMiddle.add(crossHp);
-//                }else if(blCorner){
+//                }else 
+                if(crossHp!=null){
+                    SMiddle = top.HLeft;
+                    SMiddle.add(crossHp);
+                }
+//                else if(left.VBottom!=null){
 //                    SBottom = top.HLeft;
 //                    SBottom.add(BL);
 //                }
@@ -256,24 +258,24 @@ public class Isoline2 extends AbstractProcess {
                     top.HMiddle.add(crossLf);
                     top.HMiddle.getConstruction().merge(left.VMiddle.getConstruction());
                     update(top.HMiddle.getConstruction(),k);
-                }
-//                else if(left.VBottom!=null){
+                }else if(left.VBottom!=null){
+//                    if(SBottom!=null) throw new RuntimeException("Logic error, SBottom should not be set");
 //                    top.HMiddle.add(BL);
 //                    top.HMiddle.getConstruction().merge(left.VBottom.getConstruction());
 //                    update(top.HMiddle.getConstruction(),k);
 //                    SBottom = top.HMiddle;
-//                }
+                }
             }
             
             if(left.VTop!=null){
-                if(crossHp!=null){
+                if(crossHp!=null && SMiddle==null){
                     if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
                     SMiddle = left.VTop;
                     SMiddle.add(crossHp);
-                }else if(top.HRight==null){
-//                    if(STop!=null) throw new RuntimeException("Logic error, STop should not be set");
-//                    STop = left.VTop;
-//                    STop.add(UR);
+                }else if(top.HRight==null && urCorner){
+                    if(STop!=null) throw new RuntimeException("Logic error, STop should not be set");
+                    STop = left.VTop;
+                    STop.add(UR);
                 }
             }else if(left.VBottom!=null){
                 SBottom = left.VBottom;
@@ -477,14 +479,14 @@ public class Isoline2 extends AbstractProcess {
         
         if(STop != null){
             if(crossBt!=null){
-                newBoundary.HMiddle = STop;
-                newBoundary.HMiddle.add(crossBt);
-                
                 //propage top limit
+                newBoundary.VTop = STop;
+                                
                 //duplicate line here, we might have a fork
                 Construction cst = new Construction(level);
-                newBoundary.VTop = cst.getEdge1();
-                newBoundary.VTop.add(UR);
+                newBoundary.HMiddle = cst.getEdge1();
+                newBoundary.HMiddle.add(UR);
+                newBoundary.HMiddle.add(crossBt);
                 
             }else{
                 //propage top limit
