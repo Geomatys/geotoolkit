@@ -31,9 +31,11 @@ import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.metadata.Metadata;
+import org.opengis.metadata.identification.Resolution;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.metadata.identification.DataIdentification;
 
 import org.junit.*;
-import static org.apache.sis.test.Assert.*;
 
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
@@ -47,6 +49,9 @@ import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageReaderTest;
 import org.geotoolkit.image.SampleModels;
 import org.apache.sis.xml.XML;
+
+import static org.apache.sis.test.Assert.*;
+import static org.apache.sis.test.TestUtilities.getSingleton;
 
 
 /**
@@ -114,6 +119,9 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
         assertEquals(WorldFileImageReader.class, reader.imageReader.getClass());
         final Metadata metadata = reader.getMetadata();
+        final Identification identification = getSingleton(metadata.getIdentificationInfo());
+        final Resolution resolution = getSingleton(((DataIdentification) identification).getSpatialResolutions());
+        assertEquals(Double.valueOf(1000), resolution.getDistance());
         final String xml = XML.marshal(metadata);
         assertFalse("Nothing to write.", xml.isEmpty());
         assertXmlEquals(TestData.url(ImageCoverageReaderTest.class, "MatrixMetadata.xml"),
