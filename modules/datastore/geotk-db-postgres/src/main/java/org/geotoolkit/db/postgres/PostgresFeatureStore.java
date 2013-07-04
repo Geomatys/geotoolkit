@@ -150,8 +150,8 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
             JDBCFeatureStoreUtilities.closeSafe(getLogger(), cnx);
         }
     }
-    
-     @Override
+
+    @Override
     public void deleteFeatureType(final Name typeName) throws DataStoreException {
         try {
             getVersioning(typeName).dropVersioning();
@@ -161,5 +161,26 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
          super.deleteFeatureType(typeName);
         
     }
-    
+
+    /**
+     * Delete postgres schema.
+     *
+     * @param name The postgres schema name.
+     * @throws DataStoreException
+     */
+    public void dropPostgresSchema(final String name) throws DataStoreException {
+        Statement stmt = null;
+        Connection cnx = null;
+        String sql = null;
+        try {
+            cnx = getDataSource().getConnection();
+            sql = "DROP SCHEMA \""+ name +"\"";
+            stmt = cnx.createStatement();
+            stmt.execute(sql);
+        } catch (SQLException ex) {
+            throw new DataStoreException("Failed to delete features : " + ex.getMessage() + "\nSQL Query :" + sql, ex);
+        } finally {
+            JDBCFeatureStoreUtilities.closeSafe(getLogger(), cnx, stmt, null);
+        }
+    }
 }
