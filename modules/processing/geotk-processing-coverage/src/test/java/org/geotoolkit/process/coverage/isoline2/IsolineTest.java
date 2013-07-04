@@ -58,4 +58,72 @@ public class IsolineTest {
         
     }
     
+    @Test
+    public void test2() throws Exception{
+        
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, 0, 3);
+        env.setRange(1, 0, 3);
+        
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setEnvelope(env);
+        gcb.setRenderedImage(new float[][]{
+            {10,10,20},
+            {10,10,20},
+            {10,15,10},
+        });
+        final GridCoverage2D coverage = gcb.getGridCoverage2D();
+        final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
+        final CoverageReference ref = store.getCoverageReference(store.getNames().iterator().next());
+        
+        
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "isoline2");
+        final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
+        procparams.parameter("inCoverageRef").setValue(ref);
+        procparams.parameter("inIntervals").setValue(new double[]{15});
+        final org.geotoolkit.process.Process process = desc.createProcess(procparams);
+        final ParameterValueGroup result = process.call();
+        FeatureCollection<Feature> col = (FeatureCollection) result.parameter("outFeatureCollection").getValue();
+        
+        for(Feature f : col){
+            System.out.println(f);
+        }
+        
+    }
+    
+    @Test
+    public void test3() throws Exception{
+        
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, 0, 3);
+        env.setRange(1, 0, 3);
+        
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setEnvelope(env);
+        gcb.setRenderedImage(new float[][]{
+            {10,10,20},
+            {10,10,20},
+            {10,15,10},
+            {10,15,10},
+        });
+        final GridCoverage2D coverage = gcb.getGridCoverage2D();
+        final MemoryCoverageStore store = new MemoryCoverageStore(coverage);
+        final CoverageReference ref = store.getCoverageReference(store.getNames().iterator().next());
+        
+        
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "isoline2");
+        final ParameterValueGroup procparams = desc.getInputDescriptor().createValue();
+        procparams.parameter("inCoverageRef").setValue(ref);
+        procparams.parameter("inIntervals").setValue(new double[]{15});
+        final org.geotoolkit.process.Process process = desc.createProcess(procparams);
+        final ParameterValueGroup result = process.call();
+        FeatureCollection<Feature> col = (FeatureCollection) result.parameter("outFeatureCollection").getValue();
+        
+        for(Feature f : col){
+            System.out.println(f);
+        }
+                
+    }
+    
+    
 }

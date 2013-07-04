@@ -164,6 +164,14 @@ public final class Construction {
             }
         }
 
+        public Coordinate getLast(){
+            if(atEnd){
+                return lst.getLast();
+            }else{
+                return lst.getFirst();
+            }
+        }
+        
         @Override
         public boolean equals(Object obj) {
             return getConstruction().equals( ((Edge)obj).getConstruction() );

@@ -201,176 +201,289 @@ public class Isoline2 extends AbstractProcess {
             cst.update(line0TopNeighbor[k][x]);
             cst.update(line1TopNeighbor[k][x]);
         }
+        cst.update(leftNeighbor[k]);
     }
     
     
     private Boundary buildTriangles(final int k, final double level, final Boundary top, final Boundary left) 
             throws MismatchedDimensionException, TransformException{
-        
-        //the new triangle
-        final Boundary newBoundary = new Boundary();
-        
+                
         final boolean ulCorner = (UL.z == level);
         final boolean urCorner = (UR.z == level);
         final boolean blCorner = (BL.z == level);
-        final boolean brCorner = (BR.z == level);
         final Coordinate crossUp = interpolate(level, UL, UR);
         final Coordinate crossLf = interpolate(level, UL, BL);
         final Coordinate crossHp = interpolate(level, UR, BL);
-        final Coordinate crossBt = interpolate(level, BL, BR);
-        final Coordinate crossRi = interpolate(level, UR, BR);
         
         // FIRST TRIANGLE //////////////////////////////////////////////////////
-        Construction.Edge SBottom = null;
-        Construction.Edge SMiddle = null;
-        Construction.Edge STop = null;
+        final Construction.Edge SBottom;
+        final Construction.Edge SMiddle;
+        final Construction.Edge STop;
         
         if(top!=null && left!=null){ //-----------------------------------------
             //pixel is somewhere in the image 
             
-            if(top.HLeft!=null){
-//                if(urCorner){
-//                    STop = top.HLeft;
-//                    STop.add(UR);
-//                }else 
+            if(top.HMiddle!=null){
                 if(crossHp!=null){
-                    SMiddle = top.HLeft;
-                    SMiddle.add(crossHp);
-                }
-//                else if(left.VBottom!=null){
-//                    SBottom = top.HLeft;
-//                    SBottom.add(BL);
-//                }
-            }else if(top.HRight!=null){
-                if(left.VMiddle!=null){
-                    top.HRight.add(crossLf);
-                    top.HRight.getConstruction().merge(left.VMiddle.getConstruction());
-                    update(top.HRight.getConstruction(),k);
-                }else{
-                    STop = top.HRight;
-                }
-            }else if(top.HMiddle!=null){
-                if(crossHp!=null){
-                    if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
                     SMiddle = top.HMiddle;
                     SMiddle.add(crossHp);
+                    STop = null;
+                    SBottom = null;
                 }else if(left.VMiddle!=null){
                     top.HMiddle.add(crossLf);
                     top.HMiddle.getConstruction().merge(left.VMiddle.getConstruction());
                     update(top.HMiddle.getConstruction(),k);
+                    STop = null;
+                    SMiddle = null;
+                    SBottom = null;
                 }else if(left.VBottom!=null){
-//                    if(SBottom!=null) throw new RuntimeException("Logic error, SBottom should not be set");
-//                    top.HMiddle.add(BL);
-//                    top.HMiddle.getConstruction().merge(left.VBottom.getConstruction());
-//                    update(top.HMiddle.getConstruction(),k);
-//                    SBottom = top.HMiddle;
+                    top.HMiddle.add(BL);
+                    try{
+                        top.HMiddle.getConstruction().merge(left.VBottom.getConstruction());
+                    }catch(Exception ex){
+                        System.out.println(ex);
+                    }
+                    update(top.HMiddle.getConstruction(),k);
+                    //create a fork
+                    final Construction cst = new Construction(level);
+                    SBottom = cst.getEdge1();
+                    SBottom.add(BL);
+                    STop = null;
+                    SMiddle = null;
+                }else{
+                    STop = null;
+                    SMiddle = null;
+                    SBottom = null;
                 }
-            }
-            
-            if(left.VTop!=null){
-                if(crossHp!=null && SMiddle==null){
-                    if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
-                    SMiddle = left.VTop;
-                    SMiddle.add(crossHp);
-                }else if(top.HRight==null && urCorner){
-                    if(STop!=null) throw new RuntimeException("Logic error, STop should not be set");
-                    STop = left.VTop;
-                    STop.add(UR);
-                }
-            }else if(left.VBottom!=null){
-                SBottom = left.VBottom;
-                
             }else if(left.VMiddle!=null){
                 if(crossHp!=null){
-                    if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
                     SMiddle = left.VMiddle;
                     SMiddle.add(crossHp);
+                    STop = null;
+                    SBottom = null;
+                }else if(top.HRight!=null){
+                    left.VMiddle.add(UR);
+                    try{
+                        left.VMiddle.getConstruction().merge(top.HRight.getConstruction());
+                    }catch(Exception ex){
+                        System.out.println(ex);
+                    }
+                    update(left.VMiddle.getConstruction(), k);
+                    //create a fork
+                    final Construction cst = new Construction(level);
+                    STop = cst.getEdge1();
+                    STop.add(UR);
+                    SMiddle = null;
+                    SBottom = null;
+                }else{
+                    STop = null;
+                    SMiddle = null;
+                    SBottom = null;
                 }
-                //don't test already done above
-                //else if(crossUp!=null){
-                //    left.VMiddle.add(crossUp);
-                //}
-            } 
+            }else if(left.VTop!=null && left.VBottom!=null && top.HRight!=null){
+                STop = null;
+                SMiddle = null;
+                SBottom = null;
+            }else if(left.VTop!=null && left.VBottom!=null){
+                
+                left.VTop.add(BL);
+                left.VTop.getConstruction().merge(left.VBottom.getConstruction());
+                update(left.VTop.getConstruction(),k);
+                //create a fork
+                final Construction cst = new Construction(level);
+                SBottom = cst.getEdge1();
+                SBottom.add(BL);
+                STop = null;
+                SMiddle = null;
+            }else if(left.VTop!=null){
+                if(crossHp!=null){
+                    SMiddle = left.VTop;
+                    SMiddle.add(crossHp);
+                    STop = null;
+                    SBottom = null;
+                }else{
+                    STop = null;
+                    SMiddle = null;
+                    SBottom = null;
+                }
+            }else if(left.VBottom!=null){
+                STop = null;
+                SMiddle = null;
+                SBottom = left.VBottom;
+            }else if(top.HRight!=null){
+                STop = top.HRight;
+                SMiddle = null;
+                SBottom = null;
+            }else{
+                STop = null;
+                SMiddle = null;
+                SBottom = null;
+            }
             
+            checkIntermediate(level,SBottom, SMiddle, STop);
             
         }else if(top!=null){ //-------------------------------------------------
             //pixel is on the left image border
-//            if(top.HLeft!=null){
-//                if(urCorner){
-//                    STop = top.HLeft;
-//                    STop.add(UR);
-//                }else if(crossHp!=null){
-//                    SMiddle = top.HLeft;
-//                    SMiddle.add(crossHp);
-//                }else if(blCorner){
-//                    SBottom = top.HLeft;
-//                    SBottom.add(BL);
-//                }
-//            }else if(top.HRight!=null){
-//                if(crossLf!=null){
-//                    top.HRight.add(crossLf);
-//                }else{
-//                    STop = top.HRight;
-//                }
-//            }else 
-                if(top.HMiddle!=null){
+            if(top.HMiddle!=null){
                 if(crossHp!=null){
-                    if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
                     SMiddle = top.HMiddle;
                     SMiddle.add(crossHp);
+                    STop = null;
+                    SBottom = null; 
                 }else if(crossLf!=null){
                     top.HMiddle.add(crossLf);
+                    STop = null;
+                    SMiddle = null;
+                    SBottom = null;
                 }else if(blCorner){
                     SBottom = top.HMiddle;
                     SBottom.add(BL);
+                    STop = null;
+                    SMiddle = null;
+                }else{
+                    STop = null;
+                    SMiddle = null;
+                    SBottom = null;
                 }
-            }
-            
-            if(crossLf!=null && crossHp!=null){
-                if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
+            }else if(top.HLeft!=null){
+                if(crossHp!=null){
+                    SMiddle = top.HLeft;
+                    SMiddle.add(crossHp);
+                    STop = null;
+                    SBottom = null;
+                }else if(blCorner && top.HRight!=null){
+                    SBottom = top.HLeft;
+                    SBottom.add(BL);
+                    
+                    final Construction cst = new Construction(level);
+                    STop = cst.getEdge1();
+                    STop.add(UL);
+                    STop.add(UR);
+                    SMiddle = null;
+                }else if(blCorner){
+                    SBottom = top.HLeft;
+                    SBottom.add(BL);
+                    STop = null;
+                    SMiddle = null;
+                }else if(top.HRight!=null){
+                    STop = top.HLeft;
+                    STop.add(UR);
+                    SMiddle = null;
+                    SBottom = null;
+                }else {
+                    STop = null;
+                    SMiddle = null;
+                    SBottom = null;
+                }
+            }else if(top.HRight!=null){
+                if(crossLf!=null){
+                    top.HRight.add(crossLf);
+                    STop = null;
+                }else{
+                    STop = top.HRight;
+                }
+                SMiddle = null;
+                SBottom = null;
+            }else if(crossLf!=null && crossHp!=null){
                 final Construction cst = new Construction(level);
                 SMiddle = cst.getEdge1();
                 SMiddle.add(crossLf);
                 SMiddle.add(crossHp);
+                STop = null;
+                SBottom = null;
+            }else{
+                STop = null;
+                SMiddle = null;
+                SBottom = null;
             }            
+            
+            checkIntermediate(level,SBottom, SMiddle, STop);
             
         }else if(left!=null){ //------------------------------------------------
             //pixel is on the top image border
-//            if(left.VTop != null){
-//                if(urCorner){
-//                    STop = left.VTop;
-//                    STop.add(UR);
-//                }else if(crossHp!=null){
-//                    SMiddle = left.VTop;
-//                    SMiddle.add(crossHp);
-//                }else if(blCorner){
-//                    SBottom = left.VTop;
-//                    SBottom.add(BL);
-//                }
-//            }else if(left.VBottom != null){
-//                if(crossUp!=null){
-//                    left.VBottom.add(crossUp);
-//                }else{
-//                    SBottom = left.VBottom;
-//                }
-//            }else 
-                if(left.VMiddle!=null){
+            if(left.VMiddle!=null){
                 if(crossHp!=null){
-                    if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
                     SMiddle = left.VMiddle;
                     SMiddle.add(crossHp);
+                    STop = null;
+                    SBottom = null;
                 }else if(crossUp!=null){
                     left.VMiddle.add(crossUp);
+                    STop = null;
+                    SMiddle = null;
+                    SBottom = null;
+                }else if(urCorner){
+                    STop = left.VMiddle;
+                    STop.add(UR);
+                    SMiddle = null;
+                    SBottom = null;
+                }else{
+                    STop = null;
+                    SMiddle = null;
+                    SBottom = null;
                 }
-            }
-            
-            if(crossUp!=null && crossHp!=null){
-                if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
+            }else if(left.VTop != null && left.VBottom != null){
+                if(urCorner){
+                    STop = left.VTop;
+                    STop.add(UR);
+                    SMiddle = null;
+                    SBottom = left.VBottom;
+                    
+                }else{
+                    left.VTop.getConstruction().merge(left.VBottom.getConstruction());
+                    update(left.VTop.getConstruction(), k);
+                    //fork it
+                    final Construction cst = new Construction(level);
+                    SBottom = cst.getEdge1();
+                    SBottom.add(BL);
+                    STop = null;
+                    SMiddle = null;
+                }
+                
+            }else if(left.VTop != null){
+                if(urCorner){
+                    STop = left.VTop;
+                    STop.add(UR);
+                    SMiddle = null;
+                    SBottom = null;
+                }else if(crossHp!=null){
+                    SMiddle = left.VTop;
+                    SMiddle.add(crossHp);
+                    STop = null;
+                    SBottom = null;
+                }else{
+                    STop = null;
+                    SMiddle = null;
+                    SBottom = null;
+                }
+            }else if(left.VBottom != null){
+                if(crossUp!=null){
+                    left.VBottom.add(crossUp);
+                    //fork it
+                    final Construction cst = new Construction(level);
+                    SBottom = cst.getEdge1();
+                    SBottom.add(BL);
+                    STop = null;
+                    SMiddle = null;
+                }else{
+                    STop = null;
+                    SMiddle = null;
+                    SBottom = left.VBottom;
+                }
+            }else if(crossUp!=null && crossHp!=null){
                 final Construction cst = new Construction(level);
                 SMiddle = cst.getEdge1();
                 SMiddle.add(crossUp);
                 SMiddle.add(crossHp);
+                STop = null;
+                SBottom = null;
+            }else{
+                STop = null;
+                SMiddle = null;
+                SBottom = null;
             }
+            
+            checkIntermediate(level, SBottom, SMiddle, STop);
             
         }else{ //---------------------------------------------------------------
             //pixel is on the top left image corner
@@ -384,6 +497,7 @@ public class Isoline2 extends AbstractProcess {
                 STop.add(UL);
                 STop.add(UR);
                 SBottom = cst.getEdge2();
+                SMiddle = null;
                 
             }else if(ulCorner && urCorner){
                 //adjacent border
@@ -391,6 +505,8 @@ public class Isoline2 extends AbstractProcess {
                 STop = cst.getEdge1();
                 STop.add(UL);
                 STop.add(UR);
+                SMiddle = null;
+                SBottom = null;
                 
             }else if(ulCorner && blCorner){
                 //opposite border
@@ -398,6 +514,8 @@ public class Isoline2 extends AbstractProcess {
                 SBottom = cst.getEdge1();
                 SBottom.add(UL);
                 SBottom.add(BL);
+                STop = null;
+                SMiddle = null;
                 
             }else if(urCorner && blCorner){
                 //hypothenus border
@@ -406,57 +524,102 @@ public class Isoline2 extends AbstractProcess {
                 STop.add(BL);
                 STop.add(UR);
                 SBottom = cst.getEdge2();
+                SMiddle = null;
             }
 
             //split on a height
-            if(ulCorner && crossHp!=null){
-                if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
+            else if(ulCorner && crossHp!=null){
                 final Construction cst = new Construction(level);
                 SMiddle = cst.getEdge1();
                 SMiddle.add(UL);
                 SMiddle.add(crossHp);
+                STop = null;
+                SBottom = null;
+                
             }else if(urCorner && crossLf!=null){
-                if(STop!=null) throw new RuntimeException("Logic error, STop should not be set");
                 final Construction cst = new Construction(level);
                 STop = cst.getEdge1();
                 STop.add(crossLf);
                 STop.add(UR);
+                SMiddle = null;
+                SBottom = null;
+                
             }else if(blCorner && crossUp!=null){
-                if(SBottom!=null) throw new RuntimeException("Logic error, SBottom should not be set");
                 final Construction cst = new Construction(level);
                 SBottom = cst.getEdge1();
                 SBottom.add(crossUp);
                 SBottom.add(BL);
+                STop = null;
+                SMiddle = null;
             }
             
             //split on 2 edges
             else if(crossUp!=null && crossHp!=null){
-                if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
                 final Construction cst = new Construction(level);
                 SMiddle = cst.getEdge1();
                 SMiddle.add(crossUp);
                 SMiddle.add(crossHp);
+                STop = null;
+                SBottom = null;
+                
             }else if(crossLf!=null && crossHp!=null){
-                if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
                 final Construction cst = new Construction(level);
                 SMiddle = cst.getEdge1();
                 SMiddle.add(crossLf);
                 SMiddle.add(crossHp);
+                STop = null;
+                SBottom = null;
+                
             }else if(crossUp!=null && crossLf!=null){
                 //only case where we can push the geometry directly
                 final Geometry geom = GF.createLineString(new Coordinate[]{crossUp, crossLf});
                 pushGeometry(geom, level);
+                STop = null;
+                SMiddle = null;
+                SBottom = null;
+            }else{
+                STop = null;
+                SMiddle = null;
+                SBottom = null;
             }
+            
+            checkIntermediate(level,SBottom, SMiddle, STop);
         }
         
+        return createSecondTriangle(level, SBottom, SMiddle, STop);
+    }
+    
+    private void checkIntermediate(final double level,
+                                          final Construction.Edge SBottom, 
+                                          final Construction.Edge SMiddle, 
+                                          final Construction.Edge STop){
+        final Coordinate crossHp = interpolate(level, UR, BL);
         
-        //algotihm check, can not have all S set
-        if(SMiddle!=null && (STop!=null || SBottom!=null)){
-            throw new RuntimeException("Logic error, Muplite S set");
+        //algorithm check
+        if(SBottom!=null && !SBottom.getLast().equals2D(BL)){
+            throw new RuntimeException("Unvalid point at BL");
         }
+        if(SMiddle!=null && !SMiddle.getLast().equals2D(crossHp)){
+            throw new RuntimeException("Unvalid point at HP");
+        }
+        if(STop!=null && !STop.getLast().equals2D(UR)){
+            throw new RuntimeException("Unvalid point at UR");
+        }
+    }
+    
+    private Boundary createSecondTriangle(final double level, 
+                                          final Construction.Edge SBottom, 
+                                          final Construction.Edge SMiddle, 
+                                          final Construction.Edge STop){
         
+        final boolean urCorner = (UR.z == level);
+        final boolean blCorner = (BL.z == level);
+        final boolean brCorner = (BR.z == level);
+        final Coordinate crossBt = interpolate(level, BL, BR);
+        final Coordinate crossRi = interpolate(level, UR, BR);
         
-        //SECOND TRIANGLE //////////////////////////////////////////////////////
+        //the new triangle
+        final Boundary newBoundary = new Boundary();
         
         if(SMiddle != null){
             //continue existing lines
@@ -475,9 +638,12 @@ public class Isoline2 extends AbstractProcess {
                 newBoundary.HRight.add(BR);
             }
             
-        }
-        
-        if(STop != null){
+        }else if(STop!=null && SBottom!=null){
+            //propagate the two edges
+            newBoundary.VTop = STop;
+            newBoundary.HLeft = SBottom;
+            
+        }else if(STop != null){
             if(crossBt!=null){
                 //propage top limit
                 newBoundary.VTop = STop;
@@ -488,12 +654,26 @@ public class Isoline2 extends AbstractProcess {
                 newBoundary.HMiddle.add(UR);
                 newBoundary.HMiddle.add(crossBt);
                 
+            }else if(brCorner){
+                //propage bottom limit
+                newBoundary.HRight = STop;
+                newBoundary.HRight.add(BR);
+                
+                //duplicate line here, we might have a fork
+                //if they are linked, the first triangle of next line will link them
+                Construction cst1 = new Construction(level);
+                newBoundary.VTop = cst1.getEdge1();
+                newBoundary.VTop.add(UR);
+                
+                Construction cst2 = new Construction(level);
+                newBoundary.VBottom = cst2.getEdge1();
+                newBoundary.VBottom.add(BR);
+                
             }else{
                 //propage top limit
                 newBoundary.VTop = STop;
             }
-        }
-        if(SBottom != null){
+        }else if(SBottom != null){
             if(crossRi!=null){
                 newBoundary.VMiddle = SBottom;
                 newBoundary.VMiddle.add(crossRi);
@@ -503,6 +683,16 @@ public class Isoline2 extends AbstractProcess {
                 Construction cst = new Construction(level);
                 newBoundary.HLeft = cst.getEdge1();
                 newBoundary.HLeft.add(BL);
+            }else if(brCorner){
+                //propage bottom limit
+                newBoundary.HLeft = SBottom;
+                
+                //duplicate line here, we might have a fork
+                //if they are linked, the first triangle of next line will link them
+                Construction cst = new Construction(level);
+                newBoundary.HRight = cst.getEdge1();
+                newBoundary.HRight.add(BR);
+                newBoundary.VBottom = cst.getEdge2();
             }else{
                 //propage bottom limit
                 newBoundary.HLeft = SBottom;
@@ -521,22 +711,37 @@ public class Isoline2 extends AbstractProcess {
         }
         
         //check for singular segments (edges)
-        if(newBoundary.HRight == null && brCorner && newBoundary.HLeft == null){
+        if(newBoundary.HRight == null && brCorner){
             //create a single point
             final Construction cst = new Construction(level);
-            newBoundary.HRight = cst.getEdge1();
-            newBoundary.HRight.add(BR);
-            newBoundary.VBottom = cst.getEdge2();
+            newBoundary.VBottom = cst.getEdge1();
+            newBoundary.VBottom.add(BR);
+            newBoundary.HRight = cst.getEdge2();
         }
         
         
-        //algotihm check, can not have all S set
+        //algorithm check, can not have all H or V set
         if(newBoundary.HMiddle!=null && (newBoundary.HLeft!=null || newBoundary.HRight!=null)){
             throw new RuntimeException("Logic error, Muplite H set");
         }
         if(newBoundary.VMiddle!=null && (newBoundary.VTop!=null || newBoundary.VBottom!=null)){
             throw new RuntimeException("Logic error, Muplite V set top="+newBoundary.VTop+" bottom="+newBoundary.VBottom);
         }
+        //algorithm check, can not have all H or V set
+        if(newBoundary.HLeft!=null && !blCorner) throw new RuntimeException("Invalid point creation HL");
+        if(newBoundary.HMiddle!=null && crossBt==null) throw new RuntimeException("Invalid point creation HM");
+        if(newBoundary.HRight!=null && !brCorner) throw new RuntimeException("Invalid point creation HR");
+        if(newBoundary.VTop!=null && !urCorner) throw new RuntimeException("Invalid point creation VT");
+        if(newBoundary.VMiddle!=null && crossRi==null) throw new RuntimeException("Invalid point creation VM");
+        if(newBoundary.VBottom!=null && !brCorner) throw new RuntimeException("Invalid point creation VB");
+        newBoundary.checkIncoherence();
+        
+        if(newBoundary.HLeft!=null   && !newBoundary.HLeft  .getLast().equals2D(BL))      throw new RuntimeException("Invalid point creation HL");
+        if(newBoundary.HMiddle!=null && !newBoundary.HMiddle.getLast().equals2D(crossBt)) throw new RuntimeException("Invalid point creation HM");
+        if(newBoundary.HRight!=null  && !newBoundary.HRight .getLast().equals2D(BR))      throw new RuntimeException("Invalid point creation HR");
+        if(newBoundary.VTop!=null    && !newBoundary.VTop   .getLast().equals2D(UR))      throw new RuntimeException("Invalid point creation VT");
+        if(newBoundary.VMiddle!=null && !newBoundary.VMiddle.getLast().equals2D(crossRi)) throw new RuntimeException("Invalid point creation VM");
+        if(newBoundary.VBottom!=null && !newBoundary.VBottom.getLast().equals2D(BR))      throw new RuntimeException("Invalid point creation VB");
         
         return newBoundary;
     }

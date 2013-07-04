@@ -39,4 +39,37 @@ public class Boundary {
         if(VBottom!=null) contructions.add(VBottom.getConstruction());
     }
     
+    public void checkIncoherence(){
+        if(HLeft!=null){
+            if(HLeft==HMiddle || HLeft==HRight || HLeft==VTop || HLeft==VMiddle || HLeft==VBottom){
+                throw new RuntimeException("Edge appears more then once");
+            }
+        }
+        if(HMiddle!=null){
+            if(HMiddle==HLeft || HMiddle==HRight || HMiddle==VTop || HMiddle==VMiddle || HMiddle==VBottom){
+                throw new RuntimeException("Edge appears more then once");
+            }
+        }
+        if(HRight!=null){
+            if(HRight==HLeft || HRight==HMiddle || HRight==VTop || HRight==VMiddle || HRight==VBottom){
+                throw new RuntimeException("Edge appears more then once");
+            }
+        }
+        if(VTop!=null){
+            if(VTop==HLeft || VTop==HMiddle || VTop==HRight || VTop==VMiddle || VTop==VBottom){
+                throw new RuntimeException("Edge appears more then once");
+            }
+        }
+        if(VMiddle!=null){
+            if(VMiddle==HLeft || VMiddle==HMiddle || VMiddle==HRight || VMiddle==VTop || VMiddle==VBottom){
+                throw new RuntimeException("Edge appears more then once");
+            }
+        }
+        if(VBottom!=null){
+            if(VBottom==HLeft || VBottom==HMiddle || VBottom==HRight || VBottom==VTop || VBottom==VMiddle){
+                throw new RuntimeException("Edge appears more then once");
+            }
+        }
+    }
+    
 }
