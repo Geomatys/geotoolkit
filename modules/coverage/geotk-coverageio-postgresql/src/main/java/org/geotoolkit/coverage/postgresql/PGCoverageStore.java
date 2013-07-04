@@ -195,6 +195,22 @@ public class PGCoverageStore extends AbstractCoverageStore{
         fireCoverageDeleted(name);
     }
 
+    public void dropPostgresSchema(final String name) throws DataStoreException {
+        Statement stmt = null;
+        Connection cnx = null;
+        String sql = null;
+        try {
+            cnx = getDataSource().getConnection();
+            sql = "DROP SCHEMA \""+ name +"\" CASCADE;";
+            stmt = cnx.createStatement();
+            stmt.execute(sql);
+        } catch (SQLException ex) {
+            throw new DataStoreException("Failed to delete features : " + ex.getMessage() + "\nSQL Query :" + sql, ex);
+        } finally {
+            closeSafe(cnx, stmt, null);
+        }
+    }
+
     @Override
     public Logger getLogger() {
         return super.getLogger();

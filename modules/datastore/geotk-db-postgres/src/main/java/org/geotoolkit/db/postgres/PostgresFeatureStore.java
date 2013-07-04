@@ -174,7 +174,7 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
         String sql = null;
         try {
             cnx = getDataSource().getConnection();
-            sql = "DROP SCHEMA \""+ name +"\"";
+            sql = "DROP SCHEMA \""+ name +"\" CASCADE;";
             stmt = cnx.createStatement();
             stmt.execute(sql);
         } catch (SQLException ex) {
