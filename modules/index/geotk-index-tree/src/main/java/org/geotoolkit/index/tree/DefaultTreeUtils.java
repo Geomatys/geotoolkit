@@ -326,6 +326,28 @@ public class DefaultTreeUtils {
         return true;
     }
     
+    public static boolean touches(final double[] envelopeA, final double[] envelopeB){
+        final double epsilon = 1E-15;
+        if (!intersects(envelopeA, envelopeB, true)) return false;
+        if (intersects(envelopeA, envelopeB, false)) return false;
+        final double[] intersection = intersect(envelopeA, envelopeB);
+        // on sait qu'il s'agit d'un point ou d'une ligne au max (2D)
+        // perte d'une dimension
+        final int dim = intersection.length >> 1;
+        for (int i = 0; i < dim; i++) {
+            if (getSpan(intersection, i) < epsilon) {
+                final double val = intersection[i];
+                final double minA = Math.abs(val - getMinimum(envelopeA, i));
+                final double minB = Math.abs(val - getMinimum(envelopeB, i));
+                final double maxA = Math.abs(val - getMaximum(envelopeA, i));
+                final double maxB = Math.abs(val - getMaximum(envelopeB, i));
+                if (!((minA < epsilon && maxB < epsilon) 
+                   || (maxA < epsilon && minB < epsilon))) return false;
+            }
+        }
+        return true;
+    }
+    
     /**
      * Return true if envelopeA contain envelopeB or envelope is within envelopeA.
      * 

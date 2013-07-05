@@ -129,6 +129,50 @@ public class DefaultTreeUtilsTest {
     }
     
     /**
+     * Test touches.
+     */
+    @Test
+    public void touchesTest(){
+        final double[] envelopeA  = new double[4];
+        final double[] envelopeB  = new double[4];
+        
+        //touch 2D
+        envelopeA[0] = -4; envelopeA[2] = 3;
+        envelopeA[1] = -6; envelopeA[3] = 2;
+        
+        envelopeB[0] = 3; envelopeB[2] = 10;
+        envelopeB[1] = 1; envelopeB[3] = 4;
+        
+        assertTrue(intersects(envelopeA, envelopeB, true));
+        assertFalse(intersects(envelopeA, envelopeB, false));
+        assertTrue(touches(envelopeA, envelopeB));
+        
+        envelopeB[0] = 1; envelopeB[2] = 1;
+        envelopeB[1] = 0; envelopeB[3] = 5;
+        assertFalse(touches(envelopeA, envelopeB));
+        
+        envelopeB[0] = 3; envelopeB[2] = 3;
+        envelopeB[1] = 0; envelopeB[3] = 5;
+        assertTrue(touches(envelopeA, envelopeB));
+        
+        envelopeB[0] = -4; envelopeB[2] = -4;
+        envelopeB[1] = 0; envelopeB[3] = 5;
+        assertTrue(touches(envelopeA, envelopeB));
+        
+        envelopeB[0] = -5; envelopeB[2] = 4;
+        envelopeB[1] = -6; envelopeB[3] = -6;
+        assertTrue(touches(envelopeA, envelopeB));
+        
+        envelopeB[0] = -5; envelopeB[2] = 4;
+        envelopeB[1] = 2; envelopeB[3] = 2;
+        assertTrue(touches(envelopeA, envelopeB));
+        
+        envelopeB[0] = -5; envelopeB[2] = 4;
+        envelopeB[1] = 1; envelopeB[3] = 1;
+        assertFalse(touches(envelopeA, envelopeB));
+    }
+    
+    /**
      * Test intersection.
      */
     @Test
