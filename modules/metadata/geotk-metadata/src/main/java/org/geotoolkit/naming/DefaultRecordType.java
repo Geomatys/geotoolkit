@@ -52,7 +52,10 @@ import org.geotoolkit.util.collection.XCollections;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.util.iso} package.
  */
+@Deprecated
 @Immutable
 @XmlType(name = "RecordType")
 public class DefaultRecordType implements RecordType, Serializable {

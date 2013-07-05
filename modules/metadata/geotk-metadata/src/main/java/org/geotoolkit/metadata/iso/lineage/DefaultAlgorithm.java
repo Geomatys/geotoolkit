@@ -44,6 +44,8 @@ import org.geotoolkit.xml.Namespaces;
  *
  * @since 3.03
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @ThreadSafe
 @XmlType(name = "LE_Algorithm_Type", propOrder={

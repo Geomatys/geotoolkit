@@ -44,7 +44,10 @@ import org.geotoolkit.gui.swing.tree.TreeTableNode;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata} package.
  */
+@Deprecated
 @ThreadSafe
 public abstract class AbstractMetadata implements LenientComparable {
     /**

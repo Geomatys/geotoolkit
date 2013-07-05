@@ -42,6 +42,8 @@ import org.opengis.metadata.content.FeatureCatalogueDescription;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @ThreadSafe
 @XmlType(name = "MD_FeatureCatalogueDescription_Type", propOrder={

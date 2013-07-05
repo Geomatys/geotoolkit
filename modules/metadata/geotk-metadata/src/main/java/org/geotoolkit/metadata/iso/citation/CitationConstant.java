@@ -40,6 +40,8 @@ import static java.util.Collections.singleton;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @ThreadSafe
 class CitationConstant extends DefaultCitation {

@@ -43,8 +43,11 @@ import static org.apache.sis.util.ArgumentChecks.ensureCanCast;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated moved to Apache SIS as {@link org.apache.sis.measure.NumberRange}.
  */
 @Immutable
+@Deprecated
 public class NumberRange<T extends Number & Comparable<? super T>> extends Range<T> {
     //
     // IMPLEMENTATION NOTE: This class is full of @SuppressWarnings("unchecked") annotations.

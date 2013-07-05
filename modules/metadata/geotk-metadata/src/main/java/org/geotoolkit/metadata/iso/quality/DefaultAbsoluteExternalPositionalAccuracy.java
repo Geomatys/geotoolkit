@@ -37,6 +37,8 @@ import org.opengis.metadata.quality.AbsoluteExternalPositionalAccuracy;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @ThreadSafe
 @XmlType(name = "DQ_AbsoluteExternalPositionalAccuracy_Type")

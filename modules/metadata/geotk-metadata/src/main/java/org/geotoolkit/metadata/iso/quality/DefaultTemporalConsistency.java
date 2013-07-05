@@ -36,6 +36,8 @@ import org.opengis.metadata.quality.TemporalConsistency;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @ThreadSafe
 @XmlType(name = "DQ_TemporalConsistency_Type")

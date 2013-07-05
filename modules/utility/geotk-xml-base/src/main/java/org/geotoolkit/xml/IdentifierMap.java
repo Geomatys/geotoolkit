@@ -41,7 +41,10 @@ import org.opengis.metadata.citation.Citation;
  *
  * @since 3.19
  * @module
+ *
+ * @deprecated Moved to SIS as {@link org.apache.sis.xml.IdentifierMap}.
  */
+@Deprecated
 public interface IdentifierMap extends Map<Citation,String> {
     /**
      * Returns the identifier to which the specified key is mapped,

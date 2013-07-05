@@ -81,8 +81,10 @@ import org.geotoolkit.internal.jaxb.MarshalContext;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata} package.
  */
-@ThreadSafe
+@Deprecated
 public abstract class ModifiableMetadata extends AbstractMetadata implements Cloneable {
     /**
      * A null implementation for the {@link #FREEZING} constant.

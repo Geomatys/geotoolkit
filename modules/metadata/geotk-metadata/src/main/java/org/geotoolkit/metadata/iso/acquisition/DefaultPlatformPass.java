@@ -44,6 +44,8 @@ import org.geotoolkit.internal.jaxb.NonMarshalledAuthority;
  *
  * @since 3.03
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @ThreadSafe
 @XmlType(name = "MI_PlatformPass_Type", propOrder={

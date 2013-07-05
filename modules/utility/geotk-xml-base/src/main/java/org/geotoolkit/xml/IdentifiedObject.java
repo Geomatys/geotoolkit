@@ -68,7 +68,10 @@ import org.opengis.metadata.citation.Citation;
  *
  * @since 3.18
  * @module
+ *
+ * @deprecated Moved to SIS as {@link org.apache.sis.xml.IdentifiedObject}.
  */
+@Deprecated
 public interface IdentifiedObject {
     /**
      * Returns all identifiers associated to this object. Each {@linkplain Identifier#getCode()

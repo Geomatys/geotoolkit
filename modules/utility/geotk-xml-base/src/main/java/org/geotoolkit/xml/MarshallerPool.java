@@ -61,7 +61,10 @@ import org.geotoolkit.internal.jaxb.gmd.LocaleAdapter;
  * @module
  *
  * @todo Need a timeout for disposing marshallers that have been unused for a while.
+ *
+ * @deprecated Moved to SIS as {@link org.apache.sis.xml.MarshallerPool}.
  */
+@Deprecated
 @ThreadSafe
 public class MarshallerPool {
     /**

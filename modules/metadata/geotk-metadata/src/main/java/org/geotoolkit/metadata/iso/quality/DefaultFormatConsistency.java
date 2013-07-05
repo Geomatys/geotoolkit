@@ -37,6 +37,8 @@ import org.opengis.metadata.quality.FormatConsistency;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @ThreadSafe
 @XmlType(name = "DQ_FormatConsistency_Type")

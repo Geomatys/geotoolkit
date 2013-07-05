@@ -64,6 +64,8 @@ import org.geotoolkit.internal.jaxb.gco.StringConverter;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package as {@code ISOMetadata}.
  */
 @ThreadSafe
 public class MetadataEntity extends ModifiableMetadata implements IdentifiedObject, Serializable {

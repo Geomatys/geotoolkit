@@ -45,6 +45,8 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @ThreadSafe
 @XmlType(name = "MD_Distributor_Type", propOrder={

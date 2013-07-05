@@ -41,6 +41,8 @@ import org.opengis.metadata.quality.ConformanceResult;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @ThreadSafe
 @XmlType(name = "DQ_ConformanceResult_Type", propOrder={

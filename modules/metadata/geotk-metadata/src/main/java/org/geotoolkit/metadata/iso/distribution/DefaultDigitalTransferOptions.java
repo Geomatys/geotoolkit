@@ -47,6 +47,8 @@ import org.geotoolkit.internal.jaxb.gco.GO_Real;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @ThreadSafe
 @XmlType(name = "MD_DigitalTransferOptions_Type", propOrder={

@@ -643,22 +643,26 @@ final class NetcdfMetadata extends SpatialMetadata {
     private static void appendAttributes(final List<Attribute> attributes, final IIOMetadataNode node) {
         for (final Attribute attribute : attributes) {
             /*
-             * NetCDF attributes can get string, numeric or array values. As 
-             * dom node expects String object, we let ucar transform its own 
-             * attributes as string, and then take the part we need. We can do 
-             * such a thing because ucar respects a precise CDL syntax. 
-             */            
-            String stringValue;
-            if (attribute.isString()) {
-                stringValue = attribute.getStringValue();
-            } else {
-                stringValue = attribute.toString(true);
-                stringValue = stringValue
-                        .substring(stringValue.indexOf('=')+1)
-                        .replaceAll("\"", "")
-                        .trim();
+             * NetCDF attributes can get string, numeric or array values. As
+             * DOM node expects String object, we have to convert those types
+             * to a single string.
+             */
+            final int length = attribute.getLength();
+            final StringBuilder buffer = new StringBuilder();
+            for (int i=0; i<length; i++) {
+                Object value = attribute.getStringValue(i);
+                if (value == null) {
+                    value = attribute.getNumericValue(i);
+                    if (value == null) {
+                        continue;
+                    }
+                }
+                if (i != 0) {
+                    buffer.append(", ");
+                }
+                buffer.append(value);
             }
-            node.setAttribute(attribute.getName(), stringValue);
+            node.setAttribute(attribute.getName(), buffer.toString());
         }
         node.setUserObject(attributes); // Required by Format.getDataType(Node, int).
     }

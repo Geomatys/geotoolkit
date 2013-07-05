@@ -58,7 +58,10 @@ import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Moved to the {@link org.apache.sis.util.iso} package.
  */
+@Deprecated
 @ThreadSafe
 public class DefaultNameFactory extends Factory implements NameFactory {
     /**
@@ -332,7 +335,10 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      * @return The generic names. May be a direct reference to {@code value}.
      * @throws NullArgumentException if {@code value} is null.
      * @throws ClassCastException if {@code value} can't be casted.
+     *
+     * @deprecated Moved to {@link org.apache.sis.util.iso.Types#toGenericNames}.
      */
+    @Deprecated
     public GenericName[] toArray(Object value) throws ClassCastException {
         GenericName name = createFromObject(value);
         if (name != null) {
