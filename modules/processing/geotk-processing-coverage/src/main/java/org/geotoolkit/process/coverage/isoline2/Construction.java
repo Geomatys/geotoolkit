@@ -1,6 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2013, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.process.coverage.isoline2;
 
@@ -11,8 +23,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 /**
- *
- * @author jsorel
+ * A construction is a 2 edge line string.
+ * Each eadge append coordinates at opposite ends.
+ * 
+ * @author Johann Sorel (Geomatys)
  */
 public final class Construction {
     
@@ -23,7 +37,6 @@ public final class Construction {
     private final Edge edge2;
     private final double level;
     private boolean locked = false;
-    private Exception lockStack = null;
 
     public Construction(double level) {
         edge1 = new Edge(true);
@@ -45,7 +58,6 @@ public final class Construction {
     
     public Geometry toGeometry(){
         if(locked){
-            lockStack.printStackTrace();
             throw new IllegalStateException("Construction has been merged, should not be used anymore.");
         }
         if(lst.size()==1) return null;
@@ -87,8 +99,6 @@ public final class Construction {
         }
         
         ocst.locked = true;
-        ocst.lockStack = new Exception();
-        ocst.lockStack.fillInStackTrace();
         ocst.lst = this.lst;
         return;
     }
@@ -116,21 +126,6 @@ public final class Construction {
         bnd.HLeft = update(bnd.HLeft);
         bnd.HMiddle = update(bnd.HMiddle);
         bnd.HRight = update(bnd.HRight);
-        
-//        if(bnd.HMiddle!=null && bnd.HMiddle.getConstruction().equals(this)){
-//            if(bnd.HMiddle.atEnd){
-//                bnd.HMiddle = (edge1.atEnd) ? edge1 : edge2;
-//            }else{
-//                bnd.HMiddle = (!edge1.atEnd) ? edge1 : edge2;
-//            }
-//        }
-//        if(bnd.VMiddle!=null && bnd.VMiddle.getConstruction().equals(this)){
-//            if(bnd.VMiddle.atEnd){
-//                bnd.VMiddle = (edge1.atEnd) ? edge1 : edge2;
-//            }else{
-//                bnd.VMiddle = (!edge1.atEnd) ? edge1 : edge2;
-//            }
-//        }
     }
     
     private Edge update(Edge edge){
@@ -171,6 +166,10 @@ public final class Construction {
             }else{
                 return lst.getFirst();
             }
+        }
+        
+        public boolean isPonctual(){
+            return Construction.this.lst.size() == 1;
         }
         
         @Override

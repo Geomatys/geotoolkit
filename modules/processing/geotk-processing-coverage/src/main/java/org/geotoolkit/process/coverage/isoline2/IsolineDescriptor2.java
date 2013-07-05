@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -36,6 +36,7 @@ import org.opengis.util.InternationalString;
  * Create a FeatureCollection of isoline from a GridCoverage2D and an array of intervals.
  *
  * @author Quentin Boileau (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public class IsolineDescriptor2 extends AbstractProcessDescriptor {
 

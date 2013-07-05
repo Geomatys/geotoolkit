@@ -19,7 +19,22 @@ package org.geotoolkit.process.coverage.isoline2;
 import java.util.Collection;
 
 /**
- *
+ * Define a triangle as a line routing boundary.
+ * 
+ *     + ④
+ *    /|
+ *   + + ⑤
+ *  /  |
+ * +-+-+ ⑥
+ *① ② ③
+ * 
+ * ① HLeft
+ * ② HMiddle
+ * ③ HRight
+ * ④ VTop
+ * ⑤ VMiddle
+ * ⑥ VBottom
+ * 
  * @author Johann Sorel (Geomatys)
  */
 public class Boundary {
