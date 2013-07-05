@@ -69,18 +69,36 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
     private static final String NOT_SUPPORTED_KEY = "notSupported";
     private static final InternationalString NOT_SUPPORTED = new ResourceInternationalString(BUNDLE_PATH, NOT_SUPPORTED_KEY);
     
-    private final JTextField notSupportedTF;
+    private final JTextField notSupportedTF = new JTextField(NOT_SUPPORTED.toString());
     private final List<PropertyValueEditor> editors = new CopyOnWriteArrayList<PropertyValueEditor>();
     private PropertyValueEditor editor;
     private Property property = null;
+    private boolean useProvidedEditor;
 
     public JAttributeEditor(){
-        setLayout(new BorderLayout());
-        editors.addAll(createDefaultEditorList());
-        notSupportedTF = new JTextField(NOT_SUPPORTED.toString());
-        notSupportedTF.setEnabled(false);
+      this(null);
     }
 
+    /**
+     * Constructor with a provided editor in parameter.
+     * If provided editor is not null, JAttributeEditor will by-pass 
+     * editor search from available editors and use it.
+     * If provided editor is null JAttributeEditor will have a standard behavior.
+     * 
+     * @param providedEditor editor to use regardless of property set. Can be null.
+     */
+    public JAttributeEditor(final PropertyValueEditor providedEditor){
+        setLayout(new BorderLayout());
+        if (providedEditor == null) {
+            editors.addAll(createDefaultEditorList());
+            notSupportedTF.setEnabled(false);
+            useProvidedEditor = false;
+        } else {
+            editor = providedEditor;
+            useProvidedEditor = true;
+        }
+    }
+    
     public Property getProperty() {
         if(editor != null ){
             property.setValue(editor.getValue());
@@ -89,25 +107,37 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
     }
 
     public void setProperty(Property property) {
+        
         this.property = property;
-
         if (editor != null) {
             editor.removePropertyChangeListener(this);
         }
         removeAll();
-
-        if (this.property != null) {
-            editor = getEditor(editors,this.property.getType());
-            if(editor != null){
+            
+        if (useProvidedEditor) {
+            
+            if (this.property != null) {
                 editor.setValue(property.getType(), property.getValue());
-                editor.addPropertyChangeListener(this);
-                editor.addFocusListener(this);
-                add(BorderLayout.CENTER,editor);
-            } else {
-                add(BorderLayout.CENTER, notSupportedTF);
+            }
+            editor.addPropertyChangeListener(this);
+            editor.addFocusListener(this);
+            add(BorderLayout.CENTER,editor);
+            
+        } else {
+            
+            if (this.property != null) {
+                editor = getEditor(editors,this.property.getType());
+                if(editor != null){
+                    editor.setValue(property.getType(), property.getValue());
+                    editor.addPropertyChangeListener(this);
+                    editor.addFocusListener(this);
+                    add(BorderLayout.CENTER,editor);
+                } else {
+                    add(BorderLayout.CENTER, notSupportedTF);
+                }
             }
         }
-
+        
         revalidate();
         repaint();
     }
