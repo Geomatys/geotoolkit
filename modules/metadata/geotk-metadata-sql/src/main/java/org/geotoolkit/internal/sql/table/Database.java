@@ -47,8 +47,8 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.Localized;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Localized;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;

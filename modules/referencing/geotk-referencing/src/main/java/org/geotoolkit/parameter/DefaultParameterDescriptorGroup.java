@@ -43,13 +43,13 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ComparisonMode;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.Utilities.deepEquals;
+import static org.apache.sis.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**

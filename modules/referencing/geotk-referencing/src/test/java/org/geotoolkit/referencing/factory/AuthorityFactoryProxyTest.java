@@ -25,7 +25,7 @@ import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.FactoryException;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.crs.*;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
@@ -45,7 +45,7 @@ import static org.geotoolkit.referencing.factory.AuthorityFactoryProxy.*;
  *
  * @since 2.4
  */
-@Depend({WebCRSFactoryTest.class, AutoCRSFactoryTest.class})
+@DependsOn({WebCRSFactoryTest.class, AutoCRSFactoryTest.class})
 public final strictfp class AuthorityFactoryProxyTest {
     /**
      * Ensures that the most specific interfaces appear first in the list of proxies.

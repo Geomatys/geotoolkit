@@ -24,8 +24,8 @@ import javax.imageio.IIOException;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.internal.storage.IOUtilities;
+import org.apache.sis.util.Classes;
 
 
 /**
@@ -128,7 +128,7 @@ public class InvalidImageStoreException extends IIOException {
                 if (e.isInstance(io)) {
                     return resources.getString(
                             write ? Errors.Keys.CANT_WRITE_FILE_1 : Errors.Keys.CANT_READ_FILE_1,
-                            IOUtilities.name(io));
+                            IOUtilities.filename(io));
                 }
             }
         }

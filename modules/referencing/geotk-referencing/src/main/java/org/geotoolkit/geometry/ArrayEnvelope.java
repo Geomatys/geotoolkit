@@ -28,7 +28,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.extent.GeographicBoundingBox;
-
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;

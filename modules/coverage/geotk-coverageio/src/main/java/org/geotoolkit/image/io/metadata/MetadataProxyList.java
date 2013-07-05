@@ -22,7 +22,7 @@ import java.util.AbstractList;
 import java.util.RandomAccess;
 import java.util.logging.Level;
 
-import org.geotoolkit.util.collection.CheckedCollection;
+import org.apache.sis.util.collection.CheckedContainer;
 
 import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
 import static org.geotoolkit.internal.image.io.GridDomainAccessor.ARRAY_ATTRIBUTE_NAME;
@@ -45,7 +45,7 @@ import static org.geotoolkit.internal.image.io.GridDomainAccessor.ARRAY_ATTRIBUT
  * @since 3.06
  * @module
  */
-final class MetadataProxyList<T> extends AbstractList<T> implements CheckedCollection<T>,
+final class MetadataProxyList<T> extends AbstractList<T> implements
         org.apache.sis.util.collection.CheckedContainer<T>, RandomAccess
 {
     /**

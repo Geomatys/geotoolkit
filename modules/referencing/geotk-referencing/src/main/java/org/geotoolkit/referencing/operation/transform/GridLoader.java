@@ -25,7 +25,7 @@ import org.opengis.util.FactoryException;
 
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.collection.Cache;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 
 /**

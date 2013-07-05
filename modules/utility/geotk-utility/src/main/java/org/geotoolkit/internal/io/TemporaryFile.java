@@ -24,8 +24,8 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.lang.ref.PhantomReference;
 
-import org.geotoolkit.util.Disposable;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.Disposable;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 

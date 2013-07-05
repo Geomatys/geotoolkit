@@ -29,7 +29,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;

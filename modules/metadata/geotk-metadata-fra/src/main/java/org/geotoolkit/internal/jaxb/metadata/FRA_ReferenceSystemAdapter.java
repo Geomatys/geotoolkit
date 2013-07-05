@@ -21,9 +21,11 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import org.opengis.referencing.ReferenceSystem;
 
-import org.geotoolkit.internal.jaxb.RegisterableAdapter;
+import org.apache.sis.internal.jaxb.AdapterReplacement;
 import org.geotoolkit.metadata.fra.FRA_DirectReferenceSystem;
 import org.geotoolkit.metadata.fra.FRA_IndirectReferenceSystem;
+import org.apache.sis.internal.jaxb.metadata.RS_ReferenceSystem;
+import org.apache.sis.internal.jaxb.metadata.ReferenceSystemMetadata;
 
 
 /**
@@ -36,7 +38,7 @@ import org.geotoolkit.metadata.fra.FRA_IndirectReferenceSystem;
  * @since 3.00
  * @module
  */
-public final class FRA_ReferenceSystemAdapter extends RS_ReferenceSystem implements RegisterableAdapter {
+public final class FRA_ReferenceSystemAdapter extends RS_ReferenceSystem implements AdapterReplacement {
     /**
      * Empty constructor for JAXB only.
      */
@@ -53,7 +55,7 @@ public final class FRA_ReferenceSystemAdapter extends RS_ReferenceSystem impleme
     }
 
     /**
-     * Invoked when a new adapter is created by {@link org.geotoolkit.xml.MarshallerPool}.
+     * Invoked when a new adapter is created by {@link org.apache.sis.xml.MarshallerPool}.
      *
      * @param marshaller The marshaller to be configured.
      */
@@ -63,7 +65,7 @@ public final class FRA_ReferenceSystemAdapter extends RS_ReferenceSystem impleme
     }
 
     /**
-     * Invoked when a new adapter is created by {@link org.geotoolkit.xml.MarshallerPool}.
+     * Invoked when a new adapter is created by {@link org.apache.sis.xml.MarshallerPool}.
      *
      * @param unmarshaller The marshaller to be configured.
      */

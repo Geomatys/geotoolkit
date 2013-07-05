@@ -59,10 +59,11 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.Exceptions;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.collection.Cache;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.internal.referencing.NilReferencingObject;
+
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -954,7 +955,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
                 if (!(value instanceof Set<?>)) {
                     final AbstractAuthorityFactory factory = getBackingStore();
                     try {
-                        final Set<CoordinateOperation> result = XCollections.unmodifiableSet(
+                        final Set<CoordinateOperation> result = unmodifiableOrCopy(
                                 factory.createFromCoordinateReferenceSystemCodes(sourceCRS, targetCRS));
                         value = result;
                         return result;

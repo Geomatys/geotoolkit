@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.referencing;
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.datum.TemporalDatum;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
-import org.geotoolkit.internal.jaxb.gco.PropertyType;
+import org.apache.sis.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -75,7 +75,6 @@ public final class CD_TemporalDatum extends PropertyType<CD_TemporalDatum, Tempo
      *
      * @return The metadata to be marshalled.
      */
-    @Override
     @XmlElement(name = "TemporalDatum")
     public DefaultTemporalDatum getElement() {
         return skip() ? null : DefaultTemporalDatum.castOrCopy(metadata);

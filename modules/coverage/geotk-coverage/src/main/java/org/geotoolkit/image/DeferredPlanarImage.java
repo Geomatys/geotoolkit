@@ -34,10 +34,10 @@ import javax.media.jai.TileScheduler;
 import javax.media.jai.TileComputationListener;
 
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.Disposable;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.collection.WeakValueHashMap;
+import org.apache.sis.util.Disposable;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.collection.WeakValueHashMap;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.resources.Loggings;
 
@@ -344,7 +344,7 @@ public final class DeferredPlanarImage extends PlanarImage
         }
         final Entry entry = new Entry(sampleModel, fill, box);
         if (buffers == null) {
-            buffers = new WeakValueHashMap<>();
+            buffers = new WeakValueHashMap<>(Entry.class);
         }
         DataBuffer buffer = buffers.get(entry);
         if (buffer != null) {

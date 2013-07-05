@@ -32,7 +32,7 @@ import org.opengis.referencing.operation.CoordinateOperation;
 
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 

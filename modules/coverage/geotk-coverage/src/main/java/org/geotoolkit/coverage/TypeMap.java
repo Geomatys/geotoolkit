@@ -34,10 +34,10 @@ import static org.opengis.coverage.SampleDimensionType.*;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.image.ColorUtilities;
-import org.geotoolkit.util.AbstractInternationalString;
-import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.Range;
+import org.apache.sis.util.iso.AbstractInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.measure.Range;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.math.NumberSet;
 
@@ -185,8 +185,8 @@ public final class TypeMap extends Static {
         this.size          = size;
         this.signed        = signed;
         this.real          = real;
-        this.range         = new NumberRange(c, lower, upper);
-        this.positiveRange = signed ? null : new NumberRange(c, one, upper);
+        this.range         = new NumberRange(c, lower, true, upper, true);
+        this.positiveRange = signed ? null : new NumberRange(c, one, true, upper, true);
         final int ordinal  = code.ordinal();
         assert MAP[ordinal] == null : code;
         MAP[ordinal] = this;

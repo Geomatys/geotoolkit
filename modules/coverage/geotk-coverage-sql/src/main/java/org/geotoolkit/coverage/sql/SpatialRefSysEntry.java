@@ -41,7 +41,7 @@ import org.opengis.referencing.operation.OperationNotFoundException;
 
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.internal.referencing.AxisDirections;

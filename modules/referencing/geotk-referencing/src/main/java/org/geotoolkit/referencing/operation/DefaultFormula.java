@@ -27,8 +27,7 @@ import net.jcip.annotations.Immutable;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.operation.Formula;
-
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 

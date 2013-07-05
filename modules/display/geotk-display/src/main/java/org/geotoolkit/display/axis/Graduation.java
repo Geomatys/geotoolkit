@@ -24,7 +24,7 @@ import java.awt.RenderingHints;
 import java.beans.PropertyChangeListener;
 import javax.measure.unit.Unit;
 
-import org.geotoolkit.util.Localized;
+import org.apache.sis.util.Localized;
 
 
 /**

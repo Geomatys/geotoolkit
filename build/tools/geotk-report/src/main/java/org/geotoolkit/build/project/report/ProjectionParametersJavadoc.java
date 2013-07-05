@@ -37,12 +37,12 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.apache.sis.util.ArraysExt;
 
-import org.geotoolkit.util.Deprecable;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.util.Deprecable;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Numbers;
-import org.geotoolkit.measure.Latitude;
-import org.geotoolkit.measure.Longitude;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.measure.Latitude;
+import org.apache.sis.measure.Longitude;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.referencing.operation.provider.*;
 import org.geotoolkit.referencing.CRS;
 
@@ -312,7 +312,7 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
                     (Number) descriptor.getMinimumValue(), true,
                     (Number) descriptor.getMaximumValue(), true);
             if (range == null) {
-                range = new NumberRange<>(Double.class, null, null);
+                range = new NumberRange<>(Double.class, null, false, null, false);
             }
             lines.add("      <tr><td><b>Value range:</b>" + "</td><td>" + range + unit + "</td></tr>");
         }

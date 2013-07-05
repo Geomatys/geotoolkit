@@ -30,6 +30,7 @@ import java.util.logging.LogRecord;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.CharSequences;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

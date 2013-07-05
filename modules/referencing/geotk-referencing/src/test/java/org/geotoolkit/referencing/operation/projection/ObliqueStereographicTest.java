@@ -23,8 +23,8 @@ import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.test.Depend;
 
+import org.apache.sis.test.DependsOn;
 import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;
 
@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-@Depend(UnitaryProjectionTest.class)
+@DependsOn(UnitaryProjectionTest.class)
 public final strictfp class ObliqueStereographicTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.

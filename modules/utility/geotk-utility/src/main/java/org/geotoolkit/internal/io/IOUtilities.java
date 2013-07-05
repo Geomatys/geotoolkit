@@ -133,120 +133,6 @@ public final class IOUtilities extends Static {
     }
 
     /**
-     * Encodes the characters that are not legal for the {@link URI(String)} constructor.
-     * Note that in addition of unreserved characters ("{@code _-!.~'()*}") the reserved
-     * characters ("{@code ?/[]@}") and the punctuation characters ("{@code ,;:$&+=}")
-     * are left unchanged, so they will be processed with their special meaning by the
-     * URI constructor.
-     * <p>
-     * The current implementations replaces only the space characters, control characters
-     * and the {@code %} character. Future versions may replace more characters as needed
-     * from experience.
-     *
-     * @param  path The path to encode.
-     * @return The encoded path.
-     *
-     * @since 3.15
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#encodeURI(String)}.
-     */
-    @Deprecated
-    public static String encodeURI(final String path) {
-        return org.apache.sis.internal.storage.IOUtilities.encodeURI(path);
-    }
-
-    /**
-     * Converts a {@link URL} to a {@link File}. Conceptually this work is performed by a call
-     * to {@link URL#toURI()}. However this method adds the following functionalities:
-     * <p>
-     * <ul>
-     *   <li>Optionally decodes the {@code "%XX"} sequences, where {@code "XX"} is a number.</li>
-     *   <li>Converts various exceptions into subclasses of {@link IOException}.</li>
-     * </ul>
-     *
-     * @param  url The URL (may be {@code null}).
-     * @param  encoding If the URL is encoded in a {@code application/x-www-form-urlencoded}
-     *         MIME format, the character encoding (normally {@code "UTF-8"}). If the URL is
-     *         not encoded, then {@code null}.
-     * @return The URI for the given URL, or {@code null} if the given URL was null.
-     * @throws IOException if the URL can not be converted to a URI.
-     *
-     * @since 3.20 (derived from 3.05)
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#toURI}.
-     */
-    @Deprecated
-    public static URI toURI(final URL url, final String encoding) throws IOException {
-        return org.apache.sis.internal.storage.IOUtilities.toURI(url, encoding);
-    }
-
-    /**
-     * Converts a {@link URL} to a {@link File}. Conceptually this work is performed by a call
-     * to {@link URL#toURI()} followed by a call to the {@link File#File(URI)} constructor.
-     * However this method adds the following functionalities:
-     * <p>
-     * <ul>
-     *   <li>Optionally decodes the {@code "%XX"} sequences, where {@code "XX"} is a number.</li>
-     *   <li>Converts various exceptions into subclasses of {@link IOException}.</li>
-     * </ul>
-     *
-     * @param  url The URL (may be {@code null}).
-     * @param  encoding If the URL is encoded in a {@code application/x-www-form-urlencoded}
-     *         MIME format, the character encoding (normally {@code "UTF-8"}). If the URL is
-     *         not encoded, then {@code null}.
-     * @return The file for the given URL, or {@code null} if the given URL was null.
-     * @throws IOException if the URL can not be converted to a file.
-     *
-     * @since 3.05
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#toFile}.
-     */
-    @Deprecated
-    public static File toFile(final URL url, final String encoding) throws IOException {
-        return org.apache.sis.internal.storage.IOUtilities.toFile(url, encoding);
-    }
-
-    /**
-     * Converts a {@link URL} to a {@link Path}. Conceptually this work is performed by a call
-     * to {@link URL#toURI()} followed by a call to the {@link Paths#get(URI)} static method.
-     * However this method adds the following functionalities:
-     * <p>
-     * <ul>
-     *   <li>Optionally decodes the {@code "%XX"} sequences, where {@code "XX"} is a number.</li>
-     *   <li>Converts various exceptions into subclasses of {@link IOException}.</li>
-     * </ul>
-     *
-     * @param  url The URL (may be {@code null}).
-     * @param  encoding If the URL is encoded in a {@code application/x-www-form-urlencoded}
-     *         MIME format, the character encoding (normally {@code "UTF-8"}). If the URL is
-     *         not encoded, then {@code null}.
-     * @return The path for the given URL, or {@code null} if the given URL was null.
-     * @throws IOException if the URL can not be converted to a path.
-     *
-     * @since 3.20 (derived from 3.05)
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#toPath}.
-     */
-    @Deprecated
-    public static Path toPath(final URL url, final String encoding) throws IOException {
-        return org.apache.sis.internal.storage.IOUtilities.toPath(url, encoding);
-    }
-
-    /**
-     * Parses the following path as a {@link File} if possible, or a {@link URL} otherwise.
-     *
-     * @param  path The path to parse.
-     * @return The path as a {@link File} if possible, or a {@link URL} otherwise.
-     * @throws IOException If the given path is not a file and can't be parsed as a URL.
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#toFileOrURL}.
-     */
-    @Deprecated
-    public static Object toFileOrURL(final String path) throws IOException {
-        return org.apache.sis.internal.storage.IOUtilities.toFileOrURL(path, null);
-    }
-
-    /**
      * Parses the following path as a {@link Path} if possible, or a {@link URL} otherwise.
      *
      * @param  path The path to parse.
@@ -282,11 +168,11 @@ public final class IOUtilities extends Static {
      */
     public static Object tryToFile(Object path) throws IOException {
         if (path instanceof CharSequence) {
-            path = toFileOrURL(path.toString());
+            path = org.apache.sis.internal.storage.IOUtilities.toFileOrURL(path.toString(), null);
         } else if (path instanceof URL) {
             final URL url = (URL) path;
             if (url.getProtocol().equalsIgnoreCase("file")) {
-                path = toFile(url, null);
+                path = org.apache.sis.internal.storage.IOUtilities.toFile(url, null);
             }
         } else if (path instanceof URI) {
             final URI uri = (URI) path;
@@ -330,7 +216,7 @@ public final class IOUtilities extends Static {
         } else if (path instanceof URL) {
             final URL url = (URL) path;
             if (url.getProtocol().equalsIgnoreCase("file")) {
-                path = toPath(url, null);
+                path = org.apache.sis.internal.storage.IOUtilities.toPath(url, null);
             }
         } else if (path instanceof URI) {
             final URI uri = (URI) path;
@@ -468,7 +354,7 @@ public final class IOUtilities extends Static {
      */
     public static InputStream open(Object path) throws IOException, ClassCastException {
         if (path instanceof CharSequence) {
-            path = toFileOrURL(path.toString());
+            path = org.apache.sis.internal.storage.IOUtilities.toFileOrURL(path.toString(), null);
         }
         if (path instanceof File) {
             return new FileInputStream((File) path);
@@ -505,7 +391,7 @@ public final class IOUtilities extends Static {
      */
     public static OutputStream openWrite(Object path) throws IOException, ClassCastException {
         if (path instanceof CharSequence) {
-            path = toFileOrURL(path.toString());
+            path = org.apache.sis.internal.storage.IOUtilities.toFileOrURL(path.toString(), null);
         }
         if (path instanceof File) {
             return new FileOutputStream((File) path);

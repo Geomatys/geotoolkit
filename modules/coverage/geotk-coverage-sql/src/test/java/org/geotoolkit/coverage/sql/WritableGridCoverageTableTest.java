@@ -29,16 +29,16 @@ import java.util.Set;
 
 import org.opengis.geometry.Envelope;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReader;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.geometry.AbstractEnvelope;
-import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.util.Range;
+import org.apache.sis.geometry.AbstractEnvelope;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.measure.Range;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -52,7 +52,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.12
  */
-@Depend(GridCoverageTableTest.class)
+@DependsOn(GridCoverageTableTest.class)
 public final strictfp class WritableGridCoverageTableTest extends CatalogTestBase {
     /**
      * The file which contains geostrophic current data.
@@ -235,9 +235,9 @@ public final strictfp class WritableGridCoverageTableTest extends CatalogTestBas
         assertNotNull(range);
         assertEquals(1, range.length);
         // The minimum value is actually -1.893, but we didn't specified the pad value.
-        assertEquals(-9999,  range[0].getMinimum(true), 1E-4);
-        assertEquals(31.140, range[0].getMaximum(true), 1E-4);
-        assertNull(range[0].getUnits());
+        assertEquals(-9999,  range[0].getMinDouble(true), 1E-4);
+        assertEquals(31.140, range[0].getMaxDouble(true), 1E-4);
+        assertNull(range[0].unit());
     }
 
     /**

@@ -22,8 +22,9 @@ import java.util.Set;
 import java.util.List;
 import java.util.Collection;
 import java.io.Serializable;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.gui.swing.tree.TreesTest;
+import org.apache.sis.util.Classes;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -40,7 +41,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.00
  */
-@Depend({TreesTest.class, StringConverterTest.class, NumberConverterTest.class, URIConverterTest.class,
+@DependsOn({TreesTest.class, StringConverterTest.class, NumberConverterTest.class, URIConverterTest.class,
         URLConverterTest.class, FileConverterTest.class, FallbackConverterTest.class})
 public final strictfp class ConverterRegistryTest {
     /**

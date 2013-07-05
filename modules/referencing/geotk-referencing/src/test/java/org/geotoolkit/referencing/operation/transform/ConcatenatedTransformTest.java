@@ -24,7 +24,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrix4;
 import org.geotoolkit.referencing.operation.MathTransforms;
 
 import org.junit.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import static org.opengis.test.Assert.*;
 
 
@@ -36,7 +36,7 @@ import static org.opengis.test.Assert.*;
  *
  * @since 3.00
  */
-@Depend(ProjectiveTransformTest.class)
+@DependsOn(ProjectiveTransformTest.class)
 public final strictfp class ConcatenatedTransformTest extends TransformTestBase {
     /**
      * Creates a new test suite.

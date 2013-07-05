@@ -46,7 +46,7 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.geotoolkit.resources.Loggings;
 import org.apache.sis.util.collection.BackingStoreException;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -196,7 +196,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
                 objects.put(code, object);
             } catch (FactoryException exception) {
                 if (!isRecoverableFailure(exception)) {
-                    throw new org.geotoolkit.util.collection.BackingStoreException(exception);
+                    throw new BackingStoreException(exception);
                 }
                 log(exception, code);
                 objects.remove(code);
@@ -479,7 +479,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
                         element = createObject(code);
                     } catch (FactoryException exception) {
                         if (!isRecoverableFailure(exception)) {
-                            throw new org.geotoolkit.util.collection.BackingStoreException(exception);
+                            throw new BackingStoreException(exception);
                         }
                         log(exception, code);
                         iterator.remove();

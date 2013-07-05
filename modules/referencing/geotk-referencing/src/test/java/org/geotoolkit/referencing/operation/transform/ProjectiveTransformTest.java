@@ -20,7 +20,7 @@ package org.geotoolkit.referencing.operation.transform;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.test.referencing.AffineTransformTest;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.operation.MathTransformFactoryAdapter;
 
 import org.junit.runner.RunWith;
@@ -38,7 +38,7 @@ import org.junit.runners.JUnit4;
  * @since 3.00
  */
 @RunWith(JUnit4.class)
-@Depend(AbstractMathTransformTest.class)
+@DependsOn(AbstractMathTransformTest.class)
 public final strictfp class ProjectiveTransformTest extends AffineTransformTest {
     /**
      * Creates a new test suite.

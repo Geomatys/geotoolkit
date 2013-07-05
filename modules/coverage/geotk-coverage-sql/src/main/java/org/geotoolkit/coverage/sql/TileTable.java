@@ -46,7 +46,7 @@ import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileManagerFactory;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.internal.sql.table.Table;
@@ -57,7 +57,8 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.resources.Errors;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 

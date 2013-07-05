@@ -25,12 +25,15 @@ import java.util.LinkedHashSet;
 import java.util.ServiceLoader;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.measure.Angle;
+import org.apache.sis.util.Numbers;
+import org.apache.sis.util.Classes;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.XCollections;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
+
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -146,7 +149,7 @@ public class ConverterRegistry {
             register(new SimpleConverter<Double,Angle>() {
                 @Override public Class<Double> getSourceClass()      {return Double.class;}
                 @Override public Class<Angle>  getTargetClass()      {return Angle .class;}
-                @Override public Angle         convert(Double value) {return new org.geotoolkit.measure.Angle(value);}
+                @Override public Angle         convert(Double value) {return new Angle(value);}
             });
             /*
              * Registration of converter working on interfaces
@@ -573,9 +576,9 @@ public class ConverterRegistry {
                 }
                 // Make the map unmodifiable.
                 for (final Map.Entry<Class<?>, Set<Class<?>>> entry : mapping.entrySet()) {
-                    entry.setValue(XCollections.unmodifiableSet(entry.getValue()));
+                    entry.setValue(unmodifiableOrCopy(entry.getValue()));
                 }
-                convertibleTypes = XCollections.unmodifiableMap(mapping);
+                convertibleTypes = unmodifiableOrCopy(mapping);
             }
         }
         return convertibleTypes;

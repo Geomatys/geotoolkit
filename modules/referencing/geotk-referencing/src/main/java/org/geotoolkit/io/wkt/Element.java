@@ -30,7 +30,7 @@ import org.apache.sis.util.CharSequences;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.LoggedFormat;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**

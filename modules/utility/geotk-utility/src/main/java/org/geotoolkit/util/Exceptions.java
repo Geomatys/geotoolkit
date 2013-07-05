@@ -24,7 +24,6 @@ import java.awt.Rectangle;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.Rectangle2D;
-import java.sql.SQLException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
@@ -52,6 +51,8 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
  * @version 3.21
+ *
+ * @see org.apache.sis.util.Exceptions
  *
  * @since 2.0
  * @module
@@ -91,61 +92,6 @@ public final class Exceptions extends Static {
         }
         message = message.trim();
         return !message.isEmpty() && !message.equalsIgnoreCase("null");
-    }
-
-    /**
-     * Returns an exception of the same kind and with the same stack trace than the given
-     * exception, but with a different message. This method simulates the functionality
-     * that we would had if {@link Throwable} defined a {@code setMessage(String)} method.
-     * We use this method when an external library throws an exception of the right type,
-     * but with too few details.
-     * <p>
-     * This method try to create a new exception using reflection. The exception class needs
-     * to provide a public constructor expecting a single {@link String} argument. If the
-     * exception class does not provide such constructor, then the given exception is returned
-     * unchanged.
-     *
-     * @param <T>       The type of the exception.
-     * @param exception The exception to copy with a different message.
-     * @param message   The message to set in the exception to be returned.
-     * @param append    If {@code true}, the existing message in the original exception (if any)
-     *                  will be happened after the provided message.
-     * @return A new exception with the given message, or the given exception if the exception
-     *         class does not provide public {@code Exception(String)} constructor.
-     *
-     * @since 3.20
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.Exceptions#setMessage}.
-     */
-    @Deprecated
-    public static <T extends Throwable> T setMessage(final T exception, String message, final boolean append) {
-        return org.apache.sis.util.Exceptions.setMessage(exception, message, append);
-    }
-
-    /**
-     * Returns a string which contain the given message on the first line, followed by the
-     * {@linkplain Throwable#getLocalizedMessage() localized message} of the given exception
-     * on the next line. If the exception has a {@linkplain Throwable#getCause() causes}, then
-     * the localized message of the cause is formatted on the next line and the process is
-     * repeated for the whole cause chain.
-     * <p>
-     * {@link SQLException} is handled especially in order to process the
-     * {@linkplain SQLException#getNextException() next exception} instead than the cause.
-     * <p>
-     * This method does not format the stack trace.
-     *
-     * @param  header The message to insert on the first line, or {@code null} if none.
-     * @param  cause  The exception, or {@code null} if none.
-     * @return The formatted message, or {@code null} if both the header was {@code null}
-     *         and no exception provide a message.
-     *
-     * @since 3.01
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.util.Exceptions#formatChainedMessages}.
-     */
-    @Deprecated
-    public static String formatChainedMessages(String header, Throwable cause) {
-        return org.apache.sis.util.Exceptions.formatChainedMessages(null, header, cause);
     }
 
     /**

@@ -29,7 +29,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

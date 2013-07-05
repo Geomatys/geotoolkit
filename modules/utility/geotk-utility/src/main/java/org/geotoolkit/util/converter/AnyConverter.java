@@ -18,7 +18,7 @@
 package org.geotoolkit.util.converter;
 
 import net.jcip.annotations.NotThreadSafe;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

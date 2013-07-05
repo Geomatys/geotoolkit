@@ -27,8 +27,8 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.crs.GeographicCRS;
 
-import org.geotoolkit.test.Depend;
-import org.geotoolkit.util.MeasurementRange;
+import org.apache.sis.test.DependsOn;
+import org.apache.sis.measure.MeasurementRange;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
@@ -49,7 +49,7 @@ import static org.geotoolkit.coverage.sql.LayerTableTest.*;
  *
  * @since 3.10 (derived from Seagis)
  */
-@Depend(LayerTableTest.class)
+@DependsOn(LayerTableTest.class)
 public final strictfp class LayerEntryTest extends CatalogTestBase {
     /**
      * Creates a new test suite.
@@ -80,8 +80,8 @@ public final strictfp class LayerEntryTest extends CatalogTestBase {
         final List<MeasurementRange<?>> validRanges = entry.getSampleValueRanges();
         assertNotNull(validRanges);
         assertEquals(1, validRanges.size());
-        assertEquals(-2.85, validRanges.get(0).getMinimum(), EPS);
-        assertEquals(35.25, validRanges.get(0).getMaximum(), EPS);
+        assertEquals(-2.85, validRanges.get(0).getMinDouble(), EPS);
+        assertEquals(35.25, validRanges.get(0).getMaxDouble(), EPS);
         assertSame("Shall be cached.", validRanges, entry.getSampleValueRanges());
     }
 

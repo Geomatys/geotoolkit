@@ -40,7 +40,6 @@ import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.content.RangeDimension;
 
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.SampleDimension;
@@ -49,6 +48,7 @@ import org.geotoolkit.resources.Errors;
 
 import static ucar.nc2.constants.CDM.*;
 import static org.apache.sis.math.MathFunctions.divisors;
+import static org.apache.sis.internal.util.CollectionsExt.toList;
 import static org.geotoolkit.internal.image.io.NetcdfVariable.*;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 
@@ -169,7 +169,7 @@ final class NetcdfImage extends IIOImageHelper {
         if (metadata != null) {
             final ImageDescription description = metadata.getInstanceForType(ImageDescription.class);
             if (description != null) {
-                return XCollections.asList(description.getDimensions());
+                return toList(description.getDimensions());
             }
         }
         return null;

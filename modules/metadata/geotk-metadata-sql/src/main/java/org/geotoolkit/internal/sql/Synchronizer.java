@@ -37,8 +37,9 @@ import java.util.logging.LogRecord;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.XCollections;
+import org.apache.sis.util.logging.Logging;
+
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -602,7 +603,7 @@ nextTable: for (final String table : tables.keySet()) {
      * @throws IOException if an error occurred while writing reports on this operation.
      */
     public void copy(final Policy onExisting, final String... tables) throws SQLException, IOException {
-        final Map<String,String> map = new LinkedHashMap<>(XCollections.hashMapCapacity(tables.length));
+        final Map<String,String> map = new LinkedHashMap<>(hashMapCapacity(tables.length));
         for (final String table : tables) {
             map.put(table, null);
         }

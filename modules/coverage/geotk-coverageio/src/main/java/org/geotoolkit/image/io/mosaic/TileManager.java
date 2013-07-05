@@ -39,11 +39,12 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.coverage.grid.ImageGeometry;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
+
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -266,7 +267,7 @@ public abstract class TileManager implements Serializable {
                 final int n = (frequencies != null) ? frequencies[i++] : 1;
                 providers.add(tile.getImageReaderSpi(), n);
             }
-            this.providers = XCollections.unmodifiableSet(providers);
+            this.providers = unmodifiableOrCopy(providers);
         }
         return providers;
     }

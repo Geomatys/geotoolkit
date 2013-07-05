@@ -39,21 +39,21 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.ResponsibleParty;
 
 import org.apache.sis.metadata.ValueExistencePolicy;
-import org.geotoolkit.metadata.MetadataStandard;
+import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.internal.util.Citations;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.IdentifierGenerator;
 import org.geotoolkit.internal.sql.StatementEntry;
-import org.geotoolkit.naming.DefaultNameSpace;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.iso.DefaultNameSpace;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Workaround;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
 import static org.apache.sis.metadata.KeyNamePolicy.UML_IDENTIFIER;
-import static org.geotoolkit.metadata.TypeValuePolicy.ELEMENT_TYPE;
-import static org.geotoolkit.metadata.TypeValuePolicy.DECLARING_INTERFACE;
+import static org.apache.sis.metadata.TypeValuePolicy.ELEMENT_TYPE;
+import static org.apache.sis.metadata.TypeValuePolicy.DECLARING_INTERFACE;
 
 
 /**
@@ -354,8 +354,8 @@ public class MetadataWriter extends MetadataSource {
         for (final String column : asMap.keySet()) {
             if (!columns.contains(column)) {
                 if (colTypes == null) {
-                    colTypes  = standard.asTypeMap(implementationType, ELEMENT_TYPE,        UML_IDENTIFIER);
-                    colTables = standard.asTypeMap(implementationType, DECLARING_INTERFACE, UML_IDENTIFIER);
+                    colTypes  = standard.asTypeMap(implementationType, UML_IDENTIFIER, ELEMENT_TYPE);
+                    colTables = standard.asTypeMap(implementationType, UML_IDENTIFIER, DECLARING_INTERFACE);
                 }
                 /*
                  * We have found a column to add. Check if the column actually needs to be added

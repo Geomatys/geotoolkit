@@ -39,7 +39,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.apache.sis.measure.Units;
 
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -194,7 +194,7 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
     @Override
     public String getAbbreviation() {
         final String name = axis.getShortName().trim();
-        String abbreviation = Strings.camelCaseToAcronym(name).toLowerCase();
+        String abbreviation = CharSequences.camelCaseToAcronym(name).toString().toLowerCase();
         if (abbreviation.startsWith("l")) {
             // Heuristic disambiguity.
             final int length = Math.min(9, name.length()); // 9 is the length of "longitude".

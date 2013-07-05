@@ -40,8 +40,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.*;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.ReferencingFactory;
@@ -94,7 +94,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     /**
      * The identifier for a transformation which is a datum shift.
      *
-     * @see org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_APPLIED
+     * @see org.apache.sis.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_APPLIED
      */
     protected static final ReferenceIdentifier DATUM_SHIFT =
             new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.DATUM_SHIFT));
@@ -106,7 +106,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      * 1 kilometre error. This transformation is allowed only if the factory was created with
      * {@link Hints#LENIENT_DATUM_SHIFT} set to {@link Boolean#TRUE}.
      *
-     * @see org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_OMITTED
+     * @see org.apache.sis.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_OMITTED
      */
     protected static final ReferenceIdentifier ELLIPSOID_SHIFT =
             new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.ELLIPSOID_SHIFT));
@@ -133,7 +133,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      * to returns instance of existing operations when possible.
      */
     private final WeakHashSet<CoordinateOperation> pool =
-            WeakHashSet.newInstance(CoordinateOperation.class);
+            new WeakHashSet<>(CoordinateOperation.class);
 
     /**
      * Tells if {@link FactoryGroup#hints} has been invoked. It must be invoked exactly once,

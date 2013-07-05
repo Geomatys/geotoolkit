@@ -60,7 +60,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.image.io.IrregularAxesConverter;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
 import org.geotoolkit.referencing.datum.DefaultVerticalDatum;

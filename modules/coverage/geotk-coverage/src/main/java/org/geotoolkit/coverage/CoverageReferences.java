@@ -26,8 +26,8 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.coverage.Coverage;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Disposable;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.Disposable;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 
 

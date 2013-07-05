@@ -25,7 +25,7 @@ import org.opengis.coverage.grid.GridPoint;
 import org.opengis.coverage.grid.GridCoordinates;
 
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 
 /**

@@ -23,7 +23,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.internal.image.io.RawFile;

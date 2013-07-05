@@ -41,7 +41,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.Envelope2D;
-import org.geotoolkit.geometry.ImmutableEnvelope;
+import org.apache.sis.geometry.ImmutableEnvelope;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;

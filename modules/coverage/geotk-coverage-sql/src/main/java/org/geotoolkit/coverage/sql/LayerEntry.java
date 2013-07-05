@@ -49,15 +49,15 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.util.Localized;
+import org.apache.sis.util.Localized;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.XCollections;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.internal.util.CollectionsExt;
 import org.geotoolkit.util.collection.FrequencySortedSet;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.internal.sql.table.DefaultEntry;
 import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
@@ -74,6 +74,8 @@ import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.resources.Errors;
+
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -369,7 +371,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             final String name = getName();
             final SeriesTable st = getTableFactory().getTable(SeriesTable.class);
             st.setLayer(name);
-            map = XCollections.unmodifiableMap(st.getEntriesMap());
+            map = unmodifiableOrCopy(st.getEntriesMap());
             st.release();
             series = map;
         }
@@ -527,7 +529,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
             }
-            available = XCollections.emptySortedSet();
+            available = CollectionsExt.emptySortedSet();
             if (count != null) {
                 final Set<Double> all = new HashSet<>();
                 for (final GridGeometryEntry entry : count) {
@@ -578,7 +580,8 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                             }
                             try {
                                 for (int i=0; i<length; i++) {
-                                    ranges[i] = ranges[i].union(candidates[i]);
+                                    // TODO: Cast may fail if range is fully included in candidate.
+                                    ranges[i] = (MeasurementRange<?>) ranges[i].unionAny(candidates[i]);
                                 }
                             } catch (IllegalArgumentException e) {
                                 // May occurs if the units are not convertible.
@@ -656,15 +659,15 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                      * is found, keep the best match for the requested range.
                      */
                     if (convertedRange != null) {
-                        final double min    = convertedRange.getMinimum();
-                        final double max    = convertedRange.getMaximum();
+                        final double min    = convertedRange.getMinDouble();
+                        final double max    = convertedRange.getMaxDouble();
                         final double center = 0.5 * (min + max);
                         if (!Double.isNaN(center)) {
                             final Category candidate = sd.getCategory(center);
                             if (candidate != null) {
                                 final NumberRange<?> r = candidate.getRange();
-                                final double cmin = r.getMinimum();
-                                final double cmax = r.getMaximum();
+                                final double cmin = r.getMinDouble();
+                                final double cmax = r.getMaxDouble();
                                 final double fit =
                                         (Math.min(cmax, max) - Math.max(cmin, min)) - // Intersection area
                                         (Math.max(cmax, max) - Math.min(cmin, min) - (max - min)); // Area outside requested range.
@@ -814,7 +817,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                 throw new CoverageStoreException(e);
             }
             if (extents == null) {
-                return XCollections.emptySortedSet();
+                return CollectionsExt.emptySortedSet();
             }
             final int[] count = extents.frequencies();
             final FrequencySortedSet<GeneralGridGeometry> geometries = new FrequencySortedSet<>(true);

@@ -28,7 +28,7 @@ import net.jcip.annotations.Immutable;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
 
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;

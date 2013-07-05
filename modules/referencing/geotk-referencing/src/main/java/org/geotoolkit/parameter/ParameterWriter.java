@@ -39,16 +39,16 @@ import org.opengis.referencing.operation.OperationMethod;
 import org.geotoolkit.io.X364;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.measure.Angle;
-import org.geotoolkit.measure.AngleFormat;
+import org.apache.sis.measure.Angle;
+import org.apache.sis.measure.AngleFormat;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.Localized;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.Localized;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.internal.io.IOUtilities;
 
 import static org.geotoolkit.io.TableWriter.*;
-import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**

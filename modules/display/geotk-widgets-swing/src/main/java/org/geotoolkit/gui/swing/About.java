@@ -50,10 +50,10 @@ import java.text.SimpleDateFormat;
 
 import javax.media.jai.JAI;
 
-import org.geotoolkit.util.Version;
+import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.DaemonThread;
@@ -199,7 +199,7 @@ public class About extends JComponent implements Dialog {
         if (application == null) {
             application = "<html><h2>Geotoolkit.org</h2></html>";
             if (version == null) {
-                version = Version.GEOTOOLKIT.toString();
+                version = Utilities.VERSION.toString();
             }
         }
         /*

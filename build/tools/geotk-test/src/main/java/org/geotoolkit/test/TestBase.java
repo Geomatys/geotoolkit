@@ -93,24 +93,9 @@ public abstract strictfp class TestBase {
     private static final StringWriter buffer;
 
     /**
-     * Invokes a method of {@link org.geotoolkit.util.logging.Logging#GEOTOOLKIT}.
-     */
-    private static void invokeLogging(final String method, final Class<?>[] argTypes, final Object[] argValues) {
-        try {
-            final Class<?> logging = Class.forName("org.geotoolkit.util.logging.Logging");
-            logging.getMethod(method, argTypes).invoke(logging.getField("GEOTOOLKIT").get(null), argValues);
-        } catch (ReflectiveOperationException e) {
-            System.err.println(e);
-        }
-    }
-
-    /**
      * Configures the logging handler and the logging level to use for the test suite.
-     * This method uses reflection for installing the handler provided in Geotk.
      */
     static {
-        invokeLogging("forceMonolineConsoleOutput", new Class<?>[] {Level.class}, new Object[] {
-                Boolean.getBoolean(VERBOSE_KEY) ? Level.FINE : null});
         if (Boolean.getBoolean(VERBOSE_KEY)) {
             out = new PrintWriter(buffer = new StringWriter());
         } else {
@@ -176,7 +161,6 @@ public abstract strictfp class TestBase {
      */
     @AfterClass
     public static void flushVerboseOutput() {
-        invokeLogging("flush", null, null);
         System.out.flush();
         System.err.flush();
         if (out != null) {

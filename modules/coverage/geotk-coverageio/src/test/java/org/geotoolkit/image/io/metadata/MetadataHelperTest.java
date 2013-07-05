@@ -24,7 +24,7 @@ import java.awt.geom.AffineTransform;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.geotoolkit.util.Localized;
+import org.apache.sis.util.Localized;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;

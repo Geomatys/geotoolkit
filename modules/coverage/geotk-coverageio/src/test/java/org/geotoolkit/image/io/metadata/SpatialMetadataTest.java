@@ -28,11 +28,11 @@ import org.opengis.metadata.acquisition.Instrument;
 import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.content.ImagingCondition;
 
-import org.geotoolkit.test.Depend;
-import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.metadata.iso.acquisition.DefaultInstrument;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
+import org.apache.sis.test.DependsOn;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.metadata.iso.acquisition.DefaultInstrument;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.content.DefaultImageDescription;
 
 import org.junit.*;
 
@@ -48,7 +48,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @since 3.06
  */
-@Depend(MetadataProxyTest.class)
+@DependsOn(MetadataProxyTest.class)
 public final strictfp class SpatialMetadataTest {
     /**
      * The warning level to use in this test. We set them to FINE in order to avoid
@@ -79,7 +79,7 @@ public final strictfp class SpatialMetadataTest {
         assertNull(description.getCompressionGenerationQuantity());
         assertSame("The metadata should be cached", description, metadata.getInstanceForType(ImageDescription.class));
         /*
-         * Test the copy to an org.geotoolkit.metadata.iso object.
+         * Test the copy to an org.apache.sis.metadata.iso object.
          * Note that the following warning is emmited:
          *
          *    org.opengis.metadata.content.ImageDescription getAttributeDescription
@@ -126,7 +126,7 @@ public final strictfp class SpatialMetadataTest {
         assertEquals("getType()",      type,      instrument.getType());
         assertEquals("getCitations()", citations, instrument.getCitations());
         /*
-         * Test the copy to an org.geotoolkit.metadata.iso object.
+         * Test the copy to an org.apache.sis.metadata.iso object.
          * Note that the following warning is emmited:
          *
          *    org.opengis.metadata.acquisition.Instrument getMountedOn

@@ -88,7 +88,7 @@ import org.geotoolkit.referencing.operation.MathTransforms;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**

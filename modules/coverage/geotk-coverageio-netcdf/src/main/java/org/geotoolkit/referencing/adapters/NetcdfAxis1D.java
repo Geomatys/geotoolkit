@@ -28,9 +28,9 @@ import ucar.nc2.dataset.CoordinateAxis1DTime;
 
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.util.Range;
+import org.apache.sis.measure.Range;
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.resources.Errors;

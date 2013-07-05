@@ -32,7 +32,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.io.wkt.WKTFormatTest;
@@ -53,7 +53,7 @@ import static org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory.FILENA
  *
  * @since 3.00
  */
-@Depend(WKTFormatTest.class)
+@DependsOn(WKTFormatTest.class)
 public final strictfp class PropertyAuthorityFactoryTest {
     /**
      * The filename of the property file having no {@code AXIS} declaration.

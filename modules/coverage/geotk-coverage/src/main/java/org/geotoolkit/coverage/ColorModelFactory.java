@@ -30,7 +30,7 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.internal.image.ScaledColorSpace;
-import org.geotoolkit.util.collection.WeakValueHashMap;
+import org.apache.sis.util.collection.WeakValueHashMap;
 
 
 /**
@@ -64,7 +64,7 @@ final class ColorModelFactory extends Static {
      *       {@link ColorModel} if they plan to reuse it often in a short period of time.</li>
      * </ul>
      */
-    private static final Map<ColorModelFactory,ColorModel> colors = new WeakValueHashMap<>();
+    private static final Map<ColorModelFactory,ColorModel> colors = new WeakValueHashMap<>(ColorModelFactory.class);
 
     /**
      * The list of categories for the construction of a single instance of a {@link ColorModel}.

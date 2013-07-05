@@ -57,17 +57,17 @@ import org.opengis.util.NameSpace;
 
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.citation.DefaultContact;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
-import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
+import org.apache.sis.metadata.iso.citation.DefaultContact;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
+import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static javax.media.jai.registry.RenderedRegistryMode.MODE_NAME;

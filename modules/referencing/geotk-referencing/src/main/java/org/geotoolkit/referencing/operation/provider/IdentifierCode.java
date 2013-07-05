@@ -23,7 +23,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 
 
 /**
@@ -36,7 +36,7 @@ import org.geotoolkit.referencing.DefaultReferenceIdentifier;
  * @module
  */
 @Immutable
-final class IdentifierCode extends DefaultReferenceIdentifier {
+final class IdentifierCode extends ImmutableIdentifier {
     /**
      * For cross-version compatibility.
      */

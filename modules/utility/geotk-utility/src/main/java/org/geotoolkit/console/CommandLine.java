@@ -34,7 +34,8 @@ import java.lang.annotation.Annotation;
 import org.geotoolkit.io.X364;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.logging.MonolineFormatter;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.util.converter.ConverterRegistry;
@@ -328,9 +329,9 @@ public abstract class CommandLine implements Runnable {
             }
         }
         arguments = ArraysExt.resize(arguments, count);
-        Logging.GEOTOOLKIT.forceMonolineConsoleOutput(debug ? Level.FINER : null);
+        MonolineFormatter.install(Logging.getLogger(""), debug ? Level.FINER : null);
         if (explicitEncoding) {
-            for (final Handler handler : Logging.getLogger(Logging.GEOTOOLKIT.name).getHandlers()) {
+            for (final Handler handler : Logging.getLogger("org.geotoolkit").getHandlers()) {
                 if (handler.getClass() == ConsoleHandler.class) try {
                     ((ConsoleHandler) handler).setEncoding(encoding.name());
                 } catch (UnsupportedEncodingException e) {

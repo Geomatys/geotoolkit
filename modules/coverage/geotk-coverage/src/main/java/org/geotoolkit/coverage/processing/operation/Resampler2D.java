@@ -66,7 +66,7 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.processing.AbstractCoverageProcessor;
 import org.geotoolkit.coverage.processing.CannotReprojectException;
-import org.geotoolkit.geometry.AbstractEnvelope;
+import org.apache.sis.geometry.AbstractEnvelope;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.referencing.CRS;

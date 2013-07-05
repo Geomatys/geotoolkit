@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
 
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.operation.projection.Mercator;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
@@ -255,7 +255,7 @@ public class MillerCylindrical extends MapProjection {
         PARAMETERS = UniversalParameters.createDescriptorGroup(new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Miller_Cylindrical"),
             new NamedIdentifier(Citations.IGNF,    "Miller_Cylindrical_Sphere"),
-            new DefaultReferenceIdentifier(Citations.IGNF, "IGNF", "PRC9901"),
+            new ImmutableIdentifier(Citations.IGNF, "IGNF", "PRC9901"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_MillerCylindrical"),
             new IdentifierCode (Citations.GEOTIFF,  20),
             new NamedIdentifier(Citations.PROJ4,   "mill"),

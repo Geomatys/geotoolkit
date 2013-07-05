@@ -42,15 +42,15 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.cs.DefaultCompoundCS;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.collection.CheckedContainer;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.collection.CheckedContainer;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.Utilities.deepEquals;
+import static org.apache.sis.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 

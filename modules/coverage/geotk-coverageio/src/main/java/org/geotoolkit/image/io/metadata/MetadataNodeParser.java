@@ -50,11 +50,11 @@ import org.geotoolkit.image.io.WarningProducer;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.apache.sis.measure.Units;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.Localized;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.internal.util.Utilities;
 import org.apache.sis.util.resources.IndexedResourceBundle;
@@ -880,7 +880,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             if (String.class.isAssignableFrom(type)) {
                 value = value.toString();
             } else if (Number.class.isAssignableFrom(type)) {
-                value = Numbers.valueOf(type, value.toString());
+                value = Numbers.valueOf(value.toString(), type);
             } else if (Date.class.isAssignableFrom(type)) {
                 value = org.apache.sis.internal.jdk8.JDK8.parseDateTime(value.toString(), false);
             } else if (type.isArray()) {
@@ -1123,7 +1123,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     public Integer getAttributeAsInteger(final String attribute) {
         String value = getAttribute(attribute);
         if (value != null) {
-            value = Strings.trimFractionalPart(value);
+            value = CharSequences.trimFractionalPart(value).toString();
             try {
                 return Integer.valueOf(value);
             } catch (NumberFormatException e) {
@@ -1240,7 +1240,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     public Date getAttributeAsDate(final String attribute) {
         String value = getAttribute(attribute);
         if (value != null) {
-            value = Strings.trimFractionalPart(value);
+            value = CharSequences.trimFractionalPart(value).toString();
             if (metadata instanceof SpatialMetadata) {
                 return ((SpatialMetadata) metadata).dateFormat().parse(value);
             } else try {
@@ -1366,7 +1366,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             final String token = tokens.nextToken().replace(NBSP, ' ').trim();
             final Object value;
             try {
-                value = Numbers.valueOf(wrapperType, token);
+                value = Numbers.valueOf(token, wrapperType);
             } catch (NumberFormatException e) {
                 if (caller == null) {
                     throw e;

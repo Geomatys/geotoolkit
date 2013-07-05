@@ -37,7 +37,7 @@ import org.geotoolkit.referencing.operation.transform.GridType;
 import org.geotoolkit.referencing.operation.transform.GridTransform;
 import org.geotoolkit.referencing.operation.transform.IterationStrategy;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.Utilities.hash;

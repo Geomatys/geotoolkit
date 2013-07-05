@@ -25,12 +25,16 @@ import javax.measure.unit.SI;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.JAXBContext;
 
+import org.apache.sis.xml.XML;
+import org.apache.sis.xml.Namespaces;
+import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.internal.jaxb.referencing.SecondDefiningParameter;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -55,8 +59,8 @@ public final strictfp class DatumMarshallingTest {
      */
     @BeforeClass
     public static void createPool() throws JAXBException {
-        pool = new MarshallerPool(Collections.singletonMap(
-                MarshallerPool.ROOT_NAMESPACE_KEY, Namespaces.GMD), SecondDefiningParameter.class);
+        pool = new MarshallerPool(JAXBContext.newInstance(SecondDefiningParameter.class),
+                Collections.singletonMap(XML.DEFAULT_NAMESPACE, Namespaces.GMD));
     }
 
     /**
@@ -81,10 +85,10 @@ public final strictfp class DatumMarshallingTest {
         final String xml;
         try (StringWriter writer = new StringWriter()) {
             marshaller.marshal(p, writer);
-            pool.release(marshaller);
+            pool.recycle(marshaller);
             xml = writer.toString();
         }
-        assertDomEquals(
+        assertXmlEquals(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<gml:SecondDefiningParameter xmlns:gml=\"http://www.opengis.net/gml\">\n" +
             "  <gml:semiMinorAxis uom=\"http://schemas.opengis.net/iso/19139/20070417/resources/uom/gmxUom.xml#xpointer(//*[@gml:id='m'])\">6371000.0</gml:semiMinorAxis>\n" +
@@ -108,7 +112,7 @@ public final strictfp class DatumMarshallingTest {
         try (StringReader reader = new StringReader(xml)) {
             final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
             object = unmarshaller.unmarshal(reader);
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
         assertTrue(object instanceof SecondDefiningParameter);
         final SecondDefiningParameter sdp = (SecondDefiningParameter) object;

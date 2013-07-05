@@ -42,7 +42,7 @@ import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.FormattableObject;
-import org.geotoolkit.naming.DefaultNameSpace;
+import org.apache.sis.util.iso.DefaultNameSpace;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 

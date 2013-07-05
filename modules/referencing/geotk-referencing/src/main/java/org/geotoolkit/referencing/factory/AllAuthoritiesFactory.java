@@ -38,11 +38,11 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.internal.FactoryUtilities;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -96,7 +96,7 @@ public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
      * Pool of existing instances.
      */
     private static final WeakHashSet<AllAuthoritiesFactory> POOL =
-            WeakHashSet.newInstance(AllAuthoritiesFactory.class);
+            new WeakHashSet<>(AllAuthoritiesFactory.class);
 
     /**
      * The authority names. Used in order to detect changes in the set of registered factories.

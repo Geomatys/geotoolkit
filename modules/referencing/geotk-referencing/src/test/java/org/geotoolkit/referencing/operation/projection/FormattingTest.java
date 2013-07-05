@@ -26,7 +26,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.junit.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform2D;
@@ -47,7 +47,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 3.00
  */
-@Depend(ConcatenatedTransformTest.class)
+@DependsOn(ConcatenatedTransformTest.class)
 public final strictfp class FormattingTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.

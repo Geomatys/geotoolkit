@@ -25,7 +25,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.Disposable;
+import org.apache.sis.util.Disposable;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.ThreadedAuthorityFactory;
 import org.geotoolkit.referencing.factory.NoSuchFactoryException;

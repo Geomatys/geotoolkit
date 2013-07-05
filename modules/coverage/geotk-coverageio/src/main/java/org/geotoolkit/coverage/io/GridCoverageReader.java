@@ -48,14 +48,14 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.util.GenericName;
 import org.apache.sis.util.ArraysExt;
 
-import org.geotoolkit.util.MeasurementRange;
+import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.measure.Measure;
-import org.geotoolkit.metadata.iso.DefaultMetadata;
-import org.geotoolkit.metadata.iso.extent.DefaultExtent;
-import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
-import org.geotoolkit.metadata.iso.identification.DefaultResolution;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.metadata.iso.identification.DefaultResolution;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -64,7 +64,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Vocabulary;
 
 import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 
 

@@ -29,7 +29,7 @@ import javax.imageio.event.IIOWriteProgressListener;
 import org.netbeans.spi.wizard.DeferredWizardResult;
 import org.netbeans.spi.wizard.ResultProgressHandle;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gui.swing.LoggingPanel;
 import org.geotoolkit.gui.swing.image.MosaicChooser;
 import org.geotoolkit.gui.swing.image.MosaicBuilderEditor;

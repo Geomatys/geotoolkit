@@ -33,12 +33,12 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.naming.DefaultNameSpace;
+import org.apache.sis.util.iso.DefaultNameSpace;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**

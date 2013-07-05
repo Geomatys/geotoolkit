@@ -31,6 +31,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
+import org.opengis.util.NameFactory;
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
@@ -39,7 +40,8 @@ import org.opengis.referencing.IdentifiedObject;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.naming.DefaultNameFactory;
+import org.apache.sis.util.iso.Types;
+import org.apache.sis.util.iso.DefaultNameFactory;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.Loggings;
@@ -128,7 +130,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
      * user-hints because it would be misleading: must of the name creation is actually
      * performed by {@link NamedIdentifier}, which fetches its factory instance itself.
      */
-    private transient DefaultNameFactory nameFactory;
+    private transient NameFactory nameFactory;
 
     /**
      * The underlying datum factory. If {@code null}, a default factory will be fetch from
@@ -189,7 +191,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
     /**
      * Returns the name factory.
      */
-    private synchronized DefaultNameFactory getNameFactory() {
+    private synchronized NameFactory getNameFactory() {
         if (nameFactory == null) {
             nameFactory = (DefaultNameFactory) FactoryFinder.getNameFactory(
                     new Hints(Hints.NAME_FACTORY, DefaultNameFactory.class));
@@ -456,7 +458,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
             value = properties.get(IdentifiedObject.ALIAS_KEY);
             if (value != null) {
                 final Map<String,GenericName> merged = new LinkedHashMap<>();
-                putAll(getNameFactory().toArray(value), merged);
+                putAll(Types.toGenericNames(value, getNameFactory()), merged);
                 count -= putAll(aliases, merged);
                 final Collection<GenericName> c = merged.values();
                 aliases = c.toArray(new GenericName[c.size()]);

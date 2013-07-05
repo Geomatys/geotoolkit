@@ -32,9 +32,9 @@ import org.opengis.metadata.identification.Resolution;
 import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.coverage.grid.RectifiedGrid;
 
-import org.geotoolkit.test.Depend;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.test.DependsOn;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 import org.junit.*;
@@ -51,7 +51,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @since 3.06
  */
-@Depend(MetadataNodeAccessorTest.class)
+@DependsOn(MetadataNodeAccessorTest.class)
 public final strictfp class MetadataProxyTest {
     /**
      * Tests the proxy with some properties defined under the {@code "ImageDescription"} node
@@ -172,7 +172,7 @@ public final strictfp class MetadataProxyTest {
             assertNull(accessor.getAttributeAsDouble("maxValue"));
             accessor.setAttribute("minValue", -i);
             accessor.setAttribute("maxValue",  i);
-            accessor.setAttribute("validSampleValues", NumberRange.create(-i, i));
+            accessor.setAttribute("validSampleValues", NumberRange.create(-i, true, i, true));
             assertEquals(i, dimensions.size());
         }
         int index = 0;
@@ -182,7 +182,7 @@ public final strictfp class MetadataProxyTest {
             final SampleDimension sd = (SampleDimension) dim;
             assertEquals(Double.valueOf(-index), sd.getMinValue());
             assertEquals(Double.valueOf( index), sd.getMaxValue());
-            assertEquals(NumberRange.create((byte) -index, (byte) index), sd.getValidSampleValues());
+            assertEquals(NumberRange.create((byte) -index, true, (byte) index, true), sd.getValidSampleValues());
             /*
              * Check the methods defined in java.lang.Object.
              */

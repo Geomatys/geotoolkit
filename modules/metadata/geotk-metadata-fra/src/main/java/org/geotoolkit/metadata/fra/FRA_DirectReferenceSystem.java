@@ -19,14 +19,11 @@ package org.geotoolkit.metadata.fra;
 
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
-import net.jcip.annotations.ThreadSafe;
-
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.ReferenceIdentifier;
-
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
-import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
+import org.apache.sis.internal.jaxb.metadata.ReferenceSystemMetadata;
 
 
 /**
@@ -44,12 +41,11 @@ import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @version 3.21
  *
  * @since 3.00
  * @module
  */
-@ThreadSafe
 @XmlType(name = "FRA_DirectReferenceSystem_Type")
 @XmlRootElement(name= "FRA_DirectReferenceSystem")
 public class FRA_DirectReferenceSystem extends ReferenceSystemMetadata {
@@ -94,6 +90,6 @@ public class FRA_DirectReferenceSystem extends ReferenceSystemMetadata {
      *          Identifier code or name, optionally from a controlled list or pattern defined by a code space.
      */
     public FRA_DirectReferenceSystem(final Citation authority, final String codespace, final String code) {
-        super(new DefaultReferenceIdentifier(authority, codespace, code));
+        super(new ImmutableIdentifier(authority, codespace, code));
     }
 }

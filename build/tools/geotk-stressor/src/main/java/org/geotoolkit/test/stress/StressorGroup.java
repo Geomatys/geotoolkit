@@ -34,7 +34,7 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.ExpandedTabWriter;
 import org.geotoolkit.internal.Threads;
 import org.apache.sis.math.Statistics;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 
 
 /**

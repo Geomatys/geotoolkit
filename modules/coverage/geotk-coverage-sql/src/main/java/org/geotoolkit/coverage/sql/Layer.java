@@ -29,7 +29,7 @@ import java.awt.image.RenderedImage;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.MeasurementRange;
+import org.apache.sis.measure.MeasurementRange;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 

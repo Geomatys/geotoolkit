@@ -112,7 +112,6 @@
     <module>utility</module>
     <module>metadata</module>
     <module>referencing</module>
-    <module>feature</module>
     <module>coverage</module>
     <module>display</module>
     <module>analytics</module>

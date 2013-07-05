@@ -62,45 +62,48 @@ import org.opengis.metadata.identification.TopicCategory;
 import org.opengis.metadata.identification.KeywordType;
 import org.opengis.metadata.identification.Keywords;
 import org.opengis.metadata.extent.Extent;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 import org.opengis.util.NameFactory;
 
 import org.apache.sis.measure.Units;
-import org.geotoolkit.util.Strings;
 import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.naming.DefaultNameSpace;
+import org.apache.sis.util.iso.DefaultNameSpace;
 import org.geotoolkit.image.io.WarningProducer;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.image.io.NetcdfVariable;
-import org.geotoolkit.metadata.iso.DefaultMetadata;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.metadata.iso.citation.*;
-import org.geotoolkit.metadata.iso.constraint.DefaultLegalConstraints;
-import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
-import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
-import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
-import org.geotoolkit.metadata.iso.identification.DefaultKeywords;
-import org.geotoolkit.metadata.iso.content.DefaultBand;
-import org.geotoolkit.metadata.iso.content.DefaultRangeElementDescription;
-import org.geotoolkit.metadata.iso.content.DefaultCoverageDescription;
-import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
-import org.geotoolkit.metadata.iso.distribution.DefaultDistributor;
-import org.geotoolkit.metadata.iso.distribution.DefaultDistribution;
-import org.geotoolkit.metadata.iso.extent.DefaultExtent;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicDescription;
-import org.geotoolkit.metadata.iso.extent.DefaultVerticalExtent;
-import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
-import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
-import org.geotoolkit.metadata.iso.lineage.DefaultLineage;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.citation.*;
+import org.apache.sis.metadata.iso.constraint.DefaultLegalConstraints;
+import org.apache.sis.metadata.iso.spatial.DefaultDimension;
+import org.apache.sis.metadata.iso.spatial.DefaultGridSpatialRepresentation;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.metadata.iso.identification.DefaultKeywords;
+import org.apache.sis.metadata.iso.content.DefaultBand;
+import org.apache.sis.metadata.iso.content.DefaultRangeElementDescription;
+import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
+import org.apache.sis.metadata.iso.content.DefaultImageDescription;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.metadata.iso.distribution.DefaultDistributor;
+import org.apache.sis.metadata.iso.distribution.DefaultDistribution;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicDescription;
+import org.apache.sis.metadata.iso.extent.DefaultVerticalExtent;
+import org.apache.sis.metadata.iso.extent.DefaultTemporalExtent;
+import org.apache.sis.metadata.iso.quality.DefaultDataQuality;
+import org.apache.sis.metadata.iso.lineage.DefaultLineage;
 import org.geotoolkit.referencing.adapters.NetcdfCRSBuilder;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.SimpleInternationalString.wrap;
+import static org.apache.sis.util.iso.Types.toInternationalString;
 
 
 /**
@@ -593,7 +596,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             if (individualName != null || organisationName != null || contact != null) { // Do not test role.
                 final DefaultResponsibleParty np = new DefaultResponsibleParty(role);
                 np.setIndividualName(individualName);
-                np.setOrganisationName(wrap(organisationName));
+                np.setOrganisationName(toInternationalString(organisationName));
                 np.setContactInfo(contact);
                 party = np;
             }
@@ -644,7 +647,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                 addIfAbsent(citation.getCitedResponsibleParties(), contributor);
             }
         }
-        citation.setOtherCitationDetails(wrap(references));
+        citation.setOtherCitationDetails(toInternationalString(references));
         return citation.isEmpty() ? null : citation;
     }
 
@@ -683,12 +686,13 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                 if (credits  != null) addIfAbsent(identification.getCredits(), credits);
                 if (license  != null) addIfAbsent(identification.getResourceConstraints(), constraints = new DefaultLegalConstraints(license));
                 if (access   != null) {
-                    for (final String token : Strings.split(access, ',')) {
-                        if (!token.isEmpty()) {
+                    for (final CharSequence token : CharSequences.split(access, ',')) {
+                        final String t = token.toString();
+                        if (!t.isEmpty()) {
                             if (constraints == null) {
                                 identification.getResourceConstraints().add(constraints = new DefaultLegalConstraints());
                             }
-                            addIfAbsent(constraints.getAccessConstraints(), Types.forCodeName(Restriction.class, token, true));
+                            addIfAbsent(constraints.getAccessConstraints(), Types.forCodeName(Restriction.class, t, true));
                         }
                     }
                 }
@@ -700,7 +704,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                     hasExtent = true;
                 }
             }
-            project = addIfNonNull(project, wrap(getStringValue(group, PROJECT)));
+            project = addIfNonNull(project, toInternationalString(getStringValue(group, PROJECT)));
         }
         final Citation citation = createCitation(identifier);
         final String   summary  = getStringValue(SUMMARY);
@@ -712,14 +716,14 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             identification = new DefaultDataIdentification();
         }
         identification.setCitation(citation);
-        identification.setAbstract(wrap(summary));
-        identification.setPurpose (wrap(purpose));
+        identification.setAbstract(toInternationalString(summary));
+        identification.setPurpose (toInternationalString(purpose));
         if (pointOfContact != null) {
             identification.getPointOfContacts().add(pointOfContact);
         }
         addKeywords(identification, project,   "project"); // Not necessarily the same string than PROJECT.
         addKeywords(identification, publisher, "dataCenter");
-        identification.setSupplementalInformation(wrap(getStringValue(COMMENT)));
+        identification.setSupplementalInformation(toInternationalString(getStringValue(COMMENT)));
         return identification;
     }
 
@@ -730,7 +734,8 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             final Set<InternationalString> words, final String type)
     {
         if (words != null) {
-            final DefaultKeywords keywords = new DefaultKeywords(words);
+            final DefaultKeywords keywords = new DefaultKeywords();
+            keywords.setKeywords(words);
             keywords.setType(Types.forCodeName(KeywordType.class, type, true));
             addTo.getDescriptiveKeywords().add(keywords);
         }
@@ -751,11 +756,12 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             for (String keyword : list.split(getKeywordSeparator(group))) {
                 keyword = keyword.trim();
                 if (!keyword.isEmpty()) {
-                    words.add(wrap(keyword));
+                    words.add(toInternationalString(keyword));
                 }
             }
             if (!words.isEmpty()) {
-                keywords = new DefaultKeywords(words);
+                keywords = new DefaultKeywords();
+                keywords.setKeywords(words);
                 keywords.setType(type);
                 final String vocabulary = getStringValue(group, standard ? STANDARD_NAME_VOCABULARY : VOCABULARY);
                 if (vocabulary != null) {
@@ -827,7 +833,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             }
             final DefaultDimension dimension = new DefaultDimension();
             if (rsat != null) {
-                dimension.setDimensionName(rsat.TYPE);
+                dimension.setDimensionName(rsat.DEFAULT_NAME_TYPE);
                 dimension.setResolution(resolution);
             }
             dimension.setDimensionSize(axis.getShape(i));
@@ -896,14 +902,23 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             if (extent == null) {
                 extent = new DefaultExtent();
             }
-            extent.getTemporalElements().add(new DefaultTemporalExtent(startTime, endTime));
+            final GeneralEnvelope env = new GeneralEnvelope(DefaultTemporalCRS.JAVA);
+            env.setRange(0, (startTime != null) ? startTime.getTime() : Double.NaN,
+                              (endTime != null) ?   endTime.getTime() : Double.NaN);
+            final DefaultTemporalExtent e = new DefaultTemporalExtent();
+            try {
+                e.setBounds(env);
+            } catch (TransformException ex) {
+                throw new AssertionError(ex); // Should never happen.
+            }
+            extent.getTemporalElements().add(e);
         }
         final String identifier = getStringValue(GEOGRAPHIC_IDENTIFIER);
         if (identifier != null) {
             if (extent == null) {
                 extent = new DefaultExtent();
             }
-            extent.getGeographicElements().add(new DefaultGeographicDescription(identifier));
+            extent.getGeographicElements().add(new DefaultGeographicDescription(null, identifier));
         }
         return extent;
     }
@@ -1016,7 +1031,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                 return values;
             }
         }
-        return Strings.EMPTY;
+        return CharSequences.EMPTY_ARRAY;
     }
 
     /**
@@ -1046,7 +1061,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
         }
         String descriptor = variable.getDescription();
         if (descriptor != null && !(descriptor = descriptor.trim()).isEmpty() && !descriptor.equals(name)) {
-            band.setDescriptor(wrap(descriptor));
+            band.setDescriptor(toInternationalString(descriptor));
         }
 //TODO: Can't store the units, because the Band interface restricts it to length.
 //      We need the SampleDimension interface proposed in ISO 19115 revision draft.
@@ -1073,8 +1088,8 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
     {
         if (name != null && meaning != null) {
             final DefaultRangeElementDescription element = new DefaultRangeElementDescription();
-            element.setName(wrap(name));
-            element.setDefinition(wrap(meaning));
+            element.setName(toInternationalString(name));
+            element.setDefinition(toInternationalString(meaning));
             // TODO: create a record from values (and possibly from the masks).
             //       if (pixel & mask == value) then we have that range element.
             return element;
@@ -1141,14 +1156,14 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                 // TODO: There is some transfert option, etc. that we could set there.
                 // See UnidataDD2MI.xsl for options for OPeNDAP, THREDDS, etc.
                 addIfAbsent(distribution.getDistributors(), distributor);
-                publisher = addIfNonNull(publisher, wrap(party.getIndividualName()));
+                publisher = addIfNonNull(publisher, toInternationalString(party.getIndividualName()));
             }
             // Also add history.
             final String history = getStringValue(HISTORY);
             if (history != null) {
                 final DefaultDataQuality quality = new DefaultDataQuality();
                 final DefaultLineage lineage = new DefaultLineage();
-                lineage.setStatement(wrap(history));
+                lineage.setStatement(toInternationalString(history));
                 quality.setLineage(lineage);
                 addIfAbsent(metadata.getDataQualityInfo(), quality);
             }

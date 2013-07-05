@@ -20,7 +20,7 @@ package org.geotoolkit.gui.swing.referencing;
 import java.util.Locale;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.AuthorityFactory;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 
 /**

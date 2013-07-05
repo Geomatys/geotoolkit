@@ -21,7 +21,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

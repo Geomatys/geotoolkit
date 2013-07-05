@@ -23,7 +23,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Utilities;
 
 
 /**

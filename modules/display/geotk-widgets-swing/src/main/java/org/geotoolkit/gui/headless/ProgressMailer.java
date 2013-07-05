@@ -37,7 +37,7 @@ import javax.mail.internet.AddressException;
 import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.process.ProgressController;
 
 import static org.apache.sis.util.CharSequences.length;

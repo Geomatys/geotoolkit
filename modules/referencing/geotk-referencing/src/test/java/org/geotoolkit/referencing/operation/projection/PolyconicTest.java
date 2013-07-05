@@ -21,8 +21,8 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
 import org.junit.*;
-import org.geotoolkit.test.Depend;
 
+import org.apache.sis.test.DependsOn;
 import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.operation.provider.Polyconic.PARAMETERS;
@@ -38,7 +38,7 @@ import static org.geotoolkit.referencing.operation.provider.Polyconic.PARAMETERS
  *
  * @since 3.11
  */
-@Depend(UnitaryProjectionTest.class)
+@DependsOn(UnitaryProjectionTest.class)
 public final strictfp class PolyconicTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.

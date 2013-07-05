@@ -27,7 +27,7 @@ import javax.measure.unit.Unit;
 import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 

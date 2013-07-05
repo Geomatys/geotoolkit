@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.referencing;
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.cs.CartesianCS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
-import org.geotoolkit.internal.jaxb.gco.PropertyType;
+import org.apache.sis.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -75,7 +75,6 @@ public final class CS_CartesianCS extends PropertyType<CS_CartesianCS, Cartesian
      *
      * @return The metadata to be marshalled.
      */
-    @Override
     @XmlElement(name = "CartesianCS")
     public DefaultCartesianCS getElement() {
         return skip() ? null : DefaultCartesianCS.castOrCopy(metadata);

@@ -29,9 +29,9 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.apache.sis.math.Statistics;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
-import org.geotoolkit.util.logging.PerformanceLevel;
+import org.apache.sis.util.logging.PerformanceLevel;
 
 
 /**

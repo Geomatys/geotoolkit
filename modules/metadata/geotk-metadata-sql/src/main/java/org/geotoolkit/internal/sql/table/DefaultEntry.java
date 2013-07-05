@@ -22,7 +22,7 @@ import java.io.Serializable;
 import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 
 
 /**

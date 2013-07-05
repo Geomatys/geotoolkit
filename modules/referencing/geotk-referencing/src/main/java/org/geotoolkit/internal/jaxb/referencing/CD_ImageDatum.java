@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.referencing;
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.datum.ImageDatum;
 import org.geotoolkit.referencing.datum.DefaultImageDatum;
-import org.geotoolkit.internal.jaxb.gco.PropertyType;
+import org.apache.sis.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -75,7 +75,6 @@ public final class CD_ImageDatum extends PropertyType<CD_ImageDatum, ImageDatum>
      *
      * @return The metadata to be marshalled.
      */
-    @Override
     @XmlElement(name = "ImageDatum")
     public DefaultImageDatum getElement() {
         return skip() ? null : DefaultImageDatum.castOrCopy(metadata);

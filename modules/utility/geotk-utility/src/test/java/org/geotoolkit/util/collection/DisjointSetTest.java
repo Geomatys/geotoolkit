@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Collections;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -60,8 +60,8 @@ public final strictfp class DisjointSetTest {
         assertEquals(Collections.singleton("gamma"), t3);
         assertEquals(Collections.singleton("bêta"),  t1.getTrash());
 
-        assertNotSame(t1, assertSerializable(t1));
-        assertNotSame(t2, assertSerializable(t2));
-        assertNotSame(t3, assertSerializable(t3));
+        assertNotSame(t1, assertSerializedEquals(t1));
+        assertNotSame(t2, assertSerializedEquals(t2));
+        assertNotSame(t3, assertSerializedEquals(t3));
     }
 }

@@ -22,7 +22,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 
 import static java.lang.StrictMath.*;
@@ -38,7 +38,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.PARA
  *
  * @since 3.00
  */
-@Depend(UnitaryProjectionTest.class)
+@DependsOn(UnitaryProjectionTest.class)
 public final strictfp class ObliqueMercatorTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.

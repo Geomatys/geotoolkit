@@ -24,7 +24,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.io.TableAppender;
 import org.apache.sis.io.IO;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.lang.Decorator;
 
 
@@ -155,7 +155,7 @@ public class TableWriter extends FilterWriter {
      * @param spaces Amount of white spaces to use as column separator.
      */
     public TableWriter(final Writer out, final int spaces) {
-        this(out, Strings.spaces(spaces));
+        this(out, CharSequences.spaces(spaces).toString());
     }
 
     /**

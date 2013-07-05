@@ -26,7 +26,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.process.ProgressController;
@@ -302,7 +302,7 @@ public class ProgressPrinter extends ProgressController {
             margin = trim(margin);
             if (!margin.isEmpty()) {
                 prefix = prefix + '(' + margin + ") ";
-                second = Strings.spaces(prefix.length());
+                second = CharSequences.spaces(prefix.length()).toString();
             }
         }
         int width = maxLength - prefix.length() - 1;
@@ -376,7 +376,7 @@ public class ProgressPrinter extends ProgressController {
                 }
                 case 1: {
                     out.print("**");
-                    out.print(Strings.spaces(length + 6));
+                    out.print(CharSequences.spaces(length + 6));
                     out.println("**");
                     break;
                 }

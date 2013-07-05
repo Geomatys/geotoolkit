@@ -38,7 +38,7 @@ import org.opengis.parameter.ParameterNotFoundException;
 
 import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;

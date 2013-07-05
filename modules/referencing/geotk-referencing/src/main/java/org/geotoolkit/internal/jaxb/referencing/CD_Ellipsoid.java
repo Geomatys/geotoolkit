@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.referencing;
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.internal.jaxb.gco.PropertyType;
+import org.apache.sis.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -75,7 +75,6 @@ public final class CD_Ellipsoid extends PropertyType<CD_Ellipsoid, Ellipsoid> {
      *
      * @return The metadata to be marshalled.
      */
-    @Override
     @XmlElement(name = "Ellipsoid")
     public DefaultEllipsoid getElement() {
         return skip() ? null : DefaultEllipsoid.castOrCopy(metadata);

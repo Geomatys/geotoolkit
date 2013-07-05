@@ -63,14 +63,14 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.math.Statistics;
 import org.apache.sis.measure.Units;
 import org.apache.sis.measure.Angle;
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
-import org.geotoolkit.measure.AngleFormat; // Can't use SIS because of Number formatting.
-import org.geotoolkit.measure.RangeFormat;
+import org.apache.sis.measure.AngleFormat; // Can't use SIS because of Number formatting.
+import org.apache.sis.measure.RangeFormat;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.sql.CoverageDatabase;
 import org.geotoolkit.coverage.sql.CoverageEnvelope;
@@ -88,7 +88,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -244,7 +244,7 @@ public class LayerList extends WindowCreator {
         dateFormat   = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
         heightFormat = NumberFormat.getNumberInstance(locale);
         angleFormat  = AngleFormat.getInstance(locale);
-        rangeFormat  = RangeFormat.getInstance(locale);
+        rangeFormat  = new RangeFormat(locale);
         /*
          * List of layers.
          */
@@ -717,7 +717,7 @@ public class LayerList extends WindowCreator {
                 }
                 final Set<Number> z = layer.getAvailableElevations();
                 if (!isNullOrEmpty(z)) {
-                    final Statistics stats = new Statistics();
+                    final Statistics stats = new Statistics(null);
                     for (final Number value : z) {
                         stats.accept(value.doubleValue());
                     }
@@ -725,7 +725,7 @@ public class LayerList extends WindowCreator {
                     final StringBuffer buffer = new StringBuffer();
                     final List<String> fz = new ArrayList<>(z.size());
                     synchronized (heightFormat) {
-                        stats.configure(heightFormat);
+                        org.geotoolkit.math.Statistics.configure(stats, heightFormat);
                         for (final Number value : z) {
                             heightFormat.format(value, buffer, pos).append("    ");
                             fz.add(buffer.toString());

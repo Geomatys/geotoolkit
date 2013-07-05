@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.referencing;
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.cs.AffineCS;
 import org.geotoolkit.referencing.cs.DefaultAffineCS;
-import org.geotoolkit.internal.jaxb.gco.PropertyType;
+import org.apache.sis.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -75,7 +75,6 @@ public final class CS_AffineCS extends PropertyType<CS_AffineCS, AffineCS> {
      *
      * @return The metadata to be marshalled.
      */
-    @Override
     @XmlElement(name = "AffineCS")
     public DefaultAffineCS getElement() {
         return skip() ? null : DefaultAffineCS.castOrCopy(metadata);

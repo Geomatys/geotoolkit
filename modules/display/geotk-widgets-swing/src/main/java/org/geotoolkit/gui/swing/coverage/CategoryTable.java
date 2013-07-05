@@ -39,8 +39,8 @@ import javax.swing.table.TableColumn;
 
 import org.opengis.metadata.content.TransferFunctionType;
 
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.gui.swing.ListTableModel;
 import org.geotoolkit.gui.swing.image.PaletteComboBox;
@@ -50,7 +50,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.lang.Debug;
 
 import static org.geotoolkit.gui.swing.coverage.CategoryRecord.*;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**

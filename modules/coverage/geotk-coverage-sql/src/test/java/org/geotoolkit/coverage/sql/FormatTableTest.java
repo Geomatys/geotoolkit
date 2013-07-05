@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.sql.SQLException;
 import javax.measure.unit.SI;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.09 (derived from Seagis)
  */
-@Depend(SampleDimensionTableTest.class)
+@DependsOn(SampleDimensionTableTest.class)
 public final strictfp class FormatTableTest extends CatalogTestBase {
     /**
      * The name of the temperature format to be tested.

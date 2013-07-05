@@ -47,13 +47,13 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.FormattableObject;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.LenientComparable;
+import org.apache.sis.util.LenientComparable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 

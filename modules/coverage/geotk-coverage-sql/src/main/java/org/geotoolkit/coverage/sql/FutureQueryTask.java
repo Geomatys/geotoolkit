@@ -24,7 +24,7 @@ import java.util.concurrent.CancellationException;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.ArraysExt;
 
 

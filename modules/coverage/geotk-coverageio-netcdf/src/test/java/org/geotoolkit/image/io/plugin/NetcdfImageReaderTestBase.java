@@ -27,7 +27,7 @@ import ucar.nc2.NetcdfFile;
 import org.opengis.wrapper.netcdf.IOTestCase;
 import org.opengis.test.coverage.image.ImageReaderTestCase;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.image.ImageTestBase;
 import org.geotoolkit.referencing.adapters.NetcdfCRSTest;
 
@@ -46,7 +46,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.10
  */
-@Depend(NetcdfCRSTest.class)
+@DependsOn(NetcdfCRSTest.class)
 public abstract strictfp class NetcdfImageReaderTestBase extends ImageReaderTestCase {
     /**
      * Default constructor for subclasses.

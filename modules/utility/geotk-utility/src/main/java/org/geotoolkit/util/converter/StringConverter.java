@@ -24,12 +24,13 @@ import java.net.URISyntaxException;
 import java.net.MalformedURLException;
 import net.jcip.annotations.Immutable;
 
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Locales;
+import org.apache.sis.util.Locales;
 import org.apache.sis.util.iso.Types;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.internal.InternalUtilities;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
 
 /**
@@ -102,7 +103,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             }
             source = source.trim();
             try {
-                return Numbers.finestNumber(source);
+                return Numbers.narrowestNumber(source);
             } catch (NumberFormatException e) {
                 throw new NonconvertibleObjectException(e);
             }

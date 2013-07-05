@@ -22,7 +22,7 @@ import java.util.Collection;
 import org.opengis.metadata.quality.Result;
 import org.opengis.metadata.quality.ConformanceResult;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.metadata.iso.citation.CitationsTest;
 
 import org.junit.*;
@@ -37,7 +37,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.19 (derived from 2.2)
  */
-@Depend(CitationsTest.class)
+@DependsOn(CitationsTest.class)
 public final strictfp class AbstractPositionalAccuracyTest {
     /**
      * Tests {@link AbstractPositionalAccuracy} constants.

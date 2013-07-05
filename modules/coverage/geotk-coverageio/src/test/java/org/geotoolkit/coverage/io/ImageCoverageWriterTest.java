@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import javax.imageio.ImageWriter;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.io.LineReader;
@@ -54,7 +54,7 @@ import static org.junit.Assume.*;
  *
  * @since 3.14
  */
-@Depend(ImageCoverageReaderTest.class)
+@DependsOn(ImageCoverageReaderTest.class)
 public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
     /**
      * Tolerance factor when comparing values from the {@code "matrix.txt"} file.

@@ -21,7 +21,7 @@ import java.util.Random;
 import javax.vecmath.Point3d;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 import static java.lang.StrictMath.*;
 
 
@@ -78,6 +78,6 @@ public final strictfp class PlaneTest {
         local.c  =  3.7;
         local.cx =  9.3;
         local.cy = -1.8;
-        assertNotSame(local, assertSerializable(local));
+        assertNotSame(local, assertSerializedEquals(local));
     }
 }

@@ -20,15 +20,13 @@ package org.geotoolkit.util.collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
-import org.geotoolkit.util.Range;
+import org.apache.sis.measure.Range;
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.RangeTest;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.test.Performance;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -40,7 +38,6 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 2.2
  */
-@Depend(RangeTest.class)
 public final strictfp class RangeSetTest {
     /**
      * Tests {@link RangeSet#add} followed by {@link RangeSet#remove},
@@ -153,38 +150,38 @@ public final strictfp class RangeSetTest {
 
         ranges.add(10, 22);
         assertEquals(1, ranges.size());
-        assertTrue (ranges.contains(NumberRange.create(10, 22)));
-        assertFalse(ranges.contains(NumberRange.create(10, 20)));
+        assertTrue (ranges.contains(NumberRange.create(10, true, 22, true)));
+        assertFalse(ranges.contains(NumberRange.create(10, true, 20, true)));
 
         ranges.add(14, 25);
         assertEquals(1, ranges.size());
-        assertFalse(ranges.contains(NumberRange.create(10, 22)));
-        assertTrue (ranges.contains(NumberRange.create(10, 25)));
+        assertFalse(ranges.contains(NumberRange.create(10, true, 22, true)));
+        assertTrue (ranges.contains(NumberRange.create(10, true, 25, true)));
 
         ranges.add(-5, 5);
         assertEquals(2, ranges.size());
-        assertTrue(ranges.contains(NumberRange.create(10, 25)));
-        assertTrue(ranges.contains(NumberRange.create(-5,  5)));
+        assertTrue(ranges.contains(NumberRange.create(10, true, 25, true)));
+        assertTrue(ranges.contains(NumberRange.create(-5, true,  5, true)));
 
-        ranges.add(NumberRange.create(5, 10));
+        ranges.add(NumberRange.create(5, true, 10, true));
         assertEquals(1, ranges.size());
-        assertFalse(ranges.contains(NumberRange.create(10, 25)));
-        assertFalse(ranges.contains(NumberRange.create(-5,  5)));
-        assertTrue (ranges.contains(NumberRange.create(-5, 25)));
+        assertFalse(ranges.contains(NumberRange.create(10, true, 25, true)));
+        assertFalse(ranges.contains(NumberRange.create(-5, true,  5, true)));
+        assertTrue (ranges.contains(NumberRange.create(-5, true, 25, true)));
 
         ranges.add(40, 50);
         ranges.add(30, 35);
-        ranges.add(NumberRange.create(28, 32));
+        ranges.add(NumberRange.create(28, true, 32, true));
         ranges.add(-20, -10);
         ranges.add(60, 70);
         assertEquals(5, ranges.size());
 
         final Iterator<Range<Integer>> it = ranges.iterator();
-        assertEquals(NumberRange.create(-20, -10), it.next());
-        assertEquals(NumberRange.create( -5,  25), it.next());
-        assertEquals(NumberRange.create( 28,  35), it.next());
-        assertEquals(NumberRange.create( 40,  50), it.next());
-        assertEquals(NumberRange.create( 60,  70), it.next());
+        assertEquals(NumberRange.create(-20, true, -10, true), it.next());
+        assertEquals(NumberRange.create( -5, true,  25, true), it.next());
+        assertEquals(NumberRange.create( 28, true,  35, true), it.next());
+        assertEquals(NumberRange.create( 40, true,  50, true), it.next());
+        assertEquals(NumberRange.create( 60, true,  70, true), it.next());
         assertFalse(it.hasNext());
     }
 
@@ -229,18 +226,18 @@ public final strictfp class RangeSetTest {
 
         ranges.add("FAA", "FBB");
         assertEquals(1, ranges.size());
-        assertTrue(ranges.contains(new Range<>(String.class, "FAA", "FBB")));
+        assertTrue(ranges.contains(new Range<>(String.class, "FAA", true, "FBB", true)));
 
         ranges.add("FAZ", "FCC");
         assertEquals(1, ranges.size());
-        assertTrue(ranges.contains(new Range<>(String.class, "FAA", "FCC")));
+        assertTrue(ranges.contains(new Range<>(String.class, "FAA", true, "FCC", true)));
 
         ranges.add("GAA", "GBB");
         assertEquals(2, ranges.size());
 
         final Iterator<Range<String>> it = ranges.iterator();
-        assertEquals(new Range<>(String.class, "FAA", "FCC"), it.next());
-        assertEquals(new Range<>(String.class, "GAA", "GBB"), it.next());
+        assertEquals(new Range<>(String.class, "FAA", true, "FCC", true), it.next());
+        assertEquals(new Range<>(String.class, "GAA", true, "GBB", true), it.next());
         assertFalse(it.hasNext());
     }
 
@@ -253,7 +250,7 @@ public final strictfp class RangeSetTest {
         ranges.add(12.0, 12.5);
         ranges.add(18.0, 18.5);
         ranges.add(19.0, 20.0);
-        assertNotSame(ranges, assertSerializable(ranges));
+        assertNotSame(ranges, assertSerializedEquals(ranges));
     }
 
     /**

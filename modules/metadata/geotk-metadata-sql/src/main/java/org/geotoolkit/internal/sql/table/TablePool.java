@@ -19,7 +19,7 @@ package org.geotoolkit.internal.sql.table;
 
 import java.util.Arrays;
 
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 
 /**

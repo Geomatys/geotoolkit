@@ -30,7 +30,7 @@ import org.opengis.coverage.SampleDimension;
 import org.opengis.metadata.content.TransferFunctionType;
 
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;

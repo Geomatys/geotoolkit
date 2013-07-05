@@ -24,7 +24,7 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.junit.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import static org.junit.Assert.*;
@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.4
  */
-@Depend(CoordinateSystemAxisTest.class)
+@DependsOn(CoordinateSystemAxisTest.class)
 public final strictfp class ComparableAxisWrapperTest extends ReferencingTestBase {
     /**
      * Tests sorting of axis.

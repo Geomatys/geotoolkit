@@ -30,7 +30,7 @@ import org.opengis.referencing.operation.PassThroughOperation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.util.UnsupportedImplementationException;
+import org.apache.sis.util.UnsupportedImplementationException;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;

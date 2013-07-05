@@ -33,7 +33,7 @@ import org.opengis.referencing.operation.*;
 import org.opengis.metadata.extent.Extent;
 
 import org.apache.sis.xml.NilReason;
-import org.geotoolkit.xml.NilObject;
+import org.apache.sis.xml.NilObject;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;

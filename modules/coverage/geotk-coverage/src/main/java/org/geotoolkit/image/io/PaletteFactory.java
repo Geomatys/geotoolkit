@@ -29,9 +29,9 @@ import javax.imageio.IIOException;
 
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.io.DefaultFileFilter;
-import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.internal.storage.IOUtilities;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.resources.IndexedResourceBundle;
 
@@ -208,7 +208,7 @@ public class PaletteFactory {
      *
      * @since 3.11
      */
-    protected final WeakHashSet<Palette> palettes = WeakHashSet.newInstance(Palette.class);
+    protected final WeakHashSet<Palette> palettes = new WeakHashSet<>(Palette.class);
 
     /**
      * The set of palettes protected from garbage collection. We protect a palette as long as it

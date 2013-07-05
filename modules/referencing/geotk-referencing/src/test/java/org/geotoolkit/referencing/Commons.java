@@ -21,7 +21,7 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;

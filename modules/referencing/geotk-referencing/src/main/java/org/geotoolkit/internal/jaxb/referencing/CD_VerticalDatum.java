@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.referencing;
 
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.datum.VerticalDatum;
-import org.geotoolkit.internal.jaxb.gco.PropertyType;
+import org.apache.sis.internal.jaxb.gco.PropertyType;
 import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
 
 
@@ -75,7 +75,6 @@ public final class CD_VerticalDatum extends PropertyType<CD_VerticalDatum, Verti
      *
      * @return The metadata to be marshalled.
      */
-    @Override
     @XmlElement(name = "VerticalDatum")
     public DefaultVerticalDatum getElement() {
         return skip() ? null : DefaultVerticalDatum.castOrCopy(metadata);

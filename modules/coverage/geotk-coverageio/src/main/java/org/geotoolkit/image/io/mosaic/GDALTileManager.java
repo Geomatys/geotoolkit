@@ -31,8 +31,9 @@ import java.io.IOException;
 
 import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.FrequencySortedSet;
+
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -179,8 +180,7 @@ final class GDALTileManager extends TileManager implements Comparator<Rectangle>
          */
         sortedByY = (tiles.length * (long)region.height / sumHeight >=
                      tiles.length * (long)region.width  / sumWidth);
-        final Map<Rectangle,Tile[]> byAbsoluteRegion = new IdentityHashMap<>(
-                XCollections.hashMapCapacity(numRegions));
+        final Map<Rectangle,Tile[]> byAbsoluteRegion = new IdentityHashMap<>(hashMapCapacity(numRegions));
         for (i=0; i<numRegions; i++) {
             byAbsoluteRegion.put(tileRegions[i], tilesByRegion[i]);
         }

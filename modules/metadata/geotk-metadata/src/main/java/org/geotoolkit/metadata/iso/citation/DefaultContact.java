@@ -20,18 +20,9 @@
  */
 package org.geotoolkit.metadata.iso.citation;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import net.jcip.annotations.ThreadSafe;
-
-import org.opengis.util.InternationalString;
-import org.opengis.metadata.citation.Address;
 import org.opengis.metadata.citation.Contact;
-import org.opengis.metadata.citation.Telephone;
 import org.opengis.metadata.citation.OnlineResource;
-
-import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
 /**
@@ -40,7 +31,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.19
+ * @version 3.21
  *
  * @since 2.1
  * @module
@@ -48,16 +39,8 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @Deprecated
-@ThreadSafe
-@XmlType(name = "CI_Contact_Type", propOrder={
-    "phone",
-    "address",
-    "onlineResource",
-    "hoursOfService",
-    "contactInstructions"
-})
 @XmlRootElement(name = "CI_Contact")
-public class DefaultContact extends MetadataEntity implements Contact {
+public class DefaultContact extends org.apache.sis.metadata.iso.citation.DefaultContact {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -242,32 +225,6 @@ public class DefaultContact extends MetadataEntity implements Contact {
     }
 
     /**
-     * Supplemental instructions on how or when to contact the individual or organization.
-     */
-    private InternationalString contactInstructions;
-
-    /**
-     * Time period (including time zone) when individuals can contact the organization or
-     * individual.
-     */
-    private InternationalString hoursOfService;
-
-    /**
-     * On-line information that can be used to contact the individual or organization.
-     */
-    private OnlineResource onlineResource;
-
-    /**
-     * Physical and email address at which the organization or individual may be contacted.
-     */
-    private Address address;
-
-    /**
-     * Telephone numbers at which the organization or individual may be contacted.
-     */
-    private Telephone phone;
-
-    /**
      * Constructs an initially empty contact.
      */
     public DefaultContact() {
@@ -294,125 +251,5 @@ public class DefaultContact extends MetadataEntity implements Contact {
         if (resource != null) {
             setOnlineResource(resource);
         }
-    }
-
-    /**
-     * Returns a Geotk metadata implementation with the same values than the given arbitrary
-     * implementation. If the given object is {@code null}, then this method returns {@code null}.
-     * Otherwise if the given object is already a Geotk implementation, then the given object is
-     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
-     * attribute values of the given object, using a <cite>shallow</cite> copy operation
-     * (i.e. attributes are not cloned).
-     *
-     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return A Geotk implementation containing the values of the given object (may be the
-     *         given object itself), or {@code null} if the argument was null.
-     *
-     * @since 3.18
-     */
-    public static DefaultContact castOrCopy(final Contact object) {
-        return (object == null) || (object instanceof DefaultContact)
-                ? (DefaultContact) object : new DefaultContact(object);
-    }
-
-    /**
-     * Returns the physical and email address at which the organization or individual may be contacted.
-     * Returns {@code null} if none.
-     */
-    @Override
-    @XmlElement(name = "address")
-    public synchronized Address getAddress() {
-        return address;
-    }
-
-    /**
-     * Sets the physical and email address at which the organization or individual may be contacted.
-     *
-     * @param newValue The new address.
-     */
-    public synchronized void setAddress(final Address newValue) {
-        checkWritePermission();
-        address = newValue;
-    }
-
-    /**
-     * Returns supplemental instructions on how or when to contact the individual or organization.
-     * Returns {@code null} if none.
-     */
-    @Override
-    @XmlElement(name = "contactInstructions")
-    public synchronized InternationalString getContactInstructions() {
-        return contactInstructions;
-    }
-
-    /**
-     * Sets supplemental instructions on how or when to contact the individual or organization.
-     *
-     * @param newValue The new contact instructions.
-     */
-    public synchronized void setContactInstructions(final InternationalString newValue) {
-        checkWritePermission();
-        contactInstructions = newValue;
-    }
-
-    /**
-     * Return on-line information that can be used to contact the individual or organization.
-     * Returns {@code null} if none.
-     */
-    @Override
-    @XmlElement(name = "onlineResource")
-    public synchronized OnlineResource getOnlineResource() {
-        return onlineResource;
-    }
-
-    /**
-     * Sets on-line information that can be used to contact the individual or organization.
-     *
-     * @param newValue The new online resource.
-     */
-    public synchronized void setOnlineResource(final OnlineResource newValue) {
-        checkWritePermission();
-        onlineResource = newValue;
-    }
-
-    /**
-     * Returns telephone numbers at which the organization or individual may be contacted.
-     * Returns {@code null} if none.
-     */
-    @Override
-    @XmlElement(name = "phone")
-    public synchronized Telephone getPhone() {
-        return phone;
-    }
-
-    /**
-     * Sets telephone numbers at which the organization or individual may be contacted.
-     *
-     * @param newValue The new telephone.
-     */
-    public synchronized void setPhone(final Telephone newValue) {
-        checkWritePermission();
-        phone = newValue;
-    }
-
-    /**
-     * Returns time period (including time zone) when individuals can contact the organization or
-     * individual. Returns {@code null} if none.
-     */
-    @Override
-    @XmlElement(name = "hoursOfService")
-    public synchronized InternationalString getHoursOfService() {
-        return hoursOfService;
-    }
-
-    /**
-     * Sets time period (including time zone) when individuals can contact the organization or
-     * individual.
-     *
-     * @param newValue The new hours of service.
-     */
-    public synchronized void setHoursOfService(final InternationalString newValue) {
-        checkWritePermission();
-        hoursOfService = newValue;
     }
 }

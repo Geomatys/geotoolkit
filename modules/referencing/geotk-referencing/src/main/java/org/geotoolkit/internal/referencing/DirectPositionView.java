@@ -21,7 +21,6 @@ import java.util.Arrays;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.UnmodifiableGeometryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.geometry.AbstractDirectPosition;
 
 
 /**
@@ -114,13 +113,5 @@ public final class DirectPositionView implements DirectPosition {
     @Override
     public DirectPosition getDirectPosition() {
         return this;
-    }
-
-    /**
-     * Returns a string representation of this direct position for debugging purpose.
-     */
-    @Override
-    public String toString() {
-        return AbstractDirectPosition.toString(this);
     }
 }

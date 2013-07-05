@@ -40,7 +40,7 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.measure.Measure;
-import org.geotoolkit.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.cs.AxisRangeType;
@@ -49,7 +49,7 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.util.UnsupportedImplementationException;
+import org.apache.sis.util.UnsupportedImplementationException;
 import org.geotoolkit.io.wkt.Formatter;
 import org.apache.sis.measure.Units;
 

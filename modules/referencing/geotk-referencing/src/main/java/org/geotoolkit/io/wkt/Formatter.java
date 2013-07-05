@@ -50,7 +50,7 @@ import org.geotoolkit.lang.Visitor;
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.internal.InternalUtilities;
 import org.apache.sis.internal.util.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;

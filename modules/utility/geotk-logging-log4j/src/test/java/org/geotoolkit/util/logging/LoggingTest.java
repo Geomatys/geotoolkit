@@ -19,6 +19,7 @@ package org.geotoolkit.util.logging;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.util.logging.Logging;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -38,7 +39,7 @@ public final class LoggingTest {
      */
     @Test
     public void testLog4J() {
-        assertTrue(Logging.GEOTOOLKIT.getLoggerFactory() instanceof Log4JLoggerFactory);
+        assertTrue(Logging.getLoggerFactory() instanceof Log4JLoggerFactory);
         Logger logger = Logging.getLogger("org.geotoolkit");
         assertTrue(logger instanceof Log4JLogger);
         /*

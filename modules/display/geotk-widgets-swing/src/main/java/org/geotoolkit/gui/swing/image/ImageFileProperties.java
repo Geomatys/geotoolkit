@@ -53,9 +53,9 @@ import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.swing.ExceptionMonitor;
@@ -197,7 +197,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         boolean hasWarnings = false;
         for (final Object chunk : chunks) {
             if (chunk instanceof Worker) {
-                String label = IOUtilities.name(((Worker) chunk).input);
+                String label = IOUtilities.filename(((Worker) chunk).input);
                 label = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.LOADING_1, label);
                 viewer.setProgressLabel(label);
                 viewer.setProgress(0);

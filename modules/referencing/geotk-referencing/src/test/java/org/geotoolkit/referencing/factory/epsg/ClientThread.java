@@ -27,15 +27,15 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
-import org.geotoolkit.geometry.DirectPosition2D;
-import org.geotoolkit.util.collection.XCollections;
+import org.apache.sis.geometry.DirectPosition2D;
 
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -115,7 +115,7 @@ final strictfp class ClientThread extends Thread {
         this.id         = id;
         this.factory    = factory;
         this.random     = new Random(179702531L + id);
-        this.statistics = new Statistics();
+        this.statistics = new Statistics(null);
         this.lock       = lock;
         this.result     = createEmptyResultMap();
     }
@@ -125,7 +125,7 @@ final strictfp class ClientThread extends Thread {
      * {@link #testGeographicToRandom()}.
      */
     static Map<Integer, Point2D.Double> createEmptyResultMap() {
-        return new HashMap<>(XCollections.hashMapCapacity(CODES.length));
+        return new HashMap<>(hashMapCapacity(CODES.length));
     }
 
     /**

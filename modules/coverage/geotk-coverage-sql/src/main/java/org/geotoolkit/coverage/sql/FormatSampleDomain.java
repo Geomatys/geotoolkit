@@ -20,7 +20,7 @@ package org.geotoolkit.coverage.sql;
 import java.util.List;
 import java.util.Arrays;
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.image.io.metadata.SampleDomain;
@@ -64,9 +64,9 @@ final class FormatSampleDomain implements SampleDomain {
             for (final Category category : categories) {
                 if (category.isQuantitative()) {
                     final NumberRange<?> extent = category.getRange();
-                    if (!Double.isNaN(extent.getMinimum()) && !Double.isNaN(extent.getMaximum())) {
+                    if (!Double.isNaN(extent.getMinDouble()) && !Double.isNaN(extent.getMaxDouble())) {
                         if (range != null) {
-                            range = range.union(extent);
+                            range = range.unionAny(extent);
                         } else {
                             range = extent;
                         }
@@ -75,7 +75,7 @@ final class FormatSampleDomain implements SampleDomain {
             }
         }
         this.range = range;
-        assert (range == null) || dimension.getRange().contains(range);
+        assert (range == null) || dimension.getRange().containsAny(range);
     }
 
     /**

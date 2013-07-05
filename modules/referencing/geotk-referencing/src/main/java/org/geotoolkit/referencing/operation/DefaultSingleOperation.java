@@ -43,10 +43,10 @@ import org.geotoolkit.internal.referencing.ParameterizedAffine;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.io.wkt.Formatter;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.UnsupportedImplementationException;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.UnsupportedImplementationException;
 
-import static org.geotoolkit.util.Utilities.deepEquals;
+import static org.apache.sis.util.Utilities.deepEquals;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.referencing.CRSUtilities.PARAMETERS_KEY;
 

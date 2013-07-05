@@ -20,7 +20,7 @@ package org.geotoolkit.image.io.mosaic;
 import java.util.Iterator;
 import java.net.MalformedURLException;
 import java.util.NoSuchElementException;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
 

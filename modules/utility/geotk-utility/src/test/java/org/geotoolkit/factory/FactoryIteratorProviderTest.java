@@ -19,7 +19,7 @@ package org.geotoolkit.factory;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 
 
 /**
@@ -30,7 +30,7 @@ import org.geotoolkit.test.Depend;
  *
  * @since 2.4
  */
-@Depend(FactoryRegistryTest.class)
+@DependsOn(FactoryRegistryTest.class)
 public final strictfp class FactoryIteratorProviderTest {
     /**
      * The registry to use for testing purpose.

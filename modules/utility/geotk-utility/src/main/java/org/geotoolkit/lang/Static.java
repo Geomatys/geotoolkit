@@ -88,7 +88,7 @@ package org.geotoolkit.lang;
  * <tr><th colspan="2" bgcolor="lightblue">Input / Output (including CRS, XML, images)</th></tr>
  * <tr><td>{@link org.geotoolkit.image.io.XImageIO}</td>
  *     <td>Get an {@link javax.imageio.ImageReader} for the given input, or an {@link javax.imageio.ImageWriter} for the given image.</td></tr>
- * <tr><td>{@link org.geotoolkit.xml.XML}</td>
+ * <tr><td>{@link org.apache.sis.xml.XML}</td>
  *     <td>Marshall or unmarshall ISO 19115 objects.</td></tr>
  * <tr><td>{@link org.geotoolkit.io.wkt.PrjFiles}</td>
  *     <td>Read/write {@code ".prj"} files to/from {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem Coordinate Reference System} objects.</td></tr>
@@ -99,7 +99,7 @@ package org.geotoolkit.lang;
  * <tr><th colspan="2" bgcolor="lightblue">Loggings and exceptions</th></tr>
  * <tr><td>{@link org.geotoolkit.util.ArgumentChecks}</td>
  *     <td>Perform argument checks and throw {@link IllegalArgumentException} if needed.</td></tr>
- * <tr><td>{@link org.geotoolkit.util.logging.Logging}</td>
+ * <tr><td>{@link org.apache.sis.util.logging.Logging}</td>
  *     <td>Get a {@linkplain java.util.logging.Logger logger}, which may be a wrapper around <cite>Apache Commons Logging</cite>.</td></tr>
  * <tr><td>{@link org.geotoolkit.util.Exceptions}</td>
  *     <td>Paint a stack trace in a {@link java.awt.Graphics2D}.</td></tr>

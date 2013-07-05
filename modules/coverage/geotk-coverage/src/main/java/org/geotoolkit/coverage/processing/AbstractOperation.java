@@ -34,7 +34,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 

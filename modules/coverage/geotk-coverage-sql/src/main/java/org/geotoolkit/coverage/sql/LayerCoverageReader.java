@@ -30,7 +30,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;

@@ -37,7 +37,7 @@ import org.opengis.referencing.datum.TemporalDatum;
 import org.opengis.referencing.datum.VerticalDatum;
 import org.opengis.referencing.datum.VerticalDatumType;
 
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
 
 
 /**

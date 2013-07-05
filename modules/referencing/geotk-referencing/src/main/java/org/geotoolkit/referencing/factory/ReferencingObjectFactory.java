@@ -49,8 +49,9 @@ import org.geotoolkit.referencing.datum.*;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
-import org.geotoolkit.util.collection.WeakHashSet;
-import org.geotoolkit.util.collection.XCollections;
+import org.apache.sis.util.collection.WeakHashSet;
+
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -130,9 +131,9 @@ public class ReferencingObjectFactory extends ReferencingFactory
      * @since 2.5
      */
     public ReferencingObjectFactory(final Hints hints) {
-        pool = WeakHashSet.newInstance(IdentifiedObject.class);
+        pool = new WeakHashSet<>(IdentifiedObject.class);
         parser = new ThreadLocal<>();
-        if (!XCollections.isNullOrEmpty(hints)) {
+        if (!isNullOrEmpty(hints)) {
             /*
              * Creates the dependencies (MathTransform factory, WKT parser...) now because
              * we need to process user's hints. Then, we will keep only the relevant hints.

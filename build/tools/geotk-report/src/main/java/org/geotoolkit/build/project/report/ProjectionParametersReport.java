@@ -34,11 +34,12 @@ import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.test.report.OperationParametersReport;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.util.collection.XCollections;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 
 import static org.geotoolkit.metadata.iso.citation.Citations.*;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -88,11 +89,11 @@ public final class ProjectionParametersReport extends OperationParametersReport 
         super(null);
         Reports.initialize(properties);
         properties.setProperty("TITLE", "Coordinate Operation parameters");
-        final Set<String> columns = new LinkedHashSet<>(XCollections.hashMapCapacity(authorities.length));
+        final Set<String> columns = new LinkedHashSet<>(hashMapCapacity(authorities.length));
         for (final Citation authority : authorities) {
             columns.add(getIdentifier(authority));
         }
-        columnHeaders = XCollections.unmodifiableSet(columns);
+        columnHeaders = unmodifiableOrCopy(columns);
         categories = new Class[] {
             Projection.class,
             Conversion.class,
@@ -177,8 +178,8 @@ public final class ProjectionParametersReport extends OperationParametersReport 
         for (final Map.Entry<String,String[]> entry : row.names.entrySet()) {
             final String authority = entry.getKey();
             for (final GenericName candidate : operation.getAlias()) {
-                if (candidate instanceof DefaultReferenceIdentifier) {
-                    final DefaultReferenceIdentifier identifier = (DefaultReferenceIdentifier) candidate;
+                if (candidate instanceof ImmutableIdentifier) {
+                    final ImmutableIdentifier identifier = (ImmutableIdentifier) candidate;
                     if (identifier.isDeprecated() && authority.equalsIgnoreCase(identifier.getCodeSpace())) {
                         final String[] codes = entry.getValue();
                         final String deprecated = identifier.getCode();

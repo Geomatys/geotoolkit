@@ -28,11 +28,12 @@ import org.opengis.metadata.quality.ConformanceResult;
 
 import org.geotoolkit.lang.Debug;
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
+
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -611,7 +612,7 @@ public class FactoryRegistry extends ServiceRegistry {
          */
         if (candidate instanceof Factory) {
             final Factory factory = (Factory) candidate;
-            if (!XCollections.isNullOrEmpty(hints)) {
+            if (!isNullOrEmpty(hints)) {
                 /*
                  * Ask for implementation hints with special care against infinite recursivity.
                  * Some implementations use deferred algorithms fetching dependencies only when

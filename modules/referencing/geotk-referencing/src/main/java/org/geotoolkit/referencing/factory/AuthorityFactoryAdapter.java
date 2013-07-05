@@ -50,7 +50,7 @@ import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.apache.sis.internal.util.Citations;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Decorator;

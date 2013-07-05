@@ -20,7 +20,7 @@ package org.geotoolkit.coverage.processing.operation;
 import javax.media.jai.operator.AbsoluteDescriptor;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.processing.OperationJAI;
 
 
@@ -76,8 +76,8 @@ public class Absolute extends OperationJAI {
     @Override
     protected NumberRange<?> deriveRange(final NumberRange<?>[] ranges, final Parameters parameters) {
         final NumberRange<?> range = ranges[0];
-        final double min = Math.abs(range.getMinimum());
-        final double max = Math.abs(range.getMaximum());
-        return (max < min) ? NumberRange.create(max, min) : NumberRange.create(min, max);
+        final double min = Math.abs(range.getMinDouble());
+        final double max = Math.abs(range.getMaxDouble());
+        return (max < min) ? NumberRange.create(max, true, min, true) : NumberRange.create(min, true, max, true);
     }
 }

@@ -37,7 +37,7 @@ import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.geometry.ImmutableEnvelope;
+import org.apache.sis.geometry.ImmutableEnvelope;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;

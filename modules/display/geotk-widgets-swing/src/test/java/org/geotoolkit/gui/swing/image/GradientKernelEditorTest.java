@@ -18,7 +18,7 @@
 package org.geotoolkit.gui.swing.image;
 
 import org.geotoolkit.test.gui.SwingTestBase;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 
 
 /**
@@ -29,7 +29,7 @@ import org.geotoolkit.test.Depend;
  *
  * @since 2.3
  */
-@Depend(KernelEditorTest.class)
+@DependsOn(KernelEditorTest.class)
 public final strictfp class GradientKernelEditorTest extends SwingTestBase<GradientKernelEditor> {
     /**
      * Constructs the test case.

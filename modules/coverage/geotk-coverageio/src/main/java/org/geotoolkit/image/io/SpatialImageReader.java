@@ -41,12 +41,12 @@ import javax.imageio.metadata.IIOMetadataFormat;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.apache.sis.util.ArraysExt;
 
-import org.geotoolkit.util.Version;
-import org.geotoolkit.util.Disposable;
-import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Disposable;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.resources.Locales;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.Locales;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.apache.sis.util.resources.IndexedResourceBundle;
@@ -60,7 +60,7 @@ import org.geotoolkit.internal.image.io.Warnings;
 
 import static org.geotoolkit.image.io.SampleConversionType.*;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
@@ -150,7 +150,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      */
     protected SpatialImageReader(final Spi provider) {
         super(provider);
-        availableLocales = Locales.getAvailableLocales();
+        availableLocales = Locales.SIS.getAvailableLocales();
     }
 
     /**
@@ -785,8 +785,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
                 }
                 double minimum, maximum;
                 if (range != null) {
-                    minimum = range.getMinimum();
-                    maximum = range.getMaximum();
+                    minimum = range.getMinDouble();
+                    maximum = range.getMaxDouble();
                     if (!isFloat) {
                         // If the metadata do not contain any information about the range,
                         // treat as if we use the maximal range allowed by the data type.
@@ -795,7 +795,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
                     }
                     final double extent = maximum - minimum;
                     if (extent >= 0 && (isFloat || extent <= (ceil - floor))) {
-                        allRanges = (allRanges != null) ? allRanges.union(range) : range;
+                        allRanges = (allRanges != null) ? allRanges.unionAny(range) : range;
                     } else {
                         // Use range.getMin/MaxValue() because they may be integers rather than doubles.
                         Warnings.log(this, null, SpatialImageReader.class, "getImageType",
@@ -927,7 +927,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
          * the highest data value and the highest no-data value.
          */
         if (visibleRange == null) {
-            visibleRange = (allRanges != null) ? allRanges : NumberRange.create(floor, ceil);
+            visibleRange = (allRanges != null) ? allRanges : NumberRange.create(floor, true, ceil, true);
         }
         PaletteFactory factory = null;
         if (parameters instanceof SpatialImageReadParam) {
@@ -937,8 +937,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
             factory = PaletteFactory.getDefault();
         }
         factory.setWarningLocale(locale);
-        final double minimum = visibleRange.getMinimum();
-        final double maximum = visibleRange.getMaximum();
+        final double minimum = visibleRange.getMinDouble();
+        final double maximum = visibleRange.getMaxDouble();
         final Palette palette;
         if (isFloat) {
             assert visibleConverter.getOffset() == 0 : visibleConverter;
@@ -1320,7 +1320,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
             nativeImageMetadataFormatName  = GEOTK_FORMAT_NAME;
             if (getClass().getName().startsWith("org.geotoolkit.")) {
                 vendorName = "Geotoolkit.org";
-                version    = Version.GEOTOOLKIT.toString();
+                version    = Utilities.VERSION.toString();
             }
         }
 

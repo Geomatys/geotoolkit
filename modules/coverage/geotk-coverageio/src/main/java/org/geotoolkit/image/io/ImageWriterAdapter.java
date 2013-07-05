@@ -47,7 +47,7 @@ import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.image.io.SpatialImageReader.Spi.getMetadataFormatCode;
@@ -754,7 +754,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
             nativeImageMetadataFormatName        = main.getNativeImageMetadataFormatName();
             extraStreamMetadataFormatNames       = main.getExtraStreamMetadataFormatNames();
             extraImageMetadataFormatNames        = main.getExtraImageMetadataFormatNames();
-            acceptStream = Classes.isAssignableTo(ImageOutputStream.class, main.getOutputTypes());
+            acceptStream = Classes.isAssignableToAny(ImageOutputStream.class, main.getOutputTypes());
         }
 
         /**

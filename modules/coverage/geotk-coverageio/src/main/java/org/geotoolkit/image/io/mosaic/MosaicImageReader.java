@@ -41,12 +41,12 @@ import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.wkt.PrjFiles;
-import org.geotoolkit.util.Version;
-import org.geotoolkit.util.Disposable;
-import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Disposable;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
-import org.geotoolkit.util.logging.PerformanceLevel;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.logging.PerformanceLevel;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
@@ -1397,7 +1397,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
          */
         public Spi() {
             vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
+            version         = Utilities.VERSION.toString();
             names           = NAMES;
             pluginClassName = "org.geotoolkit.image.io.mosaic.MosaicImageReader";
         }

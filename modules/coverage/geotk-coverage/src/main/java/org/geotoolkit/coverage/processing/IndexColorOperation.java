@@ -41,7 +41,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 
 /**

@@ -21,7 +21,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

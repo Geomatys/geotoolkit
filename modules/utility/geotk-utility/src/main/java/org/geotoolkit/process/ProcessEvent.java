@@ -20,7 +20,7 @@ package org.geotoolkit.process;
 import java.util.EventObject;
 import org.opengis.util.InternationalString;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.Types;
 
 
 /**
@@ -103,7 +103,7 @@ public class ProcessEvent extends EventObject {
     public ProcessEvent(final Process source, final CharSequence task, final float progress) {
         super(source);
         this.progress  = progress;
-        this.task      = SimpleInternationalString.wrap(task);
+        this.task      = Types.toInternationalString(task);
         this.exception = null;
         this.output    = null;
     }
@@ -122,7 +122,7 @@ public class ProcessEvent extends EventObject {
     public ProcessEvent(final Process source, final CharSequence task, final float progress, final ParameterValueGroup output) {
         super(source);
         this.progress  = progress;
-        this.task      = SimpleInternationalString.wrap(task);
+        this.task      = Types.toInternationalString(task);
         this.exception = null;
         this.output    = output;
     }
@@ -138,7 +138,7 @@ public class ProcessEvent extends EventObject {
     public ProcessEvent(final Process source, final CharSequence task, final float progress, final Exception exception) {
         super(source);
         this.progress  = progress;
-        this.task      = SimpleInternationalString.wrap(task);
+        this.task      = Types.toInternationalString(task);
         this.exception = exception;
         this.output    = null;
     }

@@ -51,7 +51,7 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Descriptions;
 
 import static org.geotoolkit.referencing.CRS.equalsApproximatively;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.getCoordinateOperationAuthorityFactory;
 
 

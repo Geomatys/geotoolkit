@@ -19,7 +19,7 @@ package org.geotoolkit.referencing.factory;
 
 import java.util.List;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import org.junit.*;
 

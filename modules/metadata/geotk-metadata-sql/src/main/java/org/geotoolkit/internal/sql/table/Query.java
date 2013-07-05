@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.sql.Ordering;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;

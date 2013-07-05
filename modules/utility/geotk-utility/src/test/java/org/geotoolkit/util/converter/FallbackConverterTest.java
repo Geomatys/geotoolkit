@@ -18,7 +18,7 @@
 package org.geotoolkit.util.converter;
 
 import org.junit.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import static org.geotoolkit.test.Assert.*;
 
 
@@ -30,7 +30,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.00
  */
-@Depend(StringConverterTest.class)
+@DependsOn(StringConverterTest.class)
 public final strictfp class FallbackConverterTest {
     /**
      * Tests a chain of fallback converters. The initial fallback will understand {@link Short}

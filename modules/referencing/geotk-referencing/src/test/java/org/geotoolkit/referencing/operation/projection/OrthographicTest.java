@@ -19,7 +19,7 @@ package org.geotoolkit.referencing.operation.projection;
 
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 
 import org.junit.*;
@@ -38,7 +38,7 @@ import static org.geotoolkit.referencing.operation.provider.Orthographic.PARAMET
  *
  * @since 3.00
  */
-@Depend(UnitaryProjectionTest.class)
+@DependsOn(UnitaryProjectionTest.class)
 public final strictfp class OrthographicTest extends ProjectionTestBase {
     /**
      * Tolerance level for comparing floating point numbers.

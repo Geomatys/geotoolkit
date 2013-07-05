@@ -23,10 +23,11 @@ import java.awt.image.ColorModel;
 import javax.imageio.ImageTypeSpecifier;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.image.io.Palette;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.coverage.GridSampleDimension;
+
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -64,7 +65,7 @@ final class SampleDimensionPalette extends Palette {
         {
             final GridSampleDimension[] bands = BANDS.get();
             final GridSampleDimension band = bands[Math.min(visibleBand, bands.length-1)];
-            if (XCollections.isNullOrEmpty(band.getCategories())) {
+            if (isNullOrEmpty(band.getCategories())) {
                 return super.getPalette(name, lower, upper, size, numBands, visibleBand);
             }
             Palette palette = new SampleDimensionPalette(this, name, band, numBands, visibleBand);

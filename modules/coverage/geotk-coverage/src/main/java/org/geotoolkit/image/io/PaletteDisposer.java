@@ -21,7 +21,7 @@ import java.util.Set;
 import java.awt.image.ColorModel;
 import java.lang.ref.WeakReference;
 
-import org.geotoolkit.util.Disposable;
+import org.apache.sis.util.Disposable;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 
 

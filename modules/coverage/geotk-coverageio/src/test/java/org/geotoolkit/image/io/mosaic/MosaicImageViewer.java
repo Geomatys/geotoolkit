@@ -34,7 +34,7 @@ import java.util.Collection;
 import javax.imageio.ImageIO;
 
 import org.geotoolkit.util.Exceptions;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.GraphicsUtilities;
 import static java.lang.StrictMath.*;
 
@@ -380,7 +380,6 @@ public final strictfp class MosaicImageViewer extends JPanel implements ChangeLi
      * @throws ClassNotFoundException If the serialized stream contains an unknown class.
      */
     public static void main(final String[] args) throws IOException, ClassNotFoundException {
-        Logging.GEOTOOLKIT.forceMonolineConsoleOutput(Level.FINE);
         final Object tiles;
         try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(args[0])))) {
             tiles = in.readObject();

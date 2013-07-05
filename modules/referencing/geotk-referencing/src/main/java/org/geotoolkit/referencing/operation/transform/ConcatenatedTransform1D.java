@@ -25,7 +25,7 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
-import org.geotoolkit.geometry.DirectPosition1D;
+import org.apache.sis.geometry.DirectPosition1D;
 
 
 /**

@@ -28,7 +28,7 @@ import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.internal.referencing.AxisDirections;
 
 import org.junit.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import static java.lang.StrictMath.*;
@@ -44,7 +44,7 @@ import static org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis.*;
  *
  * @since 2.2
  */
-@Depend({IdentifiedObjectTest.class, DirectionAlongMeridianTest.class})
+@DependsOn({IdentifiedObjectTest.class, DirectionAlongMeridianTest.class})
 public final strictfp class CoordinateSystemAxisTest extends ReferencingTestBase {
     /**
      * For floating point number comparisons.
@@ -133,9 +133,9 @@ public final strictfp class CoordinateSystemAxisTest extends ReferencingTestBase
      */
     @Test
     public void testSerialization() {
-        assertSerializable(X);
-        assertSerializable(GEOCENTRIC_X);
-        assertSerializable(GEODETIC_LONGITUDE);
+        assertSerializedEquals(X);
+        assertSerializedEquals(GEOCENTRIC_X);
+        assertSerializedEquals(GEODETIC_LONGITUDE);
     }
 
     /**

@@ -21,12 +21,11 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.constraint.SecurityConstraints;
 
-import org.geotoolkit.metadata.iso.constraint.DefaultSecurityConstraints;
+import org.apache.sis.metadata.iso.constraint.DefaultSecurityConstraints;
 
 
 /**
@@ -48,12 +47,11 @@ import org.geotoolkit.metadata.iso.constraint.DefaultSecurityConstraints;
  * @author Cédric Briançon (Geomatys)
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.21
  *
  * @since 3.00
  * @module
  */
-@ThreadSafe
 @XmlType(name = "FRA_SecurityConstraints_Type")
 @XmlRootElement(name = "FRA_SecurityConstraints")
 public class FRA_SecurityConstraints extends DefaultSecurityConstraints {
@@ -98,6 +96,6 @@ public class FRA_SecurityConstraints extends DefaultSecurityConstraints {
      * @param newValues Citation to the new documents.
      */
     public synchronized void setCitations(final Collection<? extends Citation> newValues) {
-        citations = copyCollection(newValues, citations, Citation.class);
+        citations = writeCollection(newValues, citations, Citation.class);
     }
 }

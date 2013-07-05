@@ -49,11 +49,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.logging.LoggedFormat;
 import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.image.io.Warnings;
-import org.geotoolkit.measure.RangeFormat;
+import org.apache.sis.measure.RangeFormat;
 import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.resources.Errors;
 

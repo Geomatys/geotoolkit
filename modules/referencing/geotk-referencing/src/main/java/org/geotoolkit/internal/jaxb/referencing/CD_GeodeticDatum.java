@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.referencing;
 
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.datum.GeodeticDatum;
-import org.geotoolkit.internal.jaxb.gco.PropertyType;
+import org.apache.sis.internal.jaxb.gco.PropertyType;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 
 
@@ -75,7 +75,6 @@ public final class CD_GeodeticDatum extends PropertyType<CD_GeodeticDatum, Geode
      *
      * @return The metadata to be marshalled.
      */
-    @Override
     @XmlElement(name = "GeodeticDatum")
     public DefaultGeodeticDatum getElement() {
         return skip() ? null : DefaultGeodeticDatum.castOrCopy(metadata);

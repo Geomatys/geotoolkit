@@ -54,9 +54,9 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.Disposable;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.Disposable;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.sql.CoverageDatabaseEvent;
@@ -68,7 +68,7 @@ import org.geotoolkit.gui.swing.referencing.AuthorityCodesComboBox;
 import org.geotoolkit.internal.swing.ComponentDisposer;
 import org.geotoolkit.internal.swing.SwingUtilities;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**

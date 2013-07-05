@@ -28,7 +28,7 @@ import java.io.IOException;
 
 import org.junit.*;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.gui.swing.tree.Trees;
 import static org.geotoolkit.test.Assert.*;
 
@@ -43,7 +43,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 2.5
  */
-@Depend(Tile.class)
+@DependsOn(Tile.class)
 public final strictfp class TreeNodeTest extends MosaicTestBase {
     /**
      * The root of an RTree for {@link #targetTiles}.

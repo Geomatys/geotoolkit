@@ -20,7 +20,7 @@ package org.geotoolkit.coverage.sql;
 import java.util.Set;
 import java.sql.SQLException;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 import org.geotoolkit.internal.sql.table.Database;
 
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.10 (derived from Seagis)
  */
-@Depend({FormatTableTest.class, SeriesEntryTest.class})
+@DependsOn({FormatTableTest.class, SeriesEntryTest.class})
 public final strictfp class SeriesTableTest extends CatalogTestBase {
     /**
      * The identifier of the series to be tested.

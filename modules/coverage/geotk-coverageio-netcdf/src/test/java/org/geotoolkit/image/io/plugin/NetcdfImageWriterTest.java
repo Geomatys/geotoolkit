@@ -32,12 +32,12 @@ import org.opengis.test.coverage.image.ImageWriterTestCase;
 
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.internal.io.TemporaryFile;
-import org.geotoolkit.metadata.iso.DefaultMetadata;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
-import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultCitationDate;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;

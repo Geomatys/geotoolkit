@@ -24,7 +24,7 @@ import java.awt.image.IndexColorModel;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.util.collection.WeakHashSet;
 
 
 /**
@@ -46,7 +46,7 @@ public final class ColorModels<T extends ColorModel> extends Static {
      * Pool of shared color models.
      */
     @SuppressWarnings("rawtypes")
-    private static final WeakHashSet<ColorModels> POOL = WeakHashSet.newInstance(ColorModels.class);
+    private static final WeakHashSet<ColorModels> POOL = new WeakHashSet<>(ColorModels.class);
 
     /**
      * The color model to share.

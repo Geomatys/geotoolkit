@@ -33,7 +33,7 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.io.wkt.WKTFormatTest;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -56,7 +56,7 @@ import static org.geotoolkit.referencing.IdentifiedObjects.getIdentifier;
  *
  * @since 3.10
  */
-@Depend(WKTFormatTest.class)
+@DependsOn(WKTFormatTest.class)
 public final strictfp class DirectPostgisFactoryTest {
     /**
      * Gets the connection parameters to the coverage database.

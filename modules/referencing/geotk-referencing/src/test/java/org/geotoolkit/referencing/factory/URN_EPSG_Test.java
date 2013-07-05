@@ -21,7 +21,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.factory.web.URN_AuthorityFactory;
 

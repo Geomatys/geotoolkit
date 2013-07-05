@@ -20,7 +20,7 @@ package org.geotoolkit.referencing.operation.transform;
 import java.util.Arrays;
 import java.util.Random;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.opengis.referencing.operation.TransformException;
 
 import org.junit.*;
@@ -41,7 +41,7 @@ import static org.geotoolkit.referencing.operation.transform.AbstractMathTransfo
  *
  * @since 3.00
  */
-@Depend(IterationStrategyTest.class)
+@DependsOn(IterationStrategyTest.class)
 public final strictfp class AbstractMathTransformTest {
     /**
      * Tests the transform methods expecting at least one argument of type {@code float[]}.

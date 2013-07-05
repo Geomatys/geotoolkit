@@ -43,8 +43,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.naming.DefaultNameSpace;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.apache.sis.util.iso.DefaultNameSpace;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
@@ -52,7 +52,6 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.IdentifiedObject.IDENTIFIERS_KEY;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.internal.Citations.iterator;
 import static org.apache.sis.internal.util.Citations.identifierMatches;
 
 
@@ -145,6 +144,20 @@ public final class IdentifiedObjects extends Static {
             return +1;
         }
         return c1.compareTo(c2);
+    }
+
+    /**
+     * Returns the collection iterator, or {@code null} if the given collection is null or
+     * empty. We use this method as a paranoiac safety against broken implementations.
+     *
+     * @param  <E> The type of elements in the collection.
+     * @param  collection The collection from which to get the iterator, or {@code null}.
+     * @return The iterator over the given collection elements, or {@code null}.
+     *
+     * @since 3.20
+     */
+    private static <E> Iterator<E> iterator(final Collection<E> collection) {
+        return (collection != null && !collection.isEmpty()) ? collection.iterator() : null;
     }
 
     /**

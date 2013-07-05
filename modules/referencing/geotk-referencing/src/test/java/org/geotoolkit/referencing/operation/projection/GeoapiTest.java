@@ -43,7 +43,7 @@ import static org.geotoolkit.referencing.operation.projection.ProjectionTestBase
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.19
  *
- * @see org.geotoolkit.naming.GeoapiTest
+ * @see org.apache.sis.util.iso.GeoapiTest
  * @see org.geotoolkit.referencing.factory.GeoapiTest
  * @see org.geotoolkit.referencing.factory.epsg.GeoapiTest
  * @see org.geotoolkit.referencing.operation.transform.GeoapiTest

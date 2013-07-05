@@ -18,7 +18,7 @@
 package org.geotoolkit.io;
 
 import java.io.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.util.UtilitiesTest;
 import static org.geotoolkit.io.LineWrapWriter.SOFT_HYPHEN;
 
@@ -34,7 +34,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.00
  */
-@Depend({UtilitiesTest.class, X364Test.class})
+@DependsOn(UtilitiesTest.class)
 public final strictfp class WriterTest {
     /**
      * The buffer where to write test data. All those buffers

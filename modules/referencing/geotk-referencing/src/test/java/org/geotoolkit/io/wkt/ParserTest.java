@@ -29,7 +29,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.operation.projection.FormattingTest;
@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.0
  */
-@Depend({SymbolsTest.class, FormattingTest.class})
+@DependsOn({SymbolsTest.class, FormattingTest.class})
 public final strictfp class ParserTest {
     /**
      * Parses all elements from the specified file. Parsing creates a set of

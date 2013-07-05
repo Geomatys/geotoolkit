@@ -32,15 +32,15 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
-import org.geotoolkit.test.Depend;
 
+import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
@@ -54,7 +54,7 @@ import static java.lang.StrictMath.*;
  *
  * @since 3.16
  */
-@Depend(WarpAdapterTest.class)
+@DependsOn(WarpAdapterTest.class)
 public final strictfp class WarpFactoryTest extends ReferencingTestBase {
     /**
      * The tolerance threshold (in pixels) used by the {@link WarpFactory} being tested.
@@ -141,8 +141,8 @@ public final strictfp class WarpFactoryTest extends ReferencingTestBase {
      */
     private void compare(final String name, final MathTransform2D transform, final Warp tested) {
         final Warp expected = new WarpAdapter(name, transform);
-        final Statistics sx = new Statistics();
-        final Statistics sy = new Statistics();
+        final Statistics sx = new Statistics("sx");
+        final Statistics sy = new Statistics("sy");
         float[] expPt = null;
         float[] tstPt = null;
         final int xmin = imageBounds.x;

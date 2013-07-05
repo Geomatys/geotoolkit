@@ -21,20 +21,21 @@
 package org.geotoolkit.metadata.iso.citation;
 
 import java.net.URI;
-
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.OnLineFunction;
 import org.opengis.metadata.citation.PresentationForm;
-
+import org.opengis.metadata.citation.ResponsibleParty;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.xml.IdentifierSpace;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.xml.IdentifierSpace;
 
 import static java.util.Arrays.asList;
+import java.util.Collections;
 import static java.util.Collections.singleton;
 
 
@@ -75,6 +76,56 @@ public final class Citations extends Static {
     private Citations() {
     }
 
+    /**
+     * Constructs a citation with the specified title.
+     *
+     * @param title The title, as a {@link String} or an {@link InternationalString} object.
+     * @param name  The field name in the {@link Citations} class.
+     * @param identifier The identifier, or {@code null} if none.
+     */
+    private static DefaultCitation create(final CharSequence title, final String name, final String identifier) {
+        final DefaultCitation citation = new DefaultCitation(title);
+        setIdentifier(citation, identifier);
+        return citation;
+    }
+
+    /**
+     * Constructs a citation with the specified responsible party.
+     *
+     * @param party The name for an organization that is responsible for the resource.
+     * @param name  The field name in the {@link Citations} class.
+     * @param identifier The identifier, or {@code null} if none.
+     */
+    private static DefaultCitation create(final ResponsibleParty party, final String name, final String identifier) {
+        final DefaultCitation citation = new DefaultCitation(party);
+        setIdentifier(citation, identifier);
+        return citation;
+    }
+
+    /**
+     * Sets the alternative title.
+     */
+    private static void setAlternateTitle(final DefaultCitation citation, final String title) {
+        assert !title.equals(citation.getTitle().toString(null)) : title;
+        citation.setAlternateTitles(Collections.singleton(new SimpleInternationalString(title)));
+    }
+
+    /**
+     * Sets the identifier. This is used as a convenience method for the creation of constants.
+     */
+    private static void setIdentifier(final DefaultCitation citation, final String identifier) {
+        if (identifier != null) {
+            citation.setIdentifiers(Collections.singleton(new DefaultIdentifier(identifier)));
+        }
+    }
+
+    /**
+     * Sets the presentation form to the given value. Any previous values are overwritten.
+     */
+    private static void setPresentationForm(final DefaultCitation citation, final PresentationForm form) {
+        citation.setPresentationForms(Collections.singleton(form));
+    }
+
 
 
 
@@ -89,7 +140,7 @@ public final class Citations extends Static {
      */
     public static final Citation MAP_INFO;
     static {
-        final CitationConstant c = new CitationConstant("MapInfo", "MAP_INFO", "MapInfo");
+        final DefaultCitation c = create("MapInfo", "MAP_INFO", "MapInfo");
         c.freeze();
         MAP_INFO = c;
     }
@@ -103,9 +154,9 @@ public final class Citations extends Static {
      */
     public static final Citation ISO;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.ISO, "ISO", "ISO");
-        c.setAlternateTitle("ISO");
-        c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
+        final DefaultCitation c = create(DefaultResponsibleParty.ISO, "ISO", "ISO");
+        setAlternateTitle(c, "ISO");
+        setPresentationForm(c, PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         ISO = c;
     }
@@ -122,9 +173,9 @@ public final class Citations extends Static {
      */
     public static final Citation OGC;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.OGC, "OGC", "OGC");
-        c.setAlternateTitle("OGC");
-        c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
+        final DefaultCitation c = create(DefaultResponsibleParty.OGC, "OGC", "OGC");
+        setAlternateTitle(c, "OGC");
+        setPresentationForm(c, PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         OGC = c;
         // NOTE: Most OGC properties will be copied into OPEN_GIS as well.
@@ -141,7 +192,7 @@ public final class Citations extends Static {
      */
     public static final Citation OPEN_GIS;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.OPEN_GIS, "OPEN_GIS", null);
+        final DefaultCitation c = create(DefaultResponsibleParty.OPEN_GIS, "OPEN_GIS", null);
         c.setPresentationForms(OGC.getPresentationForms());
         c.setAlternateTitles  (OGC.getAlternateTitles());
         c.setIdentifiers      (OGC.getIdentifiers());
@@ -160,7 +211,7 @@ public final class Citations extends Static {
      */
     public static final Citation IHO;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.IHO, "IHO", "IHO");
+        final DefaultCitation c = create(DefaultResponsibleParty.IHO, "IHO", "IHO");
         c.freeze();
         IHO = c;
     }
@@ -175,7 +226,7 @@ public final class Citations extends Static {
      */
     public static final Citation ESRI;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.ESRI, "ESRI", "ESRI");
+        final DefaultCitation c = create(DefaultResponsibleParty.ESRI, "ESRI", "ESRI");
         c.freeze();
         ESRI = c;
     }
@@ -188,7 +239,7 @@ public final class Citations extends Static {
      */
     public static final Citation ORACLE;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.ORACLE, "ORACLE", "Oracle");
+        final DefaultCitation c = create(DefaultResponsibleParty.ORACLE, "ORACLE", "Oracle");
         c.freeze();
         ORACLE = c;
     }
@@ -202,7 +253,7 @@ public final class Citations extends Static {
      */
     public static final Citation POSTGIS;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.POSTGIS, "POSTGIS", "PostGIS");
+        final DefaultCitation c = create(DefaultResponsibleParty.POSTGIS, "POSTGIS", "PostGIS");
         c.freeze();
         POSTGIS = c;
     }
@@ -214,7 +265,7 @@ public final class Citations extends Static {
      */
     public static final Citation GEOTOOLKIT;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.GEOTOOLKIT, "GEOTOOLKIT", "Geotk");
+        final DefaultCitation c = create(DefaultResponsibleParty.GEOTOOLKIT, "GEOTOOLKIT", "Geotk");
         c.freeze();
         GEOTOOLKIT = c;
     }
@@ -226,7 +277,7 @@ public final class Citations extends Static {
      */
     public static final Citation GEOTOOLS;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.GEOTOOLS, "GEOTOOLS", "GeoTools");
+        final DefaultCitation c = create(DefaultResponsibleParty.GEOTOOLS, "GEOTOOLS", "GeoTools");
         c.freeze();
         GEOTOOLS = c;
     }
@@ -253,7 +304,7 @@ public final class Citations extends Static {
      */
     public static final Citation WMS;
     static {
-        final CitationConstant c = new CitationConstant("Web Map Service", "WMS", "WMS");
+        final DefaultCitation c = create("Web Map Service", "WMS", "WMS");
         c.setAlternateTitles(asList(
                 new SimpleInternationalString("WMS 1.3.0"),
                 new SimpleInternationalString("OGC 04-024"),
@@ -268,7 +319,7 @@ public final class Citations extends Static {
          * later rather looks like the output of a numerical model (e.g. meteorological model).
          * The WMS specification is distributed as a PDF document.
          */
-        c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
+        setPresentationForm(c, PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         WMS = c;
     }
@@ -283,8 +334,8 @@ public final class Citations extends Static {
      */
     public static final Citation NETCDF;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.NETCDF, "NETCDF", "NetCDF");
-        c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
+        final DefaultCitation c = create(DefaultResponsibleParty.NETCDF, "NETCDF", "NetCDF");
+        setPresentationForm(c, PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         NETCDF = c;
     }
@@ -299,8 +350,8 @@ public final class Citations extends Static {
     public static final Citation NETCDF_CF;
     static {
         // TODO: Needs its own responsibly party.
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.NETCDF, "NETCDF_CF", "NetCDF-CF");
-        c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
+        final DefaultCitation c = create(DefaultResponsibleParty.NETCDF, "NETCDF_CF", "NetCDF-CF");
+        setPresentationForm(c, PresentationForm.DOCUMENT_DIGITAL);
         c.setTitle(new SimpleInternationalString("NetCDF Climate and Forecast (CF) Metadata Convention"));
         c.freeze();
         NETCDF_CF = c;
@@ -314,8 +365,8 @@ public final class Citations extends Static {
      */
     public static final Citation GEOTIFF;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.GEOTIFF, "GEOTIFF", "GeoTIFF");
-        c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
+        final DefaultCitation c = create(DefaultResponsibleParty.GEOTIFF, "GEOTIFF", "GeoTIFF");
+        setPresentationForm(c, PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         GEOTIFF = c;
     }
@@ -331,8 +382,8 @@ public final class Citations extends Static {
      */
     public static final Citation S57;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.IHO, "S57", "S57");
-        c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
+        final DefaultCitation c = create(DefaultResponsibleParty.IHO, "S57", "S57");
+        setPresentationForm(c, PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         S57 = c;
     }
@@ -346,8 +397,8 @@ public final class Citations extends Static {
      */
     public static final Citation JAI;
     static {
-        final CitationConstant c = new CitationConstant("Java Advanced Imaging", "JAI", "JAI");
-        c.setAlternateTitle("JAI");
+        final DefaultCitation c = create("Java Advanced Imaging", "JAI", "JAI");
+        setAlternateTitle(c, "JAI");
         c.setCitedResponsibleParties(singleton(DefaultResponsibleParty.SUN_MICROSYSTEMS));
         c.freeze();
         JAI = c;
@@ -386,8 +437,8 @@ public final class Citations extends Static {
     static {
         final CitationConstant.Authority<Integer> c = new CitationConstant.Authority<>(
                 DefaultResponsibleParty.EPSG, "EPSG", "EPSG");
-        c.setAlternateTitle("EPSG");
-        c.setPresentationForm(PresentationForm.TABLE_DIGITAL);
+        setAlternateTitle(c, "EPSG");
+        setPresentationForm(c, PresentationForm.TABLE_DIGITAL);
         c.freeze();
         EPSG = c;
     }
@@ -448,7 +499,7 @@ public final class Citations extends Static {
         c.setCitedResponsibleParties(asList(
                 DefaultResponsibleParty.OGC,
                 DefaultResponsibleParty.OGC(Role.PUBLISHER, OnLineFunction.DOWNLOAD, "http://www.opengis.org/docs/01-068r3.pdf")));
-        c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL); // See comment in WMS.
+        setPresentationForm(c, PresentationForm.DOCUMENT_DIGITAL); // See comment in WMS.
         c.freeze();
         AUTO = c;
     }
@@ -491,7 +542,7 @@ public final class Citations extends Static {
         c.setCitedResponsibleParties(asList(
                 DefaultResponsibleParty.OGC,
                 DefaultResponsibleParty.OGC(Role.PUBLISHER, DefaultOnlineResource.WMS)));
-        c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL); // See comment in WMS.
+        setPresentationForm(c, PresentationForm.DOCUMENT_DIGITAL); // See comment in WMS.
         c.freeze();
         AUTO2 = c;
     }
@@ -515,7 +566,7 @@ public final class Citations extends Static {
                 "Web Map Service CRS", "CRS", "CRS");
         c.getIdentifiers().add(new DefaultIdentifier("OGC"));
         c.setCitedResponsibleParties(AUTO2.getCitedResponsibleParties());
-        c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL); // See comment in WMS.
+        setPresentationForm(c, PresentationForm.DOCUMENT_DIGITAL); // See comment in WMS.
         c.freeze();
         CRS = c;
     }
@@ -533,7 +584,7 @@ public final class Citations extends Static {
                 "URN in OGC namespace", "URN_OGC", "urn:ogc:def");
         c.getIdentifiers().add(new DefaultIdentifier("urn:x-ogc:def"));
         c.setCitedResponsibleParties(singleton(DefaultResponsibleParty.OGC));
-        c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
+        setPresentationForm(c, PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         URN_OGC = c;
     }
@@ -550,7 +601,7 @@ public final class Citations extends Static {
         final CitationConstant.Authority<URI> c = new CitationConstant.Authority<>(
                 "URL in OGC namespace", "HTTP_OGC", "http://www.opengis.net");
         c.setCitedResponsibleParties(singleton(DefaultResponsibleParty.OGC));
-        c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
+        setPresentationForm(c, PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         HTTP_OGC = c;
     }
@@ -567,7 +618,7 @@ public final class Citations extends Static {
     static {
         final CitationConstant.Authority<String> c = new CitationConstant.Authority<>(
                 DefaultResponsibleParty.PROJ4, "PROJ4", "PROJ4");
-        c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
+        setPresentationForm(c, PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         PROJ4 = c;
     }
@@ -583,7 +634,7 @@ public final class Citations extends Static {
      * @category Code space
      * @since 3.19
      */
-    public static final IdentifierSpace<String> ISBN = DefaultCitation.ISBN;
+    public static final IdentifierSpace<String> ISBN = org.apache.sis.metadata.iso.citation.Citations.ISBN;
 
     /**
      * <cite>International Standard Serial Number</cite> (ISSN) defined by
@@ -596,7 +647,7 @@ public final class Citations extends Static {
      * @category Code space
      * @since 3.19
      */
-    public static final IdentifierSpace<String> ISSN = DefaultCitation.ISSN;
+    public static final IdentifierSpace<String> ISSN = org.apache.sis.metadata.iso.citation.Citations.ISSN;
 
     /**
      * Unknown authority, vendor or specification.
@@ -605,7 +656,7 @@ public final class Citations extends Static {
      */
     public static final Citation UNKNOWN;
     static {
-        final CitationConstant c = new CitationConstant(
+        final DefaultCitation c = create(
                 Vocabulary.formatInternational(Vocabulary.Keys.UNKNOWN), "UNKNOWN", null);
         c.freeze();
         UNKNOWN = c;

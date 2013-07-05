@@ -38,8 +38,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.datum.PixelInCell;
 
-import org.geotoolkit.util.Range;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.measure.Range;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
@@ -65,7 +65,7 @@ import static org.geotoolkit.image.io.plugin.CoriolisFormatTest.assertExpectedAx
  *
  * @since 3.08
  */
-@Depend({NetcdfAxisTest.class, IrregularAxesConverterTest.class})
+@DependsOn({NetcdfAxisTest.class, IrregularAxesConverterTest.class})
 public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.NetcdfCRSTest {
     /**
      * Small tolerance factor for floating point comparison.
@@ -195,7 +195,7 @@ public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.Net
             final Range<?> r1 = discreteAxis.getOrdinateRangeAt(0);
             final Range<?> r2 = discreteAxis.getOrdinateRangeAt(n-1);
             if (n > 1) {
-                assertFalse(r1.intersects(r2));
+                assertFalse(r1.intersects((Range) r2));
             }
             final Class<?> elementClass = isTimeAxis ? Date.class : Double.class;
             assertEquals(elementClass, r1.getElementType());

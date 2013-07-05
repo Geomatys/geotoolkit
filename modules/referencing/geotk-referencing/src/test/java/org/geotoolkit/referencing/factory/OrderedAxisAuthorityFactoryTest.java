@@ -46,7 +46,7 @@ import org.geotoolkit.referencing.factory.epsg.LongitudeFirstEpsgFactory;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
 
 import org.apache.sis.util.Classes;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
@@ -65,7 +65,7 @@ import static org.geotoolkit.referencing.Commons.*;
  *
  * @since 3.00
  */
-@Depend(FactoryFinderTest.class)
+@DependsOn(FactoryFinderTest.class)
 public final strictfp class OrderedAxisAuthorityFactoryTest extends ReferencingTestBase {
     /**
      * {@code true} if metadata (especially identifiers) should be erased, or {@code false} if

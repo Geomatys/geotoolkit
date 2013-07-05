@@ -31,13 +31,14 @@ import java.util.AbstractSet;
 import java.util.NoSuchElementException;
 import java.util.ConcurrentModificationException;
 
+import org.apache.sis.util.collection.CheckedContainer;
 
-import org.geotoolkit.util.Range;
+import org.apache.sis.measure.Range;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
@@ -71,7 +72,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureCanCast;
  */
 @Deprecated
 public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range<T>>
-        implements CheckedCollection<Range<T>>, SortedSet<Range<T>>, Cloneable, Serializable
+        implements CheckedContainer<Range<T>>, SortedSet<Range<T>>, Cloneable, Serializable
 {
     /**
      * Serial number for inter-operability with different versions.
@@ -234,7 +235,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
      */
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
-    public Class<? extends Range<T>> getElementType() {
+    public Class<Range<T>> getElementType() {
         if (isNumeric) return (Class) NumberRange.class;
         if (isDate)    return (Class) DateRange.class;
         return (Class) Range.class;
@@ -858,11 +859,11 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
     @SuppressWarnings({"unchecked","rawtypes"})
     private Range<T> newRange(final T lower, final T upper) {
         if (isNumeric) {
-            return new NumberRange(elementClass, (Number) lower, (Number) upper);
+            return new NumberRange(elementClass, (Number) lower, true, (Number) upper, true);
         } else if (isDate) {
             return (Range) new DateRange((Date) (Comparable) lower, (Date) (Comparable) upper);
         } else {
-            return new Range<>(elementClass, lower, upper);
+            return new Range<>(elementClass, lower, true, upper, true);
         }
     }
 
@@ -953,7 +954,6 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
             }
         }
         index /= 2; // Round toward 0 (odd index are maximum values).
-        assert newRange(get(2*index), get(2*index+1)).contains(value) : value;
         return index;
     }
 

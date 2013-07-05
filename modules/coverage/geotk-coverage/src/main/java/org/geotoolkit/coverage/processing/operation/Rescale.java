@@ -18,7 +18,7 @@
 package org.geotoolkit.coverage.processing.operation;
 
 import net.jcip.annotations.Immutable;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.processing.OperationJAI;
 
 
@@ -102,9 +102,9 @@ public class Rescale extends OperationJAI {
             final double c = constants[0];
             final double t = offsets[0];
             final NumberRange<?> range = ranges[0];
-            final double min = range.getMinimum() * c + t;
-            final double max = range.getMaximum() * c + t;
-            return (max < min) ? NumberRange.create(max, min) : NumberRange.create(min, max);
+            final double min = range.getMinDouble() * c + t;
+            final double max = range.getMaxDouble() * c + t;
+            return (max < min) ? NumberRange.create(max, true, min, true) : NumberRange.create(min, true, max, true);
         }
         return super.deriveRange(ranges, parameters);
     }

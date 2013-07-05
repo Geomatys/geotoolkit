@@ -25,7 +25,7 @@ import java.net.URI;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.io.ContentFormatException;
 
 
@@ -240,7 +240,7 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
             if (path instanceof File) {
                 return toSupportFile((File) path, extension, isTFW);
             }
-            final Object renamed = IOUtilities.changeExtension(path, extension);
+            final Object renamed = org.geotoolkit.internal.io.IOUtilities.changeExtension(path, extension);
             if (renamed != null) {
                 return renamed;
             }
@@ -356,7 +356,7 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
                         m[count++] = Double.parseDouble(line);
                     } catch (NumberFormatException e) {
                         throw new ContentFormatException(Errors.format(Errors.Keys.ILLEGAL_LINE_IN_FILE_2,
-                                IOUtilities.name(filename), in.getLineNumber()), e);
+                                IOUtilities.filename(filename), in.getLineNumber()), e);
                     }
                 }
             }

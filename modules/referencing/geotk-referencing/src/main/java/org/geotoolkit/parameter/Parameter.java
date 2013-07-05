@@ -39,7 +39,7 @@ import org.opengis.parameter.InvalidParameterValueException;
 
 import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 

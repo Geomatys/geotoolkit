@@ -34,7 +34,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 
 import org.geotoolkit.geometry.Envelopes;
-import org.geotoolkit.geometry.ImmutableEnvelope;
+import org.apache.sis.geometry.ImmutableEnvelope;
 import org.geotoolkit.geometry.TransformedDirectPosition;
 
 

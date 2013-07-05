@@ -40,7 +40,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.internal.sql.table.DefaultEntry;
 import org.geotoolkit.geometry.Envelopes;
-import org.geotoolkit.geometry.AbstractEnvelope;
+import org.apache.sis.geometry.AbstractEnvelope;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;

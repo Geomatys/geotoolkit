@@ -22,7 +22,7 @@ import javax.measure.unit.Unit;
 import org.opengis.metadata.content.RangeDimension;
 import org.opengis.metadata.content.TransferFunctionType;
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 
 
 /**

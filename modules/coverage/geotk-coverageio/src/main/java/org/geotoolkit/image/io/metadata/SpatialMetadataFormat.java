@@ -45,6 +45,7 @@ import org.opengis.metadata.extent.VerticalExtent;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.quality.Element;
 import org.opengis.metadata.quality.DataQuality;
+import org.opengis.metadata.ExtendedElementInformation;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.IdentifiedObject;
@@ -55,9 +56,10 @@ import org.opengis.referencing.operation.Conversion;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.RectifiedGrid;
 
-import org.geotoolkit.util.NumberRange;
+import org.opengis.util.InternationalString;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.metadata.KeyNamePolicy;
-import org.geotoolkit.metadata.MetadataStandard;
+import org.apache.sis.metadata.MetadataStandard;
 import org.geotoolkit.referencing.cs.*;
 import org.geotoolkit.referencing.crs.*;
 import org.geotoolkit.referencing.datum.*;
@@ -903,11 +905,11 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                 // The given element does not allow the storage of objects.
                 // We will set the description map to an empty map.
             }
-            Map<String,String> desc = Collections.emptyMap();
+            Map<String, ExtendedElementInformation> desc = Collections.emptyMap();
             if (type != null) {
                 final MetadataStandard standard = getElementStandard(elementName);
                 if (standard != null) try {
-                    desc = standard.asDescriptionMap(type, locale, NAME_POLICY);
+                    desc = standard.asInformationMap(type, NAME_POLICY);
                 } catch (ClassCastException e) {
                     // The element type is not an instance of the expected standard.
                     // We will set the description map to an empty map.
@@ -916,7 +918,14 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             candidate = new MetadataDescriptions(desc, elementName, locale);
             descriptions = candidate;
         }
-        return candidate.descriptions.get(attrName);
+        final ExtendedElementInformation info = candidate.descriptions.get(attrName);
+        if (info != null) {
+            final InternationalString definition = info.getDefinition();
+            if (definition != null) {
+                return definition.toString(locale);
+            }
+        }
+        return null;
     }
 
     /**

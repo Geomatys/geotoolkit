@@ -24,7 +24,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.IOException;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.14
  */
-@Depend(ImageCoverageReaderTest.class)
+@DependsOn(ImageCoverageReaderTest.class)
 public final strictfp class ImageReaderAdapterTest {
     /**
      * The precision for comparison of sample values. The values in this test file

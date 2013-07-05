@@ -22,7 +22,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -131,6 +131,6 @@ public final strictfp class LineTest {
     @Test
     public void testSerialization() {
         final Line local = new Line(9.5, -3.7);
-        assertNotSame(local, assertSerializable(local));
+        assertNotSame(local, assertSerializedEquals(local));
     }
 }

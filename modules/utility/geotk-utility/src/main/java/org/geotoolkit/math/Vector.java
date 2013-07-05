@@ -24,8 +24,8 @@ import java.util.RandomAccess;
 
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Numbers;
-import org.geotoolkit.util.collection.WeakHashSet;
-import org.geotoolkit.util.collection.CheckedCollection;
+import org.apache.sis.util.collection.WeakHashSet;
+import org.apache.sis.util.collection.CheckedContainer;
 
 import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
 
@@ -60,11 +60,11 @@ import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
  * @since 1.0
  * @module
  */
-public abstract class Vector extends AbstractList<Number> implements CheckedCollection<Number>, RandomAccess {
+public abstract class Vector extends AbstractList<Number> implements CheckedContainer/*<Number>*/, RandomAccess {
     /**
      * A pool of indices used by the {@link Vector.View} inner class.
      */
-    private static final WeakHashSet<int[]> INDICES = WeakHashSet.newInstance(int[].class);
+    private static final WeakHashSet<int[]> INDICES = new WeakHashSet<>(int[].class);
 
     /**
      * Wraps the given object in a vector. The argument should be one of the following:

@@ -40,7 +40,7 @@ import org.geotoolkit.referencing.operation.transform.ExponentialTransform1D;
 
 import static java.awt.Color.decode;
 import static javax.measure.unit.SI.*;
-import static org.geotoolkit.util.NumberRange.create;
+import static org.apache.sis.measure.NumberRange.create;
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
 import static org.junit.Assert.*;
 
@@ -72,13 +72,13 @@ public strictfp enum SampleCoverage {
      */
     SST(SampleImage.INDEXED, WGS84, new Rectangle(35, -41, 45, 46),
             new GridSampleDimension("Measure", new Category[] {
-                new Category("Coast line", decode("#000000"), create(  0,   0)),
-                new Category("Cloud",      decode("#C3C3C3"), create(  1,   9)),
-                new Category("Unused",     decode("#822382"), create( 10,  29)),
-                new Category("Sea Surface Temperature", null, create( 30, 219), 0.1, 10.0),
-                new Category("Unused",     decode("#A0505C"), create(220, 239)),
-                new Category("Land",       decode("#D2C8A0"), create(240, 254)),
-                new Category("No data",    decode("#FFFFFF"), create(255, 255)),
+                new Category("Coast line", decode("#000000"), create(  0, true,   0, true)),
+                new Category("Cloud",      decode("#C3C3C3"), create(  1, true,   9, true)),
+                new Category("Unused",     decode("#822382"), create( 10, true,  29, true)),
+                new Category("Sea Surface Temperature", null, create( 30, true, 219, true), 0.1, 10.0),
+                new Category("Unused",     decode("#A0505C"), create(220, true, 239, true)),
+                new Category("Land",       decode("#D2C8A0"), create(240, true, 254, true)),
+                new Category("No data",    decode("#FFFFFF"), create(255, true, 255, true)),
             }, CELSIUS)),
 
     /**
@@ -98,9 +98,9 @@ public strictfp enum SampleCoverage {
      */
     CHL(SampleImage.INDEXED_LOGARITHMIC, WGS84, new Rectangle(-7, 34, 19, 11),
             new GridSampleDimension("Measure", new Category[] {
-                new Category("Land",    decode("#000000"), create(255, 255)),
-                new Category("No data", decode("#FFFFFF"), create(  0,   0)),
-                new Category("Chl-a",   null,              create(  1, 254),
+                new Category("Land",    decode("#000000"), create(255, true, 255, true)),
+                new Category("No data", decode("#FFFFFF"), create(  0, true,   0, true)),
+                new Category("Chl-a",   null,              create(  1, true, 254, true),
                         MathTransforms.concatenate(
                         LinearTransform1D.create(0.015, -1.985),
                         ExponentialTransform1D.create(10)))

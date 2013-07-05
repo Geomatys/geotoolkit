@@ -40,7 +40,7 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.geotoolkit.io.X364;
 import org.geotoolkit.lang.Buffered;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.TreeNode;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
@@ -48,7 +48,7 @@ import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.internal.io.IOUtilities;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**

@@ -44,11 +44,12 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.util.collection.WeakHashSet;
-import org.geotoolkit.util.collection.XCollections;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.collection.WeakHashSet;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Decorator;
+
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -92,7 +93,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
     /**
      * A pool of modified objects created up to date.
      */
-    private final WeakHashSet<IdentifiedObject> pool = WeakHashSet.newInstance(IdentifiedObject.class);
+    private final WeakHashSet<IdentifiedObject> pool = new WeakHashSet<>(IdentifiedObject.class);
 
     /**
      * A set of low-level factories to be used if none were found in {@link #datumFactory},
@@ -522,7 +523,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
     {
         final Set<CoordinateOperation> operations, modified;
         operations = super.createFromCoordinateReferenceSystemCodes(sourceCRS, targetCRS);
-        modified = new LinkedHashSet<>(XCollections.hashMapCapacity(operations.size()));
+        modified = new LinkedHashSet<>(hashMapCapacity(operations.size()));
         for (final Iterator<CoordinateOperation> it = operations.iterator(); it.hasNext();) {
             final CoordinateOperation operation;
             try {

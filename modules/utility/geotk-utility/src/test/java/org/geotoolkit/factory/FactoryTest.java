@@ -22,7 +22,7 @@ import org.opengis.metadata.quality.ConformanceResult;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 
 
 /**
@@ -33,7 +33,7 @@ import org.geotoolkit.test.Depend;
  *
  * @since 2.3
  */
-@Depend(HintsTest.class)
+@DependsOn(HintsTest.class)
 public final strictfp class FactoryTest {
     /**
      * A key for testing purpose.

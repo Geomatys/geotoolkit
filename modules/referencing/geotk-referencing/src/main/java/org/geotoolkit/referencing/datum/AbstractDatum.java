@@ -38,11 +38,11 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.io.wkt.Formatter;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.jaxb.gco.DateAsLongAdapter;
+import org.apache.sis.internal.jaxb.gco.DateAsLongAdapter;
 
-import static org.geotoolkit.util.Utilities.deepEquals;
+import static org.apache.sis.util.Utilities.deepEquals;
 
 
 /**

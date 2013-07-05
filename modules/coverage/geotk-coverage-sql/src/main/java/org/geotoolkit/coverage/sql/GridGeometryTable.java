@@ -34,7 +34,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.internal.sql.table.Column;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.QueryType;
@@ -84,7 +84,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
      */
     private GridGeometryTable(final GridGeometryQuery query) {
         super(query, query.byIdentifier);
-        gridCRS = WeakHashSet.newInstance(SpatialRefSysEntry.class);
+        gridCRS = new WeakHashSet<>(SpatialRefSysEntry.class);
     }
 
     /**

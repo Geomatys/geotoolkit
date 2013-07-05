@@ -32,7 +32,7 @@ import org.opengis.referencing.ReferenceSystem;
 
 import org.apache.sis.util.ComparisonMode;
 
-import static org.geotoolkit.util.Utilities.deepEquals;
+import static org.apache.sis.util.Utilities.deepEquals;
 
 
 /**

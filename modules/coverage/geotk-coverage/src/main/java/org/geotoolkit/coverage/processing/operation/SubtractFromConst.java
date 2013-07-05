@@ -20,7 +20,7 @@ package org.geotoolkit.coverage.processing.operation;
 import javax.media.jai.operator.SubtractFromConstDescriptor;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.processing.OperationJAI;
 
 
@@ -92,9 +92,9 @@ public class SubtractFromConst extends OperationJAI {
         if (constants.length == 1) {
             final double c = constants[0];
             final NumberRange<?> range = ranges[0];
-            final double min = c - range.getMaximum();
-            final double max = c - range.getMinimum();
-            return NumberRange.create(min, max);
+            final double min = c - range.getMaxDouble();
+            final double max = c - range.getMinDouble();
+            return NumberRange.create(min, true, max, true);
         }
         return super.deriveRange(ranges, parameters);
     }

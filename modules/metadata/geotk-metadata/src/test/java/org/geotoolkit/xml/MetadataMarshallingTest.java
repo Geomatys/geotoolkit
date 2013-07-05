@@ -21,10 +21,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Collection;
 import javax.xml.bind.JAXBException;
 
-import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.maintenance.ScopeCode;
 import org.opengis.metadata.identification.CharacterSet;
@@ -32,39 +30,40 @@ import org.opengis.metadata.quality.EvaluationMethodType;
 import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.metadata.spatial.CellGeometry;
 
-import org.geotoolkit.metadata.iso.*;
-import org.geotoolkit.metadata.iso.spatial.*;
-import org.geotoolkit.metadata.iso.quality.*;
-import org.geotoolkit.metadata.iso.lineage.*;
-import org.geotoolkit.metadata.iso.citation.*;
-import org.geotoolkit.metadata.iso.distribution.*;
-import org.geotoolkit.metadata.iso.identification.*;
-import org.geotoolkit.metadata.MetadataStandardTest;
-import org.geotoolkit.util.DefaultInternationalString;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.xml.XML;
+import org.apache.sis.metadata.iso.*;
+import org.apache.sis.metadata.iso.spatial.*;
+import org.apache.sis.metadata.iso.quality.*;
+import org.apache.sis.metadata.iso.citation.*;
+import org.apache.sis.metadata.iso.distribution.*;
+import org.apache.sis.metadata.iso.identification.*;
+import org.apache.sis.util.iso.DefaultInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.Utilities;
+import org.geotoolkit.metadata.iso.citation.Citations;
 
 import org.junit.*;
 
-import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.LocaleDependantTestBase;
-import static org.geotoolkit.test.Assert.*;
+
+import static org.apache.sis.test.Assert.*;
+import static org.apache.sis.test.TestUtilities.getSingleton;
 
 
 /**
- * A test class for annotations written in the Metadata module.
- * First, it marshalls all annotations in a XML temporary file, starting with the
- * {@link DefaultMetadata} class as root element. Then, the temporary XML file is
- * unmarshalled, in order to get a {@code DefaultMetadata} object. Finally some
- * fields of this object are compared with the original value.
+ * A test class for (un)marshalling of various Metadata objects.
+ * First, it marshals all elements in a XML temporary buffer, starting with the {@link DefaultMetadata} class as
+ * root element. Then, the temporary XML buffer is unmarshaled, in order to get a {@code DefaultMetadata} object.
+ * Finally some fields of this object are compared with the original value.
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 4.0
  *
  * @since 2.5
  */
-@Depend({MetadataStandardTest.class, CodeListMarshallingTest.class, FreeTextMarshallingTest.class})
 public final strictfp class MetadataMarshallingTest extends LocaleDependantTestBase {
     /**
      * Generates a XML tree using the annotations on the {@link DefaultMetadata} class,
@@ -113,7 +112,8 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
         metadata.setCharacterSet(CharacterSet.UTF_8);
         metadata.setDateStamp(new Date(1260961229580L));
         metadata.setContacts(Arrays.asList(
-            DefaultResponsibleParty.GEOTOOLKIT, DefaultResponsibleParty.OPEN_GIS
+            getSingleton(Citations.GEOTOOLKIT.getCitedResponsibleParties()),
+            getSingleton(Citations.OPEN_GIS.getCitedResponsibleParties())
         ));
         metadata.setMetadataStandardVersion("ISO-19115");
         /*
@@ -135,7 +135,7 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
          */
         final DefaultCitation citation = new DefaultCitation();
         citation.setTitle(new SimpleInternationalString("Geotoolkit.org"));
-        citation.setCitedResponsibleParties(Arrays.asList(DefaultResponsibleParty.GEOTOOLKIT));
+        citation.setCitedResponsibleParties(Arrays.asList(getSingleton(Citations.GEOTOOLKIT.getCitedResponsibleParties())));
         citation.setDates(Arrays.asList(new DefaultCitationDate(new Date(1178748000000L), DateType.CREATION)));
         final DefaultDataIdentification identification = new DefaultDataIdentification();
         identification.setCitation(citation);
@@ -182,7 +182,7 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
          */
         final DefaultDistribution distribution = new DefaultDistribution();
         distribution.setDistributors(Arrays.asList(
-            new DefaultDistributor(DefaultResponsibleParty.GEOTOOLKIT)
+            new DefaultDistributor(getSingleton(Citations.GEOTOOLKIT.getCitedResponsibleParties()))
         ));
         metadata.setDistributionInfo(distribution);
         /*
@@ -244,7 +244,7 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
          */
         final String xml = XML.marshal(metadata);
         assertFalse("Nothing to write.", xml.isEmpty());
-        assertDomEquals(TestData.url(MetadataMarshallingTest.class, "Metadata.xml"),
+        assertXmlEquals(TestData.url(MetadataMarshallingTest.class, "Metadata.xml"),
                 xml, "xmlns:*", "xsi:schemaLocation");
 
         final Object obj = XML.unmarshal(xml);
@@ -256,81 +256,8 @@ public final strictfp class MetadataMarshallingTest extends LocaleDependantTestB
         final DefaultMetadata dataUnmarsh = (DefaultMetadata) obj;
         assertEquals(metadata.getCharacterSet(),       dataUnmarsh.getCharacterSet());
         assertEquals(metadata.getLanguage(),           dataUnmarsh.getLanguage());
-        assertEquals(metadata.getIdentificationInfo(), dataUnmarsh.getIdentificationInfo());
-        assertEquals(metadata.getDataQualityInfo(),    dataUnmarsh.getDataQualityInfo());
-        assertEquals(metadata,                         dataUnmarsh);
-    }
-
-    /**
-     * Tests the marshalling of {@link DefaultProcessStep}.
-     * This metadata mixes elements from ISO 19115 and ISO 19115-2 standards.
-     *
-     * @throws IOException If an error occurred while reading the XML file.
-     * @throws JAXBException If an error occurred during the creation of the JAXB context,
-     *                       or during marshalling / unmarshalling processes.
-     *
-     * @since 3.07
-     */
-    @Test
-    public void testProcessStep() throws IOException, JAXBException {
-        final DefaultProcessing info = new DefaultProcessing();
-        info.setProcedureDescription(new SimpleInternationalString("Some procedure."));
-        final DefaultProcessStep process = new DefaultProcessStep();
-        process.setDescription(new SimpleInternationalString("Some process step."));
-        process.setProcessingInformation(info);
-        /*
-         * XML marshalling.
-         */
-        final String xml = XML.marshal(process);
-        assertFalse("Empty XML.", xml.isEmpty());
-        assertDomEquals(TestData.url(MetadataMarshallingTest.class, "ProcessStep.xml"),
-                xml, "xmlns:*", "xsi:schemaLocation");
-        /*
-         * Validation tests.
-         */
-        final Object obj = XML.unmarshal(xml);
-        assertTrue(obj instanceof DefaultProcessStep);
-        assertEquals(process, obj);
-    }
-
-    /**
-     * Tests the unmarshalling of a text group with a default {@code <gco:CharacterString>}
-     * element. This test is somewhat a duplicate of {@link FreeTextMarshallingTest}, but
-     * the context is more elaborated.
-     *
-     * @throws IOException   If an error occurred while reading the XML file.
-     * @throws JAXBException If an error occurred during the creation of the JAXB context,
-     *                       or during marshalling / unmarshalling processes.
-     *
-     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-107">GEOTK-107</a>
-     * @see FreeTextMarshallingTest
-     *
-     * @since 3.14
-     */
-    @Test
-    public void testTextGroup() throws IOException, JAXBException {
-        final String xml = TestData.readText(MetadataMarshallingTest.class, "PositionalAccuracy.xml");
-        final Object obj = XML.unmarshal(xml);
-        assertTrue(obj instanceof AbstractElement);
-
-        final Collection<InternationalString> nameOfMeasures = ((AbstractElement) obj).getNamesOfMeasure();
-        assertEquals(1, nameOfMeasures.size());
-        final InternationalString nameOfMeasure = nameOfMeasures.iterator().next();
-
-        assertEquals("Mesure qualité quantitative de type pourcentage de représentation de la "
-                + "classe par rapport à la surface totale", nameOfMeasure.toString(Locale.FRENCH));
-        assertEquals("Mesure qualité quantitative de type pourcentage de représentation de la "
-                + "classe par rapport à la surface totale", nameOfMeasure.toString());
-        assertEquals("Quantitative quality measure focusing on the effective class percent "
-                + "regarded to the total surface size", nameOfMeasure.toString(null));
-        assertEquals("Quantitative quality measure focusing on the effective class percent "
-                + "regarded to the total surface size", nameOfMeasure.toString(Locale.ENGLISH));
-        /*
-         * Opportunist test. While it was not the purpose of this test, the above metadata
-         * needs to contain a "result" element in order to pass XML validation test.
-         */
-        assertInstanceOf("Wrong value for <gmd:result>", DefaultConformanceResult.class,
-                ((AbstractElement) obj).getResults().iterator().next());
-        assertDomEquals(xml, XML.marshal(obj), "xmlns:*", "xsi:schemaLocation", "xsi:type");
+        assertTrue(Utilities.deepEquals(metadata.getIdentificationInfo(), dataUnmarsh.getIdentificationInfo(), ComparisonMode.BY_CONTRACT));
+        assertTrue(Utilities.deepEquals(metadata.getDataQualityInfo(),    dataUnmarsh.getDataQualityInfo(),    ComparisonMode.BY_CONTRACT));
+//      assertTrue(Utilities.deepEquals(metadata,                         dataUnmarsh, ComparisonMode.DEBUG));
     }
 }

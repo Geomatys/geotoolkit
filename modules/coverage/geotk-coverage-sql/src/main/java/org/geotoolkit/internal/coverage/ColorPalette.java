@@ -28,10 +28,11 @@ import java.util.logging.LogRecord;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.internal.image.ColorUtilities;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 

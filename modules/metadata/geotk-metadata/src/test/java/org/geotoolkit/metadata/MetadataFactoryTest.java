@@ -24,11 +24,10 @@ import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.PresentationForm;
 
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import org.geotoolkit.test.Depend;
 
 
 /**
@@ -40,7 +39,6 @@ import org.geotoolkit.test.Depend;
  *
  * @since 3.03
  */
-@Depend({MetadataStandardTest.class, PropertyMapTest.class})
 public final strictfp class MetadataFactoryTest {
     /**
      * The metadata factory.

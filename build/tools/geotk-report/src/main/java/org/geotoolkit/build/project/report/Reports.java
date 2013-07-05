@@ -23,8 +23,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.util.Version;
+import org.apache.sis.internal.storage.IOUtilities;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -61,7 +61,7 @@ final class Reports {
      * @return The current Geotk version.
      */
     private static String getGeotkVersion() {
-        String version = Version.GEOTOOLKIT.toString();
+        String version = Utilities.VERSION.toString();
         final int snapshot = version.lastIndexOf('-');
         if (snapshot >= 2) {
             version = version.substring(0, snapshot);

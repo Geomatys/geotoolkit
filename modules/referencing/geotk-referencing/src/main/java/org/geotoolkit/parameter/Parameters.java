@@ -42,10 +42,10 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Descriptions;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
-import org.geotoolkit.naming.DefaultNameSpace;
+import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
+import org.apache.sis.util.iso.DefaultNameSpace;
 
 
 /**

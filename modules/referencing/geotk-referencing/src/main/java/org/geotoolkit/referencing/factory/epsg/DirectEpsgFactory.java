@@ -62,16 +62,16 @@ import org.opengis.metadata.quality.PositionalAccuracy;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.extent.DefaultExtent;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.metadata.iso.quality.DefaultQuantitativeResult;
-import org.geotoolkit.metadata.iso.quality.DefaultAbsoluteExternalPositionalAccuracy;
+import org.apache.sis.metadata.iso.quality.DefaultAbsoluteExternalPositionalAccuracy;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
@@ -89,10 +89,10 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 
 import static org.geotoolkit.internal.InternalUtilities.COMPARISON_THRESHOLD;
 import static org.geotoolkit.internal.referencing.CRSUtilities.PARAMETERS_KEY;
@@ -965,11 +965,11 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             code = code.trim();
             final InternationalString edition = authority.getEdition();
             final String version = (edition!=null) ? edition.toString() : null;
-            final DefaultReferenceIdentifier identifier;
+            final ImmutableIdentifier identifier;
             if (deprecated) {
                 identifier = new DeprecatedCode(authority, "EPSG", code, version, null);
             } else {
-                identifier = new DefaultReferenceIdentifier(authority, "EPSG", code, version, null);
+                identifier = new ImmutableIdentifier(authority, "EPSG", code, version, null);
             }
             properties.put(IdentifiedObject.IDENTIFIERS_KEY, identifier);
         }

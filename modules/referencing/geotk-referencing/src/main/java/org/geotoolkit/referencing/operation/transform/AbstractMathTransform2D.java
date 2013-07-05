@@ -33,8 +33,8 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.operation.MathTransforms;
 
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
@@ -238,7 +238,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
          * by those factories.
          */
         private static final WeakHashSet<AffineTransform2D> POOL =
-                WeakHashSet.newInstance(AffineTransform2D.class);
+                new WeakHashSet<>(AffineTransform2D.class);
 
         /**
          * The descriptor that represents this tuple as a whole. The parameter values may take

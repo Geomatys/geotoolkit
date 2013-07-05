@@ -26,11 +26,11 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 import static org.geotoolkit.referencing.cs.DefaultTimeCS.*;
 import static org.geotoolkit.referencing.cs.DefaultVerticalCS.*;
 import static org.geotoolkit.referencing.cs.DefaultCartesianCS.*;
@@ -48,7 +48,7 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
  *
  * @since 2.2
  */
-@Depend({IdentifiedObjectTest.class, CoordinateSystemAxisTest.class, ComparableAxisWrapperTest.class})
+@DependsOn({IdentifiedObjectTest.class, CoordinateSystemAxisTest.class, ComparableAxisWrapperTest.class})
 public final strictfp class CoordinateSystemTest extends ReferencingTestBase {
     /**
      * Validates constants.
@@ -90,10 +90,10 @@ public final strictfp class CoordinateSystemTest extends ReferencingTestBase {
      */
     @Test
     public void testSerialization() {
-        assertSerializable(PROJECTED);
-        assertSerializable(GEOCENTRIC);
-        assertSerializable(GEODETIC_2D);
-        assertSerializable(GEODETIC_3D);
+        assertSerializedEquals(PROJECTED);
+        assertSerializedEquals(GEOCENTRIC);
+        assertSerializedEquals(GEODETIC_2D);
+        assertSerializedEquals(GEODETIC_3D);
     }
 
     /**

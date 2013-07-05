@@ -37,9 +37,9 @@ import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
-
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.referencing.CRS;
@@ -1173,89 +1173,5 @@ public final class Envelopes extends Static {
      */
     private static void recoverableException(final TransformException exception) {
         Logging.recoverableException(Envelopes.class, "transform", exception);
-    }
-
-    /**
-     * Returns an envelope from the given <cite>Well Known Text</cite> (WKT).
-     * This method is quite lenient. For example all the following strings are accepted:
-     * <p>
-     * <ul>
-     *   <li>{@code BOX(-180 -90, 180 90)}</li>
-     *   <li>{@code POINT(6 10)}</li>
-     *   <li>{@code MULTIPOLYGON(((1 1, 5 1, 1 5, 1 1),(2 2, 3 2, 3 3, 2 2)))}</li>
-     *   <li>{@code GEOMETRYCOLLECTION(POINT(4 6),LINESTRING(3 8,7 10))}</li>
-     * </ul>
-     * <p>
-     * See {@link GeneralEnvelope#GeneralEnvelope(String)} for more information about the
-     * parsing rules.
-     *
-     * @param  wkt The {@code BOX}, {@code POLYGON} or other kind of element to parse.
-     * @return The envelope of the given geometry.
-     * @throws FactoryException If the given WKT can not be parsed.
-     *
-     * @see CRS#parseWKT(String)
-     * @see #toWKT(Envelope)
-     * @see org.geotoolkit.measure.CoordinateFormat
-     * @see org.geotoolkit.io.wkt
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.geometry.Envelopes#parseWKT}.
-     */
-    @Deprecated
-    public static Envelope parseWKT(final String wkt) throws FactoryException {
-        ensureNonNull("wkt", wkt);
-        try {
-            return new GeneralEnvelope(wkt);
-        } catch (RuntimeException e) {
-            throw new FactoryException(Errors.format(
-                    Errors.Keys.CANT_CREATE_OBJECT_FROM_TEXT_1, Envelope.class), e);
-        }
-    }
-
-    /**
-     * Formats a {@code BOX} element from an envelope. This method formats the given envelope in
-     * the <cite>Well Known Text</cite> (WKT) format. The output is like below, where <var>n</var>
-     * is the {@linkplain Envelope#getDimension() number of dimensions}:
-     *
-     * <blockquote>{@code BOX}<var>n</var>{@code D(}{@linkplain Envelope#getLowerCorner() lower
-     * corner}{@code ,} {@linkplain Envelope#getUpperCorner() upper corner}{@code )}</blockquote>
-     *
-     * The output of this method can be {@linkplain GeneralEnvelope#GeneralEnvelope(String) parsed}
-     * by the {@link GeneralEnvelope} constructor.
-     *
-     * @param  envelope The envelope to format.
-     * @return The envelope as a {@code BOX} or {@code BOX3D}.
-     *
-     * @see #parseWKT(String)
-     * @see org.geotoolkit.measure.CoordinateFormat
-     * @see org.geotoolkit.io.wkt
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.geometry.Envelopes#toString}.
-     */
-    @Deprecated
-    public static String toWKT(final Envelope envelope) {
-        return AbstractEnvelope.toString(envelope);
-    }
-
-    /**
-     * Formats a {@code POLYGON} element from an envelope. This method formats the given envelope
-     * as a geometry in the <cite>Well Known Text</cite> (WKT) format. This is provided as an
-     * alternative to the {@code BOX} element formatted by the above {@link #toWKT(Envelope)}
-     * method, because the {@code BOX} element is usually not considered a geometry while
-     * {@code POLYGON} is.
-     * <p>
-     * The output of this method can be {@linkplain GeneralEnvelope#GeneralEnvelope(String) parsed}
-     * by the {@link GeneralEnvelope} constructor.
-     *
-     * @param  envelope The envelope to format.
-     * @return The envelope as a {@code POLYGON} in WKT format.
-     * @throws IllegalArgumentException if the given envelope can not be formatted.
-     *
-     * @see org.geotoolkit.io.wkt
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.geometry.Envelopes#toPolygonWKT}.
-     */
-    @Deprecated
-    public static String toPolygonWKT(final Envelope envelope) throws IllegalArgumentException {
-        return org.apache.sis.geometry.Envelopes.toPolygonWKT(envelope);
     }
 }

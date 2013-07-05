@@ -20,7 +20,7 @@ package org.geotoolkit.coverage.processing.operation;
 import javax.media.jai.operator.InvertDescriptor;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.processing.OperationJAI;
 
 
@@ -81,8 +81,8 @@ public class Invert extends OperationJAI {
     @Override
     protected NumberRange<?> deriveRange(final NumberRange<?>[] ranges, final Parameters parameters) {
         final NumberRange<?> range = ranges[0];
-        final double min = -range.getMaximum();
-        final double max = -range.getMinimum();
-        return NumberRange.create(min, max);
+        final double min = -range.getMaxDouble();
+        final double max = -range.getMinDouble();
+        return NumberRange.create(min, true, max, true);
     }
 }

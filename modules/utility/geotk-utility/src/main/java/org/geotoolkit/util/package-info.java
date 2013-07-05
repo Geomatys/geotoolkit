@@ -22,13 +22,13 @@
  * <ul>
  *   <li><p>Data objects:</p>
  *   <ul>
- *     <li>{@link org.geotoolkit.util.Range} and its subclasses:
+ *     <li>{@link org.apache.sis.measure.Range} and its subclasses:
  *         {@link org.geotoolkit.util.DateRange},
- *         {@link org.geotoolkit.util.NumberRange},
- *         {@link org.geotoolkit.util.MeasurementRange}.</li>
+ *         {@link org.apache.sis.measure.NumberRange},
+ *         {@link org.apache.sis.measure.MeasurementRange}.</li>
  *
  *     <li>Various implementations of {@link org.opengis.util.InternationalString}:
- *         {@link org.geotoolkit.util.SimpleInternationalString},
+ *         {@link org.apache.sis.util.iso.SimpleInternationalString},
  *         {@link org.geotoolkit.util.DefaultInternationalString},
  *         {@link org.geotoolkit.util.ResourceInternationalString}.</li>
  *   </ul></li>

@@ -42,10 +42,10 @@ import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterCardinalityException;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.referencing.IdentifiedObjects;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -127,7 +127,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
         this.values = new ArrayList<>(Arrays.asList(values));
         final List<GeneralParameterDescriptor> parameters = descriptor.descriptors();
         final Map<GeneralParameterDescriptor,Integer> occurrences =
-                new LinkedHashMap<>(XCollections.hashMapCapacity(parameters.size()));
+                new LinkedHashMap<>(hashMapCapacity(parameters.size()));
         for (final GeneralParameterDescriptor param : parameters) {
             ensureNonNull("parameters", param);
             occurrences.put(param, 0);
@@ -161,7 +161,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
     {
         ensureNonNull("values", values);
         final Map<GeneralParameterDescriptor,Integer> occurrences =
-                new LinkedHashMap<>(XCollections.hashMapCapacity(values.length));
+                new LinkedHashMap<>(hashMapCapacity(values.length));
         for (int i=0; i<values.length; i++) {
             ensureNonNull("values", i, values);
             occurrences.put(values[i].getDescriptor(), 0);
