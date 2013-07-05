@@ -190,6 +190,57 @@ public final class ParametersExt {
     }
 
     /**
+     * Search a GeneralParameterDescriptor in a path. 
+     * Exemple : if separator is ':' and path is "input:group1:parameter"
+     * the methode will search the GeneralParameterDescriptor named "parameter"
+     * in ParameterDescriptorGroup "input" -> "group1".
+     * 
+     * @param parameter root ParameterDescriptorGroup
+     * @param path path to GeneralParameterDescriptor
+     * @param separator string used to separate groups and parameter names.
+     * @return GeneralParameterDescriptor or null if not found
+     */
+    public static GeneralParameterDescriptor searchPath(final ParameterDescriptorGroup parameter,
+                                                          final String path, final String separator) {
+        final String[] pathParts = path.split(separator);
+        
+        //only one part, the parameter must be at first depth level.
+        if (pathParts.length == 1) {
+            return search(parameter, path, 1).get(0);
+        }
+        
+        return searchPath(parameter, pathParts, 0);
+    }
+    
+    /**
+     * 
+     * @param parameter
+     * @param codes
+     * @param index
+     * @return 
+     */
+    private static GeneralParameterDescriptor searchPath(final ParameterDescriptorGroup parameter, 
+                                                            final String[] codes, int index) {
+        GeneralParameterDescriptor result = null;
+        final String codePart = codes[index];
+
+        for (GeneralParameterDescriptor param : parameter.descriptors()) {
+            if (result != null) break;
+            if (IdentifiedObjects.nameMatches(param, codePart)) {
+                if (index == codes.length-1) {
+                    result = param;
+                } else {
+                    if (param instanceof ParameterDescriptorGroup) {
+                        result = searchPath((ParameterDescriptorGroup)param, codes, index+1);
+                    }
+                }
+            }
+        }
+        return result;
+        
+    }
+     
+    /**
      * Add a GeneralParameterDescriptor to a ParameterDescriptorGroup.
      *
      * @param root
