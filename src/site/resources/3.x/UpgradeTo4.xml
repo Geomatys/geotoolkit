@@ -21,6 +21,8 @@
       <replacefilter token="org.geotoolkit.geometry.AbstractEnvelope"               value="org.apache.sis.geometry.AbstractEnvelope"/>
       <replacefilter token="org.geotoolkit.geometry.DirectPosition2D"               value="org.apache.sis.geometry.DirectPosition2D"/>
       <replacefilter token="org.geotoolkit.geometry.Envelope2D"                     value="org.apache.sis.geometry.Envelope2D"/>
+      <replacefilter token="org.geotoolkit.geometry.GeneralDirectPosition"          value="org.apache.sis.geometry.GeneralDirectPosition"/>
+      <replacefilter token="org.geotoolkit.geometry.ImmutableEnvelope"              value="org.apache.sis.geometry.ImmutableEnvelope"/>
       <replacefilter token="org.geotoolkit.image.io.stream.ChannelImageInputStream" value="org.apache.sis.internal.storage.ChannelImageInputStream"/>
       <replacefilter token="org.geotoolkit.internal.jaxb.code"                      value="org.apache.sis.internal.jaxb.code"/>
       <replacefilter token="org.geotoolkit.internal.jaxb.gco"                       value="org.apache.sis.internal.jaxb.gco"/>
@@ -28,8 +30,11 @@
       <replacefilter token="org.geotoolkit.internal.jaxb.gmi"                       value="org.apache.sis.internal.jaxb.gmi"/>
       <replacefilter token="org.geotoolkit.internal.jaxb.gml"                       value="org.apache.sis.internal.jaxb.gml"/>
       <replacefilter token="org.geotoolkit.internal.jaxb.gmt"                       value="org.apache.sis.internal.jaxb.gmt"/>
+      <replacefilter token="org.geotoolkit.internal.jaxb.geometry"                  value="org.apache.sis.internal.jaxb.geometry"/>
       <replacefilter token="org.geotoolkit.internal.jaxb.metadata"                  value="org.apache.sis.internal.jaxb.metadata"/>
       <replacefilter token="org.geotoolkit.internal.jaxb.referencing"               value="org.apache.sis.internal.jaxb.gml"/>
+      <replacefilter token="org.geotoolkit.math.Statistics"                         value="org.apache.sis.math.Statistics"/>
+      <replacefilter token="org.geotoolkit.measure.Units"                           value="org.apache.sis.measure.Units"/>
       <replacefilter token="org.geotoolkit.metadata.AbstractMetadata"               value="org.apache.sis.metadata.AbstractMetadata"/>
       <replacefilter token="org.geotoolkit.metadata.InvalidMetadataException"       value="org.apache.sis.metadata.InvalidMetadataException"/>
       <replacefilter token="org.geotoolkit.metadata.KeyNamePolicy"                  value="org.apache.sis.metadata.KeyNamePolicy"/>
@@ -54,6 +59,7 @@
       <replacefilter token="org.geotoolkit.util.NullArgumentException"              value="org.apache.sis.util.NullArgumentException"/>
       <replacefilter token="org.geotoolkit.util.NumberRange"                        value="org.apache.sis.measure.NumberRange"/>
       <replacefilter token="org.geotoolkit.util.Range"                              value="org.apache.sis.measure.Range"/>
+      <replacefilter token="org.geotoolkit.util.ResourceInternationalString"        value="org.apache.sis.util.iso.ResourceInternationalString"/>
       <replacefilter token="org.geotoolkit.util.SimpleInternationalString"          value="org.apache.sis.util.iso.SimpleInternationalString"/>
       <replacefilter token="org.geotoolkit.util.Strings"                            value="org.apache.sis.util.CharSequences"/>
       <replacefilter token="org.geotoolkit.util.UnsupportedImplementationException" value="org.apache.sis.util.UnsupportedImplementationException"/>
@@ -84,7 +90,7 @@
       <replacefilter token="org.geotoolkit.xml.XLink"                               value="org.apache.sis.xml.XLink"/>
     </replace>
 
-    <!-- Revert some changes for classes not yet migrated, or that moved elswhere. -->
+    <!-- Revert some changes for classes not yet migrated, or that moved elsewhere. -->
     <replace dir="${user.dir}" summary="yes">
       <include name="**/*.java"/>
       <replacefilter token="org.apache.sis.internal.jaxb.gmd.PT_Locale"           value="org.apache.sis.internal.jaxb.code.PT_Locale"/>
@@ -98,7 +104,6 @@
       <include name="**/*.java"/>
       <replacefilter token="DefaultReferenceIdentifier" value="ImmutableIdentifier"/>
       <replacefilter token="GeoAPI"                     value="Types"/>
-      <replacefilter token="ObjectConverters"           value="ValueConverter"/>
       <replacefilter token="Strings"                    value="CharSequences"/>
       <replacefilter token="XArrays"                    value="ArraysExt"/>
     </replace>
