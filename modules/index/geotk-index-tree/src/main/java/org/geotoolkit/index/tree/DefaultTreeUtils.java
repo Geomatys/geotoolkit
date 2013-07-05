@@ -341,11 +341,10 @@ public class DefaultTreeUtils {
                 final double minB = Math.abs(val - getMinimum(envelopeB, i));
                 final double maxA = Math.abs(val - getMaximum(envelopeA, i));
                 final double maxB = Math.abs(val - getMaximum(envelopeB, i));
-                if (!((minA < epsilon && maxB < epsilon) 
-                   || (maxA < epsilon && minB < epsilon))) return false;
+                if (((minA < epsilon && maxB < epsilon) || (maxA < epsilon && minB < epsilon))) return true;
             }
         }
-        return true;
+        return false;
     }
     
     /**
