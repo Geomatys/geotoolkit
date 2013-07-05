@@ -32,7 +32,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.*;
 import org.opengis.feature.simple.SimpleFeature;

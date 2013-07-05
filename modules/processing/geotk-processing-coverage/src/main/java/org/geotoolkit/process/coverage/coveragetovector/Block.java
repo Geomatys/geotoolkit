@@ -17,7 +17,7 @@
 
 package org.geotoolkit.process.coverage.coveragetovector;
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 
 /**
  *  Define a group of pixels with the same range.

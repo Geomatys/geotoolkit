@@ -56,7 +56,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.FileUtilities;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 
-// GeoAPI dependencies
+// Types dependencies
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;

@@ -14,7 +14,7 @@ xmlns = {
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
     // ISO 19115 adapter (metadata module)
-    @XmlJavaTypeAdapter(ScopedNameAdapter.class),
+//  @XmlJavaTypeAdapter(ScopedNameAdapter.class), // TODO
     //@XmlJavaTypeAdapter(LocalNameAdapter.class),
     @XmlJavaTypeAdapter(GO_GenericName.class),
     @XmlJavaTypeAdapter(MD_Constraints.class),
@@ -63,8 +63,8 @@ import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
-import org.geotoolkit.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.gco.*;
+import org.apache.sis.internal.jaxb.metadata.*;
+import org.apache.sis.internal.jaxb.gco.*;
 import org.geotoolkit.resources.jaxb.service.code.*;
 import org.geotoolkit.resources.jaxb.service.*;
 

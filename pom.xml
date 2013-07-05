@@ -120,6 +120,7 @@
   <!-- =========================================================== -->
 
   <properties>
+    <sis.version>0.3-jdk6-SNAPSHOT</sis.version>
     <geotoolkit.version>4.x-SNAPSHOT</geotoolkit.version>
   </properties>
 
@@ -203,7 +204,6 @@
       <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-utility</artifactId>           <version>${geotoolkit.version}</version></dependency>
       <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-widgets-swing</artifactId>     <version>${geotoolkit.version}</version></dependency>
       <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-wizards-swing</artifactId>     <version>${geotoolkit.version}</version></dependency>
-      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-xml-base</artifactId>          <version>${geotoolkit.version}</version></dependency>
 
       <!-- Batik SVG -->
       <dependency>

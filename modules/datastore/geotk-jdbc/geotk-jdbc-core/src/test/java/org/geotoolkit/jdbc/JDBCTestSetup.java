@@ -49,7 +49,7 @@ import org.geotoolkit.jdbc.dialect.SQLDialect;
  * @module pending
  */
 public abstract class JDBCTestSetup {
-    static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger(
+    static final Logger LOGGER = org.apache.sis.util.logging.Logging.getLogger(
             "org.geotoolkit.data.jdbc");
     private DataSource dataSource = null;
 

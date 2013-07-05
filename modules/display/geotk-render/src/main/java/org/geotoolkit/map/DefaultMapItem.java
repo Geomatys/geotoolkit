@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCopyOnWriteArrayList;
 
@@ -40,7 +40,7 @@ class DefaultMapItem extends AbstractMapItem implements ItemListener, Serializab
         protected void notifyAdd(MapItem item, int index) {
             registerListenerSource(item);
             fireItemChange(CollectionChangeEvent.ITEM_ADDED,
-                    Collections.singleton(item), NumberRange.create(index, index));
+                    Collections.singleton(item), NumberRange.create(index, true, index, true));
         }
 
         @Override
@@ -55,7 +55,7 @@ class DefaultMapItem extends AbstractMapItem implements ItemListener, Serializab
         protected void notifyRemove(MapItem item, int index) {
             unregisterListenerSource(item);
             fireItemChange(CollectionChangeEvent.ITEM_REMOVED,
-                    Collections.singleton(item), NumberRange.create(index, index));
+                    Collections.singleton(item), NumberRange.create(index, true, index, true));
         }
 
         @Override
@@ -91,7 +91,7 @@ class DefaultMapItem extends AbstractMapItem implements ItemListener, Serializab
         final MapItem source = (MapItem) evt.getSource();
         final int index = items.indexOf(source);
         fireItemChange(CollectionChangeEvent.ITEM_CHANGED,source,
-                       NumberRange.create(index, index),evt);
+                       NumberRange.create(index, true, index, true), evt);
     }
 
     @Override
@@ -99,7 +99,7 @@ class DefaultMapItem extends AbstractMapItem implements ItemListener, Serializab
         final MapItem source = (MapItem) evt.getSource();
         final int index = items.indexOf(source);
         fireItemChange(CollectionChangeEvent.ITEM_CHANGED,source,
-                       NumberRange.create(index, index),evt);
+                       NumberRange.create(index, true, index, true), evt);
     }
 
 }

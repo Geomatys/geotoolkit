@@ -25,7 +25,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
- * Immutable implementation of GeoAPI halo.
+ * Immutable implementation of Types halo.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending

@@ -344,7 +344,7 @@ public class ParameterDescriptorReader extends StaxStreamReader {
 
         return new NamedIdentifier(properties);
         //return new NamedIdentifier(authority, code, version);
-        //return new DefaultReferenceIdentifier(authority, codeSpace, code, version, remarks);
+        //return new ImmutableIdentifier(authority, codeSpace, code, version, remarks);
     }
 
     /**
@@ -402,7 +402,7 @@ public class ParameterDescriptorReader extends StaxStreamReader {
                                     idx = tempString.length();
                                 }
 
-                                // Update of min and max Strings
+                                // Update of min and max CharSequences
                                 if (idx > 0) {
                                     tempString = tempString.substring(0, idx);
                                     if (minString == null) {

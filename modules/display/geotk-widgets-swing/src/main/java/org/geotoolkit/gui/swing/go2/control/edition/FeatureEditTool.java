@@ -19,7 +19,7 @@ package org.geotoolkit.gui.swing.go2.control.edition;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
 /**
  * Edition tool displaying a dialog to edit the geometry using Well Known Text.

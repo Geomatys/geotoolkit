@@ -36,7 +36,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.calculated.CalculatedLineStringAttribute;
 import org.geotoolkit.feature.calculated.CalculatedMultiLineStringAttribute;
-import org.geotoolkit.geometry.ImmutableEnvelope;
+import org.apache.sis.geometry.ImmutableEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.opengis.feature.ComplexAttribute;
@@ -101,7 +101,7 @@ public final class GPXModelConstants {
     public static final FeatureType TYPE_TRACK;
     private static final GeometryDescriptor ATT_TRACK_GEOMETRY;
     private static final AttributeDescriptor ATT_TRACKSEGMENTS;
-    
+
     public static final FeatureType TYPE_ROUTE;
     private static final GeometryDescriptor ATT_ROUTE_GEOMETRY;
     private static final AttributeDescriptor ATT_WAYPOINTS;
@@ -292,7 +292,7 @@ public final class GPXModelConstants {
      * @return Immutable envelope in WGS84 with the given extents.
      */
     public static Envelope createEnvelope(final double xmin, final double xmax, final double ymin, final double ymax){
-        return new ImmutableEnvelope(DefaultGeographicCRS.WGS84, xmin, xmax, ymin, ymax);
+        return new ImmutableEnvelope(new double[] {xmin, ymin}, new double[] {xmax, ymax}, DefaultGeographicCRS.WGS84);
     }
 
     public static Feature createWayPoint(final int index, final Point geometry, final Double ele, final Date time,

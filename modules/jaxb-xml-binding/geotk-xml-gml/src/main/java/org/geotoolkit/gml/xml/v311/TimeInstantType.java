@@ -19,12 +19,12 @@ package org.geotoolkit.gml.xml.v311;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.Position;
@@ -32,11 +32,11 @@ import org.opengis.temporal.Position;
 
 /**
  * Omit back-pointers begunBy, endedBy.
- * 
+ *
  * <p>Java class for TimeInstantType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeInstantType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.opengis.temporal.Position;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -80,15 +80,15 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
             this.timePosition = new TimePositionType(timePosition.getDate());
         }
     }
-    
+
     public TimeInstantType(final Timestamp timePosition) {
         this.timePosition = new TimePositionType(timePosition);
     }
-    
+
     public TimeInstantType(final String timePosition) {
         this.timePosition = new TimePositionType(timePosition);
     }
-    
+
     public TimeInstantType(final String id, final String timePosition) {
         super(id);
         this.timePosition = new TimePositionType(timePosition);
@@ -96,11 +96,11 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
 
     /**
      * Gets the value of the timePosition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimePositionType }
-     *     
+     *
      */
     public TimePositionType getTimePosition() {
         return timePosition;
@@ -108,11 +108,11 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
 
     /**
      * Sets the value of the timePosition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimePositionType }
-     *     
+     *
      */
     public void setTimePosition(final TimePositionType value) {
         this.timePosition = value;
@@ -122,7 +122,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
     public Position getPosition() {
         return timePosition;
     }
-    
+
     public void setPosition(final Position value) {
         if (value instanceof TimePositionType) {
             this.timePosition = (TimePositionType)value;
@@ -139,7 +139,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         }
         return -1;
     }
-    
+
     @Override
     public Collection<Period> getBegunBy() {
         return null;
@@ -158,7 +158,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -169,7 +169,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         }
         if (object instanceof TimeInstantType) {
             final TimeInstantType that = (TimeInstantType) object;
-            return  Utilities.equals(this.timePosition, that.timePosition);
+            return  Objects.equals(this.timePosition, that.timePosition);
         }
         return false;
     }

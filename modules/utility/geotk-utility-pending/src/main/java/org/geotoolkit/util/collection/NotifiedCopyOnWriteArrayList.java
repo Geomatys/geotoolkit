@@ -20,7 +20,7 @@ package org.geotoolkit.util.collection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 
 /**
  * Extends CopyOnWriteArrayList and define notify methods called when
@@ -66,7 +66,7 @@ public abstract class NotifiedCopyOnWriteArrayList<E> extends CopyOnWriteArrayLi
         final int startIndex = super.size();
         final boolean added = super.addAll(collection);
         if (added) {
-            notifyAdd(collection, NumberRange.create(startIndex, super.size()-1) );
+            notifyAdd(collection, NumberRange.create(startIndex, true, super.size()-1, true) );
         }
         return added;
     }
@@ -75,7 +75,7 @@ public abstract class NotifiedCopyOnWriteArrayList<E> extends CopyOnWriteArrayLi
     public boolean addAll(final int index, final Collection<? extends E> collection) throws IllegalArgumentException, UnsupportedOperationException {
         final boolean added = super.addAll(index, collection);
         if (added) {
-            notifyAdd(collection, NumberRange.create(index, index + collection.size()) );
+            notifyAdd(collection, NumberRange.create(index, true, index + collection.size(), true) );
         }
         return added;
     }
@@ -114,7 +114,7 @@ public abstract class NotifiedCopyOnWriteArrayList<E> extends CopyOnWriteArrayLi
     public void clear() throws UnsupportedOperationException {
         if(!isEmpty()){
             final Collection<E> copy = new ArrayList<E>(this);
-            final NumberRange<Integer> range = NumberRange.create(0, copy.size()-1);
+            final NumberRange<Integer> range = NumberRange.create(0, true, copy.size()-1, true);
             super.clear();
             notifyRemove(copy, range);
         }

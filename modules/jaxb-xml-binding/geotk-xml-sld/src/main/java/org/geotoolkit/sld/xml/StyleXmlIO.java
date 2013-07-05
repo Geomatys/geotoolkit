@@ -53,10 +53,10 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
 
-// GeoAPI dependencies
+// Types dependencies
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.PropertyName;
@@ -76,7 +76,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Utility class to handle XML reading and writing for OGC SLD, SE and Filter.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -89,14 +89,14 @@ public final class StyleXmlIO {
     private final org.geotoolkit.se.xml.v110.ObjectFactory factorySEv110 = new org.geotoolkit.se.xml.v110.ObjectFactory();
     private final org.geotoolkit.ogc.xml.v100.ObjectFactory factoryOGCv100 = new org.geotoolkit.ogc.xml.v100.ObjectFactory();
     private final org.geotoolkit.ogc.xml.v110.ObjectFactory factoryOGCv110 = new org.geotoolkit.ogc.xml.v110.ObjectFactory();
-    
+
     private SLD100toGTTransformer transformerGTv100 = null;
     private SLD110toGTTransformer transformerGTv110 = null;
     private OGC200toGTTransformer transformerGTv200 = null;
     private GTtoSLD100Transformer transformerXMLv100 = null;
     private GTtoSLD110Transformer transformerXMLv110 = null;
-    
-    
+
+
 
     public StyleXmlIO() {
         final Hints hints = new Hints();
@@ -141,7 +141,7 @@ public final class StyleXmlIO {
         }
         return transformerGTv110;
     }
-    
+
     public OGC200toGTTransformer getTransformer200(final Map<String, String> namespaceMapping){
         if (transformerGTv200 == null) {
             transformerGTv200 = new OGC200toGTTransformer(filterFactory, namespaceMapping);
@@ -161,7 +161,7 @@ public final class StyleXmlIO {
 
 
 
-    private Object unmarshall(final Object source, final Unmarshaller unMarshaller) 
+    private Object unmarshall(final Object source, final Unmarshaller unMarshaller)
             throws JAXBException{
         if(source instanceof File){
             return unMarshaller.unmarshal( (File)source );
@@ -190,11 +190,11 @@ public final class StyleXmlIO {
                 Logging.getLogger(StyleXmlIO.class).log(Level.WARNING, null, ex);
                 return null;
             }
-            
+
         }else{
             throw new IllegalArgumentException("Source object is not a valid class :" + source.getClass());
         }
-        
+
     }
 
     public Object unmarshall(final Object source, final Specification.StyledLayerDescriptor version) throws JAXBException{
@@ -213,26 +213,22 @@ public final class StyleXmlIO {
             transformerGTv100 = new SLD100toGTTransformer(filterFactory, styleFactory, sldFactory);
         }
         final Unmarshaller unMarshaller = getJaxbContext100().acquireUnmarshaller();
-        try {
-            return unmarshall(source, unMarshaller);
-        } finally {
-            getJaxbContext100().release(unMarshaller);
-        }
+        Object obj = unmarshall(source, unMarshaller);
+        getJaxbContext100().recycle(unMarshaller);
+        return obj;
     }
-    
+
     private Object unmarshallV110(final Object source) throws JAXBException{
         if (transformerGTv110 == null) {
             transformerGTv110 = new SLD110toGTTransformer(filterFactory, styleFactory, sldFactory);
         }
         final Unmarshaller unMarshaller = getJaxbContext110().acquireUnmarshaller();
-        try {
-            return unmarshall(source, unMarshaller);
-        } finally {
-            getJaxbContext110().release(unMarshaller);
-        }
+        Object obj = unmarshall(source, unMarshaller);
+        getJaxbContext110().recycle(unMarshaller);
+        return obj;
     }
-    
-    private void marshall(final Object target, final Object jaxbElement, 
+
+    private void marshall(final Object target, final Object jaxbElement,
             final Marshaller marshaller) throws JAXBException{
         if(target instanceof File){
             marshaller.marshal(jaxbElement, (File)target );
@@ -254,17 +250,13 @@ public final class StyleXmlIO {
             throw new IllegalArgumentException("target object is not a valid class :" + target.getClass());
         }
     }
-    
+
     private void marshallV100(final Object target, final Object jaxElement) throws JAXBException {
         final Marshaller marshaller = getJaxbContext100().acquireMarshaller();
-        try {
-            marshall(target, jaxElement, marshaller);
-        } finally {
-            getJaxbContext100().release(marshaller);
-        }
-
+        marshall(target, jaxElement, marshaller);
+        getJaxbContext100().recycle(marshaller);
     }
-    
+
     /**
      * This method do the same marshalling process like the first marshallV100 method with an option to format or not the output.
      * @param target
@@ -276,40 +268,34 @@ public final class StyleXmlIO {
     private void marshallV100(final Object target, final Object jaxElement, final boolean isformatted) throws JAXBException {
         final Marshaller marshaller = getJaxbContext100().acquireMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, isformatted);
-        try {
-            marshall(target, jaxElement, marshaller);
-        } finally {
-            getJaxbContext100().release(marshaller);
-        }
+        marshall(target, jaxElement, marshaller);
+        getJaxbContext100().recycle(marshaller);
     }
-    
+
     private void marshallV110(final Object target, final Object jaxElement) throws JAXBException {
         final Marshaller marshaller = getJaxbContext110().acquireMarshaller();
-        try {
-            marshall(target, jaxElement, marshaller);
-        } finally {
-            getJaxbContext110().release(marshaller);
-        }
+        marshall(target, jaxElement, marshaller);
+        getJaxbContext110().recycle(marshaller);
     }
-    
-    
+
+
     // Styled Layer Descriptor -------------------------------------------------
-    
+
     /**
      * Read a SLD source and parse it in GT SLD object.
-     * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL, 
+     * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL,
      * XMLEventReader, XMLStreamReader or OnlineResource
-     * 
+     *
      * @throws javax.xml.bind.JAXBException
      */
-    public MutableStyledLayerDescriptor readSLD(final Object source, 
+    public MutableStyledLayerDescriptor readSLD(final Object source,
             final Specification.StyledLayerDescriptor version) throws JAXBException, FactoryException{
 
         ensureNonNull("source", source);
         ensureNonNull("version", version);
-        
+
         final Object obj;
-        
+
         switch(version){
             case V_1_0_0:
                 obj = unmarshallV100(source);
@@ -338,24 +324,24 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to read source, specified version is not supported");
         }
-        
+
     }
-    
+
     /**
      * Write a GT SLD.
-     * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result, 
+     * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result,
      * XMLEventWriter, XMLStreamWriter
-     * 
+     *
      * @throws javax.xml.bind.JAXBException
      */
-    public void writeSLD(final Object target, final StyledLayerDescriptor sld, 
+    public void writeSLD(final Object target, final StyledLayerDescriptor sld,
             final Specification.StyledLayerDescriptor version) throws JAXBException{
         ensureNonNull("target", target);
         ensureNonNull("sld", sld);
         ensureNonNull("version", version);
-        
+
         final Object jax;
-        
+
         switch(version){
             case V_1_0_0 :
                 jax = getTransformerXMLv100().visit(sld, null);
@@ -368,24 +354,24 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");
         }
-        
+
     }
-    
+
     /**
      * Write a GT SLD with an option to format the output result.
-     * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result, 
+     * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result,
      * XMLEventWriter, XMLStreamWriter
-     * 
+     *
      * @throws javax.xml.bind.JAXBException
      */
-    public void writeSLD(final Object target, final StyledLayerDescriptor sld, 
+    public void writeSLD(final Object target, final StyledLayerDescriptor sld,
             final Specification.StyledLayerDescriptor version, final boolean isformatted) throws JAXBException{
         ensureNonNull("target", target);
         ensureNonNull("sld", sld);
         ensureNonNull("version", version);
-        
+
         final Object jax;
-        
+
         switch(version){
             case V_1_0_0 :
                 jax = getTransformerXMLv100().visit(sld, null);
@@ -399,30 +385,30 @@ public final class StyleXmlIO {
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");
         }
     }
-    
-    
+
+
     // Symbology Encoding ------------------------------------------------------
-    
+
     /**
      * Read a SLD UserStyle source and parse it in GT Style object.
-     * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL, 
+     * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL,
      * XMLEventReader, XMLStreamReader or OnlineResource
-     * 
+     *
      * @throws javax.xml.bind.JAXBException
      */
-    public MutableStyle readStyle(final Object source, 
+    public MutableStyle readStyle(final Object source,
             final Specification.SymbologyEncoding version) throws JAXBException, FactoryException{
         ensureNonNull("source", source);
         ensureNonNull("version", version);
-        
+
         Object obj = source;
-        
+
         switch(version){
             case SLD_1_0_0 :
                 if(!(obj instanceof org.geotoolkit.sld.xml.v100.UserStyle)){
                     obj = unmarshallV100(source);
                 }
-                
+
                 if(obj instanceof org.geotoolkit.sld.xml.v100.UserStyle){
                     return getTransformer100().visitUserStyle( (org.geotoolkit.sld.xml.v100.UserStyle) obj);
                 }else{
@@ -432,7 +418,7 @@ public final class StyleXmlIO {
                 if(!(obj instanceof org.geotoolkit.sld.xml.v110.UserStyle)){
                     obj = unmarshallV110(source);
                 }
-                
+
                 if(obj instanceof org.geotoolkit.sld.xml.v110.UserStyle){
                     return getTransformer110().visitUserStyle( (org.geotoolkit.sld.xml.v110.UserStyle) obj);
                 }else{
@@ -441,24 +427,24 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to read source, specified version is not supported");
         }
-        
+
     }
-    
+
     /**
      * Write a GT Style.
-     * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result, 
+     * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result,
      * XMLEventWriter, XMLStreamWriter
-     * 
+     *
      * @throws javax.xml.bind.JAXBException
      */
-    public void writeStyle(final Object target, final Style style, 
+    public void writeStyle(final Object target, final Style style,
             final Specification.StyledLayerDescriptor version) throws JAXBException{
         ensureNonNull("target", target);
         ensureNonNull("style", style);
         ensureNonNull("version", version);
-        
+
         final Object jax;
-        
+
         switch(version){
             case V_1_0_0 :
                 jax = getTransformerXMLv100().visit(style, null);
@@ -471,23 +457,23 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");
         }
-        
+
     }
-    
+
     /**
      * Read a SE FeatureTypeStyle source and parse it in GT FTS object.
-     * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL, 
+     * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL,
      * XMLEventReader, XMLStreamReader or OnlineResource
-     * 
+     *
      * @throws javax.xml.bind.JAXBException
      */
-    public MutableFeatureTypeStyle readFeatureTypeStyle(final Object source, 
+    public MutableFeatureTypeStyle readFeatureTypeStyle(final Object source,
             final Specification.SymbologyEncoding version) throws JAXBException, FactoryException{
         ensureNonNull("source", source);
         ensureNonNull("version", version);
-        
+
         final Object obj;
-        
+
         switch(version){
             case SLD_1_0_0 :
                 obj = unmarshallV100(source);
@@ -510,24 +496,24 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to read source, specified version is not supported");
         }
-        
+
     }
-    
+
     /**
      * Write a GT FeatureTypeStyle.
-     * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result, 
+     * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result,
      * XMLEventWriter, XMLStreamWriter
-     * 
+     *
      * @throws javax.xml.bind.JAXBException
      */
-    public void writeFeatureTypeStyle(final Object target, final FeatureTypeStyle fts, 
+    public void writeFeatureTypeStyle(final Object target, final FeatureTypeStyle fts,
             final Specification.SymbologyEncoding version) throws JAXBException{
         ensureNonNull("target",target);
         ensureNonNull("fts",fts);
         ensureNonNull("version",version);
-        
+
         Object jax;
-        
+
         switch(version){
             case SLD_1_0_0 :
                 org.geotoolkit.sld.xml.v100.FeatureTypeStyle jaxfts = getTransformerXMLv100().visit(fts, null);
@@ -545,23 +531,23 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");
         }
-        
+
     }
-    
+
     /**
      * Read a SE Rule source and parse it in GT Rule object.
-     * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL, 
+     * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL,
      * XMLEventReader, XMLStreamReader or OnlineResource
-     * 
+     *
      * @throws javax.xml.bind.JAXBException
      */
-    public MutableRule readRule(final Object source, 
+    public MutableRule readRule(final Object source,
             final Specification.SymbologyEncoding version) throws JAXBException, FactoryException{
         ensureNonNull("source",source);
         ensureNonNull("version",version);
 
         final Object obj;
-        
+
         switch(version){
             case SLD_1_0_0 :
                 obj = unmarshallV100(source);
@@ -584,24 +570,24 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to read source, specified version is not supported");
         }
-        
+
     }
-    
+
     /**
      * Write a GT Rule.
-     * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result, 
+     * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result,
      * XMLEventWriter, XMLStreamWriter
-     * 
+     *
      * @throws javax.xml.bind.JAXBException
      */
-    public void writeRule(final Object target, final Rule rule, 
+    public void writeRule(final Object target, final Rule rule,
             final Specification.SymbologyEncoding version) throws JAXBException{
         ensureNonNull("target",target);
         ensureNonNull("rule",rule);
         ensureNonNull("version",version);
-        
+
         Object jax;
-        
+
         switch(version){
             case SLD_1_0_0 :
                 final org.geotoolkit.sld.xml.v100.Rule jaxRule = getTransformerXMLv100().visit(rule, null);
@@ -617,10 +603,10 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");
         }
-        
+
     }
-    
-    
+
+
     // Filter ------------------------------------------------------------------
 
     /**
@@ -662,24 +648,24 @@ public final class StyleXmlIO {
 
     /**
      * Read a Filter source and parse it in GT Filter object.
-     * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL, 
+     * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL,
      * XMLEventReader, XMLStreamReader or OnlineResource
-     * 
+     *
      * @throws javax.xml.bind.JAXBException
      */
-    public Filter readFilter(final Object source, 
+    public Filter readFilter(final Object source,
             final Specification.Filter version) throws JAXBException, FactoryException{
         ensureNonNull("source",source);
         ensureNonNull("version",version);
-        
+
         final Object obj;
-        
+
         switch(version){
             case V_1_0_0 :
                 obj = unmarshallV100(source);
                 if(obj instanceof org.geotoolkit.ogc.xml.v100.FilterType){
                     return getTransformer100().visitFilter( (org.geotoolkit.ogc.xml.v100.FilterType) obj);
-                }else if(obj instanceof JAXBElement<?> && 
+                }else if(obj instanceof JAXBElement<?> &&
                         ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.ogc.xml.v100.FilterType){
                     return getTransformer100().visitFilter( (org.geotoolkit.ogc.xml.v100.FilterType) ((JAXBElement<?>)obj).getValue() );
                 }else{
@@ -689,7 +675,7 @@ public final class StyleXmlIO {
                 obj = unmarshallV110(source);
                 if(obj instanceof org.geotoolkit.ogc.xml.v110.FilterType){
                     return getTransformer110().visitFilter( (org.geotoolkit.ogc.xml.v110.FilterType) obj);
-                }else if(obj instanceof JAXBElement<?> && 
+                }else if(obj instanceof JAXBElement<?> &&
                          ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.ogc.xml.v110.FilterType){
                     return getTransformer110().visitFilter( (org.geotoolkit.ogc.xml.v110.FilterType) ((JAXBElement<?>)obj).getValue() );
                 }else{
@@ -698,24 +684,24 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to read source, specified version is not supported");
         }
-        
+
     }
-    
+
     /**
      * Write a GT Filter.
-     * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result, 
+     * Target can be : File, ContentHandler, OutputStream, Node, Writer, Result,
      * XMLEventWriter, XMLStreamWriter
-     * 
+     *
      * @throws javax.xml.bind.JAXBException
      */
-    public void writeFilter(final Object target, final Filter filter, 
+    public void writeFilter(final Object target, final Filter filter,
             final Specification.Filter version) throws JAXBException{
         ensureNonNull("target",target);
         ensureNonNull("filter",filter);
         ensureNonNull("version",version);
-        
+
         Object jax;
-        
+
         switch(version){
             case V_1_0_0 :
                 jax = getTransformerXMLv100().visit(filter);
@@ -734,7 +720,7 @@ public final class StyleXmlIO {
             default :
                 throw new IllegalArgumentException("Unable to write object, specified version is not supported");
         }
-        
+
     }
 
     // OGC property ------------------------------------------------------------
@@ -742,7 +728,7 @@ public final class StyleXmlIO {
             final Specification.Filter version) throws JAXBException{
         ensureNonNull("source",source);
         ensureNonNull("version",version);
-        
+
         final Object obj;
 
         switch(version){

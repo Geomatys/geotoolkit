@@ -18,20 +18,20 @@
 package org.geotoolkit.sos.xml.v200;
 
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sos.xml.InsertObservationResponse;
 import org.geotoolkit.swes.xml.v200.ExtensibleResponseType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for InsertObservationResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="InsertObservationResponseType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InsertObservationResponseType")
@@ -49,11 +49,11 @@ public class InsertObservationResponseType extends ExtensibleResponseType implem
 
     @XmlElement
     private List<String> observation;
-    
+
     public InsertObservationResponseType() {
-        
+
     }
-    
+
     public InsertObservationResponseType(final List<String> assignedObservationIds) {
         this.observation = assignedObservationIds;
     }
@@ -71,7 +71,7 @@ public class InsertObservationResponseType extends ExtensibleResponseType implem
     public void setObservation(List<String> observation) {
         this.observation = observation;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = super.hashCode();
@@ -86,11 +86,11 @@ public class InsertObservationResponseType extends ExtensibleResponseType implem
         }
         if (obj instanceof InsertObservationResponseType && super.equals(obj)) {
             final InsertObservationResponseType that = (InsertObservationResponseType) obj;
-            return Utilities.equals(this.observation, that.observation);
+            return Objects.equals(this.observation, that.observation);
         }
         return false;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");

@@ -33,21 +33,21 @@ import org.geotoolkit.wps.xml.v100.DescribeProcess;
 
 /**
  * Abstract get capabilities request.
- * 
+ *
  * @author Quentin Boileau
  * @module pending
  */
 public abstract class AbstractDescribeProcess extends AbstractRequest implements DescribeProcessRequest{
-    
+
     protected final String version;
     protected List<String> identifiers;
-    
-    
+
+
     protected AbstractDescribeProcess(final String serverURL,final String version, final ClientSecurity security){
         super(serverURL,security,null);
         this.version = version;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -63,7 +63,7 @@ public abstract class AbstractDescribeProcess extends AbstractRequest implements
     public void setIdentifiers(List<String> identifiers) {
        this.identifiers = identifiers;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -74,7 +74,7 @@ public abstract class AbstractDescribeProcess extends AbstractRequest implements
         requestParameters.put("REQUEST", "DescribeProcess");
         requestParameters.put("VERSION",    "1.0.0");
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -97,29 +97,26 @@ public abstract class AbstractDescribeProcess extends AbstractRequest implements
             marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
             marshaller.marshal(request, stream);
             //marshaller.marshal(request, System.out);
+            WPSMarshallerPool.getInstance().recycle(marshaller);
         } catch (JAXBException ex) {
             throw new IOException(ex);
-        } finally {
-            if (marshaller != null) {
-                WPSMarshallerPool.getInstance().release(marshaller);
-            }
         }
         stream.close();
         return security.decrypt(conec.getInputStream());
     }
-    
+
     public DescribeProcess makeRequest(){
-        
+
         final DescribeProcess request = new DescribeProcess();
         request.setService("WPS");
         request.setVersion(version);
         final List<CodeType> listId = new ArrayList<CodeType>();
-        
+
         for(String str : identifiers){
             listId.add(new CodeType(str));
         }
         request.getIdentifier().addAll(listId);
-        
+
         return request;
     }
 }

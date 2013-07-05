@@ -39,8 +39,8 @@ import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRendererService
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.measure.NumberRange;
 
 /**
  *
@@ -48,12 +48,12 @@ import org.geotoolkit.util.NumberRange;
  * @module pending
  */
 public class DimRangeRendererService extends AbstractSymbolizerRendererService<DimRangeSymbolizer,CachedDimRangeSymbolizer>{
-    
+
     @Override
     public boolean isGroupSymbolizer() {
         return false;
     }
-    
+
     @Override
     public Class<DimRangeSymbolizer> getSymbolizerClass() {
         return DimRangeSymbolizer.class;
@@ -99,7 +99,7 @@ public class DimRangeRendererService extends AbstractSymbolizerRendererService<D
 
                 if(cm instanceof IndexColorModel){
                     final IndexColorModel icm = (IndexColorModel) cm;
-                    
+
                     final GridSampleDimension sampleDim = cov.getSampleDimension(0);
 
                     int size = icm.getMapSize();
@@ -110,7 +110,7 @@ public class DimRangeRendererService extends AbstractSymbolizerRendererService<D
 
                     final ColorMap colorMap = new ColorMap();
                     colorMap.setGeophysicsRange(ColorMap.ANY_QUANTITATIVE_CATEGORY,
-                            new MeasurementRange(NumberRange.create(minVal, maxVal),sampleDim.getUnits()));
+                            new MeasurementRange(NumberRange.create(minVal, true, maxVal, true),sampleDim.getUnits()));
 
                     GridSampleDimension ret = colorMap.recolor(sampleDim, ARGB);
                 }

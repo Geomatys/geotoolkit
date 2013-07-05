@@ -26,7 +26,7 @@ import java.util.EventObject;
 import java.util.List;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -99,8 +99,8 @@ public class ListenerTest {
         assertEquals(1, events.get(0).getItems().size());
         assertEquals(symbol, events.get(0).getItems().iterator().next());
         range = events.get(0).getRange();
-        assertEquals(0d, range.getMinimum(), DELTA);
-        assertEquals(0d, range.getMaximum(), DELTA);
+        assertEquals(0d, range.getMinDouble(), DELTA);
+        assertEquals(0d, range.getMaxDouble(), DELTA);
 
         //test remove
         events.clear();
@@ -110,8 +110,8 @@ public class ListenerTest {
         assertEquals(1, events.get(0).getItems().size());
         assertEquals(symbol, events.get(0).getItems().iterator().next());
         range = events.get(0).getRange();
-        assertEquals(0d, range.getMinimum(), DELTA);
-        assertEquals(0d, range.getMaximum(), DELTA);
+        assertEquals(0d, range.getMinDouble(), DELTA);
+        assertEquals(0d, range.getMaxDouble(), DELTA);
 
 
         //test property events
@@ -231,8 +231,8 @@ public class ListenerTest {
         assertEquals(1, events.get(0).getItems().size());
         assertEquals(rule, events.get(0).getItems().iterator().next());
         range = events.get(0).getRange();
-        assertEquals(0d, range.getMinimum(), DELTA);
-        assertEquals(0d, range.getMaximum(), DELTA);
+        assertEquals(0d, range.getMinDouble(), DELTA);
+        assertEquals(0d, range.getMaxDouble(), DELTA);
 
         //test remove
         events.clear();
@@ -242,8 +242,8 @@ public class ListenerTest {
         assertEquals(1, events.get(0).getItems().size());
         assertEquals(rule, events.get(0).getItems().iterator().next());
         range = events.get(0).getRange();
-        assertEquals(0d, range.getMinimum(), DELTA);
-        assertEquals(0d, range.getMaximum(), DELTA);
+        assertEquals(0d, range.getMinDouble(), DELTA);
+        assertEquals(0d, range.getMaxDouble(), DELTA);
 
         //test rule event forwarded
         final Symbolizer symbol = SF.lineSymbolizer();
@@ -255,8 +255,8 @@ public class ListenerTest {
         assertEquals(1, events.get(0).getItems().size());
         assertEquals(rule, events.get(0).getItems().iterator().next());
         range = events.get(0).getRange();
-        assertEquals(0d, range.getMinimum(), DELTA);
-        assertEquals(0d, range.getMaximum(), DELTA);
+        assertEquals(0d, range.getMinDouble(), DELTA);
+        assertEquals(0d, range.getMaxDouble(), DELTA);
 
         EventObject subEvent = events.get(0).getChangeEvent();
         assertTrue(subEvent instanceof CollectionChangeEvent);
@@ -265,8 +265,8 @@ public class ListenerTest {
         assertEquals(1, sub.getItems().size());
         assertEquals(symbol, sub.getItems().iterator().next());
         range = sub.getRange();
-        assertEquals(0d, range.getMinimum(), DELTA);
-        assertEquals(0d, range.getMaximum(), DELTA);
+        assertEquals(0d, range.getMinDouble(), DELTA);
+        assertEquals(0d, range.getMaxDouble(), DELTA);
 
 
         //test property events
@@ -343,8 +343,8 @@ public class ListenerTest {
         assertEquals(1, events.get(0).getItems().size());
         assertEquals(fts, events.get(0).getItems().iterator().next());
         range = events.get(0).getRange();
-        assertEquals(0d, range.getMinimum(), DELTA);
-        assertEquals(0d, range.getMaximum(), DELTA);
+        assertEquals(0d, range.getMinDouble(), DELTA);
+        assertEquals(0d, range.getMaxDouble(), DELTA);
 
         //test remove
         events.clear();
@@ -354,8 +354,8 @@ public class ListenerTest {
         assertEquals(1, events.get(0).getItems().size());
         assertEquals(fts, events.get(0).getItems().iterator().next());
         range = events.get(0).getRange();
-        assertEquals(0d, range.getMinimum(), DELTA);
-        assertEquals(0d, range.getMaximum(), DELTA);
+        assertEquals(0d, range.getMinDouble(), DELTA);
+        assertEquals(0d, range.getMaxDouble(), DELTA);
 
         //test rule event forwarded
         final MutableRule rule = SF.rule();
@@ -367,8 +367,8 @@ public class ListenerTest {
         assertEquals(1, events.get(0).getItems().size());
         assertEquals(fts, events.get(0).getItems().iterator().next());
         range = events.get(0).getRange();
-        assertEquals(0d, range.getMinimum(), DELTA);
-        assertEquals(0d, range.getMaximum(), DELTA);
+        assertEquals(0d, range.getMinDouble(), DELTA);
+        assertEquals(0d, range.getMaxDouble(), DELTA);
 
         EventObject subEvent = events.get(0).getChangeEvent();
         assertTrue(subEvent instanceof CollectionChangeEvent);
@@ -377,8 +377,8 @@ public class ListenerTest {
         assertEquals(1, sub.getItems().size());
         assertEquals(rule, sub.getItems().iterator().next());
         range = sub.getRange();
-        assertEquals(0d, range.getMinimum(), DELTA);
-        assertEquals(0d, range.getMaximum(), DELTA);
+        assertEquals(0d, range.getMinDouble(), DELTA);
+        assertEquals(0d, range.getMaxDouble(), DELTA);
 
 
         //test property events

@@ -49,8 +49,8 @@ import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.LineStringPosListType;
 import org.geotoolkit.internal.jaxb.PolygonType;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.xml.MarshallerPool;
-import org.geotoolkit.xml.Namespaces;
+import org.apache.sis.xml.MarshallerPool;
+import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.xml.StaxStreamReader;
 
 import org.opengis.feature.Feature;
@@ -271,27 +271,27 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     }
 
     private ComplexAttribute readFeature(final String id, final ComplexType featureType) throws XMLStreamException {
-        
+
         /*
-         * We create a map and a collection because we can encounter two cases : 
+         * We create a map and a collection because we can encounter two cases :
          * - The case featureType defines a property with max occur > 1.
          * - The case featureType defines a property with max occur = 1, and its
-         * value instance of collection or map. 
-         * We store all encountered name with its linked property in the map, so 
-         * at each value parsed, we can add it in the existing property if its 
-         * value is a list or map. The collection is the final property store, 
-         * we add the all the created properties in it (so we can put multiple 
+         * value instance of collection or map.
+         * We store all encountered name with its linked property in the map, so
+         * at each value parsed, we can add it in the existing property if its
+         * value is a list or map. The collection is the final property store,
+         * we add the all the created properties in it (so we can put multiple
          * properties with the same name).
          */
         final Map<Name,Property> namedProperties = new LinkedHashMap<Name, Property>();
         final Collection<Property> propertyContainer = new ArrayList<Property>();
-        
+
         while (reader.hasNext()) {
             int event = reader.next();
 
             if (event == START_ELEMENT) {
                 final Name propName = Utils.getNameFromQname(reader.getName());
-                
+
                 // we skip the boundedby attribute if it's present
                 if ("boundedBy".equals(propName.getLocalPart())) {
                     toTagEnd("boundedBy");
@@ -317,12 +317,13 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         event = reader.next();
                     }
                     final MarshallerPool pool = getPool();
-                    Unmarshaller unmarshaller = null;
                     try {
+                        final Unmarshaller unmarshaller;
                         unmarshaller = pool.acquireUnmarshaller();
                         unmarshaller.setEventHandler(new JAXBEventHandler());
                         final Geometry jtsGeom;
                         final Object geometry = ((JAXBElement) unmarshaller.unmarshal(reader)).getValue();
+                        pool.recycle(unmarshaller);
                         if (geometry instanceof JTSGeometry) {
                             final JTSGeometry isoGeom = (JTSGeometry) geometry;
                             if (isoGeom instanceof JTSMultiCurve) {
@@ -352,17 +353,12 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         }
                         namedProperties.put(propName,FF.createAttribute(jtsGeom, (AttributeDescriptor)pdesc, null));
                         propertyContainer.add(namedProperties.get(propName));
-
                     } catch (JAXBException ex) {
                         String msg = ex.getMessage();
                         if (msg == null && ex.getLinkedException() != null) {
                             msg = ex.getLinkedException().getMessage();
                         }
                         throw new IllegalArgumentException("JAXB exception while reading the feature geometry: " + msg, ex);
-                    } finally {
-                        if (unmarshaller != null) {
-                            pool.release(unmarshaller);
-                        }
                     }
 
                 } else if (propertyType instanceof ComplexType) {
@@ -372,7 +368,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                             break;
                         }
                     }
-                    
+
                     final ComplexAttribute catt = readFeature(null, (ComplexType) propertyType);
                     if (pdesc.getMaxOccurs() > 1) {
                         propertyContainer.add(FF.createComplexAttribute(catt.getProperties(), (AttributeDescriptor) pdesc, null));
@@ -435,7 +431,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     } else {
                         final List multipleValue = new ArrayList();
                         multipleValue.add(previous);
-                        multipleValue.add(readValue(content, propertyType));                        
+                        multipleValue.add(readValue(content, propertyType));
                         namedProperties.put(propName, FF.createAttribute(multipleValue, (AttributeDescriptor)pdesc, null));
                         propertyContainer.remove(prevProp);
                         propertyContainer.add(namedProperties.get(propName));
@@ -466,7 +462,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             return FF.createComplexAttribute(propertyContainer, (ComplexType)featureType, null);
         }
     }
-    
+
     public Object readValue(final String content, final PropertyType type){
         Object value = content;
         if(type.getBinding() == byte[].class && content != null){

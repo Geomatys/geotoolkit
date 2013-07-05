@@ -44,7 +44,7 @@ public class FeatureFlatTest extends TestCase {
     /**
      * The logger for the default core module.
      */
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.defaultcore");
+    private static final Logger LOGGER = org.apache.sis.util.logging.Logging.getLogger("org.geotoolkit.defaultcore");
 
     /** Feature on which to preform tests */
     private SimpleFeature testFeature = null;

@@ -32,7 +32,7 @@ import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
-import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
+import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 
 import org.opengis.metadata.quality.ConformanceResult;

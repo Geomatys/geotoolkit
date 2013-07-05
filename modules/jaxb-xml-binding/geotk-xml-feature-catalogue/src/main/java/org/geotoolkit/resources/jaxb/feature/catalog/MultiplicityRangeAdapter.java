@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
- * JAXB adapter in order to map implementing class with the GeoAPI MultiplicityRange. See
+ * JAXB adapter in order to map implementing class with the Types MultiplicityRange. See
  * package documentation for more information about JAXB and MultiplicityRange.
  *
  * @module pending

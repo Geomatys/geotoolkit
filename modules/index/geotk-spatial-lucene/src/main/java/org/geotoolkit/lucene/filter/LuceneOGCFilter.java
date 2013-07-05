@@ -39,7 +39,7 @@ import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeX;
 import org.geotoolkit.lucene.tree.NamedEnvelope;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import static org.geotoolkit.lucene.LuceneUtils.*;
         

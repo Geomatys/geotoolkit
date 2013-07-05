@@ -44,7 +44,7 @@ import org.postgis.binary.ValueSetter;
  * although the latter one is not compatible with older jdks.
  * 
  * I did not implement real unsigned 32-bit integers or emulate them with long,
- * as both java Arrays and Strings currently can have only 2^31-1 elements
+ * as both java Arrays and CharSequences currently can have only 2^31-1 elements
  * (bytes), so we cannot even get or build Geometries with more than approx.
  * 2^28 coordinates (8 bytes each).
  * 

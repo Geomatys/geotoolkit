@@ -28,7 +28,7 @@ import java.io.IOException;
 import javax.swing.tree.TreeModel;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.DomUtilities;
@@ -145,9 +145,6 @@ public class DimapAccessorTest {
         DefaultMetadata metadata = new DefaultMetadata();
 
         metadata = DimapAccessor.fillMetadata(docMapping, metadata);
-        
-        final TreeModel model = metadata.asTree();
-        System.out.println(Trees.toString(model));
 
 
         //<xsd:element minOccurs="0" ref="Dataset_Id"/> ------------------------
@@ -180,7 +177,7 @@ public class DimapAccessorTest {
         //FRAME_ROW (Scene Center)          → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.centerPoints )
         //FRAME_COL (Scene Center)          → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.centerPoints )
         //SCENE_ORIENTATION (Scene Center)  → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.centerPoints )
-        
+
         //<xsd:element minOccurs="0" ref="Dataset_Use"/> -----------------------
 
 
@@ -252,7 +249,7 @@ public class DimapAccessorTest {
         //HORIZONTAL_CS_CODE    → Reference Projection Système code (MD_Metadata > referenceSystemInfo > MD_ReferenceSystem.referenceSystemIdentifier > RS_Identifier.codeSpace)
         //HORIZONTAL_CS_TYPE    → ?
         //HORIZONTAL_CS_NAME    → Reference Projection Système name (MD_Metadata > referenceSystemInfo > MD_ReferenceSystem.referenceSystemIdentifier > RS_ReferenceSystem.name)
-        
+
 
         //<xsd:element minOccurs="0" ref="Raster_CS"/> -------------------------
         //MAPPING
@@ -266,7 +263,7 @@ public class DimapAccessorTest {
         //ULYMAP    → ?
         //XDIM      → X Resolution (MD_Metadata > spatialRepresentationInfo> MD_GridSpatialRepresentation.axisDimensionsProperties > MD_Dimension.resolution)
         //YDIM      → Y Resolution (MD_Metadata > spatialRepresentationInfo> MD_GridSpatialRepresentation.axisDimensionsProperties > MD_Dimension.resolution)
-        
+
         //<xsd:element minOccurs="0" ref="Map_Declination"/> -------------------
         //<xsd:element minOccurs="0" ref="Raster_Dimensions"/> -----------------
         //filled and tested by geotiff module
@@ -412,7 +409,7 @@ public class DimapAccessorTest {
 
         //<xsd:element minOccurs="0" ref="Vector_Attributes"/> -----------------
 
-        
+
     }
 
 }

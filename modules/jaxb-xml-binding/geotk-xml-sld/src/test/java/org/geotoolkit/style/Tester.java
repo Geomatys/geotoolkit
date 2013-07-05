@@ -38,9 +38,9 @@ import org.geotoolkit.sld.MutableUserLayer;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.xml.JAXBSLDUtilities;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;

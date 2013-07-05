@@ -30,7 +30,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
- * Immutable implementation of GeoAPI Graphic Stroke.
+ * Immutable implementation of Types Graphic Stroke.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending

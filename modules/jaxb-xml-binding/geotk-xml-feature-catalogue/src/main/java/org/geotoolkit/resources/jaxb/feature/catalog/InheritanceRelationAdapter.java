@@ -24,7 +24,7 @@ import org.geotoolkit.feature.catalog.InheritanceRelationImpl;
 import org.opengis.feature.catalog.InheritanceRelation;
 
 /**
- * JAXB adapter in order to map implementing class with the GeoAPI inheritanceRelation. See
+ * JAXB adapter in order to map implementing class with the Types inheritanceRelation. See
  * package documentation for more information about JAXB and inheritanceRelation.
  *
  * @module pending

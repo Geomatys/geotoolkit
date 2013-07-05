@@ -93,9 +93,9 @@ import org.geotoolkit.ogc.xml.v110.TouchesType;
 import org.geotoolkit.ogc.xml.v110.UpperBoundaryType;
 import org.geotoolkit.ogc.xml.v110.WithinType;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
-// GeoAPI dependencies
+// Types dependencies
 import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;

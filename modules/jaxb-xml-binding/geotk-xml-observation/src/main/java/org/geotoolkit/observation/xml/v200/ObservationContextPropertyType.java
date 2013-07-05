@@ -17,21 +17,21 @@
 
 package org.geotoolkit.observation.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * ObservationContext is a dataType, without identity, so may only be used
  * 				inline
- * 
+ *
  * <p>Java class for ObservationContextPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ObservationContextPropertyType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ObservationContextPropertyType", propOrder = {
@@ -57,11 +57,11 @@ public class ObservationContextPropertyType {
 
     /**
      * Gets the value of the observationContext property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ObservationContextType }
-     *     
+     *
      */
     public ObservationContextType getObservationContext() {
         return observationContext;
@@ -69,11 +69,11 @@ public class ObservationContextPropertyType {
 
     /**
      * Sets the value of the observationContext property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ObservationContextType }
-     *     
+     *
      */
     public void setObservationContext(ObservationContextType value) {
         this.observationContext = value;
@@ -90,8 +90,8 @@ public class ObservationContextPropertyType {
 
         if (object instanceof ObservationContextPropertyType && super.equals(object)) {
             final ObservationContextPropertyType that = (ObservationContextPropertyType) object;
-            return Utilities.equals(this.observationContext,  that.observationContext);
-        } 
+            return Objects.equals(this.observationContext,  that.observationContext);
+        }
         return false;
     }
 

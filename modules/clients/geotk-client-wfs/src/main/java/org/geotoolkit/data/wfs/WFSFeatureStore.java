@@ -84,7 +84,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * WFS Datastore, This implementation is read only.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -102,7 +102,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
     public WFSFeatureStore(WebFeatureServer server){
         super(server.getConfiguration());
-        
+
         this.server = server;
         checkTypeExist();
 
@@ -136,7 +136,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
                     defaultCRS = "EPSG:"+defaultCRS.substring(last+1);
                 }
                 crs = CRS.decode(defaultCRS,getLongitudeFirst());
-                sft = requestType(typeName);        
+                sft = requestType(typeName);
             } catch (IOException ex) {
                 getLogger().log(Level.WARNING, null, ex);
                 continue;
@@ -162,7 +162,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
                     sftb.add(desc);
                 }
             }
-            
+
             if(sft.getGeometryDescriptor() != null){
                 sftb.setDefaultGeometry(sft.getGeometryDescriptor().getLocalName());
             }
@@ -202,11 +202,11 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
         }
 	}
-    
-    public boolean getUsePost(){        
+
+    public boolean getUsePost(){
         return Parameters.value(WFSFeatureStoreFactory.POST_REQUEST, parameters);
     }
-    
+
     public boolean getLongitudeFirst(){
         return Parameters.getOrCreate(WFSFeatureStoreFactory.LONGITUDE_FIRST, parameters).booleanValue();
     }
@@ -248,17 +248,17 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public Envelope getEnvelope(final Query query) throws DataStoreException {        
+    public Envelope getEnvelope(final Query query) throws DataStoreException {
         final Name typeName = query.getTypeName();
         typeCheck(typeName);
-        if(   query.getCoordinateSystemReproject() == null 
+        if(   query.getCoordinateSystemReproject() == null
            && query.getFilter() == Filter.INCLUDE
            && (query.getMaxFeatures() == null || query.getMaxFeatures() == Integer.MAX_VALUE)
            && query.getStartIndex() == 0){
             Envelope env = bounds.get(typeName);
             if(env != null) {return env;}
         }
-        
+
         return super.getEnvelope(query);
     }
 
@@ -319,14 +319,14 @@ public class WFSFeatureStore extends AbstractFeatureStore{
             throw new DataStoreException(ex);
         }
 
-        
+
         FeatureReader reader;
         if(collection == null){
             reader = GenericEmptyFeatureIterator.createReader(sft);
         }else{
             reader = GenericWrapFeatureIterator.wrapToReader(collection.iterator(), sft);
         }
-        
+
         //we handle reprojection ourself, too complex or never done properly for a large
         //majority of wfs server tested.
         if(query.getCoordinateSystemReproject() != null){
@@ -338,7 +338,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
                 getLogger().log(Level.WARNING, ex.getMessage(), ex);
             }
         }
-        
+
         return reader;
     }
 
@@ -354,7 +354,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
 
         final TransactionRequest request = server.createTransaction();
@@ -372,35 +372,31 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
         request.elements().add(insert);
 
-        
-        Unmarshaller unmarshal = null;
+
         InputStream response = null;
-        
+
         try {
             response = request.getResponseStream();
-            unmarshal = WFSMarshallerPool.getInstance().acquireUnmarshaller();
+            Unmarshaller unmarshal = WFSMarshallerPool.getInstance().acquireUnmarshaller();
             Object obj = unmarshal.unmarshal(response);
-            
+            WFSMarshallerPool.getInstance().recycle(unmarshal);
+
             if(obj instanceof JAXBElement){
                 obj = ((JAXBElement)obj).getValue();
             }
-            
+
             if(obj instanceof TransactionResponse){
                 final TransactionResponse tr = (TransactionResponse) obj;
                 return tr.getInsertedFID();
             }else{
                 throw new DataStoreException("Unexpected response : "+ obj.getClass());
             }
-            
+
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         } catch (JAXBException ex) {
             throw new DataStoreException(ex);
         } finally {
-            if(unmarshal != null){
-                WFSMarshallerPool.getInstance().release(unmarshal);
-            }
-            
             if(response != null){
                 try {
                     response.close();
@@ -417,11 +413,11 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      */
     @Override
     public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
-        
+
         final TransactionRequest request = server.createTransaction();
         final Update update = server.createUpdateElement();
         update.setInputFormat("text/xml; subtype=gml/3.1.1");
-        
+
         update.setFilter(filter);
         update.setTypeName(groupName);
         for(Map.Entry<? extends PropertyDescriptor,? extends Object> entry : values.entrySet()){
@@ -443,10 +439,10 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      */
     @Override
     public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
-        
+
         final TransactionRequest request = server.createTransaction();
         final Delete delete = server.createDeleteElement();
-        
+
         delete.setTypeName(groupName);
         delete.setFilter(filter);
 
@@ -560,7 +556,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 		typeNames.clear();
 		bounds.clear();
 		checkTypeExist();
-		
+
 	}
 
 }

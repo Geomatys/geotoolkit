@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.bind.annotation.*;
 import org.geotoolkit.gml.xml.v311.AbstractGMLType;
-import org.geotoolkit.util.Utilities;
 
 /**
  *
@@ -173,10 +173,10 @@ public class Concept implements Serializable {
     @XmlElement(namespace="http://www.geomatys.com/count")
     private Integer count;
 
-    
+
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private List<Concept> inScheme;
-    
+
     public Concept() {
 
     }
@@ -1126,7 +1126,7 @@ public class Concept implements Serializable {
     public void setInScheme(final List<Concept> inscheme) {
         this.inScheme = inscheme;
     }
-    
+
     public void addInScheme(final Concept inScheme) {
         if (this.inScheme == null) {
             this.inScheme = new ArrayList<Concept>();
@@ -1239,41 +1239,41 @@ public class Concept implements Serializable {
         }
         if (object instanceof Concept) {
             final Concept that = (Concept) object;
-            return Utilities.equals(this.about,              that.about)       &&
-                   Utilities.equals(this.resource,           that.resource)    &&
-                   Utilities.equals(this.hierarchyRoot,      that.hierarchyRoot)    &&
-                   Utilities.equals(this.hierarchyRootType,  that.hierarchyRootType)    &&
-                   Utilities.equals(this.hasTopConcept,      that.hasTopConcept)    &&
-                   Utilities.equals(this.narrowerTransitive, that.narrowerTransitive)    &&
-                   Utilities.equals(this.subject,            that.subject)    &&
-                   Utilities.equals(this.contributor,        that.contributor)    &&
-                   Utilities.equals(this.hasVersion,         that.hasVersion)    &&
-                   Utilities.equals(this.altLabel,           that.altLabel)    &&
-                   Utilities.equals(this.broader,            that.broader)     &&
-                   Utilities.equals(this.changeNote,         that.changeNote)  &&
-                   Utilities.equals(this.creator,            that.creator)     &&
-                   Utilities.equals(this.date,               that.date)        &&
-                   Utilities.equals(this.definition,         that.definition)  &&
-                   Utilities.equals(this.description,        that.description) &&
-                   Utilities.equals(this.externalID,         that.externalID)  &&
-                   Utilities.equals(this.issued,             that.issued)      &&
-                   Utilities.equals(this.label,              that.label)       &&
-                   Utilities.equals(this.language,           that.language)    &&
-                   Utilities.equals(this.modified,           that.modified)    &&
-                   Utilities.equals(this.name,               that.name)        &&
-                   Utilities.equals(this.narrower,           that.narrower)    &&
-                   Utilities.equals(this.prefLabel,          that.prefLabel)   &&
-                   Utilities.equals(this.related,            that.related)     &&
-                   Utilities.equals(this.rights,             that.rights)      &&
-                   Utilities.equals(this.scopeNote,          that.scopeNote)   &&
-                   Utilities.equals(this.historyNote,        that.historyNote) &&
-                   Utilities.equals(this.title,              that.title)       &&
-                   Utilities.equals(this.type,               that.type)        &&
-                   Utilities.equals(this.example,            that.example)     &&
-                   Utilities.equals(this.geometry,           that.geometry)    &&
-                   Utilities.equals(this.count,              that.count)       &&
-                   Utilities.equals(this.inScheme,           that.inScheme)    &&
-                   Utilities.equals(this.value,              that.value);
+            return Objects.equals(this.about,              that.about)       &&
+                   Objects.equals(this.resource,           that.resource)    &&
+                   Objects.equals(this.hierarchyRoot,      that.hierarchyRoot)    &&
+                   Objects.equals(this.hierarchyRootType,  that.hierarchyRootType)    &&
+                   Objects.equals(this.hasTopConcept,      that.hasTopConcept)    &&
+                   Objects.equals(this.narrowerTransitive, that.narrowerTransitive)    &&
+                   Objects.equals(this.subject,            that.subject)    &&
+                   Objects.equals(this.contributor,        that.contributor)    &&
+                   Objects.equals(this.hasVersion,         that.hasVersion)    &&
+                   Objects.equals(this.altLabel,           that.altLabel)    &&
+                   Objects.equals(this.broader,            that.broader)     &&
+                   Objects.equals(this.changeNote,         that.changeNote)  &&
+                   Objects.equals(this.creator,            that.creator)     &&
+                   Objects.equals(this.date,               that.date)        &&
+                   Objects.equals(this.definition,         that.definition)  &&
+                   Objects.equals(this.description,        that.description) &&
+                   Objects.equals(this.externalID,         that.externalID)  &&
+                   Objects.equals(this.issued,             that.issued)      &&
+                   Objects.equals(this.label,              that.label)       &&
+                   Objects.equals(this.language,           that.language)    &&
+                   Objects.equals(this.modified,           that.modified)    &&
+                   Objects.equals(this.name,               that.name)        &&
+                   Objects.equals(this.narrower,           that.narrower)    &&
+                   Objects.equals(this.prefLabel,          that.prefLabel)   &&
+                   Objects.equals(this.related,            that.related)     &&
+                   Objects.equals(this.rights,             that.rights)      &&
+                   Objects.equals(this.scopeNote,          that.scopeNote)   &&
+                   Objects.equals(this.historyNote,        that.historyNote) &&
+                   Objects.equals(this.title,              that.title)       &&
+                   Objects.equals(this.type,               that.type)        &&
+                   Objects.equals(this.example,            that.example)     &&
+                   Objects.equals(this.geometry,           that.geometry)    &&
+                   Objects.equals(this.count,              that.count)       &&
+                   Objects.equals(this.inScheme,           that.inScheme)    &&
+                   Objects.equals(this.value,              that.value);
         }
         return false;
     }

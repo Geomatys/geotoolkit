@@ -28,7 +28,7 @@ import org.apache.sis.test.XMLComparator;
 //Junit dependencies
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.wcs.xml.v100.OutputType;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
@@ -59,7 +59,7 @@ public class WcsXMLBindingTest {
     @After
     public void tearDown() {
         if (marshaller != null) {
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
     }
 

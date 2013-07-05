@@ -30,12 +30,12 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.converters.WPSObjectConverter;

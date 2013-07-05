@@ -28,20 +28,20 @@ import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;
-import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
+import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.shapefile.indexed.IndexType;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.util.Collections;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.util.ResourceInternationalString;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.util.iso.ResourceInternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.quality.ConformanceResult;

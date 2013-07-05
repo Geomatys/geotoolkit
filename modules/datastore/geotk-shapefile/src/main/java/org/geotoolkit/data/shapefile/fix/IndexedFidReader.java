@@ -31,14 +31,14 @@ import org.geotoolkit.data.shapefile.FeatureIDReader;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.indexed.RecordNumberTracker;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.io.Closeable;
 
 import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
 
 /**
  * This object reads from a file the fid of a feature in a shapefile.
- * 
+ *
  * @author Jesse
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -55,7 +55,7 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
     private long currentId;
     /**
      * move the reader to the recno-th entry in the file.
-     * 
+     *
      * @param recno
      * @throws IOException
      */
@@ -64,13 +64,13 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
     public IndexedFidReader(final URL fixUrl, final ReadableByteChannel fixChannel,
             final RecordNumberTracker reader) throws IOException {
         this.reader = reader;
-        
+
         final String path = ShpFileType.FIX.toBase(fixUrl);
         final int slash = Math.max(0, path.lastIndexOf('/') + 1);
         int dot = path.indexOf('.', slash);
         if (dot < 0) {
             dot = path.length();
-        }        
+        }
         this.typeName = path.substring(slash, dot) + ".";
         this.readChannel = fixChannel;
         getHeader(fixUrl);
@@ -110,7 +110,7 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
 
     /**
      * Returns the number of Fid Entries in the file.
-     * 
+     *
      * @return Returns the number of Fid Entries in the file.
      */
     public long getCount() {
@@ -120,7 +120,7 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
     /**
      * Returns the number of features that have been removed since the fid index
      * was regenerated.
-     * 
+     *
      * @return Returns the number of features that have been removed since the
      *         fid index was regenerated.
      */
@@ -131,13 +131,13 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
     /**
      * Returns the offset to the location in the SHX file that the fid
      * identifies. This search take logN time.
-     * 
+     *
      * @param fid
      *                the fid to find.
-     * 
+     *
      * @return Returns the record number of the record in the SHX file that the
      *         fid identifies. Will return -1 if the fid was not found.
-     * 
+     *
      * @throws IOException
      * @throws IllegalArgumentException
      *                 DOCUMENT ME!
@@ -172,7 +172,7 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
 
     /**
      * Searches for the desired record.
-     * 
+     *
      * @param desired
      *                the id of the desired record.
      * @param minRec
@@ -183,9 +183,9 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
      *                desired record.
      * @param predictedRec
      *                the record that is predicted to be the desired record.
-     * 
+     *
      * @return returns the record number of the feature in the shx file.
-     * 
+     *
      * @throws IOException
      */
     long search(final long desired, final long minRec, final long maxRec, final long predictedRec)
@@ -266,12 +266,12 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
             }
         }
     }
-        
+
     @Override
     public boolean isClosed() {
         return !readChannel.isOpen();
     }
-    
+
     @Override
     public boolean hasNext() throws FeatureStoreRuntimeException {
         if (done) {
@@ -322,10 +322,10 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
     /**
      * Returns the record number of the feature in the shx or shp that is
      * identified by the the last fid returned by next().
-     * 
+     *
      * @return Returns the record number of the feature in the shx or shp that
      *         is identified by the the last fid returned by next().
-     * 
+     *
      * @throws NoSuchElementException DOCUMENT ME!
      */
     public int currentSHXIndex() {
@@ -338,11 +338,11 @@ public class IndexedFidReader implements FeatureIDReader, Closeable {
 
     /**
      * Returns the index that is appended to the typename to construct the fid.
-     * 
+     *
      * @return the index that is appended to the typename to construct the fid.
      */
     public long getCurrentFIDIndex(){
         return currentId;
     }
-    
+
 }

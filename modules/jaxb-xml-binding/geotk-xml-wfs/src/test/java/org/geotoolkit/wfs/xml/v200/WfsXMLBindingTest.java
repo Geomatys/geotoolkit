@@ -34,7 +34,7 @@ import org.geotoolkit.ogc.xml.v200.FilterType;
 import org.geotoolkit.ogc.xml.v200.PropertyIsLikeType;
 import org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType;
 import org.geotoolkit.wfs.xml.*;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -58,10 +58,10 @@ public class WfsXMLBindingTest {
     @After
     public void tearDown() {
         if (unmarshaller != null) {
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
         if (marshaller != null) {
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
     }
 
@@ -201,18 +201,18 @@ public class WfsXMLBindingTest {
         marshaller.marshal(storesQueries, sw);
 
         //System.out.println(sw.toString());
-        
+
         StoredQueryListItemType item = new StoredQueryListItemType("someid", Arrays.asList(new Title("some title")), null);
         ListStoredQueriesResponseType lsqr = new ListStoredQueriesResponseType(Arrays.asList(item));
-        
+
         sw = new StringWriter();
         marshaller.marshal(lsqr, sw);
 
         System.out.println(sw.toString());
-        
+
         item = new StoredQueryListItemType("someid", Arrays.asList(new Title("some title")),Arrays.asList(new QName("")));
         lsqr = new ListStoredQueriesResponseType(Arrays.asList(item));
-        
+
         sw = new StringWriter();
         marshaller.marshal(lsqr, sw);
 

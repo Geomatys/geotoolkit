@@ -20,17 +20,18 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.metadata.MetadataStandard;
+import org.apache.sis.metadata.MetadataStandard;
 import org.opengis.temporal.TemporalObject;
+import org.apache.sis.internal.simple.SimpleCitation;
 
 
 /**
  * The abstract supertype for temporal objects.
- * 
+ *
  * <p>Java class for AbstractTimeObjectType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractTimeObjectType">
  *   &lt;complexContent>
@@ -39,8 +40,8 @@ import org.opengis.temporal.TemporalObject;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -50,17 +51,17 @@ import org.opengis.temporal.TemporalObject;
     AbstractTimeComplexType.class
 })
 public abstract class AbstractTimeObjectType extends AbstractGMLType implements TemporalObject {
-    
+
     public AbstractTimeObjectType() {
-        
+
     }
-    
+
     public AbstractTimeObjectType(final String id) {
         super(id);
     }
-    
+
     @Override
     public MetadataStandard getStandard() {
-        return new MetadataStandard("org.opengis.temporal");
+        return new MetadataStandard(new SimpleCitation("Temporal"), Package.getPackage("org.opengis.temporal"));
     }
 }

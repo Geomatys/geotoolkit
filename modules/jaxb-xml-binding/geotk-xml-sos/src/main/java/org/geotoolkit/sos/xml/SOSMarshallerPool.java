@@ -19,8 +19,9 @@ package org.geotoolkit.sos.xml;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 
 /**
  *
@@ -31,19 +32,20 @@ public class SOSMarshallerPool {
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool("org.geotoolkit.sos.xml.v100:" +
-                                          "org.geotoolkit.sos.xml.v200:" +
-                                          "org.geotoolkit.ogc.xml.v200:" +
-                                          "org.geotoolkit.gml.xml.v311:" +
-                                          "org.geotoolkit.swe.xml.v101:" +
-                                          "org.geotoolkit.swe.xml.v200:" +
-                                          "org.geotoolkit.sml.xml.v100:" +
-                                          "org.geotoolkit.sml.xml.v101:" +
-                                          "org.geotoolkit.observation.xml.v100:" +
-                                          "org.geotoolkit.sampling.xml.v100:" +
-                                          "org.geotoolkit.sampling.xml.v200:" +
-                                          "org.geotoolkit.samplingspatial.xml.v200:" +
-                                          "org.geotoolkit.internal.jaxb.geometry");
+            instance = new MarshallerPool(JAXBContext.newInstance(
+                    "org.geotoolkit.sos.xml.v100:" +
+                    "org.geotoolkit.sos.xml.v200:" +
+                    "org.geotoolkit.ogc.xml.v200:" +
+                    "org.geotoolkit.gml.xml.v311:" +
+                    "org.geotoolkit.swe.xml.v101:" +
+                    "org.geotoolkit.swe.xml.v200:" +
+                    "org.geotoolkit.sml.xml.v100:" +
+                    "org.geotoolkit.sml.xml.v101:" +
+                    "org.geotoolkit.observation.xml.v100:" +
+                    "org.geotoolkit.sampling.xml.v100:" +
+                    "org.geotoolkit.sampling.xml.v200:" +
+                    "org.geotoolkit.samplingspatial.xml.v200:" +
+                    "org.apache.sis.internal.jaxb.geometry"), null);
         } catch (JAXBException ex) {
             Logger.getLogger(SOSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }

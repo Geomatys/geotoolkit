@@ -13,8 +13,8 @@ xmlns = {
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(ScopedNameAdapter.class),
-    @XmlJavaTypeAdapter(LocalNameAdapter.class),
+//  @XmlJavaTypeAdapter(ScopedNameAdapter.class), // TODO
+    @XmlJavaTypeAdapter(GO_LocalName.class),
     @XmlJavaTypeAdapter(GO_GenericName.class),
     // Primitive type handling
     @XmlJavaTypeAdapter(CharSequenceAdapter.class),
@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
-import org.geotoolkit.internal.jaxb.metadata.*;
+import org.apache.sis.internal.jaxb.metadata.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.code.*;
-import org.geotoolkit.internal.jaxb.gco.*;
+import org.apache.sis.internal.jaxb.gco.*;

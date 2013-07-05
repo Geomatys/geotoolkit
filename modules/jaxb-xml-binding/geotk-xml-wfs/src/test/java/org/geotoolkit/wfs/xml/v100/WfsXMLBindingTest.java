@@ -37,7 +37,7 @@ import org.geotoolkit.wfs.xml.AllSomeType;
 
 //Junit dependencies
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -61,10 +61,10 @@ public class WfsXMLBindingTest {
     @After
     public void tearDown() {
         if (unmarshaller != null) {
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
         if (marshaller != null) {
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
     }
 
@@ -91,7 +91,7 @@ public class WfsXMLBindingTest {
         FeatureTypeType ft2 = new FeatureTypeType(new QName("http://www.opengis.net/wfs","Sites_d_importance_communautaire"), "Sites importance communautaire", "EPSG:2154", Arrays.asList(bbox));
         featList.add(ft2);
 
-        
+
 
         FeatureTypeListType featureList = new FeatureTypeListType(null, featList);
         expResult.setFeatureTypeList(featureList);
@@ -105,12 +105,12 @@ public class WfsXMLBindingTest {
         // TEST with WFSBindingUtilities
 
         is = WfsXMLBindingTest.class.getResourceAsStream("/org/geotoolkit/wfs/v100/capabilities.xml");
-        
+
         result = ((JAXBElement<WFSCapabilitiesType>) unmarshaller.unmarshal(is)).getValue();
         assertEquals(expResult.getFeatureTypeList().getFeatureType(), result.getFeatureTypeList().getFeatureType());
         assertEquals(expResult.getFeatureTypeList(), result.getFeatureTypeList());
-        
-        String xml = 
+
+        String xml =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + '\n' +
                 "<wfs:Transaction version=\"1.0.0\" service=\"WFS\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" " + '\n' +
                 "          xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\">" + '\n' +
@@ -119,19 +119,19 @@ public class WfsXMLBindingTest {
                 "</wfs:Transaction>";
 
         unmarshalled = unmarshaller.unmarshal(new StringReader(xml));
-        
+
         if (unmarshalled instanceof JAXBElement) {
             unmarshalled = ((JAXBElement)unmarshalled).getValue();
         }
         assertTrue("was no transaction but " + unmarshalled, unmarshalled instanceof TransactionType);
         TransactionType resultT = (TransactionType) unmarshalled;
-        
+
         InsertElementType ins = new InsertElementType();
         TransactionType expResultT = new TransactionType("WFS", "1.1.0", null, null, ins);
-        
+
         assertEquals(expResultT, resultT);
-        
-        xml = 
+
+        xml =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + '\n' +
                 "<wfs:Transaction version=\"1.1.0\" service=\"WFS\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" " + '\n' +
                 "          xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\">" + '\n' +
@@ -140,21 +140,21 @@ public class WfsXMLBindingTest {
                 "</wfs:Transaction>";
 
         unmarshalled = unmarshaller.unmarshal(new StringReader(xml));
-        
+
         if (unmarshalled instanceof JAXBElement) {
             unmarshalled = ((JAXBElement)unmarshalled).getValue();
         }
-        
+
         assertTrue(unmarshalled instanceof TransactionType);
         resultT = (TransactionType) unmarshalled;
-        
+
         DeleteElementType del = new DeleteElementType();
         del.setTypeName(new QName("http://www.opengis.net/gml", "test"));
         expResultT = new TransactionType("WFS", "1.1.0", null, null, del);
-        
+
         assertEquals(expResultT, resultT);
-        
-        
+
+
     }
 
     @Test
@@ -162,7 +162,7 @@ public class WfsXMLBindingTest {
 
         WFSCapabilitiesType capa = new WFSCapabilitiesType();
         List<FeatureTypeType> featList = new ArrayList<FeatureTypeType>();
-        
+
         LatLongBoundingBoxType bbox = new LatLongBoundingBoxType(29.8, -90.1, 30, -89.9);
         FeatureTypeType ft1 = new FeatureTypeType(new QName("http://www.opengis.net/ows-6/utds/0.3", "Building", "utds"), "", "urn:ogc:def:crs:EPSG::4979", Arrays.asList(bbox));
         featList.add(ft1);

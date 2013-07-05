@@ -20,6 +20,7 @@ package org.geotoolkit.gml.xml.v321;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,19 +30,18 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.AbstractFeature;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * The basic feature model is given by the gml:AbstractFeatureType.
- * The content model for gml:AbstractFeatureType adds two specific properties suitable for geographic features to the content model defined in gml:AbstractGMLType. 
- * The value of the gml:boundedBy property describes an envelope that encloses the entire feature instance, and is primarily useful for supporting rapid searching for features that occur in a particular location. 
+ * The content model for gml:AbstractFeatureType adds two specific properties suitable for geographic features to the content model defined in gml:AbstractGMLType.
+ * The value of the gml:boundedBy property describes an envelope that encloses the entire feature instance, and is primarily useful for supporting rapid searching for features that occur in a particular location.
  * The value of the gml:location property describes the extent, position or relative location of the feature.
- * 
+ *
  * <p>Java class for AbstractFeatureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractFeatureType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractFeatureType", propOrder = {
@@ -123,11 +123,11 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
 
     /**
      * Gets the value of the boundedBy property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BoundingShapeType }
-     *     
+     *
      */
     @Override
     public BoundingShapeType getBoundedBy() {
@@ -136,11 +136,11 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
 
     /**
      * Sets the value of the boundedBy property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BoundingShapeType }
-     *     
+     *
      */
     public void setBoundedBy(BoundingShapeType value) {
         this.boundedBy = value;
@@ -148,12 +148,12 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
 
     /**
      * Gets the value of the location property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link LocationPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PriorityLocationPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends LocationPropertyType> getjbLocation() {
         return location;
@@ -167,15 +167,15 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
         return null;
     }
 
-    
+
     /**
      * Sets the value of the location property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link LocationPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PriorityLocationPropertyType }{@code >}
-     *     
+     *
      */
     public void setLocation(JAXBElement<? extends LocationPropertyType> value) {
         this.location = ((JAXBElement<? extends LocationPropertyType> ) value);
@@ -185,7 +185,7 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
     public List<String> getSrsName(){
         return new ArrayList<String>();
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString()).append("\n");
@@ -212,11 +212,11 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
 
             boolean loc = false;
             if (this.location != null && that.location != null) {
-                loc = Utilities.equals(this.location.getValue(), that.location.getValue());
+                loc = Objects.equals(this.location.getValue(), that.location.getValue());
             } else if (this.location == null && that.location == null) {
                 loc = true;
             }
-            return Utilities.equals(this.boundedBy,    that.boundedBy)    &&
+            return Objects.equals(this.boundedBy,    that.boundedBy)    &&
                    loc;
         }
         return false;

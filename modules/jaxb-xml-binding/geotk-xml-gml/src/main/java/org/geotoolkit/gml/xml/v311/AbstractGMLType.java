@@ -28,8 +28,8 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.AbstractGML;
 import org.geotoolkit.internal.sql.table.Entry;
-import org.geotoolkit.metadata.AbstractMetadata;
-import org.geotoolkit.metadata.MetadataStandard;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.util.ComparisonMode;
 
 

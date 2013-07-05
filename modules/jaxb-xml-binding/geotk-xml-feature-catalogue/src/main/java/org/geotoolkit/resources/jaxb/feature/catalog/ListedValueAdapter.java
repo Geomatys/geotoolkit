@@ -22,7 +22,7 @@ import org.geotoolkit.feature.catalog.ListedValueImpl;
 import org.opengis.feature.catalog.ListedValue;
 
 /**
- * JAXB adapter in order to map implementing class with the GeoAPI ListedValue. See
+ * JAXB adapter in order to map implementing class with the Types ListedValue. See
  * package documentation for more information about JAXB and ListedValue.
  *
  * @module pending

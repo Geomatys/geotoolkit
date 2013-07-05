@@ -24,6 +24,7 @@ import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -42,7 +43,8 @@ import javax.xml.transform.Source;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.xml.MarshallerPool;
+import javax.xml.bind.JAXBContext;
+import org.apache.sis.xml.MarshallerPool;
 import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -58,7 +60,7 @@ public class Chain implements Comparable<Chain>,Parameterized {
 
     @XmlTransient
     private static MarshallerPool POOL;
-        
+
     @XmlElement(name="name")
     protected String name;
 
@@ -83,7 +85,7 @@ public class Chain implements Comparable<Chain>,Parameterized {
 
     private Chain() {
     }
-    
+
     public Chain(String name) {
         ArgumentChecks.ensureNonEmpty("name", name);
         this.name = name;
@@ -121,59 +123,59 @@ public class Chain implements Comparable<Chain>,Parameterized {
         }
     }
 
-    public Parameter addInputParameter(final String code, final Class type, 
+    public Parameter addInputParameter(final String code, final Class type,
             final String remarks, final int minOccurs, final int maxOccurs, final Object defaultValue){
         final Parameter param = new Parameter(code, type, remarks, minOccurs, maxOccurs, defaultValue);
         getInputs().add(param);
         return param;
     }
-    
-    public Parameter addOutputParameter(final String code, final Class type, 
+
+    public Parameter addOutputParameter(final String code, final Class type,
             final String remarks, final int minOccurs, final int maxOccurs, final Object defaultValue){
         final Parameter param = new Parameter(code, type, remarks, minOccurs, maxOccurs, defaultValue);
         getOutputs().add(param);
         return param;
     }
-    
+
     public Constant addConstant(final int id, final Class type, final Object value){
         final Constant constant = new Constant(id, type, value,0,0);
         getConstants().add(constant);
         return constant;
     }
-    
+
     public ElementProcess addProcessElement(final int id, final String authority, final String code){
         final ElementProcess ele = new ElementProcess(id, authority, code);
         getElements().add(ele);
         return ele;
     }
-    
+
     public ElementCondition addConditionElement(final int id){
         final ElementCondition ele = new ElementCondition(id);
         getElements().add(ele);
         return ele;
     }
-    
+
     public ElementManual addManualElement(final int id){
         final ElementManual ele = new ElementManual(id);
         getElements().add(ele);
         return ele;
     }
-    
+
     public FlowLink addFlowLink(int inId, int outId){
         final FlowLink link = new FlowLink(inId, outId);
         getFlowLinks().add(link);
         return link;
     }
-    
+
     public DataLink addDataLink(int inId, String inCode, int outId, String outCode){
         final DataLink link = new DataLink(inId, inCode, outId, outCode);
         getDataLinks().add(link);
         return link;
     }
-    
+
     /**
      * Return all link which come from a source id.
-     * 
+     *
      * @param sourceId
      * @return a list of LinkDto
      */
@@ -191,7 +193,7 @@ public class Chain implements Comparable<Chain>,Parameterized {
 
     /**
      * Return all link which point to target id.
-     * 
+     *
      * @param targetId
      * @return a list of LinkDto
      */
@@ -307,13 +309,13 @@ public class Chain implements Comparable<Chain>,Parameterized {
         }
         if (obj instanceof Chain) {
             final Chain that = (Chain) obj;
-            return Utilities.equals(this.getConstants(), that.getConstants())
-                && Utilities.equals(this.getElements(), that.getElements())
-                && Utilities.equals(this.getDataLinks(), that.getDataLinks())
-                && Utilities.equals(this.getFlowLinks(), that.getFlowLinks())
-                && Utilities.equals(this.name, that.name)
-                && Utilities.equals(this.getOutputs(), that.getOutputs())
-                && Utilities.equals(this.getInputs(), that.getInputs());
+            return Objects.equals(this.getConstants(), that.getConstants())
+                && Objects.equals(this.getElements(), that.getElements())
+                && Objects.equals(this.getDataLinks(), that.getDataLinks())
+                && Objects.equals(this.getFlowLinks(), that.getFlowLinks())
+                && Objects.equals(this.name, that.name)
+                && Objects.equals(this.getOutputs(), that.getOutputs())
+                && Objects.equals(this.getInputs(), that.getInputs());
         }
         return false;
     }
@@ -363,7 +365,7 @@ public class Chain implements Comparable<Chain>,Parameterized {
 
     /**
      * Write this ProcessSequence in given output.
-     * @throws JAXBException 
+     * @throws JAXBException
      */
     public void write(final Object output) throws JAXBException{
         final MarshallerPool pool = getPoolInstance();
@@ -390,16 +392,16 @@ public class Chain implements Comparable<Chain>,Parameterized {
                 throw new JAXBException("Unsupported output : "+output);
             }
         }finally{
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
     }
-    
+
     /**
      * Read the given input and return an ProcessSequence.
-     * 
+     *
      * @param input
      * @return
-     * @throws JAXBException 
+     * @throws JAXBException
      */
     public static Chain read(final Object input) throws JAXBException{
         final MarshallerPool pool = getPoolInstance();
@@ -428,17 +430,17 @@ public class Chain implements Comparable<Chain>,Parameterized {
                 throw new JAXBException("Unsupported input : "+input);
             }
         }finally{
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
-                
+
         return set;
     }
-    
+
     public static synchronized MarshallerPool getPoolInstance() throws JAXBException{
         if(POOL == null){
-            POOL = new MarshallerPool(Chain.class);
+            POOL = new MarshallerPool(JAXBContext.newInstance(Chain.class), null);
         }
         return POOL;
     }
-    
+
 }

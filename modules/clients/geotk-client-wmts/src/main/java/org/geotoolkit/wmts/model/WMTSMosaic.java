@@ -25,7 +25,7 @@ import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.TileReference;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;

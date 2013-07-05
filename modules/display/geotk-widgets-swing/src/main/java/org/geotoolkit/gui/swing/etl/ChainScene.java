@@ -30,7 +30,7 @@ import org.geotoolkit.process.chain.model.FlowLink;
 import org.geotoolkit.process.chain.model.Parameter;
 import org.geotoolkit.process.chain.model.event.ChainListener;
 import org.geotoolkit.process.chain.model.event.EventChain;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.graph.GraphScene;

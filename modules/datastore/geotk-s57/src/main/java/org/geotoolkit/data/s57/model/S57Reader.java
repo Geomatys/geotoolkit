@@ -21,7 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.data.iso8211.DataRecord;
 import org.geotoolkit.data.iso8211.Field;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * REader returning S-57 objects for each field.

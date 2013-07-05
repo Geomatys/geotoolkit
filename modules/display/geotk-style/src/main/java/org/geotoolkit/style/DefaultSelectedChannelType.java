@@ -24,7 +24,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
- * Immutable implementation of GeoAPI SelectedChannelType.
+ * Immutable implementation of Types SelectedChannelType.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending

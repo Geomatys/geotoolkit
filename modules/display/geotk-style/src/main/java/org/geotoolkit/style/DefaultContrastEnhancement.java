@@ -26,7 +26,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
- * Immutable implementation of GeoAPI contrast enhancement.
+ * Immutable implementation of Types contrast enhancement.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending

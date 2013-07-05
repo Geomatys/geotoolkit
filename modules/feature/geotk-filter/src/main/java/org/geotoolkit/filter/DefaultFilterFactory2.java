@@ -152,7 +152,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * Default implementation of a GeoAPI filterFactory.
+ * Default implementation of a Types filterFactory.
  * All objects created by this factory are immutable.
  *
  * @author Johann Sorel (Geomatys)

@@ -19,7 +19,7 @@ package org.geotoolkit.temporal.reference;
 
 import java.util.Calendar;
 import java.util.Date;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.object.DefaultTemporalCoordinate;

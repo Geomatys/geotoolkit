@@ -19,7 +19,7 @@ package org.geotoolkit.sampling.xml.v100;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.internal.jaxb.gco.GO_GenericName;
+import org.apache.sis.internal.jaxb.gco.GO_GenericName;
 import org.opengis.observation.sampling.SamplingFeatureRelation;
 import org.opengis.util.GenericName;
 

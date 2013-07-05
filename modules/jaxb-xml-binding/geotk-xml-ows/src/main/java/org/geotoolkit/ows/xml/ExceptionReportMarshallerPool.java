@@ -19,8 +19,9 @@ package org.geotoolkit.ows.xml;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 
 /**
  *
@@ -31,9 +32,10 @@ public class ExceptionReportMarshallerPool {
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool(org.geotoolkit.ows.xml.v100.ExceptionReport.class,
-                                        org.geotoolkit.ows.xml.v110.ExceptionReport.class,
-                                        org.geotoolkit.ogc.xml.exception.ObjectFactory.class);
+            instance = new MarshallerPool(JAXBContext.newInstance(
+                    org.geotoolkit.ows.xml.v100.ExceptionReport.class,
+                    org.geotoolkit.ows.xml.v110.ExceptionReport.class,
+                    org.geotoolkit.ogc.xml.exception.ObjectFactory.class), null);
         } catch (JAXBException ex) {
             Logger.getLogger(ExceptionReportMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }

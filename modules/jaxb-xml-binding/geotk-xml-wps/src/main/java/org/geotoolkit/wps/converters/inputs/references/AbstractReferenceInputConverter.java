@@ -177,15 +177,13 @@ public abstract class AbstractReferenceInputConverter<T> extends WPSDefaultConve
 
             // Parse the response
             stream = conec.getInputStream();
+            WPSMarshallerPool.getInstance().recycle(marshaller);
 
         } catch (JAXBException ex) {
             throw new NonconvertibleObjectException("The requested body is not supported.", ex);
         } catch (IOException ex) {
             throw new NonconvertibleObjectException("Can't reach the reference URL or the reference body URL.", ex);
         } finally {
-            if (marshaller != null) {
-                WPSMarshallerPool.getInstance().release(marshaller);
-            }
             if (requestOS != null) {
                 try {
                     requestOS.close();
@@ -218,18 +216,11 @@ public abstract class AbstractReferenceInputConverter<T> extends WPSDefaultConve
 
             final String href = reference.getBodyReference().getHref();
 
-            Unmarshaller unmarshaller = null;
-            try {
-                unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
-                final URL url = new URL(URLDecoder.decode(href, "UTF-8"));
+            final Unmarshaller unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
+            final URL url = new URL(URLDecoder.decode(href, "UTF-8"));
 
-                obj = unmarshaller.unmarshal(url);
-
-            } finally {
-                if (unmarshaller != null) {
-                    WPSMarshallerPool.getInstance().release(unmarshaller);
-                }
-            }
+            obj = unmarshaller.unmarshal(url);
+            WPSMarshallerPool.getInstance().recycle(unmarshaller);
         }
         return obj;
     }

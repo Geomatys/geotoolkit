@@ -1,5 +1,5 @@
 /*
- *    GeoAPI - Java interfaces for OGC/ISO standards
+ *    Types - Java interfaces for OGC/ISO standards
  *    http://www.geoapi.org
  *
  *    Copyright (C) 2005-2012 Open Geospatial Consortium, Inc.

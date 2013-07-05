@@ -103,8 +103,9 @@
     </dependency>
     <!-- for AnchoredMarshallerPool remove ? -->
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-xml-base</artifactId>
+      <groupId>org.apache.sis</groupId>
+      <artifactId>sis-utility</artifactId>
+      <version>${sis.version}</version>
     </dependency>
   </dependencies>
 

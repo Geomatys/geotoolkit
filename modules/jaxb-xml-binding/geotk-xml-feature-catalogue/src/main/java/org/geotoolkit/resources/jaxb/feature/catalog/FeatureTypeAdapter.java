@@ -24,7 +24,7 @@ import org.geotoolkit.feature.catalog.FeatureTypeImpl;
 import org.opengis.feature.catalog.FeatureType;
 
 /**
- * JAXB adapter in order to map implementing class with the GeoAPI FeatureType. See
+ * JAXB adapter in order to map implementing class with the Types FeatureType. See
  * package documentation for more information about JAXB and FeatureType.
  *
  * @module pending

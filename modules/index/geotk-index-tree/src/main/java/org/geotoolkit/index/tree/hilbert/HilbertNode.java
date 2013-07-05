@@ -34,7 +34,7 @@ import org.geotoolkit.index.tree.Node;
 import static org.geotoolkit.index.tree.Node.PROP_HILBERT_ORDER;
 import static org.geotoolkit.index.tree.Node.PROP_ISLEAF;
 import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Sub class of {@link DefaultNode} adapted for {@link HilbertRTree} tree.

@@ -38,7 +38,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.display.canvas.CanvasState;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;

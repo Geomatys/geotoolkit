@@ -100,7 +100,7 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
     }
 
     /**
-     * implements PropertyIsNull GeoAPI interface
+     * implements PropertyIsNull Types interface
      */
     @Override
     public Expression getExpression() {

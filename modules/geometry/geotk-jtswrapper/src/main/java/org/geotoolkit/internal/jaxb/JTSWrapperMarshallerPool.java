@@ -18,8 +18,9 @@ package org.geotoolkit.internal.jaxb;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 
 /**
  *
@@ -29,7 +30,7 @@ public class JTSWrapperMarshallerPool {
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool(ObjectFactory.class);
+            instance = new MarshallerPool(JAXBContext.newInstance(ObjectFactory.class), null);
         } catch (JAXBException ex) {
             Logger.getLogger(JTSWrapperMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -42,8 +42,8 @@ import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
-import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.logging.Logging;
 
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;

@@ -23,7 +23,7 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Literal;

@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import static org.geotoolkit.csw.AbstractCSWRequest.POOL;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -41,7 +42,7 @@ import org.geotoolkit.temporal.object.TemporalUtilities;
  * @module pending
  */
 public class AbstractHarvest extends AbstractCSWRequest implements HarvestRequest {
-    
+
     /**
      * The version to use for this webservice request.
      */
@@ -171,9 +172,8 @@ public class AbstractHarvest extends AbstractCSWRequest implements HarvestReques
         OutputStream stream = conec.getOutputStream();
         stream = security.encrypt(stream);
 
-        Marshaller marsh = null;
         try {
-            marsh = POOL.acquireMarshaller();
+            final Marshaller marsh = POOL.acquireMarshaller();
             final DefaultPeriodDuration periodDuration = (harvestInterval == null) ? null :
                     (DefaultPeriodDuration) TemporalUtilities.getDurationFromString(harvestInterval);
             final Duration duration = (periodDuration == null) ? null :
@@ -187,14 +187,11 @@ public class AbstractHarvest extends AbstractCSWRequest implements HarvestReques
             final Harvest harvestXml = CswXmlFactory.createHarvest(version, "CSW", source, resourceType,
                     resourceFormat, responseHandler, duration);
             marsh.marshal(harvestXml, stream);
+            POOL.recycle(marsh);
         } catch (DatatypeConfigurationException ex) {
             throw new IOException(ex);
         } catch (JAXBException ex) {
             throw new IOException(ex);
-        } finally {
-            if (POOL != null && marsh != null) {
-                POOL.release(marsh);
-            }
         }
         stream.close();
         return security.decrypt(conec.getInputStream());

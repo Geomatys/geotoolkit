@@ -22,7 +22,7 @@ import org.opengis.style.StyleVisitor;
 import org.opengis.util.InternationalString;
 
 /**
- * Immutable implementation of GeoAPI description.
+ * Immutable implementation of Types description.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending

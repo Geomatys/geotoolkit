@@ -101,7 +101,7 @@ public class ParameterDescriptorWriter extends StaxStreamWriter {
          */
 
         /*
-         * Discrete topology : values enumeration (numbers, Strings, Booleans)
+         * Discrete topology : values enumeration (numbers, CharSequences, Booleans)
          */
         if (descriptor.getValidValues() != null) {
             for (Object value : descriptor.getValidValues()) {
@@ -166,7 +166,7 @@ public class ParameterDescriptorWriter extends StaxStreamWriter {
     }
 
     /**
-     * <p>This method writes generic pattern between two Strings.</p>
+     * <p>This method writes generic pattern between two CharSequences.</p>
      *
      * @param min
      * @param max

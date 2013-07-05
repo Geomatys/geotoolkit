@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,7 +25,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.swe.xml.AnyScalar;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -49,7 +49,7 @@ import org.geotoolkit.util.Utilities;
 public class Field extends AbstractDataComponentPropertyType implements AnyScalar {
 
     public static final Field TIME_FIELD = new Field("Time", new TimeType("urn:ogc:data:time:iso8601", null));
-    
+
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlSchemaType(name = "NCName")
@@ -100,7 +100,7 @@ public class Field extends AbstractDataComponentPropertyType implements AnyScala
         }
         if (object instanceof Field && super.equals(object)) {
             final Field that = (Field) object;
-            return Utilities.equals(this.name, that.name);
+            return Objects.equals(this.name, that.name);
         }
         return false;
     }

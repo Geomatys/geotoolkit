@@ -44,7 +44,7 @@ import org.geotoolkit.gui.swing.propertyedit.featureeditor.StyleEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.TimeStampEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.URLEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.UnitEditor;
-import org.geotoolkit.util.ResourceInternationalString;
+import org.apache.sis.util.iso.ResourceInternationalString;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.util.InternationalString;

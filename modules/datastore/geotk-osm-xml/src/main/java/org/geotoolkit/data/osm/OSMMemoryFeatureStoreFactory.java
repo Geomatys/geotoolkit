@@ -23,14 +23,14 @@ import java.util.Collections;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.internal.storage.IOUtilities;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.util.ResourceInternationalString;
+import org.apache.sis.util.iso.ResourceInternationalString;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -56,7 +56,7 @@ public class OSMMemoryFeatureStoreFactory extends AbstractFileFeatureStoreFactor
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
@@ -76,8 +76,8 @@ public class OSMMemoryFeatureStoreFactory extends AbstractFileFeatureStoreFactor
     public CharSequence getDisplayName() {
         return new ResourceInternationalString("org/geotoolkit/osm_xml/bundle", "datastoreTitle");
     }
-    
-    
+
+
 
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
@@ -88,7 +88,7 @@ public class OSMMemoryFeatureStoreFactory extends AbstractFileFeatureStoreFactor
     public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
-                
+
         final String path = url.toString();
         final int slash = Math.max(0, path.lastIndexOf('/') + 1);
         int dot = path.indexOf('.', slash);

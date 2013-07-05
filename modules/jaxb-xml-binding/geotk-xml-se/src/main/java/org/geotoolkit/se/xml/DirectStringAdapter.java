@@ -19,7 +19,7 @@ package org.geotoolkit.se.xml;
  *    Lesser General Public License for more details.
  */
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.util.InternationalString;
 
 

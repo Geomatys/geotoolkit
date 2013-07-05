@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Utility class to read HDR file.

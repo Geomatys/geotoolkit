@@ -1,5 +1,5 @@
 /*
- *    GeoAPI - Java interfaces for OGC/ISO standards
+ *    Types - Java interfaces for OGC/ISO standards
  *    http://www.geoapi.org
  *
  *    Copyright (C) 2006-2011 Open Geospatial Consortium, Inc.
@@ -43,10 +43,10 @@ import static org.opengis.annotation.Specification.*;
  *
  * @author Jody Garnett (Refractions Research)
  * @author Martin Desruisseaux (IRD)
- * @since GeoAPI 2.1
+ * @since Types 2.1
  *
  * @deprecated ISO uses this type only for the multiplicity of associations in UML models,
- *      which is not something that we try to represent in GeoAPI. Even if we wanted this
+ *      which is not something that we try to represent in Types. Even if we wanted this
  *      information, custom class can not be used in Java annotations.
  */
 @Deprecated

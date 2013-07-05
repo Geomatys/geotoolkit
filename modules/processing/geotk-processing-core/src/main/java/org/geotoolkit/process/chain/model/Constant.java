@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.process.chain.model;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.process.chain.ConstantUtilities;
-import org.geotoolkit.util.Utilities;
 
 /**
  *
@@ -53,7 +53,7 @@ public class Constant extends Positionable {
     public Constant(final int id, final Class type, final String value) {
         this(id,type,value,0,0);
     }
-    
+
     public Constant(final int id, final Class type, final Object value, final int x, final int y) {
         this(id,type, ConstantUtilities.valueToString(value),x,x);
     }
@@ -64,7 +64,7 @@ public class Constant extends Positionable {
         this.type  = type;
         this.value = value;
     }
-    
+
     public int getId() {
         return id;
     }
@@ -96,9 +96,9 @@ public class Constant extends Positionable {
         }
         if (obj instanceof Constant && super.equals(obj)) {
             final Constant that = (Constant) obj;
-            return Utilities.equals(this.id,    that.id)
-                && Utilities.equals(this.value, that.value)
-                && Utilities.equals(this.type,  that.type);
+            return Objects.equals(this.id,    that.id)
+                && Objects.equals(this.value, that.value)
+                && Objects.equals(this.type,  that.type);
         }
         return false;
     }

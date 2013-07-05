@@ -73,6 +73,7 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
             try {
                 unmarsh = WPSMarshallerPool.getInstance().acquireUnmarshaller();
                 Object value = unmarsh.unmarshal(stream);
+                WPSMarshallerPool.getInstance().recycle(unmarsh);
                 if (value != null && value instanceof JAXBElement) {
                     value = ((JAXBElement) value).getValue();
                 }
@@ -84,10 +85,6 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
                 throw new NonconvertibleObjectException("Reference geometry invalid input", ex);
             } catch (JAXBException ex) {
                 throw new NonconvertibleObjectException("Reference geometry invalid input : Unmarshallable geometry", ex);
-            } finally {
-                if (unmarsh != null) {
-                    WPSMarshallerPool.getInstance().release(unmarsh);
-                }
             }
         } else {
             throw new NonconvertibleObjectException("Reference data mime is not supported");

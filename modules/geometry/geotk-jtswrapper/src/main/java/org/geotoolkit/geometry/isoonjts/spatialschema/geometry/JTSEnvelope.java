@@ -15,7 +15,7 @@ import javax.measure.unit.NonSI;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.GeometryUtils;
 import org.geotoolkit.internal.jaxb.DirectPositionAdapter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

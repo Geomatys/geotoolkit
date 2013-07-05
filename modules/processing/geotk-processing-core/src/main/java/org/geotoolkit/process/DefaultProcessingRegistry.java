@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.process;
 
-import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.opengis.metadata.identification.Identification;
 
 /**

@@ -76,7 +76,7 @@ import org.geotoolkit.style.interval.DefaultIntervalPalette;
 import org.geotoolkit.style.interval.IntervalPalette;
 import org.geotoolkit.style.interval.IntervalStyleBuilder;
 import org.geotoolkit.style.interval.IntervalStyleBuilder.METHOD;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.EnumComboBoxModel;

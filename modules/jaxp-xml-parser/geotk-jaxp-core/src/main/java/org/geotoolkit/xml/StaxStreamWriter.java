@@ -29,7 +29,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.Namespaces;
 
 
 /**

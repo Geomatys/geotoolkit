@@ -27,7 +27,7 @@ import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

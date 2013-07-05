@@ -22,13 +22,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 //Junit dependencies
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -47,7 +48,7 @@ public class SkosXmlBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool("org.geotoolkit.skos.xml:org.geotoolkit.internal.jaxb.geometry");
+        pool = new MarshallerPool(JAXBContext.newInstance("org.geotoolkit.skos.xml:org.apache.sis.internal.jaxb.geometry"), null);
         marshaller = pool.acquireMarshaller();
         unmarshaller = pool.acquireUnmarshaller();
     }
@@ -55,10 +56,10 @@ public class SkosXmlBindingTest {
     @After
     public void tearDown() {
         if (marshaller != null) {
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
         if (unmarshaller != null) {
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
     }
 
@@ -160,7 +161,7 @@ public class SkosXmlBindingTest {
 
     }
 
-     
+
     /**
      *
      * @throws java.lang.Exception

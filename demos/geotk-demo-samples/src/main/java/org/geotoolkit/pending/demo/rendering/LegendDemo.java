@@ -32,7 +32,7 @@ import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.util.FactoryException;
 
 

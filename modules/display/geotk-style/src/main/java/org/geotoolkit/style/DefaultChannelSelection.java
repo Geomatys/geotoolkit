@@ -26,7 +26,7 @@ import org.opengis.style.StyleVisitor;
 import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
- * Immutable implementation of GeoAPI ChannelSelection.
+ * Immutable implementation of Types ChannelSelection.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending

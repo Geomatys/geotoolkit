@@ -91,15 +91,15 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
         }
 
         final String randomFileName = UUID.randomUUID().toString();
-        Marshaller m = null;
         OutputStream geometryStream = null;
         try {
             //create file
             final File geometryFile = new File((String) params.get(TMP_DIR_PATH), randomFileName);
             geometryStream = new FileOutputStream(geometryFile);
-            m = WPSMarshallerPool.getInstance().acquireMarshaller();
+            final Marshaller m = WPSMarshallerPool.getInstance().acquireMarshaller();
             m.marshal( JTStoGeometry.toGML(gmlVersion, source), geometryStream);
             reference.setHref((String) params.get(TMP_DIR_URL) + "/" +randomFileName);
+            WPSMarshallerPool.getInstance().recycle(m);
 
         } catch (FactoryException ex) {
             throw new NonconvertibleObjectException("Can't convert the JTS geometry to OpenGIS.", ex);
@@ -108,9 +108,6 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
         } catch (JAXBException ex) {
              throw new NonconvertibleObjectException("JAXB exception while writing the geometry", ex);
         } finally {
-            if(m!=null){
-                WPSMarshallerPool.getInstance().release(m);
-            }
             try {
                 geometryStream.close();
             } catch (IOException ex) {

@@ -257,7 +257,7 @@ public class SmlXMLBindingTest {
 
         component.setPosition(new Position("conductivitePosition", "piezometer#piezoPosition"));
         component.setName("Capteur Profondeur de ARGELES");
-        
+
         member.setProcess(sml100Factory.createComponent(component));
         SensorML expectedResult = new SensorML("1.0", Arrays.asList(member));
 
@@ -268,7 +268,7 @@ public class SmlXMLBindingTest {
         ComponentType resultProcess = (ComponentType) result.getMember().get(0).getProcess().getValue();
 
         assertEquals(resultProcess.getCapabilities(), component.getCapabilities());
-        
+
         assertTrue(resultProcess.getContact().size() == 1);
         assertEquals(resultProcess.getContact().get(0).getContactList(), component.getContact().get(0).getContactList());
         assertEquals(resultProcess.getContact().get(0).getResponsibleParty().getContactInfo(), component.getContact().get(0).getResponsibleParty().getContactInfo());
@@ -312,7 +312,7 @@ public class SmlXMLBindingTest {
         assertEquals(expectedResult.getMember(), result.getMember());
         assertEquals(expectedResult, result);
 
-        SensorMLMarshallerPool.getInstance().release(unmarshaller);
+        SensorMLMarshallerPool.getInstance().recycle(unmarshaller);
     }
 
     /**
@@ -650,7 +650,7 @@ public class SmlXMLBindingTest {
         assertEquals(expectedResult.getMember(), result.getMember());
         assertEquals(expectedResult, result);
 
-        SensorMLMarshallerPool.getInstance().release(unmarshaller);
+        SensorMLMarshallerPool.getInstance().recycle(unmarshaller);
     }
 
     /**
@@ -660,7 +660,7 @@ public class SmlXMLBindingTest {
      */
     @Test
     public void marshallMarshalingTest() throws Exception {
-        
+
         ObjectFactory factory = new ObjectFactory();
 
         List<DataComponentPropertyType> fields = new ArrayList<DataComponentPropertyType>();
@@ -678,7 +678,7 @@ public class SmlXMLBindingTest {
         IoComponentPropertyType io2 = new IoComponentPropertyType("piezoMeasurements", swe100Factory.createDataRecord(outRecord));
         OutputList outputList = new OutputList(Arrays.asList(io2));
         Outputs outputs = new Outputs(outputList);
-        
+
         Marshaller marshaller = SensorMLMarshallerPool.getInstance().acquireMarshaller();
 
         StringWriter sw = new StringWriter();
@@ -699,7 +699,7 @@ public class SmlXMLBindingTest {
 
         result = sw.toString();
         //System.out.println("result:" + result);
-        SensorMLMarshallerPool.getInstance().release(marshaller);
+        SensorMLMarshallerPool.getInstance().recycle(marshaller);
 
     }
 }

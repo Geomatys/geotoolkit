@@ -20,6 +20,7 @@ package org.geotoolkit.gml.xml.v321;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -31,8 +32,7 @@ import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -42,11 +42,11 @@ import org.opengis.util.FactoryException;
 /**
  * Direct position instances hold the coordinates for a position within some coordinate reference system (CRS). Since direct positions, as data types, will often be included in larger objects (such as geometry elements) that have references to CRS, the srsName attribute will in general be missing, if this particular direct position is included in a larger element with such a reference to a CRS. In this case, the CRS is implicitly assumed to take on the value of the containing object's CRS.
  * if no srsName attribute is given, the CRS shall be specified as part of the larger context this geometry element is part of, typically a geometric object like a point, curve, etc.
- * 
+ *
  * <p>Java class for DirectPositionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DirectPositionType">
  *   &lt;simpleContent>
@@ -56,8 +56,8 @@ import org.opengis.util.FactoryException;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DirectPositionType", propOrder = {
@@ -182,7 +182,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
             }
         }
     }
-    
+
     /**
      * Build a light direct position.
      *
@@ -198,10 +198,10 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
         }
     }
 
-    
+
     /**
      * A type for a list of values of the respective simple type.Gets the value of the value property.
-     * 
+     *
      */
     @Override
     public List<Double> getValue() {
@@ -213,11 +213,11 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
 
     /**
      * Gets the value of the srsName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getSrsName() {
@@ -226,11 +226,11 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
 
     /**
      * Sets the value of the srsName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSrsName(String value) {
         this.srsName = value;
@@ -238,11 +238,11 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
 
     /**
      * Gets the value of the srsDimension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     @Override
     public Integer getSrsDimension() {
@@ -251,11 +251,11 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
 
     /**
      * Sets the value of the srsDimension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setSrsDimension(Integer value) {
         this.srsDimension = value;
@@ -263,7 +263,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
 
     /**
      * Gets the value of the axisLabels property.
-     * 
+     *
      */
     @Override
     public List<String> getAxisLabels() {
@@ -275,7 +275,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
 
     /**
      * Gets the value of the uomLabels property.
-     * 
+     *
      */
     @Override
     public List<String> getUomLabels() {
@@ -284,7 +284,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
         }
         return this.uomLabels;
     }
-    
+
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         if (srsName != null) {
@@ -363,11 +363,11 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
         }
         if (object instanceof DirectPositionType) {
             final DirectPositionType that = (DirectPositionType) object;
-            return  Utilities.equals(this.getAxisLabels(), that.getAxisLabels()) &&
-                    Utilities.equals(this.srsDimension,    that.srsDimension)    &&
-                    Utilities.equals(this.srsName,         that.srsName)         &&
-                    Utilities.equals(this.getUomLabels(),  that.getUomLabels())  &&
-                    Utilities.equals(this.value,           that.value);
+            return  Objects.equals(this.getAxisLabels(), that.getAxisLabels()) &&
+                    Objects.equals(this.srsDimension,    that.srsDimension)    &&
+                    Objects.equals(this.srsName,         that.srsName)         &&
+                    Objects.equals(this.getUomLabels(),  that.getUomLabels())  &&
+                    Objects.equals(this.value,           that.value);
         }
         return false;
     }

@@ -41,7 +41,8 @@ import org.geotoolkit.swe.xml.v101.ObjectFactory;
 
 //Junit dependencies
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.xml.MarshallerPool;
+import javax.xml.bind.JAXBContext;
+import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
@@ -59,7 +60,7 @@ public class SweXMLBindingTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        pool = new MarshallerPool("org.geotoolkit.swe.xml.v101:org.geotoolkit.swe.xml.v200:org.geotoolkit.internal.jaxb.geometry");
+        pool = new MarshallerPool(JAXBContext.newInstance("org.geotoolkit.swe.xml.v101:org.geotoolkit.swe.xml.v200:org.apache.sis.internal.jaxb.geometry"), null);
     }
 
     @AfterClass
@@ -75,10 +76,10 @@ public class SweXMLBindingTest {
     @After
     public void tearDown() {
         if (marshaller != null) {
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
         if (unmarshaller != null) {
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
     }
 
@@ -100,7 +101,7 @@ public class SweXMLBindingTest {
         result = result.substring(result.indexOf("?>") + 3);
         //we remove the xmlmns
         result = StringUtilities.removeXmlns(result);
-       
+
         String expResult = "<swe:Text definition=\"definition\" >" + '\n' +
                            "    <swe:value>some value</swe:value>" + '\n' +
                            "</swe:Text>" + '\n' ;
@@ -144,24 +145,24 @@ public class SweXMLBindingTest {
 
         final XMLComparator comparator = new XMLComparator(expResult, result);
         comparator.compare();
-        
-    
+
+
         ObjectFactory factory = new ObjectFactory();
-        
+
         final List<DataComponentPropertyType> fields = new ArrayList<DataComponentPropertyType>();
         fields.add(DataComponentPropertyType.LATITUDE_FIELD);
         fields.add(DataComponentPropertyType.LONGITUDE_FIELD);
         fields.add(DataComponentPropertyType.TIME_FIELD);
         final DataRecordType posRecord = new DataRecordType(null, fields);
         final DataBlockDefinitionType definition = new DataBlockDefinitionType(null, Arrays.asList((AbstractDataComponentType)posRecord), TextBlockType.DEFAULT_ENCODING);
-        
+
         marshaller.marshal(factory.createDataBlockDefinition(definition), System.out);
-        
+
         org.geotoolkit.swe.xml.v200.ObjectFactory factoryV200 = new org.geotoolkit.swe.xml.v200.ObjectFactory();
         org.geotoolkit.swe.xml.v200.DataArrayType arrayV200 = new org.geotoolkit.swe.xml.v200.DataArrayType("test-id", 2, null, "balbbla", "test-id", null);
         marshaller.marshal(factoryV200.createDataArray(arrayV200), System.out);
     }
-    
+
     @Test
     public void cloneDataBlockDefinitionTest() throws Exception {
         final List<DataComponentPropertyType> fields = new ArrayList<DataComponentPropertyType>();
@@ -170,17 +171,17 @@ public class SweXMLBindingTest {
         fields.add(DataComponentPropertyType.TIME_FIELD);
         final DataRecordType posRecord = new DataRecordType(null, fields);
         final DataBlockDefinitionType expResult = new DataBlockDefinitionType(null, Arrays.asList((AbstractDataComponentType)posRecord), TextBlockType.DEFAULT_ENCODING);
-        
+
         final DataBlockDefinitionType result = new DataBlockDefinitionType(expResult);
-        
+
         assertEquals(expResult.getEncoding(), result.getEncoding());
         assertEquals(expResult, result);
-        
+
     }
-    
+
     @Test
     public void unmarshallingTest() throws Exception {
-        String s = 
+        String s =
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + '\n' +
         "<swe:DataArray xmlns:swe=\"http://www.opengis.net/swe/2.0\">" + '\n' +
         "        <swe:elementCount>" + '\n' +
@@ -215,7 +216,7 @@ public class SweXMLBindingTest {
         "        </swe:encoding>" + '\n' +
         "        <swe:values>00,12,45 10,13,20 20,14,30 30,13,35 40,13,40</swe:values>" + '\n' +
         "</swe:DataArray>";
-        
+
         Object obj = unmarshaller.unmarshal(new StringReader(s));
         if (obj instanceof JAXBElement) {
             obj = ((JAXBElement)obj).getValue();

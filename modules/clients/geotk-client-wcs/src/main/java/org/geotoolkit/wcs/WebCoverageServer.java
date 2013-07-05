@@ -27,7 +27,7 @@ import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wcs.v100.DescribeCoverage100;
 import org.geotoolkit.wcs.v100.GetCapabilities100;
 import org.geotoolkit.wcs.v100.GetCoverage100;
@@ -52,7 +52,7 @@ public class WebCoverageServer extends AbstractServer {
     public WebCoverageServer(final URL serverURL, final String version) {
         this(serverURL,null,version);
     }
-    
+
     public WebCoverageServer(final URL serverURL, final ClientSecurity security, final String version) {
         super(create(WCSServerFactory.PARAMETERS, serverURL, security));
         if (version.equals("1.0.0")) {
@@ -61,7 +61,7 @@ public class WebCoverageServer extends AbstractServer {
             throw new IllegalArgumentException("unkonwed version : " + version);
         }
     }
-    
+
     public WebCoverageServer(final URL serverURL, final ClientSecurity security, final WCSVersion version) {
         super(create(WCSServerFactory.PARAMETERS, serverURL, security));
         if(version == null){
@@ -69,7 +69,7 @@ public class WebCoverageServer extends AbstractServer {
         }
         Parameters.getOrCreate(WCSServerFactory.VERSION, parameters).setValue(version);
     }
-    
+
     public WebCoverageServer(final ParameterValueGroup params) {
         super(params);
     }
@@ -85,7 +85,7 @@ public class WebCoverageServer extends AbstractServer {
     public WCSVersion getVersion() {
         return WCSVersion.fromCode(Parameters.value(WCSServerFactory.VERSION, parameters));
     }
-    
+
     /**
      * Returns the {@linkplain WCSCapabilitiesType capabilities} response for this
      * server.
@@ -99,11 +99,11 @@ public class WebCoverageServer extends AbstractServer {
         final Thread thread = new Thread() {
             @Override
             public void run() {
-                Unmarshaller unmarshaller = null;
                 try {
-                    unmarshaller = WCSMarshallerPool.getInstance().acquireUnmarshaller();
+                    final Unmarshaller unmarshaller = WCSMarshallerPool.getInstance().acquireUnmarshaller();
                     final GetCapabilitiesRequest request = createGetCapabilities();
                     capabilities = (WCSCapabilitiesType) unmarshaller.unmarshal(request.getURL());
+                    WCSMarshallerPool.getInstance().recycle(unmarshaller);
                 } catch (Exception ex) {
                     capabilities = null;
                     try {
@@ -111,10 +111,6 @@ public class WebCoverageServer extends AbstractServer {
                                 createGetCapabilities().getURL().toString(), ex);
                     } catch (MalformedURLException ex1) {
                         LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
-                    }
-                }finally{
-                    if(unmarshaller != null){
-                        WCSMarshallerPool.getInstance().release(unmarshaller);
                     }
                 }
             }

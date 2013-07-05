@@ -17,19 +17,19 @@
 
 package org.geotoolkit.swe.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for AbstractSWEIdentifiableType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractSWEIdentifiableType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractSWEIdentifiableType", propOrder = {
@@ -64,13 +64,13 @@ public class AbstractSWEIdentifiableType extends AbstractSWEType {
     private String description;
 
     public AbstractSWEIdentifiableType() {
-        
+
     }
-    
+
     public AbstractSWEIdentifiableType(final String id) {
         super(id);
     }
-    
+
     public AbstractSWEIdentifiableType(final AbstractSWEIdentifiableType that) {
         super(that);
         this.description = that.description;
@@ -79,11 +79,11 @@ public class AbstractSWEIdentifiableType extends AbstractSWEType {
     }
     /**
      * Gets the value of the identifier property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIdentifier() {
         return identifier;
@@ -91,11 +91,11 @@ public class AbstractSWEIdentifiableType extends AbstractSWEType {
 
     /**
      * Sets the value of the identifier property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIdentifier(String value) {
         this.identifier = value;
@@ -103,11 +103,11 @@ public class AbstractSWEIdentifiableType extends AbstractSWEType {
 
     /**
      * Gets the value of the label property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLabel() {
         return label;
@@ -115,11 +115,11 @@ public class AbstractSWEIdentifiableType extends AbstractSWEType {
 
     /**
      * Sets the value of the label property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLabel(String value) {
         this.label = value;
@@ -127,11 +127,11 @@ public class AbstractSWEIdentifiableType extends AbstractSWEType {
 
     /**
      * Gets the value of the description property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDescription() {
         return description;
@@ -139,11 +139,11 @@ public class AbstractSWEIdentifiableType extends AbstractSWEType {
 
     /**
      * Sets the value of the description property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDescription(String value) {
         this.description = value;
@@ -152,11 +152,11 @@ public class AbstractSWEIdentifiableType extends AbstractSWEType {
     public void setName(final String name) {
         //do nothing
     }
-    
+
     public String getName() {
         return null;
     }
-    
+
     @Override
     public boolean equals(final Object object) {
         if (object == this) {
@@ -165,9 +165,9 @@ public class AbstractSWEIdentifiableType extends AbstractSWEType {
         if (object instanceof AbstractSWEIdentifiableType && super.equals(object)) {
             final AbstractSWEIdentifiableType that = (AbstractSWEIdentifiableType) object;
 
-            return Utilities.equals(this.description, that.description) &&
-                   Utilities.equals(this.label,       that.label) &&
-                   Utilities.equals(this.identifier,  that.identifier);
+            return Objects.equals(this.description, that.description) &&
+                   Objects.equals(this.label,       that.label) &&
+                   Objects.equals(this.identifier,  that.identifier);
         }
         return false;
     }

@@ -33,8 +33,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.xml.AbstractConfigurable;
-import org.geotoolkit.xml.MarshallerPool;
-import org.geotoolkit.xml.Namespaces;
+import org.apache.sis.xml.MarshallerPool;
+import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.xsd.xml.v2001.ComplexContent;
 import org.geotoolkit.xsd.xml.v2001.ExplicitGroup;
 import org.geotoolkit.xsd.xml.v2001.ExtensionType;
@@ -101,15 +101,9 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
     @Override
     public void write(final FeatureType feature, final Writer writer) throws JAXBException {
         final Schema schema = getSchemaFromFeatureType(feature);
-        Marshaller marshaller = null;
-        try {
-            marshaller = POOL.acquireMarshaller();
-            marshaller.marshal(schema, writer);
-        } finally {
-            if (marshaller != null) {
-                POOL.release(marshaller);
-            }
-        }
+        final Marshaller marshaller = POOL.acquireMarshaller();
+        marshaller.marshal(schema, writer);
+        POOL.recycle(marshaller);
     }
 
     /**
@@ -118,15 +112,9 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
     @Override
     public void write(final FeatureType feature, final OutputStream stream) throws JAXBException {
         final Schema schema = getSchemaFromFeatureType(feature);
-        Marshaller marshaller = null;
-        try {
-            marshaller = POOL.acquireMarshaller();
-            marshaller.marshal(schema, stream);
-        } finally {
-            if (marshaller != null) {
-                POOL.release(marshaller);
-            }
-        }
+        final Marshaller marshaller = POOL.acquireMarshaller();
+        marshaller.marshal(schema, stream);
+        POOL.recycle(marshaller);
     }
 
     /**
@@ -144,17 +132,11 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
         final Document document = loader.newDocument();
 
         final Schema schema = getSchemaFromFeatureType(feature);
-        Marshaller marshaller = null;
-        try {
-            marshaller = POOL.acquireMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
-            marshaller.marshal(schema, document);
-        } finally {
-            if (marshaller != null) {
-                POOL.release(marshaller);
-            }
-        }
+        final Marshaller marshaller = POOL.acquireMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
+        marshaller.marshal(schema, document);
+        POOL.recycle(marshaller);
         return document.getDocumentElement();
     }
 

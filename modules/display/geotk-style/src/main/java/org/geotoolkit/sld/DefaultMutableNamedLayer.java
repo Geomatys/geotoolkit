@@ -29,7 +29,7 @@ import org.geotoolkit.util.collection.CollectionChangeListener;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.apache.sis.util.Classes;
@@ -43,7 +43,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Default mutable named layer, thread safe.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -59,7 +59,7 @@ class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
             @Override
             protected void notifyAdd(final MutableLayerStyle item, final int index) {
                 styleListener.registerSource(item);
-                fireStyleChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, index));
+                fireStyleChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, true, index, true));
             }
 
             @Override
@@ -73,9 +73,9 @@ class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
             @Override
             protected void notifyRemove(final MutableLayerStyle item, final int index) {
                 styleListener.unregisterSource(item);
-                fireStyleChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, index));
+                fireStyleChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, true, index, true));
             }
-            
+
             @Override
             protected void notifyRemove(final Collection<? extends MutableLayerStyle> items, final NumberRange<Integer> range) {
                 for(final MutableLayerStyle mls : items){
@@ -92,21 +92,21 @@ class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
                 if(newItem != null){
                     styleListener.registerSource(newItem);
                 }
-                fireStyleChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, index));
+                fireStyleChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, true, index, true));
             }
-            
+
         };
-        
+
     private final StyleListener.Weak styleListener = new StyleListener.Weak(null,this);
-    
+
     private final EventListenerList listeners = new EventListenerList();
-    
+
     private final MutableLayerFeatureConstraints constraints = new DefaultMutableLayerFeatureConstraints();
-    
+
     private String name = null;
-    
+
     private Description description = StyleConstants.DEFAULT_DESCRIPTION;
-        
+
     /**
      * default constructor
      */
@@ -119,7 +119,7 @@ class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
             }
         });
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -128,7 +128,7 @@ class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
     public String getName() {
         return name;
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -154,7 +154,7 @@ class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
     public Description getDescription() {
         return description;
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -162,7 +162,7 @@ class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
     @Override
     public void setDescription(final Description desc) {
         ensureNonNull("description", desc);
-        
+
         final Description oldDesc;
         synchronized (this) {
             oldDesc = this.description;
@@ -173,7 +173,7 @@ class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
         }
         firePropertyChange(DESCRIPTION_PROPERTY, oldDesc, this.description);
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -204,60 +204,60 @@ class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
-    
+
     protected void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue){
         //TODO make fire property change thread safe, preserve fire order
-        
+
         final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
         final LayerListener[] lists = listeners.getListeners(LayerListener.class);
-        
+
         for(LayerListener listener : lists){
             listener.propertyChange(event);
         }
-        
+
     }
-    
+
     protected void fireStyleChange(final int type, final MutableLayerStyle layer, final NumberRange<Integer> range) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<MutableLayerStyle> event = new CollectionChangeEvent<MutableLayerStyle>(this, layer, type, range, null);
         final LayerListener[] lists = listeners.getListeners(LayerListener.class);
-        
+
         for(LayerListener listener : lists){
             listener.styleChange(event);
         }
 
     }
-    
+
     protected void fireStyleChange(final int type, final MutableLayerStyle layer, final NumberRange<Integer> range, final EventObject subEvent) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<MutableLayerStyle> event = new CollectionChangeEvent<MutableLayerStyle>(this, layer, type, range,subEvent);
         final LayerListener[] lists = listeners.getListeners(LayerListener.class);
-        
+
         for(LayerListener listener : lists){
             listener.styleChange(event);
         }
 
     }
-    
+
     protected void fireStyleChange(final int type, final Collection<? extends MutableLayerStyle> layer, final NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
-        
+
         final CollectionChangeEvent<MutableLayerStyle> event = new CollectionChangeEvent<MutableLayerStyle>(this,layer,type,range, null);
         final LayerListener[] lists = listeners.getListeners(LayerListener.class);
-        
+
         for(LayerListener listener : lists){
             listener.styleChange(event);
         }
-        
+
     }
-    
+
     protected void fireConstraintChange(final CollectionChangeEvent<? extends Constraint> event){
         CollectionChangeEvent<Constraint> newEvent = new CollectionChangeEvent<Constraint>(this,event.getItems(),event.getType(),event.getRange(),null);
-        
+
         final LayerListener[] lists = listeners.getListeners(LayerListener.class);
-        
+
         for(LayerListener listener : lists){
             listener.constraintChange(newEvent);
         }
@@ -292,7 +292,7 @@ class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
     public void removeListener(final LayerListener listener) {
         listeners.remove(LayerListener.class, listener);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -357,5 +357,5 @@ class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
 
         return builder.toString();
     }
-    
+
 }

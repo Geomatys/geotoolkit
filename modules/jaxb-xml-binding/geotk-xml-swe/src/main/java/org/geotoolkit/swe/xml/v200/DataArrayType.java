@@ -17,6 +17,7 @@
 
 package org.geotoolkit.swe.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,14 +30,13 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.swe.xml.DataArray;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for DataArrayType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataArrayType">
  *   &lt;complexContent>
@@ -69,8 +69,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataArrayType", propOrder = {
@@ -96,7 +96,7 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
      * An empty constructor used by JAXB.
      */
     DataArrayType() {
-        
+
     }
 
     /**
@@ -113,15 +113,15 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
             }
             this.values = array.values;
             if (array.elementCount != null) {
-               this.elementCount = new CountPropertyType(array.elementCount); 
+               this.elementCount = new CountPropertyType(array.elementCount);
             }
         }
 
     }
-    
+
     public DataArrayType(final String id, final int count, final AbstractEncodingType encoding, final String values, final String elementName, final AbstractDataComponentType elementType) {
         super(id, null, null);
-        this.elementCount = new CountPropertyType(count); 
+        this.elementCount = new CountPropertyType(count);
         if (encoding != null) {
             this.encoding = new Encoding(encoding);
         }
@@ -130,14 +130,14 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
             this.elementType  = new ElementType(elementName, elementType);
         }
     }
-    
+
     /**
      * Gets the value of the elementCount property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CountPropertyType }
-     *     
+     *
      */
     @Override
     public CountPropertyType getElementCount() {
@@ -146,16 +146,16 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
 
     /**
      * Sets the value of the elementCount property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CountPropertyType }
-     *     
+     *
      */
     public void setElementCount(CountPropertyType value) {
         this.elementCount = value;
     }
-    
+
     @Override
     public void setElementCount(final int value) {
         this.elementCount = new CountPropertyType(value);
@@ -163,11 +163,11 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
 
     /**
      * Gets the value of the elementType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataArrayType.ElementType }
-     *     
+     *
      */
     public DataArrayType.ElementType getElementType() {
         return elementType;
@@ -180,14 +180,14 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
     public DataArrayType.ElementType getPropertyElementType() {
         return elementType;
     }
-    
+
     /**
      * Sets the value of the elementType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataArrayType.ElementType }
-     *     
+     *
      */
     public void setElementType(DataArrayType.ElementType value) {
         this.elementType = value;
@@ -195,11 +195,11 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
 
     /**
      * Gets the value of the encoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DataArrayType.Encoding }
-     *     
+     *
      */
     @Override
     public AbstractEncodingType getEncoding() {
@@ -208,18 +208,18 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
         }
         return null;
     }
-    
+
     public DataArrayType.Encoding getJbEncoding() {
         return encoding;
     }
 
     /**
      * Sets the value of the encoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DataArrayType.Encoding }
-     *     
+     *
      */
     public void setEncoding(DataArrayType.Encoding value) {
         this.encoding = value;
@@ -227,11 +227,11 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
 
     /**
      * Gets the value of the values property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EncodedValuesPropertyType }
-     *     
+     *
      */
     @Override
     public EncodedValuesPropertyType getDataValues() {
@@ -240,11 +240,11 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
 
     /**
      * Sets the value of the values property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EncodedValuesPropertyType }
-     *     
+     *
      */
     @Override
     public void setValues(String value) {
@@ -292,10 +292,10 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
         }
         if (object instanceof DataArrayType && super.equals(object)) {
             final DataArrayType that = (DataArrayType) object;
-            return Utilities.equals(this.elementCount,   that.elementCount)   &&
-                   Utilities.equals(this.elementType,    that.elementType)   &&
-                   Utilities.equals(this.encoding,       that.encoding)    &&
-                   Utilities.equals(this.values,         that.values);
+            return Objects.equals(this.elementCount,   that.elementCount)   &&
+                   Objects.equals(this.elementType,    that.elementType)   &&
+                   Objects.equals(this.encoding,       that.encoding)    &&
+                   Objects.equals(this.values,         that.values);
         }
         return false;
     }
@@ -310,12 +310,12 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
         hash = 29 * hash + (this.values != null ? this.values.hashCode() : 0);
         return hash;
     }
-    
+
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -325,8 +325,8 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "")
@@ -338,26 +338,26 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
         private String name;
 
         public ElementType() {
-            
+
         }
-        
+
         public ElementType(final ElementType that) {
             super(that);
             this.name = that.name;
         }
-        
+
         public ElementType(final String name, final AbstractDataComponentType datacompo) {
             super(datacompo);
             this.name = name;
         }
-        
+
         /**
          * Gets the value of the name property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         @Override
         public String getName() {
@@ -366,11 +366,11 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
 
         /**
          * Sets the value of the name property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         public void setName(String value) {
             this.name = value;
@@ -395,7 +395,7 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
             }
             if (object instanceof ElementType && super.equals(object)) {
                 final ElementType that = (ElementType) object;
-                return Utilities.equals(this.name, that.name);
+                return Objects.equals(this.name, that.name);
             }
             return false;
         }
@@ -412,9 +412,9 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
 
     /**
      * <p>Java class for anonymous complex type.
-     * 
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -426,8 +426,8 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -439,15 +439,15 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
         private JAXBElement<? extends AbstractEncodingType> abstractEncoding;
 
         public Encoding() {
-            
+
         }
-        
+
         public Encoding(final String id, final String decimalSeparator, final String tokenSeparator,
             final String blockSeparator) {
             final ObjectFactory factory = new ObjectFactory();
             this.abstractEncoding = factory.createTextEncoding(new TextEncodingType(id, decimalSeparator, tokenSeparator, blockSeparator));
         }
-        
+
         public Encoding(final Encoding that) {
             this.abstractEncoding = that.abstractEncoding;
         }
@@ -463,17 +463,17 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
                 this.abstractEncoding = factory.createAbstractEncoding(encoding);
             }
         }
-        
+
         /**
          * Gets the value of the abstractEncoding property.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link JAXBElement }{@code <}{@link TextEncodingType }{@code >}
          *     {@link JAXBElement }{@code <}{@link XMLEncodingType }{@code >}
          *     {@link JAXBElement }{@code <}{@link BinaryEncodingType }{@code >}
          *     {@link JAXBElement }{@code <}{@link AbstractEncodingType }{@code >}
-         *     
+         *
          */
         public JAXBElement<? extends AbstractEncodingType> getAbstractEncoding() {
             return abstractEncoding;
@@ -481,14 +481,14 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
 
         /**
          * Sets the value of the abstractEncoding property.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link JAXBElement }{@code <}{@link TextEncodingType }{@code >}
          *     {@link JAXBElement }{@code <}{@link XMLEncodingType }{@code >}
          *     {@link JAXBElement }{@code <}{@link BinaryEncodingType }{@code >}
          *     {@link JAXBElement }{@code <}{@link AbstractEncodingType }{@code >}
-         *     
+         *
          */
         public void setAbstractEncoding(JAXBElement<? extends AbstractEncodingType> value) {
             this.abstractEncoding = ((JAXBElement<? extends AbstractEncodingType> ) value);
@@ -516,7 +516,7 @@ public class DataArrayType extends AbstractDataComponentType implements DataArra
                 if (this.abstractEncoding == null && that.abstractEncoding == null) {
                     return true;
                 } else if (this.abstractEncoding != null && that.abstractEncoding != null) {
-                    return Utilities.equals(this.abstractEncoding.getValue(), that.abstractEncoding.getValue());
+                    return Objects.equals(this.abstractEncoding.getValue(), that.abstractEncoding.getValue());
                 }
             }
             return false;

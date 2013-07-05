@@ -18,7 +18,7 @@ package org.geotoolkit.wmsc.model;
 
 import java.util.List;
 import org.geotoolkit.coverage.DefaultPyramid;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.wmsc.xml.v111.TileSet;
 import org.opengis.geometry.DirectPosition;

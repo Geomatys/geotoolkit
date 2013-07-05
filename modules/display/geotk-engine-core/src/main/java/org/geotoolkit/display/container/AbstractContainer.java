@@ -34,7 +34,7 @@ import org.geotoolkit.display.primitive.AbstractGraphic;
 import org.geotoolkit.display.primitive.AbstractReferencedGraphic;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.container.ContainerListener;

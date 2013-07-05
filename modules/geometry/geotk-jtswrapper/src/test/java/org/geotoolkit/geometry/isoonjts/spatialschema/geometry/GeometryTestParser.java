@@ -40,7 +40,7 @@ import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.PositionFactory;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

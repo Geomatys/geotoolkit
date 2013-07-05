@@ -36,7 +36,7 @@ import org.geotoolkit.display2d.ext.legend.LegendTemplate;
 import org.geotoolkit.display2d.primitive.GraphicProbe;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Legend decoration placed on the right of the map pane.

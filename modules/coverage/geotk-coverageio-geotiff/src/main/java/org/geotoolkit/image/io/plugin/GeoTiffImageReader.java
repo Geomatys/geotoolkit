@@ -31,12 +31,13 @@ import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.util.Utilities;
 
 /**
  * Reader for the <cite>GeoTiff</cite> format. This reader wraps an "ordinary" image format TIFF.
@@ -92,7 +93,7 @@ public class GeoTiffImageReader extends ImageReaderAdapter {
             MIMETypes       = new String[] {"image/x-geotiff", "image/tiff;subtype=geotiff"};
             pluginClassName = "org.geotoolkit.image.io.plugin.GeoTiffImageReader";
             vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
+            version         = Utilities.VERSION.toString();
             writerSpiNames  = new String[] {GeoTiffImageWriter.TIFF.class.getName()};
             inputTypes      = ArraysExt.append(inputTypes, ImageInputStream.class);
         }

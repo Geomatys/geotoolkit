@@ -9,7 +9,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
 import java.util.List;
 
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolygon;
 

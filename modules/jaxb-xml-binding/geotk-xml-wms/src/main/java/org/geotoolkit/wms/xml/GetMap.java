@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.List;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.geometry.ImmutableEnvelope;
+import org.apache.sis.geometry.ImmutableEnvelope;
 import org.geotoolkit.ows.xml.RequestBase;
 import org.apache.sis.util.Version;
 import org.apache.sis.internal.util.UnmodifiableArrayList;

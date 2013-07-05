@@ -59,7 +59,7 @@ public abstract class AbstractExecute extends AbstractRequest implements Execute
     protected boolean status;
     protected List<WPSOutput> outputs;
     protected List<AbstractWPSInput> inputs;
-    
+
     protected String storageDirectory;
     protected String storageURL;
 
@@ -212,7 +212,7 @@ public abstract class AbstractExecute extends AbstractRequest implements Execute
         this.storageURL = url;
     }
 
-    
+
     /**
      * {@inheritDoc }
      */
@@ -240,12 +240,9 @@ public abstract class AbstractExecute extends AbstractRequest implements Execute
             marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
             marshaller.marshal(request, stream);
             //marshaller.marshal(request, System.out);
+            WPSMarshallerPool.getInstance().recycle(marshaller);
         } catch (JAXBException ex) {
             throw new IOException(ex);
-        } finally {
-            if (marshaller != null) {
-                WPSMarshallerPool.getInstance().release(marshaller);
-            }
         }
         stream.close();
         return security.decrypt(conec.getInputStream());
@@ -377,8 +374,8 @@ public abstract class AbstractExecute extends AbstractRequest implements Execute
         final InputType inputType = new InputType();
 
         final DataType data = new DataType();
-        final BoundingBoxType bbox = new BoundingBoxType(in.getCrs(), 
-                in.getLowerCorner().get(0), in.getLowerCorner().get(1), 
+        final BoundingBoxType bbox = new BoundingBoxType(in.getCrs(),
+                in.getLowerCorner().get(0), in.getLowerCorner().get(1),
                 in.getUpperCorner().get(0), in.getUpperCorner().get(1));
 
         data.setBoundingBoxData(bbox);
@@ -409,7 +406,7 @@ public abstract class AbstractExecute extends AbstractRequest implements Execute
         parameters.put(WPSConvertersUtils.OUT_STORAGE_DIR, storageDirectory);
         //Try to convert the complex input.
         final ComplexDataType complex = WPSConvertersUtils.convertToComplex(inputData, mime, echoding, schema, parameters);
-        
+
         datatype.setComplexData(complex);
         inputType.setData(datatype);
         inputType.setIdentifier(new CodeType(in.getIdentifier()));

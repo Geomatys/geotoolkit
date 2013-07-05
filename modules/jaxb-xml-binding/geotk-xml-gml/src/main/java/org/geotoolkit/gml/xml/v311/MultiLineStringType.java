@@ -29,7 +29,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
- * A MultiLineString is defined by one or more LineStrings, referenced through lineStringMember elements. Deprecated with GML version 3.0. Use MultiCurveType instead.
+ * A MultiLineString is defined by one or more LineCharSequences, referenced through lineStringMember elements. Deprecated with GML version 3.0. Use MultiCurveType instead.
  * 
  * <p>Java class for MultiLineStringType complex type.
  * 

@@ -33,7 +33,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
- * Immutable implementation of GeoAPI text symbolizer.
+ * Immutable implementation of Types text symbolizer.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending

@@ -38,7 +38,7 @@ import org.geotoolkit.process.chain.model.DataLink;
 import org.geotoolkit.process.chain.model.Element;
 import org.geotoolkit.process.chain.model.FlowLink;
 import org.geotoolkit.process.chain.model.Parameter;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.geotoolkit.util.converter.ObjectConverter;
@@ -48,7 +48,7 @@ import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * Extends a Chain, provides automatic link cleaning and events.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class EventChain extends Chain{
@@ -76,11 +76,11 @@ public class EventChain extends Chain{
         }
         return factories;
     }
-    
+
     public EventChain() {
         this(null,getDefaultRegistries(),ConverterMatcher.DEFAULT);
     }
-    
+
     public EventChain(final Chain chain) {
         this(chain,getDefaultRegistries(),ConverterMatcher.DEFAULT);
     }
@@ -121,7 +121,7 @@ public class EventChain extends Chain{
                     //Null values not allowed
                     ArgumentChecks.ensureNonNull("item", item);
                     fireDataLinkChange(new CollectionChangeEvent(
-                            this, item, CollectionChangeEvent.ITEM_ADDED, NumberRange.create(index, index), null));
+                            this, item, CollectionChangeEvent.ITEM_ADDED, NumberRange.create(index, true, index, true), null));
                 }
                 @Override
                 protected void notifyAdd(Collection<? extends DataLink> items, NumberRange<Integer> range) {
@@ -136,7 +136,7 @@ public class EventChain extends Chain{
                 @Override
                 protected void notifyRemove(DataLink item, int index) {
                     fireDataLinkChange(new CollectionChangeEvent(
-                            this, item, CollectionChangeEvent.ITEM_REMOVED, NumberRange.create(index, index), null));
+                            this, item, CollectionChangeEvent.ITEM_REMOVED, NumberRange.create(index, true, index, true), null));
                 }
                 @Override
                 protected void notifyRemove(Collection<? extends DataLink> items, NumberRange<Integer> range) {
@@ -161,7 +161,7 @@ public class EventChain extends Chain{
                     //Null values not allowed
                     ArgumentChecks.ensureNonNull("item", item);
                     fireFlowLinkChange(new CollectionChangeEvent(
-                            this, item, CollectionChangeEvent.ITEM_ADDED, NumberRange.create(index, index), null));
+                            this, item, CollectionChangeEvent.ITEM_ADDED, NumberRange.create(index, true, index, true), null));
                 }
                 @Override
                 protected void notifyAdd(Collection<? extends FlowLink> items, NumberRange<Integer> range) {
@@ -176,7 +176,7 @@ public class EventChain extends Chain{
                 @Override
                 protected void notifyRemove(FlowLink item, int index) {
                     fireFlowLinkChange(new CollectionChangeEvent(
-                            this, item, CollectionChangeEvent.ITEM_REMOVED, NumberRange.create(index, index), null));
+                            this, item, CollectionChangeEvent.ITEM_REMOVED, NumberRange.create(index, true, index, true), null));
                 }
                 @Override
                 protected void notifyRemove(Collection<? extends FlowLink> items, NumberRange<Integer> range) {
@@ -201,7 +201,7 @@ public class EventChain extends Chain{
                     //Null values not allowed
                     ArgumentChecks.ensureNonNull("item", item);
                     fireDescriptorChange(new CollectionChangeEvent(
-                            this, item, CollectionChangeEvent.ITEM_ADDED, NumberRange.create(index, index), null));
+                            this, item, CollectionChangeEvent.ITEM_ADDED, NumberRange.create(index, true, index, true), null));
                 }
                 @Override
                 protected void notifyAdd(Collection<? extends Element> items, NumberRange<Integer> range) {
@@ -217,7 +217,7 @@ public class EventChain extends Chain{
                 protected void notifyRemove(Element item, int index) {
                     clearObsoleteLinks();
                     fireDescriptorChange(new CollectionChangeEvent(
-                            this, item, CollectionChangeEvent.ITEM_REMOVED, NumberRange.create(index, index), null));
+                            this, item, CollectionChangeEvent.ITEM_REMOVED, NumberRange.create(index, true, index, true), null));
                 }
                 @Override
                 protected void notifyRemove(Collection<? extends Element> items, NumberRange<Integer> range) {
@@ -243,7 +243,7 @@ public class EventChain extends Chain{
                     //Null values not allowed
                     ArgumentChecks.ensureNonNull("item", item);
                     fireConstantChange(new CollectionChangeEvent(
-                            this, item, CollectionChangeEvent.ITEM_ADDED, NumberRange.create(index, index), null));
+                            this, item, CollectionChangeEvent.ITEM_ADDED, NumberRange.create(index, true, index, true), null));
                 }
                 @Override
                 protected void notifyAdd(Collection<? extends Constant> items, NumberRange<Integer> range) {
@@ -259,7 +259,7 @@ public class EventChain extends Chain{
                 protected void notifyRemove(Constant item, int index) {
                     clearObsoleteLinks();
                     fireConstantChange(new CollectionChangeEvent(
-                            this, item, CollectionChangeEvent.ITEM_REMOVED, NumberRange.create(index, index), null));
+                            this, item, CollectionChangeEvent.ITEM_REMOVED, NumberRange.create(index, true, index, true), null));
                 }
                 @Override
                 protected void notifyRemove(Collection<? extends Constant> items, NumberRange<Integer> range) {
@@ -285,7 +285,7 @@ public class EventChain extends Chain{
                     //Null values not allowed
                     ArgumentChecks.ensureNonNull("item", item);
                     fireInputChange(new CollectionChangeEvent(
-                            this, item, CollectionChangeEvent.ITEM_ADDED, NumberRange.create(index, index), null));
+                            this, item, CollectionChangeEvent.ITEM_ADDED, NumberRange.create(index, true, index, true), null));
                 }
                 @Override
                 protected void notifyAdd(Collection<? extends Parameter> items, NumberRange<Integer> range) {
@@ -301,7 +301,7 @@ public class EventChain extends Chain{
                 protected void notifyRemove(Parameter item, int index) {
                     clearObsoleteLinks();
                     fireInputChange(new CollectionChangeEvent(
-                            this, item, CollectionChangeEvent.ITEM_REMOVED, NumberRange.create(index, index), null));
+                            this, item, CollectionChangeEvent.ITEM_REMOVED, NumberRange.create(index, true, index, true), null));
                 }
                 @Override
                 protected void notifyRemove(Collection<? extends Parameter> items, NumberRange<Integer> range) {
@@ -327,7 +327,7 @@ public class EventChain extends Chain{
                     //Null values not allowed
                     ArgumentChecks.ensureNonNull("item", item);
                     fireOutputChange(new CollectionChangeEvent(
-                            this, item, CollectionChangeEvent.ITEM_ADDED, NumberRange.create(index, index), null));
+                            this, item, CollectionChangeEvent.ITEM_ADDED, NumberRange.create(index, true, index, true), null));
                 }
                 @Override
                 protected void notifyAdd(Collection<? extends Parameter> items, NumberRange<Integer> range) {
@@ -343,7 +343,7 @@ public class EventChain extends Chain{
                 protected void notifyRemove(Parameter item, int index) {
                     clearObsoleteLinks();
                     fireOutputChange(new CollectionChangeEvent(
-                            this, item, CollectionChangeEvent.ITEM_REMOVED, NumberRange.create(index, index), null));
+                            this, item, CollectionChangeEvent.ITEM_REMOVED, NumberRange.create(index, true, index, true), null));
                 }
                 @Override
                 protected void notifyRemove(Collection<? extends Parameter> items, NumberRange<Integer> range) {
@@ -434,7 +434,7 @@ public class EventChain extends Chain{
      * @return true only if the link is valid
      */
     public boolean isValidFlowLink(final FlowLink link){
-        if (link.getSourceId() == -1 || link.getTargetId() == -1 || link.getSourceId() == link.getTargetId() 
+        if (link.getSourceId() == -1 || link.getTargetId() == -1 || link.getSourceId() == link.getTargetId()
                 || link.getTargetId() == Integer.MIN_VALUE || link.getSourceId() == Integer.MAX_VALUE) {
             return false;
         }
@@ -468,19 +468,19 @@ public class EventChain extends Chain{
                 otherLinks.add(lk);
             }
         }
-        
+
         if (!otherLinks.isEmpty()) {
             final Integer newSourceId = link.getSourceId();
             final List<FlowLink> execLinks = getFlowLinkFromId(link.getTargetId(), true);
             clearFlowLinkList(execLinks, otherLinks);
-            
+
             if (execLinks.isEmpty()) {
                 return false;
             } else {
-                
+
                 final Set<Integer> newSourceConnditional = new HashSet<Integer>();
                 searchForConditionalParent(newSourceId, newSourceConnditional);
-                
+
                 if (newSourceConnditional.isEmpty()) {
                     return false;
                 } else {
@@ -490,7 +490,7 @@ public class EventChain extends Chain{
                             searchForConditionalParent(exec.getSourceId(), otherSourceConditonal);
                         }
                     }
-                    
+
                     boolean valid = false;
                     for (Integer id : newSourceConnditional) {
                         if (otherSourceConditonal.contains(id)) {
@@ -504,7 +504,7 @@ public class EventChain extends Chain{
                 }
             }
         }
-        
+
 
         //check types
         final Object sourceDataType = getDataType(source, false, link.getSourceCode());
@@ -521,7 +521,7 @@ public class EventChain extends Chain{
         }
         return null;
     }
-    
+
     private void clearFlowLinkList(final List<FlowLink> inputExecLinks, final List<DataLink> inputLinks) {
         final List<FlowLink> clearedExecLinkList = new ArrayList<FlowLink>();
         for (DataLink lk : inputLinks) {
@@ -534,7 +534,7 @@ public class EventChain extends Chain{
         }
         inputLinks.removeAll(clearedExecLinkList);
     }
-    
+
     private List<FlowLink> getFlowLinkFromId(final Integer identifier, boolean source) {
         final List<FlowLink> links = new ArrayList<FlowLink>();
         for (FlowLink execLink : getFlowLinks()) {
@@ -550,7 +550,7 @@ public class EventChain extends Chain{
         }
         return links;
     }
-    
+
     private void searchForConditionalParent(final Integer startId, final Set<Integer> conditionalIdentifiers) {
         final List<FlowLink> execLinks = getFlowLinkFromId(startId, true);
         for (FlowLink exec : execLinks) {
@@ -563,7 +563,7 @@ public class EventChain extends Chain{
             }
         }
     }
-        
+
     /**
      * Return the Java class of a parameter or constant.
      *

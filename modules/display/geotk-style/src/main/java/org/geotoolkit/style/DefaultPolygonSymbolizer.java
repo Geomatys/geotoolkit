@@ -31,7 +31,7 @@ import org.opengis.style.StyleVisitor;
 import static org.geotoolkit.style.StyleConstants.*;
 
 /**
- * Immutable implementation of GeoAPI Polygon symbolizer.
+ * Immutable implementation of Types Polygon symbolizer.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending

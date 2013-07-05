@@ -20,22 +20,22 @@ package org.geotoolkit.gml.xml.v321;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.Reference;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * gml:ReferenceType is intended to be used in application schemas directly, if a property element shall use a "by-reference only" encoding.
- * 
+ *
  * <p>Java class for ReferenceType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ReferenceType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ReferenceType")
@@ -81,13 +81,13 @@ public class ReferenceType implements Reference {
     private java.lang.Boolean owns;
 
     public ReferenceType() {
-        
+
     }
-    
+
     public ReferenceType(final String href) {
         this.href = href;
     }
-    
+
     public ReferenceType(final Reference that) {
         if (that != null) {
             this.actuate      = that.getActuate();
@@ -104,10 +104,10 @@ public class ReferenceType implements Reference {
             this.type         = that.getType();
         }
     }
-    
+
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      */
     @Override
     public List<String> getNilReason() {
@@ -119,11 +119,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getRemoteSchema() {
@@ -132,11 +132,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(String value) {
         this.remoteSchema = value;
@@ -144,11 +144,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getType() {
@@ -161,11 +161,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -173,11 +173,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHref() {
@@ -186,11 +186,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -198,11 +198,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getRole() {
@@ -211,11 +211,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -223,11 +223,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getArcrole() {
@@ -236,11 +236,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -248,11 +248,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getTitle() {
@@ -261,11 +261,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -273,11 +273,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getShow() {
@@ -286,11 +286,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setShow(String value) {
         this.show = value;
@@ -298,11 +298,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getActuate() {
@@ -311,11 +311,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setActuate(String value) {
         this.actuate = value;
@@ -323,11 +323,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Gets the value of the owns property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     @Override
     public java.lang.Boolean getOwns() {
@@ -340,11 +340,11 @@ public class ReferenceType implements Reference {
 
     /**
      * Sets the value of the owns property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setOwns(java.lang.Boolean value) {
         this.owns = value;
@@ -361,16 +361,16 @@ public class ReferenceType implements Reference {
         if (object instanceof ReferenceType) {
             final ReferenceType that = (ReferenceType) object;
 
-            return Utilities.equals(this.actuate,            that.actuate)          &&
-                   Utilities.equals(this.arcrole,            that.arcrole)          &&
-                   Utilities.equals(this.type,               that.type)             &&
-                   Utilities.equals(this.href,               that.href)             &&
-                   Utilities.equals(this.nilReason,          that.nilReason)        &&
-                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
-                   Utilities.equals(this.show,               that.show)             &&
-                   Utilities.equals(this.role,               that.role)             &&
-                   Utilities.equals(this.title,              that.title)            &&
-                   Utilities.equals(this.owns,               that.owns);
+            return Objects.equals(this.actuate,            that.actuate)          &&
+                   Objects.equals(this.arcrole,            that.arcrole)          &&
+                   Objects.equals(this.type,               that.type)             &&
+                   Objects.equals(this.href,               that.href)             &&
+                   Objects.equals(this.nilReason,          that.nilReason)        &&
+                   Objects.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Objects.equals(this.show,               that.show)             &&
+                   Objects.equals(this.role,               that.role)             &&
+                   Objects.equals(this.title,              that.title)            &&
+                   Objects.equals(this.owns,               that.owns);
         }
         return false;
     }

@@ -60,7 +60,7 @@ import org.opengis.filter.capability.GeometryOperand;
 import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
 import org.geotoolkit.filter.capability.DefaultComparisonOperators;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;

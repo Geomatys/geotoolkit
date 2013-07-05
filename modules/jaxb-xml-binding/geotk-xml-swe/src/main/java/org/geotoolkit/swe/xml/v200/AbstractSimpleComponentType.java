@@ -19,20 +19,20 @@ package org.geotoolkit.swe.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for AbstractSimpleComponentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractSimpleComponentType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractSimpleComponentType", propOrder = {
@@ -78,20 +78,20 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
     private String axisID;
 
     public AbstractSimpleComponentType() {
-        
+
     }
-    
+
     public AbstractSimpleComponentType(final String id, final String definition) {
         super(id, definition, null);
     }
-    
+
     /**
      * Gets the value of the quality property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link QualityPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<QualityPropertyType> getQuality() {
         if (quality == null) {
@@ -102,11 +102,11 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
 
     /**
      * Gets the value of the nilValues property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link NilValuesPropertyType }
-     *     
+     *
      */
     public NilValuesPropertyType getNilValues() {
         return nilValues;
@@ -114,11 +114,11 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
 
     /**
      * Sets the value of the nilValues property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link NilValuesPropertyType }
-     *     
+     *
      */
     public void setNilValues(NilValuesPropertyType value) {
         this.nilValues = value;
@@ -126,11 +126,11 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
 
     /**
      * Gets the value of the referenceFrame property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getReferenceFrame() {
         return referenceFrame;
@@ -138,11 +138,11 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
 
     /**
      * Sets the value of the referenceFrame property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setReferenceFrame(String value) {
         this.referenceFrame = value;
@@ -150,11 +150,11 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
 
     /**
      * Gets the value of the axisID property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAxisID() {
         return axisID;
@@ -162,11 +162,11 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
 
     /**
      * Sets the value of the axisID property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAxisID(String value) {
         this.axisID = value;
@@ -180,10 +180,10 @@ public abstract class AbstractSimpleComponentType extends AbstractDataComponentT
         if (object instanceof AbstractSimpleComponentType && super.equals(object)) {
             final AbstractSimpleComponentType that = (AbstractSimpleComponentType) object;
 
-            return Utilities.equals(this.axisID,         that.axisID) &&
-                   Utilities.equals(this.nilValues,      that.nilValues) &&
-                   Utilities.equals(this.referenceFrame, that.referenceFrame) &&
-                   Utilities.equals(this.quality,        that.quality);
+            return Objects.equals(this.axisID,         that.axisID) &&
+                   Objects.equals(this.nilValues,      that.nilValues) &&
+                   Objects.equals(this.referenceFrame, that.referenceFrame) &&
+                   Objects.equals(this.quality,        that.quality);
         }
         return false;
     }

@@ -54,7 +54,7 @@ import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.sld.xml.StyleXmlIO;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
@@ -310,11 +310,8 @@ public class JAXPStreamTransactionWriter {
             final Marshaller marshaller = StyleXmlIO.getJaxbContext110().acquireMarshaller();
             marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
             final Object jaxbelement = util.getTransformerXMLv110().visit(filter);
-            try {
-                marshaller.marshal(jaxbelement, writer);
-            } finally {
-                 StyleXmlIO.getJaxbContext110().release(marshaller);
-            }
+            marshaller.marshal(jaxbelement, writer);
+            StyleXmlIO.getJaxbContext110().recycle(marshaller);
             writer.flush();
         }
 
@@ -350,28 +347,16 @@ public class JAXPStreamTransactionWriter {
                 if(value instanceof Geometry){
                     final GeometryDescriptor desc = (GeometryDescriptor) entry.getKey();
                     value = new GeometryPropertyType((AbstractGeometryType)JTStoGeometry.toGML("3.1.1", (Geometry)value));
-                    Marshaller marshaller = null;
-                    try {
-                        marshaller = GMLPOOL.acquireMarshaller();
-                        marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-                        marshaller.marshal(new ObjectFactory().createValue(value), writer);
-                    } finally {
-                        if (marshaller != null) {
-                            GMLPOOL.release(marshaller);
-                        }
-                    }
+                    final Marshaller marshaller = GMLPOOL.acquireMarshaller();
+                    marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+                    marshaller.marshal(new ObjectFactory().createValue(value), writer);
+                    GMLPOOL.recycle(marshaller);
 
                 }else if(value instanceof org.opengis.geometry.Geometry){
-                    Marshaller marshaller = null;
-                    try {
-                        marshaller = POOL.acquireMarshaller();
-                        marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-                        marshaller.marshal(new ObjectFactory().createValue(value), writer);
-                    } finally {
-                        if (marshaller != null) {
-                            POOL.release(marshaller);
-                        }
-                    }
+                    final Marshaller marshaller = POOL.acquireMarshaller();
+                    marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+                    marshaller.marshal(new ObjectFactory().createValue(value), writer);
+                    POOL.recycle(marshaller);
                 }else{
                     writer.writeStartElement(WFS_PREFIX, TAG_VALUE, WFS_NAMESPACE);
                     QName qname = Utils.getQNameFromType(propertyType,"");
@@ -400,7 +385,7 @@ public class JAXPStreamTransactionWriter {
 
         //write typename--------------------------------------------------------
         final Name typeName = element.getTypeName();
-        
+
         if (typeName.getNamespaceURI() != null && !typeName.getNamespaceURI().isEmpty()) {
             final String prefix = "geons"+inc.incrementAndGet();
             writer.writeAttribute("xmlns:"+prefix, typeName.getNamespaceURI());
@@ -408,7 +393,7 @@ public class JAXPStreamTransactionWriter {
         } else {
             writer.writeAttribute(PROP_TYPENAME, typeName.getLocalPart());
         }
-        
+
 
         //write handle----------------------------------------------------------
         final String handle = element.getHandle();
@@ -421,11 +406,8 @@ public class JAXPStreamTransactionWriter {
         final Marshaller marshaller = util.getJaxbContext110().acquireMarshaller();
         marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
         final Object jaxbelement = util.getTransformerXMLv110().visit(element.getFilter());
-        try {
-            marshaller.marshal(jaxbelement, writer);
-        } finally {
-            util.getJaxbContext110().release(marshaller);
-        }
+        marshaller.marshal(jaxbelement, writer);
+        util.getJaxbContext110().recycle(marshaller);
 
         writer.writeEndElement();
     }

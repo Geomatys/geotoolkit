@@ -18,6 +18,7 @@ package org.geotoolkit.wfs.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v110.FeatureIdType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.TransactionResponse;
 import org.geotoolkit.wfs.xml.WFSResponse;
 import org.opengis.filter.identity.FeatureId;
@@ -34,12 +34,12 @@ import org.opengis.filter.identity.FeatureId;
 /**
  * The response for a transaction request that was successfully completed.
  * If the transaction failed for any reason, an exception report is returned instead.
- *          
- * 
+ *
+ *
  * <p>Java class for TransactionResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TransactionResponseType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.opengis.filter.identity.FeatureId;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -89,11 +89,11 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Gets the value of the transactionSummary property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TransactionSummaryType }
-     *     
+     *
      */
     public TransactionSummaryType getTransactionSummary() {
         return transactionSummary;
@@ -101,11 +101,11 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Sets the value of the transactionSummary property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TransactionSummaryType }
-     *     
+     *
      */
     public void setTransactionSummary(final TransactionSummaryType value) {
         this.transactionSummary = value;
@@ -113,11 +113,11 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Gets the value of the transactionResults property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TransactionResultsType }
-     *     
+     *
      */
     public TransactionResultsType getTransactionResults() {
         return transactionResults;
@@ -125,11 +125,11 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Sets the value of the transactionResults property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TransactionResultsType }
-     *     
+     *
      */
     public void setTransactionResults(final TransactionResultsType value) {
         this.transactionResults = value;
@@ -137,11 +137,11 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Gets the value of the insertResults property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link InsertResultsType }
-     *     
+     *
      */
     public InsertResultsType getInsertResults() {
         return insertResults;
@@ -149,11 +149,11 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Sets the value of the insertResults property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link InsertResultsType }
-     *     
+     *
      */
     public void setInsertResults(final InsertResultsType value) {
         this.insertResults = value;
@@ -161,11 +161,11 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         if (version == null) {
@@ -177,11 +177,11 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(final String value) {
         this.version = value;
@@ -202,7 +202,7 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
         }
         return ids;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[TransactionResponseType]\n");
@@ -231,10 +231,10 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
         }
         if (object instanceof TransactionResponseType) {
             final TransactionResponseType that = (TransactionResponseType) object;
-            return Utilities.equals(this.insertResults,      that.insertResults)        &&
-                   Utilities.equals(this.transactionResults, that.transactionResults)   &&
-                   Utilities.equals(this.transactionSummary, that.transactionSummary)   &&
-                   Utilities.equals(this.version,            that.version) ;
+            return Objects.equals(this.insertResults,      that.insertResults)        &&
+                   Objects.equals(this.transactionResults, that.transactionResults)   &&
+                   Objects.equals(this.transactionSummary, that.transactionSummary)   &&
+                   Objects.equals(this.version,            that.version) ;
         }
         return false;
     }

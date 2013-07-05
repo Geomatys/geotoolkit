@@ -40,7 +40,7 @@ import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 
 import org.apache.sis.util.Version;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;

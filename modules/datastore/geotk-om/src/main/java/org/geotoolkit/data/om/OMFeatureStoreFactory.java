@@ -17,9 +17,9 @@
 
 package org.geotoolkit.data.om;
 
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.opengis.metadata.Identifier;
 import java.util.Collections;
 import org.geotoolkit.parameter.Parameters;
@@ -35,7 +35,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.jdbc.DBCPDataSource;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
+import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 
@@ -44,7 +44,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.jdbc.JDBCDataStoreFactory.*;
-import org.geotoolkit.util.ResourceInternationalString;
+import org.apache.sis.util.iso.ResourceInternationalString;
 
 /**
  *

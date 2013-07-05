@@ -32,8 +32,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.sis.test.XMLComparator;
 
 // Geotoolkit dependencies
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
 
 //Junit dependencies
 import org.junit.*;
@@ -73,10 +73,10 @@ public class OWSXmlBindingTest {
     @After
     public void tearDown() {
         if (unmarshaller != null) {
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
         if (marshaller != null) {
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
     }
 

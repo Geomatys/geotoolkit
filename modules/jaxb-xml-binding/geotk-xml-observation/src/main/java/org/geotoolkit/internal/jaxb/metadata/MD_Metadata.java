@@ -15,11 +15,11 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.internal.jaxb.metadata;
+package org.apache.sis.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
-import org.geotoolkit.internal.jaxb.gco.PropertyType;
-import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.apache.sis.internal.jaxb.gco.PropertyType;
+import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.opengis.metadata.Metadata;
 
 /**
@@ -55,7 +55,7 @@ public class MD_Metadata extends PropertyType<MD_Metadata, Metadata> {
     }
 
     /**
-     * Returns the GeoAPI interface which is bound by this adapter.
+     * Returns the Types interface which is bound by this adapter.
      */
     @Override
     protected Class<Metadata> getBoundType() {
@@ -68,7 +68,6 @@ public class MD_Metadata extends PropertyType<MD_Metadata, Metadata> {
      *
      * @return The metadata to be marshalled.
      */
-    @Override
     @XmlElementRef
     public DefaultMetadata getElement() {
         return skip() ? null : DefaultMetadata.castOrCopy(metadata);

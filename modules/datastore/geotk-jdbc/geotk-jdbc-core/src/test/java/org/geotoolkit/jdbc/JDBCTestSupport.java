@@ -79,11 +79,11 @@ public abstract class JDBCTestSupport extends TestCase {
 //        java.util.logging.ConsoleHandler handler = new java.util.logging.ConsoleHandler();
 //        handler.setLevel(java.util.logging.Level.FINE);
 //        
-//        org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data.jdbc").setLevel(java.util.logging.Level.FINE);
-//        org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data.jdbc").addHandler(handler);
+//        org.apache.sis.util.logging.Logging.getLogger("org.geotoolkit.data.jdbc").setLevel(java.util.logging.Level.FINE);
+//        org.apache.sis.util.logging.Logging.getLogger("org.geotoolkit.data.jdbc").addHandler(handler);
 //        
-//        org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.jdbc").setLevel(java.util.logging.Level.FINE);
-//        org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.jdbc").addHandler(handler);
+//        org.apache.sis.util.logging.Logging.getLogger("org.geotoolkit.jdbc").setLevel(java.util.logging.Level.FINE);
+//        org.apache.sis.util.logging.Logging.getLogger("org.geotoolkit.jdbc").addHandler(handler);
     }
 
     protected JDBCTestSetup setup;

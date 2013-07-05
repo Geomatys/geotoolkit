@@ -21,12 +21,12 @@ package org.geotoolkit.gml.xml.v321;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.Position;
@@ -34,9 +34,9 @@ import org.opengis.temporal.Position;
 
 /**
  * <p>Java class for TimeInstantType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeInstantType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.opengis.temporal.Position;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeInstantType", propOrder = {
@@ -75,34 +75,34 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
             this.timePosition = new TimePositionType(timePosition.getDate());
         }
     }
-    
+
     public TimeInstantType(final String id, final String timePosition) {
        super(id);
        this.timePosition = new TimePositionType(timePosition);
     }
-    
+
     public TimeInstantType(final String timePosition) {
        this.timePosition = new TimePositionType(timePosition);
     }
-    
+
     public TimeInstantType(final Timestamp timePosition) {
        this.timePosition = new TimePositionType(timePosition);
     }
-    
+
     public TimeInstantType(final TimeInstantType that) {
         super(that);
         if (that != null && that.timePosition != null) {
             this.timePosition = new TimePositionType(that.timePosition);
         }
     }
-    
+
     /**
      * Gets the value of the timePosition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimePositionType }
-     *     
+     *
      */
     public TimePositionType getTimePosition() {
         return timePosition;
@@ -112,7 +112,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
     public Position getPosition() {
         return timePosition;
     }
-    
+
     public void setPosition(final Position value) {
         if (value instanceof TimePositionType) {
             this.timePosition = (TimePositionType)value;
@@ -129,7 +129,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         }
         return -1;
     }
-    
+
     @Override
     public Collection<Period> getBegunBy() {
         return null;
@@ -139,19 +139,19 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
     public Collection<Period> getEndedBy() {
         return null;
     }
-    
+
     /**
      * Sets the value of the timePosition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimePositionType }
-     *     
+     *
      */
     public void setTimePosition(TimePositionType value) {
         this.timePosition = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[TimeInstantType]").append('\n');
@@ -160,7 +160,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         }
         return sb.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -171,7 +171,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         }
         if (object instanceof TimeInstantType) {
             final TimeInstantType that = (TimeInstantType) object;
-            return  Utilities.equals(this.timePosition, that.timePosition);
+            return  Objects.equals(this.timePosition, that.timePosition);
         }
         return false;
     }

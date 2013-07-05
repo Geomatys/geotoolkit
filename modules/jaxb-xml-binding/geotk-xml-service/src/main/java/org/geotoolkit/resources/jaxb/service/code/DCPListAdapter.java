@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.resources.jaxb.service.code;
 
-import org.geotoolkit.internal.jaxb.code.*;
+import org.apache.sis.internal.jaxb.gmd.*;
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.service.DCPList;
 

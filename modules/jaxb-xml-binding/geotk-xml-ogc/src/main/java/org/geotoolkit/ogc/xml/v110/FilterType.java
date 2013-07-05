@@ -29,16 +29,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.XMLFilter;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 
 
 /**
  * <p>Java class for FilterType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FilterType">
  *   &lt;complexContent>
@@ -53,8 +52,8 @@ import org.opengis.filter.FilterVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,38 +80,38 @@ public class FilterType implements Filter, XMLFilter {
 
     @XmlTransient
     private Map<String, String> prefixMapping;
-    
+
     /**
      * a transient factory to build JAXBelement
      */
     @XmlTransient
     private static ObjectFactory FACTORY = new ObjectFactory();
-    
+
     /**
      * An empty constructor used by JAXB
      */
     public FilterType() {
-        
+
     }
-    
+
     /**
      * build a new FilterType
      */
     public FilterType(final Object obj) {
-        
+
         // comparison operator
         if (obj instanceof ComparisonOpsType) {
             this.comparisonOps = createComparisonOps((ComparisonOpsType) obj);
-            
-        // logical operator    
+
+        // logical operator
         } else if (obj instanceof LogicOpsType) {
             this.logicOps = createLogicOps((LogicOpsType) obj);
-            
-        // spatial operator    
+
+        // spatial operator
         } else if (obj instanceof SpatialOpsType) {
             this.spatialOps = createSpatialOps((SpatialOpsType) obj);
-            
-        // temporal operator    
+
+        // temporal operator
         } else if (obj instanceof TemporalOpsType) {
             this.temporalOps = createTemporalOps((TemporalOpsType) obj);
 
@@ -158,21 +157,21 @@ public class FilterType implements Filter, XMLFilter {
             throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
         }
     }
-    
+
     /**
      * Gets the value of the spatialOps property.
      */
     public JAXBElement<? extends SpatialOpsType> getSpatialOps() {
         return spatialOps;
     }
-    
+
     /**
      * Sets the value of the spatialOps property.
      */
     public void setSpatialOps(final JAXBElement<? extends SpatialOpsType> spatialOps) {
         this.spatialOps = spatialOps;
     }
-    
+
     /**
      * Sets the value of the spatialOps property.
      */
@@ -186,14 +185,14 @@ public class FilterType implements Filter, XMLFilter {
     public JAXBElement<? extends ComparisonOpsType> getComparisonOps() {
         return comparisonOps;
     }
-    
+
     /**
      * Sets the value of the comparisonOps property.
      */
     public void setComparisonOps(final JAXBElement<? extends ComparisonOpsType> comparisonOps) {
         this.comparisonOps = comparisonOps;
     }
-    
+
     /**
      * Sets the value of the comparisonOps property.
      */
@@ -207,35 +206,35 @@ public class FilterType implements Filter, XMLFilter {
     public JAXBElement<? extends LogicOpsType> getLogicOps() {
         return logicOps;
     }
-    
+
     /**
      * Sets the value of the logicOps property.
      */
     public void setLogicOps(final JAXBElement<? extends LogicOpsType> logicOps) {
         this.logicOps = logicOps;
     }
-    
+
     /**
      * Sets the value of the logicOps property.
      */
     public void setLogicOps(final LogicOpsType logicOps) {
         this.logicOps = createLogicOps(logicOps);
     }
-    
+
     /**
      * Gets the value of the logicOps property.
      */
     public JAXBElement<? extends TemporalOpsType> getTemporalOps() {
         return temporalOps;
     }
-    
+
     /**
      * Sets the value of the TemporalOps property.
      */
     public void setTemporalOps(final JAXBElement<? extends TemporalOpsType> temporalOps) {
         this.temporalOps = temporalOps;
     }
-    
+
     /**
      * Sets the value of the logicOps property.
      */
@@ -268,7 +267,7 @@ public class FilterType implements Filter, XMLFilter {
         verifyIdFilter();
         return id;
     }
-    
+
     @Override
     public Object getFilterObject() {
         if (comparisonOps != null) {
@@ -288,7 +287,7 @@ public class FilterType implements Filter, XMLFilter {
         }
         return null;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']').append('\n');
@@ -324,9 +323,9 @@ public class FilterType implements Filter, XMLFilter {
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         return extraData;
     }
-    
+
     public static JAXBElement<? extends ComparisonOpsType> createComparisonOps(final ComparisonOpsType operator) {
-        
+
         if (operator instanceof PropertyIsLessThanOrEqualToType) {
             return FACTORY.createPropertyIsLessThanOrEqualTo((PropertyIsLessThanOrEqualToType) operator);
         } else if (operator instanceof PropertyIsLessThanType) {
@@ -351,9 +350,9 @@ public class FilterType implements Filter, XMLFilter {
             return null;
         }
     }
-    
+
     public static JAXBElement<? extends LogicOpsType> createLogicOps(final LogicOpsType operator) {
-        
+
         if (operator instanceof OrType) {
             return FACTORY.createOr((OrType) operator);
         } else if (operator instanceof NotType) {
@@ -366,9 +365,9 @@ public class FilterType implements Filter, XMLFilter {
             return null;
         }
     }
-    
+
     public static JAXBElement<? extends SpatialOpsType> createSpatialOps(final SpatialOpsType operator) {
-        
+
         if (operator instanceof BeyondType) {
             return FACTORY.createBeyond((BeyondType) operator);
         } else if (operator instanceof DWithinType) {
@@ -397,9 +396,9 @@ public class FilterType implements Filter, XMLFilter {
             return null;
         }
     }
-    
+
     public static JAXBElement<? extends TemporalOpsType> createTemporalOps(final TemporalOpsType operator) {
-        
+
         if (operator instanceof TimeAfterType) {
             return FACTORY.createTAfter((TimeAfterType) operator);
         } else if (operator instanceof TimeBeforeType) {
@@ -448,7 +447,7 @@ public class FilterType implements Filter, XMLFilter {
     public void setPrefixMapping(Map<String, String> prefixMapping) {
         this.prefixMapping = prefixMapping;
     }
-    
+
     public static JAXBElement<? extends AbstractIdType> createIdOps(final AbstractIdType operator) {
 
         if (operator instanceof FeatureIdType) {
@@ -470,31 +469,31 @@ public class FilterType implements Filter, XMLFilter {
         }
         if (object instanceof FilterType) {
             final FilterType that = (FilterType) object;
-            
+
             boolean comp = false;
             if (this.comparisonOps != null && that.comparisonOps != null) {
                 comp = Objects.equals(this.comparisonOps.getValue(), that.comparisonOps.getValue());
             } else if (this.comparisonOps == null && that.comparisonOps == null) {
                 comp = true;
             }
-            
+
             boolean log = false;
             if (this.logicOps != null && that.logicOps != null) {
                 log = Objects.equals(this.logicOps.getValue(), that.logicOps.getValue());
             } else if (this.logicOps == null && that.logicOps == null) {
                 log = true;
             }
-            
+
             boolean spa = false;
             if (this.spatialOps != null && that.spatialOps != null) {
                 spa = Objects.equals(this.spatialOps.getValue(), that.spatialOps.getValue());
             } else if (this.spatialOps == null && that.spatialOps == null) {
                 spa = true;
             }
-            
+
             boolean temp = false;
             if (this.temporalOps != null && that.temporalOps != null) {
-                temp = Utilities.equals(this.temporalOps.getValue(), that.temporalOps.getValue());
+                temp = Objects.equals(this.temporalOps.getValue(), that.temporalOps.getValue());
             } else if (this.temporalOps == null && that.temporalOps == null) {
                 temp = true;
             }

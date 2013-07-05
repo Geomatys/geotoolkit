@@ -29,7 +29,7 @@ import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.wmts.xml.WMTSMarshallerPool;
 
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -54,10 +54,10 @@ public class WmtsXmlBindingTest {
     @After
     public void tearDown() {
         if (unmarshaller != null) {
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
         if (marshaller != null) {
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
     }
 
@@ -95,7 +95,7 @@ public class WmtsXmlBindingTest {
                                               3);
 
         assertEquals(expResult, result);
-    
+
     }
 
     /**
@@ -120,7 +120,7 @@ public class WmtsXmlBindingTest {
         String result = sw.toString();
 
         //System.out.println("RESULT:" + result);
-        
+
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
         //we remove the xmlmns

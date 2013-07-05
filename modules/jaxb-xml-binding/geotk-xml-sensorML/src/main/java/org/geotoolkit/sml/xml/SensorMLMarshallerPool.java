@@ -18,8 +18,9 @@ package org.geotoolkit.sml.xml;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 
 /**
  *
@@ -30,11 +31,12 @@ public class SensorMLMarshallerPool {
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool("org.geotoolkit.sml.xml.v101:" +
-                                          "org.geotoolkit.sml.xml.v100:"  +
-                                          "org.geotoolkit.swe.xml.v100:"  +
-                                          "org.geotoolkit.swe.xml.v101:"  +
-                                          "org.geotoolkit.internal.jaxb.geometry");
+            instance = new MarshallerPool(JAXBContext.newInstance(
+                    "org.geotoolkit.sml.xml.v101:" +
+                    "org.geotoolkit.sml.xml.v100:"  +
+                    "org.geotoolkit.swe.xml.v100:"  +
+                    "org.geotoolkit.swe.xml.v101:"  +
+                    "org.apache.sis.internal.jaxb.geometry"), null);
         } catch (JAXBException ex) {
             Logger.getLogger(SensorMLMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }

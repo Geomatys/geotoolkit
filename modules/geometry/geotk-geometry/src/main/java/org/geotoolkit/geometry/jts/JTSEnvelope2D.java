@@ -41,9 +41,9 @@ import org.geotoolkit.resources.Errors;
 /**
  * A JTS envelope associated with a
  * {@linkplain CoordinateReferenceSystem coordinate reference system}. In
- * addition, this JTS envelope also implements the GeoAPI
+ * addition, this JTS envelope also implements the Types
  * {@linkplain org.opengis.geometry.coordinate.Envelope envelope} interface
- * for interoperability with GeoAPI.
+ * for interoperability with Types.
  *
  * @module pending
  * @since 2.2

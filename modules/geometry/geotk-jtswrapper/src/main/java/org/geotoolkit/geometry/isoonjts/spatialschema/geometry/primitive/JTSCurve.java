@@ -14,7 +14,7 @@ import java.util.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
@@ -38,7 +38,7 @@ import org.opengis.geometry.primitive.CurveBoundary;
 /**
  * Simple implementation of the Curve interface that does not implement any
  * of the (hard) math functions like intersection, etc.  A curve consists of
- * any number of CurveSegment objects (such as LineStrings) that must be
+ * any number of CurveSegment objects (such as LineCharSequences) that must be
  * connected end-to-end.
  * @module pending
  */
@@ -201,8 +201,8 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
     }
 
     /**
-     * Not fully implemented.  Returns null, unless all CurveSegments are LineStrings,
-     * in which case it returns a concatenation of all the LineStrings.
+     * Not fully implemented.  Returns null, unless all CurveSegments are LineCharSequences,
+     * in which case it returns a concatenation of all the LineCharSequences.
      * In future versions this could be implemented by delegating to the comprising segments.
      */
     @Override

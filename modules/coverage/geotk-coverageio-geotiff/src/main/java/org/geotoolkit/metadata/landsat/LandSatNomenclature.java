@@ -17,28 +17,28 @@
 package org.geotoolkit.metadata.landsat;
 
 import java.util.Date;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 
 /**
  * From a landsat file name, several information can be extracted.
  * This class organise information which can be extracted from it.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public final class LandSatNomenclature {
-    
+
     public static enum Channel{
-        B10("Visible Blue",         NumberRange.create(0.45,0.52),  30),
-        B20("Visible Green",        NumberRange.create(0.52,0.60),  30),
-        B30("Visible Red",          NumberRange.create(0.63,0.69),  30),
-        B40("Near infrared",        NumberRange.create(0.77,0.90),  30),
-        B50("Near infrared",        NumberRange.create(1.55,1.75),  30),
-        B61("Thermique low gain",   NumberRange.create(10.40,12.50),60),
-        B62("Thermique high gain",  NumberRange.create(10.40,12.50),60),
-        B70("Medium infrared",      NumberRange.create(2.08,2.35),  30),
-        B80("Panchromatic",         NumberRange.create(0.52,0.90),  15);
-        
+        B10("Visible Blue",         NumberRange.create( 0.45, true,  0.52, true),  30),
+        B20("Visible Green",        NumberRange.create( 0.52, true,  0.60, true),  30),
+        B30("Visible Red",          NumberRange.create( 0.63, true,  0.69, true),  30),
+        B40("Near infrared",        NumberRange.create( 0.77, true,  0.90, true),  30),
+        B50("Near infrared",        NumberRange.create( 1.55, true,  1.75, true),  30),
+        B61("Thermique low gain",   NumberRange.create(10.40, true, 12.50, true),  60),
+        B62("Thermique high gain",  NumberRange.create(10.40, true, 12.50, true),  60),
+        B70("Medium infrared",      NumberRange.create( 2.08, true,  2.35, true),  30),
+        B80("Panchromatic",         NumberRange.create( 0.52, true,  0.90, true),  15);
+
         private final String description;
         private final NumberRange spectrum;
         private final double resolution;
@@ -72,9 +72,9 @@ public final class LandSatNomenclature {
         public double getResolution() {
             return resolution;
         }
-        
+
     }
-    
+
     private final String sensor;
     private final int platform;
     private final int path;
@@ -100,7 +100,7 @@ public final class LandSatNomenclature {
      * E : ETM+
      * T : TM:
      * M
-     * 
+     *
      * @return String, non null
      */
     public String getSensor() {
@@ -116,7 +116,7 @@ public final class LandSatNomenclature {
 
     /**
      * Satellite path number.
-     * @return int 
+     * @return int
      */
     public int getPath() {
         return path;
@@ -124,7 +124,7 @@ public final class LandSatNomenclature {
 
     /**
      * Image start row position in satellite path.
-     * @return int 
+     * @return int
      */
     public int getStartRow() {
         return startRow;
@@ -132,7 +132,7 @@ public final class LandSatNomenclature {
 
     /**
      * Image end row position in satellite path.
-     * @return int 
+     * @return int
      */
     public int getEndRow() {
         return endRow;
@@ -160,5 +160,5 @@ public final class LandSatNomenclature {
     public String getStation() {
         return station;
     }
-        
+
 }

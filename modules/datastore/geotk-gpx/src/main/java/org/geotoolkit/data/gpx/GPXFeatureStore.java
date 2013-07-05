@@ -65,7 +65,7 @@ import static org.geotoolkit.data.gpx.model.GPXModelConstants.*;
  * - One WayPoint
  * - One Routes
  * - One Tracks
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -79,17 +79,17 @@ public class GPXFeatureStore extends AbstractFeatureStore{
     public GPXFeatureStore(final File f) throws MalformedURLException, DataStoreException{
         this(toParameter(f));
     }
-    
+
     public GPXFeatureStore(final ParameterValueGroup params) throws DataStoreException{
         super(params);
         final URL url = (URL) params.parameter(GPXFeatureStoreFactory.URLP.getName().toString()).getValue();
         try {
-            this.file = IOUtilities.toFile(url, null);
+            this.file = org.apache.sis.internal.storage.IOUtilities.toFile(url, null);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
     }
-    
+
     private static ParameterValueGroup toParameter(final File f) throws MalformedURLException{
         final ParameterValueGroup params = GPXFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         Parameters.getOrCreate(GPXFeatureStoreFactory.URLP, params).setValue(f.toURL());
@@ -102,7 +102,7 @@ public class GPXFeatureStore extends AbstractFeatureStore{
     }
 
     public MetaData getGPXMetaData() throws DataStoreException{
-        if(file.exists()){            
+        if(file.exists()){
             try {
                 RWLock.readLock().lock();
                 final GPXReader reader = new GPXReader();
@@ -165,7 +165,7 @@ public class GPXFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, 
+    public FeatureWriter getFeatureWriter(final Name typeName,
             final Filter filter, final Hints hints) throws DataStoreException {
         final FeatureType ft = getFeatureType(typeName);
         final FeatureWriter fw = new GPXFeatureWriter(ft);
@@ -197,7 +197,7 @@ public class GPXFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures, hints);
     }
@@ -263,7 +263,7 @@ public class GPXFeatureStore extends AbstractFeatureStore{
         private void read() throws FeatureStoreRuntimeException{
             if(current != null) return;
             if(reader == null) return;
-            
+
             try {
                 while(reader.hasNext()) {
                     current = reader.next();
@@ -372,10 +372,10 @@ public class GPXFeatureStore extends AbstractFeatureStore{
 
         private void findNext() {
             if(next != null) return;
-            
+
             while(next==null && super.hasNext()){
                 final Feature candidate = super.next();
-                
+
                 if(candidate.getType() == writeRestriction){
                     next = candidate;
                 }else{
@@ -452,7 +452,7 @@ public class GPXFeatureStore extends AbstractFeatureStore{
 	@Override
 	public void refreshMetaModel() {
 		return;
-		
+
 	}
 
 }

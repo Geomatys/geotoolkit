@@ -24,7 +24,7 @@ import org.opengis.style.ExternalMark;
 import org.opengis.style.StyleVisitor;
 
 /**
- * Immutable implementation of GeoAPI External mark.
+ * Immutable implementation of Types External mark.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending

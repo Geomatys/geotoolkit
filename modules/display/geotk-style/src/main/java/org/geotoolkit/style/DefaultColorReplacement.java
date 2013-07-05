@@ -23,7 +23,7 @@ import org.opengis.style.StyleVisitor;
 import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
- * Immutable implementation of GeoAPI ColorReplacement.
+ * Immutable implementation of Types ColorReplacement.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending

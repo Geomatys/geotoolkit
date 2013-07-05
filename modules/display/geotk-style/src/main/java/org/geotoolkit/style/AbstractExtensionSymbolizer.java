@@ -25,7 +25,7 @@ import org.opengis.style.ExtensionSymbolizer;
 import org.opengis.style.StyleVisitor;
 
 /**
- * Abstract implementation of GeoAPI extension symbolizer.
+ * Abstract implementation of Types extension symbolizer.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending

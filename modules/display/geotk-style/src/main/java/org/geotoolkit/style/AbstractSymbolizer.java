@@ -25,7 +25,7 @@ import org.opengis.style.Symbolizer;
 import static org.geotoolkit.style.StyleConstants.*;
 
 /**
- * Abstract implementation of GeoAPI symbolizer.
+ * Abstract implementation of Types symbolizer.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending

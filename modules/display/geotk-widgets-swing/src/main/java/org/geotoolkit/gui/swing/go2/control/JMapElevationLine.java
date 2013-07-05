@@ -51,7 +51,7 @@ import org.geotoolkit.gui.swing.navigator.JNavigator;
 import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.referencing.operation.TransformException;
 
 /**

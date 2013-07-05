@@ -33,7 +33,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
- * Immutable implementation of GeoAPI Graphic.
+ * Immutable implementation of Types Graphic.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending

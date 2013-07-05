@@ -79,8 +79,8 @@ import org.geotoolkit.style.interval.Palette;
 import org.geotoolkit.util.ColorCellEditor;
 import org.geotoolkit.util.ColorCellRenderer;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.util.logging.Logging;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
@@ -104,14 +104,14 @@ import org.opengis.util.GenericName;
 
 /**
  * Style editor which handle Raster colormap edition.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
     private static final Logger LOGGER = Logging.getLogger(JRasterColorMapStylePanel.class);
-    
+
     private static final PaletteFactory PF = PaletteFactory.getDefault();
     private static final List<Object> PALETTES;
 
@@ -119,11 +119,11 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         PALETTES = new ArrayList<Object>();
         PALETTES.add(new DefaultRandomPalette());
         final Set<String> paletteNames = PF.getAvailableNames();
-        
+
         for (String palName : paletteNames) {
             PALETTES.add(palName);
         }
-        
+
         double[] fractions = new double[]{
             -3000,
             -1500,
@@ -135,7 +135,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             2200,
             3000};
         Color[] colors = new Color[]{
-            new Color(9, 9, 145, 255),            
+            new Color(9, 9, 145, 255),
             new Color(31, 131, 224, 255),
             new Color(182, 240, 240, 255),
             new Color(5, 90, 5, 255),
@@ -146,19 +146,19 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             new Color(255, 255, 255, 255),
             };
         PALETTES.add(new DefaultIntervalPalette(fractions,colors));
-        
-        
+
+
     }
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
-    
+
     private final ColorMapModel model = new ColorMapModel();
     private MapLayer layer = null;
 
     public JRasterColorMapStylePanel() {
         initComponents();
         guiTable.setModel(model);
-        
+
         guiPalette.setModel(new ListComboBoxModel(PALETTES));
         guiPalette.setRenderer(new PaletteCellRenderer());
         guiPalette.setSelectedIndex(0);
@@ -171,7 +171,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         guiTable.getColumnModel().getColumn(2).setCellEditor(new DeleteEditor());
 
         guiTable.setShowGrid(false, false);
-        
+
         guiTable.getColumnExt(2).setMaxWidth(20);
     }
 
@@ -179,7 +179,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         guiTable.revalidate();
         guiTable.repaint();
         guiNaN.setSelected(true);
-                
+
         RasterSymbolizer rs = null;
         search:
         if(layer != null){
@@ -194,7 +194,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                 }
             }
         }
-        
+
         List<InterpolationPoint> points = null;
         if(rs != null && rs.getColorMap() != null){
             final Function fct = rs.getColorMap().getFunction();
@@ -202,12 +202,12 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                 points = ((Interpolate)fct).getInterpolationPoints();
             }
         }
-        
+
         model.points.clear();
         if(points != null){
             model.points.addAll(points);
         }
-        
+
         model.fireTableDataChanged();
     }
 
@@ -337,18 +337,18 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         if(layer == null){
             return;
         }
-        
+
         model.points.clear();
-        
+
         //add the NaN if specified
         if(guiNaN.isSelected()){
             model.points.add(SF.interpolationPoint(Float.NaN, SF.literal(new Color(0, 0, 0, 0))));
         }
-        
-        boolean mustInterpolation = true;        
+
+        boolean mustInterpolation = true;
         final Object paletteValue = (Object) guiPalette.getSelectedItem();
         List<Entry<Double, Color>> steps = new ArrayList<Entry<Double, Color>>();
-        
+
         if (paletteValue instanceof Palette) {
             final Palette palette = (Palette) paletteValue;
             steps = palette.getSteps();
@@ -364,18 +364,18 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
-        
+
         for(int i=0,n=steps.size();i<n;i++){
             final double k = steps.get(i).getKey();
             if(k < -0.01 || k > 1.01){
                 mustInterpolation = false;
             }
         }
-        
+
         if(guiInvert.isSelected()){
             final List<Entry<Double, Color>> inverted = new ArrayList<Entry<Double, Color>>();
             for(int i=0,n=steps.size();i<n;i++){
-                final double k = steps.get(i).getKey();               
+                final double k = steps.get(i).getKey();
                 inverted.add(new SimpleImmutableEntry<Double, Color>(
                         k, steps.get(n-1-i).getValue()));
             }
@@ -392,12 +392,12 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                         final List<MeasurementRange<?>> ranges = null;//reader.getSampleValueRanges(i);
                         if(ranges != null && !ranges.isEmpty()){
                             for(MeasurementRange r : ranges){
-                                final double min = r.getMinimum();
-                                final double max = r.getMaximum();                    
+                                final double min = r.getMinDouble();
+                                final double max = r.getMaxDouble();
                                 for(int s=0,l=steps.size();s<l;s++){
                                     final Entry<Double, Color> step = steps.get(s);
                                     model.points.add(SF.interpolationPoint(
-                                            min + (step.getKey()*(max-min)), 
+                                            min + (step.getKey()*(max-min)),
                                             SF.literal(step.getValue())));
                                 }
                             }
@@ -405,14 +405,14 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                             //we explore the image and try to find the min and max
                             Map<String,Object> an = StatisticOp.analyze(reader,cml.getImageIndex());
                             final double[] minArray = (double[])an.get(StatisticOp.MINIMUM);
-                            final double[] maxArray = (double[])an.get(StatisticOp.MAXIMUM); 
+                            final double[] maxArray = (double[])an.get(StatisticOp.MAXIMUM);
                             final double min = findExtremum(minArray, true);
                             final double max = findExtremum(maxArray, false);
-                            
+
                             for(int s=0,l=steps.size();s<l;s++){
                                 final Entry<Double, Color> step = steps.get(s);
                                 model.points.add(SF.interpolationPoint(
-                                        min + (step.getKey()*(max-min)), 
+                                        min + (step.getKey()*(max-min)),
                                         SF.literal(step.getValue())));
                             }
                         }
@@ -429,7 +429,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                 LOGGER.log(Level.INFO, ex.getMessage(),ex);
             }
         }
-        
+
         model.fireTableDataChanged();
 
     }//GEN-LAST:event_guiGenerateActionPerformed
@@ -456,12 +456,12 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         }
         throw new IllegalArgumentException("Array of " + (min ? "min" : "max") + " values is empty.");
     }
-    
+
     @Override
     public boolean canHandle(Object target) {
         return target instanceof MapLayer && !(target instanceof FeatureMapLayer);
     }
-    
+
     @Override
     public void setTarget(final Object layer) {
         if(layer instanceof MapLayer){
@@ -497,7 +497,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
         final RasterSymbolizer symbol = SF.rasterSymbolizer(
                 name,geom,desc,uom,opacity, selection, overlap, colorMap, enchance, relief, outline);
-        
+
         final MutableFeatureTypeStyle fts = SF.featureTypeStyle(symbol);
         fts.setDescription(SF.description("analyze", "analyze"));
         layer.getStyle().featureTypeStyles().add(fts);
@@ -524,7 +524,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
     public Image getPreview() {
         return null;
     }
-    
+
     @Override
     public String getToolTip() {
         return "";
@@ -556,7 +556,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             DeleteRenderer.this.setIcon(IconBundle.getIcon("16_delete"));
             return DeleteRenderer.this;
         }
-        
+
     }
 
     private class DeleteEditor extends AbstractCellEditor implements TableCellEditor{
@@ -577,7 +577,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                     model.fireTableDataChanged();
                 }
             });
-            
+
         }
 
         @Override
@@ -616,9 +616,9 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         public Object getValueAt(final int rowIndex, final int columnIndex) {
             final InterpolationPoint pt = points.get(rowIndex);
             switch(columnIndex){
-                case 0: 
+                case 0:
                     return pt.getData();
-                case 1: 
+                case 1:
                     final Color c = pt.getValue().evaluate(null, Color.class);
                     return c;
             }
@@ -638,15 +638,15 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex) {
             InterpolationPoint pt = points.get(rowIndex);
             switch(columnIndex){
-                case 0: 
+                case 0:
                     Number n = Converters.convert(aValue, Number.class);
                     if(n == null){
                         n = Float.NaN;
                     }
-                    
+
                     pt = SF.interpolationPoint(n, pt.getValue());
                     break;
-                case 1: 
+                case 1:
                     Color c = (Color) aValue;
                     if(c == null){
                         c = new Color(0, 0, 0, 0);
@@ -654,7 +654,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                     pt = SF.interpolationPoint(pt.getData(),SF.literal(c));
                     break;
             }
-            
+
             points.set(rowIndex, pt);
         }
 

@@ -17,22 +17,22 @@
 
 package org.geotoolkit.observation.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v321.ReferenceType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  *  The class 'NamedValue' provides for a generic soft-typed parameter
- * 				value. NamedValue shall support two attributes. 
- * 
+ * 				value. NamedValue shall support two attributes.
+ *
  * <p>Java class for NamedValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="NamedValueType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NamedValueType", propOrder = {
@@ -62,11 +62,11 @@ public class NamedValueType {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getName() {
         return name;
@@ -74,11 +74,11 @@ public class NamedValueType {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setName(ReferenceType value) {
         this.name = value;
@@ -86,11 +86,11 @@ public class NamedValueType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Object }
-     *     
+     *
      */
     public Object getValue() {
         return value;
@@ -98,11 +98,11 @@ public class NamedValueType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Object }
-     *     
+     *
      */
     public void setValue(Object value) {
         this.value = value;
@@ -116,8 +116,8 @@ public class NamedValueType {
         if (object instanceof NamedValueType) {
             final NamedValueType that = (NamedValueType) object;
 
-            return Utilities.equals(this.name,   that.name) &&
-                   Utilities.equals(this.value,  that.value);
+            return Objects.equals(this.name,   that.name) &&
+                   Objects.equals(this.value,  that.value);
         }
         return false;
     }

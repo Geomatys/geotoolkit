@@ -21,12 +21,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Locale;
+import org.geotoolkit.util.Utilities;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 import org.apache.sis.util.ArraysExt;
 
 /**
@@ -89,7 +90,7 @@ public class WKBRasterImageReader extends ImageReader{
             MIMETypes       = new String[] {"image/x-pgraster"};
             pluginClassName = "org.geotoolkit.coverage.postgresql.WKBRasterImageReader";
             vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
+            version         = Utilities.VERSION.toString();
             writerSpiNames  = new String[] {};
             inputTypes = new Class[0];
             inputTypes      = ArraysExt.append(inputTypes, InputStream.class);

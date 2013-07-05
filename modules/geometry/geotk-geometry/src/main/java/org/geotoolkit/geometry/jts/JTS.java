@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.sis.geometry.Envelope2D;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
@@ -532,7 +532,7 @@ public final class JTS {
      *
      * @param envelope The JTS envelope to convert.
      * @param crs The coordinate reference system for the specified envelope.
-     * @return The GeoAPI envelope.
+     * @return The Types envelope.
      * @throws MismatchedDimensionException if a two-dimensional envelope can't
      * be created from an envelope with the specified CRS.
      *

@@ -510,7 +510,7 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
                     /*
                      * STEP 4  -  Creates the glyph vector. We need to extract the 'GlyphVector' in
                      *            order to compute its location.  Furthermore, drawing GlyphVectors
-                     *            is faster than drawing Strings. Consequently, we stores the glyph
+                     *            is faster than drawing CharSequences. Consequently, we stores the glyph
                      *            vectors references for next paint events.
                      */
                     GlyphVector glyphs = null;

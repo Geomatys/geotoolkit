@@ -17,7 +17,7 @@
 package org.geotoolkit.util.collection;
 
 import java.util.Collection;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 
 /**
  * Abstract synchronized set that define notify methods called when

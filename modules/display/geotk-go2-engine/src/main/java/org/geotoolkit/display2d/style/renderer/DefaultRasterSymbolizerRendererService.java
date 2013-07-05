@@ -45,7 +45,7 @@ import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Jenks;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Range;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;

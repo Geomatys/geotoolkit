@@ -46,9 +46,10 @@ import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.metadata.dimap.DimapAccessor;
 import org.geotoolkit.metadata.dimap.DimapMetadataFormat;
 import org.geotoolkit.util.DomUtilities;
-import org.geotoolkit.util.Version;
+import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Version;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Reader for the <cite>Dimap</cite> format. This reader wraps an other image reader
@@ -214,7 +215,7 @@ public class DimapImageReader extends ImageReaderAdapter {
             MIMETypes       = new String[] {"image/x-dimap"};
             pluginClassName = "org.geotoolkit.image.io.plugin.DimapImageReader";
             vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
+            version         = Utilities.VERSION.toString();
             extraImageMetadataFormatNames = ArraysExt.concatenate(extraImageMetadataFormatNames, new String[] {
                 nativeImageMetadataFormatName
             });

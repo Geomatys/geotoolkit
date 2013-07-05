@@ -39,14 +39,15 @@ import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataUtils;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataWriter;
 import org.geotoolkit.util.DomUtilities;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.util.FactoryException;
 
 import org.w3c.dom.Node;
 
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
+import org.geotoolkit.util.Utilities;
 
 /**
  * Writer for the <cite>Geotiff</cite> format. This writer wraps an other image writer
@@ -171,7 +172,7 @@ public class GeoTiffImageWriter extends ImageWriterAdapter{
             MIMETypes       = new String[] {"image/x-geotiff", "image/tiff;subtype=geotiff"};
             pluginClassName = "org.geotoolkit.image.io.plugin.GeoTiffImageWriter";
             vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
+            version         = Utilities.VERSION.toString();
             outputTypes     = ArraysExt.append(outputTypes, ImageOutputStream.class);
         }
 

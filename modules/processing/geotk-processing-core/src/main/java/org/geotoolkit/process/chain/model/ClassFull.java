@@ -18,13 +18,13 @@ package org.geotoolkit.process.chain.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.Utilities;
 
 /**
  *
@@ -108,8 +108,8 @@ public class ClassFull {
         }
         if (obj instanceof ClassFull) {
             final ClassFull that = (ClassFull) obj;
-            return Utilities.equals(this.getClasses(), that.getClasses()) &&
-                   Utilities.equals(this.name, that.name);
+            return Objects.equals(this.getClasses(), that.getClasses()) &&
+                   Objects.equals(this.name, that.name);
         }
         return false;
     }

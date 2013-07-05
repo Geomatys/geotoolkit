@@ -19,6 +19,7 @@ package org.geotoolkit.observation.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -37,18 +38,17 @@ import org.geotoolkit.gml.xml.v321.TimeInstantType;
 import org.geotoolkit.gml.xml.v321.TimeNodeType;
 import org.geotoolkit.gml.xml.v321.TimePeriodType;
 import org.geotoolkit.gml.xml.v321.TimeTopologyComplexType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.xlink.xml.v100.ActuateType;
 import org.geotoolkit.xlink.xml.v100.ShowType;
 
 
 /**
  * This property type is not provided directly by GML
- * 
+ *
  * <p>Java class for TimeObjectPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeObjectPropertyType">
  *   &lt;complexContent>
@@ -61,8 +61,8 @@ import org.geotoolkit.xlink.xml.v100.ShowType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeObjectPropertyType", propOrder = {
@@ -93,13 +93,13 @@ public class TimeObjectPropertyType {
     private ActuateType actuate;
 
     public TimeObjectPropertyType() {
-        
+
     }
-    
+
     public TimeObjectPropertyType(final AbstractTimeObjectType value) {
        this.abstractTimeObject =  buildTime(value);
     }
-    
+
     private JAXBElement<? extends AbstractTimeObjectType> buildTime(final AbstractTimeObjectType value) {
         final ObjectFactory factory = new ObjectFactory();
         if (value instanceof TimePeriodType) {
@@ -115,10 +115,10 @@ public class TimeObjectPropertyType {
         }
         return null;
     }
-    
+
     /**
      * Gets the value of the abstractTimeObject property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link TimePeriodType }{@code >}
@@ -131,26 +131,26 @@ public class TimeObjectPropertyType {
      *     {@link JAXBElement }{@code <}{@link AbstractTimeComplexType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TimeInstantType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractTimeGeometricPrimitiveType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractTimeObjectType> getAbstractTimeObject() {
         return abstractTimeObject;
     }
-    
+
     public AbstractTimeObjectType getTimeObject() {
         if (abstractTimeObject != null) {
             return abstractTimeObject.getValue();
         }
         return null;
     }
-    
+
     public void setTimeObject(final AbstractTimeObjectType timeObj) {
         abstractTimeObject = buildTime(timeObj);
     }
 
     /**
      * Sets the value of the abstractTimeObject property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link TimePeriodType }{@code >}
@@ -163,7 +163,7 @@ public class TimeObjectPropertyType {
      *     {@link JAXBElement }{@code <}{@link AbstractTimeComplexType }{@code >}
      *     {@link JAXBElement }{@code <}{@link TimeInstantType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractTimeGeometricPrimitiveType }{@code >}
-     *     
+     *
      */
     public void setAbstractTimeObject(JAXBElement<? extends AbstractTimeObjectType> value) {
         this.abstractTimeObject = ((JAXBElement<? extends AbstractTimeObjectType> ) value);
@@ -171,11 +171,11 @@ public class TimeObjectPropertyType {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
@@ -186,11 +186,11 @@ public class TimeObjectPropertyType {
 
     /**
      * Gets the value of the remoteSchema property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRemoteSchema() {
         return remoteSchema;
@@ -198,11 +198,11 @@ public class TimeObjectPropertyType {
 
     /**
      * Sets the value of the remoteSchema property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRemoteSchema(String value) {
         this.remoteSchema = value;
@@ -210,11 +210,11 @@ public class TimeObjectPropertyType {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getType() {
         if (type == null) {
@@ -226,11 +226,11 @@ public class TimeObjectPropertyType {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setType(String value) {
         this.type = value;
@@ -238,11 +238,11 @@ public class TimeObjectPropertyType {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getHref() {
         return href;
@@ -250,11 +250,11 @@ public class TimeObjectPropertyType {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -262,11 +262,11 @@ public class TimeObjectPropertyType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getRole() {
         return role;
@@ -274,11 +274,11 @@ public class TimeObjectPropertyType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -286,11 +286,11 @@ public class TimeObjectPropertyType {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -298,11 +298,11 @@ public class TimeObjectPropertyType {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -310,11 +310,11 @@ public class TimeObjectPropertyType {
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -322,11 +322,11 @@ public class TimeObjectPropertyType {
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -334,11 +334,11 @@ public class TimeObjectPropertyType {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShowType }
-     *     
+     *
      */
     public ShowType getShow() {
         return show;
@@ -346,11 +346,11 @@ public class TimeObjectPropertyType {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShowType }
-     *     
+     *
      */
     public void setShow(ShowType value) {
         this.show = value;
@@ -358,11 +358,11 @@ public class TimeObjectPropertyType {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public ActuateType getActuate() {
         return actuate;
@@ -370,11 +370,11 @@ public class TimeObjectPropertyType {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public void setActuate(ActuateType value) {
         this.actuate = value;
@@ -392,17 +392,17 @@ public class TimeObjectPropertyType {
             if (this.abstractTimeObject == null && that.abstractTimeObject == null) {
                 feat = true;
             } else if (this.abstractTimeObject != null && that.abstractTimeObject != null) {
-                feat = Utilities.equals(this.abstractTimeObject.getValue(),    that.abstractTimeObject.getValue());
+                feat = Objects.equals(this.abstractTimeObject.getValue(),    that.abstractTimeObject.getValue());
             }
             return feat                                                             &&
-                   Utilities.equals(this.actuate,            that.actuate)          &&
-                   Utilities.equals(this.arcrole,            that.arcrole)          &&
-                   Utilities.equals(this.type,               that.type)             &&
-                   Utilities.equals(this.href,               that.href)             &&
-                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
-                   Utilities.equals(this.show,               that.show)             &&
-                   Utilities.equals(this.role,               that.role)             &&
-                   Utilities.equals(this.title,              that.title);
+                   Objects.equals(this.actuate,            that.actuate)          &&
+                   Objects.equals(this.arcrole,            that.arcrole)          &&
+                   Objects.equals(this.type,               that.type)             &&
+                   Objects.equals(this.href,               that.href)             &&
+                   Objects.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Objects.equals(this.show,               that.show)             &&
+                   Objects.equals(this.role,               that.role)             &&
+                   Objects.equals(this.title,              that.title);
         }
         return false;
     }

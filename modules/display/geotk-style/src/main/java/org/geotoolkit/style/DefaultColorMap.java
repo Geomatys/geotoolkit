@@ -23,7 +23,7 @@ import org.opengis.style.StyleVisitor;
 
 
 /**
- * Immutable implementation of GeoAPI ColorMap.
+ * Immutable implementation of Types ColorMap.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending

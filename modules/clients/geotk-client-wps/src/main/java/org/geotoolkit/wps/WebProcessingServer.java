@@ -53,7 +53,7 @@ import org.apache.sis.util.iso.DefaultInternationalString;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.ObjectConverter;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.io.WPSIO;
@@ -62,7 +62,7 @@ import org.geotoolkit.wps.v100.Execute100;
 import org.geotoolkit.wps.v100.GetCapabilities100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.*;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.identification.Identification;
@@ -247,7 +247,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                     final InputStream is = createGetCapabilities().getResponseStream();
                     unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
                     capabilities = ((JAXBElement<WPSCapabilitiesType>) unmarshaller.unmarshal(is)).getValue();
-                    WPSMarshallerPool.getInstance().release(unmarshaller);
+                    WPSMarshallerPool.getInstance().recycle(unmarshaller);
                     is.close();
                 } catch (Exception ex) {
                     capabilities = null;
@@ -283,12 +283,11 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
             public void run() {
                 final DescribeProcessRequest describe = createDescribeProcess();
                 describe.setIdentifiers(processIDs);
-                Unmarshaller unmarshaller = null;
                 try {
                     final InputStream request = describe.getResponseStream();
-                    unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
+                    final Unmarshaller unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
                     description[0] = (ProcessDescriptions) unmarshaller.unmarshal(request);
-                    WPSMarshallerPool.getInstance().release(unmarshaller);
+                    WPSMarshallerPool.getInstance().recycle(unmarshaller);
                     request.close();
                 } catch (Exception ex) {
                     description[0] = null;
@@ -927,8 +926,8 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
             return ((JAXBElement) response).getValue();
         }
 
-        pool.release(unmarshaller);
-        pool.release(marshaller);
+        pool.recycle(unmarshaller);
+        pool.recycle(marshaller);
 
         requestOS.close();
         requestIS.close();
@@ -956,7 +955,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
             in = url.openStream();
             final Object response = unmarshaller.unmarshal(in);
 
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
 
             if (response instanceof JAXBElement) {
                 return ((JAXBElement) response).getValue();
@@ -990,7 +989,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
 
                 final ParameterDescriptor outDesc = (ParameterDescriptor) descriptor.getOutputDescriptor().descriptor(output.getIdentifier().getValue());
                 final Class clazz = outDesc.getValueClass();
-                
+
                 /*
                  * Reference
                  */
@@ -1004,7 +1003,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
 
                 } else {
                     final DataType outputType = output.getData();
-                    
+
                     /*
                     * BBOX
                     */
@@ -1024,8 +1023,8 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
 
                         } catch (FactoryException ex) {
                             throw new ProcessException(ex.getMessage(), null, ex);
-                        } 
-                        
+                        }
+
                     /*
                     * Complex
                     */
@@ -1036,7 +1035,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
                         } catch (NonconvertibleObjectException ex) {
                             throw new ProcessException(ex.getMessage(), null, ex);
                         }
-                        
+
                     /*
                     * Literal
                     */

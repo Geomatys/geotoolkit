@@ -25,7 +25,7 @@ import org.geotoolkit.feature.catalog.FeatureAssociationImpl;
 import org.opengis.feature.catalog.BoundFeatureAttribute;
 
 /**
- * JAXB adapter in order to map implementing class with the GeoAPI BoundFeature. See
+ * JAXB adapter in order to map implementing class with the Types BoundFeature. See
  * package documentation for more information about JAXB and BoundFeature.
  *
  * @module pending

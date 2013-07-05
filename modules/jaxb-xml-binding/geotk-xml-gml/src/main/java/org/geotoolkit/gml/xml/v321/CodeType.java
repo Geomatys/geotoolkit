@@ -18,6 +18,7 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,17 +27,16 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.gml.xml.Code;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * gml:CodeType is a generalized type to be used for a term, keyword or name.
  * It adds a XML attribute codeSpace to a term, where the value of the codeSpace attribute (if present) shall indicate a dictionary, thesaurus, classification scheme, authority, or pattern for the term.
- * 
+ *
  * <p>Java class for CodeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CodeType">
  *   &lt;simpleContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CodeType", propOrder = {
@@ -66,32 +66,32 @@ public class CodeType implements Code {
     private String codeSpace;
 
     public CodeType() {
-        
+
     }
-    
+
     public CodeType(final CodeType that) {
         if (that != null) {
             this.codeSpace = that.codeSpace;
             this.value     = that.value;
         }
     }
-    
+
     public CodeType(final String value) {
         this.value = value;
     }
-    
+
     public CodeType(final String value, final String codeSpace) {
         this.codeSpace = codeSpace;
         this.value = value;
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getValue() {
@@ -100,11 +100,11 @@ public class CodeType implements Code {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(String value) {
         this.value = value;
@@ -112,11 +112,11 @@ public class CodeType implements Code {
 
     /**
      * Gets the value of the codeSpace property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getCodeSpace() {
@@ -125,11 +125,11 @@ public class CodeType implements Code {
 
     /**
      * Sets the value of the codeSpace property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCodeSpace(String value) {
         this.codeSpace = value;
@@ -157,8 +157,8 @@ public class CodeType implements Code {
         if (object instanceof CodeType) {
             final CodeType that = (CodeType) object;
 
-            return Utilities.equals(this.codeSpace, that.codeSpace) &&
-                   Utilities.equals(this.value,     that.value);
+            return Objects.equals(this.codeSpace, that.codeSpace) &&
+                   Objects.equals(this.value,     that.value);
         }
         return false;
     }

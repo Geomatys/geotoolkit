@@ -25,7 +25,7 @@ import static org.opengis.annotation.Specification.*;
  * @author Guilhem Legal
  * 
  * @module pending
- * @since GeoAPI 2.1
+ * @since Types 2.1
  * @Deprecated deleted in amd.1:2008  
  */
 @UML(identifier="SV_ServiceProvider", specification=UNSPECIFIED)

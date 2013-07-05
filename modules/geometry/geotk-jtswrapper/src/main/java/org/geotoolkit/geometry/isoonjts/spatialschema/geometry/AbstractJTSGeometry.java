@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.sis.geometry.DirectPosition2D;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurveBoundary;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoint;
@@ -647,7 +647,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     }
 
     /**
-     * This class implements JTS's CoordinateFilter interface using a GeoAPI
+     * This class implements JTS's CoordinateFilter interface using a Types
      * MathTransform object to actually perform the work.
      */
     public static class MathTransformFilter implements com.vividsolutions.jts.geom.CoordinateFilter {

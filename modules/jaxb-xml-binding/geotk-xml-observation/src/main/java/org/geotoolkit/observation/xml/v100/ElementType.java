@@ -21,10 +21,10 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.quality.AbstractResult;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.quality.AbstractResult;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.quality.Element;
@@ -87,7 +87,7 @@ public class ElementType implements Element {
      * The collection size is 1 for a single date, or 2 for a range. Returns
      * an empty collection if this information is not available.
      *
-     * @since GeoAPI 2.1
+     * @since Types 2.1
      */
     private Collection<Date> dates;
 
@@ -105,7 +105,7 @@ public class ElementType implements Element {
      * come of evaluating the obtained value (or set of values) against a specified
      * acceptable conformance quality level.
      *
-     * @since GeoAPI 2.1
+     * @since Types 2.1
      */
     private Collection<? extends AbstractResult> results;
     /**
@@ -174,7 +174,7 @@ public class ElementType implements Element {
      * The collection size is 1 for a single date, or 2 for a range. Returns
      * an empty collection if this information is not available.
      *
-     * @since GeoAPI 2.1
+     * @since Types 2.1
      */
     public Collection<Date> getDates(){ 
         return dates;
@@ -196,7 +196,7 @@ public class ElementType implements Element {
      * come of evaluating the obtained value (or set of values) against a specified
      * acceptable conformance quality level.
      *
-     * @since GeoAPI 2.1
+     * @since Types 2.1
      */
     public Collection<? extends Result> getResults(){ 
         return results;

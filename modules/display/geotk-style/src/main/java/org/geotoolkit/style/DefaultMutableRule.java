@@ -24,7 +24,7 @@ import java.util.Objects;
 import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.apache.sis.util.Classes;
@@ -39,13 +39,13 @@ import org.opengis.style.Symbolizer;
 import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
- * Mutable implementation of GeoAPI Rule.
- * 
+ * Mutable implementation of Types Rule.
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class DefaultMutableRule implements MutableRule{
-    
+
     private final List<Symbolizer> symbols = new NotifiedCheckedList<Symbolizer>(Symbolizer.class) {
 
             @Override
@@ -55,7 +55,7 @@ public class DefaultMutableRule implements MutableRule{
 
             @Override
             protected void notifyAdd(final Symbolizer item, final int index) {
-                fireSymbolizerChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, index) );
+                fireSymbolizerChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, true, index, true) );
             }
 
             @Override
@@ -65,7 +65,7 @@ public class DefaultMutableRule implements MutableRule{
 
             @Override
             protected void notifyRemove(final Symbolizer item, final int index) {
-                fireSymbolizerChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, index) );
+                fireSymbolizerChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, true, index, true) );
             }
 
             @Override
@@ -75,13 +75,13 @@ public class DefaultMutableRule implements MutableRule{
 
             @Override
             protected void notifyChange(Symbolizer oldItem, Symbolizer newItem, int index) {
-                fireSymbolizerChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, index) );
+                fireSymbolizerChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, true, index, true) );
             }
-            
+
         };
-        
+
     private final EventListenerList listeners = new EventListenerList();
-        
+
     private String name = null;
     private Description desc = StyleConstants.DEFAULT_DESCRIPTION;
     private GraphicLegend legend = null;
@@ -90,12 +90,12 @@ public class DefaultMutableRule implements MutableRule{
     private double minscale = 0;
     private double maxScale = Double.MAX_VALUE;
     private OnlineResource online = null;
-    
+
     /**
      * Create a default mutable rule.
      */
     public DefaultMutableRule(){}
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -121,7 +121,7 @@ public class DefaultMutableRule implements MutableRule{
         }
         firePropertyChange(NAME_PROPERTY, oldName, this.name);
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -138,7 +138,7 @@ public class DefaultMutableRule implements MutableRule{
     @Override
     public void setDescription(final Description desc){
         ensureNonNull("description", desc);
-        
+
         final Description oldDesc;
         synchronized (this) {
             oldDesc = this.desc;
@@ -149,7 +149,7 @@ public class DefaultMutableRule implements MutableRule{
         }
         firePropertyChange(DESCRIPTION_PROPERTY, oldDesc, this.desc);
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -175,7 +175,7 @@ public class DefaultMutableRule implements MutableRule{
         }
         firePropertyChange(LEGEND_PROPERTY, oldLegend, this.legend);
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -184,12 +184,12 @@ public class DefaultMutableRule implements MutableRule{
     public Filter getFilter() {
         return filter;
     }
-    
+
     /**
      * Set the feature filter of the rule.
      * The filter will limit the features that will be displayed
      * using the underneath symbolizers.
-     * 
+     *
      * @param filter : can be null.
      */
     @Override
@@ -213,12 +213,12 @@ public class DefaultMutableRule implements MutableRule{
     public boolean isElseFilter() {
         return isElse;
     }
-    
+
     /**
      * Set the "else" flag of the filter.
      * If a ruma has this flag then it will used only for the
      * feature that no other rule handle.
-     * 
+     *
      */
     @Override
     public void setElseFilter(final boolean isElse){
@@ -241,7 +241,7 @@ public class DefaultMutableRule implements MutableRule{
     public double getMinScaleDenominator() {
         return minscale;
     }
-    
+
     /**
      * Set the minimum scale on wich this rul apply.
      * if the display device is under this scale then this rule
@@ -268,7 +268,7 @@ public class DefaultMutableRule implements MutableRule{
     public double getMaxScaleDenominator() {
         return maxScale;
     }
-    
+
     /**
      * Set the maximum scale on wich this rul apply.
      * if the display device is above this scale then this rule
@@ -288,7 +288,7 @@ public class DefaultMutableRule implements MutableRule{
     }
 
     /**
-     * 
+     *
      * @return live list
      */
     @Override
@@ -304,7 +304,7 @@ public class DefaultMutableRule implements MutableRule{
     public OnlineResource getOnlineResource() {
         return online;
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -348,23 +348,23 @@ public class DefaultMutableRule implements MutableRule{
 
         return builder.toString();
     }
-    
+
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
-    
+
     protected void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue){
         //TODO make fire property change thread safe, preserve fire order
-        
+
         final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
         final PropertyChangeListener[] lists = listeners.getListeners(PropertyChangeListener.class);
-        
+
         for(PropertyChangeListener listener : lists){
             listener.propertyChange(event);
         }
-        
+
     }
-    
+
     protected void fireSymbolizerChange(final int type, final Symbolizer symbol, final NumberRange<Integer> range) {
         //TODO make fire property change thread safe, preserve fire order
 
@@ -376,19 +376,19 @@ public class DefaultMutableRule implements MutableRule{
         }
 
     }
-    
+
     protected void fireSymbolizerChange(final int type, final Collection<? extends Symbolizer> symbol, final NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
-        
+
         final CollectionChangeEvent<Symbolizer> event = new CollectionChangeEvent<Symbolizer>(this,symbol,type,range, null);
         final RuleListener[] lists = listeners.getListeners(RuleListener.class);
-        
+
         for(RuleListener listener : lists){
             listener.symbolizerChange(event);
         }
-        
+
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -407,7 +407,7 @@ public class DefaultMutableRule implements MutableRule{
             listeners.add(RuleListener.class, (RuleListener)listener);
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */

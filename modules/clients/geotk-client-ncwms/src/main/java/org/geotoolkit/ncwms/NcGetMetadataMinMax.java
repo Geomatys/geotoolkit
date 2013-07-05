@@ -17,7 +17,7 @@
 package org.geotoolkit.ncwms;
 
 import java.util.logging.Logger;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

@@ -95,7 +95,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;

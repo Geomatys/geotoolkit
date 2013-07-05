@@ -48,15 +48,15 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
-import org.geotoolkit.internal.jaxb.code.MD_ScopeCode;
-import org.geotoolkit.internal.jaxb.metadata.CI_Contact;
-import org.geotoolkit.internal.jaxb.metadata.EX_Extent;
-import org.geotoolkit.internal.jaxb.metadata.direct.MD_Keywords;
-import org.geotoolkit.internal.jaxb.metadata.direct.CI_OnlineResource;
-import org.geotoolkit.internal.jaxb.metadata.CI_ResponsibleParty;
-import org.geotoolkit.internal.jaxb.metadata.DQ_Result;
+import org.apache.sis.internal.jaxb.code.MD_ScopeCode;
+import org.apache.sis.internal.jaxb.metadata.CI_Contact;
+import org.apache.sis.internal.jaxb.metadata.EX_Extent;
+import org.apache.sis.internal.jaxb.metadata.direct.MD_Keywords;
+import org.apache.sis.internal.jaxb.metadata.direct.CI_OnlineResource;
+import org.apache.sis.internal.jaxb.metadata.CI_ResponsibleParty;
+import org.apache.sis.internal.jaxb.metadata.DQ_Result;
 
-import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.gco.GO_DateTime;
+import org.apache.sis.xml.Namespaces;
+import org.apache.sis.internal.jaxb.gco.GO_DateTime;
 import org.geotoolkit.resources.jaxb.service.ServiceTypeAdapter;
 

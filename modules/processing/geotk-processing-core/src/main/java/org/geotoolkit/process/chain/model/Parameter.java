@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.process.chain.model;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,7 +25,7 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * Description of a process parameter.
- * 
+ *
  * @author Guilhem Legal (Geomatys)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -145,12 +146,12 @@ public class Parameter {
         }
         if (obj instanceof Parameter) {
             final Parameter that = (Parameter) obj;
-            return Utilities.equals(this.code, that.code) &&
-                   Utilities.equals(this.defaultValue, that.defaultValue) &&
+            return Objects  .equals(this.code, that.code) &&
+                   Objects  .equals(this.defaultValue, that.defaultValue) &&
                    Utilities.equals(this.maxOccurs, that.maxOccurs) &&
                    Utilities.equals(this.minOccurs, that.minOccurs) &&
-                   Utilities.equals(this.remarks, that.remarks) &&
-                   Utilities.equals(this.type, that.type);
+                   Objects  .equals(this.remarks, that.remarks) &&
+                   Objects  .equals(this.type, that.type);
         }
         return false;
     }

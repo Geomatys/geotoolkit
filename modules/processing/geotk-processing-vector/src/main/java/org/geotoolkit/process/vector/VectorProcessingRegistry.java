@@ -19,9 +19,9 @@ package org.geotoolkit.process.vector;
 import java.util.Collections;
 
 import org.geotoolkit.process.vector.centroid.CentroidDescriptor;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 
 import org.geotoolkit.process.AbstractProcessingRegistry;
 import org.geotoolkit.process.vector.affinetransform.AffineTransformDescriptor;

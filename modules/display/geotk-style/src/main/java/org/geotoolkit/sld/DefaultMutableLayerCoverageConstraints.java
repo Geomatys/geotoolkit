@@ -23,7 +23,7 @@ import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.CollectionChangeListener;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 
 import org.opengis.sld.Constraint;
@@ -32,7 +32,7 @@ import org.opengis.sld.SLDVisitor;
 
 /**
  * Default mutable coverage constraints, thread safe.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -47,7 +47,7 @@ class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageCons
 
             @Override
             protected void notifyAdd(final CoverageConstraint item, final int index) {
-                fireLibraryChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, index) );
+                fireLibraryChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, true, index, true) );
             }
 
             @Override
@@ -57,7 +57,7 @@ class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageCons
 
             @Override
             protected void notifyRemove(final CoverageConstraint item, final int index) {
-                fireLibraryChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, index) );
+                fireLibraryChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, true, index, true) );
             }
 
             @Override
@@ -67,19 +67,19 @@ class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageCons
 
             @Override
             protected void notifyChange(CoverageConstraint oldItem, CoverageConstraint newItem, int index) {
-                fireLibraryChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, index) );
+                fireLibraryChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, true, index, true) );
             }
-            
+
         };
-    
+
     private final EventListenerList listeners = new EventListenerList();
-    
+
     /**
      * default constructor
      */
     DefaultMutableLayerCoverageConstraints(){
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -89,7 +89,7 @@ class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageCons
     public List<CoverageConstraint> constraints() {
         return constraints;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -97,7 +97,7 @@ class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageCons
     public Object accept(final SLDVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
-    
+
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
@@ -107,37 +107,37 @@ class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageCons
 
         final CollectionChangeEvent<CoverageConstraint> event = new CollectionChangeEvent<CoverageConstraint>(this, lib, type, range, null);
         final CollectionChangeListener[] lists = listeners.getListeners(CollectionChangeListener.class);
-        
+
         for(CollectionChangeListener listener : lists){
             listener.collectionChange(event);
         }
 
     }
-    
+
     protected void fireLibraryChange(final int type, final CoverageConstraint lib, final NumberRange<Integer> range, final EventObject subEvent) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<CoverageConstraint> event = new CollectionChangeEvent<CoverageConstraint>(this, lib, type, range,subEvent);
         final CollectionChangeListener[] lists = listeners.getListeners(CollectionChangeListener.class);
-        
+
         for(CollectionChangeListener listener : lists){
             listener.collectionChange(event);
         }
 
     }
-    
+
     protected void fireLibraryChange(final int type, final Collection<? extends CoverageConstraint> lib, final NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
-        
+
         final CollectionChangeEvent<CoverageConstraint> event = new CollectionChangeEvent<CoverageConstraint>(this,lib,type,range, null);
         final CollectionChangeListener[] lists = listeners.getListeners(CollectionChangeListener.class);
-        
+
         for(CollectionChangeListener listener : lists){
             listener.collectionChange(event);
         }
-        
+
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -193,5 +193,5 @@ class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageCons
         builder.append(']');
         return builder.toString();
     }
-    
+
 }

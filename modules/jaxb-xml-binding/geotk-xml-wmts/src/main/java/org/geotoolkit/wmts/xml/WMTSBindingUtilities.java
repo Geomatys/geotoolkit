@@ -28,7 +28,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wmts.xml.v100.Capabilities;
 
 import org.opengis.metadata.citation.OnlineResource;
@@ -44,20 +44,16 @@ import org.xml.sax.InputSource;
  public class WMTSBindingUtilities {
 
      public static Capabilities unmarshall(final Object source, final WMTSVersion version) throws JAXBException{
-         
-         Unmarshaller unMarshaller   = null;
-         try {
-            switch(version) {
-                case v100 : unMarshaller = WMTSMarshallerPool.getInstance().acquireUnmarshaller();
-                            break;
-                default: throw new IllegalArgumentException("unknonwed version");
-            }
-            return (Capabilities) unmarshall(source, unMarshaller);
-         } finally {
-             if (unMarshaller != null) {
-                WMTSMarshallerPool.getInstance().release(unMarshaller);
-             }
-         }
+
+        Unmarshaller unMarshaller   = null;
+        switch(version) {
+            case v100 : unMarshaller = WMTSMarshallerPool.getInstance().acquireUnmarshaller();
+                        break;
+            default: throw new IllegalArgumentException("unknonwed version");
+        }
+        Capabilities c = (Capabilities) unmarshall(source, unMarshaller);
+        WMTSMarshallerPool.getInstance().recycle(unMarshaller);
+        return c;
      }
 
      private static final Object unmarshall(final Object source, final Unmarshaller unMarshaller)

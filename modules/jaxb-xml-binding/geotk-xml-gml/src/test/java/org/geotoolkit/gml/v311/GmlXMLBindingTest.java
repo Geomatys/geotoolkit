@@ -35,7 +35,7 @@ import org.geotoolkit.gml.xml.v311.ObjectFactory;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 
 //Junit dependencies
 import org.junit.*;
@@ -71,10 +71,10 @@ public class GmlXMLBindingTest {
     @After
     public void tearDown() {
         if (marshaller != null) {
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
         if (unmarshaller != null) {
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
     }
 

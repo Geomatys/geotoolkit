@@ -29,7 +29,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import java.util.logging.Level;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;

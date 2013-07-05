@@ -29,7 +29,7 @@ import org.opengis.style.ExternalGraphic;
 import org.opengis.style.StyleVisitor;
 
 /**
- * Immutable implementation of GeoAPI External graphic.
+ * Immutable implementation of Types External graphic.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending

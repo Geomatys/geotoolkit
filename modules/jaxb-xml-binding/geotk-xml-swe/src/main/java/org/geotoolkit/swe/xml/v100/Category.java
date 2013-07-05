@@ -18,6 +18,7 @@ package org.geotoolkit.swe.xml.v100;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,14 +29,13 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.swe.xml.AbstractCategory;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -105,7 +105,7 @@ public class Category extends AbstractDataComponentType implements AbstractCateg
             this.referenceFrame = cat.getReferenceFrame();
         }
     }
-    
+
     /**
      * Gets the value of the codeSpace property.
      */
@@ -210,12 +210,12 @@ public class Category extends AbstractDataComponentType implements AbstractCateg
         if (object instanceof Category) {
             final Category that = (Category) object;
 
-            return Utilities.equals(this.axisID, that.axisID)                 &&
-                   Utilities.equals(this.codeSpace, that.codeSpace)           &&
-                   Utilities.equals(this.constraint, that.constraint)         &&
-                   Utilities.equals(this.quality, that.quality)               &&
-                   Utilities.equals(this.referenceFrame, that.referenceFrame) &&
-                   Utilities.equals(this.value, that.value);
+            return Objects.equals(this.axisID, that.axisID)                 &&
+                   Objects.equals(this.codeSpace, that.codeSpace)           &&
+                   Objects.equals(this.constraint, that.constraint)         &&
+                   Objects.equals(this.quality, that.quality)               &&
+                   Objects.equals(this.referenceFrame, that.referenceFrame) &&
+                   Objects.equals(this.value, that.value);
         }
         return false;
     }

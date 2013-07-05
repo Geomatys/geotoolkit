@@ -35,9 +35,10 @@ import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import javax.xml.bind.JAXBContext;
 
 /**
  *
@@ -47,23 +48,23 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 @XmlRootElement(name="PyramidSet")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLPyramidSet extends AbstractPyramidSet{
-    
+
     @XmlTransient
     private static MarshallerPool POOL;
-    
+
     private static synchronized MarshallerPool getPoolInstance() throws JAXBException{
         if(POOL == null){
-            POOL = new MarshallerPool(XMLPyramidSet.class);
+            POOL = new MarshallerPool(JAXBContext.newInstance(XMLPyramidSet.class), null);
         }
         return POOL;
     }
-    
-    
+
+
     @XmlElement(name="Pyramid")
     private List<XMLPyramid> pyramids;
     @XmlElement(name="MimeType")
     private String mimeType;
-    
+
     @XmlTransient
     private String id;
     @XmlTransient
@@ -74,11 +75,11 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     public XMLPyramidSet(){
         this("image/png");
     }
-    
+
     public XMLPyramidSet(String mimeType){
         this.mimeType = mimeType;
     }
-    
+
     void initialize(File mainFile){
         this.mainfile = mainFile;
         //calculate id based on file name
@@ -87,12 +88,12 @@ public class XMLPyramidSet extends AbstractPyramidSet{
         if(index > 0){
             id = id.substring(0,index);
         }
-        
+
         for(XMLPyramid pyramid : pyramids()){
             pyramid.initialize(this);
         }
     }
-    
+
     public ImageReaderSpi getReaderSpi() throws DataStoreException{
         if(spi == null){
             try {
@@ -105,7 +106,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
         }
         return spi;
     }
-    
+
     public List<XMLPyramid> pyramids() {
         if(pyramids == null){
             pyramids = new ArrayList<XMLPyramid>();
@@ -124,7 +125,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     public File getMainfile() {
         return mainfile;
     }
-    
+
     /**
      * @return Folder where each pyramid is stored.
      */
@@ -135,7 +136,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     public String getMimeType() {
         return mimeType;
     }
-    
+
     @Override
     public Collection<Pyramid> getPyramids() {
         return (Collection)pyramids();
@@ -155,17 +156,17 @@ public class XMLPyramidSet extends AbstractPyramidSet{
         }
         return null;
     }
-    
+
     @Override
     public String toString(){
         return Trees.toString(Classes.getShortClassName(this)+" "+getId(), getPyramids());
     }
-        
+
     /**
      * Create and register a new pyramid in the set.
-     * 
+     *
      * @param crs
-     * @return 
+     * @return
      */
     Pyramid createPyramid(CoordinateReferenceSystem crs) {
         final XMLPyramid pyramid = new XMLPyramid();
@@ -175,38 +176,32 @@ public class XMLPyramidSet extends AbstractPyramidSet{
         pyramids().add(pyramid);
         return pyramid;
     }
-    
+
     /**
      * Write this pyramid set in it's main file.
-     * @throws JAXBException 
+     * @throws JAXBException
      */
     public void write() throws JAXBException{
         final MarshallerPool pool = getPoolInstance();
         final Marshaller marshaller = pool.acquireMarshaller();
-        try{
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(this, getMainfile());
-        }finally{
-            pool.release(marshaller);
-        }
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        marshaller.marshal(this, getMainfile());
+        pool.recycle(marshaller);
     }
-    
+
     /**
      * Read the given file and return an XMLPyramidSet.
-     * 
+     *
      * @param file
      * @return
-     * @throws JAXBException 
+     * @throws JAXBException
      */
     public static XMLPyramidSet read(File file) throws JAXBException{
         final MarshallerPool pool = getPoolInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final XMLPyramidSet set;
-        try{
-            set = (XMLPyramidSet) unmarshaller.unmarshal(file);
-        }finally{
-            pool.release(unmarshaller);
-        }
+        set = (XMLPyramidSet) unmarshaller.unmarshal(file);
+        pool.recycle(unmarshaller);
         set.initialize(file);
         return set;
     }

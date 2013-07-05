@@ -41,7 +41,7 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.GeotkClipboard;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import org.opengis.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;

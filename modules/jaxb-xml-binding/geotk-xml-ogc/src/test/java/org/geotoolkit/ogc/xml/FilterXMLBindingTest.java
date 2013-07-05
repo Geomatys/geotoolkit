@@ -47,8 +47,8 @@ import org.geotoolkit.ogc.xml.v200.BBOXType;
 import org.geotoolkit.ogc.xml.v200.ContainsType;
 import org.geotoolkit.ogc.xml.v200.TimeAfterType;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
 
 //Junit dependencies
 import org.junit.*;
@@ -87,10 +87,10 @@ public class FilterXMLBindingTest {
     @After
     public void tearDown() {
         if (unmarshaller != null) {
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
         if (marshaller != null) {
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
     }
 
@@ -118,7 +118,7 @@ public class FilterXMLBindingTest {
         String result = sw.toString();
         //we remove the xmlmns
         result = StringUtilities.removeXmlns(result);
-        
+
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"     + '\n' +
         "<ogc:Filter >"                                                      + '\n' +

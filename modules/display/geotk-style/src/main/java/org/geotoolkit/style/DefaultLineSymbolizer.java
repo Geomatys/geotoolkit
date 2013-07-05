@@ -30,7 +30,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
- * Immutable implementation of GeoAPI Line symbolizer.
+ * Immutable implementation of Types Line symbolizer.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending

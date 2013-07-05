@@ -32,9 +32,9 @@ import org.geotoolkit.style.RuleListener;
 import org.geotoolkit.style.StyleListener;
 import org.geotoolkit.style.StyleUtilities;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.sld.NamedLayer;
 import org.opengis.sld.StyledLayerDescriptor;
@@ -60,7 +60,7 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
     public StyleTreeModel(){
         super(null);
     }
-    
+
     /**
      * create a StyleTreeModel
      * @param style , can't be null
@@ -96,9 +96,9 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
 
         setRoot(parse(style));
     }
-    
+
     /**
-     * 
+     *
      * @return Style
      */
     public T getStyleElement() {
@@ -124,7 +124,7 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
     public void featureTypeStyleChange(final CollectionChangeEvent<MutableFeatureTypeStyle> event) {
         styleElementChange(event);
     }
-    
+
     @Override
     public void ruleChange(final CollectionChangeEvent<MutableRule> event) {
         styleElementChange(event);
@@ -164,7 +164,7 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
         }
 
         if(type == CollectionChangeEvent.ITEM_ADDED){
-            int index = (int) range.getMinimum();
+            int index = (int) range.getMinDouble();
             for(Object added : event.getItems()){
                 final DefaultMutableTreeNode child = parse(added);
 
@@ -181,7 +181,7 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
                 }
             }
         }else if(type == CollectionChangeEvent.ITEM_CHANGED){
-            int index = (int) event.getRange().getMinimum();
+            int index = (int) event.getRange().getMinDouble();
             for(Object ele : event.getItems()){
                 final DefaultMutableTreeNode child = search(parent,ele);
                 final EventObject subEvent = event.getChangeEvent();
@@ -194,7 +194,7 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
                         //the full object has changed
                         child.setUserObject(newElement);
                     }
-                    
+
                     nodeChanged(child);
                 }
                 index++;
@@ -204,7 +204,7 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
 
 
     //---------------------using nodes------------------------------------------
-    
+
 
     public boolean isDeletable(final DefaultMutableTreeNode node){
         final Object removeObject = node.getUserObject();
@@ -363,11 +363,11 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
      * Get the style element at real index in the userObject style element.
      * @param parent
      * @param index
-     * @return 
+     * @return
      */
     private Object getStyleElementAt(final DefaultMutableTreeNode parent, final int index){
         final Object pse = parent.getUserObject();
-        
+
         if(pse instanceof StyledLayerDescriptor){
             return ((StyledLayerDescriptor)pse).layers().get(index);
         }else if(pse instanceof NamedLayer){
@@ -383,7 +383,7 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
         }
         return null;
     }
-    
+
     private DefaultMutableTreeNode search(final Object userObject){
         return search(getRoot(), userObject);
     }
@@ -457,14 +457,14 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
 
             ntypes.remove(fts);
             removeNodeFromParent(ftsnode);
-                       
+
             ntypes.add(target, fts);
             insertNodeInto(ftsnode, getRoot(), target);
         }
 
         return ftsnode;
     }
-    
+
     private DefaultMutableTreeNode moveAt(final DefaultMutableTreeNode rulenode, final MutableRule rule, final int target) {
         final DefaultMutableTreeNode parentnode = (DefaultMutableTreeNode)rulenode.getParent();
         final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) parentnode.getUserObject();
@@ -475,14 +475,14 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
 
             nrules.remove(rule);
             removeNodeFromParent(rulenode);
-            
+
             nrules.add(target, rule);
             insertNodeInto(rulenode, parentnode, target);
         }
 
         return rulenode;
     }
-    
+
     private DefaultMutableTreeNode moveAt(final DefaultMutableTreeNode symbolnode, final Symbolizer symbol, final int target) {
         final DefaultMutableTreeNode parentnode = (DefaultMutableTreeNode)symbolnode.getParent();
         final MutableRule rule = (MutableRule) ((DefaultMutableTreeNode)symbolnode.getParent()).getUserObject();
@@ -493,28 +493,28 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
 
             nsymbols.remove(symbol);
             removeNodeFromParent(symbolnode);
-                
+
             nsymbols.add(target, symbol);
             insertNodeInto(symbolnode, parentnode, target);
         }
 
-        return symbolnode;        
+        return symbolnode;
     }
-        
+
     private void remove(final DefaultMutableTreeNode parentNode, final MutableRule rule){
         final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) parentNode.getUserObject();
         final DefaultMutableTreeNode ruleNode = (DefaultMutableTreeNode) parentNode.getChildAt(indexof(fts, rule));
         fts.rules().remove(rule);
-        removeNodeFromParent(ruleNode);        
+        removeNodeFromParent(ruleNode);
     }
-    
+
     private void remove(final DefaultMutableTreeNode parentNode, final Symbolizer symbol){
         final MutableRule rule = (MutableRule) parentNode.getUserObject();
         final DefaultMutableTreeNode symbolNode = (DefaultMutableTreeNode) parentNode.getChildAt(indexof(rule, symbol));
         rule.symbolizers().remove(symbol);
-        removeNodeFromParent(symbolNode);        
+        removeNodeFromParent(symbolNode);
     }
-    
+
     //--------------------override----------------------------------------------
     @Override
     public DefaultMutableTreeNode getRoot() {

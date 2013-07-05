@@ -22,8 +22,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -42,17 +42,17 @@ public class XacmlAnnotationsTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool(
+        pool = new MarshallerPool(JAXBContext.newInstance(
                 "org.geotoolkit.xacml.xml.policy:" +
                 "org.geotoolkit.xacml.xml.policy:" +
-                "org.geotoolkit.xacml.xml.context");
+                "org.geotoolkit.xacml.xml.context"), null);
         unmarshaller = pool.acquireUnmarshaller();
     }
 
     @After
     public void tearDown() {
         if (unmarshaller != null) {
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
     }
 

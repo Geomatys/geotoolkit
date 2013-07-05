@@ -21,8 +21,8 @@ import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.ebrim.xml.EBRIMMarshallerPool;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
 
 /**
  * Abstract base for all CSW request

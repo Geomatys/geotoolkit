@@ -24,7 +24,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 
 /**
  * Define an "in construction" geometries.

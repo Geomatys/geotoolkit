@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.jai.TileCache;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Manage {@link RenderedImage} and its {@link Raster} to don't exceed JVM memory capacity.

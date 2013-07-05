@@ -22,7 +22,7 @@ import org.geotoolkit.feature.catalog.DefinitionReferenceImpl;
 import org.opengis.feature.catalog.DefinitionReference;
 
 /**
- * JAXB adapter in order to map implementing class with the GeoAPI DefinitionReference. See
+ * JAXB adapter in order to map implementing class with the Types DefinitionReference. See
  * package documentation for more information about JAXB and DefinitionReference.
  *
  * @module pending

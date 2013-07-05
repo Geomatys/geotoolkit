@@ -36,13 +36,13 @@ import org.geotoolkit.util.converter.ObjectConverter;
 public class ConverterMatcher {
 
     public static ConverterMatcher DEFAULT;
-    
+
     static {
         DEFAULT = new ConverterMatcher(
                     new HashMap<ClassFull, List<ClassFull>>(),
                     new ArrayList<ObjectConverter>());
     }
-    
+
     private final Map<ClassFull, List<ClassFull>> distantConverters;
     private final Collection<ObjectConverter> localConverters;
 

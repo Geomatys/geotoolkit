@@ -46,7 +46,7 @@ import org.xml.sax.SAXException;
  * @author Quentin Boileau
  */
 public class ExecuteTest {
-    
+
     private static String EPSG_VERSION;
 
     public ExecuteTest() {
@@ -92,7 +92,7 @@ public class ExecuteTest {
             final XMLComparator comparator = new XMLComparator(expected, result);
             comparator.compare();
 
-             WPSMarshallerPool.getInstance().release(marshaller);
+             WPSMarshallerPool.getInstance().recycle(marshaller);
         } catch (FactoryException ex) {
             fail(ex.getLocalizedMessage());
         } catch (NonconvertibleObjectException ex) {

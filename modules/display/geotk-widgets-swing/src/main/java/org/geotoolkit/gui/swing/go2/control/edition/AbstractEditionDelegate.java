@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.control.navigation.MouseNavigatonListener;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *

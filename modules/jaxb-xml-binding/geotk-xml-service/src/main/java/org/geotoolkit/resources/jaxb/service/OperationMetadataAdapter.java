@@ -23,7 +23,7 @@ import org.geotoolkit.service.OperationMetadataImpl;
 import org.opengis.service.OperationMetadata;
 
 /**
- * JAXB adapter in order to map implementing class with the GeoAPI interface. See
+ * JAXB adapter in order to map implementing class with the Types interface. See
  * package documentation for more information about JAXB and interface.
  *
  * @module pending

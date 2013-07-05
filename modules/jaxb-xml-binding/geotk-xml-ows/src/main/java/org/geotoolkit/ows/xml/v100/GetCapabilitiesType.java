@@ -16,28 +16,28 @@
  */
 package org.geotoolkit.ows.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractGetCapabilities;
-import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.Version;
 
 
 /**
- * XML encoded GetCapabilities operation request. 
- * This operation allows clients to retrieve service metadata about a specific service instance. 
- * In this XML encoding, no "request" parameter is included, 
- * since the element name specifies the specific operation. 
- * This base type shall be extended by each specific OWS to include the additional required "service" attribute, 
- * with the correct value for that OWS. 
- * 
+ * XML encoded GetCapabilities operation request.
+ * This operation allows clients to retrieve service metadata about a specific service instance.
+ * In this XML encoding, no "request" parameter is included,
+ * since the element name specifies the specific operation.
+ * This base type shall be extended by each specific OWS to include the additional required "service" attribute,
+ * with the correct value for that OWS.
+ *
  * <p>Java class for GetCapabilitiesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetCapabilitiesType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.apache.sis.util.Version;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -79,13 +79,13 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
     /**
      * Empty constructor used by JAXB.
      */
-    public GetCapabilitiesType(){ 
+    public GetCapabilitiesType(){
     }
 
     public GetCapabilitiesType(final String service){
         this.service = service;
     }
-    
+
     /**
      * Build a new GetCapabilities base request.
      */
@@ -97,7 +97,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         this.updateSequence = updateSequence;
         this.service        = service;
     }
-    
+
     /**
      * Gets the value of the acceptVersions property.
      */
@@ -201,7 +201,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
             return new Version(acceptVersions.getVersion().get(0));
         } return null;
     }
-    
+
     @Override
     public void setVersion(final String version) {
         if (version != null) {
@@ -224,7 +224,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
     public void setService(final String service) {
         this.service = service;
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -235,11 +235,11 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         }
         if (object instanceof GetCapabilitiesType) {
             final GetCapabilitiesType that = (GetCapabilitiesType) object;
-            return Utilities.equals(this.acceptFormats,  that.acceptFormats)  &&
-                   Utilities.equals(this.acceptVersions, that.acceptVersions) &&
-                   Utilities.equals(this.sections,       that.sections)       &&
-                   Utilities.equals(this.service,        that.service)        &&
-                   Utilities.equals(this.updateSequence, that.updateSequence);
+            return Objects.equals(this.acceptFormats,  that.acceptFormats)  &&
+                   Objects.equals(this.acceptVersions, that.acceptVersions) &&
+                   Objects.equals(this.sections,       that.sections)       &&
+                   Objects.equals(this.service,        that.service)        &&
+                   Objects.equals(this.updateSequence, that.updateSequence);
         }
         return false;
     }

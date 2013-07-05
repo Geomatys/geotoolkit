@@ -24,11 +24,11 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSMarshallerPool;
 import org.geotoolkit.wms.xml.WMSVersion;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 
 /**
  * For testing purpose.
@@ -50,13 +50,12 @@ public class MockWebMapServer extends WebMapServer{
         try{
             capa111 = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource("/org/geotoolkit/wms/wms111.xml"));
             capa130 = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource("/org/geotoolkit/wms/wms130.xml"));
+            pool.recycle(unmarshaller);
         } catch (JAXBException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
             throw ex;
-        } finally {
-            pool.release(unmarshaller);
         }
-        
+
     }
 
     @Override

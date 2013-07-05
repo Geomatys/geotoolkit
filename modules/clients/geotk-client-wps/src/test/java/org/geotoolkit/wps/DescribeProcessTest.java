@@ -107,7 +107,7 @@ public class DescribeProcessTest {
                     + "</wps:DescribeProcess>\n";
             final XMLComparator comparator = new XMLComparator(expectedMarshalledRequest, result);
             comparator.compare();
-            WPSMarshallerPool.getInstance().release(marshaller);
+            WPSMarshallerPool.getInstance().recycle(marshaller);
         } catch (JAXBException ex) {
             fail(ex.getLocalizedMessage());
         }

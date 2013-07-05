@@ -29,7 +29,7 @@ import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -54,10 +54,10 @@ public class PropertyTypeTest {
     @After
     public void tearDown() throws JAXBException {
         if (unmarshaller != null) {
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
         if (marshaller != null) {
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
     }
 

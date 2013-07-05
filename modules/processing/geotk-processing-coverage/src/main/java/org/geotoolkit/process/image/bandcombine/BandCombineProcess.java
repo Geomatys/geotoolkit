@@ -33,7 +33,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.process.image.bandcombine.BandCombineDescriptor.*;
 import static org.geotoolkit.process.image.reformat.ReformatProcess.createRaster;
 import org.geotoolkit.process.image.reformat.GrayScaleColorModel;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  *

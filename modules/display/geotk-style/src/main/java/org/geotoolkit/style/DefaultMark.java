@@ -29,7 +29,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
- * Immutable implementation of GeoAPI Mark.
+ * Immutable implementation of Types Mark.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending

@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -22,10 +22,10 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.extent.DefaultExtent;
-import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.extent.DefaultTemporalExtent;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.junit.After;
 import org.junit.Before;
@@ -145,7 +145,8 @@ public class DefaultTemporalReferenceSystemTest {
         domainOfValidity.setDescription(new SimpleInternationalString("Western Europe"));
         Calendar cal = Calendar.getInstance();
         cal.set(0, 0, 0);
-        DefaultTemporalExtent temporalExt = new DefaultTemporalExtent(cal.getTime(), new Date());
+        DefaultTemporalExtent temporalExt = new DefaultTemporalExtent();
+        temporalExt.setBounds(cal.getTime(), new Date());
         Collection<TemporalExtent> collection = new ArrayList<TemporalExtent>();
         collection.add(temporalExt);
         domainOfValidity.setTemporalElements(collection);

@@ -33,7 +33,7 @@ import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -60,7 +60,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
              final Charset charset)
             throws DataStoreException,IOException {
         super(typeName, shpFiles, attsReader, featureReader, charset);
-        
+
         this.indexedShapefileFeatureStore = featurestore;
         if (!featurestore.indexUseable(FIX)) {
             this.fidWriter = IndexedFidWriter.EMPTY_WRITER;
@@ -157,7 +157,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
                     "Error creating Feature ID index", e);
         }
     }
-    
+
     private void deleteFile(final ShpFileType shpFileType) {
         final URL url = shpFiles.getURL(shpFileType);
         try {

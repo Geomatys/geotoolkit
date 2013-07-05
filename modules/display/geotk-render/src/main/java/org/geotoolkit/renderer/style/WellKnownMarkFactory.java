@@ -23,7 +23,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D.Double;
 import java.util.logging.Logger;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.filter.expression.Expression;
 
 public class WellKnownMarkFactory implements MarkFactory {

@@ -22,16 +22,16 @@ import java.awt.geom.Point2D;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 
 /**
  * Iterator over pixels, skipping values if decimation is set.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  */
 public class CellIterator {
-    
+
     /**
      * Image to iterate over.
      */
@@ -42,14 +42,14 @@ public class CellIterator {
     private final int decimateY;
     private final Statistics[] cellStats;
     private final double[] pixel;
-    
+
     /**
      * The upper limit (exclusive) for {@link #index}.
      */
     private final int count;
 
     /**
-     * The index of current position. 
+     * The index of current position.
      * The <var>i</var>,<var>j</var> index in the underlying grid coverage can be deduced with:
      * <blockquote><pre>
      * i = index % width;
@@ -67,19 +67,19 @@ public class CellIterator {
      * <code>true</code> if {@link #i}, {@link #j}, {@link #cellStats} are valids.
      */
     private boolean valid;
-    
+
     /**
      * Create iterator over image without decimation.
-     * 
+     *
      * @param image to iterate over
      */
     public CellIterator(RenderedImage image) {
         this(image,1,1);
     }
-    
+
     /**
      * Create iterator over image with decimation.
-     * 
+     *
      * @param image to iterate over
      * @param decimateX x decimation
      * @param decimateY y decimation
@@ -93,12 +93,12 @@ public class CellIterator {
         this.count = (image.getWidth()/decimateX) * (image.getHeight()/decimateY);
         this.cellStats = new Statistics[sm.getNumBands()];
         for(int i=0;i<this.cellStats.length;i++){
-            this.cellStats[i] = new Statistics();
+            this.cellStats[i] = new Statistics(null);
         }
         this.pixel = new double[this.cellStats.length];
     }
-    
-    
+
+
     /**
      * Moves the iterator to the next position.
      */
@@ -106,7 +106,7 @@ public class CellIterator {
         valid = false;
         return ++index < count;
     }
-    
+
     /**
      * Calcule les composantes <var>x</var> et <var>y</var> du vecteur à l'index spécifié.
      */
@@ -115,7 +115,7 @@ public class CellIterator {
         for(int b=0;b<this.cellStats.length;b++){
             this.cellStats[b].reset();
         }
-        
+
         int count = 0;
         int sumI  = 0;
         int sumJ  = 0;
@@ -128,7 +128,7 @@ public class CellIterator {
                 tile.getPixel(i, j, pixel);
                 for(int b=0;b<pixel.length;b++){
                     if(!Double.isNaN(pixel[b])){
-                        cellStats[b].add(pixel[b]);
+                        cellStats[b].accept(pixel[b]);
                     }
                 }
                 sumI += i;
@@ -136,7 +136,7 @@ public class CellIterator {
                 count++;
             }
         }
-        
+
         this.i = imin + (double)decimateX/2d;
         this.j = jmin + (double)decimateX/2d;
         valid = true;
@@ -145,7 +145,7 @@ public class CellIterator {
     /**
      * Retourne les coordonnées (<var>x</var>,<var>y</var>) d'un point de la grille.
      *
-     * Si une décimation a été spécifiée alors la position retournée 
+     * Si une décimation a été spécifiée alors la position retournée
      * sera située au milieu des points à moyenner.
      */
     public Point2D position() {
@@ -169,7 +169,7 @@ public class CellIterator {
         }
         return cellStats;
     }
-    
+
     /**
      * Returns <code>true</code> if the current mark is visible in the specified clip.
      */
@@ -180,8 +180,8 @@ public class CellIterator {
         final int decWidth = image.getWidth()/decimateX;
         return clip.contains(index%decWidth, index/decWidth);
     }
-    
-    
+
+
     public static int XToTileX(final RenderedImage image, int x){
         final int tileWidth = image.getTileWidth();
         x -= image.getTileGridXOffset();
@@ -190,7 +190,7 @@ public class CellIterator {
         }
         return x/tileWidth;
     }
-    
+
     public static int YToTileY(final RenderedImage image, int y){
         final int tileHeight = image.getTileHeight();
         y -= image.getTileGridYOffset();
@@ -199,5 +199,5 @@ public class CellIterator {
         }
         return y/tileHeight;
     }
-    
+
 }

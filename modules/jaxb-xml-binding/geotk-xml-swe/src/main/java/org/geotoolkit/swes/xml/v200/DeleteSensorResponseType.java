@@ -17,6 +17,7 @@
 
 package org.geotoolkit.swes.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -24,14 +25,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swes.xml.DeleteSensorResponse;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for DeleteSensorResponseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DeleteSensorResponseType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DeleteSensorResponseType", propOrder = {
@@ -58,20 +58,20 @@ public class DeleteSensorResponseType extends ExtensibleResponseType implements 
     private String deletedProcedure;
 
     public DeleteSensorResponseType() {
-        
+
     }
-    
+
     public DeleteSensorResponseType(final String deletedProcedure) {
         this.deletedProcedure = deletedProcedure;
     }
-    
+
     /**
      * Gets the value of the deletedProcedure property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDeletedProcedure() {
         return deletedProcedure;
@@ -79,16 +79,16 @@ public class DeleteSensorResponseType extends ExtensibleResponseType implements 
 
     /**
      * Sets the value of the deletedProcedure property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDeletedProcedure(String value) {
         this.deletedProcedure = value;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(super.toString());
@@ -105,7 +105,7 @@ public class DeleteSensorResponseType extends ExtensibleResponseType implements 
         }
         if (obj instanceof DeleteSensorResponseType && super.equals(obj)) {
             final DeleteSensorResponseType that = (DeleteSensorResponseType)obj;
-            return Utilities.equals(this.deletedProcedure, that.deletedProcedure);
+            return Objects.equals(this.deletedProcedure, that.deletedProcedure);
         }
         return false;
     }

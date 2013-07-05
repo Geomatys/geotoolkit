@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * 
- *         A MultiLineString is defined by one or more LineStrings, referenced 
+ *         A MultiLineString is defined by one or more LineCharSequences, referenced 
  *         through lineStringMember elements.
  *       
  * 

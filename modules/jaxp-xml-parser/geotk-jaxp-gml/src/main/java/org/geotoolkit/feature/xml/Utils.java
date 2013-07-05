@@ -82,7 +82,7 @@ public class Utils {
      * Return a Name from a QName.
      *
      * @param qname a XML QName.
-     * @return a GeoAPI Name.
+     * @return a Types Name.
      */
     public static Name getNameFromQname(final QName qname) {
         Name name;
@@ -97,7 +97,7 @@ public class Utils {
     /**
      * Return A QName from a Name.
      *
-     * @param name a GeoAPI name.
+     * @param name a Types name.
      * @return A XML QName.
      */
     public static QName getQnameFromName(final Name name) {
@@ -127,13 +127,13 @@ public class Utils {
         CLASS_BINDING.put("double",   Double.class);
         CLASS_BINDING.put("float",    Float.class);
         CLASS_BINDING.put("base64Binary",byte[].class);
-        
+
         CLASS_BINDING.put("nonNegativeInteger", Integer.class);
-        CLASS_BINDING.put("positiveInteger",    Integer.class); 
+        CLASS_BINDING.put("positiveInteger",    Integer.class);
         CLASS_BINDING.put("integerList",        Integer.class);
         CLASS_BINDING.put("time",               Date.class);
         CLASS_BINDING.put("duration",           String.class);
-        
+
         // GML geometry types
         CLASS_BINDING.put("GeometryPropertyType",          Geometry.class);
         CLASS_BINDING.put("MultiPoint",                    MultiPoint.class);
@@ -185,7 +185,7 @@ public class Utils {
         }
         return null;
     }
-    
+
     /**
      * Return a primitive Class from the specified XML QName (extracted from an xsd file).
      *
@@ -392,47 +392,43 @@ public class Utils {
         }
         return result;
     }
-    
+
      /**
      * Retrieve an XSD schema from a http location
      * @param location
-     * @return 
+     * @return
      */
     public static Schema getDistantSchema(final String location) {
         if (location.startsWith("http://")) {
-            Unmarshaller u = null;
             try {
                 LOGGER.log(Level.INFO, "retrieving:{0}", location);
                 final URL schemaUrl = new URL(location);
-                u = XSDMarshallerPool.getInstance().acquireUnmarshaller();
+                final Unmarshaller u = XSDMarshallerPool.getInstance().acquireUnmarshaller();
                 final Object obj = u.unmarshal(schemaUrl.openStream());
                 if (obj instanceof Schema) {
                     return (Schema) obj;
                 } else {
                     LOGGER.log(Level.WARNING, "Bad content for imported schema:{0}", location);
                 }
-                
+                XSDMarshallerPool.getInstance().recycle(u);
+
             } catch (IOException ex) {
                 LOGGER.log(Level.WARNING, "IO exception trying to retrieve imported schema:" + location, ex);
             } catch (JAXBException ex) {
                 LOGGER.log(Level.WARNING, "JAXB exception while reading imported schema:" + location, ex);
-            } finally {
-                if (u != null) {
-                    XSDMarshallerPool.getInstance().release(u);
-                }
             }
         }
         return null;
     }
-    
+
     /**
      * Return the location a the Import/include element.
-     * 
+     *
      * if the location is local, the base location will be added to the result.
-     * 
+     *
      * @param baseLocation
      * @param attr
-     * @return 
+     * @return
      */
     public static String getIncludedLocation(final String baseLocation, final Object attr) {
         final String schemaLocation;

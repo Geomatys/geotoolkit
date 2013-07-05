@@ -24,11 +24,11 @@ import javax.swing.event.EventListenerList;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.style.StyleConstants;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.style.Description;
 
 /**

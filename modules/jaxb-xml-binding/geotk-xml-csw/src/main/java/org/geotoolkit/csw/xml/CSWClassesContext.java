@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 import javax.imageio.spi.ServiceRegistry;
 
 import org.geotoolkit.ows.xml.v100.ExceptionReport;
-import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.DefaultMetadata;
 
 
 /**
@@ -82,7 +82,7 @@ public class CSWClassesContext {
                                         org.geotoolkit.dublincore.xml.v1.terms.ObjectFactory.class));
 
         // GML base factory
-        classeList.add(org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
+        classeList.add(org.apache.sis.internal.jaxb.geometry.ObjectFactory.class);
 
         // we add the extensions classes
         classeList.add(org.geotoolkit.service.ServiceIdentificationImpl.class);

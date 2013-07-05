@@ -56,67 +56,63 @@ public class ReferenceToAffineTransformConverter extends AbstractReferenceInputC
 
     @Override
     public AffineTransform convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
-        
+
         final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
         final InputStream stream = getInputStreamFromReference(source);
 
         if (mime.equalsIgnoreCase(WPSMimeType.TEXT_XML.val()) || mime.equalsIgnoreCase(WPSMimeType.APP_GML.val())
                 || mime.equalsIgnoreCase(WPSMimeType.TEXT_GML.val())) {
 
-            Unmarshaller unmarsh = null;
             try {
-                unmarsh = WPSMarshallerPool.getInstance().acquireUnmarshaller();
+                final Unmarshaller unmarsh = WPSMarshallerPool.getInstance().acquireUnmarshaller();
                 Object value = unmarsh.unmarshal(stream);
-                
+                WPSMarshallerPool.getInstance().recycle(unmarsh);
+
                 return bindToAffineTransform(value);
 
             } catch (JAXBException ex) {
                 throw new NonconvertibleObjectException("Reference geometry invalid input : Unmarshallable geometry", ex);
-            } finally {
-                if (unmarsh != null) {
-                    WPSMarshallerPool.getInstance().release(unmarsh);
-                }
             }
         } else {
             throw new NonconvertibleObjectException("Reference data mime is not supported");
         }
     }
-    
+
     private AffineTransform bindToAffineTransform(final Object object) throws NonconvertibleObjectException {
-        
+
         ArgumentChecks.ensureNonNull("object", object);
-        
+
         AffineTransform affineTransform = null;
         if (object instanceof org.geotoolkit.mathml.xml.Math) {
             final org.geotoolkit.mathml.xml.Math math = (org.geotoolkit.mathml.xml.Math) object;
             final List<Object> mathExp = math.getMathExpression();
             if (mathExp != null && !mathExp.isEmpty()) {
                 final Mtable mtable = WPSConvertersUtils.findMtable(mathExp);
-                
+
                 if (mtable == null) {
                     throw new NonconvertibleObjectException("No mtable element found.");
                 }
-                
+
                 final List<Mtr> rows = WPSConvertersUtils.getRows(mtable);
-                
+
                 final int nbRows = rows.size();
                 final int nbCells = WPSConvertersUtils.getCells(rows.get(0)).length;
                 if (nbRows != 2 || (nbCells != 2 && nbCells != 3)) {
                     throw new NonconvertibleObjectException("The matrix need to be a 2x2 or a 3x3 matrix .");
                 }
-                
+
                 final double[][] matrix =  new double[nbRows][nbCells];
                 for (int i = 0; i < nbRows; i++) {
                     final double[] cells = WPSConvertersUtils.getCells(rows.get(i));
                     if (cells.length != nbCells) {
                         throw new NonconvertibleObjectException("The matrix need to be a 2x2 or a 3x3 matrix .");
                     }
-                    
+
                     System.arraycopy(cells, 0, matrix[i], 0, nbCells);
-                    
+
                 }
-                
-                //TODO optimize 
+
+                //TODO optimize
                 double[] flatMatrix = new double[nbCells*nbRows];
                 int count = 0;
                 for (int i = 0; i < nbCells; i++) {
@@ -125,7 +121,7 @@ public class ReferenceToAffineTransformConverter extends AbstractReferenceInputC
                     }
                 }
                 affineTransform = new AffineTransform(flatMatrix);
-               
+
             }
         }
         return affineTransform;

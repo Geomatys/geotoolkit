@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
 import org.geotoolkit.internal.sql.table.Entry;
-import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
+import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.observation.Measure;
 import org.opengis.observation.sampling.SurveyProcedure;

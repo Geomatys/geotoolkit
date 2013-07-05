@@ -39,7 +39,7 @@ import org.geotoolkit.resources.Errors;
 
 /**
  * An {@linkplain InternationalString international string} using a {@linkplain Map map}
- * of strings for different {@linkplain Locale locales}. Strings for new locales can be
+ * of strings for different {@linkplain Locale locales}. CharSequences for new locales can be
  * {@linkplain #add(Locale,String) added}, but existing strings can't be removed or modified.
  * This behavior is a compromise between making constructions easier, and being suitable for
  * use in immutable objects.

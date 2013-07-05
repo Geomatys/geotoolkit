@@ -17,6 +17,7 @@
 
 package org.geotoolkit.swe.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -36,7 +37,6 @@ import org.geotoolkit.swe.xml.AbstractTime;
 import org.geotoolkit.swe.xml.AbstractTimeRange;
 import org.geotoolkit.swe.xml.DataComponentProperty;
 import org.geotoolkit.swe.xml.Quantity;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.xlink.xml.v100.ActuateType;
 import org.geotoolkit.xlink.xml.v100.ShowType;
 import org.geotoolkit.xlink.xml.v100.TypeType;
@@ -44,9 +44,9 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
 
 /**
  * <p>Java class for AbstractDataComponentPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractDataComponentPropertyType">
  *   &lt;complexContent>
@@ -59,8 +59,8 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractDataComponentPropertyType", propOrder = {
@@ -92,9 +92,9 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
     private ActuateType actuate;
 
     public AbstractDataComponentPropertyType() {
-        
+
     }
-    
+
     public AbstractDataComponentPropertyType(final AbstractDataComponentPropertyType that) {
         this.abstractDataComponent = that.abstractDataComponent;
         this.actuate = that.actuate;
@@ -105,11 +105,11 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
         this.title   = that.title;
         this.type    = that.type;
     }
-    
+
     public AbstractDataComponentPropertyType(final AbstractDataComponentType data) {
         this.abstractDataComponent = getJAXBElement(data);
     }
-    
+
     public static JAXBElement<? extends AbstractDataComponentType> getJAXBElement(final AbstractDataComponentType data) {
         final ObjectFactory factory = new ObjectFactory();
         if (data instanceof BooleanType) {
@@ -149,10 +149,10 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
         }
         return null;
     }
-    
+
     /**
      * Gets the value of the abstractDataComponent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link BooleanType }{@code >}
@@ -172,12 +172,12 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
      *     {@link JAXBElement }{@code <}{@link TextType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractDataComponentType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CountType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractDataComponentType> getAbstractDataComponent() {
         return abstractDataComponent;
     }
-    
+
     @Override
     public AbstractDataComponentType getValue() {
         if (abstractDataComponent != null) {
@@ -188,7 +188,7 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
 
     /**
      * Sets the value of the abstractDataComponent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link BooleanType }{@code >}
@@ -208,7 +208,7 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
      *     {@link JAXBElement }{@code <}{@link TextType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractDataComponentType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CountType }{@code >}
-     *     
+     *
      */
     public void setAbstractDataComponent(JAXBElement<? extends AbstractDataComponentType> value) {
         this.abstractDataComponent = ((JAXBElement<? extends AbstractDataComponentType> ) value);
@@ -216,11 +216,11 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TypeType }
-     *     
+     *
      */
     @Override
     public String getType() {
@@ -233,11 +233,11 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TypeType }
-     *     
+     *
      */
     public void setType(TypeType value) {
         this.type = value;
@@ -245,11 +245,11 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHref() {
@@ -258,11 +258,11 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -270,11 +270,11 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getRole() {
@@ -283,11 +283,11 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -295,11 +295,11 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getArcrole() {
@@ -308,11 +308,11 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -320,11 +320,11 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getTitle() {
@@ -333,11 +333,11 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -345,27 +345,27 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShowType }
-     *     
+     *
      */
     @Override
     public String getShow() {
         if (show != null) {
-            return show.toString(); 
+            return show.toString();
         }
         return null;
     }
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShowType }
-     *     
+     *
      */
     public void setShow(ShowType value) {
         this.show = value;
@@ -373,11 +373,11 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ActuateType }
-     *     
+     *
      */
     @Override
     public String getActuate() {
@@ -389,11 +389,11 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public void setActuate(ActuateType value) {
         this.actuate = value;
@@ -403,7 +403,7 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
     public String getRemoteSchema() {
         return null;
     }
-    
+
     @Override
     public void setToHref() {
         // do nothing
@@ -539,21 +539,21 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
             if (this.abstractDataComponent == null && that.abstractDataComponent == null) {
                 compo = true;
             } else if (this.abstractDataComponent != null && that.abstractDataComponent != null) {
-                compo = Utilities.equals(this.abstractDataComponent.getValue(), that.abstractDataComponent.getValue());
+                compo = Objects.equals(this.abstractDataComponent.getValue(), that.abstractDataComponent.getValue());
             }
             return compo     &&
-                   Utilities.equals(this.actuate,            that.actuate)          &&
-                   Utilities.equals(this.arcrole,            that.arcrole)          &&
-                   Utilities.equals(this.type,               that.type)             &&
-                   Utilities.equals(this.href,               that.href)             &&
-                   Utilities.equals(this.show,               that.show)             &&
-                   Utilities.equals(this.role,               that.role)             &&
-                   Utilities.equals(this.title,              that.title);
+                   Objects.equals(this.actuate,            that.actuate)          &&
+                   Objects.equals(this.arcrole,            that.arcrole)          &&
+                   Objects.equals(this.type,               that.type)             &&
+                   Objects.equals(this.href,               that.href)             &&
+                   Objects.equals(this.show,               that.show)             &&
+                   Objects.equals(this.role,               that.role)             &&
+                   Objects.equals(this.title,              that.title);
         }
         return false;
     }
 
-    
+
     @Override
     public int hashCode() {
         int hash = 5;
@@ -571,7 +571,7 @@ public class AbstractDataComponentPropertyType implements DataComponentProperty 
     /**
      * Retourne une representation de l'objet.
      */
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder("[AbstractDataComponentPropertyType]\n");

@@ -29,7 +29,8 @@ import org.geotoolkit.se.xml.v110.FeatureTypeStyleType;
 import org.geotoolkit.sld.xml.v110.StyledLayerDescriptor;
 import org.geotoolkit.sld.xml.v110.UserLayer;
 import org.geotoolkit.sld.xml.v110.UserStyle;
-import org.geotoolkit.xml.MarshallerPool;
+import javax.xml.bind.JAXBContext;
+import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -106,7 +107,7 @@ public class ProvidersXmlTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool =   new MarshallerPool(MapContext.class, org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
+        pool =   new MarshallerPool(JAXBContext.newInstance(MapContext.class, org.apache.sis.internal.jaxb.geometry.ObjectFactory.class), null);
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }
@@ -260,10 +261,10 @@ public class ProvidersXmlTest {
     @After
     public void tearDown() {
         if (unmarshaller != null) {
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
         if (marshaller != null) {
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
     }
 }

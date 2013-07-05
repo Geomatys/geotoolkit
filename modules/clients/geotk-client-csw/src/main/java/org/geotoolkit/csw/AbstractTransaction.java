@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import static org.geotoolkit.csw.AbstractCSWRequest.POOL;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.geotoolkit.csw.xml.CswXmlFactory;
@@ -116,9 +117,8 @@ public class AbstractTransaction extends AbstractCSWRequest implements Transacti
         OutputStream stream = conec.getOutputStream();
         stream = security.encrypt(stream);
 
-        Marshaller marsh = null;
         try {
-            marsh = POOL.acquireMarshaller();
+            final Marshaller marsh = POOL.acquireMarshaller();
             final Transaction transactXml;
             if (delete != null) {
                 transactXml = CswXmlFactory.createTransaction(version, "CSW", delete);
@@ -131,12 +131,9 @@ public class AbstractTransaction extends AbstractCSWRequest implements Transacti
                         "It does not contain any insert, delete or update request.");
             }
             marsh.marshal(transactXml, stream);
+            POOL.recycle(marsh);
         } catch (JAXBException ex) {
             throw new IOException(ex);
-        } finally {
-            if (POOL != null && marsh != null) {
-                POOL.release(marsh);
-            }
         }
         stream.close();
         return security.decrypt(conec.getInputStream());

@@ -45,8 +45,8 @@ import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.xml.MarshallerPool;
-import org.geotoolkit.xml.Namespaces;
+import org.apache.sis.xml.MarshallerPool;
+import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.opengis.feature.ComplexAttribute;
 
@@ -93,13 +93,13 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     private final String gmlVersion;
 
     private final String wfsVersion;
-    
+
     private final String wfsNamespace;
     private final String wfsLocation;
 
     private final String gmlNamespace;
     private final String gmlLocation;
-    
+
     private static final DateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public JAXPStreamFeatureWriter() {
@@ -123,7 +123,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             gmlNamespace = Namespaces.GML;
             gmlLocation  = "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd";
         }
-        
+
         if (schemaLocations != null && schemaLocations.size() > 0) {
             final StringBuilder sb = new StringBuilder();
             for (Entry<String, String> entry : schemaLocations.entrySet()) {
@@ -134,7 +134,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             sb.append(gmlNamespace).append(' ').append(gmlLocation).append(' ');
             schemaLocation = sb.toString();
         }
-        
+
     }
 
     public JAXPStreamFeatureWriter(final Map<String, String> schemaLocations)  {
@@ -159,7 +159,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     public void write(final Object candidate, final Object output) throws IOException, XMLStreamException, DataStoreException {
         this.write(candidate, output, null);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -266,7 +266,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                         }
                         writer.writeCharacters(textValue);
                         writer.writeEndElement();
-                        
+
                     }
 
                 } else if (valueA instanceof Map && !(typeA instanceof GeometryType)) {
@@ -332,18 +332,15 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                         } else {
                             throw new IllegalArgumentException("Unexpected GML version:" + gmlVersion);
                         }
-                        Marshaller marshaller = null;
                         try {
+                            final Marshaller marshaller;
                             marshaller = POOL.acquireMarshaller();
                             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
                             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
                             marshaller.marshal(element, writer);
+                            POOL.recycle(marshaller);
                         } catch (JAXBException ex) {
                             LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
-                        } finally {
-                            if (marshaller != null) {
-                                POOL.release(marshaller);
-                            }
                         }
                         writer.writeEndElement();
                     }
@@ -372,7 +369,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         // the root Element
         writer.writeStartElement("wfs", "FeatureCollection", wfsNamespace);
-        
+
         // id does not appear in WFS 2
         if (!"2.0.0".equals(wfsVersion)) {
             String collectionID = "";
@@ -385,14 +382,14 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         synchronized(FORMATTER) {
             writer.writeAttribute("timeStamp", FORMATTER.format(new Date(System.currentTimeMillis())));
         }
-        
+
         writer.writeNamespace("gml", gmlNamespace);
         writer.writeNamespace("wfs", wfsNamespace);
         if (schemaLocation != null && !schemaLocation.equals("")) {
             writer.writeNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
             writer.writeAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", schemaLocation);
         }
-        
+
         /*
          * Other version dependant WFS feature collection attribute
          */

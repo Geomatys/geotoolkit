@@ -20,7 +20,7 @@ package org.geotoolkit.wms;
 import org.geotoolkit.wms.v111.GetLegend111;
 import org.geotoolkit.wms.v130.GetFeatureInfo130;
 import org.geotoolkit.wms.v130.GetLegend130;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.wms.xml.WMSMarshallerPool;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
@@ -187,12 +187,9 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        try{
-            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
-                    "/org/geotoolkit/wms/test_v111_GetFeatureInfo_EPSG4326.xml"));
-        }finally{
-            pool.release(unmarshaller);
-        }
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                "/org/geotoolkit/wms/test_v111_GetFeatureInfo_EPSG4326.xml"));
+        pool.recycle(unmarshaller);
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111,capa);
 
@@ -235,12 +232,9 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        try{
-            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
-                    "/org/geotoolkit/wms/test_v130_GetFeatureInfo_EPSG4326.xml"));
-        }finally{
-            pool.release(unmarshaller);
-        }
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                "/org/geotoolkit/wms/test_v130_GetFeatureInfo_EPSG4326.xml"));
+        pool.recycle(unmarshaller);
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130, capa);
 
@@ -283,12 +277,9 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        try{
-            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
-                    "/org/geotoolkit/wms/test_v130_GetFeatureInfo_CRS84.xml"));
-        }finally{
-            pool.release(unmarshaller);
-        }
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                "/org/geotoolkit/wms/test_v130_GetFeatureInfo_CRS84.xml"));
+        pool.recycle(unmarshaller);
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130,capa);
 
@@ -331,12 +322,9 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        try{
-            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
-                    "/org/geotoolkit/wms/test_v111_GetFeatureInfo_Reproject_EPSG4326_to_CRS84.xml"));
-        }finally{
-            pool.release(unmarshaller);
-        }
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                "/org/geotoolkit/wms/test_v111_GetFeatureInfo_Reproject_EPSG4326_to_CRS84.xml"));
+        pool.recycle(unmarshaller);
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111,capa);
 
@@ -380,12 +368,9 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        try{
-            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
-                    "/org/geotoolkit/wms/test_v130_GetFeatureInfo_Reproject_EPSG4326_to_CRS84.xml"));
-        }finally{
-            pool.release(unmarshaller);
-        }
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                "/org/geotoolkit/wms/test_v130_GetFeatureInfo_Reproject_EPSG4326_to_CRS84.xml"));
+        pool.recycle(unmarshaller);
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130,capa);
 
@@ -429,12 +414,9 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        try{
-            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
-                    "/org/geotoolkit/wms/test_v111_GetFeatureInfo_Reproject_CRS84_to_EPSG3857.xml"));
-        }finally{
-            pool.release(unmarshaller);
-        }
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                "/org/geotoolkit/wms/test_v111_GetFeatureInfo_Reproject_CRS84_to_EPSG3857.xml"));
+        pool.recycle(unmarshaller);
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111,capa);
 
@@ -480,12 +462,9 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        try{
-            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
-                    "/org/geotoolkit/wms/test_v130_GetFeatureInfo_Reproject_CRS84_to_EPSG3857.xml"));
-        }finally{
-            pool.release(unmarshaller);
-        }
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                "/org/geotoolkit/wms/test_v130_GetFeatureInfo_Reproject_CRS84_to_EPSG3857.xml"));
+        pool.recycle(unmarshaller);
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130,capa);
 
@@ -529,12 +508,9 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        try{
-            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
-                    "/org/geotoolkit/wms/test_v111_GetFeatureInfo_Reproject_EPSG4326_to_EPSG3857.xml"));
-        }finally{
-            pool.release(unmarshaller);
-        }
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                "/org/geotoolkit/wms/test_v111_GetFeatureInfo_Reproject_EPSG4326_to_EPSG3857.xml"));
+        pool.recycle(unmarshaller);
 
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111, capa);
@@ -580,12 +556,9 @@ public class WMSMapLayerTest {
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final AbstractWMSCapabilities capa;
-        try{
-            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
-                    "/org/geotoolkit/wms/test_v130_GetFeatureInfo_Reproject_EPSG4326_to_EPSG3857.xml"));
-        }finally{
-            pool.release(unmarshaller);
-        }
+        capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                "/org/geotoolkit/wms/test_v130_GetFeatureInfo_Reproject_EPSG4326_to_EPSG3857.xml"));
+        pool.recycle(unmarshaller);
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130,capa);
 

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,14 +31,13 @@ import org.geotoolkit.swe.xml.AbstractText;
 import org.geotoolkit.swe.xml.AbstractTime;
 import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.Quantity;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for componentPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="componentPropertyType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,19 +72,19 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     public static final AnyScalarPropertyType FEATURE_FIELD   = new AnyScalarPropertyType("FeatureID", new Text("urn:ogc:data:feature", null));
 
     public static final AnyScalarPropertyType DEPTH_FIELD  = new AnyScalarPropertyType("Depth",  new QuantityType("urn:ogc:phenomenon:depth", "metres"));
-    
+
     public static final AnyScalarPropertyType DEPTH_FIELD2  = new AnyScalarPropertyType("Depth",  new QuantityType("urn:ogc:phenomenon:depth", "m"));
-    
+
     public static final AnyScalarPropertyType PRESSION_FIELD  = new AnyScalarPropertyType("Pression",  new QuantityType("urn:ogc:phenomenon:PRES", "decibar"));
 
     public static final AnyScalarPropertyType TIME_FIELD      = new AnyScalarPropertyType("Time",      new TimeType("urn:ogc:data:time:iso8601"));
 
     @XmlTransient
     private String idDataRecord;
-    
+
     @XmlAttribute
     private String name;
-    
+
     @XmlElement(name = "AbstractDataComponent")
     private AbstractDataComponentType abstractDataComponent;
     @XmlElement(name = "Time")
@@ -95,7 +95,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     private QuantityType quantity;
     @XmlElement(name = "Text")
     private Text text;
-    
+
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
     private String remoteSchema;
@@ -117,7 +117,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
-        
+
     public AnyScalarPropertyType() {
 
     }
@@ -158,7 +158,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
         this.name     = name;
         this.quantity = quantity;
     }
-    
+
     /**
      * Build a new component Property.
      */
@@ -188,7 +188,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
         this.name  = name;
         this.time  = time;
     }
-    
+
     /**
      * Gets the value of name.
      */
@@ -202,13 +202,13 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
         return this.name;
     }
 
-    /** 
+    /**
      * retourne l'identifiant du data record qui contient ce champ.
      */
     public String getIdDataRecord() {
         return idDataRecord;
     }
-    
+
     /**
      * Gets the value of the phenomenon property.
      */
@@ -290,7 +290,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     public String getActuate() {
         return actuate;
     }
- 
+
     /**
      * Verify if this entry is identical to specified object.
      */
@@ -302,25 +302,25 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
         if (object instanceof AnyScalarPropertyType) {
             final AnyScalarPropertyType that = (AnyScalarPropertyType) object;
 
-            return Utilities.equals(this._boolean,           that._boolean)         &&
-                   Utilities.equals(this.abstractDataComponent, that.abstractDataComponent)          &&
-                   Utilities.equals(this.quantity,           that.quantity)         &&
-                   Utilities.equals(this.time,               that.time)             &&
-                   Utilities.equals(this.actuate,            that.actuate)          &&
-                   Utilities.equals(this.arcrole,            that.arcrole)          &&
-                   Utilities.equals(this.type,               that.type)             &&
-                   Utilities.equals(this.href,               that.href)             &&
-                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
-                   Utilities.equals(this.show,               that.show)             &&
-                   Utilities.equals(this.role,               that.role)             &&
-                   Utilities.equals(this.name,               that.name)             &&
-                   Utilities.equals(this.text,               that.text)             &&
-                   Utilities.equals(this.title,              that.title);
+            return Objects.equals(this._boolean,           that._boolean)         &&
+                   Objects.equals(this.abstractDataComponent, that.abstractDataComponent)          &&
+                   Objects.equals(this.quantity,           that.quantity)         &&
+                   Objects.equals(this.time,               that.time)             &&
+                   Objects.equals(this.actuate,            that.actuate)          &&
+                   Objects.equals(this.arcrole,            that.arcrole)          &&
+                   Objects.equals(this.type,               that.type)             &&
+                   Objects.equals(this.href,               that.href)             &&
+                   Objects.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Objects.equals(this.show,               that.show)             &&
+                   Objects.equals(this.role,               that.role)             &&
+                   Objects.equals(this.name,               that.name)             &&
+                   Objects.equals(this.text,               that.text)             &&
+                   Objects.equals(this.title,              that.title);
             }
         return false;
     }
 
-    
+
     @Override
     public int hashCode() {
         int hash = 5;
@@ -344,7 +344,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     /**
      * Retourne une representation de l'objet.
      */
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder("[AnyScalarPropertyType\n]");
@@ -386,5 +386,5 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
         }
         return s.toString();
     }
-    
+
 }

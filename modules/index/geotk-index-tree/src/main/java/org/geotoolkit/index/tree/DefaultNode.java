@@ -28,7 +28,7 @@ import org.geotoolkit.gui.swing.tree.Trees;
 import static org.geotoolkit.index.tree.Node.PROP_ISLEAF;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.index.tree.hilbert.HilbertNode;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.geometry.Envelope;
 
 /**

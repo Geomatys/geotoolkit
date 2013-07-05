@@ -24,7 +24,7 @@ import org.geotoolkit.feature.catalog.AssociationRoleImpl;
 import org.opengis.feature.catalog.AssociationRole;
 
 /**
- * JAXB adapter in order to map implementing class with the GeoAPI AssociationRole. See
+ * JAXB adapter in order to map implementing class with the Types AssociationRole. See
  * package documentation for more information about JAXB and AssociationRole.
  *
  * @module pending

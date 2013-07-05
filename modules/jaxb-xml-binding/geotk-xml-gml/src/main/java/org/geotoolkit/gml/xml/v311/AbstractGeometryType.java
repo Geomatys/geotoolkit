@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.metadata.MetadataStandard;
+import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.util.ComparisonMode;
 
 import org.opengis.filter.expression.Expression;
@@ -47,22 +47,23 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.internal.simple.SimpleCitation;
 
 
 
 /**
- * All geometry elements are derived directly or indirectly from this abstract supertype. 
+ * All geometry elements are derived directly or indirectly from this abstract supertype.
  * A geometry element mayhave an identifying attribute ("gml:id"),
  * a name (attribute "name") and a description (attribute "description").
  * It may be associated with a spatial reference system (attribute "srsName").
  * The following rules shall be adhered: - Every geometry type shall derive from this abstract type.
  * - Every geometry element (i.e. an element of a geometry type) shall be directly or indirectly in the
  * substitution group of _Geometry.
- * 
+ *
  * <p>Java class for AbstractGeometryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractGeometryType">
  *   &lt;complexContent>
@@ -73,8 +74,8 @@ import org.opengis.referencing.operation.TransformException;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -102,7 +103,7 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     // Opengis attribute
     @XmlTransient
     private Precision precision;
-    
+
     /**
      * empty constructor used by JAXB
      */
@@ -126,15 +127,15 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     @Override
     public MetadataStandard getStandard() {
-        return new MetadataStandard("org.opengis.geometry");
+        return new MetadataStandard(new SimpleCitation("Geometry"), Package.getPackage("org.opengis.geometry"));
     }
     /**
      * Gets the value of the gid property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getGid() {
         return gid;
@@ -142,11 +143,11 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     /**
      * Sets the value of the gid property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setGid(final String value) {
         this.gid = value;
@@ -154,11 +155,11 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     /**
      * Gets the value of the srsName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getSrsName() {
@@ -167,11 +168,11 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     /**
      * Sets the value of the srsName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setSrsName(final String value) {
@@ -180,11 +181,11 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     /**
      * Gets the value of the srsDimension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getSrsDimension() {
         return srsDimension;
@@ -192,11 +193,11 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     /**
      * Sets the value of the srsDimension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setSrsDimension(final Integer value) {
         this.srsDimension = value;
@@ -204,11 +205,11 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     /**
      * Gets the value of the axisLabels property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getAxisLabels() {
         if (axisLabels == null) {
@@ -219,10 +220,10 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     /**
      * Gets the value of the uomLabels property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getUomLabels() {
         if (uomLabels == null) {
@@ -254,7 +255,7 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     public Precision getPrecision() {
         return precision;
     }
-    
+
     /**
      * @param precision the precision to set
      */
@@ -362,8 +363,8 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     }
 
     /**
-     * cant return immutable version of the object fir this module. 
-     * @return 
+     * cant return immutable version of the object fir this module.
+     * @return
      */
     @Override
     public Geometry toImmutable() {
@@ -421,7 +422,7 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     public boolean isEmpty() {
         return false;
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */

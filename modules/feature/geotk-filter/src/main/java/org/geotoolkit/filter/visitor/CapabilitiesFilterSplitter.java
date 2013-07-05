@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.type.ComplexType;
 
 import org.opengis.filter.And;

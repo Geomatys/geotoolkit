@@ -45,7 +45,7 @@ import org.geotoolkit.se.xml.v110.PointSymbolizerType;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
 import org.geotoolkit.se.xml.v110.TextSymbolizerType;
 import org.geotoolkit.sld.xml.StyleXmlIO;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;

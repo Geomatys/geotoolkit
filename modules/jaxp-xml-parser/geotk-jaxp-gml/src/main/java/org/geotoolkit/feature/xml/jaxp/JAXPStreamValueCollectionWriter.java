@@ -38,8 +38,8 @@ import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.geotoolkit.gml.xml.v321.ObjectFactory;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.xml.MarshallerPool;
-import org.geotoolkit.xml.Namespaces;
+import org.apache.sis.xml.MarshallerPool;
+import org.apache.sis.xml.Namespaces;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
@@ -88,7 +88,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
     public void write(final Object candidate, final Object output) throws IOException, XMLStreamException, DataStoreException {
         write(candidate, output, null);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -174,18 +174,15 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
             }
             final JAXBElement element = GML32_FACTORY.buildAnyGeometry(gmlGeometry);
 
-            Marshaller marshaller = null;
             try {
+                final Marshaller marshaller;
                 marshaller = GML_32_POOL.acquireMarshaller();
                 marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
                 marshaller.marshal(element, writer);
+                GML_32_POOL.recycle(marshaller);
             } catch (JAXBException ex) {
                 LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
-            } finally {
-                if (marshaller != null) {
-                    GML_32_POOL.release(marshaller);
-                }
             }
             writer.writeEndElement();
 
@@ -250,7 +247,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
             writer.writeNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
             writer.writeAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", schemaLocation);
         }*/
-        
+
         /*
          * Other WFS value collection attribute
          */
@@ -258,7 +255,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
         if (nbMatched != null) {
             writer.writeAttribute("numberMatched", Integer.toString(nbMatched));
         }
-        
+
 
         FeatureType type = featureCollection.getFeatureType();
         if (type != null && type.getName() != null) {

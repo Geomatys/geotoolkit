@@ -19,7 +19,7 @@ package org.geotoolkit.temporal.object;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.temporal.Duration;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.OrdinalReferenceSystem;

@@ -18,10 +18,11 @@ package org.geotoolkit.mathml.xml;
 
 import java.util.Arrays;
 import java.io.StringWriter;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 
 //Junit dependencies
 import org.junit.*;
@@ -39,7 +40,7 @@ public class WcsXMLBindingTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        pool = new MarshallerPool("org.geotoolkit.mathml.xml");
+        pool = new MarshallerPool(JAXBContext.newInstance("org.geotoolkit.mathml.xml"), null);
     }
 
     @AfterClass
@@ -54,13 +55,13 @@ public class WcsXMLBindingTest {
     @After
     public void tearDown() {
         if (marshaller != null) {
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
     }
-    
+
     @Test
     public void dummyTest() {
-        
+
     }
-    
+
 }

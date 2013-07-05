@@ -28,8 +28,8 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
 
 import org.opengis.metadata.citation.OnlineResource;
 
@@ -45,17 +45,12 @@ import org.xml.sax.InputSource;
  public class WMSBindingUtilities {
 
      public static AbstractWMSCapabilities unmarshall(final Object source, final WMSVersion version) throws JAXBException{
-         
-         Unmarshaller unMarshaller   = null;
-         MarshallerPool selectedPool = WMSMarshallerPool.getInstance();
-         try {
-            unMarshaller = selectedPool.acquireUnmarshaller();
-            return (AbstractWMSCapabilities) unmarshall(source, unMarshaller);
-         } finally {
-             if (selectedPool != null && unMarshaller != null) {
-                selectedPool.release(unMarshaller);
-             }
-         }
+
+        MarshallerPool selectedPool = WMSMarshallerPool.getInstance();
+        Unmarshaller unMarshaller = selectedPool.acquireUnmarshaller();
+        AbstractWMSCapabilities c = (AbstractWMSCapabilities) unmarshall(source, unMarshaller);
+        selectedPool.recycle(unMarshaller);
+        return c;
      }
 
      private static final Object unmarshall(final Object source, final Unmarshaller unMarshaller)

@@ -24,7 +24,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
- * Immutable implementation of GeoAPI displacement.
+ * Immutable implementation of Types displacement.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending

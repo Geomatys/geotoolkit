@@ -66,9 +66,9 @@ import org.geotoolkit.ows.xml.v100.OperationsMetadata;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 
 // GeotoolKit dependencies
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
 
 //Junit dependencies
 import org.junit.*;
@@ -77,26 +77,26 @@ import org.xml.sax.SAXException;
 
 /**
  * A Test suite verifying that the Record are correctly marshalled/unmarshalled
- * 
+ *
  * @author Guilhem Legal
  * @module pending
  */
 public class CswXMLBindingTest {
-    
+
     private static final Logger LOGGER = Logging.getLogger(CswXMLBindingTest.class);
 
     private MarshallerPool pool;
-   
+
      /**
      * A JAXB factory to csw object version 2.0.2
      */
     protected final ObjectFactory cswFactory202 = new ObjectFactory();;
-    
+
     /**
-     * A JAXB factory to csw object version 2.0.0 
+     * A JAXB factory to csw object version 2.0.0
      */
     protected final org.geotoolkit.csw.xml.v200.ObjectFactory cswFactory200 = new org.geotoolkit.csw.xml.v200.ObjectFactory();
-    
+
     /**
      * a QName for csw:Record type
      */
@@ -105,17 +105,17 @@ public class CswXMLBindingTest {
     @Before
     public void setUp() throws JAXBException {
         pool = CSWMarshallerPool.getInstance();
-        
+
     }
 
     @After
     public void tearDown() {
-        
+
     }
-    
+
     /**
-     * Test simple Record Marshalling. 
-     * 
+     * Test simple Record Marshalling.
+     *
      * @throws java.lang.Exception
      */
     @Test
@@ -126,30 +126,30 @@ public class CswXMLBindingTest {
         /*
          * Test marshalling csw Record v2.0.2
          */
-        
+
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
-        
+
         List<SimpleLiteral> subject = new ArrayList<SimpleLiteral>();
         subject.add(new SimpleLiteral("oceans elevation NASA/JPL/JASON-1"));
         subject.add(new SimpleLiteral("oceans elevation 2"));
-        
+
         SimpleLiteral modified   = new SimpleLiteral("2007-11-15 21:26:49");
         SimpleLiteral Abstract   = new SimpleLiteral("Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.");
         SimpleLiteral references = new SimpleLiteral("http://keel.esri.com/output/TOOLKIT_Browse_Metadata_P7540_T8020_D1098.xml");
         SimpleLiteral spatial    = new SimpleLiteral("northlimit=65.9999999720603; eastlimit=180; southlimit=-66.0000000558794; westlimit=-180;");
-        
+
         List<BoundingBoxType> bbox = new ArrayList<BoundingBoxType>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
-        
+
         RecordType record = new RecordType(id, title, type, subject, null, modified, null, Abstract, bbox, null, null, null, spatial, references);
-        
+
         StringWriter sw = new StringWriter();
         marshaller.marshal(record, sw);
-        
+
         String result = sw.toString();
-        String expResult = 
+        String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
         "<csw:Record xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
         "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>" + '\n' +
@@ -166,34 +166,34 @@ public class CswXMLBindingTest {
         "        <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"          + '\n' +
         "    </ows:WGS84BoundingBox>"                                               + '\n' +
         "</csw:Record>" + '\n';
-    
+
         //we remove the 2 first line because the xlmns are not always in the same order.
         expResult = expResult.substring(expResult.indexOf('\n') + 1);
         expResult = expResult.substring(expResult.indexOf('\n') + 1);
-        
+
         result = result.substring(result.indexOf('\n') + 1);
         result = result.substring(result.indexOf('\n') + 1);
-        
+
         assertEquals(expResult, result);
 
-        pool.release(marshaller);
+        pool.recycle(marshaller);
     }
-    
+
     /**
-     * Test simple Record Marshalling. 
-     * 
+     * Test simple Record Marshalling.
+     *
      * @throws java.lang.Exception
      */
     @Test
     public void recordUnmarshalingTest() throws JAXBException {
 
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-        
+
         /*
          * Test Unmarshalling csw Record v2.0.2
          */
-        
-        String xml = 
+
+        String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
         "<csw:Record xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
         "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>" + '\n' +
@@ -201,10 +201,10 @@ public class CswXMLBindingTest {
         "    <dc:type>clearinghouse</dc:type>"                                      + '\n' +
         "    <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>"            + '\n' +
         "    <dc:subject>oceans elevation 2</dc:subject>"                           + '\n' +
-        "    <dc:format>binary</dc:format>"                                         + '\n' +        
-        "    <dc:date>2007-12-01</dc:date>"                                         + '\n' +  
-        "    <dc:publisher>geomatys</dc:publisher>"                                 + '\n' +           
-        "    <dc:creator>geomatys</dc:creator>"                                 + '\n' +               
+        "    <dc:format>binary</dc:format>"                                         + '\n' +
+        "    <dc:date>2007-12-01</dc:date>"                                         + '\n' +
+        "    <dc:publisher>geomatys</dc:publisher>"                                 + '\n' +
+        "    <dc:creator>geomatys</dc:creator>"                                 + '\n' +
         "    <dct:modified>2007-11-15 21:26:49</dct:modified>"                      + '\n' +
         "    <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>" + '\n' +
         "    <dct:spatial>northlimit=65.9999999720603; eastlimit=180; southlimit=-66.0000000558794; westlimit=-180;</dct:spatial>" + '\n' +
@@ -214,20 +214,20 @@ public class CswXMLBindingTest {
         "        <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"          + '\n' +
         "    </ows:WGS84BoundingBox>"                                               + '\n' +
         "</csw:Record>" + '\n';
-        
+
         StringReader sr = new StringReader(xml);
-        
+
         JAXBElement jb = (JAXBElement) unmarshaller.unmarshal(sr);
         RecordType result = (RecordType) jb.getValue();
-        
+
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
-        
+
         List<SimpleLiteral> subject = new ArrayList<SimpleLiteral>();
         subject.add(new SimpleLiteral("oceans elevation NASA/JPL/JASON-1"));
         subject.add(new SimpleLiteral("oceans elevation 2"));
-        
+
         SimpleLiteral modified    = new SimpleLiteral("2007-11-15 21:26:49");
         SimpleLiteral date        = new SimpleLiteral("2007-12-01");
         SimpleLiteral Abstract    = new SimpleLiteral("Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.");
@@ -236,40 +236,40 @@ public class CswXMLBindingTest {
         SimpleLiteral format      = new SimpleLiteral("binary");
         SimpleLiteral distributor = new SimpleLiteral("geomatys");
         SimpleLiteral creator = new SimpleLiteral("geomatys");
-        
+
         List<BoundingBoxType> bbox = new ArrayList<BoundingBoxType>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
-        
+
         RecordType expResult = new RecordType(id, title, type, subject, format, modified, date, Abstract, bbox, creator, distributor, null, spatial, references);
-        
+
         LOGGER.finer("DATE " + expResult.getDate() + " - " + result.getDate());
         assertEquals(expResult.getDate(), result.getDate());
 
         LOGGER.finer("ABSTRACT " +expResult.getAbstract() + " - " + result.getAbstract());
         assertEquals(expResult.getAbstract(), result.getAbstract());
-        
+
         LOGGER.finer("SPATIAL " +expResult.getSpatial() + " - " + result.getSpatial());
         assertEquals(expResult.getSpatial(), result.getSpatial());
-        
+
         LOGGER.finer("BBOXES " +expResult.getBoundingBox() + " - " + result.getBoundingBox());
         assertEquals(expResult.getBoundingBox().get(0).getValue(), result.getBoundingBox().get(0).getValue());
-        
-                
+
+
         LOGGER.finer("RESULT: " + result.toString());
         LOGGER.finer("");
         LOGGER.finer("EXPRESULT: " + expResult.toString());
         LOGGER.finer("-----------------------------------------------------------");
         assertEquals(expResult, result);
-        
-        
+
+
         /*
          * Test Unmarshalling csw Record v2.0.0 with http://purl... DC namespace
          */
-        
-        xml = 
+
+        xml =
         "<csw:Record xmlns:csw=\"http://www.opengis.net/cat/csw\" xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">" + '\n' +
         "   <dc:identifier>ESIGNGRAVIMÉTRICOPENINSULAYBALEARES200703070000</dc:identifier>"                      + '\n' +
-        "   <dc:title>Estudio Gravimétrico de la Península Ibérica y Baleares</dc:title>"                        + '\n' +      
+        "   <dc:title>Estudio Gravimétrico de la Península Ibérica y Baleares</dc:title>"                        + '\n' +
         "   <dc:title>Mapa de Anomalías Gravimétricas</dc:title>"                                                + '\n' +
         "   <dc:creator>Instituto Geográfico Nacional</dc:creator>"                                              + '\n' +
         "   <dc:subject>http://www.fao.org/aos/concept#4668.Gravimetría</dc:subject>"                            + '\n' +
@@ -292,22 +292,22 @@ public class CswXMLBindingTest {
         "   <dcterms:spatial>ESPAÑA.ANDALUCÍA</dcterms:spatial>"                                                 + '\n' +
         "   <dcterms:spatial>ESPAÑA.ARAGÓN</dcterms:spatial>"                                                    + '\n' +
         "</csw:Record>";
-        
+
         sr = new StringReader(xml);
-        
+
         jb = (JAXBElement) unmarshaller.unmarshal(sr);
         org.geotoolkit.csw.xml.v200.RecordType result2 = (org.geotoolkit.csw.xml.v200.RecordType) jb.getValue();
-        
+
         LOGGER.log(Level.FINER, "result:{0}", result2.toString());
-        
+
          /*
          * Test Unmarshalling csw Record v2.0.0 with http://www.purl... DC namespace
          */
-        
-        xml = 
+
+        xml =
         "<csw:Record xmlns:csw=\"http://www.opengis.net/cat/csw\" xmlns:dcterms=\"http://www.purl.org/dc/terms/\" xmlns:dc=\"http://www.purl.org/dc/elements/1.1/\">" + '\n' +
         "   <dc:identifier>ESIGNGRAVIMÉTRICOPENINSULAYBALEARES200703070000</dc:identifier>"                      + '\n' +
-        "   <dc:title>Estudio Gravimétrico de la Península Ibérica y Baleares</dc:title>"                        + '\n' +      
+        "   <dc:title>Estudio Gravimétrico de la Península Ibérica y Baleares</dc:title>"                        + '\n' +
         "   <dc:title>Mapa de Anomalías Gravimétricas</dc:title>"                                                + '\n' +
         "   <dc:creator>Instituto Geográfico Nacional</dc:creator>"                                              + '\n' +
         "   <dc:subject>http://www.fao.org/aos/concept#4668.Gravimetría</dc:subject>"                            + '\n' +
@@ -330,15 +330,15 @@ public class CswXMLBindingTest {
         "   <dcterms:spatial>ESPAÑA.ANDALUCÍA</dcterms:spatial>"                                                 + '\n' +
         "   <dcterms:spatial>ESPAÑA.ARAGÓN</dcterms:spatial>"                                                    + '\n' +
         "</csw:Record>";
-        
+
         sr = new StringReader(xml);
-        
+
         jb = (JAXBElement) unmarshaller.unmarshal(sr);
         result2 = (org.geotoolkit.csw.xml.v200.RecordType) jb.getValue();
-        
+
         LOGGER.log(Level.FINER, "result:{0}", result2.toString());
-        pool.release(unmarshaller);
-        
+        pool.recycle(unmarshaller);
+
     }
 
     /**
@@ -350,7 +350,7 @@ public class CswXMLBindingTest {
     public void summmaryRecordMarshalingTest() throws JAXBException {
 
         Marshaller marshaller = pool.acquireMarshaller();
-        
+
         /*
          * Test marshalling csw summmary Record v2.0.2
          */
@@ -481,7 +481,7 @@ public class CswXMLBindingTest {
 
         assertEquals(expResult, result);
 
-        pool.release(marshaller);
+        pool.recycle(marshaller);
     }
 
     /**
@@ -493,8 +493,8 @@ public class CswXMLBindingTest {
     public void summmaryRecordUnmarshalingTest() throws JAXBException {
 
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-        
-        
+
+
         /*
          * Test marshalling csw summmary Record v2.0.2
          */
@@ -611,7 +611,7 @@ public class CswXMLBindingTest {
         expResult = new SummaryRecordType(ids, titles, type,  bbox, subject, formats, modifieds, Abstract);
 
         assertEquals(expResult, result);
-        pool.release(unmarshaller);
+        pool.recycle(unmarshaller);
     }
 
     /**
@@ -623,7 +623,7 @@ public class CswXMLBindingTest {
     public void briefRecordMarshalingTest() throws JAXBException {
 
         Marshaller marshaller = pool.acquireMarshaller();
-        
+
         /*
          * Test marshalling BRIEF csw Record v2.0.2
          */
@@ -713,7 +713,7 @@ public class CswXMLBindingTest {
 
         assertEquals(expResult, result);
 
-        pool.release(marshaller);
+        pool.recycle(marshaller);
     }
 
     /**
@@ -725,8 +725,8 @@ public class CswXMLBindingTest {
     public void briefRecordUnmarshalingTest() throws JAXBException {
 
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-        
-        
+
+
         /*
          * Test marshalling BRIEF csw Record v2.0.2
          */
@@ -800,57 +800,57 @@ public class CswXMLBindingTest {
         expResult = new BriefRecordType(identifiers, titles, type, bbox);
 
         assertEquals(expResult, result);
-        pool.release(unmarshaller);
-        
+        pool.recycle(unmarshaller);
+
     }
-    
+
     /**
      * Test getRecordById request Marshalling.
-     * 
+     *
      * @throws java.lang.Exception
      */
     @Test
     public void getRecordByIdResponseMarshalingTest() throws JAXBException {
-        
+
         Marshaller marshaller = pool.acquireMarshaller();
-        
+
          /*
          * Test marshalling csw getRecordByIdResponse v2.0.2
          */
-        
+
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
-        
+
         List<SimpleLiteral> subject = new ArrayList<SimpleLiteral>();
         subject.add(new SimpleLiteral("oceans elevation NASA/JPL/JASON-1"));
         subject.add(new SimpleLiteral("oceans elevation 2"));
-        
+
         SimpleLiteral modified   = new SimpleLiteral("2007-11-15 21:26:49");
         SimpleLiteral Abstract   = new SimpleLiteral("Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.");
         SimpleLiteral references = new SimpleLiteral("http://keel.esri.com/output/TOOLKIT_Browse_Metadata_P7540_T8020_D1098.xml");
         SimpleLiteral spatial    = new SimpleLiteral("northlimit=65.9999999720603; eastlimit=180; southlimit=-66.0000000558794; westlimit=-180;");
-        
+
         List<BoundingBoxType> bbox = new ArrayList<BoundingBoxType>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
-        
+
         RecordType record           = new RecordType(id, title, type, subject, null, modified, null, Abstract, bbox, null, null, null, spatial, references);
         BriefRecordType briefRecord = new BriefRecordType(id, title, type, bbox);
         SummaryRecordType sumRecord = new SummaryRecordType(id, title, type, bbox, subject, null, modified, Abstract);
-        
-        List<AbstractRecordType> records = new ArrayList<AbstractRecordType>(); 
+
+        List<AbstractRecordType> records = new ArrayList<AbstractRecordType>();
         records.add(record);
         records.add(briefRecord);
         records.add(sumRecord);
         GetRecordByIdResponse response = new GetRecordByIdResponseType(records, null);
-        
+
         StringWriter sw = new StringWriter();
         marshaller.marshal(response, sw);
-        
+
         String result = sw.toString();
-        
-        
-        String expResult = 
+
+
+        String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
         "<csw:GetRecordByIdResponse xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
         "    <csw:Record>"                                                              + '\n' +
@@ -891,19 +891,19 @@ public class CswXMLBindingTest {
         "        </ows:WGS84BoundingBox>"                                               + '\n' +
         "    </csw:SummaryRecord>"                                                             + '\n' +
         "</csw:GetRecordByIdResponse>" + '\n';
-        
+
         //we remove the 2 first line because the xlmns are not always in the same order.
         expResult = expResult.substring(expResult.indexOf('\n') + 1);
         expResult = expResult.substring(expResult.indexOf('\n') + 1);
-        
+
         result = result.substring(result.indexOf('\n') + 1);
         result = result.substring(result.indexOf('\n') + 1);
-        
+
         LOGGER.log(Level.FINER, "RESULT:\n{0}", result);
         LOGGER.log(Level.FINER, "EXPRESULT:\n{0}", expResult);
         assertEquals(expResult, result);
-        
-        pool.release(marshaller);
+
+        pool.recycle(marshaller);
     }
 
     /**
@@ -915,8 +915,8 @@ public class CswXMLBindingTest {
     public void getRecordByIdResponseUnMarshalingTest() throws JAXBException {
 
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-        
-        
+
+
          /*
          * Test marshalling csw getRecordByIdResponse v2.0.2
          */
@@ -945,7 +945,7 @@ public class CswXMLBindingTest {
         records.add(record);
         records.add(briefRecord);
         records.add(sumRecord);
-        
+
         GetRecordByIdResponse expResult = new GetRecordByIdResponseType(records, null);
 
 
@@ -991,7 +991,7 @@ public class CswXMLBindingTest {
         "    </csw:SummaryRecord>"                                                             + '\n' +
         "</csw:GetRecordByIdResponse>" + '\n';
 
-        
+
         GetRecordByIdResponse result = ((JAXBElement<GetRecordByIdResponse>) unmarshaller.unmarshal(new StringReader(xml))).getValue();
 
         assertTrue(result.getAbstractRecord() instanceof List);
@@ -1004,45 +1004,45 @@ public class CswXMLBindingTest {
         assertEquals(expResult.getAbstractRecord(), result.getAbstractRecord());
         assertEquals(expResult, result);
 
-        pool.release(unmarshaller);
+        pool.recycle(unmarshaller);
     }
-    
+
     /**
-     * Test simple Record Marshalling. 
-     * 
+     * Test simple Record Marshalling.
+     *
      * @throws java.lang.Exception
      */
     @Test
     public void getRecordsMarshalingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
         Marshaller marshaller = pool.acquireMarshaller();
-        
+
          /*
          * Test marshalling csw getRecordByIdResponse v2.0.2
          */
-        
+
         /*
          * we build the first filter : < dublinCore:Title IS LIKE '*' >
-         */ 
+         */
         List<QName> typeNames  = new ArrayList<QName>();
         PropertyNameType pname = new PropertyNameType("dc:Title");
         PropertyIsLikeType pil = new PropertyIsLikeType(pname, "something?", "*", "?", "\\");
         NotType n              = new NotType(pil);
         FilterType filter1     = new FilterType(n);
-        
+
         QueryConstraintType constraint = new QueryConstraintType(filter1, "1.1.0");
         typeNames.add(_Record_QNAME);
-        QueryType query = new QueryType(typeNames, new ElementSetNameType(ElementSetType.FULL), null, constraint); 
-        
+        QueryType query = new QueryType(typeNames, new ElementSetNameType(ElementSetType.FULL), null, constraint);
+
         GetRecordsType getRecordsRequest = new GetRecordsType("CSW", "2.0.2", ResultType.RESULTS, null, "application/xml", "http://www.opengis.net/cat/csw/2.0.2", 1, 20, query, null);
-         
-        
+
+
         StringWriter sw = new StringWriter();
         marshaller.marshal(getRecordsRequest, sw);
-        
+
         String result = sw.toString();
-        
-        
-        String expResult = 
+
+
+        String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
         "<csw:GetRecords maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw/2.0.2\" outputFormat=\"application/xml\" resultType=\"results\" version=\"2.0.2\" service=\"CSW\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
         "    <csw:Query typeNames=\"csw:Record\">" + '\n' +
@@ -1060,15 +1060,15 @@ public class CswXMLBindingTest {
         "    </csw:Query>"                                                              + '\n' ;
         //"</csw:GetRecords>" + '\n';
         LOGGER.finer("RESULT:\n" + result);
-        
+
         //we remove the 2 first line because the xlmns are not always in the same order.
         expResult = expResult.substring(expResult.indexOf('\n') + 1);
         expResult = expResult.substring(expResult.indexOf('\n') + 1);
-        
+
         result = result.substring(result.indexOf('\n') + 1);
         result = result.substring(result.indexOf('\n') + 1);
         result = result.replaceAll("</csw:GetRecords>", "");
-        
+
         LOGGER.finer("RESULT:\n" + result);
         LOGGER.finer("EXPRESULT:\n" + expResult);
         XMLComparator comparator = new XMLComparator(expResult, result);
@@ -1122,28 +1122,28 @@ public class CswXMLBindingTest {
 
         LOGGER.finer("RESULT:\n" + result);
         LOGGER.finer("EXPRESULT:\n" + expResult);
-        
+
         comparator = new XMLComparator(expResult, result);
         comparator.compare();
-        
-        pool.release(marshaller);
+
+        pool.recycle(marshaller);
     }
-    
+
     /**
-     * Test simple Record Marshalling. 
-     * 
+     * Test simple Record Marshalling.
+     *
      * @throws java.lang.Exception
      */
     @Test
     public void getRecordsUnMarshalingTest() throws JAXBException {
-        
+
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-        
+
          /*
          * Test unmarshalling csw getRecordByIdResponse v2.0.2
          */
-        
-        String xml = 
+
+        String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
         "<csw:GetRecords maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw/2.0.2\" outputFormat=\"application/xml\" resultType=\"results\" version=\"2.0.2\" service=\"CSW\"  xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
         "    <csw:Query typeNames=\"csw:Record\">" + '\n' +
@@ -1160,28 +1160,28 @@ public class CswXMLBindingTest {
         "        </csw:Constraint>"                                                     + '\n' +
         "    </csw:Query>"                                                              + '\n' +
         "</csw:GetRecords>" + '\n';
-        
+
         StringReader sr = new StringReader(xml);
-        
+
         Object result = unmarshaller.unmarshal(sr);
-        
+
         /*
          * we build the first filter : < dublinCore:Title IS LIKE '*' >
-         */ 
+         */
         List<QName> typeNames  = new ArrayList<QName>();
         PropertyNameType pname = new PropertyNameType("dc:Title");
         PropertyIsLikeType pil = new PropertyIsLikeType(pname, "something?", "*", "?", "\\");
         NotType n              = new NotType(pil);
         FilterType filter1     = new FilterType(n);
-        
+
         QueryConstraintType constraint = new QueryConstraintType(filter1, "1.1.0");
         typeNames.add(_Record_QNAME);
-        QueryType query = new QueryType(typeNames, new ElementSetNameType(ElementSetType.FULL), null, constraint); 
-        
+        QueryType query = new QueryType(typeNames, new ElementSetNameType(ElementSetType.FULL), null, constraint);
+
         GetRecordsType expResult = new GetRecordsType("CSW", "2.0.2", ResultType.RESULTS, null, "application/xml", "http://www.opengis.net/cat/csw/2.0.2", 1, 20, query, null);
-         
-        
-        
+
+
+
         LOGGER.log(Level.FINER, "RESULT:\n{0}", result);
         LOGGER.log(Level.FINER, "EXPRESULT:\n{0}", expResult);
         GetRecordsType gres = (GetRecordsType)result;
@@ -1228,7 +1228,7 @@ public class CswXMLBindingTest {
 
         assertEquals(expResult200.getAbstractQuery(), result200.getAbstractQuery());
         assertEquals(expResult200, result200);
-        pool.release(unmarshaller);
+        pool.recycle(unmarshaller);
     }
 
 
@@ -1241,7 +1241,7 @@ public class CswXMLBindingTest {
     public void updateMarshalingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
 
         Marshaller marshaller = pool.acquireMarshaller();
-        
+
         // <TODO
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
@@ -1291,10 +1291,10 @@ public class CswXMLBindingTest {
         "        </csw:Constraint>"                                                                  + '\n' +
         "    </csw:Update>"                                                                          + '\n' +
         "</csw:Transaction>"+ '\n';
-         
+
         StringWriter sw = new StringWriter();
         marshaller.marshal(request, sw);
-        
+
         String result = sw.toString();
 
         result = StringUtilities.removeXmlns(result);
@@ -1350,8 +1350,8 @@ public class CswXMLBindingTest {
 
         comparator = new XMLComparator(expResult, result);
         comparator.compare();
-        
-        pool.release(marshaller);
+
+        pool.recycle(marshaller);
     }
 
     /**
@@ -1363,7 +1363,7 @@ public class CswXMLBindingTest {
     public void updateUnmarshalingTest() throws JAXBException {
 
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-        
+
         /**
          * Test 1 : Simple recordProperty (String)
          */
@@ -1424,7 +1424,7 @@ public class CswXMLBindingTest {
         "</csw:Transaction>"+ '\n';
 
         result = (TransactionType) unmarshaller.unmarshal(new StringReader(xml));
-        
+
         DefaultGeographicBoundingBox geographicElement = new DefaultGeographicBoundingBox(1.1, 1.1, 1.1, 1.1);
         recordProperty = new RecordPropertyType("/gmd:MD_Metadata/identificationInfo/extent/geographicElement", geographicElement);
         query          = new QueryConstraintType("identifier='{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}'", "1.1.0");
@@ -1432,7 +1432,7 @@ public class CswXMLBindingTest {
         expResult      = new TransactionType("CSW", "2.0.2", update);
 
         assertEquals(expResult, result);
-        pool.release(unmarshaller);
+        pool.recycle(unmarshaller);
     }
 
     /**
@@ -1481,7 +1481,7 @@ public class CswXMLBindingTest {
         Capabilities expResult = new Capabilities(null, null, om, "2.0.2", null, null);
 
         assertEquals(expResult, result);
-        pool.release(unmarshaller);
+        pool.recycle(unmarshaller);
     }
 
     /**
@@ -1536,6 +1536,6 @@ public class CswXMLBindingTest {
 
         assertEquals(expResult, result);
 
-        pool.release(marshaller);
+        pool.recycle(marshaller);
     }
 }

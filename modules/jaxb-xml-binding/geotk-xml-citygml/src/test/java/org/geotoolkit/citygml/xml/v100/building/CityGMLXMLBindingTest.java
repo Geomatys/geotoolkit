@@ -16,11 +16,12 @@
  */
 package org.geotoolkit.citygml.xml.v100.building;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 //Junit dependencies
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -49,30 +50,30 @@ public class CityGMLXMLBindingTest {
 
     @Before
     public void setUp() throws Exception {
-        pool         = new MarshallerPool(
+        pool = new MarshallerPool(JAXBContext.newInstance(
                 "org.geotoolkit.citygml.xml.v100:" +
                 "org.geotoolkit.gml.xml.v311:" +
-                ":org.geotoolkit.internal.jaxb.geometry:"+
-                "org.geotoolkit.citygml.xml.v100.building");
+                ":org.apache.sis.internal.jaxb.geometry:"+
+                "org.geotoolkit.citygml.xml.v100.building"), null);
         Unmarshaller = pool.acquireUnmarshaller();
         Marshaller   = pool.acquireMarshaller();
-        
+
     }
 
     @After
     public void tearDown() throws Exception {
         if (Marshaller != null) {
-            pool.release(Marshaller);
+            pool.recycle(Marshaller);
         }
 
         if (Unmarshaller != null) {
-            pool.release(Unmarshaller);
+            pool.recycle(Unmarshaller);
         }
     }
-    
+
     /**
-     * Test simple Record Marshalling. 
-     * 
+     * Test simple Record Marshalling.
+     *
      * @throws java.lang.Exception
      */
     @Test

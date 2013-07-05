@@ -42,7 +42,7 @@ import org.junit.Test;
  */
 public class DbaseFileTest extends AbstractTestCaseSupport {
 
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
+    private static final Logger LOGGER = org.apache.sis.util.logging.Logging
             .getLogger("org.geotoolkit.data.shapefile");
 
     static final String TEST_FILE = "shapes/statepop.dbf";

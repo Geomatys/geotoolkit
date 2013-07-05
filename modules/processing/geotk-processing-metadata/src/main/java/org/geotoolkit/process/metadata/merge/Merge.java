@@ -17,7 +17,7 @@
 package org.geotoolkit.process.metadata.merge;
 
 
-import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.metadata.Metadata;
@@ -48,12 +48,12 @@ public class Merge extends AbstractProcess {
 
         final Metadata first = (Metadata) getOrCreate(FIRST_IN, inputParameters).getValue();
         final Metadata second = (Metadata) getOrCreate(SECOND_IN, inputParameters).getValue();
-                
+
         final DefaultMetadata merged = new DefaultMetadata(first);
-        merged.getStandard().shallowCopy(second, merged, true);
-        
+// TODO merged.getStandard().shallowCopy(second, merged, true);
+
         getOrCreate(RESULT_OUT, outputParameters).setValue(merged);
-        
+
         fireProcessCompleted("Merge done.");
     }
 

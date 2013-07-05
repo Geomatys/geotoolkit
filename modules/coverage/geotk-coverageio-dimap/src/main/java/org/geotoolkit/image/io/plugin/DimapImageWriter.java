@@ -40,8 +40,9 @@ import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.metadata.dimap.DimapMetadataFormat;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.DomUtilities;
-import org.geotoolkit.util.Version;
-import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Version;
+import org.apache.sis.util.logging.Logging;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -154,7 +155,7 @@ public class DimapImageWriter extends ImageWriterAdapter{
             MIMETypes       = new String[] {"image/x-dimap"};
             pluginClassName = "org.geotoolkit.image.io.plugin.DimapImageWriter";
             vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
+            version         = Utilities.VERSION.toString();
         }
 
         /**

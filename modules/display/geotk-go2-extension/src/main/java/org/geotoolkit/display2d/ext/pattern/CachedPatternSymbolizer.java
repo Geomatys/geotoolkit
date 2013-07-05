@@ -38,7 +38,7 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.coverage.coveragetovector.CoverageToVectorDescriptor;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.expression.Expression;
@@ -71,7 +71,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
                 }else if(t2 == null){
                     return +1;
                 }
-                
+
                 double d1 = t1.evaluate(null, Double.class);
                 double d2 = t2.evaluate(null, Double.class);
                 double res = d1-d2;
@@ -92,14 +92,14 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
         int i=0;
         for(;i<steps.length-1;i++){
             end = steps[i+1].evaluate(null,Double.class);
-            interval = NumberRange.create(last,true,end,false);
+            interval = NumberRange.create(last, true, end, false);
             styles.put(interval, getCached(categorizes.get(steps[i])));
             last = end;
         }
 
         //last element
         end = Double.POSITIVE_INFINITY;
-        styles.put(NumberRange.create(last,end),
+        styles.put(NumberRange.create(last, true, end, true),
                 getCached(categorizes.get(steps[i])) );
 
         //calculate the polygons -----------------------------------------------

@@ -21,8 +21,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.client.AbstractRequest;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
+import javax.xml.bind.JAXBContext;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
 
 /**
  * Abstract base for all SOS request
@@ -41,15 +42,16 @@ public class AbstractSOSRequest extends AbstractRequest {
     static {
         MarshallerPool temp = null;
         try {
-            temp = new MarshallerPool("org.geotoolkit.sos.xml.v100:" +
-                                      "org.geotoolkit.gml.xml.v311:" +
-                                      "org.geotoolkit.swe.xml.v100:" +
-                                      "org.geotoolkit.swe.xml.v101:" +
-                                      "org.geotoolkit.observation.xml.v100:" +
-                                      "org.geotoolkit.sampling.xml.v100:" +
-                                      "org.geotoolkit.sml.xml.v100:" +
-                                      "org.geotoolkit.sml.xml.v101:" +
-                                      "org.geotoolkit.internal.jaxb.geometry");
+            temp = new MarshallerPool(JAXBContext.newInstance(
+                    "org.geotoolkit.sos.xml.v100:" +
+                    "org.geotoolkit.gml.xml.v311:" +
+                    "org.geotoolkit.swe.xml.v100:" +
+                    "org.geotoolkit.swe.xml.v101:" +
+                    "org.geotoolkit.observation.xml.v100:" +
+                    "org.geotoolkit.sampling.xml.v100:" +
+                    "org.geotoolkit.sml.xml.v100:" +
+                    "org.geotoolkit.sml.xml.v101:" +
+                    "org.apache.sis.internal.jaxb.geometry"), null);
         } catch (JAXBException ex) {
             LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
         }

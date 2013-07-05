@@ -40,9 +40,9 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.Namespaces;
+import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
@@ -106,7 +106,7 @@ public class ElementFeatureWriter {
              schemaLocation = sb.toString();
          }
     }
-    
+
      public Element write(final Object candidate, final boolean fragment) throws IOException, DataStoreException, ParserConfigurationException {
          return write(candidate, fragment, null);
      }
@@ -174,7 +174,7 @@ public class ElementFeatureWriter {
         idAttr.setValue(feature.getIdentifier().getID());
         idAttr.setPrefix("gml");
         rootElement.setAttributeNodeNS(idAttr);
-        
+
         if (rootDocument == null) {
             document.appendChild(rootElement);
         }
@@ -289,18 +289,15 @@ public class ElementFeatureWriter {
                             element.setPrefix(prefix.prefix);
                         }
                         Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) valueA, type.getCoordinateReferenceSystem());
-                        Marshaller marshaller = null;
                         try {
+                            final Marshaller marshaller;
                             marshaller = POOL.acquireMarshaller();
                             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
                             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
                             marshaller.marshal(OBJECT_FACTORY.buildAnyGeometry(isoGeometry), element);
+                            POOL.recycle(marshaller);
                         } catch (JAXBException ex) {
                             LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
-                        } finally {
-                            if (marshaller != null) {
-                                POOL.release(marshaller);
-                            }
                         }
                         rootElement.appendChild(element);
                     }
@@ -357,16 +354,16 @@ public class ElementFeatureWriter {
         rootElement.setAttributeNodeNS(idAttribute);
 
         rootElement.setAttribute("numberOfFeatures", Integer.toString(featureCollection.size()));
-            
+
         if (nbMatched != null) {
             rootElement.setAttribute("numberMatched", Integer.toString(nbMatched));
         }
-        
+
         // timestamp
         synchronized(FORMATTER) {
             rootElement.setAttribute("timeStamp", FORMATTER.format(new Date(System.currentTimeMillis())));
         }
-        
+
         if (schemaLocation != null && !schemaLocation.equals("")) {
             rootElement.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", schemaLocation);
         }

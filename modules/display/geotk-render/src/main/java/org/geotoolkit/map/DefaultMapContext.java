@@ -30,7 +30,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.StyleConstants;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicExtent;
@@ -142,7 +142,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
             }
 
         }
-        
+
         if(result == null|| result.isEmpty() || result.isInfinite() || result.isNull()){
             //we could not find a valid envelope
             result = new GeneralEnvelope(CRS.getEnvelope(crs));
@@ -292,7 +292,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
     //--------------------------------------------------------------------------
     // layer listener ----------------------------------------------------------
     //--------------------------------------------------------------------------
-        
+
     /**
      * In case item is a MapLayer we register it using the layer listener.
      */
@@ -350,7 +350,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
         layers.clearCache();
 
         if(!candidates.isEmpty()){
-            fireLayerChange(type, candidates, NumberRange.create(from, to), null);
+            fireLayerChange(type, candidates, NumberRange.create(from, true, to, true), null);
         }
     }
 
@@ -368,7 +368,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
         layers.clearCache();
 
         if(item instanceof MapLayer){
-            fireLayerChange(type, (MapLayer) item, NumberRange.create(index, index), orig);
+            fireLayerChange(type, (MapLayer) item, NumberRange.create(index, true, index, true), orig);
         }
     }
 
@@ -416,13 +416,13 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
 
         @Override
         public void add(final int index, final MapLayer element) {
-            updateTree(CollectionChangeEvent.ITEM_ADDED, element, NumberRange.create(index, index), null);
+            updateTree(CollectionChangeEvent.ITEM_ADDED, element, NumberRange.create(index, true, index, true), null);
         }
 
         @Override
         public MapLayer remove(final int index) {
             final MapLayer[] array = getCache();
-            updateTree(CollectionChangeEvent.ITEM_REMOVED, array[index], NumberRange.create(index, index), null);
+            updateTree(CollectionChangeEvent.ITEM_REMOVED, array[index], NumberRange.create(index, true, index, true), null);
             final MapLayer removed = array[index];
             return removed;
         }

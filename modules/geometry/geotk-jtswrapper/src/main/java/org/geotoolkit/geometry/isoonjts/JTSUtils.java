@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.JTSPositionFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.AbstractJTSAggregate;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
@@ -356,10 +356,10 @@ public final class JTSUtils {
             pointList.add(coordinateToDirectPosition(jtsLinearRing.getCoordinateN(i), crs));
         }
         Curve curve = pf.createCurve(new ArrayList());
-        // Cast below can be removed when GeoAPI will be allowed to abandon Java 1.4 support.
+        // Cast below can be removed when Types will be allowed to abandon Java 1.4 support.
         ((List) curve.getSegments()).add(ls);
         Ring result = pf.createRing(new ArrayList());
-        // Cast below can be removed when GeoAPI will be allowed to abandon Java 1.4 support.
+        // Cast below can be removed when Types will be allowed to abandon Java 1.4 support.
         ((List) result.getGenerators()).add(curve);
         return result;
     }

@@ -21,7 +21,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -161,11 +161,11 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
                     midCounter++;
                 }
                 final String line = midScanner.nextLine();
-                final String[] split = Strings.split(line, master.mifDelimiter);
+                final CharSequence[] split = CharSequences.split(line, master.mifDelimiter);
                 for (int i = 0; i < split.length; i++) {
                     AttributeType att = baseType.getType(i);
                     Object value = null;
-                    if (!split[i].isEmpty()) {
+                    if (split[i].length() != 0) {
                         // We don't use geotoolkit to parse date, because we have to use a specific date pattern.
                         if(Date.class.isAssignableFrom(att.getBinding())) {
                             SimpleDateFormat format = new SimpleDateFormat();
@@ -176,7 +176,7 @@ public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
                             } else {
                                  format.applyPattern("yyyyMMdd");
                             }
-                            value = format.parse(split[i]);
+                            value = format.parse(split[i].toString());
                         } else {
                             value = Converters.convert(split[i], att.getBinding());
                         }

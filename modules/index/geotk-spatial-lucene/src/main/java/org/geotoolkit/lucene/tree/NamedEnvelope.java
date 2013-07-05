@@ -19,32 +19,31 @@ package org.geotoolkit.lucene.tree;
 
 import java.io.*;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * A envelope used in R-Tree to record the identifier with the associated envelope.
- * 
- * The serialization mecanism has been overriden because we had huge file caused by a duplication of the CRS 
+ *
+ * The serialization mecanism has been overriden because we had huge file caused by a duplication of the CRS
  * attribute in the file.
- * 
+ *
  * @author Guilhem Legal (Geomatys)
  */
 public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
-    
+
     /**
      * The identifier of the envelope.
      */
     private int id;
-    
+
     /**
      * Empty constructor required by the externalizable pattern.
      */
     public NamedEnvelope() {
         super(2);
     }
-    
+
     /**
      * Build a new envelope with the specified CRS and name.
      */
@@ -52,7 +51,7 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
         super(crs);
         this.id = id;
     }
-    
+
     /**
      * Build a new envelope from the specified one and affect a name to it.
      */
@@ -101,7 +100,7 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
         hash = 17 * hash + this.id;
         return hash;
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -109,7 +108,7 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
         }
         if (obj instanceof NamedEnvelope) {
             final NamedEnvelope that = (NamedEnvelope) obj;
-            return Utilities.equals(this.id, that.id);
+            return (this.id == that.id);
         }
         return false;
     }

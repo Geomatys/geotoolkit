@@ -43,7 +43,7 @@ import org.geotoolkit.ogc.xml.v100.UnaryLogicOpType;
 import org.geotoolkit.ogc.xml.v100.UpperBoundaryType;
 import org.geotoolkit.sld.xml.v100.CssParameter;
 import org.geotoolkit.sld.xml.v100.ParameterValueType;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;

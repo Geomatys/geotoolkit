@@ -35,7 +35,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSEnvelope;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPoint;
@@ -54,7 +54,7 @@ import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.internal.jaxb.PolygonType;
 import org.geotoolkit.internal.jaxb.PolyhedralSurfaceType;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.primitive.Ring;
@@ -111,11 +111,11 @@ public class JTSGeometryBindingTest {
     @After
     public void tearDown() throws Exception {
         if (un != null) {
-            pool.release(un);
+            pool.recycle(un);
         }
 
         if (m != null) {
-            pool.release(m);
+            pool.recycle(m);
         }
     }
 
@@ -210,7 +210,7 @@ public class JTSGeometryBindingTest {
 
         assertEquals(expResult, result);
 
-        pool.release(m);
+        pool.recycle(m);
     }
 
 
@@ -310,7 +310,7 @@ public class JTSGeometryBindingTest {
 
         assertEquals(expResult, result);
 
-        pool.release(m);
+        pool.recycle(m);
     }
 
      /**
@@ -417,7 +417,7 @@ public class JTSGeometryBindingTest {
         "</gml:Envelope>" + '\n';
 
         assertEquals(expresult, result);
-        pool.release(m);
+        pool.recycle(m);
     }
 
     /**

@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsLike;

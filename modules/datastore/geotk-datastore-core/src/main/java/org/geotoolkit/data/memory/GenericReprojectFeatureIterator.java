@@ -45,7 +45,7 @@ import org.geotoolkit.referencing.CRS;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.Classes;
 import static org.geotoolkit.data.memory.GenericTransformFeatureIterator.FF;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.coverage.Coverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.GeometryAttribute;

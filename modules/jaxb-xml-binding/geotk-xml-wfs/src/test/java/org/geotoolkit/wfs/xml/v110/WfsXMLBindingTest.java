@@ -34,7 +34,7 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 import org.geotoolkit.wfs.xml.*;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -58,10 +58,10 @@ public class WfsXMLBindingTest {
     @After
     public void tearDown() {
         if (unmarshaller != null) {
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
         if (marshaller != null) {
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
     }
 
@@ -107,8 +107,8 @@ public class WfsXMLBindingTest {
         result = (WFSCapabilitiesType) WFSBindingUtilities.unmarshall(is, WFSVersion.v110);
         assertEquals(expResult.getFeatureTypeList().getFeatureType(), result.getFeatureTypeList().getFeatureType());
         assertEquals(expResult.getFeatureTypeList(), result.getFeatureTypeList());
-        
-        String xml = 
+
+        String xml =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + '\n' +
                 "<wfs:Transaction version=\"1.1.0\" service=\"WFS\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" " + '\n' +
                 "          xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\">" + '\n' +
@@ -117,17 +117,17 @@ public class WfsXMLBindingTest {
                 "</wfs:Transaction>";
 
         unmarshalled = unmarshaller.unmarshal(new StringReader(xml));
-        
+
         assertTrue(unmarshalled instanceof TransactionType);
         TransactionType resultT = (TransactionType) unmarshalled;
-        
+
         InsertElementType ins = new InsertElementType();
         ins.setIdgen(IdentifierGenerationOptionType.USE_EXISTING);
         TransactionType expResultT = new TransactionType("WFS", "1.1.0", null, null, ins);
-        
+
         assertEquals(expResultT, resultT);
-        
-        xml = 
+
+        xml =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + '\n' +
                 "<wfs:Transaction version=\"1.1.0\" service=\"WFS\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" " + '\n' +
                 "          xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\">" + '\n' +
@@ -136,17 +136,17 @@ public class WfsXMLBindingTest {
                 "</wfs:Transaction>";
 
         unmarshalled = unmarshaller.unmarshal(new StringReader(xml));
-        
+
         assertTrue(unmarshalled instanceof TransactionType);
         resultT = (TransactionType) unmarshalled;
-        
+
         DeleteElementType del = new DeleteElementType();
         del.setTypeName(new QName("http://www.opengis.net/gml", "test"));
         expResultT = new TransactionType("WFS", "1.1.0", null, null, del);
-        
+
         assertEquals(expResultT, resultT);
-        
-        
+
+
     }
 
     @Test

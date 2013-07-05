@@ -47,7 +47,7 @@ import javax.swing.JComponent;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *

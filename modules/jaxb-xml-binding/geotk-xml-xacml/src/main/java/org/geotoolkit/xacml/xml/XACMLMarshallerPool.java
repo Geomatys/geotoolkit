@@ -19,8 +19,9 @@ package org.geotoolkit.xacml.xml;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 
 /**
  *
@@ -31,7 +32,7 @@ public class XACMLMarshallerPool {
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool("org.geotoolkit.xacml.xml.policy:org.geotoolkit.xacml.xml.context");
+            instance = new MarshallerPool(JAXBContext.newInstance("org.geotoolkit.xacml.xml.policy:org.geotoolkit.xacml.xml.context"), null);
         } catch (JAXBException ex) {
             Logger.getLogger(XACMLMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }

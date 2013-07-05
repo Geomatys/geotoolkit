@@ -20,6 +20,7 @@ package org.geotoolkit.gml.xml.v321;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -30,7 +31,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.LineString;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.DirectPosition;
 
 
@@ -92,7 +92,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
     public LineStringType(final CoordinatesType coordinates) {
         this.coordinates = coordinates;
     }
-    
+
     public LineStringType(final String id, final List<DirectPositionType> pos) {
         super(id, null);
         this.pos = pos;
@@ -194,7 +194,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
         double miny =  Double.MAX_VALUE;
         double maxx = -Double.MAX_VALUE;
         double maxy = -Double.MAX_VALUE;
-        
+
         if (pos != null && !pos.isEmpty()) {
             for (DirectPositionType p : pos) {
                 final double x = p.getOrdinate(0);
@@ -209,10 +209,10 @@ public class LineStringType extends AbstractCurveType implements LineString {
             return new EnvelopeType(lowerCorner, upperCorner, getSrsName());
         }
         return null;
-        
+
         // TODO try with posList and coordinates if pos is null or empty
     }
-    
+
     @Override
     public void emptySrsNameOnChild() {
          if (pos != null && !pos.isEmpty()) {
@@ -223,7 +223,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
         } else if (posList != null) {
             posList.setSrsName(null);
             posList.setSrsDimension(null);
-        } 
+        }
     }
     /**
      * Verify if this entry is identical to the specified object.
@@ -245,9 +245,9 @@ public class LineStringType extends AbstractCurveType implements LineString {
                     }
                 }
             }
-            return Utilities.equals(this.coordinates, that.coordinates) &&
-                   Utilities.equals(this.posList,     that.posList)     &&
-                   Utilities.equals(this.pos,         that.pos)         &&
+            return Objects.equals(this.coordinates, that.coordinates) &&
+                   Objects.equals(this.posList,     that.posList)     &&
+                   Objects.equals(this.pos,         that.pos)         &&
                    jb;
         }
         return false;
@@ -265,7 +265,7 @@ public class LineStringType extends AbstractCurveType implements LineString {
 
     private boolean JAXBElementEquals(final JAXBElement a, final JAXBElement b) {
         if (a  != null && b != null) {
-            return Utilities.equals(a.getValue(), b.getValue());
+            return Objects.equals(a.getValue(), b.getValue());
         } else if (a == null && b == null) {
             return true;
         }

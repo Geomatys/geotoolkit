@@ -31,8 +31,8 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.measure.NumberRange;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
@@ -76,7 +76,7 @@ public class LegendSizeTest {
     @Test
     public void testDimRangeLegend() {
 
-        final Symbolizer dr = new DimRangeSymbolizer(new MeasurementRange(NumberRange.create(10, 20), Unit.ONE));
+        final Symbolizer dr = new DimRangeSymbolizer(new MeasurementRange(NumberRange.create(10, true, 20, true), Unit.ONE));
         final MapLayer layer = MapBuilder.createEmptyMapLayer();
         layer.setStyle(SF.style(dr));
 

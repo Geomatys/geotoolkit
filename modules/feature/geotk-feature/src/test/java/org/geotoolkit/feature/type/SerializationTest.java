@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.Collection;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;

@@ -22,7 +22,7 @@ import java.util.*;
 import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.geotoolkit.util.collection.NotifiedCheckedSet;
@@ -39,13 +39,13 @@ import org.opengis.style.Symbolizer;
 import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
- * Mutable implementation of GeoAPI FeatureTypeStyle.
- * 
+ * Mutable implementation of Types FeatureTypeStyle.
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, RuleListener{
-    
+
     private final List<MutableRule> rules = new NotifiedCheckedList<MutableRule>(MutableRule.class) {
 
             @Override
@@ -56,7 +56,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
             @Override
             protected void notifyAdd(final MutableRule item, final int index) {
                 ruleListener.registerSource(item);
-                fireRuleChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, index) );
+                fireRuleChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, true, index, true) );
             }
 
             @Override
@@ -70,7 +70,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
             @Override
             protected void notifyRemove(final MutableRule item, int index) {
                 ruleListener.unregisterSource(item);
-                fireRuleChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, index) );
+                fireRuleChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, true, index, true) );
             }
 
             @Override
@@ -89,11 +89,11 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
                 if(newItem != null){
                     ruleListener.registerSource(newItem);
                 }
-                fireRuleChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, index) );
+                fireRuleChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, true, index, true) );
             }
-            
+
         };
-        
+
     private final Set<Name> names = new NotifiedCheckedSet<Name>(Name.class){
 
         @Override
@@ -116,7 +116,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
             fireNameChange(CollectionChangeEvent.ITEM_REMOVED, item, range);
         }
     };
-    
+
     private final Set<SemanticType> semantics = new NotifiedCheckedSet<SemanticType>(SemanticType.class){
 
         @Override
@@ -139,24 +139,24 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
             fireSemanticChange(CollectionChangeEvent.ITEM_REMOVED, item, range);
         }
     };
-    
+
     private final RuleListener.Weak ruleListener = new RuleListener.Weak(this);
-        
+
     private final EventListenerList listeners = new EventListenerList();
-    
+
     private String name = null;
-    
+
     private Description desc = StyleConstants.DEFAULT_DESCRIPTION;
-    
+
     private Id ids = null;
-    
+
     private OnlineResource online = null;
-    
+
     /**
      * Create a default mutable feature type style.
      */
     public DefaultMutableFeatureTypeStyle(){}
-        
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -182,7 +182,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
         }
         firePropertyChange(NAME_PROPERTY, oldName, this.name);
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -199,7 +199,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
     @Override
     public void setDescription(final Description desc){
         ensureNonNull("description", desc);
-        
+
         final Description oldDesc;
         synchronized (this) {
             oldDesc = this.desc;
@@ -236,7 +236,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
         }
         firePropertyChange(IDS_PROPERTY, oldIds, this.ids);
     }
-    
+
     /**
      * {@inheritDoc }
      * @return Set<Name> : This is the "living" Set.
@@ -272,7 +272,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
     public OnlineResource getOnlineResource() {
         return online;
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -289,7 +289,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
         }
         firePropertyChange(ONLINE_PROPERTY, oldOnline, this.online);
     }
-    
+
     @Override
     public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
@@ -313,23 +313,23 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
 
         return builder.toString();
     }
-    
+
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
-    
+
     protected void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue){
         //TODO make fire property change thread safe, preserve fire order
-        
+
         final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
         final PropertyChangeListener[] lists = listeners.getListeners(PropertyChangeListener.class);
-        
+
         for(PropertyChangeListener listener : lists){
             listener.propertyChange(event);
         }
-        
+
     }
-    
+
     protected void fireRuleChange(final int type, final MutableRule symbol, final NumberRange<Integer> range) {
         //TODO make fire property change thread safe, preserve fire order
 
@@ -341,7 +341,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
         }
 
     }
-    
+
     protected void fireRuleChange(final int type, final MutableRule symbol, final NumberRange<Integer> range, final EventObject subEvent) {
         //TODO make fire property change thread safe, preserve fire order
 
@@ -353,19 +353,19 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
         }
 
     }
-    
+
     protected void fireRuleChange(final int type, final Collection<? extends MutableRule> symbol, final NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
-        
+
         final CollectionChangeEvent<MutableRule> event = new CollectionChangeEvent<MutableRule>(this,symbol,type,range,null);
         final FeatureTypeStyleListener[] lists = listeners.getListeners(FeatureTypeStyleListener.class);
-        
+
         for(FeatureTypeStyleListener listener : lists){
             listener.ruleChange(event);
         }
-        
+
     }
-    
+
     protected void fireNameChange(final int type, final Name ftsName, final NumberRange<Integer> range) {
         //TODO make fire property change thread safe, preserve fire order
 
@@ -377,19 +377,19 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
         }
 
     }
-    
+
     protected void fireNameChange(final int type, final Collection<? extends Name> ftsNames, final NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
-        
+
         final CollectionChangeEvent<Name> event = new CollectionChangeEvent<Name>(this,ftsNames,type,range, null);
         final FeatureTypeStyleListener[] lists = listeners.getListeners(FeatureTypeStyleListener.class);
-        
+
         for(FeatureTypeStyleListener listener : lists){
             listener.featureTypeNameChange(event);
         }
-        
+
     }
-    
+
     protected void fireSemanticChange(final int type, final SemanticType semantic, final NumberRange<Integer> range) {
         //TODO make fire property change thread safe, preserve fire order
 
@@ -401,17 +401,17 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
         }
 
     }
-    
+
     protected void fireSemanticChange(final int type, final Collection<? extends SemanticType> semantics, final NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
-        
+
         final CollectionChangeEvent<SemanticType> event = new CollectionChangeEvent<SemanticType>(this,semantics,type,range,null);
         final FeatureTypeStyleListener[] lists = listeners.getListeners(FeatureTypeStyleListener.class);
-        
+
         for(FeatureTypeStyleListener listener : lists){
             listener.semanticTypeChange(event);
         }
-        
+
     }
 
     //--------------------------------------------------------------------------
@@ -422,14 +422,14 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
     public void propertyChange(final PropertyChangeEvent event) {
         final int index = rules.indexOf(event.getSource());
         fireRuleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableRule)event.getSource(),
-                NumberRange.create(index, index), event);
+                NumberRange.create(index, true, index, true), event);
     }
 
     @Override
     public void symbolizerChange(final CollectionChangeEvent<Symbolizer> event) {
         final int index = rules.indexOf(event.getSource());
         fireRuleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableRule)event.getSource(),
-                NumberRange.create(index, index), event);
+                NumberRange.create(index, true, index, true), event);
     }
 
     /**
@@ -450,7 +450,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
             listeners.add(FeatureTypeStyleListener.class, (FeatureTypeStyleListener)listener);
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -461,5 +461,5 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
             listeners.remove(FeatureTypeStyleListener.class, (FeatureTypeStyleListener)listener);
         }
     }
-    
+
 }

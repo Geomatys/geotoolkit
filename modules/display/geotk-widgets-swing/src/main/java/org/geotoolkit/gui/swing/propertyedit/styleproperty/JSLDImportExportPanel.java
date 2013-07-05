@@ -34,7 +34,7 @@ import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.Specification.StyledLayerDescriptor;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.jdesktop.swingx.combobox.EnumComboBoxModel;
 
 import org.opengis.sld.LayerStyle;

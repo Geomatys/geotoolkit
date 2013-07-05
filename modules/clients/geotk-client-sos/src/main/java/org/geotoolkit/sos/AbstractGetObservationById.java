@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import static org.geotoolkit.sos.AbstractSOSRequest.POOL;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
@@ -136,18 +137,14 @@ public abstract class AbstractGetObservationById extends AbstractSOSRequest impl
         OutputStream stream = conec.getOutputStream();
         stream = security.encrypt(stream);
 
-        Marshaller marsh = null;
         try {
-            marsh = POOL.acquireMarshaller();
+            Marshaller marsh = POOL.acquireMarshaller();
             final GetObservationById observXml = new GetObservationById(version, observationId,
                     responseFormat, resultModel, responseMode, srsName);
             marsh.marshal(observXml, stream);
+            POOL.recycle(marsh);
         } catch (JAXBException ex) {
             throw new IOException(ex);
-        } finally {
-            if (POOL != null && marsh != null) {
-                POOL.release(marsh);
-            }
         }
         stream.close();
         return security.decrypt(conec.getInputStream());

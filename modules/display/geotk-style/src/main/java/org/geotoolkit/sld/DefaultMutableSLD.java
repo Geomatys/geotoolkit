@@ -26,7 +26,7 @@ import javax.swing.event.EventListenerList;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.apache.sis.util.Classes;
 
@@ -39,7 +39,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Default mutable Style Layer Descriptor, thread safe.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -54,7 +54,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
 
             @Override
             protected void notifyAdd(final SLDLibrary item, final int index) {
-                fireLibraryChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, index));
+                fireLibraryChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, true, index, true));
             }
 
             @Override
@@ -64,7 +64,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
 
             @Override
             protected void notifyRemove(final SLDLibrary item, final int index) {
-                fireLibraryChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, index));
+                fireLibraryChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, true, index, true));
             }
 
             @Override
@@ -74,11 +74,11 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
 
             @Override
             protected void notifyChange(SLDLibrary oldItem, SLDLibrary newItem, int index) {
-                fireLibraryChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, index));
+                fireLibraryChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, true, index, true));
             }
-            
+
         };
-    
+
     private final List<MutableLayer> layers = new NotifiedCheckedList<MutableLayer>(MutableLayer.class) {
 
             @Override
@@ -89,7 +89,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
             @Override
             protected void notifyAdd(final MutableLayer item, final int index) {
                 item.addListener(layerListener);
-                fireLayerChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, index));
+                fireLayerChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, true, index, true));
             }
 
             @Override
@@ -103,7 +103,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
             @Override
             protected void notifyRemove(final MutableLayer item, final int index) {
                 item.removeListener(layerListener);
-                fireLayerChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, index));
+                fireLayerChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, true, index, true));
             }
 
             @Override
@@ -122,11 +122,11 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
                 if(newItem != null){
                     newItem.addListener(layerListener);
                 }
-                fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, index));
+                fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, true, index, true));
             }
-            
+
         };
-    
+
     private final LayerListener layerListener = new LayerListener() {
 
         @Override
@@ -144,15 +144,15 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
             fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, (MutableLayer)event.getSource(), null, event);
         }
     };
-        
+
     private final EventListenerList listeners = new EventListenerList();
-    
+
     private String version = "1.1";
-    
+
     private String name = null;
-    
+
     private Description description = StyleConstants.DEFAULT_DESCRIPTION;
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -161,7 +161,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
     public String getName() {
         return name;
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -187,7 +187,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
     public Description getDescription() {
         return description;
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -195,7 +195,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
     @Override
     public void setDescription(final Description desc) {
         ensureNonNull("description", desc);
-        
+
         final Description oldDesc;
         synchronized (this) {
             oldDesc = this.description;
@@ -215,7 +215,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
     public String getVersion() {
         return version;
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -232,7 +232,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
         }
         firePropertyChange(VERSION_PROPERTY, oldVersion, this.version);
     }
-    
+
     /**
      * {@inheritDoc }
      * This method is thread safe.
@@ -264,91 +264,91 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
-    
+
     protected void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue){
         //TODO make fire property change thread safe, preserve fire order
-        
+
         final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
         final SLDListener[] lists = listeners.getListeners(SLDListener.class);
-        
+
         for(SLDListener listener : lists){
             listener.propertyChange(event);
         }
-        
+
     }
-    
+
     protected void fireLibraryChange(final int type, final SLDLibrary lib, final NumberRange<Integer> range) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<SLDLibrary> event = new CollectionChangeEvent<SLDLibrary>(this, lib, type, range, null);
         final SLDListener[] lists = listeners.getListeners(SLDListener.class);
-        
+
         for(SLDListener listener : lists){
             listener.libraryChange(event);
         }
 
     }
-    
+
     protected void fireLibraryChange(final int type, final SLDLibrary lib, final NumberRange<Integer> range, final EventObject subEvent) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<SLDLibrary> event = new CollectionChangeEvent<SLDLibrary>(this, lib, type, range,subEvent);
         final SLDListener[] lists = listeners.getListeners(SLDListener.class);
-        
+
         for(SLDListener listener : lists){
             listener.libraryChange(event);
         }
 
     }
-    
+
     protected void fireLibraryChange(final int type, final Collection<? extends SLDLibrary> lib, final NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
-        
+
         final CollectionChangeEvent<SLDLibrary> event = new CollectionChangeEvent<SLDLibrary>(this,lib,type,range, null);
         final SLDListener[] lists = listeners.getListeners(SLDListener.class);
-        
+
         for(SLDListener listener : lists){
             listener.libraryChange(event);
         }
-        
+
     }
-    
+
     protected void fireLayerChange(final int type, final MutableLayer layer, final NumberRange<Integer> range) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<MutableLayer> event = new CollectionChangeEvent<MutableLayer>(this, layer, type, range, null);
         final SLDListener[] lists = listeners.getListeners(SLDListener.class);
-        
+
         for(SLDListener listener : lists){
             listener.layerChange(event);
         }
 
     }
-    
+
     protected void fireLayerChange(final int type, final MutableLayer layer, final NumberRange<Integer> range, final EventObject subEvent) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<MutableLayer> event = new CollectionChangeEvent<MutableLayer>(this, layer, type, range,subEvent);
         final SLDListener[] lists = listeners.getListeners(SLDListener.class);
-        
+
         for(SLDListener listener : lists){
             listener.layerChange(event);
         }
 
     }
-    
+
     protected void fireLayerChange(final int type, final Collection<? extends MutableLayer> layer, final NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
-        
+
         final CollectionChangeEvent<MutableLayer> event = new CollectionChangeEvent<MutableLayer>(this,layer,type,range, null);
         final SLDListener[] lists = listeners.getListeners(SLDListener.class);
-        
+
         for(SLDListener listener : lists){
             listener.layerChange(event);
         }
-        
+
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -364,7 +364,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
     public void removeListener(final SLDListener listener) {
         listeners.remove(SLDListener.class, listener);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -434,7 +434,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
 
         return builder.toString();
     }
-    
+
     /**
      * {@inheritDoc }
      * @todo the complete clone must be applied on the attributes.

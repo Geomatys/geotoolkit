@@ -50,7 +50,8 @@ import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
 import org.geotoolkit.swe.xml.v101.Text;
 import org.geotoolkit.swe.xml.v101.TextBlockType;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.xml.MarshallerPool;
+import javax.xml.bind.JAXBContext;
+import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
@@ -69,12 +70,12 @@ public class ObservationXMLBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool(
+        pool = new MarshallerPool(JAXBContext.newInstance(
                 "org.geotoolkit.sampling.xml.v100:" +
                 "org.geotoolkit.swe.xml.v101:" +
                 "org.geotoolkit.observation.xml.v100:" +
                 "org.geotoolkit.gml.xml.v311:" +
-                "org.geotoolkit.internal.jaxb.geometry");
+                "org.apache.sis.internal.jaxb.geometry"), null);
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }
@@ -82,10 +83,10 @@ public class ObservationXMLBindingTest {
     @After
     public void tearDown() {
         if (unmarshaller != null) {
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
         if (marshaller != null) {
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
     }
 
@@ -136,7 +137,7 @@ public class ObservationXMLBindingTest {
                            "            <gml:name>urn:OGC:phenomenon-007</gml:name>" + '\n' +
                            "        </swe:Phenomenon>" + '\n' +
                            "    </om:observedProperty>" + '\n' +
-                           "    <om:featureOfInterest>" + '\n' + 
+                           "    <om:featureOfInterest>" + '\n' +
                            "        <sampling:SamplingPoint gml:id=\"samplingID-007\">" + '\n' +
                            "            <gml:description>a sampling Test</gml:description>" + '\n' +
                            "            <gml:name>urn:sampling:test:007</gml:name>" + '\n' +
@@ -231,8 +232,8 @@ public class ObservationXMLBindingTest {
                            "</om:Measurement>\n";
         comparator = new XMLComparator(expResult, result);
         comparator.compare();
-        
-        
+
+
         ObservationCollectionType collection = new ObservationCollectionType();
         collection.add(measmt);
 
@@ -249,7 +250,7 @@ public class ObservationXMLBindingTest {
         marshaller.marshal(collection, sw);
 
         result = sw.toString();
-        
+
     }
 
     /**
@@ -339,7 +340,7 @@ public class ObservationXMLBindingTest {
         SimpleDataRecordType record       = new SimpleDataRecordType(fields);
         DataArrayType array               = new DataArrayType("array-001", 1, "array-001", record, encoding, "somevalue");
         DataArrayPropertyType arrayProp    = new DataArrayPropertyType(array);
-        
+
         ObservationType expResult = new ObservationType("urn:Observation-007", null, sp, observedProperty, "urn:sensor:007", arrayProp, samplingTime);
 
         assertEquals(expResult.getFeatureOfInterest(), result.getFeatureOfInterest());

@@ -24,7 +24,7 @@ import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.process.converters.*;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wps.converters.inputs.complex.*;
 import org.geotoolkit.wps.converters.inputs.literal.*;
 import org.geotoolkit.wps.converters.inputs.references.*;

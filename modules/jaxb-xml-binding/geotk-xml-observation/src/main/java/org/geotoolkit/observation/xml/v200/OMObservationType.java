@@ -19,6 +19,7 @@ package org.geotoolkit.observation.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -33,8 +34,8 @@ import org.geotoolkit.gml.xml.v321.ReferenceType;
 import org.geotoolkit.gml.xml.v321.TimeInstantPropertyType;
 import org.geotoolkit.gml.xml.v321.TimePeriodPropertyType;
 import org.geotoolkit.gml.xml.v321.TimePeriodType;
-import org.geotoolkit.internal.jaxb.metadata.DQ_Element;
-import org.geotoolkit.internal.jaxb.metadata.MD_Metadata;
+import org.apache.sis.internal.jaxb.metadata.DQ_Element;
+import org.apache.sis.internal.jaxb.metadata.MD_Metadata;
 import org.geotoolkit.observation.xml.AbstractObservation;
 import org.geotoolkit.observation.xml.v200.OMObservationType.InternalPhenomenon;
 import org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType;
@@ -42,7 +43,6 @@ import org.geotoolkit.swe.xml.v200.DataArrayPropertyType;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.v321.TimeInstantType;
 import org.geotoolkit.gml.xml.v321.TimePositionType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.quality.Element;
 import org.opengis.observation.Observation;
@@ -55,14 +55,14 @@ import org.opengis.temporal.TemporalObject;
 
 /**
  *  Generic observation, whose result is anyType The following properties
- * 				are inherited from AbstractFeatureType: 
- * 				
- * 			
- * 
+ * 				are inherited from AbstractFeatureType:
+ *
+ *
+ *
  * <p>Java class for OM_ObservationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OM_ObservationType">
  *   &lt;complexContent>
@@ -75,8 +75,8 @@ import org.opengis.temporal.TemporalObject;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OM_ObservationType", propOrder = {
@@ -118,17 +118,17 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     @XmlElement(required = true)
     private Object result;
 
-    
+
     public OMObservationType() {
     }
-    
-    public OMObservationType(final String id, final String name, final String type, final AbstractTimeObjectType phenomenonTime, 
+
+    public OMObservationType(final String id, final String name, final String type, final AbstractTimeObjectType phenomenonTime,
             final String procedure, final String observedProperty, final FeaturePropertyType foi, final Object result) {
         super(id, name, null);
         this.type = new ReferenceType(type);
         this.phenomenonTime = new TimeObjectPropertyType(phenomenonTime);
         this.resultTime     = new TimeInstantPropertyType();
-        
+
         if (procedure != null) {
             this.procedure      = new OMProcessPropertyType(procedure);
         }
@@ -136,7 +136,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         this.featureOfInterest   = foi;
         this.result = result;
     }
-    
+
     /**
      * Build a clone of an observation
      */
@@ -165,19 +165,19 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
             this.result = observation.result;
         }
     }
-    
+
     @Override
     public String getDefinition() {
         return null; // not defined in SOS 2.0.0
     }
-    
+
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getType() {
         return type;
@@ -185,11 +185,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setType(ReferenceType value) {
         this.type = value;
@@ -197,11 +197,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Gets the value of the metadata property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MDMetadataPropertyType }
-     *     
+     *
      */
     @Override
     public Metadata getObservationMetadata() {
@@ -210,11 +210,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Sets the value of the metadata property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MDMetadataPropertyType }
-     *     
+     *
      */
     public void setObservationMetadata(Metadata value) {
         this.metadata = value;
@@ -222,11 +222,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Gets the value of the relatedObservation property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ObservationContextPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<ObservationContextPropertyType> getRelatedObservation() {
         if (relatedObservation == null) {
@@ -237,11 +237,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Gets the value of the phenomenonTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimeObjectPropertyType }
-     *     
+     *
      */
     public TimeObjectPropertyType getPhenomenonTime() {
         return phenomenonTime;
@@ -249,22 +249,22 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Sets the value of the phenomenonTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimeObjectPropertyType }
-     *     
+     *
      */
     public void setPhenomenonTime(TimeObjectPropertyType value) {
         this.phenomenonTime = value;
     }
-    
+
     public void setPhenomenonTime(AbstractTimeObjectType value) {
         if (value != null) {
             this.phenomenonTime = new TimeObjectPropertyType(value);
         }
     }
-    
+
     @Override
     public TemporalObject getSamplingTime() {
         if (phenomenonTime != null) {
@@ -286,7 +286,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
             this.phenomenonTime = new TimeObjectPropertyType(pt);
         }
     }
-    
+
     @Override
     public void extendSamplingTime(final String newEndBound) {
         if (newEndBound != null) {
@@ -301,19 +301,19 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
             }
         }
     }
-    
+
     @Override
     public TemporalObject getProcedureTime() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     /**
      * Gets the value of the resultTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimeInstantPropertyType }
-     *     
+     *
      */
     public TimeInstantPropertyType getResultTime() {
         return resultTime;
@@ -321,11 +321,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Sets the value of the resultTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimeInstantPropertyType }
-     *     
+     *
      */
     public void setResultTime(TimeInstantPropertyType value) {
         this.resultTime = value;
@@ -333,11 +333,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Gets the value of the validTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimePeriodPropertyType }
-     *     
+     *
      */
     public TimePeriodPropertyType getValidTime() {
         return validTime;
@@ -345,11 +345,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Sets the value of the validTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimePeriodPropertyType }
-     *     
+     *
      */
     public void setValidTime(TimePeriodPropertyType value) {
         this.validTime = value;
@@ -357,11 +357,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Gets the value of the procedure property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OMProcessPropertyType }
-     *     
+     *
      */
     @Override
     public OMProcessPropertyType getProcedure() {
@@ -370,16 +370,16 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Sets the value of the procedure property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OMProcessPropertyType }
-     *     
+     *
      */
     public void setProcedure(final OMProcessPropertyType value) {
         this.procedure = value;
     }
-    
+
     @Override
     public void setProcedure(final String procedureID) {
         if (procedureID != null) {
@@ -389,11 +389,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Gets the value of the parameter property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link NamedValuePropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<NamedValuePropertyType> getParameter() {
         if (parameter == null) {
@@ -409,19 +409,19 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         }
         return null;
     }
-    
+
     /**
      * Gets the value of the observedProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getObservedPropertyRef() {
         return observedProperty;
     }
-    
+
     @Override
     public Phenomenon getObservedProperty() {
         if (observedProperty != null) {
@@ -432,11 +432,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Sets the value of the observedProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setObservedProperty(ReferenceType value) {
         this.observedProperty = value;
@@ -444,16 +444,16 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Gets the value of the featureOfInterest property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FeaturePropertyType }
-     *     
+     *
      */
     public FeaturePropertyType getFeatureOfInterestProperty() {
         return featureOfInterest;
     }
-    
+
     @Override
     public SamplingFeature getFeatureOfInterest() {
          if (featureOfInterest != null) {
@@ -468,11 +468,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Sets the value of the featureOfInterest property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FeaturePropertyType }
-     *     
+     *
      */
     public void setFeatureOfInterest(FeaturePropertyType value) {
         this.featureOfInterest = value;
@@ -480,10 +480,10 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Gets the value of the resultQuality property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link DQElementPropertyType }
-     * 
+     *
      */
     public List<Element> getResultQuality() {
         if (resultQuality == null) {
@@ -501,11 +501,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     }
     /**
      * Gets the value of the result property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Object }
-     *     
+     *
      */
     @Override
     public Object getResult() {
@@ -514,11 +514,11 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     /**
      * Sets the value of the result property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Object }
-     *     
+     *
      */
     @Override
     public void setResult(final Object value) {
@@ -534,7 +534,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
     public OMObservationType getTemporaryTemplate(final String temporaryName, final TemporalGeometricPrimitive time) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(super.toString());
@@ -585,7 +585,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         }
         return sb.toString();
     }
-    
+
     /**
      * Vérifie que cette station est identique à l'objet spécifié
      */
@@ -597,19 +597,19 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
         if (object instanceof OMObservationType && super.equals(object, mode)) {
             final OMObservationType that = (OMObservationType) object;
-            return Utilities.equals(this.featureOfInterest,  that.featureOfInterest)   &&
-                   Utilities.equals(this.metadata,           that.metadata)   &&
-                   Utilities.equals(this.observedProperty,   that.observedProperty)   &&
-                   Utilities.equals(this.parameter,          that.parameter)   &&
-                   Utilities.equals(this.phenomenonTime,     that.phenomenonTime)   &&
-                   Utilities.equals(this.procedure,          that.procedure)   &&
-                   Utilities.equals(this.relatedObservation, that.relatedObservation)   &&
-                   Utilities.equals(this.result,             that.result)   &&
-                   Utilities.equals(this.resultQuality,      that.resultQuality)   &&
-                   Utilities.equals(this.resultTime,         that.resultTime)   &&
-                   Utilities.equals(this.type,               that.type)   &&
-                   Utilities.equals(this.validTime,          that.validTime);
-        } 
+            return Objects.equals(this.featureOfInterest,  that.featureOfInterest)   &&
+                   Objects.equals(this.metadata,           that.metadata)   &&
+                   Objects.equals(this.observedProperty,   that.observedProperty)   &&
+                   Objects.equals(this.parameter,          that.parameter)   &&
+                   Objects.equals(this.phenomenonTime,     that.phenomenonTime)   &&
+                   Objects.equals(this.procedure,          that.procedure)   &&
+                   Objects.equals(this.relatedObservation, that.relatedObservation)   &&
+                   Objects.equals(this.result,             that.result)   &&
+                   Objects.equals(this.resultQuality,      that.resultQuality)   &&
+                   Objects.equals(this.resultTime,         that.resultTime)   &&
+                   Objects.equals(this.type,               that.type)   &&
+                   Objects.equals(this.validTime,          that.validTime);
+        }
         return false;
     }
 
@@ -634,17 +634,17 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
 
     @XmlRootElement
     public static class InternalPhenomenon implements org.geotoolkit.swe.xml.Phenomenon {
-    
+
         private final String name;
-        
+
         public InternalPhenomenon() {
             this.name = null;
         }
-        
+
         public InternalPhenomenon(final String name) {
             this.name = name;
         }
-        
+
         @Override
         public String getName() {
             return name;
@@ -654,7 +654,7 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
         public boolean equals(final Object obj) {
             if (obj instanceof Phenomenon) {
                 final org.geotoolkit.swe.xml.Phenomenon that = (org.geotoolkit.swe.xml.Phenomenon) obj;
-                return Utilities.equals(this.getName(), that.getName());
+                return Objects.equals(this.getName(), that.getName());
             }
             return false;
         }

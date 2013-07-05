@@ -22,7 +22,7 @@ import org.opengis.geometry.PositionFactory;
 import org.opengis.geometry.primitive.Point;
 
 import junit.framework.TestCase;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.JTSPositionFactory;
 
 /**

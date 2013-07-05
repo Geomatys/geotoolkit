@@ -120,18 +120,18 @@ public class DecimateMultiLineHandler extends MultiLineHandler {
         }
 
         // Prepare line strings and return the multilinestring
-        final LineString[] lineStrings = new LineString[numParts];
+        final LineString[] lineCharSequences = new LineString[numParts];
         for (int part = 0; part < numParts; part++) {
             if(dimensions == 2){
-                lineStrings[part] = GEOMETRY_FACTORY.createLineString(
+                lineCharSequences[part] = GEOMETRY_FACTORY.createLineString(
                         new ShapeCoordinateSequence2D(lines[part],decimateLine2D(lines[part])));
             }else{
-                lineStrings[part] = GEOMETRY_FACTORY.createLineString(
+                lineCharSequences[part] = GEOMETRY_FACTORY.createLineString(
                         new ShapeCoordinateSequence3D(lines[part]));
             }
         }
 
-        return GEOMETRY_FACTORY.createMultiLineString(lineStrings);
+        return GEOMETRY_FACTORY.createMultiLineString(lineCharSequences);
     }
 
 

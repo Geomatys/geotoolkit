@@ -37,7 +37,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -179,7 +179,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
 
         for (final NumberRange range : polygons.keySet()) {
 
-            if (range.contains(value)) {
+            if (range.containsAny(value)) {
                 if (block.range == range) {
                     //last pixel was in the same range
                     block.endX = point.x;
@@ -426,12 +426,12 @@ public class CoverageToVectorProcess extends AbstractProcess {
     private static class NaNRange extends NumberRange{
 
         public NaNRange() {
-            super(Double.class,0d,0d);
+            super(Double.class, 0d, true, 0d, true);
         }
 
         @Override
-        public boolean contains(final Number number) throws IllegalArgumentException {
-            return Double.isNaN(number.doubleValue());
+        public boolean contains(final Comparable number) throws IllegalArgumentException {
+            return Double.isNaN(((Number) number).doubleValue());
         }
     }
 

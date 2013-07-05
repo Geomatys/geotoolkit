@@ -24,7 +24,7 @@ import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.util.InternationalString;
 
 /**
- * Immutable implementation of GeoAPI Online Resource.
+ * Immutable implementation of Types Online Resource.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending

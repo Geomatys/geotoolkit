@@ -19,8 +19,9 @@ package org.geotoolkit.citygml.xml;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 
 /**
  *
@@ -31,14 +32,15 @@ public class CityGMLMarshallerPool {
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool("org.geotoolkit.internal.jaxb.geometry:" +
-                                          "org.geotoolkit.gml.xml.v311:" +
-                                          "org.geotoolkit.citygml.xml.v100:" +
-                                          "org.geotoolkit.citygml.xml.v100.appearance:" + 
-                                          "org.geotoolkit.citygml.xml.v100.building:" + 
-                                          "org.geotoolkit.citygml.xml.v100.cityfurniture:" + 
-                                          "org.geotoolkit.citygml.xml.v100.landuse:" + 
-                                          "org.geotoolkit.citygml.xml.v100.transportation");
+            instance = new MarshallerPool(JAXBContext.newInstance(
+                    "org.apache.sis.internal.jaxb.geometry:" +
+                    "org.geotoolkit.gml.xml.v311:" +
+                    "org.geotoolkit.citygml.xml.v100:" +
+                    "org.geotoolkit.citygml.xml.v100.appearance:" +
+                    "org.geotoolkit.citygml.xml.v100.building:" +
+                    "org.geotoolkit.citygml.xml.v100.cityfurniture:" +
+                    "org.geotoolkit.citygml.xml.v100.landuse:" +
+                    "org.geotoolkit.citygml.xml.v100.transportation"), null);
         } catch (JAXBException ex) {
             Logger.getLogger(CityGMLMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }

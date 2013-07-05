@@ -19,10 +19,10 @@ package org.geotoolkit.process.chain.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import org.geotoolkit.util.Utilities;
 
 /**
  *
@@ -30,29 +30,29 @@ import org.geotoolkit.util.Utilities;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ElementCondition extends Element implements Parameterized{
-        
+
     @XmlElement(name = "syntax")
     private String syntax;
-    
+
     @XmlElement(name = "expression")
     private String expression;
-     
+
     @XmlElement(name="inputs")
     private List<Parameter> inputs;
-    
+
     @XmlElement(name="outputs")
     private List<Parameter> outputs;
-    
+
     @XmlElement(name="success")
     private List<FlowLink> success;
-    
+
     @XmlElement(name="fail")
     private List<FlowLink> failed;
-    
+
     public ElementCondition() {
-        
+
     }
-    
+
     public ElementCondition(final ElementCondition condition) {
         super(condition.id);
         this.expression = condition.getExpression();
@@ -70,8 +70,8 @@ public class ElementCondition extends Element implements Parameterized{
     public ElementCondition(Integer id) {
         super(id);
     }
-    
-    public ElementCondition(final Integer id, final List<Parameter> inputs, final List<FlowLink> success, 
+
+    public ElementCondition(final Integer id, final List<Parameter> inputs, final List<FlowLink> success,
             final List<FlowLink> fail, final String expression, final int x, final int y) {
         super(id,x, y);
         this.inputs = inputs;
@@ -79,7 +79,7 @@ public class ElementCondition extends Element implements Parameterized{
         this.failed = fail;
         this.expression = expression;
     }
-    
+
     public final List<Parameter> getInputs() {
         if (inputs == null) {
             inputs = new ArrayList<Parameter>();
@@ -90,7 +90,7 @@ public class ElementCondition extends Element implements Parameterized{
     public void setInputs(List<Parameter> inputs) {
         this.inputs = inputs;
     }
-    
+
     public final List<FlowLink> getSuccess() {
         if (success == null) {
             success = new ArrayList<FlowLink>();
@@ -112,7 +112,7 @@ public class ElementCondition extends Element implements Parameterized{
     public void setFailed(List<FlowLink> fail) {
         this.failed = fail;
     }
-    
+
     public String getSyntax() {
         return syntax;
     }
@@ -120,7 +120,7 @@ public class ElementCondition extends Element implements Parameterized{
     public void setSyntax(String syntax) {
         this.syntax = syntax;
     }
-    
+
     public String getExpression() {
         return expression;
     }
@@ -141,15 +141,15 @@ public class ElementCondition extends Element implements Parameterized{
         if (this == obj) {
             return true;
         }
-        
+
         if (obj instanceof ElementCondition) { // no looking for position
             final ElementCondition that = (ElementCondition) obj;
-            return Utilities.equals(this.id,        that.id)
-                && Utilities.equals(this.inputs,    that.inputs)
-                && Utilities.equals(this.outputs,    that.outputs)
-                && Utilities.equals(this.success,   that.success)
-                && Utilities.equals(this.failed,      that.failed)
-                && Utilities.equals(this.expression,that.expression);
+            return Objects.equals(this.id,        that.id)
+                && Objects.equals(this.inputs,    that.inputs)
+                && Objects.equals(this.outputs,    that.outputs)
+                && Objects.equals(this.success,   that.success)
+                && Objects.equals(this.failed,      that.failed)
+                && Objects.equals(this.expression,that.expression);
         }
         return false;
     }
@@ -175,7 +175,7 @@ public class ElementCondition extends Element implements Parameterized{
         }
         return sb.toString();
     }
-    
+
     @Override
     public Element copy() {
         return new ElementCondition(this);
@@ -189,5 +189,5 @@ public class ElementCondition extends Element implements Parameterized{
     @Override
     public void setOutputs(List<Parameter> outputs) {
     }
-    
+
 }

@@ -23,7 +23,7 @@ import static org.opengis.annotation.Specification.*;
  * @author Guilhem Legal
  * 
  * @module pending
- * * @since GeoAPI 2.5
+ * * @since Types 2.5
  */
 @UML(identifier="SV_ServiceSpecification", specification=UNSPECIFIED)
 public interface ServiceSpecification {

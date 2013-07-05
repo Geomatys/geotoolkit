@@ -51,7 +51,7 @@ import org.geotoolkit.gml.xml.v311.CubicSplineType;
 import org.geotoolkit.gml.xml.v311.GeodesicStringType;
 import org.geotoolkit.gml.xml.v311.OffsetCurveType;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -75,38 +75,32 @@ public class GeometrytoJTS {
 
     /**
      * Unmarshall given GML String and transform it in a JTS geometry.
-     * 
+     *
      * @param gmlString
      * @return
      * @throws JAXBException
-     * @throws FactoryException 
+     * @throws FactoryException
      */
     public static Geometry toJTS(String gmlString) throws JAXBException, FactoryException{
         final Reader reader = new StringReader(gmlString);
-        
-        Unmarshaller unmarshaller = null;
+
         final Geometry geom;
-        try{
-            unmarshaller = GMLMarshallerPool.getInstance().acquireUnmarshaller();
-            Object jax = unmarshaller.unmarshal(reader);
-            
-            if(jax instanceof JAXBElement){
-                jax = ((JAXBElement)jax).getValue();
-            }
-            
-            if(jax instanceof AbstractGeometry){
-                geom = GeometrytoJTS.toJTS((AbstractGeometry)jax);
-            }else{
-                throw new JAXBException("Object is not a valid GML "+jax);
-            }
-        }finally{
-            if(unmarshaller != null){
-                GMLMarshallerPool.getInstance().release(unmarshaller);
-            }
+        final Unmarshaller unmarshaller = GMLMarshallerPool.getInstance().acquireUnmarshaller();
+        Object jax = unmarshaller.unmarshal(reader);
+
+        if(jax instanceof JAXBElement){
+            jax = ((JAXBElement)jax).getValue();
         }
+
+        if(jax instanceof AbstractGeometry){
+            geom = GeometrytoJTS.toJTS((AbstractGeometry)jax);
+        }else{
+            throw new JAXBException("Object is not a valid GML "+jax);
+        }
+        GMLMarshallerPool.getInstance().recycle(unmarshaller);
         return geom;
     }
-    
+
     /**
      * Transform A GML envelope into JTS Polygon
      *
@@ -233,7 +227,7 @@ public class GeometrytoJTS {
 
         final Polygon polygon = GF.createPolygon(exterior, holes);
 
-        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();        
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
         JTS.setCRS(polygon, crs);
         return polygon;
     }
@@ -268,7 +262,7 @@ public class GeometrytoJTS {
             final List<Coordinate> coords = toJTSCoords(gmlLine.getPos());
             ls = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
         }
-        
+
         JTS.setCRS(ls, crs);
         return ls;
     }
@@ -279,7 +273,7 @@ public class GeometrytoJTS {
             throw new FactoryException("A CRS (coordinate Reference system) must be specified for the line.");
         }
         final CoordinateReferenceSystem crs = toCRS(crsName);
-        
+
         final List<com.vividsolutions.jts.geom.LineString> lineList = new ArrayList<com.vividsolutions.jts.geom.LineString>();
         final CurveSegmentArrayProperty arrayProperty = gmlLine.getSegments();
         List<? extends AbstractCurveSegment> segments = arrayProperty.getAbstractCurveSegment();

@@ -39,8 +39,9 @@ import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.sampling.xml.v100.ObjectFactory;
 import org.geotoolkit.sampling.xml.v100.SamplingPointType;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
+import javax.xml.bind.JAXBContext;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
@@ -59,11 +60,11 @@ public class SamplingXMLBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool(
+        pool = new MarshallerPool(JAXBContext.newInstance(
                 "org.geotoolkit.sampling.xml.v100:" +
                 "org.geotoolkit.observation.xml.v100:" +
                 "org.geotoolkit.gml.xml.v311:" +
-                "org.geotoolkit.internal.jaxb.geometry");
+                "org.apache.sis.internal.jaxb.geometry"), null);
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }
@@ -71,10 +72,10 @@ public class SamplingXMLBindingTest {
     @After
     public void tearDown() throws Exception {
         if (unmarshaller != null) {
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
         if (marshaller != null) {
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
     }
 
@@ -114,13 +115,13 @@ public class SamplingXMLBindingTest {
                            "</sampling:SamplingPoint>" + '\n' ;
         XMLComparator comparator = new XMLComparator(expResult, result);
         comparator.compare();
-        
+
         final ObjectFactory facto = new ObjectFactory();
         FeatureCollectionType collection = new FeatureCollectionType();
         List<FeaturePropertyType> featProps = new ArrayList<FeaturePropertyType>();
         featProps.add(new FeaturePropertyType(facto.createSamplingPoint(sp)));
         collection.getFeatureMember().addAll(featProps);
-        
+
         sw = new StringWriter();
         marshaller.marshal(collection, sw);
 
@@ -190,7 +191,7 @@ public class SamplingXMLBindingTest {
 
         assertEquals(expResult.getPosition(), result.getPosition());
         assertEquals(expResult, result);
-        
+
          xml =             "<gml:FeatureCollection xmlns:sampling=\"http://www.opengis.net/sampling/1.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
                            "    <gml:featureMember>" + '\n' +
                            "        <sampling:SamplingPoint gml:id=\"samplingID-007\">" + '\n' +
@@ -211,13 +212,13 @@ public class SamplingXMLBindingTest {
         sr = new StringReader(xml);
 
         Object obj  =   ((JAXBElement) unmarshaller.unmarshal(sr)).getValue();
-        
+
         final ObjectFactory facto = new ObjectFactory();
         FeatureCollectionType collection = new FeatureCollectionType();
         List<FeaturePropertyType> featProps = new ArrayList<FeaturePropertyType>();
         featProps.add(new FeaturePropertyType(facto.createSamplingPoint(expResult)));
         collection.getFeatureMember().addAll(featProps);
-        
+
         assertEquals(collection, obj);
 
     }

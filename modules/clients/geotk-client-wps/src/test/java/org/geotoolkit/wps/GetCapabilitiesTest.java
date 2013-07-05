@@ -51,12 +51,12 @@ public class GetCapabilitiesTest {
             fail(ex.getLocalizedMessage());
             return;
         }
-        
+
         final String expectedURL = "http://test.com?SERVICE=WPS&ACCEPTVERSIONS=1.0.0&REQUEST=GetCapabilities";
         assertEquals(expectedURL, url.toString());
     }
-    
-   @Test 
+
+   @Test
    public void testRequestAndMarshall(){
        Marshaller marshaller = null;
         try {
@@ -64,27 +64,26 @@ public class GetCapabilitiesTest {
             final GetCapabilities request = caps100.makeRequest();
             assertEquals("WPS", request.getService());
             assertEquals("1.0.0", request.getAcceptVersions().getVersion().get(0));
-            
+
             final StringWriter stringWriter = new StringWriter();
             marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
             marshaller.marshal(request,stringWriter);
-            
-            final String expectedMarshalledRequest = 
+
+            final String expectedMarshalledRequest =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                     + "<wps:GetCapabilities service=\"WPS\" >\n"
                     + "    <wps:AcceptVersions>\n"
                     + "        <ows:Version>1.0.0</ows:Version>\n"
                     + "    </wps:AcceptVersions>\n"
                     + "</wps:GetCapabilities>\n";
-            
+
             String result = StringUtilities.removeXmlns(stringWriter.toString());
-            assertEquals(expectedMarshalledRequest, result);                   
-            
+            assertEquals(expectedMarshalledRequest, result);
+            WPSMarshallerPool.getInstance().recycle(marshaller);
+
         } catch (JAXBException ex) {
             fail(ex.getLocalizedMessage());
             return;
-        } finally {
-            WPSMarshallerPool.getInstance().release(marshaller);
         }
    }
 }

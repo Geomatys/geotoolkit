@@ -18,6 +18,7 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.util.Objects;
 import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,14 +26,13 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.AbstractCurveSegment;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for AbstractCurveSegmentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractCurveSegmentType">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractCurveSegmentType")
@@ -71,11 +71,11 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
 
     /**
      * Gets the value of the numDerivativesAtStart property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getNumDerivativesAtStart() {
         if (numDerivativesAtStart == null) {
@@ -87,11 +87,11 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
 
     /**
      * Sets the value of the numDerivativesAtStart property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setNumDerivativesAtStart(BigInteger value) {
         this.numDerivativesAtStart = value;
@@ -99,11 +99,11 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
 
     /**
      * Gets the value of the numDerivativesAtEnd property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getNumDerivativesAtEnd() {
         if (numDerivativesAtEnd == null) {
@@ -115,11 +115,11 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
 
     /**
      * Sets the value of the numDerivativesAtEnd property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setNumDerivativesAtEnd(BigInteger value) {
         this.numDerivativesAtEnd = value;
@@ -127,11 +127,11 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
 
     /**
      * Gets the value of the numDerivativeInterior property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getNumDerivativeInterior() {
         if (numDerivativeInterior == null) {
@@ -143,11 +143,11 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
 
     /**
      * Sets the value of the numDerivativeInterior property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setNumDerivativeInterior(BigInteger value) {
         this.numDerivativeInterior = value;
@@ -163,9 +163,9 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
         }
         if (object instanceof AbstractCurveSegmentType) {
             final AbstractCurveSegmentType that = (AbstractCurveSegmentType) object;
-            return  Utilities.equals(this.numDerivativeInterior, that.numDerivativeInterior) &&
-                    Utilities.equals(this.numDerivativesAtEnd,   that.numDerivativesAtEnd)   &&
-                    Utilities.equals(this.numDerivativesAtStart, that.numDerivativesAtStart);
+            return  Objects.equals(this.numDerivativeInterior, that.numDerivativeInterior) &&
+                    Objects.equals(this.numDerivativesAtEnd,   that.numDerivativesAtEnd)   &&
+                    Objects.equals(this.numDerivativesAtStart, that.numDerivativesAtStart);
         }
         return false;
     }

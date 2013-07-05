@@ -16,21 +16,21 @@
  */
 package org.geotoolkit.ogc.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.namespace.QName;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.PropertyName;
 
 
 /**
  * <p>Java class for PropertyNameType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PropertyNameType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import org.opengis.filter.expression.PropertyName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,9 +56,9 @@ public class InternalPropertyName implements PropertyName {
      * An empty constructor used by JAXB
      */
     public InternalPropertyName() {
-        
+
     }
-    
+
     /**
      * Build a new propertyName with the specified name.
      */
@@ -78,13 +78,13 @@ public class InternalPropertyName implements PropertyName {
             }
         }
     }
-    
+
     public InternalPropertyName(final InternalPropertyName that) {
         if (that != null && that.content != null) {
             this.content = that.content;
         }
     }
-    
+
     /**
      * Gets the value of the content property.
      */
@@ -123,7 +123,7 @@ public class InternalPropertyName implements PropertyName {
     public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -134,8 +134,8 @@ public class InternalPropertyName implements PropertyName {
         }
         if (object instanceof InternalPropertyName) {
             final InternalPropertyName that = (InternalPropertyName) object;
-            
-            return  Utilities.equals(this.content, that.content);
+
+            return  Objects.equals(this.content, that.content);
         }
         return false;
     }

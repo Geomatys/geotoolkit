@@ -51,15 +51,16 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.style.StyleConstants;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.wmc.xml.v110.*;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Description;
 import org.opengis.util.FactoryException;
+import javax.xml.bind.JAXBContext;
 
 /**
  *
@@ -90,9 +91,10 @@ public class WMCUtilities {
      * @throws JAXBException if the xml cannot be read.
      */
     public static MapContext getMapContext(InputStream source) throws JAXBException {
-        final MarshallerPool pool = new MarshallerPool("org.geotoolkit.ogc.xml.exception:" +
-                                                        "org.geotoolkit.wmc.xml.v110:" +
-                                                        "org.geotoolkit.ogc.xml.v100");
+        final MarshallerPool pool = new MarshallerPool(JAXBContext.newInstance(
+                "org.geotoolkit.ogc.xml.exception:" +
+                "org.geotoolkit.wmc.xml.v110:" +
+                "org.geotoolkit.ogc.xml.v100"), null);
         final Unmarshaller um = pool.acquireUnmarshaller();
         Object o = um.unmarshal(source);
         if (o instanceof JAXBElement) {
@@ -103,7 +105,7 @@ public class WMCUtilities {
 
         final MapContext context = getMapContext(root);
 
-        pool.release(um);
+        pool.recycle(um);
         return context;
     }
 

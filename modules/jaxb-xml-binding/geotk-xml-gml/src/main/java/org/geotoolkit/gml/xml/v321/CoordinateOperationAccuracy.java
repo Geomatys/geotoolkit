@@ -28,10 +28,10 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
-import org.geotoolkit.metadata.iso.quality.DefaultAbsoluteExternalPositionalAccuracy;
-import org.geotoolkit.metadata.iso.quality.DefaultGriddedDataPositionalAccuracy;
-import org.geotoolkit.metadata.iso.quality.DefaultRelativeInternalPositionalAccuracy;
+import org.apache.sis.metadata.iso.quality.AbstractPositionalAccuracy;
+import org.apache.sis.metadata.iso.quality.DefaultAbsoluteExternalPositionalAccuracy;
+import org.apache.sis.metadata.iso.quality.DefaultGriddedDataPositionalAccuracy;
+import org.apache.sis.metadata.iso.quality.DefaultRelativeInternalPositionalAccuracy;
 
 
 /**

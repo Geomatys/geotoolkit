@@ -28,8 +28,8 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
 
 import org.opengis.metadata.citation.OnlineResource;
 
@@ -47,28 +47,23 @@ public class CSWBindingUtilities {
     /**
      * Returns {@link AbstractCapabilities} object as a result of unmarshalling
      * from source object.
-     * 
+     *
      * @param source Object to unmarshal XML data from.
      * @return {@link AbstractCapabilities} instance which is the unmarshall result.
      * @throws JAXBException If any unexpected errors occur while unmarshalling.
      */
     public static AbstractCapabilities unmarshall(final Object source) throws JAXBException {
 
-        Unmarshaller unMarshaller = null;
         MarshallerPool selectedPool = CSWMarshallerPool.getInstance();
-        try {
-            unMarshaller = selectedPool.acquireUnmarshaller();
-            return (AbstractCapabilities) unmarshall(source, unMarshaller);
-        } finally {
-            if (selectedPool != null && unMarshaller != null) {
-                selectedPool.release(unMarshaller);
-            }
-        }
+        Unmarshaller unMarshaller = selectedPool.acquireUnmarshaller();
+        AbstractCapabilities c = (AbstractCapabilities) unmarshall(source, unMarshaller);
+        selectedPool.recycle(unMarshaller);
+        return c;
     }
 
     /**
      * Unmarshal XML data from the specified source and return the resulting content tree.
-     * 
+     *
      * @param source object to unmarshall
      * @param unMarshaller {@link Unmarshaller} instance
      * @return the newly created root object of the java content tree.

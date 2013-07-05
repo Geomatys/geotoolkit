@@ -17,6 +17,7 @@
 
 package org.geotoolkit.swe.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractEncoding;
 import org.geotoolkit.swe.xml.AbstractEncodingProperty;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.xlink.xml.v100.ActuateType;
 import org.geotoolkit.xlink.xml.v100.ShowType;
 import org.geotoolkit.xlink.xml.v100.TypeType;
@@ -34,9 +34,9 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
 
 /**
  * <p>Java class for AbstractEncodingPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractEncodingPropertyType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractEncodingPropertyType", propOrder = {
@@ -60,10 +60,10 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
     @XmlElementRef(name = "AbstractEncoding", namespace = "http://www.opengis.net/swe/2.0", type = JAXBElement.class)
     private JAXBElement<? extends AbstractEncodingType> abstractEncoding;
-    
+
     @XmlTransient
     private JAXBElement<? extends AbstractEncodingType> hiddenEncoding;
-    
+
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private TypeType type;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
@@ -80,13 +80,13 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     private ActuateType actuate;
 
     public AbstractEncodingPropertyType() {
-        
+
     }
-    
+
     public AbstractEncodingPropertyType(final JAXBElement<? extends AbstractEncodingType> abstractEncoding) {
         this.abstractEncoding = abstractEncoding;
     }
-    
+
     @Override
     public void setToHref() {
         if (abstractEncoding != null) {
@@ -105,17 +105,17 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
         }
         return null;
     }
-    
+
     /**
      * Gets the value of the abstractEncoding property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link TextEncodingType }{@code >}
      *     {@link JAXBElement }{@code <}{@link XMLEncodingType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryEncodingType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractEncodingType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractEncodingType> getAbstractEncoding() {
         return abstractEncoding;
@@ -123,14 +123,14 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
     /**
      * Sets the value of the abstractEncoding property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link TextEncodingType }{@code >}
      *     {@link JAXBElement }{@code <}{@link XMLEncodingType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryEncodingType }{@code >}
      *     {@link JAXBElement }{@code <}{@link AbstractEncodingType }{@code >}
-     *     
+     *
      */
     public void setAbstractEncoding(JAXBElement<? extends AbstractEncodingType> value) {
         this.abstractEncoding = ((JAXBElement<? extends AbstractEncodingType> ) value);
@@ -138,11 +138,11 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TypeType }
-     *     
+     *
      */
     @Override
     public String getType() {
@@ -155,11 +155,11 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TypeType }
-     *     
+     *
      */
     public void setType(TypeType value) {
         this.type = value;
@@ -167,11 +167,11 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHref() {
@@ -180,11 +180,11 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setHref(String value) {
         this.href = value;
@@ -192,11 +192,11 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getRole() {
@@ -205,11 +205,11 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setRole(String value) {
         this.role = value;
@@ -217,11 +217,11 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getArcrole() {
@@ -230,11 +230,11 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setArcrole(String value) {
         this.arcrole = value;
@@ -242,11 +242,11 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getTitle() {
@@ -255,11 +255,11 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(String value) {
         this.title = value;
@@ -267,11 +267,11 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShowType }
-     *     
+     *
      */
     @Override
     public String getShow() {
@@ -283,11 +283,11 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShowType }
-     *     
+     *
      */
     public void setShow(ShowType value) {
         this.show = value;
@@ -295,11 +295,11 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ActuateType }
-     *     
+     *
      */
     @Override
     public String getActuate() {
@@ -311,11 +311,11 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ActuateType }
-     *     
+     *
      */
     public void setActuate(ActuateType value) {
         this.actuate = value;
@@ -341,21 +341,21 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
             if (this.abstractEncoding == null && that.abstractEncoding == null) {
                 enc = true;
             } else if (this.abstractEncoding != null && that.abstractEncoding != null) {
-                enc = Utilities.equals(this.abstractEncoding.getValue(),      that.abstractEncoding.getValue());
+                enc = Objects.equals(this.abstractEncoding.getValue(), that.abstractEncoding.getValue());
             }
             return enc     &&
-                   Utilities.equals(this.actuate,            that.actuate)          &&
-                   Utilities.equals(this.arcrole,            that.arcrole)          &&
-                   Utilities.equals(this.type,               that.type)             &&
-                   Utilities.equals(this.href,               that.href)             &&
-                   Utilities.equals(this.show,               that.show)             &&
-                   Utilities.equals(this.role,               that.role)             &&
-                   Utilities.equals(this.title,              that.title);
+                   Objects.equals(this.actuate,            that.actuate)          &&
+                   Objects.equals(this.arcrole,            that.arcrole)          &&
+                   Objects.equals(this.type,               that.type)             &&
+                   Objects.equals(this.href,               that.href)             &&
+                   Objects.equals(this.show,               that.show)             &&
+                   Objects.equals(this.role,               that.role)             &&
+                   Objects.equals(this.title,              that.title);
         }
         return false;
     }
 
-    
+
     @Override
     public int hashCode() {
         int hash = 5;
@@ -373,7 +373,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     /**
      * Retourne une representation de l'objet.
      */
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder("[AbstractEncodingPropertyType]\n");

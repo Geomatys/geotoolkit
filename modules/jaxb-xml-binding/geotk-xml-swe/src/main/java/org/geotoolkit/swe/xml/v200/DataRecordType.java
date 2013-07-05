@@ -19,20 +19,20 @@ package org.geotoolkit.swe.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.DataRecord;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for DataRecordType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataRecordType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataRecordType", propOrder = {
@@ -65,20 +65,20 @@ public class DataRecordType extends AbstractDataComponentType implements DataRec
     private List<Field> field;
 
     public DataRecordType() {
-        
+
     }
-    
+
     public DataRecordType(final String id, final String definition, final boolean fixed, final List<Field> fields) {
         super(id, definition, !fixed);
         this.field = fields;
     }
-    
+
     /**
      * Gets the value of the field property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link DataRecordType.Field }
-     * 
+     *
      */
     @Override
     public List<Field> getField() {
@@ -87,7 +87,7 @@ public class DataRecordType extends AbstractDataComponentType implements DataRec
         }
         return this.field;
     }
-    
+
     public void addField(final Field newField) {
         if (field == null) {
             field = new ArrayList<Field>();
@@ -106,7 +106,7 @@ public class DataRecordType extends AbstractDataComponentType implements DataRec
         }
         return sb.toString();
     }
-    
+
     @Override
     public boolean equals(final Object object) {
         if (object == this) {
@@ -115,7 +115,7 @@ public class DataRecordType extends AbstractDataComponentType implements DataRec
         if (object instanceof DataRecordType && super.equals(object)) {
             final DataRecordType that = (DataRecordType) object;
 
-            return Utilities.equals(this.field,    that.field);
+            return Objects.equals(this.field, that.field);
         }
         return false;
     }

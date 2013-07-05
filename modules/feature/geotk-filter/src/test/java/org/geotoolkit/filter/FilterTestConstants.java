@@ -32,7 +32,7 @@ import java.awt.Color;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import org.opengis.filter.FilterFactory2;
 import org.opengis.util.FactoryException;

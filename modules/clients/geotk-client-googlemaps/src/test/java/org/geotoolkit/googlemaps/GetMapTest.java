@@ -19,7 +19,7 @@ package org.geotoolkit.googlemaps;
 import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.junit.Test;

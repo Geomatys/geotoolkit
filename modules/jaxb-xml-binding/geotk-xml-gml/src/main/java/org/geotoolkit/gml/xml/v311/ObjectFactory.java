@@ -40,7 +40,7 @@ import javax.xml.namespace.QName;
  * @module pending
  */
 @XmlRegistry
-public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectFactory {
+public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectFactory {
 
     public static final QName _CoordinateReferenceSystem_QNAME = new QName("http://www.opengis.net/gml", "AbstractCoordinateReferenceSystem");
     public static final QName _DatumID_QNAME = new QName("http://www.opengis.net/gml", "datumID");

@@ -18,7 +18,7 @@ package org.geotoolkit.osmtms;
 
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *

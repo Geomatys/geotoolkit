@@ -30,7 +30,7 @@ import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wms.v111.GetCapabilities111;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;

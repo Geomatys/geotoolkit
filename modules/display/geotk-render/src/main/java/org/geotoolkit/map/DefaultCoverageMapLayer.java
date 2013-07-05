@@ -24,7 +24,7 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.geometry.ImmutableEnvelope;
+import org.apache.sis.geometry.ImmutableEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
@@ -44,7 +44,8 @@ import static org.apache.sis.util.ArgumentChecks.*;
  */
 public class DefaultCoverageMapLayer extends AbstractMapLayer implements CoverageMapLayer {
 
-    private static final ImmutableEnvelope INFINITE = new ImmutableEnvelope(DefaultGeographicCRS.WGS84, -180, 180, -90, 90);
+    private static final ImmutableEnvelope INFINITE = new ImmutableEnvelope(
+            new double[] {-180, -90}, new double[] {180, 90}, DefaultGeographicCRS.WGS84);
 
     private final CoverageReference ref;
     private final Name coverageName;

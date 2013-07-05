@@ -33,7 +33,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.referencing.NoSuchAuthorityCodeException;

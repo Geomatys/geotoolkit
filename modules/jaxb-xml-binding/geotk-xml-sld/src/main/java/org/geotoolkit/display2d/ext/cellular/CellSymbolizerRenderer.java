@@ -47,11 +47,11 @@ import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRen
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.opengis.feature.simple.SimpleFeature;
@@ -69,26 +69,26 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  */
 public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedCellSymbolizer>{
-    
+
     private static final GeometryFactory GF = new GeometryFactory();
-    
-    public CellSymbolizerRenderer(SymbolizerRendererService service, 
+
+    public CellSymbolizerRenderer(SymbolizerRendererService service,
             CachedCellSymbolizer symbol, RenderingContext2D context) {
         super(service, symbol, context);
     }
 
     @Override
     public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
-        
+
         final GridCoverage2D coverage = toObjective(projectedCoverage);
         if(coverage == null){
             LOGGER.log(Level.WARNING, "Reprojected coverage is null.");
             return;
         }
-        
+
         final MathTransform2D gridToCRS = coverage.getGridGeometry().getGridToCRS2D();
-        
-        Envelope env = renderingContext.getCanvasObjectiveBounds();        
+
+        Envelope env = renderingContext.getCanvasObjectiveBounds();
         final AffineTransform tr;
         try {
             // TODO: handle the case where gridToCRS is not affine.
@@ -110,8 +110,8 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
             LOGGER.log(Level.WARNING, ex.getMessage(),ex);
             return;
         }
-        
-        
+
+
         //calculate decimation factor
         final int cellSize = symbol.getSource().getCellSize();
         Point2D delta = new Point2D.Double(cellSize, 0);
@@ -120,24 +120,24 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         delta.setLocation(0, cellSize);
         delta = tr.deltaTransform(delta, delta);
         final int decimateY = length(delta);
-        
+
         final Rectangle2D shp = new Rectangle2D.Double(env.getMinimum(0)/decimateX, env.getMinimum(1)/decimateY, env.getSpan(0)/decimateX, env.getSpan(1)/decimateY);
         final RenderedImage image = coverage.getRenderedImage();
         final int nbBand = image.getSampleModel().getNumBands();
-        
-        //prepare the cell feature type        
+
+        //prepare the cell feature type
         final SimpleFeatureType cellType = CellSymbolizer.buildCellType(coverage);
         final Object[] values = new Object[1+7*nbBand];
         final SimpleFeature feature = new DefaultSimpleFeature(cellType, new DefaultFeatureId("cell-n"), values, false);
         final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(), null);
         params.update(renderingContext);
         final DefaultProjectedFeature pf = new DefaultProjectedFeature(params,feature);
-        
-        //iterator on image  
+
+        //iterator on image
         final CellIterator ite = new CellIterator(image,decimateX,decimateY);
         final CachedRule rule = symbol.getCachedRule();
         final CanvasMonitor monitor = renderingContext.getMonitor();
-        
+
         while(ite.next()){
             if(monitor.stopRequested()) break;
             if(!ite.visible(shp)) continue;
@@ -146,7 +146,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
             try {
                 final Point2D obj = gridToCRS.transform(point, null);
                 final Statistics[] stats = ite.statistics();
-                
+
                 values[0] = GF.createPoint(new Coordinate(obj.getX(), obj.getY()));
                 int i=0;
                 for(int b=0,n=nbBand;b<n;b++){
@@ -154,24 +154,24 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                     values[++i] = stats[b].minimum();
                     values[++i] = stats[b].mean();
                     values[++i] = stats[b].maximum();
-                    values[++i] = stats[b].range();
+                    values[++i] = stats[b].span();
                     values[++i] = stats[b].rms();
                     values[++i] = stats[b].sum();
                 }
-                                
+
                 if(rule.getFilter() == null || rule.getFilter().evaluate(feature)){
                     for(CachedSymbolizer cs : rule.symbolizers()){
                         cs.getRenderer().createRenderer(cs, renderingContext).portray(pf);
                     }
                 }
-                
+
             } catch (TransformException ex) {
                 LOGGER.log(Level.INFO, ex.getMessage(),ex);
             }
         }
-        
+
     }
-    
+
     private GridCoverage2D toObjective(final ProjectedCoverage projectedCoverage) throws PortrayalException{
         double[] resolution = renderingContext.getResolution();
         Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
@@ -258,8 +258,8 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
         return dataCoverage;
     }
-    
-    private AffineTransform calculateAverageAffine(final RenderingContext2D context, 
+
+    private AffineTransform calculateAverageAffine(final RenderingContext2D context,
             final GridCoverage2D coverage) throws FactoryException, TransformException{
 
         final MathTransform trs = context.getMathTransform(context.getObjectiveCRS(),coverage.getCoordinateReferenceSystem2D() );
@@ -278,15 +278,15 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         aff.setToScale(scaleX,scaleY);
         return aff;
     }
-    
+
     /**
      * Evaluate the lenght of the given vector.
-     * 
+     *
      * @param delta : vector to evaluate
      * @return integer : lenght of the vector rounded at the above integer
      */
     private static int length(final Point2D delta) {
         return Math.max(1, (int) Math.ceil(Math.hypot(delta.getX(), delta.getY())));
     }
-    
+
 }

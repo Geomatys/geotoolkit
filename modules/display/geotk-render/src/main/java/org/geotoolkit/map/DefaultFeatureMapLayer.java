@@ -34,7 +34,7 @@ import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Range;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.opengis.feature.Feature;

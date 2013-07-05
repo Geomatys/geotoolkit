@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.process.chain.model;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import org.geotoolkit.util.Utilities;
 import org.opengis.parameter.ParameterDescriptor;
 
 /**
@@ -155,7 +155,10 @@ public class DataLink {
         }
         if (obj instanceof DataLink) {
             final DataLink that = (DataLink) obj;
-            return Utilities.equals(this.sourceCode, that.sourceCode) && Utilities.equals(this.sourceId, that.sourceId) && Utilities.equals(this.targetCode, that.targetCode) && Utilities.equals(this.targetId, that.targetId);
+            return Objects  .equals(this.sourceCode, that.sourceCode) &&
+                                   (this.sourceId == that.sourceId) &&
+                   Objects  .equals(this.targetCode, that.targetCode) &&
+                                   (this.targetId == that.targetId);
         }
         return false;
     }
@@ -173,5 +176,5 @@ public class DataLink {
         }
         return sb.toString();
     }
-    
+
 }

@@ -50,7 +50,7 @@ import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.DefaultTileReference;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.TileReference;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.XImageIO;
 import org.apache.sis.util.Classes;

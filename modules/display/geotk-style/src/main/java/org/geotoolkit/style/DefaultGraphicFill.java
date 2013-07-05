@@ -27,7 +27,7 @@ import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.StyleVisitor;
 
 /**
- * Immutable implementation of GeoAPI Graphic.
+ * Immutable implementation of Types Graphic.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending

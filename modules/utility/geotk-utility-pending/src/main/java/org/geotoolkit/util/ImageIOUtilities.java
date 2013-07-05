@@ -38,7 +38,7 @@ import javax.imageio.stream.ImageOutputStream;
 import org.geotoolkit.lang.Static;
 
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

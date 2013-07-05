@@ -30,8 +30,8 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
 
 import org.opengis.metadata.citation.OnlineResource;
 
@@ -48,26 +48,20 @@ public class WFSBindingUtilities {
 
      public static WFSCapabilities unmarshall(final Object source, final WFSVersion version) throws JAXBException{
 
-         final MarshallerPool pool = WFSMarshallerPool.getInstance();
-         Unmarshaller unMarshaller = null;
-         try {
-             switch(version){
-                 case v110 : break;
-                 case v200 : break;
-                 default: throw new IllegalArgumentException("unknonwed version");
-             }
-             unMarshaller = pool.acquireUnmarshaller();
-             final Object unmarshalled = unmarshall(source, unMarshaller);
-             if (unmarshalled instanceof JAXBElement) {
-                 return (WFSCapabilities) ((JAXBElement)unmarshalled).getValue();
-             } else {
-                return (WFSCapabilities) unmarshalled;
-             }
-         } finally {
-             if (unMarshaller != null) {
-                 pool.release(unMarshaller);
-             }
-         }
+        final MarshallerPool pool = WFSMarshallerPool.getInstance();
+        switch(version){
+            case v110 : break;
+            case v200 : break;
+            default: throw new IllegalArgumentException("unknonwed version");
+        }
+        Unmarshaller unMarshaller = pool.acquireUnmarshaller();
+        final Object unmarshalled = unmarshall(source, unMarshaller);
+        pool.recycle(unMarshaller);
+        if (unmarshalled instanceof JAXBElement) {
+            return (WFSCapabilities) ((JAXBElement)unmarshalled).getValue();
+        } else {
+           return (WFSCapabilities) unmarshalled;
+        }
      }
 
      private static Object unmarshall(final Object source, final Unmarshaller unMarshaller)

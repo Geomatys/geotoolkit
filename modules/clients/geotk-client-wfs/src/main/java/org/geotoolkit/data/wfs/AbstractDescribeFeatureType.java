@@ -138,16 +138,13 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
             marshaller = WFSMarshallerPool.getInstance().acquireMarshaller();
             marshaller.marshal(request, stream);
             //marshaller.marshal(request, System.out);
+            WFSMarshallerPool.getInstance().recycle(marshaller);
         } catch (JAXBException ex) {
             throw new IOException(ex);
-        } finally {
-            if (marshaller != null) {
-                WFSMarshallerPool.getInstance().release(marshaller);
-            }
         }
         stream.close();
         return security.decrypt(conec.getInputStream());
     }
 
-    
+
 }

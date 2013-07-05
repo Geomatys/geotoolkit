@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -30,18 +31,17 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
-import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.temporal.PeriodDuration;
 import org.opengis.util.InternationalString;
 
 
 /**
  * <p>Java class for TM_PeriodDuration_PropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TM_PeriodDuration_PropertyType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.opengis.util.InternationalString;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TM_PeriodDuration_PropertyType", propOrder = {
@@ -69,9 +69,9 @@ public class PeriodDurationType implements PeriodDuration {
     protected List<String> nilReason;
 
     public PeriodDurationType() {
-        
+
     }
-    
+
     public PeriodDurationType(final String s) {
         try {
             final DatatypeFactory factory = DatatypeFactory.newInstance();
@@ -79,9 +79,9 @@ public class PeriodDurationType implements PeriodDuration {
         } catch (DatatypeConfigurationException ex) {
             Logging.getLogger(PeriodDurationType.class).log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
         }
-        
+
     }
-    
+
     public PeriodDurationType(final boolean isPositive, final int years, final int months, final int days, final int hours, final int minutes,
 		final int seconds) {
         try {
@@ -90,9 +90,9 @@ public class PeriodDurationType implements PeriodDuration {
         } catch (DatatypeConfigurationException ex) {
             Logging.getLogger(PeriodDurationType.class).log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
         }
-        
+
     }
-    
+
     public PeriodDurationType(final boolean isPositive, final BigInteger years, final BigInteger months, final BigInteger days, final BigInteger hours, final BigInteger minutes,
 		final BigDecimal seconds) {
         try {
@@ -101,16 +101,16 @@ public class PeriodDurationType implements PeriodDuration {
         } catch (DatatypeConfigurationException ex) {
             Logging.getLogger(PeriodDurationType.class).log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
         }
-        
+
     }
-    
+
     /**
      * Gets the value of the tmPeriodDuration property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Duration }
-     *     
+     *
      */
     public Duration getTMPeriodDuration() {
         return tmPeriodDuration;
@@ -118,11 +118,11 @@ public class PeriodDurationType implements PeriodDuration {
 
     /**
      * Sets the value of the tmPeriodDuration property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Duration }
-     *     
+     *
      */
     public void setTMPeriodDuration(Duration value) {
         this.tmPeriodDuration = value;
@@ -130,10 +130,10 @@ public class PeriodDurationType implements PeriodDuration {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
@@ -202,9 +202,9 @@ public class PeriodDurationType implements PeriodDuration {
 
     @Override
     public String toString() {
-        return tmPeriodDuration + ""; 
+        return tmPeriodDuration + "";
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -212,8 +212,8 @@ public class PeriodDurationType implements PeriodDuration {
         }
         if (obj instanceof PeriodDurationType) {
             final PeriodDurationType that = (PeriodDurationType) obj;
-            return Utilities.equals(this.nilReason,        that.nilReason) &&
-                   Utilities.equals(this.tmPeriodDuration, that.tmPeriodDuration);
+            return Objects.equals(this.nilReason,        that.nilReason) &&
+                   Objects.equals(this.tmPeriodDuration, that.tmPeriodDuration);
         }
         return false;
     }

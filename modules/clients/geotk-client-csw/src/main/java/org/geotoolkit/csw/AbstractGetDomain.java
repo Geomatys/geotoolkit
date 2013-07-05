@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import static org.geotoolkit.csw.AbstractCSWRequest.POOL;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.geotoolkit.csw.xml.CswXmlFactory;
@@ -102,17 +103,13 @@ public abstract class AbstractGetDomain extends AbstractCSWRequest implements Ge
         OutputStream stream = conec.getOutputStream();
         stream = security.encrypt(stream);
 
-        Marshaller marsh = null;
         try {
-            marsh = POOL.acquireMarshaller();
+            final Marshaller marsh = POOL.acquireMarshaller();
             final GetDomain domainXml = CswXmlFactory.createGetDomain(version, "CSW",  propertyName, null);
             marsh.marshal(domainXml, stream);
+            POOL.recycle(marsh);
         } catch (JAXBException ex) {
             throw new IOException(ex);
-        } finally {
-            if (POOL != null && marsh != null) {
-                POOL.release(marsh);
-            }
         }
         stream.close();
         return security.decrypt(conec.getInputStream());

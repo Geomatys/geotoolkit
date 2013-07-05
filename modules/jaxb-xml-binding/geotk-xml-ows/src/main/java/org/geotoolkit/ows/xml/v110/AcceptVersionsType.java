@@ -19,20 +19,20 @@ package org.geotoolkit.ows.xml.v110;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
- * Prioritized sequence of one or more specification versions accepted by client, with preferred versions listed first. See Version negotiation subclause for more information. 
- * 
+ * Prioritized sequence of one or more specification versions accepted by client, with preferred versions listed first. See Version negotiation subclause for more information.
+ *
  * <p>Java class for AcceptVersionsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AcceptVersionsType">
  *   &lt;complexContent>
@@ -44,7 +44,7 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module pending
  */
@@ -61,9 +61,9 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
      * Empty constructor used by JAXB.
      */
     AcceptVersionsType(){
-        
+
     }
-    
+
     /**
      * Build a new List of acceptVersion.
      */
@@ -73,11 +73,11 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
             version.add(v);
         }
     }
-    
+
     public AcceptVersionsType(final List<String> version){
         this.version = version;
     }
-    
+
     /**
      * Gets the value of the version property.
      */
@@ -88,17 +88,17 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
         }
         return Collections.unmodifiableList(version);
     }
-    
+
     /**
      * Add a new accepted version to the list.
-     * 
+     *
      * @param version a number of version.
      */
     @Override
     public void addVersion(final String version) {
         this.version.add(version);
     }
-    
+
     public void addFirstVersion(final String version) {
         this.version.add(0, version);
     }
@@ -113,7 +113,7 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
         }
         if (object instanceof AcceptVersionsType) {
             final AcceptVersionsType that = (AcceptVersionsType) object;
-            return Utilities.equals(this.version, that.version);
+            return Objects.equals(this.version, that.version);
         }
         return false;
     }
@@ -124,7 +124,7 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
         hash = 17 * hash + (this.version != null ? this.version.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("[AcceptVersionsType]\n");

@@ -63,11 +63,11 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.Range;
 import org.geotoolkit.util.SwingEventPassThrough;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
@@ -204,7 +204,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             }
 
             if(min != null && max != null){
-                ranges.add(NumberRange.create(min, max));
+                ranges.add(NumberRange.create(min, true, max, true));
             }
 
         }else if(layer instanceof FeatureMapLayer){
@@ -252,7 +252,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
                             ponctuals.add(d2);
                         }else if(d1 != null && d2 != null){
                             if(d1.doubleValue() != d2.doubleValue()){
-                                ranges.add(NumberRange.create(d1, d2));
+                                ranges.add(NumberRange.create(d1, true, d2, true));
                             }else{
                                 ponctuals.add(d1);
                             }

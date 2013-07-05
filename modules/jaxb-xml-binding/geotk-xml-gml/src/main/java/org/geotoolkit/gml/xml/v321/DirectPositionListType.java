@@ -20,6 +20,7 @@ package org.geotoolkit.gml.xml.v321;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,19 +28,18 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.gml.xml.DirectPositionList;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * posList instances (and other instances with the content model specified by DirectPositionListType) hold the coordinates for a sequence of direct positions within the same coordinate reference system (CRS).
- * if no srsName attribute is given, the CRS shall be specified as part of the larger context this geometry element is part of, typically a geometric object like a point, curve, etc. 
+ * if no srsName attribute is given, the CRS shall be specified as part of the larger context this geometry element is part of, typically a geometric object like a point, curve, etc.
  * The optional attribute count specifies the number of direct positions in the list. If the attribute count is present then the attribute srsDimension shall be present, too.
  * The number of entries in the list is equal to the product of the dimensionality of the coordinate reference system (i.e. it is a derived value of the coordinate reference system definition) and the number of direct positions.
- * 
+ *
  * <p>Java class for DirectPositionListType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DirectPositionListType">
  *   &lt;simpleContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DirectPositionListType", propOrder = {
@@ -76,21 +76,21 @@ public class DirectPositionListType implements DirectPositionList {
     private List<String> uomLabels;
 
     public DirectPositionListType() {
-        
+
     }
-    
+
     public DirectPositionListType(List<Double> value) {
         this.value = value;
     }
-    
+
     /**
      * A type for a list of values of the respective simple type.Gets the value of the value property.
-     * 
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Double }
-     * 
-     * 
+     *
+     *
      */
     public List<Double> getValue() {
         if (value == null) {
@@ -110,14 +110,14 @@ public class DirectPositionListType implements DirectPositionList {
         this.value = value;
     }
 
-    
+
     /**
      * Gets the value of the count property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getCount() {
         return count;
@@ -125,11 +125,11 @@ public class DirectPositionListType implements DirectPositionList {
 
     /**
      * Sets the value of the count property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setCount(Integer value) {
         this.count = value;
@@ -137,11 +137,11 @@ public class DirectPositionListType implements DirectPositionList {
 
     /**
      * Gets the value of the srsName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSrsName() {
         return srsName;
@@ -149,11 +149,11 @@ public class DirectPositionListType implements DirectPositionList {
 
     /**
      * Sets the value of the srsName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSrsName(String value) {
         this.srsName = value;
@@ -161,11 +161,11 @@ public class DirectPositionListType implements DirectPositionList {
 
     /**
      * Gets the value of the srsDimension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getSrsDimension() {
         return srsDimension;
@@ -173,11 +173,11 @@ public class DirectPositionListType implements DirectPositionList {
 
     /**
      * Sets the value of the srsDimension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setSrsDimension(Integer value) {
         this.srsDimension = value;
@@ -185,11 +185,11 @@ public class DirectPositionListType implements DirectPositionList {
 
     /**
      * Gets the value of the axisLabels property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getAxisLabels() {
         if (axisLabels == null) {
@@ -200,11 +200,11 @@ public class DirectPositionListType implements DirectPositionList {
 
     /**
      * Gets the value of the uomLabels property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getUomLabels() {
         if (uomLabels == null) {
@@ -259,12 +259,12 @@ public class DirectPositionListType implements DirectPositionList {
         }
         if (object instanceof DirectPositionListType) {
             final DirectPositionListType that = (DirectPositionListType) object;
-            return  Utilities.equals(this.getAxisLabels(), that.getAxisLabels()) &&
-                    Utilities.equals(this.srsDimension,    that.srsDimension)    &&
-                    Utilities.equals(this.srsName,         that.srsName)         &&
-                    Utilities.equals(this.count,           that.count)           &&
-                    Utilities.equals(this.getUomLabels(),  that.getUomLabels())  &&
-                    Utilities.equals(this.value,           that.value);
+            return  Objects.equals(this.getAxisLabels(), that.getAxisLabels()) &&
+                    Objects.equals(this.srsDimension,    that.srsDimension)    &&
+                    Objects.equals(this.srsName,         that.srsName)         &&
+                    Objects.equals(this.count,           that.count)           &&
+                    Objects.equals(this.getUomLabels(),  that.getUomLabels())  &&
+                    Objects.equals(this.value,           that.value);
         }
         return false;
     }

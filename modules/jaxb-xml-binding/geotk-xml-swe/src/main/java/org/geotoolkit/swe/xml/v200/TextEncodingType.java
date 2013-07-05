@@ -17,19 +17,19 @@
 
 package org.geotoolkit.swe.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.TextBlock;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for TextEncodingType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TextEncodingType">
  *   &lt;complexContent>
@@ -42,8 +42,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TextEncodingType")
@@ -52,7 +52,7 @@ public class TextEncodingType extends AbstractEncodingType implements TextBlock 
     public final static TextEncodingType DEFAULT_ENCODING = new TextEncodingType("encoding-1", ".", ",", "@@");
 
     public final static TextEncodingType CSV_ENCODING     = new TextEncodingType("encoding-CSV", ".", ",", "\n");
-    
+
     @XmlAttribute
     private Boolean collapseWhiteSpaces;
     @XmlAttribute
@@ -63,9 +63,9 @@ public class TextEncodingType extends AbstractEncodingType implements TextBlock 
     private String blockSeparator;
 
     public TextEncodingType() {
-        
+
     }
-    
+
     public TextEncodingType(final String id, final String decimalSeparator, final String tokenSeparator,
             final String blockSeparator) {
         super(id);
@@ -73,14 +73,14 @@ public class TextEncodingType extends AbstractEncodingType implements TextBlock 
         this.decimalSeparator = decimalSeparator;
         this.tokenSeparator   = tokenSeparator;
     }
-            
+
     /**
      * Gets the value of the collapseWhiteSpaces property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isCollapseWhiteSpaces() {
         if (collapseWhiteSpaces == null) {
@@ -92,11 +92,11 @@ public class TextEncodingType extends AbstractEncodingType implements TextBlock 
 
     /**
      * Sets the value of the collapseWhiteSpaces property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setCollapseWhiteSpaces(Boolean value) {
         this.collapseWhiteSpaces = value;
@@ -104,11 +104,11 @@ public class TextEncodingType extends AbstractEncodingType implements TextBlock 
 
     /**
      * Gets the value of the decimalSeparator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getDecimalSeparator() {
@@ -121,11 +121,11 @@ public class TextEncodingType extends AbstractEncodingType implements TextBlock 
 
     /**
      * Sets the value of the decimalSeparator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDecimalSeparator(String value) {
         this.decimalSeparator = value;
@@ -133,11 +133,11 @@ public class TextEncodingType extends AbstractEncodingType implements TextBlock 
 
     /**
      * Gets the value of the tokenSeparator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getTokenSeparator() {
@@ -146,11 +146,11 @@ public class TextEncodingType extends AbstractEncodingType implements TextBlock 
 
     /**
      * Sets the value of the tokenSeparator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTokenSeparator(String value) {
         this.tokenSeparator = value;
@@ -158,11 +158,11 @@ public class TextEncodingType extends AbstractEncodingType implements TextBlock 
 
     /**
      * Gets the value of the blockSeparator property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getBlockSeparator() {
@@ -171,11 +171,11 @@ public class TextEncodingType extends AbstractEncodingType implements TextBlock 
 
     /**
      * Sets the value of the blockSeparator property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setBlockSeparator(String value) {
         this.blockSeparator = value;
@@ -192,15 +192,15 @@ public class TextEncodingType extends AbstractEncodingType implements TextBlock 
 
         if (object instanceof TextEncodingType && super.equals(object)) {
             final TextEncodingType that = (TextEncodingType) object;
-            return Utilities.equals(this.blockSeparator,      that.blockSeparator)      &&
-                   Utilities.equals(this.collapseWhiteSpaces, that.collapseWhiteSpaces) &&
-                   Utilities.equals(this.decimalSeparator,    that.decimalSeparator)    &&
-                   Utilities.equals(this.tokenSeparator,      that.tokenSeparator);
+            return Objects.equals(this.blockSeparator,      that.blockSeparator)      &&
+                   Objects.equals(this.collapseWhiteSpaces, that.collapseWhiteSpaces) &&
+                   Objects.equals(this.decimalSeparator,    that.decimalSeparator)    &&
+                   Objects.equals(this.tokenSeparator,      that.tokenSeparator);
         }
         return false;
     }
 
-    
+
     @Override
     public int hashCode() {
         int hash = 5;
@@ -215,7 +215,7 @@ public class TextEncodingType extends AbstractEncodingType implements TextBlock 
     /**
      * Retourne une representation de l'objet.
      */
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder(super.toString());

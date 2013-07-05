@@ -1,7 +1,7 @@
 
 package org.geotoolkit.pending.demo.processing;
 
-import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.chain.ChainProcessDescriptor;

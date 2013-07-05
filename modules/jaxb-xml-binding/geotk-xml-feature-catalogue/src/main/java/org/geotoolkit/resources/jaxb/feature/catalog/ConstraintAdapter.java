@@ -22,7 +22,7 @@ import org.geotoolkit.feature.catalog.ConstraintImpl;
 import org.opengis.feature.catalog.Constraint;
 
 /**
- * JAXB adapter in order to map implementing class with the GeoAPI Constraint. See
+ * JAXB adapter in order to map implementing class with the Types Constraint. See
  * package documentation for more infoFeatureTypermation about JAXB and Constraint.
  *
  * @module pending

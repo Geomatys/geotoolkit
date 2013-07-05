@@ -26,7 +26,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
- * Immutable implementation of GeoAPI Fill.
+ * Immutable implementation of Types Fill.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending

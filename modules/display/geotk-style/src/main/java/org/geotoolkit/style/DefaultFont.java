@@ -29,7 +29,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
- * Immutable implementation of GeoAPI Font.
+ * Immutable implementation of Types Font.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending

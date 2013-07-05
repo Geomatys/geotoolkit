@@ -21,14 +21,14 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.gml.xml.v311.*;
 
-import org.geotoolkit.internal.jaxb.RegisterableAdapter;
-import org.geotoolkit.internal.jaxb.geometry.GM_Object;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.internal.jaxb.geometry.GM_Object;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.geometry.Geometry;
+import org.apache.sis.internal.jaxb.AdapterReplacement;
 
 
 /**
- * JAXB adapter in order to map implementing class with the GeoAPI interface. See
+ * JAXB adapter in order to map implementing class with the Types interface. See
  * package documentation for more information about JAXB and interface.
  *
  * @author Guilhem Legal (Geomatys)
@@ -37,10 +37,10 @@ import org.opengis.geometry.Geometry;
  * @since 3.00
  * @module
  */
-public final class GmlGeometryAdapter extends GM_Object implements RegisterableAdapter {
+public final class GmlGeometryAdapter extends GM_Object implements AdapterReplacement {
 
     private static final Logger LOGGER = Logging.getLogger(GmlGeometryAdapter.class);
-    
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -86,24 +86,24 @@ public final class GmlGeometryAdapter extends GM_Object implements RegisterableA
 
         } else if (metadata instanceof MultiPolygonType) {
             this.geometry = factory.createMultiPolygon((MultiPolygonType) metadata);
-        
+
         } else if (metadata instanceof MultiPolygonType) {
             this.geometry = factory.createMultiPolygon((MultiPolygonType) metadata);
-            
+
         } else if (metadata instanceof PolygonType) {
             this.geometry = factory.createPolygon((PolygonType) metadata);
-        
+
         } else if (metadata instanceof SurfaceType) {
             this.geometry = factory.createSurface((SurfaceType) metadata);
-            
-        
+
+
         } else if (metadata != null){
             LOGGER.warning("Unexpected geometry class in geometryAdpater:" + metadata.getClass().getName());
-        } 
+        }
     }
 
     /**
-     * Invoked when a new adapter is created by {@link org.geotoolkit.xml.MarshallerPool}.
+     * Invoked when a new adapter is created by {@link org.apache.sis.xml.MarshallerPool}.
      *
      * @param marshaller The marshaller to be configured.
      */
@@ -113,7 +113,7 @@ public final class GmlGeometryAdapter extends GM_Object implements RegisterableA
     }
 
     /**
-     * Invoked when a new adapter is created by {@link org.geotoolkit.xml.MarshallerPool}.
+     * Invoked when a new adapter is created by {@link org.apache.sis.xml.MarshallerPool}.
      *
      * @param unmarshaller The marshaller to be configured.
      */
@@ -133,5 +133,5 @@ public final class GmlGeometryAdapter extends GM_Object implements RegisterableA
         return new GmlGeometryAdapter(value);
     }
 
-  
+
 }

@@ -36,7 +36,7 @@ import org.geotoolkit.util.Utilities;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
- * Immutable implementation of GeoAPI raster symbolizer.
+ * Immutable implementation of Types raster symbolizer.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending

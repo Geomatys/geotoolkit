@@ -21,8 +21,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
+import org.apache.sis.xml.XML;
 
 /**
  *
@@ -37,27 +39,28 @@ public class WMSMarshallerPool {
     static {
         try {
             final Map<String, String> properties = new HashMap<String, String>();
-            properties.put(MarshallerPool.ROOT_NAMESPACE_KEY, "http://www.opengis.net/wms");
-            instancev130 = new MarshallerPool(properties,
+            properties.put(XML.DEFAULT_NAMESPACE, "http://www.opengis.net/wms");
+            instancev130 = new MarshallerPool(JAXBContext.newInstance(
                                           "org.geotoolkit.ogc.xml.exception:" +
                                           "org.geotoolkit.wms.xml.v130:" +
                                           "org.geotoolkit.sld.xml.v110:" +
                                           "org.geotoolkit.inspire.xml.vs:" +
-                                          "org.geotoolkit.internal.jaxb.geometry");
+                                          "org.apache.sis.internal.jaxb.geometry"), properties);
         } catch (JAXBException ex) {
             Logger.getLogger(WMSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool("org.geotoolkit.ogc.xml.exception:" +
-                                          "org.geotoolkit.wms.xml.v111:" +
-                                          "org.geotoolkit.wms.xml.v130:" +
-                                          "org.geotoolkit.sld.xml.v110:" +
-                                          "org.geotoolkit.inspire.xml.vs:" +
-                                          "org.geotoolkit.internal.jaxb.geometry");
+            instance = new MarshallerPool(JAXBContext.newInstance(
+                    "org.geotoolkit.ogc.xml.exception:" +
+                    "org.geotoolkit.wms.xml.v111:" +
+                    "org.geotoolkit.wms.xml.v130:" +
+                    "org.geotoolkit.sld.xml.v110:" +
+                    "org.geotoolkit.inspire.xml.vs:" +
+                    "org.apache.sis.internal.jaxb.geometry"), null);
         } catch (JAXBException ex) {
             Logger.getLogger(WMSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -67,7 +70,7 @@ public class WMSMarshallerPool {
     public static MarshallerPool getInstance() {
         return instance;
     }
-    
+
     public static MarshallerPool getInstance130() {
         return instancev130;
     }

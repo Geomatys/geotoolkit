@@ -13,7 +13,7 @@ import org.geotoolkit.security.BasicAuthenticationSecurity;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.RandomStyleBuilder;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.wmts.WMTSServerFactory;
 import org.geotoolkit.wmts.WebMapTileServer;
 import org.opengis.feature.type.Name;

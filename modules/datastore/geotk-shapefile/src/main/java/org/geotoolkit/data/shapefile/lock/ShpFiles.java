@@ -38,7 +38,7 @@ import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
 import org.geotoolkit.index.quadtree.fs.FileSystemIndexStore;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.util.collection.WeakHashSet;
 
 /**

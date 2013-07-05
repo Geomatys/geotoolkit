@@ -29,11 +29,12 @@ import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.xml.MarshallerPool;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.sld.StyledLayerDescriptor;
 import org.opengis.util.FactoryException;
+import javax.xml.bind.JAXBContext;
 
 /**
  * Utility class to read and write XML OGC SLD files.
@@ -66,7 +67,7 @@ public class JAXBSLDUtilities {
             }
 
             try {
-                POOL_100 = new MarshallerPool(classes.toArray(new Class[classes.size()]));
+                POOL_100 = new MarshallerPool(JAXBContext.newInstance(classes.toArray(new Class[classes.size()])), null);
             } catch (JAXBException ex) {
                 throw new RuntimeException("Could not load jaxbcontext for sld 100.",ex);
             }
@@ -79,7 +80,7 @@ public class JAXBSLDUtilities {
 
             final List<Class> classes = new ArrayList<Class>();
             classes.add(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
-            classes.add(org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
+            classes.add(org.apache.sis.internal.jaxb.geometry.ObjectFactory.class);
 
             final ServiceLoader<org.geotoolkit.se.xml.v110.SymbolizerType> additionalTypes = ServiceLoader.load(org.geotoolkit.se.xml.v110.SymbolizerType.class);
             final Iterator<org.geotoolkit.se.xml.v110.SymbolizerType> ite = additionalTypes.iterator();
@@ -97,7 +98,7 @@ public class JAXBSLDUtilities {
             }
 
             try {
-                POOL_110 = new MarshallerPool(classes.toArray(new Class[classes.size()]));
+                POOL_110 = new MarshallerPool(JAXBContext.newInstance(classes.toArray(new Class[classes.size()])), null);
             } catch (JAXBException ex) {
                 throw new RuntimeException("Could not load jaxbcontext for sld 110.",ex);
             }
@@ -126,11 +127,8 @@ public class JAXBSLDUtilities {
 
         try {
             final Unmarshaller unmarshaller = getMarshallerPoolSLD100().acquireUnmarshaller();
-            try {
-                sld = ( org.geotoolkit.sld.xml.v100.StyledLayerDescriptor) unmarshaller.unmarshal(sldFile);
-            } finally {
-                getMarshallerPoolSLD100().release(unmarshaller);
-            }
+            sld = ( org.geotoolkit.sld.xml.v100.StyledLayerDescriptor) unmarshaller.unmarshal(sldFile);
+            getMarshallerPoolSLD100().recycle(unmarshaller);
         } catch (JAXBException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -142,11 +140,8 @@ public class JAXBSLDUtilities {
 
         try {
             final Marshaller marshaller = getMarshallerPoolSLD100().acquireMarshaller();
-            try {
-                marshaller.marshal(sld, sldFile);
-            } finally {
-                getMarshallerPoolSLD100().release(marshaller);
-            }
+            marshaller.marshal(sld, sldFile);
+            getMarshallerPoolSLD100().recycle(marshaller);
         } catch (JAXBException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -168,11 +163,8 @@ public class JAXBSLDUtilities {
 
         try {
             final Unmarshaller unmarshaller = getMarshallerPoolSLD110().acquireUnmarshaller();
-            try {
-                sld = (org.geotoolkit.sld.xml.v110.StyledLayerDescriptor) unmarshaller.unmarshal(sldFile);
-            } finally {
-                getMarshallerPoolSLD110().release(unmarshaller);
-            }
+            sld = (org.geotoolkit.sld.xml.v110.StyledLayerDescriptor) unmarshaller.unmarshal(sldFile);
+            getMarshallerPoolSLD110().recycle(unmarshaller);
         } catch (JAXBException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -184,11 +176,8 @@ public class JAXBSLDUtilities {
 
         try {
             final Marshaller marshaller = getMarshallerPoolSLD110().acquireMarshaller();
-            try {
-                marshaller.marshal(sld, sldFile);
-            } finally {
-                getMarshallerPoolSLD110().release(marshaller);
-            }
+            marshaller.marshal(sld, sldFile);
+            getMarshallerPoolSLD110().recycle(marshaller);
         } catch (JAXBException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }

@@ -55,7 +55,7 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
     public URL getURL() throws MalformedURLException {
         requestParameters.put("SERVICE",    "WFS");
         requestParameters.put("REQUEST",    "GetCapabilities");
-        requestParameters.put("VERSION",    version);        
+        requestParameters.put("VERSION",    version);
         return super.getURL();
     }
 
@@ -82,12 +82,9 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
             marshaller = WFSMarshallerPool.getInstance().acquireMarshaller();
             marshaller.marshal(request, stream);
             //marshaller.marshal(request, System.out);
+            WFSMarshallerPool.getInstance().recycle(marshaller);
         } catch (JAXBException ex) {
             throw new IOException(ex);
-        } finally {
-            if (marshaller != null) {
-                WFSMarshallerPool.getInstance().release(marshaller);
-            }
         }
         stream.close();
         return security.decrypt(conec.getInputStream());

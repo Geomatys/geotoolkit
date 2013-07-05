@@ -70,13 +70,13 @@ import org.opengis.geometry.primitive.OrientableCurve;
  *                  For now, to keep implementation-independance I'm returning it as a List
  * </li>
  * <li>
- * MULTILINESTRING  no matching type in the GeoAPI interfaces
+ * MULTILINESTRING  no matching type in the Types interfaces
  *                  Could also be returned as list.
  *                  <br>
  *                  Not handled for now
  * </li>
  * <li>
- * MULTIPOLYGON     no matching type in the GeoAPI interfaces
+ * MULTIPOLYGON     no matching type in the Types interfaces
  *                  Could also be returned as list.
  *                  <br>
  *                  Not handled for now

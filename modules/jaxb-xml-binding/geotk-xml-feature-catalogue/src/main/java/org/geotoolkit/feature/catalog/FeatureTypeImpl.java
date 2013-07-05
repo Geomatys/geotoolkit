@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -36,9 +36,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.internal.jaxb.gco.GO_GenericName;
+import org.apache.sis.internal.jaxb.gco.GO_GenericName;
 import org.geotoolkit.resources.jaxb.feature.catalog.FeatureCatalogueAdapter;
-import org.geotoolkit.util.Utilities;
 import org.opengis.util.LocalName;
 import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.DefinitionReference;
@@ -52,11 +51,11 @@ import org.opengis.feature.catalog.PropertyType;
 
 /**
  * Class of real world phenomena with common properties -  - [ocl] - name realizes GF_FeatureType::typeName; - isAbstract realizes GF_FeatureType::isAbstract; - constrainedBy realizes GF_FeatureType::constrainedBy - [/ocl]
- * 
+ *
  * <p>Java class for FC_FeatureType_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FC_FeatureType_Type">
  *   &lt;complexContent>
@@ -78,8 +77,8 @@ import org.opengis.feature.catalog.PropertyType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -120,25 +119,25 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     private List<LocalName> aliases;
     private List<InheritanceRelation> inheritsFrom;
     private List<InheritanceRelation> inheritsTo;
-    
+
     @XmlJavaTypeAdapter(FeatureCatalogueAdapter.class)
     private FeatureCatalogue featureCatalogue;
     private List<PropertyType> carrierOfCharacteristics;
     private List<Constraint> constrainedBy;
     private DefinitionReference definitionReference;
-    
+
     @XmlTransient
     private boolean isReference = false;
     @XmlTransient
     protected boolean rootElement = true;
-     
+
     /**
      * An empty constructor used by JAXB
      */
     public FeatureTypeImpl() {
-        
+
     }
-    
+
     /**
      * Clone a FeatureType
      */
@@ -158,7 +157,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
             this.typeName                 = feature.getTypeName();
         }
     }
-    
+
     /**
      * Build a new Feature type
      */
@@ -173,7 +172,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         this.isAbstract               = isAbstract;
         this.typeName                 = typeName;
     }
-    
+
     /**
      * Gets the value of the typeName property.
      */
@@ -190,7 +189,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
 
     /**
      * Gets the value of the definition property.
-     * 
+     *
      */
     public String getDefinition() {
         return definition;
@@ -205,7 +204,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
 
     /**
      * Gets the value of the code property.
-     * 
+     *
      */
     public String getCode() {
         return code;
@@ -234,7 +233,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
 
     /**
      * Gets the value of the aliases property.
-     * 
+     *
      */
     public List<LocalName> getAliases() {
         if (aliases == null) {
@@ -242,14 +241,14 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         }
         return aliases;
     }
-    
+
     public void setAliases(final LocalName alias) {
         if (aliases == null) {
             aliases = new ArrayList<LocalName>();
         }
         this.aliases.add(alias);
     }
-    
+
     public void setAliases(final List<LocalName> aliases) {
         this.aliases = aliases;
     }
@@ -263,14 +262,14 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         }
         return this.inheritsFrom;
     }
-    
+
     public void setInheritsFrom(final InheritanceRelation inheritsFrom) {
         if (this.inheritsFrom == null) {
             this.inheritsFrom = new ArrayList<InheritanceRelation>();
         }
         this.inheritsFrom.add(inheritsFrom);
     }
-    
+
     public void setInheritsFrom(final List<InheritanceRelation> inheritsFrom) {
         this.inheritsFrom = inheritsFrom;
     }
@@ -284,14 +283,14 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         }
         return this.inheritsTo;
     }
-    
+
     public void setInheritsTo(final InheritanceRelation inheritsTo) {
         if (this.inheritsTo == null) {
             this.inheritsTo = new ArrayList<InheritanceRelation>();
         }
         this.inheritsTo.add(inheritsTo);
     }
-    
+
     public void setInheritsTo(final List<InheritanceRelation> inheritsTo) {
         this.inheritsTo = inheritsTo;
     }
@@ -312,7 +311,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
 
     /**
      * Gets the value of the carrierOfCharacteristics property.
-     * 
+     *
      */
     public List<PropertyType> getCarrierOfCharacteristics() {
         if (carrierOfCharacteristics == null) {
@@ -320,7 +319,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         }
         return this.carrierOfCharacteristics;
     }
-    
+
     public void setCarrierOfCharacteristics(final PropertyType carrierOfCharacteristics) {
         if (this.carrierOfCharacteristics == null) {
             this.carrierOfCharacteristics = new ArrayList<PropertyType>();
@@ -334,14 +333,14 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         }
         this.carrierOfCharacteristics.add(carrierOfCharacteristics);
     }
-    
+
     public void setCarrierOfCharacteristics(final List<PropertyType> carrierOfCharacteristics) {
         this.carrierOfCharacteristics = carrierOfCharacteristics;
     }
 
     /**
      * Gets the value of the constrainedBy property.
-     * 
+     *
      */
     public List<Constraint> getConstrainedBy() {
         if (constrainedBy == null) {
@@ -349,21 +348,21 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         }
         return this.constrainedBy;
     }
-    
+
     public void setConstrainedBy(final Constraint constrainedBy) {
         if (this.constrainedBy == null) {
             this.constrainedBy = new ArrayList<Constraint>();
         }
         this.constrainedBy.add(constrainedBy);
     }
-    
+
     public void setConstrainedBy(final List<Constraint> constrainedBy) {
         this.constrainedBy = constrainedBy;
     }
 
     /**
      * Gets the value of the definitionReference property.
-     * 
+     *
      */
     public DefinitionReference getDefinitionReference() {
         return definitionReference;
@@ -371,12 +370,12 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
 
     /**
      * Sets the value of the definitionReference property.
-     * 
+     *
      */
     public void setDefinitionReference(final DefinitionReference value) {
         this.definitionReference = value;
     }
-    
+
     public String getId() {
         return id;
     }
@@ -384,27 +383,27 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     public void setId(final String id) {
         this.id = id;
     }
-     
+
     /**
      * set the feature in reference mode
      */
     public void setReference(final boolean mode) {
         this.isReference = mode;
     }
-    
+
      /**
      * get the current feature in reference mode
      */
     public boolean isReference() {
         return isReference;
     }
-    
+
     public FeatureTypeImpl getReference() {
         FeatureTypeImpl reference = new FeatureTypeImpl(this);
         reference.setReference(true);
         return reference;
     }
-    
+
     /**
      * This java object contains cycle. this cycle cannot be handle by JAXB.
      * We must create reference mark in the xml.
@@ -415,39 +414,39 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
             beforeMarshal(new HashMap<String, Referenceable>());
         }
     }
-    
+
     public Map<String, Referenceable> beforeMarshal(Map<String, Referenceable> alreadySee) {
         if (id != null && !id.isEmpty()) {
             alreadySee.put(id, this);
         }
         rootElement = false;
-        
+
         List<InheritanceRelation> fromReplacement = new ArrayList<InheritanceRelation>();
         for (InheritanceRelation in: getInheritsFrom()) {
             InheritanceRelationImpl inf = (InheritanceRelationImpl) in;
-            
+
             if (alreadySee.get(inf.getId()) != null) {
                 fromReplacement.add(inf.getReference());
             } else {
                 alreadySee = inf.beforeMarshal(alreadySee);
-                fromReplacement.add(inf);    
+                fromReplacement.add(inf);
             }
         }
         inheritsFrom = fromReplacement;
-        
+
         List<InheritanceRelation> toReplacement = new ArrayList<InheritanceRelation>();
         for (InheritanceRelation in: getInheritsTo()) {
             InheritanceRelationImpl inf = (InheritanceRelationImpl) in;
-            
+
             if (alreadySee.get(inf.getId()) != null) {
                 toReplacement.add(inf.getReference());
             } else {
                 alreadySee = inf.beforeMarshal(alreadySee);
-                toReplacement.add(inf);    
+                toReplacement.add(inf);
             }
         }
         inheritsTo = toReplacement;
-        
+
         if (featureCatalogue != null) {
             if (alreadySee.get(featureCatalogue.getId()) != null) {
                 featureCatalogue = ((FeatureCatalogueImpl)featureCatalogue).getReference();
@@ -455,23 +454,23 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
                 alreadySee = ((FeatureCatalogueImpl)featureCatalogue).beforeMarshal(alreadySee);
             }
         }
-        
+
         List<PropertyType> replacement = new ArrayList<PropertyType>();
         for (PropertyType f: getCarrierOfCharacteristics()) {
             PropertyTypeImpl p = (PropertyTypeImpl) f;
-            
+
             if (alreadySee.get(p.getId()) != null) {
                 replacement.add(p.getReference());
             } else {
                 alreadySee = p.beforeMarshal(alreadySee);
-                replacement.add(p);    
+                replacement.add(p);
             }
         }
         carrierOfCharacteristics = replacement;
         return alreadySee;
     }
-    
-    
+
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]:").append('\n');
@@ -532,7 +531,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         }
         return s.toString();
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -543,7 +542,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         }
         if (object instanceof FeatureTypeImpl) {
             final FeatureTypeImpl that = (FeatureTypeImpl) object;
-            
+
              //to avoid infinite cycle
              boolean carrier = false;
              carrier = Objects.equals(this.getCarrierOfCharacteristics().size(), that.getCarrierOfCharacteristics().size());
@@ -556,7 +555,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
                          final LocalName thisName = this.getCarrierOfCharacteristics().get(i).getMemberName();
                          final LocalName thatName = that.getCarrierOfCharacteristics().get(i).getMemberName();
                          carrier = Objects.equals(thisName, thatName);
-                     
+
                      } else {
                          carrier = Objects.equals(thisId, thatId);
                      }
@@ -564,20 +563,20 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
              } else {
                  return false;
              }
-             
-                     
+
+
              //to avoid infinite cycle
              boolean catalogue = false;
              if (this.featureCatalogue != null && that.featureCatalogue != null) {
-                catalogue = Utilities.equals(this.featureCatalogue.getId(), that.featureCatalogue.getId());
+                catalogue = Objects.equals(this.featureCatalogue.getId(), that.featureCatalogue.getId());
              } else if (this.featureCatalogue == null && that.featureCatalogue == null){
                  catalogue = true;
              }
-             
+
              //to avoid infinite cycle
-             boolean inherits = Objects.equals(this.getInheritsFrom().size(), that.getInheritsFrom().size()) && 
-                                Objects.equals(this.getInheritsTo().size(),   that.getInheritsTo().size()); 
-            
+             boolean inherits = Objects.equals(this.getInheritsFrom().size(), that.getInheritsFrom().size()) &&
+                                Objects.equals(this.getInheritsTo().size(),   that.getInheritsTo().size());
+
             return Objects.equals(this.aliases,                  that.aliases)                  &&
                    Objects.equals(this.code,                     that.code)                     &&
                    Objects.equals(this.constrainedBy,            that.constrainedBy)            &&

@@ -19,6 +19,7 @@ package org.geotoolkit.wfs.xml.v100;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,14 +27,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.BoundingBox;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for LatLongBoundingBoxType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LatLongBoundingBoxType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LatLongBoundingBoxType")
@@ -63,12 +63,12 @@ public class LatLongBoundingBoxType implements BoundingBox {
     private String maxy;
 
     public LatLongBoundingBoxType() {
-        
+
     }
-    
+
     /**
      * Build a 2 dimension boundingBox.
-     * 
+     *
      */
     public LatLongBoundingBoxType(final double minx, final double miny, final double maxx, final double maxy){
         this.minx = Double.toString(minx);
@@ -77,14 +77,14 @@ public class LatLongBoundingBoxType implements BoundingBox {
         this.maxy = Double.toString(maxy);
     }
 
-    
+
     /**
      * Gets the value of the minx property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMinx() {
         return minx;
@@ -92,11 +92,11 @@ public class LatLongBoundingBoxType implements BoundingBox {
 
     /**
      * Sets the value of the minx property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMinx(String value) {
         this.minx = value;
@@ -104,11 +104,11 @@ public class LatLongBoundingBoxType implements BoundingBox {
 
     /**
      * Gets the value of the miny property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMiny() {
         return miny;
@@ -116,11 +116,11 @@ public class LatLongBoundingBoxType implements BoundingBox {
 
     /**
      * Sets the value of the miny property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMiny(String value) {
         this.miny = value;
@@ -128,11 +128,11 @@ public class LatLongBoundingBoxType implements BoundingBox {
 
     /**
      * Gets the value of the maxx property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMaxx() {
         return maxx;
@@ -140,11 +140,11 @@ public class LatLongBoundingBoxType implements BoundingBox {
 
     /**
      * Sets the value of the maxx property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMaxx(String value) {
         this.maxx = value;
@@ -152,11 +152,11 @@ public class LatLongBoundingBoxType implements BoundingBox {
 
     /**
      * Gets the value of the maxy property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMaxy() {
         return maxy;
@@ -164,11 +164,11 @@ public class LatLongBoundingBoxType implements BoundingBox {
 
     /**
      * Sets the value of the maxy property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMaxy(String value) {
         this.maxy = value;
@@ -184,10 +184,10 @@ public class LatLongBoundingBoxType implements BoundingBox {
         }
         if (object instanceof LatLongBoundingBoxType) {
             final LatLongBoundingBoxType that = (LatLongBoundingBoxType) object;
-            return Utilities.equals(this.minx        , that.minx)         &&
-                   Utilities.equals(this.maxx , that.maxx)  &&
-                   Utilities.equals(this.miny, that.miny) &&
-                   Utilities.equals(this.maxy, that.maxy);
+            return Objects.equals(this.minx, that.minx) &&
+                   Objects.equals(this.maxx, that.maxx) &&
+                   Objects.equals(this.miny, that.miny) &&
+                   Objects.equals(this.maxy, that.maxy);
         }
         return false;
     }
@@ -202,8 +202,8 @@ public class LatLongBoundingBoxType implements BoundingBox {
         return hash;
     }
 
-   
-    
+
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]:").append('\n');
@@ -226,7 +226,7 @@ public class LatLongBoundingBoxType implements BoundingBox {
     public List<Double> getLowerCorner() {
         if (minx != null && miny != null) {
             try {
-                return Arrays.asList(Double.parseDouble(minx), 
+                return Arrays.asList(Double.parseDouble(minx),
                                      Double.parseDouble(miny));
             } catch (NumberFormatException ex) {
                 Logger.getLogger(LatLongBoundingBoxType.class.getName()).log(Level.WARNING, "error while parsing LatLong bbox", ex);
@@ -239,7 +239,7 @@ public class LatLongBoundingBoxType implements BoundingBox {
     public List<Double> getUpperCorner() {
         if (maxx != null && maxy != null) {
             try {
-                return Arrays.asList(Double.parseDouble(maxx), 
+                return Arrays.asList(Double.parseDouble(maxx),
                                      Double.parseDouble(maxy));
             } catch (NumberFormatException ex) {
                 Logger.getLogger(LatLongBoundingBoxType.class.getName()).log(Level.WARNING, "error while parsing LatLong bbox", ex);

@@ -26,7 +26,7 @@ import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.DefaultPyramid;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.PyramidSet;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.googlemaps.GetMapRequest;
 import org.geotoolkit.googlemaps.GoogleCoverageReference;

@@ -20,8 +20,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.extent.DefaultExtent;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -268,7 +268,8 @@ public class ProjectionUtils {
                     bounds = new GeneralEnvelope(minDP, maxDP);
 
                     if(projCode == GEO_PROJ_CODE) {
-                        final GeographicExtent bbox = new DefaultGeographicBoundingBox(bounds);
+                        final DefaultGeographicBoundingBox bbox = new DefaultGeographicBoundingBox();
+                        bbox.setBounds(bounds);
                         final DefaultExtent ext = new DefaultExtent();
                         ext.setGeographicElements(Collections.singleton(bbox));
                         crsIdentifiers.put(ReferenceSystem.DOMAIN_OF_VALIDITY_KEY, ext);
@@ -363,10 +364,8 @@ public class ProjectionUtils {
                     DirectPosition newUpper = new DirectPosition2D(baseCRS);
                     transform.transform(bounds.getLowerCorner(), newLower);
                     transform.transform(bounds.getUpperCorner(), newUpper);
-                    GeographicExtent bbox = new DefaultGeographicBoundingBox(
-                            new GeneralEnvelope(newLower.getCoordinate(), newUpper.getCoordinate()));
-                    Envelope geoEnv = new Envelope2D(newLower, newUpper);
-                    final DefaultExtent ext = new DefaultExtent(geoEnv);
+                    final DefaultExtent ext = new DefaultExtent();
+                    ext.addElements(new Envelope2D(newLower, newUpper));
 //                    ext.setGeographicElements(Collections.singleton(bbox));
                     crsIdentifiers.put(ReferenceSystem.DOMAIN_OF_VALIDITY_KEY, ext);
                 } catch (Exception e) {
@@ -384,7 +383,7 @@ public class ProjectionUtils {
      * Parse a Geotk CRS to build a MIF representation of it.
      * @param crs The CRS we want to get in MIF syntax.
      * @return a String which is the CRS in MIF syntax.
-     * @throws org.geotoolkit.storage.DataStoreException if the CRS does not get any equivalent in MIF.
+     * @throws org.apache.sis.storage.DataStoreException if the CRS does not get any equivalent in MIF.
      */
     public static String crsToMIFSyntax(CoordinateReferenceSystem crs) throws DataStoreException, FactoryException {
         ArgumentChecks.ensureNonNull("CRS to convert", crs);

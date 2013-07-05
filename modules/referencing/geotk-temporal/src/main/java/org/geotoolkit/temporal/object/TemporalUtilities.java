@@ -32,12 +32,12 @@ import java.util.logging.Logger;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.geotoolkit.temporal.reference.DefaultTemporalCoordinateSystem;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.collection.UnSynchronizedCache;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.DateAndTime;

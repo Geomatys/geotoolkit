@@ -19,6 +19,7 @@ package org.geotoolkit.samplingspatial.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -27,11 +28,10 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.gml.xml.v321.FeaturePropertyType;
-import org.geotoolkit.internal.jaxb.metadata.DQ_Element;
+import org.apache.sis.internal.jaxb.metadata.DQ_Element;
 import org.geotoolkit.observation.xml.v200.OMProcessPropertyType;
 import org.geotoolkit.sampling.xml.v200.SFSamplingFeatureType;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Geometry;
 import org.opengis.metadata.quality.PositionalAccuracy;
 
@@ -47,12 +47,12 @@ import org.opengis.metadata.quality.PositionalAccuracy;
  * 				common practice in focussing on conventional spatial dimensions. Properties observed
  * 				on sampling features may be time-dependent, but the temporal axis does not generally
  * 				contribute to the classification of sampling feature classes. Sampling feature
- * 				identity is usually less time-dependent than is the property value. 
- * 
+ * 				identity is usually less time-dependent than is the property value.
+ *
  * <p>Java class for SF_SpatialSamplingFeatureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SF_SpatialSamplingFeatureType">
  *   &lt;complexContent>
@@ -65,8 +65,8 @@ import org.opengis.metadata.quality.PositionalAccuracy;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SF_SpatialSamplingFeatureType", propOrder = {
@@ -83,9 +83,9 @@ public class SFSpatialSamplingFeatureType extends SFSamplingFeatureType {
     private ShapeType shape;
 
     public SFSpatialSamplingFeatureType() {
-        
+
     }
-    
+
     public SFSpatialSamplingFeatureType(final String               identifier,
                                         final String               name,
                                         final String               remarks,
@@ -98,14 +98,14 @@ public class SFSpatialSamplingFeatureType extends SFSamplingFeatureType {
             this.shape = new ShapeType(location);
         }
     }
-    
+
     /**
      * Gets the value of the hostedProcedure property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link OMProcessPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<OMProcessPropertyType> getHostedProcedure() {
         if (hostedProcedure == null) {
@@ -116,11 +116,11 @@ public class SFSpatialSamplingFeatureType extends SFSamplingFeatureType {
 
     /**
      * Gets the value of the positionalAccuracy property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link DQPositionalAccuracyPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<PositionalAccuracy> getPositionalAccuracy() {
         if (positionalAccuracy == null) {
@@ -132,12 +132,12 @@ public class SFSpatialSamplingFeatureType extends SFSamplingFeatureType {
     /**
      *  The association Geometry shall link a
      *  SF_SpatialSamplingFeature to a GM_Object that describes its shape.
-     * 							
-     * 
+     *
+     *
      * @return
      *     possible object is
      *     {@link ShapeType }
-     *     
+     *
      */
     public ShapeType getShape() {
         return shape;
@@ -150,19 +150,19 @@ public class SFSpatialSamplingFeatureType extends SFSamplingFeatureType {
         }
         return null;
     }
-    
+
     /**
      * Sets the value of the shape property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShapeType }
-     *     
+     *
      */
     public void setShape(ShapeType value) {
         this.shape = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString()).append("\n");
@@ -196,9 +196,9 @@ public class SFSpatialSamplingFeatureType extends SFSamplingFeatureType {
         if (object instanceof SFSpatialSamplingFeatureType && super.equals(object, mode)) {
             final SFSpatialSamplingFeatureType that = (SFSpatialSamplingFeatureType) object;
 
-            return Utilities.equals(this.hostedProcedure,    that.hostedProcedure)    &&
-                   Utilities.equals(this.positionalAccuracy, that.positionalAccuracy) &&
-                   Utilities.equals(this.shape,              that.shape);
+            return Objects.equals(this.hostedProcedure,    that.hostedProcedure)    &&
+                   Objects.equals(this.positionalAccuracy, that.positionalAccuracy) &&
+                   Objects.equals(this.shape,              that.shape);
         }
         return false;
     }

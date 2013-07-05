@@ -31,7 +31,7 @@ import javax.measure.quantity.Length;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
@@ -84,16 +84,16 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
 
     @Override
     public void setCenter(DirectPosition center) {
-        
+
         try {
             final DirectPosition oldCenter = getCenter();
-            
+
             final CoordinateReferenceSystem candidateCRS = center.getCoordinateReferenceSystem();
             if(candidateCRS != null && !CRS.equalsIgnoreMetadata(candidateCRS, oldCenter.getCoordinateReferenceSystem())){
                 final MathTransform trs = CRS.findMathTransform(candidateCRS,oldCenter.getCoordinateReferenceSystem());
                 center = trs.transform(center, null);
-            }            
-            
+            }
+
             final double diffX = center.getOrdinate(0) - oldCenter.getOrdinate(0);
             final double diffY = center.getOrdinate(1) - oldCenter.getOrdinate(1);
             translateObjective(diffX, diffY);
@@ -127,7 +127,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         final Point2D center = getDisplayCenter();
         canvas.getObjectiveToDisplay().inverseTransform(center, center);
         final GeneralDirectPosition pt = new GeneralDirectPosition(canvas.getObjectiveCRS2D());
-        pt.setLocation(center);
+        pt.setCoordinate(center.getX(), center.getY());
         return pt;
     }
 
@@ -228,7 +228,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void transformPixels(final AffineTransform change) {        
+    public void transformPixels(final AffineTransform change) {
         if (!change.isIdentity()) {
             final AffineTransform2D objToDisp = canvas.getObjectiveToDisplay();
             final AffineTransform logical;
@@ -421,9 +421,9 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         }
 
         if (index >= 0) {
-            
+
             if(startDate!=null || endDate!=null){
-                canvas.setRange(index, 
+                canvas.setRange(index,
                     (startDate!=null)?startDate.getTime():Double.NEGATIVE_INFINITY,
                     (endDate!=null)?endDate.getTime():Double.POSITIVE_INFINITY);
             }else{
@@ -432,7 +432,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
                 crs = removeCRS(crs, DefaultTemporalCRS.JAVA);
                 setObjectiveCRS(crs);
             }
-            
+
         }
     }
 
@@ -464,7 +464,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
 
         if (index >= 0) {
             if(min!=null || max!=null){
-                canvas.setRange(index, 
+                canvas.setRange(index,
                     (min!=null)?min:Double.NEGATIVE_INFINITY,
                     (max!=null)?max:Double.POSITIVE_INFINITY);
             }else{
@@ -526,8 +526,8 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         }
         return -1;
     }
-    
-    
+
+
     public Double[] getAxisRange(final Comparator<CoordinateSystemAxis> comparator) {
         final int index = getAxisIndex(comparator);
         if (index >= 0) {
@@ -536,8 +536,8 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         }
         return null;
     }
-    
-    public void setAxisRange(final Double min, final Double max, 
+
+    public void setAxisRange(final Double min, final Double max,
             final Comparator<CoordinateSystemAxis> comparator, CoordinateReferenceSystem axisCrs) throws TransformException {
         int index = getAxisIndex(comparator);
         if(index < 0 && (min!=null || max!=null)){
@@ -550,7 +550,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
 
         if (index >= 0) {
             if(min!=null || max!=null){
-                canvas.setRange(index, 
+                canvas.setRange(index,
                     (min!=null)?min:Double.NEGATIVE_INFINITY,
                     (max!=null)?max:Double.POSITIVE_INFINITY);
             }else{
@@ -561,11 +561,11 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
             }
         }
     }
-    
+
     /**
      * Search an axis index.
      * Comparator must return 0 when found.
-     * 
+     *
      * @param comparator
      * @return -1 if not found
      */
@@ -590,7 +590,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         }
 
     }
-    
+
     private CoordinateReferenceSystem removeCRS(final CoordinateReferenceSystem crs, final CoordinateReferenceSystem toRemove){
         if(crs instanceof CompoundCRS){
             final CompoundCRS orig = (CompoundCRS) crs;

@@ -65,7 +65,7 @@ import org.geotoolkit.coverage.wkb.WKBRasterConstants;
 import org.geotoolkit.coverage.wkb.WKBRasterWriter;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.version.Version;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.feature.type.Name;
@@ -162,14 +162,14 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             query.append(",'");
             query.append(epsgCode);
             query.append("')");
-            
+
             stmt.executeUpdate(query.toString(), new String[]{"id"});
 
             rs = stmt.getGeneratedKeys();
             if(rs.next()){
                 pyramidId = String.valueOf(rs.getInt(1));
             }
-            
+
             //write version
             if(version!=null && !version.getLabel().equals(PGVersionControl.UNSET)){
                 query.setLength(0);
@@ -182,7 +182,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                 query.append("')");
                 stmt.executeUpdate(query.toString());
             }
-            
+
         }catch(FactoryException ex){
             throw new DataStoreException(ex);
         }catch(SQLException ex){
@@ -226,7 +226,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             pyramidSet.mustUpdate();
         }
     }
-    
+
     @Override
     public GridMosaic createMosaic(final String pyramidId, final Dimension gridSize, final Dimension tilePixelSize,
             final DirectPosition upperleft, final double pixelscale) throws DataStoreException {
@@ -327,7 +327,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             pyramidSet.mustUpdate();
         }
     }
-    
+
     @Override
     public void writeTiles(final String pyramidId, final String mosaicId,
             final RenderedImage image, final boolean onlyMissing) throws DataStoreException {
@@ -449,7 +449,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             pyramidSet.mustUpdate();
         };
     }
-    
+
     @Override
     public List<GridSampleDimension> getSampleDimensions(int index) throws DataStoreException{
         final List<GridSampleDimension> dimensions = new LinkedList<GridSampleDimension>();
@@ -461,7 +461,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         try {
             cnx = store.getDataSource().getConnection();
             cnx.setReadOnly(false);
-            
+
             final int layerId = store.getLayerId(cnx,name.getLocalPart());
             final StringBuilder query = new StringBuilder();
             query.append("SELECT \"id\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\",\"min\",\"max\"");
@@ -497,7 +497,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                 final int categoriesSize = (pNoData != null && pNoData.length > 0) ? (pNoData.length + 1) : 2;
 
                 final Category[] categories = new Category[categoriesSize];
-                categories[0] = new Category("data", Color.BLACK, NumberRange.create(min, max));
+                categories[0] = new Category("data", Color.BLACK, NumberRange.create(min, true, max, true));
                 if (pNoData != null && pNoData.length > 0) {
                     for (int i = 0; i < pNoData.length; i++) {
                         categories[i] = new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA) + String.valueOf(i), new Color(0,0,0,0), pNoData[i]);
@@ -539,7 +539,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             try{
                 cnx = store.getDataSource().getConnection();
                 cnx.setReadOnly(false);
-                    
+
                 final int layerId = store.getLayerId(cnx,name.getLocalPart());
                 for (int i = 0; i < dimensions.size(); i++) {
 
@@ -563,7 +563,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                     query.append(" (\"layerId\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\", \"min\", \"max\") ");
                     query.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
-                    
+
                     pstmt = cnx.prepareStatement(query.toString());
 
                     pstmt.setInt(1, layerId);

@@ -24,7 +24,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
- * Immutable implementation of GeoAPI Line placement.
+ * Immutable implementation of Types Line placement.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending

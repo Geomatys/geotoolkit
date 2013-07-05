@@ -41,6 +41,7 @@ import org.geotoolkit.ogc.xml.v110.SortByType;
 import org.geotoolkit.security.ClientSecurity;
 import org.opengis.filter.Filter;
 
+import static org.geotoolkit.csw.AbstractCSWRequest.POOL;
 import static org.geotoolkit.csw.xml.CswXmlFactory.*;
 
 /**
@@ -324,9 +325,8 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
         OutputStream stream = conec.getOutputStream();
         stream = security.encrypt(stream);
 
-        Marshaller marsh = null;
         try {
-            marsh = POOL.acquireMarshaller();
+            final Marshaller marsh = POOL.acquireMarshaller();
 
             /*
              * Getting typeNames value used to build QueryType object
@@ -382,17 +382,14 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
             final Query queryType = createQuery(version, typNames, esnt, sort, qct);
 
             final DistributedSearch ds = createDistributedSearch(version, hopcount);
-            final org.geotoolkit.csw.xml.GetRecordsRequest recordsXml = createGetRecord(version, "CSW", resultType, requestId, outputFormat, 
+            final org.geotoolkit.csw.xml.GetRecordsRequest recordsXml = createGetRecord(version, "CSW", resultType, requestId, outputFormat,
                     outputSchema, startPosition, maxRecords, queryType, ds);
-                    
-                    
+
+
             marsh.marshal(recordsXml, stream);
+            POOL.recycle(marsh);
         } catch (JAXBException ex) {
             throw new IOException(ex);
-        } finally {
-            if (POOL != null && marsh != null) {
-                POOL.release(marsh);
-            }
         }
         stream.close();
         return security.decrypt(conec.getInputStream());

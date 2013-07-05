@@ -24,7 +24,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
- * Immutable implementation of GeoAPI shaded relief.
+ * Immutable implementation of Types shaded relief.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending

@@ -23,7 +23,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.wmts.xml.WMTSMarshallerPool;
 
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -56,7 +56,7 @@ public class TestGetCapabilities {
         final Object objResp = unmarsh.unmarshal(getCapsResponse);
         getCapsResponse.close();
         assertTrue("The unmarshalled object is not an instance of wmts Capabilities. Response class:"+
-                   objResp.getClass().getName(), 
+                   objResp.getClass().getName(),
                    objResp instanceof Capabilities);
         final Capabilities capsResp = (Capabilities) objResp;
         final List<LayerType> layers = capsResp.getContents().getLayers();
@@ -65,7 +65,7 @@ public class TestGetCapabilities {
         final LayerType firstLayer = layers.get(0);
         assertEquals(firstLayer.getTitle().get(0).getValue(), "Coastlines");
         //System.out.println(firstLayer.toString());
-        pool.release(unmarsh);
+        pool.recycle(unmarsh);
     }
 
 }

@@ -136,7 +136,7 @@ public class SmlXMLBindingTest {
 
         SystemType system = new SystemType();
         system.setId("urn-ogc-object-feature-Sensor-IFREMER-13471-09-CTD-1");
-        
+
         List<String> kw = new ArrayList<String>();
         kw.add("OCEANS");
         kw.add("OCEANS:OCEAN TEMPERATURE");
@@ -393,7 +393,7 @@ public class SmlXMLBindingTest {
                     }
                     assertEquals(expParam.getAbstractRecord(), resParam.getAbstractRecord());
                     assertEquals(expParam, resParam);
-                    
+
                 }
                 assertEquals(expCPprocess.getParameters().getParameterList().getParameter(), resCPprocess.getParameters().getParameterList().getParameter());
                 assertEquals(expCPprocess.getParameters().getParameterList(), resCPprocess.getParameters().getParameterList());
@@ -408,7 +408,7 @@ public class SmlXMLBindingTest {
             assertEquals(expCPprocess.getMethod(), resCPprocess.getMethod());
             assertEquals(expCPprocess.getTemporalReferenceFrame(), resCPprocess.getTemporalReferenceFrame());
             assertEquals(expCPprocess.getTimePosition(), resCPprocess.getTimePosition());
-            
+
             assertEquals(expCPprocess, resCPprocess);
             assertEquals(expCP, resCP);
         }
@@ -431,7 +431,7 @@ public class SmlXMLBindingTest {
         assertEquals(expectedResult.getMember(), result.getMember());
         assertEquals(expectedResult, result);
 
-        SensorMLMarshallerPool.getInstance().release(unmarshaller);
+        SensorMLMarshallerPool.getInstance().recycle(unmarshaller);
     }
 
     /**
@@ -612,7 +612,7 @@ public class SmlXMLBindingTest {
         m.marshal(sensor, sw);
 
         String result = sw.toString();
-        
+
         InputStream in = SmlXMLBindingTest.class.getResourceAsStream("/org/geotoolkit/sml/system101.xml");
         StringWriter out = new StringWriter();
         byte[] buffer = new byte[1024];
@@ -634,9 +634,9 @@ public class SmlXMLBindingTest {
         };
         comparator.compare();
 
-        SensorMLMarshallerPool.getInstance().release(m);
+        SensorMLMarshallerPool.getInstance().recycle(m);
     }
-    
+
     @Test
     public void DataSourceMarshalingTest() throws Exception {
         final SystemType system = new SystemType();
@@ -651,7 +651,7 @@ public class SmlXMLBindingTest {
         trajValues.setAny("test");
         final DataSourceType datasource = new DataSourceType(dataDefinition, trajValues, null);
         final Position pos  = new Position(null, datasource);
-        
+
         system.setPosition(pos);
         DataSourceType expds = (DataSourceType) pos.getAbstractProcess();
         DataSourceType resds = (DataSourceType) system.getPosition().getAbstractProcess();
@@ -666,6 +666,6 @@ public class SmlXMLBindingTest {
         //m.marshal(factory.createPosition(pos), System.out);
         //m.marshal(factory.createSystem(system), System.out);
         //m.marshal(sml, System.out);
-        SensorMLMarshallerPool.getInstance().release(m);
+        SensorMLMarshallerPool.getInstance().recycle(m);
     }
 }

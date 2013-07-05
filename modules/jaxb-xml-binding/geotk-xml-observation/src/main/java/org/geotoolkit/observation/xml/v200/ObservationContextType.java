@@ -17,12 +17,12 @@
 
 package org.geotoolkit.observation.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v321.ReferenceType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -31,12 +31,12 @@ import org.geotoolkit.util.Utilities;
  * 				are stronger than mere spatiotemporal coincidences, requiring explicit
  * 				representation. If present, the association class ObservationContext (Figure 2)
  * 				shall link a OM_Observation to another OM_Observation, with the role name
- * 				relatedObservation for the target. 
- * 
+ * 				relatedObservation for the target.
+ *
  * <p>Java class for ObservationContextType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ObservationContextType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ObservationContextType", propOrder = {
@@ -66,11 +66,11 @@ public class ObservationContextType {
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getRole() {
         return role;
@@ -78,11 +78,11 @@ public class ObservationContextType {
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setRole(ReferenceType value) {
         this.role = value;
@@ -90,11 +90,11 @@ public class ObservationContextType {
 
     /**
      * Gets the value of the relatedObservation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public ReferenceType getRelatedObservation() {
         return relatedObservation;
@@ -102,11 +102,11 @@ public class ObservationContextType {
 
     /**
      * Sets the value of the relatedObservation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
-     *     
+     *
      */
     public void setRelatedObservation(ReferenceType value) {
         this.relatedObservation = value;
@@ -123,9 +123,9 @@ public class ObservationContextType {
 
         if (object instanceof ObservationContextType && super.equals(object)) {
             final ObservationContextType that = (ObservationContextType) object;
-            return Utilities.equals(this.relatedObservation,  that.relatedObservation) &&
-                   Utilities.equals(this.role,                that.role);
-        } 
+            return Objects.equals(this.relatedObservation,  that.relatedObservation) &&
+                   Objects.equals(this.role,                that.role);
+        }
         return false;
     }
 

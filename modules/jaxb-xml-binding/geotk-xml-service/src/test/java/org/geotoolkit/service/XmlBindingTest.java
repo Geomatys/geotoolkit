@@ -22,12 +22,13 @@ import java.util.Arrays;
 import org.opengis.util.LocalName;
 import org.opengis.util.TypeName;
 import org.opengis.util.MemberName;
-import org.geotoolkit.metadata.iso.DefaultMetadata;
+import javax.xml.bind.JAXBContext;
+import org.apache.sis.metadata.iso.DefaultMetadata;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import org.geotoolkit.naming.DefaultNameFactory;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.util.iso.DefaultNameFactory;
+import org.apache.sis.xml.MarshallerPool;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -36,14 +37,14 @@ import static org.junit.Assert.*;
  * @author guilhem
  */
 public class XmlBindingTest {
- 
+
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;
     private Marshaller   marshaller;
 
     @Before
     public void setUp() throws JAXBException {
-        pool =   new MarshallerPool(DefaultMetadata.class, org.geotoolkit.service.ServiceIdentificationImpl.class);
+        pool =   new MarshallerPool(JAXBContext.newInstance(DefaultMetadata.class, org.geotoolkit.service.ServiceIdentificationImpl.class), null);
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }
@@ -51,10 +52,10 @@ public class XmlBindingTest {
     @After
     public void tearDown() {
         if (unmarshaller != null) {
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
         if (marshaller != null) {
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
     }
 
@@ -65,7 +66,7 @@ public class XmlBindingTest {
      */
     @Test
     public void unmarshallingTest() throws JAXBException {
-        String xml = 
+        String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
         "<srv:SV_ServiceIdentification xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:srv=\"http://www.isotc211.org/2005/srv\">" + '\n' +
         "    <srv:serviceType>" + '\n' +
@@ -92,27 +93,27 @@ public class XmlBindingTest {
         "        </srv:SV_OperationMetadata>" + '\n' +
         "    </srv:containsOperations>" + '\n' +
         "</srv:SV_ServiceIdentification>" + '\n';
-        
+
         Object obj = unmarshaller.unmarshal(new StringReader(xml));
         assertTrue(obj instanceof ServiceIdentificationImpl);
         ServiceIdentificationImpl result = (ServiceIdentificationImpl) obj;
 
         ServiceIdentificationImpl expResult = new ServiceIdentificationImpl();
-        
+
         ParameterImpl params = new ParameterImpl();
         DefaultNameFactory factory = new DefaultNameFactory();
         TypeName tname = factory.createTypeName(null, "CharacterString");
         MemberName name = factory.createMemberName(null, "VERSION", tname);
         params.setName(name);
-        
+
         OperationMetadataImpl meta = new OperationMetadataImpl();
         meta.setParameters(params);
         expResult.setContainsOperations(Arrays.asList(meta));
-        
-        
+
+
         LocalName loc = factory.createLocalName(null, "test service Type");
         expResult.setServiceType(loc);
-        
+
         assertEquals(expResult.getContainsOperations().iterator().next().getParameters(), result.getContainsOperations().iterator().next().getParameters());
         assertEquals(expResult.getContainsOperations().iterator().next().getConnectPoint(), result.getContainsOperations().iterator().next().getConnectPoint());
         assertEquals(expResult.getContainsOperations().iterator().next().getDCP(), result.getContainsOperations().iterator().next().getDCP());
@@ -130,25 +131,25 @@ public class XmlBindingTest {
     @Test
     public void marshallingTest() throws Exception {
         ServiceIdentificationImpl servIdent = new ServiceIdentificationImpl();
-        
+
         ParameterImpl params = new ParameterImpl();
         DefaultNameFactory factory = new DefaultNameFactory();
         TypeName tname = factory.createTypeName(null, "CharacterString");
         MemberName name = factory.createMemberName(null, "VERSION", tname);
         params.setName(name);
-        
+
         OperationMetadataImpl meta = new OperationMetadataImpl();
         meta.setParameters(params);
         servIdent.setContainsOperations(Arrays.asList(meta));
-        
-        
+
+
         LocalName loc = factory.createLocalName(null, "test service Type");
         servIdent.setServiceType(loc);
-        
+
         StringWriter sw = new StringWriter();
         marshaller.marshal(servIdent, sw);
-        
-        String expResult = 
+
+        String expResult =
         "<srv:SV_ServiceIdentification >" + '\n' +
         "    <srv:serviceType>" + '\n' +
         "        <gco:LocalName>test service Type</gco:LocalName>" + '\n' +
@@ -174,16 +175,16 @@ public class XmlBindingTest {
         "        </srv:SV_OperationMetadata>" + '\n' +
         "    </srv:containsOperations>" + '\n' +
         "</srv:SV_ServiceIdentification>" + '\n';
-        
+
         String result = sw.toString();
          //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
         //we remove the xmlmns
         result = removeXmlns(result);
-        
+
         assertEquals(expResult, result);
     }
-    
+
     /**
      * Remove all the XML namespace declaration.
      * @param xml

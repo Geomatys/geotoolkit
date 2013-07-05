@@ -295,7 +295,7 @@ public final class StringUtilities {
      * @param list
      * @return
      */
-    public static List<String> cleanStrings(final List<String> list) {
+    public static List<String> cleanCharSequences(final List<String> list) {
         final List<String> result = new ArrayList<String>();
         for (String s : list) {
             //we remove the bad character before the real value

@@ -41,30 +41,31 @@ import org.apache.sis.util.iso.DefaultInternationalString;
 import org.geotoolkit.inspire.xml.vs.ExtendedCapabilitiesType;
 import org.geotoolkit.inspire.xml.vs.LanguagesType;
 import org.geotoolkit.inspire.xml.vs.ObjectFactory;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.citation.DefaultContact;
-import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
-import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
-import org.geotoolkit.metadata.iso.extent.DefaultExtent;
-import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
-import org.geotoolkit.metadata.iso.identification.DefaultKeywords;
-import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
-import org.geotoolkit.naming.DefaultNameFactory;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultContact;
+import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
+import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.extent.DefaultTemporalExtent;
+import org.apache.sis.metadata.iso.identification.DefaultKeywords;
+import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
+import org.apache.sis.util.iso.DefaultNameFactory;
 import org.geotoolkit.service.ServiceTypeImpl;
 import org.geotoolkit.temporal.object.DefaultPeriod;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.wms.xml.v111.BoundingBox;
 import org.geotoolkit.wms.xml.v130.Capability;
 import org.geotoolkit.wmsc.xml.v111.TileSet;
 
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import org.opengis.metadata.citation.OnLineFunction;
 import org.opengis.metadata.citation.PresentationForm;
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.maintenance.ScopeCode;
+import javax.xml.bind.JAXBContext;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 
@@ -81,10 +82,11 @@ public class WmsXmlBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool =   new MarshallerPool("org.geotoolkit.wms.xml.v111:" +
-                                    "org.geotoolkit.wms.xml.v130:" +
-                                    "org.geotoolkit.inspire.xml.vs:" +
-                                    "org.geotoolkit.internal.jaxb.geometry");
+        pool = new MarshallerPool(JAXBContext.newInstance(
+                "org.geotoolkit.wms.xml.v111:" +
+                "org.geotoolkit.wms.xml.v130:" +
+                "org.geotoolkit.inspire.xml.vs:" +
+                "org.apache.sis.internal.jaxb.geometry"), null);
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }
@@ -92,10 +94,10 @@ public class WmsXmlBindingTest {
     @After
     public void tearDown() {
         if (unmarshaller != null) {
-            pool.release(unmarshaller);
+            pool.recycle(unmarshaller);
         }
         if (marshaller != null) {
-            pool.release(marshaller);
+            pool.recycle(marshaller);
         }
     }
 
@@ -261,7 +263,7 @@ public class WmsXmlBindingTest {
         period.setBegining(new Date(120000000));
         period.setEnding(new Date(120000001));
 
-        org.geotoolkit.internal.jaxb.gml.GMLAdapter.IDs.setUUID(period, "extent");
+//      org.apache.sis.internal.jaxb.gml.GMLAdapter.IDs.setUUID(period, "extent");
         tempExt.setExtent(period);
         extent.setTemporalElements(Arrays.asList(tempExt));
         ext.setTemporalRefererence(extent);
@@ -269,12 +271,12 @@ public class WmsXmlBindingTest {
         DefaultConformanceResult cresult =  new DefaultConformanceResult(Citations.EPSG, new DefaultInternationalString("see the referenced specification"), true);
         ext.setConformity(cresult);
 
-        ResponsibleParty party = DefaultResponsibleParty.EPSG;
+        ResponsibleParty party = org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty.EPSG;
         ext.setMetadataPointOfContact(party);
 
         ext.setMetadataDate(new Date(82800000));
 
-        DefaultKeywords key = new DefaultKeywords(Arrays.asList(new SimpleInternationalString("something")));
+        DefaultKeywords key = new DefaultKeywords(new SimpleInternationalString("something"));
         ext.setInpireKeywords(key);
 
         List<LanguageType> langs = new ArrayList<LanguageType>();
@@ -429,7 +431,7 @@ public class WmsXmlBindingTest {
         "    </inspire_vs:ExtendedCapabilities>" + '\n' +
         "</wms:Capability>" + '\n';
 
-        org.geotoolkit.internal.jaxb.gml.GMLAdapter.IDs.removeUUID(period);
+//      org.apache.sis.internal.jaxb.gml.GMLAdapter.IDs.removeUUID(period);
 
         final XMLComparator comparator = new XMLComparator(expResult, result);
         comparator.compare();
@@ -608,12 +610,12 @@ public class WmsXmlBindingTest {
         DefaultConformanceResult cresult =  new DefaultConformanceResult(citation, new DefaultInternationalString("see the referenced specification"), true);
         ext.setConformity(cresult);
 
-        ResponsibleParty party = DefaultResponsibleParty.EPSG;
+        ResponsibleParty party = org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty.EPSG;
         ext.setMetadataPointOfContact(party);
 
         ext.setMetadataDate(new Date(82800000));
 
-        DefaultKeywords key = new DefaultKeywords(Arrays.asList(new SimpleInternationalString("something")));
+        DefaultKeywords key = new DefaultKeywords(new SimpleInternationalString("something"));
         ext.setInpireKeywords(key);
 
         List<LanguageType> langs = new ArrayList<LanguageType>();

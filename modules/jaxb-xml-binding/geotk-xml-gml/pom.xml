@@ -65,6 +65,11 @@
   -->
   <dependencies>
     <dependency>
+      <groupId>org.apache.sis</groupId>
+      <artifactId>sis-utility</artifactId>
+      <version>${sis.version}</version>
+    </dependency>
+    <dependency>
         <groupId>org.geotoolkit</groupId>
         <artifactId>geotk-metadata-sql</artifactId>
     </dependency>

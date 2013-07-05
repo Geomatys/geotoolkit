@@ -19,7 +19,7 @@ package org.geotoolkit.parameter;
 import java.util.*;
 
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.util.ArgumentChecks;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.parameter.*;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.InternationalString;

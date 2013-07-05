@@ -20,6 +20,7 @@ package org.geotoolkit.gml.xml.v321;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -31,14 +32,13 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.BoundingShape;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.EnvelopeWithTimePeriod;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for BoundingShapeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BoundingShapeType">
  *   &lt;complexContent>
@@ -54,8 +54,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BoundingShapeType", propOrder = {
@@ -74,12 +74,12 @@ public class BoundingShapeType implements BoundingShape {
 
     public BoundingShapeType() {
     }
-    
+
     public BoundingShapeType(final String nul) {
         this._null = new ArrayList<String>();
         this._null.add(nul);
     }
-    
+
     public BoundingShapeType(final BoundingShape that) {
         if (that != null) {
             if (that.getEnvelope() != null) {
@@ -98,7 +98,7 @@ public class BoundingShapeType implements BoundingShape {
            }
         }
     }
-    
+
     public BoundingShapeType(final EnvelopeType envelope) {
         final ObjectFactory factory = new ObjectFactory();
         if (envelope instanceof EnvelopeWithTimePeriodType) {
@@ -112,7 +112,7 @@ public class BoundingShapeType implements BoundingShape {
         }
 
     }
-    
+
     @Override
     public EnvelopeType getEnvelope() {
         if (envelope != null) {
@@ -120,15 +120,15 @@ public class BoundingShapeType implements BoundingShape {
         }
         return null;
     }
-    
+
     /**
      * Gets the value of the envelope property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link EnvelopeWithTimePeriodType }{@code >}
      *     {@link JAXBElement }{@code <}{@link EnvelopeType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends EnvelopeType> getjbEnvelope() {
         return envelope;
@@ -136,12 +136,12 @@ public class BoundingShapeType implements BoundingShape {
 
     /**
      * Sets the value of the envelope property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link EnvelopeWithTimePeriodType }{@code >}
      *     {@link JAXBElement }{@code <}{@link EnvelopeType }{@code >}
-     *     
+     *
      */
     public void setEnvelope(JAXBElement<? extends EnvelopeType> value) {
         this.envelope = ((JAXBElement<? extends EnvelopeType> ) value);
@@ -149,11 +149,11 @@ public class BoundingShapeType implements BoundingShape {
 
     /**
      * Gets the value of the null property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     @Override
     public List<String> getNull() {
@@ -165,11 +165,11 @@ public class BoundingShapeType implements BoundingShape {
 
     /**
      * Gets the value of the nilReason property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     @Override
     public List<String> getNilReason() {
@@ -188,12 +188,12 @@ public class BoundingShapeType implements BoundingShape {
             return true;
         }
         if (object instanceof BoundingShapeType) {
-            
+
             final BoundingShapeType that = (BoundingShapeType) object;
 
-            return Utilities.equals(this.getNull(),              that.getNull())              &&
-                   Utilities.equals(this.getEnvelope(),          that.getEnvelope())          &&
-                   Utilities.equals(this.getNilReason(),         that.getNilReason());
+            return Objects.equals(this.getNull(),              that.getNull())              &&
+                   Objects.equals(this.getEnvelope(),          that.getEnvelope())          &&
+                   Objects.equals(this.getNilReason(),         that.getNilReason());
         }
         return false;
     }

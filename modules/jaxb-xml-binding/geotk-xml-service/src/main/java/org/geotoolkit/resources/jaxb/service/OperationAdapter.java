@@ -22,7 +22,7 @@ import org.geotoolkit.service.OperationImpl;
 import org.opengis.service.Operation;
 
 /**
- * JAXB adapter in order to map implementing class with the GeoAPI interface. See
+ * JAXB adapter in order to map implementing class with the Types interface. See
  * package documentation for more information about JAXB and interface.
  *
  * @module pending

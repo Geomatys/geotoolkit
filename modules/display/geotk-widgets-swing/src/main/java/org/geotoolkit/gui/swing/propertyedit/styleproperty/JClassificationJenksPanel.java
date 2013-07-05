@@ -49,7 +49,7 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
 import static org.geotoolkit.style.StyleConstants.*;
 import org.geotoolkit.style.function.Jenks;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;

@@ -17,10 +17,10 @@
 
 package org.geotoolkit.process.chain.model;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import org.geotoolkit.util.Utilities;
 
 /**
  *
@@ -69,8 +69,8 @@ public class ElementManual extends Element {
         }
         if (obj instanceof ElementManual) {
             final ElementManual that = (ElementManual) obj;
-            return Utilities.equals(this.id,          that.id) &&
-                   Utilities.equals(this.description, that.description);
+            return Objects.equals(this.id,          that.id) &&
+                   Objects.equals(this.description, that.description);
         }
         return false;
     }
@@ -93,10 +93,10 @@ public class ElementManual extends Element {
         sb.append("description:").append(description).append('\n');
         return sb.toString();
     }
-    
+
     @Override
     public Element copy() {
         return new ElementManual(this);
     }
-    
+
 }

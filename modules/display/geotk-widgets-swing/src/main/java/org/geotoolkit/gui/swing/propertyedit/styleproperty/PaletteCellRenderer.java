@@ -30,7 +30,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.style.interval.Palette;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Renderer of Palette in combobox in Style editor. 

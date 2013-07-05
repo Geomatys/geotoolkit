@@ -48,7 +48,7 @@ import org.geotoolkit.factory.FactoryRegistry;
  */
 public final class DynamicSymbolFactoryFinder {
     /** The logger for the filter module. */
-    protected static final Logger LOGGER = org.geotoolkit.util.logging.Logging
+    protected static final Logger LOGGER = org.apache.sis.util.logging.Logging
             .getLogger("org.geotoolkit.renderer.style");
 
     /**

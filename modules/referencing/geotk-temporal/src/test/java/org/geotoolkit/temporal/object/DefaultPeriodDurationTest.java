@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

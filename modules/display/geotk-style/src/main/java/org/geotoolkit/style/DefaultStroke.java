@@ -29,7 +29,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
- * Immutable implementation of GeoAPI Stroke.
+ * Immutable implementation of Types Stroke.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending

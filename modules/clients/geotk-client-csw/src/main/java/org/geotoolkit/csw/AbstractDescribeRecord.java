@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
+import static org.geotoolkit.csw.AbstractCSWRequest.POOL;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
@@ -144,18 +145,14 @@ public abstract class AbstractDescribeRecord extends AbstractCSWRequest implemen
         OutputStream stream = conec.getOutputStream();
         stream = security.encrypt(stream);
 
-        Marshaller marsh = null;
         try {
-            marsh = POOL.acquireMarshaller();
+            final Marshaller marsh = POOL.acquireMarshaller();
             final DescribeRecord describeXml = CswXmlFactory.createDescribeRecord(version, "CSW",
                     Arrays.asList(typeNames), outputFormat, schemaLanguage);
             marsh.marshal(describeXml, stream);
+            POOL.recycle(marsh);
         } catch (JAXBException ex) {
             throw new IOException(ex);
-        } finally {
-            if (POOL != null && marsh != null) {
-                POOL.release(marsh);
-            }
         }
         stream.close();
         return security.decrypt(conec.getInputStream());

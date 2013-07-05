@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.resources.jaxb.service;
 
-import org.geotoolkit.internal.jaxb.metadata.direct.MetadataAdapter;
-import org.geotoolkit.naming.DefaultMemberName;
+import org.apache.sis.internal.jaxb.metadata.direct.MetadataAdapter;
+import org.apache.sis.util.iso.DefaultMemberName;
 import org.opengis.util.MemberName;
 
 /**

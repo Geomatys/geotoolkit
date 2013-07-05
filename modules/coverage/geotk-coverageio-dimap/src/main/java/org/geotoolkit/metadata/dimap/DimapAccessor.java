@@ -141,51 +141,51 @@ import java.util.logging.Logger;
 import javax.measure.unit.Unit;
 import javax.media.jai.Warp;
 import javax.media.jai.WarpAffine;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.TypeMap;
 import org.geotoolkit.geometry.isoonjts.GeometryUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
-import org.geotoolkit.internal.jaxb.gmi.MI_Metadata;
+import org.apache.sis.internal.jaxb.gmi.MI_Metadata;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.metadata.dimap.DimapConstants.DataType;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.metadata.iso.DefaultMetadata;
-import org.geotoolkit.metadata.iso.acquisition.DefaultAcquisitionInformation;
-import org.geotoolkit.metadata.iso.acquisition.DefaultInstrument;
-import org.geotoolkit.metadata.iso.acquisition.DefaultOperation;
-import org.geotoolkit.metadata.iso.acquisition.DefaultPlatform;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
-import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
-import org.geotoolkit.metadata.iso.constraint.DefaultLegalConstraints;
-import org.geotoolkit.metadata.iso.content.AbstractContentInformation;
-import org.geotoolkit.metadata.iso.content.DefaultBand;
-import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
-import org.geotoolkit.metadata.iso.distribution.DefaultFormat;
-import org.geotoolkit.metadata.iso.extent.DefaultBoundingPolygon;
-import org.geotoolkit.metadata.iso.extent.DefaultExtent;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicDescription;
-import org.geotoolkit.metadata.iso.identification.AbstractIdentification;
-import org.geotoolkit.metadata.iso.identification.DefaultBrowseGraphic;
-import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
-import org.geotoolkit.metadata.iso.identification.DefaultResolution;
-import org.geotoolkit.metadata.iso.lineage.DefaultAlgorithm;
-import org.geotoolkit.metadata.iso.lineage.DefaultLineage;
-import org.geotoolkit.metadata.iso.lineage.DefaultProcessStep;
-import org.geotoolkit.metadata.iso.lineage.DefaultProcessing;
-import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
-import org.geotoolkit.metadata.iso.spatial.AbstractSpatialRepresentation;
-import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
-import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
-import org.geotoolkit.naming.DefaultNameFactory;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
+import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.acquisition.DefaultAcquisitionInformation;
+import org.apache.sis.metadata.iso.acquisition.DefaultInstrument;
+import org.apache.sis.metadata.iso.acquisition.DefaultOperation;
+import org.apache.sis.metadata.iso.acquisition.DefaultPlatform;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultCitationDate;
+import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
+import org.apache.sis.metadata.iso.constraint.DefaultLegalConstraints;
+import org.apache.sis.metadata.iso.content.AbstractContentInformation;
+import org.apache.sis.metadata.iso.content.DefaultBand;
+import org.apache.sis.metadata.iso.content.DefaultImageDescription;
+import org.apache.sis.metadata.iso.distribution.DefaultFormat;
+import org.apache.sis.metadata.iso.extent.DefaultBoundingPolygon;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicDescription;
+import org.apache.sis.metadata.iso.identification.AbstractIdentification;
+import org.apache.sis.metadata.iso.identification.DefaultBrowseGraphic;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.metadata.iso.identification.DefaultResolution;
+import org.apache.sis.metadata.iso.lineage.DefaultAlgorithm;
+import org.apache.sis.metadata.iso.lineage.DefaultLineage;
+import org.apache.sis.metadata.iso.lineage.DefaultProcessStep;
+import org.apache.sis.metadata.iso.lineage.DefaultProcessing;
+import org.apache.sis.metadata.iso.quality.DefaultDataQuality;
+import org.apache.sis.metadata.iso.spatial.AbstractSpatialRepresentation;
+import org.apache.sis.metadata.iso.spatial.DefaultDimension;
+import org.apache.sis.metadata.iso.spatial.DefaultGridSpatialRepresentation;
+import org.apache.sis.util.iso.DefaultNameFactory;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.temporal.object.ISODateParser;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Geometry;
@@ -328,7 +328,7 @@ public final class DimapAccessor extends Static {
 
     /**
      * Read the number of bits used for each pixel of each band of the raster image.
-     * 
+     *
      * @param doc
      * @return int the number of bits
      */
@@ -404,7 +404,7 @@ public final class DimapAccessor extends Static {
             final double stxLinMin = textValueSafe(bandStat, TAG_STX_LIN_MIN, Double.class);
             final double stxLinMax = textValueSafe(bandStat, TAG_STX_LIN_MAX, Double.class);
             final int bandIndex = textValueSafe(bandStat, TAG_BAND_INDEX, Integer.class);
-            valueRanges.put(bandIndex, NumberRange.create(stxMin, stxMax));
+            valueRanges.put(bandIndex, NumberRange.create(stxMin, true, stxMax, true));
         }
 
         // read dimensions -----------------------------------------------------
@@ -419,7 +419,7 @@ public final class DimapAccessor extends Static {
             This record provides the unit of the physical value resulting from data radiometric count
             to physical measure conversion such as Illumination or height :
             L = X/A + B
-            
+
             - L is the resulting physical value expressed in PHYSICAL_UNIT
             - X is the radiometric value at a given pixel location as stored in the raster file (unitless).
             - A is the gain (PHYSICAL_GAIN)
@@ -500,7 +500,7 @@ public final class DimapAccessor extends Static {
                 first = position;
             }
         }
-        
+
         if (first != null) {
             exteriorRing[len] = first;
         }
@@ -524,62 +524,62 @@ public final class DimapAccessor extends Static {
         final String name = textAttributeValueSafe(datasetID, TAG_DATASET_QL_PATH, ATTRIBUTE_HREF, String.class);
         return name.toLowerCase();
     }
-    
+
     /**
      * Return the TypeProduct according the missionIndex and the sensorCode
      * @param missionIndex
      * @param sensorCode
-     * @return 
+     * @return
      */
     public static String findTypeProduct(final int missionIndex, final String sensorCode) {
-        
+
         if ((missionIndex == 2 && "P".equals(sensorCode))
                 || (missionIndex == 4 && "M".equals(sensorCode))
                 || (missionIndex == 5 && "A".equals(sensorCode))
-                || (missionIndex == 5 && "B".equals(sensorCode))) 
+                || (missionIndex == 5 && "B".equals(sensorCode)))
             return "Black and White";
-        
+
         if ((missionIndex == 2 && "X".equals(sensorCode))
                 || (missionIndex == 4 && "X".equals(sensorCode))
-                || (missionIndex == 5 && "X".equals(sensorCode))) 
+                || (missionIndex == 5 && "X".equals(sensorCode)))
             return "Color";
-        
+
         if ((missionIndex == 4 && "I".equals(sensorCode))
                 || (missionIndex == 5 && "J".equals(sensorCode)))
             return "Color with SWIR";
-        
-        if (missionIndex == 5 && "T".equals(sensorCode)) 
+
+        if (missionIndex == 5 && "T".equals(sensorCode))
             return "Black White or Color";
-        
+
         return null;
     }
-    
+
     /**
      * Return the Resolution according the missionIndex and the sensorCode
      * @param missionIndex
      * @param sensorCode
-     * @return 
+     * @return
      */
     public static Double findResolution(final int missionIndex, final String sensorCode) {
-        
+
         if ((missionIndex == 2 && "P".equals(sensorCode))
                 || (missionIndex == 4 && "M".equals(sensorCode))
                 || (missionIndex == 5 && "X".equals(sensorCode))
-                || (missionIndex == 5 && "J".equals(sensorCode))) 
+                || (missionIndex == 5 && "J".equals(sensorCode)))
             return 10.0;
-        
+
         if ((missionIndex == 2 && "X".equals(sensorCode))
                 || (missionIndex == 4 && "I".equals(sensorCode))
-                || (missionIndex == 4 && "X".equals(sensorCode))) 
+                || (missionIndex == 4 && "X".equals(sensorCode)))
             return 20.0;
-        
+
         if ((missionIndex == 5 && "A".equals(sensorCode))
                 || (missionIndex == 5 && "B".equals(sensorCode)))
             return 5.0;
-        
-        if (missionIndex == 5 && "T".equals(sensorCode)) 
+
+        if (missionIndex == 5 && "T".equals(sensorCode))
             return 2.5;
-        
+
         return null;
     }
 
@@ -607,7 +607,7 @@ public final class DimapAccessor extends Static {
 
         String thumbnail = null;
         String name = null;
-        
+
         //Dimap_Document STRUCTURE
         //
         //<Metadata_Id/>                    - Mandatory
@@ -643,8 +643,8 @@ public final class DimapAccessor extends Static {
             //<DATASET_QL_PATH/>    → ?
             //<DATASET_QL_FORMAT/>  → ?
             //<COPYRIGHT/>          → MetaData.metadataConstraints > LegalConstraints.otherConstraints
-            //                      → MetaData.identificationInfo > resourcesConstraints > LegalConstraints.otherConstraints 
-            
+            //                      → MetaData.identificationInfo > resourcesConstraints > LegalConstraints.otherConstraints
+
             final String copyright = textValueSafe(datasetID, TAG_DATASET_COPYRIGHT, String.class);
             thumbnail = textAttributeValueSafe(datasetID, TAG_DATASET_TN_PATH, ATTRIBUTE_HREF, String.class);
             name = textValueSafe(datasetID, TAG_DATASET_NAME, String.class);
@@ -657,9 +657,9 @@ public final class DimapAccessor extends Static {
             final DefaultLegalConstraints constraints = new DefaultLegalConstraints();
             constraints.setUseConstraints(Collections.singleton(restriction));
             constraints.setOtherConstraints(Collections.singleton(new SimpleInternationalString(copyright)));
-            
+
             metadata.getMetadataConstraints().add(constraints);
-            
+
             // duplicate ?
             final AbstractIdentification identification = getIdentificationInfo(metadata);
             identification.getResourceConstraints().add(constraints);
@@ -688,7 +688,7 @@ public final class DimapAccessor extends Static {
             //    <FRAME_COL/>          → ?
             //    <SCENE_ORIENTATION/>  → ?
             //</Scene_Center>
-            
+
             if (metadata instanceof MI_Metadata) {
                 Geometry geometry = null;
                 try {
@@ -702,7 +702,7 @@ public final class DimapAccessor extends Static {
                 /**
                  * Fills IdentificationInfo
                  */
-                
+
                 //MetaData > DataIdentification > Extent > BoundingPolygon
                 if (geometry != null) {
                     final DefaultBoundingPolygon boundingPolygon = new DefaultBoundingPolygon();
@@ -743,10 +743,10 @@ public final class DimapAccessor extends Static {
             //<JOB_ID/>                     → MetaData.dataQualityInfo > DataQuality.lineage > Lineage.processSteps > ProcessStep > Processing.identifier > Identifier.code
             //<Production_Facility>         Occurs : 1 to 1
             //    <SOFTWARE_NAME/>          → MetaData.dataQualityInfo > DataQuality.lineage > Lineage.processSteps > ProcessStep.processingInfo > Processing.softwareReference > Citation.title
-            //    <SOFTWARE_VERSION/>       → MetaData.dataQualityInfo > DataQuality.lineage > Lineage.processSteps > ProcessStep.processingInfo > Processing.softwareReference > Citation.edition 
+            //    <SOFTWARE_VERSION/>       → MetaData.dataQualityInfo > DataQuality.lineage > Lineage.processSteps > ProcessStep.processingInfo > Processing.softwareReference > Citation.edition
             //    <PROCESSING_CENTER/>      → MetaData.dataQualityInfo > DataQuality.lineage > Lineage.processSteps > ProcessStep.processingInfo > Processing.softwareReference > Citation.citedResponsibleParties > ResponsibleParty.organisationName
             //</Production_Facility>
-            
+
             final String jobId = textValueSafe(production, TAG_JOB_ID, String.class);
             final String productType = textValueSafe(production, TAG_PRODUCT_TYPE, String.class);
             final String productInfo = textValueSafe(production, TAG_PRODUCT_INFO, String.class);
@@ -764,11 +764,11 @@ public final class DimapAccessor extends Static {
             /**
              * Fills DataQualityInfo
              */
-            
+
             //MetaData > DataQuality > Lineage > ProcessStep
             final DefaultResponsibleParty responsibleParty = new DefaultResponsibleParty(Role.ORIGINATOR);
             responsibleParty.setOrganisationName(new SimpleInternationalString(producerName));
-            
+
             final DefaultProcessStep processStep = getProcessStep(metadata);
             processStep.setDescription(new SimpleInternationalString(productInfo));
             processStep.setDate(productionDate);
@@ -779,7 +779,7 @@ public final class DimapAccessor extends Static {
                 final DefaultProcessing processing = getProcessingInfo(metadata);
                 processing.setIdentifier(new DefaultIdentifier(jobId));
             }
-            
+
             //MetaData > DataQuality > Lineage > ProcessStep > Processing > SoftwareReferences
             if (facility != null) {
                 final String softwareName = textValueSafe(facility, TAG_PRODUCTION_FACILITY_SOFTWARE_NAME, String.class);
@@ -815,7 +815,7 @@ public final class DimapAccessor extends Static {
             /**
              * Fills SpatialRepresentationInfo
              */
-            
+
             //MetaData > GridSpatialRepresentation > Dimension
             final DefaultDimension rowDim = new DefaultDimension();
             rowDim.setDimensionSize(nrows);
@@ -848,7 +848,7 @@ public final class DimapAccessor extends Static {
             //    <SWIR_BAND_REGISTRATION_FLAG/>    → ?
             //    <X_BANDS_REGISTRATION_FLAG/>      → ?
             //    <RESAMPLING_METHOD/>              → ?
-            //    <Dynamic_Stretch>                 Occurs : 0 to 1 
+            //    <Dynamic_Stretch>                 Occurs : 0 to 1
             //        <Thresholds>                  Occurs : 1 to n
             //            <BAND_INDEX/>             → MetaData.contentInfo > ImageDescription.dimensions > Band.descriptor
             //            <LOW_THRESHOLD/>          → MetaData.contentInfo > ImageDescription.dimensions > Band.minValue
@@ -857,14 +857,14 @@ public final class DimapAccessor extends Static {
             //    <Dynamic_Stretch>
             //    <Deconvolution>                   Occurs : 0 to 1
             //        <LINE_SHIFT/>                 → ?
-            //        <DECOMPRESSION_TYPE/>         → ?   
+            //        <DECOMPRESSION_TYPE/>         → ?
             //    <Deconvolution>
             //    <Sampling_Step>                   Occurs : 0 to 1
             //        <SAMPLING_STEP_X/>            → ?
             //        <SAMPLING_STEP_Y/>            → ?
             //    <Sampling_Step>
             //    <SuperMode_Processing>            Occurs : 0 to 1
-            //        <SM_CORRELATION_NEEDED/>      → ? 
+            //        <SM_CORRELATION_NEEDED/>      → ?
             //        <SM_RAW_GRID_FILTERING/>      → ?
             //        <SM_PROCESSING_TYPE/>         → ?
             //    <SuperMode_Processing>
@@ -881,17 +881,17 @@ public final class DimapAccessor extends Static {
             //        <ROW_MIN/>                    → ?
             //        <COL_MAX/>                    → ?
             //        <ROW_MAX/>                    → ?
-            //    </Region_Of_Interest> 
+            //    </Region_Of_Interest>
             //    ...
             //</Regions_Of_Interest>
-            
+
             final String algoType = textValueSafe(dataProcessing, TAG_DATA_PROCESSING_ALGORITHM_TYPE, String.class);
             final String algoName = textValueSafe(dataProcessing, TAG_DATA_PROCESSING_ALGORITHM_NAME, String.class);
             final String processingLevel = textValueSafe(dataProcessing, TAG_DATA_PROCESSING_PROCESSING_LEVEL, String.class);
             /**
              * Fills DataQualityInfo
              */
-            
+
             //MetaData > DataQuality > Lineage > ProcessStep > Processing > Algorithm
             if (algoName != null && algoType != null) {
                 final DefaultCitation citation = new DefaultCitation();
@@ -904,7 +904,7 @@ public final class DimapAccessor extends Static {
                 final DefaultProcessing processing = getProcessingInfo(metadata);
                 processing.getAlgorithms().add(algorithm);
             }
-            
+
             /**
              * Fills ContentInfo
              */
@@ -913,17 +913,17 @@ public final class DimapAccessor extends Static {
             final Element processingOpts = firstElement(dataProcessing, TAG_PROCESSING_OPTIONS);
             if (processingOpts != null) {
                 final Element dynamicStretch = firstElement(dataProcessing, TAG_DYNAMIC_STRETCH);
-                
+
                 if (dynamicStretch != null) {
                     final List<Element> thresholds = getListElements(dynamicStretch, TAG_THRESHOLDS);
-                    
+
                     for (int i = 0, len = thresholds.size(); i < len; i++) {
                         final Element threshold = (Element) thresholds.get(i);
-                        
+
                         final int bandIndex = textValueSafe(threshold, TAG_BAND_INDEX, Integer.class);
                         final Double lowThreshold = textValueSafe(threshold, TAG_LOW_THRESHOLD, Double.class);
                         final Double highThreshold = textValueSafe(threshold, TAG_HIGH_THRESHOLD, Double.class);
-                        
+
                         final DefaultNameFactory factory = new DefaultNameFactory();
                         final TypeName tname = factory.createTypeName(null, "BAND_INDEX");
                         final MemberName memberName = factory.createMemberName(null, String.valueOf(bandIndex), tname);
@@ -935,7 +935,7 @@ public final class DimapAccessor extends Static {
                     }
                 }
             }
-            
+
             //MetaData > ContentInfo (ImageDescription) > ProcessingLevelCode
             if (processingLevel != null) {
                 final DefaultImageDescription contentInfo = (DefaultImageDescription) getContentInfo(metadata);
@@ -954,18 +954,18 @@ public final class DimapAccessor extends Static {
             //<Data_File>               Occurs : 1 to 1
             //    <DATA_FILE_PATH/>      → ?
             //</Data_File>
-            
+
             final Element formatTag = firstElement(dataAccess, TAG_DATA_FILE_FORMAT);
 
             /**
              * Fills IdentificationInfo
              */
-            
+
             //MetaData > DataIdentification > Format
             if (formatTag != null) {
                 final String version = formatTag.getAttribute(ATT_VERSION);
                 final String formatName = formatTag.getTextContent();
-                
+
                 final DefaultFormat format = new DefaultFormat();
                 format.setName(new SimpleInternationalString(formatName));
                 format.setVersion(new SimpleInternationalString(version));
@@ -989,38 +989,38 @@ public final class DimapAccessor extends Static {
             //    <PHYSICAL_CALIBRATION_DATE/>   → ?
             //</Spectral_Band_Info>
             //...
-            
+
             /**
              * Fills ContentInfo
              */
-            
+
             final List<Element> spectrals = getListElements(imageInter, TAG_SPECTRAL_BAND_INFO);
             if (spectrals != null) {
                 final Element physicalUnitElem = firstElement(imageInter, TAG_PHYSICAL_UNIT);
-                
+
                 final int nbits = readNBits(doc);
-            
+
                 //MetaData > ImageDescription > RecordType
                 //if (physicalUnitElem != null) {
                 //     TODO: how to build an attribute description
                 //    final RecordType recordType = new DefaultRecordType();
-                //    
+                //
                 //    final DefaultImageDescription contentInfo = (DefaultImageDescription) getContentInfo(metadata);
                 //    contentInfo.setAttributeDescription(null);
                 //}
-                
+
                 //MetaData > ImageDescription > Dimensions
                 for (int i = 0, len = spectrals.size(); i < len; i++) {
                     final Element spectre = (Element) spectrals.get(i);
-                    
+
                     final int bandIndex = textValueSafe(spectre, TAG_BAND_INDEX, Integer.class);
                     final String bandDesc = textValueSafe(spectre, TAG_BAND_DESCRIPTION, String.class);
                     final Double physicalGain = textValueSafe(spectre, TAG_PHYSICAL_GAIN, Double.class);
                     final Double physicalBias = textValueSafe(spectre, TAG_PHYSICAL_BIAS, Double.class);
                     String physicalUnit = textValueSafe(spectre, TAG_PHYSICAL_UNIT, String.class);
-                    
+
                     physicalUnit = physicalUnit.substring(physicalUnit.indexOf("(") + 1, physicalUnit.indexOf(")"));
-                    
+
                     //final Unit unit = Unit.valueOf(physicalUnit);
 
                     final DefaultBand dimension = getBandDimension(metadata, bandIndex);
@@ -1030,9 +1030,9 @@ public final class DimapAccessor extends Static {
                     dimension.setOffset(physicalBias);
                     //dimension.setUnits(unit);
                 }
-            } 
+            }
         }
-        
+
         //<xsd:element minOccurs="1" maxOccurs="1" ref="Dataset_Sources"/> -----
         //Could be mapped to Aquisition informations
         final Element datasetSources = firstElement(doc, TAG_DATASET_SOURCES);
@@ -1055,7 +1055,7 @@ public final class DimapAccessor extends Static {
             //        ...
             //    </Source_Frame>
             //    <Scene_Source>                         Occurs : 0 to 1
-            //        <MISSION/>                         → MetaData.acquisitionInformation > AcquisitionInformation.operations > Operations.description 
+            //        <MISSION/>                         → MetaData.acquisitionInformation > AcquisitionInformation.operations > Operations.description
             //                                             AND MetaData.acquisitionInformation > AcquisitionInformation.plateforms > Platform.identifier > Identifier.code
             //                                             AND MetaData.acquisitionInformation > AcquisitionInformation.plateforms > Platform.Citation > Citation.title
             //                                             AND MetaData.acquisitionInformation > AcquisitionInformation.plateforms > Platform.description
@@ -1108,7 +1108,7 @@ public final class DimapAccessor extends Static {
             if (sourceInfo != null) {
                 final String sourceDesc = textValueSafe(sourceInfo, TAG_SOURCE_DESCRIPTION, String.class);
                 final String sourceType = textValueSafe(sourceInfo, TAG_SOURCE_TYPE, String.class);
-                
+
                 /**
                  * Fills IdentificationInfo, AcquisitionInfo and ContentInfo
                  */
@@ -1127,11 +1127,11 @@ public final class DimapAccessor extends Static {
                     final String viewingAngle = textValueSafe(sceneSource, TAG_SCENE_VIEWING_ANGLE, String.class);
                     final Double sunAzimuth = textValueSafe(sceneSource, TAG_SCENE_SUN_AZIMUTH, Double.class);
                     final Double sunElevation = textValueSafe(sceneSource, TAG_SCENE_SUN_ELEVATION, Double.class);
-                    
+
                     /**
                      * Fills IdentificationInfo
                      */
-                    
+
                     //MetaData > IdentificationInfo (DataIdentification) > GraphicOverviews
                     final DefaultDataIdentification dataIdentification = (DefaultDataIdentification) getIdentificationInfo(metadata);
                     if (thumbnail != null && thumbnail.contains(".")) {
@@ -1146,7 +1146,7 @@ public final class DimapAccessor extends Static {
                     //MetaData > IdentificationInfo (DataIdentification) > Abstract
                     dataIdentification.setAbstract(new SimpleInternationalString(
                             missionName + " " + missionIndex + " " + sourceDesc));
-                    
+
                     //MetaData > IdentificationInfo (DataIdentification) > Citation
                     final DefaultCitation citation = new DefaultCitation();
                     final ISODateParser dateParser = new ISODateParser();
@@ -1154,33 +1154,33 @@ public final class DimapAccessor extends Static {
                     citation.setDates(Collections.singleton(new DefaultCitationDate(date, DateType.CREATION)));
                     citation.setTitle(new SimpleInternationalString(
                             missionName + " " + missionIndex + " " + sourceType + " " + findTypeProduct(missionIndex, sensorCode)));
-                    
+
                     dataIdentification.setCitation(citation);
-                    
+
                     //MetaData > IdentificationInfo (DataIdentification) > Resolution
                     final DefaultResolution resolution = new DefaultResolution();
                     resolution.setDistance(findResolution(missionIndex, sensorCode));
 
                     dataIdentification.setSpatialResolutions(Collections.singleton(resolution));
-                    
+
                     /**
                      * Fills AcquisitionInfo
                      */
-                    
+
                     final DefaultAcquisitionInformation acquisitionInfo = getAcquisitionInfo(metadata);
 
                     //MetaData > AcquisitionInfo > Operations
                     final DefaultOperation operation = new DefaultOperation();
                     operation.setIdentifier(new DefaultIdentifier(String.valueOf(missionIndex)));
                     operation.setDescription(new SimpleInternationalString(missionName));
-                    
+
                     acquisitionInfo.getOperations().add(operation);
 
                     //MetaData > AcquisitionInfo > Instruments
                     final DefaultInstrument instrument = new DefaultInstrument();
                     instrument.setIdentifier(new DefaultIdentifier(instrumentName + instrumentIndex));
                     instrument.setDescription(new SimpleInternationalString(instrumentName));
-                    
+
                     acquisitionInfo.getInstruments().add(instrument);
 
                     //MetaData > AcquisitionInfo > Platforms
@@ -1364,7 +1364,7 @@ public final class DimapAccessor extends Static {
         //If the dimension doesn't exists, creates and returns a new dimension
         final DefaultBand dimension = new DefaultBand();
         dimensions.add(dimension);
-        
+
         return dimension;
     }
 

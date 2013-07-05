@@ -19,6 +19,7 @@ package org.geotoolkit.swe.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,14 +29,13 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.geotoolkit.swe.xml.AbstractTime;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for TimeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimeType">
  *   &lt;complexContent>
@@ -51,8 +51,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimeType", propOrder = {
@@ -75,9 +75,9 @@ public class TimeType extends AbstractSimpleComponentType implements AbstractTim
     private String localFrame;
 
     public TimeType() {
-        
+
     }
-    
+
     public TimeType(final String definition, final UnitReference uom) {
         super(null, definition);
         if (uom != null) {
@@ -86,14 +86,14 @@ public class TimeType extends AbstractSimpleComponentType implements AbstractTim
             this.uom = new UnitReference();
         }
     }
-    
+
     /**
      * Gets the value of the uom property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link UnitReference }
-     *     
+     *
      */
     @Override
     public UnitReference getUom() {
@@ -102,11 +102,11 @@ public class TimeType extends AbstractSimpleComponentType implements AbstractTim
 
     /**
      * Sets the value of the uom property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link UnitReference }
-     *     
+     *
      */
     public void setUom(UnitReference value) {
         this.uom = value;
@@ -114,11 +114,11 @@ public class TimeType extends AbstractSimpleComponentType implements AbstractTim
 
     /**
      * Gets the value of the constraint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedTimesPropertyType }
-     *     
+     *
      */
     public AllowedTimesPropertyType getConstraint() {
         return constraint;
@@ -126,11 +126,11 @@ public class TimeType extends AbstractSimpleComponentType implements AbstractTim
 
     /**
      * Sets the value of the constraint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedTimesPropertyType }
-     *     
+     *
      */
     public void setConstraint(AllowedTimesPropertyType value) {
         this.constraint = value;
@@ -138,11 +138,11 @@ public class TimeType extends AbstractSimpleComponentType implements AbstractTim
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     @Override
     public List<String> getValue() {
@@ -154,16 +154,16 @@ public class TimeType extends AbstractSimpleComponentType implements AbstractTim
 
     /**
      * Gets the value of the referenceTime property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getReferenceTimeCalendar() {
         return referenceTime;
     }
-    
+
     @Override
     public String getReferenceTime() {
         if (referenceTime != null) {
@@ -174,11 +174,11 @@ public class TimeType extends AbstractSimpleComponentType implements AbstractTim
 
     /**
      * Sets the value of the referenceTime property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setReferenceTime(XMLGregorianCalendar value) {
         this.referenceTime = value;
@@ -186,11 +186,11 @@ public class TimeType extends AbstractSimpleComponentType implements AbstractTim
 
     /**
      * Gets the value of the localFrame property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getLocalFrame() {
@@ -199,11 +199,11 @@ public class TimeType extends AbstractSimpleComponentType implements AbstractTim
 
     /**
      * Sets the value of the localFrame property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLocalFrame(String value) {
         this.localFrame = value;
@@ -217,11 +217,11 @@ public class TimeType extends AbstractSimpleComponentType implements AbstractTim
         if (object instanceof TimeType && super.equals(object)) {
             final TimeType that = (TimeType) object;
 
-            return Utilities.equals(this.constraint,    that.constraint) &&
-                   Utilities.equals(this.localFrame,    that.localFrame) &&
-                   Utilities.equals(this.referenceTime, that.referenceTime) &&
-                   Utilities.equals(this.value,         that.value) &&
-                   Utilities.equals(this.uom,           that.uom);
+            return Objects.equals(this.constraint,    that.constraint) &&
+                   Objects.equals(this.localFrame,    that.localFrame) &&
+                   Objects.equals(this.referenceTime, that.referenceTime) &&
+                   Objects.equals(this.value,         that.value) &&
+                   Objects.equals(this.uom,           that.uom);
         }
         return false;
     }

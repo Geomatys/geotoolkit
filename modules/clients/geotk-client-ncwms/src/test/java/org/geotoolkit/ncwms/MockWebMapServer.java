@@ -24,7 +24,7 @@ import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSMarshallerPool;
 import org.geotoolkit.wms.xml.WMSVersion;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 
 /**
  * For testing purpose.
@@ -42,13 +42,10 @@ public class MockWebMapServer extends NcWebMapServer{
 
         final MarshallerPool pool = WMSMarshallerPool.getInstance();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-        try{
-            capa111 = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource("/org/geotoolkit/wms/wms111.xml"));
-            capa130 = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource("/org/geotoolkit/wms/wms130.xml"));
-        }finally{
-            pool.release(unmarshaller);
-        }
-        
+        capa111 = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource("/org/geotoolkit/wms/wms111.xml"));
+        capa130 = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource("/org/geotoolkit/wms/wms130.xml"));
+        pool.recycle(unmarshaller);
+
     }
 
     @Override

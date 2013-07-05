@@ -40,7 +40,7 @@ import org.geotoolkit.sld.MutableUserLayer;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.xml.StyleXmlIO;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.metadata.citation.OnlineResource;
@@ -68,7 +68,7 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 import org.geotoolkit.sld.xml.Specification;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.junit.Test;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;

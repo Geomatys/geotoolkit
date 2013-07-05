@@ -18,7 +18,7 @@
 package org.geotoolkit.temporal.object;
 
 import java.util.Objects;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.temporal.PeriodDuration;
 import org.opengis.util.InternationalString;
 

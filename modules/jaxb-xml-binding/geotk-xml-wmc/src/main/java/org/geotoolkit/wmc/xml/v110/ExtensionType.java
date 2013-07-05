@@ -50,7 +50,7 @@ import org.geotoolkit.ogc.xml.v100.LiteralType;
 @XmlType(name = "ExtensionType", propOrder = {
     "any"
 })
-@XmlSeeAlso({LiteralType.class,org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class})
+@XmlSeeAlso({LiteralType.class,org.apache.sis.internal.jaxb.geometry.ObjectFactory.class})
 public class ExtensionType {
 
     @XmlAnyElement(lax = true)

@@ -18,21 +18,21 @@ package org.geotoolkit.ows.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractDomain;
-import org.geotoolkit.util.Utilities;
 
 
 /**
- * Valid domain (or allowed set of values) of one quantity, with its name or identifier. 
- * 
+ * Valid domain (or allowed set of values) of one quantity, with its name or identifier.
+ *
  * <p>Java class for DomainType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DomainType">
  *   &lt;complexContent>
@@ -42,7 +42,7 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module pending
  */
@@ -58,14 +58,14 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
      */
     DomainType(){
     }
-    
+
     public DomainType(final DomainType that){
         super(that);
         if (that != null) {
             this.name = that.name;
         }
     }
-    
+
     /**
      * Build a new Domain with the specified name.
      */
@@ -80,7 +80,7 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
         super(values);
         this.name = name;
     }
-    
+
     /**
      * Build a new Domain with the specified name.
      */
@@ -88,17 +88,17 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
         super(values);
         this.name = name;
     }
-    
+
     public DomainType(final String name, final ValueType defaultValue){
         super(defaultValue);
         this.name = name;
     }
-    
+
     public DomainType(final String name, final NoValues noValues, final ValueType defaultValue){
         super(noValues, defaultValue);
         this.name = name;
     }
-    
+
     /**
      * Build a new Domain with the specified name.
      */
@@ -106,7 +106,7 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
         super(value);
         this.name = name;
     }
-    
+
     /**
      * Build a new Domain with the specified list of values.
      */
@@ -114,7 +114,7 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
         super(value);
         this.name  = name;
     }
-    
+
     /**
      * Gets the value of the name property.
      */
@@ -130,14 +130,14 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
         }
         return null;
     }
-    
+
     @Override
     public void setValue(final List<String> values) {
         if (values != null) {
             this.setAllowedValues(new AllowedValues(values));
         }
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -148,8 +148,8 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
         }
         if (object instanceof DomainType && super.equals(object)) {
             final DomainType that = (DomainType) object;
-            return Utilities.equals(this.name, that.name);
-        } 
+            return Objects.equals(this.name, that.name);
+        }
         return false;
     }
 
@@ -159,9 +159,9 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
         hash = 23 * hash + (this.name != null ? this.name.hashCode() : 0);
         return hash;
     }
-    
+
     /**
-     * 
+     *
      */
     @Override
     public String toString() {

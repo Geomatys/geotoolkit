@@ -36,11 +36,8 @@ public final class WCSUtilities extends Static {
     public static GetCapabilitiesResponse unmarshallCapabilities(final InputStream stream) throws JAXBException{
         final Unmarshaller unmarshal = WCSMarshallerPool.getInstance().acquireUnmarshaller();
         Object obj;
-        try{
-            obj = unmarshal.unmarshal(stream);
-        }finally{
-            WCSMarshallerPool.getInstance().release(unmarshal);
-        }
+        obj = unmarshal.unmarshal(stream);
+        WCSMarshallerPool.getInstance().recycle(unmarshal);
 
         if(obj instanceof JAXBElement){
             final JAXBElement ele = (JAXBElement) obj;

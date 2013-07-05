@@ -20,7 +20,7 @@ package org.geotoolkit.data;
 import java.net.URL;
 import java.util.Collections;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.util.ResourceInternationalString;
+import org.apache.sis.util.iso.ResourceInternationalString;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 

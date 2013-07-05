@@ -18,35 +18,35 @@ package org.geotoolkit.util.collection;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 
 /**
  * Abstract synchronized list that define notify methods called when
  * objects are added or removed.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public abstract class NotifiedCheckedList<E> extends CheckedArrayList<E>{
-    
+
     public NotifiedCheckedList(final Class<E> type) {
         super(type);
     }
-    
+
     public NotifiedCheckedList(final Class<E> type, final int capacity) {
         super(type,capacity);
     }
 
     protected abstract void notifyAdd(final E item, int index);
-    
+
     protected abstract void notifyAdd(final Collection<? extends E> items, NumberRange<Integer> range);
-    
+
     protected abstract void notifyChange(final E oldItem, E newItem, int index);
-    
+
     protected abstract void notifyRemove(final E item, int index);
-    
+
     protected abstract void notifyRemove(final Collection<? extends E> items, NumberRange<Integer> range);
-        
+
     @Override
     public boolean add(final E element) throws IllegalArgumentException, UnsupportedOperationException {
         if(element == null) return false;
@@ -70,13 +70,13 @@ public abstract class NotifiedCheckedList<E> extends CheckedArrayList<E>{
         notifyChange(old, element, index);
         return old;
     }
-    
+
     @Override
     public boolean addAll(final Collection<? extends E> collection) throws IllegalArgumentException, UnsupportedOperationException {
         final int startIndex = super.size();
         final boolean added = super.addAll(collection);
         if (added) {
-            notifyAdd(collection, NumberRange.create(startIndex, super.size()-1) );
+            notifyAdd(collection, NumberRange.create(startIndex, true, super.size()-1, true) );
         }
         return added;
     }
@@ -85,7 +85,7 @@ public abstract class NotifiedCheckedList<E> extends CheckedArrayList<E>{
     public boolean addAll(final int index, final Collection<? extends E> collection) throws IllegalArgumentException, UnsupportedOperationException {
         final boolean added = super.addAll(index, collection);
         if (added) {
-            notifyAdd(collection, NumberRange.create(index, index + collection.size()) );
+            notifyAdd(collection, NumberRange.create(index, true, index + collection.size(), true) );
         }
         return added;
     }
@@ -124,10 +124,10 @@ public abstract class NotifiedCheckedList<E> extends CheckedArrayList<E>{
     public void clear() throws UnsupportedOperationException {
         if(!isEmpty()){
             final Collection<E> copy = new ArrayList<E>(this);
-            final NumberRange<Integer> range = NumberRange.create(0, copy.size()-1);
+            final NumberRange<Integer> range = NumberRange.create(0, true, copy.size()-1, true);
             super.clear();
             notifyRemove(copy, range);
         }
     }
-      
+
 }

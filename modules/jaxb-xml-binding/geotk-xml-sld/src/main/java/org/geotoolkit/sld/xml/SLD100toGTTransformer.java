@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.sld.xml.v100.LayerFeatureConstraints;

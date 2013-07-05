@@ -208,7 +208,7 @@ public abstract class StaxStreamReader extends AbstractConfigurable {
     /**
      * <p>XML language provides two notations for boolean type :
      * "true" can be written "1" and "0" significates "false".
-     * This method considers all this values as Strings and return its boolean value.</p>
+     * This method considers all this values as CharSequences and return its boolean value.</p>
      *
      * @param bool The String to parse
      * @return true if bool is equal to "true" or "1".

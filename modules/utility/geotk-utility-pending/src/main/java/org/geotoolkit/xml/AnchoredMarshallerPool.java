@@ -21,8 +21,13 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.geotoolkit.resources.Errors;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import org.apache.sis.xml.XML;
+import org.apache.sis.xml.MarshallerPool;
+
 
 /**
  *
@@ -31,10 +36,19 @@ import javax.xml.bind.Marshaller;
 public class AnchoredMarshallerPool extends MarshallerPool {
 
     public AnchoredMarshallerPool() throws JAXBException {
-        super();
+        super(null);
     }
 
     private String schemaLocation = null;
+
+    /**
+     * Binds string labels with URNs or anchors. Values can be either {@link URI} or
+     * {@link Anchor} instances. The map is initially null and will be created
+     * when first needed.
+     *
+     * @see #addLinkage(String, URI)
+     */
+    private Map<String,Object> anchors;
 
     /**
      * Creates a new factory for the given class to be bound, with a default empty namespace.
@@ -43,7 +57,7 @@ public class AnchoredMarshallerPool extends MarshallerPool {
      * @throws JAXBException    If the JAXB context can not be created.
      */
     public AnchoredMarshallerPool(final Class<?>... classesToBeBound) throws JAXBException {
-        super(classesToBeBound);
+        super(JAXBContext.newInstance(classesToBeBound), null);
     }
 
     /**
@@ -54,7 +68,7 @@ public class AnchoredMarshallerPool extends MarshallerPool {
      * @throws JAXBException    If the JAXB context can not be created.
      */
     public AnchoredMarshallerPool(final String rootNamespace, final Class<?>... classesToBeBound) throws JAXBException {
-        super(Collections.singletonMap(ROOT_NAMESPACE_KEY, rootNamespace), classesToBeBound);
+        super(JAXBContext.newInstance(classesToBeBound), Collections.singletonMap(XML.DEFAULT_NAMESPACE, rootNamespace));
     }
 
     /**
@@ -65,7 +79,7 @@ public class AnchoredMarshallerPool extends MarshallerPool {
      * @throws JAXBException    If the JAXB context can not be created.
      */
     public AnchoredMarshallerPool(final String rootNamespace, final String schemaLocation, final Class<?>... classesToBeBound) throws JAXBException {
-        super(getProperties(rootNamespace), classesToBeBound);
+        super(JAXBContext.newInstance(classesToBeBound), getProperties(rootNamespace));
         this.schemaLocation = schemaLocation;
     }
 
@@ -78,7 +92,7 @@ public class AnchoredMarshallerPool extends MarshallerPool {
      * @throws JAXBException    If the JAXB context can not be created.
      */
     public AnchoredMarshallerPool(final String packages) throws JAXBException {
-        super(packages);
+        super(JAXBContext.newInstance(packages), null);
     }
 
     /**
@@ -90,7 +104,7 @@ public class AnchoredMarshallerPool extends MarshallerPool {
      * @throws JAXBException    If the JAXB context can not be created.
      */
     public AnchoredMarshallerPool(final String rootNamespace, final String packages) throws JAXBException {
-        super(Collections.singletonMap(ROOT_NAMESPACE_KEY, rootNamespace), packages);
+        super(JAXBContext.newInstance(packages), Collections.singletonMap(XML.DEFAULT_NAMESPACE, rootNamespace));
     }
 
     /**
@@ -103,7 +117,7 @@ public class AnchoredMarshallerPool extends MarshallerPool {
      * @throws JAXBException    If the JAXB context can not be created.
      */
     public AnchoredMarshallerPool(final String rootNamespace, final String packages, final String schemaLocation) throws JAXBException {
-        super(getProperties(rootNamespace), packages);
+        super(JAXBContext.newInstance(packages), getProperties(rootNamespace));
         this.schemaLocation = schemaLocation;
 
     }
@@ -112,12 +126,10 @@ public class AnchoredMarshallerPool extends MarshallerPool {
      * Return a Map of Marshaller properties.
      *
      * @param rootNamespace The root namespace, for example {@code "http://www.isotc211.org/2005/gmd"}.
-     * @param schemaLocation The main xsd schema location for all the returned xml.
-     * @return
      */
     public static Map<String, String> getProperties(final String rootNamespace) {
-        final Map<String, String> properties = new HashMap<String, String>();
-        properties.put(ROOT_NAMESPACE_KEY, rootNamespace);
+        final Map<String, String> properties = new HashMap<>();
+        properties.put(XML.DEFAULT_NAMESPACE, rootNamespace);
         return properties;
     }
 
@@ -130,8 +142,26 @@ public class AnchoredMarshallerPool extends MarshallerPool {
         return marshaller;
     }
 
-    @Override
-    public void addAnchor(final String text, final URI uri) {
-        super.addAnchor(text, uri);
+    /**
+     * Adds a label associated to an URN. For some methods expected to return a code as a
+     * {@link String} object, the code will be completed by the given URN in an {@code AnchorType}
+     * element.
+     * <p>
+     * This method should be invoked from subclasses constructor only. Anchors can be added
+     * but can not be removed or modified.
+     *
+     * @param  label The label associated to the URN.
+     * @param  linkage The URN.
+     * @throws IllegalStateException If a URN is already associated to the given linkage.
+     */
+    public void addAnchor(final String label, final URI linkage) throws IllegalStateException {
+        if (anchors == null) {
+            anchors = new HashMap<>();
+        }
+        final Object old = anchors.put(label, linkage);
+        if (old != null) {
+            anchors.put(label, old);
+            throw new IllegalStateException(Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_1, label));
+        }
     }
 }

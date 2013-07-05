@@ -26,7 +26,7 @@ import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.sampling.xml.v100.SamplingFeatureType;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
-import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.opengis.observation.Measurement;
 import org.opengis.observation.Measure;
 import org.opengis.temporal.TemporalGeometricPrimitive;

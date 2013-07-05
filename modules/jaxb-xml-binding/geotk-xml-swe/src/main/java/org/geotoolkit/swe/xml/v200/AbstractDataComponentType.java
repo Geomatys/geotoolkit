@@ -17,6 +17,7 @@
 
 package org.geotoolkit.swe.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,14 +27,13 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.Code;
 import org.geotoolkit.gml.xml.Reference;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for AbstractDataComponentType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractDataComponentType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractDataComponentType")
@@ -68,28 +68,28 @@ public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableT
     private String definition;
 
     public AbstractDataComponentType() {
-        
+
     }
-    
+
     public AbstractDataComponentType(final String id, final String definition, final Boolean updatable) {
         super(id);
         this.definition = definition;
     }
-    
+
     public AbstractDataComponentType(final AbstractDataComponentType that) {
         super(that);
         this.definition = that.definition;
         this.optional   = that.optional;
         this.updatable  = that.updatable;
     }
-    
+
     /**
      * Gets the value of the updatable property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isUpdatable() {
         return updatable;
@@ -97,11 +97,11 @@ public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableT
 
     /**
      * Sets the value of the updatable property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setUpdatable(Boolean value) {
         this.updatable = value;
@@ -109,11 +109,11 @@ public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableT
 
     /**
      * Gets the value of the optional property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isOptional() {
         if (optional == null) {
@@ -122,7 +122,7 @@ public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableT
             return optional;
         }
     }
-    
+
     @Override
     public Boolean isFixed() {
         if (updatable != null) {
@@ -133,11 +133,11 @@ public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableT
 
     /**
      * Sets the value of the optional property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setOptional(Boolean value) {
         this.optional = value;
@@ -145,11 +145,11 @@ public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableT
 
     /**
      * Gets the value of the definition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getDefinition() {
@@ -158,11 +158,11 @@ public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableT
 
     /**
      * Sets the value of the definition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDefinition(String value) {
         this.definition = value;
@@ -172,12 +172,12 @@ public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableT
     public Code getParameterName() {
         return null;
     }
-    
+
     @Override
     public Reference getDescriptionReference() {
         return null;
     }
-    
+
     @Override
     public boolean equals(final Object object) {
         if (object == this) {
@@ -186,9 +186,9 @@ public abstract class AbstractDataComponentType extends AbstractSWEIdentifiableT
         if (object instanceof AbstractDataComponentType && super.equals(object)) {
             final AbstractDataComponentType that = (AbstractDataComponentType) object;
 
-            return Utilities.equals(this.definition,  that.definition) &&
-                   Utilities.equals(this.optional,    that.optional) &&
-                   Utilities.equals(this.updatable,   that.updatable);
+            return Objects.equals(this.definition,  that.definition) &&
+                   Objects.equals(this.optional,    that.optional) &&
+                   Objects.equals(this.updatable,   that.updatable);
         }
         return false;
     }

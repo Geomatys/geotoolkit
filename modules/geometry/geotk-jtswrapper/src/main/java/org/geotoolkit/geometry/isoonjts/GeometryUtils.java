@@ -31,7 +31,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeome
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -577,18 +577,18 @@ public final class GeometryUtils {
 */    
     
     /**
-     * Returns an array of LineStrings corresponding
+     * Returns an array of LineCharSequences corresponding
      * to the primitive elements of the specified CompositeCurve.
      * This will be empty if the CompositeCurve is empty.
      * Throws an exception if any element of the CompositeCurve cannot be converted
      * to a LineString.
      * @param cc The CompositeCurve of interest
-     * @return an array of LineStrings
+     * @return an array of LineCharSequences
      * @throws IllegalArgumentException if any element cannot be converted.
-     * For the present version, only Curves that wrap only LineStrings are convertible.
+     * For the present version, only Curves that wrap only LineCharSequences are convertible.
      */
-    public static LineString[] getLineStrings(final CompositeCurve cc) {
-    	ArrayList lsList = getLineStrings(cc, new ArrayList());
+    public static LineString[] getLineCharSequences(final CompositeCurve cc) {
+    	ArrayList lsList = getLineCharSequences(cc, new ArrayList());
     	if (lsList == null) {
     		throw new IllegalArgumentException(
     				"Unable to convert all elements of CompositeCurve to LineString");
@@ -597,7 +597,7 @@ public final class GeometryUtils {
     }
     
     /**
-     * Recursively populates the specified List with LineStrings corresponding
+     * Recursively populates the specified List with LineCharSequences corresponding
      * to the primitive elements of the specified CompositeCurve.
      * Returns null if any element of the CompositeCurve cannot be converted
      * to a LineString.
@@ -605,8 +605,8 @@ public final class GeometryUtils {
      * @param lsList The ArrayList to be populated
      * @return The populated List, or null if not valid
      */
-    private static ArrayList getLineStrings(final CompositeCurve cc, final ArrayList lsList) {
-        // Cast below can be removed when GeoAPI will be allowed to abandon Java 1.4 support.
+    private static ArrayList getLineCharSequences(final CompositeCurve cc, final ArrayList lsList) {
+        // Cast below can be removed when Types will be allowed to abandon Java 1.4 support.
     	List elements = (List) cc.getGenerators();
     	boolean valid = true;
     	if (!elements.isEmpty()) {
@@ -615,7 +615,7 @@ public final class GeometryUtils {
     		while (it.hasNext() && valid) {
     			Object element = it.next();
     			if (element instanceof CompositeCurve) {
-    				valid = getLineStrings((CompositeCurve) element, lsList) != null;
+    				valid = getLineCharSequences((CompositeCurve) element, lsList) != null;
     			} else if (element instanceof Curve) {
     				// PENDING(NL):  When we have arc geometries implemented,
     				// make provision to pass in real parameters for spacing and offset.
@@ -649,7 +649,7 @@ public final class GeometryUtils {
     
     public static DirectPosition[] getDirectPositions(final Ring ring) {
         final List directPositionList = new ArrayList();
-        // Cast below can be removed when GeoAPI will be allowed to abandon Java 1.4 support.
+        // Cast below can be removed when Types will be allowed to abandon Java 1.4 support.
         final List/*<Curve>*/ generators = (List) ring.getGenerators();
         for (int i = 0; i < generators.size(); i++) {
             final Curve curve = (Curve) generators.get(i);

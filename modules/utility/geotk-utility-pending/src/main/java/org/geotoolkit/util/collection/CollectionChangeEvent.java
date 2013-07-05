@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EventObject;
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 
 
 /**

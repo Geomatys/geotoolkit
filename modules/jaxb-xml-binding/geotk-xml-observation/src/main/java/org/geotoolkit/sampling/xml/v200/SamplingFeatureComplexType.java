@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v321.ReferenceType;
-import org.geotoolkit.naming.DefaultNameFactory;
+import org.apache.sis.util.iso.DefaultNameFactory;
 import org.opengis.observation.sampling.SamplingFeature;
 import org.opengis.observation.sampling.SamplingFeatureRelation;
 import org.opengis.util.GenericName;

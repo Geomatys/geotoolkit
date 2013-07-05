@@ -17,7 +17,7 @@
 package org.geotoolkit.process.converters;
 
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.SimpleConverter;
 
@@ -74,25 +74,25 @@ public class StringToNumberRangeConverter extends SimpleConverter<String, Number
 
         final String[] range = s.split(":");
         final int nbRange = range.length;
-        
+
         final NumberRange[] ranges = new NumberRange[nbRange];
         //each range
         for(int i = 0 ; i<nbRange; i++){
-            
+
             final String[] aRange = range[i].split(",");
 
             String min = aRange[0];
             String max = aRange[1];
-            
+
             double dblMin = Double.valueOf(min);
             double dblMax = Double.valueOf(max);
-            
+
             if(dblMin>dblMax){
                 throw new NonconvertibleObjectException("Invalid NumberRange Min/Max :"+min+"/"+max);
             }
-            
-            ranges[i] = new NumberRange(Double.class, dblMin, dblMax);
-            
+
+            ranges[i] = new NumberRange<>(Double.class, dblMin, true, dblMax, true);
+
         }
         return ranges;
     }

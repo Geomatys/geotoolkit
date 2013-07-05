@@ -52,7 +52,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;

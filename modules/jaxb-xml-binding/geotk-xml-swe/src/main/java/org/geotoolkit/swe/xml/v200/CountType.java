@@ -17,18 +17,18 @@
 
 package org.geotoolkit.swe.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractCount;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for CountType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CountType">
  *   &lt;complexContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CountType", propOrder = {
@@ -56,18 +56,18 @@ public class CountType extends AbstractSimpleComponentType implements AbstractCo
 
     public CountType() {
     }
-    
+
     public CountType(final String definition, final int value) {
         this.value = value;
     }
-    
+
     /**
      * Gets the value of the constraint property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedValuesPropertyType }
-     *     
+     *
      */
     @Override
     public AllowedValuesPropertyType getConstraint() {
@@ -76,11 +76,11 @@ public class CountType extends AbstractSimpleComponentType implements AbstractCo
 
     /**
      * Sets the value of the constraint property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedValuesPropertyType }
-     *     
+     *
      */
     public void setConstraint(AllowedValuesPropertyType value) {
         this.constraint = value;
@@ -88,11 +88,11 @@ public class CountType extends AbstractSimpleComponentType implements AbstractCo
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     @Override
     public Integer getValue() {
@@ -101,11 +101,11 @@ public class CountType extends AbstractSimpleComponentType implements AbstractCo
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setValue(Integer value) {
         this.value = value;
@@ -122,13 +122,13 @@ public class CountType extends AbstractSimpleComponentType implements AbstractCo
 
         if (object instanceof CountType && super.equals(object)) {
             final CountType that = (CountType) object;
-            return Utilities.equals(this.constraint, that.constraint)     &&
-                   Utilities.equals(this.value,      that.value);
+            return Objects.equals(this.constraint, that.constraint)     &&
+                   Objects.equals(this.value,      that.value);
         }
         return false;
     }
 
-    
+
     @Override
     public int hashCode() {
         int hash = 5;
@@ -141,7 +141,7 @@ public class CountType extends AbstractSimpleComponentType implements AbstractCo
     /**
      * Retourne une representation de l'objet.
      */
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder(super.toString());

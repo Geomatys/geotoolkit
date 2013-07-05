@@ -41,7 +41,7 @@ import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.io.Closeable;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Manage reader and writer creation with proper read/write locks.

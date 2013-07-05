@@ -55,7 +55,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.GeotkClipboard;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.filter.Filter;
 import org.openide.awt.DropDownButtonFactory;
 

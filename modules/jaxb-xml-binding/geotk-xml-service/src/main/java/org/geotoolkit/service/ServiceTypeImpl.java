@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.internal.jaxb.gco.GO_GenericName;
+import org.apache.sis.internal.jaxb.gco.GO_GenericName;
 import org.opengis.service.ServiceType;
 import org.opengis.util.LocalName;
 

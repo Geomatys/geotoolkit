@@ -37,7 +37,7 @@ import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.sld.xml.StyleXmlIO;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wfs.xml.GetFeature;
 import org.geotoolkit.wfs.xml.Query;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
@@ -195,8 +195,8 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
 
         if(filter != null && filter != Filter.INCLUDE){
             final StyleXmlIO util = new StyleXmlIO();
-            final StringWriter writer = new StringWriter();            
-            
+            final StringWriter writer = new StringWriter();
+
             try {
                 util.writeFilter(writer, filter, org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
             } catch (JAXBException ex) {
@@ -216,7 +216,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             final StringBuilder sb = new StringBuilder();
 
             for(final Name prop : propertyNames){
-                if(typeName != null && prop.getNamespaceURI() != null 
+                if(typeName != null && prop.getNamespaceURI() != null
                    && prop.getNamespaceURI().equals(typeName.getNamespaceURI())){
                     sb.append(typeName.getPrefix()).append(':').append(prop.getLocalPart()).append(',');
                 }else{
@@ -254,7 +254,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             final SimplifyingFilterVisitor visitor = new SimplifyingFilterVisitor();
             filter = (Filter) this.filter.accept(visitor, null);
         }
-        
+
         FilterType xmlFilter;
         if(filter != null && filter != Filter.INCLUDE){
             final StyleXmlIO util = new StyleXmlIO();
@@ -262,7 +262,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
         } else {
             xmlFilter = null;
         }
-        
+
         final List<String> propName = new ArrayList<String>();
         if(propertyNames != null){
             // TODO handle prefix/namespace
@@ -284,16 +284,12 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
 
         OutputStream stream = conec.getOutputStream();
         stream = security.encrypt(stream);
-        Marshaller marshaller = null;
         try {
-            marshaller = WFSMarshallerPool.getInstance().acquireMarshaller();
+            Marshaller marshaller = WFSMarshallerPool.getInstance().acquireMarshaller();
             marshaller.marshal(request, stream);
+            WFSMarshallerPool.getInstance().recycle(marshaller);
         } catch (JAXBException ex) {
             throw new IOException(ex);
-        } finally {
-            if (marshaller != null) {
-                WFSMarshallerPool.getInstance().release(marshaller);
-            }
         }
         stream.close();
         return security.decrypt(conec.getInputStream());

@@ -17,13 +17,13 @@
 
 package org.geotoolkit.swe.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractAllowedValuesProperty;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.xlink.xml.v100.ActuateType;
 import org.geotoolkit.xlink.xml.v100.ShowType;
 import org.geotoolkit.xlink.xml.v100.TypeType;
@@ -31,9 +31,9 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
 
 /**
  * <p>Java class for AllowedValuesPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AllowedValuesPropertyType">
  *   &lt;complexContent>
@@ -46,8 +46,8 @@ import org.geotoolkit.xlink.xml.v100.TypeType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AllowedValuesPropertyType", propOrder = {
@@ -74,11 +74,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Gets the value of the allowedValues property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AllowedValuesType }
-     *     
+     *
      */
     @Override
     public AllowedValuesType getAllowedValues() {
@@ -87,11 +87,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Sets the value of the allowedValues property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AllowedValuesType }
-     *     
+     *
      */
     public void setAllowedValues(AllowedValuesType value) {
         this.allowedValues = value;
@@ -99,11 +99,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TypeType }
-     *     
+     *
      */
     @Override
     public String getType() {
@@ -116,11 +116,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TypeType }
-     *     
+     *
      */
     @Override
     public void setType(final String value) {
@@ -131,11 +131,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Gets the value of the href property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHref() {
@@ -144,11 +144,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Sets the value of the href property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setHref(String value) {
@@ -157,11 +157,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getRole() {
@@ -170,11 +170,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Sets the value of the role property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setRole(String value) {
@@ -183,11 +183,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getArcrole() {
@@ -196,11 +196,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Sets the value of the arcrole property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setArcrole(String value) {
@@ -209,11 +209,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Gets the value of the titleTemp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getTitle() {
@@ -222,11 +222,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Sets the value of the titleTemp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setTitle(String value) {
@@ -235,11 +235,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Gets the value of the show property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ShowType }
-     *     
+     *
      */
     @Override
     public String getShow() {
@@ -251,11 +251,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Sets the value of the show property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ShowType }
-     *     
+     *
      */
     @Override
     public void setShow(final String value) {
@@ -266,11 +266,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Gets the value of the actuate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ActuateType }
-     *     
+     *
      */
     @Override
     public String getActuate() {
@@ -282,11 +282,11 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
     /**
      * Sets the value of the actuate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ActuateType }
-     *     
+     *
      */
     @Override
     public void setActuate(final String value) {
@@ -304,7 +304,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
     public void setRemoteSchema(String value) {
         // do nothing
     }
-    
+
     /**
      * Verify if this entry is identical to specified object.
      */
@@ -316,19 +316,19 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
 
         if (object instanceof AllowedValuesPropertyType) {
             final AllowedValuesPropertyType that = (AllowedValuesPropertyType) object;
-            return Utilities.equals(this.allowedValues,      that.allowedValues)     &&
-                   Utilities.equals(this.actuate,            that.actuate)          &&
-                   Utilities.equals(this.arcrole,            that.arcrole)          &&
-                   Utilities.equals(this.type,               that.type)             &&
-                   Utilities.equals(this.href,               that.href)             &&
-                   Utilities.equals(this.show,               that.show)             &&
-                   Utilities.equals(this.role,               that.role)             &&
-                   Utilities.equals(this.title,              that.title);
+            return Objects.equals(this.allowedValues,      that.allowedValues)     &&
+                   Objects.equals(this.actuate,            that.actuate)          &&
+                   Objects.equals(this.arcrole,            that.arcrole)          &&
+                   Objects.equals(this.type,               that.type)             &&
+                   Objects.equals(this.href,               that.href)             &&
+                   Objects.equals(this.show,               that.show)             &&
+                   Objects.equals(this.role,               that.role)             &&
+                   Objects.equals(this.title,              that.title);
         }
         return false;
     }
 
-    
+
     @Override
     public int hashCode() {
         int hash = 5;
@@ -346,7 +346,7 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
     /**
      * Retourne une representation de l'objet.
      */
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder("[AllowedValuesPropertyType]\n");

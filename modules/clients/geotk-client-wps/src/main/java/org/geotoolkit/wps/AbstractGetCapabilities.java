@@ -31,12 +31,12 @@ import org.geotoolkit.wps.xml.v100.GetCapabilities;
 
 /**
  * Abstract get capabilities request.
- * 
+ *
  * @author Quentin Boileau
  * @module pending
  */
 public abstract class AbstractGetCapabilities extends AbstractRequest implements GetCapabilitiesRequest{
-    
+
     protected final String version;
 
     protected AbstractGetCapabilities(final String serverURL,final String version, final ClientSecurity security){
@@ -49,9 +49,9 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
         super.prepareParameters();
         requestParameters.put("SERVICE",    "WPS");
         requestParameters.put("REQUEST",    "GetCapabilities");
-        requestParameters.put("ACCEPTVERSIONS",    version);        
+        requestParameters.put("ACCEPTVERSIONS",    version);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -73,19 +73,16 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
         try {
             marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
             marshaller.marshal(request, stream);
+            WPSMarshallerPool.getInstance().recycle(marshaller);
         } catch (JAXBException ex) {
             throw new IOException(ex);
-        } finally {
-            if (marshaller != null) {
-                WPSMarshallerPool.getInstance().release(marshaller);
-            }
         }
         stream.close();
         return security.decrypt(conec.getInputStream());
     }
-    
+
     public GetCapabilities makeRequest(){
-        
+
         final GetCapabilities request = new GetCapabilities();
         request.setService("WPS");
         request.setAcceptVersions(new AcceptVersionsType(version));

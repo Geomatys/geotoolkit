@@ -6,19 +6,20 @@ package org.geotoolkit.skos.xml;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.xml.MarshallerPool;
+import org.apache.sis.xml.MarshallerPool;
 
 /**
  *
  * @author guilhem
  */
 public class SkosMarshallerPool {
- 
+
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool("org.geotoolkit.skos.xml:org.geotoolkit.internal.jaxb.geometry");
+            instance = new MarshallerPool(JAXBContext.newInstance("org.geotoolkit.skos.xml:org.apache.sis.internal.jaxb.geometry"), null);
         } catch (JAXBException ex) {
             Logger.getLogger(SkosMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -22,7 +22,7 @@ import org.geotoolkit.service.ServiceIdentificationImpl;
 import org.opengis.service.ServiceIdentification;
 
 /**
- * JAXB adapter in order to map implementing class with the GeoAPI interface. See
+ * JAXB adapter in order to map implementing class with the Types interface. See
  * package documentation for more information about JAXB and interface.
  *
  * @module pending

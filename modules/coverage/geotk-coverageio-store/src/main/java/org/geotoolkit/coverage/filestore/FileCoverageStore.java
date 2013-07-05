@@ -40,7 +40,7 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 

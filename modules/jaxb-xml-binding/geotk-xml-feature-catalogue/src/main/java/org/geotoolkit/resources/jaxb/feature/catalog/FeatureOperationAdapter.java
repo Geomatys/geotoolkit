@@ -22,7 +22,7 @@ import org.geotoolkit.feature.catalog.FeatureOperationImpl;
 import org.opengis.feature.catalog.FeatureOperation;
 
 /**
- * JAXB adapter in order to map implementing class with the GeoAPI FeatureOperation. See
+ * JAXB adapter in order to map implementing class with the Types FeatureOperation. See
  * package documentation for more information about JAXB and FeatureOperation.
  *
  * @module pending
