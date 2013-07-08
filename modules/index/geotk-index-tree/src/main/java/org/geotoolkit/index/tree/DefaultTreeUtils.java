@@ -331,8 +331,9 @@ public class DefaultTreeUtils {
         if (!intersects(envelopeA, envelopeB, true)) return false;
         if (intersects(envelopeA, envelopeB, false)) return false;
         final double[] intersection = intersect(envelopeA, envelopeB);
-        // on sait qu'il s'agit d'un point ou d'une ligne au max (2D)
-        // perte d'une dimension
+        /**
+         * If one dimension from intersection, equals to envelopeA and envelopeB boundary touches is true.
+         */
         final int dim = intersection.length >> 1;
         for (int i = 0; i < dim; i++) {
             if (getSpan(intersection, i) < epsilon) {
