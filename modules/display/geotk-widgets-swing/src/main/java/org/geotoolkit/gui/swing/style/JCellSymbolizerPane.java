@@ -196,6 +196,9 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
         pan_info.repaint();
         editor = null;
         filter = Filter.INCLUDE;
+        guiTypeList.setSelectedIndex(0);
+        final Symbolizer symbol =  getStyleFactory().pointSymbolizer();
+        setEditedSymbolizer(symbol);
         
         if(target!=null){
             guiCellSize.setValue(target.getCellSize());
