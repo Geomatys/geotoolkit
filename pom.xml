@@ -120,7 +120,7 @@
   <!-- =========================================================== -->
 
   <properties>
-    <sis.version>0.3-jdk6-SNAPSHOT</sis.version>
+    <sis.version>0.3-jdk6</sis.version>
     <geotoolkit.version>4.x-SNAPSHOT</geotoolkit.version>
   </properties>
 
