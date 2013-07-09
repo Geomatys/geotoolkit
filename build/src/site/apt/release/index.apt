@@ -10,8 +10,11 @@ Performing a Geotoolkit.org release
   those documents on the web server. The content of this page is:
 
    * List of requirements
+
    * Setup (to be executed only once)
+
    * Performing a GeoAPI release
+
    * Performing a Geotk release
 
 
@@ -74,8 +77,8 @@ ln -s $GEOTK_HOME/build/src/site/resources/release/fix-html.xml
   the Geotk version numbers and the deployment server:
 
 --------------------------------------------------------
-export OLD_VERSION="3.21"
-export NEW_VERSION="4.0-M0"
+export OLD_VERSION="4.0-M0"
+export NEW_VERSION="4.0-M1"
 export GEOTK_SERVER=(... insert foo@server.com here ...)
 --------------------------------------------------------
 
@@ -129,6 +132,7 @@ hg diff
 mvn deploy --activate-profiles package
 mvn site --activate-profiles \!no-site --define skipTests
 mvn org.geotoolkit.project:geotk-jar-collector:pack-specific --non-recursive
+zip -d geotk-$NEW_VERSION-sources.zip \*.jar
 +---------------------------------------------------------------------------------------+
 
   Copy to the server:
