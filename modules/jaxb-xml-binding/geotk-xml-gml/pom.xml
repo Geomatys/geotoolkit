@@ -65,7 +65,7 @@
   -->
   <dependencies>
     <dependency>
-      <groupId>org.apache.sis</groupId>
+      <groupId>org.apache.sis.core</groupId>
       <artifactId>sis-utility</artifactId>
       <version>${sis.version}</version>
     </dependency>
