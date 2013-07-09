@@ -66,17 +66,17 @@ The Geotoolkit.org library
 
 * Latest releases
 
-  Latest Geotoolkit.org release is Geotk-3.21, released February 2013.
+  Latest Geotoolkit.org release is Geotk-4.0-M0, released July 2013.
 
-    * The <<<3.21>>> version, which depends on GeoAPI 3.1-M04, is available on the
+    * The <<<4.0-M0>>> version, which depends on GeoAPI 3.1-M04, is available on the
       {{{http://maven.geotoolkit.org/}project's Maven repository}}.
 
     * The <<<geotk-3.20-geoapi-3.0>>> version, which depends on GeoAPI 3.0.0,
       is available on the {{{http://search.maven.org/}Maven Central repository}}.
-      There is no <<<geotk-3.21-geoapi-3.0>>> version because the changes compared
+      There is no <<<geotk-4.0-M0-geoapi-3.0>>> version because the changes compared
       to 3.20 are minors.
 
-  See the {{{http://download.geotoolkit.org/3.21/}download page}} for release notes.
+  See the {{{http://download.geotoolkit.org/4.0-M0/}download page}} for release notes.
 
 
 * License

@@ -52,10 +52,10 @@ java -jar $GEOTK_HOME/geotk-setup.jar
 
   Alternatively, the configuration panel is also available from the
   <File> / <Preferences> menu in the Swing application provided by the
-  <<<{{{http://download.geotoolkit.org/3.21/geotk-bundle-3.21.pack.gz}geotk-bundle.pack.gz}}>>>
+  <<<{{{http://download.geotoolkit.org/4.0-M0/geotk-bundle-4.0-M0.pack.gz}geotk-bundle.pack.gz}}>>>
   file. The application can be run as below (unpack only once):
 
 +----------------------------------------------------------------------
-unpack200 --remove-pack-file geotk-bundle-3.21.pack.gz geotk-bundle.jar
+unpack200 --remove-pack-file geotk-bundle-4.0-M0.pack.gz geotk-bundle.jar
 java -jar geotk-bundle.jar
 +----------------------------------------------------------------------
