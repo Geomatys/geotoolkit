@@ -53,42 +53,43 @@ public final class Construction {
         return GF.createLineString(coords);
     }
 
-    public void merge(Construction other){
-        if(this.equals(other)){
+    public void merge(Edge otherEdge){
+        final Construction ocst = otherEdge.getConstruction();
+        if(this.equals(ocst)){
             //closing a construction
             return;
         }
         
-        if(this.lst.getFirst().equals2D(other.lst.getLast())){
+        if(this.lst.getFirst().equals2D(ocst.lst.getLast())){
             //add at the beginning of this segment
             this.lst.removeFirst();
-            this.lst.addAll(0, other.lst);
-        }else if(this.lst.getLast().equals2D(other.lst.getFirst())){
+            this.lst.addAll(0, ocst.lst);
+        }else if(this.lst.getLast().equals2D(ocst.lst.getFirst())){
             //add at the end of this segment
             this.lst.removeLast();
-            this.lst.addAll(other.lst);
-        }else if(this.lst.getFirst().equals2D(other.lst.getFirst())){
+            this.lst.addAll(ocst.lst);
+        }else if(this.lst.getFirst().equals2D(ocst.lst.getFirst())){
             //flip this list and add at the end of this segment
             //flip = true;
             Collections.reverse(lst);
             this.flipEdges();
             this.lst.removeLast();
-            this.lst.addAll(other.lst);
-        }else if(this.lst.getLast().equals2D(other.lst.getLast())){
+            this.lst.addAll(ocst.lst);
+        }else if(this.lst.getLast().equals2D(ocst.lst.getLast())){
             //flip other list and add at the end of this segment
             //flip = true;
             Collections.reverse(lst);
             this.flipEdges();
             this.lst.removeFirst();
-            this.lst.addAll(0,other.lst);
+            this.lst.addAll(0,ocst.lst);
         }else{
             throw new IllegalArgumentException("Strings can not be merged, no common point");
         }
         
-        other.locked = true;
-        other.lockStack = new Exception();
-        other.lockStack.fillInStackTrace();
-        other.lst = this.lst;
+        ocst.locked = true;
+        ocst.lockStack = new Exception();
+        ocst.lockStack.fillInStackTrace();
+        ocst.lst = this.lst;
         return;
     }
     

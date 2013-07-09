@@ -171,8 +171,9 @@ public class Isoline2 extends AbstractProcess {
                 final Boundary[][] tempbound = line0TopNeighbor;
                 line0TopNeighbor = line1TopNeighbor;
                 line1TopNeighbor = tempbound;
-                leftNeighbor[0] = null;
-                
+                for(int i=0;i<leftNeighbor.length;i++){
+                    leftNeighbor[i] = null;
+                }
             }
             
             //loop on the last line to push the remaining geometries
@@ -216,9 +217,15 @@ public class Isoline2 extends AbstractProcess {
         final Coordinate crossHp = interpolate(level, UR, BL);
         
         // FIRST TRIANGLE //////////////////////////////////////////////////////
-        final Construction.Edge SBottom;
-        final Construction.Edge SMiddle;
+        // the 3 points on the first triangle hypothenuse
+        // +---+ STop
+        // |  /
+        // | + SMiddle
+        // |/
+        // + SBottom
         final Construction.Edge STop;
+        final Construction.Edge SMiddle;
+        final Construction.Edge SBottom;
         
         if(top!=null && left!=null){ //-----------------------------------------
             //pixel is somewhere in the image 
@@ -231,19 +238,14 @@ public class Isoline2 extends AbstractProcess {
                     SBottom = null;
                 }else if(left.VMiddle!=null){
                     top.HMiddle.add(crossLf);
-                    top.HMiddle.getConstruction().merge(left.VMiddle.getConstruction());
+                    top.HMiddle.getConstruction().merge(left.VMiddle);
                     update(top.HMiddle.getConstruction(),k);
                     STop = null;
                     SMiddle = null;
                     SBottom = null;
                 }else if(left.VBottom!=null){
                     top.HMiddle.add(BL);
-                    try{
-                        top.HMiddle.getConstruction().merge(left.VBottom.getConstruction());
-                    }catch(Exception ex){
-                        System.out.println(ex);
-                    }
-                    update(top.HMiddle.getConstruction(),k);
+                    //do not merge, used by triangle on the left side
                     //create a fork
                     final Construction cst = new Construction(level);
                     SBottom = cst.getEdge1();
@@ -255,6 +257,7 @@ public class Isoline2 extends AbstractProcess {
                     SMiddle = null;
                     SBottom = null;
                 }
+                checkIntermediate(level,SBottom, SMiddle, STop);
             }else if(left.VMiddle!=null){
                 if(crossHp!=null){
                     SMiddle = left.VMiddle;
@@ -264,7 +267,7 @@ public class Isoline2 extends AbstractProcess {
                 }else if(top.HRight!=null){
                     left.VMiddle.add(UR);
                     try{
-                        left.VMiddle.getConstruction().merge(top.HRight.getConstruction());
+                        left.VMiddle.getConstruction().merge(top.HRight);
                     }catch(Exception ex){
                         System.out.println(ex);
                     }
@@ -280,14 +283,19 @@ public class Isoline2 extends AbstractProcess {
                     SMiddle = null;
                     SBottom = null;
                 }
+                checkIntermediate(level,SBottom, SMiddle, STop);
             }else if(left.VTop!=null && left.VBottom!=null && top.HRight!=null){
-                STop = null;
+                                
+                left.VBottom.add(UL);
+                STop = left.VTop;
+                STop.add(UR);
                 SMiddle = null;
                 SBottom = null;
+                checkIntermediate(level,SBottom, SMiddle, STop);
             }else if(left.VTop!=null && left.VBottom!=null){
                 
                 left.VTop.add(BL);
-                left.VTop.getConstruction().merge(left.VBottom.getConstruction());
+                left.VTop.getConstruction().merge(left.VBottom);
                 update(left.VTop.getConstruction(),k);
                 //create a fork
                 final Construction cst = new Construction(level);
@@ -295,6 +303,31 @@ public class Isoline2 extends AbstractProcess {
                 SBottom.add(BL);
                 STop = null;
                 SMiddle = null;
+                checkIntermediate(level,SBottom, SMiddle, STop);
+            }else if(left.VTop!=null && top.HRight!=null){
+                
+                left.VTop.add(UR);
+                left.VTop.getConstruction().merge(top.HRight);
+                update(left.VTop.getConstruction(),k);
+                //create a fork
+                final Construction cst = new Construction(level);
+                STop = cst.getEdge1();
+                STop.add(UR);
+                SBottom = null;
+                SMiddle = null;
+                checkIntermediate(level,SBottom, SMiddle, STop);
+            }else if(left.VBottom!=null && top.HRight!=null){
+                
+                //close the segment
+                left.VBottom.add(UR);
+                
+                STop = top.HRight;
+                //create a fork at the bottom
+                final Construction cst = new Construction(level);
+                SBottom = cst.getEdge1();
+                SBottom.add(BL);
+                SMiddle = null;
+                checkIntermediate(level,SBottom, SMiddle, STop);
             }else if(left.VTop!=null){
                 if(crossHp!=null){
                     SMiddle = left.VTop;
@@ -306,18 +339,22 @@ public class Isoline2 extends AbstractProcess {
                     SMiddle = null;
                     SBottom = null;
                 }
+                checkIntermediate(level,SBottom, SMiddle, STop);
             }else if(left.VBottom!=null){
                 STop = null;
                 SMiddle = null;
                 SBottom = left.VBottom;
+                checkIntermediate(level,SBottom, SMiddle, STop);
             }else if(top.HRight!=null){
                 STop = top.HRight;
                 SMiddle = null;
                 SBottom = null;
+                checkIntermediate(level,SBottom, SMiddle, STop);
             }else{
                 STop = null;
                 SMiddle = null;
                 SBottom = null;
+                checkIntermediate(level,SBottom, SMiddle, STop);
             }
             
             checkIntermediate(level,SBottom, SMiddle, STop);
@@ -430,7 +467,7 @@ public class Isoline2 extends AbstractProcess {
                     SBottom = left.VBottom;
                     
                 }else{
-                    left.VTop.getConstruction().merge(left.VBottom.getConstruction());
+                    left.VTop.getConstruction().merge(left.VBottom);
                     update(left.VTop.getConstruction(), k);
                     //fork it
                     final Construction cst = new Construction(level);
@@ -689,10 +726,13 @@ public class Isoline2 extends AbstractProcess {
                 
                 //duplicate line here, we might have a fork
                 //if they are linked, the first triangle of next line will link them
-                Construction cst = new Construction(level);
-                newBoundary.HRight = cst.getEdge1();
+                Construction cst1 = new Construction(level);
+                newBoundary.VBottom = cst1.getEdge1();
+                newBoundary.VBottom.add(BR);
+                
+                final Construction cst2 = new Construction(level);
+                newBoundary.HRight = cst2.getEdge1();
                 newBoundary.HRight.add(BR);
-                newBoundary.VBottom = cst.getEdge2();
             }else{
                 //propage bottom limit
                 newBoundary.HLeft = SBottom;
@@ -713,10 +753,12 @@ public class Isoline2 extends AbstractProcess {
         //check for singular segments (edges)
         if(newBoundary.HRight == null && brCorner){
             //create a single point
-            final Construction cst = new Construction(level);
-            newBoundary.VBottom = cst.getEdge1();
+            final Construction cst1 = new Construction(level);
+            newBoundary.VBottom = cst1.getEdge1();
             newBoundary.VBottom.add(BR);
-            newBoundary.HRight = cst.getEdge2();
+            final Construction cst2 = new Construction(level);
+            newBoundary.HRight = cst2.getEdge1();
+            newBoundary.HRight.add(BR);
         }
         
         
@@ -728,12 +770,12 @@ public class Isoline2 extends AbstractProcess {
             throw new RuntimeException("Logic error, Muplite V set top="+newBoundary.VTop+" bottom="+newBoundary.VBottom);
         }
         //algorithm check, can not have all H or V set
-        if(newBoundary.HLeft!=null && !blCorner) throw new RuntimeException("Invalid point creation HL");
+        if(newBoundary.HLeft!=null   && !blCorner)     throw new RuntimeException("Invalid point creation HL");
         if(newBoundary.HMiddle!=null && crossBt==null) throw new RuntimeException("Invalid point creation HM");
-        if(newBoundary.HRight!=null && !brCorner) throw new RuntimeException("Invalid point creation HR");
-        if(newBoundary.VTop!=null && !urCorner) throw new RuntimeException("Invalid point creation VT");
+        if(newBoundary.HRight!=null  && !brCorner)     throw new RuntimeException("Invalid point creation HR");
+        if(newBoundary.VTop!=null    && !urCorner)     throw new RuntimeException("Invalid point creation VT");
         if(newBoundary.VMiddle!=null && crossRi==null) throw new RuntimeException("Invalid point creation VM");
-        if(newBoundary.VBottom!=null && !brCorner) throw new RuntimeException("Invalid point creation VB");
+        if(newBoundary.VBottom!=null && !brCorner)     throw new RuntimeException("Invalid point creation VB");
         newBoundary.checkIncoherence();
         
         if(newBoundary.HLeft!=null   && !newBoundary.HLeft  .getLast().equals2D(BL))      throw new RuntimeException("Invalid point creation HL");
