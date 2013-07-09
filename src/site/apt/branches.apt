@@ -5,43 +5,22 @@
 
 Geotoolkit.org branches
 
-  The {{{./source-repository.html}source code repository}} maintains three branches:
-
-
-* The JDK7 branch
-
-  The JDK7 branch is the current main development branch. This branch implements the interfaces
-  defined in the {{{http://www.geoapi.org/snapshot/index.html}GeoAPI 3.1-M04}} milestone
-  and uses some JDK7-specific features like:
-
-    * Syntax enhancements, mostly in exceptions handling (<try-with-resources>, <multi-catches>)
-      but also on more minor aspects like diamond operator.
-
-    * Leveraging of new API.
-
-  Users and developers do not get the JDK7 branch, unless they explicitly request for it
-  using the following Mercurial command on their source code repository:
-
---------------
-hg update JDK7
---------------
+  The {{{./source-repository.html}source code repository}} maintains two branches:
 
 
 * The default branch
 
-  The default branch is a merge of the JDK7 branch ported to JDK6. This is the branch that users
+  The default branch is the current main development branch. This is the branch that users
   and developers get after a fresh checkout of Geotoolkit.org source code. This is also the branch
   which is built by the {{{./integration.html}continuous integration system}} and deployed on the
-  Maven repository.
-
-  Like the JDK7 branch, the default branch implements the interfaces defined in the
+  Maven repository. The default branch implements the interfaces defined in the
   {{{http://www.geoapi.org/snapshot/index.html}GeoAPI 3.1-M04}} milestones.
 
 
 
 * The GeoAPI-3.0 branch
 
-  The GeoAPI-3.0 branch is a merge of the default branch (JDK6) ported to the interfaces defined by
+  The GeoAPI-3.0 branch is a merge of the default branch ported to the interfaces defined by
   the {{{http://www.geoapi.org/3.0/index.html}GeoAPI 3.0.0}} release. This branch contains only the
   {{{./modules/metadata/index.html}metadata}} and {{{./modules/referencing/index.html}referencing}}
   modules - together with their dependencies - because the metadata and referencing interfaces are
