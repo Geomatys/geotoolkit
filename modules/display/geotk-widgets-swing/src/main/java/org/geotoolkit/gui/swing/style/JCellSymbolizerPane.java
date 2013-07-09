@@ -149,7 +149,6 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
     @Override
     public void setTarget(Object candidate) {
         cellMimicLayer = null;
-        parse(null);
         if (candidate instanceof CoverageMapLayer) {
             setLayer((CoverageMapLayer) candidate);
             try {
@@ -174,8 +173,11 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
                     }
                 }
             }
+            parse(null);
         }else if(candidate instanceof CellSymbolizer){
             parse((CellSymbolizer)candidate);
+        }else{
+            parse(null);
         }
     }
 
@@ -204,9 +206,14 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
                 parentRule.symbolizers().add(parentIndex,symbol);
             }else{
                 //style did not exist, add a new feature type style for it
-                final MutableFeatureTypeStyle fts = SF.featureTypeStyle(symbol);
+                final MutableFeatureTypeStyle fts = SF.featureTypeStyle();
+                final MutableRule rule = SF.rule(symbol);
+                fts.rules().add(rule);
                 fts.setDescription(SF.description("raster cell", "raster cell"));
+                rule.setDescription(SF.description("raster cell", "raster cell"));
                 layer.getStyle().featureTypeStyles().add(fts);
+                parentRule = rule;
+                parentIndex = 0;
             }
         }
     }
@@ -238,6 +245,8 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
             }
             
         }
+        
+        guiCQL.setFilter(filter);
     }
 
     @Override
