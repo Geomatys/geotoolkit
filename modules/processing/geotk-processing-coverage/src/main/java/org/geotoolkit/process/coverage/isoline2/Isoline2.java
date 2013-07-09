@@ -22,8 +22,10 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import java.awt.image.RenderedImage;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 
@@ -48,6 +50,7 @@ import static org.geotoolkit.process.coverage.isoline2.IsolineDescriptor2.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -69,6 +72,7 @@ public class Isoline2 extends AbstractProcess {
     private MathTransform gridtoCRS;
     private FeatureType type;
     private FeatureCollection col;
+    private double[] intervals;
     
     //previous triangles informations
     private Boundary[][] line0TopNeighbor; // [level][X] for previous line
@@ -91,7 +95,7 @@ public class Isoline2 extends AbstractProcess {
         final CoverageReference coverageRef = value(COVERAGE_REF, inputParameters);
         FeatureStore featureStore = value(FEATURE_STORE, inputParameters);
         final String featureTypeName = value(FEATURE_NAME, inputParameters);
-        final double[] intervals = value(INTERVALS, inputParameters);
+        intervals = value(INTERVALS, inputParameters);
         
         if(featureStore==null){
             featureStore = new MemoryFeatureStore();
@@ -103,7 +107,7 @@ public class Isoline2 extends AbstractProcess {
             final RenderedImage image = coverage.getRenderedImage();
             final PixelIterator ite = PixelIteratorFactory.createDefaultIterator(image);
             crs = coverage.getCoordinateReferenceSystem();
-            gridtoCRS = coverage.getGridGeometry().getGridToCRS();
+            gridtoCRS = coverage.getGridGeometry().getGridToCRS(PixelOrientation.UPPER_LEFT);
             type = getOrCreateIsoType(featureStore, featureTypeName, coverage.getCoordinateReferenceSystem());
             col = featureStore.createSession(false).getFeatureCollection(QueryBuilder.all(type.getName()));
             
@@ -131,7 +135,7 @@ public class Isoline2 extends AbstractProcess {
                         
                         for(int k=0;k<intervals.length;k++){
                             final double level = intervals[k];
-                            final Boundary nb = buildTriangles(level,line0TopNeighbor[k][x], leftNeighbor[k]);
+                            final Boundary nb = buildTriangles(k,level,line0TopNeighbor[k][x], leftNeighbor[k]);
                             //the created boundary is the left boundary of next pixel
                             //and the top boundary of underneath pixel
                             leftNeighbor[k] = nb;
@@ -142,22 +146,21 @@ public class Isoline2 extends AbstractProcess {
                 
                 if(y>0){
                     //filter the constructions which are not used
-                    final List<LinkedList<Coordinate>> oldinconstructions = new ArrayList<LinkedList<Coordinate>>();
-                    final List<LinkedList<Coordinate>> newinconstructions = new ArrayList<LinkedList<Coordinate>>();
+                    final Set<Construction> oldinconstructions = new HashSet<Construction>();
+                    final Set<Construction> newinconstructions = new HashSet<Construction>();
                     for(int x=1;x<width;x++){
                         for(int k=0;k<intervals.length;k++){
                             if(line0TopNeighbor[k][x] != null){
-                                oldinconstructions.addAll(line0TopNeighbor[k][x].getConstructions());
+                                line0TopNeighbor[k][x].getConstructions(oldinconstructions);
                             }
-                            newinconstructions.addAll(line1TopNeighbor[k][x].getConstructions());
+                            line1TopNeighbor[k][x].getConstructions(newinconstructions);
                         }
                     }
                     oldinconstructions.removeAll(newinconstructions);
 
                     //push in the feature collection geometries which are not used anymore
-                    for(final LinkedList<Coordinate> lst : oldinconstructions){
-                        final Coordinate[] coords = lst.toArray(new Coordinate[lst.size()]);
-                        pushGeometry(GF.createLineString(coords), coords[0].z);
+                    for(final Construction str : oldinconstructions){
+                        pushGeometry(str.toGeometry(), str.getLevel());
                     }
                 }
                 
@@ -172,14 +175,36 @@ public class Isoline2 extends AbstractProcess {
                 
             }
             
+            //loop on the last line to push the remaining geometries
+            final Set<Construction> oldinconstructions = new HashSet<Construction>();
+            for(int x=1;x<width;x++){
+                for(int k=0;k<intervals.length;k++){
+                    line0TopNeighbor[k][x].getConstructions(oldinconstructions);
+                }
+            }
+            for(final Construction str : oldinconstructions){
+                pushGeometry(str.toGeometry(), str.getLevel());
+            }
+            
+            
         }catch(Exception ex){
             throw new ProcessException(ex.getMessage(), this, ex);
         }
         
+        System.out.println(">>>>>>>>>>>>>>>>> "+col.size());
+        
         outputParameters.parameter("outFeatureCollection").setValue(col);
     }
+        
+    private void update(Construction cst, int k){
+        for(int x=0;x<line0TopNeighbor[0].length;x++){
+            cst.update(line0TopNeighbor[k][x]);
+            cst.update(line1TopNeighbor[k][x]);
+        }
+    }
     
-    private Boundary buildTriangles(final double level, final Boundary top, final Boundary left) 
+    
+    private Boundary buildTriangles(final int k, final double level, final Boundary top, final Boundary left) 
             throws MismatchedDimensionException, TransformException{
         
         //the new triangle
@@ -196,84 +221,123 @@ public class Isoline2 extends AbstractProcess {
         final Coordinate crossRi = interpolate(level, UR, BR);
         
         // FIRST TRIANGLE //////////////////////////////////////////////////////
-        Geometry geom = null;
+        Construction.Edge SBottom = null;
+        Construction.Edge SMiddle = null;
+        Construction.Edge STop = null;
         
-        //on border cases
-        if(ulCorner && urCorner && blCorner){
-            //close triangle
-            geom = GF.createLineString(new Coordinate[]{UL,UR,BL});
-        }else if(ulCorner && urCorner){
-            //adjacent border
-            geom = GF.createLineString(new Coordinate[]{UL,UR});
-        }else if(ulCorner && blCorner){
-            //opposite border
-            geom = GF.createLineString(new Coordinate[]{UL,BL});
-        }else if(urCorner && blCorner){
-            //hypothenus border
-            geom = GF.createLineString(new Coordinate[]{UR,BL});
+        if(top!=null && left!=null){ //-----------------------------------------
+            //pixel is somewhere in the image 
+            
+            if(top.HMiddle!=null){
+                if(crossHp!=null){
+                    if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
+                    SMiddle = top.HMiddle;
+                    SMiddle.add(crossHp);
+                }else if(left.VMiddle!=null){
+                    top.HMiddle.add(crossLf);
+                    top.HMiddle.getConstruction().merge(left.VMiddle.getConstruction());
+                    update(top.HMiddle.getConstruction(),k);
+                }
+            }
+            
+            if(left.VMiddle!=null){
+                if(crossHp!=null){
+                    if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
+                    SMiddle = left.VMiddle;
+                    SMiddle.add(crossHp);
+                }
+                //don't test already done above
+                //else if(crossUp!=null){
+                //    left.VMiddle.add(crossUp);
+                //}
+            }
+            
+            
+        }else if(top!=null){ //-------------------------------------------------
+            //pixel is on the left image border
+            if(top.HMiddle!=null){
+                if(crossHp!=null){
+                    if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
+                    SMiddle = top.HMiddle;
+                    SMiddle.add(crossHp);
+                }else if(crossLf!=null){
+                    top.HMiddle.add(crossLf);
+                }
+            }
+            
+            if(crossLf!=null && crossHp!=null){
+                if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
+                final Construction cst = new Construction(level);
+                SMiddle = cst.getEdge1();
+                SMiddle.add(crossLf);
+                SMiddle.add(crossHp);
+            }            
+            
+        }else if(left!=null){ //------------------------------------------------
+            //pixel is on the top image border
+            if(left.VMiddle!=null){
+                if(crossHp!=null){
+                    if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
+                    SMiddle = left.VMiddle;
+                    SMiddle.add(crossHp);
+                }else if(crossUp!=null){
+                    left.VMiddle.add(crossUp);
+                }
+            }
+            
+            if(crossUp!=null && crossHp!=null){
+                if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
+                final Construction cst = new Construction(level);
+                SMiddle = cst.getEdge1();
+                SMiddle.add(crossUp);
+                SMiddle.add(crossHp);
+            }
+            
+        }else{ //---------------------------------------------------------------
+            //pixel is on the top left image corner
+            //split on 2 edges
+            if(crossUp!=null && crossHp!=null){
+                if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
+                final Construction cst = new Construction(level);
+                SMiddle = cst.getEdge1();
+                SMiddle.add(crossUp);
+                SMiddle.add(crossHp);
+            }else if(crossLf!=null && crossHp!=null){
+                if(SMiddle!=null) throw new RuntimeException("Logic error, SMiddle should not be set");
+                final Construction cst = new Construction(level);
+                SMiddle = cst.getEdge1();
+                SMiddle.add(crossLf);
+                SMiddle.add(crossHp);
+            }else if(crossUp!=null && crossLf!=null){
+                //only case where we can push the geometry directly
+                final Geometry geom = GF.createLineString(new Coordinate[]{crossUp, crossLf});
+                pushGeometry(geom, level);
+            }
         }
         
-        //split on a height
-        else if(ulCorner && crossHp!=null){
-            geom = GF.createLineString(new Coordinate[]{UL,crossHp});
-        }else if(urCorner && crossLf!=null){
-            geom = GF.createLineString(new Coordinate[]{UR,crossLf});
-        }else if(blCorner && crossUp!=null){
-            geom = GF.createLineString(new Coordinate[]{BL,crossUp});
-        }
-        
-        //split on 2 edges
-        else if(crossUp!=null && crossHp!=null){
-            geom = GF.createLineString(new Coordinate[]{crossUp, crossHp});
-        }else if(crossLf!=null && crossHp!=null){
-            geom = GF.createLineString(new Coordinate[]{crossLf, crossHp});
-        }else if(crossUp!=null && crossLf!=null){
-            geom = GF.createLineString(new Coordinate[]{crossUp, crossLf});
-        }
-        
-        if(geom!=null){
-            pushGeometry(geom, level);
-        }
         
         //SECOND TRIANGLE //////////////////////////////////////////////////////
         
-        geom = null;
-        
-        //on border cases
-        if(urCorner && blCorner && brCorner){
-            //close triangle
-            geom = GF.createLineString(new Coordinate[]{UR, BL, BR});
-        }else if(brCorner && urCorner){
-            //adjacent border
-            geom = GF.createLineString(new Coordinate[]{BR,UR});
-        }else if(brCorner && blCorner){
-            //opposite border
-            geom = GF.createLineString(new Coordinate[]{BR,BL});
-        }else if(urCorner && blCorner){
-            //hypothenus border
-            geom = GF.createLineString(new Coordinate[]{UR,BL});
-        }
-        
-        //split on a height
-        else if(brCorner && crossHp!=null){
-            geom = GF.createLineString(new Coordinate[]{BR,crossHp});
-        }else if(urCorner && crossBt!=null){
-            geom = GF.createLineString(new Coordinate[]{UR,crossBt});
-        }else if(blCorner && crossRi!=null){
-            geom = GF.createLineString(new Coordinate[]{BL,crossRi});
-        }
-        
-        //split on 2 edges
-        else if(crossRi!=null && crossHp!=null){
-            geom = GF.createLineString(new Coordinate[]{crossRi, crossHp});
-        }else if(crossBt!=null && crossHp!=null){
-            geom = GF.createLineString(new Coordinate[]{crossBt, crossHp});
-        }else if(crossRi!=null && crossBt!=null){
-            geom = GF.createLineString(new Coordinate[]{crossRi, crossBt});
-        }
-        
-        if(geom!=null){
-            pushGeometry(geom, level);
+        if(SMiddle != null){
+            //continue existing lines
+            if(crossBt != null){
+                newBoundary.HMiddle = SMiddle;
+                newBoundary.HMiddle.add(crossBt);
+            }else if(crossRi != null){
+                newBoundary.VMiddle = SMiddle;
+                newBoundary.VMiddle.add(crossRi);
+            }
+            
+        }else{
+            //create new lines 
+            if(crossBt != null && crossRi != null){
+                final Construction cst = new Construction(level);
+                newBoundary.VMiddle = cst.getEdge1();
+                newBoundary.VMiddle.add(crossBt);
+                newBoundary.VMiddle.add(crossRi);
+                newBoundary.HMiddle = cst.getEdge2();
+            }
+            
         }
         
         return newBoundary;
@@ -294,12 +358,14 @@ public class Isoline2 extends AbstractProcess {
             double ratio = (candidate-start.z) / (end.z-start.z);
             return new Coordinate(
                     start.x + (end.x-start.x)*ratio, 
-                    start.y + (end.y-start.y)*ratio);
+                    start.y + (end.y-start.y)*ratio,
+                    candidate);
         }else if(start.z>candidate && candidate>end.z){
             double ratio = (candidate-end.z) / (start.z-end.z);
             return new Coordinate(
                     end.x + (start.x-end.x)*ratio, 
-                    end.y + (start.y-end.y)*ratio);
+                    end.y + (start.y-end.y)*ratio,
+                    candidate);
         }
         return null;
     }

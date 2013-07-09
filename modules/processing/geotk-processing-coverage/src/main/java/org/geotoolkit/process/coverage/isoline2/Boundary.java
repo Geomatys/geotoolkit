@@ -16,10 +16,7 @@
  */
 package org.geotoolkit.process.coverage.isoline2;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collection;
 
 /**
  *
@@ -30,18 +27,16 @@ public class Boundary {
     /**
      * Geometries in construction
      */
-    public LinkedList<Coordinate> HLeft, HMiddle, HRight;
-    public LinkedList<Coordinate> VTop, VMiddle, VBottom;
+    public Construction.Edge HLeft, HMiddle, HRight;
+    public Construction.Edge VTop, VMiddle, VBottom;
     
-    public List<LinkedList<Coordinate>> getConstructions(){
-        final List<LinkedList<Coordinate>> contructions = new ArrayList<LinkedList<Coordinate>>();
-        if(HLeft!=null) contructions.add(HLeft);
-        if(HMiddle!=null) contructions.add(HMiddle);
-        if(HRight!=null) contructions.add(HRight);
-        if(VTop!=null) contructions.add(VTop);
-        if(VMiddle!=null) contructions.add(VMiddle);
-        if(VBottom!=null) contructions.add(VBottom);
-        return contructions;
+    public void getConstructions(Collection<Construction> contructions){
+        if(HLeft!=null) contructions.add(HLeft.getConstruction());
+        if(HMiddle!=null) contructions.add(HMiddle.getConstruction());
+        if(HRight!=null) contructions.add(HRight.getConstruction());
+        if(VTop!=null) contructions.add(VTop.getConstruction());
+        if(VMiddle!=null) contructions.add(VMiddle.getConstruction());
+        if(VBottom!=null) contructions.add(VBottom.getConstruction());
     }
     
 }
