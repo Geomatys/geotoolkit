@@ -126,7 +126,7 @@ public class LuceneSearcherTest {
         //final Calculator calculator = DefaultCalculator.CALCULATOR_2D;
 
         //creating tree (R-Tree)------------------------------------------------
-        rTree = new StarRTree(15, treeCrs);
+        rTree = new StarRTree(10, treeCrs);
 
         final Analyzer analyzer  = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
         IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_40, analyzer);

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.propertyedit.styleproperty.simple;
+package org.geotoolkit.gui.swing.style.symbolizer;
 
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
@@ -28,6 +28,9 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JFillControlPane;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JFontPane;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JHaloPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JLabelPlacementPane;
 import org.geotoolkit.gui.swing.style.JTextExpressionPane;
@@ -42,14 +45,14 @@ import org.opengis.style.TextSymbolizer;
  * @author Fabien Rétif (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
+public class JTextSymbolizerSimple extends StyleElementEditor<TextSymbolizer> {
 
     private MapLayer layer = null;
 
     /**
      * Creates new form JTextSymbolizerPane
      */
-    public JTextSymbolizerPane() {
+    public JTextSymbolizerSimple() {
         super(TextSymbolizer.class);
         initComponents();
     }
@@ -133,25 +136,25 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
 
         guiLabel.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JTextSymbolizerPane.this.propertyChange(evt);
+                JTextSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
         guiFont.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JTextSymbolizerPane.this.propertyChange(evt);
+                JTextSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
         guiFill.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JTextSymbolizerPane.this.propertyChange(evt);
+                JTextSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
         guiHalo.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JTextSymbolizerPane.this.propertyChange(evt);
+                JTextSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
@@ -208,7 +211,7 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
 
         guiLabelPlacement.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JTextSymbolizerPane.this.propertyChange(evt);
+                JTextSymbolizerSimple.this.propertyChange(evt);
             }
         });
         jTabbedPane1.addTab(MessageBundle.getString("position"), guiLabelPlacement); // NOI18N

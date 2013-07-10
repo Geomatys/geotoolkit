@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.style;
+package org.geotoolkit.gui.swing.style.symbolizer;
 
 import java.awt.Component;
 import java.awt.Image;
@@ -26,21 +26,22 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.display2d.ext.cellular.CellSymbolizer;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.filter.JCQLEditor;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import static org.geotoolkit.gui.swing.style.StyleElementEditor.LOGGER;
-import static org.geotoolkit.gui.swing.style.StyleElementEditor.getStyleFactory;
+import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
+import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
-import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.PointSymbolizer;
-import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 
@@ -50,6 +51,8 @@ import org.opengis.style.TextSymbolizer;
  * @author Johann Sorel (Geomatys)
  */
 public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> implements PropertyPane {
+    
+    private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
     
     private MapLayer layer = null;
     private StyleElementEditor editor = null;
@@ -73,6 +76,10 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
             setEditedSymbolizer(symbol);
         }
     };
+    
+    //keep track of where the symbolizer was to avoid rewriting the complete style
+    private MutableRule parentRule = null;
+    private int parentIndex = 0;
     
     /**
      * Creates new form JCellSymbolizerPane
@@ -138,7 +145,6 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
     @Override
     public void setTarget(Object candidate) {
         cellMimicLayer = null;
-        parse(null);
         if (candidate instanceof CoverageMapLayer) {
             setLayer((CoverageMapLayer) candidate);
             try {
@@ -148,18 +154,26 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
                 LOGGER.log(Level.WARNING, ex.getMessage(),ex);
             }
             //search for a cell symbolizer
-            for(FeatureTypeStyle fts : this.layer.getStyle().featureTypeStyles()){
-                for(Rule r : fts.rules()){
-                    for(Symbolizer s : r.symbolizers()){
+            parentRule = null;
+            parentIndex = 0;
+            for(MutableFeatureTypeStyle fts : this.layer.getStyle().featureTypeStyles()){
+                for(MutableRule r : fts.rules()){
+                    for(int i=0,n=r.symbolizers().size();i<n;i++){
+                        Symbolizer s = r.symbolizers().get(i);
                         if(s instanceof CellSymbolizer){
                             parse((CellSymbolizer)s);
+                            parentRule = r;
+                            parentIndex = i;
                             return;
                         }
                     }
                 }
             }
+            parse(null);
         }else if(candidate instanceof CellSymbolizer){
             parse((CellSymbolizer)candidate);
+        }else{
+            parse(null);
         }
     }
 
@@ -181,10 +195,22 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
     @Override
     public void apply() {
         if(layer!=null){
-            final CellSymbolizer cs = create();
-            final MutableStyle style = layer.getStyle();
-            style.featureTypeStyles().clear();
-            style.featureTypeStyles().add(getStyleFactory().featureTypeStyle(cs));
+            final CellSymbolizer symbol = create();
+            
+            if(parentRule!=null){
+                parentRule.symbolizers().remove(parentIndex);
+                parentRule.symbolizers().add(parentIndex,symbol);
+            }else{
+                //style did not exist, add a new feature type style for it
+                final MutableFeatureTypeStyle fts = SF.featureTypeStyle();
+                final MutableRule rule = SF.rule(symbol);
+                fts.rules().add(rule);
+                fts.setDescription(SF.description("raster cell", "raster cell"));
+                rule.setDescription(SF.description("raster cell", "raster cell"));
+                layer.getStyle().featureTypeStyles().add(fts);
+                parentRule = rule;
+                parentIndex = 0;
+            }
         }
     }
     
@@ -196,6 +222,9 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
         pan_info.repaint();
         editor = null;
         filter = Filter.INCLUDE;
+        guiTypeList.setSelectedIndex(0);
+        final Symbolizer symbol =  getStyleFactory().pointSymbolizer();
+        setEditedSymbolizer(symbol);
         
         if(target!=null){
             guiCellSize.setValue(target.getCellSize());
@@ -212,6 +241,8 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
             }
             
         }
+        
+        guiCQL.setFilter(filter);
     }
 
     @Override

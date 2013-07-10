@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.style;
+package org.geotoolkit.gui.swing.style.symbolizer;
 
 
 import java.awt.Component;
@@ -28,6 +28,11 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.style.JGeomPane;
+import org.geotoolkit.gui.swing.style.JOffSetPane;
+import org.geotoolkit.gui.swing.style.JStrokePane;
+import org.geotoolkit.gui.swing.style.JUOMPane;
+import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.LineSymbolizer;
@@ -39,14 +44,14 @@ import org.opengis.style.LineSymbolizer;
  * @author Johann Sorel
  * @module pending
  */
-public class JLineSymbolizerPane extends  StyleElementEditor<LineSymbolizer> {
+public class JLineSymbolizerAdvanced extends  StyleElementEditor<LineSymbolizer> {
     
     private MapLayer layer = null;
     
     /** 
      * Creates new form JLineSymbolizerPanel
      */
-    public JLineSymbolizerPane() {
+    public JLineSymbolizerAdvanced() {
         super(LineSymbolizer.class);
         initComponents();
     }
@@ -118,14 +123,14 @@ public class JLineSymbolizerPane extends  StyleElementEditor<LineSymbolizer> {
         guiStroke.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("stroke"))); // NOI18N
         guiStroke.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JLineSymbolizerPane.this.propertyChange(evt);
+                JLineSymbolizerAdvanced.this.propertyChange(evt);
             }
         });
 
         guiOffset.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("displacement"))); // NOI18N
         guiOffset.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JLineSymbolizerPane.this.propertyChange(evt);
+                JLineSymbolizerAdvanced.this.propertyChange(evt);
             }
         });
 

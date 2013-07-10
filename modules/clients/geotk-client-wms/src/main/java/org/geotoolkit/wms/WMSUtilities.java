@@ -305,8 +305,10 @@ public final class WMSUtilities {
                             values[i] = dblValues.get(i);
                         }
                         dimCRS = DiscreteReferencingFactory.createDiscreteCRS(dimCRS, values);
-                        minVal = values[0];
-                        maxVal = values[values.length - 1];
+                        if(values.length>0){
+                            minVal = values[0];
+                            maxVal = values[values.length - 1];
+                        }
                     }
                 }
 

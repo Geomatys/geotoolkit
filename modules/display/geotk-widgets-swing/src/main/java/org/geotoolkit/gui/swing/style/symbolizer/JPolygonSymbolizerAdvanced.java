@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.style;
+package org.geotoolkit.gui.swing.style.symbolizer;
 
 import java.awt.Component;
 import javax.swing.BorderFactory;
@@ -25,6 +25,13 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.style.JDisplacementPane;
+import org.geotoolkit.gui.swing.style.JFillPane;
+import org.geotoolkit.gui.swing.style.JGeomPane;
+import org.geotoolkit.gui.swing.style.JOffSetPane;
+import org.geotoolkit.gui.swing.style.JStrokePane;
+import org.geotoolkit.gui.swing.style.JUOMPane;
+import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.PolygonSymbolizer;
@@ -35,14 +42,14 @@ import org.opengis.style.PolygonSymbolizer;
  * @author  Johann Sorel
  * @module pending
  */
-public class JPolygonSymbolizerPane extends StyleElementEditor<PolygonSymbolizer> {
+public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbolizer> {
 
     
     private MapLayer layer = null;
 
     /** Creates new form LineStylePanel
      */
-    public JPolygonSymbolizerPane() {
+    public JPolygonSymbolizerAdvanced() {
         super(PolygonSymbolizer.class);
         initComponents();
     }
@@ -150,8 +157,6 @@ public class JPolygonSymbolizerPane extends StyleElementEditor<PolygonSymbolizer
 
         GroupLayout jPanel4Layout = new GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
-
-
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
@@ -171,7 +176,9 @@ public class JPolygonSymbolizerPane extends StyleElementEditor<PolygonSymbolizer
         );
 
         guiFill.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("fill"))); // NOI18N
+
         guiStroke.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("stroke"))); // NOI18N
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(

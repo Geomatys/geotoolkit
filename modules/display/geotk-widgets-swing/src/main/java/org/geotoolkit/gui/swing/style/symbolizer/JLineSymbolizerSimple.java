@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.propertyedit.styleproperty.simple;
+package org.geotoolkit.gui.swing.style.symbolizer;
 
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
@@ -25,6 +25,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JStrokeControlPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JNumberExpressionPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
@@ -38,14 +39,14 @@ import org.opengis.style.LineSymbolizer;
  * @author Fabien Rétif (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class JLineSymbolizerPane extends StyleElementEditor<LineSymbolizer> {
+public class JLineSymbolizerSimple extends StyleElementEditor<LineSymbolizer> {
 
     private MapLayer layer = null;
 
     /**
      * Creates new form JLineSymbolizerPanel
      */
-    public JLineSymbolizerPane() {
+    public JLineSymbolizerSimple() {
         super(LineSymbolizer.class);
         initComponents();
         guiDisplacementX.setModel(0d, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1d);
@@ -116,13 +117,13 @@ public class JLineSymbolizerPane extends StyleElementEditor<LineSymbolizer> {
 
         guiStrokeControlPane.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JLineSymbolizerPane.this.propertyChange(evt);
+                JLineSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
         guiDisplacementX.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JLineSymbolizerPane.this.propertyChange(evt);
+                JLineSymbolizerSimple.this.propertyChange(evt);
             }
         });
 

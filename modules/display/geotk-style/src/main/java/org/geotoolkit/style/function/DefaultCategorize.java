@@ -267,10 +267,13 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
     @Override
     public Object evaluate(final Object object, final Class c) {
 
+        final Object candidate;
+        final Double value;
         if(object instanceof Feature){
             
             final Feature f = (Feature)object;
-            final Double value = lookup.evaluate(f,Double.class);
+            candidate = f;
+            value = lookup.evaluate(f,Double.class);
             final Expression exp = new DefaultLiteral<Double>(value);
 
             final boolean b = this.belongTo == belongTo.SUCCEEDING;
@@ -280,9 +283,21 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
             
         } else if (object instanceof RenderedImage) {
             return evaluateImage((RenderedImage) object);
+        }else if(object instanceof Number){
+            candidate = null;
+            value = ((Number)object).doubleValue();
+        }else if(fallback!=null){
+            return fallback.evaluate(object,c);
+        }else{
+            return null;
         }
         
-        return null;
+        final Expression exp = new DefaultLiteral<Double>(value);
+
+        final boolean b = this.belongTo == belongTo.SUCCEEDING;
+
+        final Expression closest = values.headMap(exp,!b).lastEntry().getValue();
+        return closest.evaluate(candidate,c);
     }
 
     /**

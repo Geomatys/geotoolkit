@@ -34,7 +34,7 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.JRasterColorMapStyleP
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.gui.swing.style.JCellSymbolizerPane;
+import org.geotoolkit.gui.swing.style.symbolizer.JCellSymbolizerPane;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.DefaultMutableStyle;

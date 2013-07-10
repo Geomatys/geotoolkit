@@ -39,8 +39,9 @@
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-storage</artifactId>
+      <groupId>org.apache.sis.storage</groupId>
+      <artifactId>sis-storage</artifactId>
+      <version>${sis.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>

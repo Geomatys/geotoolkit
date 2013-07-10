@@ -180,7 +180,7 @@ public final class TreeX {
                 tree.search(regionSearch, defVisitor);
                 for(int i = 0; i < listSearch.size(); i++){
                     final Envelope env = (Envelope) listSearch.get(i);
-                    if (intersects(regionSearch, getCoords(env), true) && !intersects(regionSearch, getCoords(env), false)) visitor.visit(env);
+                    if (touches(regionSearch, getCoords(env))) visitor.visit(env);
                 }
             } break;
 

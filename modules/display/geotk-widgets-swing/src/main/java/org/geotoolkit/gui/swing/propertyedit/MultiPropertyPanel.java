@@ -35,6 +35,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import org.geotoolkit.gui.swing.misc.JImagePane;
 import org.jdesktop.swingx.JXTaskPane;
@@ -46,13 +47,15 @@ import org.jdesktop.swingx.JXTaskPaneContainer;
  * @author Johann Sorel
  * @module pending
  */
-public abstract class MultiPropertyPanel extends javax.swing.JPanel implements PropertyPane {
+public abstract class MultiPropertyPanel extends JPanel implements PropertyPane {
 
     private final Map<String,List<PropertyPane>> panels = new LinkedHashMap<String,List<PropertyPane>>();
     private final JXTaskPaneContainer guiMenus = new JXTaskPaneContainer();
     private final Map<String,JXTaskPane> guiGroups = new HashMap<String,JXTaskPane>();
     private final JImagePane guiPreview = new JImagePane();
     private PropertyPane active = null;
+    
+    private final JXTaskPane preview = new JXTaskPane();
     
 
     /** 
@@ -61,12 +64,12 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
     public MultiPropertyPanel() {
         super();
         initComponents();
+        preview.getContentPane().setLayout(new BorderLayout());
+        preview.add(BorderLayout.CENTER,guiPreview);
         
         guiMenus.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
         guiTypesPane.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         guiTypesPane.add(guiMenus, BorderLayout.CENTER);
-        guiTypesPane.add(guiPreview, BorderLayout.SOUTH);
-              
 
     }
 
@@ -94,22 +97,9 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
                 @Override
                         public void run() {
                             final JComponent panComp = (JComponent) panel.getComponent();
-//                            final Container parent = panComp.getParent();
-//                            if(parent!=null){
-//                                parent.remove(panComp);
-//                            }
-//                            panComp.setSize(1, 1);
-                            
-//                            final JPanel pane = new JPanel(new GridLayout(1, 1));
-//                            pane.add(panel.getComponent());
-//                            panel.getComponent().getP
-//                            pane.setPreferredSize(new Dimension(100, 100));
                             add(BorderLayout.CENTER,panComp);
                             revalidate();
                             repaint();
-//                            RepaintManager.currentManager(guiSplitPane).validateInvalidComponents();
-//                            guiSplitPane.revalidate();
-//                            guiSplitPane.repaint();
                         }
                     });
             
@@ -120,8 +110,12 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
                 guiPreview.setPreferredSize(new Dimension(100, 140));
                 guiPreview.revalidate();
                 guiPreview.repaint();
+                preview.setEnabled(true);
+                preview.setCollapsed(false);
             }else{
                 guiPreview.setPreferredSize(new Dimension(1, 1));
+                preview.setEnabled(false);
+                preview.setCollapsed(true);
             }
             
             return true;
@@ -140,12 +134,18 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new JScrollPane();
         guiTypesPane = new JPanel();
 
         setLayout(new BorderLayout());
 
+        jScrollPane1.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+
+        guiTypesPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         guiTypesPane.setLayout(new BorderLayout());
-        add(guiTypesPane, BorderLayout.LINE_START);
+        jScrollPane1.setViewportView(guiTypesPane);
+
+        add(jScrollPane1, BorderLayout.WEST);
     }// </editor-fold>//GEN-END:initComponents
     
     @Override
@@ -155,6 +155,7 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
         for(JXTaskPane tp : guiGroups.values()){
             guiMenus.remove(tp);
         }
+        guiMenus.remove(preview);
         guiGroups.clear();
         
         PropertyPane selected = null;
@@ -207,7 +208,9 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
                     task.add(act);
             }
         }
-                      
+                  
+        guiMenus.add(preview);
+        
         setSelectedPropertyPanel(selected);
     }
 
@@ -249,6 +252,7 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JPanel guiTypesPane;
+    private JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
 }

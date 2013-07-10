@@ -215,7 +215,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
                         .addComponent(jLabel6)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(86, Short.MAX_VALUE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel3, jLabel4, jLabel5, jLabel6});

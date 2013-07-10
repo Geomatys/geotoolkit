@@ -799,8 +799,6 @@ public class BasicRTree extends AbstractTree {
             }
         }
         if (candidate.getParent() != null) trim (candidate.getParent());
-        // j'insert et je trim parent ensuite 
-        // a voir peut etre sortir list du if et trimmer d'abord
         if (reinsertListCoords != null) {
             assert (reinsertListObjects != null) : "trim : listObjects should not be null.";
             final int reSize = reinsertListCoords.size();

@@ -113,6 +113,12 @@ public class ArrayEditor extends PropertyValueEditor implements ActionListener{
 
     @Override
     public Object getValue() {
+        //create empty array to avoid return null.
+        if (value == null) {
+            final Class subClass = this.type.getBinding().getComponentType();
+            value = Array.newInstance(subClass, 0);
+        }
+        
         return value;
     }
 

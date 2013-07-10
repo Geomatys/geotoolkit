@@ -28,6 +28,7 @@ import org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor;
 import org.geotoolkit.process.coverage.coveragetofeatures.CoverageToFeaturesDescriptor;
 import org.geotoolkit.process.coverage.coveragetovector.CoverageToVectorDescriptor;
 import org.geotoolkit.process.coverage.isoline.IsolineDescriptor;
+import org.geotoolkit.process.coverage.isoline2.IsolineDescriptor2;
 import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
 import org.geotoolkit.process.coverage.merge.MergeDescriptor;
 import org.geotoolkit.process.coverage.metadataextractor.ExtractionDescriptor;
@@ -67,6 +68,7 @@ public class CoverageProcessingRegistry extends AbstractProcessingRegistry{
               KrigingDescriptor.INSTANCE,
               ExtractionDescriptor.INSTANCE,
               IsolineDescriptor.INSTANCE,
+              IsolineDescriptor2.INSTANCE,
               ResampleDescriptor.INSTANCE,
               CopyCoverageStoreDescriptor.INSTANCE,
               StraightenDescriptor.INSTANCE,

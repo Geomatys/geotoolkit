@@ -35,6 +35,8 @@ import org.opengis.filter.expression.Function;
  */
 public class CompatibleColorModel extends ColorModel{
 
+    private static final int TRANSLUCENT = new Color(255, 255, 255, 0).getRGB();
+    
     private final Function fct;
     
     /**
@@ -67,6 +69,9 @@ public class CompatibleColorModel extends ColorModel{
             throw new UnsupportedOperationException("Can not extract value from type : " + inData.getClass());
         }        
         final Color c = fct.evaluate(value, Color.class);
+        if(c==null){
+            return TRANSLUCENT;
+        }
         return c.getRGB();
     }
     

@@ -52,7 +52,6 @@
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-referencing</artifactId></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-referencing3D</artifactId></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-setup</artifactId></dependency>
-        <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-storage</artifactId></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-utility</artifactId></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-widgets-swing</artifactId></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-wizards-swing</artifactId></dependency>
@@ -86,7 +85,6 @@
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-jdbc-postgis</artifactId>        <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-jtswrapper</artifactId>          <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-om</artifactId>                  <version>${project.version}</version></dependency>
-        <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-osm-bin</artifactId>             <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-osm-core</artifactId>            <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-osm-xml</artifactId>             <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-processing-core</artifactId>     <version>${project.version}</version></dependency>

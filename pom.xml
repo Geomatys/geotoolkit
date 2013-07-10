@@ -120,7 +120,7 @@
   <!-- =========================================================== -->
 
   <properties>
-    <sis.version>0.3-jdk6</sis.version>
+    <sis.version>0.3-jdk7</sis.version>
     <geotoolkit.version>4.x-SNAPSHOT</geotoolkit.version>
   </properties>
 
@@ -200,7 +200,6 @@
       <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-referencing</artifactId>       <version>${geotoolkit.version}</version></dependency>
       <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-referencing3D</artifactId>     <version>${geotoolkit.version}</version></dependency>
       <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-setup</artifactId>             <version>${geotoolkit.version}</version></dependency>
-      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-storage</artifactId>           <version>${geotoolkit.version}</version></dependency>
       <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-utility</artifactId>           <version>${geotoolkit.version}</version></dependency>
       <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-widgets-swing</artifactId>     <version>${geotoolkit.version}</version></dependency>
       <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-wizards-swing</artifactId>     <version>${geotoolkit.version}</version></dependency>

@@ -88,7 +88,7 @@ public class AnchoredMarshallerPool extends MarshallerPool {
      * The separator character for the packages is the colon.
      *
      * @param  packages         The packages in which JAXB will search for annotated classes to be bound,
-     *                          for example {@code "org.geotoolkit.metadata.iso:org.geotoolkit.metadata.iso.citation"}.
+     *                          for example {@code "org.apache.sis.metadata.iso:org.apache.sis.metadata.iso.citation"}.
      * @throws JAXBException    If the JAXB context can not be created.
      */
     public AnchoredMarshallerPool(final String packages) throws JAXBException {
@@ -100,7 +100,7 @@ public class AnchoredMarshallerPool extends MarshallerPool {
      *
      * @param  rootNamespace    The root namespace, for example {@code "http://www.isotc211.org/2005/gmd"}.
      * @param  packages         The packages in which JAXB will search for annotated classes to be bound,
-     *                          for example {@code "org.geotoolkit.metadata.iso:org.geotoolkit.metadata.iso.citation"}.
+     *                          for example {@code "org.apache.sis.metadata.iso:org.apache.sis.metadata.iso.citation"}.
      * @throws JAXBException    If the JAXB context can not be created.
      */
     public AnchoredMarshallerPool(final String rootNamespace, final String packages) throws JAXBException {
@@ -112,7 +112,7 @@ public class AnchoredMarshallerPool extends MarshallerPool {
      *
      * @param  rootNamespace    The root namespace, for example {@code "http://www.isotc211.org/2005/gmd"}.
      * @param  packages         The packages in which JAXB will search for annotated classes to be bound,
-     *                          for example {@code "org.geotoolkit.metadata.iso:org.geotoolkit.metadata.iso.citation"}.
+     *                          for example {@code "org.apache.sis.metadata.iso:org.apache.sis.metadata.iso.citation"}.
      * @param schemaLocation    The main xsd schema location for all the returned xml.
      * @throws JAXBException    If the JAXB context can not be created.
      */

@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.style;
+package org.geotoolkit.gui.swing.style.symbolizer;
 
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
@@ -27,6 +27,10 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.style.JGeomPane;
+import org.geotoolkit.gui.swing.style.JGraphicPane;
+import org.geotoolkit.gui.swing.style.JUOMPane;
+import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.PointSymbolizer;
@@ -37,11 +41,11 @@ import org.opengis.style.PointSymbolizer;
  * @author Johann Sorel
  * @module pending
  */
-public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
+public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer> {
 
     private MapLayer layer = null;
 
-    public JPointSymbolizerPane() {
+    public JPointSymbolizerAdvanced() {
         super(PointSymbolizer.class);
         initComponents();
     }
@@ -134,7 +138,7 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
         guiGraphic.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("graphic"))); // NOI18N
         guiGraphic.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JPointSymbolizerPane.this.propertyChange(evt);
+                JPointSymbolizerAdvanced.this.propertyChange(evt);
             }
         });
 

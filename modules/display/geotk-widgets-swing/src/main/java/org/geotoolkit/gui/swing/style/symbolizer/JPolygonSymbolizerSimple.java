@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.propertyedit.styleproperty.simple;
+package org.geotoolkit.gui.swing.style.symbolizer;
 
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
@@ -25,6 +25,8 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JFillControlPane;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JStrokeControlPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JNumberExpressionPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
@@ -38,14 +40,14 @@ import org.opengis.style.PolygonSymbolizer;
  * @author Fabien Rétif (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class JPolygonSymbolizerPane extends  StyleElementEditor<PolygonSymbolizer>  {
+public class JPolygonSymbolizerSimple extends  StyleElementEditor<PolygonSymbolizer>  {
 
     private MapLayer layer = null;
     
     /** 
      * Creates new form JPolygonSymbolizerPane and sets range of number component
      */
-    public JPolygonSymbolizerPane() {
+    public JPolygonSymbolizerSimple() {
         super(PolygonSymbolizer.class);
         initComponents();
         guiOffset.setModel(0d, 0d, Double.POSITIVE_INFINITY, 1d);
@@ -139,19 +141,19 @@ public class JPolygonSymbolizerPane extends  StyleElementEditor<PolygonSymbolize
 
         guiDisplacementX.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JPolygonSymbolizerPane.this.propertyChange(evt);
+                JPolygonSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
         guiDisplacementY.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JPolygonSymbolizerPane.this.propertyChange(evt);
+                JPolygonSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
         guiOffset.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JPolygonSymbolizerPane.this.propertyChange(evt);
+                JPolygonSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
@@ -159,13 +161,13 @@ public class JPolygonSymbolizerPane extends  StyleElementEditor<PolygonSymbolize
 
         guiStrokeControlPane.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JPolygonSymbolizerPane.this.propertyChange(evt);
+                JPolygonSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
         guiFillControlPane.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JPolygonSymbolizerPane.this.propertyChange(evt);
+                JPolygonSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
