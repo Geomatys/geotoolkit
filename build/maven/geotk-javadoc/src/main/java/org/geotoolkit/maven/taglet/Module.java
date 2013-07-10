@@ -221,17 +221,6 @@ public final class Module implements Taglet {
              * Appends the "View source code for this class" link.
              */
             buffer.append("\n</TD><TD ALIGN=\"RIGHT\">\n");
-            final Doc holder = tag.holder();
-            if (holder instanceof ClassDoc) {
-                ClassDoc outer, doc = (ClassDoc) holder;
-                while ((outer = doc.containingClass()) != null) {
-                    doc = outer;
-                }
-                buffer.append(" &nbsp;&nbsp; ");
-                openMavenReportLink(buffer);
-                buffer.append("cobertura/").append(doc.qualifiedName())
-                      .append(".html\">View source code for this class</A>");
-            }
             buffer.append("\n</TD></TR></TABLE>");
         }
         return buffer.append("</DD>\n").toString();
