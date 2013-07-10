@@ -43,8 +43,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.DatabaseMetaData;
 
-import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.CharSequences;
+import org.apache.sis.util.Version;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -116,7 +116,7 @@ public class ScriptRunner implements FilenameFilter {
      * {@code "FKeys"} in that order, because this is the order that the script files
      * are expected to be run.
      */
-    protected final List<String> suffixes = new ArrayList<String>();
+    protected final List<String> suffixes = new ArrayList<>();
 
     /**
      * The presumed dialect spoken by the database.
@@ -134,7 +134,7 @@ public class ScriptRunner implements FilenameFilter {
      * database (for example Derby does not support the {@code TEXT} data type, which need to
      * be replaced by {@code VARCHAR}).
      */
-    protected final Map<String,String> replacements = new HashMap<String,String>();
+    protected final Map<String,String> replacements = new HashMap<>();
 
     /**
      * The statement created from a connection to the database.
@@ -265,8 +265,8 @@ public class ScriptRunner implements FilenameFilter {
          */
         String prefix = null, suffix = null;
         for (final String file : files) {
-            prefix = Strings.commonPrefix(prefix, file);
-            suffix = Strings.commonSuffix(suffix, file);
+            prefix = CharSequences.commonPrefix(prefix, file).toString();
+            suffix = CharSequences.commonSuffix(suffix, file).toString();
         }
         final int pl = prefix.length();
         final int sl = suffix.length();
@@ -275,8 +275,8 @@ public class ScriptRunner implements FilenameFilter {
          * get the version of every files. We will then select one version, by default the
          * one having the highest major/minor version numbers.
          */
-        final Set<String> uniques = new LinkedHashSet<String>();
-        final Map<String,Integer> order = new HashMap<String,Integer>();
+        final Set<String> uniques = new LinkedHashSet<>();
+        final Map<String,Integer> order = new HashMap<>();
         final String[] versions = new String[files.length];
         for (int i=0; i<files.length; i++) {
             final String file = files[i];
@@ -340,11 +340,11 @@ public class ScriptRunner implements FilenameFilter {
         } else {
             reader = new InputStreamReader(new FileInputStream(file), encoding);
         }
-        final LineNumberReader in = new LineNumberReader(reader);
-        currentFile = file;
-        final int count = run(in);
-        // The stream is closed by the 'run(in)' method (Note: the JDK7 branch use resources management).
-        currentFile = null; // Clear on success only.
+        final int count;
+        try (LineNumberReader in = new LineNumberReader(reader)) {
+            currentFile = file; count = run(in);
+            currentFile = null; // Clear on success only.
+        }
         return count;
     }
 
@@ -364,7 +364,9 @@ public class ScriptRunner implements FilenameFilter {
         } else {
             reader = new InputStreamReader(in, encoding);
         }
-        return run(new LineNumberReader(reader));
+        try (LineNumberReader lr = new LineNumberReader(reader)) {
+            return run(lr);
+        }
     }
 
     /**

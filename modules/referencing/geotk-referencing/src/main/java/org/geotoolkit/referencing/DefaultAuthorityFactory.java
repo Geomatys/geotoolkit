@@ -42,8 +42,8 @@ import org.geotoolkit.referencing.factory.MultiAuthoritiesFactory;
 import org.geotoolkit.referencing.factory.CachingAuthorityFactory;
 import org.geotoolkit.referencing.factory.FactoryDependencies;
 import org.geotoolkit.internal.referencing.factory.ImplementationHints;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
 
 
@@ -108,7 +108,7 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
         if (userType != null) {
             hints.put(Hints.CRS_AUTHORITY_FACTORY, userType);
         }
-        final List<CRSAuthorityFactory> factories = new ArrayList<CRSAuthorityFactory>(
+        final List<CRSAuthorityFactory> factories = new ArrayList<>(
                 AuthorityFactoryFinder.getCRSAuthorityFactories(hints));
         /*
          * Do not invoke FactoryRegistry.getServiceProviders() (which returns an Iterator over
@@ -199,7 +199,7 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
             printer.setAbridged(true);
             final LogRecord record = new LogRecord(level,
                     "CRS.getAuthorityFactory(" + longitudeFirst +") creates:" + // TODO: localize
-                    System.getProperty("line.separator", "\n") + printer);
+                    System.lineSeparator() + printer);
             record.setSourceClassName("org.geotoolkit.referencing.CRS");
             record.setSourceMethodName("getAuthorityFactory");
             record.setLoggerName(logger.getName());
@@ -231,7 +231,7 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
      * amount of class loading when using {@link CRS} for other purpose than CRS decoding.
      */
     static Set<String> getSupportedCodes(final String authority) {
-        final Set<String> result = new LinkedHashSet<String>(AUTHORITY_LESS);
+        final Set<String> result = new LinkedHashSet<>(AUTHORITY_LESS);
         for (final CRSAuthorityFactory factory : AuthorityFactoryFinder.getCRSAuthorityFactories(null)) {
             if (Citations.identifierMatches(factory.getAuthority(), authority)) {
                 final Set<String> codes;
@@ -260,7 +260,7 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
      * amount of class loading when using {@link CRS} for other purpose than CRS decoding.
      */
     static Set<String> getSupportedAuthorities(final boolean returnAliases) {
-        final Set<String> result = new LinkedHashSet<String>();
+        final Set<String> result = new LinkedHashSet<>();
         for (final CRSAuthorityFactory factory : AuthorityFactoryFinder.getCRSAuthorityFactories(null)) {
             for (final Identifier id : factory.getAuthority().getIdentifiers()) {
                 result.add(id.getCode());

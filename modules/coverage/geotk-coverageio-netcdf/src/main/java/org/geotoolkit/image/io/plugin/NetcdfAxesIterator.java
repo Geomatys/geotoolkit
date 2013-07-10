@@ -101,7 +101,7 @@ final class NetcdfAxesIterator implements Iterator<Map.Entry<?,Integer>> {
                     break; // If we add new cases, the above line must stay last.
         }
         index++;
-        return new AbstractMap.SimpleImmutableEntry<Object, Integer>(property, dimension);
+        return new AbstractMap.SimpleImmutableEntry<>(property, dimension);
     }
 
     /**

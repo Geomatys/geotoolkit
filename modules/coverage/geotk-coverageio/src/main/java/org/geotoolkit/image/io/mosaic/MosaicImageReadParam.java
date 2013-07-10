@@ -118,7 +118,7 @@ public class MosaicImageReadParam extends ImageReadParam {
      * @param reader The image reader, or {@code null} if none.
      */
     protected MosaicImageReadParam(final MosaicImageReader reader) {
-        readers = new WeakHashMap<ImageReader,ImageReadParam>();
+        readers = new WeakHashMap<>();
         if (reader != null) {
             for (final ImageReader tileReader : reader.readers.getTileReaders()) {
                 readers.put(tileReader, null);

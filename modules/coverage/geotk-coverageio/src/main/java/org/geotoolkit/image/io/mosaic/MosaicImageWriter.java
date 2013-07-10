@@ -51,9 +51,9 @@ import java.lang.reflect.UndeclaredThrowableException;
 
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.Version;
-import org.geotoolkit.util.Disposable;
-import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Disposable;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
 import org.apache.sis.util.logging.PerformanceLevel;
 import org.geotoolkit.resources.Errors;
@@ -150,7 +150,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
      */
     public MosaicImageWriter(final ImageWriterSpi spi) {
         super(spi != null ? spi : Spi.DEFAULT);
-        temporaryFiles = new HashMap<Tile,RawFile>();
+        temporaryFiles = new HashMap<>();
     }
 
     /**
@@ -270,10 +270,10 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
             }
             final File file = File.createTempFile("MIW", ".png");
             try {
-                final ImageOutputStream output = ImageIO.createImageOutputStream(file);
-                writer.setOutput(output);
-                writer.write(metadata, image, param);
-                output.close();
+                try (ImageOutputStream output = ImageIO.createImageOutputStream(file)) {
+                    writer.setOutput(output);
+                    writer.write(metadata, image, param);
+                }
                 /*
                  * We don't want to take in account parameters like source region, subsampling, etc.
                  * since they were already handled by the writing process above. But we want to take
@@ -347,7 +347,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
     {
         final boolean success;
         final ImageReader reader = getImageReader(input, inputIndex, param);
-        final Queue<ReaderInputPair.WithWriter> cache = new LinkedList<ReaderInputPair.WithWriter>();
+        final Queue<ReaderInputPair.WithWriter> cache = new LinkedList<>();
         try {
             if (onlyOneImage && reader.getNumImages(false) <= 1) {
                 onlyOneImage = false;
@@ -417,7 +417,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
             tiles = Collections.emptyList();
             bytesPerPixel = 1;
         } else {
-            tiles = new LinkedList<Tile>(managers[outputIndex].getTiles());
+            tiles = new LinkedList<>(managers[outputIndex].getTiles());
             /*
              * Computes an estimation of the amount of memory to be required for each pixel.
              * This estimation may not be accurate especially for image packing many pixels
@@ -458,7 +458,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
         final int             nThreads  = Runtime.getRuntime().availableProcessors();
         final ExecutorService executor  = Executors.newFixedThreadPool(nThreads, Threads.createThreadFactory("MosaicImageWriter #"));
         final Semaphore  submitPermits  = new Semaphore(nThreads + 1);
-        final List<Future<?>> tasks     = new ArrayList<Future<?>>();
+        final List<Future<?>> tasks     = new ArrayList<>();
         final TreeNode        tree      = new GridNode(tiles.toArray(new Tile[tiles.size()]));
         final ImageReadParam  readParam = reader.getDefaultReadParam();
         final boolean         logWrites = isLoggable();
@@ -1272,7 +1272,7 @@ search: for (final Tile tile : tiles) {
          * If we are allowed to cache an uncompressed copies of the tiles, do that now.
          */
         if (op != null || isCachingEnabled(reader, inputIndex)) {
-            final Collection<Tile> tiles = new ArrayList<Tile>();
+            final Collection<Tile> tiles = new ArrayList<>();
             if (reader instanceof MosaicImageReader) {
                 for (final TileManager manager : ((MosaicImageReader) reader).getInput()) {
                     tiles.addAll(manager.getTiles());
@@ -1457,7 +1457,7 @@ search: for (final Tile tile : tiles) {
         final String[] spiNames    = readerSpi.getImageWriterSpiNames();
         final String[] formatNames = readerSpi.getFormatNames();
         final IIORegistry registry = IIORegistry.getDefaultInstance();
-        final Set<ImageWriterSpi> providers = new LinkedHashSet<ImageWriterSpi>();
+        final Set<ImageWriterSpi> providers = new LinkedHashSet<>();
         List<ImageWriterSpi> ignored = null; // To be initialized when first needed.
         Iterator<ImageWriterSpi>  it = null; // To be initialized when first needed.
         boolean canIgnore = true;
@@ -1523,7 +1523,7 @@ search: for (final Tile tile : tiles) {
                  */
                 if (canIgnore && Tile.ignore(spi)) {
                     if (ignored == null) {
-                        ignored = new ArrayList<ImageWriterSpi>(4);
+                        ignored = new ArrayList<>(4);
                     }
                     ignored.add(spi);
                     continue;
@@ -1703,7 +1703,7 @@ search: for (final Tile tile : tiles) {
          */
         public Spi() {
             vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
+            version         = Utilities.VERSION.toString();
             names           = MosaicImageReader.Spi.NAMES;
             pluginClassName = "org.geotoolkit.image.io.mosaic.MosaicImageWriter";
         }

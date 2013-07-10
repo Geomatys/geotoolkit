@@ -51,7 +51,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.util.CodeList;
 
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.Version;
+import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.WarningProducer;
 import org.apache.sis.util.iso.Types;
@@ -204,7 +204,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
         super(owner);
         ArgumentChecks.ensureNonNull("file", file);
         this.file  = file;
-        defined = new HashSet<String>();
+        defined = new HashSet<>();
         spatioTemporalExtent = new double[3*NUM_DIMENSIONS];
         Arrays.fill(spatioTemporalExtent, 0*NUM_DIMENSIONS, 2*NUM_DIMENSIONS, Double.POSITIVE_INFINITY);
         Arrays.fill(spatioTemporalExtent, 2*NUM_DIMENSIONS, 3*NUM_DIMENSIONS, Double.NEGATIVE_INFINITY);
@@ -227,7 +227,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
     private static <E> Set<E> addTo(Set<E> set, final E element) {
         if (element != null) {
             if (set == null) {
-                set = new LinkedHashSet<E>();
+                set = new LinkedHashSet<>();
             }
             set.add(element);
         }
@@ -607,7 +607,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
             final Collection<? extends ResponsibleParty> authors = nonNull(citation.getCitedResponsibleParties());
             if (!authors.isEmpty()) {
                 boolean foundCreator = false;
-                final List<ResponsibleParty> deferred = new ArrayList<ResponsibleParty>(authors.size());
+                final List<ResponsibleParty> deferred = new ArrayList<>(authors.size());
                 for (final ResponsibleParty author : authors) {
                     if (author != null) {
                         if (Role.ORIGINATOR.equals(author.getRole())) {
@@ -629,7 +629,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
             if (!isDefined(ACKNOWLEDGMENT)) {
                 Collection<String> credits = nonNull(info.getCredits());
                 if (credits.size() >= 2) {
-                    credits = new LinkedHashSet<String>(credits); // Avoid duplicated values.
+                    credits = new LinkedHashSet<>(credits); // Avoid duplicated values.
                 }
                 setAttribute(CharSequences.toString(credits, "\n"));
             }
@@ -786,7 +786,7 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
             {
                 final DimensionNameType type = dimension.getDimensionName();
                 if (type != null) for (int i=0; i<NUM_DIMENSIONS; i++) {
-                    if (type.equals(DIMENSIONS[i].TYPE)) {
+                    if (type.equals(DIMENSIONS[i].DEFAULT_NAME_TYPE)) {
                         final Double resolution = dimension.getResolution();
                         if (resolution != null) {
                             final double value = resolution;
@@ -886,7 +886,7 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
                 }
             }
             if (history.length() == 0) {
-                history.append("Created by Geotoolkit.org version ").append(Version.GEOTOOLKIT);
+                history.append("Created by Geotoolkit.org version ").append(Utilities.VERSION);
             }
             setAttribute(history.toString());
         }

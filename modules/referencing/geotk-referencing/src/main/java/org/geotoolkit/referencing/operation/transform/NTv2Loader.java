@@ -75,7 +75,7 @@ final class NTv2Loader extends GridLoader {
      */
     private static final Map<String, Class<?>> TYPES;
     static {
-        final Map<String, Class<?>> types = new HashMap<String, Class<?>>(32);
+        final Map<String, Class<?>> types = new HashMap<>(32);
         types.put("NUM_OREC", Integer.class);
         types.put("NUM_SREC", Integer.class);
         types.put("NUM_FILE", Integer.class);
@@ -138,14 +138,14 @@ final class NTv2Loader extends GridLoader {
      */
     NTv2Loader() {
         super(NTv2Loader.class);
-        header = new LinkedHashMap<String,Comparable<?>>();
+        header = new LinkedHashMap<>();
     }
 
     /**
      * If a loader already exists for the given file, returns it. Otherwise loads
      * the data and returns a {@code NTv2Loader} instance containing the data.
      *
-     * @param  gridFile Name or path to the longitude and latittude difference files.
+     * @param  gridFile Name or path to the longitude and latitude difference files.
      * @param  loadPrecision {@code true} if the precision should also be loaded.
      * @throws FactoryException If there is an error reading the grid files.
      */
@@ -162,7 +162,7 @@ final class NTv2Loader extends GridLoader {
     /**
      * Loads the data and returns a {@code NTv2Loader} instance containing the data.
      *
-     * @param  gridFile Name or path to the longitude and latittude difference files.
+     * @param  gridFile Name or path to the longitude and latitude difference files.
      * @param  loadPrecision {@code true} if the precision should also be loaded.
      * @throws FactoryException If there is an error reading the grid files.
      */
@@ -204,107 +204,107 @@ final class NTv2Loader extends GridLoader {
      * @throws IOException If there is an error reading the grid files.
      */
     private void load(final boolean loadPrecision) throws IOException {
-        final ReadableByteChannel channel = Channels.newChannel(IOUtilities.open(latitudeGridFile));
-        /*
-         * Extracts the two first header records wich contain the length of the header.
-         * Note that the buffer need to be large enough for containing fully the header.
-         * The typical header length is 704 bytes.
-         *
-         * This code also tries to auto-detect the endieness.
-         */
-        final ByteBuffer buffer = ByteBuffer.allocate(4096);
-        buffer.limit(2*RECORD_LENGTH);
-        readFully(channel, buffer);
-        int numRecords = buffer.getInt(HEADER_KEY_LENGTH) + buffer.getInt(RECORD_LENGTH + HEADER_KEY_LENGTH);
-        buffer.order(ByteOrder.LITTLE_ENDIAN);
-        int altRecords = buffer.getInt(HEADER_KEY_LENGTH) + buffer.getInt(RECORD_LENGTH + HEADER_KEY_LENGTH);
-        if (altRecords < numRecords) {
-            numRecords = altRecords;
-            // Keep the little endian order.
-        } else {
-            // Restore the big original order.
-            buffer.order(ByteOrder.BIG_ENDIAN);
-        }
-        final int headerLimit = (numRecords - 2) * RECORD_LENGTH;
-        /*
-         * Initializes members with header's parameters values.
-         */
-        buffer.rewind().limit(headerLimit);
-        readFully(channel, buffer);
-        final byte[] array = buffer.array();
-        final Charset charset = Charset.forName("US-ASCII");
-        for (int i=0; i<headerLimit; i+=RECORD_LENGTH) {
-            String key = new String(array, i, HEADER_KEY_LENGTH, charset).trim().toUpperCase(Locale.US);
-            final Class<?> type = TYPES.get(key);
-            if (type != null) {
-                final int p = i + HEADER_KEY_LENGTH;
-                final Comparable<?> value;
-                if (type.equals(Double.class)) {
-                    value = buffer.getDouble(p);
-                } else if (type.equals(Integer.class)) {
-                    value = buffer.getInt(p);
-                } else {
-                    value = new String(array, p, RECORD_LENGTH - HEADER_KEY_LENGTH, charset).trim();
-                }
-                key = key.intern(); // Same instance than the one in the TYPES map.
-                header.put(key, value);
-            }
-        }
-        /*
-         * Get the bounding box in seconds of angle.
-         */
-        final double xmax, ymax;
-        ymin   = getDouble("S_LAT");
-        ymax   = getDouble("N_LAT");
-        xmin   = getDouble("E_LONG");
-        xmax   = getDouble("W_LONG");
-        dy     = getDouble("LAT_INC");
-        dx     = getDouble("LONG_INC");
-        width  = (int) Math.round((xmax - xmin) / dx) + 1;
-        height = (int) Math.round((ymax - ymin) / dy) + 1;
-        xmin /= 3600;
-        ymin /= 3600;
-        dx   /= 3600;
-        dy   /= 3600;
-        /*
-         * Initialize values tables.
-         */
-        final int count = getInteger("GS_COUNT");
-        latitudeShift  = new float[count];
-        longitudeShift = new float[count];
-        if (loadPrecision) {
-            latitudePrecision  = new float[count];
-            longitudePrecision = new float[count];
-        }
-        /*
-         * At this point, the header is read. Now prepare a buffer for reading the records.
-         */
-        final int rowsPerBulk = buffer.capacity() / RECORD_LENGTH;
-        for (int index=0; index < count;) {
-            buffer.rewind().limit(Math.min(rowsPerBulk, count - index) * RECORD_LENGTH);
+        try (ReadableByteChannel channel = Channels.newChannel(IOUtilities.open(latitudeGridFile))) {
+            /*
+             * Extracts the two first header records wich contain the length of the header.
+             * Note that the buffer need to be large enough for containing fully the header.
+             * The typical header length is 704 bytes.
+             *
+             * This code also tries to auto-detect the endieness.
+             */
+            final ByteBuffer buffer = ByteBuffer.allocate(4096);
+            buffer.limit(2*RECORD_LENGTH);
             readFully(channel, buffer);
-            buffer.rewind();
-            while (buffer.hasRemaining()) {
-                latitudeShift [index] = buffer.getFloat();
-                longitudeShift[index] = buffer.getFloat();
-                if (loadPrecision) {
-                    latitudePrecision [index] = buffer.getFloat();
-                    longitudePrecision[index] = buffer.getFloat();
-                } else {
-                    buffer.position(buffer.position() + 2*(Float.SIZE / Byte.SIZE));
-                }
-                index++;
+            int numRecords = buffer.getInt(HEADER_KEY_LENGTH) + buffer.getInt(RECORD_LENGTH + HEADER_KEY_LENGTH);
+            buffer.order(ByteOrder.LITTLE_ENDIAN);
+            int altRecords = buffer.getInt(HEADER_KEY_LENGTH) + buffer.getInt(RECORD_LENGTH + HEADER_KEY_LENGTH);
+            if (altRecords < numRecords) {
+                numRecords = altRecords;
+                // Keep the little endian order.
+            } else {
+                // Restore the big original order.
+                buffer.order(ByteOrder.BIG_ENDIAN);
             }
-        }
-        /*
-         * Verify that the file ends with "END".
-         */
-        buffer.rewind().limit(RECORD_LENGTH);
-        readFully(channel, buffer);
-        channel.close();
-        String key = new String(array, 0, HEADER_KEY_LENGTH, charset).trim().toUpperCase(Locale.US);
-        if (!key.equals("END")) {
-            throw new IOException(Errors.format(Errors.Keys.FILE_HAS_TOO_MANY_DATA));
+            final int headerLimit = (numRecords - 2) * RECORD_LENGTH;
+            /*
+             * Initializes members with header's parameters values.
+             */
+            buffer.rewind().limit(headerLimit);
+            readFully(channel, buffer);
+            final byte[] array = buffer.array();
+            final Charset charset = Charset.forName("US-ASCII");
+            for (int i=0; i<headerLimit; i+=RECORD_LENGTH) {
+                String key = new String(array, i, HEADER_KEY_LENGTH, charset).trim().toUpperCase(Locale.US);
+                final Class<?> type = TYPES.get(key);
+                if (type != null) {
+                    final int p = i + HEADER_KEY_LENGTH;
+                    final Comparable<?> value;
+                    if (type.equals(Double.class)) {
+                        value = buffer.getDouble(p);
+                    } else if (type.equals(Integer.class)) {
+                        value = buffer.getInt(p);
+                    } else {
+                        value = new String(array, p, RECORD_LENGTH - HEADER_KEY_LENGTH, charset).trim();
+                    }
+                    key = key.intern(); // Same instance than the one in the TYPES map.
+                    header.put(key, value);
+                }
+            }
+            /*
+             * Get the bounding box in seconds of angle.
+             */
+            final double xmax, ymax;
+            ymin   = getDouble("S_LAT");
+            ymax   = getDouble("N_LAT");
+            xmin   = getDouble("E_LONG");
+            xmax   = getDouble("W_LONG");
+            dy     = getDouble("LAT_INC");
+            dx     = getDouble("LONG_INC");
+            width  = (int) Math.round((xmax - xmin) / dx) + 1;
+            height = (int) Math.round((ymax - ymin) / dy) + 1;
+            xmin /= 3600;
+            ymin /= 3600;
+            dx   /= 3600;
+            dy   /= 3600;
+            /*
+             * Initialize values tables.
+             */
+            final int count = getInteger("GS_COUNT");
+            latitudeShift  = new float[count];
+            longitudeShift = new float[count];
+            if (loadPrecision) {
+                latitudePrecision  = new float[count];
+                longitudePrecision = new float[count];
+            }
+            /*
+             * At this point, the header is read. Now prepare a buffer for reading the records.
+             */
+            final int rowsPerBulk = buffer.capacity() / RECORD_LENGTH;
+            for (int index=0; index < count;) {
+                buffer.rewind().limit(Math.min(rowsPerBulk, count - index) * RECORD_LENGTH);
+                readFully(channel, buffer);
+                buffer.rewind();
+                while (buffer.hasRemaining()) {
+                    latitudeShift [index] = buffer.getFloat();
+                    longitudeShift[index] = buffer.getFloat();
+                    if (loadPrecision) {
+                        latitudePrecision [index] = buffer.getFloat();
+                        longitudePrecision[index] = buffer.getFloat();
+                    } else {
+                        buffer.position(buffer.position() + 2*(Float.SIZE / Byte.SIZE));
+                    }
+                    index++;
+                }
+            }
+            /*
+             * Verify that the file ends with "END".
+             */
+            buffer.rewind().limit(RECORD_LENGTH);
+            readFully(channel, buffer);
+            String key = new String(array, 0, HEADER_KEY_LENGTH, charset).trim().toUpperCase(Locale.US);
+            if (!key.equals("END")) {
+                throw new IOException(Errors.format(Errors.Keys.FILE_HAS_TOO_MANY_DATA));
+            }
         }
     }
 
@@ -320,7 +320,6 @@ final class NTv2Loader extends GridLoader {
     {
         while (buffer.hasRemaining()) {
             if (channel.read(buffer) < 0) {
-                channel.close();
                 throw new EOFException(Errors.format(Errors.Keys.END_OF_DATA_FILE));
             }
         }

@@ -47,8 +47,8 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.Localized;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Localized;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -129,7 +129,7 @@ public class Database implements Localized {
      *        for a different thread, and because it allows us to know the set of all
      *        active sessions.}
      */
-    private final Map<Long,Session> sessions = new LinkedHashMap<Long,Session>();
+    private final Map<Long,Session> sessions = new LinkedHashMap<>();
 
     /**
      * Holds thread-local information for SQL statements being executed.
@@ -321,8 +321,7 @@ public class Database implements Localized {
      * {@section Synchronization note}
      * Every access to this map shall be synchronized on {@code tables}.
      */
-    private final Map<Class<? extends Table>, Table> tables =
-            new HashMap<Class<? extends Table>, Table>();
+    private final Map<Class<? extends Table>, Table> tables = new HashMap<>();
 
     /**
      * The properties given at construction time, or {@code null} if none.
@@ -564,7 +563,7 @@ public class Database implements Localized {
                     final Constructor<T> c = type.getConstructor(Database.class);
                     c.setAccessible(true);
                     table = c.newInstance(this);
-                } catch (Exception exception) { // Too many exeptions for enumerating them.
+                } catch (ReflectiveOperationException exception) {
                     throw new NoSuchTableException(Classes.getShortName(type), exception);
                 }
                 tables.put(type, table);
@@ -677,7 +676,7 @@ public class Database implements Localized {
             synchronized (s) {
                 generator = new NameGenerator(s, pk);
             }
-            s.generators = generators = new HashMap<String, NameGenerator>(4);
+            s.generators = generators = new HashMap<>(4);
         }
         if (generators.put(pk, generator) != null) {
             throw new AssertionError(pk);

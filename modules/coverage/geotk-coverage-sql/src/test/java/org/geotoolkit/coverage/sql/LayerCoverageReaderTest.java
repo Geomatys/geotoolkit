@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.awt.geom.Rectangle2D;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -43,7 +43,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @since 3.10 (derived from Seagis)
  */
-@Depend(CoverageDatabaseTest.class)
+@DependsOn(CoverageDatabaseTest.class)
 public final strictfp class LayerCoverageReaderTest extends CatalogTestBase {
     /**
      * Creates a new test suite.

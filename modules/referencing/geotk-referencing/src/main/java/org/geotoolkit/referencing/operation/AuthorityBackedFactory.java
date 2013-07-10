@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import net.jcip.annotations.ThreadSafe;
@@ -46,12 +47,11 @@ import org.geotoolkit.referencing.operation.transform.EllipsoidalTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.factory.NoSuchIdentifiedResource;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Descriptions;
 
 import static org.geotoolkit.referencing.CRS.equalsApproximatively;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.getCoordinateOperationAuthorityFactory;
 
 
@@ -95,7 +95,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
     /**
      * Used as a guard against infinite recursivity.
      */
-    private final ThreadLocal<Boolean> processing = new ThreadLocal<Boolean>();
+    private final ThreadLocal<Boolean> processing = new ThreadLocal<>();
 
     /**
      * Creates a new factory backed by a default EPSG authority factory.
@@ -517,8 +517,8 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
             if (method != null) {
                 final Integer sourceDimensions = transform.getSourceDimensions();
                 final Integer targetDimensions = transform.getTargetDimensions();
-                if (!Utilities.equals(sourceDimensions, method.getSourceDimensions()) ||
-                    !Utilities.equals(targetDimensions, method.getTargetDimensions()))
+                if (!Objects.equals(sourceDimensions, method.getSourceDimensions()) ||
+                    !Objects.equals(targetDimensions, method.getTargetDimensions()))
                 {
                     method = new DefaultOperationMethod(method, sourceDimensions, targetDimensions);
                 }
@@ -716,8 +716,8 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
                  * the original method except for the number of source/target dimensions.
                  */
                 method = ((SingleOperation) operation).getMethod();
-                if (!Utilities.equals(srcDim, method.getSourceDimensions()) ||
-                    !Utilities.equals(tgtDim, method.getTargetDimensions()))
+                if (!Objects.equals(srcDim, method.getSourceDimensions()) ||
+                    !Objects.equals(tgtDim, method.getTargetDimensions()))
                 {
                     method = new DefaultOperationMethod(method, srcDim, tgtDim);
                 }

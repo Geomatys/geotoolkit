@@ -39,8 +39,8 @@ import javax.imageio.spi.ImageReaderSpi;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
@@ -142,16 +142,16 @@ public class TileManagerFactory extends Factory {
             if (!suffix.endsWith(".serialized")) {
                 throw new IOException(Errors.format(Errors.Keys.UNKNOWN_FILE_SUFFIX_1, suffix));
             }
-            final ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
             final Object manager;
-            try {
-                manager = in.readObject();
-            } catch (ClassNotFoundException cause) {
-                InvalidClassException ex = new InvalidClassException(cause.getLocalizedMessage());
-                ex.initCause(cause);
-                throw ex;
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+                try {
+                    manager = in.readObject();
+                } catch (ClassNotFoundException cause) {
+                    InvalidClassException ex = new InvalidClassException(cause.getLocalizedMessage());
+                    ex.initCause(cause);
+                    throw ex;
+                }
             }
-            in.close();
             return setSourceFile(createFromObject(manager), file);
         } else if (file.isDirectory()) {
             return create(file, null, null);
@@ -190,7 +190,7 @@ public class TileManagerFactory extends Factory {
         if (filter == null) {
             filter = new ImageFileFilter(spi);
         }
-        final ArrayList<File> files = new ArrayList<File>();
+        final ArrayList<File> files = new ArrayList<>();
         listFiles(directory, filter, files);
         return setSourceFile(create(listTiles(spi, files.toArray(new File[files.size()]))), directory);
     }
@@ -283,7 +283,7 @@ public class TileManagerFactory extends Factory {
              * of creating RegionCalculator in the common case where it is not needed. So it is
              * not a big deal if 'hasPendingGridToCRS' conservatively returned 'true'.
              */
-            final Collection<Tile> remainings = new ArrayList<Tile>(Math.min(16, tiles.size()));
+            final Collection<Tile> remainings = new ArrayList<>(Math.min(16, tiles.size()));
             final RegionCalculator calculator = new RegionCalculator();
             for (final Tile tile : tiles) {
                 if (!calculator.add(tile)) {
@@ -435,8 +435,8 @@ public class TileManagerFactory extends Factory {
      */
     public List<Tile> listTiles(final ImageReaderSpi provider, final File... inputs) throws IOException {
         final TileReaderPool readers = new TileReaderPool();
-        final Set<ImageReaderSpi> providers = new HashSet<ImageReaderSpi>();
-        final List<Tile> tiles = new ArrayList<Tile>(inputs.length);
+        final Set<ImageReaderSpi> providers = new HashSet<>();
+        final List<Tile> tiles = new ArrayList<>(inputs.length);
         final AffineTransform scaledGridToCRS = new AffineTransform();
         for (final File input : inputs) {
             // Creates the tile for the first image, which usually have the maximal resolution.

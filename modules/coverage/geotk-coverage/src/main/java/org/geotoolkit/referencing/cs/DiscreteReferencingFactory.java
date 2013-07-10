@@ -42,7 +42,7 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
@@ -187,7 +187,7 @@ public final class DiscreteReferencingFactory extends Static {
         if (crs instanceof TemporalCRS)   return new DiscreteCRS.Temporal  ((TemporalCRS)   crs, ordinates);
         if (crs instanceof SingleCRS)     return new DiscreteCRS.Single    ((SingleCRS)     crs, ordinates);
         if (crs instanceof CompoundCRS)   return DiscreteCompoundCRS.create((CompoundCRS)   crs, ordinates);
-        return new DiscreteCRS<CoordinateReferenceSystem>(crs, new DiscreteCS(crs.getCoordinateSystem(), ordinates));
+        return new DiscreteCRS<>(crs, new DiscreteCS(crs.getCoordinateSystem(), ordinates));
     }
 
     /**

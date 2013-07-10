@@ -63,42 +63,40 @@ public final class Compiler {
         if (stream == null) {
             throw new FileNotFoundException(filename);
         }
-        final LineNumberReader in;
-        in = new LineNumberReader(new InputStreamReader(stream, "ISO-8859-1"));
-        String line;
-        while ((line = in.readLine()) != null) {
-            final StringTokenizer tokens = new StringTokenizer(line);
-            try {
-                /*
-                 * Note: we use 'parseShort' instead of 'parseInt' as an easy way to ensure that
-                 *       the values are in some reasonable range. The range is typically [0..180].
-                 *       We don't check that, but at least 'parseShort' disallows values greater
-                 *       than 32767. Additional note: we real all lines in all cases even if we
-                 *       discard some of them, in order to check the file format.
-                 */
-                final int n = Short.parseShort (tokens.nextToken());
-                final int m = Short.parseShort (tokens.nextToken());
-                if (n <= 0 || m < 0 || m > n) {
-                    in.close();
-                    throw new ContentFormatException("n="+ n +" and m=" + m);
+        try (LineNumberReader in = new LineNumberReader(new InputStreamReader(stream, "ISO-8859-1"))) {
+            String line;
+            while ((line = in.readLine()) != null) {
+                final StringTokenizer tokens = new StringTokenizer(line);
+                try {
+                    /*
+                     * Note: we use 'parseShort' instead of 'parseInt' as an easy way to ensure that
+                     *       the values are in some reasonable range. The range is typically [0..180].
+                     *       We don't check that, but at least 'parseShort' disallows values greater
+                     *       than 32767. Additional note: we real all lines in all cases even if we
+                     *       discard some of them, in order to check the file format.
+                     */
+                    final int n = Short.parseShort (tokens.nextToken());
+                    final int m = Short.parseShort (tokens.nextToken());
+                    if (n <= 0 || m < 0 || m > n) {
+                        throw new ContentFormatException("n="+ n +" and m=" + m);
+                    }
+                    final double cbar = Double.parseDouble(tokens.nextToken());
+                    final double sbar = Double.parseDouble(tokens.nextToken());
+                    final int ll = locatingArray(n) + m;
+                    cnmGeopCoef[ll] = cbar;
+                    snmGeopCoef[ll] = sbar;
+                } catch (RuntimeException cause) {
+                    /*
+                     * Catch the following exceptions:
+                     *   - NoSuchElementException      if a line has too few numbers.
+                     *   - NumberFormatException       if a number can't be parsed.
+                     *   - IndexOutOfBoundsException   if 'n' or 'm' values are illegal.
+                     */
+                    throw new IOException(Errors.format(Errors.Keys.ILLEGAL_LINE_IN_FILE_2,
+                            filename, in.getLineNumber()), cause);
                 }
-                final double cbar = Double.parseDouble(tokens.nextToken());
-                final double sbar = Double.parseDouble(tokens.nextToken());
-                final int ll = locatingArray(n) + m;
-                cnmGeopCoef[ll] = cbar;
-                snmGeopCoef[ll] = sbar;
-            } catch (RuntimeException cause) {
-                /*
-                 * Catch the following exceptions:
-                 *   - NoSuchElementException      if a line has too few numbers.
-                 *   - NumberFormatException       if a number can't be parsed.
-                 *   - IndexOutOfBoundsException   if 'n' or 'm' values are illegal.
-                 */
-                throw new IOException(Errors.format(Errors.Keys.ILLEGAL_LINE_IN_FILE_2,
-                        filename, in.getLineNumber()), cause);
             }
         }
-        in.close();
     }
 
     /**
@@ -111,12 +109,12 @@ public final class Compiler {
         if (file.exists()) {
             throw new IOException("File already exists.");
         }
-        final DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-        for (int i=0; i<cnmGeopCoef.length; i++) {
-            out.writeDouble(cnmGeopCoef[i]);
-            out.writeDouble(snmGeopCoef[i]);
+        try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)))) {
+            for (int i=0; i<cnmGeopCoef.length; i++) {
+                out.writeDouble(cnmGeopCoef[i]);
+                out.writeDouble(snmGeopCoef[i]);
+            }
         }
-        out.close();
     }
 
     /**

@@ -24,8 +24,8 @@ import javax.measure.unit.Unit;
 import org.opengis.referencing.datum.Ellipsoid;
 
 import org.apache.sis.measure.Units;
-import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.gco.Measure;
+import org.apache.sis.xml.Namespaces;
+import org.apache.sis.internal.jaxb.gco.Measure;
 
 
 /**
@@ -53,8 +53,8 @@ public final class SecondDefiningParameter {
      * We distinguish those two cases by the unit: if the measure is the inverse flattening,
      * then the unit must be {@link Unit#ONE}.
      *
-     * @see Ellipsoid#getSemiMinorAxis
-     * @see Ellipsoid#getInverseFlattening
+     * @see Ellipsoid#getSemiMinorAxis()
+     * @see Ellipsoid#getInverseFlattening()
      */
     public Measure measure;
 

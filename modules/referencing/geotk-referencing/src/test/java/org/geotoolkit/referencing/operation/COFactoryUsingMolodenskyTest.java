@@ -221,7 +221,7 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
                 .append(Classes.getShortClassName(this))
                 .append("[datumShiftMethod=").append(getDatumShiftMethod())
                 .append(", isEpsgFactoryAvailable=").append(isEpsgFactoryAvailable())
-                .append(']').append(System.getProperty("line.separator", "\n"));
+                .append(']').append(System.lineSeparator());
         final FactoryDependencies dep = new FactoryDependencies(opFactory);
         try {
             dep.print(buffer);

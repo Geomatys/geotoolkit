@@ -310,7 +310,7 @@ public final class CRSUtilities extends Static {
      */
     @Workaround(library="Geotk", version="3.21")
     public static Envelope appendMissingDimensions(final Envelope envelope, final CompoundCRS crs) {
-        final List<CoordinateReferenceSystem> toAdd = new ArrayList<CoordinateReferenceSystem>(4);
+        final List<CoordinateReferenceSystem> toAdd = new ArrayList<>(4);
         final CoordinateReferenceSystem currentCRS = envelope.getCoordinateReferenceSystem();
         final CoordinateSystem currentCS = currentCRS.getCoordinateSystem();
         for (final SingleCRS subCRS : DefaultCompoundCRS.getSingleCRS(crs)) {

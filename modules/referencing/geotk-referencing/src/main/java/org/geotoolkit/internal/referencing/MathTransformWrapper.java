@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal.referencing;
 
+import java.util.Objects;
 import java.io.Serializable;
 
 import org.opengis.referencing.operation.Matrix;
@@ -27,7 +28,6 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.DirectPosition;
 
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.Formattable;
@@ -181,7 +181,7 @@ public class MathTransformWrapper implements MathTransform, Formattable, Seriali
     public final boolean equals(final Object object) {
         if (object != null && object.getClass() == getClass()) {
             final MathTransformWrapper that = (MathTransformWrapper) object;
-            return Utilities.equals(this.transform, that.transform);
+            return Objects.equals(this.transform, that.transform);
         }
         return false;
     }

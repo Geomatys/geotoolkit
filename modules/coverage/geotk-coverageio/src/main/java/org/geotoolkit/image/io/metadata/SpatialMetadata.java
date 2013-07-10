@@ -49,11 +49,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.logging.LoggedFormat;
 import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.image.io.Warnings;
-import org.geotoolkit.measure.RangeFormat;
+import org.apache.sis.measure.RangeFormat;
 import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.geotoolkit.resources.Errors;
 
@@ -455,7 +455,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      */
     public <T> T getInstanceForType(final Class<T> type) throws IllegalArgumentException {
         if (instances == null) {
-            instances = new HashMap<Class<?>, Object>();
+            instances = new HashMap<>();
         }
         @SuppressWarnings("unchecked")
         T object = (T) instances.get(type);
@@ -583,7 +583,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      */
     public <T> List<T> getListForType(final Class<T> type) throws IllegalArgumentException {
         if (lists == null) {
-            lists = new HashMap<Class<?>, List<?>>();
+            lists = new HashMap<>();
         }
         @SuppressWarnings("unchecked")
         List<T> list = (List<T>) lists.get(type);
@@ -958,7 +958,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * @return A format that logs warnings when it can't parse fully a string.
      */
     protected <T> LoggedFormat<T> createLoggedFormat(final Format format, final Class<T> type) {
-        return new FormatAdapter<T>(format, type);
+        return new FormatAdapter<>(format, type);
     }
 
     /**

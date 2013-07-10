@@ -37,7 +37,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.util.collection.WeakValueHashMap;
+import org.apache.sis.util.collection.WeakValueHashMap;
 import org.apache.sis.util.ComparisonMode;
 
 import static java.lang.Math.*;
@@ -91,8 +91,7 @@ public class EarthGravitationalModel extends VerticalTransform {
      * memory usage (avoid duplicating arrays), not for saving the CPU time associated to the
      * creation of the model. So we really want weak references, not soft references.
      */
-    private static final WeakValueHashMap<Integer,EarthGravitationalModel> POOL =
-            new WeakValueHashMap<Integer,EarthGravitationalModel>();
+    private static final WeakValueHashMap<Integer,EarthGravitationalModel> POOL = new WeakValueHashMap<>(Integer.class);
 
     /** {@code true} for WGS84 model, or {@code false} for WGS72 model. */
     private final boolean isWGS84;
@@ -269,12 +268,12 @@ public class EarthGravitationalModel extends VerticalTransform {
         if (stream == null) {
             throw new FileNotFoundException(filename);
         }
-        final DataInputStream in = new DataInputStream(new BufferedInputStream(stream));
-        for (int i=0; i<cnmGeopCoef.length; i++) {
-            cnmGeopCoef[i] = in.readDouble();
-            snmGeopCoef[i] = in.readDouble();
+        try (DataInputStream in = new DataInputStream(new BufferedInputStream(stream))) {
+            for (int i=0; i<cnmGeopCoef.length; i++) {
+                cnmGeopCoef[i] = in.readDouble();
+                snmGeopCoef[i] = in.readDouble();
+            }
         }
-        in.close();
     }
 
     /**
@@ -394,8 +393,8 @@ public class EarthGravitationalModel extends VerticalTransform {
     @Override
     public ParameterValueGroup getParameterValues() {
         return new ParameterGroup(getParameterDescriptors(),
-                new Parameter<String>(DATUM, isWGS84 ? "WGS84" : "WGS72"),
-                new Parameter<Integer>(ORDER, nmax));
+                new Parameter<>(DATUM, isWGS84 ? "WGS84" : "WGS72"),
+                new Parameter<>(ORDER, nmax));
     }
 
     /**

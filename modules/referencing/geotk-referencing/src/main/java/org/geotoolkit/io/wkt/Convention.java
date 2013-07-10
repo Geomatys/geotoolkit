@@ -32,7 +32,7 @@ import org.opengis.referencing.operation.CoordinateOperation;
 
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 
@@ -260,7 +260,7 @@ public enum Convention {
     Citation createCitation() {
         try {
             return (Citation) Citations.class.getField(name()).get(null);
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException e) {
             // Should never happen.
             throw new AssertionError(e);
         }

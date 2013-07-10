@@ -28,10 +28,11 @@ import java.util.logging.LogRecord;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.internal.image.ColorUtilities;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 
@@ -103,16 +104,16 @@ public final class ColorPalette implements Serializable {
      * @param  factory The factory to use for getting the choices.
      * @return The choices, or {@code null} if none.
      */
-    public static ComboBoxModel getChoices(final PaletteFactory factory) {
+    public static ComboBoxModel<ColorPalette> getChoices(final PaletteFactory factory) {
         final Set<String> names = factory.getAvailableNames();
         if (isNullOrEmpty(names)) {
             return null;
         }
-        final Vector<Object> items = new Vector<Object>(names.size());
+        final Vector<ColorPalette> items = new Vector<>(names.size());
         for (final String n : names) {
             items.add(new ColorPalette(n));
         }
-        return new DefaultComboBoxModel(items);
+        return new DefaultComboBoxModel<>(items);
     }
 
     /**
@@ -127,7 +128,7 @@ public final class ColorPalette implements Serializable {
      * @return The name of the color palette, or {@code null} if no match were found or
      *         if the color is fully transparent.
      */
-    public static String findName(final Color[] colors, ComboBoxModel choices, PaletteFactory factory) {
+    public static String findName(final Color[] colors, ComboBoxModel<ColorPalette> choices, PaletteFactory factory) {
         /*
          * Determines the palette name or RGB code. In the simplest
          * case, we have a single Color object to format as "#RRGGBB".
@@ -151,12 +152,9 @@ public final class ColorPalette implements Serializable {
             }
             int index = choices.getSize();
             while (--index >= 0) {
-                final Object candidate = choices.getElementAt(index);
-                if (candidate instanceof ColorPalette) {
-                    final ColorPalette cp = (ColorPalette) candidate;
-                    if (Arrays.equals(colors, cp.getColors(factory))) {
-                        return cp.paletteName;
-                    }
+                final ColorPalette candidate = choices.getElementAt(index);
+                if (Arrays.equals(colors, candidate.getColors(factory))) {
+                    return candidate.paletteName;
                 }
             }
         }

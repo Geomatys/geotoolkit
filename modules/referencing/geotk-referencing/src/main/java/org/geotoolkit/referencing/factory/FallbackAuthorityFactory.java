@@ -45,7 +45,7 @@ import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.util.collection.WeakValueHashMap;
+import org.apache.sis.util.collection.WeakValueHashMap;
 import org.geotoolkit.factory.FactoryNotFoundException;
 
 
@@ -73,7 +73,7 @@ public class FallbackAuthorityFactory extends AuthorityFactoryAdapter {
     /**
      * The pool of factories created up to date.
      */
-    private static final Map<Key,AuthorityFactory> POOL = new WeakValueHashMap<Key,AuthorityFactory>();
+    private static final Map<Key,AuthorityFactory> POOL = new WeakValueHashMap<>(Key.class);
 
     /**
      * The number of time the primary factory failed and the fallback factory was used
@@ -125,6 +125,7 @@ public class FallbackAuthorityFactory extends AuthorityFactoryAdapter {
      * @throws FactoryNotFoundException if the argument don't contain at least one element.
      * @throws ClassCastException if {@code type} is illegal.
      */
+    @SafeVarargs
     public static <T extends AuthorityFactory> T create(final Class<T> type, final T... factories)
             throws FactoryNotFoundException, ClassCastException
     {
@@ -256,7 +257,7 @@ public class FallbackAuthorityFactory extends AuthorityFactoryAdapter {
     public Set<String> getAuthorityCodes(final Class<? extends IdentifiedObject> type)
             throws FactoryException
     {
-        final Set<String> codes = new LinkedHashSet<String>(super.getAuthorityCodes(type));
+        final Set<String> codes = new LinkedHashSet<>(super.getAuthorityCodes(type));
         codes.addAll(fallback.getAuthorityCodes(type));
         return codes;
     }

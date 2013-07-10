@@ -75,7 +75,7 @@ public class EllipsoidToGeoid extends MathTransformProvider {
      * The operation parameter descriptor for the datum.
      * Valid values are {@code "WGS84"} and {@code "WGS72"}.
      */
-    public static final ParameterDescriptor<String> DATUM = new DefaultParameterDescriptor<String>(
+    public static final ParameterDescriptor<String> DATUM = new DefaultParameterDescriptor<>(
             Collections.singletonMap(NAME_KEY, new NamedIdentifier(Citations.GEOTOOLKIT,
                     Vocabulary.formatInternational(Vocabulary.Keys.DATUM))),
             String.class, new String[] {"WGS84", "WGS72"}, "WGS84", null, null, null, true);

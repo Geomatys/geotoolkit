@@ -25,12 +25,15 @@ import java.util.LinkedHashSet;
 import java.util.ServiceLoader;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.measure.Angle;
+import org.apache.sis.util.Numbers;
+import org.apache.sis.util.Classes;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.XCollections;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
+
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -146,7 +149,7 @@ public class ConverterRegistry {
             register(new SimpleConverter<Double,Angle>() {
                 @Override public Class<Double> getSourceClass()      {return Double.class;}
                 @Override public Class<Angle>  getTargetClass()      {return Angle .class;}
-                @Override public Angle         convert(Double value) {return new org.geotoolkit.measure.Angle(value);}
+                @Override public Angle         convert(Double value) {return new Angle(value);}
             });
             /*
              * Registration of converter working on interfaces
@@ -181,7 +184,7 @@ public class ConverterRegistry {
      * Creates an initially empty set of object converters.
      */
     public ConverterRegistry() {
-        converters = new LinkedHashMap<ClassPair<?,?>, ObjectConverter<?,?>>();
+        converters = new LinkedHashMap<>();
     }
 
     /**
@@ -349,7 +352,7 @@ public class ConverterRegistry {
     public <S,T> ObjectConverter<S,T> converter(final Class<S> source, final Class<T> target)
             throws NonconvertibleObjectException
     {
-        final ClassPair<S,T> key = new ClassPair<S,T>(source, target);
+        final ClassPair<S,T> key = new ClassPair<>(source, target);
         synchronized (converters) {
             ObjectConverter<S,T> converter = key.cast(converters.get(key));
             if (converter != null) {
@@ -460,7 +463,7 @@ public class ConverterRegistry {
         final Set<Class<?>>[] targets = new Set[sources.length];
         for (int i=0; i<sources.length; i++) {
             Class<?> source = sources[i];
-            final Set<Class<?>> types = new LinkedHashSet<Class<?>>();
+            final Set<Class<?>> types = new LinkedHashSet<>();
             while (source != null && base.isAssignableFrom(source)) {
                 types.add(source);
                 source = source.getSuperclass();
@@ -562,20 +565,20 @@ public class ConverterRegistry {
     public Map<Class<?>, Set<Class<?>>> getConvertibleTypes() {
         synchronized (converters) {
             if (convertibleTypes == null) {
-                final Map<Class<?>, Set<Class<?>>> mapping = new LinkedHashMap<Class<?>, Set<Class<?>>>();
+                final Map<Class<?>, Set<Class<?>>> mapping = new LinkedHashMap<>();
                 for (final ClassPair<?,?> pair : converters.keySet()) {
                     Set<Class<?>> targets = mapping.get(pair.sourceClass);
                     if (targets == null) {
-                        targets = new LinkedHashSet<Class<?>>();
+                        targets = new LinkedHashSet<>();
                         mapping.put(pair.sourceClass, targets);
                     }
                     targets.add(pair.targetClass);
                 }
                 // Make the map unmodifiable.
                 for (final Map.Entry<Class<?>, Set<Class<?>>> entry : mapping.entrySet()) {
-                    entry.setValue(XCollections.unmodifiableSet(entry.getValue()));
+                    entry.setValue(unmodifiableOrCopy(entry.getValue()));
                 }
-                convertibleTypes = XCollections.unmodifiableMap(mapping);
+                convertibleTypes = unmodifiableOrCopy(mapping);
             }
         }
         return convertibleTypes;

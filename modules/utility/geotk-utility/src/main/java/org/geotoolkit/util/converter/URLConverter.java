@@ -116,9 +116,7 @@ abstract class URLConverter<T> extends SimpleConverter<URL,T> implements Seriali
             }
             try {
                 return new java.io.File(source.toURI());
-            } catch (URISyntaxException e) { // TODO: multi-catch
-                throw new NonconvertibleObjectException(formatErrorMessage("URL", source, e), e);
-            } catch (IllegalArgumentException e) {
+            } catch (URISyntaxException | IllegalArgumentException e) {
                 throw new NonconvertibleObjectException(formatErrorMessage("URL", source, e), e);
             }
         }

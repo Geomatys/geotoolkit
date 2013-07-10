@@ -116,7 +116,7 @@ public final class ListIteratorAdapter<E> implements ListIterator<E> {
      */
     public static <E> ListIterator<E> first(final Collection<E> collection) {
         if (collection == null) {
-            return Collections.<E>emptyList().listIterator();
+            return Collections.emptyListIterator();
         }
         if (collection instanceof List<?>) {
             return ((List<E>) collection).listIterator();
@@ -125,7 +125,7 @@ public final class ListIteratorAdapter<E> implements ListIterator<E> {
         if (iterator instanceof ListIterator<?>) {
             return (ListIterator<E>) iterator;
         }
-        return new ListIteratorAdapter<E>(iterator, collection, collection.size());
+        return new ListIteratorAdapter<>(iterator, collection, collection.size());
     }
 
     /**
@@ -137,7 +137,7 @@ public final class ListIteratorAdapter<E> implements ListIterator<E> {
      */
     public static <E> ListIterator<E> last(final Collection<E> collection) {
         if (collection == null) {
-            return Collections.<E>emptyList().listIterator();
+            return Collections.emptyListIterator();
         }
         int i = collection.size();
         if (collection instanceof List<?>) {
@@ -145,7 +145,7 @@ public final class ListIteratorAdapter<E> implements ListIterator<E> {
         }
         Iterator<E> iterator = collection.iterator();
         if (!(iterator instanceof ListIterator<?>)) {
-            iterator = new ListIteratorAdapter<E>(iterator, collection, i);
+            iterator = new ListIteratorAdapter<>(iterator, collection, i);
         }
         while (--i >= 0) {
             iterator.next();
@@ -243,7 +243,7 @@ public final class ListIteratorAdapter<E> implements ListIterator<E> {
                 do iterator.next();
                 while (--i >= 0);
             } catch (NoSuchElementException e) {
-                throw new ConcurrentModificationException();
+                throw new ConcurrentModificationException(e);
             }
             iterator.remove();
             iteratorPosition = nextIndex;

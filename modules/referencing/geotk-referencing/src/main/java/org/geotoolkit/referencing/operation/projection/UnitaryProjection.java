@@ -22,6 +22,7 @@
 package org.geotoolkit.referencing.operation.projection;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.logging.Level;
@@ -48,10 +49,10 @@ import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.Deprecable;
+import org.apache.sis.util.Deprecable;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -167,7 +168,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * The pool of unitary projections created in this running JVM.
      */
     private static final WeakHashSet<UnitaryProjection> POOL =
-            WeakHashSet.newInstance(UnitaryProjection.class);
+            new WeakHashSet<>(UnitaryProjection.class);
 
     /**
      * The parameters used for creating this projection. They are used for formatting <cite>Well
@@ -1092,7 +1093,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
                 final Parameters that = (Parameters) object;
                 return Utilities.equals(semiMajor,          that.semiMajor)          &&
                        Utilities.equals(semiMinor,          that.semiMinor)          &&
-                       Utilities.equals(rollLongitude,      that.rollLongitude)      &&
+                         Objects.equals(rollLongitude,      that.rollLongitude)      &&
                        Utilities.equals(centralMeridian,    that.centralMeridian)    &&
                        Utilities.equals(latitudeOfOrigin,   that.latitudeOfOrigin)   &&
                           Arrays.equals(standardParallels,  that.standardParallels)  &&
@@ -1342,7 +1343,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             final double e1, e2;
             final UnitaryProjection that = (UnitaryProjection) object;
             if (mode.ordinal() < ComparisonMode.IGNORE_METADATA.ordinal()) {
-                if (!Utilities.equals(parameters, that.parameters)) {
+                if (!Objects.equals(parameters, that.parameters)) {
                     return false;
                 }
                 e1 = this.excentricitySquared;

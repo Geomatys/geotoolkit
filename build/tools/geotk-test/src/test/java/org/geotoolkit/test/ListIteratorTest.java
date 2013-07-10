@@ -36,7 +36,7 @@ public final strictfp class ListIteratorTest extends ListIteratorTestCase<Intege
      */
     @Test
     public void compareToArrayList() {
-        final ArrayList<Integer> list = new ArrayList<Integer>(100);
+        final ArrayList<Integer> list = new ArrayList<>(100);
         for (int i=100; --i>=0;) {
             list.add(i);
         }

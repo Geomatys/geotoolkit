@@ -49,14 +49,14 @@ import javax.media.jai.OperationDescriptor;
 import javax.media.jai.ParameterListDescriptor;
 import javax.media.jai.RegistryElementDescriptor;
 
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.gui.swing.IconFactory;
 import org.geotoolkit.gui.swing.tree.TreeNode;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultTreeModel;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**

@@ -18,19 +18,16 @@
 package org.geotoolkit.metadata;
 
 import java.util.Set;
+import java.util.Objects;
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import net.jcip.annotations.Immutable;
-
-import org.opengis.annotation.UML;
 import org.opengis.annotation.Obligation;
 
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.collection.WeakHashSet;
-import org.geotoolkit.lang.ValueRange;
-import org.geotoolkit.resources.Errors;
+import org.opengis.metadata.ExtendedElementInformation;
+import org.opengis.util.InternationalString;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.collection.WeakHashSet;
 
 
 /**
@@ -76,7 +73,7 @@ public class ValueRestriction implements Serializable {
      * The instances created in this JVM. In many case, the same restriction will be shared
      * by many attributes (e.g. restricting the range of values to 0 .. 100 for percentage).
      */
-    private static final WeakHashSet<ValueRestriction> POOL = WeakHashSet.newInstance(ValueRestriction.class);
+    private static final WeakHashSet<ValueRestriction> POOL = new WeakHashSet<>(ValueRestriction.class);
 
     /**
      * Whatever the property is {@linkplain Obligation#MANDATORY mandatory} or
@@ -142,7 +139,7 @@ public class ValueRestriction implements Serializable {
      * @param  validValues An enumeration of valid values, or {@code null} if none.
      * @return The restriction, or {@code null} if none.
      */
-    static ValueRestriction create(final Obligation obligation, final NumberRange<?> range, final Set<?> validValues) {
+    private static ValueRestriction create(final Obligation obligation, final NumberRange<?> range, final Set<?> validValues) {
         if (range == null && validValues == null && obligation != Obligation.MANDATORY && obligation != Obligation.FORBIDDEN) {
             return null;
         }
@@ -150,41 +147,17 @@ public class ValueRestriction implements Serializable {
     }
 
     /**
-     * Creates a new {@code ValueRestriction} instance from the annotations on the given
-     * getter method. If there is no restriction, then this method returns {@code null}.
-     *
-     * @param  type The return type if it is not a collection, or the type of elements
-     *         if the return type is a collection.
-     * @param  getter The getter method defined in the interface.
-     * @param  impl The getter method defined in the implementation.
-     * @return The restriction, or {@code null} if none.
+     * Converts the given {@code ExtendedElementInformation} to a {@code ValueRestriction}.
      */
-    @SuppressWarnings({"unchecked","rawtypes"})
-    static ValueRestriction create(final Class<?> type, Method getter, final Method impl) {
-        Obligation obligation = null;
-        NumberRange<?>  range = null;
-        final UML uml = getter.getAnnotation(UML.class);
-        while (true) {
-            if (uml != null) {
-                obligation = uml.obligation();
-            }
-            final ValueRange vr = getter.getAnnotation(ValueRange.class);
-            if (vr != null) {
-                Class<?> required;
-                if ((required = Number.class).isAssignableFrom(type) &&
-                    (required = Comparable.class).isAssignableFrom(type))
-                {
-                    range = new NumberRange((Class) type, vr);
-                } else {
-                    throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_CLASS_2, type, required));
-                }
-            }
-            if (getter == impl) {
-                break;
-            }
-            getter = impl;
+    public static ValueRestriction create(final ExtendedElementInformation info) {
+        if (info != null) {
+            final org.opengis.metadata.Obligation o = info.getObligation();
+            final InternationalString domain = info.getDomainValue();
+            return create((o != null) ? Obligation.valueOf(o.name()) : null,
+                    (domain instanceof NumberRange<?>) ? (NumberRange<?>) domain : null,
+                    (domain instanceof Set<?>) ? (Set<?>) domain : null);
         }
-        return create(obligation, range, null);
+        return null;
     }
 
     /**
@@ -194,7 +167,7 @@ public class ValueRestriction implements Serializable {
      * @param  value The value to test (may be {@code null}).
      * @return {@code null} if the given value does not violate the restrictions.
      */
-    final ValueRestriction violation(final Object value) {
+    public final ValueRestriction violation(final Object value) {
         Obligation obligation = this.obligation;
         NumberRange<?>  range = this.range;
         Set<?>    validValues = this.validValues;
@@ -209,7 +182,7 @@ public class ValueRestriction implements Serializable {
         /*
          * If the value is not outside the range, set the range to null.
          */
-        if (value == null || range == null || (value instanceof Number && range.contains((Number) value))) {
+        if (value == null || range == null || (value instanceof Number && range.containsAny((Number) value))) {
             range = null;
             changed = true;
         }
@@ -234,8 +207,8 @@ public class ValueRestriction implements Serializable {
         if (other != null && other.getClass() == getClass()) {
             final ValueRestriction that = (ValueRestriction) other;
             return (this.obligation == that.obligation) &&
-                   Utilities.equals(this.range,       that.range) &&
-                   Utilities.equals(this.validValues, that.validValues);
+                   Objects.equals(this.range,       that.range) &&
+                   Objects.equals(this.validValues, that.validValues);
         }
         return false;
     }

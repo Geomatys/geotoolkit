@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.io.File;
 import java.awt.Dimension;
@@ -53,7 +54,6 @@ import org.jdesktop.swingx.JXTitledPanel;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.coverage.sql.Layer;
 import org.geotoolkit.coverage.sql.CoverageTableModel;
 import org.geotoolkit.coverage.sql.CoverageEnvelope;
@@ -120,7 +120,7 @@ public class CoverageList extends JComponent {
      *
      * @since 3.15
      */
-    private JList variableChooser;
+    private JList<String> variableChooser;
 
     /**
      * The table which list all coverages.
@@ -280,26 +280,35 @@ public class CoverageList extends JComponent {
         /**
          * Invoked when one of the buttons ("Remove", "Add", etc.) has been pressed.
          * This method delegates to the appropriate method in the enclosing class.
-         *
-         * @todo Use switch(String) with Java 7.
          */
         @Override
         public void actionPerformed(final ActionEvent event) {
             final String action = event.getActionCommand();
-            if (REFRESH.equals(action)) {
-                refresh();
-            } else if (REMOVE.equals(action)) {
-                removeCoverage();
-            } else if (ADD.equals(action)) {
-                showFileChooser();
-            } else if (ImageFileChooser.CANCEL_SELECTION.equals(action)) {
-                setSelectionPanel(TABLE);
-            } else if (ImageFileChooser.APPROVE_SELECTION.equals(action)) {
-                // Must check if the file selection panel is visible, because pressing the 'Enter'
-                // key in the format JComboBox of the NewGridCoverageDetails widget seems to also
-                // fire the event associated with "Ok" button of the JFileChooser.
-                if (FILES.equals(selectionPanelName)) {
-                    addNewCoverage();
+            switch (action) {
+                case REFRESH: {
+                    refresh();
+                    break;
+                }
+                case REMOVE: {
+                    removeCoverage();
+                    break;
+                }
+                case ADD: {
+                    showFileChooser();
+                    break;
+                }
+                case ImageFileChooser.CANCEL_SELECTION: {
+                    setSelectionPanel(TABLE);
+                    break;
+                }
+                case ImageFileChooser.APPROVE_SELECTION: {
+                    // Must check if the file selection panel is visible, because pressing the 'Enter'
+                    // key in the format JComboBox of the NewGridCoverageDetails widget seems to also
+                    // fire the event associated with "Ok" button of the JFileChooser.
+                    if (FILES.equals(selectionPanelName)) {
+                        addNewCoverage();
+                    }
+                    break;
                 }
             }
         }
@@ -322,7 +331,7 @@ public class CoverageList extends JComponent {
      * @param layer The layer for which to get the coverage entries, or {@code null} if none.
      */
     public void setLayer(final Layer layer) {
-        if (!Utilities.equals(layer, this.layer)) {
+        if (!Objects.equals(layer, this.layer)) {
             setData(layer, envelope);
         }
     }
@@ -348,7 +357,7 @@ public class CoverageList extends JComponent {
      * @param envelope The envelope of the coverage entries to list, or {@code null} if unbounded.
      */
     public void setEnvelope(CoverageEnvelope envelope) {
-        if (!Utilities.equals(envelope, this.envelope)) {
+        if (!Objects.equals(envelope, this.envelope)) {
             setData(layer, envelope);
         }
     }
@@ -436,13 +445,17 @@ public class CoverageList extends JComponent {
         ((CardLayout) selectionPanel.getLayout()).show(selectionPanel, name);
         selectionPanelName = name;
         toolbar.setButtonsEnabled(TABLE.equals(name));
-        // TODO: use switch(String) with Java 7.
-        if (TABLE.equals(name)) {
-            final ListSelectionModel model = table.getSelectionModel();
-            setImageProperties(model.isSelectionEmpty() ? null :
-                    coverages.getCoverageReferenceAt(model.getAnchorSelectionIndex()));
-        } else if (FILES.equals(name)) {
-            properties.setImageLater(fileChooser.getSelectedFile());
+        switch (name) {
+            case TABLE: {
+                final ListSelectionModel model = table.getSelectionModel();
+                setImageProperties(model.isSelectionEmpty() ? null :
+                        coverages.getCoverageReferenceAt(model.getAnchorSelectionIndex()));
+                break;
+            }
+            case FILES: {
+                properties.setImageLater(fileChooser.getSelectedFile());
+                break;
+            }
         }
     }
 
@@ -494,7 +507,7 @@ public class CoverageList extends JComponent {
      */
     final void showVariableChooser(final String[] images, final boolean multiSelectionAllowed) {
         if (variableChooser == null) {
-            variableChooser = new JList();
+            variableChooser = new JList<>();
             final Vocabulary resources = Vocabulary.getResources(getLocale());
             final JButton ok     = new JButton(resources.getString(Vocabulary.Keys.OK));
             final JButton cancel = new JButton(resources.getString(Vocabulary.Keys.CANCEL));
@@ -533,10 +546,9 @@ public class CoverageList extends JComponent {
      *
      * @since 3.15
      */
-    @SuppressWarnings({"unchecked","rawtypes"})
     final List<String> getSelectedVariables() {
         setSelectionPanel(BUZY);
-        return (List) Arrays.asList(variableChooser.getSelectedValues());
+        return variableChooser.getSelectedValuesList();
     }
 
     /**

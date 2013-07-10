@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import org.geotoolkit.measure.Latitude;
+import org.apache.sis.measure.Latitude;
 import org.geotoolkit.resources.Errors;
 import org.opengis.referencing.operation.TransformException;
 

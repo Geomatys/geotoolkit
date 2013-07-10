@@ -62,13 +62,13 @@ import org.geotoolkit.geometry.TransformedDirectPosition;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.collection.XCollections;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.lang.Debug;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -573,7 +573,8 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                 } catch (TransformException exception) {
                     throw new CannotEvaluateException(formatEvaluateError(point, false), exception);
                 }
-                return arbitraryToInternal.toPoint2D();
+                return new Point2D.Double(arbitraryToInternal.getOrdinate(0),
+                                          arbitraryToInternal.getOrdinate(1));
             }
         }
         /*
@@ -997,7 +998,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                 }
             }
             // Assign only in successful.
-            this.viewTypes = XCollections.unmodifiableSet(viewTypes);
+            this.viewTypes = unmodifiableOrCopy(viewTypes);
         }
         return viewTypes;
     }
@@ -1017,7 +1018,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
             final Field field = GridCoverage2D.class.getDeclaredField("image");
             field.setAccessible(true);
             field.set(this, PlanarImage.wrapRenderedImage(serializedImage));
-        } catch (Exception cause) {
+        } catch (ReflectiveOperationException cause) {
             InvalidClassException e = new InvalidClassException(getClass().getCanonicalName(), cause.getLocalizedMessage());
             e.initCause(cause);
             throw e;
@@ -1108,7 +1109,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     @Override
     public String toString() {
         final StringBuilder buffer = new StringBuilder(super.toString());
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         buffer.append("\u2514 Image=").append(Classes.getShortClassName(image)).append('[');
         if (image instanceof OperationNode) {
             buffer.append('"').append(((OperationNode) image).getOperationName()).append('"');

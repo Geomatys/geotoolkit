@@ -50,10 +50,10 @@ import java.text.SimpleDateFormat;
 
 import javax.media.jai.JAI;
 
-import org.geotoolkit.util.Version;
+import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.DaemonThread;
@@ -199,7 +199,7 @@ public class About extends JComponent implements Dialog {
         if (application == null) {
             application = "<html><h2>Geotoolkit.org</h2></html>";
             if (version == null) {
-                version = Version.GEOTOOLKIT.toString();
+                version = Utilities.VERSION.toString();
             }
         }
         /*
@@ -280,7 +280,7 @@ public class About extends JComponent implements Dialog {
         if (tasks != null) {
             updater = new ThreadList(tasks, totalMemoryLabel, percentUsedLabel, resources);
             final JPanel pane = new JPanel(new BorderLayout());
-            final JList list = new JList(updater);
+            final JList<String> list = new JList<>(updater);
             pane.add(new JLabel(resources.getString(Vocabulary.Keys.RUNNING_TASKS)), BorderLayout.NORTH);
             pane.add(new JScrollPane(list), BorderLayout.CENTER);
             pane.setBorder(BorderFactory.createEmptyBorder(9,9,9,9));
@@ -294,8 +294,7 @@ public class About extends JComponent implements Dialog {
          */
         if (true) {
             final StringBuilder rootName = new StringBuilder();
-            final Map<String, DefaultMutableTreeNode[]> mimes =
-                    new TreeMap<String, DefaultMutableTreeNode[]>();
+            final Map<String, DefaultMutableTreeNode[]> mimes = new TreeMap<>();
             /*
              * The array in the above map will have a length of 2. The first element is for
              * readers, and the second element is for writer. The following loop is executed
@@ -439,7 +438,7 @@ public class About extends JComponent implements Dialog {
      * @module
      */
     @SuppressWarnings("serial")
-    private static final class ThreadList extends AbstractListModel implements Runnable {
+    private static final class ThreadList extends AbstractListModel<String> implements Runnable {
         /**
          * The thread which update {@code ThreadList}, or {@code null} if none.
          * Setting this field to {@code null} will stop any current process.

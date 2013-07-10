@@ -201,12 +201,12 @@ public final class PrjFiles extends Static {
             throws ContentFormatException, IOException
     {
         final String wkt = format(crs);
-        final Writer out = new OutputStreamWriter(new FileOutputStream(file), ENCODING);
         // No need to buffer, because we will write everything (except EOL) in one shot.
         // In addition, OutputStreamWriter already manage its own internal buffer anyway.
-        out.write(wkt);
-        out.write('\n'); // Use Unix EOL for cross-platform consistency.
-        out.close();
+        try (Writer out = new OutputStreamWriter(new FileOutputStream(file), ENCODING)) {
+            out.write(wkt);
+            out.write('\n'); // Use Unix EOL for cross-platform consistency.
+        }
     }
 
     /**

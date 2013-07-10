@@ -32,11 +32,11 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.naming.DefaultNameSpace;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.util.iso.DefaultNameSpace;
 import org.geotoolkit.resources.Vocabulary;
 
 

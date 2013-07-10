@@ -50,7 +50,7 @@ import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.apache.sis.internal.util.Citations;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Decorator;
@@ -454,7 +454,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     Collection<? super AuthorityFactory> dependencies() {
         // Need a modifiable list, because some subclasses
         // will add more elements to that list.
-        final List<Object> dep = new ArrayList<Object>(2);
+        final List<Object> dep = new ArrayList<>(2);
         Object factory;
         try {
             factory = getAuthorityFactory(null);

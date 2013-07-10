@@ -34,7 +34,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.operation.MathTransform2D;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -301,8 +301,7 @@ public class LayerCoverageWriter extends GridCoverageWriter {
          * error occurs, we will rollback the database transaction and delete all images that
          * we created.
          */
-        final List<Tile> files = new ArrayList<Tile>();
-        boolean success = false;
+        final List<Tile> files = new ArrayList<>();
         try {
             for (final GridCoverage coverage : coverages) {
                 final File file;
@@ -338,16 +337,14 @@ public class LayerCoverageWriter extends GridCoverageWriter {
             }
             writer.reset();
             layer.addCoverageReferences(files, null);
-            success = true;
-        } finally {
-            if (success) return;
+        } catch (Throwable e) {
             /*
              * Operation failed - delete all image files created by this method call.
              */
             try {
                 writer.reset(); // Ensures that the file is closed.
             } catch (Throwable s) {
-                // JDK7: e.addSuppressed(s);
+                e.addSuppressed(s);
             }
             for (final Tile tile : files) {
                 final File file = (File) tile.getInput();
@@ -355,6 +352,7 @@ public class LayerCoverageWriter extends GridCoverageWriter {
                     Logging.getLogger(LayerCoverageWriter.class).warning(errors().getString(Errors.Keys.CANT_DELETE_FILE_1, file));
                 }
             }
+            throw e;
         }
     }
 

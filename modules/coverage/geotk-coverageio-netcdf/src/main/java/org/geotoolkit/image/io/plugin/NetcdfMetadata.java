@@ -67,10 +67,9 @@ import org.geotoolkit.referencing.adapters.NetcdfCRS;
 import org.geotoolkit.referencing.adapters.NetcdfCRSBuilder;
 import org.geotoolkit.metadata.netcdf.NetcdfMetadataReader;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.collection.BackingStoreException;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.collection.BackingStoreException;
 
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 import static org.geotoolkit.image.io.plugin.NetcdfImageReader.Spi.NATIVE_FORMAT_NAME;
@@ -325,7 +324,7 @@ final class NetcdfMetadata extends SpatialMetadata {
             if (builder == null) {
                 reader.crsBuilder = builder = new NetcdfCRSBuilder(file, reader);
             }
-            domain = new ArrayList<Dimension>(domain);
+            domain = new ArrayList<>(domain);
             Collections.reverse(domain);
             builder.setDomain(domain);
             builder.setCoordinateSystem(cs);
@@ -514,7 +513,6 @@ final class NetcdfMetadata extends SpatialMetadata {
                     }
                 } else {
                     final String name = attribute.getNodeName();
-                    // TODO: Use switch on String when we will be allowed to use JDK 7.
                     if (NetcdfVariable.VALID_MIN.equals(name) || NetcdfVariable.VALID_MAX.equals(name)) {
                         return DATATYPE_DOUBLE;
                     }

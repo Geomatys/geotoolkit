@@ -28,8 +28,8 @@ import java.util.Locale;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.io.IOUtilities;
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
 
@@ -76,8 +76,8 @@ final class TileReaderPool {
      * Creates a new, initially empty, cache.
      */
     TileReaderPool() {
-        readers = new HashMap<ImageReaderSpi,ImageReader>();
-        readerInputs = new IdentityHashMap<ImageReader,Object>();
+        readers = new HashMap<>();
+        readerInputs = new IdentityHashMap<>();
         providers = Collections.unmodifiableSet(readers.keySet());
     }
 

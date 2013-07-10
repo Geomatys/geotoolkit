@@ -18,7 +18,7 @@
 package org.geotoolkit.image.io.mosaic;
 
 import java.io.IOException;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 
 
 /**
@@ -29,7 +29,7 @@ import org.geotoolkit.test.Depend;
  *
  * @since 2.5
  */
-@Depend(TileTest.class)
+@DependsOn(TileTest.class)
 public final strictfp class GridTileManagerTest extends TileManagerTest {
     /**
      * The tile manager factory to be given to the {@linkplain #builder builder}. This method

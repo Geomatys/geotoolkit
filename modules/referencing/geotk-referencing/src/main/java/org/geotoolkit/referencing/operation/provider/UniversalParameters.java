@@ -46,7 +46,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 
 import static org.opengis.referencing.operation.SingleOperation.*;
 import static org.geotoolkit.metadata.iso.citation.Citations.*;
-import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -158,7 +158,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      * <p>
      * This is a Geotk-specific parameter.
      */
-    public static final ParameterDescriptor<Boolean> ROLL_LONGITUDE = new DefaultParameterDescriptor<Boolean>(
+    public static final ParameterDescriptor<Boolean> ROLL_LONGITUDE = new DefaultParameterDescriptor<>(
             GEOTOOLKIT, "roll_longitude", Boolean.class, null, null, null, null, null, false);
 
     /**
@@ -268,7 +268,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             new NamedIdentifier(PROJ4,   "lat_0")
         }, 0, -90, 90, NonSI.DEGREE_ANGLE, true);
 
-        STANDARD_PARALLEL = new DefaultParameterDescriptor<double[]>(Collections.singletonMap(NAME_KEY, nc),
+        STANDARD_PARALLEL = new DefaultParameterDescriptor<>(Collections.singletonMap(NAME_KEY, nc),
             double[].class, null, null, null, null, NonSI.DEGREE_ANGLE, false);
 
         STANDARD_PARALLEL_1 = new UniversalParameters(new NamedIdentifier[] {
@@ -527,7 +527,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
                 minimum == Double.NEGATIVE_INFINITY ? null : Double.valueOf(minimum),
                 maximum == Double.POSITIVE_INFINITY ? null : Double.valueOf(maximum), unit, required);
         this.identifiers = identifiers;
-        identifiersMap = new HashMap<String,NamedIdentifier>(hashMapCapacity(identifiers.length));
+        identifiersMap = new HashMap<>(hashMapCapacity(identifiers.length));
         Map<NamedIdentifier,NamedIdentifier> nextSameName = null;
         // Put elements in reverse order in order to give precedence to the first occurrence.
         for (int i=identifiers.length; --i>=0;) {
@@ -535,7 +535,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             final NamedIdentifier old = identifiersMap.put(id.getCode(), id);
             if (old != null) {
                 if (nextSameName == null) {
-                    nextSameName = new IdentityHashMap<NamedIdentifier,NamedIdentifier>(4);
+                    nextSameName = new IdentityHashMap<>(4);
                 }
                 nextSameName.put(id, old);
             }
@@ -572,7 +572,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
     final ParameterDescriptor<Double> select(final Boolean required, final Double defaultValue,
             final Citation[] excludes, final String[] deprecated, final String... names)
     {
-        final Map<Citation,Boolean> authorities = new HashMap<Citation,Boolean>();
+        final Map<Citation,Boolean> authorities = new HashMap<>();
         NamedIdentifier[] selected = new NamedIdentifier[identifiers.length];
         long usedIdent = 0; // A bitmask of elements from the 'identifiers' array which have been used.
         long usedNames = 0; // A bitmask of elements from the given 'names' array which have been used.
@@ -648,7 +648,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             }
         }
         selected = ArraysExt.resize(selected, n);
-        return new DefaultParameterDescriptor<Double>(toMap(selected), Double.class, null,
+        return new DefaultParameterDescriptor<>(toMap(selected), Double.class, null,
                 (defaultValue != null) ? defaultValue : getDefaultValue(),
                 getMinimumValue(), getMaximumValue(), getUnit(),
                 (required != null) ? required : getMinimumOccurs() != 0);
@@ -762,7 +762,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             final Citation[] excludes, final ParameterDescriptor<?>[] parameters, final int supplement)
     {
         if (excludes != null) {
-            final Map<String,Object> properties = new HashMap<String,Object>();
+            final Map<String,Object> properties = new HashMap<>();
             for (int i=0; i<parameters.length; i++) {
                 @SuppressWarnings("unchecked")
                 final ParameterDescriptor<Double> param = (ParameterDescriptor) parameters[i];
@@ -800,7 +800,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
                 } while ((forAlias = !forAlias) == true);
                 if (modified) {
                     properties.put(NAME_KEY, aliases[0]); // In case the primary name was one of the excluded names.
-                    parameters[i] = new DefaultParameterDescriptor<Double>(properties, Double.class, null,
+                    parameters[i] = new DefaultParameterDescriptor<>(properties, Double.class, null,
                             param.getDefaultValue(), param.getMinimumValue(), param.getMaximumValue(),
                             param.getUnit(), param.getMinimumOccurs() != 0);
                 }
@@ -837,7 +837,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
         }
         id    = ArraysExt.resize(id,    idCount);
         alias = ArraysExt.resize(alias, aliasCount);
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<>(4);
         properties.put(NAME_KEY,        identifiers[0]);
         properties.put(IDENTIFIERS_KEY, id);
         properties.put(ALIAS_KEY,       alias);

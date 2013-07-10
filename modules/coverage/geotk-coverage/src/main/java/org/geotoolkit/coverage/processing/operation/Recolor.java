@@ -78,7 +78,7 @@ public class Recolor extends IndexColorOperation {
     /**
      * The parameter descriptor for the color map.
      */
-    public static final ParameterDescriptor<ColorMap[]> COLOR_MAPS = new DefaultParameterDescriptor<ColorMap[]>(
+    public static final ParameterDescriptor<ColorMap[]> COLOR_MAPS = new DefaultParameterDescriptor<>(
             Citations.GEOTOOLKIT, "ColorMaps",
             ColorMap[].class, // Value class (mandatory)
             null,             // Array of valid values

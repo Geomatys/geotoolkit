@@ -20,6 +20,7 @@ package org.geotoolkit.util.converter;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
 import net.jcip.annotations.Immutable;
+import org.apache.sis.util.Numbers;
 
 
 /**

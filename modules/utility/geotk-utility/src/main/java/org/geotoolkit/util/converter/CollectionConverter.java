@@ -80,7 +80,7 @@ abstract class CollectionConverter<T> extends SimpleConverter<Collection<?>,T> i
             if (source instanceof java.util.List<?>) {
                 return (java.util.List<?>) source;
             }
-            return new ArrayList<Object>(source);
+            return new ArrayList<>(source);
         }
 
         /** Returns the singleton instance on deserialization. */
@@ -119,7 +119,7 @@ abstract class CollectionConverter<T> extends SimpleConverter<Collection<?>,T> i
             if (source instanceof java.util.Set<?>) {
                 return (java.util.Set<?>) source;
             }
-            return new LinkedHashSet<Object>(source);
+            return new LinkedHashSet<>(source);
         }
 
         /** Returns the singleton instance on deserialization. */

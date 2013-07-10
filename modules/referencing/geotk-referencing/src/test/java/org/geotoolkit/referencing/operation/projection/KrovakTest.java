@@ -20,8 +20,8 @@ package org.geotoolkit.referencing.operation.projection;
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
-import org.geotoolkit.test.Depend;
 
+import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import static java.lang.StrictMath.*;
 import static org.geotoolkit.referencing.operation.provider.Krovak.PARAMETERS;
@@ -36,7 +36,7 @@ import static org.geotoolkit.referencing.operation.provider.Krovak.PARAMETERS;
  *
  * @since 3.00
  */
-@Depend(UnitaryProjectionTest.class)
+@DependsOn(UnitaryProjectionTest.class)
 public final strictfp class KrovakTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.

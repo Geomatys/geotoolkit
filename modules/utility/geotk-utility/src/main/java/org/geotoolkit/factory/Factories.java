@@ -210,6 +210,6 @@ public final class Factories extends Static {
         {
             return iterator;
         }
-        return new OrderedIterator<T>(classLoader, iterator);
+        return new OrderedIterator<>(classLoader, iterator);
     }
 }

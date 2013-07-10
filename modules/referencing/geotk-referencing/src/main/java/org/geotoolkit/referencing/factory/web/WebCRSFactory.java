@@ -36,7 +36,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
@@ -79,8 +79,7 @@ public class WebCRSFactory extends DirectAuthorityFactory implements CRSAuthorit
     /**
      * The map of pre-defined CRS.
      */
-    private final Map<Integer,CoordinateReferenceSystem> crsMap =
-            new TreeMap<Integer,CoordinateReferenceSystem>();
+    private final Map<Integer,CoordinateReferenceSystem> crsMap = new TreeMap<>();
 
     /**
      * Constructs a default factory for the {@code CRS} authority.
@@ -124,7 +123,7 @@ public class WebCRSFactory extends DirectAuthorityFactory implements CRSAuthorit
      */
     private void add(final int code, final String name, final Ellipsoid ellipsoid) throws FactoryException {
         assert Thread.holdsLock(this);
-        final Map<String,Object> properties = new HashMap<String,Object>();
+        final Map<String,Object> properties = new HashMap<>();
         final Citation authority = getAuthority();
         final String text = String.valueOf(code);
         properties.put(IdentifiedObject.NAME_KEY, name);
@@ -166,7 +165,7 @@ public class WebCRSFactory extends DirectAuthorityFactory implements CRSAuthorit
             throws FactoryException
     {
         ensureInitialized();
-        final Set<String> set = new LinkedHashSet<String>();
+        final Set<String> set = new LinkedHashSet<>();
         for (final Map.Entry<Integer,CoordinateReferenceSystem> entry : crsMap.entrySet()) {
             final CoordinateReferenceSystem crs = entry.getValue();
             if (type.isAssignableFrom(crs.getClass())) {

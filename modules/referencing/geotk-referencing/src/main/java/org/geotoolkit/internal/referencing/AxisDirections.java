@@ -19,12 +19,12 @@ package org.geotoolkit.internal.referencing;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Objects;
 
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.Utilities;
 
 import static org.opengis.referencing.cs.AxisDirection.*;
 
@@ -50,8 +50,7 @@ public final class AxisDirections extends Static {
     /**
      * For each direction, the opposite direction.
      */
-    private static final Map<AxisDirection,AxisDirection> opposites =
-            new HashMap<AxisDirection,AxisDirection>(35);
+    private static final Map<AxisDirection,AxisDirection> opposites = new HashMap<>(35);
     static {
         opposites.put(OTHER, OTHER);
         final AxisDirection[] dir = {
@@ -154,7 +153,7 @@ public final class AxisDirections extends Static {
      * @since 3.14
      */
     public static boolean isOpposite(final AxisDirection dir) {
-        return Utilities.equals(dir, opposite(absolute(dir)));
+        return Objects.equals(dir, opposite(absolute(dir)));
     }
 
     /**

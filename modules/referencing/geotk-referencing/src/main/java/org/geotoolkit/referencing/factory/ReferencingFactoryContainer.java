@@ -42,7 +42,7 @@ import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.internal.referencing.Identifier3D;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
@@ -375,7 +375,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
          * Get a copy of the components list and iterate in reverse order,
          * because we may remove elements from that list while iterating.
          */
-        final List<SingleCRS> components = new ArrayList<SingleCRS>(DefaultCompoundCRS.getSingleCRS(crs));
+        final List<SingleCRS> components = new ArrayList<>(DefaultCompoundCRS.getSingleCRS(crs));
         final int count = components.size();
         for (int i=count; --i>=0;) {
             final SingleCRS component = components.get(i);
@@ -518,9 +518,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
             } else {
                 return AbstractCS.swapAndScaleAxis(sourceCS, targetCS);
             }
-        } catch (IllegalArgumentException e) {
-            failure = e;
-        } catch (ConversionException e) {
+        } catch (IllegalArgumentException | ConversionException e) {
             failure = e;
         }
         throw new FactoryException(Errors.format(Errors.Keys.UNSUPPORTED_CRS_1, crs.getName()), failure);
@@ -635,7 +633,7 @@ search:     for (final CoordinateReferenceSystem source : sources) {
     private static Map<String,?> getTemporaryName(final IdentifiedObject source) {
         final ReferenceIdentifier id = source.getName();
         return Collections.singletonMap(IdentifiedObject.NAME_KEY,
-                new DefaultReferenceIdentifier(null, // Null because we are inventing a code.
+                new ImmutableIdentifier(null, // Null because we are inventing a code.
                     id.getCodeSpace(), id.getCode() + " (3D)"));
     }
 }

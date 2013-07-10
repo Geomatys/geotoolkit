@@ -173,7 +173,7 @@ public class ReferencingCommands extends CommandLine {
      */
     @Override
     Map<String,String> examples() {
-        final Map<String,String> examples = new LinkedHashMap<String,String>();
+        final Map<String,String> examples = new LinkedHashMap<>();
         examples.put("BasicExample",      "EPSG:4181 EPSG:4326 CRS:84 AUTO:42001,30,0");
         examples.put("BasicEpsgExample",  "--authority=EPSG 4181 7411");
         examples.put("BursawolfsExample", "bursawolfs EPSG:4230");

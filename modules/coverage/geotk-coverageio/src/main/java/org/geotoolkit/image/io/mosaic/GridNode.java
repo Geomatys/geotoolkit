@@ -315,8 +315,8 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
         /*
          * Move the list of children in a temporary array.
          */
-        final List<GridNode> toProcess = new LinkedList<GridNode>();
-        final List<GridNode> retained  = new  ArrayList<GridNode>();
+        final List<GridNode> toProcess = new LinkedList<>();
+        final List<GridNode> retained  = new  ArrayList<>();
         child = (GridNode) firstChildren();
         while (child != null) {
             toProcess.add(child);
@@ -581,7 +581,7 @@ adjust: while (true) {
          * inserted in reverse order, with the biggest tiles added last.
          */
         final Rectangle region = new Rectangle();
-        final List<GridNode> extra = new ArrayList<GridNode>();
+        final List<GridNode> extra = new ArrayList<>();
         while (exists.length > 1) {
             region.width  = tileWidth;
             region.height = tileHeight;

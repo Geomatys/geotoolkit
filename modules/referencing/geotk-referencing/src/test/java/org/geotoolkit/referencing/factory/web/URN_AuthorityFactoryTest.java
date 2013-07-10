@@ -34,7 +34,7 @@ import org.geotoolkit.referencing.factory.AllAuthoritiesFactoryTest;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 import org.junit.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import static org.junit.Assume.*;
@@ -51,7 +51,7 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
  *
  * @since 2.4
  */
-@Depend({AllAuthoritiesFactoryTest.class, HTTP_AuthorityFactoryTest.class})
+@DependsOn({AllAuthoritiesFactoryTest.class, HTTP_AuthorityFactoryTest.class})
 public final strictfp class URN_AuthorityFactoryTest extends ReferencingTestBase {
     /**
      * Makes sure that a singleton instance is registered.

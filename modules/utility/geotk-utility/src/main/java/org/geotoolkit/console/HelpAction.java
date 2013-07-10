@@ -30,11 +30,11 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.LineWrapWriter;
 import org.geotoolkit.io.IndentedLineWriter;
 import org.apache.sis.util.Numbers;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.resources.Vocabulary;
 
 import static org.geotoolkit.console.CommandLine.*;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -89,7 +89,7 @@ final class HelpAction {
     HelpAction(final CommandLine cmd) {
         this.cmd = cmd;
         this.out = cmd.out;
-        lineSeparator = System.getProperty("line.separator", "\n");
+        lineSeparator = System.lineSeparator();
         /*
          * Tries to get the number of columns in the terminal windows. Note: Unix users
          * may need to do "export COLUMNS" in their shell for getting this code to work.
@@ -128,8 +128,8 @@ final class HelpAction {
 
         // Lists of actions and options to be collected before to be printed.
         final Map<String,Map.Entry<String,String>> actions, options;
-        actions = new TreeMap<String,Map.Entry<String,String>>();
-        options = new TreeMap<String,Map.Entry<String,String>>();
+        actions = new TreeMap<>();
+        options = new TreeMap<>();
 
         // Cached objects.
         boolean descriptionDone = false;
@@ -175,7 +175,7 @@ final class HelpAction {
                 color(X364.RESET);
                 label = buffer.toString();
                 final String description = description(resources, name, action.examples());
-                actions.put(name, new AbstractMap.SimpleEntry<String,String>(label, description));
+                actions.put(name, new AbstractMap.SimpleEntry<>(label, description));
             }
             /*
              * Scan the fields declared in the class, looking for the ones annotated with @Option.
@@ -234,7 +234,7 @@ final class HelpAction {
                  * string and save the (name,description) pair in the map.
                  */
                 final String description = description(resources, name, option.examples());
-                options.put(name, new AbstractMap.SimpleEntry<String,String>(label, description));
+                options.put(name, new AbstractMap.SimpleEntry<>(label, description));
             }
         } while (CommandLine.class.isAssignableFrom(classe = classe.getSuperclass()));
         /*
@@ -368,7 +368,7 @@ final class HelpAction {
      */
     private void examples(final String command) {
         final Map<String,String> examples = cmd.examples();
-        if (XCollections.isNullOrEmpty(examples)) {
+        if (isNullOrEmpty(examples)) {
             return;
         }
         /*
@@ -377,7 +377,7 @@ final class HelpAction {
          * the CommandLine.properties one. If we really found none of them, prints the first
          * exception and terminate this method.
          */
-        final List<ResourceBundle> resources = new ArrayList<ResourceBundle>();
+        final List<ResourceBundle> resources = new ArrayList<>();
         MissingResourceException failure = null;
         for (Class<?> c=cmd.getClass(); CommandLine.class.isAssignableFrom(c); c=c.getSuperclass()) {
             try {
@@ -386,7 +386,7 @@ final class HelpAction {
                 if (failure == null) {
                     failure = e;
                 } else {
-                    // TODO: addSuppress with JDK7.
+                    failure.addSuppressed(e);
                 }
             }
         }

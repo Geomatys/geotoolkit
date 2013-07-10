@@ -58,7 +58,7 @@ final class DirectoryPanel extends JComponent {
          * Specifies if the directory should be determined automatically,
          * specified for current user or specified for all users.
          */
-        private final JComboBox mode;
+        private final JComboBox<String> mode;
 
         /**
          * The value specified by the user. This field is disabled if the currently
@@ -97,7 +97,7 @@ final class DirectoryPanel extends JComponent {
             modes[AUTO]   = resources.getString(Vocabulary.Keys.AUTOMATIC);
             modes[USER]   = resources.getString(Vocabulary.Keys.CURRENT_USER);
             modes[SYSTEM] = resources.getString(Vocabulary.Keys.ALL_USERS);
-            mode = new JComboBox(modes);
+            mode = new JComboBox<>(modes);
             directory = new JTextField();
             directory.addFocusListener(this);
             open = new JButton(openIcon);

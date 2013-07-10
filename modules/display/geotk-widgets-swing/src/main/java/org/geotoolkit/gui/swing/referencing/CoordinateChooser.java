@@ -55,10 +55,10 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
-import org.geotoolkit.measure.Angle;
-import org.geotoolkit.measure.Latitude;
-import org.geotoolkit.measure.Longitude;
-import org.geotoolkit.measure.AngleFormat;
+import org.apache.sis.measure.Angle;
+import org.apache.sis.measure.Latitude;
+import org.apache.sis.measure.Longitude;
+import org.apache.sis.measure.AngleFormat;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -149,7 +149,7 @@ public class CoordinateChooser extends JComponent implements Dialog {
      * Liste de choix dans laquelle l'utilisateur
      * choisira le fuseau horaire de ses dates.
      */
-    private final JComboBox timezone;
+    private final JComboBox<String> timezone;
 
     /**
      * Dates de début et de fin de la plage de temps demandée par l'utilisateur.
@@ -288,7 +288,7 @@ public class CoordinateChooser extends JComponent implements Dialog {
 
         final String[] timezones = TimeZone.getAvailableIDs();
         Arrays.sort(timezones);
-        timezone = new JComboBox(timezones);
+        timezone = new JComboBox<>(timezones);
         timezone.setSelectedItem(dateFormat.getTimeZone().getID());
 
         final JLabel labelSize1 = new JLabel(resources.getLabel(Vocabulary.Keys.SIZE_IN_MINUTES));

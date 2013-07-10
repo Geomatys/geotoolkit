@@ -63,7 +63,7 @@ import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 import static org.geotoolkit.referencing.datum.DefaultGeodeticDatum.WGS84;
 import static org.geotoolkit.referencing.datum.DefaultPrimeMeridian.GREENWICH;
 import static org.geotoolkit.referencing.datum.DefaultGeodeticDatum.BURSA_WOLF_KEY;
@@ -245,8 +245,7 @@ public class ReferencingParser extends MathTransformParser {
          * Gets the map of axis directions.
          */
         final AxisDirection[] values = AxisDirection.values();
-        Map<String,AxisDirection> directions =
-                new HashMap<String,AxisDirection>(hashMapCapacity(values.length));
+        Map<String,AxisDirection> directions = new HashMap<>(hashMapCapacity(values.length));
         final Locale locale = symbols.locale;
         for (int i=0; i<values.length; i++) {
             directions.put(values[i].name().trim().toUpperCase(locale), values[i]);
@@ -382,19 +381,19 @@ public class ReferencingParser extends MathTransformParser {
         final Object key = element.peek();
         if (key instanceof Element) {
             final String keyword = keyword((Element) key);
-            switch (keyword.hashCode()) {
+            switch (keyword) {
                 /*
                  * Note: the following cases are copied in the parseObject(Element) method in
                  * order to take advantage of a single switch statement. If new cases are added
                  * here, then they must be added in parseObject(Element) as well.
                  */
-                case  2098816550: if (   "GEOGCS".equals(keyword)) return parseGeoGCS  (element); break;
-                case -1926479731: if (   "PROJCS".equals(keyword)) return parseProjCS  (element); break;
-                case  2098812706: if (   "GEOCCS".equals(keyword)) return parseGeoCCS  (element); break;
-                case  1069641278: if (  "VERT_CS".equals(keyword)) return parseVertCS  (element); break;
-                case -1611514396: if ( "LOCAL_CS".equals(keyword)) return parseLocalCS (element); break;
-                case   182967770: if ( "COMPD_CS".equals(keyword)) return parseCompdCS (element); break;
-                case   414930797: if ("FITTED_CS".equals(keyword)) return parseFittedCS(element); break;
+                case "GEOGCS":    return parseGeoGCS  (element);
+                case "PROJCS":    return parseProjCS  (element);
+                case "GEOCCS":    return parseGeoCCS  (element);
+                case "VERT_CS":   return parseVertCS  (element);
+                case "LOCAL_CS":  return parseLocalCS (element);
+                case "COMPD_CS":  return parseCompdCS (element);
+                case "FITTED_CS": return parseFittedCS(element);
             }
         }
         throw element.parseFailed(null, Errors.format(Errors.Keys.UNKNOWN_TYPE_1, key));
@@ -412,35 +411,35 @@ public class ReferencingParser extends MathTransformParser {
         final Object key = element.peek();
         if (key instanceof Element) {
             final String keyword = keyword((Element) key);
-            switch (keyword.hashCode()) {
-                case     2023329: if (       "AXIS".equals(keyword)) return parseAxis      (element, METRE, true); break;
-                case -1926655538: if (     "PRIMEM".equals(keyword)) return parsePrimem    (element, DEGREE_ANGLE); break;
-                case  -414856156: if (    "TOWGS84".equals(keyword)) return parseToWGS84   (element); break;
-                case -1262236878: if (   "SPHEROID".equals(keyword)) return parseSpheroid  (element); break;
-                case  1321414593: if ( "VERT_DATUM".equals(keyword)) return parseVertDatum (element); break;
-                case   519534171: if ("LOCAL_DATUM".equals(keyword)) return parseLocalDatum(element); break;
-                case    64819279: if (      "DATUM".equals(keyword)) return parseDatum     (element, GREENWICH); break;
+            switch (keyword) {
+                case "AXIS":        return parseAxis      (element, METRE, true);
+                case "PRIMEM":      return parsePrimem    (element, DEGREE_ANGLE);
+                case "TOWGS84":     return parseToWGS84   (element);
+                case "SPHEROID":    return parseSpheroid  (element);
+                case "VERT_DATUM":  return parseVertDatum (element);
+                case "LOCAL_DATUM": return parseLocalDatum(element);
+                case "DATUM":       return parseDatum     (element, GREENWICH);
                 /*
                  * Note: the following cases are copied from parseCoordinateReferenceSystem(Element)
                  * method in order to take advantage of a single switch statement. If new cases are
                  * added here, then they must be added in the above method first.
                  */
-                case  2098816550: if (   "GEOGCS".equals(keyword)) return parseGeoGCS  (element); break;
-                case -1926479731: if (   "PROJCS".equals(keyword)) return parseProjCS  (element); break;
-                case  2098812706: if (   "GEOCCS".equals(keyword)) return parseGeoCCS  (element); break;
-                case  1069641278: if (  "VERT_CS".equals(keyword)) return parseVertCS  (element); break;
-                case -1611514396: if ( "LOCAL_CS".equals(keyword)) return parseLocalCS (element); break;
-                case   182967770: if ( "COMPD_CS".equals(keyword)) return parseCompdCS (element); break;
-                case   414930797: if ("FITTED_CS".equals(keyword)) return parseFittedCS(element); break;
+                case "GEOGCS":    return parseGeoGCS  (element);
+                case "PROJCS":    return parseProjCS  (element);
+                case "GEOCCS":    return parseGeoCCS  (element);
+                case "VERT_CS":   return parseVertCS  (element);
+                case "LOCAL_CS":  return parseLocalCS (element);
+                case "COMPD_CS":  return parseCompdCS (element);
+                case "FITTED_CS": return parseFittedCS(element);
                 /*
                  * Note: the following cases are copied from MathTransformParser in order to take
                  * advantage of a single switch statement. If new cases are added there, then the
                  * superclass must be updated first.
                  */
-                case  1954077369: if (      "PARAM_MT".equals(keyword)) return parseParamMT      (element); break;
-                case  1889286834: if (     "CONCAT_MT".equals(keyword)) return parseConcatMT     (element); break;
-                case -1910641354: if (    "INVERSE_MT".equals(keyword)) return parseInverseMT    (element); break;
-                case  -219294638: if ("PASSTHROUGH_MT".equals(keyword)) return parsePassThroughMT(element); break;
+                case "PARAM_MT":       return parseParamMT      (element);
+                case "CONCAT_MT":      return parseConcatMT     (element);
+                case "INVERSE_MT":     return parseInverseMT    (element);
+                case "PASSTHROUGH_MT": return parsePassThroughMT(element);
             }
         }
         throw element.parseFailed(null, Errors.format(Errors.Keys.UNKNOWN_TYPE_1, key));
@@ -491,7 +490,7 @@ public class ReferencingParser extends MathTransformParser {
         if (element == null && !isRoot) {
             return singletonMap(IdentifiedObject.NAME_KEY, (Object) name);
         }
-        Map<String,Object> properties = new HashMap<String,Object>(4);
+        Map<String,Object> properties = new HashMap<>(4);
         properties.put(IdentifiedObject.NAME_KEY, name);
         if (element != null) {
             final String auth = element.pullString("name");
@@ -833,7 +832,7 @@ public class ReferencingParser extends MathTransformParser {
         element.close();
         if (toWGS84 != null) {
             if (!(properties instanceof HashMap<?,?>)) {
-                properties = new HashMap<String,Object>(properties);
+                properties = new HashMap<>(properties);
             }
             properties.put(BURSA_WOLF_KEY, toWGS84);
         }
@@ -920,7 +919,7 @@ public class ReferencingParser extends MathTransformParser {
         EngineeringDatum    datum = parseLocalDatum(element);
         Unit<Length>   linearUnit = parseUnit(element, METRE);
         CoordinateSystemAxis axis = parseAxis(element, linearUnit, true);
-        List<CoordinateSystemAxis> list = new ArrayList<CoordinateSystemAxis>();
+        List<CoordinateSystemAxis> list = new ArrayList<>();
         do {
             list.add(axis);
             axis = parseAxis(element, linearUnit, false);
@@ -1164,9 +1163,7 @@ public class ReferencingParser extends MathTransformParser {
                     method, toBase.inverse());
             final CoordinateSystem cs = new AbstractCS(properties, axis);
             return crsFactory.createDerivedCRS(properties, base, conversion, cs);
-        } catch (FactoryException exception) {
-            throw element.parseFailed(exception, null);
-        } catch (NoninvertibleTransformException exception) {
+        } catch (FactoryException | NoninvertibleTransformException exception) {
             throw element.parseFailed(exception, null);
         }
     }

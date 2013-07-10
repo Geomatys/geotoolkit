@@ -88,7 +88,7 @@ import org.geotoolkit.referencing.operation.MathTransforms;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -143,7 +143,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      */
     private static final Set<String> METADATA_NODES;
     static {
-        final Set<String> s = new HashSet<String>(25);
+        final Set<String> s = new HashSet<>(25);
                                                 // geotk-coverageio
                                                 // ├───ImageDescription
         s.add("Dimensions");                    // │   ├───Dimensions
@@ -659,7 +659,7 @@ public class ImageCoverageReader extends GridCoverageReader {
     private static <T> Map.Entry<Map<Integer,T>,T> setCached(T value, Map<Integer,T> cache, final int index) {
         if (value != null) {
             if (cache == null) {
-                cache = new HashMap<Integer,T>();
+                cache = new HashMap<>();
             }
             for (final T current : cache.values()) {
                 if (current.equals(value)) {
@@ -669,7 +669,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             }
             cache.put(index, value);
         }
-        return new HashMap.SimpleEntry<Map<Integer,T>,T>(cache, value);
+        return new HashMap.SimpleEntry<>(cache, value);
     }
 
     /**
@@ -1057,9 +1057,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                 ((SpatialImageReadParam) imageParam).setPaletteFactory(SampleDimensionPalette.FACTORY);
             }
             image = imageReader.read(index, imageParam);
-        } catch (IllegalArgumentException e) { // TODO: Multi-catch with JDK7.
-            throw new CoverageStoreException(formatErrorMessage(e), e);
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);
         } finally {
             if (usePaletteFactory) {

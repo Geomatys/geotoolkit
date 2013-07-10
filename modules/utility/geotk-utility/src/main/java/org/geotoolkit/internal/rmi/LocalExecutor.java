@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 
 import org.geotoolkit.internal.Threads;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -78,7 +78,7 @@ final class LocalExecutor implements TaskExecutor {
      */
     @Override
     public <Input,Output> TaskFuture<Output> submit(final ShareableTask<Input,Output> task) {
-        return new LocalFuture<Output>(executor != null ? executor.submit(task) : null, task);
+        return new LocalFuture<>(executor != null ? executor.submit(task) : null, task);
     }
 
     /**

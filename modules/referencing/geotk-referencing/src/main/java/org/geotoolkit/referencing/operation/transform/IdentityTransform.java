@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.MathTransform;
 
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.MathTransforms;

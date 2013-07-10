@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.ResourceBundle;
 import java.util.Locale;
+import java.util.Objects;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.awt.image.RenderedImage;
@@ -55,19 +56,18 @@ import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
 
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.citation.DefaultContact;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
-import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
+import org.apache.sis.metadata.iso.citation.DefaultContact;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
+import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static javax.media.jai.registry.RenderedRegistryMode.MODE_NAME;
@@ -292,7 +292,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
      */
     public static Map<String,Object> properties(final RegistryElementDescriptor operation) {
         String name = operation.getName();
-        final Map<String,Object> properties = new HashMap<String,Object>();
+        final Map<String,Object> properties = new HashMap<>();
         if (operation instanceof OperationDescriptor) {
             /*
              * Gets the vendor name (if available) using US locale in order to get something as
@@ -302,7 +302,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
              * appears in the GenericName's scope below (as an alias).
              */
             final OperationDescriptor op = (OperationDescriptor) operation;
-            final ResourceBundle bundle = op.getResourceBundle(Locale.getDefault());
+            final ResourceBundle bundle = op.getResourceBundle(Locale.getDefault(Locale.Category.DISPLAY));
             String vendor = op.getResourceBundle(Locale.US).getString("Vendor");
             Citation authority = null;
             if (vendor != null) {
@@ -394,8 +394,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
         if (descriptor == null) {
             throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_1, "descriptor"));
         }
-        final Map<String,ParameterDescriptor<?>> replacements =
-                new LinkedHashMap<String,ParameterDescriptor<?>>();
+        final Map<String,ParameterDescriptor<?>> replacements = new LinkedHashMap<>();
         if (extension != null) {
             for (final ParameterDescriptor<?> d : extension) {
                 final String name = d.getName().getCode().trim().toLowerCase();
@@ -413,7 +412,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
          */
         final int numSources;
         final int numParameters = descriptor.getNumParameters();
-        final Map<String,CharSequence> properties = new HashMap<String,CharSequence>();
+        final Map<String,CharSequence> properties = new HashMap<>();
         ParameterDescriptor<?>[] desc;
         if (operation instanceof OperationDescriptor) {
             final OperationDescriptor op = (OperationDescriptor) operation;
@@ -566,8 +565,8 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
         }
         if (object instanceof ImagingParameterDescriptors && super.equals(object, mode)) {
             final ImagingParameterDescriptors that = (ImagingParameterDescriptors) object;
-            return Utilities.equals(this.operation,  that.operation) &&
-                   Utilities.equals(this.descriptor, that.descriptor);
+            return Objects.equals(this.operation,  that.operation) &&
+                   Objects.equals(this.descriptor, that.descriptor);
         }
         return false;
     }

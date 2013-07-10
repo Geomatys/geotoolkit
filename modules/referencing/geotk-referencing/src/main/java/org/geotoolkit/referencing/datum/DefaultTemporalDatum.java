@@ -22,6 +22,7 @@ package org.geotoolkit.referencing.datum;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Collections;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,7 +32,6 @@ import org.opengis.referencing.datum.TemporalDatum;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -213,7 +213,7 @@ public class DefaultTemporalDatum extends AbstractDatum implements TemporalDatum
                 }
                 default: {
                     final TemporalDatum that = (TemporalDatum) object;
-                    return Utilities.equals(getOrigin(), that.getOrigin());
+                    return Objects.equals(getOrigin(), that.getOrigin());
                 }
             }
         }

@@ -49,8 +49,8 @@ import org.geotoolkit.coverage.grid.Interpolator2D;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.Localized;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.Localized;
 
 
 /**
@@ -273,7 +273,7 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
             throws OperationNotFoundException, IOException
     {
         final CoverageParameterWriter writer = new CoverageParameterWriter(out);
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         if (names != null) {
             for (int i=0; i<names.length; i++) {
                 final Operation operation = getOperation(names[i]);

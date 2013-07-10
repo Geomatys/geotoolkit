@@ -17,12 +17,13 @@
  */
 package org.geotoolkit.image.io.mosaic;
 
+import java.util.Objects;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Utilities;
 
 
 /**
@@ -90,8 +91,8 @@ class ReaderInputPair {
     public final boolean equals(final Object object) {
         if (object instanceof ReaderInputPair) {
             final ReaderInputPair that = (ReaderInputPair) object;
-            return Utilities.equals(this.reader, that.reader) &&
-                   Utilities.deepEquals(this.input, that.input);
+            return Objects.equals(this.reader, that.reader) &&
+                   Objects.deepEquals(this.input, that.input);
         }
         return false;
     }

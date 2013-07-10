@@ -33,7 +33,7 @@
  *   <li>Collections are not currently supported (only the first element is stored).</li>
  *   <li>{@link org.opengis.util.InternationalString} are stored only for the default locale.</li>
  *   <li>Cyclic graph (<var>A</var> references <var>B</var> which reference <var>A</var>) are not
- *       supported, unless foreigner key constraints are manualy disabled for the columns which
+ *       supported, unless foreigner key constraints are manually disabled for the columns which
  *       contain the cyclic references.</li>
  *   <li>Metadata that are sub-interface of other metadata (for example
  *       {@link org.opengis.metadata.extent.GeographicDescription} which extends

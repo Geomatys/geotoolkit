@@ -44,7 +44,7 @@ import org.geotoolkit.internal.swing.UnitFormatter;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.resources.Vocabulary;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -96,7 +96,7 @@ public class SampleDimensionPanel extends JComponent {
     /**
      * Names of the sample dimensions.
      */
-    private final JComboBox nameField;
+    private final JComboBox<BandName> nameField;
 
     /**
      * Units of measurement.
@@ -157,7 +157,7 @@ public class SampleDimensionPanel extends JComponent {
         table.setRowSelectionAllowed(false);
         table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
-        nameField = new JComboBox();
+        nameField = new JComboBox<>();
         unitField = new JFormattedTextField(new UnitFormatter(locale));
         final JLabel nameLabel = new JLabel(resources.getLabel(Vocabulary.Keys.BAND));
         final JLabel unitLabel = new JLabel(resources.getLabel(Vocabulary.Keys.UNITS));
@@ -219,7 +219,7 @@ public class SampleDimensionPanel extends JComponent {
                 for (int j=0; j<categories.length; j++) {
                     categories[j] = records[j].getCategory(paletteFactory);
                 }
-                final String name = ((BandName) nameField.getModel().getElementAt(i)).name;
+                final String name = nameField.getModel().getElementAt(i).name;
                 final GridSampleDimension band;
                 try {
                     band = new GridSampleDimension(name, categories, units[i]);
@@ -245,7 +245,7 @@ public class SampleDimensionPanel extends JComponent {
     public void setSampleDimensions(final List<GridSampleDimension> bands) {
         final Locale locale = getLocale();
         final Vocabulary resources = Vocabulary.getResources(locale);
-        final DefaultComboBoxModel nameList = (DefaultComboBoxModel) nameField.getModel();
+        final DefaultComboBoxModel<BandName> nameList = (DefaultComboBoxModel<BandName>) nameField.getModel();
         nameList.removeAllElements();
         units   = null;
         records = null;
@@ -310,7 +310,7 @@ public class SampleDimensionPanel extends JComponent {
              */
             final String text = (String) nameField.getSelectedItem();
             if (text != null) {
-                ((BandName) nameField.getModel().getElementAt(selectedBandIndex)).name = text;
+                nameField.getModel().getElementAt(selectedBandIndex).name = text;
             } else {
                 /*
                  * Replacing the current selection by a null selection.

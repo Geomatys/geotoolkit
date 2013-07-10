@@ -80,7 +80,7 @@ final class SerializedKey implements Serializable {
     protected Object readResolve() throws ObjectStreamException {
         try {
             return definer.getField(field).get(null);
-        } catch (Exception cause) { // NoSuchFieldException, SecurityException, and many others.
+        } catch (ReflectiveOperationException cause) {
             final InvalidClassException e = new InvalidClassException(definer.getName(),
                     Errors.format(Errors.Keys.ILLEGAL_KEY_1, this));
             e.initCause(cause);

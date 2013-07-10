@@ -81,7 +81,7 @@ final class RemoteFuture<Output> extends UnicastRemoteObject implements TaskFutu
     @Override
     public synchronized Output get() throws RemoteException, ExecutionException, InterruptedException {
         if (output == null) {
-            final List<Output> results = new ArrayList<Output>(futures.size());
+            final List<Output> results = new ArrayList<>(futures.size());
             for (final TaskFuture<Output> future : futures) {
                 results.add(future.get());
             }
@@ -109,7 +109,7 @@ final class RemoteFuture<Output> extends UnicastRemoteObject implements TaskFutu
                 if (failure == null) {
                     failure = e;
                 } else {
-                    // TODO: addSuppress with JDK7.
+                    failure.addSuppressed(e);
                 }
             }
         }

@@ -63,14 +63,14 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.math.Statistics;
 import org.apache.sis.measure.Units;
 import org.apache.sis.measure.Angle;
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
-import org.geotoolkit.measure.AngleFormat; // Can't use SIS because of Number formatting.
-import org.geotoolkit.measure.RangeFormat;
+import org.apache.sis.measure.AngleFormat; // Can't use SIS because of Number formatting.
+import org.apache.sis.measure.RangeFormat;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.sql.CoverageDatabase;
 import org.geotoolkit.coverage.sql.CoverageEnvelope;
@@ -88,7 +88,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -154,7 +154,7 @@ public class LayerList extends WindowCreator {
     /**
      * The widget which display the list of selected layers.
      */
-    private final JList layerList;
+    private final JList<String> layerList;
 
     /**
      * The button for removing a layer or showing the available coverages.
@@ -244,12 +244,12 @@ public class LayerList extends WindowCreator {
         dateFormat   = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
         heightFormat = NumberFormat.getNumberInstance(locale);
         angleFormat  = AngleFormat.getInstance(locale);
-        rangeFormat  = RangeFormat.getInstance(locale);
+        rangeFormat  = new RangeFormat(locale);
         /*
          * List of layers.
          */
-        layers = new ArrayListModel<String>();
-        layerList = new JList(layers);
+        layers = new ArrayListModel<>();
+        layerList = new JList<>(layers);
         layerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setLayerNames(database.getLayers());
         layerList.addListSelectionListener(listeners);
@@ -258,11 +258,11 @@ public class LayerList extends WindowCreator {
         /*
          * List of available elevations.
          */
-        elevations = new ArrayListModel<String>();
-        final JList elevationList = new JList(elevations);
+        elevations = new ArrayListModel<>();
+        final JList<String> elevationList = new JList<>(elevations);
         elevationList.setLayoutOrientation(JList.VERTICAL_WRAP);
         elevationList.setVisibleRowCount(0); // Will be calculated from the list height.
-        final ListCellRenderer renderer = elevationList.getCellRenderer();
+        final ListCellRenderer<? super String> renderer = elevationList.getCellRenderer();
         if (renderer instanceof JLabel) {
             ((JLabel) renderer).setHorizontalAlignment(JLabel.RIGHT);
         }
@@ -437,16 +437,12 @@ public class LayerList extends WindowCreator {
         @Override
         public void actionPerformed(final ActionEvent event) {
             final String action = event.getActionCommand();
-            if (ADD.equals(action)) {
-                addNewLayer();
-            } else if (REMOVE.equals(action)) {
-                removeLayer();
-            } else if (COVERAGES.equals(action)) {
-                showCoverages();
-            } else if (REFRESH.equals(action)) {
-                refresh(true);
-            } else if (BUSY.equals(action)) {
-                setBusy(true);
+            switch (action) {
+                case ADD:       addNewLayer();   break;
+                case REMOVE:    removeLayer();   break;
+                case COVERAGES: showCoverages(); break;
+                case REFRESH:   refresh(true);   break;
+                case BUSY:      setBusy(true);   break;
             }
         }
     }
@@ -646,7 +642,7 @@ public class LayerList extends WindowCreator {
      * @return The currently selected layer, or {@code null}.
      */
     public String getSelectedLayer() {
-        return (String) layerList.getSelectedValue();
+        return layerList.getSelectedValue();
     }
 
     /**
@@ -721,15 +717,15 @@ public class LayerList extends WindowCreator {
                 }
                 final Set<Number> z = layer.getAvailableElevations();
                 if (!isNullOrEmpty(z)) {
-                    final Statistics stats = new Statistics();
+                    final Statistics stats = new Statistics(null);
                     for (final Number value : z) {
                         stats.accept(value.doubleValue());
                     }
                     final FieldPosition pos = new FieldPosition(0);
                     final StringBuffer buffer = new StringBuffer();
-                    final List<String> fz = new ArrayList<String>(z.size());
+                    final List<String> fz = new ArrayList<>(z.size());
                     synchronized (heightFormat) {
-                        stats.configure(heightFormat);
+                        org.geotoolkit.math.Statistics.configure(stats, heightFormat);
                         for (final Number value : z) {
                             heightFormat.format(value, buffer, pos).append("    ");
                             fz.add(buffer.toString());

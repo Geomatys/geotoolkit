@@ -30,9 +30,10 @@ import org.geotoolkit.gui.swing.tree.TreeNodeFilter;
 import org.geotoolkit.gui.swing.tree.DefaultTreeModel;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.FrequencySortedSet;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -121,9 +122,8 @@ final class TreeTileManager extends TileManager implements TreeNodeFilter {
          * different input, we will order by image index first, then (y,x) order.
          */
         ensureNonNull("tiles", tiles);
-        final Map<ReaderInputPair,List<Tile>> tilesByInput =
-                new LinkedHashMap<ReaderInputPair, List<Tile>>(tiles.length + tiles.length/4 + 1);
-        providers = new FrequencySortedSet<ImageReaderSpi>(4, true);
+        final Map<ReaderInputPair,List<Tile>> tilesByInput = new LinkedHashMap<>(tiles.length + tiles.length/4 + 1);
+        providers = new FrequencySortedSet<>(4, true);
         for (final Tile tile : tiles) {
             tile.checkGeometryValidity();
             final ImageReaderSpi  spi = tile.getImageReaderSpi();
@@ -136,13 +136,13 @@ final class TreeTileManager extends TileManager implements TreeNodeFilter {
                  * more elements, the number of distinct lists will be smaller and they will
                  * be reasonably cheap to growth.
                  */
-                sameInputs = new ArrayList<Tile>(1);
+                sameInputs = new ArrayList<>(1);
                 tilesByInput.put(key, sameInputs);
                 providers.add(spi);
             }
             sameInputs.add(tile);
         }
-        providers = XCollections.unmodifiableSet(providers);
+        providers = unmodifiableOrCopy(providers);
         /*
          * Overwrites the tiles array with the same tiles, but ordered with same input firsts.
          */
@@ -409,10 +409,10 @@ final class TreeTileManager extends TileManager implements TreeNodeFilter {
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         allTiles = UnmodifiableArrayList.wrap(tiles);
-        providers = new FrequencySortedSet<ImageReaderSpi>(4, true);
+        providers = new FrequencySortedSet<>(4, true);
         for (final Tile tile : tiles) {
             providers.add(tile.getImageReaderSpi());
         }
-        providers = XCollections.unmodifiableSet(providers);
+        providers = unmodifiableOrCopy(providers);
     }
 }

@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.datum;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Angle;
@@ -73,7 +74,7 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
      */
     public static final DefaultPrimeMeridian GREENWICH;
     static {
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<>(4);
         properties.put(NAME_KEY, "Greenwich");
         properties.put(IDENTIFIERS_KEY, new NamedIdentifier(Citations.EPSG, "8901"));
         GREENWICH = new DefaultPrimeMeridian(properties, 0, NonSI.DEGREE_ANGLE);
@@ -229,12 +230,12 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
                 case STRICT: {
                     final DefaultPrimeMeridian that = (DefaultPrimeMeridian) object;
                     return Utilities.equals(this.greenwichLongitude, that.greenwichLongitude) &&
-                           Utilities.equals(this.angularUnit,        that.angularUnit);
+                             Objects.equals(this.angularUnit,        that.angularUnit);
                 }
                 case BY_CONTRACT: {
                     final PrimeMeridian that = (PrimeMeridian) object;
                     return Utilities.equals(getGreenwichLongitude(), that.getGreenwichLongitude()) &&
-                           Utilities.equals(getAngularUnit(),        that.getAngularUnit());
+                             Objects.equals(getAngularUnit(),        that.getAngularUnit());
                 }
                 default: {
                     final DefaultPrimeMeridian that = castOrCopy((PrimeMeridian) object);

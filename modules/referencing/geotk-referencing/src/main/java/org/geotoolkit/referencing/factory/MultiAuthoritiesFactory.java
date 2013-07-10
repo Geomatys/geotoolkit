@@ -33,12 +33,12 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.naming.DefaultNameSpace;
+import org.apache.sis.util.iso.DefaultNameSpace;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -119,7 +119,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
      * @param factories A set of user-specified factories to try.
      */
     public MultiAuthoritiesFactory(final Collection<? extends AuthorityFactory> factories) {
-        inProgress = new ThreadLocal<Boolean>();
+        inProgress = new ThreadLocal<>();
         /*
          * The hints map initially contains a value for Hints.NAME_FACTORY, which has been set
          * by the parent constructor. However this factory doesn't use NameFactory (except for
@@ -198,7 +198,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
             final List<AuthorityFactory> list;
             if (authorityIndex == authorityCount) {
                 authorities[authorityCount++] = authority;
-                factoriesByAuthority[authorityIndex] = list = new ArrayList<AuthorityFactory>(4);
+                factoriesByAuthority[authorityIndex] = list = new ArrayList<>(4);
             } else {
                 list = factoriesByAuthority[authorityIndex];
             }
@@ -209,8 +209,8 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
         /*
          * For each authority, chains the factories into a FallbackAuthorityFactory object.
          */
-        final ArrayList<AuthorityFactory> result = new ArrayList<AuthorityFactory>();
-        final List<AuthorityFactory> buffer = new ArrayList<AuthorityFactory>(4);
+        final ArrayList<AuthorityFactory> result = new ArrayList<>();
+        final List<AuthorityFactory> buffer = new ArrayList<>(4);
         for (int i=0; i<authorityCount; i++) {
             final Collection<AuthorityFactory> list = factoriesByAuthority[i];
             while (!list.isEmpty()) {
@@ -342,7 +342,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
      * Returns the authority names of every factories in the given collection.
      */
     static Set<String> getAuthorityNames(final Collection<AuthorityFactory> factories) {
-        final Set<String> names = new HashSet<String>();
+        final Set<String> names = new HashSet<>();
         if (factories != null) {
             for (final AuthorityFactory factory : factories) {
                 names.add(Citations.getIdentifier(factory.getAuthority()));
@@ -636,8 +636,8 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
              */
             return Collections.emptySet();
         }
-        final Set<String> codes = new LinkedHashSet<String>();
-        final Set<AuthorityFactory> done = new HashSet<AuthorityFactory>();
+        final Set<String> codes = new LinkedHashSet<>();
+        final Set<AuthorityFactory> done = new HashSet<>();
         done.add(this); // Safety for avoiding recursive calls.
         inProgress.set(Boolean.TRUE);
         try {
@@ -729,7 +729,7 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
      */
     @Override
     public InternationalString getDescriptionText(final String code) throws FactoryException {
-        final Set<AuthorityFactory> done = new HashSet<AuthorityFactory>();
+        final Set<AuthorityFactory> done = new HashSet<>();
         done.add(this); // Safety for avoiding recursive calls.
         FactoryException failure = null;
         for (int type=0; type<FACTORY_TYPES.length; type++) {
@@ -745,7 +745,7 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
                 if (failure == null) {
                     failure = exception;
                 } else {
-                    // TODO: addSuppress with JDK7.
+                    failure.addSuppressed(exception);
                 }
                 continue;
             }
@@ -782,7 +782,7 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
      */
     @Override
     public IdentifiedObject createObject(final String code) throws FactoryException {
-        final Set<AuthorityFactory> done = new HashSet<AuthorityFactory>();
+        final Set<AuthorityFactory> done = new HashSet<>();
         done.add(this); // Safety for avoiding recursive calls.
         FactoryException failure = null;
         for (int type=0; type<FACTORY_TYPES.length; type++) {
@@ -798,7 +798,7 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
                 if (failure == null) {
                     failure = exception;
                 } else {
-                    // TODO: addSuppress with JDK7.
+                    failure.addSuppressed(exception);
                 }
                 continue;
             }

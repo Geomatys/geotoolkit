@@ -33,7 +33,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 
 import static org.apache.sis.util.ArgumentChecks.ensurePositive;

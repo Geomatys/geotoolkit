@@ -18,6 +18,7 @@
 package org.geotoolkit.display.axis;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.io.Serializable;
 import java.awt.RenderingHints;
 import java.beans.PropertyChangeSupport;
@@ -25,9 +26,8 @@ import java.beans.PropertyChangeListener;
 import javax.measure.unit.Unit;
 import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -61,7 +61,7 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
     /**
      * The locale for formatting labels.
      */
-    private Locale locale = Locale.getDefault();
+    private Locale locale = Locale.getDefault(Locale.Category.FORMAT);
 
     /**
      * A list of event listeners for this component.
@@ -322,9 +322,9 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
             final AbstractGraduation that = (AbstractGraduation) object;
             // We should lock object as well, but can't because of deadlocks.
             synchronized (this) {
-                return Utilities.equals(this.unit,   that.unit  ) &&
-                       Utilities.equals(this.title,  that.title ) &&
-                       Utilities.equals(this.locale, that.locale);
+                return Objects.equals(this.unit,   that.unit  ) &&
+                       Objects.equals(this.title,  that.title ) &&
+                       Objects.equals(this.locale, that.locale);
             }
         }
         return false;

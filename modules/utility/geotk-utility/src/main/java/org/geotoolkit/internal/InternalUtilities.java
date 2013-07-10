@@ -24,13 +24,15 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 
 import static java.lang.Math.*;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -158,7 +160,7 @@ public final class InternalUtilities extends Static {
      */
     public static boolean epsilonEqual(final double v1, final double v2, final ComparisonMode mode) {
         switch (mode) {
-            default:            return Utilities.equals(v1, v2);
+            default: return org.geotoolkit.util.Utilities.equals(v1, v2);
             case APPROXIMATIVE: return epsilonEqual(v1, v2);
             case DEBUG: {
                 final boolean equal = epsilonEqual(v1, v2);
@@ -276,7 +278,7 @@ public final class InternalUtilities extends Static {
      * Returns a copy of the given array as a non-empty immutable set.
      * If the given array is empty, then this method returns {@code null}.
      * <p>
-     * This method is not public provided in the public API because the recommended
+     * This method is not provided in the public API because the recommended
      * practice is usually to return an empty collection rather than {@code null}.
      *
      * @param  <T> The type of elements.
@@ -285,6 +287,7 @@ public final class InternalUtilities extends Static {
      *
      * @since 3.17
      */
+    @SafeVarargs
     public static <T> Set<T> nonEmptySet(final T... elements) {
         final Set<T> asSet = XCollections.immutableSet(elements);
         return (asSet != null && asSet.isEmpty()) ? null : asSet;
@@ -306,19 +309,20 @@ public final class InternalUtilities extends Static {
      *
      * @since 3.17
      */
+    @SafeVarargs
     public static <K,V> Map<K,V> subset(final Map<?,?> map, final Class<V> valueType, final K... keys)
             throws ClassCastException
     {
         Map<K,V> copy = null;
         if (map != null) {
-            copy = new HashMap<K,V>(XCollections.hashMapCapacity(Math.min(map.size(), keys.length)));
+            copy = new HashMap<>(hashMapCapacity(Math.min(map.size(), keys.length)));
             for (final K key : keys) {
                 final V value = valueType.cast(map.get(key));
                 if (value != null) {
                     copy.put(key, value);
                 }
             }
-            copy = XCollections.unmodifiableMap(copy);
+            copy = unmodifiableOrCopy(copy);
         }
         return copy;
     }

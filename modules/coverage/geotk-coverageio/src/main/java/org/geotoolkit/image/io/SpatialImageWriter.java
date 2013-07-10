@@ -38,12 +38,12 @@ import org.geotoolkit.image.ImageDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.ImageUtilities;
-import org.geotoolkit.util.Version;
+import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.Disposable;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.Disposable;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Locales;
+import org.apache.sis.util.Locales;
 import org.geotoolkit.resources.Loggings;
 import org.apache.sis.util.resources.IndexedResourceBundle;
 
@@ -92,7 +92,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
      */
     protected SpatialImageWriter(final Spi provider) {
         super(provider);
-        availableLocales = Locales.getAvailableLocales();
+        availableLocales = Locales.SIS.getAvailableLocales();
     }
 
     /**
@@ -592,7 +592,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
             nativeImageMetadataFormatName  = GEOTK_FORMAT_NAME;
             if (getClass().getName().startsWith("org.geotoolkit.")) {
                 vendorName = "Geotoolkit.org";
-                version    = Version.GEOTOOLKIT.toString();
+                version    = Utilities.VERSION.toString();
             }
         }
 

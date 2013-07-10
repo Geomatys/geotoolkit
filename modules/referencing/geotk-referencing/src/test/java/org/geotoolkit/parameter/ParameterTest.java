@@ -27,12 +27,12 @@ import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 import org.opengis.parameter.*;
 import org.opengis.referencing.cs.AxisDirection;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 import org.geotoolkit.test.referencing.ParameterTestBase;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 import static org.opengis.test.Validators.*;
 import static java.lang.StrictMath.*;
 
@@ -45,7 +45,7 @@ import static java.lang.StrictMath.*;
  *
  * @since 2.1
  */
-@Depend(ParameterDescriptorTest.class)
+@DependsOn(ParameterDescriptorTest.class)
 public final strictfp class ParameterTest extends ParameterTestBase {
     /**
      * Strict tolerance factor for floating point comparisons. In the particular
@@ -93,7 +93,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
             // This is the expected exception.
             assertEquals("Test", exception.getParameterName());
         }
-        assertNotSame(parameter, assertSerializable(parameter));
+        assertNotSame(parameter, assertSerializedEquals(parameter));
     }
 
     /**
@@ -103,7 +103,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
     @Test
     public void testIntegerRange() {
         final Parameter<Integer> parameter =
-                new Parameter<Integer>(DefaultParameterDescriptor.create("Range", 15, -30, +40));
+                new Parameter<>(DefaultParameterDescriptor.create("Range", 15, -30, +40));
         assertEquals(Integer.class, parameter.getDescriptor().getValueClass());
         assertEquals(   "intValue", 15, parameter.intValue());
         assertEquals("doubleValue", 15, parameter.doubleValue(), STRICT);
@@ -145,7 +145,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
      */
     @Test
     public void testDoubleType() {
-        final Parameter<Double> parameter  = Parameter.create("Test", 3, METRE);
+        final Parameter<Double> parameter = Parameter.create("Test", 3, METRE);
         final ParameterDescriptor<Double> descriptor = parameter.getDescriptor();
         validate(parameter);
 
@@ -166,7 +166,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
             // This is the expected exception.
             assertEquals("Test", exception.getParameterName());
         }
-        assertNotSame(parameter, assertSerializable(parameter));
+        assertNotSame(parameter, assertSerializedEquals(parameter));
     }
 
     /**
@@ -176,7 +176,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
     @Test
     public void testDoubleRange() {
         final Parameter<Double> parameter =
-                new Parameter<Double>(DefaultParameterDescriptor.create("Range", 15.0, -30.0, +40.0, null));
+                new Parameter<>(DefaultParameterDescriptor.create("Range", 15.0, -30.0, +40.0, null));
         assertEquals(Double.class, parameter.getDescriptor().getValueClass());
         assertEquals(   "intValue", 15, parameter.intValue());
         assertEquals("doubleValue", 15, parameter.doubleValue(), STRICT);
@@ -233,7 +233,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
         assertTrue  ("validValues",  validValues.contains(AxisDirection.SOUTH));
         assertTrue  ("validValues",  validValues.contains(AxisDirection.DISPLAY_LEFT));
         assertTrue  ("validValues",  validValues.contains(AxisDirection.PAST));
-        assertEquals("validValues",  new HashSet<AxisDirection>(Arrays.asList(AxisDirection.values())), validValues);
+        assertEquals("validValues",  new HashSet<>(Arrays.asList(AxisDirection.values())), validValues);
         try {
             parameter.doubleValue();
             fail("doubleValue should not be allowed on AxisDirection");
@@ -241,7 +241,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
             // This is the expected exception.
             assertEquals("Test", exception.getParameterName());
         }
-        assertNotSame(parameter, assertSerializable(parameter));
+        assertNotSame(parameter, assertSerializedEquals(parameter));
     }
 
     /**
@@ -257,7 +257,7 @@ public final strictfp class ParameterTest extends ParameterTestBase {
         validate(p);
 
         assertNull ("default value", d.getDefaultValue());
-        assertEquals("Valid values", new HashSet<AxisDirection>(Arrays.asList(AxisDirection.values())), validValues);
+        assertEquals("Valid values", new HashSet<>(Arrays.asList(AxisDirection.values())), validValues);
         assertEquals("Actual value", AxisDirection.DISPLAY_DOWN, p.getValue());
         p.setValue(AxisDirection.DOWN);
         try {

@@ -26,7 +26,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.io.IOException;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
@@ -89,7 +89,7 @@ final class RegionCalculator {
         // We really need an IdentityHashMap, not an ordinary HashMap, because we will
         // put many AffineTransforms that are equal in the sense of Object.equals  but
         // we still want to associate them to different Tile instances.
-        tiles = new IdentityHashMap<AffineTransform,Tile>();
+        tiles = new IdentityHashMap<>();
     }
 
     /**
@@ -133,7 +133,7 @@ final class RegionCalculator {
      * implementation modify its workspace directly for efficiency.
      */
     public Map<ImageGeometry,Tile[]> tiles() {
-        final Map<ImageGeometry,Tile[]> results = new HashMap<ImageGeometry,Tile[]>(4);
+        final Map<ImageGeometry,Tile[]> results = new HashMap<>(4);
         for (final Map<AffineTransform,Dimension> tilesAT : computePyramidLevels(tiles.keySet())) {
             /*
              * Picks an affine transform to be used as the reference one. We need the finest one.
@@ -258,8 +258,7 @@ final class RegionCalculator {
                 }
                 final ImageGeometry geometry = new ImageGeometry(groupBounds, reference);
                 reference = geometry.getGridToCRS(); // Fetches the immutable instance.
-                final Map<Dimension,TranslatedTransform> pool =
-                        new HashMap<Dimension,TranslatedTransform>();
+                final Map<Dimension,TranslatedTransform> pool = new HashMap<>();
                 for (final Tile tile : tilesArray) {
                     final Dimension subsampling = tile.getSubsampling();
                     TranslatedTransform translated = pool.get(subsampling);
@@ -318,8 +317,7 @@ final class RegionCalculator {
     private static List<Map<AffineTransform,Dimension>> computePyramidLevels(
             final Collection<AffineTransform> gridToCRS)
     {
-        final List<Map<AffineTransform,Dimension>> results =
-                new ArrayList<Map<AffineTransform,Dimension>>(2);
+        final List<Map<AffineTransform,Dimension>> results = new ArrayList<>(2);
         /*
          * First, computes the pyramid levels along the X axis. Transforms that we were unable
          * to classify will be discarded from the first run and put in a subsequent run.
@@ -328,8 +326,7 @@ final class RegionCalculator {
         Arrays.sort(transforms, X_COMPARATOR);
         int length = transforms.length;
         while (length != 0) {
-            final Map<AffineTransform,Dimension> result =
-                    new IdentityHashMap<AffineTransform,Dimension>();
+            final Map<AffineTransform,Dimension> result = new IdentityHashMap<>();
             if (length <= (length = computePyramidLevels(transforms, length, result, false))) {
                 throw new AssertionError(length); // Should always be decreasing.
             }
@@ -509,7 +506,7 @@ final class RegionCalculator {
      */
     @Override
     public String toString() {
-        final List<Tile> tiles = new ArrayList<Tile>(this.tiles.values());
+        final List<Tile> tiles = new ArrayList<>(this.tiles.values());
         Collections.sort(tiles);
         return Tile.toString(tiles, 400);
     }

@@ -118,8 +118,7 @@ public final strictfp class TextMatrixImageWriterTest extends TextImageWriterTes
         prepareImageWriter(false);
         final IIOImage image = createImage(false);
         final TextMatrixImageWriter writer = (TextMatrixImageWriter) this.writer;
-        final StringWriter out = new StringWriter();
-        try {
+        try (StringWriter out = new StringWriter()) {
             writer.setOutput(out);
             writer.write(image);
             assertMultilinesEquals(
@@ -153,8 +152,6 @@ public final strictfp class TextMatrixImageWriterTest extends TextImageWriterTes
             writer.write(null, image, param);
             assertMultilinesEquals(
                 "   0.22  0.24\n", out.toString());
-        } finally {
-            out.close();
         }
         writer.dispose();
     }

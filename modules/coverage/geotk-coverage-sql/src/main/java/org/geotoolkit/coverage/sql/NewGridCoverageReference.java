@@ -44,12 +44,12 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
-import org.geotoolkit.util.Range;
+import org.apache.sis.measure.Range;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Localized;
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -112,7 +112,7 @@ public final class NewGridCoverageReference {
      * The range of sample values to use if no transfer function is defined.
      * Note that the value 0 is reserved for "no data".
      */
-    private static final NumberRange<Integer> PACKED_RANGE = NumberRange.create(1, 255);
+    private static final NumberRange<Integer> PACKED_RANGE = NumberRange.create(1, true, 255, true);
 
     /**
      * The originating database.
@@ -618,8 +618,8 @@ public final class NewGridCoverageReference {
         bestFormat = candidate;
         format = candidate.getIdentifier();
         this.sampleDimensions = (candidate.sampleDimensions != null) ?
-            new ArrayList<GridSampleDimension>(candidate.sampleDimensions) :
-            new ArrayList<GridSampleDimension>();
+                new ArrayList<>(candidate.sampleDimensions) :
+                new ArrayList<GridSampleDimension>();
     }
 
     /**

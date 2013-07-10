@@ -73,7 +73,7 @@ public final strictfp class ParametersTest {
                 // A mandatory parameter with values in the [5 ... 15] range.
                 DefaultParameterDescriptor.create("Test1", 10, 5, 15),
                 // A mandatory parameter with values in the {1, 4, 8} set.
-                new DefaultParameterDescriptor<Integer>("Test2", Integer.class, new Integer[] {1, 4, 8}, 4));
+                new DefaultParameterDescriptor<>("Test2", Integer.class, new Integer[] {1, 4, 8}, 4));
         /*
          * Create a parameter group more flexible than the one below.
          * This is needed in order to allow us to create invalide parameters.

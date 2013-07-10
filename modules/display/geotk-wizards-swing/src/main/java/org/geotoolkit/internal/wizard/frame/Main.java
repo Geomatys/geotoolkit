@@ -24,7 +24,9 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -35,6 +37,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.netbeans.api.wizard.WizardDisplayer;
 
@@ -52,7 +55,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Wizards;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -161,34 +164,49 @@ public final class Main extends JFrame implements ActionListener {
      * Invoked when a button has been pressed.
      *
      * @param event The button which has been pressed.
-     *
-     * @todo Use "switch in strings" when we will be allowed to compile for Java 7.
      */
     @Override
     public void actionPerformed(final ActionEvent event) {
         final String action = event.getActionCommand();
-        if (ABOUT.equals(action)) {
-            final About about = new About();
-            about.showDialog(Main.this);
-        } else if (SETUP.equals(action)) {
-            ControlPanel.show(desktop);
-        } else if (QUIT.equals(action)) {
-            System.exit(0);
-        } else if (COVERAGES.equals(action)) {
-            final CoverageDatabase database = getCoverageDatabase();
-            if (database != null) {
-                show(Vocabulary.Keys.GRIDDED_DATA, new LayerList(database));
+        switch (action) {
+            case ABOUT: {
+                final About about = new About();
+                about.showDialog(Main.this);
+                break;
             }
-        } else if (COVERAGES_SCHEMA.equals(action)) {
-            final CoverageDatabaseWizard wizard = new CoverageDatabaseWizard();
-            WizardDisplayer.showWizard(wizard.createWizard());
-        } else if (MOSAIC.equals(action)) {
-            final MosaicWizard wizard = new MosaicWizard();
-            WizardDisplayer.showWizard(wizard.createWizard());
-        } else if (HOME.equals(action)) try {
-            Desktop.getDesktop().browse(new URI("http://www.geotoolkit.org/modules/display/geotk-wizards-swing/index.html"));
-        } catch (Exception ex) {
-            ExceptionMonitor.show(desktop, ex);
+            case SETUP: {
+                ControlPanel.show(desktop);
+                break;
+            }
+            case QUIT: {
+                System.exit(0);
+                break;
+            }
+            case COVERAGES: {
+                final CoverageDatabase database = getCoverageDatabase();
+                if (database != null) {
+                    show(Vocabulary.Keys.GRIDDED_DATA, new LayerList(database));
+                }
+                break;
+            }
+            case COVERAGES_SCHEMA: {
+                final CoverageDatabaseWizard wizard = new CoverageDatabaseWizard();
+                WizardDisplayer.showWizard(wizard.createWizard());
+                break;
+            }
+            case MOSAIC: {
+                final MosaicWizard wizard = new MosaicWizard();
+                WizardDisplayer.showWizard(wizard.createWizard());
+                break;
+            }
+            case HOME: {
+                try {
+                    Desktop.getDesktop().browse(new URI("http://www.geotoolkit.org/modules/display/geotk-wizards-swing/index.html"));
+                } catch (URISyntaxException | IOException ex) {
+                    ExceptionMonitor.show(desktop, ex);
+                }
+                break;
+            }
         }
     }
 
@@ -236,7 +254,7 @@ public final class Main extends JFrame implements ActionListener {
     public static void main(final String[] args) {
         if (ArraysExt.containsIgnoreCase(args, "--nimbus")) try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException | UnsupportedLookAndFeelException e) {
             Logging.recoverableException(Main.class, "<init>", e);
         } else {
             GraphicsUtilities.setLookAndFeel(Main.class, "<init>");

@@ -26,7 +26,7 @@ import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.TextImageReaderTestBase;
@@ -48,7 +48,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @since 3.07
  */
-@Depend(TextMatrixImageReader.class)
+@DependsOn(TextMatrixImageReader.class)
 public final strictfp class WorldFileImageReaderTest extends TextImageReaderTestBase {
     /**
      * Creates a reader and sets its input if needed.
@@ -203,15 +203,12 @@ public final strictfp class WorldFileImageReaderTest extends TextImageReaderTest
             /*
              * If the input is a stream, then the standard reader should be selected.
              */
-            final ImageInputStream in = ImageIO.createImageInputStream(file);
-            try {
+            try (ImageInputStream in = ImageIO.createImageInputStream(file)) {
                 reader = XImageIO.getReaderBySuffix("txt", in, true, true);
                 assertTrue(reader instanceof TextMatrixImageReader);
                 // Don't botter to read the image. The purpose of
                 // this test is not to test the Matrix ImageReader.
                 reader.dispose();
-            } finally {
-                in.close();
             }
         } finally {
             WorldFileImageReader.Spi.unregisterDefaults(null);
@@ -220,11 +217,5 @@ public final strictfp class WorldFileImageReaderTest extends TextImageReaderTest
             }
             Locale.setDefault(locale);
         }
-    }
-
-    @Test
-    @Ignore("Ignore for now a test that fail randomly.")
-    @Override
-    public void testReadAsBufferedImage() {
     }
 }

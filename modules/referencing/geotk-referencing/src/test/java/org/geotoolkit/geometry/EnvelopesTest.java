@@ -29,7 +29,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.geotoolkit.display.shape.XRectangle2D;
@@ -56,7 +56,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.19 (derived from 3.00)
  */
-@Depend(CRS_Test.class)
+@DependsOn(CRS_Test.class)
 public final strictfp class EnvelopesTest extends ReferencingTestBase {
     /**
      * Small tolerance factor when envelopes calculated in different ways are expected

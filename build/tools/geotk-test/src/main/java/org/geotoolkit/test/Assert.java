@@ -50,58 +50,6 @@ public strictfp class Assert extends org.apache.sis.test.Assert {
     }
 
     /**
-     * Parses two XML tree as DOM documents, and compares the nodes.
-     * The inputs given to this method can be any of the following types:
-     * <p>
-     * <ul>
-     *   <li>{@link org.w3c.dom.Node}; used directly without further processing.</li>
-     *   <li>{@link java.io.File}, {@link java.net.URL} or {@link java.net.URI}: the
-     *       stream is opened and parsed as a XML document.</li>
-     *   <li>{@link String}: The string content is parsed directly as a XML document.
-     *       Encoding <strong>must</strong> be UTF-8 (no other encoding is supported
-     *       by current implementation of this method).</li>
-     * </ul>
-     * <p>
-     * This method will ignore comments and the optional attributes given in arguments.
-     *
-     * @param  expected The expected XML document.
-     * @param  actual   The XML document to compare.
-     * @param  ignoredAttributes The fully-qualified names of attributes to ignore
-     *         (typically {@code "xmlns:*"} and {@code "xsi:schemaLocation"}).
-     *
-     * @since 3.17
-     *
-     * @deprecated Moved to Apache SIS as {@link #assertXmlEquals(Object, Object, String[])}.
-     */
-    @Deprecated
-    public static void assertDomEquals(final Object expected, final Object actual, final String... ignoredAttributes) {
-        assertDomEquals(expected, actual, 0, ignoredAttributes);
-    }
-
-    /**
-     * Parses two XML tree as DOM documents, and compares the nodes with the given tolerance
-     * threshold for numerical values. The inputs given to this method can be any of the types
-     * documented {@linkplain #assertDomEquals(Object, Object, String[]) above}. This method
-     * will ignore comments and the optional attributes given in arguments.
-     *
-     * @param  expected  The expected XML document.
-     * @param  actual    The XML document to compare.
-     * @param  tolerance The tolerance threshold for comparison of numerical values.
-     * @param  ignoredAttributes The fully-qualified names of attributes to ignore
-     *         (typically {@code "xmlns:*"} and {@code "xsi:schemaLocation"}).
-     *
-     * @since 3.18
-     *
-     * @deprecated Moved to Apache SIS as {@link #assertXmlEquals(Object, Object, double, String[])}.
-     */
-    @Deprecated
-    public static void assertDomEquals(final Object expected, final Object actual,
-            final double tolerance, final String... ignoredAttributes)
-    {
-        assertXmlEquals(expected, actual, tolerance, ignoredAttributes);
-    }
-
-    /**
      * Asserts that the given parameter values are equal to the expected ones within a
      * positive delta. Only the elements in the given descriptor are compared, and the
      * comparisons are done in the units declared in the descriptor.
@@ -318,25 +266,5 @@ public strictfp class Assert extends org.apache.sis.test.Assert {
             }
             assertFalse("r1.contains(" + x + ", " + y + ')', r1.contains(x, y));
         }
-    }
-
-    /**
-     * Serializes the given object in memory, deserialize it and ensure that the deserialized
-     * object is equal to the original one. This method doesn't write anything to the disk.
-     * <p>
-     * If the serialization fails, then this method thrown a {@link AssertionError}
-     * as do the other JUnit assertion methods.
-     *
-     * @param  <T> The type of the object to serialize.
-     * @param  object The object to serialize.
-     * @return The deserialized object.
-     *
-     * @since 3.19 (derived from 3.00)
-     *
-     * @deprecated Moved to Apache SIS as {@link #assertSerializedEquals(Object)}.
-     */
-    @Deprecated
-    public static <T> T assertSerializable(final T object) {
-        return assertSerializedEquals(object);
     }
 }

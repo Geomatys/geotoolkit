@@ -37,7 +37,7 @@ import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -115,19 +115,19 @@ public abstract class Operation2D extends AbstractOperation {
      */
     public static final ParameterDescriptor<GridCoverage2D> SOURCE_2;
     static {
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<>(4);
         properties.put(IdentifiedObject.NAME_KEY,  new NamedIdentifier(Citations.OGC, "Source"));
         properties.put(IdentifiedObject.ALIAS_KEY, new NamedIdentifier(Citations.JAI, "source0"));
-        SOURCE_0 = new DefaultParameterDescriptor<GridCoverage2D>(properties, GridCoverage2D.class,
+        SOURCE_0 = new DefaultParameterDescriptor<>(properties, GridCoverage2D.class,
                         null, null, null, null, null, true);
 
         properties.clear();
         properties.put(IdentifiedObject.NAME_KEY, new NamedIdentifier(Citations.JAI, "source1"));
-        SOURCE_1 = new DefaultParameterDescriptor<GridCoverage2D>(properties, GridCoverage2D.class,
+        SOURCE_1 = new DefaultParameterDescriptor<>(properties, GridCoverage2D.class,
                         null, null, null, null, null, true);
 
         properties.put(IdentifiedObject.NAME_KEY, new NamedIdentifier(Citations.JAI, "source2"));
-        SOURCE_2 = new DefaultParameterDescriptor<GridCoverage2D>(properties, GridCoverage2D.class,
+        SOURCE_2 = new DefaultParameterDescriptor<>(properties, GridCoverage2D.class,
                         null, null, null, null, null, true);
     }
 

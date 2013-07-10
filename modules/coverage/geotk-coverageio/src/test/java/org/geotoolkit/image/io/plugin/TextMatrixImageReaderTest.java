@@ -67,11 +67,6 @@ public final strictfp class TextMatrixImageReaderTest extends TextImageReaderTes
         }
     }
 
-    @Override
-    @Ignore("This test randomly fail. Need more investigation.")
-    public void testReadAsRenderedImage() {
-    }
-
     /**
      * Tests the metadata of the {@link "matrix.txt"} file.
      *

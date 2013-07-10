@@ -340,7 +340,7 @@ public final class SwingUtilities extends Static {
      * @param list    The list from which to remove elements.
      * @param indices The index of elements to remove.
      */
-    public static void remove(final DefaultListModel list, final int[] indices) {
+    public static void remove(final DefaultListModel<?> list, final int[] indices) {
         // We must iterate in reverse order, because the
         // index after the removed elements will change.
         int i = indices.length;

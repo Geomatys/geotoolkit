@@ -20,6 +20,7 @@ package org.geotoolkit.display.axis;
 import java.util.Date;
 import java.util.TimeZone;
 import java.text.DateFormat;
+import java.util.Objects;
 import java.awt.RenderingHints;
 
 import javax.measure.unit.Unit;
@@ -27,7 +28,6 @@ import javax.measure.quantity.Duration;
 import javax.measure.converter.UnitConverter;
 
 import org.apache.sis.measure.Units;
-import org.geotoolkit.util.Utilities;
 
 import static org.apache.sis.measure.Units.MILLISECOND;
 
@@ -401,7 +401,7 @@ public class DateGraduation extends AbstractGraduation {
             synchronized (this) {
                 return this.minimum == that.minimum &&
                        this.maximum == that.maximum &&
-                       Utilities.equals(this.timezone, that.timezone);
+                       Objects.equals(this.timezone, that.timezone);
             }
         }
         return false;

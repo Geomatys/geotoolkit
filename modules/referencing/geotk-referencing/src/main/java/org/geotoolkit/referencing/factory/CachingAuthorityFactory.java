@@ -26,6 +26,7 @@ import java.util.EnumMap;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.WeakHashMap;
+import java.util.Objects;
 import java.util.logging.LogRecord;
 import java.util.logging.Level;
 import javax.measure.unit.Unit;
@@ -56,13 +57,13 @@ import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.Exceptions;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.collection.Cache;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.internal.referencing.NilReferencingObject;
+
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -132,8 +133,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      * Every access to this pool must be synchronized on {@code findPool}.
      */
     @GuardedBy("self")
-    private final Map<IdentifiedObject, Map<ComparisonMode,IdentifiedObject>> findPool =
-            new WeakHashMap<IdentifiedObject, Map<ComparisonMode,IdentifiedObject>>();
+    private final Map<IdentifiedObject, Map<ComparisonMode,IdentifiedObject>> findPool = new WeakHashMap<>();
 
     /**
      * Constructs an instance wrapping the specified factory with a default number
@@ -169,7 +169,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
         }
         backingStore = factory;
         ensureNotSmaller("maxStrongReferences", maxStrongReferences, 0);
-        cache = new Cache<Object,Object>(20, maxStrongReferences, false);
+        cache = new Cache<>(20, maxStrongReferences, false);
         final Map<RenderingHints.Key, Object> hints = this.hints;
         if (factory instanceof DatumAuthorityFactory) {
             hints.put(Hints.DATUM_AUTHORITY_FACTORY, factory);
@@ -198,7 +198,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     CachingAuthorityFactory(final Hints userHints, final int maxStrongReferences) {
         super(userHints);
         ensureNotSmaller("maxStrongReferences", maxStrongReferences, 0);
-        cache = new Cache<Object,Object>(20, maxStrongReferences, false);
+        cache = new Cache<>(20, maxStrongReferences, false);
         backingStore = null;
     }
 
@@ -542,8 +542,8 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
         @Override public boolean equals(final Object other) {
             if (other instanceof Key) {
                 final Key that = (Key) other;
-                return Utilities.equals(type, that.type) &&
-                       Utilities.equals(code, that.code);
+                return Objects.equals(type, that.type) &&
+                       Objects.equals(code, that.code);
             }
             return false;
         }
@@ -955,7 +955,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
                 if (!(value instanceof Set<?>)) {
                     final AbstractAuthorityFactory factory = getBackingStore();
                     try {
-                        final Set<CoordinateOperation> result = XCollections.unmodifiableSet(
+                        final Set<CoordinateOperation> result = unmodifiableOrCopy(
                                 factory.createFromCoordinateReferenceSystemCodes(sourceCRS, targetCRS));
                         value = result;
                         return result;
@@ -996,8 +996,8 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
         public boolean equals(final Object other) {
             if (other instanceof CodePair) {
                 final CodePair that = (CodePair) other;
-                return Utilities.equals(this.source, that.source) &&
-                       Utilities.equals(this.target, that.target);
+                return Objects.equals(this.source, that.source) &&
+                       Objects.equals(this.target, that.target);
             }
             return false;
         }
@@ -1209,7 +1209,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
                 synchronized (pool) {
                     Map<ComparisonMode,IdentifiedObject> byMode = pool.get(object);
                     if (byMode == null) {
-                        byMode = new EnumMap<ComparisonMode,IdentifiedObject>(ComparisonMode.class);
+                        byMode = new EnumMap<>(ComparisonMode.class);
                         pool.put(object, byMode);
                     }
                     byMode.put(mode, (candidate == null) ? NilReferencingObject.INSTANCE : candidate);

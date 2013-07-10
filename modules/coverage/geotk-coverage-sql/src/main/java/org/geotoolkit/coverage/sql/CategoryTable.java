@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage.sql;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransformFactory;
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.internal.coverage.TransferFunction;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
@@ -83,7 +84,7 @@ final class CategoryTable extends Table {
      * in order to avoid reloading the colors from the files for every images inserted
      * in the database.
      */
-    private transient ComboBoxModel paletteChoices;
+    private transient ComboBoxModel<ColorPalette> paletteChoices;
 
     /**
      * Creates a category table.
@@ -125,8 +126,8 @@ final class CategoryTable extends Table {
         int paletteRange = 0;
         String paletteName = null;
         final CategoryQuery query = (CategoryQuery) this.query;
-        final List<Category> categories = new ArrayList<Category>();
-        final Map<Integer,Category[]> dimensions = new HashMap<Integer,Category[]>();
+        final List<Category> categories = new ArrayList<>();
+        final Map<Integer,Category[]> dimensions = new HashMap<>();
         MathTransformFactory mtFactory = null;  // Will be fetched only if needed.
         MathTransform      exponential = null;  // Will be fetched only if needed.
         int bandOfPreviousCategory = 0;
@@ -143,127 +144,126 @@ final class CategoryTable extends Table {
             final int c1Index       = indexOf(query.c1      );
             final int functionIndex = indexOf(query.function);
             final int colorsIndex   = indexOf(query.colors  );
-            final ResultSet results = statement.executeQuery();
-            PaletteFactory palettes = null;
-            while (results.next()) {
-                boolean isQuantifiable = true;
-                final int        band = results.getInt   (bandIndex);
-                final String     name = results.getString(nameIndex);
-                final int       lower = results.getInt   (lowerIndex);
-                final int       upper = results.getInt   (upperIndex);
-                final double       c0 = results.getDouble(c0Index); isQuantifiable &= !results.wasNull();
-                final double       c1 = results.getDouble(c1Index); isQuantifiable &= !results.wasNull();
-                final String function = results.getString(functionIndex);
-                final String  colorID = results.getString(colorsIndex);
-                /*
-                 * Decode the "colors" value. This string is either the RGB numeric code starting
-                 * with '#" (as in "#D2C8A0"), or the name of a color palette (as "rainbow").
-                 */
-                Color[] colors = null;
-                if (colorID != null) {
-                    final String id = colorID.trim();
-                    if (!id.isEmpty()) try {
-                        if (colorID.charAt(0) == '#') {
-                            colors = new Color[] {Color.decode(id)};
-                         } else {
-                            if (palettes == null) {
-                                palettes = ((TableFactory) getDatabase()).paletteFactory;
-                                palettes.setWarningLocale(getLocale());
-                            }
-                            colors = palettes.getColors(colorID);
-                            final int range = upper - lower;
-                            if (paletteName == null || range > paletteRange) {
-                                paletteName = colorID;
-                                paletteRange = range;
-                            }
-                         }
-                    } catch (Exception exception) { // Includes IOException and NumberFormatException
-                        throw new IllegalRecordException(exception, this, results, colorsIndex, name);
-                    }
-                }
-                /*
-                 * Creates a category for the current record. A category can be 1) qualitive,
-                 * 2) quantitative and linear, or 3) quantitative and logarithmic.
-                 */
-                Category category;
-                final NumberRange<?> range = NumberRange.create(lower, upper);
-                if (!isQuantifiable) {
-                    // Qualitative category.
-                    if (colors == null) {
-                        colors = TRANSPARENT;
-                    }
-                    category = new Category(name, colors, range, (MathTransform1D) null);
-                } else {
-                    // Quantitative category.
-                    if (mtFactory == null) {
-                        mtFactory = ((SpatialDatabase) getDatabase()).getMathTransformFactory();
-                    }
-                    MathTransform tr;
-                    try {
-                        tr = mtFactory.createAffineTransform(new Matrix2(c1, c0, 0, 1));
-                        /*
-                         * Check for transfer function:
-                         *
-                         *   - NULL is considered synonymous to "linear".
-                         *
-                         *   - "log" (not to be confused with "logarithmic") is handled as
-                         *     "exponential" for compatibility with legacy databases. It was
-                         *      interpreted as log(y)=C0+C1*x.
-                         *
-                         *   - "logarithmic" is not yet implemented, because we don't know yet
-                         *     if the log should be computed before or after the offset and scale
-                         *     factor.
-                         *
-                         * NOTE: The formulas used below must be consistent with the formulas in
-                         *       MetadataHelper.getGridSampleDimensions(List<SampleDimension>).
-                         */
-                        if (function != null && !function.equalsIgnoreCase("linear")) {
-                            if (function.equalsIgnoreCase("exponential") || function.equalsIgnoreCase("log")) {
-                                // Quantitative and logarithmic category.
-                                if (exponential == null) {
-                                    final ParameterValueGroup param = mtFactory.getDefaultParameters("Exponential");
-                                    param.parameter("base").setValue(10d); // Must be a 'double'
-                                    exponential = mtFactory.createParameterizedTransform(param);
+            try (ResultSet results = statement.executeQuery()) {
+                PaletteFactory palettes = null;
+                while (results.next()) {
+                    boolean isQuantifiable = true;
+                    final int        band = results.getInt   (bandIndex);
+                    final String     name = results.getString(nameIndex);
+                    final int       lower = results.getInt   (lowerIndex);
+                    final int       upper = results.getInt   (upperIndex);
+                    final double       c0 = results.getDouble(c0Index); isQuantifiable &= !results.wasNull();
+                    final double       c1 = results.getDouble(c1Index); isQuantifiable &= !results.wasNull();
+                    final String function = results.getString(functionIndex);
+                    final String  colorID = results.getString(colorsIndex);
+                    /*
+                     * Decode the "colors" value. This string is either the RGB numeric code starting
+                     * with '#" (as in "#D2C8A0"), or the name of a color palette (as "rainbow").
+                     */
+                    Color[] colors = null;
+                    if (colorID != null) {
+                        final String id = colorID.trim();
+                        if (!id.isEmpty()) try {
+                            if (colorID.charAt(0) == '#') {
+                                colors = new Color[] {Color.decode(id)};
+                             } else {
+                                if (palettes == null) {
+                                    palettes = ((TableFactory) getDatabase()).paletteFactory;
+                                    palettes.setWarningLocale(getLocale());
                                 }
-                                tr = mtFactory.createConcatenatedTransform(tr, exponential);
-                            } else {
-                                throw new IllegalRecordException(errors().getString(
-                                        Errors.Keys.UNSUPPORTED_OPERATION_1, function),
-                                        this, results, functionIndex, name);
-                            }
+                                colors = palettes.getColors(colorID);
+                                final int range = upper - lower;
+                                if (paletteName == null || range > paletteRange) {
+                                    paletteName = colorID;
+                                    paletteRange = range;
+                                }
+                             }
+                        } catch (IOException | NumberFormatException exception) {
+                            throw new IllegalRecordException(exception, this, results, colorsIndex, name);
                         }
-                    } catch (FactoryException exception) {
-                        results.close();
-                        throw new CatalogException(exception);
                     }
-                    try {
-                        category = new Category(name, colors, range, (MathTransform1D) tr);
-                    } catch (ClassCastException exception) { // If 'tr' is not a MathTransform1D.
-                        throw new IllegalRecordException(exception, this, results, functionIndex, format);
-                        // 'results' is closed by the above constructor.
+                    /*
+                     * Creates a category for the current record. A category can be 1) qualitive,
+                     * 2) quantitative and linear, or 3) quantitative and logarithmic.
+                     */
+                    Category category;
+                    final NumberRange<?> range = NumberRange.create(lower, true, upper, true);
+                    if (!isQuantifiable) {
+                        // Qualitative category.
+                        if (colors == null) {
+                            colors = TRANSPARENT;
+                        }
+                        category = new Category(name, colors, range, (MathTransform1D) null);
+                    } else {
+                        // Quantitative category.
+                        if (mtFactory == null) {
+                            mtFactory = ((SpatialDatabase) getDatabase()).getMathTransformFactory();
+                        }
+                        MathTransform tr;
+                        try {
+                            tr = mtFactory.createAffineTransform(new Matrix2(c1, c0, 0, 1));
+                            /*
+                             * Check for transfer function:
+                             *
+                             *   - NULL is considered synonymous to "linear".
+                             *
+                             *   - "log" (not to be confused with "logarithmic") is handled as
+                             *     "exponential" for compatibility with legacy databases. It was
+                             *      interpreted as log(y)=C0+C1*x.
+                             *
+                             *   - "logarithmic" is not yet implemented, because we don't know yet
+                             *     if the log should be computed before or after the offset and scale
+                             *     factor.
+                             *
+                             * NOTE: The formulas used below must be consistent with the formulas in
+                             *       MetadataHelper.getGridSampleDimensions(List<SampleDimension>).
+                             */
+                            if (function != null && !function.equalsIgnoreCase("linear")) {
+                                if (function.equalsIgnoreCase("exponential") || function.equalsIgnoreCase("log")) {
+                                    // Quantitative and logarithmic category.
+                                    if (exponential == null) {
+                                        final ParameterValueGroup param = mtFactory.getDefaultParameters("Exponential");
+                                        param.parameter("base").setValue(10d); // Must be a 'double'
+                                        exponential = mtFactory.createParameterizedTransform(param);
+                                    }
+                                    tr = mtFactory.createConcatenatedTransform(tr, exponential);
+                                } else {
+                                    throw new IllegalRecordException(errors().getString(
+                                            Errors.Keys.UNSUPPORTED_OPERATION_1, function),
+                                            this, results, functionIndex, name);
+                                }
+                            }
+                        } catch (FactoryException exception) {
+                            throw new CatalogException(exception);
+                        }
+                        try {
+                            category = new Category(name, colors, range, (MathTransform1D) tr);
+                        } catch (ClassCastException exception) { // If 'tr' is not a MathTransform1D.
+                            throw new IllegalRecordException(exception, this, results, functionIndex, format);
+                            // 'results' is closed by the above constructor.
+                        }
                     }
-                }
-                /*
-                 * Add to the new category to the lists. Note that the test below for the
-                 * maximum band count is arbitrary and exists only for spotting bad records.
-                 */
-                final int minBand = Math.max(1, bandOfPreviousCategory);
-                if (band < minBand || band > MAXIMUM_BANDS) {
-                    throw new IllegalRecordException(errors().getString(Errors.Keys.VALUE_OUT_OF_BOUNDS_3,
-                            band, minBand, MAXIMUM_BANDS), this, results, bandIndex, name);
-                }
-                // If we are beginning a new band, stores the previous
-                // categories in the 'dimensions' map.
-                if (band != bandOfPreviousCategory) {
-                    if (!categories.isEmpty()) {
-                        store(dimensions, bandOfPreviousCategory, categories);
-                        categories.clear();
+                    /*
+                     * Add to the new category to the lists. Note that the test below for the
+                     * maximum band count is arbitrary and exists only for spotting bad records.
+                     */
+                    final int minBand = Math.max(1, bandOfPreviousCategory);
+                    if (band < minBand || band > MAXIMUM_BANDS) {
+                        throw new IllegalRecordException(errors().getString(Errors.Keys.VALUE_OUT_OF_BOUNDS_3,
+                                band, minBand, MAXIMUM_BANDS), this, results, bandIndex, name);
                     }
-                    bandOfPreviousCategory = band;
+                    // If we are beginning a new band, stores the previous
+                    // categories in the 'dimensions' map.
+                    if (band != bandOfPreviousCategory) {
+                        if (!categories.isEmpty()) {
+                            store(dimensions, bandOfPreviousCategory, categories);
+                            categories.clear();
+                        }
+                        bandOfPreviousCategory = band;
+                    }
+                    categories.add(category);
                 }
-                categories.add(category);
             }
-            results.close();
             release(lc, ce);
         }
         if (!categories.isEmpty()) {

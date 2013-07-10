@@ -29,7 +29,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.lang.Debug;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.processing.OperationJAI;
@@ -370,10 +370,10 @@ public class GradientMagnitude extends OperationJAI {
         double factor = getNormalizationFactor(mask1, mask2) / (size-1);
         if (factor>0 && !Double.isInfinite(factor)) {
             range = category.geophysics(true).getRange();
-            final double minimum = range.getMinimum();
-            final double maximum = range.getMaximum();
+            final double minimum = range.getMinDouble();
+            final double maximum = range.getMaxDouble();
             factor *= (maximum - minimum) * DEFAULT_RANGE_SCALE;
-            range = NumberRange.create(0, factor);
+            range = NumberRange.create(0, true, factor, true);
         }
         if (range != null) {
             category = new Category(category.getName(), DEFAULT_COLOR_PALETTE, samples, range);

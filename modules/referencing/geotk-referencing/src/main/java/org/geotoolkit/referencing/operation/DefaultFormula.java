@@ -20,15 +20,14 @@
  */
 package org.geotoolkit.referencing.operation;
 
+import java.util.Objects;
 import java.io.Serializable;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.operation.Formula;
-
-import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -127,8 +126,8 @@ public class DefaultFormula implements Formula, Serializable {
         }
         if (object != null && object.getClass() == getClass()) {
             final DefaultFormula that = (DefaultFormula) object;
-            return Utilities.equals(this.formula,  that.formula) &&
-                   Utilities.equals(this.citation, that.citation);
+            return Objects.equals(this.formula,  that.formula) &&
+                   Objects.equals(this.citation, that.citation);
         }
         return false;
     }

@@ -25,9 +25,9 @@ import java.sql.PreparedStatement;
 import java.awt.geom.Dimension2D;
 import java.io.IOException;
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.util.collection.RangeSet;
-import org.geotoolkit.util.collection.XCollections;
+import org.apache.sis.internal.util.CollectionsExt;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.BoundedSingletonTable;
@@ -258,7 +258,7 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     public final Set<GridCoverageEntry> getEntries() throws SQLException {
         final Dimension2D resolution = envelope.getPreferredResolution();
         final  Set<GridCoverageEntry> entries  = super.getEntries();
-        final List<GridCoverageEntry> filtered = new ArrayList<GridCoverageEntry>(entries.size());
+        final List<GridCoverageEntry> filtered = new ArrayList<>(entries.size());
 loop:   for (final GridCoverageEntry newEntry : entries) {
             /*
              * If there is many entries with the same spatio-temporal envelope but different
@@ -367,7 +367,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      * @throws SQLException if an error occurred while reading the database.
      */
     public final SortedSet<Date> getAvailableTimes() throws SQLException {
-        final Set<Long> dates = new HashSet<Long>();
+        final Set<Long> dates = new HashSet<>();
         final GridCoverageQuery query = (GridCoverageQuery) super.query;
         final LocalCache lc = getLocalCache();
         synchronized (lc) {
@@ -376,29 +376,29 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
             final int endTimeIndex   = indexOf(query.endTime);
             final Calendar calendar  = getCalendar(lc);
             final PreparedStatement statement = ce.statement;
-            final ResultSet results = statement.executeQuery();
-            while (results.next()) {
-                final Date startTime = results.getTimestamp(startTimeIndex, calendar);
-                final Date   endTime = results.getTimestamp(  endTimeIndex, calendar);
-                final long      time;
-                if (startTime != null) {
-                    if (endTime != null) {
-                        time = (startTime.getTime() + endTime.getTime()) >>> 1;
+            try (ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    final Date startTime = results.getTimestamp(startTimeIndex, calendar);
+                    final Date   endTime = results.getTimestamp(  endTimeIndex, calendar);
+                    final long      time;
+                    if (startTime != null) {
+                        if (endTime != null) {
+                            time = (startTime.getTime() + endTime.getTime()) >>> 1;
+                        } else {
+                            time = startTime.getTime();
+                        }
+                    } else if (endTime != null) {
+                        time = endTime.getTime();
                     } else {
-                        time = startTime.getTime();
+                        continue;
                     }
-                } else if (endTime != null) {
-                    time = endTime.getTime();
-                } else {
-                    continue;
+                    dates.add(time);
                 }
-                dates.add(time);
             }
-            results.close();
             release(lc, ce);
         }
         if (dates.isEmpty()) {
-            return XCollections.emptySortedSet();
+            return CollectionsExt.emptySortedSet();
         }
         return new UnmodifiableArraySortedSet.Date(dates);
     }
@@ -421,33 +421,33 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
             final Calendar calendar = getCalendar(lc);
             final LocalCache.Stmt ce = getStatement(lc, QueryType.AVAILABLE_DATA);
             final PreparedStatement statement = ce.statement;
-            final ResultSet results = statement.executeQuery();
-            final LayerEntry layer  = this.layer; // Don't use getLayerEntry() because we want to accept null.
-            final long timeInterval = (layer != null) ? Math.round(layer.timeInterval * MILLIS_IN_DAY) : 0;
-            if (addTo == null) {
-                addTo = new RangeSet<Date>(Date.class);
-            }
-            while (results.next()) {
-                final Date startTime = results.getTimestamp(startTimeIndex, calendar);
-                final Date   endTime = results.getTimestamp(  endTimeIndex, calendar);
-                if (startTime != null && endTime != null) {
-                    final long lgEndTime = endTime.getTime();
-                    final long checkTime = lgEndTime - timeInterval;
-                    if (checkTime <= lastEndTime  &&  checkTime < startTime.getTime()) {
-                        /*
-                         * Use case: some layer may produce images every 24 hours, but declare
-                         * a time range spaning only 12 hours for each image. We don't want to
-                         * consider the 12 remaining hours as a hole in data availability. If
-                         * the 'timeInterval' is set to "1 day", then we merge the time range
-                         * of consecutive images.
-                         */
-                        startTime.setTime(checkTime);
+            try (ResultSet results = statement.executeQuery()) {
+                final LayerEntry layer  = this.layer; // Don't use getLayerEntry() because we want to accept null.
+                final long timeInterval = (layer != null) ? Math.round(layer.timeInterval * MILLIS_IN_DAY) : 0;
+                if (addTo == null) {
+                    addTo = new RangeSet<>(Date.class);
+                }
+                while (results.next()) {
+                    final Date startTime = results.getTimestamp(startTimeIndex, calendar);
+                    final Date   endTime = results.getTimestamp(  endTimeIndex, calendar);
+                    if (startTime != null && endTime != null) {
+                        final long lgEndTime = endTime.getTime();
+                        final long checkTime = lgEndTime - timeInterval;
+                        if (checkTime <= lastEndTime  &&  checkTime < startTime.getTime()) {
+                            /*
+                             * Use case: some layer may produce images every 24 hours, but declare
+                             * a time range spaning only 12 hours for each image. We don't want to
+                             * consider the 12 remaining hours as a hole in data availability. If
+                             * the 'timeInterval' is set to "1 day", then we merge the time range
+                             * of consecutive images.
+                             */
+                            startTime.setTime(checkTime);
+                        }
+                        lastEndTime = lgEndTime;
+                        addTo.add(startTime, endTime);
                     }
-                    lastEndTime = lgEndTime;
-                    addTo.add(startTime, endTime);
                 }
             }
-            results.close();
             release(lc, ce);
         }
         return addTo;
@@ -521,7 +521,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
         final int extent = results.getInt(indexOf(query.spatialExtent));
         final GridGeometryEntry geometry = getGridGeometryTable().getEntry(extent);
         final NumberRange<?> verticalRange = envelope.getVerticalRange();
-        final double z = 0.5*(verticalRange.getMinimum() + verticalRange.getMaximum());
+        final double z = 0.5*(verticalRange.getMinDouble() + verticalRange.getMaxDouble());
         return new GridCoverageIdentifier(series, filename, index,
                 geometry.indexOfNearestAltitude(z), geometry);
     }
@@ -592,7 +592,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      */
     final Map<Integer,Integer> count(final SeriesEntry series, final boolean groupByExtent) throws SQLException {
         final GridCoverageQuery query = (GridCoverageQuery) this.query;
-        final Map<Integer,Integer> count = new HashMap<Integer,Integer>();
+        final Map<Integer,Integer> count = new HashMap<>();
         final LocalCache lc = getLocalCache();
         synchronized (lc) {
             final SeriesEntry oldSeries = specificSeries;
@@ -601,16 +601,16 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
                 final LocalCache.Stmt ce = getStatement(lc, QueryType.COUNT,
                         groupByExtent ? query.spatialExtent : query.series);
                 final PreparedStatement stmt = ce.statement;
-                final ResultSet results = stmt.executeQuery();
-                while (results.next()) {
-                    final Integer k = results.getInt(1);
-                    final int     c = results.getInt(2);
-                    final Integer p = count.put(k, c);
-                    if (p != null) {
-                        count.put(k, p+c); // Should not happen, but let be paranoiac.
+                try (ResultSet results = stmt.executeQuery()) {
+                    while (results.next()) {
+                        final Integer k = results.getInt(1);
+                        final int     c = results.getInt(2);
+                        final Integer p = count.put(k, c);
+                        if (p != null) {
+                            count.put(k, p+c); // Should not happen, but let be paranoiac.
+                        }
                     }
                 }
-                results.close();
                 release(lc, ce);
             } finally {
                 specificSeries = oldSeries;

@@ -96,7 +96,7 @@ final class NetcdfAxis2D extends NetcdfAxis {
      */
     @Override
     final Map<Integer,Dimension> getDomain() {
-        final Map<Integer,Dimension> domain = new LinkedHashMap<Integer,Dimension>(4);
+        final Map<Integer,Dimension> domain = new LinkedHashMap<>(4);
         domain.put(iDim, axis.getDimension(0));
         domain.put(jDim, axis.getDimension(1));
         return domain;

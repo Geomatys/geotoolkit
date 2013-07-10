@@ -21,10 +21,11 @@ import java.util.Locale;
 import java.io.PrintWriter;
 import java.sql.Driver;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import org.geotoolkit.internal.sql.Dialect;
 import org.geotoolkit.io.X364;
-import org.geotoolkit.util.Version;
+import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;
@@ -61,7 +62,7 @@ final class VersionAction {
         }
         final Vocabulary resources = Vocabulary.getResources(locale);
         out.print("Geotoolkit.org ");
-        out.println(Version.GEOTOOLKIT);
+        out.println(Utilities.VERSION);
         out.print(resources.getString(Vocabulary.Keys.JAVA_VERSION_1, System.getProperty("java.version")));
         out.print(faint);
         out.print(" (");
@@ -123,7 +124,7 @@ final class VersionAction {
                         break;
                     }
                 }
-            } catch (Exception e) {
+            } catch (ReflectiveOperationException | SQLException e) {
                 result = e;
             }
             out.print(header);

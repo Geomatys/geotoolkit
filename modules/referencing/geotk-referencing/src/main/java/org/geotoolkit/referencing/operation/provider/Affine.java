@@ -247,7 +247,7 @@ public class Affine extends MathTransformProvider {
     public static final ParameterDescriptorGroup PARAMETERS;
     static {
         final NamedIdentifier name = new NamedIdentifier(Citations.OGC, "Affine");
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<>(4);
         properties.put(NAME_KEY,        name);
         properties.put(IDENTIFIERS_KEY, new IdentifierCode(Citations.EPSG, 9624));
         properties.put(ALIAS_KEY, new ReferenceIdentifier[] {

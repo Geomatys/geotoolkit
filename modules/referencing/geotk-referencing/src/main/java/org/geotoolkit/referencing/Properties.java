@@ -30,9 +30,10 @@ import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.CoordinateOperation;
 
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
-import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
+
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -167,14 +168,14 @@ final class Properties extends AbstractMap<String,Object> {
     @Override
     public Set<Entry<String,Object>> entrySet() {
         if (entries == null) {
-            entries = new HashSet<Entry<String,Object>>(hashMapCapacity(KEYS.length));
+            entries = new HashSet<>(hashMapCapacity(KEYS.length));
             for (int i=0; i<KEYS.length; i++) {
                 final Object value = get(i);
                 if (value != null) {
-                    entries.add(new SimpleEntry<String,Object>(KEYS[i], value));
+                    entries.add(new SimpleEntry<>(KEYS[i], value));
                 }
             }
-            entries = XCollections.unmodifiableSet(entries);
+            entries = unmodifiableOrCopy(entries);
         }
         return entries;
     }

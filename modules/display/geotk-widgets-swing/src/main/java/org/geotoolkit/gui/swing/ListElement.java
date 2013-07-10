@@ -19,9 +19,9 @@ package org.geotoolkit.gui.swing;
 
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.Objects;
 import java.io.Serializable;
 import org.opengis.util.InternationalString;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -109,8 +109,8 @@ final class ListElement implements Comparable<Object>, Serializable {
     public boolean equals(final Object other) {
         if (other instanceof ListElement) {
             final ListElement that = (ListElement) other;
-            return Utilities.equals(this.element, that.element) &&
-                   Utilities.equals(this.string,  that.string);
+            return Objects.equals(this.element, that.element) &&
+                   Objects.equals(this.string,  that.string);
         }
         return false;
     }

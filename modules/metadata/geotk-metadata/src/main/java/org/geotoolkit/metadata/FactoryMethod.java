@@ -154,7 +154,7 @@ final class FactoryMethod {
         final Class<?>[] types = method.getParameterTypes();
         final Object[] parameters = new Object[types.length];
         if (types.length > 1) {
-            final Map<String,Object> reduced = new LinkedHashMap<String,Object>(properties);
+            final Map<String,Object> reduced = new LinkedHashMap<>(properties);
             properties = reduced;
             for (int i=1; i<types.length; i++) {
                 final Class<?> expected = types[i];

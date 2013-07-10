@@ -43,7 +43,7 @@ import static org.opengis.test.Assert.*;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
  *
- * @see org.geotoolkit.naming.GeoapiTest
+ * @see org.apache.sis.util.iso.GeoapiTest
  * @see org.geotoolkit.referencing.factory.GeoapiTest
  * @see org.geotoolkit.referencing.factory.epsg.GeoapiTest
  * @see org.geotoolkit.referencing.operation.transform.GeoapiTest

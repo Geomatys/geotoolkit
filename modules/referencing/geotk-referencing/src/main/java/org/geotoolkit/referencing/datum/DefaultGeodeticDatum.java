@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -45,11 +46,10 @@ import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.io.wkt.Formatter;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.Utilities.deepEquals;
+import static org.apache.sis.util.Utilities.deepEquals;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
@@ -103,7 +103,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
             new NamedIdentifier(Citations.ESRI,   "D_WGS_1984"),
             new NamedIdentifier(Citations.EPSG,   "World Geodetic System 1984")
         };
-        final Map<String,Object> properties = new HashMap<String,Object>(6);
+        final Map<String,Object> properties = new HashMap<>(6);
         properties.put(NAME_KEY,  identifiers[0]);
         properties.put(ALIAS_KEY, identifiers);
         properties.put(IDENTIFIERS_KEY, new NamedIdentifier(Citations.EPSG, "6326"));
@@ -127,7 +127,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
             new NamedIdentifier(Citations.OGC,  "WGS72"),
             new NamedIdentifier(Citations.EPSG, "World Geodetic System 1972")
         };
-        final Map<String,Object> properties = new HashMap<String,Object>(6);
+        final Map<String,Object> properties = new HashMap<>(6);
         properties.put(NAME_KEY,  identifiers[0]);
         properties.put(ALIAS_KEY, identifiers);
         properties.put(IDENTIFIERS_KEY, new NamedIdentifier(Citations.EPSG, "6322"));
@@ -288,7 +288,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
                 if (bursaWolf.length == 0) {
                     bursaWolf = null;
                 } else {
-                    final Set<BursaWolfParameters> s = new LinkedHashSet<BursaWolfParameters>();
+                    final Set<BursaWolfParameters> s = new LinkedHashSet<>();
                     for (int i=0; i<bursaWolf.length; i++) {
                         s.add(bursaWolf[i].clone());
                     }
@@ -455,7 +455,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
                         if (deepEquals(sourceStep, targetStep, ComparisonMode.IGNORE_METADATA)) {
                             final XMatrix step1, step2;
                             if (exclusion == null) {
-                                exclusion = new HashSet<GeodeticDatum>();
+                                exclusion = new HashSet<>();
                             }
                             if (exclusion.add(source)) {
                                 if (exclusion.add(target)) {
@@ -520,9 +520,9 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
             switch (mode) {
                 case STRICT: {
                     final DefaultGeodeticDatum that = (DefaultGeodeticDatum) object;
-                    return Utilities.equals(this.ellipsoid,     that.ellipsoid)     &&
-                           Utilities.equals(this.primeMeridian, that.primeMeridian) &&
-                              Arrays.equals(this.bursaWolf,     that.bursaWolf);
+                    return Objects.equals(this.ellipsoid,     that.ellipsoid)     &&
+                           Objects.equals(this.primeMeridian, that.primeMeridian) &&
+                            Arrays.equals(this.bursaWolf,     that.bursaWolf);
                 }
                 default: {
                     final GeodeticDatum that = (GeodeticDatum) object;

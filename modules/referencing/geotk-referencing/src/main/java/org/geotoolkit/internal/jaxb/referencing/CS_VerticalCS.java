@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.referencing;
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.cs.VerticalCS;
 import org.geotoolkit.referencing.cs.DefaultVerticalCS;
-import org.geotoolkit.internal.jaxb.gco.PropertyType;
+import org.apache.sis.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -75,7 +75,6 @@ public final class CS_VerticalCS extends PropertyType<CS_VerticalCS, VerticalCS>
      *
      * @return The metadata to be marshalled.
      */
-    @Override
     @XmlElement(name = "VerticalCS")
     public DefaultVerticalCS getElement() {
         return skip() ? null : DefaultVerticalCS.castOrCopy(metadata);

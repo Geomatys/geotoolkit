@@ -17,16 +17,17 @@
  */
 package org.geotoolkit.coverage.io;
 
+import java.util.Objects;
 import java.io.IOException;
 import java.awt.image.ColorModel;
 import javax.imageio.ImageTypeSpecifier;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.image.io.Palette;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.coverage.GridSampleDimension;
+
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -64,7 +65,7 @@ final class SampleDimensionPalette extends Palette {
         {
             final GridSampleDimension[] bands = BANDS.get();
             final GridSampleDimension band = bands[Math.min(visibleBand, bands.length-1)];
-            if (XCollections.isNullOrEmpty(band.getCategories())) {
+            if (isNullOrEmpty(band.getCategories())) {
                 return super.getPalette(name, lower, upper, size, numBands, visibleBand);
             }
             Palette palette = new SampleDimensionPalette(this, name, band, numBands, visibleBand);
@@ -76,7 +77,7 @@ final class SampleDimensionPalette extends Palette {
     /**
      * Workaround for passing the bands argument to {@code FACTORY.getPalette(...)}.
      */
-    static final ThreadLocal<GridSampleDimension[]> BANDS = new ThreadLocal<GridSampleDimension[]>();
+    static final ThreadLocal<GridSampleDimension[]> BANDS = new ThreadLocal<>();
 
     /**
      * The sample dimension to use for creating the color model.
@@ -126,7 +127,7 @@ final class SampleDimensionPalette extends Palette {
         }
         if (super.equals(object)) {
             final SampleDimensionPalette that = (SampleDimensionPalette) object;
-            return Utilities.equals(band, that.band);
+            return Objects.equals(band, that.band);
         }
         return false;
     }

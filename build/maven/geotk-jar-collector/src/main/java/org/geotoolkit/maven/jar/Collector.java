@@ -19,9 +19,9 @@ package org.geotoolkit.maven.jar;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Files;
 import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -233,20 +233,20 @@ public class Collector extends AbstractMojo implements FileFilter {
     }
 
     /**
-     * Copies the given file to the given target file.
+     * Copies the given file to the given target file. Since JDK 7, this method actually
+     * creates a hard link.
      *
      * @param file The source file to read.
      * @param copy The destination file to create.
      */
     private static void copyFileToDirectory(final File file, final File copy) throws IOException {
-        final FileInputStream in = new FileInputStream(file);
-        final FileOutputStream out = new FileOutputStream(copy);
-        final byte[] buffer = new byte[4096];
-        int c;
-        while ((c = in.read(buffer)) >= 0) {
-            out.write(buffer, 0, c);
+        final Path source = file.toPath();
+        final Path target = copy.toPath();
+        try {
+            Files.createLink(target, source);
+        } catch (UnsupportedOperationException e) {
+            // If hard links are not supported, do a plain copy.
+            Files.copy(source, target);
         }
-        out.close();
-        in.close();
     }
 }

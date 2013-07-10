@@ -171,7 +171,7 @@
       org.geotoolkit.build:org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra:org.opengis:com
     </javadoc.exclude>
     <geoapi.version>3.1-M04</geoapi.version>
-    <sis.version>0.3-jdk6</sis.version>
+    <sis.version>0.3-jdk7</sis.version>
     <derby.version>10.8.2.2</derby.version> <!-- If updated, need to search occurrences in APT files. -->
     <netcdf.version>4.3.10</netcdf.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -482,8 +482,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.6</source>       <!-- The -source argument for the Java compiler.   -->
-          <target>1.6</target>       <!-- The -target argument for the Java compiler.   -->
+          <source>1.7</source>       <!-- The -source argument for the Java compiler.   -->
+          <target>1.7</target>       <!-- The -target argument for the Java compiler.   -->
           <debug>false</debug>       <!-- Whether to include debugging information.     -->
           <optimize>true</optimize>  <!-- Whether to optimize the compiled code.        -->
           <encoding>${project.build.sourceEncoding}</encoding>
@@ -620,7 +620,7 @@
                 <encoding>${project.build.sourceEncoding}</encoding>
                 <docencoding>${website.encoding}</docencoding>
                 <charset>${website.encoding}</charset>
-                <source>1.6</source>             <!-- Enables javadoc to handle assertions present in J2SE 1.4.  -->
+                <source>1.7</source>             <!-- Enables javadoc to handle assertions present in J2SE 1.4.  -->
                 <locale>en</locale>              <!-- Locale that javadoc uses when generating documentation.    -->
                 <noqualifier>all</noqualifier>   <!-- Omit qualifying package name before class names in output. -->
                 <aggregate>true</aggregate>      <!-- Build an aggregated report at the root.                    -->

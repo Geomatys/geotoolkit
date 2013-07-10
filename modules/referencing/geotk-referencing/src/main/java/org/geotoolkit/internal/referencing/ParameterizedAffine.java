@@ -17,11 +17,11 @@
  */
 package org.geotoolkit.internal.referencing;
 
+import java.util.Objects;
 import java.awt.geom.AffineTransform;
 import org.opengis.referencing.operation.MathTransform;
 import org.geotoolkit.referencing.operation.transform.Parameterized;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -96,7 +96,7 @@ public class ParameterizedAffine extends AffineTransform2D {
         if (super.equals(object)) {
             if (object instanceof ParameterizedAffine) {
                 final ParameterizedAffine that = (ParameterizedAffine) object;
-                return Utilities.equals(this.parameters, that.parameters);
+                return Objects.equals(this.parameters, that.parameters);
             }
             return true;
         }

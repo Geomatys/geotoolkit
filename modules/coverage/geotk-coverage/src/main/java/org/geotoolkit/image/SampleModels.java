@@ -21,7 +21,7 @@ import java.awt.image.*;
 import org.geotoolkit.lang.Static;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 
 /**

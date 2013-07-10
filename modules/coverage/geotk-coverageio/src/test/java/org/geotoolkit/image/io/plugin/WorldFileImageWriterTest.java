@@ -119,16 +119,7 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
      * Problem seems to be {@link TextMatrixImageWriter} not being reliable enough.
      */
     @Override
-    @Ignore("Temporarily disable a test that fail randomly.")
-    public void testOneFloatBand() {
-    }
-
-    /**
-     * Ignored for now. Failure cause is not yet clearly identified.
-     * Problem seems to be {@link TextMatrixImageWriter} not being reliable enough.
-     */
-    @Override
-    @Ignore("Temporarily disable a test that fail randomly.")
+    @Ignore
     public void testOneShortBand() {
     }
 
@@ -137,7 +128,7 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
      * Problem seems to be {@link TextMatrixImageWriter} not being reliable enough.
      */
     @Override
-    @Ignore("Temporarily disable a test that fail randomly.")
+    @Ignore
     public void testOneUnsignedShortBand() {
     }
 
@@ -244,15 +235,12 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
             /*
              * If the output is a stream, then the standard writer should be selected.
              */
-            final ImageOutputStream out = ImageIO.createImageOutputStream(file);
-            try {
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
                 writer = XImageIO.getWriterByFormatName("png", out, image);
                 assertFalse(writer instanceof WorldFileImageWriter);
                 // Don't botter to write the image. The purpose of
                 // this test is not to test the JDK PNG ImageWriter.
                 writer.dispose();
-            } finally {
-                out.close();
             }
         } finally {
             WorldFileImageWriter.Spi.unregisterDefaults(null);

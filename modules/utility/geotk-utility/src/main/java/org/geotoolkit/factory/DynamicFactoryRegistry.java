@@ -25,7 +25,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 
 
@@ -61,19 +61,19 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
     /**
      * List of factories already created. Used as a cache.
      */
-    private final Map<Class<?>, List<Reference<?>>> cache = new HashMap<Class<?>, List<Reference<?>>>();
+    private final Map<Class<?>, List<Reference<?>>> cache = new HashMap<>();
 
     /**
      * Objects under construction for each implementation class.
      * Used by {@link #safeCreate} as a guard against infinite recursivity.
      */
-    private final Set<Class<?>> underConstruction = new HashSet<Class<?>>();
+    private final Set<Class<?>> underConstruction = new HashSet<>();
 
     /**
      * The factories which have been declared unavailable. Used in order to avoid
      * trying the same factory twice when we already failed in a previous attempt.
      */
-    private final Set<Class<? extends Factory>> unavailables = new HashSet<Class<? extends Factory>>();
+    private final Set<Class<? extends Factory>> unavailables = new HashSet<>();
 
     /**
      * Constructs a new registry for the specified category.
@@ -114,7 +114,7 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
     private <T> List<Reference<T>> getCachedProviders(final Class<T> category) {
         List<Reference<?>> c = cache.get(category);
         if (c == null) {
-            c = new LinkedList<Reference<?>>();
+            c = new LinkedList<>();
             cache.put(category, c);
         }
         @SuppressWarnings({"unchecked","rawtypes"})
@@ -130,7 +130,7 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
      * Caches the specified factory under the specified category.
      */
     private <T> void cache(final Class<T> category, final T factory) {
-        getCachedProviders(category).add(new WeakReference<T>(factory));
+        getCachedProviders(category).add(new WeakReference<>(factory));
     }
 
     /**
@@ -402,18 +402,6 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
                  * we will retrown the previous exception instead.
                  */
             }
-        } catch (IllegalAccessException exception) {
-            /*
-             * Constructor is not public. This exception should never happen since we asked
-             * for Class.getConstructor(...), which returns only public constructors.
-             */
-            cause = exception;
-        } catch (InstantiationException exception) {
-            /*
-             * The class is abstract. Should not happen neither since we
-             * checked for non-abstract class before to invoke this method.
-             */
-            cause = exception;
         } catch (InvocationTargetException exception) {
             /*
              * Exception in the invoked constructor. We will wrap the cause in a
@@ -423,6 +411,13 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
             if (cause instanceof FactoryRegistryException) {
                 throw (FactoryRegistryException) cause;
             }
+        } catch (ReflectiveOperationException exception) {
+            /*
+             * Constructor is not public or the class is abstract. This exception should never
+             * happen since we asked for Class.getConstructor(...), which returns only public
+             * constructors, and we checked for non-abstract class before to invoke this method.
+             */
+            cause = exception;
         }
         throw new FactoryRegistryException(Errors.format(
                 Errors.Keys.CANT_CREATE_FACTORY_FOR_TYPE_1, implementation), cause);

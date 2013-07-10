@@ -24,6 +24,8 @@ import javax.measure.converter.ConversionException;
 import net.jcip.annotations.Immutable;
 
 import org.apache.sis.measure.Units;
+import org.apache.sis.measure.Range;
+import org.apache.sis.measure.MeasurementRange;
 import org.geotoolkit.resources.Errors;
 
 
@@ -53,7 +55,7 @@ public class DateRange extends Range<Date> {
      * @param endTime   The end time (inclusive), or {@code null} if none.
      */
     public DateRange(final Date startTime, final Date endTime) {
-        super(Date.class, clone(startTime), clone(endTime));
+        super(Date.class, clone(startTime), true, clone(endTime), true);
     }
 
     /**
@@ -80,7 +82,7 @@ public class DateRange extends Range<Date> {
      *         {@linkplain MeasurementRange#getUnits unit} compatible with milliseconds.
      */
     public DateRange(final MeasurementRange<?> range, final Date origin) throws ConversionException {
-        this(range, getConverter(range.getUnits()), origin.getTime());
+        this(range, getConverter(range.unit()), origin.getTime());
     }
 
     /**
@@ -91,44 +93,8 @@ public class DateRange extends Range<Date> {
             throws ConversionException
     {
         super(Date.class,
-              new Date(origin + Math.round(converter.convert(range.getMinimum()))), range.isMinIncluded(),
-              new Date(origin + Math.round(converter.convert(range.getMaximum()))), range.isMaxIncluded());
-    }
-
-    /**
-     * Creates a new date range using the given values. This method is invoked by the
-     * parent class for creating the result of an intersection or union operation.
-     *
-     * @since 3.20
-     */
-    @Override
-    final DateRange create(final Date minValue, final boolean isMinIncluded,
-                           final Date maxValue, final boolean isMaxIncluded)
-    {
-        return new DateRange(minValue, isMinIncluded, maxValue, isMaxIncluded);
-    }
-
-    /**
-     * Returns an initially empty array of the given length.
-     *
-     * @since 3.20
-     */
-    @Override
-    final DateRange[] newArray(final int length) {
-        return new DateRange[length];
-    }
-
-    /**
-     * Ensures that {@link #elementClass} is compatible with the type expected by this range class.
-     * Invoked for argument checking by the super-class constructor.
-     */
-    @Override
-    final void checkElementClass() throws IllegalArgumentException {
-        // No need to call super.checkElementClass() because Date implements Comparable.
-        if (!Date.class.isAssignableFrom(elementClass)) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_CLASS_2, elementClass, Date.class));
-        }
+              new Date(origin + Math.round(converter.convert(range.getMinDouble()))), range.isMinIncluded(),
+              new Date(origin + Math.round(converter.convert(range.getMaxDouble()))), range.isMaxIncluded());
     }
 
     /**
@@ -140,8 +106,8 @@ public class DateRange extends Range<Date> {
         if (range == null || range instanceof DateRange) {
             return (DateRange) range;
         }
-        return new DateRange((Date) ((Object) range.getMinValue()), range.isMinIncluded(),
-                             (Date) ((Object) range.getMaxValue()), range.isMaxIncluded());
+        return new DateRange((Date) range.getMinValue(), range.isMinIncluded(),
+                             (Date) range.getMaxValue(), range.isMaxIncluded());
     }
 
     /**
@@ -184,7 +150,7 @@ public class DateRange extends Range<Date> {
      * @since 3.20
      */
     @Override
-    public DateRange union(final Range<?> range) throws IllegalArgumentException {
+    public DateRange union(final Range<Date> range) throws IllegalArgumentException {
         return cast(super.union(range));
     }
 
@@ -194,7 +160,7 @@ public class DateRange extends Range<Date> {
      * @since 3.20
      */
     @Override
-    public DateRange intersect(final Range<?> range) throws IllegalArgumentException {
+    public DateRange intersect(final Range<Date> range) throws IllegalArgumentException {
         return cast(super.intersect(range));
     }
 
@@ -204,9 +170,12 @@ public class DateRange extends Range<Date> {
      * @since 3.20
      */
     @Override
-    public DateRange[] subtract(final Range<?> range) throws IllegalArgumentException {
-        return (DateRange[]) super.subtract(range);
-        // Should never throw ClassCastException because super.subtract(Range) invokes newArray(int)
-        // and create(...), which are overridden in this class with DateRange return type.
+    public DateRange[] subtract(final Range<Date> range) throws IllegalArgumentException {
+        final Range<Date>[] ranges = super.subtract(range);
+        final DateRange[] result = new DateRange[ranges.length];
+        for (int i=0; i<result.length; i++) {
+            result[i] = cast(ranges[i]);
+        }
+        return result;
     }
 }

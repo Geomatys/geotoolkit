@@ -25,7 +25,7 @@ import java.net.URI;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.io.ContentFormatException;
 
 
@@ -240,7 +240,7 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
             if (path instanceof File) {
                 return toSupportFile((File) path, extension, isTFW);
             }
-            final Object renamed = IOUtilities.changeExtension(path, extension);
+            final Object renamed = org.geotoolkit.internal.io.IOUtilities.changeExtension(path, extension);
             if (renamed != null) {
                 return renamed;
             }
@@ -298,14 +298,14 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
      * @throws IOException if an error occurred while writing the file.
      */
     public static void writeTFW(final OutputStream stream, final AffineTransform tr) throws IOException {
-        final BufferedWriter out = new BufferedWriter(new OutputStreamWriter(stream, ENCODING));
-        final double[] matrix = new double[6];
-        tr.getMatrix(matrix);
-        for (int i=0; i<matrix.length; i++) {
-            out.write(String.valueOf(matrix[i]));
-            out.newLine();
+        try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(stream, ENCODING))) {
+            final double[] matrix = new double[6];
+            tr.getMatrix(matrix);
+            for (int i=0; i<matrix.length; i++) {
+                out.write(String.valueOf(matrix[i]));
+                out.newLine();
+            }
         }
-        out.close();
     }
 
     /**
@@ -340,27 +340,27 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
      * @since 3.07
      */
     public static AffineTransform parseTFW(final InputStream input, final Object filename) throws IOException {
-        final LineNumberReader in = new LineNumberReader(new InputStreamReader(input, ENCODING));
-        final double[] m = new double[6];
-        int count = 0;
-        String line;
-        while ((line = in.readLine()) != null) {
-            line = line.trim();
-            if (!line.isEmpty() && line.charAt(0) != '#') {
-                if (count >= m.length) {
-                    in.close();
-                    throw new ContentFormatException(Errors.format(Errors.Keys.FILE_HAS_TOO_MANY_DATA));
-                }
-                try {
-                    m[count++] = Double.parseDouble(line);
-                } catch (NumberFormatException e) {
-                    in.close();
-                    throw new ContentFormatException(Errors.format(Errors.Keys.ILLEGAL_LINE_IN_FILE_2,
-                            IOUtilities.name(filename), in.getLineNumber()), e);
+        final double[] m;
+        int count;
+        try (LineNumberReader in = new LineNumberReader(new InputStreamReader(input, ENCODING))) {
+            m = new double[6];
+            count = 0;
+            String line;
+            while ((line = in.readLine()) != null) {
+                line = line.trim();
+                if (!line.isEmpty() && line.charAt(0) != '#') {
+                    if (count >= m.length) {
+                        throw new ContentFormatException(Errors.format(Errors.Keys.FILE_HAS_TOO_MANY_DATA));
+                    }
+                    try {
+                        m[count++] = Double.parseDouble(line);
+                    } catch (NumberFormatException e) {
+                        throw new ContentFormatException(Errors.format(Errors.Keys.ILLEGAL_LINE_IN_FILE_2,
+                                IOUtilities.filename(filename), in.getLineNumber()), e);
+                    }
                 }
             }
         }
-        in.close();
         if (count != m.length) {
             throw new EOFException(Errors.format(Errors.Keys.END_OF_DATA_FILE));
         }

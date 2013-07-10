@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.operation;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.awt.RenderingHints;
 import javax.measure.converter.ConversionException;
 import net.jcip.annotations.ThreadSafe;
@@ -39,9 +40,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.*;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.ReferencingFactory;
@@ -94,7 +94,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     /**
      * The identifier for a transformation which is a datum shift.
      *
-     * @see org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_APPLIED
+     * @see org.apache.sis.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_APPLIED
      */
     protected static final ReferenceIdentifier DATUM_SHIFT =
             new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.DATUM_SHIFT));
@@ -106,7 +106,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      * 1 kilometre error. This transformation is allowed only if the factory was created with
      * {@link Hints#LENIENT_DATUM_SHIFT} set to {@link Boolean#TRUE}.
      *
-     * @see org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_OMITTED
+     * @see org.apache.sis.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_OMITTED
      */
     protected static final ReferenceIdentifier ELLIPSOID_SHIFT =
             new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.ELLIPSOID_SHIFT));
@@ -133,7 +133,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      * to returns instance of existing operations when possible.
      */
     private final WeakHashSet<CoordinateOperation> pool =
-            WeakHashSet.newInstance(CoordinateOperation.class);
+            new WeakHashSet<>(CoordinateOperation.class);
 
     /**
      * Tells if {@link FactoryGroup#hints} has been invoked. It must be invoked exactly once,
@@ -293,9 +293,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     {
         try {
             return AbstractCS.swapAndScaleAxis(sourceCS,targetCS);
-        } catch (IllegalArgumentException exception) {
-            throw new OperationNotFoundException(getErrorMessage(sourceCS, targetCS), exception);
-        } catch (ConversionException exception) {
+        } catch (IllegalArgumentException | ConversionException exception) {
             throw new OperationNotFoundException(getErrorMessage(sourceCS, targetCS), exception);
         }
         // No attempt to catch ClassCastException since such
@@ -316,7 +314,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     private static Map<String,Object> getProperties(final ReferenceIdentifier name) {
         final Map<String,Object> properties;
         if ((name == DATUM_SHIFT) || (name == ELLIPSOID_SHIFT)) {
-            properties = new HashMap<String,Object>(4);
+            properties = new HashMap<>(4);
             properties.put(NAME_KEY, name);
             properties.put(COORDINATE_OPERATION_ACCURACY_KEY, new PositionalAccuracy[] {
                       name == DATUM_SHIFT ? DATUM_SHIFT_APPLIED : DATUM_SHIFT_OMITTED
@@ -432,12 +430,12 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
         CoordinateOperation operation;
         if (transform instanceof CoordinateOperation) {
             operation = (CoordinateOperation) transform;
-            if (Utilities.equals(operation.getSourceCRS(),     sourceCRS) &&
-                Utilities.equals(operation.getTargetCRS(),     targetCRS) &&
-                Utilities.equals(operation.getMathTransform(), transform))
+            if (Objects.equals(operation.getSourceCRS(),     sourceCRS) &&
+                Objects.equals(operation.getTargetCRS(),     targetCRS) &&
+                Objects.equals(operation.getMathTransform(), transform))
             {
                 if (operation instanceof SingleOperation) {
-                    if (Utilities.equals(((SingleOperation) operation).getMethod(), method)) {
+                    if (Objects.equals(((SingleOperation) operation).getMethod(), method)) {
                         return operation;
                     }
                 } else {
@@ -627,7 +625,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
         final Map<String,Object> properties = IdentifiedObjects.getProperties(operation, null);
         properties.putAll(getTemporaryName(targetCRS, sourceCRS));
         if (operation instanceof ConcatenatedOperation) {
-            final LinkedList<CoordinateOperation> inverted = new LinkedList<CoordinateOperation>();
+            final LinkedList<CoordinateOperation> inverted = new LinkedList<>();
             for (final CoordinateOperation op : ((ConcatenatedOperation) operation).getOperations()) {
                 inverted.addFirst(inverse(op));
             }
@@ -730,7 +728,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      * @param source The CRS to base name on, or {@code null} if none.
      */
     static Map<String,Object> getTemporaryName(final IdentifiedObject source) {
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<>(4);
         properties.put(NAME_KEY, new TemporaryIdentifier(source.getName()));
         properties.put(IdentifiedObject.REMARKS_KEY, formatInternational(
                 Vocabulary.Keys.DERIVED_FROM_1, getClassName(source)));

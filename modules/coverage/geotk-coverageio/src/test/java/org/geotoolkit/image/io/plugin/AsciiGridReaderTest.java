@@ -198,8 +198,7 @@ public strictfp class AsciiGridReaderTest extends TextImageReaderTestBase {
 
         int x=0, y=0;
         final long timestamp = System.currentTimeMillis();
-        final BufferedReader reader = new BufferedReader(new FileReader(input));
-        try {
+        try (BufferedReader reader = new BufferedReader(new FileReader(input))) {
             for (int i=1; i<=headerLineCount; i++) {
                 out.println("Header " + i + ": " + reader.readLine());
             }
@@ -238,8 +237,6 @@ public strictfp class AsciiGridReaderTest extends TextImageReaderTestBase {
                     buffer.setLength(0);
                 }
             }
-        } finally {
-            reader.close();
         }
         out.println("Coordinate of the next pixel to read, if it existed: (" + x + ',' + y + ')');
         out.println("Ellapsed time: " + (System.currentTimeMillis() - timestamp) / 1000f + " seconds.");

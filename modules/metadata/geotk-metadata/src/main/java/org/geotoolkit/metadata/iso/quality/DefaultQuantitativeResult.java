@@ -22,14 +22,8 @@ package org.geotoolkit.metadata.iso.quality;
 
 import java.util.List;
 import java.util.Arrays;
-import javax.measure.unit.Unit;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import net.jcip.annotations.ThreadSafe;
-
 import org.opengis.metadata.quality.QuantitativeResult;
-import org.opengis.util.InternationalString;
 import org.opengis.util.Record;
 import org.opengis.util.RecordType;
 
@@ -46,44 +40,13 @@ import org.opengis.util.RecordType;
  *
  * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
-@ThreadSafe
-@XmlType(name = "DQ_QuantitativeResult_Type", propOrder={
-    "valueType",
-    "valueUnit",
-    "errorStatistic"
-})
+@Deprecated
 @XmlRootElement(name = "DQ_QuantitativeResult")
-public class DefaultQuantitativeResult extends AbstractResult implements QuantitativeResult {
+public class DefaultQuantitativeResult extends org.apache.sis.metadata.iso.quality.DefaultQuantitativeResult {
     /**
      * Serial number for compatibility with different versions.
      */
     private static final long serialVersionUID = 1230713599561236060L;
-
-    /**
-     * Quantitative value or values, content determined by the evaluation procedure used.
-     */
-    private List<Record> values;
-
-    /**
-     * Value type for reporting a data quality result, or {@code null} if none.
-     */
-    private RecordType valueType;
-
-    /**
-     * Value unit for reporting a data quality result, or {@code null} if none.
-     */
-    private Unit<?> valueUnit;
-
-    /**
-     * Statistical method used to determine the value, or {@code null} if none.
-     */
-    private InternationalString errorStatistic;
-
-    /**
-     * Constructs an initially empty quantitative result.
-     */
-    public DefaultQuantitativeResult() {
-    }
 
     /**
      * Constructs a metadata entity initialized with the values from the specified metadata.
@@ -106,53 +69,11 @@ public class DefaultQuantitativeResult extends AbstractResult implements Quantit
     }
 
     /**
-     * Returns a Geotk metadata implementation with the same values than the given arbitrary
-     * implementation. If the given object is {@code null}, then this method returns {@code null}.
-     * Otherwise if the given object is already a Geotk implementation, then the given object is
-     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
-     * attribute values of the given object, using a <cite>shallow</cite> copy operation
-     * (i.e. attributes are not cloned).
-     *
-     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return A Geotk implementation containing the values of the given object (may be the
-     *         given object itself), or {@code null} if the argument was null.
-     *
-     * @since 3.18
-     */
-    public static DefaultQuantitativeResult castOrCopy(final QuantitativeResult object) {
-        return (object == null) || (object instanceof DefaultQuantitativeResult)
-                ? (DefaultQuantitativeResult) object : new DefaultQuantitativeResult(object);
-    }
-
-    /**
-     * Returns the quantitative value or values, content determined
-     * by the evaluation procedure used.
-     *
-     * @todo Find an implementation of {@link Record}. The one in this class is deprecated.
-     */
-    @Override
-/// @XmlElement(name = "value", required = true)
-    public synchronized List<Record> getValues() {
-        return values = nonNullList(values, Record.class);
-    }
-
-    /**
-     * Sets the quantitative value or values, content determined by the evaluation procedure used.
-     *
-     * @param newValues The new values.
-     *
-     * @since 2.4
-     */
-    public synchronized void setValues(final List<Record> newValues) {
-        values = copyList(newValues, values, Record.class);
-    }
-
-    /**
      * Sets the quantitative value or values, content determined by the evaluation procedure used.
      *
      * @param newValues The new values.
      */
-    public synchronized void setValues(final double[] newValues) {
+    public void setValues(final double[] newValues) {
         final List<Record> records;
         if (newValues == null) {
             records = null;
@@ -206,62 +127,5 @@ public class DefaultQuantitativeResult extends AbstractResult implements Quantit
         @Override public int hashCode() {
             return map.hashCode();
         }
-    }
-
-    /**
-     * Return the value type for reporting a data quality result, or {@code null} if none.
-     */
-    @Override
-    @XmlElement(name = "valueType")
-    public synchronized RecordType getValueType()  {
-        return valueType;
-    }
-
-    /**
-     * Sets the value type for reporting a data quality result, or {@code null} if none.
-     *
-     * @param newValue The new value type.
-     */
-    public synchronized void setValueType(final RecordType newValue) {
-        checkWritePermission();
-        valueType = newValue;
-    }
-
-    /**
-     * Returns the value unit for reporting a data quality result, or {@code null} if none.
-     */
-    @Override
-    @XmlElement(name = "valueUnit", required = true)
-    public synchronized Unit<?> getValueUnit()  {
-        return valueUnit;
-    }
-
-    /**
-     * Sets the value unit for reporting a data quality result, or {@code null} if none.
-     *
-     * @param newValue The new value unit.
-     */
-    public synchronized void setValueUnit(final Unit<?> newValue) {
-        checkWritePermission();
-        valueUnit = newValue;
-    }
-
-    /**
-     * Returns the statistical method used to determine the value, or {@code null} if none.
-     */
-    @Override
-    @XmlElement(name = "errorStatistic")
-    public synchronized InternationalString getErrorStatistic()  {
-        return errorStatistic;
-    }
-
-    /**
-     * Sets the statistical method used to determine the value, or {@code null} if none.
-     *
-     * @param newValue The new error statistic.
-     */
-    public synchronized void setErrorStatistic(final InternationalString newValue) {
-        checkWritePermission();
-        errorStatistic = newValue;
     }
 }

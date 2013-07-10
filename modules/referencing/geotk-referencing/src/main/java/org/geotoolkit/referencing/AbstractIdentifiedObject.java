@@ -25,6 +25,8 @@ import java.util.Set;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlID;
@@ -32,6 +34,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 
 import org.opengis.util.LocalName;
 import org.opengis.util.ScopedName;
@@ -45,25 +48,29 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.parameter.InvalidParameterValueException;
 
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.Deprecable;
+import org.apache.sis.util.Locales;
+import org.apache.sis.util.Deprecable;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.LenientComparable;
-import org.geotoolkit.util.DefaultInternationalString;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.LenientComparable;
+import org.apache.sis.util.iso.DefaultInternationalString;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
-import org.apache.sis.internal.util.Citations;
-import org.geotoolkit.internal.jaxb.gco.StringConverter;
+import org.apache.sis.util.iso.Types;
+import org.apache.sis.util.ObjectConverter;
+import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.internal.converter.SurjectiveConverter;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.internal.jaxb.referencing.RS_Identifier;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 import net.jcip.annotations.ThreadSafe;
 import net.jcip.annotations.Immutable;
-import org.geotoolkit.xml.Namespaces;
+import org.apache.sis.xml.Namespaces;
 
-import static org.geotoolkit.util.Utilities.deepEquals;
+import static org.apache.sis.util.Utilities.deepEquals;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static org.opengis.referencing.IdentifiedObject.REMARKS_KEY;
 import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
 import static org.geotoolkit.internal.referencing.CRSUtilities.getReferencingGroup;
 
@@ -103,6 +110,26 @@ public class AbstractIdentifiedObject extends FormattableObject implements Ident
      * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -5173281694258483264L;
+
+    /**
+     * Filter out the map entries to be given to {@link NamedIdentifier}.
+     *
+     * @todo Actually replaces NAME_KEY by CODE_KEY, but we should check if CODE_KEY exists before?
+     */
+    private static final ObjectConverter<String,String> EXCLUDE_NAME = new SurjectiveConverter<String,String>() {
+        @Override public Class<String> getSourceClass() {return String.class;}
+        @Override public Class<String> getTargetClass() {return String.class;}
+        @Override public String apply(final String key) {
+            if (key != null) {
+                if (key.equalsIgnoreCase(NAME_KEY)) {
+                    return Identifier.CODE_KEY;
+                } else if (key.regionMatches(true, 0, REMARKS_KEY, 0, REMARKS_KEY.length())) {
+                    return null;
+                }
+            }
+            return key;
+        }
+    };
 
     /**
      * The name for this object or code. Should never be {@code null}.
@@ -297,7 +324,8 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
                 case 3373707: {
                     if (key.equals(NAME_KEY)) {
                         if (value instanceof String) {
-                            name = new NamedIdentifier(properties, false);
+                            name = new NamedIdentifier(ObjectConverters.derivedKeys(
+                                    (Map<String,Object>) properties, EXCLUDE_NAME, Object.class));
                             assert value.equals(((Identifier) name).getCode()) : name;
                         } else {
                             // Should be an instance of ReferenceIdentifier, but we don't check
@@ -314,7 +342,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
                 // -------------------------------------------------------------------
                 case 92902992: {
                     if (key.equals(ALIAS_KEY)) {
-                        alias = NamedIdentifier.getNameFactory().toArray(value);
+                        alias = Types.toGenericNames(value, NamedIdentifier.getNameFactory());
                         continue nextKey;
                     }
                     break;
@@ -363,7 +391,9 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
                         i18n = new DefaultInternationalString();
                     }
                 }
-                if (i18n.add(REMARKS_KEY, key, value.toString())) {
+                final Locale locale = Locales.parseSuffix(REMARKS_KEY, key);
+                if (locale != null) {
+                    i18n.add(locale, value.toString());
                     continue nextKey;
                 }
             }
@@ -394,7 +424,9 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
                                 sub_i18n[i] = new DefaultInternationalString();
                             }
                         }
-                        if (sub_i18n[i].add(prefix, key, value.toString())) {
+                        final Locale locale = Locales.parseSuffix(prefix, key);
+                        if (locale != null) {
+                            sub_i18n[i].add(locale, value.toString());
                             continue nextKey;
                         }
                     }
@@ -464,7 +496,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      */
     @XmlID
     @XmlAttribute(name = "id", namespace = Namespaces.GML, required = true)
-    @XmlJavaTypeAdapter(StringConverter.class)
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     final String getID() {
         ReferenceIdentifier id = getIdentifier(null);
         if (id == null) {
@@ -636,32 +668,32 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * <p>
      * <ul>
      *   <li>If the {@linkplain #getName() name}
-     *       {@linkplain DefaultReferenceIdentifier#isDeprecated() is deprecated},
+     *       {@linkplain ImmutableIdentifier#isDeprecated() is deprecated},
      *       then returns {@code true}.</li>
      *   <li>Otherwise if <strong>every</strong> {@linkplain #getIdentifiers() identifiers}
-     *       {@linkplain DefaultReferenceIdentifier#isDeprecated() are deprecated}, ignoring
-     *       the identifiers that are not instance of {@link DefaultReferenceIdentifier}
+     *       {@linkplain ImmutableIdentifier#isDeprecated() are deprecated}, ignoring
+     *       the identifiers that are not instance of {@link ImmutableIdentifier}
      *       (because they can not be tested), then returns {@code true}.</li>
      *   <li>Otherwise returns {@code false}.</li>
      * </ul>
      *
      * @return {@code true} if this object is deprecated.
      *
-     * @see DefaultReferenceIdentifier#isDeprecated()
+     * @see ImmutableIdentifier#isDeprecated()
      *
      * @since 3.20
      */
     @Override
     public boolean isDeprecated() {
-        if (name instanceof DefaultReferenceIdentifier) {
-            if (((DefaultReferenceIdentifier) name).isDeprecated()) {
+        if (name instanceof ImmutableIdentifier) {
+            if (((ImmutableIdentifier) name).isDeprecated()) {
                 return true;
             }
         }
         boolean isDeprecated = false;
         for (final ReferenceIdentifier identifier : identifiers) {
-            if (identifier instanceof DefaultReferenceIdentifier) {
-                isDeprecated = ((DefaultReferenceIdentifier) identifier).isDeprecated();
+            if (identifier instanceof ImmutableIdentifier) {
+                isDeprecated = ((ImmutableIdentifier) identifier).isDeprecated();
                 if (!isDeprecated) break;
             }
         }
@@ -752,10 +784,10 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
         switch (mode) {
             case STRICT: {
                 final AbstractIdentifiedObject that = (AbstractIdentifiedObject) object;
-                return Utilities.equals(name,        that.name)        &&
-                       Utilities.equals(alias,       that.alias)       &&
-                       Utilities.equals(identifiers, that.identifiers) &&
-                       Utilities.equals(remarks,     that.remarks);
+                return Objects.equals(name,        that.name)        &&
+                       Objects.equals(alias,       that.alias)       &&
+                       Objects.equals(identifiers, that.identifiers) &&
+                       Objects.equals(remarks,     that.remarks);
             }
             case BY_CONTRACT: {
                 final IdentifiedObject that = (IdentifiedObject) object;

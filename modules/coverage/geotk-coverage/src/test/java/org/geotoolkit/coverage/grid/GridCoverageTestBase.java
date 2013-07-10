@@ -34,7 +34,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.test.image.ImageTestBase;
 
@@ -203,20 +203,14 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
          * But we want to test the default GridCoverage2D encoding.
          */
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        final ObjectOutputStream out = new ObjectOutputStream(buffer);
-        try {
+        try (ObjectOutputStream out = new ObjectOutputStream(buffer)) {
             out.writeObject(coverage.view(ViewType.PACKED));
             out.writeObject(coverage.view(ViewType.GEOPHYSICS));
-        } finally {
-            out.close();
         }
-        final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()));
         GridCoverage2D read;
-        try {
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
             read = (GridCoverage2D) in.readObject(); assertSame(read, read.view(ViewType.PACKED));
             read = (GridCoverage2D) in.readObject(); assertSame(read, read.view(ViewType.GEOPHYSICS));
-        } finally {
-            in.close();
         }
         final GridCoverage2D view = read.view(ViewType.PACKED);
         assertNotSame(read, view);

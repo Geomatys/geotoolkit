@@ -114,7 +114,7 @@ final class NetcdfParameter<T> extends NetcdfIdentifiedObject implements
      */
     @Override
     public ParameterValue<T> createValue() {
-        return new NetcdfParameter<T>(parameter);
+        return new NetcdfParameter<>(parameter);
     }
 
     /**

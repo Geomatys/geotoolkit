@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation;
 
 import java.util.Map;
+import java.util.Objects;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
@@ -35,7 +36,6 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.collection.Cache;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -121,9 +121,9 @@ public class CachingCoordinateOperationFactory extends AbstractCoordinateOperati
             }
             if (object instanceof CRSPair) {
                 final CRSPair that = (CRSPair) object;
-                return Utilities.equals(this.sourceCRS, that.sourceCRS) &&
-                       Utilities.equals(this.targetCRS, that.targetCRS) &&
-                       Utilities.equals(this.method,    that.method);
+                return Objects.equals(this.sourceCRS, that.sourceCRS) &&
+                       Objects.equals(this.targetCRS, that.targetCRS) &&
+                       Objects.equals(this.method,    that.method);
             }
             return false;
         }
@@ -142,7 +142,7 @@ public class CachingCoordinateOperationFactory extends AbstractCoordinateOperati
      * be different for the same ({@code sourceCRS}, {@code targetCRS}) pair depending of
      * hint values like {@link Hints#LENIENT_DATUM_SHIFT}.
      */
-    private final Cache<CRSPair, CoordinateOperation> cache = new Cache<CRSPair, CoordinateOperation>();
+    private final Cache<CRSPair, CoordinateOperation> cache = new Cache<>();
 
     /**
      * Creates a buffered factory wrapping the {@linkplain AuthorityBackedFactory default one}.

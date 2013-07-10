@@ -239,47 +239,47 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
                         .appendIdentifier(column, quote).append(" LIKE ? ORDER BY ").appendIdentifier(column, quote).toString()));
             }
             entry.statement.setString(1, buffer.clear().appendEscaped(proposal).append('%').toString());
-            final ResultSet rs = entry.statement.executeQuery();
-            if (rs.next()) {
-                String current = rs.getString(1);
-                if (current.equals(proposal)) {
-                    /*
-                     * The proposed identifier is already used. If there is no other identifiers,
-                     * just append "-1" are we are done. Otherwise we need to search for a "hole"
-                     * in the sequence of number suffixes.
-                     */
-                    final int parseAt = proposal.length() + 1;
-                    final int[] result = new int[2]; // Initialized to 0.
-                    int expected = 0;
-searchValidRecord:  while (rs.next()) {
-                        current = rs.getString(1);
-                        assert current.startsWith(proposal) : current;
-                        while (current.length() > parseAt) {
-                            char c = current.charAt(parseAt-1);
-                            if (c < SEPARATOR) continue searchValidRecord;
-                            if (c > SEPARATOR) break searchValidRecord;
-                            c = current.charAt(parseAt);
-                            /*
-                             * Intentionally exclude any record having leading zeros,
-                             * since it would confuse our algorithm.
-                             */
-                            if (c < '1') continue searchValidRecord;
-                            if (c > '9') break searchValidRecord;
-                            final String prefix = current.substring(0, parseAt);
-                            current = search(rs, current, prefix, ++expected, parseAt, result);
-                            if (current == null) {
-                                break searchValidRecord;
+            try (ResultSet rs = entry.statement.executeQuery()) {
+                if (rs.next()) {
+                    String current = rs.getString(1);
+                    if (current.equals(proposal)) {
+                        /*
+                         * The proposed identifier is already used. If there is no other identifiers,
+                         * just append "-1" are we are done. Otherwise we need to search for a "hole"
+                         * in the sequence of number suffixes.
+                         */
+                        final int parseAt = proposal.length() + 1;
+                        final int[] result = new int[2]; // Initialized to 0.
+                        int expected = 0;
+searchValidRecord:      while (rs.next()) {
+                            current = rs.getString(1);
+                            assert current.startsWith(proposal) : current;
+                            while (current.length() > parseAt) {
+                                char c = current.charAt(parseAt-1);
+                                if (c < SEPARATOR) continue searchValidRecord;
+                                if (c > SEPARATOR) break searchValidRecord;
+                                c = current.charAt(parseAt);
+                                /*
+                                 * Intentionally exclude any record having leading zeros,
+                                 * since it would confuse our algorithm.
+                                 */
+                                if (c < '1') continue searchValidRecord;
+                                if (c > '9') break searchValidRecord;
+                                final String prefix = current.substring(0, parseAt);
+                                current = search(rs, current, prefix, ++expected, parseAt, result);
+                                if (current == null) {
+                                    break searchValidRecord;
+                                }
                             }
                         }
+                        int n = result[1]; // The hole found during iteration.
+                        if (n == 0) {
+                            n = result[0] + 1; // If no hole, use the maximal number + 1.
+                        }
+                        proposal = proposal + SEPARATOR + n;
                     }
-                    int n = result[1]; // The hole found during iteration.
-                    if (n == 0) {
-                        n = result[0] + 1; // If no hole, use the maximal number + 1.
-                    }
-                    proposal = proposal + SEPARATOR + n;
                 }
             }
-            rs.close();
             if (pool.put(key, entry) != null) {
                 throw new AssertionError();
             }

@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.processing;
 
 import java.awt.Color;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,10 +36,9 @@ import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.MeasurementRange;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.measure.MeasurementRange;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.image.ColorUtilities;
@@ -153,7 +153,7 @@ public class ColorMap implements Serializable {
         final String name = unlocalized(category);
         if (colors != null) {
             if (colorMap == null) {
-                colorMap = new HashMap<String,Object>();
+                colorMap = new HashMap<>();
             }
             colorMap.put(name, colors);
         } else if (colorMap != null) {
@@ -305,7 +305,7 @@ public class ColorMap implements Serializable {
         final String name = unlocalized(category);
         if (range != null) {
             if (colorRanges == null) {
-                colorRanges = new HashMap<String,NumberRange<?>>();
+                colorRanges = new HashMap<>();
             }
             colorRanges.put(name, range);
         } else if (colorRanges != null) {
@@ -397,8 +397,8 @@ public class ColorMap implements Serializable {
                 Logging.unexpectedException(AbstractCoverageProcessor.LOGGER, ColorMap.class, "recolor", e);
                 return null; // This is allowed by this method contract.
             }
-            minimum = scale.getMinimum();
-            maximum = scale.getMaximum();
+            minimum = scale.getMinDouble();
+            maximum = scale.getMaxDouble();
             MathTransform1D tr = category.getSampleToGeophysics();
             if (tr != null) try {
                 tr = tr.inverse();
@@ -409,11 +409,11 @@ public class ColorMap implements Serializable {
                 return null; // This is allowed by this method contract.
             }
         } else {
-            minimum = scale.getMinimum();
-            maximum = scale.getMaximum();
+            minimum = scale.getMinDouble();
+            maximum = scale.getMaxDouble();
             final NumberRange<?> range = category.getRange();
-            final double lower  = range.getMinimum();
-            final double extent = range.getMaximum() - lower;
+            final double lower  = range.getMinDouble();
+            final double extent = range.getMaxDouble() - lower;
             minimum     = (minimum / 100) * extent + lower;
             maximum     = (maximum / 100) * extent + lower;
             minIncluded &= range.isMinIncluded();
@@ -585,7 +585,7 @@ public class ColorMap implements Serializable {
         final Set<String> names;
         if (colorMap != null) {
             if (colorRanges != null) {
-                names = new HashSet<String>(colorMap.keySet());
+                names = new HashSet<>(colorMap.keySet());
                 names.addAll(colorRanges.keySet());
             } else {
                 names = colorMap.keySet();
@@ -631,8 +631,8 @@ public class ColorMap implements Serializable {
     public boolean equals(final Object object) {
         if (object != null && getClass() == object.getClass()) {
             final ColorMap that = (ColorMap) object;
-            return Utilities.equals(this.colorMap,    that.colorMap) &&
-                   Utilities.equals(this.colorRanges, that.colorRanges);
+            return Objects.equals(this.colorMap,    that.colorMap) &&
+                   Objects.equals(this.colorRanges, that.colorRanges);
         }
         return false;
     }

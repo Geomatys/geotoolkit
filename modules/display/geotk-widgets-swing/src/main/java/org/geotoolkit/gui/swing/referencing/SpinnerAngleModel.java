@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.gui.swing.referencing;
 
+import java.util.Objects;
+
 import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
@@ -28,14 +30,13 @@ import javax.swing.text.DefaultFormatterFactory;
 import java.io.Serializable;
 import java.text.ParseException;
 
-import org.geotoolkit.measure.Angle;
-import org.geotoolkit.measure.Latitude;
-import org.geotoolkit.measure.Longitude;
-import org.geotoolkit.measure.AngleFormat;
+import org.apache.sis.measure.Angle;
+import org.apache.sis.measure.Latitude;
+import org.apache.sis.measure.Longitude;
+import org.apache.sis.measure.AngleFormat;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -206,7 +207,7 @@ final class SpinnerAngleModel extends AbstractSpinnerModel implements Serializab
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_2, "value", value));
         }
-        if (!Utilities.equals(value, this.value)) {
+        if (!Objects.equals(value, this.value)) {
             this.value = (Angle)value;
             fireStateChanged();
         }

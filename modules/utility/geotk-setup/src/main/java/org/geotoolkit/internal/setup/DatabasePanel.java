@@ -313,7 +313,7 @@ abstract class DatabasePanel extends JComponent implements ActionListener {
             }
             field.setText(value);
         }
-        final JComboBox url = (JComboBox) fields[0].component;
+        final JComboBox<?> url = (JComboBox<?>) fields[0].component;
         url.setSelectedIndex(manual || !hasExplicitURL ? 0 : 1);
         refresh();
     }
@@ -383,8 +383,9 @@ abstract class DatabasePanel extends JComponent implements ActionListener {
             final Field urlField = fields[0];
             final String value = settings.getProperty(urlField.propertyKey);
             if (value != null) {
-                final JComboBox url = (JComboBox) urlField.component;
-                final DefaultComboBoxModel model = (DefaultComboBoxModel) url.getModel();
+                @SuppressWarnings("unchecked")
+                final JComboBox<String> url = (JComboBox<String>) urlField.component;
+                final DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) url.getModel();
                 if (!value.equals(model.getElementAt(0))) {
                     model.insertElementAt(value, 0);
                     hasExplicitURL = true;
@@ -444,9 +445,9 @@ abstract class DatabasePanel extends JComponent implements ActionListener {
                 }
                 try {
                     final File file = new File(installation.validDirectory(true), Installation.DATASOURCE_FILE);
-                    final FileOutputStream out = new FileOutputStream(file);
-                    settings.store(out, "Connection parameters to the " + name + " database");
-                    out.close();
+                    try (FileOutputStream out = new FileOutputStream(file)) {
+                        settings.store(out, "Connection parameters to the " + name + " database");
+                    }
                 } catch (IOException ex) {
                     error(Errors.Keys.CANT_WRITE_FILE_1, ex);
                     return;

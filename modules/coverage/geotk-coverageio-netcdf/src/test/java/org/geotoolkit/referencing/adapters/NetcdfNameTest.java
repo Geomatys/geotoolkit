@@ -72,16 +72,16 @@ public final strictfp class NetcdfNameTest {
          * change in a future NetCDF version  (in which case the Geotk library may need to be
          * updated).
          */
-        final Map<String,Set<String>> extraParameterNames = new HashMap<String,Set<String>>();
-        assertNull(extraParameterNames.put("Mercator", new HashSet<String>(Arrays.asList(
+        final Map<String,Set<String>> extraParameterNames = new HashMap<>();
+        assertNull(extraParameterNames.put("Mercator", new HashSet<>(Arrays.asList(
                 "latitude_of_projection_origin"))));
-        assertNull(extraParameterNames.put("Orthographic", new HashSet<String>(Arrays.asList(
+        assertNull(extraParameterNames.put("Orthographic", new HashSet<>(Arrays.asList(
                 "false_easting", "false_northing"))));
         /*
          * 'netcdfParameterNames' will contain the names provided by the NetcdfTransformFactory.
          * We use this factory as the reference implementation.
          */
-        final Set<String> netcdfParameterNames = new HashSet<String>();
+        final Set<String> netcdfParameterNames = new HashSet<>();
         final MathTransformFactory factory = FactoryFinder.getMathTransformFactory(
                 new Hints(Hints.MATH_TRANSFORM_FACTORY, DefaultMathTransformFactory.class));
         final MathTransformFactory netcdfFactory = new NetcdfTransformFactory();

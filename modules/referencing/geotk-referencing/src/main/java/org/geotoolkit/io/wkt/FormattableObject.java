@@ -28,7 +28,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.geotoolkit.io.X364;
 import org.geotoolkit.lang.Debug;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 
 /**
@@ -65,7 +65,7 @@ public class FormattableObject implements Formattable {
     /**
      * The formatter for the {@link #toWKT()} method.
      */
-    private static final ThreadLocal<Formatter> FORMATTER = new ThreadLocal<Formatter>();
+    private static final ThreadLocal<Formatter> FORMATTER = new ThreadLocal<>();
 
     /**
      * The default indentation value.

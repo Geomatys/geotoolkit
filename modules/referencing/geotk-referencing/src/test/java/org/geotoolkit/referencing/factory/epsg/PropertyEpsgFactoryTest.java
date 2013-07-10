@@ -39,7 +39,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactoryTest;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
@@ -56,7 +56,7 @@ import static org.geotoolkit.referencing.Commons.*;
  *
  * @since 2.4
  */
-@Depend(PropertyAuthorityFactoryTest.class)
+@DependsOn(PropertyAuthorityFactoryTest.class)
 public final strictfp class PropertyEpsgFactoryTest extends ReferencingTestBase {
     /**
      * The factory to test.
@@ -120,7 +120,7 @@ public final strictfp class PropertyEpsgFactoryTest extends ReferencingTestBase 
      */
     @Test
     public void testAuthorityCodes() throws FactoryException {
-        final Set<String> expected = new HashSet<String>(4);
+        final Set<String> expected = new HashSet<>(4);
         assertTrue(expected.add("27572"));
         assertTrue(expected.add("3035"));
         Set<String> codes = factory.getAuthorityCodes(null);

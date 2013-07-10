@@ -46,10 +46,10 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
-import org.geotoolkit.util.Localized;
+import org.apache.sis.util.Localized;
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -122,7 +122,7 @@ public class CoverageDatabase implements Localized {
         final ParameterDescriptor<?>[] param = new ParameterDescriptor<?>[keys.length];
         for (int i=0; i<keys.length; i++) {
             final ConfigurationKey key = keys[i];
-            param[i] = new DefaultParameterDescriptor<String>(key.key, null, String.class, key.defaultValue, false);
+            param[i] = new DefaultParameterDescriptor<>(key.key, null, String.class, key.defaultValue, false);
         }
         PARAMETERS = new DefaultParameterDescriptorGroup("CoverageDatabase", param);
     }
@@ -234,7 +234,7 @@ public class CoverageDatabase implements Localized {
     CoverageDatabase(final TableFactory db) {
         database  = db;
         executor  = new Executor();
-        listeners = new ArrayList<CoverageDatabaseListener>(4);
+        listeners = new ArrayList<>(4);
     }
 
     /**
@@ -270,7 +270,7 @@ public class CoverageDatabase implements Localized {
                     super.dispose();
                 }
             };
-            instance = new WeakReference<CoverageDatabase>(database);
+            instance = new WeakReference<>(database);
             return database;
         }
         return null;
@@ -328,7 +328,7 @@ public class CoverageDatabase implements Localized {
          */
         @Override
         protected <T> RunnableFuture<T> newTaskFor(final Callable<T> task) {
-            return new FutureQueryTask<T>(task);
+            return new FutureQueryTask<>(task);
         }
 
         /**

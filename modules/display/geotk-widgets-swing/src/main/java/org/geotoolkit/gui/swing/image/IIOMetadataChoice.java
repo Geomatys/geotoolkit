@@ -141,12 +141,19 @@ final class IIOMetadataChoice implements Serializable {
             part = resources.getString(Vocabulary.Keys.IMAGE_1, imageIndex + 1);
         }
         String rootName = getFormatName();
-        if (rootName.equals(SpatialMetadataFormat.GEOTK_FORMAT_NAME)) {
-            rootName = resources.getString(Vocabulary.Keys.GEOSPATIAL);
-        } else if (rootName.equals(IIOMetadataFormatImpl.standardMetadataFormatName)) {
-            rootName = resources.getString(Vocabulary.Keys.STANDARD);
-        } else {
-            rootName = rootName.replace('_', ' ').trim();
+        switch (rootName) {
+            case SpatialMetadataFormat.GEOTK_FORMAT_NAME: {
+                rootName = resources.getString(Vocabulary.Keys.GEOSPATIAL);
+                break;
+            }
+            case IIOMetadataFormatImpl.standardMetadataFormatName: {
+                rootName = resources.getString(Vocabulary.Keys.STANDARD);
+                break;
+            }
+            default: {
+                rootName = rootName.replace('_', ' ').trim();
+                break;
+            }
         }
         final StringBuilder buffer = new StringBuilder("<html><b>").append(rootName)
                 .append("</b> \u00A0\u2014\u00A0 ").append(part);

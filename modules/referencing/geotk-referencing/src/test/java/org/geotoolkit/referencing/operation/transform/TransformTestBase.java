@@ -48,7 +48,7 @@ import org.geotoolkit.test.Commons;
 import org.geotoolkit.test.TestBase;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.wkt.Convention;
 import org.geotoolkit.io.wkt.FormattableObject;
@@ -349,7 +349,7 @@ public abstract strictfp class TransformTestBase extends TransformTestCase imple
      * Then concatenate the WKT.
      */
     private String complete(String message) {
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         final StringWriter buffer = new StringWriter();
         if (messageOnFailure != null) {
             buffer.append(messageOnFailure).append(lineSeparator);
@@ -482,12 +482,15 @@ public abstract strictfp class TransformTestBase extends TransformTestCase imple
             out.print(domain); out.println(" domain:");
             final Statistics[] stats = new Statistics[dimension];
             for (int i=0; i<stats.length; i++) {
-                stats[i] = new Statistics();
+                stats[i] = new Statistics(null);
             }
             for (int i=0; i<coordinates.length; i++) {
                 stats[i % dimension].accept(coordinates[i]);
             }
-            Statistics.printTable(null, stats, null);
+//          Statistics.printTable(null, stats, null);
+            for (final Statistics s : stats) {
+                System.out.println(s);
+            }
             out.println();
             out.flush();
         }

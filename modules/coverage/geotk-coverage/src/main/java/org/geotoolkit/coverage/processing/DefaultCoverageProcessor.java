@@ -121,7 +121,7 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
      * keys are {@link String} objects, the operation name are actually case-insensitive
      * because of the comparator used in the sorted map.
      */
-    private final Map<String,Operation> operations = new TreeMap<String,Operation>(COMPARATOR);
+    private final Map<String,Operation> operations = new TreeMap<>(COMPARATOR);
 
     /**
      * The service registry for finding {@link Operation} implementations.

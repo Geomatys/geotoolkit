@@ -31,7 +31,7 @@
  * The available metadata implementations are:
  * <p>
  * <table>
- *   <tr valign="top"><td nowrap>&#8226; {@link org.geotoolkit.metadata.iso}:&nbsp;</td>
+ *   <tr valign="top"><td nowrap>&#8226; {@link org.apache.sis.metadata.iso}:&nbsp;</td>
  *   <td>concrete implementation of ISO interfaces, including ISO&nbsp;19115 and ISO&nbsp;19115-2.</td></tr>
  *
  *   <tr valign="top"><td nowrap>&#8226; {@link org.geotoolkit.metadata.sql}:&nbsp;</td>
@@ -50,7 +50,7 @@
  * as a tree} for use in Swing or other GUI applications.
  * <p>
  * ISO 19115 metadata can be marshalled and unmarshalled in XML using the
- * {@link org.geotoolkit.xml.XML} convenience methods.
+ * {@link org.apache.sis.xml.XML} convenience methods.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.19

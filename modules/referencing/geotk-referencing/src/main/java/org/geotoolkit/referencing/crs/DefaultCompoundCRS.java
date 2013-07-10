@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import net.jcip.annotations.Immutable;
@@ -41,16 +42,15 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.cs.DefaultCompoundCS;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.collection.CheckedContainer;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.collection.CheckedContainer;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.Utilities.deepEquals;
+import static org.apache.sis.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
@@ -242,7 +242,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
         } else if (crs instanceof CompoundCRS) {
             final List<CoordinateReferenceSystem> elements =
                 ((CompoundCRS) crs).getComponents();
-            singles = new ArrayList<SingleCRS>(elements.size());
+            singles = new ArrayList<>(elements.size());
             getSingleCRS(elements, singles);
         } else if (crs instanceof SingleCRS) {
             singles = Collections.singletonList((SingleCRS) crs);
@@ -277,7 +277,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
      * if it has the same content.
      */
     private boolean computeSingleCRS(List<? extends CoordinateReferenceSystem> crs) {
-        singles = new ArrayList<SingleCRS>(crs.size());
+        singles = new ArrayList<>(crs.size());
         final boolean identical = getSingleCRS(crs, singles);
         singles = UnmodifiableArrayList.wrap(singles.toArray(new SingleCRS[singles.size()]));
         return identical;
@@ -376,7 +376,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
             switch (mode) {
                 case STRICT: {
                     final DefaultCompoundCRS that = (DefaultCompoundCRS) object;
-                    return Utilities.equals(this.components, that.components);
+                    return Objects.equals(this.components, that.components);
                 }
                 default: {
                     final CompoundCRS that = (CompoundCRS) object;

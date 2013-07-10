@@ -60,18 +60,15 @@ public final strictfp class TimeStampTest extends CatalogTestBase {
         final LocalCache cache = getDatabase().getLocalCache();
         final Date t1, t2;
         synchronized (cache) {
-            final Statement s = cache.connection().createStatement();
-            final ResultSet r = s.executeQuery(
+            try (Statement s = cache.connection().createStatement();
+                 ResultSet r = s.executeQuery(
                     "SELECT \"startTime\", \"startTime\" FROM \"coverages\".\"GridCoverages\" " +
-                    "WHERE series=100 AND filename='198601'");
-            try {
+                    "WHERE series=100 AND filename='198601'"))
+            {
                 assertTrue(r.next());
                 t1 = r.getTimestamp(1);
                 t2 = r.getTimestamp(2, cal);
                 assertFalse(r.next());
-            } finally {
-                r.close();
-                s.close();
             }
         }
         // 'offset' sera expliqué plus bas...

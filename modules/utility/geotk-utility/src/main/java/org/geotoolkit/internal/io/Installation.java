@@ -28,7 +28,8 @@ import java.util.prefs.Preferences;
 import org.geotoolkit.internal.OS;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.internal.storage.IOUtilities;
 
 
 /**
@@ -293,7 +294,7 @@ public enum Installation {
      * @throws IOException if the URL cannot be created.
      */
     public Object toFileOrURL(final Class<?> caller, final String path) throws IOException {
-        final Object uof = IOUtilities.toFileOrURL(path);
+        final Object uof = IOUtilities.toFileOrURL(path, null);
         if (uof instanceof URL) {
             return (URL) uof;
         }
@@ -340,10 +341,11 @@ public enum Installation {
     public Properties getDataSource() throws IOException {
         final File file = new File(directory(true), DATASOURCE_FILE);
         if (file.isFile()) {
-            final InputStream in = new FileInputStream(file);
-            final Properties properties = new Properties();
-            properties.load(in);
-            in.close();
+            final Properties properties;
+            try (InputStream in = new FileInputStream(file)) {
+                properties = new Properties();
+                properties.load(in);
+            }
             return properties;
         }
         return null;

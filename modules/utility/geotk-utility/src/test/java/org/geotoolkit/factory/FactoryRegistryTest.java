@@ -23,7 +23,7 @@ import org.geotoolkit.util.collection.LazyList;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 
 
 /**
@@ -34,7 +34,7 @@ import org.geotoolkit.test.Depend;
  *
  * @since 2.1
  */
-@Depend(FactoryTest.class)
+@DependsOn(FactoryTest.class)
 public final strictfp class FactoryRegistryTest {
     /**
      * Ensures that class {@link Hints} is loaded before {@link DummyFactory}.
@@ -75,7 +75,7 @@ public final strictfp class FactoryRegistryTest {
         assertTrue(registry.setOrdering(DummyFactory.class, (DummyFactory)factory2, (DummyFactory)factory3));
         assertTrue(registry.setOrdering(DummyFactory.class, (DummyFactory)factory1, (DummyFactory)factory3));
 
-        final List<?> factories = new LazyList<Object>(registry.getServiceProviders(DummyFactory.class, null, null, null));
+        final List<?> factories = new LazyList<>(registry.getServiceProviders(DummyFactory.class, null, null, null));
         assertTrue(factories.contains(factory1));
         assertTrue(factories.contains(factory2));
         assertTrue(factories.contains(factory3));
@@ -282,35 +282,35 @@ public final strictfp class FactoryRegistryTest {
         Hints hints = new Hints();
         LazySet<DummyFactory> c;
 
-        c = new LazySet<DummyFactory>(registry.getServiceProviders(DummyFactory.class, null, hints, key));
+        c = new LazySet<>(registry.getServiceProviders(DummyFactory.class, null, hints, key));
         assertTrue(c.contains(factory1));
         assertTrue(c.contains(factory2));
         assertTrue(c.contains(factory3));
         assertEquals(3, c.size());
 
         hints.put(key, DummyFactory.class);
-        c = new LazySet<DummyFactory>(registry.getServiceProviders(DummyFactory.class, null, hints, key));
+        c = new LazySet<>(registry.getServiceProviders(DummyFactory.class, null, hints, key));
         assertTrue(c.contains(factory1));
         assertTrue(c.contains(factory2));
         assertTrue(c.contains(factory3));
         assertEquals(3, c.size());
 
         hints.put(key, Example2.class);
-        c = new LazySet<DummyFactory>(registry.getServiceProviders(DummyFactory.class, null, hints, key));
+        c = new LazySet<>(registry.getServiceProviders(DummyFactory.class, null, hints, key));
         assertFalse(c.contains(factory1));
         assertTrue (c.contains(factory2));
         assertFalse(c.contains(factory3));
         assertEquals(1, c.size());
 
         hints.put(key, new Class<?>[] {Example2.class, Example1.class});
-        c = new LazySet<DummyFactory>(registry.getServiceProviders(DummyFactory.class, null, hints, key));
+        c = new LazySet<>(registry.getServiceProviders(DummyFactory.class, null, hints, key));
         assertTrue (c.contains(factory1));
         assertTrue (c.contains(factory2));
         assertFalse(c.contains(factory3));
         assertEquals(2, c.size());
 
         hints.put(key, factory3);
-        c = new LazySet<DummyFactory>(registry.getServiceProviders(DummyFactory.class, null, hints, key));
+        c = new LazySet<>(registry.getServiceProviders(DummyFactory.class, null, hints, key));
         assertFalse(c.contains(factory1));
         assertFalse(c.contains(factory2));
         assertTrue (c.contains(factory3));

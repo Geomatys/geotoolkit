@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 
-import org.geotoolkit.geometry.DirectPosition2D;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.parameter.ParameterWriter;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.test.referencing.ReferencingTestBase;

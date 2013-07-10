@@ -25,12 +25,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.AbstractSet;
+import java.util.Objects;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.IOException;
 import javax.imageio.spi.ImageReaderSpi;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -104,7 +104,7 @@ final class GridTileManager extends TileManager {
     protected GridTileManager(final Tile[] tiles) throws IOException, IllegalArgumentException {
         ensureNonNull("tiles", tiles);
         Tile[] modifiedOrder = tiles; // May be modified later.
-        final Map<Dimension,OverviewLevel> levelsBySubsampling = new HashMap<Dimension,OverviewLevel>();
+        final Map<Dimension,OverviewLevel> levelsBySubsampling = new HashMap<>();
         for (int i=0; i<modifiedOrder.length; i++) {
             Tile tile = modifiedOrder[i];
             Dimension subsampling = tile.getSubsampling();
@@ -195,7 +195,7 @@ final class GridTileManager extends TileManager {
      */
     @Override
     final Collection<Tile> getInternalTiles() {
-        final FrequencySortedSet<Tile> tiles = new FrequencySortedSet<Tile>();
+        final FrequencySortedSet<Tile> tiles = new FrequencySortedSet<>();
             for (OverviewLevel level=root; level!=null; level=level.getFinerLevel()) {
             level.getInternalTiles(tiles);
         }
@@ -256,7 +256,7 @@ final class GridTileManager extends TileManager {
              * be lower if the region to read is small enough so that reading smaller tiles
              * compensate the cost of applying a higher subsampling.
              */
-            final ArrayList<Tile> tiles = new ArrayList<Tile>();
+            final ArrayList<Tile> tiles = new ArrayList<>();
             level.getTiles(tiles, region, subsampling, Long.MAX_VALUE);
             // TODO: The search in finer levels is not yet implemented.
             subsampling.setSize(doable);
@@ -313,8 +313,8 @@ final class GridTileManager extends TileManager {
         if (object != null && object.getClass() == getClass()) {
             final GridTileManager that = (GridTileManager) object;
             return count == that.count &&
-                   Utilities.equals(region, that.region) &&
-                   Utilities.equals(root,   that.root); // Tests last since it may be expansive.
+                   Objects.equals(region, that.region) &&
+                   Objects.equals(root,   that.root); // Tests last since it may be expansive.
         }
         return false;
     }

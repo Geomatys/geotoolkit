@@ -30,7 +30,7 @@ import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.referencing.datum.PixelInCell;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 
 

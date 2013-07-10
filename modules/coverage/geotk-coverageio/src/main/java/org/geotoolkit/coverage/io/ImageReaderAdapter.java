@@ -44,8 +44,8 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.SpatialImageReader;
@@ -106,13 +106,13 @@ public class ImageReaderAdapter extends SpatialImageReader {
      * when first needed, and cached because each value is typically fetched twice (once for
      * image width, and once for image height).
      */
-    private final Map<Integer,Dimension> imageSizes = new HashMap<Integer,Dimension>();
+    private final Map<Integer,Dimension> imageSizes = new HashMap<>();
 
     /**
      * The image types at various image indices. Values are computed from the sample
      * dimensions when first needed.
      */
-    private final Map<Integer,ImageTypeSpecifier> imageTypes = new HashMap<Integer,ImageTypeSpecifier>();
+    private final Map<Integer,ImageTypeSpecifier> imageTypes = new HashMap<>();
 
     /**
      * Creates a new adapter for the given coverage reader.

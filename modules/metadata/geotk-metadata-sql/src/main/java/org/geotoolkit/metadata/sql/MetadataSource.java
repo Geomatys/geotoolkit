@@ -39,15 +39,15 @@ import org.geotoolkit.internal.sql.SQLBuilder;
 import org.geotoolkit.internal.sql.StatementPool;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.StatementEntry;
-import org.geotoolkit.metadata.NullValuePolicy;
+import org.apache.sis.metadata.ValueExistencePolicy;
 import org.apache.sis.metadata.KeyNamePolicy;
-import org.geotoolkit.metadata.MetadataStandard;
-import org.geotoolkit.util.collection.WeakValueHashMap;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.util.collection.WeakValueHashMap;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -79,7 +79,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @module
  */
 @ThreadSafe
-public class MetadataSource {
+public class MetadataSource implements AutoCloseable {
     /**
      * The column name used for the identifiers. We do not quote this
      * identifier; we will let the database uses its own convention.
@@ -183,9 +183,9 @@ public class MetadataSource {
         ensureNonNull("dataSource", dataSource);
         this.standard = standard;
         this.schema = schema;
-        statements  = new StatementPool<Object,StatementEntry>(10, dataSource);
-        tables      = new HashMap<String, Set<String>>();
-        cache       = new WeakValueHashMap<CacheKey,Object>();
+        statements  = new StatementPool<>(10, dataSource);
+        tables      = new HashMap<>();
+        cache       = new WeakValueHashMap<>(CacheKey.class);
         converters  = ConverterRegistry.system();
         loader      = getClass().getClassLoader();
         synchronized (statements) {
@@ -207,9 +207,9 @@ public class MetadataSource {
         converters = source.converters;
         loader     = source.loader;
         buffer     = new SQLBuilder(source.buffer);
-        tables     = new HashMap<String, Set<String>>();
-        cache      = new WeakValueHashMap<CacheKey,Object>();
-        statements = new StatementPool<Object,StatementEntry>(source.statements);
+        tables     = new HashMap<>();
+        cache      = new WeakValueHashMap<>(CacheKey.class);
+        statements = new StatementPool<>(source.statements);
     }
 
     /**
@@ -267,7 +267,7 @@ public class MetadataSource {
      *         interface of the expected package.
      */
     final Map<String,Object> asMap(final Object metadata) throws ClassCastException {
-        return standard.asMap(metadata, NullValuePolicy.ALL, KeyNamePolicy.UML_IDENTIFIER);
+        return standard.asValueMap(metadata, KeyNamePolicy.UML_IDENTIFIER, ValueExistencePolicy.ALL);
     }
 
     /**
@@ -306,9 +306,9 @@ public class MetadataSource {
                 final String table = getTableName(standard.getInterface(metadata.getClass()));
                 final Map<String,Object> asMap = asMap(metadata);
                 synchronized (statements) {
-                    final Statement stmt = statements.connection().createStatement();
-                    identifier = search(table, null, asMap, stmt, buffer);
-                    stmt.close();
+                    try (Statement stmt = statements.connection().createStatement()) {
+                        identifier = search(table, null, asMap, stmt, buffer);
+                    }
                 }
             }
         }
@@ -390,19 +390,19 @@ public class MetadataSource {
          * be retained but a warning will be logged.
          */
         String identifier = null;
-        final ResultSet rs = stmt.executeQuery(buffer.toString());
-        while (rs.next()) {
-            final String candidate = rs.getString(1);
-            if (candidate != null) {
-                if (identifier == null) {
-                    identifier = candidate;
-                } else if (!identifier.equals(candidate)) {
+        try (ResultSet rs = stmt.executeQuery(buffer.toString())) {
+            while (rs.next()) {
+                final String candidate = rs.getString(1);
+                if (candidate != null) {
+                    if (identifier == null) {
+                        identifier = candidate;
+                    } else if (!identifier.equals(candidate)) {
                         Logging.log(MetadataSource.class, "search", Errors.getResources(null).getLogRecord(
                                 Level.WARNING, Errors.Keys.DUPLICATED_VALUES_FOR_KEY_1, candidate));
+                    }
                 }
             }
         }
-        rs.close();
         return identifier;
     }
 
@@ -422,7 +422,7 @@ public class MetadataSource {
         assert Thread.holdsLock(statements);
         Set<String> columns = tables.get(table);
         if (columns == null) {
-            columns = new HashSet<String>();
+            columns = new HashSet<>();
             /*
              * Note: a null schema in the DatabaseMetadata. getExistingColumns(...) call means "do not
              * take schema in account" - it does not mean "no schema" (the later is specified
@@ -430,16 +430,13 @@ public class MetadataSource {
              * a schema in a SELECT statement, then the actual schema used depends on the search
              * path set in the database environment variables.
              */
-            final ResultSet rs = statements.connection().getMetaData().getColumns(CATALOG, schema, table, null);
-            try {
+            try (ResultSet rs = statements.connection().getMetaData().getColumns(CATALOG, schema, table, null)) {
                 while (rs.next()) {
                     if (!columns.add(rs.getString("COLUMN_NAME"))) {
                         // Paranoiac check, but should never happen.
                         throw new SQLNonTransientException(table);
                     }
                 }
-            } finally {
-                rs.close();
             }
             tables.put(table, columns);
         }
@@ -505,7 +502,7 @@ public class MetadataSource {
     final Object getValue(final Class<?> type, final Method method, final String identifier) throws SQLException {
         final Class<?> valueType    = method.getReturnType();
         final boolean  isCollection = Collection.class.isAssignableFrom(valueType);
-        final Class<?> elementType  = isCollection ? Classes.boundOfParameterizedAttribute(method) : valueType;
+        final Class<?> elementType  = isCollection ? Classes.boundOfParameterizedProperty(method) : valueType;
         final boolean  isMetadata   = standard.isMetadata(elementType);
         final String   tableName    = getTableName(type);
         final String   columnName   = getColumnName(method);
@@ -566,9 +563,9 @@ public class MetadataSource {
             if (isCollection) {
                 Collection<Object> collection = Arrays.asList(values);
                 if (SortedSet.class.isAssignableFrom(valueType)) {
-                    collection = new TreeSet<Object>(collection);
+                    collection = new TreeSet<>(collection);
                 } else if (Set.class.isAssignableFrom(valueType)) {
-                    collection = new LinkedHashSet<Object>(collection);
+                    collection = new LinkedHashSet<>(collection);
                 }
                 value = collection;
             }
@@ -629,6 +626,7 @@ public class MetadataSource {
      *
      * @throws SQLException If an error occurred while closing the connection.
      */
+    @Override
     public void close() throws SQLException {
         statements.close();
     }

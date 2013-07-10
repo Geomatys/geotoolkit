@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.operation;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
+import java.util.Objects;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.Matrix;
@@ -36,7 +37,7 @@ import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.metadata.citation.Citation;
 
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -329,23 +330,23 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
         if (super.equals(object, mode)) {
             switch (mode) {
                 case BY_CONTRACT: {
-                    if (!Utilities.equals(getFormula(), ((OperationMethod) object).getFormula())) {
+                    if (!Objects.equals(getFormula(), ((OperationMethod) object).getFormula())) {
                         return false;
                     }
                     // Fall through
                 }
                 default: {
                     final OperationMethod that = (OperationMethod) object;
-                    return Utilities.equals(getSourceDimensions(), that.getSourceDimensions()) &&
-                           Utilities.equals(getTargetDimensions(), that.getTargetDimensions()) &&
+                    return Objects.equals(getSourceDimensions(), that.getSourceDimensions()) &&
+                           Objects.equals(getTargetDimensions(), that.getTargetDimensions()) &&
                            Utilities.deepEquals(getParameters(),   that.getParameters(), mode);
                 }
                 case STRICT: {
                     final DefaultOperationMethod that = (DefaultOperationMethod) object;
-                    return Utilities.equals(this.formula,         that.formula) &&
-                           Utilities.equals(this.sourceDimension, that.sourceDimension) &&
-                           Utilities.equals(this.targetDimension, that.targetDimension) &&
-                           Utilities.equals(this.parameters,      that.parameters);
+                    return Objects.equals(this.formula,         that.formula) &&
+                           Objects.equals(this.sourceDimension, that.sourceDimension) &&
+                           Objects.equals(this.targetDimension, that.targetDimension) &&
+                           Objects.equals(this.parameters,      that.parameters);
                 }
             }
         }

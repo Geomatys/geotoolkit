@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.datum;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -36,13 +37,12 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.jaxb.gco.DateAsLongAdapter;
+import org.apache.sis.internal.jaxb.gco.DateAsLongAdapter;
 
-import static org.geotoolkit.util.Utilities.deepEquals;
+import static org.apache.sis.util.Utilities.deepEquals;
 
 
 /**
@@ -203,7 +203,7 @@ public class AbstractDatum extends AbstractIdentifiedObject implements Datum {
      * compared by the {@link #equals} method.
      */
     static Map<String,Object> name(final int key) {
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<>(4);
         final InternationalString name = Vocabulary.formatInternational(key);
         properties.put(NAME_KEY,  name.toString(null)); // "null" required for unlocalized version.
         properties.put(ALIAS_KEY, name);
@@ -297,9 +297,9 @@ public class AbstractDatum extends AbstractIdentifiedObject implements Datum {
                 case STRICT: {
                     final AbstractDatum that = (AbstractDatum) object;
                     return this.realizationEpoch == that.realizationEpoch &&
-                           Utilities.equals(this.domainOfValidity, that.domainOfValidity) &&
-                           Utilities.equals(this.anchorPoint,      that.anchorPoint) &&
-                           Utilities.equals(this.scope,            that.scope);
+                           Objects.equals(this.domainOfValidity, that.domainOfValidity) &&
+                           Objects.equals(this.anchorPoint,      that.anchorPoint) &&
+                           Objects.equals(this.scope,            that.scope);
                 }
                 case BY_CONTRACT: {
                     final Datum that = (Datum) object;

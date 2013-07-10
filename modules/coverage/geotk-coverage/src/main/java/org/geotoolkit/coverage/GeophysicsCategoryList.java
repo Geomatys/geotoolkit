@@ -20,10 +20,9 @@ package org.geotoolkit.coverage;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.Objects;
 import javax.measure.unit.Unit;
 import net.jcip.annotations.Immutable;
-
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -167,7 +166,7 @@ final class GeophysicsCategoryList extends CategoryList {
     synchronized StringBuffer format(final double value, final boolean writeUnits,
                                      final Locale locale, StringBuffer buffer)
     {
-        if (format == null || !Utilities.equals(this.locale, locale)) {
+        if (format == null || !Objects.equals(this.locale, locale)) {
             this.locale = locale;
             format = (locale != null) ? NumberFormat.getNumberInstance(locale) :
                                         NumberFormat.getNumberInstance();
@@ -195,7 +194,7 @@ final class GeophysicsCategoryList extends CategoryList {
         if (object instanceof GeophysicsCategoryList) {
             final GeophysicsCategoryList that = (GeophysicsCategoryList) object;
             return this.ndigits == that.ndigits &&
-                   Utilities.equals(this.unit, that.unit) &&
+                   Objects.equals(this.unit, that.unit) &&
                    super.equals(that);
         }
         return ndigits == 0 && unit == null && super.equals(object);

@@ -113,7 +113,7 @@ public abstract class DeferringIterator<E> implements Iterator<E> {
                 return next;
             }
             if (fallbacks == null) {
-                fallbacks = new ArrayList<E>();
+                fallbacks = new ArrayList<>();
             }
             fallbacks.add(next);
         } while (iterator.hasNext());

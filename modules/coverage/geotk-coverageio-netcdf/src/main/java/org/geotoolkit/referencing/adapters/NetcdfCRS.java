@@ -60,7 +60,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.image.io.IrregularAxesConverter;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
 import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
@@ -226,7 +226,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     NetcdfCRS(final CoordinateSystem netcdfCS, final Dimension[] domain, final NetcdfCRS... components) {
         cs = netcdfCS;
         this.domain = domain; // No need to clone here.
-        final List<NetcdfAxis> netcdfAxes = new ArrayList<NetcdfAxis>(netcdfCS.getRankRange());
+        final List<NetcdfAxis> netcdfAxes = new ArrayList<>(netcdfCS.getRankRange());
         for (final NetcdfCRS c : components) {
             netcdfAxes.addAll(Arrays.asList(c.axes));
         }

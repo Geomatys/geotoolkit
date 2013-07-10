@@ -42,8 +42,8 @@ import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
 import org.geotoolkit.referencing.factory.DatumAliasesTest;
-import org.geotoolkit.test.Depend;
 
+import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import static org.geotoolkit.test.Commons.*;
 import static org.geotoolkit.referencing.Assert.*;
@@ -59,7 +59,7 @@ import static org.geotoolkit.referencing.Assert.*;
  *
  * @since 2.0
  */
-@Depend({ParserTest.class, DatumAliasesTest.class})
+@DependsOn({ParserTest.class, DatumAliasesTest.class})
 public final strictfp class WKTFormatTest {
     /**
      * Test a hard coded version of a WKT. This is more convenient for debugging.

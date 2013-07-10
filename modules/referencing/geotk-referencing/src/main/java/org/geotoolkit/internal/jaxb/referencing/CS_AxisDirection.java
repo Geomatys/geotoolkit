@@ -18,7 +18,7 @@
 package org.geotoolkit.internal.jaxb.referencing;
 
 import org.opengis.referencing.cs.AxisDirection;
-import org.geotoolkit.internal.jaxb.gml.CodeListAdapter;
+import org.apache.sis.internal.jaxb.gml.CodeListAdapter;
 
 
 /**

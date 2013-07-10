@@ -19,6 +19,7 @@ package org.geotoolkit.internal.sql;
 
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
@@ -31,9 +32,8 @@ import javax.sql.DataSource;
 
 import org.geotoolkit.resources.Loggings;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -57,7 +57,7 @@ public class DefaultDataSource implements DataSource {
      * The driver names of the connection returned by {@code DefaultDataSource}.
      * This is used for logging purpose only.
      */
-    private static final Set<String> DRIVERS = new HashSet<String>();
+    private static final Set<String> DRIVERS = new HashSet<>();
 
     /**
      * The URL to use for connecting to the database.
@@ -201,7 +201,7 @@ public class DefaultDataSource implements DataSource {
         }
         if (other != null && other.getClass() == getClass()) {
             final DefaultDataSource that = (DefaultDataSource) other;
-            return Utilities.equals(this.url, that.url);
+            return Objects.equals(this.url, that.url);
         }
         return false;
     }
@@ -231,7 +231,7 @@ public class DefaultDataSource implements DataSource {
      *
      * @return the parent Logger for this data source
      */
-//  @Override // Uncomment with JDK7
+    @Override
     public Logger getParentLogger() {
         return LOGGER;
     }

@@ -87,7 +87,7 @@ class ClassPair<S,T> {
                 return null;
             }
         }
-        return new ClassPair<S,T>(source, targetClass);
+        return new ClassPair<>(source, targetClass);
     }
 
     /**

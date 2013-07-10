@@ -73,7 +73,6 @@ public final class PostgisInstaller extends ScriptRunner {
     public PostgisInstaller(final Connection connection) throws SQLException {
         super(connection);
         if (dialect != Dialect.POSTGRESQL) {
-            connection.close();
             throw new UnsupportedOperationException(dialect.toString());
         }
         setEncoding("ISO-8859-1");

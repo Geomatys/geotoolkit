@@ -18,6 +18,7 @@
 package org.geotoolkit.parameter;
 
 import java.net.URI;
+import java.util.Objects;
 import javax.measure.unit.Unit;
 import javax.media.jai.ParameterList;
 
@@ -25,7 +26,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
 
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.resources.Errors;
 
 
@@ -65,7 +66,7 @@ final class ImagingParameter<T> extends AbstractParameterValue<T> {
     public static <T> ImagingParameter<T> create(final ParameterDescriptor<T> descriptor,
                                                  final ParameterList parameters)
     {
-        return new ImagingParameter<T>(descriptor, parameters);
+        return new ImagingParameter<>(descriptor, parameters);
     }
 
     /**
@@ -335,7 +336,7 @@ final class ImagingParameter<T> extends AbstractParameterValue<T> {
         }
         if (super.equals(object)) {
             final ImagingParameter<?> that = (ImagingParameter<?>) object;
-            return Utilities.deepEquals(this.getValue(), that.getValue());
+            return Objects.deepEquals(this.getValue(), that.getValue());
         }
         return false;
     }
@@ -345,7 +346,7 @@ final class ImagingParameter<T> extends AbstractParameterValue<T> {
      */
     @Override
     public int hashCode() {
-        return Utilities.hash(Utilities.deepHashCode(getValue()), super.hashCode()) ^ (int) serialVersionUID;
+        return org.geotoolkit.util.Utilities.hash(Utilities.deepHashCode(getValue()), super.hashCode()) ^ (int) serialVersionUID;
     }
 
     /**
@@ -354,7 +355,7 @@ final class ImagingParameter<T> extends AbstractParameterValue<T> {
      */
     @Override
     public Parameter<T> clone() {
-        final Parameter<T> parameter = new Parameter<T>(getDescriptor());
+        final Parameter<T> parameter = new Parameter<>(getDescriptor());
         parameter.setValue(getValue());
         return parameter;
     }

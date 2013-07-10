@@ -30,8 +30,8 @@ import org.apache.sis.util.ArraysExt;
 
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.resources.IndexedResourceBundle;
-import org.geotoolkit.util.NullArgumentException;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.NullArgumentException;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.image.io.Warnings;
 
 import static org.geotoolkit.image.io.DimensionSlice.API;
@@ -334,7 +334,7 @@ public class DimensionIdentification implements WarningProducer {
                     return (Integer) key;
                 }
                 if (identifiers == null) {
-                    identifiers = new HashSet<Object>(8);
+                    identifiers = new HashSet<>(8);
                 }
                 identifiers.add(key);
             }
@@ -359,7 +359,7 @@ public class DimensionIdentification implements WarningProducer {
                 }
                 if (identifiers.contains(property)) {
                     if (found == null) {
-                        found = new LinkedHashMap<Integer,Object>(4);
+                        found = new LinkedHashMap<>(4);
                     }
                     final Object old = found.put(position, property);
                     if (old != null) {

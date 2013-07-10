@@ -66,9 +66,7 @@ public class LineWriter extends FilterWriter {
      * @throws IllegalArgumentException if {@code out} is {@code null}.
      */
     public LineWriter(final Writer out) {
-        this(out, System.getProperty("line.separator", "\n"));
-        // TODO: replace by System.lineSeparator() when we will be allowed to target JDK7.
-        // Performs the search-and-replace in the whole Geotk code base.
+        this(out, System.lineSeparator());
     }
 
     /**

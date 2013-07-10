@@ -64,7 +64,7 @@ public final class Setup implements SetupService {
         final IIORegistry registry = IIORegistry.getDefaultInstance();
         WorldFileImageReader.Spi.unregisterDefaults(registry);
         WorldFileImageWriter.Spi.unregisterDefaults(registry);
-        final List<Object> toRemove = new ArrayList<Object>();
+        final List<Object> toRemove = new ArrayList<>();
         final Iterator<Class<?>> categories = registry.getCategories();
         while (categories.hasNext()) {
             final Class<?> category = categories.next();

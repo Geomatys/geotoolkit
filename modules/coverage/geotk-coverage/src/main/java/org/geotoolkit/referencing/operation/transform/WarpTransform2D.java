@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.io.Serializable;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -38,7 +39,6 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.lang.Workaround;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
@@ -332,14 +332,14 @@ public class WarpTransform2D extends AbstractMathTransform2D implements Serializ
             final WarpPolynomial poly = (WarpPolynomial) warp;
             final ParameterValue<?>[] p = new ParameterValue<?>[7];
             int c = 0;
-            p[c++] = new Parameter<Integer>(DEGREE,   poly.getDegree());
-            p[c++] = new Parameter<float[]>(X_COEFFS, poly.getXCoeffs());
-            p[c++] = new Parameter<float[]>(Y_COEFFS, poly.getYCoeffs());
+            p[c++] = new Parameter<>(DEGREE,   poly.getDegree());
+            p[c++] = new Parameter<>(X_COEFFS, poly.getXCoeffs());
+            p[c++] = new Parameter<>(Y_COEFFS, poly.getYCoeffs());
             float s;
-            if ((s=poly.getPreScaleX ()) != 1) p[c++] = new Parameter<Float>(PRE_SCALE_X,  s);
-            if ((s=poly.getPreScaleY ()) != 1) p[c++] = new Parameter<Float>(PRE_SCALE_Y,  s);
-            if ((s=poly.getPostScaleX()) != 1) p[c++] = new Parameter<Float>(POST_SCALE_X, s);
-            if ((s=poly.getPostScaleY()) != 1) p[c++] = new Parameter<Float>(POST_SCALE_Y, s);
+            if ((s=poly.getPreScaleX ()) != 1) p[c++] = new Parameter<>(PRE_SCALE_X,  s);
+            if ((s=poly.getPreScaleY ()) != 1) p[c++] = new Parameter<>(PRE_SCALE_Y,  s);
+            if ((s=poly.getPostScaleX()) != 1) p[c++] = new Parameter<>(POST_SCALE_X, s);
+            if ((s=poly.getPostScaleY()) != 1) p[c++] = new Parameter<>(POST_SCALE_Y, s);
             return new ParameterGroup(getParameterDescriptors(), ArraysExt.resize(p, c));
         } else {
             return null;
@@ -545,7 +545,7 @@ public class WarpTransform2D extends AbstractMathTransform2D implements Serializ
         }
         if (super.equals(object, mode)) {
             final WarpTransform2D that = (WarpTransform2D) object;
-            return Utilities.equals(this.warp, that.warp);
+            return Objects.equals(this.warp, that.warp);
         }
         return false;
     }

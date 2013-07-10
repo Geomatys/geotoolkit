@@ -70,7 +70,7 @@ public interface ProcessDescriptor extends Processing {
      *   <li>{@link ProcessStep#getProcessingInformation()} is the {@linkplain Process#getDescriptor() process descriptor}.</li>
      * </ul>
      */
-    ParameterDescriptor<ProcessStep> PROCESS_STEP = new SimpleParameterDescriptor<ProcessStep>(ProcessStep.class, "Geotk", "ProcessStep");
+    ParameterDescriptor<ProcessStep> PROCESS_STEP = new SimpleParameterDescriptor<>(ProcessStep.class, "Geotk", "ProcessStep");
 
     /**
      * Information to identify the processing package that run the process.

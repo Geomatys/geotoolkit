@@ -125,11 +125,9 @@ public enum Dialect {
                 ArgumentChecks.ensureNonNull("databaseURL", databaseURL);
                 connection = DefaultDataSource.log(DriverManager.getConnection(databaseURL), Dialect.class);
             }
-            Statement stmt = connection.createStatement();
-            try {
+            try (Statement stmt = connection.createStatement()) {
                 stmt.execute(setReadOnly ? "SHUTDOWN COMPACT" : "SHUTDOWN");
             } finally {
-                stmt.close();
                 connection.close();
             }
             if (setReadOnly) {
@@ -137,19 +135,13 @@ public enum Dialect {
                 if (path != null) try {
                     final File file = new File(path.getParentFile(), path.getName() + ".properties");
                     final Properties properties;
-                    InputStream propertyIn = new FileInputStream(file);
-                    try {
+                    try (InputStream propertyIn = new FileInputStream(file)) {
                         properties = new Properties();
                         properties.load(propertyIn);
-                    } finally {
-                        propertyIn.close();
                     }
                     if (!"true".equals(properties.put("readonly", "true"))) {
-                        OutputStream out = new FileOutputStream(file);
-                        try {
+                        try (OutputStream out = new FileOutputStream(file)) {
                             properties.store(out, "HSQL database configuration");
-                        } finally {
-                            out.close();
                         }
                     }
                 } catch (IOException e) {

@@ -22,7 +22,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 
 import org.apache.sis.util.Disposable;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 
 
@@ -48,14 +48,14 @@ public class ReferenceQueueConsumer<T> extends DaemonThread {
     static {
         // Call to Thread.start() must be outside the constructor
         // (Reference: Goetz et al.: "Java Concurrency in Practice").
-        DEFAULT = new ReferenceQueueConsumer<Object>("ReferenceQueueConsumer");
+        DEFAULT = new ReferenceQueueConsumer<>("ReferenceQueueConsumer");
         DEFAULT.start();
     }
 
     /**
      * List of references collected by the garbage collector.
      */
-    public final ReferenceQueue<T> queue = new ReferenceQueue<T>();
+    public final ReferenceQueue<T> queue = new ReferenceQueue<>();
 
     /**
      * Constructs a new thread as a daemon. This thread will be sleeping most of the time.
@@ -122,12 +122,8 @@ public class ReferenceQueueConsumer<T> extends DaemonThread {
             }
             try {
                 process(ref);
-            } catch (Exception exception) {
+            } catch (Throwable exception) {
                 Logging.unexpectedException(getClass(), "run", exception);
-            } catch (AssertionError exception) {
-                Logging.unexpectedException(getClass(), "run", exception);
-                // Do not kill the thread on assertion failure, in order to
-                // keep the same behaviour as if assertions were turned off.
             }
         }
         Logging.getLogger(getClass()).log(level, "{0} daemon stopped.", Classes.getShortClassName(this));

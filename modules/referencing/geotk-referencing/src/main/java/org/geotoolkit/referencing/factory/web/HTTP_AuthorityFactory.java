@@ -31,7 +31,7 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.naming.DefaultNameSpace;
+import org.apache.sis.util.iso.DefaultNameSpace;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
 import org.geotoolkit.referencing.factory.AuthorityFactoryAdapter;

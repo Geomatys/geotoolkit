@@ -29,7 +29,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.apache.sis.util.ArraysExt;
 
-import org.geotoolkit.util.Deprecable;
+import org.apache.sis.util.Deprecable;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -100,9 +100,8 @@ public final strictfp class ConformanceTest extends ReferencingTestBase {
          * but many OperationMethods can be associated to the same name or alias because
          * some are ambiguous (e.g. "Bursa-Wolf").
          */
-        final Map<String, OperationMethod> codes = new LinkedHashMap<String, OperationMethod>();
-        final Map<String, Map<OperationMethod,OperationMethod>> names =
-                new LinkedHashMap<String, Map<OperationMethod,OperationMethod>>();
+        final Map<String, OperationMethod> codes = new LinkedHashMap<>();
+        final Map<String, Map<OperationMethod,OperationMethod>> names = new LinkedHashMap<>();
         final MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
 skip:   for (final OperationMethod method : mtFactory.getAvailableMethods(SingleOperation.class)) {
             for (final ReferenceIdentifier id : method.getIdentifiers()) {
@@ -133,7 +132,7 @@ skip:   for (final OperationMethod method : mtFactory.getAvailableMethods(Single
                     assertFalse("Not a name: " + name, isNumber(name));
                     Map<OperationMethod,OperationMethod> methods = names.get(name);
                     if (methods == null) {
-                        methods = new IdentityHashMap<OperationMethod,OperationMethod>();
+                        methods = new IdentityHashMap<>();
                         assertNull(name, names.put(name, methods));
                     }
                     assertNull("MathTransformFactory.getAvailableMethods(...) did not retuned a Set." +

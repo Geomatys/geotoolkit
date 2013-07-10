@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 import javax.swing.AbstractListModel;
@@ -29,8 +30,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.IdentifiedObject;
 
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.swing.FastComboBox;
 
 
@@ -47,7 +47,7 @@ import org.geotoolkit.internal.swing.FastComboBox;
  * @module
  */
 @SuppressWarnings("serial") // Actually not serializable because AuthorityCode is not.
-final class AuthorityCodeList extends AbstractListModel implements FastComboBox.Model {
+final class AuthorityCodeList extends AbstractListModel<AuthorityCode> implements FastComboBox.Model<AuthorityCode> {
     /**
      * The authority codes as {@link AuthorityCode} objects.
      */
@@ -90,6 +90,7 @@ final class AuthorityCodeList extends AbstractListModel implements FastComboBox.
      * @param factory The factory to use for fetching the codes.
      * @param type Base classes of CRS objects to extract.
      */
+    @SafeVarargs
     public AuthorityCodeList(final Locale locale, final AuthorityFactory factory,
             final Class<? extends IdentifiedObject>... types)
     {
@@ -189,7 +190,7 @@ final class AuthorityCodeList extends AbstractListModel implements FastComboBox.
      */
     @Override
     public void setSelectedItem(final Object code) {
-        if (!Utilities.equals(code, selected)) {
+        if (!Objects.equals(code, selected)) {
             selected = (AuthorityCode) code;
             selectedCode = null;
             final int index = (selected != null) ? selected.index : -1;

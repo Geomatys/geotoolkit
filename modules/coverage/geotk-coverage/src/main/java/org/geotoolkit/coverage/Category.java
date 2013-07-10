@@ -19,6 +19,7 @@ package org.geotoolkit.coverage;
 
 import java.awt.Color;
 import java.util.Arrays;
+import java.util.Objects;
 import java.io.Serializable;
 import net.jcip.annotations.Immutable;
 
@@ -27,10 +28,10 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.math.XMath;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.converter.Numbers;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.math.MathFunctions;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.Numbers;
+import org.apache.sis.util.iso.Types;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
@@ -96,7 +97,7 @@ public class Category implements Serializable {
     private static final NumberRange<Byte> BYTE_0;
     static {
         final Byte index = 0;
-        BYTE_0 = NumberRange.create(index, index);
+        BYTE_0 = NumberRange.create(index, true, index, true);
     }
 
     /**
@@ -105,7 +106,7 @@ public class Category implements Serializable {
     private static final NumberRange<Byte> BYTE_1;
     static {
         final Byte index = 1;
-        BYTE_1 = NumberRange.create(index, index);
+        BYTE_1 = NumberRange.create(index, true, index, true);
     }
 
     /**
@@ -247,7 +248,7 @@ public class Category implements Serializable {
      */
     @SuppressWarnings({"unchecked","rawtypes"})
     private Category(final CharSequence name, final int[] ARGB, final Number sample) {
-        this(name, ARGB, new NumberRange(sample.getClass(), sample, sample), null);
+        this(name, ARGB, new NumberRange(sample.getClass(), sample, true, sample, true), null);
         assert Double.isNaN(inverse.minimum) : inverse.minimum;
         assert Double.isNaN(inverse.maximum) : inverse.maximum;
     }
@@ -444,7 +445,7 @@ public class Category implements Serializable {
         ensureNonNull("name",  name);
         ensureNonNull("range", range);
         Class<? extends Number> type = range.getElementType();
-        this.name      = SimpleInternationalString.wrap(name);
+        this.name      = Types.toInternationalString(name);
         this.ARGB      = ARGB;
         this.range     = range;
         boolean minInc = range.isMinIncluded();
@@ -518,7 +519,7 @@ public class Category implements Serializable {
         this.name    = inverse.name;
         this.ARGB    = inverse.ARGB;
         if (!isQuantitative) {
-            minimum = maximum = XMath.toNaN(((int) Math.round((inverse.minimum + inverse.maximum)/2)) % 0x200000);
+            minimum = maximum = MathFunctions.toNanFloat(((int) Math.round((inverse.minimum + inverse.maximum)/2)) % 0x200000);
             transform = LinearTransform1D.create(0, inverse.minimum); // geophysics to sample
             return;
         }
@@ -681,8 +682,8 @@ public class Category implements Serializable {
     private static int[] toARGB(final Color color, final NumberRange<?> sampleValueRange) {
         int sample = 0;
         if (color == null && sampleValueRange != null) {
-            sample = (int) Math.round(sampleValueRange.getMinimum(true));
-            if (sample != Math.round(sampleValueRange.getMaximum(true))) {
+            sample = (int) Math.round(sampleValueRange.getMinDouble(true));
+            if (sample != Math.round(sampleValueRange.getMaxDouble(true))) {
                 return DEFAULT;
             }
         }
@@ -808,7 +809,7 @@ public class Category implements Serializable {
      * @see GridSampleDimension#rescale
      */
     public Category rescale(final MathTransform1D sampleToGeophysics) {
-        if (Utilities.equals(sampleToGeophysics, transform)) {
+        if (Objects.equals(sampleToGeophysics, transform)) {
             return this;
         }
         return new Category(name, ARGB, range, sampleToGeophysics);
@@ -877,16 +878,16 @@ public class Category implements Serializable {
             final Category that = (Category) object;
             if (Double.doubleToRawLongBits(minimum)== Double.doubleToRawLongBits(that.minimum) &&
                 Double.doubleToRawLongBits(maximum)== Double.doubleToRawLongBits(that.maximum) &&
-                Utilities.equals(this.transform, that.transform) &&
-                Utilities.equals(this.name,      that.name ) &&
-                          Arrays.equals(this.ARGB,      that.ARGB ))
+                Objects.equals(this.transform, that.transform) &&
+                Objects.equals(this.name,      that.name ) &&
+                 Arrays.equals(this.ARGB,      that.ARGB ))
             {
                 // Special test for 'range', since 'GeophysicsCategory'
                 // computes it only when first needed.
                 final NumberRange<?> r1 = this.range;
                 final NumberRange<?> r2 = that.range;
                 if (r1 != null && r2 != null) {
-                    if (!Utilities.equals(r1, r2)) {
+                    if (!Objects.equals(r1, r2)) {
                         return false;
                     }
                     if (inverse instanceof GeophysicsCategory) {

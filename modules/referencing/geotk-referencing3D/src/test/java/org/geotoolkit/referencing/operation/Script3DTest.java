@@ -45,10 +45,11 @@ public final strictfp class Script3DTest {
      * @throws Exception If a test failed.
      */
     private void runScript(final String filename) throws Exception {
-        final LineNumberReader in = TestData.openReader(this, filename);
-        final ScriptRunner3D test = new ScriptRunner3D(in);
-        test.run();
-        in.close();
+        final ScriptRunner3D test;
+        try (LineNumberReader in = TestData.openReader(this, filename)) {
+            test = new ScriptRunner3D(in);
+            test.run();
+        }
         if (test.firstError != null) {
             throw test.firstError;
         }

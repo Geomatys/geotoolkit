@@ -142,44 +142,44 @@ final class SampleDimensionTable extends Table {
             final int bandIndex = indexOf(query.band);
             final int nameIndex = indexOf(query.name);
             final int unitIndex = indexOf(query.units);
-            final ResultSet results = statement.executeQuery();
-            while (results.next()) {
-                final String name = results.getString(nameIndex);
-                final int    band = results.getInt   (bandIndex); // First band is 1.
-                String unitSymbol = results.getString(unitIndex);
-                Unit<?> unit = null;
-                if (unitSymbol != null) {
-                    unitSymbol = unitSymbol.trim();
-                    if (unitSymbol.isEmpty()) {
-                        unit = Unit.ONE;
-                    } else {
-                        try {
-                            unit = (Unit<?>) getUnitFormat().parseObject(unitSymbol);
-                        } catch (ParseException e) {
-                            // The constructor of this exception will close the ResultSet.
-                            final IllegalRecordException ex = new IllegalRecordException(errors().getString(
-                                    Errors.Keys.UNPARSABLE_STRING_2, "unit(" + unitSymbol + ')',
-                                    unitSymbol.substring(Math.max(0, e.getErrorOffset()))),
-                                    this, results, unitIndex, name);
-                            ex.initCause(e);
-                            throw ex;
+            try (ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    final String name = results.getString(nameIndex);
+                    final int    band = results.getInt   (bandIndex); // First band is 1.
+                    String unitSymbol = results.getString(unitIndex);
+                    Unit<?> unit = null;
+                    if (unitSymbol != null) {
+                        unitSymbol = unitSymbol.trim();
+                        if (unitSymbol.isEmpty()) {
+                            unit = Unit.ONE;
+                        } else {
+                            try {
+                                unit = (Unit<?>) getUnitFormat().parseObject(unitSymbol);
+                            } catch (ParseException e) {
+                                // The constructor of this exception will close the ResultSet.
+                                final IllegalRecordException ex = new IllegalRecordException(errors().getString(
+                                        Errors.Keys.UNPARSABLE_STRING_2, "unit(" + unitSymbol + ')',
+                                        unitSymbol.substring(Math.max(0, e.getErrorOffset()))),
+                                        this, results, unitIndex, name);
+                                ex.initCause(e);
+                                throw ex;
+                            }
                         }
                     }
-                }
-                if (numSampleDimensions >= names.length) {
-                    names = Arrays.copyOf(names, names.length*2);
-                    units = Arrays.copyOf(units, units.length*2);
-                }
-                names[numSampleDimensions] = name;
-                units[numSampleDimensions] = unit;
-                if (band != ++numSampleDimensions) {
-                    // The constructor of this exception will close the ResultSet.
-                    throw new IllegalRecordException(errors().getString(
-                            Errors.Keys.NON_CONSECUTIVE_BANDS_2, numSampleDimensions, band),
-                            this, results, bandIndex, format);
+                    if (numSampleDimensions >= names.length) {
+                        names = Arrays.copyOf(names, names.length*2);
+                        units = Arrays.copyOf(units, units.length*2);
+                    }
+                    names[numSampleDimensions] = name;
+                    units[numSampleDimensions] = unit;
+                    if (band != ++numSampleDimensions) {
+                        // The constructor of this exception will close the ResultSet.
+                        throw new IllegalRecordException(errors().getString(
+                                Errors.Keys.NON_CONSECUTIVE_BANDS_2, numSampleDimensions, band),
+                                this, results, bandIndex, format);
+                    }
                 }
             }
-            results.close();
             release(lc, ce);
         }
         /*
@@ -227,7 +227,7 @@ final class SampleDimensionTable extends Table {
                 final int bandIndex = indexOf(query.band);
                 final int nameIndex = indexOf(query.name);
                 final int unitIndex = indexOf(query.units);
-                final List<List<Category>> categories = new ArrayList<List<Category>>(bands.size());
+                final List<List<Category>> categories = new ArrayList<>(bands.size());
                 boolean isEmpty = true;
                 int bandNumber = 0;
                 for (GridSampleDimension band : bands) {

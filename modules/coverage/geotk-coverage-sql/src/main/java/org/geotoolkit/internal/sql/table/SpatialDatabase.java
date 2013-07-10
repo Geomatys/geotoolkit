@@ -37,7 +37,7 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
@@ -198,7 +198,7 @@ public class SpatialDatabase extends Database {
     {
         if (temporalCRS == null) return spatialCRS;
         if (spatialCRS == null) return temporalCRS;
-        final Map<String,Object> id = new HashMap<String,Object>(4);
+        final Map<String,Object> id = new HashMap<>(4);
         id.put(CoordinateReferenceSystem.NAME_KEY, spatialCRS.getName().getCode() +
                 " + Time(" + temporalCRS.getName().getCode() + ')');
         if (world) {
@@ -260,11 +260,9 @@ public class SpatialDatabase extends Database {
          */
         Integer id = IdentifiedObjects.lookupEpsgCode(horizontalCRS, true);
         if (id != null) {
-            try {
-                final Connection c = getDataSource(true).getConnection();
+            try (Connection c = getDataSource(true).getConnection()) {
                 final DirectPostgisFactory postgis = new DirectPostgisFactory(null, c);
                 id = postgis.getPrimaryKey(CoordinateReferenceSystem.class, id.toString());
-                c.close();
             } catch (SQLException e) {
                 throw new FactoryException(e);
             }

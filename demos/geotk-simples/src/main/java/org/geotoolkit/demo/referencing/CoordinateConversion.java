@@ -16,7 +16,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeocentricCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 
 
 /**

@@ -46,6 +46,11 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 
+import org.apache.sis.measure.Angle;
+import org.apache.sis.measure.AngleFormat;
+import org.apache.sis.measure.Latitude;
+import org.apache.sis.measure.Longitude;
+import org.apache.sis.measure.Units;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.geometry.TransformedDirectPosition;
@@ -182,7 +187,7 @@ public class CoordinateFormat extends Format {
      * ({@linkplain DefaultGeographicCRS#WGS84 WGS 1984}) coordinate reference system.
      */
     public CoordinateFormat() {
-        this(Locale.getDefault());
+        this(Locale.getDefault(Locale.Category.FORMAT));
     }
 
     /**
@@ -499,6 +504,7 @@ public class CoordinateFormat extends Format {
     private AngleFormat getAngleFormat() {
         if (angleFormat == null) {
             angleFormat = AngleFormat.getInstance(locale);
+            angleFormat.applyPattern("DD°MM.m′");
         }
         return angleFormat;
     }

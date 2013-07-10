@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.adapters;
 import java.util.Set;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 
 import ucar.nc2.VariableSimpleIF;
 
@@ -29,7 +30,6 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
 
@@ -154,7 +154,7 @@ public abstract class NetcdfIdentifiedObject implements IdentifiedObject, Refere
             return true;
         }
         if (other != null && other.getClass() == getClass()) {
-            return Utilities.equals(delegate(), ((NetcdfIdentifiedObject) other).delegate());
+            return Objects.equals(delegate(), ((NetcdfIdentifiedObject) other).delegate());
         }
         return false;
     }

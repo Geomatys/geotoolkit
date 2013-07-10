@@ -125,7 +125,7 @@ public final strictfp class ImageWorkerTest extends SampleImageTestBase {
         final RenderedImage rgb = worker.image;
         worker.setColorSpaceType(PaletteInterpretation.GRAY);
         assertNotSame(rgb, image = worker.image);
-        assertCurrentChecksumEquals("setColorSpaceType(GRAY)", 2283780390L);
+        assertCurrentChecksumEquals("setColorSpaceType(GRAY)", 2283780390L, 418360231L);
         showCurrentImage("setColorSpaceType(GRAY)");
 
         final RenderedImage grayscale = worker.image;
@@ -222,7 +222,7 @@ public final strictfp class ImageWorkerTest extends SampleImageTestBase {
         worker.setImage(original);
         worker.setColorSpaceType(PaletteInterpretation.GRAY);
         assertNotSame(indexed, image = worker.image);
-        assertCurrentChecksumEquals("setColorSpaceType(GRAY)", 163325088L, 3717990294L);
+        assertCurrentChecksumEquals("setColorSpaceType(GRAY)", 163325088L, 3717990294L, 1028333482L);
         showCurrentImage("setColorSpaceType(GRAY)");
 
         final RenderedImage grayscale = worker.image;

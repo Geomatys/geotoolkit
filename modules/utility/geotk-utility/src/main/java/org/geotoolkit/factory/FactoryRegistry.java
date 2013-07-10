@@ -28,11 +28,12 @@ import org.opengis.metadata.quality.ConformanceResult;
 
 import org.geotoolkit.lang.Debug;
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
+
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -111,20 +112,19 @@ public class FactoryRegistry extends ServiceRegistry {
      * as a guard against infinite recursivity (i.e. when a factory to be scanned request
      * an other dependency of the same category).
      */
-    private final Set<Class<?>> scanningCategories = new HashSet<Class<?>>();
+    private final Set<Class<?>> scanningCategories = new HashSet<>();
 
     /**
      * Factories under testing for availability. This is used by
      * {@link #isAcceptable} as a guard against infinite recursivity.
      */
-    private final Set<Class<? extends Factory>> testingAvailability =
-            new HashSet<Class<? extends Factory>>();
+    private final Set<Class<? extends Factory>> testingAvailability = new HashSet<>();
 
     /**
      * Factories under testing for hints compatibility. This is used by
      * {@link #usesAcceptableHints} as a guard against infinite recursivity.
      */
-    private final Set<Factory> testingHints = new HashSet<Factory>();
+    private final Set<Factory> testingHints = new HashSet<>();
 
     /**
      * If a factory is not available because of some exception, the exception. Otherwise {@code null}.
@@ -165,7 +165,7 @@ public class FactoryRegistry extends ServiceRegistry {
         super(categories.iterator());
         for (final Iterator<Class<?>> it=getCategories(); it.hasNext();) {
             if (needScanForPlugins == null) {
-                needScanForPlugins = new HashSet<Class<?>>();
+                needScanForPlugins = new HashSet<>();
             }
             needScanForPlugins.add(it.next());
         }
@@ -612,7 +612,7 @@ public class FactoryRegistry extends ServiceRegistry {
          */
         if (candidate instanceof Factory) {
             final Factory factory = (Factory) candidate;
-            if (!XCollections.isNullOrEmpty(hints)) {
+            if (!isNullOrEmpty(hints)) {
                 /*
                  * Ask for implementation hints with special care against infinite recursivity.
                  * Some implementations use deferred algorithms fetching dependencies only when
@@ -714,7 +714,7 @@ public class FactoryRegistry extends ServiceRegistry {
      * @return All classloaders to be used for scanning plugins.
      */
     public Set<ClassLoader> getClassLoaders() {
-        final Set<ClassLoader> loaders = new HashSet<ClassLoader>(6);
+        final Set<ClassLoader> loaders = new HashSet<>(6);
         for (int i=0; i<4; i++) {
             final ClassLoader loader;
             try {
@@ -875,7 +875,7 @@ public class FactoryRegistry extends ServiceRegistry {
      */
     private <T> boolean register(final Iterator<T> factories, final Class<T> category, final StringBuilder message) {
         boolean newServices = false;
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         while (factories.hasNext()) {
             T factory;
             try {
@@ -1057,7 +1057,7 @@ public class FactoryRegistry extends ServiceRegistry {
      */
     public <T> boolean setOrdering(final Class<T> category, final Comparator<T> comparator) {
         boolean set = false;
-        final List<T> previous = new ArrayList<T>();
+        final List<T> previous = new ArrayList<>();
         for (final Iterator<T> it=getServiceProviders(category, false); it.hasNext();) {
             final T f1 = it.next();
             for (int i=previous.size(); --i>=0;) {
@@ -1146,7 +1146,7 @@ public class FactoryRegistry extends ServiceRegistry {
                                            final Filter service1, final Filter service2)
     {
         boolean done = false;
-        List<T> precedences = new ArrayList<T>(); // The plugins of the service which have precedence.
+        List<T> precedences = new ArrayList<>(); // The plugins of the service which have precedence.
         for (final Iterator<? extends T> it=getServiceProviders(category, true); it.hasNext();) {
             final T factory = it.next();
             if (service1.filter(factory)) {

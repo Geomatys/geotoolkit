@@ -21,13 +21,15 @@ import java.io.*; // Many imports, including some for javadoc only.
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Path;
+import java.nio.file.Files;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -39,7 +41,7 @@ import org.geotoolkit.util.logging.Logging;
  * The default implementation handles all the following types:
  *
  * <blockquote>
- * {@link String}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},
+ * {@link String}, {@link Path}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},
  * {@link InputStream}, {@link ImageInputStream}, {@link ReadableByteChannel}.
  * </blockquote>
  *
@@ -101,7 +103,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
 
     /**
      * Sets the input source to use. Input may be one of the object documented in the
-     * <a href="#overview">class javadoc</a>, namely {@link String}, {@link File},
+     * <a href="#overview">class javadoc</a>, namely {@link String}, {@link Path}, {@link File},
      * {@link URI}, {@link URL}, {@link URLConnection}, {@link InputStream}, {@link ImageInputStream}
      * or {@link ReadableByteChannel}.
      * <p>
@@ -134,8 +136,8 @@ public abstract class StreamImageReader extends SpatialImageReader {
     /**
      * Returns the stream length in bytes, or {@code -1} if unknown. This method checks the
      * {@linkplain #input input} type and invokes one of {@link File#length()},
-     * {@link ImageInputStream#length()} or {@link URLConnection#getContentLength()}
-     * method accordingly.
+     * {@link ImageInputStream#length()}, {@link URLConnection#getContentLength()} or
+     * {@link Files#size(Path)} method accordingly.
      *
      * @return The stream length, or -1 is unknown.
      * @throws IOException if an I/O error occurred.
@@ -148,6 +150,9 @@ public abstract class StreamImageReader extends SpatialImageReader {
                 length -= streamOrigin;
             }
             return length;
+        }
+        if (input instanceof Path) {
+            return Files.size((Path) input);
         }
         if (input instanceof File) {
             return ((File) input).length();
@@ -165,7 +170,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * Returns the {@linkplain #input input} as an {@linkplain InputStream input stream} object.
      * If the input is already an input stream, it is returned unchanged. Otherwise this method
      * creates a new {@linkplain InputStream input stream} (usually <strong>not</strong>
-     * {@linkplain BufferedInputStream buffered}) from {@link File}, {@link URI},
+     * {@linkplain BufferedInputStream buffered}) from {@link File}, {@link Path}, {@link URI},
      * {@link URL}, {@link URLConnection}, {@link ImageInputStream} or {@link ReadableByteChannel}
      * inputs.
      * <p>
@@ -202,6 +207,9 @@ public abstract class StreamImageReader extends SpatialImageReader {
             } else if (input instanceof File) {
                 stream = new FileInputStream((File) input);
                 closeOnReset = stream;
+            } else if (input instanceof Path) {
+                stream = Files.newInputStream((Path) input);
+                closeOnReset = stream;
             } else if (input instanceof URI) {
                 stream = ((URI) input).toURL().openStream();
                 closeOnReset = stream;
@@ -225,7 +233,8 @@ public abstract class StreamImageReader extends SpatialImageReader {
     /**
      * Returns the {@linkplain #input input} as an {@linkplain ReadableByteChannel readable byte
      * channel}. If the input is already such channel, it is returned unchanged. Otherwise this
-     * method creates a new channel from the value returned by {@link #getInputStream()}.
+     * method creates a new channel from the {@link Path} input or the value returned by
+     * {@link #getInputStream()}.
      * <p>
      * This method creates a new channel only when first invoked. All subsequent calls will return
      * the same instance. Consequently, the returned channel should never be closed by the caller.
@@ -247,6 +256,8 @@ public abstract class StreamImageReader extends SpatialImageReader {
             final Object input = getInput();
             if (input instanceof ReadableByteChannel) {
                 channel = (ReadableByteChannel) input;
+            } else if (input instanceof Path) {
+                channel = Files.newByteChannel((Path) input);
             } else {
                 final InputStream stream = getInputStream();
                 if (stream instanceof FileInputStream) {
@@ -315,7 +326,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
      *     <th>Value</th>
      *   </tr><tr>
      *     <td>&nbsp;{@link #inputTypes}&nbsp;</td>
-     *     <td>&nbsp;{@link String}, {@link File}, {@link URI}, {@link URL},
+     *     <td>&nbsp;{@link String}, {@link Path}, {@link File}, {@link URI}, {@link URL},
      *               {@link URLConnection}, {@link InputStream}, {@link ImageInputStream},
      *               {@link ReadableByteChannel}&nbsp;</td>
      *   </tr><tr>
@@ -341,6 +352,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
          */
         private static final Class<?>[] INPUT_TYPES = new Class<?>[] {
             File.class,
+            Path.class,
             URI.class,
             URL.class,
             URLConnection.class,

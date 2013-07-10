@@ -24,6 +24,7 @@ import java.io.File;
 import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
@@ -37,9 +38,8 @@ import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
 
 import org.apache.sis.measure.Units;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -149,8 +149,8 @@ public class Parameter<T> extends AbstractParameterValue<T> {
      */
     public static Parameter<Integer> create(final String name, final int value) {
         final ParameterDescriptor<Integer> descriptor =
-                new DefaultParameterDescriptor<Integer>(name, Integer.class, null, null);
-        final Parameter<Integer> parameter = new Parameter<Integer>(descriptor);
+                new DefaultParameterDescriptor<>(name, Integer.class, null, null);
+        final Parameter<Integer> parameter = new Parameter<>(descriptor);
         parameter.value = value;
         return parameter;
     }
@@ -186,7 +186,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         }
         final ParameterDescriptor<Double> descriptor = DefaultParameterDescriptor.create(
                 name, Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unit);
-        final Parameter<Double> parameter = new Parameter<Double>(descriptor);
+        final Parameter<Double> parameter = new Parameter<>(descriptor);
         parameter.value = value;
         parameter.unit  = unit;
         return parameter;
@@ -209,8 +209,8 @@ public class Parameter<T> extends AbstractParameterValue<T> {
      * @since 2.5
      */
     public static <T extends CodeList<T>> Parameter<T> create(final String name, final Class<T> type, final T value) {
-        final ParameterDescriptor<T> descriptor = new DefaultParameterDescriptor<T>(name, null, type, null, true);
-        final Parameter<T> parameter = new Parameter<T>(descriptor);
+        final ParameterDescriptor<T> descriptor = new DefaultParameterDescriptor<>(name, null, type, null, true);
+        final Parameter<T> parameter = new Parameter<>(descriptor);
         parameter.value = value;
         return parameter;
     }
@@ -739,8 +739,8 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         }
         if (super.equals(object)) {
             final Parameter<?> that = (Parameter<?>) object;
-            return Utilities.equals(this.value, that.value) &&
-                   Utilities.equals(this.unit,  that.unit);
+            return Objects.equals(this.value, that.value) &&
+                   Objects.equals(this.unit,  that.unit);
         }
         return false;
     }

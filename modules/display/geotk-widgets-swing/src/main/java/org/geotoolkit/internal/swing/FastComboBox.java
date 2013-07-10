@@ -31,6 +31,8 @@ import org.geotoolkit.lang.Workaround;
  * The workaround works only if the {@link ComboBoxModel} implements the {@link Model}
  * interface provided in this class.
  *
+ * @param <E> The type of elements in the model.
+ *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.12
  *
@@ -39,13 +41,13 @@ import org.geotoolkit.lang.Workaround;
  */
 @SuppressWarnings("serial")
 @Workaround(library="JDK", version="1.6")
-public class FastComboBox extends JComboBox {
+public class FastComboBox<E> extends JComboBox<E> {
     /**
      * Creates a new combo box.
      *
      * @param model The data model.
      */
-    public FastComboBox(final Model model) {
+    public FastComboBox(final Model<E> model) {
         super(model);
     }
 
@@ -54,8 +56,8 @@ public class FastComboBox extends JComboBox {
      */
     @Override
     public int getSelectedIndex() {
-        if (dataModel instanceof Model) {
-            return ((Model) dataModel).getSelectedIndex();
+        if (dataModel instanceof Model<?>) {
+            return ((Model<E>) dataModel).getSelectedIndex();
         }
         return super.getSelectedIndex();
     }
@@ -63,13 +65,15 @@ public class FastComboBox extends JComboBox {
     /**
      * The model which is needed for making {@link FastComboBox} effective.
      *
+     * @param <E> The type of elements in the model.
+     *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.12
      *
      * @since 3.12
      * @module
      */
-    public interface Model extends ComboBoxModel {
+    public interface Model<E> extends ComboBoxModel<E> {
         /**
          * Returns the index of the currently selected element.
          *

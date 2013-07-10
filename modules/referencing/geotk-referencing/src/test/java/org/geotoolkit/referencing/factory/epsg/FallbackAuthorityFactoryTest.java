@@ -31,8 +31,8 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.geotoolkit.test.referencing.WKT;
-import org.geotoolkit.test.Depend;
 
+import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import static org.geotoolkit.referencing.Assert.*;
 
@@ -47,7 +47,7 @@ import static org.geotoolkit.referencing.Assert.*;
  *
  * @since 2.4
  */
-@Depend(PropertyEpsgFactoryTest.class)
+@DependsOn(PropertyEpsgFactoryTest.class)
 public final strictfp class FallbackAuthorityFactoryTest extends ReferencingTestBase {
     /**
      * The extra factory.

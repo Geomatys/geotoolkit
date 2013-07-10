@@ -20,6 +20,7 @@
  */
 package org.geotoolkit.coverage.processing;
 
+import java.util.Objects;
 import java.io.Serializable;
 import java.awt.RenderingHints;
 import net.jcip.annotations.Immutable;
@@ -33,8 +34,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -238,7 +238,7 @@ public abstract class AbstractOperation implements Operation, Serializable {
     public boolean equals(final Object object) {
         if (object != null && object.getClass() == getClass()) {
             final AbstractOperation that = (AbstractOperation) object;
-            return Utilities.equals(this.descriptor, that.descriptor);
+            return Objects.equals(this.descriptor, that.descriptor);
         }
         return false;
     }

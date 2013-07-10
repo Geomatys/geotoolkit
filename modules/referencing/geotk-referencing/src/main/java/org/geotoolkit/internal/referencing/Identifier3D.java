@@ -19,13 +19,13 @@ package org.geotoolkit.internal.referencing;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Objects;
 
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.ReferenceIdentifier;
 
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
@@ -59,7 +59,7 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
  * @since 3.16
  * @module
  */
-public final class Identifier3D extends DefaultReferenceIdentifier {
+public final class Identifier3D extends ImmutableIdentifier {
     /**
      * For cross-version compatibility.
      */
@@ -101,7 +101,7 @@ public final class Identifier3D extends DefaultReferenceIdentifier {
     public boolean equals(final Object object) {
         if (super.equals(object)) {
             final Identifier3D other = (Identifier3D) object;
-            return Utilities.equals(horizontalCRS, other.horizontalCRS);
+            return Objects.equals(horizontalCRS, other.horizontalCRS);
         }
         return false;
     }
@@ -115,7 +115,7 @@ public final class Identifier3D extends DefaultReferenceIdentifier {
      * @return The properties with the given horizontal CRS injected in the name identifier.
      */
     public static Map<String,?> addHorizontalCRS(Map<String,?> properties, final SingleCRS horizontalCRS) {
-        final Map<String,Object> copy = new HashMap<String,Object>(properties);
+        final Map<String,Object> copy = new HashMap<>(properties);
         final ReferenceIdentifier id = (ReferenceIdentifier) copy.get(NAME_KEY);
         copy.put(NAME_KEY, new Identifier3D(id, horizontalCRS));
         return copy;

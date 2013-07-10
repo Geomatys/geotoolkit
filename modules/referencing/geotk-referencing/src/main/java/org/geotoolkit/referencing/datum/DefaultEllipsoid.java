@@ -24,6 +24,7 @@ import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Length;
@@ -35,9 +36,9 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.Ellipsoid;
 
-import org.geotoolkit.geometry.DirectPosition2D;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.internal.jaxb.referencing.SecondDefiningParameter;
-import org.geotoolkit.internal.jaxb.gco.Measure;
+import org.apache.sis.internal.jaxb.gco.Measure;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.measure.CoordinateFormat;
@@ -93,7 +94,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      * This is used for the creation of default ellipsoid constants.
      */
     private static Map<String,?> properties(final String name, final int code, final Object alias) {
-        final Map<String,Object> map = new HashMap<String,Object>(4);
+        final Map<String,Object> map = new HashMap<>(4);
         map.put(NAME_KEY, name);
         map.put(IDENTIFIERS_KEY, new NamedIdentifier(Citations.EPSG, String.valueOf(code)));
         if (alias != null) {
@@ -759,7 +760,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
                            Utilities.equals(this.semiMajorAxis,     that.semiMajorAxis)     &&
                            Utilities.equals(this.semiMinorAxis,     that.semiMinorAxis)     &&
                            Utilities.equals(this.inverseFlattening, that.inverseFlattening) &&
-                           Utilities.equals(this.unit,              that.unit);
+                             Objects.equals(this.unit,              that.unit);
                 }
                 case BY_CONTRACT: {
                     if (isIvfDefinitive() != ((Ellipsoid) object).isIvfDefinitive()) {
@@ -772,7 +773,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
                     return epsilonEqual(getSemiMajorAxis(),     that.getSemiMajorAxis(),     mode) &&
                            epsilonEqual(getSemiMinorAxis(),     that.getSemiMinorAxis(),     mode) &&
                            epsilonEqual(getInverseFlattening(), that.getInverseFlattening(), mode) &&
-                           Utilities.equals(getAxisUnit(),      that.getAxisUnit());
+                           Objects.equals(getAxisUnit(),        that.getAxisUnit());
                 }
             }
         }

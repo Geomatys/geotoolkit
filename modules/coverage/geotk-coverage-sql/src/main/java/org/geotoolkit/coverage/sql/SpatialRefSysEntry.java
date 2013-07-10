@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.awt.Dimension;
@@ -40,7 +41,7 @@ import org.opengis.referencing.operation.OperationNotFoundException;
 
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.internal.referencing.AxisDirections;
@@ -243,7 +244,7 @@ final class SpatialRefSysEntry {
                 if (verticalCRS != null) {
                     String name = headCRS.getName().getCode();
                     name = name + " + " + verticalCRS.getName().getCode();
-                    final Map<String,Object> copy = new HashMap<String,Object>(properties);
+                    final Map<String,Object> copy = new HashMap<>(properties);
                     copy.put(CoordinateReferenceSystem.NAME_KEY, name);
                     properties = copy;
                 }
@@ -282,9 +283,7 @@ final class SpatialRefSysEntry {
                 try {
                     matrix = AbstractCS.swapAndScaleAxis(sourceCRS.getCoordinateSystem(),
                                                          targetCRS.getCoordinateSystem());
-                } catch (ConversionException ignore) {
-                    throw e;
-                } catch (IllegalArgumentException ignore) {
+                } catch (ConversionException | IllegalArgumentException ignore) {
                     throw e;
                 }
                 tr = database.getMathTransformFactory().createAffineTransform(matrix);
@@ -514,7 +513,7 @@ final class SpatialRefSysEntry {
             final SpatialRefSysEntry that = (SpatialRefSysEntry) object;
             return this.horizontalSRID == that.horizontalSRID &&
                    this.verticalSRID   == that.verticalSRID   &&
-                   Utilities.equals(this.temporalCRS, that.temporalCRS);
+                   Objects.equals(this.temporalCRS, that.temporalCRS);
         }
         return false;
     }

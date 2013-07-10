@@ -50,7 +50,7 @@ import org.geotoolkit.lang.Visitor;
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.internal.InternalUtilities;
 import org.apache.sis.internal.util.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -190,7 +190,7 @@ public class Formatter {
     /**
      * The line separator to use.
      */
-    private final String lineSeparator = System.getProperty("line.separator", "\n");
+    private final String lineSeparator = System.lineSeparator();
 
     /**
      * {@code true} if a new line were requested during the execution of

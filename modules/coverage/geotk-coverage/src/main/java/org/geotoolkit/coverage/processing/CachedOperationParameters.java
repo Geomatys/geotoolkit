@@ -21,13 +21,14 @@ import java.util.Map;
 import java.util.Locale;
 import java.util.Arrays;
 import java.util.TreeMap;
+import java.util.Objects;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.processing.Operation;
 import org.opengis.parameter.ParameterValueGroup;
 
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Utilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.coverage.CoverageReferences;
 
@@ -72,7 +73,7 @@ final class CachedOperationParameters {
      * @param parameters The parameters, including source grid coverages.
      */
     CachedOperationParameters(final Operation operation, final ParameterValueGroup parameters) {
-        final Map<String,Object> param = new TreeMap<String,Object>();
+        final Map<String,Object> param = new TreeMap<>();
         Parameters.copy(parameters, param);
         this.operation = operation;
         this.names     = new String[param.size()];
@@ -110,7 +111,7 @@ final class CachedOperationParameters {
     public boolean equals(final Object object) {
         if (object instanceof CachedOperationParameters) {
             final CachedOperationParameters that = (CachedOperationParameters) object;
-            if (Utilities.equals(operation, that.operation) && Arrays.equals(names, that.names)) {
+            if (Objects.equals(operation, that.operation) && Arrays.equals(names, that.names)) {
                 /*
                  * Following arrays contain WeakReferences, but this is okay if they
                  * have been created with CoverageReferences because the later ensures

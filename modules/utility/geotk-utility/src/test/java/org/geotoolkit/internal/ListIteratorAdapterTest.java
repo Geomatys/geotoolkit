@@ -47,7 +47,7 @@ public final strictfp class ListIteratorAdapterTest extends ListIteratorTestCase
      * delegate to {@code data.listIterator()}.
      */
     public ListIteratorAdapterTest() {
-        data = new LinkedHashSet<Integer>(COUNT + COUNT/4);
+        data = new LinkedHashSet<>(COUNT + COUNT/4);
         for (int i=0; i<COUNT; i++) {
             assertTrue(data.add(i));
         }

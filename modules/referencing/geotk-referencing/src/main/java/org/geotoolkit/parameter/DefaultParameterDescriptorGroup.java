@@ -43,13 +43,13 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ComparisonMode;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.Utilities.deepEquals;
+import static org.apache.sis.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -235,7 +235,7 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
         @Override
         public boolean contains(final Object object) {
             if (asSet == null) {
-                asSet = new HashSet<GeneralParameterDescriptor>(this);
+                asSet = new HashSet<>(this);
             }
             return asSet.contains(object);
         }
@@ -282,7 +282,7 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
                 }
                 if (param instanceof DefaultParameterDescriptorGroup) {
                     if (subgroups == null) {
-                        subgroups = new LinkedList<DefaultParameterDescriptorGroup>();
+                        subgroups = new LinkedList<>();
                     }
                     assert !subgroups.contains(param) : param;
                     subgroups.add((DefaultParameterDescriptorGroup) param);

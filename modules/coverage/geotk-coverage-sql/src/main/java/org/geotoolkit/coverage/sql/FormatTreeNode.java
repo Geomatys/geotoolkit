@@ -19,7 +19,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.Locale;
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;

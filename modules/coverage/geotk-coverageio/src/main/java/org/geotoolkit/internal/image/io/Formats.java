@@ -41,7 +41,7 @@ import org.geotoolkit.factory.Factories;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.resources.Vocabulary;
 
 
@@ -89,7 +89,7 @@ public final class Formats extends Static {
 
         /**
          * Invoked when a recoverable error occurred. Implementors will typically delegate to
-         * {@link org.geotoolkit.util.logging.Logging#recoverableException(Class, String, Throwable)}
+         * {@link org.apache.sis.util.logging.Logging#recoverableException(Class, String, Throwable)}
          * with appropriate class an method name.
          *
          * @param error The error which occurred.
@@ -128,7 +128,7 @@ public final class Formats extends Static {
          * loop below. For every loop execution after the first one, we will use that
          * list instead of the IIORegistry iterator.
          */
-        final List<ImageReaderSpi> providers = new LinkedList<ImageReaderSpi>();
+        final List<ImageReaderSpi> providers = new LinkedList<>();
         boolean useProvidersList = false;
         /*
          * The state of this method (whatever we have found a reader, or failed).
@@ -204,9 +204,9 @@ attmpt: while (true) {
                     break attmpt;
                 } catch (IOException e) {
                     if (failure == null) {
-                        failure = e; // Remember only the first failure.
+                        failure = e;
                     } else {
-                        // TODO: addSuppress with JDK7.
+                        failure.addSuppressed(e);
                     }
                 } finally {
                     /*

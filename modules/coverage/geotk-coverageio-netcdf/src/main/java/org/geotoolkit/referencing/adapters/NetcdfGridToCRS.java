@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.referencing.SeparableTransform;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
@@ -151,7 +151,6 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
          * Creates a new inverse transform.
          */
         Inverse() {
-            NetcdfGridToCRS.this.super();
         }
 
         /**

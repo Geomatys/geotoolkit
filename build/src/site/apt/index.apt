@@ -17,7 +17,7 @@ Building Geotoolkit.org
 
   The following free softwares must be installed on the local machine:
 
-    * Java Development Kit (JDK) version 6.
+    * Java Development Kit (JDK) version 7.
 
     * {{{http://jai.dev.java.net/}Java Advanced Imaging}} (JAI) version 1.1.3 or later
       ({{{http://download.java.net/media/jai/builds/release/}download}}).

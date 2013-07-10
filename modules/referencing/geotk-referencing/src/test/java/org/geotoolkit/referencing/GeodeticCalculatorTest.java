@@ -29,7 +29,7 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 
-import org.geotoolkit.geometry.DirectPosition2D;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;

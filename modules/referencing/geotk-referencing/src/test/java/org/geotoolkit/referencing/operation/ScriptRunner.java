@@ -125,21 +125,21 @@ public final strictfp class ScriptRunner extends ReferencingConsole {
      * @throws IOException If an error occurred while executing the script.
      */
     public static void main(final String[] args) throws IOException {
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         for (int i=0; i<args.length; i++) {
             final String filename = args[i];
-            final LineNumberReader in = new LineNumberReader(new FileReader(filename));
-            final ScriptRunner test = new ScriptRunner(in);
-            test.out.write("Running \"");
-            test.out.write(filename);
-            test.out.write('"');
-            test.out.write(lineSeparator);
-            test.out.flush();
-            test.run();
-            test.printStatistics(test.out);
-            test.out.write(lineSeparator);
-            test.out.flush();
-            in.close();
+            try (LineNumberReader in = new LineNumberReader(new FileReader(filename))) {
+                final ScriptRunner test = new ScriptRunner(in);
+                test.out.write("Running \"");
+                test.out.write(filename);
+                test.out.write('"');
+                test.out.write(lineSeparator);
+                test.out.flush();
+                test.run();
+                test.printStatistics(test.out);
+                test.out.write(lineSeparator);
+                test.out.flush();
+            }
         }
     }
 }

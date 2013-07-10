@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
@@ -43,7 +44,6 @@ import com.sun.media.imageio.stream.FileChannelImageOutputStream;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.rmi.RMI;
 import org.geotoolkit.internal.io.ObjectStream;
 import org.geotoolkit.internal.io.TemporaryFile;
@@ -90,7 +90,7 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
     TileCopier(final Collection<Tile> tiles, final BufferedImageOp filter) {
         super(tiles);
         this.filter = filter;
-        temporaryFiles = new HashMap<Tile,RawFile>();
+        temporaryFiles = new HashMap<>();
     }
 
     /**
@@ -127,85 +127,83 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
      */
     @Override
     public Map<Tile,RawFile> call() throws IOException {
-        final ObjectStream<Tile> tiles = inputs();
-        final Map<ImageTypeSpecifier,ImageTypeSpecifier> sharedTypes =
-                new HashMap<ImageTypeSpecifier,ImageTypeSpecifier>();
-        final Map<Dimension,Dimension> sharedSizes = new HashMap<Dimension,Dimension>();
-        final ImageWriter writer = getTemporaryTileWriter();
-        final File directory = RMI.getSharedTemporaryDirectory();
-        ImageTypeSpecifier sourceType = null;
-        BufferedImage sourceImage = null;
-        BufferedImage targetImage = null;
-        Tile tile;
-        while ((tile = tiles.next()) != null) {
-            final LogRecord record = Loggings.format(Level.FINE, Loggings.Keys.CACHING_1, tile);
-            record.setSourceClassName("MosaicImageWriter"); // The public API which created this task.
-            record.setSourceMethodName("writeFromInput");
-            LOGGER.log(record);
+        try (ObjectStream<Tile> tiles = inputs()) {
+            final Map<ImageTypeSpecifier,ImageTypeSpecifier> sharedTypes = new HashMap<>();
+            final Map<Dimension,Dimension> sharedSizes = new HashMap<>();
+            final ImageWriter writer = getTemporaryTileWriter();
+            final File directory = RMI.getSharedTemporaryDirectory();
+            ImageTypeSpecifier sourceType = null;
+            BufferedImage sourceImage = null;
+            BufferedImage targetImage = null;
+            Tile tile;
+            while ((tile = tiles.next()) != null) {
+                final LogRecord record = Loggings.format(Level.FINE, Loggings.Keys.CACHING_1, tile);
+                record.setSourceClassName("MosaicImageWriter"); // The public API which created this task.
+                record.setSourceMethodName("writeFromInput");
+                LOGGER.log(record);
 
-            final int imageIndex = tile.getImageIndex();
-            final ImageReader reader = tile.getImageReader();
-            ImageReadParam param = null;
-            final ImageTypeSpecifier type = reader.getRawImageType(imageIndex);
-            if (sourceImage != null) {
+                final int imageIndex = tile.getImageIndex();
+                final ImageReader reader = tile.getImageReader();
+                ImageReadParam param = null;
+                final ImageTypeSpecifier type = reader.getRawImageType(imageIndex);
+                if (sourceImage != null) {
+                    /*
+                     * Recycles the current BufferedImage if it still suitable for the next tile
+                     * to read. In the majority of case, such recycling is possible. If we can't
+                     * recycle it, a new BufferedImage will be created. In the later case we will
+                     * invoke GC explicitly in order to increase the chances to get the previous
+                     * image (which may be very big) reclaimed before to attempt to create a new
+                     * one.
+                     */
+                    if (reader.getWidth (imageIndex) == sourceImage.getWidth()  &&
+                        reader.getHeight(imageIndex) == sourceImage.getHeight() &&
+                        Objects.equals(sourceType, type))
+                    {
+                        param = reader.getDefaultReadParam();
+                        param.setDestination(sourceImage);
+                    } else {
+                        sourceImage = null;
+                        targetImage = null;
+                        System.gc(); // Image may be huge - give GC an additional chance.
+                    }
+                }
+                sourceType = type;
                 /*
-                 * Recycles the current BufferedImage if it still suitable for the next tile
-                 * to read. In the majority of case, such recycling is possible. If we can't
-                 * recycle it, a new BufferedImage will be created. In the later case we will
-                 * invoke GC explicitly in order to increase the chances to get the previous
-                 * image (which may be very big) reclaimed before to attempt to create a new
-                 * one.
+                 * Reads the image, applies an optional operation and remember the color/sample
+                 * model (as an ImageTypeIdentifier) of the result. In the majority of cases, the
+                 * ImageTypeSpecifier will be the same for every tiles, so it is worth to share
+                 * the same instance given that some mosaic contains thousands of input tiles.
                  */
-                if (reader.getWidth (imageIndex) == sourceImage.getWidth()  &&
-                    reader.getHeight(imageIndex) == sourceImage.getHeight() &&
-                    Utilities.equals(sourceType, type))
-                {
-                    param = reader.getDefaultReadParam();
-                    param.setDestination(sourceImage);
+                sourceImage = reader.read(imageIndex, param);
+                Tile.dispose(reader);
+                final BufferedImage image;
+                if (filter != null) {
+                    image = targetImage = filter.filter(sourceImage, targetImage);
                 } else {
-                    sourceImage = null;
-                    targetImage = null;
-                    System.gc(); // Image may be huge - give GC an additional chance.
+                    image = sourceImage;
+                }
+                final File file = TemporaryFile.createTempFile("IMW", ".raw", directory);
+                final RawFile entry = new RawFile(file,
+                        share(sharedTypes, ImageTypeSpecifier.createFromRenderedImage(image)),
+                        share(sharedSizes, new Dimension(image.getWidth(), image.getHeight())));
+                if (temporaryFiles.put(tile, entry) != null) {
+                    throw new IllegalArgumentException(Errors.format(
+                            Errors.Keys.DUPLICATED_VALUES_FOR_KEY_1, tile));
+                }
+                /*
+                 * Writes the temporary file.
+                 */
+                try (RandomAccessFile raf = new RandomAccessFile(file, "rw");
+                     FileChannel channel = raf.getChannel();
+                     FileChannelImageOutputStream stream = new FileChannelImageOutputStream(channel))
+                {
+                    writer.setOutput(stream);
+                    writer.write(image);
+                    writer.setOutput(null);
                 }
             }
-            sourceType = type;
-            /*
-             * Reads the image, applies an optional operation and remember the color/sample
-             * model (as an ImageTypeIdentifier) of the result. In the majority of cases, the
-             * ImageTypeSpecifier will be the same for every tiles, so it is worth to share
-             * the same instance given that some mosaic contains thousands of input tiles.
-             */
-            sourceImage = reader.read(imageIndex, param);
-            Tile.dispose(reader);
-            final BufferedImage image;
-            if (filter != null) {
-                image = targetImage = filter.filter(sourceImage, targetImage);
-            } else {
-                image = sourceImage;
-            }
-            final File file = TemporaryFile.createTempFile("IMW", ".raw", directory);
-            final RawFile entry = new RawFile(file,
-                    share(sharedTypes, ImageTypeSpecifier.createFromRenderedImage(image)),
-                    share(sharedSizes, new Dimension(image.getWidth(), image.getHeight())));
-            if (temporaryFiles.put(tile, entry) != null) {
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.DUPLICATED_VALUES_FOR_KEY_1, tile));
-            }
-            /*
-             * Writes the temporary file.
-             */
-            final RandomAccessFile raf = new RandomAccessFile(file, "rw");
-            final FileChannel channel = raf.getChannel();
-            final FileChannelImageOutputStream stream = new FileChannelImageOutputStream(channel);
-            writer.setOutput(stream);
-            writer.write(image);
-            writer.setOutput(null);
-            stream.close();
-            channel.close();
-            raf.close();
+            writer.dispose();
         }
-        writer.dispose();
-        tiles.close();
         return temporaryFiles;
     }
 

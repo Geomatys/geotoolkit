@@ -17,12 +17,12 @@
  */
 package org.geotoolkit.internal.sql.table;
 
+import java.util.Objects;
 import java.io.Serializable;
 import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NullArgumentException;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.NullArgumentException;
 
 
 /**
@@ -117,8 +117,8 @@ public class DefaultEntry implements Entry, Serializable {
         }
         if (object != null && object.getClass() == getClass()) {
             final DefaultEntry that = (DefaultEntry) object;
-            return Utilities.equals(this.identifier,  that.identifier) &&
-                   Utilities.equals(this.description, that.description);
+            return Objects.equals(this.identifier,  that.identifier) &&
+                   Objects.equals(this.description, that.description);
         }
         return false;
     }

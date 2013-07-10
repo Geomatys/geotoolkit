@@ -26,7 +26,7 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.collection.WeakValueHashMap;
+import org.apache.sis.util.collection.WeakValueHashMap;
 
 import static java.lang.Math.*;
 
@@ -45,8 +45,7 @@ final class LookupTableFactory extends Static {
     /**
      * The pool of {@link LookupTableJAI} objects already created.
      */
-    private static final Map<LookupTableFactory,LookupTableJAI> pool =
-            new WeakValueHashMap<LookupTableFactory,LookupTableJAI>();
+    private static final Map<LookupTableFactory,LookupTableJAI> pool = new WeakValueHashMap<>(LookupTableFactory.class);
 
     /**
      * The source data type. Should be one of {@link DataBuffer} constants.

@@ -57,7 +57,7 @@ import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Wizards;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Descriptions;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.io.Host;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.internal.sql.PostgisInstaller;
@@ -96,7 +96,7 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
     /**
      * The field for selecting the database engine.
      */
-    private JComboBox engine;
+    private JComboBox<String> engine;
 
     /**
      * Fields to be provided by users.
@@ -152,165 +152,186 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
     @Override
     @SuppressWarnings("rawtypes")
     protected JComponent createPanel(final WizardController controller, final String id, final Map settings) {
-        final Locale     locale    = Locale.getDefault();
+        final Locale     locale    = Locale.getDefault(Locale.Category.DISPLAY);
         final Vocabulary resources = Vocabulary.getResources(locale);
         final Wizards    wizardRes = Wizards.getResources(locale);
         final JComponent panel;
-        if (id.equals(CONNECTION)) {
+        switch (id) {
             // -------------------------------------------------------------------
             //     Panel 1:  Connection parameters
             // -------------------------------------------------------------------
-            panel = new JPanel(new GridBagLayout());
-            final GridBagConstraints c = new GridBagConstraints();
-            c.gridy  = 0; c.anchor = GridBagConstraints.WEST;
-            engine   = new JComboBox(new String[] {"PostgreSQL"});
-            server   = new JTextField();
-            port     = new JFormattedTextField(new NumberFormatter());
-            database = new JTextField();
-            schema   = new JTextField(CoverageDatabaseInstaller.SCHEMA);
-            admin    = new JTextField(CoverageDatabaseInstaller.ADMINISTRATOR);
-            user     = new JTextField(CoverageDatabaseInstaller.USER);
-            add(panel, resources, Vocabulary.Keys.DATABASE_ENGINE, engine,   c);
-            add(panel, resources, Vocabulary.Keys.SERVER,          server,   c);
-            add(panel, resources, Vocabulary.Keys.PORT,            port,     c);
-            add(panel, resources, Vocabulary.Keys.DATABASE,        database, c);
-            add(panel, resources, Vocabulary.Keys.SCHEMA,          schema,   c);
-            add(panel, resources, Vocabulary.Keys.ADMINISTRATOR,   admin ,   c);
-            add(panel, resources, Vocabulary.Keys.USER,            user,     c);
-            final String problem = wizardRes.getString(Wizards.Keys.DATABASE_REQUIRED);
-            final DocumentChangeListener listener = new DocumentChangeListener() {
-                /** The set of documents having a non-blank text value. */
-                private final Set<Document> hasText = Collections.newSetFromMap(new IdentityHashMap<Document,Boolean>());
+            case CONNECTION: {
+                panel = new JPanel(new GridBagLayout());
+                final GridBagConstraints c = new GridBagConstraints();
+                c.gridy  = 0;
+                c.anchor = GridBagConstraints.WEST;
+                engine   = new JComboBox<>(new String[] {"PostgreSQL"});
+                server   = new JTextField();
+                port     = new JFormattedTextField(new NumberFormatter());
+                database = new JTextField();
+                schema   = new JTextField(CoverageDatabaseInstaller.SCHEMA);
+                admin    = new JTextField(CoverageDatabaseInstaller.ADMINISTRATOR);
+                user     = new JTextField(CoverageDatabaseInstaller.USER);
+                add(panel, resources, Vocabulary.Keys.DATABASE_ENGINE, engine,   c);
+                add(panel, resources, Vocabulary.Keys.SERVER,          server,   c);
+                add(panel, resources, Vocabulary.Keys.PORT,            port,     c);
+                add(panel, resources, Vocabulary.Keys.DATABASE,        database, c);
+                add(panel, resources, Vocabulary.Keys.SCHEMA,          schema,   c);
+                add(panel, resources, Vocabulary.Keys.ADMINISTRATOR,   admin ,   c);
+                add(panel, resources, Vocabulary.Keys.USER,            user,     c);
+                final String problem = wizardRes.getString(Wizards.Keys.DATABASE_REQUIRED);
+                final DocumentChangeListener listener = new DocumentChangeListener() {
+                    /** The set of documents having a non-blank text value. */
+                    private final Set<Document> hasText = Collections.newSetFromMap(new IdentityHashMap<Document,Boolean>());
 
-                @Override protected void textChanged(final Document document, final String text) {
-                    if (!text.trim().isEmpty() ? hasText.add(document) : hasText.remove(document)) {
-                        final int size = 2 - hasText.size(); // 2 is the amount of fields having this listener.
-                        assert size >= 0 : size;
-                        controller.setProblem(size == 0 ? null : problem);
+                    @Override protected void textChanged(final Document document, final String text) {
+                        if (!text.trim().isEmpty() ? hasText.add(document) : hasText.remove(document)) {
+                            final int size = 2 - hasText.size(); // 2 is the amount of fields having this listener.
+                            assert size >= 0 : size;
+                            controller.setProblem(size == 0 ? null : problem);
+                        }
                     }
+                };
+                server  .getDocument().addDocumentListener(listener);
+                database.getDocument().addDocumentListener(listener);
+                controller.setProblem(problem);
+                try {
+                    // Initial values, which must be set after the listeners.
+                    final Host host = new Host(Installation.COVERAGES.getDataSource(), null);
+                    if (host.host != null) server.setText(host.host);
+                    if (host.port != null) port.setValue(host.port);
+                } catch (IOException e) {
+                    Logging.recoverableException(Logging.getLogger(CoverageDatabase.class),
+                            CoverageDatabaseWizard.class, "createPanel", e);
                 }
-            };
-            server  .getDocument().addDocumentListener(listener);
-            database.getDocument().addDocumentListener(listener);
-            controller.setProblem(problem);
-            try {
-                // Initial values, which must be set after the listeners.
-                final Host host = new Host(Installation.COVERAGES.getDataSource(), null);
-                if (host.host != null) server.setText(host.host);
-                if (host.port != null) port.setValue(host.port);
-            } catch (IOException e) {
-                Logging.recoverableException(Logging.getLogger(CoverageDatabase.class),
-                        CoverageDatabaseWizard.class, "createPanel", e);
+                addSetting(settings, CONNECTION, panel);
+                break;
             }
-            addSetting(settings, CONNECTION, panel);
-        } else if (id.equals(POSTGIS)) {
             // -------------------------------------------------------------------
             //     Panel 2:  Spatial objects
             // -------------------------------------------------------------------
-            final JXLabel desc = new JXLabel(wizardRes.getString(Wizards.Keys.POSTGIS_DIRECTORY));
-            desc.setLineWrap(true);
-            panel = new JPanel(new BorderLayout());
-            panel.add(desc, BorderLayout.BEFORE_FIRST_LINE);
-            postgis = new JFileChooser();
-            postgis.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            postgis.setControlButtonsAreShown(false);
-            postgis.setMultiSelectionEnabled(false);
-            postgis.setAcceptAllFileFilterUsed(false);
-            postgis.addChoosableFileFilter(new FileNameExtensionFilter(resources.getString(Vocabulary.Keys.FILES_1, "SQL"), "sql"));
-            postgis.addPropertyChangeListener(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY, new PropertyChangeListener() {
-                @Override public void propertyChange(final PropertyChangeEvent event) {
-                    String missing = PostgisInstaller.INSTALL;
-                    final File directory = (File) event.getNewValue();
-                    if (directory != null) {
-                        if (new File(directory, missing).isFile() ||
-                            new File(directory, PostgisInstaller.LEGACY).isFile())
-                        {
-                            missing = PostgisInstaller.REF_SYS;
-                            if (new File(directory, missing).isFile()) {
-                                missing = null;
+            case POSTGIS: {
+                final JXLabel desc = new JXLabel(wizardRes.getString(Wizards.Keys.POSTGIS_DIRECTORY));
+                desc.setLineWrap(true);
+                panel = new JPanel(new BorderLayout());
+                panel.add(desc, BorderLayout.BEFORE_FIRST_LINE);
+                postgis = new JFileChooser();
+                postgis.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                postgis.setControlButtonsAreShown(false);
+                postgis.setMultiSelectionEnabled(false);
+                postgis.setAcceptAllFileFilterUsed(false);
+                postgis.addChoosableFileFilter(new FileNameExtensionFilter(resources.getString(Vocabulary.Keys.FILES_1, "SQL"), "sql"));
+                postgis.addPropertyChangeListener(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY, new PropertyChangeListener() {
+                    @Override public void propertyChange(final PropertyChangeEvent event) {
+                        String missing = PostgisInstaller.INSTALL;
+                        final File directory = (File) event.getNewValue();
+                        if (directory != null) {
+                            if (new File(directory, missing).isFile() ||
+                                new File(directory, PostgisInstaller.LEGACY).isFile())
+                            {
+                                missing = PostgisInstaller.REF_SYS;
+                                if (new File(directory, missing).isFile()) {
+                                    missing = null;
+                                }
                             }
                         }
+                        if (missing != null) {
+                            missing = Errors.format(Errors.Keys.FILE_DOES_NOT_EXIST_1, missing);
+                        }
+                        controller.setProblem(missing);
                     }
-                    if (missing != null) {
-                        missing = Errors.format(Errors.Keys.FILE_DOES_NOT_EXIST_1, missing);
-                    }
-                    controller.setProblem(missing);
-                }
-            });
-            controller.setProblem(Widgets.format(Widgets.Keys.SELECT_DIRECTORY));
-            final File directory = new File(preferences().get(POSTGIS_PREFS, System.getProperty("user.dir", ".")));
-            postgis.setCurrentDirectory(directory.getParentFile());
-            panel.add(postgis, BorderLayout.CENTER);
-            addSetting(settings, POSTGIS, panel);
-        } else if (id.equals(CONFIGURE)) {
+                });
+                controller.setProblem(Widgets.format(Widgets.Keys.SELECT_DIRECTORY));
+                final File directory = new File(preferences().get(POSTGIS_PREFS, System.getProperty("user.dir", ".")));
+                postgis.setCurrentDirectory(directory.getParentFile());
+                panel.add(postgis, BorderLayout.CENTER);
+                addSetting(settings, POSTGIS, panel);
+                break;
+            }
             // -------------------------------------------------------------------
             //     Panel 3:  Configure whatever we want roles, EPSG database, etc.
             // -------------------------------------------------------------------
-            createRoles      = new JCheckBox(wizardRes.getString(Wizards.Keys.CREATE_ROLES_2, admin.getText(), user.getText()), true);
-            createEPSG       = new JCheckBox(wizardRes.getString(Wizards.Keys.CREATE_EPSG), true);
-            setAsDefaultEPSG = new JCheckBox(wizardRes.getString(Wizards.Keys.SET_AS_DEFAULT_1, "EPSG"));
-            setAsDefault     = new JCheckBox(wizardRes.getString(Wizards.Keys.SET_AS_DEFAULT_1, "Coverages"));
-            createEPSG.addActionListener(new ActionListener() {
-                @Override public void actionPerformed(final ActionEvent event) {
-                    setAsDefaultEPSG.setEnabled(createEPSG.isSelected());
-                }
-            });
-            // The warning will be made visible or hidden using the 'setForeground' method.
-            // We do not use the 'setVisible(boolean)' method because we want to keep the
-            // layout unchanged.
-            final JLabel passwordWarning = new JLabel(Descriptions.getResources(locale)
-                    .getString(Descriptions.Keys.PASSWORD_NOT_ENCRYPTED));
-            passwordWarning.setForeground(passwordWarning.getBackground());
-            final ActionListener listener = new ActionListener() {
-                @Override public void actionPerformed(final ActionEvent event) {
-                    final boolean enabled = setAsDefault.isSelected() ||
-                            (createEPSG.isSelected() && setAsDefaultEPSG.isSelected());
-                    passwordWarning.setForeground(enabled ? Color.RED : passwordWarning.getBackground());
-                }
-            };
-            createEPSG      .addActionListener(listener);
-            setAsDefault    .addActionListener(listener);
-            setAsDefaultEPSG.addActionListener(listener);
-
-            final JPanel choices = new JPanel(new GridBagLayout());
-            final GridBagConstraints c = new GridBagConstraints();
-            c.anchor=GridBagConstraints.WEST;
-            c.gridy=0; c.gridx=0;        choices.add(createRoles, c);
-            c.gridy++;                   choices.add(createEPSG, c);
-            c.gridy++; c.insets.left=30; choices.add(setAsDefaultEPSG, c);
-            c.gridy++; c.insets.left= 0; choices.add(setAsDefault, c);
-            c.gridy++; c.insets.top =15; choices.add(passwordWarning, c);
-            panel = new JPanel(new BorderLayout());
-            panel.add(choices, BorderLayout.CENTER);
-            panel.add(new JLabel(wizardRes.getString(Wizards.Keys.COVERAGE_DATABASE_NOTES_1,
-                    server.getText())), BorderLayout.PAGE_END);
-        } else if (id.equals(CONFIRM)) {
+            case CONFIGURE: {
+                createRoles      = new JCheckBox(wizardRes.getString(Wizards.Keys.CREATE_ROLES_2, admin.getText(), user.getText()), true);
+                createEPSG       = new JCheckBox(wizardRes.getString(Wizards.Keys.CREATE_EPSG), true);
+                setAsDefaultEPSG = new JCheckBox(wizardRes.getString(Wizards.Keys.SET_AS_DEFAULT_1, "EPSG"));
+                setAsDefault     = new JCheckBox(wizardRes.getString(Wizards.Keys.SET_AS_DEFAULT_1, "Coverages"));
+                createEPSG.addActionListener(new ActionListener() {
+                    @Override public void actionPerformed(final ActionEvent event) {
+                        setAsDefaultEPSG.setEnabled(createEPSG.isSelected());
+                    }
+                });
+                // The warning will be made visible or hidden using the 'setForeground' method.
+                // We do not use the 'setVisible(boolean)' method because we want to keep the
+                // layout unchanged.
+                final JLabel passwordWarning = new JLabel(Descriptions.getResources(locale)
+                        .getString(Descriptions.Keys.PASSWORD_NOT_ENCRYPTED));
+                passwordWarning.setForeground(passwordWarning.getBackground());
+                final ActionListener listener = new ActionListener() {
+                    @Override public void actionPerformed(final ActionEvent event) {
+                        final boolean enabled = setAsDefault.isSelected() ||
+                                (createEPSG.isSelected() && setAsDefaultEPSG.isSelected());
+                        passwordWarning.setForeground(enabled ? Color.RED : passwordWarning.getBackground());
+                    }
+                };
+                createEPSG      .addActionListener(listener);
+                setAsDefault    .addActionListener(listener);
+                setAsDefaultEPSG.addActionListener(listener);
+                final JPanel choices = new JPanel(new GridBagLayout());
+                final GridBagConstraints c = new GridBagConstraints();
+                c.anchor=GridBagConstraints.WEST;
+                c.gridy=0;
+                c.gridx=0;
+                choices.add(createRoles, c);
+                c.gridy++;
+                choices.add(createEPSG, c);
+                c.gridy++;
+                c.insets.left=30;
+                choices.add(setAsDefaultEPSG, c);
+                c.gridy++;
+                c.insets.left= 0;
+                choices.add(setAsDefault, c);
+                c.gridy++;
+                c.insets.top =15;
+                choices.add(passwordWarning, c);
+                panel = new JPanel(new BorderLayout());
+                panel.add(choices, BorderLayout.CENTER);
+                panel.add(new JLabel(wizardRes.getString(Wizards.Keys.COVERAGE_DATABASE_NOTES_1,
+                        server.getText())), BorderLayout.PAGE_END);
+                break;
+            }
             // -------------------------------------------------------------------
             //     Panel 4:  Confirm
             // -------------------------------------------------------------------
-            String schema = this.schema.getText();
-            if (schema == null || ((schema = schema.trim()).length()) == 0) {
-                schema = CoverageDatabaseInstaller.SCHEMA;
+            case CONFIRM: {
+                String schema = this.schema.getText();
+                if (schema == null || ((schema = schema.trim()).length()) == 0) {
+                    schema = CoverageDatabaseInstaller.SCHEMA;
+                }
+                schemas = new String[] {
+                    PostgisInstaller.DEFAULT_SCHEMA,
+                    EpsgInstaller.DEFAULT_SCHEMA,
+                    CoverageDatabaseInstaller.METADATA_SCHEMA,
+                    schema
+                };
+                // NOTE: CoverageDatabaseCreator expect the label to be added directly
+                // to the pane. Shall not be a pane included in an other pane.
+                panel = new JPanel(new GridBagLayout());
+                final GridBagConstraints c = new GridBagConstraints();
+                c.gridx=0;
+                c.gridy=0;
+                c.anchor=GridBagConstraints.LINE_START;
+                c.insets.top = c.insets.bottom = 6;
+                for (int i=0; i<schemas.length; i++) {
+                    panel.add(new JLabel(wizardRes.getString(Wizards.Keys.CREATING_SCHEMA_1, schemas[i])), c);
+                    c.gridy++;
+                }
+                addSetting(settings, CONFIRM, panel);
+                break;
             }
-            schemas = new String[] {
-                PostgisInstaller.DEFAULT_SCHEMA,
-                EpsgInstaller.DEFAULT_SCHEMA,
-                CoverageDatabaseInstaller.METADATA_SCHEMA,
-                schema
-            };
-            // NOTE: CoverageDatabaseCreator expect the label to be added directly
-            // to the pane. Shall not be a pane included in an other pane.
-            panel = new JPanel(new GridBagLayout());
-            final GridBagConstraints c = new GridBagConstraints();
-            c.gridx=0; c.gridy=0; c.anchor=GridBagConstraints.LINE_START;
-            c.insets.top = c.insets.bottom = 6;
-            for (int i=0; i<schemas.length; i++) {
-                panel.add(new JLabel(wizardRes.getString(Wizards.Keys.CREATING_SCHEMA_1, schemas[i])), c);
-                c.gridy++;
+            default: {
+                throw new IllegalArgumentException(id); // Should never happen.
             }
-            addSetting(settings, CONFIRM, panel);
-        } else {
-            throw new IllegalArgumentException(id); // Should never happen.
         }
         panel.setPreferredSize(SIZE);
         panel.setBorder(BorderFactory.createEmptyBorder(6, 15, 9, 15));

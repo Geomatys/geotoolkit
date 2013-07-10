@@ -1,61 +1,75 @@
 /*
- *    Geotoolkit.org - An Open Source Java GIS Toolkit
- *    http://www.geotoolkit.org
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *    (C) 2002-2012, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2012, Geomatys
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation;
- *    version 2.1 of the License.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.geotoolkit.util.collection;
 
+import java.util.Set;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.NoSuchElementException;
 import net.jcip.annotations.ThreadSafe;
-
-import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.resources.Errors;
+import org.apache.sis.util.Decorator;
+import org.apache.sis.util.resources.Errors;
+import org.apache.sis.util.collection.CheckedContainer;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
 /**
- * A {@linkplain Collections#checkedSet checked} and {@linkplain Collections#synchronizedSet
- * synchronized} {@link java.util.Set}. Type checks are performed at run-time in addition of
- * compile-time checks. The synchronization lock can be modified at runtime by overriding the
- * {@link #getLock} method.
- * <p>
- * This class is similar to using the wrappers provided in {@link Collections}, minus the cost
- * of indirection levels and with the addition of overrideable methods.
+ * A {@linkplain Collections#checkedSet(Set, Class) checked} and
+ * {@linkplain Collections#synchronizedSet(Set) synchronized} {@link LinkedHashSet}.
+ * The type checks are performed at run-time in addition to the compile-time checks.
+ *
+ * <p>Using this class is similar to wrapping a {@link LinkedHashSet} using the methods provided
+ * in the standard {@link Collections} class, except for the following advantages:</p>
+ *
+ * <ul>
+ *   <li>Avoid the two levels of indirection (for type check and synchronization).</li>
+ *   <li>Checks for write permission.</li>
+ *   <li>Overrideable methods for controlling the synchronization lock,
+ *       type checks and write permission checks.</li>
+ * </ul>
+ *
+ * The synchronization is provided mostly in order to prevent damages
+ * to the set in case of concurrent access. It does <strong>not</strong> prevent
+ * {@link java.util.ConcurrentModificationException} to be thrown during iterations,
+ * unless the whole iteration is synchronized on this set {@linkplain #getLock() lock}.
+ * For real concurrency, see the {@link java.util.concurrent} package instead.
+ *
+ * {@note The above is the reason why the name of this class emphases the <cite>checked</cite>
+ *        aspect rather than the <cite>synchronized</cite> aspect of the set.}
  *
  * @param <E> The type of elements in the set.
  *
- * @author Jody Garnett (Refractions)
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
- *
- * @see Collections#checkedSet
- * @see Collections#synchronizedSet
- *
- * @since 2.1
+ * @author  Martin Desruisseaux (Geomatys)
+ * @since   2.1
+ * @version 3.22
  * @module
+ *
+ * @see Collections#checkedSet(Set, Class)
+ * @see Collections#synchronizedSet(Set)
  */
 @ThreadSafe
-public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollection<E>, Cloneable {
+public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedContainer<E>, Cloneable {
     /**
      * Serial version UID for compatibility with different versions.
      */
-    private static final long serialVersionUID = -9014541457174735097L;
+    private static final long serialVersionUID = 1999408533884863599L;
 
     /**
      * The element type.
@@ -65,7 +79,7 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollec
     /**
      * Constructs a set of the specified type.
      *
-     * @param type The element type (should not be null).
+     * @param type The element type (can not be null).
      */
     public CheckedHashSet(final Class<E> type) {
         super();
@@ -78,8 +92,6 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollec
      *
      * @param type The element type (should not be null).
      * @param capacity The initial capacity.
-     *
-     * @since 2.4
      */
     public CheckedHashSet(final Class<E> type, final int capacity) {
         super(capacity);
@@ -89,8 +101,6 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollec
 
     /**
      * Returns the element type given at construction time.
-     *
-     * @since 2.4
      */
     @Override
     public Class<E> getElementType() {
@@ -98,68 +108,123 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollec
     }
 
     /**
-     * Checks the type of the specified object. The default implementation ensure
-     * that the object is assignable to the type specified at construction time.
+     * Ensures that the given element can be added to this set.
+     * The default implementation ensures that the object is {@code null} or assignable
+     * to the type specified at construction time. Subclasses can override this method
+     * if they need to perform additional checks.
+     *
+     * {@section Synchronization}
+     * This method is invoked <em>before</em> to get the synchronization {@linkplain #getLock() lock}.
+     * This is different than the {@link #checkWritePermission()} method, which is invoked inside the
+     * synchronized block.
      *
      * @param  element the object to check, or {@code null}.
-     * @throws IllegalArgumentException if the specified element is not of the expected type.
+     * @throws IllegalArgumentException if the specified element can not be added to this set.
      */
-    protected void ensureValidType(final E element) throws IllegalArgumentException {
-        if (element!=null && !type.isInstance(element)) {
+    protected void ensureValid(final E element) throws IllegalArgumentException {
+        if (element != null && !type.isInstance(element)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_CLASS_2, element.getClass(), type));
+                    Errors.Keys.IllegalArgumentClass_3, "element", type, element.getClass()));
         }
     }
 
     /**
-     * Checks the type of all elements in the specified collection.
+     * Ensures that all elements of the given collection can be added to this set.
      *
      * @param  collection the collection to check, or {@code null}.
-     * @throws IllegalArgumentException if at least one element is not of the expected type.
+     * @throws IllegalArgumentException if at least one element can not be added to this set.
      */
-    private void ensureValid(final Collection<? extends E> collection) throws IllegalArgumentException {
-        if (collection != null) {
-            for (final E element : collection) {
-                ensureValidType(element);
-            }
+    private void ensureValidCollection(final Collection<? extends E> collection) throws IllegalArgumentException {
+        for (final E element : collection) {
+            ensureValid(element);
         }
     }
 
     /**
-     * Checks if changes in this collection are allowed. This method is automatically invoked
-     * after this collection got the {@linkplain #getLock lock} and before any operation that
-     * may change the content. The default implementation does nothing (i.e. this collection
-     * is modifiable). Subclasses should override this method if they want to control write
-     * access.
+     * Checks if changes in this set are allowed. This method is automatically invoked
+     * after this set got the {@linkplain #getLock() lock} and before any operation that
+     * may change the content. If the write operation is allowed, then this method shall
+     * returns normally. Otherwise an {@link UnsupportedOperationException} is thrown.
      *
-     * @throws UnsupportedOperationException if this collection is unmodifiable.
+     * <p>The default implementation does nothing significant (see below), thus allowing this set to
+     * be modified. Subclasses can override this method if they want to control write permissions.</p>
      *
-     * @since 2.5
+     * {@note Actually the current implementation contains an <code>assert</code> statement
+     *        ensuring that the thread holds the lock. This is an implementation details that may
+     *        change in any future version of the SIS library. Nevertheless methods that override
+     *        this one are encouraged to invoke <code>super.checkWritePermission()</code>.}
+     *
+     * @throws UnsupportedOperationException if this set is unmodifiable.
      */
     protected void checkWritePermission() throws UnsupportedOperationException {
+        assert Thread.holdsLock(getLock());
     }
 
     /**
      * Returns the synchronization lock. The default implementation returns {@code this}.
-     * Subclasses that override this method should be careful to update the lock reference
-     * when this set is {@linkplain #clone cloned}.
+     *
+     * {@section Note for subclass implementors}
+     * Subclasses that override this method must be careful to update the lock reference
+     * (if needed) when this set is {@linkplain #clone() cloned}.
      *
      * @return The synchronization lock.
-     *
-     * @since 2.5
      */
     protected Object getLock() {
         return this;
     }
 
     /**
+     * A synchronized iterator with a check for write permission prior element removal.
+     * This class wraps the iterator provided by {@link LinkedHashSet#iterator()}.
+     *
+     * @see CheckedHashSet#iterator()
+     */
+    @ThreadSafe
+    @Decorator(Iterator.class)
+    private final class Iter implements Iterator<E> {
+        /** The {@link LinkedHashSet} iterator. */
+        private final Iterator<E> iterator;
+
+        /** Creates a new wrapper for the given {@link LinkedHashSet} iterator. */
+        Iter(final Iterator<E> iterator) {
+            this.iterator = iterator;
+        }
+
+        /** Returns {@code true} if there is more elements in the iteration. */
+        @Override
+        public boolean hasNext() {
+            synchronized (getLock()) {
+                return iterator.hasNext();
+            }
+        }
+
+        /** Returns the next element in the iteration. */
+        @Override
+        public E next() throws NoSuchElementException {
+            synchronized (getLock()) {
+                return iterator.next();
+            }
+        }
+
+        /** Removes the previous element if the enclosing {@link CheckedHashSet} allows write operations. */
+        @Override
+        public void remove() throws UnsupportedOperationException {
+            synchronized (getLock()) {
+                checkWritePermission();
+                iterator.remove();
+            }
+        }
+    }
+
+    /**
      * Returns an iterator over the elements in this set.
+     * The returned iterator will support {@linkplain Iterator#remove() element removal}
+     * only if the {@link #checkWritePermission()} method does not throw exception.
      */
     @Override
     public Iterator<E> iterator() {
-        final Object lock = getLock();
-        synchronized (lock) {
-            return new SynchronizedIterator<E>(super.iterator(), lock);
+        synchronized (getLock()) {
+            return new Iter(super.iterator());
         }
     }
 
@@ -205,7 +270,7 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollec
     public boolean add(final E element)
             throws IllegalArgumentException, UnsupportedOperationException
     {
-        ensureValidType(element);
+        ensureValid(element);
         synchronized (getLock()) {
             checkWritePermission();
             return super.add(element);
@@ -215,7 +280,7 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollec
     /**
      * Appends all of the elements in the specified collection to this set.
      *
-     * @param collection the elements to be inserted into this set.
+     * @param  collection the elements to be inserted into this set.
      * @return {@code true} if this set changed as a result of the call.
      * @throws IllegalArgumentException if at least one element is not of the expected type.
      * @throws UnsupportedOperationException if this collection is unmodifiable.
@@ -224,7 +289,7 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollec
     public boolean addAll(final Collection<? extends E> collection)
             throws IllegalArgumentException, UnsupportedOperationException
     {
-        ensureValid(collection);
+        ensureValidCollection(collection);
         synchronized (getLock()) {
             checkWritePermission();
             return super.addAll(collection);
@@ -232,7 +297,7 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollec
     }
 
     /**
-     * Removes the pecified element from this set.
+     * Removes the specified element from this set.
      *
      * @throws UnsupportedOperationException if this collection is unmodifiable.
      */

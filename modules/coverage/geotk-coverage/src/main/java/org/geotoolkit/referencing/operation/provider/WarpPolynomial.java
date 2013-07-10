@@ -94,7 +94,7 @@ public class WarpPolynomial extends MathTransformProvider {
      * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
      * descriptor(String)}</code> instead.
      */
-    public static final ParameterDescriptor<float[]> X_COEFFS = new DefaultParameterDescriptor<float[]>(
+    public static final ParameterDescriptor<float[]> X_COEFFS = new DefaultParameterDescriptor<>(
             Citations.GEOTOOLKIT, "xCoeffs", float[].class, null, null, null, null, null, true);
 
     /**
@@ -104,7 +104,7 @@ public class WarpPolynomial extends MathTransformProvider {
      * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
      * descriptor(String)}</code> instead.
      */
-    public static final ParameterDescriptor<float[]> Y_COEFFS = new DefaultParameterDescriptor<float[]>(
+    public static final ParameterDescriptor<float[]> Y_COEFFS = new DefaultParameterDescriptor<>(
             Citations.GEOTOOLKIT, "yCoeffs", float[].class, null, null, null, null, null, true);
 
     /**

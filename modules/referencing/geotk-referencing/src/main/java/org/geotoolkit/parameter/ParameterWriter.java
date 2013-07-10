@@ -39,16 +39,16 @@ import org.opengis.referencing.operation.OperationMethod;
 import org.geotoolkit.io.X364;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.measure.Angle;
-import org.geotoolkit.measure.AngleFormat;
+import org.apache.sis.measure.Angle;
+import org.apache.sis.measure.AngleFormat;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.Localized;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.Localized;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.internal.io.IOUtilities;
 
 import static org.geotoolkit.io.TableWriter.*;
-import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -79,12 +79,12 @@ public class ParameterWriter extends FilterWriter implements Localized {
     /**
      * The locale for international strings.
      */
-    private Locale locale = Locale.getDefault();
+    private Locale locale = Locale.getDefault(Locale.Category.DISPLAY);
 
     /**
      * The locale for numbers, dates and angles.
      */
-    private Locale formatLocale = Locale.getDefault(); // JDK7 allows a different value.
+    private Locale formatLocale = Locale.getDefault(Locale.Category.FORMAT);
 
     /**
      * The formatter to use for numbers. Will be created only when first needed.
@@ -333,7 +333,7 @@ public class ParameterWriter extends FilterWriter implements Localized {
         final Locale  locale        = this.locale;
         final boolean brief         = this.brief;
         final boolean colorEnabled  = this.colorEnabled;
-        final String  lineSeparator = System.getProperty("line.separator", "\n");
+        final String  lineSeparator = System.lineSeparator();
         final Vocabulary resources  = Vocabulary.getResources(locale);
         new ParameterTableRow(group, locale, null, brief).write(out, colorEnabled, false, lineSeparator);
         out.write(lineSeparator);
@@ -372,8 +372,7 @@ header: for (int i=0; ; i++) {
         int authorityLength = 0;
         final Collection<?> elements = (values != null) ? values.values() : group.descriptors();
         final Map<GeneralParameterDescriptor,ParameterTableRow> descriptorValues =
-                new LinkedHashMap<GeneralParameterDescriptor,ParameterTableRow>(
-                hashMapCapacity(elements.size()));
+                new LinkedHashMap<>(hashMapCapacity(elements.size()));
         List<Object> deferredGroups = null; // To be created only if needed (it is usually not).
         for (final Object element : elements) {
             final GeneralParameterValue parameter;
@@ -387,7 +386,7 @@ header: for (int i=0; ; i++) {
             }
             if (descriptor instanceof ParameterDescriptorGroup) {
                 if (deferredGroups == null) {
-                    deferredGroups = new ArrayList<Object>();
+                    deferredGroups = new ArrayList<>();
                 }
                 deferredGroups.add(element);
                 continue;
@@ -549,9 +548,9 @@ header: for (int i=0; ; i++) {
          * localized strings in the map right now because they could conflict with the
          * scope of some alias to be processed below.
          */
-        final Map<Object,Integer> header = new LinkedHashMap<Object,Integer>();
-        final List<String[]>        rows = new ArrayList<String[]>();
-        final List<String>     epsgNames = new ArrayList<String>();
+        final Map<Object,Integer> header = new LinkedHashMap<>();
+        final List<String[]>        rows = new ArrayList<>();
+        final List<String>     epsgNames = new ArrayList<>();
         final Locale              locale = getLocale();
         final Set<String>         scopes = getAuthorities();
         final Vocabulary       resources = Vocabulary.getResources(locale);

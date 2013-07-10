@@ -156,7 +156,7 @@ public final class Main extends CommandLine {
         }
         final Object input = CoverageReadWriteStressor.createReaderInput(new File(arguments[0]));
         final StressorGroup<CoverageReadWriteStressor> stressors =
-                new StressorGroup<CoverageReadWriteStressor>(duration * 1000L, out, err);
+                new StressorGroup<>(duration * 1000L, out, err);
         /*
          * Creates a new stressor for each thread, and configures it to the minimal and
          * maximal size, maximal scale and locale given as parameters on the command line.

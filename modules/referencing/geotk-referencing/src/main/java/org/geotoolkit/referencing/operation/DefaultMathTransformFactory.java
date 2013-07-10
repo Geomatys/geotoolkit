@@ -55,7 +55,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.io.wkt.Symbols;
 import org.geotoolkit.io.wkt.MathTransformParser;
 import org.geotoolkit.referencing.cs.AbstractCS;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.factory.ReferencingFactory;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
@@ -63,11 +63,11 @@ import org.geotoolkit.internal.referencing.MathTransformDecorator;
 import org.geotoolkit.internal.referencing.ParameterizedAffine;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ArraysExt;
 
-import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR;
+import static org.apache.sis.util.iso.DefaultNameSpace.DEFAULT_SEPARATOR;
 
 
 /**
@@ -166,8 +166,8 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
      */
     public DefaultMathTransformFactory() {
         registry  = new FactoryRegistry(MathTransformProvider.class);
-        pool      = WeakHashSet.newInstance(MathTransform.class);
-        variables = new ThreadLocal<Variables>();
+        pool      = new WeakHashSet<>(MathTransform.class);
+        variables = new ThreadLocal<>();
     }
 
     /**
@@ -343,8 +343,8 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
      */
     static boolean isDeprecated(final OperationMethod method, final String name) {
         for (final GenericName id : method.getAlias()) {
-            if (id instanceof DefaultReferenceIdentifier) {
-                final DefaultReferenceIdentifier df = (DefaultReferenceIdentifier) id;
+            if (id instanceof ImmutableIdentifier) {
+                final ImmutableIdentifier df = (ImmutableIdentifier) id;
                 if (name.equals(df.getCode())) {
                     return df.isDeprecated();
                 }
@@ -412,7 +412,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
             final Unit<Length> axisUnit = ellipsoid.getAxisUnit();
             Parameters.ensureSet(parameters, "semi_major", ellipsoid.getSemiMajorAxis(), axisUnit, false);
             Parameters.ensureSet(parameters, "semi_minor", ellipsoid.getSemiMinorAxis(), axisUnit, false);
-        } catch (ParameterNotFoundException e) {
+        } catch (ParameterNotFoundException | InvalidParameterTypeException e) {
             /*
              * Parameter not found. This exception should not occurs for map projections.
              * If it occurs, we will not try to set the parameter here, but the same
@@ -425,8 +425,6 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
              * since we have no way to set the corresponding "tgt_semi_major" and
              * "tgt_semi_minor" parameters anyway.
              */
-        } catch (InvalidParameterTypeException e) {
-            // Similar than above.
         }
         MathTransform baseToDerived = createParameterizedTransform(parameters);
         final Variables localVariables = getLocalVariables();
@@ -468,11 +466,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
         try {
             swap1 = AbstractCS.swapAndScaleAxis(sourceCS, AbstractCS.standard(sourceCS));
             swap3 = AbstractCS.swapAndScaleAxis(AbstractCS.standard(derivedCS), derivedCS);
-        } catch (IllegalArgumentException cause) {
-            // User-specified axis don't match.
-            throw new FactoryException(cause);
-        } catch (ConversionException cause) {
-            // A Unit conversion is non-linear.
+        } catch (IllegalArgumentException | ConversionException cause) {
             throw new FactoryException(cause);
         }
         /*
@@ -546,14 +540,12 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
             try {
                 parameters = provider.ensureValidValues(parameters);
                 transform  = provider.createMathTransform(parameters);
-            } catch (IllegalArgumentException exception) {
+            } catch (IllegalArgumentException | IllegalStateException exception) {
                 /*
                  * Catch only exceptions which may be the result of improper parameter
                  * usage (e.g. a value out of range). Do not catch exception caused by
                  * programming errors (e.g. null pointer exception).
                  */
-                throw new FactoryException(exception);
-            } catch (IllegalStateException exception) {
                 throw new FactoryException(exception);
             }
             if (transform instanceof MathTransformDecorator) {

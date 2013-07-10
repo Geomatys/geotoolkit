@@ -37,12 +37,12 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.apache.sis.util.ArraysExt;
 
-import org.geotoolkit.util.Deprecable;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.util.Deprecable;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.Numbers;
-import org.geotoolkit.measure.Latitude;
-import org.geotoolkit.measure.Longitude;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.measure.Latitude;
+import org.apache.sis.measure.Longitude;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.referencing.operation.provider.*;
 import org.geotoolkit.referencing.CRS;
 
@@ -62,9 +62,11 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
      * Runs from the command line.
      *
      * @param  args Ignored.
-     * @throws Exception If an error occurred while updating the source files.
+     * @throws ReflectiveOperationException Should never happen.
+     * @throws IOException If an error occurred while updating the source files.
+     * @throws FactoryException If an error occurred while querying the authority factory.
      */
-    public static void main(final String[] args) throws Exception {
+    public static void main(final String[] args) throws ReflectiveOperationException, IOException, FactoryException {
         Locale.setDefault(Locale.ENGLISH);
         final ProjectionParametersJavadoc updater = new ProjectionParametersJavadoc();
         for (final Class<?> provider : updater.parameters) {
@@ -174,7 +176,7 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
      */
     private ProjectionParametersJavadoc() throws IOException, FactoryException {
         super("<!-- GENERATED PARAMETERS", "*/");
-        domainOfValidity = new HashMap<String, DefaultGeographicBoundingBox>();
+        domainOfValidity = new HashMap<>();
         final CRSAuthorityFactory factory = CRS.getAuthorityFactory(Boolean.FALSE);
         for (final String code : factory.getAuthorityCodes(GeneralDerivedCRS.class)) {
             final CoordinateReferenceSystem crs;
@@ -269,7 +271,7 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
         /*
          * First, build a list of names without duplicated values.
          */
-        final Set<String> names = new LinkedHashSet<String>();
+        final Set<String> names = new LinkedHashSet<>();
         names.add(toHTML(descriptor.getName()));
         for (final GenericName name : descriptor.getAlias()) {
             names.add(toHTML(name));
@@ -310,7 +312,7 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
                     (Number) descriptor.getMinimumValue(), true,
                     (Number) descriptor.getMaximumValue(), true);
             if (range == null) {
-                range = new NumberRange<Double>(Double.class, null, null);
+                range = new NumberRange<>(Double.class, null, false, null, false);
             }
             lines.add("      <tr><td><b>Value range:</b>" + "</td><td>" + range + unit + "</td></tr>");
         }

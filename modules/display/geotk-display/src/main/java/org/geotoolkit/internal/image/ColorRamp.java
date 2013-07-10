@@ -49,9 +49,9 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.display.axis.Graduation;
 import org.geotoolkit.display.axis.TickIterator;
 import org.geotoolkit.display.axis.NumberGraduation;
@@ -249,7 +249,7 @@ public class ColorRamp implements Serializable {
      */
     public final void setGraduation(final MeasurementRange<?> range, final MathTransform1D sampleToGeophysics) {
         setGraduation(range != null ? createDefaultGraduation(graduation, sampleToGeophysics,
-                range.getMinimum(), range.getMaximum(), range.getUnits(), getLocale()) : null);
+                range.getMinDouble(), range.getMaxDouble(), range.unit(), getLocale()) : null);
     }
 
     /**
@@ -298,7 +298,7 @@ public class ColorRamp implements Serializable {
      * @return The old and new colors, or {@code null} if there is no change.
      */
     public final Color[][] setColors(final Color... colors) {
-        final Map<Integer,Color> share = new HashMap<Integer,Color>();
+        final Map<Integer,Color> share = new HashMap<>();
         int[] ARGB = null;
         if (colors != null) {
             ARGB = new int[colors.length];
@@ -338,7 +338,7 @@ public class ColorRamp implements Serializable {
             return null;
         }
         if (share == null) {
-            share = new HashMap<Integer,Color>();
+            share = new HashMap<>();
         }
         return new Color[][] {getColors(oldColors, share), getColors(newColors, share)};
     }
@@ -453,7 +453,7 @@ public class ColorRamp implements Serializable {
                 graduation = createGraduation(this.graduation, band, min, max);
             }
         }
-        return new AbstractMap.SimpleEntry<Graduation,Color[]>(graduation, colors);
+        return new AbstractMap.SimpleEntry<>(graduation, colors);
     }
 
     /**

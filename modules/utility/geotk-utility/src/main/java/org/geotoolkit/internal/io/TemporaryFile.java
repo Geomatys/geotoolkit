@@ -24,8 +24,8 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.lang.ref.PhantomReference;
 
-import org.geotoolkit.util.Disposable;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.Disposable;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 
@@ -50,7 +50,7 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
     /**
      * The temporary files not yet deleted. Keys are the string returned by {@link File#getPath()}.
      */
-    private static final Map<String,TemporaryFile> REFERENCES = new HashMap<String,TemporaryFile>();
+    private static final Map<String,TemporaryFile> REFERENCES = new HashMap<>();
 
     /**
      * Registers a shutdown hook which will delete every files not yet deleted.

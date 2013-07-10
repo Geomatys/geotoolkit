@@ -20,7 +20,7 @@ package org.geotoolkit.referencing.operation.projection;
 import java.awt.geom.Point2D;
 
 import org.junit.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform1D;
 
 import static java.lang.StrictMath.*;
@@ -38,7 +38,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @since 3.18
  */
-@Depend(UnitaryProjectionTest.class)
+@DependsOn(UnitaryProjectionTest.class)
 public final strictfp class CassiniOrMercatorTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.

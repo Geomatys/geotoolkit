@@ -266,7 +266,7 @@ public final class Interpolator2D extends Calculator2D {
      * @return The interpolations. The returned array contains at least one element.
      */
     public Interpolation[] getInterpolations() {
-        final List<Interpolation> interp = new ArrayList<Interpolation>(4);
+        final List<Interpolation> interp = new ArrayList<>(4);
         Interpolator2D scan = this;
         do {
             interp.add(interpolation);

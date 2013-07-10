@@ -122,9 +122,9 @@ final class RTree implements Cloneable {
      */
     public RTree(final TreeNode root) {
         this.root = root;
-        subsamplingDone  = new HashSet<Dimension>();
-        subsamplingToTry = new LinkedList<Dimension>();
-        distinctBounds   = new HashMap<Rectangle,SelectedNode>();
+        subsamplingDone  = new HashSet<>();
+        subsamplingToTry = new LinkedList<>();
+        distinctBounds   = new HashMap<>();
     }
 
     /**
@@ -277,7 +277,7 @@ final class RTree implements Cloneable {
          * we could use the Comparator<GridNode> implemented by the GridNode class.
          */
         subsampling.setSize(bestSubsampling); // Must be set only when the loop above is over.
-        final List<Tile> tiles = new ArrayList<Tile>(bestCandidateCount);
+        final List<Tile> tiles = new ArrayList<>(bestCandidateCount);
         if (bestCandidate != null) {
             assert bestCandidate.checkValidity() : bestCandidate.toTree();
             bestCandidate.getTiles(tiles);

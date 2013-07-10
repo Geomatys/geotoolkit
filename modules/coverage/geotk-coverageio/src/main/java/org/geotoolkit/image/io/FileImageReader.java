@@ -26,9 +26,10 @@ import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import javax.imageio.spi.ImageReaderSpi;
+import java.nio.file.Path;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.internal.io.TemporaryFile;
 
 
@@ -45,6 +46,8 @@ import org.geotoolkit.internal.io.TemporaryFile;
  *   <li>{@link File} inputs are returned as-is.</li>
  *   <li>{@link String} inputs are converted to {@code File} objects by a call to the
  *       {@link File#File(String)} constructor.</li>
+ *   <li>{@link Path} inputs are converted to {@code File} objects by a call to
+ *       {@link Path#toFile()} method.</li>
  *   <li>{@link URL} and {@link URI} inputs are converted to {@code File} objects by a call to the
  *       {@link File#File(URI)} constructor only if the protocol is {@code "file"}. In the particular
  *       case of {@code URL}s, the encoding is specified by {@link #getURLEncoding()}.</li>
@@ -129,6 +132,11 @@ public abstract class FileImageReader extends StreamImageReader {
             ensureFileExists(inputFile);
             return inputFile;
         }
+        if (input instanceof Path) {
+            inputFile = ((Path) input).toFile();
+            ensureFileExists(inputFile);
+            return inputFile;
+        }
         if (input instanceof URI) {
             final URI sourceURI = (URI) input;
             if (sourceURI.getScheme().equalsIgnoreCase("file")) {
@@ -155,11 +163,8 @@ public abstract class FileImageReader extends StreamImageReader {
         final InputStream in = getInputStream();
         inputFile = TemporaryFile.createTempFile("FIR", XImageIO.getFileSuffix(originatingProvider), null);
         isTemporary = true;
-        final OutputStream out = new FileOutputStream(inputFile);
-        try {
-            IOUtilities.copy(in, out);
-        } finally {
-            out.close();
+        try (OutputStream out = new FileOutputStream(inputFile)) {
+            org.geotoolkit.internal.io.IOUtilities.copy(in, out);
         }
         /*
          * Do not close the input stream, because it may be a stream explicitly specified by the user.

@@ -22,7 +22,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.internal.io.IOUtilities;
 
@@ -111,7 +111,7 @@ public class NumberedLineWriter extends IndentedLineWriter {
     protected void beginNewLine() throws IOException {
         final String number = String.valueOf(current++);
         out.write('[');
-        out.write(Strings.spaces(width - number.length()));
+        out.append(CharSequences.spaces(width - number.length()));
         out.write(number);
         out.write("] ");
     }

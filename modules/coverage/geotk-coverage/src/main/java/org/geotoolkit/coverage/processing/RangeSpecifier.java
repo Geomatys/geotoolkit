@@ -20,14 +20,14 @@ package org.geotoolkit.coverage.processing;
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Objects;
 import javax.measure.unit.Unit;
 
 import org.opengis.referencing.operation.MathTransform1D;
 
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.Classes;
 
 
 /**
@@ -221,10 +221,10 @@ public class RangeSpecifier implements Serializable, Cloneable {
     public boolean equals(final Object object) {
         if (object != null && object.getClass() == getClass()) {
             final RangeSpecifier that = (RangeSpecifier) object;
-            return Utilities.equals(this.range,     that.range    ) &&
-                   Utilities.equals(this.transform, that.transform) &&
-                   Utilities.equals(this.unit,      that.unit     ) &&
-                      Arrays.equals(this.colors,    that.colors   );
+            return Objects.equals(this.range,     that.range    ) &&
+                   Objects.equals(this.transform, that.transform) &&
+                   Objects.equals(this.unit,      that.unit     ) &&
+                    Arrays.equals(this.colors,    that.colors   );
         }
         return false;
     }

@@ -28,8 +28,8 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.coverage.grid.RectifiedGrid;
 
 import org.junit.*;
-import org.geotoolkit.test.Depend;
 
+import org.apache.sis.test.DependsOn;
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
@@ -43,7 +43,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @since 3.06
  */
-@Depend(SpatialMetadataFormatTest.class)
+@DependsOn(SpatialMetadataFormatTest.class)
 public final strictfp class MetadataNodeAccessorTest {
     /**
      * Tests the accessor with some properties defined under the {@code "ImageDescription"} node.
@@ -197,8 +197,8 @@ public final strictfp class MetadataNodeAccessorTest {
          * We don't consider elements order.
          */
         paths = MetadataNodeAccessor.listPaths(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), Identifier.class);
-        assertEquals(new HashSet<String>(Arrays.asList("ImageDescription/ImageQualityCode",
-                "ImageDescription/ProcessingLevelCode")), new HashSet<String>(paths));
+        assertEquals(new HashSet<>(Arrays.asList("ImageDescription/ImageQualityCode",
+                "ImageDescription/ProcessingLevelCode")), new HashSet<>(paths));
         /*
          * More tricky case: 'Instrument' is the type of elements in a collection.
          * But we want the path to the whole collection.

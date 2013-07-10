@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.referencing;
 import javax.xml.bind.annotation.XmlElement;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.geotoolkit.internal.jaxb.gco.PropertyType;
+import org.apache.sis.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -78,7 +78,6 @@ public final class CS_CoordinateSystemAxis extends
      *
      * @return The metadata to be marshalled.
      */
-    @Override
     @XmlElement(name = "CoordinateSystemAxis")
     public DefaultCoordinateSystemAxis getElement() {
         return skip() ? null : DefaultCoordinateSystemAxis.castOrCopy(metadata);

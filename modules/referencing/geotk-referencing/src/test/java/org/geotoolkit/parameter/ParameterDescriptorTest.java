@@ -66,7 +66,7 @@ public final strictfp class ParameterDescriptorTest extends ParameterTestBase {
         assertEquals("DefaultParameterDescriptor[\"Test\", mandatory, class=Double, " +
                 "valid=[4.0 … 20.0], default=12.0, unit=m]", descriptor.toString());
 
-        assertEquals(     Parameter.class, testDoubleValue(new Parameter<Double>(descriptor)));
+        assertEquals(     Parameter.class, testDoubleValue(new Parameter<>(descriptor)));
         assertEquals(FloatParameter.class, testDoubleValue(descriptor.createValue()));
     }
 

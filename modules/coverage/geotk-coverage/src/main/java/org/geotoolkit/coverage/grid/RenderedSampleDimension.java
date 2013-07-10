@@ -39,7 +39,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 
 
 /**
@@ -334,7 +334,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
         } else {
             // In "integer to integer" conversions, rescale only if
             // the target range is smaller than the source range.
-            needScaling = !targetRange.contains(TypeMap.getRange(sourceType));
+            needScaling = !targetRange.containsAny(TypeMap.getRange(sourceType));
         }
         /*
          * Computes the minimal and maximal values, if not explicitly provided.
@@ -394,7 +394,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
             NumberRange<?> sourceRange = TypeMap.getRange(sourceType);
             final Color[] c = (colors != null) ? colors[b] : null;
             if (needScaling) {
-                final NumberRange<Double> range = NumberRange.create(min[b], max[b]);
+                final NumberRange<Double> range = NumberRange.create(min[b], true, max[b], true);
                 sourceRange = range.castTo(sourceRange.getElementType());
                 categories[0] = new Category(name, c, targetRange, sourceRange);
             } else {

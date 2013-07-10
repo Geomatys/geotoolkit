@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation.builder;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
@@ -39,7 +40,6 @@ import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.internal.referencing.AxisDirections;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -246,7 +246,7 @@ public class GridToEnvelopeMapper {
      */
     public void setPixelAnchor(final PixelInCell anchor) {
         ensureNonNull("anchor", anchor);
-        if (!Utilities.equals(this.anchor, anchor)) {
+        if (!Objects.equals(this.anchor, anchor)) {
             this.anchor = anchor;
             reset();
         }
@@ -276,7 +276,7 @@ public class GridToEnvelopeMapper {
     public void setGridExtent(final GridEnvelope extent) {
         ensureNonNull("extent", extent);
         ensureDimensionMatch(extent, envelope, true);
-        if (!Utilities.equals(gridExtent, extent)) {
+        if (!Objects.equals(gridExtent, extent)) {
             gridExtent = extent;
             reset();
         }
@@ -342,7 +342,7 @@ public class GridToEnvelopeMapper {
     public void setEnvelope(final Envelope envelope) {
         ensureNonNull("envelope", envelope);
         ensureDimensionMatch(gridExtent, envelope, false);
-        if (!Utilities.equals(this.envelope, envelope)) {
+        if (!Objects.equals(this.envelope, envelope)) {
             this.envelope = envelope;
             reset();
         }

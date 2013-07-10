@@ -38,7 +38,7 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.math.MathFunctions;
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.io.LineFormat;
@@ -540,11 +540,8 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
      * @since 2.2
      */
     public static GeneralMatrix load(final File file) throws IOException {
-        final BufferedReader in = new BufferedReader(new FileReader(file));
-        try {
+        try (BufferedReader in = new BufferedReader(new FileReader(file))) {
             return load(in, Locale.US);
-        } finally {
-            in.close();
         }
     }
 
@@ -616,20 +613,20 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
          */
         final int numRow = matrix.getNumRow();
         final int numCol = matrix.getNumCol();
-        final Statistics statistics = new Statistics();
+        final Statistics statistics = new Statistics(null);
         for (int j=0; j<numRow; j++) {
             for (int i=0; i<numCol; i++) {
                 statistics.accept(matrix.getElement(j,i));
             }
         }
-        final NumberFormat format = statistics.getNumberFormat(null);
+        final NumberFormat format = NumberFormat.getNumberInstance();
         format.setGroupingUsed(false);
         final int columnWidth = format.getMaximumFractionDigits() + 6;
         final FieldPosition dummy = new FieldPosition(0);
         /*
          * Formats the element values like usual matrix representation (including the brackets).
          */
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         final CharSequence whiteline = CharSequences.spaces(numCol*columnWidth + 1);
         StringBuffer buffer = new StringBuffer();
         buffer.append('\u250C').append(whiteline).append('\u2510').append(lineSeparator);

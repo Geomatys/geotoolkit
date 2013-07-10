@@ -107,7 +107,7 @@ final class CacheRecord implements Comparable<CacheRecord> {
      * @param out The output writer, or {@code null} for the standard output stream.
      */
     public static void printCacheContent(final Map<?,?> cache, PrintWriter out) {
-        final List<CacheRecord> list = new ArrayList<CacheRecord>(cache.size() + 10);
+        final List<CacheRecord> list = new ArrayList<>(cache.size() + 10);
         int codeLength = 0;
         int identityLength = 0;
         for (final Map.Entry<?,?> entry : cache.entrySet()) {

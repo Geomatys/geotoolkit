@@ -20,8 +20,8 @@ package org.geotoolkit.coverage.sql;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Objects;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.sql.table.DefaultEntry;
 
 
@@ -237,11 +237,11 @@ final class SeriesEntry extends DefaultEntry {
         }
         if (super.equals(object)) {
             final SeriesEntry that = (SeriesEntry) object;
-            return Utilities.equals(this.protocol,   that.protocol)  &&
-                   Utilities.equals(this.host,       that.host)      &&
-                   Utilities.equals(this.path,       that.path)      &&
-                   Utilities.equals(this.extension,  that.extension) &&
-                   Utilities.equals(this.format,     that.format);
+            return Objects.equals(this.protocol,   that.protocol)  &&
+                   Objects.equals(this.host,       that.host)      &&
+                   Objects.equals(this.path,       that.path)      &&
+                   Objects.equals(this.extension,  that.extension) &&
+                   Objects.equals(this.format,     that.format);
         }
         return false;
     }

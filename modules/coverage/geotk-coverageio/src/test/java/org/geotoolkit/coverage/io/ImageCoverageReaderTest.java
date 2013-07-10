@@ -31,11 +31,13 @@ import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.metadata.Metadata;
+import org.opengis.metadata.identification.Resolution;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.metadata.identification.DataIdentification;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.image.ImageTestBase;
 import org.geotoolkit.geometry.Envelope2D;
@@ -46,7 +48,10 @@ import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageReaderTest;
 import org.geotoolkit.image.SampleModels;
-import org.geotoolkit.xml.XML;
+import org.apache.sis.xml.XML;
+
+import static org.apache.sis.test.Assert.*;
+import static org.apache.sis.test.TestUtilities.getSingleton;
 
 
 /**
@@ -59,7 +64,7 @@ import org.geotoolkit.xml.XML;
  *
  * @since 3.09
  */
-@Depend({TextMatrixImageReaderTest.class, WorldFileImageReaderTest.class})
+@DependsOn({TextMatrixImageReaderTest.class, WorldFileImageReaderTest.class})
 public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
     /**
      * Small number for comparison of floating point values.
@@ -114,9 +119,12 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
         assertEquals(WorldFileImageReader.class, reader.imageReader.getClass());
         final Metadata metadata = reader.getMetadata();
+        final Identification identification = getSingleton(metadata.getIdentificationInfo());
+        final Resolution resolution = getSingleton(((DataIdentification) identification).getSpatialResolutions());
+        assertEquals(Double.valueOf(1000), resolution.getDistance());
         final String xml = XML.marshal(metadata);
         assertFalse("Nothing to write.", xml.isEmpty());
-        assertDomEquals(TestData.url(ImageCoverageReaderTest.class, "MatrixMetadata.xml"),
+        assertXmlEquals(TestData.url(ImageCoverageReaderTest.class, "MatrixMetadata.xml"),
                 xml, 0.0001, "xmlns:*", "xsi:schemaLocation");
     }
 

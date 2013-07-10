@@ -22,6 +22,7 @@ package org.geotoolkit.referencing;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
 import net.jcip.annotations.Immutable;
 
@@ -29,10 +30,9 @@ import org.opengis.metadata.extent.Extent;
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.ReferenceSystem;
 
-import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 
-import static org.geotoolkit.util.Utilities.deepEquals;
+import static org.apache.sis.util.Utilities.deepEquals;
 
 
 /**
@@ -179,8 +179,8 @@ public class AbstractReferenceSystem extends AbstractIdentifiedObject implements
             switch (mode) {
                 case STRICT: {
                     final AbstractReferenceSystem that = (AbstractReferenceSystem) object;
-                    return Utilities.equals(domainOfValidity, that.domainOfValidity) &&
-                           Utilities.equals(scope,            that.scope);
+                    return Objects.equals(domainOfValidity, that.domainOfValidity) &&
+                           Objects.equals(scope,            that.scope);
                 }
                 case BY_CONTRACT: {
                     final ReferenceSystem that = (ReferenceSystem) object;

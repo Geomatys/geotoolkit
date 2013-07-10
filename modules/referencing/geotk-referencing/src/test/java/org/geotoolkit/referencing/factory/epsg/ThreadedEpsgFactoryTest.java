@@ -374,7 +374,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
             // Starting from 7.06, there is some overlaps.
             assertTrue(Collections.disjoint(datum, crs));
         } else {
-            final Set<String> intersect = new HashSet<String>(crs);
+            final Set<String> intersect = new HashSet<>(crs);
             intersect.retainAll(datum);
             final int size = intersect.size();
             assertTrue("CRS set size",   size <= crs.size());
@@ -550,12 +550,13 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
      */
     private static void serialize(final Object object) throws IOException, ClassNotFoundException {
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        final ObjectOutputStream out = new ObjectOutputStream(buffer);
-        out.writeObject(object);
-        out.close();
-        final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()));
-        final Object read = in.readObject();
-        in.close();
+        try (ObjectOutputStream out = new ObjectOutputStream(buffer)) {
+            out.writeObject(object);
+        }
+        final Object read;
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
+            read = in.readObject();
+        }
         assertEquals(object, read);
         assertEquals(object.hashCode(), read.hashCode());
     }

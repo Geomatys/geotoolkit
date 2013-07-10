@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import java.util.List;
+import java.util.Objects;
 import java.io.Serializable;
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
@@ -32,8 +33,8 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.operation.MathTransforms;
 
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
@@ -237,7 +238,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
          * by those factories.
          */
         private static final WeakHashSet<AffineTransform2D> POOL =
-                WeakHashSet.newInstance(AffineTransform2D.class);
+                new WeakHashSet<>(AffineTransform2D.class);
 
         /**
          * The descriptor that represents this tuple as a whole. The parameter values may take
@@ -363,9 +364,9 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
         public boolean equals(final Object object) {
             if (object != null && object.getClass() == getClass()) {
                 final Parameters that = (Parameters) object;
-                return Utilities.equals(descriptor,  that.descriptor) &&
-                       Utilities.equals(normalize,   that.normalize)  &&
-                       Utilities.equals(denormalize, that.denormalize);
+                return Objects.equals(descriptor,  that.descriptor) &&
+                       Objects.equals(normalize,   that.normalize)  &&
+                       Objects.equals(denormalize, that.denormalize);
             }
             return false;
         }

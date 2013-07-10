@@ -22,6 +22,7 @@ package org.geotoolkit.referencing.crs;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import javax.measure.unit.SI;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -37,7 +38,6 @@ import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 
 
@@ -105,7 +105,7 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
                     }
                     default: {
                         final EngineeringCRS that = (EngineeringCRS) object;
-                        return Utilities.equals(getName().getCode(), that.getName().getCode());
+                        return Objects.equals(getName().getCode(), that.getName().getCode());
                     }
                 }
             }

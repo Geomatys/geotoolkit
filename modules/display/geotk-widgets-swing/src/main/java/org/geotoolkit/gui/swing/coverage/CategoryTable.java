@@ -39,17 +39,18 @@ import javax.swing.table.TableColumn;
 
 import org.opengis.metadata.content.TransferFunctionType;
 
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.gui.swing.ListTableModel;
 import org.geotoolkit.gui.swing.image.PaletteComboBox;
+import org.geotoolkit.internal.coverage.ColorPalette;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.lang.Debug;
 
 import static org.geotoolkit.gui.swing.coverage.CategoryRecord.*;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -178,7 +179,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
      * not a big deal if the field is computed more than once. It can also be {@code null},
      * in which case a temporary list will be created when needed (may be costly).
      */
-    private transient ComboBoxModel paletteChoices;
+    private transient ComboBoxModel<ColorPalette> paletteChoices;
 
     /**
      * Creates a new, initially empty, table.
@@ -243,7 +244,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
      * @return The categories, or an empty list if none.
      */
     public List<Category> getCategories() {
-        final List<Category> categories = new ArrayList<Category>(elements.size());
+        final List<Category> categories = new ArrayList<>(elements.size());
         for (final CategoryRecord record : elements) {
             categories.add(record.getCategory(paletteFactory));
         }
@@ -473,6 +474,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
      *
      * @param table The table in which to install the cell renderer and editors.
      */
+    @SuppressWarnings("unchecked")
     public void configure(final JTable table) {
         final NumberEditor numberEditor = new NumberEditor(false);
         final CellRenderer renderer     = new CellRenderer(numberEditor.getFormat());
@@ -487,7 +489,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
         palettesChoice.addDefaultColors();
         palettesChoice.useAsTableCellEditor(column);
         try {
-            paletteChoices = (ComboBoxModel) ((Callable<?>) column.getCellEditor()).call();
+            paletteChoices = ((Callable<ComboBoxModel<ColorPalette>>) column.getCellEditor()).call();
         } catch (Exception e) {
             // Should never happen. If it happen anyway, this is not a fatal error.
             // But log a complete warning with full stack trace so we can fix.
@@ -625,7 +627,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
          * Creates a new editor for the given labels.
          */
         FunctionEditor(final String[] functionLabels) {
-            super(new JComboBox(functionLabels));
+            super(new JComboBox<>(functionLabels));
             this.functionLabels = functionLabels;
         }
 

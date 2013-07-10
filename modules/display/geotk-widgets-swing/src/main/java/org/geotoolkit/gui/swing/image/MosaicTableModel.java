@@ -32,8 +32,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.AbstractTableModel;
 import javax.imageio.spi.ImageReaderSpi;
 
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.process.ProgressController;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.mosaic.TileManager;
@@ -302,7 +302,7 @@ public class MosaicTableModel extends ListTableModel<Tile> {
             progress.setTask(Vocabulary.formatInternational(Vocabulary.Keys.LOADING_HEADERS));
             progress.started();
         }
-        final List<Tile> toAdd = new ArrayList<Tile>(files.length);
+        final List<Tile> toAdd = new ArrayList<>(files.length);
         Class<? extends Exception> lastFailureType = null;
         DefaultTableModel failures = null;
         for (int i=0; i<files.length; i++) {

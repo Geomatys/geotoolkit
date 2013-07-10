@@ -206,19 +206,19 @@ public final strictfp class QueryTest extends CatalogTestBase {
     private static void trySelectStatement(final String query) throws SQLException {
         final LocalCache lc = getDatabase().getLocalCache();
         assertTrue("Lock is required.", Thread.holdsLock(lc));
-        final Statement s = lc.connection().createStatement();
-        final ResultSet r = s.executeQuery(query);
-        if (r.next()) {
-            final ResultSetMetaData metadata = r.getMetaData();
-            final int num = metadata.getColumnCount();
-            for (int i=1; i<=num; i++) {
-                final String value = r.getString(i);
-                if (metadata.isNullable(i) == ResultSetMetaData.columnNoNulls) {
-                    assertNotNull(value);
+        try (Statement s = lc.connection().createStatement();
+             ResultSet r = s.executeQuery(query))
+        {
+            if (r.next()) {
+                final ResultSetMetaData metadata = r.getMetaData();
+                final int num = metadata.getColumnCount();
+                for (int i=1; i<=num; i++) {
+                    final String value = r.getString(i);
+                    if (metadata.isNullable(i) == ResultSetMetaData.columnNoNulls) {
+                        assertNotNull(value);
+                    }
                 }
             }
         }
-        r.close();
-        s.close();
     }
 }

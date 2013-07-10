@@ -50,7 +50,7 @@ import javax.media.jai.ParameterListDescriptor;
 import javax.media.jai.LookupTableJAI;
 import javax.media.jai.KernelJAI;
 
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.gui.swing.IconFactory;
@@ -209,7 +209,7 @@ public class OperationTreeBrowser extends JComponent implements Dialog {
      */
     @Debug
     public static void print(final RenderedImage image) {
-        Trees.print(getTree(image, Locale.getDefault()));
+        Trees.print(getTree(image, Locale.getDefault(Locale.Category.DISPLAY)));
     }
 
     /**
@@ -222,7 +222,7 @@ public class OperationTreeBrowser extends JComponent implements Dialog {
      */
     @Debug
     public static void print(final RenderableImage image) {
-        Trees.print(getTree(image, Locale.getDefault()));
+        Trees.print(getTree(image, Locale.getDefault(Locale.Category.DISPLAY)));
     }
 
     /**

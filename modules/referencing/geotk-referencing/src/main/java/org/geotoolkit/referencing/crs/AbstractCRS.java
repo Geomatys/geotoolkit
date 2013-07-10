@@ -22,6 +22,7 @@ package org.geotoolkit.referencing.crs;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Objects;
 import javax.measure.unit.Unit;
 import net.jcip.annotations.Immutable;
 
@@ -34,15 +35,14 @@ import org.geotoolkit.measure.Measure;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
-import org.geotoolkit.util.UnsupportedImplementationException;
+import org.apache.sis.util.UnsupportedImplementationException;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.NilReferencingObject;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.Utilities.deepEquals;
+import static org.apache.sis.util.Utilities.deepEquals;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
@@ -123,7 +123,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
      * even if their names were formatted in different locales.
      */
     static Map<String,?> name(final int key) {
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<>(4);
         final InternationalString name = Vocabulary.formatInternational(key);
         properties.put(NAME_KEY,  name.toString());
         properties.put(ALIAS_KEY, name);
@@ -200,7 +200,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
             switch (mode) {
                 case STRICT: {
                     final AbstractCRS that = (AbstractCRS) object;
-                    return Utilities.equals(this.coordinateSystem, that.coordinateSystem);
+                    return Objects.equals(this.coordinateSystem, that.coordinateSystem);
                 }
                 default: {
                     final CoordinateReferenceSystem that = (CoordinateReferenceSystem) object;

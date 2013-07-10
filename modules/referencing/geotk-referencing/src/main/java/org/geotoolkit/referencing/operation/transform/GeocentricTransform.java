@@ -277,7 +277,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
         final ParameterValue<?>[] parameters = new ParameterValue<?>[hasHeight ? 2 : 3];
         int index = 0;
         if (!hasHeight) {
-            final ParameterValue<Integer> p = new Parameter<Integer>(EllipsoidToGeocentric.DIM);
+            final ParameterValue<Integer> p = new Parameter<>(EllipsoidToGeocentric.DIM);
             p.setValue(2);
             parameters[index++] = p;
         }

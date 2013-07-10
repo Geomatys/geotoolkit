@@ -21,10 +21,12 @@ import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
@@ -131,97 +133,29 @@ public final class IOUtilities extends Static {
     }
 
     /**
-     * Encodes the characters that are not legal for the {@link URI(String)} constructor.
-     * Note that in addition of unreserved characters ("{@code _-!.~'()*}") the reserved
-     * characters ("{@code ?/[]@}") and the punctuation characters ("{@code ,;:$&+=}")
-     * are left unchanged, so they will be processed with their special meaning by the
-     * URI constructor.
-     * <p>
-     * The current implementations replaces only the space characters, control characters
-     * and the {@code %} character. Future versions may replace more characters as needed
-     * from experience.
-     *
-     * @param  path The path to encode.
-     * @return The encoded path.
-     *
-     * @since 3.15
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#encodeURI(String)}.
-     */
-    @Deprecated
-    public static String encodeURI(final String path) {
-        return org.apache.sis.internal.storage.IOUtilities.encodeURI(path);
-    }
-
-    /**
-     * Converts a {@link URL} to a {@link File}. Conceptually this work is performed by a call
-     * to {@link URL#toURI()}. However this method adds the following functionalities:
-     * <p>
-     * <ul>
-     *   <li>Optionally decodes the {@code "%XX"} sequences, where {@code "XX"} is a number.</li>
-     *   <li>Converts various exceptions into subclasses of {@link IOException}.</li>
-     * </ul>
-     *
-     * @param  url The URL (may be {@code null}).
-     * @param  encoding If the URL is encoded in a {@code application/x-www-form-urlencoded}
-     *         MIME format, the character encoding (normally {@code "UTF-8"}). If the URL is
-     *         not encoded, then {@code null}.
-     * @return The URI for the given URL, or {@code null} if the given URL was null.
-     * @throws IOException if the URL can not be converted to a URI.
-     *
-     * @since 3.20 (derived from 3.05)
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#toURI}.
-     */
-    @Deprecated
-    public static URI toURI(final URL url, final String encoding) throws IOException {
-        return org.apache.sis.internal.storage.IOUtilities.toURI(url, encoding);
-    }
-
-    /**
-     * Converts a {@link URL} to a {@link File}. Conceptually this work is performed by a call
-     * to {@link URL#toURI()} followed by a call to the {@link File#File(URI)} constructor.
-     * However this method adds the following functionalities:
-     * <p>
-     * <ul>
-     *   <li>Optionally decodes the {@code "%XX"} sequences, where {@code "XX"} is a number.</li>
-     *   <li>Converts various exceptions into subclasses of {@link IOException}.</li>
-     * </ul>
-     *
-     * @param  url The URL (may be {@code null}).
-     * @param  encoding If the URL is encoded in a {@code application/x-www-form-urlencoded}
-     *         MIME format, the character encoding (normally {@code "UTF-8"}). If the URL is
-     *         not encoded, then {@code null}.
-     * @return The file for the given URL, or {@code null} if the given URL was null.
-     * @throws IOException if the URL can not be converted to a file.
-     *
-     * @since 3.05
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#toFile}.
-     */
-    @Deprecated
-    public static File toFile(final URL url, final String encoding) throws IOException {
-        return org.apache.sis.internal.storage.IOUtilities.toFile(url, encoding);
-    }
-
-    /**
-     * Parses the following path as a {@link File} if possible, or a {@link URL} otherwise.
+     * Parses the following path as a {@link Path} if possible, or a {@link URL} otherwise.
      *
      * @param  path The path to parse.
-     * @return The path as a {@link File} if possible, or a {@link URL} otherwise.
+     * @return The path as a {@link Path} if possible, or a {@link URL} otherwise.
      * @throws IOException If the given path is not a file and can't be parsed as a URL.
      *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#toFileOrURL}.
+     * @since 3.20 (derived from 3.00)
+     *
+     * @deprecated No replacement.
      */
     @Deprecated
-    public static Object toFileOrURL(final String path) throws IOException {
-        return org.apache.sis.internal.storage.IOUtilities.toFileOrURL(path, null);
+    public static Object toPathOrURL(final String path) throws IOException {
+        Object value = org.apache.sis.internal.storage.IOUtilities.toFileOrURL(path, null);
+        if (value instanceof File) {
+            value = ((File) value).toPath();
+        }
+        return value;
     }
 
     /**
      * Tries to convert the given path to a {@link File} object if possible, or returns
      * the path unchanged otherwise. Conversion attempts are performed for paths of class
-     * {@link CharSequence}, {@link URL} or {@link URI}.
+     * {@link CharSequence}, {@link URL}, {@link URI} or {@link Path}.
      * <p>
      * If a conversion from a {@link URL} object was necessary, then the URL is assumed
      * to <strong>not</strong> be encoded.
@@ -234,11 +168,11 @@ public final class IOUtilities extends Static {
      */
     public static Object tryToFile(Object path) throws IOException {
         if (path instanceof CharSequence) {
-            path = toFileOrURL(path.toString());
+            path = org.apache.sis.internal.storage.IOUtilities.toFileOrURL(path.toString(), null);
         } else if (path instanceof URL) {
             final URL url = (URL) path;
             if (url.getProtocol().equalsIgnoreCase("file")) {
-                path = toFile(url, null);
+                path = org.apache.sis.internal.storage.IOUtilities.toFile(url, null);
             }
         } else if (path instanceof URI) {
             final URI uri = (URI) path;
@@ -256,6 +190,52 @@ public final class IOUtilities extends Static {
                 e.initCause(cause);
                 throw e;
             }
+        } else if (path instanceof Path) {
+            path = ((Path) path).toFile();
+        }
+        return path;
+    }
+
+    /**
+     * Tries to convert the given path to a {@link Path} object if possible, or returns
+     * the path unchanged otherwise. Conversion attempts are performed for paths of class
+     * {@link CharSequence}, {@link URL}, {@link URI} or {@link File}.
+     * <p>
+     * If a conversion from a {@link URL} object was necessary, then the URL is assumed
+     * to <strong>not</strong> be encoded.
+     *
+     * @param  path The path to convert to a {@link Path} if possible.
+     * @return The path as a {@link Path} if this conversion was possible.
+     * @throws IOException If an error occurred while converting the path to a file.
+     *
+     * @since 3.20 (derived from 3.07)
+     */
+    public static Object tryToPath(Object path) throws IOException {
+        if (path instanceof CharSequence) {
+            path = toPathOrURL(path.toString());
+        } else if (path instanceof URL) {
+            final URL url = (URL) path;
+            if (url.getProtocol().equalsIgnoreCase("file")) {
+                path = org.apache.sis.internal.storage.IOUtilities.toPath(url, null);
+            }
+        } else if (path instanceof URI) {
+            final URI uri = (URI) path;
+            final String scheme = uri.getScheme();
+            if (scheme != null && scheme.equalsIgnoreCase("file")) try {
+                path = Paths.get(uri);
+            } catch (IllegalArgumentException cause) {
+                /*
+                 * Typically because the URI contains a fragment (for example a query part)
+                 * that can not be represented as a File. We consider that as an error
+                 * because the scheme pretended that we had a file URI.
+                 */
+                final IOException e = new MalformedURLException(concatenate(
+                        Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "URI", path), cause));
+                e.initCause(cause);
+                throw e;
+            }
+        } else if (path instanceof File) {
+            path = ((File) path).toPath();
         }
         return path;
     }
@@ -270,13 +250,14 @@ public final class IOUtilities extends Static {
      */
     public static boolean canProcessAsPath(final Object path) {
         return (path instanceof CharSequence) || (path instanceof File) ||
-                (path instanceof URL) || (path instanceof URI);
+                (path instanceof URL) || (path instanceof URI) || (path instanceof Path);
     }
 
     /**
-     * Returns the filename from a {@link String}, {@link File}, {@link URL} or {@link URI}.
+     * Returns the filename from a {@link String}, {@link File}, {@link URL}, {@link URI}
+     * or {@link Path}.
      *
-     * @param  path The path as a {@link String}, {@link File}, {@link URL} or {@link URI}.
+     * @param  path The path as a {@link String}, {@link File}, {@link URL}, {@link URI} or {@link Path}.
      * @return The filename in the given path.
      *
      * @since 3.07
@@ -289,10 +270,10 @@ public final class IOUtilities extends Static {
     }
 
     /**
-     * Returns the filename extension from a {@link String}, {@link File}, {@link URL} or
-     * {@link URI}. If no extension is found, returns an empty string.
+     * Returns the filename extension from a {@link String}, {@link File}, {@link URL},
+     * {@link URI} or {@link Path}. If no extension is found, returns an empty string.
      *
-     * @param  path The path as a {@link String}, {@link File}, {@link URL} or {@link URI}.
+     * @param  path The path as a {@link String}, {@link File}, {@link URL}, {@link URI} or {@link Path}.
      * @return The filename extension in the given path, or an empty string if none.
      *
      * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#extension(String)}.
@@ -303,14 +284,14 @@ public final class IOUtilities extends Static {
     }
 
     /**
-     * Changes the extension of the given {@link String}, {@link File}, {@link URL} or
-     * {@link URI} argument. If the argument is not recognized, returns {@code null}.
+     * Changes the extension of the given {@link String}, {@link File}, {@link URL}, {@link URI}
+     * {@link Path} argument. If the argument is not recognized, returns {@code null}.
      * If the result of this method is an object equals to {@code path}, then the
      * {@code path} instance is returned.
      * <p>
      * Note that this method converts {@link URI} objects to {@link URL}.
      *
-     * @param  path The path as a {@link String}, {@link File}, {@link URL} or {@link URI}.
+     * @param  path The path as a {@link String}, {@link File}, {@link URL}, {@link URI} or {@link Path}.
      * @param  extension The new extension, without leading dot.
      * @return The path with the new extension, or {@code null} if the given object has
      *         not been recognized (including {@code null} path).
@@ -322,7 +303,10 @@ public final class IOUtilities extends Static {
     public static Object changeExtension(final Object path, final String extension) throws MalformedURLException {
         String name;
         final int base;
-        if (path instanceof File) {
+        if (path instanceof Path) {
+            name = ((Path) path).getFileName().toString();
+            base = 0;
+        } else if (path instanceof File) {
             name = ((File) path).getName();
             base = 0;
         } else {
@@ -342,7 +326,9 @@ public final class IOUtilities extends Static {
         }
         name = buffer.append(extension).toString();
         final Object result;
-        if (path instanceof File) {
+        if (path instanceof Path) {
+            result = ((Path) path).resolveSibling(name);
+        } else if (path instanceof File) {
             result = new File(((File) path).getParent(), name);
         } else if (path instanceof URL || path instanceof URI) {
             result = new URL(name);
@@ -353,8 +339,8 @@ public final class IOUtilities extends Static {
     }
 
     /**
-     * Opens an input stream from the given {@link String}, {@link File}, {@link URL} or
-     * {@link URI}. The stream will not be buffered, and is not required to support the mark or
+     * Opens an input stream from the given {@link String}, {@link File}, {@link URL}, {@link URI}
+     * or {@link Path}. The stream will not be buffered, and is not required to support the mark or
      * reset methods.
      * <p>
      * It is the caller responsibility to close the given stream. This method does not accept
@@ -368,17 +354,20 @@ public final class IOUtilities extends Static {
      */
     public static InputStream open(Object path) throws IOException, ClassCastException {
         if (path instanceof CharSequence) {
-            path = toFileOrURL(path.toString());
+            path = org.apache.sis.internal.storage.IOUtilities.toFileOrURL(path.toString(), null);
         }
         if (path instanceof File) {
             return new FileInputStream((File) path);
+        }
+        if (path instanceof Path) {
+            return Files.newInputStream((Path) path);
         }
         return ((path instanceof URI) ? ((URI) path).toURL() : ((URL) path)).openStream();
     }
 
     /**
-     * Opens a reader from the given {@link String}, {@link File}, {@link URL} or
-     * {@link URI}. The character encoding is assumed ISO-LATIN-1.
+     * Opens a reader from the given {@link String}, {@link File}, {@link URL}, {@link URI} or
+     * {@link Path}. The character encoding is assumed ISO-LATIN-1.
      *
      * @param  path The file to open, as a {@link String}, {@link File}, {@link URL} or {@link URI}.
      * @return The buffered reader for the given file.
@@ -390,8 +379,8 @@ public final class IOUtilities extends Static {
     }
 
     /**
-     * Opens an output stream from the given {@link String}, {@link File}, {@link URL} or
-     * {@link URI}.
+     * Opens an output stream from the given {@link String}, {@link File}, {@link URL},
+     * {@link URI} or {@link Path}.
      *
      * @param  path The file to open,
      * @return The output stream for the given file.
@@ -402,21 +391,20 @@ public final class IOUtilities extends Static {
      */
     public static OutputStream openWrite(Object path) throws IOException, ClassCastException {
         if (path instanceof CharSequence) {
-            path = toFileOrURL(path.toString());
+            path = org.apache.sis.internal.storage.IOUtilities.toFileOrURL(path.toString(), null);
         }
         if (path instanceof File) {
             return new FileOutputStream((File) path);
+        }
+        if (path instanceof Path) {
+            return Files.newOutputStream((Path) path);
         }
         return ((path instanceof URI) ? ((URI) path).toURL() : ((URL) path)).openConnection().getOutputStream();
     }
 
     /**
      * Closes the given stream if it is closeable, or do nothing otherwise. Closeable
-     * objects are any instance of {@link Closeable} or {@link ImageInputStream}.
-     * <p>
-     * <b>Note:</b> {@code ImageInputStream} does not extend {@code Closeable}, which is
-     * why it needs a particular check. Note also that {@code ImageOutputStream} extends
-     * {@code ImageInputStream}, and consequently doesn't need to be checked explicitly.
+     * objects are any instance of {@link Closeable}.
      *
      * @param  stream The object to close if it is closeable.
      * @throws IOException If an error occurred while closing the stream.
@@ -426,9 +414,9 @@ public final class IOUtilities extends Static {
     public static void close(final Object stream) throws IOException {
         if (stream instanceof Closeable) {
             ((Closeable) stream).close();
-        } else if (stream instanceof ImageInputStream) {
-            ((ImageInputStream) stream).close();
         }
+        // On JDK6, we needed an explicit check for ImageInputStream.
+        // Since JDK7, this is not needed anymore.
     }
 
     /**
@@ -529,30 +517,30 @@ public final class IOUtilities extends Static {
      * @throws IOException If an error occurred while unzipping the entries.
      */
     public static void unzip(final InputStream in, final File target) throws IOException {
-        final ZipInputStream def = new ZipInputStream(in);
-        final byte[] buffer = new byte[BUFFER_SIZE];
-        ZipEntry entry;
-        while ((entry = def.getNextEntry()) != null) {
-            final File file = new File(target, entry.getName());
-            if (entry.isDirectory()) {
-                if (!file.isDirectory() && !file.mkdir()) {
-                    throw new IOException(Errors.format(Errors.Keys.CANT_CREATE_DIRECTORY_1, file));
+        try (ZipInputStream def = new ZipInputStream(in)) {
+            final byte[] buffer = new byte[BUFFER_SIZE];
+            ZipEntry entry;
+            while ((entry = def.getNextEntry()) != null) {
+                final File file = new File(target, entry.getName());
+                if (entry.isDirectory()) {
+                    if (!file.isDirectory() && !file.mkdir()) {
+                        throw new IOException(Errors.format(Errors.Keys.CANT_CREATE_DIRECTORY_1, file));
+                    }
+                    continue;
                 }
-                continue;
+                try (OutputStream out = new FileOutputStream(file)) {
+                    int n;
+                    while ((n = def.read(buffer)) >= 0) {
+                        out.write(buffer, 0, n);
+                    }
+                }
+                final long time = entry.getTime();
+                if (time >= 0) {
+                    file.setLastModified(time);
+                }
+                def.closeEntry();
             }
-            final OutputStream out = new FileOutputStream(file);
-            int n;
-            while ((n = def.read(buffer)) >= 0) {
-                out.write(buffer, 0, n);
-            }
-            out.close();
-            final long time = entry.getTime();
-            if (time >= 0) {
-                file.setLastModified(time);
-            }
-            def.closeEntry();
         }
-        def.close();
     }
 
     /**

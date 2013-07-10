@@ -69,7 +69,7 @@ public abstract strictfp class ImageTestBase extends TestBase {
             Class.forName("org.geotoolkit.image.jai.Registry")
                  .getMethod("setDefaultCodecPreferences", (Class<?>[]) null)
                  .invoke(null, (Object[]) null);
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException e) {
             System.err.println(e);
         }
     }
@@ -130,7 +130,7 @@ public abstract strictfp class ImageTestBase extends TestBase {
         try {
             final Class<?> c = Class.forName("org.geotoolkit.internal.io.Installation");
             file = (File) c.getMethod("directory", Boolean.TYPE).invoke(c.getField("TESTS").get(null), Boolean.TRUE);
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException e) {
             throw new AssertionError(e);
         }
         if (filename != null) {
@@ -258,7 +258,7 @@ public abstract strictfp class ImageTestBase extends TestBase {
                         v.addImage(image, String.valueOf(title));
                     }
                 });
-            } catch (Exception e) {
+            } catch (InterruptedException | InvocationTargetException e) {
                 throw new AssertionError(e);
             }
         }

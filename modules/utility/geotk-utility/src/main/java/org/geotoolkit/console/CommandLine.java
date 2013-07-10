@@ -34,7 +34,8 @@ import java.lang.annotation.Annotation;
 import org.geotoolkit.io.X364;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.logging.MonolineFormatter;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.util.converter.ConverterRegistry;
@@ -307,7 +308,7 @@ public abstract class CommandLine implements Runnable {
             encoding = Charset.defaultCharset();
         }
         if (locale == null) {
-            locale = Locale.getDefault();
+            locale = Locale.getDefault(Locale.Category.DISPLAY);
         }
         /*
          * Arguments consumed have been set to null. Now pack the remaining arguments
@@ -328,9 +329,9 @@ public abstract class CommandLine implements Runnable {
             }
         }
         arguments = ArraysExt.resize(arguments, count);
-        Logging.GEOTOOLKIT.forceMonolineConsoleOutput(debug ? Level.FINER : null);
+        MonolineFormatter.install(Logging.getLogger(""), debug ? Level.FINER : null);
         if (explicitEncoding) {
-            for (final Handler handler : Logging.getLogger(Logging.GEOTOOLKIT.name).getHandlers()) {
+            for (final Handler handler : Logging.getLogger("org.geotoolkit").getHandlers()) {
                 if (handler.getClass() == ConsoleHandler.class) try {
                     ((ConsoleHandler) handler).setEncoding(encoding.name());
                 } catch (UnsupportedEncodingException e) {
@@ -678,7 +679,7 @@ public abstract class CommandLine implements Runnable {
         final Descriptions resources = Descriptions.getResources(locale);
         out.println(resources.getString(Descriptions.Keys.COMMAND_USAGE_1, command));
         final Vocabulary vocabulary = Vocabulary.getResources(locale);
-        final Set<String> options = new TreeSet<String>();
+        final Set<String> options = new TreeSet<>();
         boolean action = true;
         do {
             final Class<? extends Annotation> at = (action) ? Action.class : Option.class;

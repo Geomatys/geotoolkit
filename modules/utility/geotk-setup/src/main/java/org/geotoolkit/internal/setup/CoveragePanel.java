@@ -54,7 +54,7 @@ final class CoveragePanel extends DatabasePanel {
      */
     @Override
     Field[] getFields(final Vocabulary resources) {
-        final JComboBox url = new JComboBox(new String[] {
+        final JComboBox<String> url = new JComboBox<>(new String[] {
             "jdbc:postgresql://host/database",
             "jdbc:odbc:Coverages"
         });
@@ -66,7 +66,7 @@ final class CoveragePanel extends DatabasePanel {
             new Field(SCHEMA.key,         Vocabulary.Keys.SCHEMA,               resources, new JTextField(),     SCHEMA.defaultValue),
             new Field(USER.key,           Vocabulary.Keys.USER,                 resources, new JTextField(),     USER.defaultValue),
             new Field(PASSWORD.key,       Vocabulary.Keys.PASSWORD,             resources, new JPasswordField(), PASSWORD.defaultValue),
-            new Field(TIMEZONE.key,       Vocabulary.Keys.TIME_ZONE,            resources, new JComboBox(tz),    TIMEZONE.defaultValue),
+            new Field(TIMEZONE.key,       Vocabulary.Keys.TIME_ZONE,            resources, new JComboBox<>(tz),  TIMEZONE.defaultValue),
             new Field(ROOT_DIRECTORY.key, Vocabulary.Keys.IMAGE_ROOT_DIRECTORY, resources, new JTextField(),     ROOT_DIRECTORY.defaultValue),
         };
     }

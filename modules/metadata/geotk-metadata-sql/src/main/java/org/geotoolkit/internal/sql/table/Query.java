@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.sql.Ordering;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
@@ -109,12 +109,12 @@ public class Query {
      * <p>
      * Values shall be {@code "ASC"} or {@code "DESC"}.
      */
-    final Map<Column,Ordering> ordering = new LinkedHashMap<Column,Ordering>();
+    final Map<Column,Ordering> ordering = new LinkedHashMap<>();
 
     /**
      * SQL queries cached up to date.
      */
-    private final Map<QueryType,String> cachedSQL = new EnumMap<QueryType,String>(QueryType.class);
+    private final Map<QueryType,String> cachedSQL = new EnumMap<>(QueryType.class);
 
     /**
      * Creates an initially empty query for a table in the default schema.
@@ -250,7 +250,7 @@ public class Query {
      * @return An immutable list of columns.
      */
     public final List<Column> getColumns(final QueryType type) {
-        return new ColumnOrParameterList<Column>(type, columns);
+        return new ColumnOrParameterList<>(type, columns);
     }
 
     /**
@@ -263,7 +263,7 @@ public class Query {
      * @return An immutable list of parameters.
      */
     public final List<Parameter> getParameters(final QueryType type) {
-        return new ColumnOrParameterList<Parameter>(type, parameters);
+        return new ColumnOrParameterList<>(type, parameters);
     }
 
     /**
@@ -277,12 +277,12 @@ public class Query {
     private Set<String> getColumnNames(final DatabaseMetaData metadata, final String table)
             throws SQLException
     {
-        final Set<String> columns = new HashSet<String>();
-        final ResultSet results = metadata.getColumns(database.catalog, schema, table, null);
-        while (results.next()) {
-            columns.add(results.getString("COLUMN_NAME"));
+        final Set<String> columns = new HashSet<>();
+        try (ResultSet results = metadata.getColumns(database.catalog, schema, table, null)) {
+            while (results.next()) {
+                columns.add(results.getString("COLUMN_NAME"));
+            }
         }
-        results.close();
         return columns;
     }
 
@@ -306,7 +306,7 @@ public class Query {
          * Keep trace of all involved tables in the process.
          */
         final String quote = metadata.getIdentifierQuoteString().trim();
-        Map<String,CrossReference> tables = new LinkedHashMap<String,CrossReference>();
+        Map<String,CrossReference> tables = new LinkedHashMap<>();
         Map<String,Set<String>> columnNames = null;
         String separator = "SELECT ";
         for (final Column column : columns) {
@@ -325,7 +325,7 @@ public class Query {
                 columnExists = true;
             } else {
                 if (columnNames == null) {
-                    columnNames = new HashMap<String,Set<String>>();
+                    columnNames = new HashMap<>();
                 }
                 Set<String> columns = columnNames.get(table);
                 if (columns == null) {
@@ -390,48 +390,46 @@ public class Query {
         if (tables.size() >= 2) {
             for (final Map.Entry<String,CrossReference> entry : tables.entrySet()) {
                 final String table = entry.getKey();
-                final ResultSet pks = metadata.getExportedKeys(catalog, schema, table);
-                while (pks.next()) {
-                    assert catalog == null || catalog.equals(pks.getString("PKTABLE_CAT"  )) : catalog;
-                    assert schema  == null || schema .equals(pks.getString("PKTABLE_SCHEM")) : schema;
-                    assert table   == null || table  .equals(pks.getString("PKTABLE_NAME" )) : table;
-                    final String pkColumn = pks.getString("PKCOLUMN_NAME");
-                    // Consider only the tables from the same catalog.
-                    if (catalog != null && !catalog.equals(pks.getString("FKTABLE_CAT"))) {
-                        continue;
-                    }
-                    // Consider only the tables from the same schema.
-                    if (schema != null && !schema.equals(pks.getString("FKTABLE_SCHEM"))) {
-                        continue;
-                    }
-                    // Consider only the tables that are present in the SELECT statement.
-                    final String fkTable = pks.getString("FKTABLE_NAME");
-                    if (!tables.containsKey(fkTable) || table.equals(fkTable)) {
-                        continue;
-                    }
-                    final String fkColumn = pks.getString("FKCOLUMN_NAME");
-                    if (pks.getShort("KEY_SEQ") != 1) {
-                        // Current implementation do not support multi-columns foreigner key.
-                        pks.close();
-                        throw new SQLException("Clé étrangère sur plusieurs colonnes dans la table \"" + table + "\".");
-                    }
-                    final Column pk = new Column(  table, pkColumn);
-                    final Column fk = new Column(fkTable, fkColumn);
-                    final CrossReference ref = new CrossReference(fk, pk);
-                    final CrossReference old = entry.setValue(ref);
-                    if (old != null && !ref.equals(old)) {
-                        // Current implementation supports only one foreigner key per table.
-                        pks.close();
-                        throw new SQLException("Multiple clés étrangères pour la table \"" + table + "\".");
+                try (ResultSet pks = metadata.getExportedKeys(catalog, schema, table)) {
+                    while (pks.next()) {
+                        assert catalog == null || catalog.equals(pks.getString("PKTABLE_CAT"  )) : catalog;
+                        assert schema  == null || schema .equals(pks.getString("PKTABLE_SCHEM")) : schema;
+                        assert table   == null || table  .equals(pks.getString("PKTABLE_NAME" )) : table;
+                        final String pkColumn = pks.getString("PKCOLUMN_NAME");
+                        // Consider only the tables from the same catalog.
+                        if (catalog != null && !catalog.equals(pks.getString("FKTABLE_CAT"))) {
+                            continue;
+                        }
+                        // Consider only the tables from the same schema.
+                        if (schema != null && !schema.equals(pks.getString("FKTABLE_SCHEM"))) {
+                            continue;
+                        }
+                        // Consider only the tables that are present in the SELECT statement.
+                        final String fkTable = pks.getString("FKTABLE_NAME");
+                        if (!tables.containsKey(fkTable) || table.equals(fkTable)) {
+                            continue;
+                        }
+                        final String fkColumn = pks.getString("FKCOLUMN_NAME");
+                        if (pks.getShort("KEY_SEQ") != 1) {
+                            // Current implementation do not support multi-columns foreigner key.
+                            throw new SQLException("Clé étrangère sur plusieurs colonnes dans la table \"" + table + "\".");
+                        }
+                        final Column pk = new Column(  table, pkColumn);
+                        final Column fk = new Column(fkTable, fkColumn);
+                        final CrossReference ref = new CrossReference(fk, pk);
+                        final CrossReference old = entry.setValue(ref);
+                        if (old != null && !ref.equals(old)) {
+                            // Current implementation supports only one foreigner key per table.
+                            throw new SQLException("Multiple clés étrangères pour la table \"" + table + "\".");
+                        }
                     }
                 }
-                pks.close();
             }
             /*
              * Copies the table in a new map with a potentially different order.
              * We try to move last the tables that use foreigner keys.
              */
-            final Map<String,CrossReference> ordered = new LinkedHashMap<String,CrossReference>();
+            final Map<String,CrossReference> ordered = new LinkedHashMap<>();
 scan:       while (!tables.isEmpty()) {
                 for (final Iterator<Map.Entry<String,CrossReference>> it=tables.entrySet().iterator(); it.hasNext();) {
                     final Map.Entry<String,CrossReference> entry = it.next();

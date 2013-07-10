@@ -91,8 +91,8 @@ public class NetcdfImageWriter extends FileImageWriter {
      */
     public NetcdfImageWriter(final Spi spi) {
         super(spi != null ? spi : new Spi());
-        dimensions = new ArrayList<NetcdfDimension>(4);
-        images     = new ArrayList<NetcdfImage>(4);
+        dimensions = new ArrayList<>(4);
+        images     = new ArrayList<>(4);
     }
 
     /**

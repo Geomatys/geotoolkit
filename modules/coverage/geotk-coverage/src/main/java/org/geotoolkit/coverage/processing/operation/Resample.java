@@ -37,7 +37,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -153,7 +153,7 @@ public class Resample extends Operation2D {
      * The parameter descriptor for the interpolation type.
      */
     public static final ParameterDescriptor<Object> INTERPOLATION_TYPE =
-            new DefaultParameterDescriptor<Object>(Citations.OGC,
+            new DefaultParameterDescriptor<>(Citations.OGC,
                 "InterpolationType",                // Parameter name
                 Object.class,                       // Value class (mandatory)
                 null,                               // Array of valid values
@@ -167,7 +167,7 @@ public class Resample extends Operation2D {
      * The parameter descriptor for the coordinate reference system.
      */
     public static final ParameterDescriptor<CoordinateReferenceSystem> COORDINATE_REFERENCE_SYSTEM =
-            new DefaultParameterDescriptor<CoordinateReferenceSystem>(Citations.OGC,
+            new DefaultParameterDescriptor<>(Citations.OGC,
                 "CoordinateReferenceSystem",        // Parameter name
                 CoordinateReferenceSystem.class,    // Value class (mandatory)
                 null,                               // Array of valid values
@@ -181,7 +181,7 @@ public class Resample extends Operation2D {
      * The parameter descriptor for the grid geometry.
      */
     public static final ParameterDescriptor<GridGeometry> GRID_GEOMETRY =
-            new DefaultParameterDescriptor<GridGeometry>(Citations.OGC,
+            new DefaultParameterDescriptor<>(Citations.OGC,
                 "GridGeometry",                     // Parameter name
                 GridGeometry.class,                 // Value class (mandatory)
                 null,                               // Array of valid values
@@ -197,7 +197,7 @@ public class Resample extends Operation2D {
      * @since 3.16
      */
     public static final ParameterDescriptor<double[]> BACKGROUND =
-            new DefaultParameterDescriptor<double[]>(Citations.GEOTOOLKIT,
+            new DefaultParameterDescriptor<>(Citations.GEOTOOLKIT,
                 "Background",                       // Parameter name
                 double[].class,                     // Value class (mandatory)
                 null,                               // Array of valid values
@@ -247,10 +247,7 @@ public class Resample extends Operation2D {
         final GridCoverage2D target;
         try {
             target = Resampler2D.reproject(source, targetCRS, targetGG, interpolation, background, hints);
-        } catch (FactoryException exception) {
-            throw new CannotReprojectException(Errors.format(
-                    Errors.Keys.CANT_REPROJECT_COVERAGE_1, source.getName()), exception);
-        } catch (TransformException exception) {
+        } catch (FactoryException | TransformException exception) {
             throw new CannotReprojectException(Errors.format(
                     Errors.Keys.CANT_REPROJECT_COVERAGE_1, source.getName()), exception);
         }
@@ -321,9 +318,7 @@ public class Resample extends Operation2D {
                 }
                 transformed.intersect(reduced);
                 gridGeometry = new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, transformed, null);
-            } catch (FactoryException exception) {
-                recoverableException("resample", exception);
-            } catch (TransformException exception) {
+            } catch (FactoryException | TransformException exception) {
                 recoverableException("resample", exception);
                 // Will use the grid envelope from the original geometry,
                 // which will result in keeping the same image size.

@@ -29,9 +29,9 @@ import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.MultidimensionalImageStore;
 import org.geotoolkit.image.io.IllegalImageDimensionException;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.util.collection.XCollections;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 
 /**
@@ -152,7 +152,7 @@ public final class DimensionManager extends DimensionSet {
                 throw new IllegalArgumentException(errors().getString(Errors.Keys.EMPTY_ARRAY));
             }
             if (bandNames == null) {
-                bandNames = new HashMap<Integer,List<String>>();
+                bandNames = new HashMap<>();
             }
             names = names.clone();
             ensureNonNull(names);

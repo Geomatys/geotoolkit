@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import java.util.StringTokenizer;
+import java.util.Objects;
 import java.lang.reflect.Array;
 import java.text.NumberFormat;
 import java.text.DateFormat;
@@ -46,18 +47,17 @@ import javax.media.jai.PerspectiveTransform;
 import javax.media.jai.ParameterListDescriptor;
 import javax.media.jai.RegistryElementDescriptor;
 
-import org.geotoolkit.measure.Angle;
-import org.geotoolkit.measure.AngleFormat;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.measure.Angle;
+import org.apache.sis.measure.AngleFormat;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.gui.swing.image.KernelEditor;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.image.Adapters;
 import org.geotoolkit.resources.Vocabulary;
 
 import static java.awt.GridBagConstraints.*;
-import static org.geotoolkit.util.converter.Numbers.*;
+import static org.apache.sis.util.Numbers.*;
 
 
 /**
@@ -103,7 +103,7 @@ public class ParameterEditor extends JComponent {
     /**
      * The set of {@linkplain Component component} editors created up to date.
      */
-    private final Map<String,Component> editors = new HashMap<String,Component>();
+    private final Map<String,Component> editors = new HashMap<>();
 
     /**
      * The properties panel for parameters. The content for this panel
@@ -186,7 +186,7 @@ public class ParameterEditor extends JComponent {
      */
     public void setParameterValue(final Object value) {
         final Object oldValue = this.value;
-        if (!Utilities.deepEquals(value, oldValue)) {
+        if (!Objects.deepEquals(value, oldValue)) {
             this.value = value;
             updateEditor();
             firePropertyChange("value", oldValue, value);

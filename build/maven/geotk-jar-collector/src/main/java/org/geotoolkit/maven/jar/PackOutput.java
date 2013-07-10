@@ -79,7 +79,7 @@ final class PackOutput implements Closeable {
     /**
      * The entries which were already done by previous invocation of {@link #getInputStream}.
      */
-    private final Set<String> entriesDone = new HashSet<String>();
+    private final Set<String> entriesDone = new HashSet<>();
 
     /**
      * Creates an output jar.
@@ -91,9 +91,9 @@ final class PackOutput implements Closeable {
     PackOutput(final Packer packer, final PackOutput parent, final String[] jars) {
         this.packer = packer;
         if (parent != null) {
-            inputs = new LinkedHashSet<File>(parent.inputs);
+            inputs = new LinkedHashSet<>(parent.inputs);
         } else {
-            inputs = new LinkedHashSet<File>(jars.length * 4/3);
+            inputs = new LinkedHashSet<>(jars.length * 4/3);
         }
         for (final String jar : jars) {
             final File file = new File(packer.jarDirectory, jar);

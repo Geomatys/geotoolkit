@@ -30,7 +30,7 @@ import org.apache.sis.util.CharSequences;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.LoggedFormat;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -78,7 +78,7 @@ final class Element {
     Element(final Element singleton) {
         offset  = 0;
         keyword = null;
-        list    = new LinkedList<Object>();
+        list    = new LinkedList<>();
         list.add(singleton);
     }
 
@@ -125,7 +125,7 @@ final class Element {
             }
         }
         while (!parseOptionalSeparator(text, position, symbols.openingBrackets[bracketIndex]));
-        list = new LinkedList<Object>();
+        list = new LinkedList<>();
         /*
          * Parse all elements inside the bracket. Elements are parsed sequentially
          * and their type are selected according their first character:

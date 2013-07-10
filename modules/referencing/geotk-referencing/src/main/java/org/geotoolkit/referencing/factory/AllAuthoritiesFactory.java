@@ -38,11 +38,11 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.internal.FactoryUtilities;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -96,7 +96,7 @@ public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
      * Pool of existing instances.
      */
     private static final WeakHashSet<AllAuthoritiesFactory> POOL =
-            WeakHashSet.newInstance(AllAuthoritiesFactory.class);
+            new WeakHashSet<>(AllAuthoritiesFactory.class);
 
     /**
      * The authority names. Used in order to detect changes in the set of registered factories.
@@ -180,7 +180,7 @@ public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
         if (authorities != authorityNames) {
             authorityNames = authorities;
             final Hints hints = getHints();
-            final Set<AuthorityFactory> factories = new LinkedHashSet<AuthorityFactory>(getUserFactories());
+            final Set<AuthorityFactory> factories = new LinkedHashSet<>(getUserFactories());
             final Set<String> names = getAuthorityNames(factories);
 typeLoop:   for (int i=0; ; i++) {
                 final Set<? extends AuthorityFactory> c;
@@ -298,7 +298,7 @@ typeLoop:   for (int i=0; ; i++) {
         private Set<AuthorityFactory> fromFactoryRegistry() {
             final MultiAuthoritiesFactory factory = (MultiAuthoritiesFactory) this.factory;
             final Class<? extends AuthorityFactory> type = getFactoryType();
-            final Set<AuthorityFactory> factories = new LinkedHashSet<AuthorityFactory>();
+            final Set<AuthorityFactory> factories = new LinkedHashSet<>();
             for (final String authority : AuthorityFactoryFinder.getAuthorityNames()) {
                 factory.fromFactoryRegistry(authority, type, factories);
             }

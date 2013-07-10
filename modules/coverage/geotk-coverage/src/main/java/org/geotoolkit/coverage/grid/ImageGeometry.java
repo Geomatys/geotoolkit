@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.grid;
 
+import java.util.Objects;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
@@ -27,8 +28,7 @@ import net.jcip.annotations.Immutable;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
 
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
@@ -177,8 +177,8 @@ public class ImageGeometry implements GridGeometry, Serializable {
         }
         if (object != null && object.getClass() == getClass()) {
             final ImageGeometry that = (ImageGeometry) object;
-            return Utilities.equals(extent,    that.extent) &&
-                   Utilities.equals(gridToCRS, that.gridToCRS);
+            return Objects.equals(extent,    that.extent) &&
+                   Objects.equals(gridToCRS, that.gridToCRS);
         }
         return false;
     }

@@ -17,10 +17,10 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.Objects;
 import java.awt.geom.Dimension2D;
 
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.internal.sql.table.DefaultEntry;
 
@@ -83,9 +83,9 @@ final class DomainOfLayerEntry extends DefaultEntry {
         }
         if (super.equals(object)) {
             final DomainOfLayerEntry that = (DomainOfLayerEntry) object;
-            return Utilities.equals(this.timeRange,  that.timeRange ) &&
-                   Utilities.equals(this.bbox,       that.bbox)       &&
-                   Utilities.equals(this.resolution, that.resolution);
+            return Objects.equals(this.timeRange,  that.timeRange ) &&
+                   Objects.equals(this.bbox,       that.bbox)       &&
+                   Objects.equals(this.resolution, that.resolution);
         }
         return false;
     }

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Collections;
+import java.util.Objects;
 import javax.measure.unit.Unit;
 import net.jcip.annotations.Immutable;
 
@@ -35,19 +36,20 @@ import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.referencing.IdentifiedObject;
 
-import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.collection.XCollections;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
-import static org.geotoolkit.util.Utilities.*;
+import static org.geotoolkit.util.Utilities.hash;
+import static org.apache.sis.util.Utilities.deepHashCode;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.apache.sis.util.ArgumentChecks.ensureCanCast;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -87,7 +89,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
      * Some frequently used {@link Double} values. As of Java 6, those values don't
      * seem to be cached by {@link Double#valueOf} like JDK does for integers.
      */
-    private static final Map<Double,Double> CACHE = new HashMap<Double,Double>(13);
+    private static final Map<Double,Double> CACHE = new HashMap<>(13);
     static {
         cache(   0.0);
         cache(   1.0);
@@ -278,13 +280,13 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
             }
         }
         if (validValues != null) {
-            final Set<T> valids = new HashSet<T>(Math.max(XCollections.hashMapCapacity(validValues.length), 8));
+            final Set<T> valids = new HashSet<>(Math.max(hashMapCapacity(validValues.length), 8));
             for (int i=0; i<validValues.length; i++) {
                 final T value = cached(validValues[i]);
                 ensureCanCast("validValues", valueClass, value);
                 valids.add(value);
             }
-            this.validValues = XCollections.unmodifiableSet(valids);
+            this.validValues = unmodifiableOrCopy(valids);
         } else {
             this.validValues = null;
         }
@@ -324,7 +326,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
     public static DefaultParameterDescriptor<Integer> create(final Map<String,?> properties,
             final int defaultValue, final int minimum, final int maximum, final boolean required)
     {
-        return new DefaultParameterDescriptor<Integer>(properties,
+        return new DefaultParameterDescriptor<>(properties,
                  Integer.class, null, Integer.valueOf(defaultValue),
                  (minimum == Integer.MIN_VALUE) ? null : Integer.valueOf(minimum),
                  (maximum == Integer.MAX_VALUE) ? null : Integer.valueOf(maximum), null, required);
@@ -366,7 +368,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
             final double defaultValue, final double minimum, final double maximum,
             final Unit<?> unit, final boolean required)
     {
-        return new DefaultParameterDescriptor<Double>(properties, Double.class, null,
+        return new DefaultParameterDescriptor<>(properties, Double.class, null,
                 Double.isNaN(defaultValue)          ? null : Double.valueOf(defaultValue),
                 minimum == Double.NEGATIVE_INFINITY ? null : Double.valueOf(minimum),
                 maximum == Double.POSITIVE_INFINITY ? null : Double.valueOf(maximum), unit, required);
@@ -384,7 +386,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
                 final T[] tmp = (T[]) valueClass.getMethod("values",
                         (Class<?>[]) null).invoke(null, (Object[]) null);
                 codeList = tmp;
-            } catch (Exception exception) {
+            } catch (ReflectiveOperationException exception) {
                 // No code list defined. Not a problem; we will just
                 // not provide any set of code to check against.
             }
@@ -401,7 +403,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
         if (remarks == null ){
             properties = Collections.singletonMap(NAME_KEY, (CharSequence) name);
         } else {
-            properties = new HashMap<String,CharSequence>(4);
+            properties = new HashMap<>(4);
             properties.put(NAME_KEY,    name);
             properties.put(REMARKS_KEY, remarks);
         }
@@ -435,7 +437,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
         if (valueClass == Double.class) {
             return (ParameterValue<T>) new FloatParameter((ParameterDescriptor<Double>) this);
         }
-        return new Parameter<T>(this);
+        return new Parameter<>(this);
     }
 
     /**
@@ -547,19 +549,19 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
                 }
                 case BY_CONTRACT: {
                     final ParameterDescriptor<?> that = (ParameterDescriptor<?>) object;
-                    return Utilities.    equals(getValidValues(),  that.getValidValues())  &&
-                           Utilities.deepEquals(getDefaultValue(), that.getDefaultValue()) &&
-                           Utilities.    equals(getMinimumValue(), that.getMinimumValue()) &&
-                           Utilities.    equals(getMaximumValue(), that.getMaximumValue()) &&
-                           Utilities.    equals(getUnit(),         that.getUnit());
+                    return Objects.    equals(getValidValues(),  that.getValidValues())  &&
+                           Objects.deepEquals(getDefaultValue(), that.getDefaultValue()) &&
+                           Objects.    equals(getMinimumValue(), that.getMinimumValue()) &&
+                           Objects.    equals(getMaximumValue(), that.getMaximumValue()) &&
+                           Objects.    equals(getUnit(),         that.getUnit());
                 }
                 case STRICT: {
                     final DefaultParameterDescriptor<?> that = (DefaultParameterDescriptor<?>) object;
-                    return Utilities.    equals(this.validValues,  that.validValues)  &&
-                           Utilities.deepEquals(this.defaultValue, that.defaultValue) &&
-                           Utilities.    equals(this.minimum,      that.minimum)      &&
-                           Utilities.    equals(this.maximum,      that.maximum)      &&
-                           Utilities.    equals(this.unit,         that.unit);
+                    return Objects.    equals(this.validValues,  that.validValues)  &&
+                           Objects.deepEquals(this.defaultValue, that.defaultValue) &&
+                           Objects.    equals(this.minimum,      that.minimum)      &&
+                           Objects.    equals(this.maximum,      that.maximum)      &&
+                           Objects.    equals(this.unit,         that.unit);
                 }
             }
         }

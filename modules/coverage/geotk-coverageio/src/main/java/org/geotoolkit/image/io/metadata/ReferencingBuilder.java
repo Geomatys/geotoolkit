@@ -36,7 +36,7 @@ import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
@@ -47,10 +47,10 @@ import org.apache.sis.util.resources.IndexedResourceBundle;
 import org.apache.sis.internal.util.Citations;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.DataTypes;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.NullArgumentException;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.naming.DefaultNameSpace;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.iso.DefaultNameSpace;
 import org.geotoolkit.lang.Builder;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
@@ -269,13 +269,10 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
         Exception failure;
         try {
             return getCoordinateReferenceSystem(CoordinateReferenceSystem.class);
-        } catch (FactoryException e) {
-            failure = e;
-        } catch (NoSuchElementException e) {
-            // Throws by MetadataAccessor if an element is absents and IIOMetadata is read only.
-            failure = e;
-        } catch (NullArgumentException e) {
-            // Throws by 'isNonNull' (in this class) if a mandatory element is absents.
+        } catch (FactoryException       |
+                 NoSuchElementException | // Throws by MetadataNodeParser if an element is absents and IIOMetadata is read only.
+                 NullArgumentException e) // Throws by 'isNonNull' (in this class) if a mandatory element is absents.
+        {
             failure = e;
         }
         accessor.warning(null, getClass(), "build", failure);
@@ -538,7 +535,9 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
                     if (abbreviation == null) {
                         abbreviation = Types.getCodeName(direction);
                     }
-                    abbreviation = Strings.camelCaseToAcronym(abbreviation);
+                    if (abbreviation != null) {
+                        abbreviation = CharSequences.camelCaseToAcronym(abbreviation).toString();
+                    }
                 }
                 final Unit<?> unit = axesAccessor.getAttributeAsUnit("unit", null);
                 if (!isNonNull("getCoordinateSystem", "unit", unit)) {
@@ -937,10 +936,10 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
                 if (name.isEmpty()) {
                     name = authority;
                 } else if (!authority.isEmpty()) {
-                    final Map<String,Object> properties = new HashMap<String,Object>(6);
+                    final Map<String,Object> properties = new HashMap<>(6);
                     properties.put(ReferenceIdentifier.CODESPACE_KEY, authority);
                     properties.put(ReferenceIdentifier.CODE_KEY, name);
-                    final ReferenceIdentifier id = new DefaultReferenceIdentifier(properties);
+                    final ReferenceIdentifier id = new ImmutableIdentifier(properties);
                     return Collections.<String,Object>singletonMap(IdentifiedObject.NAME_KEY, id);
                 }
             }

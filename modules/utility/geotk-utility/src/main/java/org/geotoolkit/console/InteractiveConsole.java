@@ -176,7 +176,7 @@ public abstract class InteractiveConsole implements Runnable {
             locale = Locale.CANADA;
             colors = X364.isSupported();
         }
-        lineSeparator   = System.getProperty("line.separator", "\n");
+        lineSeparator   = System.lineSeparator();
         numberFormat    = NumberFormat.getNumberInstance(locale);
         numberSeparator = getNumberSeparator(numberFormat);
         ensureValid();
@@ -211,7 +211,7 @@ public abstract class InteractiveConsole implements Runnable {
         this.err = new PrintWriter(System.err, true);
         colors          = false;
         locale          = Locale.CANADA;
-        lineSeparator   = System.getProperty("line.separator", "\n");
+        lineSeparator   = System.lineSeparator();
         numberFormat    = NumberFormat.getNumberInstance(locale);
         numberSeparator = getNumberSeparator(numberFormat);
         ensureValid();

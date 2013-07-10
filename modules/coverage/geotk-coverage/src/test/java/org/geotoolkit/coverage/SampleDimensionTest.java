@@ -24,8 +24,8 @@ import javax.media.jai.OperationRegistry;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.ParameterListDescriptor;
 
-import org.geotoolkit.test.Depend;
 
+import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-@Depend(CategoryListTest.class)
+@DependsOn(CategoryListTest.class)
 public final strictfp class SampleDimensionTest {
     /**
      * The categories making the sample dimension to test.

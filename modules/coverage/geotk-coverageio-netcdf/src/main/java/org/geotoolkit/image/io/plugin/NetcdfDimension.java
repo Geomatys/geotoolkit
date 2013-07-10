@@ -19,6 +19,7 @@ package org.geotoolkit.image.io.plugin;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Collections;
 import java.io.IOException;
 import javax.imageio.IIOException;
@@ -50,7 +51,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.apache.sis.measure.Units;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.CRS;
@@ -433,7 +434,7 @@ final class NetcdfDimension {
      */
     @Override
     public int hashCode() {
-        return Utilities.hash(axis, 0) ^ Utilities.deepHashCode(ordinates.getStorage());
+        return Objects.hashCode(axis) ^ Utilities.deepHashCode(ordinates.getStorage());
     }
 
     /**
@@ -447,7 +448,7 @@ final class NetcdfDimension {
         if (other instanceof NetcdfDimension) {
             final NetcdfDimension that = (NetcdfDimension) other;
             return Utilities.deepEquals(axis, that.axis, ComparisonMode.IGNORE_METADATA) &&
-                   Utilities.deepEquals(ordinates.getStorage(), that.ordinates.getStorage());
+                   Objects.deepEquals(ordinates.getStorage(), that.ordinates.getStorage());
         }
         return false;
     }

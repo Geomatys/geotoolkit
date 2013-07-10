@@ -42,7 +42,7 @@ import javax.media.jai.registry.RenderedRegistryMode;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.TransfertRectIter;
 
 

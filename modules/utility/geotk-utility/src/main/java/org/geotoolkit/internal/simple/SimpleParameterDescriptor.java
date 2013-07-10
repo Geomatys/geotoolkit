@@ -79,7 +79,7 @@ public class SimpleParameterDescriptor<T> extends SimpleReferenceIdentifier impl
     @Override public int                      getMaximumOccurs() {return 1;}
     @Override public InternationalString      getRemarks()       {return null;}
     @Override public String                   toWKT()            {throw new UnsupportedOperationException();}
-    @Override public ParameterValue<T>        createValue()      {return new SimpleParameterValue<T>(this);}
+    @Override public ParameterValue<T>        createValue()      {return new SimpleParameterValue<>(this);}
 
     /**
      * Returns a string representation of this descriptor.

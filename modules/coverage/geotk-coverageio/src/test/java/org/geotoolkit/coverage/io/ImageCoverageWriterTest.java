@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import javax.imageio.ImageWriter;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.io.LineReader;
@@ -54,7 +54,7 @@ import static org.junit.Assume.*;
  *
  * @since 3.14
  */
-@Depend(ImageCoverageReaderTest.class)
+@DependsOn(ImageCoverageReaderTest.class)
 public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
     /**
      * Tolerance factor when comparing values from the {@code "matrix.txt"} file.
@@ -147,7 +147,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
             final double missingValue) throws IOException, ParseException
     {
         assertMatrixEquals(LineReaders.wrap(expected), Locale.CANADA,
-                           LineReaders.wrap(actual),   Locale.getDefault(),
+                           LineReaders.wrap(actual),   Locale.getDefault(Locale.Category.FORMAT),
                            missingValue);
     }
 
@@ -158,11 +158,11 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
     private static void assertMatrixEqualsFile(final String expectedFile, final String actual,
             final double missingValue) throws IOException, ParseException
     {
-        final LineNumberReader in = TestData.openReader(TextMatrixImageReaderTest.class, expectedFile);
-        assertMatrixEquals(LineReaders.wrap(in),     Locale.CANADA,
-                           LineReaders.wrap(actual), Locale.getDefault(),
-                           missingValue);
-        in.close();
+        try (LineNumberReader in = TestData.openReader(TextMatrixImageReaderTest.class, expectedFile)) {
+            assertMatrixEquals(LineReaders.wrap(in),     Locale.CANADA,
+                               LineReaders.wrap(actual), Locale.getDefault(Locale.Category.FORMAT),
+                               missingValue);
+        }
     }
 
     /**
@@ -385,33 +385,32 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
         reader.setInput(TestData.file(SampleModels.class, "Contour.png"));
         final GridCoverage2D coverage = reader.read(0, null);
         reader.dispose();
+        try (ByteArrayOutputStream buffer = new ByteArrayOutputStream(8192)) {
+            assertEquals("Expected an initially empty stream.", 0, buffer.size());
+            final GridCoverageWriteParam param = new GridCoverageWriteParam();
+            param.setFormatName("PNG");
 
-        final ByteArrayOutputStream buffer = new ByteArrayOutputStream(8192);
-        assertEquals("Expected an initially empty stream.", 0, buffer.size());
-        final GridCoverageWriteParam param = new GridCoverageWriteParam();
-        param.setFormatName("PNG");
+            final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeTwice");
+            writer.setOutput(buffer);
+            writer.write(coverage, param);
+            if (out != null) {
+                out.println(writer);
+            }
+            writer.assertNoDifference();
+            final long length = buffer.size();
+            assertTrue("Empty file.", length > 0);
 
-        final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeTwice");
-        writer.setOutput(buffer);
-        writer.write(coverage, param);
-        if (out != null) {
-            out.println(writer);
+            buffer.reset();
+            assertEquals("Expected an initially empty stream.", 0, buffer.size());
+            param.setEnvelope(new Envelope2D(null, 100, 50, 800, 1200));
+            param.setResolution(20, 30);
+            writer.setOutput(buffer);
+            writer.write(coverage, param);
+            if (out != null) {
+                out.println(writer);
+            }
+            assertTrue("Expected a smaller file", buffer.size() < length);
+            writer.dispose();
         }
-        writer.assertNoDifference();
-        final long length = buffer.size();
-        assertTrue("Empty file.", length > 0);
-
-        buffer.reset();
-        assertEquals("Expected an initially empty stream.", 0, buffer.size());
-        param.setEnvelope(new Envelope2D(null, 100, 50, 800, 1200));
-        param.setResolution(20, 30);
-        writer.setOutput(buffer);
-        writer.write(coverage, param);
-        if (out != null) {
-            out.println(writer);
-        }
-        assertTrue("Expected a smaller file", buffer.size() < length);
-        writer.dispose();
-        buffer.close(); // As a matter of principle.
     }
 }

@@ -20,7 +20,7 @@ package org.geotoolkit.image.io.mosaic;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.Commons;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.image.ImageTestBase;
@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.18
  */
-@Depend(TileManagerTest.class)
+@DependsOn(TileManagerTest.class)
 public final strictfp class TileManagerFactoryTest extends ImageTestBase {
     /**
      * Creates a new test suite.

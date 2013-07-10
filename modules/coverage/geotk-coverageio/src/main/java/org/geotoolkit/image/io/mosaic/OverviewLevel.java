@@ -29,12 +29,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.MalformedURLException;
 
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.collection.IntegerList;
 import org.geotoolkit.util.collection.FrequencySortedSet;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
@@ -68,7 +67,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
     /**
      * The input types for which we will try to find a pattern.
      */
-    private static final Set<Class<?>> INPUT_TYPES = new HashSet<Class<?>>(8);
+    private static final Set<Class<?>> INPUT_TYPES = new HashSet<>(8);
     static {
         INPUT_TYPES.add(String.class);
         INPUT_TYPES.add(File  .class);
@@ -223,7 +222,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
         assert subsampling.equals(tile.getSubsampling()) : subsampling;
         xSubsampling = subsampling.width;
         ySubsampling = subsampling.height;
-        tiles = new ArrayList<Tile>();
+        tiles = new ArrayList<>();
         tiles.add(tile);
     }
 
@@ -300,13 +299,13 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
          */
         formatter = new FilenameFormatter();
         final Rectangle size = new Rectangle(xOffset, yOffset, dx, dy);
-        final Map<Tile,List<Tile>> models = new HashMap<Tile,List<Tile>>();
+        final Map<Tile,List<Tile>> models = new HashMap<>();
         for (final Tile tile : tiles) {
             final String input = inputPattern(tile);
             final Tile model = (input != null) ? new Tile(tile, input, size) : null;
             List<Tile> similar = models.get(model);
             if (similar == null) {
-                similar = new ArrayList<Tile>();
+                similar = new ArrayList<>();
                 models.put(model, similar);
             }
             similar.add(tile);
@@ -1004,11 +1003,11 @@ nextTile:   for (int tileX=minTileX; tileX<maxTileX; tileX++) {
                    dx == that.dx && dy == that.dy && nx == that.nx && ny == that.ny &&
                    xSubsampling == that.xSubsampling && ySubsampling == that.ySubsampling &&
                    xOffset == that.xOffset && yOffset == that.yOffset &&
-                   Utilities.equals(this.mosaic,      that.mosaic)   &&
-                   Utilities.equals(this.tiles,       that.tiles)    &&
-                   Arrays   .equals(this.patterns,    that.patterns) &&
-                   Utilities.equals(this.patternUsed, that.patternUsed) &&
-                   Utilities.equals(this.finer,       that.finer);
+                   Objects.equals(this.mosaic,      that.mosaic)   &&
+                   Objects.equals(this.tiles,       that.tiles)    &&
+                   Arrays .equals(this.patterns,    that.patterns) &&
+                   Objects.equals(this.patternUsed, that.patternUsed) &&
+                   Objects.equals(this.finer,       that.finer);
         }
         return false;
     }

@@ -26,7 +26,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.util.FactoryException;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -52,7 +52,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @since 3.07
  */
-@Depend(MetadataNodeAccessorTest.class)
+@DependsOn(MetadataNodeAccessorTest.class)
 public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBase {
     /**
      * Tests the formatting of the WGS84 CRS.

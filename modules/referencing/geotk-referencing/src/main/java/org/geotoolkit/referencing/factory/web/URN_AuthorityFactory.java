@@ -33,7 +33,7 @@ import org.opengis.referencing.cs.CSAuthorityFactory;
 import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
@@ -76,7 +76,7 @@ public class URN_AuthorityFactory extends AuthorityFactoryAdapter implements CRS
      * The authority factories by versions. Factories will be created by
      * {@link #createVersionedFactory} when first needed.
      */
-    private final SortedMap<Version, AuthorityFactory> byVersions = new TreeMap<Version, AuthorityFactory>();
+    private final SortedMap<Version, AuthorityFactory> byVersions = new TreeMap<>();
 
     /**
      * The last code processed, or {@code null} if none.

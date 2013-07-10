@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.image.io.metadata;
 
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 
 
 /**

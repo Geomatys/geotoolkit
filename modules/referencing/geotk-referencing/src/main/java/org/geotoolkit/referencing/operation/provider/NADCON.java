@@ -36,7 +36,7 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.NadconTransform;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -87,7 +87,7 @@ public class NADCON extends MathTransformProvider {
      * descriptor(String)}</code> instead.
      */
     @Deprecated
-    public static final ParameterDescriptor<String> LAT_DIFF_FILE = new DefaultParameterDescriptor<String>(
+    public static final ParameterDescriptor<String> LAT_DIFF_FILE = new DefaultParameterDescriptor<>(
             Citations.EPSG, "Latitude difference file", String.class, null, "conus.las", null, null, null, true);
 
     /**
@@ -98,7 +98,7 @@ public class NADCON extends MathTransformProvider {
      * descriptor(String)}</code> instead.
      */
     @Deprecated
-    public static final ParameterDescriptor<String> LONG_DIFF_FILE = new DefaultParameterDescriptor<String>(
+    public static final ParameterDescriptor<String> LONG_DIFF_FILE = new DefaultParameterDescriptor<>(
             Citations.EPSG, "Longitude difference file", String.class, null, "conus.los", null, null, null, true);
 
     /**

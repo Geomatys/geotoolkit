@@ -32,7 +32,7 @@ import java.awt.geom.AffineTransform;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.gui.swing.ZoomPane;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.coverage.grid.ImageGeometry;
@@ -122,7 +122,7 @@ final class MosaicPanel extends ZoomPane {
         } else {
             final Collection<Tile> asList = Arrays.asList(tiles);
             if (selected == null) {
-                selected = new HashSet<Tile>(asList);
+                selected = new HashSet<>(asList);
             } else {
                 selected.clear();
                 selected.addAll(asList);

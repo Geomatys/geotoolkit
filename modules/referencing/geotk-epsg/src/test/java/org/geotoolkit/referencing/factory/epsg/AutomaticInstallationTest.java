@@ -25,7 +25,7 @@ import javax.sql.DataSource;
 import org.opengis.util.FactoryException;
 import org.geotoolkit.internal.sql.Dialect;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 
 import org.junit.*;
@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.10
  */
-@Depend(EpsgInstallerTest.class)
+@DependsOn(EpsgInstallerTest.class)
 public final strictfp class AutomaticInstallationTest {
     /**
      * Tests the {@link ThreadedEpsgFactory#getDefaultURL()} method.

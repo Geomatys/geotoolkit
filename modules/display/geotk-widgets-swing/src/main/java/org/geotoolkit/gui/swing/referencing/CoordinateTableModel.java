@@ -34,7 +34,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 
 import org.geotoolkit.geometry.Envelopes;
-import org.geotoolkit.geometry.ImmutableEnvelope;
+import org.apache.sis.geometry.ImmutableEnvelope;
 import org.geotoolkit.geometry.TransformedDirectPosition;
 
 
@@ -80,7 +80,7 @@ public class CoordinateTableModel extends AbstractTableModel {
     /**
      * The direct positions to display in the table.
      */
-    private final List<DirectPosition> positions = new ArrayList<DirectPosition>();
+    private final List<DirectPosition> positions = new ArrayList<>();
 
     /**
      * An unmodifiable view of the positions list. This is the view returned by public accessors.
@@ -272,7 +272,7 @@ public class CoordinateTableModel extends AbstractTableModel {
     @Override
     public String toString() {
         final StringBuilder buffer = new StringBuilder();
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         final int size = positions.size();
         for (int i=0; i<size; i++) {
             buffer.append(positions.get(i)).append(lineSeparator);

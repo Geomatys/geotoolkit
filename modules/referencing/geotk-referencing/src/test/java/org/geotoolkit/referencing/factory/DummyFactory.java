@@ -28,8 +28,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.IdentifiedObject;
-
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
@@ -53,7 +52,7 @@ final strictfp class DummyFactory extends AbstractAuthorityFactory {
          * All dummy factories created by this threaded factory,
          * including any factories having been disposed.
          */
-        private final Queue<DummyFactory> factories = new ConcurrentLinkedQueue<DummyFactory>();
+        private final Queue<DummyFactory> factories = new ConcurrentLinkedQueue<>();
 
         /**
          * Creates a new threaded factory.
@@ -78,7 +77,7 @@ final strictfp class DummyFactory extends AbstractAuthorityFactory {
          * to allows comparisons with {@link List#equals}.
          */
         final synchronized List<DummyFactory> factories() {
-            return new ArrayList<DummyFactory>(factories);
+            return new ArrayList<>(factories);
         }
     }
 

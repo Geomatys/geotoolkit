@@ -41,7 +41,7 @@ import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;

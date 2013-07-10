@@ -39,21 +39,21 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.ResponsibleParty;
 
 import org.apache.sis.metadata.ValueExistencePolicy;
-import org.geotoolkit.metadata.MetadataStandard;
+import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.internal.util.Citations;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.IdentifierGenerator;
 import org.geotoolkit.internal.sql.StatementEntry;
-import org.geotoolkit.naming.DefaultNameSpace;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.iso.DefaultNameSpace;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Workaround;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
 import static org.apache.sis.metadata.KeyNamePolicy.UML_IDENTIFIER;
-import static org.geotoolkit.metadata.TypeValuePolicy.ELEMENT_TYPE;
-import static org.geotoolkit.metadata.TypeValuePolicy.DECLARING_INTERFACE;
+import static org.apache.sis.metadata.TypeValuePolicy.ELEMENT_TYPE;
+import static org.apache.sis.metadata.TypeValuePolicy.DECLARING_INTERFACE;
 
 
 /**
@@ -260,16 +260,16 @@ public class MetadataWriter extends MetadataSource {
         if (identifier == null) {
             synchronized (statements) {
                 final Connection connection = statements.connection();
-                final Statement stmt = connection.createStatement();
                 connection.setAutoCommit(false);
                 boolean success = false;
                 try {
-                    if (metadata instanceof CodeList<?>) {
-                        identifier = addCode(stmt, (CodeList<?>) metadata);
-                    } else {
-                        identifier = add(stmt, metadata, new IdentityHashMap<Object,String>(), null);
+                    try (Statement stmt = connection.createStatement()) {
+                        if (metadata instanceof CodeList<?>) {
+                            identifier = addCode(stmt, (CodeList<?>) metadata);
+                        } else {
+                            identifier = add(stmt, metadata, new IdentityHashMap<Object,String>(), null);
+                        }
                     }
-                    stmt.close();
                     success = true;
                 } finally {
                     if (success) {
@@ -306,7 +306,7 @@ public class MetadataWriter extends MetadataSource {
          * against concurrent changes in the metadata object. This protection is needed
          * because we need to perform multiple passes on the same metadata.
          */
-        final Map<String,Object> asMap = new LinkedHashMap<String,Object>();
+        final Map<String,Object> asMap = new LinkedHashMap<>();
         for (final Map.Entry<String,Object> entry : asMap(metadata).entrySet()) {
             asMap.put(entry.getKey(), extractFromCollection(entry.getValue()));
         }
@@ -354,8 +354,8 @@ public class MetadataWriter extends MetadataSource {
         for (final String column : asMap.keySet()) {
             if (!columns.contains(column)) {
                 if (colTypes == null) {
-                    colTypes  = standard.asTypeMap(implementationType, ELEMENT_TYPE,        UML_IDENTIFIER);
-                    colTables = standard.asTypeMap(implementationType, DECLARING_INTERFACE, UML_IDENTIFIER);
+                    colTypes  = standard.asTypeMap(implementationType, UML_IDENTIFIER, ELEMENT_TYPE);
+                    colTables = standard.asTypeMap(implementationType, UML_IDENTIFIER, DECLARING_INTERFACE);
                 }
                 /*
                  * We have found a column to add. Check if the column actually needs to be added
@@ -379,7 +379,7 @@ public class MetadataWriter extends MetadataSource {
                      */
                     maxLength = maximumIdentifierLength;
                     if (foreigners == null) {
-                        foreigners = new LinkedHashMap<String,FKey>();
+                        foreigners = new LinkedHashMap<>();
                     }
                     if (foreigners.put(column, new FKey(addTo, rt, null)) != null) {
                         throw new AssertionError(column); // Should never happen.
@@ -477,9 +477,8 @@ public class MetadataWriter extends MetadataSource {
                                 // foreigner keys for the current table, then verify if the existing
                                 // constraint references the right table.
                                 if (referencedTables == null) {
-                                    referencedTables = new HashMap<String,FKey>();
-                                    final ResultSet rs = stmt.getConnection().getMetaData().getImportedKeys(CATALOG, schema, table);
-                                    try {
+                                    referencedTables = new HashMap<>();
+                                    try (ResultSet rs = stmt.getConnection().getMetaData().getImportedKeys(CATALOG, schema, table)) {
                                         while (rs.next()) {
                                             if ((schema  == null || schema .equals(rs.getString("PKTABLE_SCHEM"))) &&
                                                 (CATALOG == null || CATALOG.equals(rs.getString("PKTABLE_CAT"))))
@@ -489,8 +488,6 @@ public class MetadataWriter extends MetadataSource {
                                                                      rs.getString("FK_NAME")));
                                             }
                                         }
-                                    } finally {
-                                        rs.close();
                                     }
                                 }
                                 fkey = referencedTables.remove(column);
@@ -664,11 +661,13 @@ public class MetadataWriter extends MetadataSource {
             columns.add(CODE_COLUMN);
         }
         final String identifier = code.name();
-        final ResultSet rs = stmt.executeQuery(buffer.clear().append("SELECT ").append(CODE_COLUMN)
+        final String query = buffer.clear().append("SELECT ").append(CODE_COLUMN)
                 .append(" FROM ").appendIdentifier(schema, table).append(" WHERE ")
-                .append(CODE_COLUMN).appendCondition(identifier).toString());
-        final boolean exists = rs.next();
-        rs.close();
+                .append(CODE_COLUMN).appendCondition(identifier).toString();
+        final boolean exists;
+        try (ResultSet rs = stmt.executeQuery(query)) {
+            exists = rs.next();
+        }
         if (!exists) {
             final String sql = buffer.clear().append("INSERT INTO ").appendIdentifier(schema, table)
                     .append(" (").append(CODE_COLUMN).append(") VALUES (").appendValue(identifier)

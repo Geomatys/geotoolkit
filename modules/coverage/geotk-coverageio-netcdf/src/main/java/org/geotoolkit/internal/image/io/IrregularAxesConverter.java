@@ -31,7 +31,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
@@ -174,9 +174,7 @@ public final class IrregularAxesConverter {
                 {
                     return (ProjectedCRS) DiscreteReferencingFactory.createDiscreteCRS(targetCRS, nx, ny);
                 }
-            } catch (FactoryException e) { // TODO: multi-catch with Java 7.
-                Logging.recoverableException(IrregularAxesConverter.class, "canConvert", e);
-            } catch (TransformException e) {
+            } catch (FactoryException | TransformException e) {
                 Logging.recoverableException(IrregularAxesConverter.class, "canConvert", e);
             }
         }

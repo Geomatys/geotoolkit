@@ -26,8 +26,8 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.coverage.Coverage;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Disposable;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.Disposable;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 
 
@@ -78,7 +78,7 @@ public class CoverageReferences {
     /**
      * The map of coverages references. Keys and values are the same instances.
      */
-    private final ConcurrentMap<Ref,Ref> pool = new ConcurrentHashMap<Ref,Ref>();
+    private final ConcurrentMap<Ref,Ref> pool = new ConcurrentHashMap<>();
 
     /**
      * Creates a new coverage cache. This method is given protected access for subclassing

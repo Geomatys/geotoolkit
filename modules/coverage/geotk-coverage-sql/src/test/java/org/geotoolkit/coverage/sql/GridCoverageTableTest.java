@@ -30,8 +30,8 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
-import org.geotoolkit.test.Depend;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.test.DependsOn;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
@@ -50,7 +50,7 @@ import static org.geotoolkit.referencing.CRS.getHorizontalCRS;
  *
  * @since 3.10 (derived from Seagis)
  */
-@Depend(LayerTableTest.class)
+@DependsOn(LayerTableTest.class)
 public final strictfp class GridCoverageTableTest extends CatalogTestBase {
     /**
      * The name of the coverage to be tested.

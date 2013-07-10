@@ -19,6 +19,7 @@ package org.geotoolkit.maven.jar;
 
 import java.util.Map;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.jar.*;
@@ -64,12 +65,12 @@ public final class Packer implements FilenameFilter {
     /**
      * The JAR files to read, by input filename.
      */
-    private final Map<File,PackInput> inputs = new LinkedHashMap<File,PackInput>();
+    private final Map<File,PackInput> inputs = new LinkedHashMap<>();
 
     /**
      * The JAR and PACK files to create, by output name.
      */
-    private final Map<String,PackOutput> outputs = new LinkedHashMap<String,PackOutput>();
+    private final Map<String,PackOutput> outputs = new LinkedHashMap<>();
 
     /**
      * The version to declare in the manifest file.
@@ -107,9 +108,7 @@ public final class Packer implements FilenameFilter {
      * @throws IOException If an error occurred while collecting the target directory content.
      */
     public void addPack(final String parent, final String pack, final String[] jars) throws IOException {
-        if (pack == null) {
-            throw new NullPointerException("pack");
-        }
+        Objects.requireNonNull("pack", pack);
         PackOutput p = null;
         if (parent != null) {
             p = outputs.get(parent);
@@ -185,7 +184,7 @@ public final class Packer implements FilenameFilter {
          * need to be copied - all those "active" output streams will be filled in parallel.
          */
         final byte[] buffer = new byte[64*1024];
-        final Map<File,PackInput> activeInputs = new LinkedHashMap<File,PackInput>(inputs.size() * 4/3);
+        final Map<File,PackInput> activeInputs = new LinkedHashMap<>(inputs.size() * 4/3);
         final PackOutput[] activesForFile      = new PackOutput[outputs.size()];
         final PackOutput[] activesForEntry     = new PackOutput[activesForFile.length];
         final PackOutput[] activesForFollow    = new PackOutput[activesForFile.length];

@@ -43,12 +43,12 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import org.geotoolkit.measure.Angle;
-import org.geotoolkit.measure.AngleFormat;
+import org.apache.sis.measure.Angle;
+import org.apache.sis.measure.AngleFormat;
 import org.geotoolkit.measure.CoordinateFormat;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.internal.swing.SwingUtilities;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;
 
 import static java.awt.GridBagConstraints.*;
@@ -82,7 +82,7 @@ public class FormatChooser extends JComponent implements Dialog {
      * and values are {@code String[][]} with arrays in the following order: number
      * patterns, date patterns and angle patterns.
      */
-    private static final Map<Locale,String[][]> PATTERNS = new HashMap<Locale,String[][]>();
+    private static final Map<Locale,String[][]> PATTERNS = new HashMap<>();
 
     /**
      * A set of default pattern for {@link AngleFormat}.
@@ -112,7 +112,7 @@ public class FormatChooser extends JComponent implements Dialog {
     /**
      * The panel in which to edit the pattern.
      */
-    private final JComboBox choices = new JComboBox();
+    private final JComboBox<String> choices = new JComboBox<>();
 
     /**
      * The preview text. This is the {@code value} formated using {@code format}.
@@ -130,7 +130,7 @@ public class FormatChooser extends JComponent implements Dialog {
         setLayout(new GridBagLayout());
         final String[] patterns = getPatterns(format);
         if (patterns != null) {
-            final MutableComboBoxModel model = (MutableComboBoxModel) choices.getModel();
+            final MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) choices.getModel();
             for (int i=0; i<patterns.length; i++) {
                 model.addElement(patterns[i]);
             }
@@ -163,7 +163,7 @@ public class FormatChooser extends JComponent implements Dialog {
      * @todo Need a way to find the format locale.
      */
     private static synchronized String[] getPatterns(final Format format) {
-        final Locale locale = Locale.getDefault();
+        final Locale locale = Locale.getDefault(Locale.Category.FORMAT);
         String[][] patterns = PATTERNS.get(locale);
         if (patterns == null) {
             patterns = new String[3][];
@@ -194,7 +194,7 @@ public class FormatChooser extends JComponent implements Dialog {
      * Note: this method is costly and should be invoked only once for a given locale.
      */
     private static String[] getNumberPatterns(final Locale locale) {
-        final Set<String> patterns = new LinkedHashSet<String>();
+        final Set<String> patterns = new LinkedHashSet<>();
         int type = 0;
   fill: while (true) {
             final int digits;
@@ -230,7 +230,7 @@ public class FormatChooser extends JComponent implements Dialog {
             SimpleDateFormat.LONG,
             SimpleDateFormat.FULL
         };
-        final Set<String> patterns = new LinkedHashSet<String>();
+        final Set<String> patterns = new LinkedHashSet<>();
         for (int i=0; i<codes.length; i++) {
             for (int j=-1; j<codes.length; j++) {
                 final DateFormat format;
@@ -434,7 +434,7 @@ public class FormatChooser extends JComponent implements Dialog {
             return false;
         }
         if (add) {
-            final DefaultComboBoxModel model = (DefaultComboBoxModel) choices.getModel();
+            final DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) choices.getModel();
             pattern = choices.getSelectedItem().toString();
             final int index = model.getIndexOf(pattern);
             if (index > 0) {

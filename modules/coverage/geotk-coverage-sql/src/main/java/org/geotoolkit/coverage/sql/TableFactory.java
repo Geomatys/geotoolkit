@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import javax.sql.DataSource;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
@@ -52,13 +52,13 @@ final class TableFactory extends SpatialDatabase {
      * Pool of layer tables.
      */
     final TablePool<LayerTable> layers =
-            new TablePool<LayerTable>(this, LayerTable.class, new LayerTable[4]);
+            new TablePool<>(this, LayerTable.class, new LayerTable[4]);
 
     /**
      * Pool of grid coverage tables.
      */
     final TablePool<GridCoverageTable> coverages =
-            new TablePool<GridCoverageTable>(this, GridCoverageTable.class, new GridCoverageTable[4]);
+            new TablePool<>(this, GridCoverageTable.class, new GridCoverageTable[4]);
 
     /**
      * The factory for color palettes.

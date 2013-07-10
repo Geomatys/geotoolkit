@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 
 
 /**
@@ -54,7 +54,7 @@ public final class RS_Identifier extends XmlAdapter<XMLReferenceIdentifier, Refe
     public ReferenceIdentifier unmarshal(final XMLReferenceIdentifier adapter) {
         if (adapter != null) {
             final Citation authority = Citations.fromName(adapter.codeSpace); // May be null.
-            return new DefaultReferenceIdentifier(authority, Citations.getIdentifier(authority), adapter.code);
+            return new ImmutableIdentifier(authority, Citations.getIdentifier(authority), adapter.code);
         }
         return null;
     }
@@ -92,7 +92,7 @@ public final class RS_Identifier extends XmlAdapter<XMLReferenceIdentifier, Refe
         @Override
         public ReferenceIdentifier unmarshal(final String adapter) {
             if (adapter != null) {
-                return new DefaultReferenceIdentifier(null, null, adapter);
+                return new ImmutableIdentifier(null, null, adapter);
             }
             return null;
         }

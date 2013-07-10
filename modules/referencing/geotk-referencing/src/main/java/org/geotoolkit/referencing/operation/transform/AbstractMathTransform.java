@@ -47,13 +47,13 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.FormattableObject;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.LenientComparable;
+import org.apache.sis.util.LenientComparable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
@@ -470,7 +470,7 @@ public abstract class AbstractMathTransform extends FormattableObject
                     failure = exception; // Keep only the first failure.
                     blockStart = srcOff;
                 } else {
-                    // TODO: addSuppress with JDK7.
+                    failure.addSuppressed(exception);
                     if (Math.abs(srcOff - blockStart) > MAXIMUM_BUFFER_SIZE) {
                         failureCount = 0; // We started a new block of coordinates.
                         blockStart = srcOff;
@@ -608,7 +608,7 @@ public abstract class AbstractMathTransform extends FormattableObject
                 } else if (failure == null) {
                     failure = exception; // Keep only the first exception.
                 } else {
-                    // TODO: addSuppress with JDK7.
+                    failure.addSuppressed(exception);
                 }
             }
             for (int i=0; i<dstStop; i++) {
@@ -677,7 +677,7 @@ public abstract class AbstractMathTransform extends FormattableObject
                 } else if (failure == null) {
                     failure = exception;
                 } else {
-                    // TODO: addSuppress with JDK7.
+                    failure.addSuppressed(exception);
                 }
             }
             for (int i=0; i<dstLength; i++) {
@@ -756,7 +756,7 @@ public abstract class AbstractMathTransform extends FormattableObject
                 } else if (failure == null) {
                     failure = exception;
                 } else {
-                    // TODO: addSuppress with JDK7.
+                    failure.addSuppressed(exception);
                 }
             }
             dstOff += dstLength;

@@ -104,7 +104,7 @@ public final class Trees extends Static {
      * @return The paths to the specified value, or an empty array if none.
      */
     public static TreePath[] getPathsToUserObject(final TreeModel model, final Object value) {
-        final List<TreePath> paths = new ArrayList<TreePath>(8);
+        final List<TreePath> paths = new ArrayList<>(8);
         final Object[] path = new Object[8];
         path[0] = model.getRoot();
         getPathsToUserObject(model, value, path, 1, paths);

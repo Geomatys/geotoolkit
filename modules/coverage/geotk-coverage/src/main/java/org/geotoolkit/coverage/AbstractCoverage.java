@@ -70,21 +70,22 @@ import org.opengis.util.InternationalString;
 import org.opengis.util.Record;
 import org.opengis.util.RecordType;
 
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.geotoolkit.io.LineWriter;
-import org.geotoolkit.util.Localized;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Localized;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Debug;
+import org.apache.sis.util.iso.Types;
 
 
 /**
@@ -161,7 +162,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
                                final Map<?,?>           properties)
     {
         super(properties, propertySource);
-        this.name = SimpleInternationalString.wrap(name);
+        this.name = Types.toInternationalString(name);
         this.crs  = crs;
     }
 
@@ -178,7 +179,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
      */
     protected AbstractCoverage(final CharSequence name, final Coverage coverage) {
         super(null, (coverage instanceof PropertySource) ? (PropertySource) coverage : null);
-        final InternationalString n = SimpleInternationalString.wrap(name);
+        final InternationalString n = Types.toInternationalString(name);
         if (coverage instanceof AbstractCoverage) {
             final AbstractCoverage source = (AbstractCoverage) coverage;
             this.name = (n != null) ? n : source.name;
@@ -1265,7 +1266,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
             out.write("\"]");
         }
         out.write(']');
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         final LineWriter filter = new LineWriter(out, lineSeparator + "\u2502   ");
         final int n = getNumSampleDimensions();
         try {

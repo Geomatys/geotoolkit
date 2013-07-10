@@ -50,11 +50,11 @@ import org.geotoolkit.image.io.WarningProducer;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.apache.sis.measure.Units;
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.Localized;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.internal.util.Utilities;
 import org.apache.sis.util.resources.IndexedResourceBundle;
@@ -463,7 +463,7 @@ public class MetadataNodeParser implements WarningProducer {
              * If the caller asked for a node associated to a user object of the
              * given type, get the path to that node. We expect a single path.
              */
-            final List<String> paths = new ArrayList<String>(4);
+            final List<String> paths = new ArrayList<>(4);
             listPaths(format, type, root.getNodeName(), new StringBuilder(48), paths);
             final int count = paths.size();
             if (count == 1) {
@@ -473,7 +473,7 @@ public class MetadataNodeParser implements WarningProducer {
             }
             if (count != 0) {
                 // Found too many paths.
-                final String lineSeparator = System.getProperty("line.separator", "\n");
+                final String lineSeparator = System.lineSeparator();
                 final StringBuilder buffer = new StringBuilder(getErrorResources().getString(
                         Errors.Keys.AMBIGUOUS_VALUE_1, type)).append(lineSeparator);
                 for (final String path : paths) {
@@ -509,7 +509,7 @@ public class MetadataNodeParser implements WarningProducer {
          * Fetch the parent node and ensure that we got a singleton. If there is more nodes than
          * expected, log a warning and pickup the first one. If there is no node, create a new one.
          */
-        final List<Node> childs = new ArrayList<Node>(4);
+        final List<Node> childs = new ArrayList<>(4);
         if (parentPath != null) {
             listChilds(root, parentPath, 0, childs, true);
             final int count = childs.size();
@@ -655,7 +655,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     public static List<String> listPaths(final IIOMetadataFormat format, final Class<?> objectClass) {
         ensureNonNull("type",   objectClass);
         ensureNonNull("format", format);
-        final List<String> paths = new ArrayList<String>(4);
+        final List<String> paths = new ArrayList<>(4);
         listPaths(format, objectClass, format.getRootName(), new StringBuilder(48), paths);
         return paths;
     }
@@ -880,7 +880,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             if (String.class.isAssignableFrom(type)) {
                 value = value.toString();
             } else if (Number.class.isAssignableFrom(type)) {
-                value = Numbers.valueOf(type, value.toString());
+                value = Numbers.valueOf(value.toString(), type);
             } else if (Date.class.isAssignableFrom(type)) {
                 value = org.apache.sis.internal.jdk8.JDK8.parseDateTime(value.toString(), false);
             } else if (type.isArray()) {
@@ -1123,7 +1123,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     public Integer getAttributeAsInteger(final String attribute) {
         String value = getAttribute(attribute);
         if (value != null) {
-            value = Strings.trimFractionalPart(value);
+            value = CharSequences.trimFractionalPart(value).toString();
             try {
                 return Integer.valueOf(value);
             } catch (NumberFormatException e) {
@@ -1240,7 +1240,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     public Date getAttributeAsDate(final String attribute) {
         String value = getAttribute(attribute);
         if (value != null) {
-            value = Strings.trimFractionalPart(value);
+            value = CharSequences.trimFractionalPart(value).toString();
             if (metadata instanceof SpatialMetadata) {
                 return ((SpatialMetadata) metadata).dateFormat().parse(value);
             } else try {
@@ -1356,9 +1356,9 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         }
         final Collection<Object> values;
         if (unique) {
-            values = new LinkedHashSet<Object>();
+            values = new LinkedHashSet<>();
         } else {
-            values = new ArrayList<Object>();
+            values = new ArrayList<>();
         }
         final Class<?> wrapperType = Numbers.primitiveToWrapper(type);
         final StringTokenizer tokens = new StringTokenizer(sequence);
@@ -1366,7 +1366,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             final String token = tokens.nextToken().replace(NBSP, ' ').trim();
             final Object value;
             try {
-                value = Numbers.valueOf(wrapperType, token);
+                value = Numbers.valueOf(token, wrapperType);
             } catch (NumberFormatException e) {
                 if (caller == null) {
                     throw e;

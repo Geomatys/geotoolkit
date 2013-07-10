@@ -36,8 +36,8 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.quality.ConformanceResult;
 
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.CharSequences;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.resources.Vocabulary;
@@ -206,7 +206,7 @@ public abstract class Factory {
      * Creates a new factory instance.
      */
     protected Factory() {
-        hints = new LinkedHashMap<RenderingHints.Key, Object>();
+        hints = new LinkedHashMap<>();
         unmodifiableHints = Collections.unmodifiableMap(hints);
     }
 
@@ -514,7 +514,7 @@ public abstract class Factory {
                         continue;
                     }
                     if (alreadyDone == null) {
-                        alreadyDone = new HashSet<Factory>();
+                        alreadyDone = new HashSet<>();
                         if (remaining.put(DONE, alreadyDone) != null) {
                             throw new AssertionError(); // Paranoiac check (should never happen).
                         }
@@ -763,7 +763,7 @@ public abstract class Factory {
         }
         if (object != null && object.getClass() == getClass()) {
             final Factory that = (Factory) object;
-            final Set<FactoryComparator> comparators = new HashSet<FactoryComparator>();
+            final Set<FactoryComparator> comparators = new HashSet<>();
             return new FactoryComparator(this, that).compare(comparators);
         }
         return false;
@@ -783,11 +783,11 @@ public abstract class Factory {
     @Override
     public String toString() {
         final String name = format(this);
-        final Map<Factory,String> done = new IdentityHashMap<Factory,String>();
+        final Map<Factory,String> done = new IdentityHashMap<>();
         // We used IdentityHashMap above because we don't want to rely on Factory.equals(...)
         done.put(this, name);
         final String tree = format(getImplementationHints(), done);
-        return name + System.getProperty("line.separator", "\n") + tree;
+        return name + System.lineSeparator() + tree;
     }
 
     /**
@@ -857,7 +857,7 @@ public abstract class Factory {
             table.write(String.valueOf(value));
             table.write('\n');
             if (recursive != null) {
-                final String nextIndent = Strings.spaces(indent.length() + 2);
+                final String nextIndent = CharSequences.spaces(indent.length() + 2).toString();
                 format(table, recursive.getImplementationHints(), nextIndent, done);
             }
         }

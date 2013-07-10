@@ -27,8 +27,8 @@ import java.sql.PreparedStatement;
 import java.awt.geom.Rectangle2D;
 
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.geometry.Envelopes;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.coverage.sql.CoverageEnvelope;
@@ -156,36 +156,36 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
             synchronized (lc) {
                 final LocalCache.Stmt ce = getStatement(lc, type);
                 final PreparedStatement statement = ce.statement;
-                final ResultSet results = statement.executeQuery();
-                while (results.next()) { // Should contains only one record.
-                    if (timeColumn != 0) {
-                        final Calendar calendar = getCalendar(lc);
-                        final Date tMin = results.getTimestamp(timeColumn,   calendar); // NOSONAR: timeColumn can't be 0.
-                        final Date tMax = results.getTimestamp(timeColumn+1, calendar);
-                        // Computes the intersection with the time range that we found.
-                        Date t;
-                        final DateRange range = envelope.getTimeRange();
-                        if ((t = range.getMinValue()) != null && t.after (tMin)) tMin.setTime(t.getTime());
-                        if ((t = range.getMaxValue()) != null && t.before(tMax)) tMax.setTime(t.getTime());
-                        envelope.setTimeRange(tMin, tMax);
-                    }
-                    if (bboxColumn != 0) {
-                        final String bbox = results.getString(bboxColumn); // NOSONAR: bboxColumn can't be 0.
-                        if (bbox == null) {
-                            continue;
+                try (ResultSet results = statement.executeQuery()) {
+                    while (results.next()) { // Should contains only one record.
+                        if (timeColumn != 0) {
+                            final Calendar calendar = getCalendar(lc);
+                            final Date tMin = results.getTimestamp(timeColumn,   calendar); // NOSONAR: timeColumn can't be 0.
+                            final Date tMax = results.getTimestamp(timeColumn+1, calendar);
+                            // Computes the intersection with the time range that we found.
+                            Date t;
+                            final DateRange range = envelope.getTimeRange();
+                            if ((t = range.getMinValue()) != null && t.after (tMin)) tMin.setTime(t.getTime());
+                            if ((t = range.getMaxValue()) != null && t.before(tMax)) tMax.setTime(t.getTime());
+                            envelope.setTimeRange(tMin, tMax);
                         }
-                        final GeneralEnvelope ge;
-                        try {
-                            ge = new GeneralEnvelope(bbox);
-                        } catch (RuntimeException e) {
-                            throw new IllegalRecordException(e, this, results, bboxColumn, null);
+                        if (bboxColumn != 0) {
+                            final String bbox = results.getString(bboxColumn); // NOSONAR: bboxColumn can't be 0.
+                            if (bbox == null) {
+                                continue;
+                            }
+                            final GeneralEnvelope ge;
+                            try {
+                                ge = new GeneralEnvelope(bbox);
+                            } catch (RuntimeException e) {
+                                throw new IllegalRecordException(e, this, results, bboxColumn, null);
+                            }
+                            final XRectangle2D region = (XRectangle2D) ge.toRectangle2D();
+                            region.intersect(envelope.getHorizontalRange());
+                            envelope.setHorizontalRange(region);
                         }
-                        final XRectangle2D region = (XRectangle2D) ge.toRectangle2D();
-                        region.intersect(envelope.getHorizontalRange());
-                        envelope.setHorizontalRange(region);
                     }
                 }
-                results.close();
                 release(lc, ce);
                 fireStateChanged("Envelope");
             }

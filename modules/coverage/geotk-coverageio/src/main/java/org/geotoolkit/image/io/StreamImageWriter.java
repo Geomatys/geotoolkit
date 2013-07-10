@@ -21,6 +21,8 @@ import java.io.*; // Many imports, including some for javadoc only.
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Path;
+import java.nio.file.Files;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import javax.imageio.ImageTypeSpecifier;
@@ -39,7 +41,7 @@ import org.geotoolkit.resources.Errors;
  * The default implementation handles all the following types:
  *
  * <blockquote>
- * {@link String}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},
+ * {@link String}, {@link Path}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},
  * {@link OutputStream}, {@link ImageOutputStream}, {@link WritableByteChannel}.
  * </blockquote>
  *
@@ -90,7 +92,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
 
     /**
      * Sets the output source to use. Output can be any of the object documented in the
-     * <a href="#overview">class javadoc</a>, namely {@link String}, {@link File},
+     * <a href="#overview">class javadoc</a>, namely {@link String}, {@link Path}, {@link File},
      * {@link URI}, {@link URL}, {@link URLConnection}, {@link OutputStream}, {@link ImageOutputStream}
      * or {@link WritableByteChannel}.
      * <p>
@@ -111,7 +113,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
      * Returns the {@linkplain #output output} as an {@linkplain OutputStream output stream} object.
      * If the output is already an output stream, it is returned unchanged. Otherwise this method
      * creates a new {@linkplain OutputStream output stream} (usually <strong>not</strong>
-     * {@linkplain BufferedOutputStream buffered}) from {@link File}, {@link URI},
+     * {@linkplain BufferedOutputStream buffered}) from {@link File}, {@link Path}, {@link URI},
      * {@link URL}, {@link URLConnection}, {@link ImageOutputStream} or {@link WritableByteChannel}
      * outputs.
      * <p>
@@ -145,6 +147,9 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
                 closeOnReset = stream;
             } else if (output instanceof File) {
                 stream = new FileOutputStream((File) output);
+                closeOnReset = stream;
+            } else if (output instanceof Path) {
+                stream = Files.newOutputStream((Path) output);
                 closeOnReset = stream;
             } else if (output instanceof URI) {
                 stream = ((URI) output).toURL().openConnection().getOutputStream();
@@ -214,7 +219,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
      *     <th>Value</th>
      *   </tr><tr>
      *     <td>&nbsp;{@link #outputTypes}&nbsp;</td>
-     *     <td>&nbsp;{@link String}, {@link File}, {@link URI}, {@link URL},
+     *     <td>&nbsp;{@link String}, {@link Path}, {@link File}, {@link URI}, {@link URL},
      *               {@link URLConnection}, {@link OutputStream}, {@link ImageOutputStream},
      *               {@link WritableByteChannel}&nbsp;</td>
      *   </tr><tr>
@@ -241,6 +246,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
          */
         private static final Class<?>[] OUTPUT_TYPES = new Class<?>[] {
             File.class,
+            Path.class,
             URL.class,
             URLConnection.class,
             OutputStream.class,

@@ -39,7 +39,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import static org.apache.sis.util.ArgumentChecks.ensurePositive;
 

@@ -26,7 +26,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.junit.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import static org.junit.Assert.*;
 
 
@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.5
  */
-@Depend(TileManagerTest.class)
+@DependsOn(TileManagerTest.class)
 public final strictfp class MosaicBuilderTest extends MosaicTestBase {
     /**
      * Tests subsampling calculation.
@@ -93,14 +93,13 @@ public final strictfp class MosaicBuilderTest extends MosaicTestBase {
 
         // Tests serialization
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        final ObjectOutputStream out = new ObjectOutputStream(buffer);
-        out.writeObject(tileManager);
-        out.close();
-
-        final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()));
-        final TileManager serialized = (TileManager) in.readObject();
-        in.close();
-
+        try (ObjectOutputStream out = new ObjectOutputStream(buffer)) {
+            out.writeObject(tileManager);
+        }
+        final TileManager serialized;
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
+            serialized = (TileManager) in.readObject();
+        }
         assertNotSame(tileManager, serialized);
         assertEquals(tileManager, serialized);
         assertEquals(tileManager.getImageReaderSpis(), serialized.getImageReaderSpis());

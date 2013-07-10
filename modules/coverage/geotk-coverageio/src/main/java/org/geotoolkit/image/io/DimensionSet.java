@@ -33,11 +33,13 @@ import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Localized;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.internal.image.io.Warnings;
 
 import static org.geotoolkit.image.io.DimensionSlice.API;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -177,7 +179,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
      */
     @Override
     public boolean isEmpty() {
-        return XCollections.isNullOrEmpty(identifiersMap);
+        return isNullOrEmpty(identifiersMap);
     }
 
     /**
@@ -215,7 +217,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
     private Set<DimensionIdentification> dimensions() {
         if (dimensions == null) {
             if (identifiersMap != null) {
-                dimensions = XCollections.unmodifiableSet(new LinkedHashSet<DimensionIdentification>(identifiersMap.values()));
+                dimensions = unmodifiableOrCopy(new LinkedHashSet<>(identifiersMap.values()));
             } else {
                 dimensions = Collections.emptySet();
             }
@@ -435,7 +437,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
             throws IllegalArgumentException
     {
         if (identifiersMap == null) {
-            identifiersMap = new LinkedHashMap<Object,DimensionIdentification>();
+            identifiersMap = new LinkedHashMap<>();
         }
         final DimensionIdentification old = identifiersMap.put(identifier, dimension);
         if (old != null && !old.equals(dimension)) {
@@ -494,7 +496,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
                 if (source != null) {
                     final Integer index = source.getSliceIndex();
                     if (found == null) {
-                        found = new LinkedHashMap<Integer,Object>(4);
+                        found = new LinkedHashMap<>(4);
                     }
                     final Object old = found.put(index, id);
                     if (old != null) {
@@ -550,7 +552,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
                 final DimensionIdentification slice = identifiersMap.get(id);
                 if (slice != null) {
                     if (found == null) {
-                        found = new LinkedHashMap<DimensionIdentification,Object>(4);
+                        found = new LinkedHashMap<>(4);
                     }
                     final Object old = found.put(slice, id);
                     if (old != null) {

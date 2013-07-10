@@ -34,7 +34,7 @@ import java.text.ParseException;
 
 import org.geotoolkit.math.Vector;
 import org.geotoolkit.math.VectorPair;
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.gui.swing.Plot2D;
 import org.geotoolkit.internal.swing.SwingUtilities;
@@ -42,7 +42,7 @@ import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.MosaicProfiler;
 import org.geotoolkit.display.axis.NumberGraduation;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import static org.apache.sis.util.ArgumentChecks.ensurePositive;
 
@@ -310,7 +310,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
                 final int ns = getSeries().size();
                 final Color color = DEFAULT_COLORS.get((ns/2) % DEFAULT_COLORS.size());
                 final Color trans = new Color(color.getRGB() & 0x20FFFFFF, true);
-                final Map<String,Object> properties = new HashMap<String,Object>(4);
+                final Map<String,Object> properties = new HashMap<>(4);
                 properties.put("Name", name);
                 properties.put("Paint", trans);
                 properties.put("Fill", Boolean.TRUE);

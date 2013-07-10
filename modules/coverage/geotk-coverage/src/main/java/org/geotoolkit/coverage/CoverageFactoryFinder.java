@@ -113,7 +113,7 @@ public final class CoverageFactoryFinder extends Static {
         synchronized (FactoryFinder.class) {
             iterator = getServiceRegistry().getServiceProviders(category, null, hints, key);
         }
-        return new LazySet<T>(iterator);
+        return new LazySet<>(iterator);
     }
 
     /**

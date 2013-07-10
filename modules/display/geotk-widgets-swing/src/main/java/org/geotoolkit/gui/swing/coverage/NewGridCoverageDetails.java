@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.text.ParseException;
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
@@ -53,10 +54,9 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.Disposable;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.Disposable;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.sql.CoverageDatabaseEvent;
@@ -68,7 +68,7 @@ import org.geotoolkit.gui.swing.referencing.AuthorityCodesComboBox;
 import org.geotoolkit.internal.swing.ComponentDisposer;
 import org.geotoolkit.internal.swing.SwingUtilities;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -106,7 +106,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
      * The format (editable). Contains many {@link String} elements for each existing format
      * names, and a single {@link InternationalString} element for the "New format" choice.
      */
-    private final JComboBox format;
+    private final JComboBox<CharSequence> format;
 
     /**
      * The currently selected format. Used only in order to avoid querying the database
@@ -183,7 +183,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
         final Vocabulary resources = Vocabulary.getResources(locale);
         newFormat     = new SimpleInternationalString("<html><i>" + resources .getString(Vocabulary.Keys.NEW_FORMAT) + "</i></html>");
         filename      = new JTextField();
-        format        = new JComboBox();
+        format        = new JComboBox<>();
         formatNote    = new JLabel();
         isGeophysics  = new JCheckBox(guires.getString(Widgets.Keys.RASTER_IS_GEOPHYSICS));
         horizontalCRS = new AuthorityCodesComboBox(crsFactory, GeographicCRS.class, ProjectedCRS.class);
@@ -262,20 +262,15 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
     /**
      * Invoked when the "Ok" or "Cancel" button is pressed, or when a new format is selected,
      * or when a new variable is selected.
-     *
-     * @todo switch(String) with Java 7.
      */
     @Override
     public void actionPerformed(final ActionEvent event) {
         final String action = event.getActionCommand();
-        if (SELECT_FORMAT.equals(action)) {
-            formatSelected();
-        } else if (SELECT_VARIABLES.equals(action)) {
-            variableSelectionChanged();
-        } else if (OK.equals(action)) {
-            confirm();
-        } if (CANCEL.equals(action)) {
-            dispose();
+        switch (action) {
+            case SELECT_FORMAT:     formatSelected();           break;
+            case SELECT_VARIABLES:  variableSelectionChanged(); break;
+            case OK:                confirm();                  break;
+            case CANCEL:            dispose();                  break;
         }
     }
 
@@ -299,7 +294,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
      */
     private void formatSelected() {
         final String formatName = getSelectedFormat();
-        if (!Utilities.equals(formatName, selectedFormat)) {
+        if (!Objects.equals(formatName, selectedFormat)) {
             selectedFormat = formatName;
             List<GridSampleDimension> bands = null;
             CoverageStoreException failure = null;
@@ -428,7 +423,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
                 selectedFormat    = null; // Must be before the change of format choices.
                 try {
                     final String[] alternatives = newReference.getAlternativeFormats();
-                    final DefaultComboBoxModel model = new DefaultComboBoxModel(alternatives);
+                    final DefaultComboBoxModel<CharSequence> model = new DefaultComboBoxModel<CharSequence>(alternatives);
                     if (!ArraysExt.contains(alternatives, newReference.format)) {
                         /*
                          * InternationalString is used as a sentinal value meaning "New Format",
@@ -509,11 +504,9 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
                 }
                 reference.sampleDimensions.addAll(bands);
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | ParseException e) {
             // Do not weakup the sleeping thread.
             // User will need to make an other selection.
-            return;
-        } catch (ParseException e) {
             return;
         }
         /*

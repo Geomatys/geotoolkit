@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.factory;
 
 import java.io.Serializable;
 import java.io.ObjectStreamException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
@@ -42,11 +43,10 @@ import org.opengis.util.NoSuchIdentifierException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Loggings;
 import org.apache.sis.util.collection.BackingStoreException;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -96,7 +96,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * The map of object codes (keys), and the actual identified objects (values) when it has
      * been created. Each entry has a null value until the corresponding object is created.
      */
-    private final Map<String,T> objects = new LinkedHashMap<String,T>();
+    private final Map<String,T> objects = new LinkedHashMap<>();
 
     /**
      * The authority factory given at construction time.
@@ -179,7 +179,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
     @Override
     public boolean add(final T object) {
         final String code = getAuthorityCode(object);
-        return !Utilities.equals(objects.put(code, object), object);
+        return !Objects.equals(objects.put(code, object), object);
     }
 
     /**
@@ -196,7 +196,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
                 objects.put(code, object);
             } catch (FactoryException exception) {
                 if (!isRecoverableFailure(exception)) {
-                    throw new org.geotoolkit.util.collection.BackingStoreException(exception);
+                    throw new BackingStoreException(exception);
                 }
                 log(exception, code);
                 objects.remove(code);
@@ -325,7 +325,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * @see #addAuthorityCode
      */
     public void setAuthorityCodes(final String[] codes) {
-        final Map<String,T> copy = new HashMap<String,T>(objects);
+        final Map<String,T> copy = new HashMap<>(objects);
         objects.clear();
         for (final String code : codes) {
             objects.put(code, copy.get(code));
@@ -428,7 +428,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * @throws ObjectStreamException If this set can not be serialized.
      */
     protected Object writeReplace() throws ObjectStreamException {
-        return new LinkedHashSet<T>(this);
+        return new LinkedHashSet<>(this);
     }
 
     /**
@@ -479,7 +479,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
                         element = createObject(code);
                     } catch (FactoryException exception) {
                         if (!isRecoverableFailure(exception)) {
-                            throw new org.geotoolkit.util.collection.BackingStoreException(exception);
+                            throw new BackingStoreException(exception);
                         }
                         log(exception, code);
                         iterator.remove();

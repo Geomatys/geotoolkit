@@ -25,7 +25,7 @@ import java.awt.geom.Point2D;
 import java.util.concurrent.CountDownLatch;
 import java.util.Map;
 
-import org.geotoolkit.math.Statistics;
+import org.apache.sis.math.Statistics;
 
 import org.apache.sis.util.Classes;
 import org.junit.*;
@@ -100,7 +100,7 @@ public final strictfp class StressTest extends EpsgFactoryTestBase {
          * end of this method.
          */
         final Map<Integer, Point2D.Double> result = ClientThread.createEmptyResultMap();
-        final Statistics statistics = new Statistics();
+        final Statistics statistics = new Statistics(null);
         Throwable exception = null;
         for (int i=0; i<RUNNER_COUNT; i++) {
             final ClientThread thread = runners[i];
@@ -110,7 +110,7 @@ public final strictfp class StressTest extends EpsgFactoryTestBase {
                 if (exception == null) {
                     exception = e;
                 } else {
-                    // TODO: addSuppress with JDK7.
+                    exception.addSuppressed(e);
                 }
                 System.err.println(Classes.getShortClassName(e) + " in thread " +
                         thread.id + " for code " + thread.badCode);
@@ -158,15 +158,15 @@ public final strictfp class StressTest extends EpsgFactoryTestBase {
                         ", " + maxTime;
                 final File file = new File(System.getProperty("user.home"), "epsg-stress.csv");
                 final boolean created = file.createNewFile();
-                final BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
-                if (created) {
-                    bw.write("THREADS, MAX_WORKERS, ITERATIONS_PER_THREAD, " +
-                            "AVG_TIME, TOTAL_TIME, TOTAL_RUNS, THROUGHPUT, MIN_TIME, MAX_TIME");
+                try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, true))) {
+                    if (created) {
+                        bw.write("THREADS, MAX_WORKERS, ITERATIONS_PER_THREAD, " +
+                                "AVG_TIME, TOTAL_TIME, TOTAL_RUNS, THROUGHPUT, MIN_TIME, MAX_TIME");
+                        bw.newLine();
+                    }
+                    bw.write(content);
                     bw.newLine();
                 }
-                bw.write(content);
-                bw.newLine();
-                bw.close();
             }
         }
         /*

@@ -35,7 +35,7 @@ import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.factory.Hints;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
@@ -52,7 +52,7 @@ import static org.geotoolkit.referencing.Commons.*;
  *
  * @since 2.4
  */
-@Depend({WebCRSFactoryTest.class, AutoCRSFactoryTest.class, AuthorityFactoryProxyTest.class})
+@DependsOn({WebCRSFactoryTest.class, AutoCRSFactoryTest.class, AuthorityFactoryProxyTest.class})
 public final strictfp class AllAuthoritiesFactoryTest extends ReferencingTestBase {
     /**
      * Tests the {@link AllAuthoritiesFactory#getAuthorityCodes} method.
@@ -208,10 +208,10 @@ public final strictfp class AllAuthoritiesFactoryTest extends ReferencingTestBas
             assumeTrue(isEpsgFactoryAvailable());
             if (!foundSQL) {
                 final StringWriter buffer = new StringWriter();
-                final PrintWriter printer = new PrintWriter(buffer);
-                printer.println("Expected a SQL exception, but found the following stack trace:");
-                e.printStackTrace(printer);
-                printer.close();
+                try (PrintWriter printer = new PrintWriter(buffer)) {
+                    printer.println("Expected a SQL exception, but found the following stack trace:");
+                    e.printStackTrace(printer);
+                }
                 fail(buffer.toString());
             }
         }

@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.geotoolkit.lang.Decorator;
+import org.apache.sis.util.collection.CheckedContainer;
 
 
 /**
@@ -51,7 +52,7 @@ import org.geotoolkit.lang.Decorator;
 @Deprecated
 @Decorator(Set.class)
 public abstract class DerivedSet<B,E> extends AbstractSet<E>
-        implements CheckedCollection<E>, org.apache.sis.util.collection.CheckedContainer<E>, Serializable
+        implements CheckedContainer<E>, Serializable
 {
     /**
      * Serial number for inter-operability with different versions.

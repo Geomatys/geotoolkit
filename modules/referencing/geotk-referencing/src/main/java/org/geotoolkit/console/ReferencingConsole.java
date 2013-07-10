@@ -43,7 +43,7 @@ import org.geotoolkit.referencing.crs.AbstractCRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.io.wkt.Colors;
 import org.geotoolkit.io.X364;
@@ -315,11 +315,8 @@ public class ReferencingConsole extends InteractiveConsole {
                         if (value != null) {
                             throw unexpectedArgument(Errors.Keys.UNEXPECTED_ARGUMENT_FOR_INSTRUCTION_1, "load");
                         }
-                        final BufferedReader in = new BufferedReader(new FileReader(key1));
-                        try {
+                        try (BufferedReader in = new BufferedReader(new FileReader(key1))) {
                             loadDefinitions(in);
-                        } finally {
-                            in.close();
                         }
                         return;
                     }

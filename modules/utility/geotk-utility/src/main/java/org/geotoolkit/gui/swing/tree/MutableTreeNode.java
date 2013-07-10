@@ -24,8 +24,8 @@ import org.geotoolkit.lang.Workaround;
  * Defines the requirements for a tree node object that can change. It may changes by adding or
  * removing child nodes, or by changing the contents of a user object stored in the node.
  * <p>
- * This interface inherits the {@link #getUserObject getUserObject()} method from Geotk's
- * {@link TreeNode}. This is needed because the Swing's {@link javax.swing.tree.MutableTreeNode}
+ * This interface inherits the {@link #getUserObject getUserObject()} method from Geotk
+ * {@link TreeNode}. This is needed because the Swing {@link javax.swing.tree.MutableTreeNode}
  * interface defines a {@link #setUserObject(Object) setUserObject(Object)} method but doesn't
  * define or inherit any {@code getUserObject()}.
  *

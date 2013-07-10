@@ -20,7 +20,7 @@ package org.geotoolkit.test.stress;
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridEnvelope;
 
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;

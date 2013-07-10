@@ -45,10 +45,10 @@ import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.io.wkt.ReferencingParser;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.util.collection.DerivedSet;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.resources.Vocabulary;
@@ -320,7 +320,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
             return codes;
         }
         if (filteredCodes == null) {
-            filteredCodes = new HashMap<Class<? extends IdentifiedObject>, Set<String>>();
+            filteredCodes = new HashMap<>();
         }
         Set<String> filtered = filteredCodes.get(type);
         if (filtered == null) {
@@ -365,7 +365,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
             try {
                 wkt = definitions.get(getPrimaryKey(type, key));
             } catch (FactoryException e) {
-                throw new org.geotoolkit.util.collection.BackingStoreException(e);
+                throw new BackingStoreException(e);
             }
             final int length = wkt.length();
             int i=0; while (i<length && Character.isJavaIdentifierPart(wkt.charAt(i))) i++;
@@ -709,7 +709,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
                     }
                     identifiers[i + offset] = new NamedIdentifier(authority, ci);
                 }
-                properties = new HashMap<String,Object>(properties);
+                properties = new HashMap<>(properties);
                 properties.put(IdentifiedObject.IDENTIFIERS_KEY, identifiers);
             }
             return super.alterProperties(properties);

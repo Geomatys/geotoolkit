@@ -34,9 +34,9 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.ProjectedCRS;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.SimpleInternationalString;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 
 // Following are for Javadoc only.
@@ -117,7 +117,7 @@ public class AutoCRSFactory extends DirectAuthorityFactory implements CRSAuthori
      *
      * @todo Replace this with full FactorySPI system.
      */
-    private final Map<Integer,Factlet> factlets = new TreeMap<Integer,Factlet>();
+    private final Map<Integer,Factlet> factlets = new TreeMap<>();
 
     /**
      * Constructs a default factory for the {@code AUTO} authority.
@@ -195,7 +195,7 @@ public class AutoCRSFactory extends DirectAuthorityFactory implements CRSAuthori
             throws FactoryException
     {
         if (type.isAssignableFrom(ProjectedCRS.class)) {
-            final Set<String> set = new LinkedHashSet<String>();
+            final Set<String> set = new LinkedHashSet<>();
             for (final Integer code : factlets.keySet()) {
                 set.add(String.valueOf(code));
             }

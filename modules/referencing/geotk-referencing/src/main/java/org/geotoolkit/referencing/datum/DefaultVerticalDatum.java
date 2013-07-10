@@ -21,6 +21,7 @@
 package org.geotoolkit.referencing.datum;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Collections;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
@@ -31,11 +32,11 @@ import org.opengis.referencing.datum.VerticalDatum;
 import org.opengis.referencing.datum.VerticalDatumType;
 
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.StringBuilders;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.jaxb.MarshalContext;
+import org.apache.sis.internal.jaxb.Context;
+import org.apache.sis.internal.jaxb.gml.GMLAdapter;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
 import static org.geotoolkit.util.Utilities.hash;
@@ -256,7 +257,7 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
      */
     @XmlElement(name = "verticalDatumType")
     private VerticalDatumType getMarshalled() {
-        return (MarshalContext.versionGML(MarshalContext.GML_3_2)) ? null : getVerticalDatumType();
+        return (Context.isGMLVersion(Context.current(), GMLAdapter.GML_3_2)) ? null : getVerticalDatumType();
     }
 
     /**
@@ -321,11 +322,11 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
             switch (mode) {
                 case STRICT: {
                     final DefaultVerticalDatum that = (DefaultVerticalDatum) object;
-                    return Utilities.equals(this.type(), that.type());
+                    return Objects.equals(this.type(), that.type());
                 }
                 default: {
                     final VerticalDatum that = (VerticalDatum) object;
-                    return Utilities.equals(getVerticalDatumType(), that.getVerticalDatumType());
+                    return Objects.equals(getVerticalDatumType(), that.getVerticalDatumType());
                 }
             }
         }

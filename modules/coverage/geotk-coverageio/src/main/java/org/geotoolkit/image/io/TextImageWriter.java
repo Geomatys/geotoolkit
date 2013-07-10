@@ -155,7 +155,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
                 return lineSeparator;
             }
         }
-        return System.getProperty("line.separator", "\n");
+        return System.lineSeparator();
     }
 
     /**

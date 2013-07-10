@@ -45,6 +45,7 @@ import org.opengis.metadata.extent.VerticalExtent;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.quality.Element;
 import org.opengis.metadata.quality.DataQuality;
+import org.opengis.metadata.ExtendedElementInformation;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.IdentifiedObject;
@@ -55,9 +56,10 @@ import org.opengis.referencing.operation.Conversion;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.RectifiedGrid;
 
-import org.geotoolkit.util.NumberRange;
+import org.opengis.util.InternationalString;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.metadata.KeyNamePolicy;
-import org.geotoolkit.metadata.MetadataStandard;
+import org.apache.sis.metadata.MetadataStandard;
 import org.geotoolkit.referencing.cs.*;
 import org.geotoolkit.referencing.crs.*;
 import org.geotoolkit.referencing.datum.*;
@@ -366,12 +368,12 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * {@link MetadataStandard#ISO_19115 ISO_19115}. This information is used for
      * {@linkplain #getDescription(String, String, Locale)} implementation.
      */
-    private final Map<String,MetadataStandard> standards = new HashMap<String,MetadataStandard>();
+    private final Map<String,MetadataStandard> standards = new HashMap<>();
 
     /**
      * The mapping from method names to attribute or child element names for a given element.
      */
-    private final Map<String, Map<String,String>> namesMapping = new HashMap<String, Map<String,String>>();
+    private final Map<String, Map<String,String>> namesMapping = new HashMap<>();
 
     /**
      * The last value returned by {@link #getDescription(String, String, Locale)}, cached on
@@ -614,7 +616,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         ensureNonNull("elementName", elementName);
         Map<String, String> map = namesMapping.get(parentName);
         if (map == null) {
-            map = new HashMap<String, String>();
+            map = new HashMap<>();
             namesMapping.put(parentName, map);
         }
         final String old = map.put(methodName, elementName);
@@ -885,7 +887,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      */
     private String getDescription(String elementName, String attrName, Locale locale) {
         if (locale == null) {
-            locale = Locale.getDefault();
+            locale = Locale.getDefault(Locale.Category.DISPLAY);
         }
         if (attrName == null) {
             attrName = elementName;
@@ -903,11 +905,11 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                 // The given element does not allow the storage of objects.
                 // We will set the description map to an empty map.
             }
-            Map<String,String> desc = Collections.emptyMap();
+            Map<String, ExtendedElementInformation> desc = Collections.emptyMap();
             if (type != null) {
                 final MetadataStandard standard = getElementStandard(elementName);
                 if (standard != null) try {
-                    desc = standard.asDescriptionMap(type, locale, NAME_POLICY);
+                    desc = standard.asInformationMap(type, NAME_POLICY);
                 } catch (ClassCastException e) {
                     // The element type is not an instance of the expected standard.
                     // We will set the description map to an empty map.
@@ -916,7 +918,14 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             candidate = new MetadataDescriptions(desc, elementName, locale);
             descriptions = candidate;
         }
-        return candidate.descriptions.get(attrName);
+        final ExtendedElementInformation info = candidate.descriptions.get(attrName);
+        if (info != null) {
+            final InternationalString definition = info.getDefinition();
+            if (definition != null) {
+                return definition.toString(locale);
+            }
+        }
+        return null;
     }
 
     /**

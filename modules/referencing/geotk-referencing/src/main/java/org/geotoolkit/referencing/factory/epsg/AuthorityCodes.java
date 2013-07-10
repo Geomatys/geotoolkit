@@ -35,7 +35,7 @@ import java.sql.Statement;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.util.NoSuchIdentifierException;
 
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -245,17 +245,15 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
      */
     private int count(final boolean first) {
         int count = 0;
-        try {
-            final Statement stmt = connection.createStatement();
-            final ResultSet results = stmt.executeQuery(sqlAll);
+        try (Statement stmt = connection.createStatement();
+             ResultSet results = stmt.executeQuery(sqlAll))
+        {
             while (results.next()) {
                 if (isAcceptable(results)) {
                     count++;
                     if (first) break;
                 }
             }
-            results.close();
-            stmt.close();
         } catch (SQLException exception) {
             unexpectedException(first ? "isEmpty" : "size", exception);
         }
@@ -270,13 +268,14 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
         boolean exists = false;
         if (code != null) try {
             final ResultSet results = getSingle(code);
-            if (results != null) {
+            if (results != null) try {
                 while (results.next()) {
                     if (isAcceptable(results)) {
                         exists = true;
                         break;
                     }
                 }
+            } finally {
                 results.close();
             }
         } catch (SQLException exception) {
@@ -305,7 +304,7 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
      * database.
      */
     protected Object writeReplace() throws ObjectStreamException {
-        return new LinkedHashSet<String>(this);
+        return new LinkedHashSet<>(this);
     }
 
     /**
@@ -387,7 +386,7 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
                 try {
                     finalize();
                 } catch (SQLException e) {
-                    // TODO: use suppressed exceptions with JDK 7.
+                    exception.addSuppressed(e);
                 }
                 unexpectedException(Iterator.class, "next", exception);
             }
@@ -405,10 +404,10 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
         protected void finalize() throws SQLException {
             next = null;
             if (results != null) {
-                final Statement owner = results.getStatement();
-                results.close();
-                results = null;
-                owner.close();
+                try (Statement owner = results.getStatement()) {
+                    results.close();
+                    results = null;
+                }
             }
         }
     }
@@ -453,13 +452,14 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
             if (code != null) try {
                 synchronized (AuthorityCodes.this) {
                     final ResultSet results = getSingle(code);
-                    if (results != null) {
+                    if (results != null) try {
                         while (results.next()) {
                             if (isAcceptable(results)) {
                                 value = results.getString(2);
                                 break;
                             }
                         }
+                    } finally {
                         results.close();
                     }
                 }

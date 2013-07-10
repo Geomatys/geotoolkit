@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.Locale;
 import java.util.List;
+import java.util.Objects;
 import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,9 +28,8 @@ import java.sql.SQLException;
 import org.opengis.referencing.operation.MathTransform1D;
 
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -145,19 +145,17 @@ final class FormatTable extends SingletonTable<FormatEntry> {
         final String comments = results.getString(indexOf(query.comments));
         final ViewType viewType;
         final String type = String.valueOf(encoding).toLowerCase();
-        if (type.equals("photographic")) { // TODO: use switch on Strings with Java 7.
-            viewType = ViewType.PHOTOGRAPHIC;
-        } else if (type.equals("geophysics")) {
-            viewType = ViewType.GEOPHYSICS;
-        } else if (type.equals("native")) {
-            viewType = ViewType.NATIVE;
-        } else if (type.equals("packed")) {
-            viewType = ViewType.PACKED;
-        } else {
-            // Following constructor will close the ResultSet.
-            throw new IllegalRecordException(errors().getString(
-                    Errors.Keys.UNKNOWN_PARAMETER_1, encoding),
-                    this, results, encodingIndex, identifier);
+        switch (type) {
+            case "photographic": viewType = ViewType.PHOTOGRAPHIC; break;
+            case "geophysics":   viewType = ViewType.GEOPHYSICS;   break;
+            case "native":       viewType = ViewType.NATIVE;       break;
+            case "packed":       viewType = ViewType.PACKED;       break;
+            default: {
+                // Following constructor will close the ResultSet.
+                throw new IllegalRecordException(errors().getString(
+                        Errors.Keys.UNKNOWN_PARAMETER_1, encoding),
+                        this, results, encodingIndex, identifier);
+            }
         }
         final CategoryEntry entry = getSampleDimensionTable().getSampleDimensions(identifier.toString());
         GridSampleDimension[] sampleDimensions = null;
@@ -209,9 +207,9 @@ final class FormatTable extends SingletonTable<FormatEntry> {
         final Class<?> type = range.getElementType();
         if (Numbers.isInteger(type)) {
             if (!range.isMaxIncluded() || !range.isMinIncluded() || type != Integer.class) {
-                range = new NumberRange<Integer>(Integer.class,
-                        (int) Math.floor(range.getMinimum(true)), true,
-                        (int) Math.ceil (range.getMaximum(true)), true);
+                range = new NumberRange<>(Integer.class,
+                        (int) Math.floor(range.getMinDouble(true)), true,
+                        (int) Math.ceil (range.getMaxDouble(true)), true);
             }
         }
         return range;
@@ -252,7 +250,7 @@ next:   for (final FormatEntry candidate : getEntries()) {
             for (int i=0; i<numBands; i++) {
                 final GridSampleDimension band1 = bands.get(i);
                 final GridSampleDimension band2 = current.get(i);
-                if (!Utilities.equals(band1.getUnits(), band2.getUnits())) {
+                if (!Objects.equals(band1.getUnits(), band2.getUnits())) {
                     // Units don't match for at least one band: look for an other format.
                     continue next;
                 }
@@ -283,9 +281,9 @@ next:   for (final FormatEntry candidate : getEntries()) {
                      * we want to differentiate "geophysics" views from the packed ones
                      * (the former have identity transforms).
                      */
-                    if (!Utilities.equals(getRange(category1), getRange(category2)) ||
-                        !Utilities.equals(category1.getSampleToGeophysics(),
-                                          category2.getSampleToGeophysics()))
+                    if (!Objects.equals(getRange(category1), getRange(category2)) ||
+                        !Objects.equals(category1.getSampleToGeophysics(),
+                                        category2.getSampleToGeophysics()))
                     {
                         continue next;
                     }

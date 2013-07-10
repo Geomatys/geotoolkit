@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.matrix;
 
+import java.util.Objects;
 import java.awt.geom.AffineTransform;
 import javax.vecmath.MismatchedSizeException;
 import javax.vecmath.SingularMatrixException;
@@ -635,9 +636,7 @@ search:     for (int j=numRow; --j>=0;) {
             try {
                 m.invert();
                 matrix = m;
-            } catch (SingularMatrixException exception) {
-                failure = exception;
-            } catch (MismatchedSizeException exception) {
+            } catch (SingularMatrixException | MismatchedSizeException exception) {
                 // This exception is thrown if the matrix is not square.
                 failure = exception;
             }
@@ -813,7 +812,7 @@ search:     for (int j=numRow; --j>=0;) {
      */
     public static boolean equals(final Matrix m1, final Matrix m2, final ComparisonMode mode) {
         switch (mode) {
-            case STRICT:          return Utilities.equals(m1, m2);
+            case STRICT:          return Objects.equals(m1, m2);
             case BY_CONTRACT:     // Fall through
             case IGNORE_METADATA: return equals(m1, m2, 0, false);
             case DEBUG:           // Fall through

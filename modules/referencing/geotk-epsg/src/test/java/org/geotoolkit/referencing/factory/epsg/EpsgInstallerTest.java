@@ -67,16 +67,13 @@ public final strictfp class EpsgInstallerTest {
              * At this point the EPSG database has been fully created.
              * Now test the creation of a few CRS objects from it.
              */
-            final Connection connection = DriverManager.getConnection("jdbc:derby:memory:EPSG");
-            try {
+            try (Connection connection = DriverManager.getConnection("jdbc:derby:memory:EPSG")) {
                 final AnsiDialectEpsgFactory factory = new AnsiDialectEpsgFactory(null, connection);
                 factory.setSchema("EPSG", true);
                 factory.useOriginalTableNames();
                 assertTrue(factory.createCoordinateReferenceSystem("4326") instanceof GeographicCRS);
                 assertTrue(factory.createCoordinateReferenceSystem("7402") instanceof CompoundCRS);
                 factory.dispose(false);
-            } finally {
-                connection.close();
             }
             success = true;
         } finally {
@@ -139,15 +136,12 @@ public final strictfp class EpsgInstallerTest {
                  * for the Derby database, we don't invoke 'useOriginalTableNames()' because the
                  * database that we just created has no schema.
                  */
-                final Connection connection = DriverManager.getConnection(databaseURL);
-                try {
+                try (Connection connection = DriverManager.getConnection(databaseURL)) {
                     final HsqlDialectEpsgFactory factory = new HsqlDialectEpsgFactory(null, connection);
                     assertTrue(factory.createCoordinateReferenceSystem("4326") instanceof GeographicCRS);
                     assertTrue(factory.createCoordinateReferenceSystem("7402") instanceof CompoundCRS);
                     Dialect.HSQL.shutdown(connection, null, false);
                     factory.dispose(false);
-                } finally {
-                    connection.close();
                 }
             } finally {
                 TestData.deleteRecursively(directory);

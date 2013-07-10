@@ -25,8 +25,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.FileInputStream;
 import javax.imageio.spi.ImageWriterSpi;
+import java.nio.file.Path;
 
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.resources.Errors;
 
@@ -44,6 +45,8 @@ import org.geotoolkit.resources.Errors;
  *   <li>{@link File} outputs are returned as-is.</li>
  *   <li>{@link String} outputs are converted to {@code File} objects by a call to the
  *       {@link File#File(String)} constructor.</li>
+ *   <li>{@link Path} outputs are converted to {@code File} objects by a call to
+ *       {@link Path#toFile()} method.</li>
  *   <li>{@link URL} and {@link URI} inputs are converted to {@code File} objects by a call to the
  *       {@link File#File(URI)} constructor only if the protocol is {@code "file"}. In the particular
  *       case of {@code URL}s, the encoding is specified by {@link #getURLEncoding()}.</li>
@@ -118,6 +121,10 @@ public abstract class FileImageWriter extends StreamImageWriter {
             outputFile = (File) output;
             return outputFile;
         }
+        if (output instanceof Path) {
+            outputFile = ((Path) output).toFile();
+            return outputFile;
+        }
         if (output instanceof URI) {
             final URI targetURI = (URI) output;
             if (targetURI.getScheme().equalsIgnoreCase("file")) {
@@ -176,11 +183,8 @@ public abstract class FileImageWriter extends StreamImageWriter {
         if (isTemporary) try {
             isTemporary = false;
             final OutputStream out = getOutputStream();
-            final InputStream in = new FileInputStream(file);
-            try {
-                IOUtilities.copy(in, out);
-            } finally {
-                in.close();
+            try (InputStream in = new FileInputStream(file)) {
+                org.geotoolkit.internal.io.IOUtilities.copy(in, out);
             }
             out.flush();
             // Do not close the 'out' stream. Let the super.close() method decides what

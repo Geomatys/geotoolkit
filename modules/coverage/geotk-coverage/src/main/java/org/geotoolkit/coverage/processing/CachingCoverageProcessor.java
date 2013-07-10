@@ -65,8 +65,7 @@ public class CachingCoverageProcessor extends AbstractCoverageProcessor {
      *
      * @todo Use the capability of {@link Cache} to evict entries based on cost calculation.
      */
-    private final Cache<CachedOperationParameters, Coverage> cache =
-            new Cache<CachedOperationParameters, Coverage>(12, 0, false);
+    private final Cache<CachedOperationParameters, Coverage> cache = new Cache<>(12, 0, false);
 
     /**
      * Creates a default caching processor.

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io;
 
+import java.util.Objects;
 import java.awt.image.*;
 import java.awt.Color;
 import java.awt.Font;
@@ -31,10 +32,9 @@ import java.io.FileNotFoundException;
 import javax.imageio.ImageTypeSpecifier;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.NullArgumentException;
 
 
 /**
@@ -198,14 +198,14 @@ public abstract class Palette {
             final ColorModel candidate = colors.get();
             if (candidate != null) {
                 final ImageTypeSpecifier its = new ImageTypeSpecifier(candidate, samples);
-                specifier = new WeakReference<ImageTypeSpecifier>(its);
+                specifier = new WeakReference<>(its);
                 return its;
             }
         }
         final ImageTypeSpecifier its = createImageTypeSpecifier();
         samples   = its.getSampleModel();
         colors    = new PaletteDisposer(this, its.getColorModel());
-        specifier = new WeakReference<ImageTypeSpecifier>(its);
+        specifier = new WeakReference<>(its);
         return its;
     }
 
@@ -347,7 +347,7 @@ public abstract class Palette {
             final Palette that = (Palette) object;
             return this.numBands    == that.numBands    &&
                    this.visibleBand == that.visibleBand &&
-                   Utilities.equals(this.name, that.name);
+                   Objects.equals(this.name, that.name);
             /*
              * Note: we do not compare PaletteFactory on purpose, since two instances could be
              * identical except for the locale to use for formatting error messages.   Because

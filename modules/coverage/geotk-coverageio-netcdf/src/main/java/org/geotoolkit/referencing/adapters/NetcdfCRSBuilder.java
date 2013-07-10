@@ -39,8 +39,10 @@ import ucar.nc2.dataset.CoordinateSystem;
 
 import org.geotoolkit.lang.Builder;
 import org.geotoolkit.image.io.WarningProducer;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
+
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -132,7 +134,7 @@ public class NetcdfCRSBuilder extends Builder<NetcdfCRS> {
     public NetcdfCRSBuilder(final NetcdfDataset file, final WarningProducer logger) {
         this.file   = file;
         this.logger = logger;
-        coordinateSystems = new HashMap<List<Object>, NetcdfCRS>(8);
+        coordinateSystems = new HashMap<>(8);
     }
 
     /**
@@ -179,7 +181,7 @@ public class NetcdfCRSBuilder extends Builder<NetcdfCRS> {
      */
     public List<CoordinateAxis> getCoordinateAxes() {
         if (axes == null && netcdfCS != null) {
-            Collections.reverse(axes = new ArrayList<CoordinateAxis>(netcdfCS.getCoordinateAxes()));
+            Collections.reverse(axes = new ArrayList<>(netcdfCS.getCoordinateAxes()));
         }
         return axes;
     }
@@ -213,7 +215,7 @@ public class NetcdfCRSBuilder extends Builder<NetcdfCRS> {
      */
     public List<Dimension> getDomain() {
         if (domain == null && netcdfCS != null) {
-            Collections.reverse(domain = new ArrayList<Dimension>(netcdfCS.getDomain()));
+            Collections.reverse(domain = new ArrayList<>(netcdfCS.getDomain()));
         }
         return domain;
     }
@@ -252,7 +254,7 @@ public class NetcdfCRSBuilder extends Builder<NetcdfCRS> {
     public Map<Dimension,CoordinateAxis> getAxesDomain() throws IllegalStateException {
         final List<CoordinateAxis> axes = getCoordinateAxes();
         ensureDefined("axes", axes);
-        final Map<Dimension,CoordinateAxis> map = new LinkedHashMap<Dimension,CoordinateAxis>(XCollections.hashMapCapacity(axes.size()));
+        final Map<Dimension,CoordinateAxis> map = new LinkedHashMap<>(hashMapCapacity(axes.size()));
         /*
          * Stores all dimensions in the map, together with an arbitrary axis. If there is no
          * conflict, we are done. If there is conflicts, then the first one-dimensional axis
@@ -275,11 +277,11 @@ public class NetcdfCRSBuilder extends Builder<NetcdfCRS> {
                          * to process it later.
                          */
                         if (conflicts == null) {
-                            conflicts = new HashMap<Dimension, Set<CoordinateAxis>>(4);
+                            conflicts = new HashMap<>(4);
                         }
                         Set<CoordinateAxis> deferred = conflicts.get(dimension);
                         if (deferred == null) {
-                            deferred = new LinkedHashSet<CoordinateAxis>(4);
+                            deferred = new LinkedHashSet<>(4);
                             conflicts.put(dimension, deferred);
                         }
                         deferred.add(previous);
@@ -304,7 +306,7 @@ public class NetcdfCRSBuilder extends Builder<NetcdfCRS> {
          * exist. In such cases, we will first checks if there is any axis that can be assigned
          * to only one dimension, because all other dimensions are not available anymore.
          */
-redo:   while (!XCollections.isNullOrEmpty(conflicts)) {
+redo:   while (!isNullOrEmpty(conflicts)) {
             for (final Map.Entry<Dimension,Set<CoordinateAxis>> entry : conflicts.entrySet()) {
                 final Dimension dimension = entry.getKey();
 otherAxis:      for (final CoordinateAxis axis : entry.getValue()) {
@@ -364,7 +366,7 @@ otherAxis:      for (final CoordinateAxis axis : entry.getValue()) {
         final List<Dimension>    domain = getDomain();         if (domain == null) return;
         final Map<Dimension,CoordinateAxis> forDim = getAxesDomain();
         final int rank = domain.size();
-        final Map<CoordinateAxis,Integer> positions = new IdentityHashMap<CoordinateAxis,Integer>(XCollections.hashMapCapacity(rank));
+        final Map<CoordinateAxis,Integer> positions = new IdentityHashMap<>(hashMapCapacity(rank));
         for (int i=rank; --i>=0;) {
             /*
              * Remember the axis position for later sorting. If the axis dimension is not in the
@@ -468,7 +470,7 @@ otherAxis:      for (final CoordinateAxis axis : entry.getValue()) {
         /*
          * Checks the cache before to create the wrapper.
          */
-        final List<Object> cacheKey = new ArrayList<Object>(1 + axes.size() + domainArray.length);
+        final List<Object> cacheKey = new ArrayList<>(1 + axes.size() + domainArray.length);
         cacheKey.add(netcdfCS);
         cacheKey.addAll(axes);
         cacheKey.addAll(Arrays.asList(domainArray));
@@ -480,7 +482,7 @@ otherAxis:      for (final CoordinateAxis axis : entry.getValue()) {
              * the components are build in the same order than axes are found.
              */
             final int dimension = axes.size();
-            final List<NetcdfCRS> components = new ArrayList<NetcdfCRS>(4);
+            final List<NetcdfCRS> components = new ArrayList<>(4);
             for (int i=0; i<dimension; i++) {
                 final CoordinateAxis axis = axes.get(i);
                 final AxisType type = axis.getAxisType();

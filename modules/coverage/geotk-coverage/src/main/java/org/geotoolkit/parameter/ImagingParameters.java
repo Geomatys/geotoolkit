@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Objects;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -44,8 +45,8 @@ import org.opengis.parameter.InvalidParameterNameException;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
@@ -328,7 +329,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
         }
         if (super.equals(object)) {
             final ImagingParameters that = (ImagingParameters) object;
-            return Utilities.equals(this.parameters, that.parameters);
+            return Objects.equals(this.parameters, that.parameters);
         }
         return false;
     }
@@ -353,7 +354,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
             final Field  paramField  = ImagingParameters.class.getField("parameters");
             paramField.setAccessible(true); // Will work only with J2SE 1.5 or above.
             paramField.set(copy, cloneMethod.invoke(parameters, (Object[]) null));
-        } catch (Exception exception) {
+        } catch (ReflectiveOperationException exception) {
             // TODO: localize.
             throw new UnsupportedOperationException("Clone not supported.", exception);
         }

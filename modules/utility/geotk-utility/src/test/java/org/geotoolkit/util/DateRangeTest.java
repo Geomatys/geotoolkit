@@ -18,7 +18,7 @@
 package org.geotoolkit.util;
 
 import java.util.Date;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.measure.Range;
 import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
@@ -33,7 +33,6 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.20
  */
-@Depend(RangeTest.class)
 public final strictfp class DateRangeTest extends TestBase {
     /**
      * Tests {@link DateRange#union(Range)}.
@@ -46,7 +45,7 @@ public final strictfp class DateRangeTest extends TestBase {
         final Date max = date("1998-07-01 19:00:00");
         final DateRange r1 = new DateRange(min, in2);
         final DateRange r2 = new DateRange(in1, max);
-        final DateRange rt = r1.union(r2);
+        final Range<?>  rt = r1.union(r2);
         assertEquals(min, rt.getMinValue());
         assertEquals(max, rt.getMaxValue());
         assertEquals(rt, r2.union(r1));
@@ -60,7 +59,7 @@ public final strictfp class DateRangeTest extends TestBase {
         /*
          * Same test than above, but with a cast from Range to DateRange.
          */
-        final Range<Date> outerAsRange = new Range<Date>(Date.class, min, max);
+        final Range<Date> outerAsRange = new Range<>(Date.class, min, true, max, true);
         assertSame(outerAsRange, outerAsRange.union(inner));
         assertEquals(outer, inner.union(outerAsRange));
     }
@@ -76,7 +75,7 @@ public final strictfp class DateRangeTest extends TestBase {
         final Date max = date("1998-07-01 19:00:00");
         final DateRange r1 = new DateRange(min, in2);
         final DateRange r2 = new DateRange(in1, max);
-        final DateRange rt = r1.intersect(r2);
+        final Range<?>  rt = r1.intersect(r2);
         assertEquals(in1, rt.getMinValue());
         assertEquals(in2, rt.getMaxValue());
         assertEquals(rt, r2.intersect(r1));
@@ -90,7 +89,7 @@ public final strictfp class DateRangeTest extends TestBase {
         /*
          * Same test than above, but with a cast from Range to DateRange.
          */
-        final Range<Date> innerAsRange = new Range<Date>(Date.class, in1, in2);
+        final Range<Date> innerAsRange = new Range<>(Date.class, in1, true, in2, true);
         assertSame(innerAsRange, innerAsRange.intersect(outer));
         assertEquals(inner, outer.intersect(innerAsRange));
     }
@@ -106,7 +105,7 @@ public final strictfp class DateRangeTest extends TestBase {
         final Date max = date("1998-07-01 19:00:00");
         final DateRange outer = new DateRange(min, max);
         final DateRange inner = new DateRange(in1, in2);
-        final DateRange[] rt = outer.subtract(inner);
+        final Range<?>[]   rt = outer.subtract(inner);
         assertEquals(2, rt.length);
         assertEquals(min, rt[0].getMinValue());
         assertEquals(in1, rt[0].getMaxValue());

@@ -62,7 +62,7 @@ import javax.imageio.spi.ServiceRegistry;
 
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
@@ -474,7 +474,7 @@ public class RawTiffImageReader extends SpatialImageReader {
                     tileOffsets     = null;
                     rawImageType    = null;
 
-                    final Collection<long[]> deferred = new ArrayList<long[]>(4);
+                    final Collection<long[]> deferred = new ArrayList<>(4);
                     long position = positionIFD[imageIndex];
                     ensureBufferContains(position, shortSize + intSize, IFD_SIZE);
                     final long n = readShort();

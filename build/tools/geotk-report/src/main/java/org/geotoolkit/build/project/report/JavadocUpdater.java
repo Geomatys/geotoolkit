@@ -80,7 +80,7 @@ public abstract class JavadocUpdater {
     JavadocUpdater(final String signatureBegin, final String signatureEnd) throws IOException {
         this.signatureBegin = signatureBegin;
         this.signatureEnd   = signatureEnd;
-        lines = new ArrayList<String>();
+        lines = new ArrayList<>();
         root = Reports.getProjectRootDirectory();
     }
 
@@ -152,8 +152,7 @@ public abstract class JavadocUpdater {
 
         final File file = new File(root, "modules/" + module + "/src/main/java/" +
                 getOuterClass(classe).getCanonicalName().replace('.', '/') + ".java");
-        final BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), ENCODING));
-        try {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), ENCODING))) {
             String line;
             while ((line = in.readLine()) != null) {
                 buffer.append(line).append('\n');
@@ -181,15 +180,10 @@ public abstract class JavadocUpdater {
                     }
                 }
             }
-        } finally {
-            in.close();
         }
         // Write the result.
-        final Writer out = new OutputStreamWriter(new FileOutputStream(file), ENCODING);
-        try {
+        try (Writer out = new OutputStreamWriter(new FileOutputStream(file), ENCODING)) {
             out.write(buffer.toString());
-        } finally {
-            out.close();
         }
     }
 
@@ -198,7 +192,7 @@ public abstract class JavadocUpdater {
      */
     @Override
     public String toString() {
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         final StringBuilder buffer = new StringBuilder();
         for (final String line : lines) {
             buffer.append(line).append(lineSeparator);

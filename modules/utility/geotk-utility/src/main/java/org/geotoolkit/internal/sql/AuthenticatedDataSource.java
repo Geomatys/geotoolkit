@@ -173,9 +173,8 @@ public final class AuthenticatedDataSource implements DataSource {
      * @return the parent Logger for this data source
      * @throws SQLFeatureNotSupportedException if the data source does not use {@code java.util.logging}.
      */
-//  @Override // Uncomment with JDK7
+    @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        throw new SQLFeatureNotSupportedException();
-        //return wrapped.getParentLogger();
+        return wrapped.getParentLogger();
     }
 }

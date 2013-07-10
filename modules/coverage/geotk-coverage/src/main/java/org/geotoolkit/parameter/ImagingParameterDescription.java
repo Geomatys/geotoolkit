@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.parameter;
 
+import java.util.Objects;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
@@ -24,8 +25,7 @@ import java.io.Serializable;
 import javax.media.jai.OperationDescriptor;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.AbstractInternationalString;
+import org.apache.sis.util.iso.AbstractInternationalString;
 
 
 /**
@@ -126,7 +126,7 @@ final class ImagingParameterDescription extends AbstractInternationalString impl
     @Override
     public String toString(Locale locale) throws MissingResourceException {
         if (locale == null) {
-            locale = Locale.getDefault();
+            locale = Locale.getDefault(Locale.Category.DISPLAY);
         }
         final ResourceBundle resources = operation.getResourceBundle(locale);
         String name = resources.getString(key);
@@ -165,9 +165,9 @@ final class ImagingParameterDescription extends AbstractInternationalString impl
     public boolean equals(final Object object) {
         if (object != null && object.getClass() == getClass()) {
             final ImagingParameterDescription that = (ImagingParameterDescription) object;
-            return Utilities.equals(this.key,       that.key)       &&
-                   Utilities.equals(this.prefixKey, that.prefixKey) &&
-                   Utilities.equals(this.operation, that.operation);
+            return Objects.equals(this.key,       that.key)       &&
+                   Objects.equals(this.prefixKey, that.prefixKey) &&
+                   Objects.equals(this.operation, that.operation);
         }
         return false;
     }

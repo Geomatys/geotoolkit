@@ -27,7 +27,8 @@ import java.util.concurrent.Callable;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.ObjectStream;
-import org.geotoolkit.util.collection.XCollections;
+
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -72,7 +73,7 @@ public abstract class ShareableTask<Input,Output> implements Callable<Output>, S
      */
     protected ShareableTask(final Iterable<Input> input) {
         if (input != null) {
-            stream = new IteratorWrapper<Input>(input.iterator());
+            stream = new IteratorWrapper<>(input.iterator());
         }
     }
 
@@ -146,7 +147,7 @@ public abstract class ShareableTask<Input,Output> implements Callable<Output>, S
         for (final Map<K,V> output : outputs) {
             size += output.size();
         }
-        final Map<K,V> aggregate = new HashMap<K,V>(XCollections.hashMapCapacity(size));
+        final Map<K,V> aggregate = new HashMap<>(hashMapCapacity(size));
         for (final Map<K,V> output : outputs) {
             aggregate.putAll(output);
         }
@@ -171,7 +172,7 @@ public abstract class ShareableTask<Input,Output> implements Callable<Output>, S
     private synchronized void writeObject(final ObjectOutputStream out) throws IOException {
         final ObjectStream<Input> stream = this.stream;
         if (stream != null && !(stream instanceof Serializable)) {
-            this.stream = new RemoteStream<Input>(stream);
+            this.stream = new RemoteStream<>(stream);
         }
         out.defaultWriteObject();
     }

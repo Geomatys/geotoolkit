@@ -118,7 +118,7 @@ public final strictfp class NetcdfMetadataReaderTest extends NetcdfMetadataTest 
         assertNull(expected.put("identificationInfo.citation.identifier.code", "crm_v1"));
         assertNull(expected.put("contentInfo.dimension.sequenceIdentifier",    "z"));
         super.testTHREDDS();
-        assertEquals("hierarchyLevel", new HashSet<ScopeCode>(Arrays.asList(ScopeCode.DATASET, ScopeCode.SERVICE)),
+        assertEquals("hierarchyLevel", new HashSet<>(Arrays.asList(ScopeCode.DATASET, ScopeCode.SERVICE)),
                 metadata.getHierarchyLevels());
         /*
          * In the Geotk case, the Metadata/Contact and Metadata/Identification/PointOfContact

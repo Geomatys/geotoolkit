@@ -21,16 +21,9 @@
 package org.geotoolkit.metadata.iso.citation;
 
 import java.net.URI;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import net.jcip.annotations.ThreadSafe;
-
-import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.OnLineFunction;
 import org.opengis.metadata.citation.OnlineResource;
-
-import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
 /**
@@ -47,17 +40,9 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  *
  * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
-@ThreadSafe
-@XmlType(name = "CI_OnlineResource_Type", propOrder={
-    "linkage",
-    "protocol",
-    "applicationProfile",
-    "name",
-    "description",
-    "function"
-})
+@Deprecated
 @XmlRootElement(name = "CI_OnlineResource")
-public class DefaultOnlineResource extends MetadataEntity implements OnlineResource {
+public class DefaultOnlineResource extends org.apache.sis.metadata.iso.citation.DefaultOnlineResource {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -240,37 +225,6 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
     }
 
     /**
-     * Name of an application profile that can be used with the online resource.
-     */
-    private String applicationProfile;
-
-    /**
-     * Name of the online resources.
-     */
-    private String name;
-
-    /**
-     * Detailed text description of what the online resource is/does.
-     */
-    private InternationalString description;
-
-    /**
-     * Code for function performed by the online resource.
-     */
-    private OnLineFunction function;
-
-    /**
-     * Location (address) for on-line access using a Uniform Resource Locator address or
-     * similar addressing scheme such as http://www.statkart.no/isotc211.
-     */
-    private URI linkage;
-
-    /**
-     * The connection protocol to be used.
-     */
-    private String protocol;
-
-    /**
      * Creates an initially empty on line resource.
      */
     public DefaultOnlineResource() {
@@ -309,150 +263,5 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
         if (linkage != null) {
             setLinkage(linkage);
         }
-    }
-
-    /**
-     * Returns a Geotk metadata implementation with the same values than the given arbitrary
-     * implementation. If the given object is {@code null}, then this method returns {@code null}.
-     * Otherwise if the given object is already a Geotk implementation, then the given object is
-     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
-     * attribute values of the given object, using a <cite>shallow</cite> copy operation
-     * (i.e. attributes are not cloned).
-     *
-     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return A Geotk implementation containing the values of the given object (may be the
-     *         given object itself), or {@code null} if the argument was null.
-     *
-     * @since 3.18
-     */
-    public static DefaultOnlineResource castOrCopy(final OnlineResource object) {
-        return (object == null) || (object instanceof DefaultOnlineResource)
-                ? (DefaultOnlineResource) object : new DefaultOnlineResource(object);
-    }
-
-    /**
-     * Returns the name of an application profile that can be used with the online resource.
-     * Returns {@code null} if none.
-     */
-    @Override
-    @XmlElement(name = "applicationProfile")
-    public synchronized String getApplicationProfile() {
-        return applicationProfile;
-    }
-
-    /**
-     * Sets the name of an application profile that can be used with the online resource.
-     *
-     * @param newValue The new application profile.
-     */
-    public synchronized void setApplicationProfile(final String newValue) {
-        checkWritePermission();
-        applicationProfile = newValue;
-    }
-
-    /**
-     * Name of the online resource. Returns {@code null} if none.
-     *
-     * @since 2.4
-     */
-    @Override
-    @XmlElement(name = "name")
-    public synchronized String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the name of the online resource.
-     *
-     * @param newValue The new name.
-     *
-     * @since 2.4
-     */
-    public synchronized void setName(final String newValue) {
-        checkWritePermission();
-        name = newValue;
-    }
-
-    /**
-     * Returns the detailed text description of what the online resource is/does.
-     * Returns {@code null} if none.
-     */
-    @Override
-    @XmlElement(name = "description")
-    public synchronized InternationalString getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the detailed text description of what the online resource is/does.
-     *
-     * @param newValue The new description.
-     */
-    public synchronized void setDescription(final InternationalString newValue) {
-        checkWritePermission();
-        description = newValue;
-    }
-
-    /**
-     * Returns the code for function performed by the online resource.
-     * Returns {@code null} if unspecified.
-     */
-    @Override
-    @XmlElement(name = "function")
-    public synchronized OnLineFunction getFunction() {
-        return function;
-    }
-
-    /**
-     * Sets the code for function performed by the online resource.
-     *
-     * @param newValue The new function.
-     */
-    public synchronized void setFunction(final OnLineFunction newValue) {
-        checkWritePermission();
-        function = newValue;
-    }
-
-    /**
-     * Returns the location (address) for on-line access using a Uniform Resource Locator address or
-     * similar addressing scheme such as http://www.statkart.no/isotc211.
-     */
-    @Override
-    @XmlElement(name = "linkage", required = true)
-    public synchronized URI getLinkage() {
-        return linkage;
-    }
-
-    /**
-     * Sets the location (address) for on-line access using a Uniform Resource Locator address or
-     * similar addressing scheme such as http://www.statkart.no/isotc211.
-     *
-     * @param newValue The new linkage.
-     */
-    public synchronized void setLinkage(final URI newValue) {
-        checkWritePermission();
-        linkage = newValue;
-    }
-
-    /**
-     * Returns the connection protocol to be used.
-     * Returns {@code null} if none.
-     */
-    @Override
-    @XmlElement(name = "protocol")
-    public synchronized String getProtocol() {
-        return protocol;
-    }
-
-    /**
-     * Returns the connection protocol to be used.
-     *
-     * @param newValue The new protocol.
-     *
-     * @since 3.04
-     */
-    public synchronized void setProtocol(final String newValue) {
-        checkWritePermission();
-        protocol = newValue;
     }
 }

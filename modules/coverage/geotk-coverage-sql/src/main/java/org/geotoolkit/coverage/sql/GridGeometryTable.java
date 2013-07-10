@@ -34,7 +34,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.collection.WeakHashSet;
+import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.internal.sql.table.Column;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.QueryType;
@@ -84,7 +84,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
      */
     private GridGeometryTable(final GridGeometryQuery query) {
         super(query, query.byIdentifier);
-        gridCRS = WeakHashSet.newInstance(SpatialRefSysEntry.class);
+        gridCRS = new WeakHashSet<>(SpatialRefSysEntry.class);
     }
 
     /**
@@ -288,58 +288,58 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
             final int idIndex = indexOf(query.identifier);
             int vsIndex = indexOf(query.verticalSRID);
             int voIndex = indexOf(query.verticalOrdinates);
-            final ResultSet results = statement.executeQuery();
-            while (results.next()) {
-                final int nextID   = results.getInt(idIndex);
-                final int nextSRID = results.getInt(vsIndex);
-                /*
-                 * We check vertical SRID in Java code rather than in the SQL statement because it is
-                 * uneasy to write a statement that works for both non-null and null values (the former
-                 * requires "? IS NULL" since the "? = NULL" statement doesn't work with PostgreSQL 8.2.
-                 */
-                if (results.wasNull() != (verticalOrdinates == null)) {
-                    // Inconsistent fields. We will ignore this entry.
-                    continue; //
-                }
-                if (verticalOrdinates != null && nextSRID != verticalSRID) {
-                    // Not the expected SRID. Search for an other entry.
-                    continue;
-                }
-                /*
-                 * We compare the arrays in this Java code rather than in the SQL statement (in the
-                 * WHERE clause) in order to make sure that we are insensitive to the array type
-                 * (since we convert to double[] in all cases), and because we need to relax the
-                 * tolerance threshold in some cases.
-                 */
-                final double[] altitudes = asDoubleArray(results.getArray(voIndex));
-                final boolean isStrictlyEquals;
-                if (Arrays.equals(altitudes, verticalOrdinates)) {
-                    isStrictlyEquals = true;
-                } else if (equalsAsFloat(altitudes, verticalOrdinates)) {
-                    isStrictlyEquals = false;
-                } else {
-                    continue;
-                }
-                /*
-                 * If there is more than one record with different ID, then there is a choice:
-                 *   1) If the new record is more accurate than the previous one, keep the new one.
-                 *   2) Otherwise we keep the previous record. A warning will be logged if and only
-                 *      if the two records are strictly equals.
-                 */
-                if (id != null && id.intValue() != nextID) {
-                    if (!isStrictlyEquals) {
+            try (ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    final int nextID   = results.getInt(idIndex);
+                    final int nextSRID = results.getInt(vsIndex);
+                    /*
+                     * We check vertical SRID in Java code rather than in the SQL statement because it is
+                     * uneasy to write a statement that works for both non-null and null values (the former
+                     * requires "? IS NULL" since the "? = NULL" statement doesn't work with PostgreSQL 8.2.
+                     */
+                    if (results.wasNull() != (verticalOrdinates == null)) {
+                        // Inconsistent fields. We will ignore this entry.
+                        continue; //
+                    }
+                    if (verticalOrdinates != null && nextSRID != verticalSRID) {
+                        // Not the expected SRID. Search for an other entry.
                         continue;
                     }
-                    if (foundStrictlyEquals) {
-                        // Could happen if there is insufficient conditions in the WHERE clause.
-                        log("find", errors().getLogRecord(Level.WARNING, Errors.Keys.DUPLICATED_RECORD_1, id));
+                    /*
+                     * We compare the arrays in this Java code rather than in the SQL statement (in the
+                     * WHERE clause) in order to make sure that we are insensitive to the array type
+                     * (since we convert to double[] in all cases), and because we need to relax the
+                     * tolerance threshold in some cases.
+                     */
+                    final double[] altitudes = asDoubleArray(results.getArray(voIndex));
+                    final boolean isStrictlyEquals;
+                    if (Arrays.equals(altitudes, verticalOrdinates)) {
+                        isStrictlyEquals = true;
+                    } else if (equalsAsFloat(altitudes, verticalOrdinates)) {
+                        isStrictlyEquals = false;
+                    } else {
                         continue;
                     }
+                    /*
+                     * If there is more than one record with different ID, then there is a choice:
+                     *   1) If the new record is more accurate than the previous one, keep the new one.
+                     *   2) Otherwise we keep the previous record. A warning will be logged if and only
+                     *      if the two records are strictly equals.
+                     */
+                    if (id != null && id.intValue() != nextID) {
+                        if (!isStrictlyEquals) {
+                            continue;
+                        }
+                        if (foundStrictlyEquals) {
+                            // Could happen if there is insufficient conditions in the WHERE clause.
+                            log("find", errors().getLogRecord(Level.WARNING, Errors.Keys.DUPLICATED_RECORD_1, id));
+                            continue;
+                        }
+                    }
+                    id = nextID;
+                    foundStrictlyEquals = isStrictlyEquals;
                 }
-                id = nextID;
-                foundStrictlyEquals = isStrictlyEquals;
             }
-            results.close();
             release(lc, ce);
         }
         return id;
@@ -406,13 +406,13 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                     /*
                      * Get the identifier of the entry that we just generated.
                      */
-                    final ResultSet keys = statement.getGeneratedKeys();
-                    while (keys.next()) {
-                        id = keys.getInt(query.identifier.name);
-                        if (!keys.wasNull()) break;
-                        id = null; // Should never reach this point, but I'm paranoiac.
+                    try (ResultSet keys = statement.getGeneratedKeys()) {
+                        while (keys.next()) {
+                            id = keys.getInt(query.identifier.name);
+                            if (!keys.wasNull()) break;
+                            id = null; // Should never reach this point, but I'm paranoiac.
+                        }
                     }
-                    keys.close();
                     release(lc, ce);
                 }
             } finally {

@@ -84,11 +84,10 @@ import org.geotoolkit.referencing.adapters.NetcdfCRS;
 import org.geotoolkit.referencing.adapters.NetcdfCRSBuilder;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Workaround;
-import org.geotoolkit.util.Version;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
@@ -368,7 +367,7 @@ public class NetcdfImageReader extends FileImageReader implements
             final List<Aggregation.Dataset> components = aggregation.getDatasets();
             if (components != null) {
                 if (addTo == null) {
-                    addTo = new ArrayList<URI>(components.size());
+                    addTo = new ArrayList<>(components.size());
                 }
                 for (final Aggregation.Dataset component : components) {
                     if (abortRequested()) {
@@ -660,7 +659,7 @@ public class NetcdfImageReader extends FileImageReader implements
                             axes = getAxes(rank);
                         } catch (IOException e) {
                             // Will be caught in the enclosing method.
-                            throw new org.geotoolkit.util.collection.BackingStoreException(e);
+                            throw new BackingStoreException(e);
                         }
                         return (axes != null) ? new NetcdfAxesIterator(axes) :
                                 Collections.<Map.Entry<?,Integer>>emptySet().iterator();
@@ -764,7 +763,7 @@ public class NetcdfImageReader extends FileImageReader implements
      */
     final Map<String,GDALGridMapping> getGridMapping() {
         if (gridMapping == null) {
-            gridMapping = new HashMap<String,GDALGridMapping>();
+            gridMapping = new HashMap<>();
         }
         return gridMapping;
     }
@@ -1286,6 +1285,15 @@ public class NetcdfImageReader extends FileImageReader implements
     @Override
     public boolean isCancel() {
         return abortRequested();
+    }
+
+    /**
+     * Invoked by the NetCDF library for reporting progress
+     *
+     * @param message A description of the operation being executed.
+     * @param progress The progress (not necessarily a percentage).
+     */
+    public void setProgress(String message, int progress) {
     }
 
     /**

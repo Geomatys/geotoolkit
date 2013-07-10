@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.cs.EllipsoidalCS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
-import org.geotoolkit.internal.jaxb.gco.PropertyType;
+import org.apache.sis.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -76,7 +76,6 @@ public final class CS_EllipsoidalCS extends PropertyType<CS_EllipsoidalCS, Ellip
      *
      * @return The metadata to be marshalled.
      */
-    @Override
     @XmlElement(name = "EllipsoidalCS")
     public DefaultEllipsoidalCS getElement() {
         return skip() ? null : DefaultEllipsoidalCS.castOrCopy(metadata);

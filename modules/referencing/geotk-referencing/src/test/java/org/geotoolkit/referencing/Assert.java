@@ -17,18 +17,20 @@
  */
 package org.geotoolkit.referencing;
 
+import java.util.Objects;
+
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.io.wkt.Convention;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.io.wkt.FormattableObject;
-import org.geotoolkit.geometry.AbstractEnvelope;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.AbstractEnvelope;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
 import static java.lang.StrictMath.*;
@@ -67,8 +69,8 @@ public strictfp final class Assert extends org.geotoolkit.test.Assert {
      */
     public static void assertNotDeepEquals(final Object o1, final Object o2) {
         assertNotSame("same", o1, o2);
-        assertFalse("equals",                      Utilities.equals    (o1, o2));
-        assertFalse("deepEquals",                  Utilities.deepEquals(o1, o2));
+        assertFalse("equals",                      Objects  .equals    (o1, o2));
+        assertFalse("deepEquals",                  Objects  .deepEquals(o1, o2));
         assertFalse("deepEquals(STRICT)",          Utilities.deepEquals(o1, o2, ComparisonMode.STRICT));
         assertFalse("deepEquals(IGNORE_METADATA)", Utilities.deepEquals(o1, o2, ComparisonMode.IGNORE_METADATA));
         assertFalse("deepEquals(APPROXIMATIVE)",   Utilities.deepEquals(o1, o2, ComparisonMode.APPROXIMATIVE));

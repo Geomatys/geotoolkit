@@ -19,6 +19,7 @@ package org.geotoolkit.image.io.metadata;
 
 import java.util.Map;
 import java.util.Locale;
+import org.opengis.metadata.ExtendedElementInformation;
 
 
 /**
@@ -36,7 +37,7 @@ final class MetadataDescriptions {
      * assumption that the description of different attributes of the same element are
      * likely to be asked a few consecutive time.
      */
-    final Map<String,String> descriptions;
+    final Map<String, ExtendedElementInformation> descriptions;
 
     /**
      * The name of the element requested when we fetched the {@link #descriptions} map.
@@ -53,7 +54,9 @@ final class MetadataDescriptions {
      * Creates a new {@code MetadataDescriptions} for the given standard, element name
      * and locale.
      */
-    MetadataDescriptions(final Map<String,String> descriptions, final String elementName, final Locale locale) {
+    MetadataDescriptions(final Map<String, ExtendedElementInformation> descriptions,
+            final String elementName, final Locale locale)
+    {
         this.descriptions = descriptions;
         this.elementName  = elementName;
         this.locale       = locale;

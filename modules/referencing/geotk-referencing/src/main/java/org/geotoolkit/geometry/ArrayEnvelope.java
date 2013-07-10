@@ -18,6 +18,7 @@
 package org.geotoolkit.geometry;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.io.Serializable;
 import java.awt.geom.Rectangle2D;
 
@@ -27,10 +28,9 @@ import org.opengis.geometry.Envelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.extent.GeographicBoundingBox;
-
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import static org.apache.sis.util.ArgumentChecks.*;
@@ -477,7 +477,7 @@ scanNumber: while (++i < length) {
         if (object != null && object.getClass() == getClass()) {
             final ArrayEnvelope that = (ArrayEnvelope) object;
             return Arrays.equals(this.ordinates, that.ordinates) &&
-                    Utilities.equals(this.crs, that.crs);
+                  Objects.equals(this.crs, that.crs);
         }
         return false;
     }

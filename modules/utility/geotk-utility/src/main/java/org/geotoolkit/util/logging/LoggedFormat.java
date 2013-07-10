@@ -30,6 +30,7 @@ import java.util.logging.LogRecord;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.CharSequences;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -115,7 +116,7 @@ public class LoggedFormat<T> extends Format {
      * @return A new format which will delegate parsing to the given format and log failures.
      */
     public static <T> LoggedFormat<T> getInstance(final Format format, final Class<T> type) {
-        return new LoggedFormat<T>(format, type);
+        return new LoggedFormat<>(format, type);
     }
 
     /**
@@ -278,7 +279,7 @@ public class LoggedFormat<T> extends Format {
      * @return The locale to use for formatting warnings.
      */
     protected Locale getWarningLocale() {
-        return Locale.getDefault();
+        return Locale.getDefault(Locale.Category.DISPLAY);
     }
 
     /**

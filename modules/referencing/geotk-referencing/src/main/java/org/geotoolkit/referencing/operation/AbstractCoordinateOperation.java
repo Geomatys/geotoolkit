@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Length;
@@ -39,7 +40,6 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.InternationalString;
 import org.opengis.util.Record;
 
-import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
@@ -49,7 +49,7 @@ import org.geotoolkit.internal.referencing.Semaphores;
 import org.apache.sis.measure.Units;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.Utilities.deepEquals;
+import static org.apache.sis.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
 
@@ -544,11 +544,11 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
                 // See comment in DefaultSingleOperation.equals(...) about why we compare MathTransform.
                 case STRICT: {
                     final AbstractCoordinateOperation that = (AbstractCoordinateOperation) object;
-                    if (!Utilities.equals(sourceCRS,                   that.sourceCRS)        ||
-                        !Utilities.equals(transform,                   that.transform)        ||
-                        !Utilities.equals(domainOfValidity,            that.domainOfValidity) ||
-                        !Utilities.equals(scope,                       that.scope)            ||
-                        !Utilities.equals(coordinateOperationAccuracy, that.coordinateOperationAccuracy))
+                    if (!Objects.equals(sourceCRS,                   that.sourceCRS)        ||
+                        !Objects.equals(transform,                   that.transform)        ||
+                        !Objects.equals(domainOfValidity,            that.domainOfValidity) ||
+                        !Objects.equals(scope,                       that.scope)            ||
+                        !Objects.equals(coordinateOperationAccuracy, that.coordinateOperationAccuracy))
                     {
                         return false;
                     }
@@ -583,7 +583,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
             }
             try {
                 if (mode == ComparisonMode.STRICT) {
-                    return Utilities.equals(targetCRS, ((AbstractCoordinateOperation) object).targetCRS);
+                    return Objects.equals(targetCRS, ((AbstractCoordinateOperation) object).targetCRS);
                 } else {
                     return deepEquals(getTargetCRS(), ((CoordinateOperation) object).getTargetCRS(), mode);
                 }
@@ -628,7 +628,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
     @SuppressWarnings("serial")
     static void append(final Formatter formatter, final IdentifiedObject object, final String type) {
         if (object != null) {
-            final Map<String,Object> properties = new HashMap<String,Object>(4);
+            final Map<String,Object> properties = new HashMap<>(4);
             properties.put(IdentifiedObject.NAME_KEY,        formatter.getName(object));
             properties.put(IdentifiedObject.IDENTIFIERS_KEY, formatter.getIdentifier(object));
             formatter.append((IdentifiedObject) new AbstractIdentifiedObject(properties) {

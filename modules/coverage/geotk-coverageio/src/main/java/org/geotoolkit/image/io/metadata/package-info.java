@@ -89,7 +89,7 @@
  *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_DOUBLE DATATYPE_DOUBLE}</td>
  *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#VALUE_LIST VALUE_LIST}</td>
  *   </tr><tr>
- *     <td>&nbsp;{@link org.geotoolkit.util.NumberRange}&nbsp;</td>
+ *     <td>&nbsp;{@link org.apache.sis.measure.NumberRange}&nbsp;</td>
  *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_STRING DATATYPE_STRING}</td>
  *     <td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#VALUE_ARBITRARY VALUE_ARBITRARY}</td>
  *   </tr><tr>

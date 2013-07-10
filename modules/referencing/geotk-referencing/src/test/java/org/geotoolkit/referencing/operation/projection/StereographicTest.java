@@ -21,8 +21,8 @@ import org.junit.*;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
-import org.geotoolkit.test.Depend;
 
+import org.apache.sis.test.DependsOn;
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
 import static org.geotoolkit.referencing.operation.provider.Stereographic.PARAMETERS;
@@ -37,7 +37,7 @@ import static org.geotoolkit.referencing.operation.projection.Stereographic.Para
  *
  * @since 3.19
  */
-@Depend(UnitaryProjectionTest.class)
+@DependsOn(UnitaryProjectionTest.class)
 public final strictfp class StereographicTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.

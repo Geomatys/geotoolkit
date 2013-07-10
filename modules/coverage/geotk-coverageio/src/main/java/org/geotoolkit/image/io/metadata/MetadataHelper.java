@@ -21,6 +21,7 @@ import java.awt.Point;
 import java.util.List;
 import java.util.Locale;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.text.NumberFormat;
 import java.text.FieldPosition;
 import java.awt.Rectangle;
@@ -44,11 +45,10 @@ import org.opengis.metadata.content.TransferFunctionType;
 import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.Localized;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.util.Localized;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.coverage.Category;
@@ -60,7 +60,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -571,7 +571,7 @@ public class MetadataHelper implements Localized {
                 units[i] = cs.getAxis(i).getUnit();
             }
             for (int i=1; i<units.length; i++) {
-                if (!Utilities.equals(units[i-1], units[i])) {
+                if (!Objects.equals(units[i-1], units[i])) {
                     sameUnits = false;
                     break;
                 }
@@ -660,7 +660,7 @@ public class MetadataHelper implements Localized {
          */
         boolean allGeophysics = true;
         InternationalString untitled = null; // To be created only if needed.
-        final List<Category> categories = new ArrayList<Category>();
+        final List<Category> categories = new ArrayList<>();
         final GridSampleDimension[] bands = new GridSampleDimension[sampleDimensions.size()];
         boolean hasSampleDimensions = false;
         for (int i=0; i<bands.length; i++) {
@@ -792,7 +792,7 @@ public class MetadataHelper implements Localized {
      */
     private static boolean overlap(final List<Category> categories, final NumberRange<?> range) {
         for (final Category category : categories) {
-            if (range.intersects(category.getRange())) {
+            if (range.intersectsAny(category.getRange())) {
                 return true;
             }
         }

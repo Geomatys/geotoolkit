@@ -46,7 +46,7 @@ import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileManagerFactory;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.collection.Cache;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.internal.sql.table.Table;
@@ -57,7 +57,8 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.resources.Errors;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 
@@ -94,7 +95,7 @@ final class TileTable extends Table implements Comparator<TileManager> {
      */
     public TileTable(final Database database) {
         super(new TileQuery((SpatialDatabase) database));
-        cache = new Cache<CoverageRequest,TileManager[]>();
+        cache = new Cache<>();
     }
 
     /**
@@ -143,9 +144,9 @@ final class TileTable extends Table implements Comparator<TileManager> {
             final LocalCache.Stmt ce = getStatement(lc, QueryType.EXISTS);
             final PreparedStatement statement = ce.statement;
             statement.setString(indexOf(query.byLayer), layer.getName());
-            final ResultSet results = statement.executeQuery();
-            exists = results.next();
-            results.close();
+            try (ResultSet results = statement.executeQuery()) {
+                exists = results.next();
+            }
             release(lc, ce);
         }
         return exists;
@@ -178,7 +179,7 @@ final class TileTable extends Table implements Comparator<TileManager> {
                     managers = load(cacheFile);
                     if (managers == null) {
                         final TileQuery query  = (TileQuery) this.query;
-                        final List<Tile> tiles = new ArrayList<Tile>();
+                        final List<Tile> tiles = new ArrayList<>();
                         final LocalCache lc    = getLocalCache();
                         synchronized (lc) {
                             final Calendar calendar = getCalendar(lc);
@@ -194,56 +195,56 @@ final class TileTable extends Table implements Comparator<TileManager> {
                             final int extentIndex   = indexOf(query.spatialExtent);
                             final int dxIndex       = indexOf(query.dx);
                             final int dyIndex       = indexOf(query.dy);
-                            final ResultSet results = statement.executeQuery();
-                            SeriesEntry       series   = null;
-                            ImageReaderSpi    provider = null;
-                            GridGeometryEntry geometry = null;
-                            int lastSeriesID = 0;
-                            int lastExtentID = 0;
-                            while (results.next()) {
-                                final int    seriesID = results.getInt   (seriesIndex);
-                                final String filename = results.getString(filenameIndex);
-                                final int    index    = results.getInt   (indexIndex);
-                                final int    extent   = results.getInt   (extentIndex);
-                                final int    dx       = results.getInt   (dxIndex); // '0' if null, which is fine.
-                                final int    dy       = results.getInt   (dyIndex); // '0' if null, which is fine.
-                                /*
-                                 * Gets the series, which usually never change for the whole mosaic (but this is not
-                                 * mandatory - the real thing that can't change is the layer).  The series is needed
-                                 * in order to build the absolute pathname from the relative one.
-                                 */
-                                if (series == null || seriesID != lastSeriesID) {
-                                    // Computes only if the series changed. Usually it doesn't change.
-                                    series       = layer.getSeries(seriesID);
-                                    provider     = getImageReaderSpi(series.format.imageFormat);
-                                    lastSeriesID = seriesID;
+                            try (ResultSet results = statement.executeQuery()) {
+                                SeriesEntry       series   = null;
+                                ImageReaderSpi    provider = null;
+                                GridGeometryEntry geometry = null;
+                                int lastSeriesID = 0;
+                                int lastExtentID = 0;
+                                while (results.next()) {
+                                    final int    seriesID = results.getInt   (seriesIndex);
+                                    final String filename = results.getString(filenameIndex);
+                                    final int    index    = results.getInt   (indexIndex);
+                                    final int    extent   = results.getInt   (extentIndex);
+                                    final int    dx       = results.getInt   (dxIndex); // '0' if null, which is fine.
+                                    final int    dy       = results.getInt   (dyIndex); // '0' if null, which is fine.
+                                    /*
+                                     * Gets the series, which usually never change for the whole mosaic (but this is not
+                                     * mandatory - the real thing that can't change is the layer).  The series is needed
+                                     * in order to build the absolute pathname from the relative one.
+                                     */
+                                    if (series == null || seriesID != lastSeriesID) {
+                                        // Computes only if the series changed. Usually it doesn't change.
+                                        series       = layer.getSeries(seriesID);
+                                        provider     = getImageReaderSpi(series.format.imageFormat);
+                                        lastSeriesID = seriesID;
+                                    }
+                                    Object input = series.file(filename);
+                                    if (!((File) input).isAbsolute()) try {
+                                        input = series.uri(filename);
+                                    } catch (URISyntaxException e) {
+                                        throw new IIOException(e.getLocalizedMessage(), e);
+                                    }
+                                    /*
+                                     * Gets the geometry, which usually don't change often.  The same geometry can be shared
+                                     * by all tiles at the same level, given that the only change is the (dx,dy) translation
+                                     * term defined explicitly in the "Tiles" table. Doing so avoid the creation a thousands
+                                     * of new "GridGeometries" entries.
+                                     */
+                                    if (geometry == null || extent != lastExtentID) {
+                                        geometry = getGridGeometryTable().getEntry(extent);
+                                        lastExtentID = extent;
+                                    }
+                                    AffineTransform gridToCRS = geometry.gridToCRS;
+                                    if (dx != 0 || dy != 0) {
+                                        gridToCRS = new AffineTransform(gridToCRS);
+                                        gridToCRS.translate(dx, dy);
+                                    }
+                                    final Rectangle bounds = geometry.getImageBounds();
+                                    final Tile tile = new Tile(provider, input, (index != 0) ? index-1 : 0, bounds, gridToCRS);
+                                    tiles.add(tile);
                                 }
-                                Object input = series.file(filename);
-                                if (!((File) input).isAbsolute()) try {
-                                    input = series.uri(filename);
-                                } catch (URISyntaxException e) {
-                                    throw new IIOException(e.getLocalizedMessage(), e);
-                                }
-                                /*
-                                 * Gets the geometry, which usually don't change often.  The same geometry can be shared
-                                 * by all tiles at the same level, given that the only change is the (dx,dy) translation
-                                 * term defined explicitly in the "Tiles" table. Doing so avoid the creation a thousands
-                                 * of new "GridGeometries" entries.
-                                 */
-                                if (geometry == null || extent != lastExtentID) {
-                                    geometry = getGridGeometryTable().getEntry(extent);
-                                    lastExtentID = extent;
-                                }
-                                AffineTransform gridToCRS = geometry.gridToCRS;
-                                if (dx != 0 || dy != 0) {
-                                    gridToCRS = new AffineTransform(gridToCRS);
-                                    gridToCRS.translate(dx, dy);
-                                }
-                                final Rectangle bounds = geometry.getImageBounds();
-                                final Tile tile = new Tile(provider, input, (index != 0) ? index-1 : 0, bounds, gridToCRS);
-                                tiles.add(tile);
                             }
-                            results.close();
                             release(lc, ce);
                         }
                         /*
@@ -372,22 +373,13 @@ final class TileTable extends Table implements Comparator<TileManager> {
         TileManager[] managers = null;
         if (file != null) try {
             if (file.isFile() && file.canRead()) {
-                final ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
-                try {
+                try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
                     managers = (TileManager[]) in.readObject();
-                } finally {
-                    in.close();
                 }
             }
-        } catch (ObjectStreamException e) {
+        } catch (ObjectStreamException | ClassNotFoundException | ClassCastException | SecurityException e) {
             recoverableException(e);
-        } catch (ClassNotFoundException e) {
-            recoverableException(e);
-        } catch (ClassCastException e) {
-            recoverableException(e);
-        } catch (SecurityException e) {
-            recoverableException(e);
-        } // TODO: multi-catch with JDK7.
+        }
         return managers;
     }
 
@@ -407,9 +399,9 @@ final class TileTable extends Table implements Comparator<TileManager> {
             final File parent = file.getParentFile();
             if (parent != null) try {
                 if (parent.isDirectory() && parent.canWrite() && file.createNewFile()) {
-                    final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
-                    out.writeObject(managers);
-                    out.close();
+                    try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
+                        out.writeObject(managers);
+                    }
                 }
             } catch (SecurityException e) {
                 recoverableException(e);

@@ -25,6 +25,7 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Comparator;
 import java.util.Locale;
 import javax.measure.unit.Unit;
@@ -38,15 +39,14 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.matrix.Matrix1;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.AbstractInternationalString;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.iso.AbstractInternationalString;
+import org.apache.sis.measure.NumberRange;
 
 import static java.lang.Double.NaN;
 import static java.lang.Double.isNaN;
@@ -238,7 +238,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
                     throw new IllegalArgumentException(Errors.format(Errors.Keys.RANGE_OVERLAP_4, args));
                 }
                 // Checks if there is a gap between this category and the previous one.
-                if (!isNaN(minimum) && minimum != previous.getRange().getMaximum(false)) {
+                if (!isNaN(minimum) && minimum != previous.getRange().getMaxDouble(false)) {
                     hasGaps = true;
                 }
             }
@@ -468,8 +468,8 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         @Override public String toString(Locale locale) {
             Locale fmtLoc = locale;
             if (locale == null) {
-                locale = Locale.getDefault();
-                fmtLoc = locale; // JDK7 allows a different value.
+                locale = Locale.getDefault(Locale.Category.DISPLAY);
+                fmtLoc = Locale.getDefault(Locale.Category.FORMAT);
             }
             final StringBuffer buffer = new StringBuffer(30);
             if (main != null) {
@@ -530,9 +530,9 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         if (range == null) {
             for (final Category category : categories) {
                 final NumberRange<?> extent = category.getRange();
-                if (!isNaN(extent.getMinimum()) && !isNaN(extent.getMaximum())) {
+                if (!isNaN(extent.getMinDouble()) && !isNaN(extent.getMaxDouble())) {
                     if (range != null) {
-                        range = range.union(extent);
+                        range = range.unionAny(extent);
                     } else {
                         range = extent;
                     }
@@ -553,8 +553,8 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         final NumberRange<?> range = getRange();
         buffer.append('[');
         if (range != null) {
-            format(range.getMinimum(), false, locale, buffer).append(" \u2026 "); // " ... "
-            format(range.getMaximum(), true,  locale, buffer);
+            format(range.getMinDouble(), false, locale, buffer).append(" \u2026 "); // " ... "
+            format(range.getMaxDouble(), true,  locale, buffer);
         } else {
             final Unit<?> unit = getUnits();
             if (unit != null) {
@@ -778,7 +778,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
      * or either {@link GridSampleDimension}.
      */
     final String toString(final Object owner, final InternationalString description) {
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         final StringBuffer buffer = new StringBuffer(64);
         buffer.append(Classes.getShortClassName(owner)).append('(');
         if (description != null && !(description instanceof Name)) {
@@ -811,7 +811,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
             final CategoryList that = (CategoryList) object;
             if (Arrays.equals(this.categories, that.categories)) {
                 assert Arrays.equals(this.minimums, that.minimums);
-                return Utilities.equals(this.overflowFallback, that.overflowFallback);
+                return Objects.equals(this.overflowFallback, that.overflowFallback);
             }
             return false;
         }

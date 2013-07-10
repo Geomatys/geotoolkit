@@ -36,7 +36,7 @@ import org.apache.sis.util.ArraysExt;
  * @module
  */
 @SuppressWarnings("serial")
-public final class ArrayListModel<E> extends AbstractListModel {
+public final class ArrayListModel<E> extends AbstractListModel<E> {
     /**
      * The elements in this model, or {@code null} if none.
      */

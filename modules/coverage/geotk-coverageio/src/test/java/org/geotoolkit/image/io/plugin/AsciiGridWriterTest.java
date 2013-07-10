@@ -123,8 +123,7 @@ public final strictfp class AsciiGridWriterTest extends TextImageWriterTestBase 
         prepareImageWriter(false);
         final IIOImage image = createImage(true);
         final AsciiGridWriter writer = (AsciiGridWriter) this.writer;
-        final StringWriter out = new StringWriter();
-        try {
+        try (StringWriter out = new StringWriter()) {
             writer.setOutput(out);
             writer.write(image);
             assertMultilinesEquals(
@@ -175,8 +174,6 @@ public final strictfp class AsciiGridWriterTest extends TextImageWriterTestBase 
                 "CELLSIZE      200.0\n" +
                 "NODATA_VALUE  -9998\n" +
                 "0.22 0.24\n", out.toString());
-        } finally {
-            out.close();
         }
         writer.dispose();
     }

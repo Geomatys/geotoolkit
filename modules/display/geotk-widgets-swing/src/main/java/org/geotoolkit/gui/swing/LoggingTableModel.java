@@ -34,7 +34,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.event.EventListenerList;
 import javax.swing.BoundedRangeModel;
 
-import org.geotoolkit.util.Strings;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.resources.Vocabulary;
 
 
@@ -111,10 +111,10 @@ final class LoggingTableModel extends Handler implements TableModel {
          * Creates the records for the given log and its message.
          */
         static Record[] create(final LogRecord log, final String message) {
-            final String[] lines = Strings.getLinesFromMultilines(message);
+            final CharSequence[] lines = CharSequences.splitOnEOL(message);
             final Record[] records = new Record[lines.length];
             for (int i=0; i<lines.length; i++) {
-                records[i] = new Record(log, lines[i]);
+                records[i] = new Record(log, lines[i].toString());
             }
             for (int i=1; i<lines.length; i++) {
                 records[i].time = ADDITIONAL_LINES;

@@ -33,8 +33,8 @@ import org.opengis.referencing.IdentifiedObject;
 
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.naming.DefaultNameSpace;
-import org.geotoolkit.util.collection.BackingStoreException;
+import org.apache.sis.util.iso.DefaultNameSpace;
+import org.apache.sis.util.collection.BackingStoreException;
 
 import static org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory.*;
 
@@ -79,12 +79,13 @@ final class SpatialRefSysMap extends AbstractMap<String,String> {
      */
     public SpatialRefSysMap(final Connection connection) throws SQLException {
         this.connection = connection;
-        final ResultSet result = connection.getMetaData().getTables(null, null, TABLE, new String[] {"TABLE"});
-        String schema = null;
-        if (result.next()) {
-            schema = result.getString("TABLE_SCHEM");
+        String schema;
+        try (ResultSet result = connection.getMetaData().getTables(null, null, TABLE, new String[] {"TABLE"})) {
+            schema = null;
+            if (result.next()) {
+                schema = result.getString("TABLE_SCHEM");
+            }
         }
-        result.close();
         this.schema = schema;
     }
 
@@ -113,17 +114,17 @@ final class SpatialRefSysMap extends AbstractMap<String,String> {
         appendFrom(sql)
                 .append(" GROUP BY ").append(AUTHORITY_COLUMN)
                 .append(" ORDER BY np DESC, n DESC");
-        final Map<String,Boolean> authorities = new LinkedHashMap<String,Boolean>();
-        final Statement stmt = connection.createStatement();
-        final ResultSet results = stmt.executeQuery(sql.toString());
-        while (results.next()) {
-            final String name = results.getString(1); // May be null.
-            final int    np   = results.getInt   (2);
-            final int    n    = results.getInt   (3);
-            authorities.put(name, np == n);
+        final Map<String,Boolean> authorities = new LinkedHashMap<>();
+        try (Statement stmt = connection.createStatement();
+             ResultSet results = stmt.executeQuery(sql.toString()))
+        {
+            while (results.next()) {
+                final String name = results.getString(1); // May be null.
+                final int    np   = results.getInt   (2);
+                final int    n    = results.getInt   (3);
+                authorities.put(name, np == n);
+            }
         }
-        results.close();
-        stmt.close();
         return authorities;
     }
 
@@ -147,14 +148,14 @@ final class SpatialRefSysMap extends AbstractMap<String,String> {
             sql.append(" WHERE srtext ILIKE '").append(type).append("%'");
         }
         sql.append(" ORDER BY ").append(PRIMARY_KEY);
-        final Set<String> codes = new LinkedHashSet<String>();
-        final Statement stmt = connection.createStatement();
-        final ResultSet results = stmt.executeQuery(sql.toString());
-        while (results.next()) {
-            codes.add(results.getString(1));
+        final Set<String> codes = new LinkedHashSet<>();
+        try (Statement stmt = connection.createStatement();
+             ResultSet results = stmt.executeQuery(sql.toString()))
+        {
+            while (results.next()) {
+                codes.add(results.getString(1));
+            }
         }
-        results.close();
-        stmt.close();
         return codes;
     }
 
@@ -196,24 +197,23 @@ final class SpatialRefSysMap extends AbstractMap<String,String> {
             throws SQLException
     {
         T value = null;
-        final ResultSet results = statement.executeQuery();
-        while (results.next()) {
-            final Object candidate;
-            if (Integer.class.isAssignableFrom(type)) {
-                candidate = results.getInt(1);
-            } else {
-                candidate = results.getString(1);
-            }
-            if (!results.wasNull()) {
-                if (value != null && !candidate.equals(value)) {
-                    results.close();
-                    throw new SQLIntegrityConstraintViolationException(
-                            Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_1, code));
+        try (ResultSet results = statement.executeQuery()) {
+            while (results.next()) {
+                final Object candidate;
+                if (Integer.class.isAssignableFrom(type)) {
+                    candidate = results.getInt(1);
+                } else {
+                    candidate = results.getString(1);
                 }
-                value = type.cast(candidate);
+                if (!results.wasNull()) {
+                    if (value != null && !candidate.equals(value)) {
+                        throw new SQLIntegrityConstraintViolationException(
+                                Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_1, code));
+                    }
+                    value = type.cast(candidate);
+                }
             }
         }
-        results.close();
         return value;
     }
 

@@ -47,7 +47,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
@@ -168,9 +168,9 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
                 final AffineTransform tr = mh.getAffineTransform(rf, param);
                 final Object path = createOutput("tfw");
                 if (path != null) {
-                    final OutputStream out = IOUtilities.openWrite(path);
-                    SupportFiles.writeTFW(out, tr);
-                    out.close();
+                    try (OutputStream out = IOUtilities.openWrite(path)) {
+                        SupportFiles.writeTFW(out, tr);
+                    }
                 }
             }
             /*
@@ -182,9 +182,9 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
             if (crs != null && !(crs instanceof ImageCRS)) {
                 final Object path = createOutput("prj");
                 if (path != null) {
-                    final OutputStream out = IOUtilities.openWrite(path);
-                    PrjFiles.write(crs, out);
-                    out.close();
+                    try (OutputStream out = IOUtilities.openWrite(path)) {
+                        PrjFiles.write(crs, out);
+                    }
                 }
             }
         }

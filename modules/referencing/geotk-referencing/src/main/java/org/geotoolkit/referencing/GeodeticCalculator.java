@@ -47,7 +47,7 @@ import org.apache.sis.measure.Angle;
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
 import org.geotoolkit.measure.CoordinateFormat;
-import org.geotoolkit.geometry.DirectPosition2D;
+import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.TransformedDirectPosition;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
@@ -56,8 +56,8 @@ import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.NullArgumentException;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.NullArgumentException;
 
 
 /**

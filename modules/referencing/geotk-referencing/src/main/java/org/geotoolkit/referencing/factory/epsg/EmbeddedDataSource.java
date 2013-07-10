@@ -49,7 +49,7 @@ final class EmbeddedDataSource extends DefaultDataSource {
      * {@link #createIfEmpty} is synchronized in such a way that there is no
      * concurrent execution of that method for the same database..
      */
-    private static final Map<String,EmbeddedDataSource> SOURCES = new HashMap<String,EmbeddedDataSource>(4);
+    private static final Map<String,EmbeddedDataSource> SOURCES = new HashMap<>(4);
 
     /**
      * {@code true} if the presence of the EPSG database has been tested.

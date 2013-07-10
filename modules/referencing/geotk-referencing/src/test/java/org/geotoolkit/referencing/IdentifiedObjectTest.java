@@ -22,13 +22,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import org.opengis.test.Validators;
-import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
-import org.opengis.referencing.ReferenceIdentifier;
-import org.opengis.parameter.InvalidParameterValueException;
-
-import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
@@ -45,64 +39,11 @@ import static org.junit.Assert.*;
  */
 public final strictfp class IdentifiedObjectTest extends ReferencingTestBase {
     /**
-     * Tests {@link NamedIdentifier} attributes. Useful for making sure that the
-     * hash code enumerated in the switch statement in the constructor have
-     * the correct value.
-     */
-    @Test
-    public void testIdentifier() {
-        final Map<String,Object> properties = new HashMap<String,Object>();
-        assertNull(properties.put("code",          "This is a code"));
-        assertNull(properties.put("authority",     "This is an authority"));
-        assertNull(properties.put("version",       "This is a version"));
-        assertNull(properties.put("dummy",         "Doesn't matter"));
-        assertNull(properties.put("remarks",       "There is remarks"));
-        assertNull(properties.put("remarks_fr",    "Voici des remarques"));
-        assertNull(properties.put("remarks_fr_CA", "Pareil"));
-
-        NamedIdentifier identifier = new NamedIdentifier(properties);
-        Validators.validate((ReferenceIdentifier) identifier);
-        Validators.validate((GenericName) identifier);
-
-        assertEquals("code",          "This is a code",        identifier.getCode());
-        assertEquals("authority",     "This is an authority",  identifier.getAuthority().getTitle().toString());
-        assertEquals("version",       "This is a version",     identifier.getVersion());
-        assertEquals("remarks",       "There is remarks",      identifier.getRemarks().toString(Locale.ENGLISH));
-        assertEquals("remarks_fr",    "Voici des remarques",   identifier.getRemarks().toString(Locale.FRENCH));
-        assertEquals("remarks_fr_CA", "Pareil",                identifier.getRemarks().toString(Locale.CANADA_FRENCH));
-        assertEquals("remarks_fr_BE", "Voici des remarques",   identifier.getRemarks().toString(new Locale("fr", "BE")));
-
-        // Following produces warnings, which we ignore.
-        if (true) {
-            final Object old = properties.put("remarks", new SimpleInternationalString("Overrides remarks"));
-            identifier = new NamedIdentifier(properties);
-            assertEquals("remarks", "Overrides remarks", identifier.getRemarks().toString(Locale.ENGLISH));
-            assertNotNull(properties.put("remarks", old)); // Restore the previous value.
-        }
-
-        assertNotNull(properties.remove("authority"));
-        assertNull(properties.put("AutHOrITY", new DefaultCitation("An other authority")));
-        identifier = new NamedIdentifier(properties);
-        Validators.validate((ReferenceIdentifier) identifier);
-        Validators.validate((GenericName) identifier);
-
-        assertEquals("authority", "An other authority", identifier.getAuthority().getTitle().toString(Locale.ENGLISH));
-        assertNotNull(properties.remove("AutHOrITY"));
-        assertNull(properties.put("authority", Locale.CANADA));
-        try {
-            identifier = new NamedIdentifier(properties);
-            fail(identifier.toString());
-        } catch (InvalidParameterValueException exception) {
-            // This is the expected exception
-        }
-    }
-
-    /**
      * Tests {@link IdentifiedObject}.
      */
     @Test
     public void testIdentifiedObject() {
-        final Map<String,Object> properties = new HashMap<String,Object>();
+        final Map<String,Object> properties = new HashMap<>();
         assertNull(properties.put("name",             "This is a name"));
         assertNull(properties.put("remarks",          "There is remarks"));
         assertNull(properties.put("remarks_fr",       "Voici des remarques"));
@@ -114,7 +55,7 @@ public final strictfp class IdentifiedObjectTest extends ReferencingTestBase {
         assertNull(properties.put("realizationEpoch", "Realization epoch"));
         assertNull(properties.put("validArea",        "Valid area"));
 
-        final Map<String,Object> remaining = new HashMap<String,Object>();
+        final Map<String,Object> remaining = new HashMap<>();
         final AbstractIdentifiedObject reference = new AbstractIdentifiedObject(
                 properties, remaining, new String[] {"local"});
         Validators.validate(reference);
@@ -142,7 +83,7 @@ public final strictfp class IdentifiedObjectTest extends ReferencingTestBase {
      */
     @Test
     public void testReferenceSystem() {
-        final Map<String,Object> properties = new HashMap<String,Object>();
+        final Map<String,Object> properties = new HashMap<>();
         assertNull(properties.put("name",       "This is a name"));
         assertNull(properties.put("scope",      "This is a scope"));
         assertNull(properties.put("scope_fr",   "Valide dans ce domaine"));

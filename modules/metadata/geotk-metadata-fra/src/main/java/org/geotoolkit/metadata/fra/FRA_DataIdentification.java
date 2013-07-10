@@ -21,12 +21,11 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.identification.DataIdentification;
 
-import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
+import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 
 
 /**
@@ -47,12 +46,11 @@ import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Guilhem Legal (Geomatys)
- * @version 3.03
+ * @version 3.21
  *
  * @since 3.00
  * @module
  */
-@ThreadSafe
 @XmlType(name = "FRA_DataIdentification_Type")
 @XmlRootElement(name ="FRA_DataIdentification")
 public class FRA_DataIdentification extends DefaultDataIdentification {
@@ -97,6 +95,6 @@ public class FRA_DataIdentification extends DefaultDataIdentification {
      * @param newValues Citation to the new documents.
      */
     public synchronized void setRelatedCitations(final Collection<? extends Citation> newValues) {
-        relatedCitations = copyCollection(newValues, relatedCitations, Citation.class);
+        relatedCitations = writeCollection(newValues, relatedCitations, Citation.class);
     }
 }

@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.coverage.io;
 
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 
 
 /**

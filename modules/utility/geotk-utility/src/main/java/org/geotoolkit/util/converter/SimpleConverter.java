@@ -90,7 +90,7 @@ public abstract class SimpleConverter<S,T> implements ObjectConverter<S,T> {
         if (cause != null) {
             final String cm = cause.getLocalizedMessage();
             if (cm != null) {
-                message = message + System.getProperty("line.separator", "\n") + cm;
+                message = message + System.lineSeparator() + cm;
             }
         }
         return message;

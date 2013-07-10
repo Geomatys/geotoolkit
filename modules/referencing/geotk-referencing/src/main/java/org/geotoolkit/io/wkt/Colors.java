@@ -127,7 +127,7 @@ public class Colors implements Serializable {
      * Creates a new, initially empty, set of colors.
      */
     public Colors() {
-        map = new EnumMap<Element,X364>(Element.class);
+        map = new EnumMap<>(Element.class);
     }
 
     /**

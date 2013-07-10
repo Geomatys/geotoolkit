@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.util.FactoryException;
@@ -40,16 +41,15 @@ import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.Utilities.deepEquals;
+import static org.apache.sis.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -288,14 +288,14 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
                     Collection<PositionalAccuracy> candidates = op.getCoordinateOperationAccuracy();
                     if (!isNullOrEmpty(candidates)) {
                         if (accuracy == null) {
-                            accuracy = new LinkedHashSet<PositionalAccuracy>();
+                            accuracy = new LinkedHashSet<>();
                         }
                         accuracy.addAll(candidates);
                     }
                 }
             }
             if (accuracy != null) {
-                final Map<String,Object> merged = new HashMap<String,Object>(properties);
+                final Map<String,Object> merged = new HashMap<>(properties);
                 merged.put(COORDINATE_OPERATION_ACCURACY_KEY,
                            accuracy.toArray(new PositionalAccuracy[accuracy.size()]));
                 return merged;
@@ -334,7 +334,7 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
             switch (mode) {
                 case STRICT: {
                     final DefaultConcatenatedOperation that = (DefaultConcatenatedOperation) object;
-                    return Utilities.equals(this.operations, that.operations);
+                    return Objects.equals(this.operations, that.operations);
                 }
                 default: {
                     final ConcatenatedOperation that = (ConcatenatedOperation) object;

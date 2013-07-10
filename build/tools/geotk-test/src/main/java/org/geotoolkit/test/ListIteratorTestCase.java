@@ -91,7 +91,7 @@ public abstract strictfp class ListIteratorTestCase<E> extends TestCase {
         if (data instanceof List<?>) {
             return (List<E>) data;
         } else {
-            return new ArrayList<E>(data);
+            return new ArrayList<>(data);
         }
     }
 

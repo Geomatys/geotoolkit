@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.headless;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.text.BreakIterator;
@@ -25,8 +26,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.CharSequences;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.process.ProgressController;
@@ -132,7 +132,7 @@ public class ProgressPrinter extends ProgressController {
     public ProgressPrinter(final PrintWriter out, final int maxLength) {
         this.out = out;
         this.maxLength = maxLength;
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         CR_supported = lineSeparator.equals("\r\n") || lineSeparator.equals("\n");
     }
 
@@ -287,7 +287,7 @@ public class ProgressPrinter extends ProgressController {
             printInBox(Vocabulary.getResources(locale).getString(Vocabulary.Keys.WARNING));
             hasPrintedWarning = true;
         }
-        if (!Utilities.equals(source, lastSource)) {
+        if (!Objects.equals(source, lastSource)) {
             out.println();
             out.println(source != null ? source : Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED));
             lastSource = source;
@@ -302,7 +302,7 @@ public class ProgressPrinter extends ProgressController {
             margin = trim(margin);
             if (!margin.isEmpty()) {
                 prefix = prefix + '(' + margin + ") ";
-                second = Strings.spaces(prefix.length());
+                second = CharSequences.spaces(prefix.length()).toString();
             }
         }
         int width = maxLength - prefix.length() - 1;
@@ -376,7 +376,7 @@ public class ProgressPrinter extends ProgressController {
                 }
                 case 1: {
                     out.print("**");
-                    out.print(Strings.spaces(length + 6));
+                    out.print(CharSequences.spaces(length + 6));
                     out.println("**");
                     break;
                 }

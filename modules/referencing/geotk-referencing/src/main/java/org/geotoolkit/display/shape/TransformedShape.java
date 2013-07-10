@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display.shape;
 
+import java.util.Objects;
 import java.awt.Shape;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
@@ -28,8 +29,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import net.jcip.annotations.NotThreadSafe;
 
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -411,7 +411,7 @@ public final class TransformedShape extends AffineTransform implements Shape {
     @Override
     public boolean equals(final Object object) {
         if (object instanceof TransformedShape && super.equals(object)) {
-            return Utilities.equals(shape, ((TransformedShape) object).shape);
+            return Objects.equals(shape, ((TransformedShape) object).shape);
         }
         return false;
     }

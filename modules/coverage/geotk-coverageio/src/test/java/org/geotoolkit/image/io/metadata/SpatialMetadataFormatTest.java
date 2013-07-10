@@ -484,11 +484,11 @@ public final strictfp class SpatialMetadataFormatTest {
         assertTrue(!stream.isEmpty()); // Dummy check. The real interesting part is the write to a file.
         assertTrue(!image .isEmpty());
         if (false) {
-            final Writer out = new OutputStreamWriter(new FileOutputStream("SpatialMetadataFormat.txt"), "UTF-8");
-            out.write(stream);
-            out.write(System.getProperty("line.separator", "\n"));
-            out.write(image);
-            out.close();
+            try (Writer out = new OutputStreamWriter(new FileOutputStream("SpatialMetadataFormat.txt"), "UTF-8")) {
+                out.write(stream);
+                out.write(System.lineSeparator());
+                out.write(image);
+            }
         }
     }
 }

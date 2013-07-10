@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.sql;
 import java.util.Set;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Locale;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,10 +34,9 @@ import org.geotoolkit.coverage.io.GridCoverageStorePool;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.image.io.metadata.SampleDomain;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.MeasurementRange;
+import org.apache.sis.measure.MeasurementRange;
 import org.geotoolkit.internal.sql.table.DefaultEntry;
 
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
@@ -179,7 +179,7 @@ final class FormatEntry extends DefaultEntry {
      * @return Possible alternatives to the given image format.
      */
     static String[] getImageFormats(final String imageFormat) {
-        final Set<String> names = new HashSet<String>();
+        final Set<String> names = new HashSet<>();
         for (final Iterator<ImageReaderSpi> it = IIORegistry.getDefaultInstance()
                 .getServiceProviders(ImageReaderSpi.class, false); it.hasNext();)
         {
@@ -215,8 +215,8 @@ final class FormatEntry extends DefaultEntry {
              * minimal and maximal values are the result of a computation, not a stored value.
              */
             ranges[i] = MeasurementRange.create(
-                    adjustForRoundingError(band.getMinimumValue()),
-                    adjustForRoundingError(band.getMaximumValue()),
+                    adjustForRoundingError(band.getMinimumValue()), true,
+                    adjustForRoundingError(band.getMaximumValue()), true,
                     band.getUnits());
         }
         return ranges;
@@ -269,7 +269,7 @@ final class FormatEntry extends DefaultEntry {
         }
         if (super.equals(object)) {
             final FormatEntry that = (FormatEntry) object;
-            return Utilities.equals(imageFormat, that.imageFormat);
+            return Objects.equals(imageFormat, that.imageFormat);
         }
         return false;
     }

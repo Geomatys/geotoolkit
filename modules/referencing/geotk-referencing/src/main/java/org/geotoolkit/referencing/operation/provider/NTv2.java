@@ -80,7 +80,7 @@ public class NTv2 extends MathTransformProvider {
      * descriptor(String)}</code> instead.
      */
     @Deprecated
-    public static final ParameterDescriptor<String> DIFFERENCE_FILE = new DefaultParameterDescriptor<String>(
+    public static final ParameterDescriptor<String> DIFFERENCE_FILE = new DefaultParameterDescriptor<>(
             Citations.EPSG, "Latitude and longitude difference file", String.class, null, null, null, null, null, true);
 
     /**

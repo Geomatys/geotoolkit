@@ -141,7 +141,6 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
     public CoverageDatabaseInstaller(final Connection connection) throws SQLException {
         super(connection);
         if (dialect != Dialect.POSTGRESQL) {
-            connection.close();
             throw new UnsupportedOperationException(dialect.toString());
         }
         final DatabaseMetaData metadata = connection.getMetaData();

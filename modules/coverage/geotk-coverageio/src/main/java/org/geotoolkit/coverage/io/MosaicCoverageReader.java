@@ -33,7 +33,7 @@ import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriteParam;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Debug;
@@ -174,10 +174,10 @@ final class MosaicCoverageReader extends ImageCoverageReader {
         try {
             manager = builder.writeFromInput(input, params);
             if (policy == TileWritingPolicy.OVERWRITE) {
-                final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialized));
-                out.writeObject(manager);
-                out.writeObject(crs);
-                out.close();
+                try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialized))) {
+                    out.writeObject(manager);
+                    out.writeObject(crs);
+                }
             }
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);

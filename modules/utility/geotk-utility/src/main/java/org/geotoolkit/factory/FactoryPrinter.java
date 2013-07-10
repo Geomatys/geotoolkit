@@ -97,7 +97,7 @@ final class FactoryPrinter implements Comparator<Class<?>> {
         /*
          * Gets the categories in some sorted order.
          */
-        final Map<Class<?>,FactoryRegistry> categories = new HashMap<Class<?>,FactoryRegistry>();
+        final Map<Class<?>,FactoryRegistry> categories = new HashMap<>();
         for (final FactoryRegistry registry : registries) {
             for (final Iterator<Class<?>> it=registry.getCategories(); it.hasNext();) {
                 categories.put(it.next(), registry);

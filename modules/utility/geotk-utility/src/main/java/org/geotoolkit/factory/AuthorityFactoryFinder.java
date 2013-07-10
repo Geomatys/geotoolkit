@@ -32,7 +32,8 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
 import org.geotoolkit.lang.Configuration;
 import org.apache.sis.internal.util.Citations;
-import org.geotoolkit.util.collection.XCollections;
+
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -83,7 +84,7 @@ public final class AuthorityFactoryFinder extends FactoryFinder {
          * changes for clearing their cache.
          */
         if (authorityNames == null) {
-            authorityNames = new LinkedHashSet<String>();
+            authorityNames = new LinkedHashSet<>();
             final Hints hints = org.geotoolkit.factory.Factory.EMPTY_HINTS;
 loop:       for (int i=0; ; i++) {
                 final Set<? extends AuthorityFactory> factories;
@@ -104,7 +105,7 @@ loop:       for (int i=0; ; i++) {
                     }
                 }
             }
-            authorityNames = XCollections.unmodifiableSet(authorityNames);
+            authorityNames = unmodifiableOrCopy(authorityNames);
         }
         return authorityNames;
     }

@@ -287,7 +287,7 @@ final class NetcdfTransform extends AbstractMathTransform implements MathTransfo
         final List<Parameter> param = projection.getProjectionParameters();
         final NetcdfParameter<?>[] values = new NetcdfParameter<?>[param.size()];
         for (int i=0; i<values.length; i++) {
-            values[i] = new NetcdfParameter(param.get(i));
+            values[i] = new NetcdfParameter<>(param.get(i));
         }
         return new ParameterGroup(Collections.singletonMap(
                 ParameterDescriptorGroup.NAME_KEY, projection.getClassName()), values);

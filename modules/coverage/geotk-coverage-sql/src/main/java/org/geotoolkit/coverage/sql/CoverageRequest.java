@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.Date;
+import java.util.Objects;
 import net.jcip.annotations.Immutable;
 import org.geotoolkit.util.Utilities;
 
@@ -79,7 +80,7 @@ final class CoverageRequest {
     public boolean equals(final Object object) {
         if (object instanceof CoverageRequest) {
             final CoverageRequest that = (CoverageRequest) object;
-            return Utilities.equals(this.layer, that.layer) &&
+            return Objects.equals(this.layer, that.layer) &&
                    this.startTime == that.startTime &&
                    this.endTime   == that.endTime &&
                    this.srid      == that.srid;

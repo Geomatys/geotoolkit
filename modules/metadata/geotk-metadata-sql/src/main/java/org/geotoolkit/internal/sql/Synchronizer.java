@@ -29,6 +29,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -36,9 +37,9 @@ import java.util.logging.LogRecord;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.XCollections;
+import org.apache.sis.util.logging.Logging;
+
+import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
 
 /**
@@ -186,26 +187,27 @@ public final class Synchronizer {
     private String[] getPrimaryKeys(final String table) throws SQLException {
         final String catalog = targetCatalog;
         final String schema  = targetSchema;
-        final ResultSet results = targetMetadata.getPrimaryKeys(catalog, schema, table);
-        String[] columns = CharSequences.EMPTY_ARRAY;
-        while (results.next()) {
-            if (catalog!=null && !catalog.equals(results.getString("TABLE_CAT"))) {
-                continue;
+        String[] columns;
+        try (ResultSet results = targetMetadata.getPrimaryKeys(catalog, schema, table)) {
+            columns = CharSequences.EMPTY_ARRAY;
+            while (results.next()) {
+                if (catalog!=null && !catalog.equals(results.getString("TABLE_CAT"))) {
+                    continue;
+                }
+                if (schema!=null && !schema.equals(results.getString("TABLE_SCHEM"))) {
+                    continue;
+                }
+                if (!table.equals(results.getString("TABLE_NAME"))) {
+                    continue;
+                }
+                final String column = results.getString("COLUMN_NAME");
+                final int index = results.getShort("KEY_SEQ");
+                if (index > columns.length) {
+                    columns = Arrays.copyOf(columns, index);
+                }
+                columns[index - 1] = column;
             }
-            if (schema!=null && !schema.equals(results.getString("TABLE_SCHEM"))) {
-                continue;
-            }
-            if (!table.equals(results.getString("TABLE_NAME"))) {
-                continue;
-            }
-            final String column = results.getString("COLUMN_NAME");
-            final int index = results.getShort("KEY_SEQ");
-            if (index > columns.length) {
-                columns = Arrays.copyOf(columns, index);
-            }
-            columns[index - 1] = column;
         }
-        results.close();
         return columns;
     }
 
@@ -259,10 +261,10 @@ public final class Synchronizer {
             buffer.append(" WHERE ").append(condition);
         }
         final String sql = buffer.toString();
-        final Statement targetStatement = target.createStatement();
-        final int count = pretend ? 0 : targetStatement.executeUpdate(sql);
-        log(UPDATE, "delete", sql + '\n' + count + " lignes supprimées.");
-        targetStatement.close();
+        try (Statement targetStatement = target.createStatement()) {
+            final int count = pretend ? 0 : targetStatement.executeUpdate(sql);
+            log(UPDATE, "delete", sql + '\n' + count + " lignes supprimées.");
+        }
     }
 
     /**
@@ -293,171 +295,167 @@ public final class Synchronizer {
             buffer.append(" WHERE ").append(condition);
         }
         String sql = buffer.toString();
-        final Statement  sourceStatement = source.createStatement();
-        final ResultSet  sourceResultSet = sourceStatement.executeQuery(sql);
-        final ResultSetMetaData metadata = sourceResultSet.getMetaData();
-        final String[] sourceColumns = new String[metadata.getColumnCount()];
-        for (int i=0; i<sourceColumns.length;) {
-            sourceColumns[i] = metadata.getColumnName(++i);
-        }
-        log(SELECT, "insert", sql);
-        /*
-         * Gets the primary keys of the target table. We don't check for primary keys in the
-         * source table since it may be a view. Then gets the index (counting from 1) in the
-         * source table for those primary keys.
-         */
-        final String[] pkColumns = getPrimaryKeys(table);
-        final int[] pkSourceIndex = new int[pkColumns.length];
-        for (int i=0; i<pkColumns.length; i++) {
-            final String name = pkColumns[i];
-            if ((pkSourceIndex[i] = getColumnIndex(metadata, name)) == 0) {
-                throw new SQLException("Primary key \"" + name + "\" defined in the target \"" +
-                        table + "\" table is not found in the source table.");
+        PreparedStatement existing = null;
+        TableWriter mismatchs = null;
+        try (Statement sourceStatement = source.createStatement();
+             ResultSet sourceResultSet = sourceStatement.executeQuery(sql))
+        {
+            final ResultSetMetaData metadata = sourceResultSet.getMetaData();
+            final String[] sourceColumns = new String[metadata.getColumnCount()];
+            for (int i=0; i<sourceColumns.length;) {
+                sourceColumns[i] = metadata.getColumnName(++i);
             }
-        }
-        final int[] nonpkSourceIndex = new int[sourceColumns.length - pkSourceIndex.length];
-        for (int i=0,j=0; i<sourceColumns.length;) {
-            if (!contains(pkSourceIndex, ++i)) {
-                nonpkSourceIndex[j++] = i;
-            }
-        }
-        assert !contains(nonpkSourceIndex, 0);
-        /*
-         * Creates the SQL statement for the SELECT or UPDATE query in the target database.
-         * This is used in order to search for existing entries before to insert a new one.
-         * This operation can be performed only if the target table contains at least one
-         * primary key column.
-         */
-        final PreparedStatement existing;
-        final boolean update = nonpkSourceIndex.length != 0 && onExisting == Policy.INSERT_OR_UPDATE;
-        final String quoteTarget = targetMetadata.getIdentifierQuoteString();
-        if (pkColumns.length == 0 || onExisting == Policy.DELETE_BEFORE_INSERT) {
-            existing = null;
-        } else {
-            buffer.setLength(0);
-            appendTableName(buffer.append(update ? "UPDATE " : "SELECT * FROM "), targetSchema, table, quoteTarget);
-            if (update) {
-                buffer.append(" SET ");
-                boolean afterFirst = false;
-                for (int i=0; i<nonpkSourceIndex.length; i++) {
-                    if (afterFirst) buffer.append(',');
-                    else afterFirst = true;
-                    final String name = sourceColumns[nonpkSourceIndex[i] - 1];
-                    buffer.append(quoteTarget).append(name).append(quoteTarget).append("=?");
-                }
-            }
-            String separator = " WHERE ";
+            log(SELECT, "insert", sql);
+            /*
+             * Gets the primary keys of the target table. We don't check for primary keys in the
+             * source table since it may be a view. Then gets the index (counting from 1) in the
+             * source table for those primary keys.
+             */
+            final String[] pkColumns = getPrimaryKeys(table);
+            final int[] pkSourceIndex = new int[pkColumns.length];
             for (int i=0; i<pkColumns.length; i++) {
                 final String name = pkColumns[i];
-                buffer.append(separator).append(quoteTarget).append(name).append(quoteTarget).append("=?");
-                separator = " AND ";
+                if ((pkSourceIndex[i] = getColumnIndex(metadata, name)) == 0) {
+                    throw new SQLException("Primary key \"" + name + "\" defined in the target \"" +
+                            table + "\" table is not found in the source table.");
+                }
             }
-            sql = buffer.toString();
-            existing = target.prepareStatement(sql);
-        }
-        /*
-         * Creates the target prepared statement for the INSERT queries. The parameters will
-         * need to be filled in the same order than the column from the source SELECT query.
-         */
-        buffer.setLength(0);
-        appendTableName(buffer.append("INSERT INTO "), targetSchema, table, quoteTarget);
-        buffer.append(" (");
-        for (int i=0; i<sourceColumns.length; i++) {
-            if (i != 0) buffer.append(',');
-            buffer.append(quoteTarget).append(sourceColumns[i]).append(quoteTarget);
-        }
-        buffer.append(") VALUES (");
-        for (int i=0; i<sourceColumns.length; i++) {
-            if (i != 0) buffer.append(',');
-            buffer.append('?');
-        }
-        sql = buffer.append(')').toString();
-        final PreparedStatement insertStatement = target.prepareStatement(sql);
-        /*
-         * Reads all records from the source table and check if a corresponding records exists
-         * in the target table. If such record exists and have identical content, then nothing
-         * is done. If the content is not identical, then a warning is printed.
-         */
-        int[] sourceToTarget = null;
-        TableWriter mismatchs = null;
-        final Object[] primaryKeyValues = new Object[pkColumns.length];
-        while (sourceResultSet.next()) {
-            if (cancel) break;
-            if (existing != null) {
-                int param = 0;
+            final int[] nonpkSourceIndex = new int[sourceColumns.length - pkSourceIndex.length];
+            for (int i=0,j=0; i<sourceColumns.length;) {
+                if (!contains(pkSourceIndex, ++i)) {
+                    nonpkSourceIndex[j++] = i;
+                }
+            }
+            assert !contains(nonpkSourceIndex, 0);
+            /*
+             * Creates the SQL statement for the SELECT or UPDATE query in the target database.
+             * This is used in order to search for existing entries before to insert a new one.
+             * This operation can be performed only if the target table contains at least one
+             * primary key column.
+             */
+            final boolean update = nonpkSourceIndex.length != 0 && onExisting == Policy.INSERT_OR_UPDATE;
+            final String quoteTarget = targetMetadata.getIdentifierQuoteString();
+            if (pkColumns.length != 0 && onExisting != Policy.DELETE_BEFORE_INSERT) {
+                buffer.setLength(0);
+                appendTableName(buffer.append(update ? "UPDATE " : "SELECT * FROM "), targetSchema, table, quoteTarget);
                 if (update) {
+                    buffer.append(" SET ");
+                    boolean afterFirst = false;
                     for (int i=0; i<nonpkSourceIndex.length; i++) {
-                        final Object value = sourceResultSet.getObject(nonpkSourceIndex[i]);
-                        existing.setObject(++param, value);
+                        if (afterFirst) buffer.append(',');
+                        else afterFirst = true;
+                        final String name = sourceColumns[nonpkSourceIndex[i] - 1];
+                        buffer.append(quoteTarget).append(name).append(quoteTarget).append("=?");
                     }
                 }
-                for (int i=0; i<pkSourceIndex.length; i++) {
-                    final Object value = sourceResultSet.getObject(pkSourceIndex[i]);
-                    existing.setObject(++param, value);
-                    primaryKeyValues[i] = value;
+                String separator = " WHERE ";
+                for (int i=0; i<pkColumns.length; i++) {
+                    final String name = pkColumns[i];
+                    buffer.append(separator).append(quoteTarget).append(name).append(quoteTarget).append("=?");
+                    separator = " AND ";
                 }
-                int count = 0;
-                if (update) {
-                    count = existing.executeUpdate();
-                } else {
-                    final ResultSet targetResultSet = existing.executeQuery();
-                    if (sourceToTarget == null) {
-                        sourceToTarget = getColumnIndex(targetResultSet.getMetaData(), sourceColumns);
-                    }
-                    while (targetResultSet.next()) {
-                        for (int i=0; i<sourceToTarget.length; i++) {
-                            final int index = sourceToTarget[i];
-                            if (index == 0) {
-                                // Compares only the columns present in both tables.
-                                continue;
-                            }
-                            final String source = sourceResultSet.getString(i+1);
-                            final String target = targetResultSet.getString(index);
-                            if (!Utilities.equals(source, target)) {
-                                if (mismatchs == null) {
-                                    mismatchs = createMismatchTable(table, pkColumns);
-                                } else {
-                                    mismatchs.nextLine();
-                                }
-                                for (int j=0; j<primaryKeyValues.length; j++) {
-                                    mismatchs.write(String.valueOf(primaryKeyValues[j]));
-                                    mismatchs.nextColumn();
-                                }
-                                mismatchs.write(sourceColumns[i]); mismatchs.nextColumn();
-                                mismatchs.write(source);           mismatchs.nextColumn();
-                                mismatchs.write(target);           mismatchs.nextLine();
-                            }
-                        }
-                        count++;
-                    }
-                    targetResultSet.close();
-                }
-                if (count != 0) {
-                    continue;
-                }
+                sql = buffer.toString();
+                existing = target.prepareStatement(sql);
             }
             /*
-             * At this point, we know that we have a new element.
-             * Now insert the new record in the target table.
+             * Creates the target prepared statement for the INSERT queries. The parameters will
+             * need to be filled in the same order than the column from the source SELECT query.
              */
-            for (int i=1; i<=sourceColumns.length; i++) {
-                insertStatement.setObject(i, sourceResultSet.getObject(i));
+            buffer.setLength(0);
+            appendTableName(buffer.append("INSERT INTO "), targetSchema, table, quoteTarget);
+            buffer.append(" (");
+            for (int i=0; i<sourceColumns.length; i++) {
+                if (i != 0) buffer.append(',');
+                buffer.append(quoteTarget).append(sourceColumns[i]).append(quoteTarget);
             }
-            final int count = pretend ? 1 : insertStatement.executeUpdate();
-            if (count == 1) {
-                log(UPDATE, "insert", insertStatement.toString());
-            } else {
-                log(Level.WARNING, "insert", count + " enregistrements ajoutés.");
+            buffer.append(") VALUES (");
+            for (int i=0; i<sourceColumns.length; i++) {
+                if (i != 0) buffer.append(',');
+                buffer.append('?');
             }
-        }
-        /*
-         * Disposes all resources used by this method.
-         */
-        sourceResultSet.close();
-        sourceStatement.close();
-        insertStatement.close();
-        if (existing != null) {
-            existing.close();
+            sql = buffer.append(')').toString();
+            try (PreparedStatement insertStatement = target.prepareStatement(sql)) {
+                /*
+                 * Reads all records from the source table and check if a corresponding records exists
+                 * in the target table. If such record exists and have identical content, then nothing
+                 * is done. If the content is not identical, then a warning is printed.
+                 */
+                int[] sourceToTarget = null;
+                final Object[] primaryKeyValues = new Object[pkColumns.length];
+                while (sourceResultSet.next()) {
+                    if (cancel) break;
+                    if (existing != null) {
+                        int param = 0;
+                        if (update) {
+                            for (int i=0; i<nonpkSourceIndex.length; i++) {
+                                final Object value = sourceResultSet.getObject(nonpkSourceIndex[i]);
+                                existing.setObject(++param, value);
+                            }
+                        }
+                        for (int i=0; i<pkSourceIndex.length; i++) {
+                            final Object value = sourceResultSet.getObject(pkSourceIndex[i]);
+                            existing.setObject(++param, value);
+                            primaryKeyValues[i] = value;
+                        }
+                        int count = 0;
+                        if (update) {
+                            count = existing.executeUpdate();
+                        } else {
+                            try (ResultSet targetResultSet = existing.executeQuery()) {
+                                if (sourceToTarget == null) {
+                                    sourceToTarget = getColumnIndex(targetResultSet.getMetaData(), sourceColumns);
+                                }
+                                while (targetResultSet.next()) {
+                                    for (int i=0; i<sourceToTarget.length; i++) {
+                                        final int index = sourceToTarget[i];
+                                        if (index == 0) {
+                                            // Compares only the columns present in both tables.
+                                            continue;
+                                        }
+                                        final String source = sourceResultSet.getString(i+1);
+                                        final String target = targetResultSet.getString(index);
+                                        if (!Objects.equals(source, target)) {
+                                            if (mismatchs == null) {
+                                                mismatchs = createMismatchTable(table, pkColumns);
+                                            } else {
+                                                mismatchs.nextLine();
+                                            }
+                                            for (int j=0; j<primaryKeyValues.length; j++) {
+                                                mismatchs.write(String.valueOf(primaryKeyValues[j]));
+                                                mismatchs.nextColumn();
+                                            }
+                                            mismatchs.write(sourceColumns[i]); mismatchs.nextColumn();
+                                            mismatchs.write(source);           mismatchs.nextColumn();
+                                            mismatchs.write(target);           mismatchs.nextLine();
+                                        }
+                                    }
+                                    count++;
+                                }
+                            }
+                        }
+                        if (count != 0) {
+                            continue;
+                        }
+                    }
+                    /*
+                     * At this point, we know that we have a new element.
+                     * Now insert the new record in the target table.
+                     */
+                    for (int i=1; i<=sourceColumns.length; i++) {
+                        insertStatement.setObject(i, sourceResultSet.getObject(i));
+                    }
+                    final int count = pretend ? 1 : insertStatement.executeUpdate();
+                    if (count == 1) {
+                        log(UPDATE, "insert", insertStatement.toString());
+                    } else {
+                        log(Level.WARNING, "insert", count + " enregistrements ajoutés.");
+                    }
+                }
+            }
+        } finally {
+            if (existing != null) {
+                existing.close();
+            }
         }
         if (mismatchs != null) {
             mismatchs.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
@@ -476,7 +474,7 @@ public final class Synchronizer {
     private TableWriter createMismatchTable(final String table, final String[] pkColumns)
             throws IOException
     {
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         out.write(lineSeparator);
         out.write(table);
         out.write(lineSeparator);
@@ -531,22 +529,22 @@ public final class Synchronizer {
          */
         final String catalog = targetCatalog;
         final String schema  = targetSchema;
-        final ResultSet dependencies = targetMetadata.getImportedKeys(catalog, schema, table);
-        while (dependencies.next()) {
-            String dependency = dependencies.getString("PKTABLE_CAT");
-            if (catalog!=null && !catalog.equals(dependency)) {
-                continue;
-            }
-            dependency = dependencies.getString("PKTABLE_SCHEM");
-            if (schema!=null && !schema.equals(dependency)) {
-                continue;
-            }
-            dependency = dependencies.getString("PKTABLE_NAME");
-            if (tables.containsKey(dependency)) {
-                copy(dependency, tables, onExisting);
+        try (ResultSet dependencies = targetMetadata.getImportedKeys(catalog, schema, table)) {
+            while (dependencies.next()) {
+                String dependency = dependencies.getString("PKTABLE_CAT");
+                if (catalog!=null && !catalog.equals(dependency)) {
+                    continue;
+                }
+                dependency = dependencies.getString("PKTABLE_SCHEM");
+                if (schema!=null && !schema.equals(dependency)) {
+                    continue;
+                }
+                dependency = dependencies.getString("PKTABLE_NAME");
+                if (tables.containsKey(dependency)) {
+                    copy(dependency, tables, onExisting);
+                }
             }
         }
-        dependencies.close();
         insert(table, condition, onExisting);
     }
 
@@ -571,19 +569,18 @@ search: while (!tables.isEmpty()) {
 nextTable: for (final String table : tables.keySet()) {
                 if (cancel) break search;
                 // Skips all tables that have dependencies.
-                final ResultSet dependents = targetMetadata.getExportedKeys(catalog, schema, table);
-                while (dependents.next()) {
-                    if ((catalog==null || catalog.equals(dependents.getString("FKTABLE_CAT"))) &&
-                        (schema ==null || schema .equals(dependents.getString("FKTABLE_SCHEM"))))
-                    {
-                        final String dependent = dependents.getString("FKTABLE_NAME");
-                        if (tables.containsKey(dependent)) {
-                            dependents.close();
-                            continue nextTable;
+                try (ResultSet dependents = targetMetadata.getExportedKeys(catalog, schema, table)) {
+                    while (dependents.next()) {
+                        if ((catalog==null || catalog.equals(dependents.getString("FKTABLE_CAT"))) &&
+                            (schema ==null || schema .equals(dependents.getString("FKTABLE_SCHEM"))))
+                        {
+                            final String dependent = dependents.getString("FKTABLE_NAME");
+                            if (tables.containsKey(dependent)) {
+                                continue nextTable;
+                            }
                         }
                     }
                 }
-                dependents.close();
                 // We have found a table which have no dependencies (a leaf).
                 copy(table, tables, onExisting);
                 continue search;
@@ -606,7 +603,7 @@ nextTable: for (final String table : tables.keySet()) {
      * @throws IOException if an error occurred while writing reports on this operation.
      */
     public void copy(final Policy onExisting, final String... tables) throws SQLException, IOException {
-        final Map<String,String> map = new LinkedHashMap<String,String>(XCollections.hashMapCapacity(tables.length));
+        final Map<String,String> map = new LinkedHashMap<>(hashMapCapacity(tables.length));
         for (final String table : tables) {
             map.put(table, null);
         }

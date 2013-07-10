@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
 import java.sql.Connection;
@@ -45,7 +46,8 @@ import org.geotoolkit.internal.sql.CoverageDatabaseInstaller;
 import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Wizards;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -130,10 +132,9 @@ final class CoverageDatabaseCreator extends DeferredWizardResult implements Runn
     @Override
     @SuppressWarnings("rawtypes")
     public void start(final Map settings, final ResultProgressHandle progress) {
-        final Connection connection = getLoggingService().getConnection();
         CoverageDatabaseInstaller installer = null;
         try {
-            try {
+            try (Connection connection = getLoggingService().getConnection()) {
                 installer = new CoverageDatabaseInstaller(connection) {
                     @Override protected void progress(int percent, String schema) {
                         progress.setProgress(percent, 100);
@@ -152,8 +153,6 @@ final class CoverageDatabaseCreator extends DeferredWizardResult implements Runn
                 installer.user        = wizard.user.getText();
                 installer.install();
                 installer.close(true);
-            } finally {
-                connection.close();
             }
             if (wizard.setAsDefaultEPSG.isSelected() && wizard.createEPSG.isSelected()) {
                 saveSettings(true);
@@ -161,7 +160,7 @@ final class CoverageDatabaseCreator extends DeferredWizardResult implements Runn
             if (wizard.setAsDefault.isSelected()) {
                 saveSettings(false);
             }
-        } catch (Exception exception) { // To many exceptions for enumerating them.
+        } catch (IOException | SQLException | FactoryException exception) {
             String message = exception.getLocalizedMessage();
             if (message == null) {
                 message = Classes.getShortClassName(exception);
@@ -194,9 +193,9 @@ final class CoverageDatabaseCreator extends DeferredWizardResult implements Runn
         setProperty(properties, ConfigurationKey.SCHEMA,   epsg ? EpsgInstaller.DEFAULT_SCHEMA : wizard.schema.getText());
         File file = (epsg ? Installation.EPSG : Installation.COVERAGES).validDirectory(true);
         file = new File(file, Installation.DATASOURCE_FILE);
-        final OutputStream out = new FileOutputStream(file);
-        properties.store(out, "Connection parameters from the installer.");
-        out.close();
+        try (OutputStream out = new FileOutputStream(file)) {
+            properties.store(out, "Connection parameters from the installer.");
+        }
     }
 
     /**

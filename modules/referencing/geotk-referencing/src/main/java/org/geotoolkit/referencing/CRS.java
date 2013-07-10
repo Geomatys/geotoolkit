@@ -39,10 +39,10 @@ import org.opengis.metadata.extent.*;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.Version;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Version;
+import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.Factories;
@@ -52,7 +52,7 @@ import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -291,7 +291,7 @@ public final class CRS extends Static {
     public static Version getVersion(final String authority) throws FactoryRegistryException {
         ensureNonNull("authority", authority);
         Object candidate = AuthorityFactoryFinder.getCRSAuthorityFactory(authority, null);
-        final Set<Factory> guard = new HashSet<Factory>();
+        final Set<Factory> guard = new HashSet<>();
         while (candidate instanceof Factory) {
             final Factory factory = (Factory) candidate;
             if (!guard.add(factory)) {

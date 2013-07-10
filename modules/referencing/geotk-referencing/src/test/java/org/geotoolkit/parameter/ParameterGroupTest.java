@@ -51,9 +51,9 @@ public final strictfp class ParameterGroupTest extends ParameterTestBase {
         final Integer ONE = 1;
         final Class<Integer> I = Integer.class;
         final ParameterDescriptor<Integer> p1, p2, p3, p4;
-        p1 = new DefaultParameterDescriptor<Integer>(name("1"), I, null, ONE, null, null, null, true);
-        p2 = new DefaultParameterDescriptor<Integer>(name("2"), I, null, ONE, null, null, null, true);
-        p3 = new DefaultParameterDescriptor<Integer>(name("3"), I, null, ONE, null, null, null, false);
+        p1 = new DefaultParameterDescriptor<>(name("1"), I, null, ONE, null, null, null, true);
+        p2 = new DefaultParameterDescriptor<>(name("2"), I, null, ONE, null, null, null, true);
+        p3 = new DefaultParameterDescriptor<>(name("3"), I, null, ONE, null, null, null, false);
         p4 = new DefaultParameterDescriptor<Integer>(name("4"), I, null, ONE, null, null, null, false) {
             /**
              * We are cheating here:  {@code maximumOccurs} should always be 1 for
@@ -67,14 +67,14 @@ public final strictfp class ParameterGroupTest extends ParameterTestBase {
         };
 
         final Parameter<Integer> v1, v2, v3, v4, v1b, v2b, v3b, v4b;
-        v1  = new Parameter<Integer>(p1); v1 .setValue( 10);
-        v2  = new Parameter<Integer>(p2); v2 .setValue( 20);
-        v3  = new Parameter<Integer>(p3); v3 .setValue( 30);
-        v4  = new Parameter<Integer>(p4); v4 .setValue( 40);
-        v1b = new Parameter<Integer>(p1); v1b.setValue(-10);
-        v2b = new Parameter<Integer>(p2); v2b.setValue(-20);
-        v3b = new Parameter<Integer>(p3); v3b.setValue(-30);
-        v4b = new Parameter<Integer>(p4); v4b.setValue(-40);
+        v1  = new Parameter<>(p1); v1 .setValue( 10);
+        v2  = new Parameter<>(p2); v2 .setValue( 20);
+        v3  = new Parameter<>(p3); v3 .setValue( 30);
+        v4  = new Parameter<>(p4); v4 .setValue( 40);
+        v1b = new Parameter<>(p1); v1b.setValue(-10);
+        v2b = new Parameter<>(p2); v2b.setValue(-20);
+        v3b = new Parameter<>(p3); v3b.setValue(-30);
+        v4b = new Parameter<>(p4); v4b.setValue(-40);
 
         validate(v1);
         validate(v2);

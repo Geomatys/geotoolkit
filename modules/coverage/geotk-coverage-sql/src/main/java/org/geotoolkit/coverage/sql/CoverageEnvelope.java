@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.Date;
+import java.util.Objects;
 import java.awt.Dimension;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
@@ -33,9 +34,9 @@ import org.opengis.referencing.crs.SingleCRS;
 
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.geometry.AbstractEnvelope;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.AbstractEnvelope;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display.shape.FloatDimension2D;
 import org.geotoolkit.display.shape.DoubleDimension2D;
@@ -266,7 +267,7 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
             dim = dimensionColinearWith(cs, database.verticalCRS);
             if (dim >= 0) {
                 final NumberRange<?> altitude = getVerticalRange();
-                envelope.setRange(dim, altitude.getMinimum(), altitude.getMaximum());
+                envelope.setRange(dim, altitude.getMinDouble(), altitude.getMaxDouble());
             }
             final DefaultTemporalCRS temporalCRS = database.temporalCRS;
             dim = dimensionColinearWith(cs, temporalCRS);
@@ -389,7 +390,7 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
      * @see #getTimeRange()
      */
     public NumberRange<Double> getVerticalRange() {
-        return NumberRange.create(zMin, zMax);
+        return NumberRange.create(zMin, true, zMax, true);
     }
 
     /**
@@ -403,8 +404,8 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
     public final boolean setVerticalRange(final NumberRange<?> range) {
         final double minimum, maximum;
         if (range != null) {
-            minimum = range.getMinimum(true);
-            maximum = range.getMaximum(true);
+            minimum = range.getMinDouble(true);
+            maximum = range.getMaxDouble(true);
         } else {
             minimum = NEGATIVE_INFINITY;
             maximum = POSITIVE_INFINITY;
@@ -708,7 +709,7 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
                    Utilities.equals(zMax, that.zMax) &&
                    Utilities.equals(xResolution, that.xResolution) &&
                    Utilities.equals(yResolution, that.yResolution) &&
-                   Utilities.equals(database.spatioTemporalCRS, that.database.spatioTemporalCRS);
+                   Objects.equals(database.spatioTemporalCRS, that.database.spatioTemporalCRS);
         }
         return false;
     }

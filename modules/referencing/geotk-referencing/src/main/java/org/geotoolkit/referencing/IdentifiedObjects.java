@@ -43,8 +43,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.naming.DefaultNameSpace;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.apache.sis.util.iso.DefaultNameSpace;
+import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
@@ -52,7 +52,6 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.IdentifiedObject.IDENTIFIERS_KEY;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.internal.Citations.iterator;
 import static org.apache.sis.internal.util.Citations.identifierMatches;
 
 
@@ -148,6 +147,20 @@ public final class IdentifiedObjects extends Static {
     }
 
     /**
+     * Returns the collection iterator, or {@code null} if the given collection is null or
+     * empty. We use this method as a paranoiac safety against broken implementations.
+     *
+     * @param  <E> The type of elements in the collection.
+     * @param  collection The collection from which to get the iterator, or {@code null}.
+     * @return The iterator over the given collection elements, or {@code null}.
+     *
+     * @since 3.20
+     */
+    private static <E> Iterator<E> iterator(final Collection<E> collection) {
+        return (collection != null && !collection.isEmpty()) ? collection.iterator() : null;
+    }
+
+    /**
      * Returns the informations provided in the specified identified object as a map of
      * properties. The returned map contains keys declared in the {@link IdentifiedObject}
      * interface, for example {@link IdentifiedObject#NAME_KEY NAME_KEY}. The values are
@@ -183,7 +196,7 @@ public final class IdentifiedObjects extends Static {
      * @return A view of the identified object as a mutable map.
      */
     public static Map<String,Object> getProperties(final IdentifiedObject info, final Citation authority) {
-        final Map<String,Object> properties = new HashMap<String,Object>(getProperties(info));
+        final Map<String,Object> properties = new HashMap<>(getProperties(info));
         properties.put(NAME_KEY, new NamedIdentifier(authority, info.getName().getCode()));
         properties.remove(IDENTIFIERS_KEY);
         return properties;
@@ -243,7 +256,7 @@ public final class IdentifiedObjects extends Static {
      * @since 3.20
      */
     public static Set<String> getNames(final IdentifiedObject info, final Citation authority) {
-        final Set<String> names = new LinkedHashSet<String>(8);
+        final Set<String> names = new LinkedHashSet<>(8);
         name(info, authority, names);
         return names;
     }

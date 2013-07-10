@@ -50,7 +50,7 @@ import org.geotoolkit.image.io.TextImageReader;
 import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.stream.ChannelImageInputStream;
+import org.apache.sis.internal.storage.ChannelImageInputStream;
 import org.geotoolkit.internal.image.io.DataTypes;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
@@ -352,7 +352,7 @@ public class AsciiGridReader extends TextImageReader {
     private Map<String,String> readHeader() throws IOException {
         final ReadableByteChannel channel = getChannel();
         final StringBuilder       stbuff  = new StringBuilder(32);
-        final Map<String,String>  header  = new HashMap<String,String>();
+        final Map<String,String>  header  = new HashMap<>();
         ByteBuffer buffer = this.buffer;
         if (buffer == null) {
             this.buffer = buffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
@@ -780,14 +780,13 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
         final BufferedImage image;
         try {
             buffer.clear().limit(0);
-            final ImageInputStream in = new ChannelImageInputStream(Channels.newChannel(binaryStream), buffer);
-            final RawImageInputStream rawStream = new RawImageInputStream(in, getRawImageType(imageIndex),
-                    new long[1], new Dimension[] {new Dimension(width, height)});
-            try {
+            final ImageInputStream in = new ChannelImageInputStream(IOUtilities.name(input),
+                    Channels.newChannel(binaryStream), buffer, true);
+            try (RawImageInputStream rawStream = new RawImageInputStream(in, getRawImageType(imageIndex),
+                   new long[1], new Dimension[] {new Dimension(width, height)}))
+            {
                 binaryReader.setInput(rawStream, true, true);
                 image = binaryReader.read(imageIndex, param);
-            } finally {
-                rawStream.close();
             }
         } finally {
             binaryStream.close();

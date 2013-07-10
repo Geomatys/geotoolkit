@@ -25,7 +25,7 @@ import javax.media.jai.JAI;
 
 import org.junit.*;
 
-import static org.geotoolkit.test.Assert.*;
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -61,8 +61,8 @@ public final strictfp class HintsTest {
      */
     @Test
     public void testKeySerialization() {
-        assertSame(Hints.CS_FACTORY,    assertSerializable(Hints.CS_FACTORY));
-        assertSame(Hints.DATUM_FACTORY, assertSerializable(Hints.DATUM_FACTORY));
+        assertSame(Hints.CS_FACTORY,    assertSerializedEquals(Hints.CS_FACTORY));
+        assertSame(Hints.DATUM_FACTORY, assertSerializedEquals(Hints.DATUM_FACTORY));
     }
 
     /**
@@ -73,7 +73,7 @@ public final strictfp class HintsTest {
         final Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
         assertFalse(hints.isEmpty());
 
-        Map<RenderingHints.Key,Object> map = new HashMap<RenderingHints.Key,Object>();
+        Map<RenderingHints.Key,Object> map = new HashMap<>();
         assertNull(map.put(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.FALSE));
         map = Collections.unmodifiableMap(map);
         assertFalse(map.isEmpty());

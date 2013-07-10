@@ -44,7 +44,7 @@ final class CharSequenceConverter<T> extends SimpleConverter<CharSequence,T> imp
      * A converter from {@link CharSequence} to {@link String}.
      */
     static final CharSequenceConverter<String> STRING =
-            new CharSequenceConverter<String>(String.class, IdentityConverter.STRING);
+            new CharSequenceConverter<>(String.class, IdentityConverter.STRING);
 
     /**
      * The target type requested by the user. We retain this type explicitly instead
@@ -83,7 +83,7 @@ final class CharSequenceConverter<T> extends SimpleConverter<CharSequence,T> imp
         if (next.getSourceClass().isAssignableFrom(CharSequence.class)) {
             return (ObjectConverter<? super CharSequence, T>) next;
         }
-        return new CharSequenceConverter<T>(targetType, next);
+        return new CharSequenceConverter<>(targetType, next);
     }
 
     /**

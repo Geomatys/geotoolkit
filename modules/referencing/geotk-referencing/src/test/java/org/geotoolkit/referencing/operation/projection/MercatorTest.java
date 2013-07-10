@@ -21,7 +21,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
 import org.junit.*;
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 
 import static java.lang.StrictMath.*;
@@ -41,7 +41,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjectionT
  *
  * @since 3.00
  */
-@Depend(UnitaryProjectionTest.class)
+@DependsOn(UnitaryProjectionTest.class)
 public final strictfp class MercatorTest extends ProjectionTestBase {
     /**
      * Tolerance level for comparing floating point numbers.

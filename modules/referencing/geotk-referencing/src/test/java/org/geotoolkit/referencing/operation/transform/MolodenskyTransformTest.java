@@ -25,7 +25,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.test.referencing.ParameterizedTransformTest;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.factory.FactoryFinder;
 import static org.geotoolkit.referencing.datum.DefaultEllipsoid.*;
 
@@ -44,7 +44,7 @@ import static org.opengis.test.Assert.*;
  *
  * @since 2.5
  */
-@Depend(AbstractMathTransformTest.class)
+@DependsOn(AbstractMathTransformTest.class)
 public final strictfp class MolodenskyTransformTest extends TransformTestBase {
     /**
      * Tolerance factor.

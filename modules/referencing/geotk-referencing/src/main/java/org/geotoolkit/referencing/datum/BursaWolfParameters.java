@@ -20,6 +20,7 @@
  */
 package org.geotoolkit.referencing.datum;
 
+import java.util.Objects;
 import java.io.Serializable;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
@@ -250,7 +251,7 @@ public class BursaWolfParameters extends FormattableObject implements Cloneable,
                    Utilities.equals(this.ey,  that.ey)  &&
                    Utilities.equals(this.ez,  that.ez)  &&
                    Utilities.equals(this.ppm, that.ppm) &&
-                   Utilities.equals(this.targetDatum, that.targetDatum);
+                     Objects.equals(this.targetDatum, that.targetDatum);
         }
         return false;
     }

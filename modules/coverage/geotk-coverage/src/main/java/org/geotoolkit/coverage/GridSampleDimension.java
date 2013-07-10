@@ -22,6 +22,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,17 +40,16 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.converter.Numbers;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.iso.Types;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -416,7 +416,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
         }
         final int  nameCount    = (categories != null) ? categories.length : 0;
         final int  nodataCount  = (nodata     != null) ?     nodata.length : 0;
-        final List<Category> categoryList = new ArrayList<Category>(nameCount + nodataCount + 2);
+        final List<Category> categoryList = new ArrayList<>(nameCount + nodataCount + 2);
         /*
          * STEP 1 - Add a qualitative category for each 'nodata' value.
          *   NAME: Fetched from 'categories' if available, otherwise default to the value.
@@ -438,7 +438,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
                 name = value.toString();
             }
             @SuppressWarnings({"unchecked","rawtypes"})
-            final NumberRange<?> range = new NumberRange(value.getClass(), value, value);
+            final NumberRange<?> range = new NumberRange(value.getClass(), value, true, value, true);
             final Color[] colors = ColorUtilities.subarray(palette, intValue, intValue + 1);
             categoryList.add(new Category(name, colors, range, (MathTransform1D) null));
         }
@@ -476,7 +476,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
                     max    = Numbers.cast(max, classe);
                 }
                 @SuppressWarnings({"unchecked","rawtypes"})
-                final NumberRange<?> range = new NumberRange(classe, min, max);
+                final NumberRange<?> range = new NumberRange(classe, min, true, max, true);
                 final Color[] colors = ColorUtilities.subarray(palette, lower, upper);
                 categoryList.add(new Category(name, colors, range, (MathTransform1D) null));
                 lower = upper;
@@ -537,8 +537,8 @@ public class GridSampleDimension implements SampleDimension, Serializable {
             boolean maxIncluded = true;
             for (int i = categoryList.size(); --i >= 0;) {
                 final NumberRange<?> range = categoryList.get(i).getRange();
-                final double min = range.getMinimum();
-                final double max = range.getMaximum();
+                final double min = range.getMinDouble();
+                final double max = range.getMaxDouble();
                 if (max-minimum < maximum-min) {
                     if (max >= minimum) {
                         // We are loosing some sample values in
@@ -650,7 +650,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
          * sample dimension.
          */
         if (description != null) {
-            this.description = SimpleInternationalString.wrap(description);
+            this.description = Types.toInternationalString(description);
         } else {
             // we need to build one. Let's use the category list in
             // order to build the name of the sample dimension
@@ -1466,7 +1466,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
         }
         if (object instanceof GridSampleDimension) {
             final GridSampleDimension that = (GridSampleDimension) object;
-            return Utilities.equals(this.categories, that.categories);
+            return Objects.equals(this.categories, that.categories);
             // Since everything is deduced from CategoryList, two sample dimensions
             // should be equal if they have the same list of categories.
         }

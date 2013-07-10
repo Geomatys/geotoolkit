@@ -72,9 +72,9 @@ final class ImageFormatEntry implements Comparable<ImageFormatEntry> {
      *
      * @param defaultFormat The format to select by default (can not be {@code null}).
      */
-    static JComboBox comboBox(final String defaultFormat) {
-        final Set<ImageFormatEntry> preferred = new LinkedHashSet<ImageFormatEntry>();
-        final JComboBox formatChoices = new JComboBox(list(defaultFormat, preferred));
+    static JComboBox<ImageFormatEntry> comboBox(final String defaultFormat) {
+        final Set<ImageFormatEntry> preferred = new LinkedHashSet<>();
+        final JComboBox<ImageFormatEntry> formatChoices = new JComboBox<>(list(defaultFormat, preferred));
         final Iterator<ImageFormatEntry> it = preferred.iterator();
         if (it.hasNext()) {
             formatChoices.setSelectedItem(it.next());
@@ -91,7 +91,7 @@ final class ImageFormatEntry implements Comparable<ImageFormatEntry> {
      * @param preferred Where to store the entry for the preferred format.
      */
     private static ImageFormatEntry[] list(final String defaultFormat, final Set<ImageFormatEntry> preferred) {
-        final Map<String,ImageFormatEntry> formatsDone = new HashMap<String,ImageFormatEntry>();
+        final Map<String,ImageFormatEntry> formatsDone = new HashMap<>();
         final IIORegistry registry = IIORegistry.getDefaultInstance();
         /*
          * Get the list of writers first, because they are typically less numerous
@@ -138,7 +138,7 @@ skip:   for (final Iterator<ImageReaderSpi> it=registry.getServiceProviders(Imag
          * Gets the array of entries, removing the one without readers.
          * We wraps in a HashSet in order to remove duplicated values.
          */
-        final Collection<ImageFormatEntry> entries = new HashSet<ImageFormatEntry>(formatsDone.values());
+        final Collection<ImageFormatEntry> entries = new HashSet<>(formatsDone.values());
         ImageFormatEntry[] array = entries.toArray(new ImageFormatEntry[entries.size()]);
         int count = 0;
         for (int i=0; i<array.length; i++) {

@@ -96,7 +96,7 @@ final class FactoryIteratorProviders {
             if (iteratorProviders != null) {
                 iteratorProviders.retainAll(GLOBAL.iteratorProviders);
             } else if (!GLOBAL.iteratorProviders.isEmpty()) {
-                iteratorProviders = new LinkedHashSet<FactoryIteratorProvider>();
+                iteratorProviders = new LinkedHashSet<>();
             }
             /*
              * If 'addFactoryIteratorProvider(...)' has been invoked since the last time
@@ -129,7 +129,7 @@ final class FactoryIteratorProviders {
      */
     synchronized boolean addFactoryIteratorProvider(FactoryIteratorProvider provider) {
         if (iteratorProviders == null) {
-            iteratorProviders = new LinkedHashSet<FactoryIteratorProvider>();
+            iteratorProviders = new LinkedHashSet<>();
         }
         if (iteratorProviders.add(provider)) {
             modifications++;

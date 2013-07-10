@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.coverage;
 
 import java.awt.Color;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.text.NumberFormat;
@@ -34,9 +35,9 @@ import org.opengis.metadata.content.TransferFunctionType;
 import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.internal.InternalUtilities;
@@ -165,7 +166,7 @@ public class CategoryRecord implements Cloneable, Serializable {
      *        this list is already available from the {@link SampleDimensionPanel} GUI.
      */
     CategoryRecord(Category category, final Locale locale,
-            PaletteFactory paletteFactory, ComboBoxModel palettes)
+            PaletteFactory paletteFactory, ComboBoxModel<ColorPalette> palettes)
     {
         this.category = category = category.geophysics(false);
         final InternationalString name = category.getName();
@@ -272,7 +273,7 @@ public class CategoryRecord implements Cloneable, Serializable {
      * @return {@code true} if this object changed as a result of this method call.
      */
     public boolean setName(final String name) {
-        if (Utilities.equals(name, this.name)) {
+        if (Objects.equals(name, this.name)) {
             return false;
         }
         this.name = name;
@@ -299,7 +300,7 @@ public class CategoryRecord implements Cloneable, Serializable {
             if (min != null && min <= 0) min = 1;
             if (max != null && max <= 0) max = min;
         }
-        return new NumberRange<Integer>(Integer.class, min, max);
+        return new NumberRange<>(Integer.class, min, true, max, true);
     }
 
     /**
@@ -324,7 +325,7 @@ public class CategoryRecord implements Cloneable, Serializable {
             if (min != null && min <= 0) min = Double.MIN_VALUE;
             if (max != null && max <= 0) max = min;
         }
-        return new NumberRange<Double>(Double.class, min, max);
+        return new NumberRange<>(Double.class, min, true, max, true);
     }
 
     /**
@@ -334,7 +335,7 @@ public class CategoryRecord implements Cloneable, Serializable {
      */
     public NumberRange<Integer> getSampleRange() {
         if (sampleRange == null) {
-            sampleRange = NumberRange.create(sampleMin, sampleMax);
+            sampleRange = NumberRange.create(sampleMin, true, sampleMax, true);
         }
         return sampleRange;
     }
@@ -418,7 +419,7 @@ public class CategoryRecord implements Cloneable, Serializable {
                 min = MathFunctions.pow10(min);
                 max = MathFunctions.pow10(max);
             }
-            valueRange = NumberRange.create(min, max);
+            valueRange = NumberRange.create(min, true, max, true);
         }
         return valueRange;
     }
@@ -448,8 +449,8 @@ public class CategoryRecord implements Cloneable, Serializable {
                 break;
             }
         }
-        double ymin = (minimum != null) ? minimum.doubleValue() : getValueRange().getMinimum(true);
-        double ymax = (maximum != null) ? maximum.doubleValue() : getValueRange().getMaximum(true);
+        double ymin = (minimum != null) ? minimum.doubleValue() : getValueRange().getMinDouble(true);
+        double ymax = (maximum != null) ? maximum.doubleValue() : getValueRange().getMaxDouble(true);
         if (ymin > ymax) {
             final double tmp = ymin;
             ymin = ymax;
@@ -626,7 +627,7 @@ public class CategoryRecord implements Cloneable, Serializable {
      * @since 3.14
      */
     public boolean setPaletteName(final String name) {
-        final boolean changed = !Utilities.equals(name, paletteName);
+        final boolean changed = !Objects.equals(name, paletteName);
         if (changed) {
             paletteName = name;
             category = null;

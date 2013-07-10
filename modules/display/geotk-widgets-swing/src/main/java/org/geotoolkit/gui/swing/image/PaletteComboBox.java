@@ -69,7 +69,7 @@ public class PaletteComboBox extends JComponent {
     /**
      * The combo box providing color palette choices.
      */
-    private final JComboBox comboBox;
+    private final JComboBox<Object> comboBox;
 
     /**
      * Creates a new combo box using the
@@ -104,12 +104,12 @@ public class PaletteComboBox extends JComponent {
              */
             names = Collections.singleton(SpatialImageReadParam.DEFAULT_PALETTE_NAME);
         }
-        final List<Object> items = new ArrayList<Object>(names.size() + 1);
+        final List<Object> items = new ArrayList<>(names.size() + 1);
         items.add(resources.getString(Vocabulary.Keys.NONE));
         for (final String name : names) {
             items.add(new ColorPalette(name));
         }
-        comboBox = new JComboBox(items.toArray());
+        comboBox = new JComboBox<>(items.toArray());
         comboBox.setPrototypeDisplayValue(SpatialImageReadParam.DEFAULT_PALETTE_NAME); // For preventing pre-rendering of all palettes.
         comboBox.setRenderer(new PaletteCellRenderer(comboBox.getModel(), factory, locale));
         setLayout(new BorderLayout());
@@ -294,7 +294,7 @@ public class PaletteComboBox extends JComponent {
      * @module
      */
     @SuppressWarnings("serial")
-    private final class CellEditor extends AbstractCellEditor implements TableCellEditor, Callable<ComboBoxModel> {
+    private final class CellEditor extends AbstractCellEditor implements TableCellEditor, Callable<ComboBoxModel<Object>> {
         /**
          * Returns {@code true} if the cell can be edited. We require a double click,
          * otherwise the combo box drop down list appears and disappears too often.
@@ -328,7 +328,7 @@ public class PaletteComboBox extends JComponent {
          * to get the list of available palettes. Should not be invoked by client code.
          */
         @Override
-        public ComboBoxModel call() {
+        public ComboBoxModel<Object> call() {
             return comboBox.getModel();
         }
     }

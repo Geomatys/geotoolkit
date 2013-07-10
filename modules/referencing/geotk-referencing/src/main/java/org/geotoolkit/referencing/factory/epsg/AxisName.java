@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
+import java.util.Objects;
 import net.jcip.annotations.Immutable;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -65,8 +65,8 @@ final class AxisName {
     public boolean equals(final Object object) {
         if (object instanceof AxisName) {
             final AxisName that = (AxisName) object;
-            return Utilities.equals(this.name,        that.name) &&
-                   Utilities.equals(this.description, that.description);
+            return Objects.equals(this.name,        that.name) &&
+                   Objects.equals(this.description, that.description);
         }
         return false;
     }

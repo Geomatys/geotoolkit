@@ -38,13 +38,13 @@ import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.coverage.grid.GridEnvelope;
 
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.iso.Types;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.coverage.grid.GeneralGridCoordinates;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.resources.Errors;
 
 
@@ -160,7 +160,7 @@ final class MetadataProxy<T> implements InvocationHandler {
      */
     static <T> T newProxyInstance(final Class<T> type, final MetadataNodeParser accessor) {
         return type.cast(Proxy.newProxyInstance(MetadataProxy.class.getClassLoader(),
-                new Class<?>[] {type}, new MetadataProxy<T>(type, accessor)));
+                new Class<?>[] {type}, new MetadataProxy<>(type, accessor)));
     }
 
     /**
@@ -170,7 +170,7 @@ final class MetadataProxy<T> implements InvocationHandler {
     final T newProxyInstance(final int index) {
         final Class<T> type = interfaceType;
         return type.cast(Proxy.newProxyInstance(MetadataProxy.class.getClassLoader(),
-                new Class<?>[] {type}, new MetadataProxy<T>(this, index)));
+                new Class<?>[] {type}, new MetadataProxy<>(this, index)));
     }
 
     /**
@@ -251,6 +251,32 @@ final class MetadataProxy<T> implements InvocationHandler {
     }
 
     /**
+     * Casts the {@code type} class to represent a subclass of the class represented by the
+     * {@code sub} argument. Checks that the cast is valid, and returns {@code null} if it
+     * is not.
+     * <p>
+     * This method performs the same work than
+     * <code>type.{@linkplain Class#asSubclass(Class) asSubclass}(sub)</code>,
+     * except that {@code null} is returned instead than throwing an exception
+     * if the cast is not valid or if any of the argument is {@code null}.
+     *
+     * @param  <U>  The compile-time bounds of the {@code sub} argument.
+     * @param  type The class to cast to a sub-class, or {@code null}.
+     * @param  sub  The subclass to cast to, or {@code null}.
+     * @return The {@code type} argument casted to a subclass of the {@code sub} argument,
+     *         or {@code null} if this cast can not be performed.
+     *
+     * @see Class#asSubclass(Class)
+     */
+    @SuppressWarnings("unchecked")
+    private static <U> Class<? extends U> asSubclassOrNull(final Class<?> type, final Class<U> sub) {
+        // Design note: We are required to return null if 'sub' is null (not to return 'type'
+        // unchanged), because if we returned 'type', we would have an unsafe cast if this
+        // method is invoked indirectly from a parameterized method.
+        return (type != null && sub != null && sub.isAssignableFrom(type)) ? (Class) type : null;
+    }
+
+    /**
      * For an attribute containing an array, return the length of that array.
      * This is used only for implementing a few {@link #SPECIAL_CASE special cases}.
      */
@@ -320,14 +346,11 @@ final class MetadataProxy<T> implements InvocationHandler {
                 if (arg instanceof Integer) {
                     final int dim = (Integer) arg;
                     if (proxy instanceof GridEnvelope) {
-                        // TODO: Use String in switch with JDK 7.
-                        if (methodName.equals("getLow")) {
-                            return getAttributeAsInteger("low", dim);
-                        } else if (methodName.equals("getHigh")) {
-                            return getAttributeAsInteger("high", dim);
-                        } else if (methodName.equals("getSpan")) {
-                            return getAttributeAsInteger("high", dim) -
-                                   getAttributeAsInteger("low",  dim) + 1;
+                        switch (methodName) {
+                            case "getLow":  return getAttributeAsInteger("low",  dim);
+                            case "getHigh": return getAttributeAsInteger("high", dim);
+                            case "getSpan": return getAttributeAsInteger("high", dim) -
+                                                   getAttributeAsInteger("low",  dim) + 1;
                         }
                     }
                 }
@@ -405,11 +428,11 @@ final class MetadataProxy<T> implements InvocationHandler {
         if (targetType.isAssignableFrom(NumberRange.class)) return accessor.getAttributeAsRange   (name);
         if (targetType.isAssignableFrom(Citation   .class)) return accessor.getAttributeAsCitation(name);
         if (targetType.isAssignableFrom(InternationalString.class)) {
-            return SimpleInternationalString.wrap(accessor.getAttribute(name));
+            return Types.toInternationalString(accessor.getAttribute(name));
         }
         if (targetType.isAssignableFrom(Unit.class)) {
-            final Class<?> bounds = Classes.boundOfParameterizedAttribute(method);
-            return accessor.getAttributeAsUnit(name, Classes.asSubclassOrNull(bounds, Quantity.class));
+            final Class<?> bounds = Classes.boundOfParameterizedProperty(method);
+            return accessor.getAttributeAsUnit(name, asSubclassOrNull(bounds, Quantity.class));
         }
         if (SPECIAL_CASE && Character.isLowerCase(name.charAt(0))) {
             /*
@@ -433,12 +456,12 @@ final class MetadataProxy<T> implements InvocationHandler {
              * value because we want to recompute it on next method call (the returned list
              * is not "live").
              */
-            Class<?> componentType = Classes.boundOfParameterizedAttribute(method);
+            Class<?> componentType = Classes.boundOfParameterizedProperty(method);
             if (componentType.isAssignableFrom(String.class)) {
                 return UnmodifiableArrayList.wrap(accessor.getAttributeAsStrings(name, false));
             }
             if (componentType.isAssignableFrom(InternationalString.class)) {
-                return UnmodifiableArrayList.wrap(SimpleInternationalString.wrap(
+                return UnmodifiableArrayList.wrap(Types.toInternationalStrings(
                         accessor.getAttributeAsStrings(name, false)));
             }
             if (componentType.isAssignableFrom(Citation.class)) {
@@ -450,7 +473,7 @@ final class MetadataProxy<T> implements InvocationHandler {
              * IIOMetadataFormat may specify restrictions.
              */
             if (childs == null) {
-                childs = new HashMap<String, Object>();
+                childs = new HashMap<>();
             }
             List<?> list = (List<?>) childs.get(methodName);
             if (list == null) {
@@ -499,7 +522,7 @@ final class MetadataProxy<T> implements InvocationHandler {
          * A new proxy will be created for the nested child.
          */
         if (childs == null) {
-            childs = new HashMap<String, Object>();
+            childs = new HashMap<>();
         }
         Object child = childs.get(methodName);
         if (child == null) {

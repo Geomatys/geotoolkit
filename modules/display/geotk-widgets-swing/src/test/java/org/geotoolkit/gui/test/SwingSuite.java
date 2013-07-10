@@ -95,7 +95,8 @@ public final strictfp class SwingSuite extends SwingTestBase<About> {
     /**
      * Shows the widget provided by all the above test cases.
      */
-    private static void show(final Class<? extends SwingTestBase<?>>... tests) throws Exception {
+    @SafeVarargs
+    private static void show(final Class<? extends SwingTestBase<?>>... tests) throws ReflectiveOperationException {
         for (final Class<? extends SwingTestBase<?>> type : tests) {
             show(type != null ? type.newInstance() : null);
         }

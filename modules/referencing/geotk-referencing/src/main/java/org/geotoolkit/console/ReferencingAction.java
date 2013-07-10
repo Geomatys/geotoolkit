@@ -202,7 +202,7 @@ final class ReferencingAction {
      */
     private void listAuthorities() {
         final PrintWriter out = cmd.out;
-        final Set<Citation> done  = new HashSet<Citation>();
+        final Set<Citation> done  = new HashSet<>();
         final TableWriter   table = new TableWriter(out, TableWriter.SINGLE_VERTICAL_LINE);
         final TableWriter   notes = new TableWriter(out, " ");
         int noteCount = 0;
@@ -335,7 +335,7 @@ final class ReferencingAction {
         }
         final String authority = cmd.authority;
         final MathTransformFactory factory = FactoryFinder.getMathTransformFactory(HINTS);
-        final Set<OperationMethod> methods = new TreeSet<OperationMethod>(NAME_COMPARATOR);
+        final Set<OperationMethod> methods = new TreeSet<>(NAME_COMPARATOR);
         methods.addAll(factory.getAvailableMethods(type));
         final ParameterWriter writer = new ParameterWriter(cmd.out);
         writer.setLocale(cmd.locale);

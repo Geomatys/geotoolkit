@@ -41,7 +41,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.Envelope2D;
-import org.geotoolkit.geometry.ImmutableEnvelope;
+import org.apache.sis.geometry.ImmutableEnvelope;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
@@ -937,7 +937,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
                 return gridFromCRS2D.transform(point, null);
             } catch (TransformException exception) {
                 throw new CannotEvaluateException(Errors.format(Errors.Keys.CANT_EVALUATE_FOR_COORDINATE_1,
-                          AbstractGridCoverage.toString(point, Locale.getDefault()), exception));
+                          AbstractGridCoverage.toString(point, Locale.getDefault(Locale.Category.FORMAT)), exception));
             }
         }
         throw new InvalidGridGeometryException(Errors.Keys.NO_TRANSFORM2D_AVAILABLE);

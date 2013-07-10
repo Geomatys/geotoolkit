@@ -113,7 +113,7 @@ public class Interpolate extends Operation2D {
      * either a {@link String} or an {@link Interpolation} object.
      */
     public static final ParameterDescriptor<Object> TYPE =
-            new DefaultParameterDescriptor<Object>(Citations.OGC, "Type",
+            new DefaultParameterDescriptor<>(Citations.OGC, "Type",
                 Object.class,       // Value class (mandatory)
                 null,               // Array of valid values
                 "NearestNeighbor",  // Default value

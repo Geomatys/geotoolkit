@@ -47,7 +47,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
@@ -159,7 +159,7 @@ public class ImageFileChooser extends JFileChooser {
     public ImageFileChooser(final String defaultFormat, final boolean showProperties) {
         super();
         this.defaultFormat = defaultFormat;
-        providers = new HashMap<FileFilter,ImageReaderWriterSpi>();
+        providers = new HashMap<>();
         addPropertyChangeListener(SELECTED_FILES_CHANGED_PROPERTY, new PropertyChangeListener() {
             @Override public void propertyChange(PropertyChangeEvent event) {
                 selectedFiles = null;
@@ -278,9 +278,9 @@ public class ImageFileChooser extends JFileChooser {
         }
         final IIORegistry registry = IIORegistry.getDefaultInstance();
         final Iterator<? extends ImageReaderWriterSpi> it = registry.getServiceProviders(category, true);
-        final List<FileFilter> filters = new ArrayList<FileFilter>();
-        final Map<String,String> suffixDone = new HashMap<String,String>();
-        final Set<String> formatsDone = new HashSet<String>();
+        final List<FileFilter> filters = new ArrayList<>();
+        final Map<String,String> suffixDone = new HashMap<>();
+        final Set<String> formatsDone = new HashSet<>();
         final StringBuilder buffer = new StringBuilder();
         resetChoosableFileFilters();
         FileFilter preferred = null;
@@ -399,12 +399,11 @@ skip:   while (it.hasNext()) {
          */
         if (selectedFiles == null) {
             final File directory = getCurrentDirectory();
-            final List<File> content = new ArrayList<File>();
+            final List<File> content = new ArrayList<>();
             for (final File list : super.getSelectedFiles()) {
                 if (!filter.accept(list)) {
                     content.add(list);
-                } else try {
-                    final BufferedReader in = new BufferedReader(new FileReader(list));
+                } else try (BufferedReader in = new BufferedReader(new FileReader(list))) {
                     String line; while ((line = in.readLine()) != null) {
                         line = line.trim();
                         if (!line.isEmpty() && line.charAt(0) != '#') {
@@ -415,7 +414,6 @@ skip:   while (it.hasNext()) {
                             content.add(file);
                         }
                     }
-                    in.close();
                 } catch (IOException e) {
                     Logging.unexpectedException(ImageFileChooser.class, "getSelectedFiles", e);
                 }

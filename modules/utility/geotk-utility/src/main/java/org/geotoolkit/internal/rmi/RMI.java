@@ -26,11 +26,11 @@ import java.rmi.RemoteException;
 import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.util.concurrent.ExecutionException;
+import java.util.Objects;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -79,7 +79,7 @@ public final class RMI extends Static {
      */
     @Configuration
     public static synchronized void setMaster(final String master) {
-        if (!Utilities.equals(master, RMI.master)) {
+        if (!Objects.equals(master, RMI.master)) {
             RMI.master = master;
             executor = null;
         }

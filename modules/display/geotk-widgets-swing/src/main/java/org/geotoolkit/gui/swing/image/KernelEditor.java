@@ -100,12 +100,12 @@ public class KernelEditor extends JComponent implements Dialog {
     /**
      * The list of available filter's categories.
      */
-    private final JComboBox categorySelector = new JComboBox();
+    private final JComboBox<String> categorySelector = new JComboBox<>();
 
     /**
      * The list of available kernels.
      */
-    private final JComboBox kernelSelector = new JComboBox(model);
+    private final JComboBox<String> kernelSelector = new JComboBox<>(model);
 
     /**
      * The matrix width.
@@ -295,7 +295,7 @@ public class KernelEditor extends JComponent implements Dialog {
      * Adds a new category if not already present.
      */
     private void addCategory(final String category) {
-        final ComboBoxModel categories = categorySelector.getModel();
+        final ComboBoxModel<String> categories = categorySelector.getModel();
         for (int i=categories.getSize(); --i>=0;) {
             if (category.equals(categories.getElementAt(i))) {
                 return;
@@ -415,7 +415,7 @@ public class KernelEditor extends JComponent implements Dialog {
      *
      * @return The predefined kernels in the current category.
      */
-    public ComboBoxModel getKernelListModel() {
+    public ComboBoxModel<String> getKernelListModel() {
         return model;
     }
 
@@ -444,17 +444,17 @@ public class KernelEditor extends JComponent implements Dialog {
      */
     @SuppressWarnings("serial")
     private final class Model extends AbstractTableModel
-            implements ComboBoxModel, ChangeListener, ItemListener
+            implements ComboBoxModel<String>, ChangeListener, ItemListener
     {
         /**
          * Dictionnary of kernels by their name.
          */
-        private final Map<String,KernelJAI> kernels = new HashMap<String,KernelJAI>();
+        private final Map<String,KernelJAI> kernels = new HashMap<>();
 
         /**
          * List of categories by kernel's name.
          */
-        private final Map<String,String> categories = new LinkedHashMap<String,String>();
+        private final Map<String,String> categories = new LinkedHashMap<>();
 
         /**
          * {@code true} if the keys into {@link #categories}
@@ -549,7 +549,7 @@ public class KernelEditor extends JComponent implements Dialog {
          * Used by the combox box of kernel names.
          */
         @Override
-        public Object getElementAt(final int index) {
+        public String getElementAt(final int index) {
             return getKernelNames()[index];
         }
 
@@ -841,7 +841,7 @@ public class KernelEditor extends JComponent implements Dialog {
          * @see KernelEditor#sortKernelNames
          */
         public void sortKernelNames(final Comparator<String> comparator) {
-            final Map<String,String> sorted = new TreeMap<String,String>(comparator);
+            final Map<String,String> sorted = new TreeMap<>(comparator);
             sorted.putAll(categories);
             categories.clear();
             categories.putAll(sorted);

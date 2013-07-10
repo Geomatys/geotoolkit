@@ -30,6 +30,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Date;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
@@ -53,10 +54,9 @@ import org.geotoolkit.coverage.io.GridCoverageStorePool;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.logging.Logging;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.sql.table.DefaultEntry;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -439,7 +439,7 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
                 }
                 coverage = read(param, listeners);
                 if (coverage != null) {
-                    cached = new SoftReference<GridCoverage2D>(coverage);
+                    cached = new SoftReference<>(coverage);
                 }
             }
         }
@@ -563,7 +563,7 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
             if (startTime == that.startTime && endTime == that.endTime) {
                 final GridGeometryEntry geom1 = this.getIdentifier().geometry;
                 final GridGeometryEntry geom2 = that.getIdentifier().geometry;
-                return Utilities.equals(geom1, geom2);
+                return Objects.equals(geom1, geom2);
             }
         }
         return false;

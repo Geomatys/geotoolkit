@@ -28,9 +28,9 @@ import ucar.nc2.dataset.CoordinateAxis1DTime;
 
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.util.Range;
+import org.apache.sis.measure.Range;
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.NumberRange;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.resources.Errors;
@@ -254,7 +254,7 @@ final class NetcdfAxis1D extends NetcdfAxis implements DiscreteCoordinateSystemA
                 if (timeAxis != null) {
                     ranges[i] = new DateRange((Date) c1, true, (Date) c2, maxInclusive);
                 } else {
-                    ranges[i] = new NumberRange<Double>(Double.class, (Double) c1, true, (Double) c2, maxInclusive);
+                    ranges[i] = new NumberRange<>(Double.class, (Double) c1, true, (Double) c2, maxInclusive);
                 }
             }
             this.ranges = ranges; // Only on success.

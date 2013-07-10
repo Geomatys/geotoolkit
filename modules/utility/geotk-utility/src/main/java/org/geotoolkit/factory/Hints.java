@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -45,10 +46,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 
 import org.geotoolkit.lang.Configuration;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.collection.XCollections;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
+
+import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
 
 /**
@@ -83,8 +84,7 @@ public class Hints extends RenderingHints {
      * A set of system-wide hints to use by default. Only one thread is expected to write
      * (while more are allowed).
      */
-    private static final Map<RenderingHints.Key,Object> GLOBAL =
-            new ConcurrentHashMap<RenderingHints.Key,Object>(8, 0.75f, 1);
+    private static final Map<RenderingHints.Key,Object> GLOBAL = new ConcurrentHashMap<>(8, 0.75f, 1);
 
 
 
@@ -277,7 +277,7 @@ public class Hints extends RenderingHints {
      * If this hint is set to {@code TRUE}, then the users are encouraged to check the
      * {@linkplain CoordinateOperation#getCoordinateOperationAccuracy coordinate operation accuracy}
      * for every transformation created. If the set of operation accuracy contains
-     * {@link org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_OMITTED
+     * {@link org.apache.sis.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_OMITTED
      * DATUM_SHIFT_OMITTED}, this means that an "ellipsoid shift" were applied without real datum
      * shift method available, and the transformed coordinates may have one kilometer error. The
      * application should warn the user (e.g. popup a message dialog box) in such case.
@@ -402,12 +402,12 @@ public class Hints extends RenderingHints {
      * Version number of the requested service. This hint is used for example in order to get
      * a {@linkplain org.opengis.referencing.crs.CRSAuthorityFactory CRS authority factory}
      * backed by a particular version of EPSG database. The value should be an instance of
-     * {@link org.geotoolkit.util.Version}.
+     * {@link org.apache.sis.util.Version}.
      *
      * @since 2.4
      * @category Referencing
      */
-    public static final Key VERSION = new Key("org.geotoolkit.util.Version");
+    public static final Key VERSION = new Key("org.apache.sis.util.Version");
 
 
 
@@ -780,7 +780,7 @@ public class Hints extends RenderingHints {
                     Errors.Keys.ILLEGAL_ARGUMENT_2, nameOf(key), value));
         }
         final Object old = GLOBAL.put(key, value);
-        if (!Utilities.equals(value, old)) {
+        if (!Objects.equals(value, old)) {
             Factories.fireConfigurationChanged(Hints.class);
         }
         return old;
@@ -1318,9 +1318,9 @@ public class Hints extends RenderingHints {
          */
         public OptionKey(final String... alternatives) {
             super(String.class);
-            final Set<String> options = new TreeSet<String>(Arrays.asList(alternatives));
+            final Set<String> options = new TreeSet<>(Arrays.asList(alternatives));
             this.wildcard = options.remove("*");
-            this.options  = XCollections.unmodifiableSet(options);
+            this.options  = unmodifiableOrCopy(options);
         }
 
         /**

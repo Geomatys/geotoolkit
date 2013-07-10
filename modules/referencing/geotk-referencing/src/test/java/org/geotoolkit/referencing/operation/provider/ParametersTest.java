@@ -93,8 +93,8 @@ public final strictfp class ParametersTest {
      */
     @Test
     public void ensureUniqueness() {
-        final Map<GeneralParameterDescriptor, String> groupNames = new IdentityHashMap<GeneralParameterDescriptor, String>();
-        final Map<GeneralParameterDescriptor, GeneralParameterDescriptor> existings = new HashMap<GeneralParameterDescriptor, GeneralParameterDescriptor>();
+        final Map<GeneralParameterDescriptor, String> groupNames = new IdentityHashMap<>();
+        final Map<GeneralParameterDescriptor, GeneralParameterDescriptor> existings = new HashMap<>();
         for (final ParameterDescriptorGroup group : parameters) {
             final String name = group.getName().getCode();
             for (final GeneralParameterDescriptor param : group.descriptors()) {

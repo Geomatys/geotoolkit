@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.processing;
 import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Locale;
 import java.util.Collections;
 import java.io.Serializable;
@@ -66,10 +67,9 @@ import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.AbstractInternationalString;
+import org.apache.sis.measure.NumberRange;
+import org.apache.sis.util.logging.Logging;
+import org.apache.sis.util.iso.AbstractInternationalString;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -779,7 +779,7 @@ public class OperationJAI extends Operation2D {
             if (newCategory == null) {
                 return null;
             }
-            if (!oldCategory.equals(newCategory) || !Utilities.equals(oldUnit, newUnit)) {
+            if (!oldCategory.equals(newCategory) || !Objects.equals(oldUnit, newUnit)) {
                 /*
                  * Create a new sample dimension. Note that we use a null title, not the same
                  * title than the original sample dimension, because the new sample dimension
@@ -987,7 +987,7 @@ public class OperationJAI extends Operation2D {
         }
         if (super.equals(object)) {
             final OperationJAI that = (OperationJAI) object;
-            return Utilities.equals(this.operation, that.operation);
+            return Objects.equals(this.operation, that.operation);
         }
         return false;
     }

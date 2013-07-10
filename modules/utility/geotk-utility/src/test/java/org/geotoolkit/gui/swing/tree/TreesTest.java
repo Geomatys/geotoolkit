@@ -21,8 +21,8 @@ import java.util.Locale;
 import java.util.Arrays;
 import java.util.AbstractMap;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.test.Depend;
 
+import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 
@@ -36,7 +36,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.00
  */
-@Depend(TreeFormat.class)
+@DependsOn(TreeFormat.class)
 public final strictfp class TreesTest {
     /**
      * Tests the formatting as a tree.
@@ -87,7 +87,7 @@ public final strictfp class TreesTest {
     public void testObjectToSwing() {
         final Object object = new Object[] {
             Arrays.asList("Node #1", "Node #2"),
-            new AbstractMap.SimpleEntry<String,String>("Node #3", "Dummy")
+            new AbstractMap.SimpleEntry<>("Node #3", "Dummy")
         };
         final MutableTreeNode root = Trees.objectToSwing(object);
         assertMultilinesEquals(

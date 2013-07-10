@@ -266,10 +266,8 @@ public strictfp class Commons {
             return;
         }
         file = new File(file, testClass.getName() + ".serialized");
-        try {
-            final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
             out.writeObject(object);
-            out.close();
         } catch (IOException e) {
             System.err.println(e);
             file.delete();
@@ -290,13 +288,8 @@ public strictfp class Commons {
      * @since 3.19
      */
     public static Object deserialize(final String file) {
-        try {
-            final ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
-            try {
-                return in.readObject();
-            } finally {
-                in.close();
-            }
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+            return in.readObject();
         } catch (IOException e) {
             throw new AssertionError(e);
         } catch (ClassNotFoundException e) {

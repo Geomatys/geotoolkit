@@ -39,7 +39,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.util.FactoryException;
 
-import org.geotoolkit.util.Version;
+import org.apache.sis.util.Version;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.sql.DefaultDataSource;
@@ -55,7 +55,7 @@ import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
 import org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactory;
 import org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactoryTest;
 
-import org.geotoolkit.test.Depend;
+import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
@@ -74,7 +74,7 @@ import static org.geotoolkit.referencing.Commons.*;
  *
  * @since 2.4
  */
-@Depend(CRS_Test.class)
+@DependsOn(CRS_Test.class)
 public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
     /**
      * Ensures that the EPSG database is available. If no EPSG database is installed,

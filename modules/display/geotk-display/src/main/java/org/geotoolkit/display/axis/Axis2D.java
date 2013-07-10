@@ -44,7 +44,7 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.util.converter.Classes;
+import org.apache.sis.util.Classes;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;

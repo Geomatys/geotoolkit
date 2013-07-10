@@ -44,7 +44,7 @@ public final strictfp class LazyListTest {
          * list will be used as a reference for comparison purpose.
          */
         final Random random = new Random(583912);
-        final List<Integer> reference = new ArrayList<Integer>();
+        final List<Integer> reference = new ArrayList<>();
         for (int i=0; i<400; i++) {
             reference.add(random.nextInt(1000));
         }
@@ -53,7 +53,7 @@ public final strictfp class LazyListTest {
          * We tests only in the first half of the list in order to keep
          * some room for testing the iterator later.
          */
-        final List<Integer> lazy = new LazyList<Integer>(reference.iterator());
+        final List<Integer> lazy = new LazyList<>(reference.iterator());
         final int size = reference.size();
         assertFalse(lazy.isEmpty());
         for (int i=0; i<200; i++) {

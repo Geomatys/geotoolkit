@@ -23,14 +23,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import net.jcip.annotations.ThreadSafe;
-
 import org.opengis.util.FactoryException;
-
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.metadata.KeyNamePolicy;
+import org.apache.sis.metadata.ValueExistencePolicy;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
@@ -48,7 +49,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  *   <li><p>If no suitable factory is found, then {@code MetadataFactory} will try to instantiate
  *       a metadata implementation directly using {@link Class#newInstance()}. The class can be an
  *       interface like {@link org.opengis.metadata.citation.Citation} or its implementation class
- *       like {@link org.geotoolkit.metadata.iso.citation.DefaultCitation}.
+ *       like {@link org.apache.sis.metadata.iso.citation.DefaultCitation}.
  *       The keys in the map shall be the {@linkplain KeyNamePolicy#UML_IDENTIFIER UML identifiers}
  *       or the {@linkplain KeyNamePolicy#JAVABEANS_PROPERTY Java Beans name} of metadata properties,
  *       for example {@code "title"} for the value to be returned by
@@ -109,7 +110,7 @@ public class MetadataFactory extends Factory {
     public MetadataFactory(final Set<?> factories, final MetadataStandard... standards) {
         if (!isNullOrEmpty(factories)) {
             this.factories = factories.toArray();
-            factoryMethods = new HashMap<Class<?>, FactoryMethod>();
+            factoryMethods = new HashMap<>();
         } else {
             this.factories = null;
             factoryMethods = null;
@@ -121,7 +122,7 @@ public class MetadataFactory extends Factory {
      * Returns the factories declared in {@link FactoryFinder}.
      */
     private static Set<?> factories() {
-        final Set<Object> factories = new LinkedHashSet<Object>();
+        final Set<Object> factories = new LinkedHashSet<>();
         for (int i=0; ; i++) {
             final Set<?> factory;
             switch (i) {
@@ -197,7 +198,10 @@ public class MetadataFactory extends Factory {
         Exception failure = null;
         for (final MetadataStandard standard : standards) {
             if (standard.isMetadata(type)) {
-                final Class<?> impl = standard.getImplementation(type);
+                Class<?> impl = standard.getImplementation(type);
+                if (impl == null) {
+                    impl = type; // Will try to instantiate the type directly.
+                }
                 final Object metadata;
                 try {
                     metadata = impl.newInstance();
@@ -213,7 +217,8 @@ public class MetadataFactory extends Factory {
                     }
                     continue;
                 }
-                final Map<String,Object> asMap = standard.asMap(metadata);
+                final Map<String,Object> asMap = standard.asValueMap(metadata,
+                        KeyNamePolicy.JAVABEANS_PROPERTY, ValueExistencePolicy.NON_EMPTY);
                 try {
                     asMap.putAll(properties);
                 } catch (RuntimeException e) {

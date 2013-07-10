@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Collections;
+import java.util.Objects;
 import javax.measure.unit.Unit;
 import net.jcip.annotations.Immutable;
 
@@ -37,9 +38,8 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.Utilities.hash;
@@ -246,9 +246,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
                 final int row = Integer.parseInt(name.substring(prefix.length(), split));
                 final int col = Integer.parseInt(name.substring(split+1));
                 return descriptor(row, col, numRow, numCol);
-            } catch (NumberFormatException exception) {
-                cause = exception;
-            } catch (IndexOutOfBoundsException exception) {
+            } catch (NumberFormatException | IndexOutOfBoundsException exception) {
                 cause = exception;
             }
         }
@@ -321,11 +319,11 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
         if (numRow == 3 && numCol == 3) {
             final int i = row*3 + column;
             if (i >= 0 && i < EPSG_NAMES.length) {
-                properties = new HashMap<String,Object>(properties);
+                properties = new HashMap<>(properties);
                 properties.put(ALIAS_KEY, new NamedIdentifier(Citations.EPSG, EPSG_NAMES[i]));
             }
         }
-        param = new DefaultParameterDescriptor<Double>(properties,
+        param = new DefaultParameterDescriptor<>(properties,
                 Double.class, null, (row == column) ? 1.0 : 0.0,
                 null, null, Unit.ONE, true);
         if (index >= 0) {
@@ -425,9 +423,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
                         final int col = Integer.parseInt(name.substring(split+1));
                         matrix.setElement(row, col, ((ParameterValue<?>) param).doubleValue());
                         continue;
-                    } catch (NumberFormatException exception) {
-                        cause = exception;
-                    } catch (IndexOutOfBoundsException exception) {
+                    } catch (NumberFormatException | IndexOutOfBoundsException exception) {
                         cause = exception;
                     }
                 }
@@ -451,7 +447,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
     public boolean equals(final Object object, final ComparisonMode mode) {
         if (object instanceof MatrixParameterDescriptors && super.equals(object, mode)) {
             final MatrixParameterDescriptors that = (MatrixParameterDescriptors) object;
-            return separator == that.separator && Utilities.equals(prefix, that.prefix);
+            return separator == that.separator && Objects.equals(prefix, that.prefix);
         }
         return false;
     }
