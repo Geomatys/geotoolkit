@@ -50,16 +50,16 @@ import org.geotoolkit.gui.swing.misc.ActionCell;
 import org.geotoolkit.gui.swing.misc.EmptyCellRenderer;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
-import org.geotoolkit.gui.swing.style.symbolizer.JLineSymbolizerSimple;
-import org.geotoolkit.gui.swing.style.symbolizer.JPointSymbolizerSimple;
-import org.geotoolkit.gui.swing.style.symbolizer.JPolygonSymbolizerSimple;
-import org.geotoolkit.gui.swing.style.symbolizer.JTextSymbolizerSimple;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JBankPanel;
 import org.geotoolkit.gui.swing.style.JPreview;
 import org.geotoolkit.gui.swing.style.symbolizer.JRasterSymbolizerPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
+import org.geotoolkit.gui.swing.style.symbolizer.JLineSymbolizerPane;
+import org.geotoolkit.gui.swing.style.symbolizer.JPointSymbolizerPane;
+import org.geotoolkit.gui.swing.style.symbolizer.JPolygonSymbolizerPane;
+import org.geotoolkit.gui.swing.style.symbolizer.JTextSymbolizerPane;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -189,13 +189,13 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                     if (item != null) {
 
                         if (item instanceof PointSymbolizer) {
-                            currentEditor = new JPointSymbolizerSimple();
+                            currentEditor = new JPointSymbolizerPane();
                         } else if (item instanceof LineSymbolizer) {
-                            currentEditor = new JLineSymbolizerSimple();
+                            currentEditor = new JLineSymbolizerPane();
                         } else if (item instanceof PolygonSymbolizer) {
-                            currentEditor = new JPolygonSymbolizerSimple();
+                            currentEditor = new JPolygonSymbolizerPane();
                         } else if (item instanceof TextSymbolizer) {
-                            currentEditor = new JTextSymbolizerSimple();
+                            currentEditor = new JTextSymbolizerPane();
                         } else if (item instanceof RasterSymbolizer) {
                             currentEditor = new JRasterSymbolizerPane();
                         }

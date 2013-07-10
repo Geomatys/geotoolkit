@@ -394,7 +394,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
 
     private void butPolygonSymbolizerActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_butPolygonSymbolizerActionPerformed
         
-        final JPolygonSymbolizerAdvanced pane = new JPolygonSymbolizerAdvanced();
+        final JPolygonSymbolizerPane pane = new JPolygonSymbolizerPane();
         pane.setLayer(layer);
         pane.parse((PolygonSymbolizer)outLine);
         
@@ -404,7 +404,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
     }//GEN-LAST:event_butPolygonSymbolizerActionPerformed
 
     private void butLineSymbolizerActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_butLineSymbolizerActionPerformed
-        final JLineSymbolizerAdvanced pane = new JLineSymbolizerAdvanced();
+        final JLineSymbolizerPane pane = new JLineSymbolizerPane();
         pane.setLayer(layer);
         pane.parse((LineSymbolizer)outLine);
         
