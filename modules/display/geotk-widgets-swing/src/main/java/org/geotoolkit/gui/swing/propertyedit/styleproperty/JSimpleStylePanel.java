@@ -253,9 +253,6 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         jLabel7.setFont(new Font("Lucida Grande", 1, 13)); // NOI18N
         jLabel7.setText(MessageBundle.getString("symbolPreview")); // NOI18N
 
-        guiOverviewLabel.setBackground(new Color(254, 254, 254));
-        guiOverviewLabel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
-
         GroupLayout guiOverviewLabelLayout = new GroupLayout(guiOverviewLabel);
         guiOverviewLabel.setLayout(guiOverviewLabelLayout);
         guiOverviewLabelLayout.setHorizontalGroup(
@@ -300,7 +297,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(jAddButton, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012 Geomatys
+ *    (C) 2012-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -111,7 +111,7 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        guiExternalGraphicPane = new org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JExternalGraphicPane();
+        guiExternalGraphicPane = new org.geotoolkit.gui.swing.style.JExternalGraphicPane();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -120,7 +120,7 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
                 jTabbedPane1StateChanged(evt);
             }
         });
-        jTabbedPane1.addTab(MessageBundle.getString("image"), guiExternalGraphicPane); // NOI18N
+        jTabbedPane1.addTab("tab1", guiExternalGraphicPane);
 
         add(jTabbedPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -131,7 +131,7 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
         guiExternalGraphicPane.parse(null);
     }//GEN-LAST:event_jTabbedPane1StateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JExternalGraphicPane guiExternalGraphicPane;
+    private org.geotoolkit.gui.swing.style.JExternalGraphicPane guiExternalGraphicPane;
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 }

@@ -27,6 +27,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.border.LineBorder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JColorPane;
+import org.geotoolkit.gui.swing.style.JExternalGraphicPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;

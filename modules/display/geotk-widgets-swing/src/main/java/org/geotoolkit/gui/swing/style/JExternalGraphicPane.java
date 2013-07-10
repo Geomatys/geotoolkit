@@ -18,6 +18,8 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.swing.GroupLayout;
@@ -26,9 +28,17 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.type.DefaultPropertyType;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.URLEditor;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import static org.geotoolkit.gui.swing.style.StyleElementEditor.getStyleFactory;
 import org.geotoolkit.map.MapLayer;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.style.ExternalGraphic;
+import org.openide.util.Exceptions;
 
 /**
  * External graphic panel
@@ -38,6 +48,9 @@ import org.opengis.style.ExternalGraphic;
  */
 public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
 
+    private static final PropertyType URLTYPE = new DefaultPropertyType(DefaultName.valueOf(""), 
+            URL.class, false, null, null, new SimpleInternationalString(""));
+    
     private MapLayer layer = null;
     private ExternalGraphic external = null;
 
@@ -45,10 +58,15 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
     public JExternalGraphicPane() {
         super(ExternalGraphic.class);
         initComponents();
-        init();
-    }
-
-    private void init() {
+        guiPreview.setMir(true);
+        guiURL.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if(PropertyValueEditor.PROP_VALUE.equals(evt.getPropertyName())){
+                    guiPreview.parse(create());
+                }
+            }
+        });
     }
 
     @Override
@@ -63,26 +81,32 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
 
     @Override
     public void parse(final ExternalGraphic ext) {
+        guiMime.setText("");
+        guiURL.setValue(URLTYPE, null);
         this.external = ext;
 
         if (external != null) {
             //TODO : not handled yet
             //external.getCustomProperties();
             guiMime.setText(external.getFormat());
-            guiURL.setText(external.getOnlineResource().toString());
-           
+            try {
+                guiURL.setValue(URLTYPE, external.getOnlineResource().getLinkage().toURL());
+            } catch (MalformedURLException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+            guiPreview.parse(ext);
         }
     }
 
     @Override
     public ExternalGraphic create() {
-
-        try {
-            external = getStyleFactory().externalGraphic(new URL(guiURL.getText()), guiMime.getText());
-        } catch (MalformedURLException ex) {
-            ex.printStackTrace();
+        URL url = null;
+        url = (URL)guiURL.getValue();
+        if(url!=null){
+            external = getStyleFactory().externalGraphic(url, guiMime.getText());
+        }else{
+            external = null;
         }
-
         return external;
     }
     
@@ -97,32 +121,34 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
         jLabel2 = new JLabel();
         jLabel3 = new JLabel();
         guiMime = new JTextField();
-        guiURL = new JTextField();
+        guiPreview = new JPreview();
+        guiURL = new URLEditor();
 
         setOpaque(false);
 
-
-
         jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel2.setText(MessageBundle.getString("mime")); // NOI18N
+
         jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel3.setText(MessageBundle.getString("url")); // NOI18N
-        guiMime.setOpaque(false);
-
-        guiURL.setOpaque(false);
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel2)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiMime, GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel3)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiURL, GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(guiPreview, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiURL, GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiMime)))
+                .addContainerGap())
         );
 
         layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel2, jLabel3});
@@ -130,18 +156,28 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(guiMime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(guiURL, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(guiURL, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addComponent(guiPreview, GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
+                .addContainerGap())
         );
+
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiURL, jLabel3});
+
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiMime, jLabel2});
+
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JTextField guiMime;
-    private JTextField guiURL;
+    private JPreview guiPreview;
+    private URLEditor guiURL;
     private JLabel jLabel2;
     private JLabel jLabel3;
     // End of variables declaration//GEN-END:variables

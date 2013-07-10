@@ -30,6 +30,8 @@ import java.util.List;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.style.StyleConstants;
@@ -55,9 +57,10 @@ import org.opengis.style.TextSymbolizer;
  * Fill, Stroke...)
  *
  * @author Fabien Rétif (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
-public class JPreview extends JComponent implements ComponentListener {
-
+public class JPreview extends JPanel implements ComponentListener {
+    
     private BufferedImage image = null;
     private final double[] disp = new double[] {0d,0d};
     /**
@@ -68,6 +71,9 @@ public class JPreview extends JComponent implements ComponentListener {
 
     public JPreview() {
         this.addComponentListener(this);
+        setBorder(new LineBorder(Color.DARK_GRAY, 1));
+        setBackground(Color.WHITE);
+        setOpaque(true);
     }
 
     public void setMir(boolean mir) {
@@ -82,7 +88,6 @@ public class JPreview extends JComponent implements ComponentListener {
         return targetObj;
     }   
     
-
     /**
      * This methods parses settled object and tries to create a preview of it
      *
