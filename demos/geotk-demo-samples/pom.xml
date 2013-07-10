@@ -214,11 +214,6 @@
             <artifactId>geotk-mapinfo</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-                <groupId>org.constellation.gui</groupId>    
-                <artifactId>admin-swing</artifactId>
-                <version>0.9-SNAPSHOT</version>    
-        </dependency>
 
     </dependencies>
 
