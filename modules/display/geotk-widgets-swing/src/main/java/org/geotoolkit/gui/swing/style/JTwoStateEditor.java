@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import org.geotoolkit.gui.swing.style.symbolizer.JLineSymbolizerPane;
-import com.sun.java.swing.plaf.gtk.GTKLookAndFeel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -33,12 +31,8 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLayeredPane;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
@@ -169,16 +163,6 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> {
     @Override
     public T create() {
         return current.create();
-    }
-    
-    public static void main(String[] args) throws UnsupportedLookAndFeelException {
-        UIManager.setLookAndFeel(new GTKLookAndFeel());
-        
-        final org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JLineSymbolizerSimple simple = 
-            new org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JLineSymbolizerSimple();
-        final JLineSymbolizerPane advanced = new JLineSymbolizerPane();
-        
-        JOptionDialog.show(null, new JTwoStateEditor(simple,advanced), JOptionPane.OK_CANCEL_OPTION);
     }
     
 }

@@ -46,12 +46,12 @@ import org.opengis.style.TextSymbolizer;
  * @author Johann Sorel
  * @module pending
  */
-public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
+public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> {
     
     private MapLayer layer = null;
 
     /** Creates new form JTextSymbolizer */
-    public JTextSymbolizerPane() {
+    public JTextSymbolizerAdvanced() {
         super(TextSymbolizer.class);
         initComponents();
     }
@@ -171,28 +171,28 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
         guiFont.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("fonts"))); // NOI18N
         guiFont.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JTextSymbolizerPane.this.propertyChange(evt);
+                JTextSymbolizerAdvanced.this.propertyChange(evt);
             }
         });
 
         guiHalo.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("halo"))); // NOI18N
         guiHalo.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JTextSymbolizerPane.this.propertyChange(evt);
+                JTextSymbolizerAdvanced.this.propertyChange(evt);
             }
         });
 
         guiFill.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("fill"))); // NOI18N
         guiFill.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JTextSymbolizerPane.this.propertyChange(evt);
+                JTextSymbolizerAdvanced.this.propertyChange(evt);
             }
         });
 
         guiPlacement.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("placement"))); // NOI18N
         guiPlacement.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JTextSymbolizerPane.this.propertyChange(evt);
+                JTextSymbolizerAdvanced.this.propertyChange(evt);
             }
         });
 

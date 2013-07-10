@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.propertyedit.styleproperty.simple;
+package org.geotoolkit.gui.swing.style.symbolizer;
 
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
@@ -29,6 +29,9 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JFillControlPane;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JGraphicSymbolControlPane;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JStrokeControlPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JNumberExpressionPane;
 import org.geotoolkit.gui.swing.style.JNumberSliderExpressionPane;

@@ -5,11 +5,10 @@ org.geotoolkit.gui.swing.style.JFeatureTypeStylePane
 org.geotoolkit.gui.swing.style.JRulePane
 
 # symbolizer editors
-org.geotoolkit.gui.swing.style.symbolizer.JTextSymbolizerPane
-org.geotoolkit.gui.swing.style.symbolizer.JPolygonSymbolizerPane
-org.geotoolkit.gui.swing.style.symbolizer.JPointSymbolizerPane
-org.geotoolkit.gui.swing.style.symbolizer.JLineSymbolizerPane
-org.geotoolkit.gui.swing.style.symbolizer.JRasterSymbolizerPane
+org.geotoolkit.gui.swing.style.symbolizer.JPointSymbolizerAdvanced
+org.geotoolkit.gui.swing.style.symbolizer.JLineSymbolizerAdvanced
+org.geotoolkit.gui.swing.style.symbolizer.JPolygonSymbolizerAdvanced
+org.geotoolkit.gui.swing.style.symbolizer.JTextSymbolizerAdvanced
 org.geotoolkit.gui.swing.style.symbolizer.JRasterSymbolizerPane
 
 # extension editors
