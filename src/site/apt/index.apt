@@ -66,7 +66,7 @@ The Geotoolkit.org library
 
 * Using Geotoolkit.org
 
-  Geotk requires a Java 6 Runtime Environment.
+  Geotk requires a Java 7 Runtime Environment.
   That is the only requirement for the base modules up to and including the Referencing
   module. To use the coverage module, Geotk also requires the Java Advanced Imaging\ (JAI)
   libraries available from Oracle. The module currently requires JAI version 1.1.3 or greater.
