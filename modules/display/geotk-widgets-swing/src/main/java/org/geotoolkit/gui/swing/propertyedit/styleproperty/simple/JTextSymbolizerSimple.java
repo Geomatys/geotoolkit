@@ -42,14 +42,14 @@ import org.opengis.style.TextSymbolizer;
  * @author Fabien Rétif (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
+public class JTextSymbolizerSimple extends StyleElementEditor<TextSymbolizer> {
 
     private MapLayer layer = null;
 
     /**
      * Creates new form JTextSymbolizerPane
      */
-    public JTextSymbolizerPane() {
+    public JTextSymbolizerSimple() {
         super(TextSymbolizer.class);
         initComponents();
     }
@@ -133,25 +133,25 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
 
         guiLabel.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JTextSymbolizerPane.this.propertyChange(evt);
+                JTextSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
         guiFont.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JTextSymbolizerPane.this.propertyChange(evt);
+                JTextSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
         guiFill.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JTextSymbolizerPane.this.propertyChange(evt);
+                JTextSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
         guiHalo.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JTextSymbolizerPane.this.propertyChange(evt);
+                JTextSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
@@ -208,7 +208,7 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
 
         guiLabelPlacement.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JTextSymbolizerPane.this.propertyChange(evt);
+                JTextSymbolizerSimple.this.propertyChange(evt);
             }
         });
         jTabbedPane1.addTab(MessageBundle.getString("position"), guiLabelPlacement); // NOI18N

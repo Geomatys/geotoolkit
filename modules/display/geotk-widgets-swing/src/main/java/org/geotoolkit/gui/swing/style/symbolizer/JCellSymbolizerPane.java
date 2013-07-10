@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.style;
+package org.geotoolkit.gui.swing.style.symbolizer;
 
 import java.awt.Component;
 import java.awt.Image;
@@ -32,20 +32,16 @@ import org.geotoolkit.gui.swing.filter.JCQLEditor;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import static org.geotoolkit.gui.swing.style.StyleElementEditor.LOGGER;
-import static org.geotoolkit.gui.swing.style.StyleElementEditor.getStyleFactory;
+import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
-import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
-import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.PointSymbolizer;
-import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 

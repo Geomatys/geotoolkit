@@ -53,11 +53,11 @@ import org.opengis.style.Stroke;
  * @author Fabien Rétif (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
+public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> {
 
     private MapLayer layer = null;
 
-    public JPointSymbolizerPane() {
+    public JPointSymbolizerSimple() {
         super(PointSymbolizer.class);
         initComponents();
         init();
@@ -210,7 +210,7 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
 
         guiSize.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JPointSymbolizerPane.this.propertyChange(evt);
+                JPointSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
@@ -218,7 +218,7 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
 
         guiRotation.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JPointSymbolizerPane.this.propertyChange(evt);
+                JPointSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
@@ -226,7 +226,7 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
 
         guiOpacity.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JPointSymbolizerPane.this.propertyChange(evt);
+                JPointSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
@@ -234,13 +234,13 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
 
         guiDisplacementY.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JPointSymbolizerPane.this.propertyChange(evt);
+                JPointSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
         guiDisplacementX.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JPointSymbolizerPane.this.propertyChange(evt);
+                JPointSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
@@ -248,19 +248,19 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
 
         guiGraphicSymbol.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JPointSymbolizerPane.this.propertyChange(evt);
+                JPointSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
         guiStroke.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JPointSymbolizerPane.this.propertyChange(evt);
+                JPointSymbolizerSimple.this.propertyChange(evt);
             }
         });
 
         guiFill.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-                JPointSymbolizerPane.this.propertyChange(evt);
+                JPointSymbolizerSimple.this.propertyChange(evt);
             }
         });
 

@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.style;
+package org.geotoolkit.gui.swing.style.symbolizer;
 
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
@@ -28,6 +28,14 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.style.JFillPane;
+import org.geotoolkit.gui.swing.style.JFontPane;
+import org.geotoolkit.gui.swing.style.JGeomPane;
+import org.geotoolkit.gui.swing.style.JHaloPane;
+import org.geotoolkit.gui.swing.style.JLabelPlacementPane;
+import org.geotoolkit.gui.swing.style.JTextExpressionPane;
+import org.geotoolkit.gui.swing.style.JUOMPane;
+import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.TextSymbolizer;

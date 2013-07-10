@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.style;
+package org.geotoolkit.gui.swing.style.symbolizer;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -36,6 +36,14 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.style.JChannelSelectionPane;
+import org.geotoolkit.gui.swing.style.JContrastEnhancement;
+import org.geotoolkit.gui.swing.style.JGeomPane;
+import org.geotoolkit.gui.swing.style.JNumberExpressionPane;
+import org.geotoolkit.gui.swing.style.JShadedReliefPane;
+import org.geotoolkit.gui.swing.style.JTextExpressionPane;
+import org.geotoolkit.gui.swing.style.JUOMPane;
+import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.ChannelSelection;

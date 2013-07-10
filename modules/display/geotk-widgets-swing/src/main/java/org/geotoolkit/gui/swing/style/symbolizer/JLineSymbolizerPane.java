@@ -15,7 +15,8 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.style;
+package org.geotoolkit.gui.swing.style.symbolizer;
+
 
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
@@ -27,53 +28,65 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.style.JGeomPane;
+import org.geotoolkit.gui.swing.style.JOffSetPane;
+import org.geotoolkit.gui.swing.style.JStrokePane;
+import org.geotoolkit.gui.swing.style.JUOMPane;
+import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
-import org.opengis.style.PointSymbolizer;
+import org.opengis.style.LineSymbolizer;
+
 
 /**
- * Point symbolizer edition panel
+ * Line symbolizer edition panel
  * 
  * @author Johann Sorel
  * @module pending
  */
-public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
-
+public class JLineSymbolizerPane extends  StyleElementEditor<LineSymbolizer> {
+    
     private MapLayer layer = null;
-
-    public JPointSymbolizerPane() {
-        super(PointSymbolizer.class);
+    
+    /** 
+     * Creates new form JLineSymbolizerPanel
+     */
+    public JLineSymbolizerPane() {
+        super(LineSymbolizer.class);
         initComponents();
     }
-
+    
     /**
      * {@inheritDoc }
      */
     @Override
-    public void setLayer(final MapLayer layer) {
+    public void setLayer(final MapLayer layer){
         this.layer = layer;
-        guiGraphic.setLayer(layer);
+        guiStroke.setLayer(layer);
         guiGeom.setLayer(layer);
         guiUOM.setLayer(layer);
+        guiOffset.setLayer(layer);
     }
-
+    
     /**
      * {@inheritDoc }
      */
     @Override
-    public MapLayer getLayer() {
+    public MapLayer getLayer(){
         return layer;
     }
-
+ 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void parse(final PointSymbolizer symbol) {
-        if (symbol instanceof PointSymbolizer) {
+    public void parse(final LineSymbolizer symbol) {
+        
+        if (symbol != null) {            
             guiGeom.setGeom(symbol.getGeometryPropertyName());
+            guiStroke.parse(symbol.getStroke());
+            guiOffset.parse(symbol.getPerpendicularOffset());
             guiUOM.parse(symbol.getUnitOfMeasure());
-            guiGraphic.parse(symbol.getGraphic());
     }
     }
 
@@ -81,13 +94,14 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
      * {@inheritDoc }
      */
     @Override
-    public PointSymbolizer create() {
-        return getStyleFactory().pointSymbolizer(
-                "PointSymbolizer",
-                guiGeom.getGeom(),
-                StyleConstants.DEFAULT_DESCRIPTION,
-                guiUOM.create(),
-                guiGraphic.create());
+    public LineSymbolizer create(){
+        return getStyleFactory().lineSymbolizer(
+                    "lineSymbolizer",
+                    guiGeom.getGeom(),
+                    StyleConstants.DEFAULT_DESCRIPTION,
+                    guiUOM.create(),
+                    guiStroke.create(), 
+                    guiOffset.create());
     }
 
     /** This method is called from within the constructor to
@@ -98,12 +112,27 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        guiStroke = new JStrokePane();
+        guiOffset = new JOffSetPane();
         jPanel1 = new JPanel();
         guiGeom = new JGeomPane();
         guiUOM = new JUOMPane();
-        guiGraphic = new JGraphicPane();
 
         setOpaque(false);
+
+        guiStroke.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("stroke"))); // NOI18N
+        guiStroke.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JLineSymbolizerPane.this.propertyChange(evt);
+            }
+        });
+
+        guiOffset.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("displacement"))); // NOI18N
+        guiOffset.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JLineSymbolizerPane.this.propertyChange(evt);
+            }
+        });
 
         jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("general"))); // NOI18N
         jPanel1.setOpaque(false);
@@ -131,26 +160,22 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        guiGraphic.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("graphic"))); // NOI18N
-        guiGraphic.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                JPointSymbolizerPane.this.propertyChange(evt);
-            }
-        });
-
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(guiGraphic, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(guiStroke, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(guiOffset, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiGraphic, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addComponent(guiStroke, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(guiOffset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -164,8 +189,10 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JGeomPane guiGeom;
-    private JGraphicPane guiGraphic;
+    private JOffSetPane guiOffset;
+    private JStrokePane guiStroke;
     private JUOMPane guiUOM;
     private JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
+
 }
