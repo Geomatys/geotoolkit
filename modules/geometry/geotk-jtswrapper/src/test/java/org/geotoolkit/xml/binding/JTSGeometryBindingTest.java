@@ -203,9 +203,9 @@ public class JTSGeometryBindingTest {
 
         String result = StringUtilities.removeXmlns(sw.toString());
 
-        String expResult = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"              + '\n' +
+        String expResult = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"           + '\n' +
                            "<gml:Point srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326\" >" + '\n' +
-                           "    <gml:pos>2.1 12.6</gml:pos>"   + '\n' +
+                           "  <gml:pos>2.1 12.6</gml:pos>"   + '\n' +
                            "</gml:Point>" + '\n';
 
         assertEquals(expResult, result);
@@ -223,8 +223,8 @@ public class JTSGeometryBindingTest {
     public void PointUnMarshalingTest() throws Exception {
 
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"    + '\n' +
-                     "<gml:Point srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326\" xmlns:gml=\"http://www.opengis.net/gml\">"             + '\n' +
-                     "    <gml:pos>2.1 12.6</gml:pos>" + '\n' +
+                     "<gml:Point srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
+                     "  <gml:pos>2.1 12.6</gml:pos>" + '\n' +
                      "</gml:Point>" + '\n';
 
         JAXBElement<JTSPoint> result = (JAXBElement) un.unmarshal(new StringReader(xml));
@@ -292,20 +292,20 @@ public class JTSGeometryBindingTest {
         String result = StringUtilities.removeXmlns(sw.toString());
 
         String expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                 + '\n' +
-        "<gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" >"                   + '\n' +
-        "    <gml:segments>"                                                                            + '\n' +
-        "        <gml:LineStringSegment interpolation=\"linear\">"                                      + '\n' +
-        "            <gml:pos>401500.0 3334500.0</gml:pos>"   + '\n' +
-        "            <gml:pos>401700.0 3334850.0</gml:pos>"   + '\n' +
-        "            <gml:pos>402200.0 3335200.0</gml:pos>"   + '\n' +
-        "        </gml:LineStringSegment>"                                                              + '\n' +
-        "        <gml:LineStringSegment interpolation=\"linear\">"                                      + '\n' +
-        "            <gml:pos>402320.0 3334850.0</gml:pos>"   + '\n' +
-        "            <gml:pos>402200.0 3335200.0</gml:pos>"   + '\n' +
-        "        </gml:LineStringSegment>"                                                              + '\n' +
-        "    </gml:segments>"                                                                           + '\n' +
-        "</gml:Curve>"                                                                                  + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"            + '\n' +
+        "<gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" >" + '\n' +
+        "  <gml:segments>"                                                         + '\n' +
+        "    <gml:LineStringSegment interpolation=\"linear\">"                     + '\n' +
+        "      <gml:pos>401500.0 3334500.0</gml:pos>"                              + '\n' +
+        "      <gml:pos>401700.0 3334850.0</gml:pos>"                              + '\n' +
+        "      <gml:pos>402200.0 3335200.0</gml:pos>"                              + '\n' +
+        "    </gml:LineStringSegment>"                                             + '\n' +
+        "    <gml:LineStringSegment interpolation=\"linear\">"                     + '\n' +
+        "      <gml:pos>402320.0 3334850.0</gml:pos>"                              + '\n' +
+        "      <gml:pos>402200.0 3335200.0</gml:pos>"                              + '\n' +
+        "    </gml:LineStringSegment>"                                             + '\n' +
+        "  </gml:segments>"                                                        + '\n' +
+        "</gml:Curve>"                                                             + '\n';
 
 
         assertEquals(expResult, result);
@@ -322,20 +322,20 @@ public class JTSGeometryBindingTest {
     public void CurveUnmarshalingTest() throws Exception {
 
         String xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                 + '\n' +
-        "<gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                   + '\n' +
-        "    <gml:segments>"                                                                            + '\n' +
-        "        <gml:LineStringSegment interpolation=\"linear\">"                                      + '\n' +
-        "            <gml:pos>401500.0 3334500.0</gml:pos>"   + '\n' +
-        "            <gml:pos>401700.0 3334850.0</gml:pos>"   + '\n' +
-        "            <gml:pos>402200.0 3335200.0</gml:pos>"   + '\n' +
-        "        </gml:LineStringSegment>"                                                              + '\n' +
-        "        <gml:LineStringSegment interpolation=\"linear\">"                                      + '\n' +
-        "            <gml:pos>402320.0 3334850.0</gml:pos>"   + '\n' +
-        "            <gml:pos>402200.0 3335200.0</gml:pos>"   + '\n' +
-        "        </gml:LineStringSegment>"                                                              + '\n' +
-        "    </gml:segments>"                                                                           + '\n' +
-        "</gml:Curve>"                                                                                  + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
+        "<gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
+        "  <gml:segments>"                                              + '\n' +
+        "    <gml:LineStringSegment interpolation=\"linear\">"          + '\n' +
+        "      <gml:pos>401500.0 3334500.0</gml:pos>"                   + '\n' +
+        "      <gml:pos>401700.0 3334850.0</gml:pos>"                   + '\n' +
+        "      <gml:pos>402200.0 3335200.0</gml:pos>"                   + '\n' +
+        "    </gml:LineStringSegment>"                                  + '\n' +
+        "    <gml:LineStringSegment interpolation=\"linear\">"          + '\n' +
+        "      <gml:pos>402320.0 3334850.0</gml:pos>"                   + '\n' +
+        "      <gml:pos>402200.0 3335200.0</gml:pos>"                   + '\n' +
+        "    </gml:LineStringSegment>"                                  + '\n' +
+        "  </gml:segments>"                                             + '\n' +
+        "</gml:Curve>"                                                  + '\n';
 
         CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572");
         assertTrue(crs != null);
@@ -410,10 +410,10 @@ public class JTSGeometryBindingTest {
         String result = StringUtilities.removeXmlns(sw.toString());
 
         String expresult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                               + '\n' +
-        "<gml:Envelope >"                                     + '\n' +
-        "    <gml:lowerCorner>402320.0 3334850.0</gml:lowerCorner>" + '\n' +
-        "    <gml:upperCorner>402200.0 3335200.0</gml:upperCorner>" + '\n' +
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
+        "<gml:Envelope >"                                               + '\n' +
+        "  <gml:lowerCorner>402320.0 3334850.0</gml:lowerCorner>"       + '\n' +
+        "  <gml:upperCorner>402200.0 3335200.0</gml:upperCorner>"       + '\n' +
         "</gml:Envelope>" + '\n';
 
         assertEquals(expresult, result);
@@ -441,11 +441,11 @@ public class JTSGeometryBindingTest {
         JTSEnvelope expResult = new JTSEnvelope(p1, p2);
 
         String xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                               + '\n' +
-        "<gml:Envelope xmlns:gml=\"http://www.opengis.net/gml\">"                                     + '\n' +
-        "    <gml:lowerCorner>402000.0 3334850.0</gml:lowerCorner>" + '\n' +
-        "    <gml:upperCorner>402200.0 3335200.0</gml:upperCorner>" + '\n' +
-        "</gml:Envelope>" + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
+        "<gml:Envelope xmlns:gml=\"http://www.opengis.net/gml\">"       + '\n' +
+        "  <gml:lowerCorner>402000.0 3334850.0</gml:lowerCorner>"       + '\n' +
+        "  <gml:upperCorner>402200.0 3335200.0</gml:upperCorner>"       + '\n' +
+        "</gml:Envelope>"                                               + '\n';
 
 
 
@@ -488,19 +488,19 @@ public class JTSGeometryBindingTest {
         String result = StringUtilities.removeXmlns(sw.toString());
 
         String expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                               + '\n' +
-        "<gml:MultiPoint srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" >"            + '\n' +
-        "    <gml:pointMember>"                                                                       + '\n' +
-        "        <gml:Point srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                                                  + '\n' +
-        "            <gml:pos>402000.0 3334850.0</gml:pos>" + '\n' +
-        "        </gml:Point>"                                                                        + '\n' +
-        "    </gml:pointMember>"                                                                      + '\n' +
-        "    <gml:pointMember>"                                                                       + '\n' +
-        "        <gml:Point srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                                                  + '\n' +
-        "            <gml:pos>402200.0 3335200.0</gml:pos>" + '\n' +
-        "        </gml:Point>"                                                                        + '\n' +
-        "    </gml:pointMember>"                                                                      + '\n' +
-        "</gml:MultiPoint>" + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                 + '\n' +
+        "<gml:MultiPoint srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" >" + '\n' +
+        "  <gml:pointMember>"                                                           + '\n' +
+        "    <gml:Point srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"   + '\n' +
+        "      <gml:pos>402000.0 3334850.0</gml:pos>"                                   + '\n' +
+        "    </gml:Point>"                                                              + '\n' +
+        "  </gml:pointMember>"                                                          + '\n' +
+        "  <gml:pointMember>"                                                           + '\n' +
+        "    <gml:Point srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"   + '\n' +
+        "      <gml:pos>402200.0 3335200.0</gml:pos>"                                   + '\n' +
+        "    </gml:Point>"                                                              + '\n' +
+        "  </gml:pointMember>"                                                          + '\n' +
+        "</gml:MultiPoint>"                                                             + '\n';
 
         assertEquals(expResult, result);
     }
@@ -533,18 +533,18 @@ public class JTSGeometryBindingTest {
 
 
         String xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                               + '\n' +
-        "<gml:MultiPoint srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" xmlns:gml=\"http://www.opengis.net/gml\">"            + '\n' +
-        "    <gml:pointMember>"                                                                       + '\n' +
-        "        <gml:Point srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                                                  + '\n' +
-        "            <gml:pos>402200.0 3335200.0</gml:pos>" + '\n' +
-        "        </gml:Point>"                                                                        + '\n' +
-        "    </gml:pointMember>"                                                                      + '\n' +
-        "    <gml:pointMember>"                                                                       + '\n' +
-        "        <gml:Point srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                                                  + '\n' +
-        "            <gml:pos>402000.0 3334850.0</gml:pos>" + '\n' +
-        "        </gml:Point>"                                                                        + '\n' +
-        "    </gml:pointMember>"                                                                      + '\n' +
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"               + '\n' +
+        "<gml:MultiPoint srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
+        "  <gml:pointMember>"                                                         + '\n' +
+        "    <gml:Point srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">" + '\n' +
+        "      <gml:pos>402200.0 3335200.0</gml:pos>"                                 + '\n' +
+        "    </gml:Point>"                                                            + '\n' +
+        "  </gml:pointMember>"                                                        + '\n' +
+        "  <gml:pointMember>"                                                         + '\n' +
+        "    <gml:Point srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">" + '\n' +
+        "      <gml:pos>402000.0 3334850.0</gml:pos>"                                 + '\n' +
+        "    </gml:Point>"                                                            + '\n' +
+        "  </gml:pointMember>"                                                        + '\n' +
         "</gml:MultiPoint>" + '\n';
 
         JTSMultiPoint result = (JTSMultiPoint) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
@@ -559,7 +559,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-   @Test
+    @Test
     public void CompositeCurveMarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572");
@@ -623,34 +623,34 @@ public class JTSGeometryBindingTest {
         String result = StringUtilities.removeXmlns(sw.toString());
 
         String expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
-        "<gml:CompositeCurve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" >"                + '\n' +
-        "    <gml:curveMember>"                                                                               + '\n' +
-        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                                                          + '\n' +
-        "            <gml:segments>"                                                                          + '\n' +
-        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
-        "                    <gml:pos>401500.0 3334500.0</gml:pos>" + '\n' +
-        "                    <gml:pos>401700.0 3334850.0</gml:pos>" + '\n' +
-        "                    <gml:pos>402200.0 3335200.0</gml:pos>" + '\n' +
-        "                </gml:LineStringSegment>"                                                            + '\n' +
-        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
-        "                    <gml:pos>402320.0 3334850.0</gml:pos>" + '\n' +
-        "                    <gml:pos>402200.0 3335200.0</gml:pos>" + '\n' +
-        "                </gml:LineStringSegment>"                                                            + '\n' +
-        "            </gml:segments>"                                                                         + '\n' +
-        "        </gml:Curve>"                                                                                + '\n' +
-        "    </gml:curveMember>"                                                                              + '\n' +
-        "    <gml:curveMember>"                                                                               + '\n' +
-        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                                                          + '\n' +
-        "            <gml:segments>"                                                                          + '\n' +
-        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
-        "                    <gml:pos>402000.0 3334850.0</gml:pos>" + '\n' +
-        "                    <gml:pos>402200.0 3335200.0</gml:pos>" + '\n' +
-        "                </gml:LineStringSegment>"                                                            + '\n' +
-        "            </gml:segments>"                                                                         + '\n' +
-        "        </gml:Curve>"                                                                                + '\n' +
-        "    </gml:curveMember>"                                                                              + '\n' +
-        "</gml:CompositeCurve>"                                                                               + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                     + '\n' +
+        "<gml:CompositeCurve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" >" + '\n' +
+        "  <gml:curveMember>"                                                               + '\n' +
+        "    <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"       + '\n' +
+        "      <gml:segments>"                                                              + '\n' +
+        "        <gml:LineStringSegment interpolation=\"linear\">"                          + '\n' +
+        "          <gml:pos>401500.0 3334500.0</gml:pos>"                                   + '\n' +
+        "          <gml:pos>401700.0 3334850.0</gml:pos>"                                   + '\n' +
+        "          <gml:pos>402200.0 3335200.0</gml:pos>"                                   + '\n' +
+        "        </gml:LineStringSegment>"                                                  + '\n' +
+        "        <gml:LineStringSegment interpolation=\"linear\">"                          + '\n' +
+        "          <gml:pos>402320.0 3334850.0</gml:pos>"                                   + '\n' +
+        "          <gml:pos>402200.0 3335200.0</gml:pos>"                                   + '\n' +
+        "        </gml:LineStringSegment>"                                                  + '\n' +
+        "      </gml:segments>"                                                             + '\n' +
+        "    </gml:Curve>"                                                                  + '\n' +
+        "  </gml:curveMember>"                                                              + '\n' +
+        "  <gml:curveMember>"                                                               + '\n' +
+        "    <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"       + '\n' +
+        "      <gml:segments>"                                                              + '\n' +
+        "        <gml:LineStringSegment interpolation=\"linear\">"                          + '\n' +
+        "          <gml:pos>402000.0 3334850.0</gml:pos>"                                   + '\n' +
+        "          <gml:pos>402200.0 3335200.0</gml:pos>"                                   + '\n' +
+        "        </gml:LineStringSegment>"                                                  + '\n' +
+        "      </gml:segments>"                                                             + '\n' +
+        "    </gml:Curve>"                                                                  + '\n' +
+        "  </gml:curveMember>"                                                              + '\n' +
+        "</gml:CompositeCurve>"                                                             + '\n';
 
         assertEquals(expResult, result);
     }
@@ -711,19 +711,19 @@ public class JTSGeometryBindingTest {
         String result = StringUtilities.removeXmlns(sw.toString());
 
         String expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
-        "<gml:MultiCurve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326\" >" + '\n' +
-        "    <gml:curveMember>" + '\n' +
-        "        <gml:LineString>" + '\n' +
-        "            <gml:posList>35.840973 0.14967346 44.11891 3.6755037</gml:posList>" + '\n' +
-        "        </gml:LineString>" + '\n' +
-        "    </gml:curveMember>" + '\n' +
-        "    <gml:curveMember>" + '\n' +
-        "        <gml:LineString>" + '\n' +
-        "            <gml:posList>51.174034 12.365124 55.288635 7.583888 56.534782 4.1457024</gml:posList>" + '\n' +
-        "        </gml:LineString>" + '\n' +
-        "    </gml:curveMember>" + '\n' +
-        "</gml:MultiCurve>"                                                                               + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                               + '\n' +
+        "<gml:MultiCurve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326\" >"                + '\n' +
+        "  <gml:curveMember>"                                                                         + '\n' +
+        "    <gml:LineString>"                                                                        + '\n' +
+        "      <gml:posList>35.840973 0.14967346 44.11891 3.6755037</gml:posList>"                    + '\n' +
+        "    </gml:LineString>"                                                                       + '\n' +
+        "  </gml:curveMember>"                                                                        + '\n' +
+        "  <gml:curveMember>"                                                                         + '\n' +
+        "    <gml:LineString>"                                                                        + '\n' +
+        "      <gml:posList>51.174034 12.365124 55.288635 7.583888 56.534782 4.1457024</gml:posList>" + '\n' +
+        "    </gml:LineString>"                                                                       + '\n' +
+        "  </gml:curveMember>"                                                                        + '\n' +
+        "</gml:MultiCurve>"                                                                           + '\n';
 
         assertEquals(expResult, result);
     }
@@ -779,19 +779,19 @@ public class JTSGeometryBindingTest {
         expResult.getElements().add(c1);
 
         String xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                               + '\n' +
         "<gml:MultiCurve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
-        "    <gml:curveMember>" + '\n' +
-        "        <gml:LineString>" + '\n' +
-        "            <gml:posList>35.840973 0.14967346 44.11891 3.6755037</gml:posList>" + '\n' +
-        "        </gml:LineString>" + '\n' +
-        "    </gml:curveMember>" + '\n' +
-        "    <gml:curveMember>" + '\n' +
-        "        <gml:LineString>" + '\n' +
-        "            <gml:posList>51.174034 12.365124 55.288635 7.583888 56.534782 4.1457024</gml:posList>" + '\n' +
-        "        </gml:LineString>" + '\n' +
-        "    </gml:curveMember>" + '\n' +
-        "</gml:MultiCurve>"                                                                               + '\n';
+        "  <gml:curveMember>"                                                                         + '\n' +
+        "    <gml:LineString>"                                                                        + '\n' +
+        "      <gml:posList>35.840973 0.14967346 44.11891 3.6755037</gml:posList>"                    + '\n' +
+        "    </gml:LineString>"                                                                       + '\n' +
+        "  </gml:curveMember>"                                                                        + '\n' +
+        "  <gml:curveMember>"                                                                         + '\n' +
+        "    <gml:LineString>"                                                                        + '\n' +
+        "      <gml:posList>51.174034 12.365124 55.288635 7.583888 56.534782 4.1457024</gml:posList>" + '\n' +
+        "    </gml:LineString>"                                                                       + '\n' +
+        "  </gml:curveMember>"                                                                        + '\n' +
+        "</gml:MultiCurve>"                                                                           + '\n';
 
         JTSMultiCurve result = (JTSMultiCurve) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
         result.applyCRSonChild();
@@ -872,34 +872,34 @@ public class JTSGeometryBindingTest {
         expResult.getElements().add(c2);
 
         String xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
-        "<gml:CompositeCurve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                + '\n' +
-        "    <gml:curveMember>"                                                                               + '\n' +
-        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                                                          + '\n' +
-        "            <gml:segments>"                                                                          + '\n' +
-        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
-        "                    <gml:pos>401500.0 3334500.0</gml:pos>" + '\n' +
-        "                    <gml:pos>401700.0 3334850.0</gml:pos>" + '\n' +
-        "                    <gml:pos>402200.0 3335200.0</gml:pos>" + '\n' +
-        "                </gml:LineStringSegment>"                                                            + '\n' +
-        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
-        "                    <gml:pos>402320.0 3334850.0</gml:pos>" + '\n' +
-        "                    <gml:pos>402200.0 3335200.0</gml:pos>" + '\n' +
-        "                </gml:LineStringSegment>"                                                            + '\n' +
-        "            </gml:segments>"                                                                         + '\n' +
-        "        </gml:Curve>"                                                                                + '\n' +
-        "    </gml:curveMember>"                                                                              + '\n' +
-        "    <gml:curveMember>"                                                                               + '\n' +
-        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                                                          + '\n' +
-        "            <gml:segments>"                                                                          + '\n' +
-        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
-        "                    <gml:pos>402000.0 3334850.0</gml:pos>" + '\n' +
-        "                    <gml:pos>402200.0 3335200.0</gml:pos>" + '\n' +
-        "                </gml:LineStringSegment>"                                                            + '\n' +
-        "            </gml:segments>"                                                                         + '\n' +
-        "        </gml:Curve>"                                                                                + '\n' +
-        "    </gml:curveMember>"                                                                              + '\n' +
-        "</gml:CompositeCurve>"                                                                               + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"               + '\n' +
+        "<gml:CompositeCurve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
+        "  <gml:curveMember>"                                                         + '\n' +
+        "    <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">" + '\n' +
+        "      <gml:segments>"                                                        + '\n' +
+        "        <gml:LineStringSegment interpolation=\"linear\">"                    + '\n' +
+        "          <gml:pos>401500.0 3334500.0</gml:pos>"                             + '\n' +
+        "          <gml:pos>401700.0 3334850.0</gml:pos>"                             + '\n' +
+        "          <gml:pos>402200.0 3335200.0</gml:pos>"                             + '\n' +
+        "        </gml:LineStringSegment>"                                            + '\n' +
+        "        <gml:LineStringSegment interpolation=\"linear\">"                    + '\n' +
+        "          <gml:pos>402320.0 3334850.0</gml:pos>"                             + '\n' +
+        "          <gml:pos>402200.0 3335200.0</gml:pos>"                             + '\n' +
+        "        </gml:LineStringSegment>"                                            + '\n' +
+        "      </gml:segments>"                                                       + '\n' +
+        "    </gml:Curve>"                                                            + '\n' +
+        "  </gml:curveMember>"                                                        + '\n' +
+        "  <gml:curveMember>"                                                         + '\n' +
+        "    <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">" + '\n' +
+        "      <gml:segments>"                                                        + '\n' +
+        "        <gml:LineStringSegment interpolation=\"linear\">"                    + '\n' +
+        "          <gml:pos>402000.0 3334850.0</gml:pos>"                             + '\n' +
+        "          <gml:pos>402200.0 3335200.0</gml:pos>"                             + '\n' +
+        "        </gml:LineStringSegment>"                                            + '\n' +
+        "      </gml:segments>"                                                       + '\n' +
+        "    </gml:Curve>"                                                            + '\n' +
+        "  </gml:curveMember>"                                                        + '\n' +
+        "</gml:CompositeCurve>"                                                       + '\n';
 
 
         JTSCompositeCurve result = (JTSCompositeCurve) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
@@ -1058,35 +1058,35 @@ public class JTSGeometryBindingTest {
 
 
         String expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                                       + '\n'  +
-        "<gml:PolyhedralSurface srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" >"                             + '\n'  +
-        "    <gml:polygonPatches>"                                                                                            + '\n'  +
-        "        <gml:PolygonPatch>"                                                                                          + '\n'  +
-        "            <gml:exterior>"                                                                                          + '\n'  +
-        "                <gml:LinearRing>"                                                             + '\n'  +
-        "                    <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
-        "                </gml:LinearRing>"                                                                                         + '\n'  +
-        "            </gml:exterior>"                                                                                         + '\n'  +
-        "            <gml:interior>"                                                                                          + '\n'  +
-        "                <gml:LinearRing>"                                                                                    + '\n'  +
-        "                    <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>"             + '\n'  +
-        "                </gml:LinearRing>"                                                                                   + '\n'  +
-        "            </gml:interior>"                                                                                         + '\n'  +
-        "        </gml:PolygonPatch>"                                                                                         + '\n'  +
-        "        <gml:PolygonPatch>"                                                                                          + '\n'  +
-        "            <gml:exterior>"                                                                                          + '\n'  +
-        "                <gml:LinearRing>"                                                                                    + '\n'  +
-        "                    <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>"                 + '\n'  +
-        "                </gml:LinearRing>"                                                                                   + '\n'  +
-        "            </gml:exterior>"                                                                                         + '\n'  +
-        "            <gml:interior>"                                                                                          + '\n'  +
-        "                <gml:LinearRing>"                                                                                    + '\n'  +
-        "                    <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>"             + '\n'  +
-        "                </gml:LinearRing>"                                                                                         + '\n'  +
-        "            </gml:interior>"                                                                                         + '\n'  +
-        "        </gml:PolygonPatch>"                                                                                         + '\n'  +
-        "    </gml:polygonPatches>"                                                                                           + '\n'  +
-        "</gml:PolyhedralSurface>"                                                                                            + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                 + '\n'  +
+        "<gml:PolyhedralSurface srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" >"          + '\n'  +
+        "  <gml:polygonPatches>"                                                                        + '\n'  +
+        "    <gml:PolygonPatch>"                                                                        + '\n'  +
+        "      <gml:exterior>"                                                                          + '\n'  +
+        "        <gml:LinearRing>"                                                                      + '\n'  +
+        "          <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "        </gml:LinearRing>"                                                                     + '\n'  +
+        "      </gml:exterior>"                                                                         + '\n'  +
+        "      <gml:interior>"                                                                          + '\n'  +
+        "        <gml:LinearRing>"                                                                      + '\n'  +
+        "          <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "        </gml:LinearRing>"                                                                     + '\n'  +
+        "      </gml:interior>"                                                                         + '\n'  +
+        "    </gml:PolygonPatch>"                                                                       + '\n'  +
+        "    <gml:PolygonPatch>"                                                                        + '\n'  +
+        "      <gml:exterior>"                                                                          + '\n'  +
+        "        <gml:LinearRing>"                                                                      + '\n'  +
+        "          <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "        </gml:LinearRing>"                                                                     + '\n'  +
+        "      </gml:exterior>"                                                                         + '\n'  +
+        "      <gml:interior>"                                                                          + '\n'  +
+        "        <gml:LinearRing>"                                                                      + '\n'  +
+        "          <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "        </gml:LinearRing>"                                                                     + '\n'  +
+        "      </gml:interior>"                                                                         + '\n'  +
+        "    </gml:PolygonPatch>"                                                                       + '\n'  +
+        "  </gml:polygonPatches>"                                                                       + '\n'  +
+        "</gml:PolyhedralSurface>"                                                                      + '\n';
 
         assertEquals(expResult, result);
     }
@@ -1233,35 +1233,35 @@ public class JTSGeometryBindingTest {
         // TODO remove the srsName
 
         String xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                                       + '\n'  +
-        "<gml:PolyhedralSurface srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                             + '\n'  +
-        "    <gml:polygonPatches>"                                                                                            + '\n'  +
-        "        <gml:PolygonPatch>"                                                                                          + '\n'  +
-        "            <gml:exterior>"                                                                                          + '\n'  +
-        "                <gml:LinearRing>"                                                             + '\n'  +
-        "                    <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
-        "                </gml:LinearRing>"                                                                                         + '\n'  +
-        "            </gml:exterior>"                                                                                         + '\n'  +
-        "            <gml:interior>"                                                                                          + '\n'  +
-        "                <gml:LinearRing>"                                                                                    + '\n'  +
-        "                    <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>"             + '\n'  +
-        "                </gml:LinearRing>"                                                                                   + '\n'  +
-        "            </gml:interior>"                                                                                         + '\n'  +
-        "        </gml:PolygonPatch>"                                                                                         + '\n'  +
-        "        <gml:PolygonPatch>"                                                                                          + '\n'  +
-        "            <gml:exterior>"                                                                                          + '\n'  +
-        "                <gml:LinearRing>"                                                                                    + '\n'  +
-        "                    <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>"                 + '\n'  +
-        "                </gml:LinearRing>"                                                                                   + '\n'  +
-        "            </gml:exterior>"                                                                                         + '\n'  +
-        "            <gml:interior>"                                                                                          + '\n'  +
-        "                <gml:LinearRing>"                                                                                    + '\n'  +
-        "                    <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>"             + '\n'  +
-        "                </gml:LinearRing>"                                                                                         + '\n'  +
-        "            </gml:interior>"                                                                                         + '\n'  +
-        "        </gml:PolygonPatch>"                                                                                         + '\n'  +
-        "    </gml:polygonPatches>"                                                                                           + '\n'  +
-        "</gml:PolyhedralSurface>"                                                                                            + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                 + '\n'  +
+        "<gml:PolyhedralSurface srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n'  +
+        "  <gml:polygonPatches>"                                                                        + '\n'  +
+        "    <gml:PolygonPatch>"                                                                        + '\n'  +
+        "      <gml:exterior>"                                                                          + '\n'  +
+        "        <gml:LinearRing>"                                                                      + '\n'  +
+        "          <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "        </gml:LinearRing>"                                                                     + '\n'  +
+        "      </gml:exterior>"                                                                         + '\n'  +
+        "      <gml:interior>"                                                                          + '\n'  +
+        "        <gml:LinearRing>"                                                                      + '\n'  +
+        "          <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "        </gml:LinearRing>"                                                                     + '\n'  +
+        "      </gml:interior>"                                                                         + '\n'  +
+        "    </gml:PolygonPatch>"                                                                       + '\n'  +
+        "    <gml:PolygonPatch>"                                                                        + '\n'  +
+        "      <gml:exterior>"                                                                          + '\n'  +
+        "        <gml:LinearRing>"                                                                      + '\n'  +
+        "          <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "        </gml:LinearRing>"                                                                     + '\n'  +
+        "      </gml:exterior>"                                                                         + '\n'  +
+        "      <gml:interior>"                                                                          + '\n'  +
+        "        <gml:LinearRing>"                                                                      + '\n'  +
+        "          <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "        </gml:LinearRing>"                                                                     + '\n'  +
+        "      </gml:interior>"                                                                         + '\n'  +
+        "    </gml:PolygonPatch>"                                                                       + '\n'  +
+        "  </gml:polygonPatches>"                                                                       + '\n'  +
+        "</gml:PolyhedralSurface>"                                                                      + '\n';
 
 
 
@@ -1339,24 +1339,24 @@ public class JTSGeometryBindingTest {
         String result = StringUtilities.removeXmlns(sw.toString());
 
         String expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                    + '\n'  +
-        "<gml:Ring srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" >"       + '\n'  +
-        "    <gml:curveMember>"                                                            + '\n'  +
-        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                                       + '\n'  +
-        "            <gml:segments>"                                                       + '\n'  +
-        "                <gml:LineStringSegment interpolation=\"linear\">"                 + '\n'  +
-        "                    <gml:pos>401500.0 3334500.0</gml:pos>"                        + '\n'  +
-        "                    <gml:pos>401700.0 3334850.0</gml:pos>"                        + '\n'  +
-        "                    <gml:pos>402200.0 3335200.0</gml:pos>"                        + '\n'  +
-        "                </gml:LineStringSegment>"                                         + '\n'  +
-        "                <gml:LineStringSegment interpolation=\"linear\">"                 + '\n'  +
-        "                    <gml:pos>402320.0 3334850.0</gml:pos>"                        + '\n'  +
-        "                    <gml:pos>402200.0 3335200.0</gml:pos>"                        + '\n'  +
-        "                </gml:LineStringSegment>"                                         + '\n'  +
-        "            </gml:segments>"                                                      + '\n'  +
-        "        </gml:Curve>"                                                             + '\n'  +
-        "    </gml:curveMember>"                                                           + '\n'  +
-        "</gml:Ring>"                                                                      + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"               + '\n'  +
+        "<gml:Ring srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" >"     + '\n'  +
+        "  <gml:curveMember>"                                                         + '\n'  +
+        "    <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">" + '\n'  +
+        "      <gml:segments>"                                                        + '\n'  +
+        "        <gml:LineStringSegment interpolation=\"linear\">"                    + '\n'  +
+        "          <gml:pos>401500.0 3334500.0</gml:pos>"                             + '\n'  +
+        "          <gml:pos>401700.0 3334850.0</gml:pos>"                             + '\n'  +
+        "          <gml:pos>402200.0 3335200.0</gml:pos>"                             + '\n'  +
+        "        </gml:LineStringSegment>"                                            + '\n'  +
+        "        <gml:LineStringSegment interpolation=\"linear\">"                    + '\n'  +
+        "          <gml:pos>402320.0 3334850.0</gml:pos>"                             + '\n'  +
+        "          <gml:pos>402200.0 3335200.0</gml:pos>"                             + '\n'  +
+        "        </gml:LineStringSegment>"                                            + '\n'  +
+        "      </gml:segments>"                                                       + '\n'  +
+        "    </gml:Curve>"                                                            + '\n'  +
+        "  </gml:curveMember>"                                                        + '\n'  +
+        "</gml:Ring>"                                                                 + '\n';
 
         assertEquals(expResult, result);
     }
@@ -1406,24 +1406,24 @@ public class JTSGeometryBindingTest {
 
 
         String xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                    + '\n'  +
-        "<gml:Ring srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" xmlns:gml=\"http://www.opengis.net/gml\">"       + '\n'  +
-        "    <gml:curveMember>"                                                            + '\n'  +
-        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                                       + '\n'  +
-        "            <gml:segments>"                                                       + '\n'  +
-        "                <gml:LineStringSegment interpolation=\"linear\">"                 + '\n'  +
-        "                    <gml:pos>401500.0 3334500.0</gml:pos>"                        + '\n'  +
-        "                    <gml:pos>401700.0 3334850.0</gml:pos>"                        + '\n'  +
-        "                    <gml:pos>402200.0 3335200.0</gml:pos>"                        + '\n'  +
-        "                </gml:LineStringSegment>"                                         + '\n'  +
-        "                <gml:LineStringSegment interpolation=\"linear\">"                 + '\n'  +
-        "                    <gml:pos>402320.0 3334850.0</gml:pos>"                        + '\n'  +
-        "                    <gml:pos>402200.0 3335200.0</gml:pos>"                        + '\n'  +
-        "                </gml:LineStringSegment>"                                         + '\n'  +
-        "            </gml:segments>"                                                      + '\n'  +
-        "        </gml:Curve>"                                                             + '\n'  +
-        "    </gml:curveMember>"                                                           + '\n'  +
-        "</gml:Ring>"                                                                      + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"               + '\n'  +
+        "<gml:Ring srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n'  +
+        "  <gml:curveMember>"                                                         + '\n'  +
+        "    <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">" + '\n'  +
+        "      <gml:segments>"                                                        + '\n'  +
+        "        <gml:LineStringSegment interpolation=\"linear\">"                    + '\n'  +
+        "          <gml:pos>401500.0 3334500.0</gml:pos>"                             + '\n'  +
+        "          <gml:pos>401700.0 3334850.0</gml:pos>"                             + '\n'  +
+        "          <gml:pos>402200.0 3335200.0</gml:pos>"                             + '\n'  +
+        "        </gml:LineStringSegment>"                                            + '\n'  +
+        "        <gml:LineStringSegment interpolation=\"linear\">"                    + '\n'  +
+        "          <gml:pos>402320.0 3334850.0</gml:pos>"                             + '\n'  +
+        "          <gml:pos>402200.0 3335200.0</gml:pos>"                             + '\n'  +
+        "        </gml:LineStringSegment>"                                            + '\n'  +
+        "      </gml:segments>"                                                       + '\n'  +
+        "    </gml:Curve>"                                                            + '\n'  +
+        "  </gml:curveMember>"                                                        + '\n'  +
+        "</gml:Ring>"                                                                 + '\n';
 
 
         JTSRing result  = (JTSRing) un.unmarshal(new StringReader(xml));
@@ -1511,19 +1511,19 @@ public class JTSGeometryBindingTest {
         String result = StringUtilities.removeXmlns(sw.toString());
 
         String expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                               + '\n'  +
-        "<gml:Polygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" >"                               + '\n'  +
-        "    <gml:exterior>"                                                                                          + '\n'  +
-        "        <gml:LinearRing>"                                                                   + '\n'  +
-        "            <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
-        "        </gml:LinearRing>"                                                                                         + '\n'  +
-        "    </gml:exterior>"                                                                                         + '\n'  +
-        "    <gml:interior>"                                                                                          + '\n'  +
-        "        <gml:LinearRing>"                                                                   + '\n'  +
-        "            <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
-        "        </gml:LinearRing>"                                                                                         + '\n'  +
-        "    </gml:interior>"                                                                                         + '\n'  +
-        "</gml:Polygon>"                                                                                              + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                             + '\n'  +
+        "<gml:Polygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" >"                + '\n'  +
+        "  <gml:exterior>"                                                                          + '\n'  +
+        "    <gml:LinearRing>"                                                                      + '\n'  +
+        "      <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "    </gml:LinearRing>"                                                                     + '\n'  +
+        "  </gml:exterior>"                                                                         + '\n'  +
+        "  <gml:interior>"                                                                          + '\n'  +
+        "    <gml:LinearRing>"                                                                      + '\n'  +
+        "      <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "    </gml:LinearRing>"                                                                     + '\n'  +
+        "  </gml:interior>"                                                                         + '\n'  +
+        "</gml:Polygon>"                                                                            + '\n';
 
         assertEquals(expResult, result);
     }
@@ -1605,19 +1605,19 @@ public class JTSGeometryBindingTest {
         JTSPolygon expResult = new JTSPolygon(bound1);
 
         String xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                               + '\n'  +
-        "<gml:Polygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                               + '\n'  +
-        "    <gml:exterior>"                                                                                          + '\n'  +
-        "        <gml:LinearRing>"                                                                   + '\n'  +
-        "            <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
-        "        </gml:LinearRing>"                                                                                         + '\n'  +
-        "    </gml:exterior>"                                                                                         + '\n'  +
-        "    <gml:interior>"                                                                                          + '\n'  +
-        "        <gml:LinearRing>"                                                                   + '\n'  +
-        "            <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
-        "        </gml:LinearRing>"                                                                                         + '\n'  +
-        "    </gml:interior>"                                                                                         + '\n'  +
-        "</gml:Polygon>"                                                                                              + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                             + '\n'  +
+        "<gml:Polygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n'  +
+        "  <gml:exterior>"                                                                          + '\n'  +
+        "    <gml:LinearRing>"                                                                      + '\n'  +
+        "      <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "    </gml:LinearRing>"                                                                     + '\n'  +
+        "  </gml:exterior>"                                                                         + '\n'  +
+        "  <gml:interior>"                                                                          + '\n'  +
+        "    <gml:LinearRing>"                                                                      + '\n'  +
+        "      <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "    </gml:LinearRing>"                                                                     + '\n'  +
+        "  </gml:interior>"                                                                         + '\n'  +
+        "</gml:Polygon>"                                                                            + '\n';
 
 
         PolygonType temp = (PolygonType) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
@@ -1626,19 +1626,19 @@ public class JTSGeometryBindingTest {
         assertEquals(expResult, result);
 
         xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                               + '\n'  +
-        "<gml:Polygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                               + '\n'  +
-        "    <gml:outerBoundaryIs>"                                                                                          + '\n'  +
-        "        <gml:LinearRing>"                                                                   + '\n'  +
-        "            <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
-        "        </gml:LinearRing>"                                                                                         + '\n'  +
-        "    </gml:outerBoundaryIs>"                                                                                         + '\n'  +
-        "    <gml:innerBoundaryIs>"                                                                                          + '\n'  +
-        "        <gml:LinearRing>"                                                                   + '\n'  +
-        "            <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
-        "        </gml:LinearRing>"                                                                                         + '\n'  +
-        "    </gml:innerBoundaryIs>"                                                                                         + '\n'  +
-        "</gml:Polygon>"                                                                                              + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                             + '\n'  +
+        "<gml:Polygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n'  +
+        "  <gml:outerBoundaryIs>"                                                                   + '\n'  +
+        "    <gml:LinearRing>"                                                                      + '\n'  +
+        "      <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "    </gml:LinearRing>"                                                                     + '\n'  +
+        "  </gml:outerBoundaryIs>"                                                                  + '\n'  +
+        "  <gml:innerBoundaryIs>"                                                                   + '\n'  +
+        "    <gml:LinearRing>"                                                                      + '\n'  +
+        "      <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "    </gml:LinearRing>"                                                                     + '\n'  +
+        "  </gml:innerBoundaryIs>"                                                                  + '\n'  +
+        "</gml:Polygon>"                                                                            + '\n';
 
         temp = (PolygonType) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
 
@@ -1727,22 +1727,22 @@ public class JTSGeometryBindingTest {
         String result = StringUtilities.removeXmlns(sw.toString());
 
         String expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                               + '\n'  +
-        "<gml:MultiPolygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" >"                                               + '\n'  +
-        "    <gml:polygonMember>"                                               + '\n'  +
-        "        <gml:Polygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                               + '\n'  +
-        "            <gml:exterior>"                                                                                          + '\n'  +
-        "                <gml:LinearRing>"                                                                   + '\n'  +
-        "                    <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
-        "                </gml:LinearRing>"                                                                                         + '\n'  +
-        "            </gml:exterior>"                                                                                         + '\n'  +
-        "            <gml:interior>"                                                                                          + '\n'  +
-        "                <gml:LinearRing>"                                                                   + '\n'  +
-        "                    <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
-        "                </gml:LinearRing>"                                                                                         + '\n'  +
-        "            </gml:interior>"                                                                                         + '\n'  +
-        "        </gml:Polygon>"                                                                                              + '\n' +
-        "    </gml:polygonMember>"                                               + '\n'  +
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                 + '\n'  +
+        "<gml:MultiPolygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" >"               + '\n'  +
+        "  <gml:polygonMember>"                                                                         + '\n'  +
+        "    <gml:Polygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                 + '\n'  +
+        "      <gml:exterior>"                                                                          + '\n'  +
+        "        <gml:LinearRing>"                                                                      + '\n'  +
+        "          <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "        </gml:LinearRing>"                                                                     + '\n'  +
+        "      </gml:exterior>"                                                                         + '\n'  +
+        "      <gml:interior>"                                                                          + '\n'  +
+        "        <gml:LinearRing>"                                                                      + '\n'  +
+        "          <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "        </gml:LinearRing>"                                                                     + '\n'  +
+        "      </gml:interior>"                                                                         + '\n'  +
+        "    </gml:Polygon>"                                                                            + '\n' +
+        "  </gml:polygonMember>"                                                                        + '\n'  +
         "</gml:MultiPolygon>\n";
 
         assertEquals(expResult, result);
@@ -1828,22 +1828,22 @@ public class JTSGeometryBindingTest {
         expResult.getElements().add(expPoly);
 
         String xml =
-         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                               + '\n'  +
-        "<gml:MultiPolygon xmlns:gml=\"http://www.opengis.net/gml\" srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                                               + '\n'  +
-        "    <gml:polygonMember>"                                               + '\n'  +
-        "        <gml:Polygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                               + '\n'  +
-        "            <gml:exterior>"                                                                                          + '\n'  +
-        "                <gml:LinearRing>"                                                                   + '\n'  +
-        "                    <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
-        "                </gml:LinearRing>"                                                                                         + '\n'  +
-        "            </gml:exterior>"                                                                                         + '\n'  +
-        "            <gml:interior>"                                                                                          + '\n'  +
-        "                <gml:LinearRing>"                                                                   + '\n'  +
-        "                    <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
-        "                </gml:LinearRing>"                                                                                         + '\n'  +
-        "            </gml:interior>"                                                                                         + '\n'  +
-        "        </gml:Polygon>"                                                                                              + '\n' +
-        "    </gml:polygonMember>"                                               + '\n'  +
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                 + '\n'  +
+        "<gml:MultiPolygon xmlns:gml=\"http://www.opengis.net/gml\" srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">" + '\n'  +
+        "  <gml:polygonMember>"                                                                         + '\n'  +
+        "    <gml:Polygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                 + '\n'  +
+        "      <gml:exterior>"                                                                          + '\n'  +
+        "        <gml:LinearRing>"                                                                      + '\n'  +
+        "          <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "        </gml:LinearRing>"                                                                     + '\n'  +
+        "      </gml:exterior>"                                                                         + '\n'  +
+        "      <gml:interior>"                                                                          + '\n'  +
+        "        <gml:LinearRing>"                                                                      + '\n'  +
+        "          <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "        </gml:LinearRing>"                                                                     + '\n'  +
+        "      </gml:interior>"                                                                         + '\n'  +
+        "    </gml:Polygon>"                                                                            + '\n'  +
+        "  </gml:polygonMember>"                                                                        + '\n'  +
         "</gml:MultiPolygon>\n";
 
 
@@ -1922,34 +1922,34 @@ public class JTSGeometryBindingTest {
         String result = StringUtilities.removeXmlns(sw.toString());
 
         String expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
-        "<gml:MultiGeometry >"                                        + '\n' +
-        "    <gml:geometryMember>"                                                                               + '\n' +
-        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                                                          + '\n' +
-        "            <gml:segments>"                                                                          + '\n' +
-        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
-        "                    <gml:pos>401500.0 3334500.0</gml:pos>" + '\n' +
-        "                    <gml:pos>401700.0 3334850.0</gml:pos>" + '\n' +
-        "                    <gml:pos>402200.0 3335200.0</gml:pos>" + '\n' +
-        "                </gml:LineStringSegment>"                                                            + '\n' +
-        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
-        "                    <gml:pos>402320.0 3334850.0</gml:pos>" + '\n' +
-        "                    <gml:pos>402200.0 3335200.0</gml:pos>" + '\n' +
-        "                </gml:LineStringSegment>"                                                            + '\n' +
-        "            </gml:segments>"                                                                         + '\n' +
-        "        </gml:Curve>"                                                                                + '\n' +
-        "    </gml:geometryMember>"                                                                              + '\n' +
-        "    <gml:geometryMember>"                                                                               + '\n' +
-        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                                                          + '\n' +
-        "            <gml:segments>"                                                                          + '\n' +
-        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
-        "                    <gml:pos>402000.0 3334850.0</gml:pos>" + '\n' +
-        "                    <gml:pos>402200.0 3335200.0</gml:pos>" + '\n' +
-        "                </gml:LineStringSegment>"                                                            + '\n' +
-        "            </gml:segments>"                                                                         + '\n' +
-        "        </gml:Curve>"                                                                                + '\n' +
-        "    </gml:geometryMember>"                                                                              + '\n' +
-        "</gml:MultiGeometry>"                                                                               + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"               + '\n' +
+        "<gml:MultiGeometry >"                                                        + '\n' +
+        "  <gml:geometryMember>"                                                      + '\n' +
+        "    <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">" + '\n' +
+        "      <gml:segments>"                                                        + '\n' +
+        "        <gml:LineStringSegment interpolation=\"linear\">"                    + '\n' +
+        "          <gml:pos>401500.0 3334500.0</gml:pos>"                             + '\n' +
+        "          <gml:pos>401700.0 3334850.0</gml:pos>"                             + '\n' +
+        "          <gml:pos>402200.0 3335200.0</gml:pos>"                             + '\n' +
+        "        </gml:LineStringSegment>"                                            + '\n' +
+        "        <gml:LineStringSegment interpolation=\"linear\">"                    + '\n' +
+        "          <gml:pos>402320.0 3334850.0</gml:pos>"                             + '\n' +
+        "          <gml:pos>402200.0 3335200.0</gml:pos>"                             + '\n' +
+        "        </gml:LineStringSegment>"                                            + '\n' +
+        "      </gml:segments>"                                                       + '\n' +
+        "    </gml:Curve>"                                                            + '\n' +
+        "  </gml:geometryMember>"                                                     + '\n' +
+        "  <gml:geometryMember>"                                                      + '\n' +
+        "    <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">" + '\n' +
+        "      <gml:segments>"                                                        + '\n' +
+        "        <gml:LineStringSegment interpolation=\"linear\">"                    + '\n' +
+        "          <gml:pos>402000.0 3334850.0</gml:pos>"                             + '\n' +
+        "          <gml:pos>402200.0 3335200.0</gml:pos>"                             + '\n' +
+        "        </gml:LineStringSegment>"                                            + '\n' +
+        "      </gml:segments>"                                                       + '\n' +
+        "    </gml:Curve>"                                                            + '\n' +
+        "  </gml:geometryMember>"                                                     + '\n' +
+        "</gml:MultiGeometry>"                                                        + '\n';
 
         assertEquals(expResult, result);
 
@@ -2000,22 +2000,22 @@ public class JTSGeometryBindingTest {
         result = StringUtilities.removeXmlns(sw.toString());
 
         expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
-        "<gml:MultiGeometry >"                                        + '\n' +
-        "    <gml:geometryMember>" + '\n' +
-        "        <gml:PolyhedralSurface srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27593\">" + '\n' +
-        "            <gml:polygonPatches>" + '\n' +
-        "                <gml:PolygonPatch>" + '\n' +
-        "                    <gml:exterior>" + '\n' +
-        "                        <gml:LinearRing>" + '\n' +
-        "                            <gml:posList>656216.1977884835 38574.31079256255 656209.434300029 38569.570186997764</gml:posList>"  + '\n' +
-        "                        </gml:LinearRing>" + '\n' +
-        "                    </gml:exterior>" + '\n' +
-        "                </gml:PolygonPatch>" + '\n' +
-        "            </gml:polygonPatches>" + '\n' +
-        "        </gml:PolyhedralSurface>" + '\n' +
-        "    </gml:geometryMember>" + '\n' +
-        "</gml:MultiGeometry>"                                                                               + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
+        "<gml:MultiGeometry >" + '\n' +
+        "  <gml:geometryMember>" + '\n' +
+        "    <gml:PolyhedralSurface srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27593\">" + '\n' +
+        "      <gml:polygonPatches>" + '\n' +
+        "        <gml:PolygonPatch>" + '\n' +
+        "          <gml:exterior>" + '\n' +
+        "            <gml:LinearRing>" + '\n' +
+        "              <gml:posList>656216.1977884835 38574.31079256255 656209.434300029 38569.570186997764</gml:posList>" + '\n' +
+        "            </gml:LinearRing>" + '\n' +
+        "          </gml:exterior>" + '\n' +
+        "        </gml:PolygonPatch>" + '\n' +
+        "      </gml:polygonPatches>" + '\n' +
+        "    </gml:PolyhedralSurface>" + '\n' +
+        "  </gml:geometryMember>" + '\n' +
+        "</gml:MultiGeometry>" + '\n';
 
         assertEquals(expResult, result);
 
@@ -2073,18 +2073,18 @@ public class JTSGeometryBindingTest {
         result = StringUtilities.removeXmlns(sw.toString());
 
         expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                              + '\n' +
-        "<gml:MultiGeometry >"                                                                        + '\n' +
-        "    <gml:geometryMember>"                                                                   + '\n' +
-        "        <gml:Polygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326\">"                                                + '\n' +
-        "            <gml:exterior>"                                                                 + '\n' +
-        "                <gml:LinearRing>"                                                           + '\n' +
-        "                    <gml:posList>-1.0 0.0 0.0 1.0 1.0 0.0 0.0 -1.0 -1.0 0.0</gml:posList>"  + '\n' +
-        "                </gml:LinearRing>"                                                          + '\n' +
-        "            </gml:exterior>"                                                               + '\n' +
-        "        </gml:Polygon>"                                                                     + '\n' +
-        "    </gml:geometryMember>"                                                                  + '\n' +
-        "</gml:MultiGeometry>"                                                                       + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                    + '\n' +
+        "<gml:MultiGeometry >"                                                             + '\n' +
+        "  <gml:geometryMember>"                                                           + '\n' +
+        "    <gml:Polygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326\">"     + '\n' +
+        "      <gml:exterior>"                                                             + '\n' +
+        "        <gml:LinearRing>"                                                         + '\n' +
+        "          <gml:posList>-1.0 0.0 0.0 1.0 1.0 0.0 0.0 -1.0 -1.0 0.0</gml:posList>"  + '\n' +
+        "        </gml:LinearRing>"                                                        + '\n' +
+        "      </gml:exterior>"                                                            + '\n' +
+        "    </gml:Polygon>"                                                               + '\n' +
+        "  </gml:geometryMember>"                                                          + '\n' +
+        "</gml:MultiGeometry>"                                                             + '\n';
 
         assertEquals(expResult, result);
     }
@@ -2152,34 +2152,34 @@ public class JTSGeometryBindingTest {
         expResult.getElements().add(c2);
 
         String xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
-        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                        + '\n' +
-        "    <gml:geometryMember>"                                                                               + '\n' +
-        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                                                          + '\n' +
-        "            <gml:segments>"                                                                          + '\n' +
-        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
-        "                    <gml:pos>401500.0 3334500.0</gml:pos>" + '\n' +
-        "                    <gml:pos>401700.0 3334850.0</gml:pos>" + '\n' +
-        "                    <gml:pos>402200.0 3335200.0</gml:pos>" + '\n' +
-        "                </gml:LineStringSegment>"                                                            + '\n' +
-        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
-        "                    <gml:pos>402320.0 3334850.0</gml:pos>" + '\n' +
-        "                    <gml:pos>402200.0 3335200.0</gml:pos>" + '\n' +
-        "                </gml:LineStringSegment>"                                                            + '\n' +
-        "            </gml:segments>"                                                                         + '\n' +
-        "        </gml:Curve>"                                                                                + '\n' +
-        "    </gml:geometryMember>"                                                                              + '\n' +
-        "    <gml:geometryMember>"                                                                               + '\n' +
-        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                                                          + '\n' +
-        "            <gml:segments>"                                                                          + '\n' +
-        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
-        "                    <gml:pos>402000.0 3334850.0</gml:pos>" + '\n' +
-        "                    <gml:pos>402200.0 3335200.0</gml:pos>" + '\n' +
-        "                </gml:LineStringSegment>"                                                            + '\n' +
-        "            </gml:segments>"                                                                         + '\n' +
-        "        </gml:Curve>"                                                                                + '\n' +
-        "    </gml:geometryMember>"                                                                           + '\n' +
-        "</gml:MultiGeometry>"                                                                                + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                + '\n' +
+        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                 + '\n' +
+        "  <gml:geometryMember>"                                                       + '\n' +
+        "    <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"  + '\n' +
+        "      <gml:segments>"                                                         + '\n' +
+        "        <gml:LineStringSegment interpolation=\"linear\">"                     + '\n' +
+        "          <gml:pos>401500.0 3334500.0</gml:pos>"                              + '\n' +
+        "          <gml:pos>401700.0 3334850.0</gml:pos>"                              + '\n' +
+        "          <gml:pos>402200.0 3335200.0</gml:pos>"                              + '\n' +
+        "        </gml:LineStringSegment>"                                             + '\n' +
+        "        <gml:LineStringSegment interpolation=\"linear\">"                     + '\n' +
+        "          <gml:pos>402320.0 3334850.0</gml:pos>"                              + '\n' +
+        "          <gml:pos>402200.0 3335200.0</gml:pos>"                              + '\n' +
+        "        </gml:LineStringSegment>"                                             + '\n' +
+        "      </gml:segments>"                                                        + '\n' +
+        "    </gml:Curve>"                                                             + '\n' +
+        "  </gml:geometryMember>"                                                      + '\n' +
+        "  <gml:geometryMember>"                                                       + '\n' +
+        "    <gml:Curve srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"  + '\n' +
+        "      <gml:segments>"                                                         + '\n' +
+        "        <gml:LineStringSegment interpolation=\"linear\">"                     + '\n' +
+        "          <gml:pos>402000.0 3334850.0</gml:pos>"                              + '\n' +
+        "          <gml:pos>402200.0 3335200.0</gml:pos>"                              + '\n' +
+        "        </gml:LineStringSegment>"                                             + '\n' +
+        "      </gml:segments>"                                                        + '\n' +
+        "    </gml:Curve>"                                                             + '\n' +
+        "  </gml:geometryMember>"                                                      + '\n' +
+        "</gml:MultiGeometry>"                                                         + '\n';
 
         JTSMultiPrimitive result = (JTSMultiPrimitive) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
 
@@ -2200,21 +2200,21 @@ public class JTSGeometryBindingTest {
         assertTrue(crs != null);
 
         xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
-        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                        + '\n' +
-        "    <gml:geometryMember>" + '\n' +
-        "        <gml:PolyhedralSurface srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27593\">" + '\n' +
-        "            <gml:polygonPatches>" + '\n' +
-        "                <gml:PolygonPatch>" + '\n' +
-        "                    <gml:exterior>" + '\n' +
-        "                        <gml:LinearRing>" + '\n' +
-        "                            <gml:posList>656216.1977884835 38574.31079256255 656209.434300029 38569.570186997764</gml:posList>"  + '\n' +
-        "                        </gml:LinearRing>" + '\n' +
-        "                    </gml:exterior>" + '\n' +
-        "                </gml:PolygonPatch>" + '\n' +
-        "            </gml:polygonPatches>" + '\n' +
-        "        </gml:PolyhedralSurface>" + '\n' +
-        "    </gml:geometryMember>" + '\n' +
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
+        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
+        "  <gml:geometryMember>" + '\n' +
+        "    <gml:PolyhedralSurface srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27593\">" + '\n' +
+        "      <gml:polygonPatches>" + '\n' +
+        "        <gml:PolygonPatch>" + '\n' +
+        "          <gml:exterior>" + '\n' +
+        "            <gml:LinearRing>" + '\n' +
+        "              <gml:posList>656216.1977884835 38574.31079256255 656209.434300029 38569.570186997764</gml:posList>" + '\n' +
+        "            </gml:LinearRing>" + '\n' +
+        "          </gml:exterior>" + '\n' +
+        "        </gml:PolygonPatch>" + '\n' +
+        "      </gml:polygonPatches>" + '\n' +
+        "    </gml:PolyhedralSurface>" + '\n' +
+        "  </gml:geometryMember>" + '\n' +
         "</gml:MultiGeometry>" + '\n';
 
        result = (JTSMultiPrimitive) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
@@ -2274,18 +2274,18 @@ public class JTSGeometryBindingTest {
 
 
         xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                              + '\n' +
-        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                                                        + '\n' +
-        "    <gml:geometryMember>"                                                                   + '\n' +
-        "        <gml:Polygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326\">"                                                + '\n' +
-        "            <gml:exterior>"                                                                 + '\n' +
-        "                <gml:LinearRing>"                                                           + '\n' +
-        "                    <gml:posList>-1.0 0.0 0.0 1.0 1.0 0.0 0.0 -1.0 -1.0 0.0</gml:posList>"  + '\n' +
-        "                </gml:LinearRing>"                                                          + '\n' +
-        "            </gml:exterior>"                                                               + '\n' +
-        "        </gml:Polygon>"                                                                     + '\n' +
-        "    </gml:geometryMember>"                                                                  + '\n' +
-        "</gml:MultiGeometry>"                                                                       + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                    + '\n' +
+        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                     + '\n' +
+        "  <gml:geometryMember>"                                                           + '\n' +
+        "    <gml:Polygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326\">"     + '\n' +
+        "      <gml:exterior>"                                                             + '\n' +
+        "        <gml:LinearRing>"                                                         + '\n' +
+        "          <gml:posList>-1.0 0.0 0.0 1.0 1.0 0.0 0.0 -1.0 -1.0 0.0</gml:posList>"  + '\n' +
+        "        </gml:LinearRing>"                                                        + '\n' +
+        "      </gml:exterior>"                                                            + '\n' +
+        "    </gml:Polygon>"                                                               + '\n' +
+        "  </gml:geometryMember>"                                                          + '\n' +
+        "</gml:MultiGeometry>"                                                             + '\n';
 
         result = (JTSMultiPrimitive) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
 
