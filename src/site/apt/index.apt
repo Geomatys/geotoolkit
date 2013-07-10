@@ -44,17 +44,43 @@ The Geotoolkit.org library
   their dependencies. See the {{{./branches.html}branches page}} for more information.
 
 
-* News
+* Apache SIS and Geotk 3.<x>/4.<x> series
 
-  Latest Geotoolkit.org release is Geotk-3.20, released October 2012.
+  Large part of Geotoolkit.org code is moving to the {{{http://builds.apache.org/job/sis-trunk/site/}Apache SIS}} project.
+  This migration results in deprecation of massive amount of classes in the Geotk project,
+  which will be replaced by the SIS equivalent. In many cases, migrating to SIS is just a
+  matter of replacing the <<<org.geotoolkit>>> package name by <<<org.apache.sis>>> in the
+  <<<import>>> declarations. However in some cases, the changes are more consistent.
+  Non-trivial replacements are indicated in the comments of the <<<@deprecated>>> tags.
 
-    * The <<<3.20>>> version, which depends on GeoAPI 3.1-M04, is available on the
+    * {{{./3.x/UpgradeTo4.xml}Ant script for automatic renaming of some package names}}.
+
+  To reduce the annoyance, this replacement is performed only on the 4.<x> series of Geotk versions.
+  The Geotk 3.<x> series still have no dependency to SIS, and their classes are not deprecated.
+  However we expect that most future developments will happen in the Apache SIS project together
+  with the Geotk 4.<x> series, and the Geotk 3.<x> series may receive only occasional bug fixes.
+
+  Furthermore, the <<<geotoolkit>>> and <<<geotoolkit-pending>>> repositories will be merged in a
+  single project in the 4.<x> series.
+
+
+* Latest releases
+
+  Latest Geotoolkit.org release is Geotk-4.0-M0, released July 2013.
+  This release is a milestone toward migration to Apache SIS.
+  The <<<4.0-M0>>> release contains deprecated classes with links to their SIS replacement, mostly in the utility and metadata modules.
+  Those deprecated classes will be deleted in the <<<4.0-M1>>> milestone.
+  The <<<4.0-M0>>> milestone is provided in the hope to ease transition with less risks to break existing code.
+
+    * The <<<4.0-M0>>> version, which depends on GeoAPI 3.1-M04, is available on the
       {{{http://maven.geotoolkit.org/}project's Maven repository}}.
 
     * The <<<geotk-3.20-geoapi-3.0>>> version, which depends on GeoAPI 3.0.0,
       is available on the {{{http://search.maven.org/}Maven Central repository}}.
+      There is no <<<geotk-4.0-M0-geoapi-3.0>>> version because the changes compared
+      to 3.20 are minors.
 
-  See the {{{http://download.geotoolkit.org/3.20/}download page}} for release notes.
+  See the {{{http://download.geotoolkit.org/4.0-M0/}download page}} for release notes.
 
 
 * License

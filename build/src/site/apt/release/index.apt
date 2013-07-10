@@ -7,29 +7,67 @@ Performing a Geotoolkit.org release
 
   This page is for Geotk release managers only. It describes how to create and deploy the
   Geotoolkit.org Maven artifacts, create the bundles, javadoc, list of API changes and push
-  those documents on the web server.
+  those documents on the web server. The content of this page is:
+
+   * List of requirements
+
+   * Setup (to be executed only once)
+
+   * Performing a GeoAPI release
+
+   * Performing a Geotk release
+
 
 
 * Requirements
 
-  * Maven, Ant, Java and the Java compiler shall be available on the path.
+  Before to perform a release, make sure that the following conditions holds:
 
-  * A clone of <<<http://hg.geotoolkit.org/geotoolkit>>> must be available in a directory named <<<public>>>.
+   * Maven, Ant, Java and the Java compiler shall be available on the path.
 
-  * The <<<{{{./setup.sh}public/build/src/site/resources/release/setup.sh}}>>> script shall have
-    been executed once from the parent directory of the above-cited <<<public>>> directory.
+   * The <Setup> section below must have been executed once.
 
-  * The <<<release/$OLD_VERSION>>> directory shall exist (where <<<$OLD_VERSION>>> is defined
-    below) and shall contain the source code of the previous version, as processed by the <<<Move>>>
-    program described below.
+   * In the "<<<release>>>" directory created by the <Setup> section, the <<<$OLD_VERSION>>> directory
+     shall exist (where <<<$OLD_VERSION>>> is defined below) and shall contain the source code of the
+     previous version, as processed by the <<<Move>>> program described below.
 
-  * The home directory on <<<$GEOTK_SERVER>>> (defined below) shall contains a <<<geotk-release>>>
-    directory with a <<<packs>>> sub-directory. They are used temporarily for files transfer.
+   * The home directory on <<<$GEOTK_SERVER>>> (defined below) shall contains a "<<<geotk-release>>>"
+     directory with a "<<<packs>>>" sub-directory. They are used temporarily for files transfer.
+
+
+
+* Setup
+
+  This section needs to be executed only once. It creates a "<<<release>>>" directory from which
+  the release work will be performed. This directory shall <<not>> be deleted after the release,
+  since it will contain information needed for the next release.
+
+  Before to execute the following commands, set the <<<$GEOTK_HOME>>> environment variable to
+  your Geotk working directory (a clone of <<<http://hg.geotoolkit.org/geotoolkit>>>).
+
+--------------------------------------------------------------------------------------------------
+export GEOTK_HOME=(... insert the path to your http://hg.geotoolkit.org/geotoolkit clone here ...)
+--------------------------------------------------------------------------------------------------
+
+  Then execute:
+
++-------------------------------------------------------------------+
+mkdir release
+cd release
+mkdir changes
+hg clone $GEOTK_HOME clone
+
+javac $GEOTK_HOME/build/src/site/resources/release/Move.java -d .
+ln -s $GEOTK_HOME/build/src/site/resources/release/update-version.xml
+ln -s $GEOTK_HOME/build/src/site/resources/release/fix-html.xml
++-------------------------------------------------------------------+
+
 
 
 * Performing a GeoAPI release
 
   See {{{http://www.geoapi.org/tools/release-instruction.html}GeoAPI tools}}
+
 
 
 * Performing a Geotk release
@@ -39,23 +77,115 @@ Performing a Geotoolkit.org release
   the Geotk version numbers and the deployment server:
 
 --------------------------------------------------------
-export OLD_VERSION="3.20"
-export NEW_VERSION="3.21"
+export OLD_VERSION="4.0-M0"
+export NEW_VERSION="4.0-M1"
 export GEOTK_SERVER=(... insert foo@server.com here ...)
 --------------------------------------------------------
 
-  Search for the old version number in all <<<.apt>>> and <<<.xml>>> files. Replace them by the new
-  version numbers. The files to be updated include the <<<download.apt>>> page, the <<<run.apt>>>
-  page, the OpenOffice.org addin <<<description.xml>>> and <<<update.xml>>> files, and various
-  <<<index.apt>>> pages.
+  Execute the following commands from the "<<<release>>>" directory.
+  All those commands can be executed by copy-and-paste without the need to edit them.
 
-  Finally, run the script after making sure that the tests pass:
++-------------------+
+cd clone
+hg pull --update
+hg status
++-------------------+
 
----------------------
-cd public
-mvn clean test
-../release/release.sh
----------------------
+  The last command above should not produce any output. If the command reports any
+  modified files, then stop the release process or revert the local modifications.
+  Otherwise:
+
+   * <<manually>> search (for example using the <Find> contextual menu of your IDE on the
+     "<<<clone>>>" directory) for the old version number (the value of <<<$OLD_VERSION>>>)
+     in all <<<.apt>>>, <<<.xml>>> and <<<.entities>>> files.
+     Do <<not>> include <<<.java>>> files in the search.
+
+   * For any occurrence found, <<read the surrounding text>> for making sure that this is a Geotk
+     version number, update the version number to the value of <<<$NEW_VERSION>>> if appropriate,
+     and eventually edit the text surrounding text. Some text may be specific to a particular
+     version number (for example a notice about an EPSG database update, <etc.>).
+
+  The files to be updated include the <<<download.apt>>> page, the <<<run.apt>>> page,
+  the OpenOffice.org addin <<<description.xml>>> and <<<update.xml>>> files, and various
+  <<<index.apt>>> pages. After those editions, continue:
+
++---------------------------------------------------------------------------------------+
+hg commit -m "Updated version number in documentation from $OLD_VERSION to $NEW_VERSION."
+hg tag "$NEW_VERSION"
+hg out
++---------------------------------------------------------------------------------------+
+
+  The last command above should output exactly two changesets: one for the version number update,
+  and one for the newly added tag. If there is more changeset, stop the release process.
+  Otherwise continue:
+
++---------------------------------------------------------------------------------------+
+ant -file ../update-version.xml -Dgeotk.version=$NEW_VERSION
+hg diff
++---------------------------------------------------------------------------------------+
+
+  Ensure that there in no anomaly in the <<<hg diff>>> output.
+  <<Do not commit those changes>> as we will revert them later.
+  Then deploy the JAR and prepare the other distribution formats:
+
++---------------------------------------------------------------------------------------+
+mvn deploy --activate-profiles package
+mvn site --activate-profiles \!no-site --define skipTests
+mvn org.geotoolkit.project:geotk-jar-collector:pack-specific --non-recursive
+zip -d geotk-$NEW_VERSION-sources.zip \*.jar
++---------------------------------------------------------------------------------------+
+
+  Copy to the server:
+
++---------------------------------------------------------------------------------------+
+scp target/bundles/* $GEOTK_SERVER:geotk-release
+scp modules/analytics/geotk-openoffice/target/geotk-$NEW_VERSION.oxt $GEOTK_SERVER:geotk-release
++---------------------------------------------------------------------------------------+
+
+  Prepare PACK200 files:
+
++---------------------------------------------------------------------------------------+
+cd target/binaries
+mv -i ../../demos/geotk-simples/target/geotk-simples-$NEW_VERSION.jar .
+find geotk-*.jar -exec zip -d '{}' META-INF/INDEX.LIST \;
+find *.jar -exec pack200 --strip-debug --no-keep-file-order --segment-limit=-1 --effort=9 --deflate-hint=true '{}'.pack.gz '{}' \;
+scp *.gz $GEOTK_SERVER:geotk-release/packs
+cd -
++---------------------------------------------------------------------------------------+
+
+  Generate javadoc and run JDiff:
+
++---------------------------------------------------------------------------------------+
+cd ..
+mkdir $NEW_VERSION
+cd $NEW_VERSION
+cp -r ../clone/modules .
+java -cp .. Move
+cd -
+./jdiff.sh
+cd changes
+ant -file ../fix-html.xml
+scp -r changes changes.html $GEOTK_SERVER:geotk-release
++---------------------------------------------------------------------------------------+
+
+  Cleanup:
+
++---------------------------------------------------------------------------------------+
+rm -r *
+cd -
+rm Geotk-*.xml
+rm -r $OLD_VERSION
+cd clone
+mvn clean --quiet
+hg revert --all --no-backup
++---------------------------------------------------------------------------------------+
+
+  Push the pending changes (only on success):
+
++---------------------------------------------------------------------------------------+
+hg push
++---------------------------------------------------------------------------------------+
+
 
 
 * Performing a Geotk-pending release

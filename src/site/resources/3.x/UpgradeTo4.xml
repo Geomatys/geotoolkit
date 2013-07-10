@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Replace some Geotk fully qualified names by Apache SIS names.
+  This script processes all *.java files in the current working
+  directory and all sub-directories. This task does not replace
+  every classes. The classes that are not replaced by this task
+  will need to be resolved manually.
+
+  This script has three targets:
+
+  - packages (default): Renames only fully qualified names.
+  - classes: Renames some classes after the packages have been renamed.
+  - methods: rename some static methods after the classes have been renamed.
+-->
+<project name="Upgrade" default="packages">
+  <target name="packages">
+    <replace dir="${user.dir}" summary="yes">
+      <include name="**/*.java"/>
+      <replacefilter token="org.geotoolkit.geometry.AbstractDirectPosition"         value="org.apache.sis.geometry.AbstractDirectPosition"/>
+      <replacefilter token="org.geotoolkit.geometry.AbstractEnvelope"               value="org.apache.sis.geometry.AbstractEnvelope"/>
+      <replacefilter token="org.geotoolkit.geometry.DirectPosition2D"               value="org.apache.sis.geometry.DirectPosition2D"/>
+      <replacefilter token="org.geotoolkit.geometry.Envelope2D"                     value="org.apache.sis.geometry.Envelope2D"/>
+      <replacefilter token="org.geotoolkit.geometry.GeneralDirectPosition"          value="org.apache.sis.geometry.GeneralDirectPosition"/>
+      <replacefilter token="org.geotoolkit.geometry.ImmutableEnvelope"              value="org.apache.sis.geometry.ImmutableEnvelope"/>
+      <replacefilter token="org.geotoolkit.image.io.stream.ChannelImageInputStream" value="org.apache.sis.internal.storage.ChannelImageInputStream"/>
+      <replacefilter token="org.geotoolkit.internal.jaxb.code"                      value="org.apache.sis.internal.jaxb.code"/>
+      <replacefilter token="org.geotoolkit.internal.jaxb.gco"                       value="org.apache.sis.internal.jaxb.gco"/>
+      <replacefilter token="org.geotoolkit.internal.jaxb.gmd"                       value="org.apache.sis.internal.jaxb.gmd"/>
+      <replacefilter token="org.geotoolkit.internal.jaxb.gmi"                       value="org.apache.sis.internal.jaxb.gmi"/>
+      <replacefilter token="org.geotoolkit.internal.jaxb.gml"                       value="org.apache.sis.internal.jaxb.gml"/>
+      <replacefilter token="org.geotoolkit.internal.jaxb.gmt"                       value="org.apache.sis.internal.jaxb.gmt"/>
+      <replacefilter token="org.geotoolkit.internal.jaxb.geometry"                  value="org.apache.sis.internal.jaxb.geometry"/>
+      <replacefilter token="org.geotoolkit.internal.jaxb.metadata"                  value="org.apache.sis.internal.jaxb.metadata"/>
+      <replacefilter token="org.geotoolkit.internal.jaxb.referencing"               value="org.apache.sis.internal.jaxb.gml"/>
+      <replacefilter token="org.geotoolkit.math.Statistics"                         value="org.apache.sis.math.Statistics"/>
+      <replacefilter token="org.geotoolkit.measure.Units"                           value="org.apache.sis.measure.Units"/>
+      <replacefilter token="org.geotoolkit.metadata.AbstractMetadata"               value="org.apache.sis.metadata.AbstractMetadata"/>
+      <replacefilter token="org.geotoolkit.metadata.InvalidMetadataException"       value="org.apache.sis.metadata.InvalidMetadataException"/>
+      <replacefilter token="org.geotoolkit.metadata.KeyNamePolicy"                  value="org.apache.sis.metadata.KeyNamePolicy"/>
+      <replacefilter token="org.geotoolkit.metadata.MetadataStandard"               value="org.apache.sis.metadata.MetadataStandard"/>
+      <replacefilter token="org.geotoolkit.metadata.ModifiableMetadata"             value="org.apache.sis.metadata.ModifiableMetadata"/>
+      <replacefilter token="org.geotoolkit.metadata.NullValuePolicy"                value="org.apache.sis.metadata.ValueExistencePolicy"/>
+      <replacefilter token="org.geotoolkit.metadata.TypeValuePolicy"                value="org.apache.sis.metadata.TypeValuePolicy"/>
+      <replacefilter token="org.geotoolkit.metadata.UnmodifiableMetadataException"  value="org.apache.sis.metadata.UnmodifiableMetadataException"/>
+      <replacefilter token="org.geotoolkit.metadata.iso"                            value="org.apache.sis.metadata.iso"/>
+      <replacefilter token="org.geotoolkit.naming"                                  value="org.apache.sis.util.iso"/>
+      <replacefilter token="org.geotoolkit.referencing.DefaultReferenceIdentifier"  value="org.apache.sis.metadata.iso.ImmutableIdentifier"/>
+      <replacefilter token="org.geotoolkit.storage.DataStoreException"              value="org.apache.sis.storage.DataStoreException"/>
+      <replacefilter token="org.geotoolkit.util.AbstractInternationalString"        value="org.apache.sis.util.iso.AbstractInternationalString"/>
+      <replacefilter token="org.geotoolkit.util.ArgumentChecks"                     value="org.apache.sis.util.ArgumentChecks"/>
+      <replacefilter token="org.geotoolkit.util.Characters"                         value="org.apache.sis.util.Characters"/>
+      <replacefilter token="org.geotoolkit.util.ComparisonMode"                     value="org.apache.sis.util.ComparisonMode"/>
+      <replacefilter token="org.geotoolkit.util.Disposable"                         value="org.apache.sis.util.Disposable"/>
+      <replacefilter token="org.geotoolkit.util.GeoAPI"                             value="org.apache.sis.util.iso.Types"/>
+      <replacefilter token="org.geotoolkit.util.LenientComparable"                  value="org.apache.sis.util.LenientComparable"/>
+      <replacefilter token="org.geotoolkit.util.Localized"                          value="org.apache.sis.util.Localized"/>
+      <replacefilter token="org.geotoolkit.util.MeasurementRange"                   value="org.apache.sis.measure.MeasurementRange"/>
+      <replacefilter token="org.geotoolkit.util.NullArgumentException"              value="org.apache.sis.util.NullArgumentException"/>
+      <replacefilter token="org.geotoolkit.util.NumberRange"                        value="org.apache.sis.measure.NumberRange"/>
+      <replacefilter token="org.geotoolkit.util.Range"                              value="org.apache.sis.measure.Range"/>
+      <replacefilter token="org.geotoolkit.util.ResourceInternationalString"        value="org.apache.sis.util.iso.ResourceInternationalString"/>
+      <replacefilter token="org.geotoolkit.util.SimpleInternationalString"          value="org.apache.sis.util.iso.SimpleInternationalString"/>
+      <replacefilter token="org.geotoolkit.util.Strings"                            value="org.apache.sis.util.CharSequences"/>
+      <replacefilter token="org.geotoolkit.util.UnsupportedImplementationException" value="org.apache.sis.util.UnsupportedImplementationException"/>
+      <replacefilter token="org.geotoolkit.util.Version;"                           value="org.apache.sis.util.Version;"/> <!-- Not to confuse with Versioned. -->
+      <replacefilter token="org.geotoolkit.util.XArrays"                            value="org.apache.sis.util.ArraysExt"/>
+      <replacefilter token="org.geotoolkit.util.converter.Classes"                  value="org.apache.sis.util.Classes"/>
+      <replacefilter token="org.geotoolkit.util.converter.Numbers"                  value="org.apache.sis.util.Numbers"/>
+      <replacefilter token="org.geotoolkit.util.collection.BackingStoreException"   value="org.apache.sis.util.collection.BackingStoreException"/>
+      <replacefilter token="org.geotoolkit.util.collection.Cache"                   value="org.apache.sis.util.collection.Cache"/>
+      <replacefilter token="org.geotoolkit.util.collection.CheckedContainer"        value="org.apache.sis.util.collection.CheckedContainer"/>
+      <replacefilter token="org.geotoolkit.util.collection.UnmodifiableArrayList"   value="org.apache.sis.internal.util.UnmodifiableArrayList"/>
+      <replacefilter token="org.geotoolkit.util.collection.WeakHashSet"             value="org.apache.sis.util.collection.WeakHashSet"/>
+      <replacefilter token="org.geotoolkit.util.collection.WeakValueHashMap"        value="org.apache.sis.util.collection.WeakValueHashMap"/>
+      <replacefilter token="org.geotoolkit.util.collection.XCollection"             value="org.apache.sis.util.collection.Containers"/>
+      <replacefilter token="org.geotoolkit.util.logging.LoggerAdapter"              value="org.apache.sis.util.logging.LoggerAdapter"/>
+      <replacefilter token="org.geotoolkit.util.logging.Logging"                    value="org.apache.sis.util.logging.Logging"/>
+      <replacefilter token="org.geotoolkit.util.logging.MonolineFormatter"          value="org.apache.sis.util.logging.MonolineFormatter"/>
+      <replacefilter token="org.geotoolkit.util.logging.PerformanceLevel"           value="org.apache.sis.util.logging.PerformanceLevel"/>
+      <replacefilter token="org.geotoolkit.xml.IdentifiedObject"                    value="org.apache.sis.xml.IdentifiedObject"/>
+      <replacefilter token="org.geotoolkit.xml.IdentifierMap"                       value="org.apache.sis.xml.IdentifierMap"/>
+      <replacefilter token="org.geotoolkit.xml.IdentifierSpace"                     value="org.apache.sis.xml.IdentifierSpace"/>
+      <replacefilter token="org.geotoolkit.xml.MarshallerPool"                      value="org.apache.sis.xml.MarshallerPool"/>
+      <replacefilter token="org.geotoolkit.xml.Namespaces"                          value="org.apache.sis.xml.Namespaces"/>
+      <replacefilter token="org.geotoolkit.xml.NilReason"                           value="org.apache.sis.xml.NilReason"/>
+      <replacefilter token="org.geotoolkit.xml.ObjectConverters"                    value="org.apache.sis.xml.ValueConverter"/>
+      <replacefilter token="org.geotoolkit.xml.ObjectLinker"                        value="org.apache.sis.xml.ReferenceResolver"/>
+      <replacefilter token="org.geotoolkit.xml.XML"                                 value="org.apache.sis.xml.XML"/>
+      <replacefilter token="org.geotoolkit.xml.XLink"                               value="org.apache.sis.xml.XLink"/>
+    </replace>
+
+    <!-- Revert some changes for classes not yet migrated, or that moved elsewhere. -->
+    <replace dir="${user.dir}" summary="yes">
+      <include name="**/*.java"/>
+      <replacefilter token="org.apache.sis.internal.jaxb.gmd.PT_Locale"           value="org.apache.sis.internal.jaxb.code.PT_Locale"/>
+      <replacefilter token="org.apache.sis.metadata.iso.citation.Citations"       value="org.geotoolkit.metadata.iso.citation.Citations"/>
+      <replacefilter token="org.apache.sis.metadata.iso.spatial.PixelTranslation" value="org.geotoolkit.metadata.iso.spatial.PixelTranslation"/>
+    </replace>
+  </target>
+
+  <target name="classes">
+    <replace dir="${user.dir}" summary="yes">
+      <include name="**/*.java"/>
+      <replacefilter token="DefaultReferenceIdentifier" value="ImmutableIdentifier"/>
+      <replacefilter token="GeoAPI"                     value="Types"/>
+      <replacefilter token="Strings"                    value="CharSequences"/>
+      <replacefilter token="XArrays"                    value="ArraysExt"/>
+    </replace>
+  </target>
+
+  <target name="methods">
+    <replace dir="${user.dir}" summary="yes">
+      <include name="**/*.java"/>
+      <replacefilter token="WeakHashSet.newInstance"                                value="new WeakHashSet"/>
+      <replacefilter token="Classes.boundOfParameterizedAttribute"                  value="Classes.boundOfParameterizedProperty"/>
+      <replacefilter token="GeoAPI.forUML"                                          value="Types.forStandardName"/>
+    </replace>
+  </target>
+</project>

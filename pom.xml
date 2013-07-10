@@ -168,7 +168,7 @@
        =========================================================== -->
   <properties>
     <javadoc.exclude>
-      org.geotoolkit.project:org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra:org.opengis:com
+      org.geotoolkit.build:org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra:org.opengis:com
     </javadoc.exclude>
     <geoapi.version>3.1-M04</geoapi.version>
     <sis.version>0.3-jdk7</sis.version>
@@ -217,7 +217,7 @@
       <dependency>
         <groupId>javax.media</groupId>
         <artifactId>jai_imageio</artifactId>
-        <version>1.1</version>
+        <version>1.1.1</version>
       </dependency>
       <dependency>
         <groupId>com.jhlabs</groupId>
