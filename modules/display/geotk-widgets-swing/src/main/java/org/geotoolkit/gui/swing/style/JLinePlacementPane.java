@@ -47,10 +47,10 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
         guiGap.setModel(0d, 0d, Double.POSITIVE_INFINITY, 1d);
     }
     
-    public void setExpressionUnvisible(){
-        guiGap.setExpressionUnvisible();
-        guiInitial.setExpressionUnvisible();
-        guiOffset.setExpressionUnvisible();
+    public void setExpressionVisible(boolean visible){
+        guiGap.setExpressionVisible(visible);
+        guiInitial.setExpressionVisible(visible);
+        guiOffset.setExpressionVisible(visible);
     } 
     
     @Override

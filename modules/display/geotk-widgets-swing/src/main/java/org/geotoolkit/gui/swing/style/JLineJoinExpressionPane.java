@@ -17,25 +17,18 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.ButtonGroup;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.resource.IconBundle;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
@@ -50,6 +43,7 @@ public class JLineJoinExpressionPane extends StyleElementEditor<Expression>{
     private static final ImageIcon ICON_JOIN_ROUND = IconBundle.getIcon("16_linejoin_round");
     private static final ImageIcon ICON_JOIN_MITRE = IconBundle.getIcon("16_linejoin_mitre");
     private static final ImageIcon ICON_JOIN_BEVEL = IconBundle.getIcon("16_linejoin_bevel");
+    private final Dimension specialSize;
 
     /** Creates new form JColorExpressionPane */
     public JLineJoinExpressionPane() {
@@ -58,12 +52,13 @@ public class JLineJoinExpressionPane extends StyleElementEditor<Expression>{
         guiBevel.setIcon(ICON_JOIN_BEVEL);
         guiMiter.setIcon(ICON_JOIN_MITRE);
         guiRound.setIcon(ICON_JOIN_ROUND);
+        specialSize = guiSpecial.getPreferredSize();
     }
     
-    public void setExpressionUnvisible(){
-        guiSpecial.setPreferredSize(new Dimension(1, 1));
-        guiSpecial.setVisible(false);
-    }  
+    public void setExpressionVisible(boolean visible){
+        guiSpecial.setPreferredSize( visible ? new Dimension(specialSize) : new Dimension(1, 1));
+        guiSpecial.setVisible(visible);
+    }
 
     @Override
     public void setLayer(final MapLayer layer) {

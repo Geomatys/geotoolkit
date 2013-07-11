@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.style;
 
+import java.awt.LayoutManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,14 +29,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyleFactory;
-import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.expression.Expression;
 import org.opengis.style.Description;
 import org.opengis.util.InternationalString;
 
@@ -64,6 +62,11 @@ public abstract class StyleElementEditor<T> extends JPanel {
     private final Class<T> targetClass;
 
     public StyleElementEditor(Class<T> targetClass){
+        this.targetClass = targetClass;
+    }
+    
+    public StyleElementEditor(LayoutManager layout, Class<T> targetClass){
+        super(layout);
         this.targetClass = targetClass;
     }
     
@@ -131,12 +134,7 @@ public abstract class StyleElementEditor<T> extends JPanel {
         }
         return FILTER_FACTORY;
     }
-    
-    protected boolean isStatic(final Expression exp){
-        ensureNonNull("expression", exp);
-        return (Boolean) exp.accept(IsStaticExpressionVisitor.VISITOR, null);
-    }
-    
+        
     /**
      * Will popup a small dialog with this style editor.
      */

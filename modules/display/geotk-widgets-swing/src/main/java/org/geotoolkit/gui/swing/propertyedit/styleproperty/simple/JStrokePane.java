@@ -55,7 +55,7 @@ import org.opengis.style.Stroke;
  */
 public class JStrokePane extends StyleElementEditor<Stroke> {
 
-    private StyleBank model = StyleBank.getInstance();
+    private final StyleBank model = StyleBank.getInstance();
     private MapLayer layer = null;
     
     /**
@@ -70,9 +70,9 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
 
         guiWidth.setModel(0d, 0d, Double.POSITIVE_INFINITY, 0.1d);
 
-        guiLineCap.setExpressionUnvisible();
-        guiLineJoin.setExpressionUnvisible();
-        guiWidth.setExpressionUnvisible();
+        guiLineCap.setExpressionVisible(false);
+        guiLineJoin.setExpressionVisible(false);
+        guiWidth.setExpressionVisible(false);
     }
 
     /**

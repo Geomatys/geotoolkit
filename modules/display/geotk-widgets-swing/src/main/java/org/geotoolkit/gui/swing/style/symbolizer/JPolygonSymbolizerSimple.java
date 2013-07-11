@@ -53,9 +53,9 @@ public class JPolygonSymbolizerSimple extends  StyleElementEditor<PolygonSymboli
         guiOffset.setModel(0d, 0d, Double.POSITIVE_INFINITY, 1d);
         guiDisplacementX.setModel(0d, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1d);
         guiDisplacementY.setModel(0d, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1d);
-        guiDisplacementX.setExpressionUnvisible();
-        guiDisplacementY.setExpressionUnvisible();
-        guiOffset.setExpressionUnvisible();        
+        guiDisplacementX.setExpressionVisible(false);
+        guiDisplacementY.setExpressionVisible(false);
+        guiOffset.setExpressionVisible(false);        
     }
     
     /**

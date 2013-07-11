@@ -75,8 +75,11 @@ public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> 
         guiOpacity.setModel(99, 0, 100, 1);
         guiDisplacementY.setModel(0d, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1d);
         guiDisplacementX.setModel(0d, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1d);
-        guiDisplacementY.setExpressionUnvisible();
-        guiDisplacementX.setExpressionUnvisible();
+        guiDisplacementY.setExpressionVisible(false);
+        guiDisplacementX.setExpressionVisible(false);
+        guiSize.setExpressionVisible(false);
+        guiRotation.setExpressionVisible(false);
+        guiOpacity.setExpressionVisible(false);
     }
 
     /**

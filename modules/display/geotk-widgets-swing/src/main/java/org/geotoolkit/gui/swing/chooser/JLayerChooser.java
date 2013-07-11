@@ -108,8 +108,8 @@ public class JLayerChooser extends javax.swing.JPanel {
         final MutableStyleFactory styleFactory = (MutableStyleFactory) FactoryFinder.getStyleFactory(
                             new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
         
-        final Object[] values = guiList.getSelectedValues();
-        final List<MapLayer> layers = new ArrayList<MapLayer>();
+        final Object[] values = guiList.getSelectedValuesList().toArray();
+        final List<MapLayer> layers = new ArrayList<>();
         
         if(values != null){
             for(Object value : values){
@@ -146,8 +146,8 @@ public class JLayerChooser extends javax.swing.JPanel {
     public void setSource(Object source) throws DataStoreException {
         this.source = source;
         
-        final List firstCandidates = new ArrayList<Name>();
-        final List secondCandidates = new ArrayList<Name>();
+        final List firstCandidates = new ArrayList<>();
+        final List secondCandidates = new ArrayList<>();
         
         if(source instanceof FeatureStore){
             final FeatureStore store = (FeatureStore) source;

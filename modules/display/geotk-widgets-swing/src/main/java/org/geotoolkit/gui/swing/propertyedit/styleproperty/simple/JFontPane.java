@@ -33,6 +33,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
@@ -220,7 +221,7 @@ public class JFontPane extends StyleElementEditor<Font> {
         
         //Parsing family fonts
         for(Expression f : target.getFamily()){
-            if(!isStatic(f))continue;
+            if(!FilterUtilities.isStatic(f))continue;
             final String currentFamily = f.evaluate(null, String.class);
             if(this.familyFontList.contains(currentFamily)){
                 guiFamilyFontList.setSelectedValue(currentFamily, true);
@@ -230,7 +231,7 @@ public class JFontPane extends StyleElementEditor<Font> {
 
         //Parsing size
         final Expression  expSize = target.getSize();
-        if (isStatic(expSize)) {
+        if (FilterUtilities.isStatic(expSize)) {
             guiSizeList.setSelectedValue(expSize.evaluate(null, String.class), true);
         }
 
@@ -238,7 +239,7 @@ public class JFontPane extends StyleElementEditor<Font> {
         final Expression style = target.getStyle();
         final Expression weight = target.getWeight();
 
-        if (isStatic(style) && isStatic(weight)) {
+        if (FilterUtilities.isStatic(style) && FilterUtilities.isStatic(weight)) {
             final String w = weight.evaluate(null, String.class);
             if (w.equalsIgnoreCase(StyleConstants.FONT_WEIGHT_BOLD_STRING)) {
                 guiStyleList.setSelectedValue(style.evaluate(null, String.class) + " " + w, true);

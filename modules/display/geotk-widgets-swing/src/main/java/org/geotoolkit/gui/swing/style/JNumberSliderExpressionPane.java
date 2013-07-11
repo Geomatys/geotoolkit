@@ -16,14 +16,14 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import javax.swing.DefaultBoundedRangeModel;
+import javax.swing.GroupLayout;
 import javax.swing.JSlider;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.LayoutStyle;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.geotoolkit.filter.FilterUtilities;
+import static org.geotoolkit.gui.swing.style.StyleElementEditor.getFilterFactory;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.expression.Expression;
 
@@ -42,11 +42,13 @@ public class JNumberSliderExpressionPane extends StyleElementEditor<Expression> 
     }
 
     public void setModel(final int value, final int min, final int max, final int step) {
-        guiNumber.setModel(new SpinnerNumberModel(value, min, max, step));
+        guiNumber.setModel(value, min, max, step);
         guiSlider.setModel(new DefaultBoundedRangeModel(value, step, min, max));
-        guiSlider.setMinorTickSpacing(min);
-        guiSlider.setMajorTickSpacing(max);
     }
+    
+    public void setExpressionVisible(boolean visible){
+        guiNumber.setExpressionVisible(visible);
+    }  
     
     @Override
     public void setLayer(final MapLayer layer) {
@@ -61,61 +63,48 @@ public class JNumberSliderExpressionPane extends StyleElementEditor<Expression> 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        GridBagConstraints gridBagConstraints;
 
         guiSlider = new JSlider();
-        guiNumber = new JSpinner();
+        guiNumber = new JNumberExpressionPane();
 
-        setLayout(new GridBagLayout());
-
-        guiSlider.setPaintLabels(true);
         guiSlider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent evt) {
                 guiSliderStateChanged(evt);
             }
         });
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridwidth = GridBagConstraints.RELATIVE;
-        gridBagConstraints.gridheight = GridBagConstraints.RELATIVE;
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        add(guiSlider, gridBagConstraints);
 
-        guiNumber.setModel(new SpinnerNumberModel());
-        guiNumber.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent evt) {
-                guiNumberStateChanged(evt);
-            }
-        });
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 24;
-        gridBagConstraints.anchor = GridBagConstraints.EAST;
-        add(guiNumber, gridBagConstraints);
+        GroupLayout layout = new GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(guiSlider, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(guiNumber, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                .addComponent(guiNumber, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addComponent(guiSlider, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        );
     }// </editor-fold>//GEN-END:initComponents
 
-private void guiNumberStateChanged(final ChangeEvent evt) {//GEN-FIRST:event_guiNumberStateChanged
-    guiSlider.setValue((Integer) guiNumber.getValue());
-    firePropertyChange(PROPERTY_TARGET, null, create());
-}//GEN-LAST:event_guiNumberStateChanged
-
     private void guiSliderStateChanged(ChangeEvent evt) {//GEN-FIRST:event_guiSliderStateChanged
-        guiNumber.setValue(guiSlider.getValue());
+        guiNumber.parse(getFilterFactory().literal(guiSlider.getValue()));
     }//GEN-LAST:event_guiSliderStateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JSpinner guiNumber;
+    private JNumberExpressionPane guiNumber;
     private JSlider guiSlider;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void parse(final Expression target) {
         if (target != null) {
-            if (isStatic(target)) {
+            if (FilterUtilities.isStatic(target)) {
                 final Number value = target.evaluate(null, Number.class);
                 if (value != null) {
-                    guiNumber.setValue(value.intValue());
+                    guiNumber.parse(getFilterFactory().literal(value.intValue()));
                 }
             }
         }
@@ -123,6 +112,6 @@ private void guiNumberStateChanged(final ChangeEvent evt) {//GEN-FIRST:event_gui
 
     @Override
     public Expression create() {
-        return getFilterFactory().literal(((SpinnerNumberModel) guiNumber.getModel()).getNumber());
+        return guiNumber.create();
     }
 }

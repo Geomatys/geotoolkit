@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012 Geomatys
+ *    (C) 2012-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,14 +19,15 @@ package org.geotoolkit.gui.swing.propertyedit.styleproperty.simple;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JPreview;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
+import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_TARGET;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.GraphicalSymbol;
 
@@ -38,7 +39,14 @@ import org.opengis.style.GraphicalSymbol;
  */
 public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbol> {
 
-    private final JButton guiMarkButton = new JButton();
+    private final JButton guiMarkButton = new JButton(new AbstractAction(MessageBundle.getString("change")) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(null,paneGraphicalSymbolChooser,"",JOptionPane.PLAIN_MESSAGE);
+            parse(create());
+            firePropertyChange(PROPERTY_TARGET, null, create());
+        }
+    });
     private final JPreview guiMarkLabel = new JPreview();
     
     private MapLayer layer = null;    
@@ -48,27 +56,20 @@ public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbo
      * Creates new form JGraphicSymbolControlPane
      */
     public JGraphicSymbolControlPane() {
-        super(GraphicalSymbol.class);
-        setLayout(new BorderLayout(8,8));
-
-        guiMarkButton.setText(MessageBundle.getString("change"));
-        guiMarkButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                guiMarkButtonActionPerformed(evt);
-            }
-        });
-        add(guiMarkButton,BorderLayout.EAST);
+        super(new BorderLayout(8,8),GraphicalSymbol.class);
 
         guiMarkLabel.setPreferredSize(new Dimension(32, 32));
         guiMarkLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                guiMarkLabelMouseClicked(evt);
+                JOptionPane.showMessageDialog(null,paneGraphicalSymbolChooser,"",JOptionPane.PLAIN_MESSAGE);
+                parse(create());
+                firePropertyChange(PROPERTY_TARGET, null, create());
             }
         });
-        add(guiMarkLabel, BorderLayout.WEST);
         
+        add(guiMarkLabel, BorderLayout.WEST);
+        add(guiMarkButton,BorderLayout.EAST);
     }
 
     /**
@@ -93,7 +94,6 @@ public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbo
      */
     @Override
     public void parse(final GraphicalSymbol graphicalSymbol) {
-        
         if (graphicalSymbol != null) {
             guiMarkLabel.parse(graphicalSymbol);            
             paneGraphicalSymbolChooser.parse(graphicalSymbol);            
@@ -106,18 +106,6 @@ public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbo
     @Override
     public GraphicalSymbol create() {
         return paneGraphicalSymbolChooser.create();
-    }
-
-    private void guiMarkButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        JOptionPane.showMessageDialog(null,paneGraphicalSymbolChooser,"",JOptionPane.PLAIN_MESSAGE);
-        parse(create());
-        firePropertyChange(PROPERTY_TARGET, null, create());
-    }
-
-    private void guiMarkLabelMouseClicked(java.awt.event.MouseEvent evt) {
-        JOptionPane.showMessageDialog(null,paneGraphicalSymbolChooser,"",JOptionPane.PLAIN_MESSAGE);
-        parse(create());
-        firePropertyChange(PROPERTY_TARGET, null, create());
     }
    
 }

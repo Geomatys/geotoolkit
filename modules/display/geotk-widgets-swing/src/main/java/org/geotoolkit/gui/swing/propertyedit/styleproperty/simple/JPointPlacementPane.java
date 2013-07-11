@@ -48,8 +48,8 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
         super(PointPlacement.class);
         initComponents();
         guiRotation.setModel(0, 0, 360, 1);
-        guiDisplacementX.setExpressionUnvisible();
-        guiDisplacementY.setExpressionUnvisible();
+        guiDisplacementX.setExpressionVisible(false);
+        guiDisplacementY.setExpressionVisible(false);
     }
     
     /** This method is called from within the constructor to

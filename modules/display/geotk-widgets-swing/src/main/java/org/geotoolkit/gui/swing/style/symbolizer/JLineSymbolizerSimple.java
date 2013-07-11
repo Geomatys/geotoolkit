@@ -50,7 +50,7 @@ public class JLineSymbolizerSimple extends StyleElementEditor<LineSymbolizer> {
         super(LineSymbolizer.class);
         initComponents();
         guiDisplacementX.setModel(0d, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1d);
-        guiDisplacementX.setExpressionUnvisible();
+        guiDisplacementX.setExpressionVisible(false);
     }
 
     /**

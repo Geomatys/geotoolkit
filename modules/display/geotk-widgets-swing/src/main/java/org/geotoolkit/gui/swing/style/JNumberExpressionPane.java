@@ -3,7 +3,8 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2008 - 2013, Johann Sorel
+ *    (C) 2099 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -27,6 +28,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.expression.Expression;
 
@@ -37,15 +39,18 @@ import org.opengis.filter.expression.Expression;
  */
 public class JNumberExpressionPane extends StyleElementEditor<Expression>{
 
+    private final Dimension specialSize;
+    
     /** Creates new form JColorExpressionPane */
     public JNumberExpressionPane() {
         super(Expression.class);
         initComponents();
+        specialSize = new Dimension(guiSpecial.getPreferredSize());
     }
     
-    public void setExpressionUnvisible(){
-        guiSpecial.setPreferredSize(new Dimension(1, 1));
-        guiSpecial.setVisible(false);
+    public void setExpressionVisible(boolean visible){
+        guiSpecial.setPreferredSize( visible ? new Dimension(specialSize) : new Dimension(1, 1));
+        guiSpecial.setVisible(visible);
     }  
 
     public void setModel(final double value, final double min, final double max, final double step){
@@ -129,7 +134,7 @@ private void guiNumberStateChanged(final ChangeEvent evt) {//GEN-FIRST:event_gui
     @Override
     public void parse(final Expression target) {
         if(target != null){
-            if(isStatic(target)){
+            if(FilterUtilities.isStatic(target)){
                 final Number value = target.evaluate(null, Number.class);
                 if(value != null){
                     guiSpecial.parse(null);

@@ -52,8 +52,8 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
         initComponents();
     }
     
-    public void setExpressionUnvisible(){
-        guiGamma.setExpressionUnvisible();
+    public void setExpressionVisible(boolean visible){
+        guiGamma.setExpressionVisible(visible);
     } 
 
     /**

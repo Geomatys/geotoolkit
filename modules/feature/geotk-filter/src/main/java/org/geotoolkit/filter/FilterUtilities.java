@@ -17,10 +17,13 @@
 
 package org.geotoolkit.filter;
 
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.PrepareFilterVisitor;
 import org.geotoolkit.lang.Static;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
 
 /**
@@ -61,4 +64,16 @@ public final class FilterUtilities extends Static {
         return new CachedPropertyName(exp.getPropertyName(), objectClazz,expectedType);
     }
 
+    /**
+     * Test if an expression is static.
+     * Static is the way no expressions use the candidate object for evaluation.
+     * 
+     * @param exp
+     * @return true if expression is static
+     */
+    public static boolean isStatic(final Expression exp){
+        ensureNonNull("expression", exp);
+        return (Boolean) exp.accept(IsStaticExpressionVisitor.VISITOR, null);
+    }
+    
 }

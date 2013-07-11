@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012 Geomatys
+ *    (C) 2012-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.border.TitledBorder;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JBankView;
 import org.geotoolkit.gui.swing.style.JColorPane;
@@ -32,33 +33,31 @@ import org.opengis.style.Fill;
 import org.opengis.style.Mark;
 
 /**
- * Filling a form with mark
+ * Filling a form with mark.
  *
  * @author Fabien Rétif (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
 public class JFillMarkPane extends StyleElementEditor<Mark> {
 
-    private final JColorPane guiMarkColorChooser;
+    private final JColorPane guiMarkColorChooser = new JColorPane();
     private final StyleBank model = StyleBank.getInstance();
     private MapLayer layer = null;
-    private JBankView<Mark> guiMarkPane = null;
+    private final JBankView<Mark> guiMarkPane = new JBankView<>(Mark.class);
 
     /**
      * Creates new form JFillMarkPane
      */
     public JFillMarkPane() {
-        super(Mark.class);
-        guiMarkColorChooser = new JColorPane();
-        setLayout(new BorderLayout());
+        super(new BorderLayout(),Mark.class);
+        
         guiMarkColorChooser.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("color")));
-        add(guiMarkColorChooser, BorderLayout.CENTER);
 
-        guiMarkPane = new JBankView<Mark>(Mark.class);
         guiMarkPane.setCandidates(model.getCandidates(new StyleBank.ByClassComparator(Mark.class)));
-
         guiMarkPane.setBorder(new TitledBorder("Forme"));
-        this.add(BorderLayout.NORTH, guiMarkPane);
+        
+        add(guiMarkPane, BorderLayout.NORTH);
+        add(guiMarkColorChooser, BorderLayout.CENTER);
     }
 
     /**
@@ -87,26 +86,13 @@ public class JFillMarkPane extends StyleElementEditor<Mark> {
     public void parse(final Mark mark) {
 
         if (mark != null) {
-
             guiMarkPane.parse(mark);
-
-            //Color parsing
             final Expression targetColor = mark.getFill().getColor();
-            if (targetColor != null) {
-
-                if (isStatic(targetColor)) {
-                    final Color color = targetColor.evaluate(null, Color.class);
-                    if (color != null) {
-
-                        guiMarkColorChooser.setColor(color);
-                    } else {
-                        guiMarkColorChooser.setColor(Color.RED);
-                    }
-                } else {
-                    guiMarkColorChooser.setColor(Color.RED);
-                }
+            Color color = Color.RED;
+            if (targetColor != null && FilterUtilities.isStatic(targetColor)) {
+                color = targetColor.evaluate(null, Color.class);
             }
-
+            guiMarkColorChooser.setColor(color);
         }
     }
 

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012 Geomatys
+ *    (C) 2012-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,13 +18,11 @@ package org.geotoolkit.gui.swing.propertyedit.styleproperty.simple;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
 import javax.swing.JTabbedPane;
 import javax.swing.border.LineBorder;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JColorPane;
 import org.geotoolkit.gui.swing.style.JExternalGraphicPane;
@@ -33,14 +31,12 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.AnchorPoint;
-import org.opengis.style.Description;
 import org.opengis.style.Displacement;
 import org.opengis.style.ExternalGraphic;
 import org.opengis.style.Fill;
 import org.opengis.style.GraphicFill;
 import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.Mark;
-import org.opengis.style.Stroke;
 
 /**
  * Fill editor pane. A form can be filled by a Color or a GraphicFill.
@@ -64,22 +60,19 @@ public class JFillPane extends StyleElementEditor<Fill> {
     }
 
     public JFillPane(Color color) {
-        super(Fill.class);
-
-        setLayout(new BorderLayout());
+        super(new BorderLayout(),Fill.class);
 
         guiColorChooser.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-        guiTabbedPane.addTab(MessageBundle.getString("plainColor"), guiColorChooser);
-
+        guiColorChooser.setColor(color);
+        
         guiMarkPane.setBorder(new LineBorder(new Color(102, 102, 102), 1, true));
-        guiTabbedPane.addTab(MessageBundle.getString("predefinedShape"), guiMarkPane);
-
         guiExternalGraphicPane.setBorder(new LineBorder(new Color(102, 102, 102), 1, true));
+        
+        guiTabbedPane.addTab(MessageBundle.getString("plainColor"), guiColorChooser);
+        guiTabbedPane.addTab(MessageBundle.getString("predefinedShape"), guiMarkPane);
         guiTabbedPane.addTab(MessageBundle.getString("image"), guiExternalGraphicPane);
 
         add(guiTabbedPane, java.awt.BorderLayout.CENTER);
-
-        guiColorChooser.setColor(color);
     }
 
     public Color getColor() {
@@ -138,7 +131,7 @@ public class JFillPane extends StyleElementEditor<Fill> {
             } else if (targetColor != null) {
                 //Color parsing
                 guiTabbedPane.setSelectedComponent(guiColorChooser);
-                if (isStatic(targetColor)) {
+                if (FilterUtilities.isStatic(targetColor)) {
                     final Color color = targetColor.evaluate(null, Color.class);
                     if (color != null) {
 
@@ -159,44 +152,29 @@ public class JFillPane extends StyleElementEditor<Fill> {
      */
     @Override
     public Fill create() {
-
-        Object obj = guiTabbedPane.getSelectedComponent();
-
-        // Visual element
-        final String name = "mySymbol";
-        final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
-        final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
+        final Object obj = guiTabbedPane.getSelectedComponent();
         final Expression offset = StyleConstants.LITERAL_ONE_FLOAT;
-
         final Expression size = getFilterFactory().literal(12);
         final Expression opacity = StyleConstants.LITERAL_ONE_FLOAT;
         final Expression rotation = StyleConstants.LITERAL_ONE_FLOAT;
         final AnchorPoint anchor = StyleConstants.DEFAULT_ANCHOR_POINT;
         final Displacement disp = StyleConstants.DEFAULT_DISPLACEMENT;
 
-        final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
-        final Stroke stroke = getStyleFactory().stroke(Color.BLACK, 2);
-        final Fill fill = getStyleFactory().fill(Color.BLACK);
-
-        //Create Fill with Color
         if (obj instanceof JColorPane) {
+            //Create Fill with Color
             return getStyleFactory().fill(
                     getStyleFactory().literal(guiColorChooser.getColor()),
                     getFilterFactory().literal((double) guiColorChooser.getColor().getAlpha() / 255.d));
-        } // Create fill with Mark
-        else if (obj instanceof JFillMarkPane) {
-            symbols.add(guiMarkPane.create());
-            final GraphicFill graphicFill = getStyleFactory().graphicFill(symbols, opacity, size, rotation, anchor, disp);
-
+        } else if (obj instanceof JFillMarkPane) {
+            // Create fill with Mark
+            final GraphicFill graphicFill = getStyleFactory().graphicFill(Collections.singletonList(
+                    (GraphicalSymbol)guiMarkPane.create()), opacity, size, rotation, anchor, disp);
             return getStyleFactory().fill(graphicFill, offset, offset);
-        } // Create fill with External Graphic
-        else if (obj instanceof JExternalGraphicPane) {
-            symbols.add(guiExternalGraphicPane.create());
-            final GraphicFill graphicFill = getStyleFactory().graphicFill(symbols, opacity, size, rotation, anchor, disp);
-
+        } else if (obj instanceof JExternalGraphicPane) {
+            // Create fill with External Graphic
+            final GraphicFill graphicFill = getStyleFactory().graphicFill(Collections.singletonList(
+                    (GraphicalSymbol)guiExternalGraphicPane.create()), opacity, size, rotation, anchor, disp);
             return getStyleFactory().fill(graphicFill, offset, offset);
-
         } else {
             return getStyleFactory().fill();
         }

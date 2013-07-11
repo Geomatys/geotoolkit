@@ -22,11 +22,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JPreview;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
+import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_TARGET;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.Stroke;
 
@@ -37,7 +39,14 @@ import org.opengis.style.Stroke;
  */
 public class JStrokeControlPane extends StyleElementEditor<Stroke> {
 
-    private final JButton guiStrokeButton = new JButton();
+    private final JButton guiStrokeButton = new JButton(new AbstractAction(MessageBundle.getString("change")) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(null, paneStrokeChooser, "", JOptionPane.PLAIN_MESSAGE);
+            parse(create());
+            firePropertyChange(PROPERTY_TARGET, null, create());
+        }
+    });
     private final JPreview guiStrokeLabel = new JPreview();
     private final JStrokePane paneStrokeChooser = new JStrokePane();
     private MapLayer layer = null;
@@ -46,27 +55,20 @@ public class JStrokeControlPane extends StyleElementEditor<Stroke> {
      * Creates new form JStrokeControlPane
      */
     public JStrokeControlPane() {
-        super(Stroke.class);
-        setLayout(new BorderLayout(8,8));
-
-        guiStrokeButton.setText(MessageBundle.getString("change"));
-        guiStrokeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                guiStrokeButtonActionPerformed(evt);
-            }
-        });
-        add(guiStrokeButton, BorderLayout.EAST);
+        super(new BorderLayout(8,8),Stroke.class);
 
         guiStrokeLabel.setPreferredSize(new Dimension(32, 32));
         guiStrokeLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                guiStrokeLabelMouseClicked(evt);
+                JOptionPane.showMessageDialog(null, paneStrokeChooser, "", JOptionPane.PLAIN_MESSAGE);
+                parse(create());
+                firePropertyChange(PROPERTY_TARGET, null, create());
             }
         });
+        
         add(guiStrokeLabel, BorderLayout.WEST);
-
+        add(guiStrokeButton, BorderLayout.EAST);
     }
 
     /**
@@ -91,7 +93,6 @@ public class JStrokeControlPane extends StyleElementEditor<Stroke> {
      */
     @Override
     public void parse(final Stroke stroke) {
-
         if (stroke != null) {
             //Create the icon image            
             guiStrokeLabel.parse(stroke);
@@ -113,15 +114,4 @@ public class JStrokeControlPane extends StyleElementEditor<Stroke> {
         guiStrokeLabel.setVisible(bool);
     }
 
-    private void guiStrokeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiStrokeButtonActionPerformed
-        JOptionPane.showMessageDialog(null, paneStrokeChooser, "", JOptionPane.PLAIN_MESSAGE);
-        parse(create());
-        firePropertyChange(PROPERTY_TARGET, null, create());
-    }
-
-    private void guiStrokeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_guiStrokeLabelMouseClicked
-        JOptionPane.showMessageDialog(null, paneStrokeChooser, "", JOptionPane.PLAIN_MESSAGE);
-        parse(create());
-        firePropertyChange(PROPERTY_TARGET, null, create());
-    }
 }

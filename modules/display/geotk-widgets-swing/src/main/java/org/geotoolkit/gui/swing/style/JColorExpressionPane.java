@@ -28,6 +28,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.expression.Expression;
 
@@ -129,7 +130,7 @@ private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRS
     @Override
     public void parse(final Expression target) {
         if(target != null){
-            if(isStatic(target)){
+            if(FilterUtilities.isStatic(target)){
                 final Color color = target.evaluate(null, Color.class);
                 if(color != null){
                     guiSpecial.parse(null);

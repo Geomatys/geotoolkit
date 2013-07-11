@@ -28,6 +28,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.expression.Expression;
 
@@ -38,15 +39,18 @@ import org.opengis.filter.expression.Expression;
  */
 public class JTextExpressionPane extends StyleElementEditor<Expression>{
 
+    private final Dimension specialSize;
+    
     /** Creates new form JColorExpressionPane */
     public JTextExpressionPane() {
         super(Expression.class);
         initComponents();
+        specialSize = guiSpecial.getPreferredSize();
     }
     
-    public void setExpressionUnvisible(){
-        guiSpecial.setPreferredSize(new Dimension(1, 1));
-        guiSpecial.setVisible(false);
+    public void setExpressionVisible(boolean visible){
+        guiSpecial.setPreferredSize( visible ? new Dimension(specialSize) : new Dimension(1, 1));
+        guiSpecial.setVisible(visible);
     } 
 
     @Override
@@ -120,7 +124,7 @@ public class JTextExpressionPane extends StyleElementEditor<Expression>{
     @Override
     public void parse(final Expression target) {
         if(target != null){
-            if(isStatic(target)){
+            if(FilterUtilities.isStatic(target)){
                 guiSpecial.parse(null);
                 guiText.setText(target.toString());
             }else{

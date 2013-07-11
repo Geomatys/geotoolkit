@@ -51,8 +51,8 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
         guiFactor.setModel(1d, 0d, 1d, 0.1d);
     }
     
-    public void setExpressionUnvisible(){
-        guiFactor.setExpressionUnvisible();
+    public void setExpressionVisible(boolean visible){
+        guiFactor.setExpressionVisible(visible);
     } 
 
     @Override

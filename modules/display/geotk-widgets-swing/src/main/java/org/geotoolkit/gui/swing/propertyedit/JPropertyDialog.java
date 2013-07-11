@@ -46,9 +46,7 @@ import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.PolygonSymbolizer;
-import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Symbolizer;
-import org.opengis.style.TextSymbolizer;
 
 
 /**
@@ -155,6 +153,7 @@ public class JPropertyDialog extends JDialog{
             dia.addEditPanel(pro);
         }
 
+        dia.setAlwaysOnTop(true);
         dia.setSize(700,500);
         dia.setLocationRelativeTo(null);
         dia.setVisible(true);
