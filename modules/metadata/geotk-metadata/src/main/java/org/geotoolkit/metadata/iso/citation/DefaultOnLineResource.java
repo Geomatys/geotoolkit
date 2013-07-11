@@ -56,8 +56,8 @@ public class DefaultOnlineResource extends org.apache.sis.metadata.iso.citation.
      */
     static final OnlineResource ISO;
     static {
-        final DefaultOnlineResource r;
-        ISO = r = new DefaultOnlineResource("http://www.iso.org/");
+        final org.apache.sis.metadata.iso.citation.DefaultOnlineResource r;
+        ISO = r = create("http://www.iso.org/");
         r.freeze();
     }
 
@@ -69,8 +69,8 @@ public class DefaultOnlineResource extends org.apache.sis.metadata.iso.citation.
      */
     static final OnlineResource OGC;
     static {
-        final DefaultOnlineResource r;
-        OGC = r = new DefaultOnlineResource("http://www.opengeospatial.org/");
+        final org.apache.sis.metadata.iso.citation.DefaultOnlineResource r;
+        OGC = r = create("http://www.opengeospatial.org/");
         r.freeze();
     }
 
@@ -82,8 +82,8 @@ public class DefaultOnlineResource extends org.apache.sis.metadata.iso.citation.
      */
     static final OnlineResource OPEN_GIS;
     static {
-        final DefaultOnlineResource r;
-        OPEN_GIS = r = new DefaultOnlineResource("http://www.opengis.org");
+        final org.apache.sis.metadata.iso.citation.DefaultOnlineResource r;
+        OPEN_GIS = r = create("http://www.opengis.org");
         r.freeze();
     }
 
@@ -92,8 +92,8 @@ public class DefaultOnlineResource extends org.apache.sis.metadata.iso.citation.
      */
     static final OnlineResource IHO;
     static {
-        final DefaultOnlineResource r;
-        IHO = r = new DefaultOnlineResource("http://www.iho.int");
+        final org.apache.sis.metadata.iso.citation.DefaultOnlineResource r;
+        IHO = r = create("http://www.iho.int");
         r.freeze();
     }
 
@@ -103,8 +103,8 @@ public class DefaultOnlineResource extends org.apache.sis.metadata.iso.citation.
      */
     static final OnlineResource EPSG;
     static {
-        final DefaultOnlineResource r;
-        EPSG = r = new DefaultOnlineResource("http://www.epsg.org");
+        final org.apache.sis.metadata.iso.citation.DefaultOnlineResource r;
+        EPSG = r = create("http://www.epsg.org");
         r.freeze();
     }
 
@@ -116,8 +116,8 @@ public class DefaultOnlineResource extends org.apache.sis.metadata.iso.citation.
      */
     static final OnlineResource NETCDF;
     static {
-        final DefaultOnlineResource r;
-        NETCDF = r = new DefaultOnlineResource("http://www.unidata.ucar.edu/software/netcdf-java");
+        final org.apache.sis.metadata.iso.citation.DefaultOnlineResource r;
+        NETCDF = r = create("http://www.unidata.ucar.edu/software/netcdf-java");
         r.freeze();
     }
 
@@ -127,8 +127,8 @@ public class DefaultOnlineResource extends org.apache.sis.metadata.iso.citation.
      */
     public static final OnlineResource GEOTIFF;
     static {
-        final DefaultOnlineResource r;
-        GEOTIFF = r = new DefaultOnlineResource("http://www.remotesensing.org/geotiff");
+        final org.apache.sis.metadata.iso.citation.DefaultOnlineResource r;
+        GEOTIFF = r = create("http://www.remotesensing.org/geotiff");
         r.freeze();
     }
 
@@ -139,8 +139,8 @@ public class DefaultOnlineResource extends org.apache.sis.metadata.iso.citation.
      */
     static final OnlineResource PROJ4;
     static {
-        final DefaultOnlineResource r;
-        PROJ4 = r = new DefaultOnlineResource("http://trac.osgeo.org/proj");
+        final org.apache.sis.metadata.iso.citation.DefaultOnlineResource r;
+        PROJ4 = r = create("http://trac.osgeo.org/proj");
         r.freeze();
     }
 
@@ -149,8 +149,8 @@ public class DefaultOnlineResource extends org.apache.sis.metadata.iso.citation.
      */
     static final OnlineResource ESRI;
     static {
-        final DefaultOnlineResource r;
-        ESRI = r = new DefaultOnlineResource("http://www.esri.com");
+        final org.apache.sis.metadata.iso.citation.DefaultOnlineResource r;
+        ESRI = r = create("http://www.esri.com");
         r.freeze();
     }
 
@@ -159,8 +159,8 @@ public class DefaultOnlineResource extends org.apache.sis.metadata.iso.citation.
      */
     static final OnlineResource ORACLE;
     static {
-        final DefaultOnlineResource r;
-        ORACLE = r = new DefaultOnlineResource("http://www.oracle.com");
+        final org.apache.sis.metadata.iso.citation.DefaultOnlineResource r;
+        ORACLE = r = create("http://www.oracle.com");
         r.freeze();
     }
 
@@ -171,8 +171,8 @@ public class DefaultOnlineResource extends org.apache.sis.metadata.iso.citation.
      */
     static final OnlineResource POSTGIS;
     static {
-        final DefaultOnlineResource r;
-        POSTGIS = r = new DefaultOnlineResource("http://postgis.refractions.net");
+        final org.apache.sis.metadata.iso.citation.DefaultOnlineResource r;
+        POSTGIS = r = create("http://postgis.refractions.net");
         r.freeze();
     }
 
@@ -184,8 +184,8 @@ public class DefaultOnlineResource extends org.apache.sis.metadata.iso.citation.
      */
     static final OnlineResource SUN_MICROSYSTEMS;
     static {
-        final DefaultOnlineResource r;
-        SUN_MICROSYSTEMS = r = new DefaultOnlineResource("http://java.sun.com");
+        final org.apache.sis.metadata.iso.citation.DefaultOnlineResource r;
+        SUN_MICROSYSTEMS = r = create("http://java.sun.com");
         r.freeze();
     }
 
@@ -194,8 +194,8 @@ public class DefaultOnlineResource extends org.apache.sis.metadata.iso.citation.
      */
     static final OnlineResource GEOTOOLKIT;
     static {
-        final DefaultOnlineResource r;
-        GEOTOOLKIT = r = new DefaultOnlineResource("http://www.geotoolkit.org");
+        final org.apache.sis.metadata.iso.citation.DefaultOnlineResource r;
+        GEOTOOLKIT = r = create("http://www.geotoolkit.org");
         r.freeze();
     }
 
@@ -204,8 +204,8 @@ public class DefaultOnlineResource extends org.apache.sis.metadata.iso.citation.
      */
     static final OnlineResource GEOTOOLS;
     static {
-        final DefaultOnlineResource r;
-        GEOTOOLS = r = new DefaultOnlineResource("http://www.geotools.org");
+        final org.apache.sis.metadata.iso.citation.DefaultOnlineResource r;
+        GEOTOOLS = r = create("http://www.geotools.org");
         r.freeze();
     }
 
@@ -218,10 +218,18 @@ public class DefaultOnlineResource extends org.apache.sis.metadata.iso.citation.
      */
     static final OnlineResource WMS;
     static {
-        final DefaultOnlineResource r;
-        WMS = r = new DefaultOnlineResource("http://portal.opengis.org/files/?artifact_id=5316");
+        final org.apache.sis.metadata.iso.citation.DefaultOnlineResource r;
+        WMS = r = create("http://portal.opengis.org/files/?artifact_id=5316");
         r.setFunction(OnLineFunction.DOWNLOAD);
         r.freeze();
+    }
+
+    private static org.apache.sis.metadata.iso.citation.DefaultOnlineResource create(final String linkage) {
+        final org.apache.sis.metadata.iso.citation.DefaultOnlineResource r =
+                new org.apache.sis.metadata.iso.citation.DefaultOnlineResource();
+        r.setLinkage(URI.create(linkage));
+        r.setFunction(OnLineFunction.INFORMATION);
+        return r;
     }
 
     /**

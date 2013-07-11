@@ -63,10 +63,12 @@ public class DefaultResponsibleParty extends org.apache.sis.metadata.iso.citatio
      * @since 2.2
      */
     static ResponsibleParty OGC(final Role role, final OnlineResource resource) {
-        final DefaultResponsibleParty ogc = new DefaultResponsibleParty(role);
+        final org.apache.sis.metadata.iso.citation.DefaultResponsibleParty ogc =
+                new org.apache.sis.metadata.iso.citation.DefaultResponsibleParty(role);
         ogc.setOrganisationName(OGC.getOrganisationName());
         if (resource != null) {
-            final DefaultContact contact = new DefaultContact(resource);
+            final org.apache.sis.metadata.iso.citation.DefaultContact contact =
+                    new org.apache.sis.metadata.iso.citation.DefaultContact(resource);
             contact.freeze();
             ogc.setContactInfo(contact);
         }
@@ -117,7 +119,8 @@ public class DefaultResponsibleParty extends org.apache.sis.metadata.iso.citatio
      */
     static final ResponsibleParty ISO;
     static {
-        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
+        final org.apache.sis.metadata.iso.citation.DefaultResponsibleParty r =
+                new org.apache.sis.metadata.iso.citation.DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
         r.setOrganisationName(new SimpleInternationalString("International Organization for Standardization"));
         r.setContactInfo(DefaultContact.ISO);
         r.freeze();
@@ -132,7 +135,8 @@ public class DefaultResponsibleParty extends org.apache.sis.metadata.iso.citatio
      */
     static final ResponsibleParty OGC;
     static {
-        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
+        final org.apache.sis.metadata.iso.citation.DefaultResponsibleParty r =
+                new org.apache.sis.metadata.iso.citation.DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
         r.setOrganisationName(new SimpleInternationalString("Open Geospatial Consortium"));
         r.setContactInfo(DefaultContact.OGC);
         r.freeze();
@@ -150,7 +154,8 @@ public class DefaultResponsibleParty extends org.apache.sis.metadata.iso.citatio
     @Deprecated
     public static final ResponsibleParty OPEN_GIS;
     static {
-        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
+        final org.apache.sis.metadata.iso.citation.DefaultResponsibleParty r =
+                new org.apache.sis.metadata.iso.citation.DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
         r.setOrganisationName(new SimpleInternationalString("OpenGIS consortium"));
         r.setContactInfo(DefaultContact.OPEN_GIS);
         r.freeze();
@@ -162,7 +167,8 @@ public class DefaultResponsibleParty extends org.apache.sis.metadata.iso.citatio
      */
     static final ResponsibleParty IHO;
     static {
-        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
+        final org.apache.sis.metadata.iso.citation.DefaultResponsibleParty r =
+                new org.apache.sis.metadata.iso.citation.DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
         r.setOrganisationName(new SimpleInternationalString("International hydrographic organization"));
         r.setContactInfo(DefaultContact.IHO);
         r.freeze();
@@ -179,7 +185,8 @@ public class DefaultResponsibleParty extends org.apache.sis.metadata.iso.citatio
     @Deprecated
     public static final ResponsibleParty EPSG;
     static {
-        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
+        final org.apache.sis.metadata.iso.citation.DefaultResponsibleParty r =
+                new org.apache.sis.metadata.iso.citation.DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("European Petroleum Survey Group"));
         r.setContactInfo(DefaultContact.EPSG);
         r.freeze();
@@ -195,7 +202,8 @@ public class DefaultResponsibleParty extends org.apache.sis.metadata.iso.citatio
      */
     static final ResponsibleParty NETCDF;
     static {
-        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
+        final org.apache.sis.metadata.iso.citation.DefaultResponsibleParty r =
+                new org.apache.sis.metadata.iso.citation.DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("NETCDF"));
         r.setContactInfo(DefaultContact.NETCDF);
         r.freeze();
@@ -210,7 +218,8 @@ public class DefaultResponsibleParty extends org.apache.sis.metadata.iso.citatio
      */
     static final ResponsibleParty GEOTIFF;
     static {
-        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
+        final org.apache.sis.metadata.iso.citation.DefaultResponsibleParty r =
+                new org.apache.sis.metadata.iso.citation.DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("GeoTIFF"));
         r.setContactInfo(DefaultContact.GEOTIFF);
         r.freeze();
@@ -226,7 +235,8 @@ public class DefaultResponsibleParty extends org.apache.sis.metadata.iso.citatio
      */
     static final ResponsibleParty PROJ4;
     static {
-        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
+        final org.apache.sis.metadata.iso.citation.DefaultResponsibleParty r =
+                new org.apache.sis.metadata.iso.citation.DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("PROJ4"));
         r.setContactInfo(DefaultContact.PROJ4);
         r.freeze();
@@ -243,7 +253,8 @@ public class DefaultResponsibleParty extends org.apache.sis.metadata.iso.citatio
     @Deprecated
     public static final ResponsibleParty ESRI;
     static {
-        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.OWNER);
+        final org.apache.sis.metadata.iso.citation.DefaultResponsibleParty r =
+                new org.apache.sis.metadata.iso.citation.DefaultResponsibleParty(Role.OWNER);
         r.setOrganisationName(new SimpleInternationalString("ESRI"));
         r.setContactInfo(DefaultContact.ESRI);
         r.freeze();
@@ -257,7 +268,8 @@ public class DefaultResponsibleParty extends org.apache.sis.metadata.iso.citatio
      */
     static final ResponsibleParty ORACLE;
     static {
-        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.OWNER);
+        final org.apache.sis.metadata.iso.citation.DefaultResponsibleParty r =
+                new org.apache.sis.metadata.iso.citation.DefaultResponsibleParty(Role.OWNER);
         r.setOrganisationName(new SimpleInternationalString("Oracle"));
         r.setContactInfo(DefaultContact.ORACLE);
         r.freeze();
@@ -273,7 +285,8 @@ public class DefaultResponsibleParty extends org.apache.sis.metadata.iso.citatio
      */
     static final ResponsibleParty POSTGIS;
     static {
-        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
+        final org.apache.sis.metadata.iso.citation.DefaultResponsibleParty r =
+                new org.apache.sis.metadata.iso.citation.DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("PostGIS"));
         r.setContactInfo(DefaultContact.POSTGIS);
         r.freeze();
@@ -289,7 +302,8 @@ public class DefaultResponsibleParty extends org.apache.sis.metadata.iso.citatio
      */
     static final ResponsibleParty SUN_MICROSYSTEMS;
     static {
-        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
+        final org.apache.sis.metadata.iso.citation.DefaultResponsibleParty r =
+                new org.apache.sis.metadata.iso.citation.DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("Sun Microsystems"));
         r.setContactInfo(DefaultContact.SUN_MICROSYSTEMS);
         r.freeze();
@@ -306,7 +320,8 @@ public class DefaultResponsibleParty extends org.apache.sis.metadata.iso.citatio
     @Deprecated
     public static final ResponsibleParty GEOTOOLKIT;
     static {
-        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
+        final org.apache.sis.metadata.iso.citation.DefaultResponsibleParty r =
+                new org.apache.sis.metadata.iso.citation.DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("Geotoolkit.org"));
         r.setContactInfo(DefaultContact.GEOTOOLKIT);
         r.freeze();
@@ -320,7 +335,8 @@ public class DefaultResponsibleParty extends org.apache.sis.metadata.iso.citatio
      */
     static final ResponsibleParty GEOTOOLS;
     static {
-        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
+        final org.apache.sis.metadata.iso.citation.DefaultResponsibleParty r =
+                new org.apache.sis.metadata.iso.citation.DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("GeoTools"));
         r.setContactInfo(DefaultContact.GEOTOOLS);
         r.freeze();
