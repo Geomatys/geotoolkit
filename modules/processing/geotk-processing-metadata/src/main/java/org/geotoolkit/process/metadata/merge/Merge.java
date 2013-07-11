@@ -16,8 +16,11 @@
  */
 package org.geotoolkit.process.metadata.merge;
 
-
+import java.util.Map;
 import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.metadata.KeyNamePolicy;
+import org.apache.sis.metadata.ValueExistencePolicy;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.metadata.Metadata;
@@ -25,6 +28,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.process.metadata.merge.MergeDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
+
 
 /**
  * Merge two metadata objects.
@@ -50,7 +54,10 @@ public class Merge extends AbstractProcess {
         final Metadata second = (Metadata) getOrCreate(SECOND_IN, inputParameters).getValue();
 
         final DefaultMetadata merged = new DefaultMetadata(first);
-// TODO merged.getStandard().shallowCopy(second, merged, true);
+        final MetadataStandard standard = merged.getStandard();
+        final Map<String, Object> source = standard.asValueMap(second, KeyNamePolicy.JAVABEANS_PROPERTY, ValueExistencePolicy.NON_EMPTY);
+        final Map<String, Object> target = standard.asValueMap(merged, KeyNamePolicy.JAVABEANS_PROPERTY, ValueExistencePolicy.ALL);
+        target.putAll(source);
 
         getOrCreate(RESULT_OUT, outputParameters).setValue(merged);
 
