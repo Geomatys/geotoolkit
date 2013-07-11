@@ -176,6 +176,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
             throw new IllegalArgumentException("Unknown version : " + version);
         }
         getCapabilities();
+        LOGGER.log(Level.INFO, "Web processing client initialization complete.");
     }
 
     /**
@@ -193,11 +194,13 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
         Parameters.getOrCreate(WPSServerFactory.VERSION, parameters).setValue(version);
 
         getCapabilities();
+        LOGGER.log(Level.INFO, "Web processing client initialization complete.");
     }
 
     public WebProcessingServer(ParameterValueGroup params) throws CapabilitiesException {
         super(params);
         getCapabilities();
+        LOGGER.log(Level.INFO, "Web processing client initialization complete.");
     }
 
     @Override
@@ -266,6 +269,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
         if (capabilities == null) {
             throw new CapabilitiesException("A problem occured while getting Service capabilities.");
         }
+        LOGGER.log(Level.INFO, "GetCapabilities request succeed.");
         return capabilities;
     }
 
@@ -595,7 +599,6 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
 
                         @Override
                         protected void execute() throws ProcessException {
-
                             final Execute exec = createRequest(getInput(), getDescriptor(), inputTypes);
                             final ExecuteResponse response = sendExecuteRequest(exec, this);
                             fillOutputs(outputParameters, getDescriptor(), response);
@@ -796,6 +799,8 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
             // Status can be activated only if we ask outputs as references.
             exec100.setOutputStatus(asReference && statusSupported.get(processId));
             exec100.setStorageURL(storageURL);
+            LOGGER.log(Level.INFO, "Execute request created for "+processId+" in "+((asReference)? "asynchronous": "synchronous") + " mode.");
+
             return exec100.makeRequest();
 
         } catch (NonconvertibleObjectException ex) {
@@ -815,13 +820,11 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
     private ExecuteResponse sendExecuteRequest(final Execute exec, final Process process) throws ProcessException {
         try {
             Object respObj = sendSecuredRequestInPost(exec);
+            respObj = checkResult(respObj);
 
             if (respObj instanceof ExecuteResponse) {
-                respObj = checkResult((ExecuteResponse) respObj);
                 return (ExecuteResponse) respObj;
-            }
-
-            if (respObj instanceof ExceptionReport) {
+            } else if (respObj instanceof ExceptionReport) {
                 final ExceptionReport report = (ExceptionReport) respObj;
                 final ExceptionType excep = report.getException().get(0);
                 throw new ProcessException("Exception when executing the process.", process, new Exception(excep.toString()));
@@ -844,41 +847,52 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
      * we reach wanted result.
      * @param respObj The execute response given by service.
      */
-    private ExecuteResponse checkResult(ExecuteResponse respObj) throws IOException, JAXBException, InterruptedException {
-        StatusType status = respObj.getStatus();
-        if (status.getProcessFailed() != null || status.getProcessSucceeded() != null) {
+    private Object checkResult(Object respObj) throws IOException, JAXBException, InterruptedException {
+
+        if (respObj instanceof ExceptionReport) {
             return respObj;
-        }
 
-        final Unmarshaller unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
+        } else if (respObj instanceof ExecuteResponse) {
+            StatusType status = ((ExecuteResponse) respObj).getStatus();
+            if (status.getProcessFailed() != null || status.getProcessSucceeded() != null) {
+                return respObj;
+            }
+            LOGGER.log(Level.INFO, "Response object got, it's nor a succes nor a fail. Start querying statusLocation.");
+            final Unmarshaller unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
 
-        final ClientSecurity security = getClientSecurity();
-        final URL statusLocation = security.secure(new URL(respObj.getStatusLocation()));
-        Object tmpResponse;
-        int timeLapse = 1000;
+            final ClientSecurity security = getClientSecurity();
+            final URL statusLocation = security.secure(new URL(((ExecuteResponse) respObj).getStatusLocation()));
+            Object tmpResponse;
+            int timeLapse = 1000;
         /*
          * We start querying distant status location. To be aware of process success (or failure), we keep doing request
          * over time, until we get the right content. The time interval used for checking increase at each request, to
          * avoid overloading.
          */
-        while(true) {
-            timeLapse = timeLapse*2;
-            synchronized (this) {
-                wait(timeLapse);
-            }
-            tmpResponse = unmarshaller.unmarshal(security.decrypt(statusLocation.openStream()));
-            if (tmpResponse instanceof JAXBElement) {
-                tmpResponse = ((JAXBElement) tmpResponse).getValue();
-            }
+            while (true) {
+                timeLapse = timeLapse * 2;
+                synchronized (this) {
+                    wait(timeLapse);
+                }
+                tmpResponse = unmarshaller.unmarshal(security.decrypt(statusLocation.openStream()));
+                if (tmpResponse instanceof JAXBElement) {
+                    tmpResponse = ((JAXBElement) tmpResponse).getValue();
+                }
 
-            if (tmpResponse instanceof ExecuteResponse) {
-                status = ((ExecuteResponse) tmpResponse).getStatus();
-                if (status.getProcessFailed() != null || status.getProcessSucceeded() != null) {
-                    respObj = (ExecuteResponse) tmpResponse;
-                    return respObj;
+                if (tmpResponse instanceof ExecuteResponse) {
+                    status = ((ExecuteResponse) tmpResponse).getStatus();
+                    if (status.getProcessFailed() != null || status.getProcessSucceeded() != null) {
+                        respObj = tmpResponse;
+                        break;
+                    }
+                } else if (tmpResponse instanceof ExceptionReport) {
+                    respObj = tmpResponse;
+                    break;
                 }
             }
         }
+
+        return respObj;
     }
 
     /**
@@ -912,6 +926,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
         conec.setDoOutput(true);
         security.secure(conec);
 
+        LOGGER.log(Level.INFO, "Sending execute request.");
         // Write request content
         requestOS = conec.getOutputStream();
         security.encrypt(requestOS);
@@ -985,8 +1000,10 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
 
             final List<OutputDataType> wpsOutputs = response.getProcessOutputs().getOutput();
 
+            LOGGER.log(Level.INFO, "Starting to parse output parameters. We found  "+wpsOutputs.size()+" of them.");
             for (final OutputDataType output : wpsOutputs) {
 
+                LOGGER.log(Level.INFO, "Parsing "+output.getIdentifier().getValue()+" output.");
                 final ParameterDescriptor outDesc = (ParameterDescriptor) descriptor.getOutputDescriptor().descriptor(output.getIdentifier().getValue());
                 final Class clazz = outDesc.getValueClass();
 
@@ -1025,7 +1042,7 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
                             throw new ProcessException(ex.getMessage(), null, ex);
                         }
 
-                    /*
+                   /*
                     * Complex
                     */
                     } else if (outputType.getComplexData() != null) {
