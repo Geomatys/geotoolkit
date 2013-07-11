@@ -23,6 +23,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import java.awt.geom.AffineTransform;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import java.util.concurrent.CancellationException;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -52,7 +53,6 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.process.coverage.AbstractProcessTest;
-import org.geotoolkit.process.coverage.coveragetofeatures.CoverageToFeaturesDescriptor;
 
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
@@ -220,12 +220,11 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         } else {
             gridToCRS = new AffineTransform2D(1, 0, 0, 1, 0.5, 1.5);
         }
-        final GridCoverageFactory gc = new GridCoverageFactory();
-        final GridCoverage2D coverage = gc.create("cover", image,
-                crs2d, gridToCRS, null, null, null);
-
-        SimpleCoverageReader reader = new SimpleCoverageReader(coverage, pixPos);
-        return reader;
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setCoordinateReferenceSystem(crs2d);
+        gcb.setGridToCRS((AffineTransform)gridToCRS);
+        gcb.setRenderedImage(image);
+        return new SimpleCoverageReader(gcb.getGridCoverage2D(), pixPos);
     }
 
     private FeatureType buildFeatureType() throws NoSuchAuthorityCodeException, FactoryException {

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
@@ -22,19 +22,19 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public class CustomCoverageNDDemo {
     
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();    
-    private static final GridCoverageFactory GCF = new GridCoverageFactory();
+    private static final MutableStyleFactory SF = new DefaultStyleFactory();
     
     public static void main(String[] args) throws Exception {
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
         
         CoordinateReferenceSystem crs = new DefaultCompoundCRS("4D crs",
                     CRS.decode("EPSG:4326"),
                     DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT,
                     DefaultTemporalCRS.JAVA);
 
-        List<Coverage> temps = new ArrayList<Coverage>();
+        List<Coverage> temps = new ArrayList<>();
         for(int i=0; i<10; i++){
-            final List<Coverage> eles = new ArrayList<Coverage>();
+            final List<Coverage> eles = new ArrayList<>();
             for(int k=0;k<10;k++){
                 GeneralEnvelope env = new GeneralEnvelope(crs);
                 env.setRange(0,  0,  10);
@@ -45,7 +45,9 @@ public class CustomCoverageNDDemo {
                 final Graphics2D g = img.createGraphics();
                 g.setColor(RandomStyleBuilder.randomColor() );
                 g.fillRect(0, 0, 100, 100);
-                GridCoverage2D coverage = GCF.create("2D", img, env);
+                gcb.setEnvelope(env);
+                gcb.setRenderedImage(img);
+                GridCoverage2D coverage = gcb.getGridCoverage2D();
                 eles.add(coverage);
             }
             temps.add(new CoverageStack("3D", eles));

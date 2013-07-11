@@ -29,7 +29,7 @@ import java.util.logging.Level;
 import javax.imageio.ImageIO;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -125,8 +125,10 @@ final class WCSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
                 return;
             }
 
-            final GridCoverageFactory gc = new GridCoverageFactory();
-            final GridCoverage2D coverage = gc.create("wcs", image, env);
+            final GridCoverageBuilder gc = new GridCoverageBuilder();
+            gc.setEnvelope(env);
+            gc.setRenderedImage(image);
+            final GridCoverage2D coverage = gc.getGridCoverage2D();
             try {
                 GO2Utilities.portray(context2D, coverage);
             } catch (PortrayalException ex) {

@@ -50,7 +50,6 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -84,6 +83,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -97,8 +97,6 @@ import org.opengis.style.portrayal.PortrayalService;
  * @module pending
  */
 public final class DefaultPortrayalService implements PortrayalService{
-
-    private static final GridCoverageFactory GCF = new GridCoverageFactory();
 
     /**
      * Cache the last CoverageWriter.
@@ -454,7 +452,10 @@ public final class DefaultPortrayalService implements PortrayalService{
             //check the image color model
             image = (BufferedImage) rectifyImageColorModel(image, mime);
 
-            final GridCoverage2D coverage = GCF.create("PortrayalTempCoverage", image, env);
+            final GridCoverageBuilder gcb = new GridCoverageBuilder();
+            gcb.setEnvelope(env);
+            gcb.setRenderedImage(image);
+            final GridCoverage2D coverage = gcb.getGridCoverage2D();
             writeCoverage(coverage, env, resolution, outputDef,null);
         }else{
             try {

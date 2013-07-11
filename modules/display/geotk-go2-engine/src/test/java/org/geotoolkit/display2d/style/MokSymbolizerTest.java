@@ -18,7 +18,6 @@ package org.geotoolkit.display2d.style;
 
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
@@ -57,7 +56,6 @@ import static org.junit.Assert.*;
 public class MokSymbolizerTest {
 
     private static final GeometryFactory GF = new GeometryFactory();
-    private static final GridCoverageFactory GCF = new GridCoverageFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
 
 

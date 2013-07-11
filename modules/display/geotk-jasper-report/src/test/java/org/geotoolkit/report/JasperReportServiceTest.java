@@ -49,7 +49,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 
 import org.junit.After;
@@ -69,7 +69,6 @@ import static org.junit.Assert.*;
  */
 public class JasperReportServiceTest {
 
-    private static final GridCoverageFactory GCF = new GridCoverageFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
 
     public JasperReportServiceTest() {
@@ -162,7 +161,10 @@ public class JasperReportServiceTest {
                 new Color[]{Color.CYAN, Color.RED, Color.GREEN});
         g.setPaint(paint);
         g.fill(new Rectangle(0, 0, 1000, 1000));
-        final GridCoverage2D coverage = GCF.create("test1", img, env);
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setEnvelope(env);
+        gcb.setRenderedImage(img);
+        final GridCoverage2D coverage = gcb.getGridCoverage2D();
 
         final MapContext context = MapBuilder.createContext();
         context.layers().add(MapBuilder.createCoverageLayer(coverage,

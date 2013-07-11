@@ -45,8 +45,7 @@ import java.util.List;
 
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
-import org.geotoolkit.coverage.processing.Operations;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureWriter;
@@ -101,7 +100,6 @@ import static org.geotoolkit.style.StyleConstants.*;
 public class ColorModelTest {
 
     private static final GeometryFactory GF = new GeometryFactory();
-    private static final GridCoverageFactory GCF = new GridCoverageFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
 
     private final List<FeatureCollection> featureColls = new ArrayList<FeatureCollection>();
@@ -114,6 +112,8 @@ public class ColorModelTest {
 
     public ColorModelTest() throws Exception {
 
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        
         // create the feature collection for tests -----------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("test");
@@ -195,7 +195,10 @@ public class ColorModelTest {
         Graphics2D g = img.createGraphics();
         g.setColor(Color.RED);
         g.fill(new Rectangle(0, 0, 100, 100));
-        GridCoverage2D coverage = GCF.create("test1", img, env);
+        gcb.reset();
+        gcb.setEnvelope(env);
+        gcb.setRenderedImage(img);
+        GridCoverage2D coverage = gcb.getGridCoverage2D();
         coverages.add(coverage);
 
         env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
@@ -205,7 +208,10 @@ public class ColorModelTest {
         g = img.createGraphics();
         g.setColor(Color.RED);
         g.fill(new Rectangle(0, 0, 100, 100));
-        coverage = GCF.create("test2", img, env);
+        gcb.reset();
+        gcb.setEnvelope(env);
+        gcb.setRenderedImage(img);
+        coverage = gcb.getGridCoverage2D();
         coverages.add(coverage);
 
         //create some ND coverages ---------------------------------------------
@@ -224,7 +230,10 @@ public class ColorModelTest {
                 env.setRange(2, k, k+1);
                 env.setRange(3, i, i+1);
                 img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
-                coverage = GCF.create("2D", img, env);
+                gcb.reset();
+                gcb.setEnvelope(env);
+                gcb.setRenderedImage(img);
+                coverage = gcb.getGridCoverage2D();
                 eles.add(coverage);
             }
             temps.add(new CoverageStack("3D", eles));
@@ -454,8 +463,10 @@ public class ColorModelTest {
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
         env.setRange(0, 0, 20);
         env.setRange(1, 0, 20);
-        final GridCoverageFactory GF = new GridCoverageFactory();
-        final GridCoverage2D coverage = GF.create("myCoverage", img, env);
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setEnvelope(env);
+        gcb.setRenderedImage(img);
+        final GridCoverage2D coverage = gcb.getGridCoverage2D();
                         
         //display it
         final MapContext context = MapBuilder.createContext();
@@ -502,8 +513,10 @@ public class ColorModelTest {
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
         env.setRange(0, 0, 20);
         env.setRange(1, 0, 20);
-        final GridCoverageFactory GF = new GridCoverageFactory();
-        final GridCoverage2D coverage = GF.create("myCoverage", img, env);
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setEnvelope(env);
+        gcb.setRenderedImage(img);
+        final GridCoverage2D coverage = gcb.getGridCoverage2D();
                         
         //display it
         final MapContext context = MapBuilder.createContext();

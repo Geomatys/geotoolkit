@@ -21,7 +21,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import java.awt.*;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ import javax.swing.JPanel;
 import javax.vecmath.Point3d;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -171,8 +170,6 @@ public class KrigingProcess extends AbstractProcess {
                 new Rectangle2D.Double(x0, y0, spanX, spanY));
         env.setCoordinateReferenceSystem(crs);
 
-//        final GridCoverage2D coverage = toCoverage(computed, cx, cy, env);
-//        final GridCoverage2D coverage = new GridCoverageFactory().create("catgrid", renderedImage, env);
         final GridCoverage2D coverage = toCoverage(cz, cx, cy, env);
         getOrCreate(OUT_COVERAGE, outputParameters).setValue(coverage);
 
@@ -302,8 +299,10 @@ public class KrigingProcess extends AbstractProcess {
             }
         }
 
-        final GridCoverageFactory gcf = new GridCoverageFactory();
-        return gcf.create("catgrid",matrix, env);
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setEnvelope(env);
+        gcb.setRenderedImage(matrix);
+        return gcb.getGridCoverage2D();
     }
 
 }

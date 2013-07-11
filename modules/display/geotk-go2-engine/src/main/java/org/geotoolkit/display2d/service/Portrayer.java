@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -70,8 +70,6 @@ import org.opengis.style.Symbolizer;
 public final class Portrayer {
 
     private static final MapContext EMPTY_CONTEXT = MapBuilder.createContext();
-
-    private final GridCoverageFactory GCF = new GridCoverageFactory();
 
     /**
      * Cache the last CoverageWriter.
@@ -194,7 +192,10 @@ public final class Portrayer {
                     env.getSpan(0) / (double)dim.width,
                     env.getSpan(1) / (double)dim.height};
 
-            final GridCoverage2D coverage = GCF.create("PortrayalTempCoverage", image, env);
+            final GridCoverageBuilder gcb = new GridCoverageBuilder();
+            gcb.setEnvelope(env);
+            gcb.setRenderedImage(image);
+            final GridCoverage2D coverage = gcb.getGridCoverage2D();
             writeCoverage(coverage, env, resolution, outputDef,null);
         }else{
             try {

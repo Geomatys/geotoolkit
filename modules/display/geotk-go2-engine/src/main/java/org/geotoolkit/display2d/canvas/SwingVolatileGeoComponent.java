@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.Timer;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -89,8 +89,11 @@ public class SwingVolatileGeoComponent extends JComponent{
                                 if(buffer!=null){
                                     MathTransform2D aff = canvas.getController().getTransform();
                                     aff = aff.inverse();
-                                    GridCoverageFactory gcf = new GridCoverageFactory();
-                                    coverage = gcf.create("temp", buffer, canvas.getObjectiveCRS2D(), aff, null,null,null);
+                                    final GridCoverageBuilder gcb = new GridCoverageBuilder();
+                                    gcb.setRenderedImage(buffer);
+                                    gcb.setCoordinateReferenceSystem(canvas.getObjectiveCRS2D());
+                                    gcb.setGridToCRS(aff);
+                                    coverage = gcb.getGridCoverage2D();
                                 }
                             }catch(Exception ex){
                                 Logger.getLogger(SwingVolatileGeoComponent.class.getName()).log(Level.INFO, ex.getMessage(), ex);

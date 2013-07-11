@@ -46,7 +46,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
@@ -96,6 +95,7 @@ import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
@@ -881,7 +881,10 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             final GeneralEnvelope envelope = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
             envelope.setRange(0, west, east);
             envelope.setRange(1, south, north);
-            final GridCoverage2D coverage = new GridCoverageFactory().create("cov", image, envelope);
+            final GridCoverageBuilder gcb = new GridCoverageBuilder();
+            gcb.setEnvelope(envelope);
+            gcb.setRenderedImage(image);
+            final GridCoverage2D coverage = gcb.getGridCoverage2D();
             final GridCoverage2D resampled = (GridCoverage2D) Operations.DEFAULT.resample(coverage, context2d.getObjectiveCRS2D());
 
             context2d.switchToObjectiveCRS();

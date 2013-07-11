@@ -32,11 +32,9 @@ import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -44,7 +42,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
@@ -466,8 +463,10 @@ public class PortrayalServiceTest {
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
-        final GridCoverageFactory GF = new GridCoverageFactory();
-        final GridCoverage2D coverage = GF.create("myCoverage", img, env);
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setEnvelope(env);
+        gcb.setRenderedImage(img);
+        final GridCoverage2D coverage = gcb.getGridCoverage2D();
 
         //display it
         final MapContext context = MapBuilder.createContext();
