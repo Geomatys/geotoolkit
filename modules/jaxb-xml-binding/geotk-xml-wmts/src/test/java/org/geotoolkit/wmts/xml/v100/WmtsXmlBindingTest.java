@@ -23,6 +23,7 @@ import java.util.Collections;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import org.apache.sis.test.XMLComparator;
 
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.PointType;
@@ -140,7 +141,8 @@ public class WmtsXmlBindingTest {
                      "    <MatrixHeight>3</MatrixHeight>" + '\n' +
                      "</TileMatrix>" + '\n';
 
-        assertEquals(expResult, result);
+        XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.compare();
 
     }
 }

@@ -27,6 +27,7 @@ import org.apache.sis.metadata.iso.DefaultMetadata;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import org.apache.sis.test.XMLComparator;
 import org.apache.sis.util.iso.DefaultNameFactory;
 import org.apache.sis.xml.MarshallerPool;
 
@@ -182,7 +183,8 @@ public class XmlBindingTest {
         //we remove the xmlmns
         result = removeXmlns(result);
 
-        assertEquals(expResult, result);
+        final XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.compare();
     }
 
     /**

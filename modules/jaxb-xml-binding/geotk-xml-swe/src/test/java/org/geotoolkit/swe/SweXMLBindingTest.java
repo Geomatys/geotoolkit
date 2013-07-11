@@ -103,7 +103,7 @@ public class SweXMLBindingTest {
         result = StringUtilities.removeXmlns(result);
 
         String expResult = "<swe:Text definition=\"definition\" >" + '\n' +
-                           "    <swe:value>some value</swe:value>" + '\n' +
+                           "  <swe:value>some value</swe:value>" + '\n' +
                            "</swe:Text>" + '\n' ;
         assertEquals(expResult, result);
 

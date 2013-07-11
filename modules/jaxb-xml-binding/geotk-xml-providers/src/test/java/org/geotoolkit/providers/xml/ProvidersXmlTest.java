@@ -30,6 +30,7 @@ import org.geotoolkit.sld.xml.v110.StyledLayerDescriptor;
 import org.geotoolkit.sld.xml.v110.UserLayer;
 import org.geotoolkit.sld.xml.v110.UserStyle;
 import javax.xml.bind.JAXBContext;
+import org.apache.sis.test.XMLComparator;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -118,7 +119,7 @@ public class ProvidersXmlTest {
      * @throws JAXBException
      */
     @Test
-    public void testMarshallingWithoutSLD() throws JAXBException {
+    public void testMarshallingWithoutSLD() throws Exception {
         final List<MapItem> mapLayers2 = new ArrayList<MapItem>();
         mapLayers2.add(new MapLayer(new DataReference("postgis_test:my_otherlayer"), new StyleReference("my_otherstyle")));
         mapLayers2.add(new MapLayer(new DataReference("coverage:my_thirdlayer"), new StyleReference("my_newstyle")));
@@ -143,7 +144,8 @@ public class ProvidersXmlTest {
         }
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertEquals(RESULT_MARSHALLING_WITHOUT_SLD, result.trim());
+        XMLComparator comparator = new XMLComparator(RESULT_MARSHALLING_WITHOUT_SLD, result.trim());
+        comparator.compare();
     }
 
     /**
@@ -152,7 +154,7 @@ public class ProvidersXmlTest {
      * @throws JAXBException
      */
     @Test
-    public void testMarshallingWithSLD() throws JAXBException {
+    public void testMarshallingWithSLD() throws JAXBException, Exception {
         final List<MapItem> mapLayers2 = new ArrayList<MapItem>();
         final StyledLayerDescriptor sld = new StyledLayerDescriptor();
         final UserStyle us = new UserStyle();
@@ -189,7 +191,8 @@ public class ProvidersXmlTest {
         }
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertEquals(RESULT_MARSHALLING_WITH_SLD, result.trim());
+        XMLComparator comparator = new XMLComparator(RESULT_MARSHALLING_WITH_SLD, result.trim());
+        comparator.compare();
     }
 
     /**

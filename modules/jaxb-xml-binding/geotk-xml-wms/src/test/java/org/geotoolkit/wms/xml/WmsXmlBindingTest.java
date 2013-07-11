@@ -641,7 +641,7 @@ public class WmsXmlBindingTest {
         // SimpleInternationalString because it detected that there is only one locale.
         // Perform the same change in our expected result in order to allow comparison.
         cresult.setExplanation(new SimpleInternationalString(cresult.getExplanation().toString()));
-
+        
         assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getExplanation().toString(), result.getInspireExtendedCapabilities().getConformity().getExplanation().toString());
         assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getSpecification().getCollectiveTitle(), result.getInspireExtendedCapabilities().getConformity().getSpecification().getCollectiveTitle());
         assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getSpecification().getCitedResponsibleParties(), result.getInspireExtendedCapabilities().getConformity().getSpecification().getCitedResponsibleParties());

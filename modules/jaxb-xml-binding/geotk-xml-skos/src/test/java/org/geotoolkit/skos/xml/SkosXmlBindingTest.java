@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.skos.xml;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import org.apache.sis.test.XMLComparator;
 
 //Junit dependencies
 import org.apache.sis.util.logging.Logging;
@@ -68,7 +70,7 @@ public class SkosXmlBindingTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void RDFMarshalingTest() throws JAXBException {
+    public void RDFMarshalingTest() throws JAXBException, Exception {
         List<Concept> concepts = new ArrayList<Concept>();
         Concept c1 = new Concept("http://www.geomatys.com/test/bonjour", null, "bonjour", "salut", "Un terme de politesse pour saluer son interlocuteur.", null);
         Concept c2 = new Concept("http://www.geomatys.com/test/pluie", null, new Value("pluie"), Arrays.asList(new Value("averse"), new Value("précipitation")), new Value("Un evenement meteorologique qui fais tomber de l'eau sur la terre."), null);
@@ -109,12 +111,13 @@ public class SkosXmlBindingTest {
 
         LOGGER.finer("result" + result);
         LOGGER.finer("expected" + expResult);
-        assertEquals(expResult, result);
+        final XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.compare();
 
     }
 
     @Test
-    public void RDFMultilangMarshalingTest() throws JAXBException {
+    public void RDFMultilangMarshalingTest() throws JAXBException, Exception {
         List<Concept> concepts = new ArrayList<Concept>();
         Concept c1 = new Concept("http://www.geomatys.com/test/bonjour", null, new Value("bonjour", "fr"), new Value("salut", "fr"), new Value("Un terme de politesse pour saluer son interlocuteur.", "fr"), null);
         Concept c2 = new Concept("http://www.geomatys.com/test/pluie", null, Arrays.asList(new Value("pluie", "fr"), new Value("rain", "en")), Arrays.asList(new Value("averse", "fr"), new Value("précipitation", "fr")), Arrays.asList(new Value("Un evenement meteorologique qui fais tomber de l'eau sur la terre.", "fr"), new Value("water falling from sky", "en")), null);
@@ -157,7 +160,8 @@ public class SkosXmlBindingTest {
 
         LOGGER.finer("result" + result);
         LOGGER.finer("expected" + expResult);
-        assertEquals(expResult, result);
+        final XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.compare();
 
     }
 

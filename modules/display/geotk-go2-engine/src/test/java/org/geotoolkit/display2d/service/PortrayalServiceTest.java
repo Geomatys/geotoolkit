@@ -109,7 +109,7 @@ public class PortrayalServiceTest {
     private static final double EPS = 0.000000001d;
 
     private static final GeometryFactory GF = new GeometryFactory();
-    private static final GridCoverageFactory GCF = new GridCoverageFactory();
+    private static final GridCoverageBuilder GCF = new GridCoverageBuilder();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
 
     private final List<FeatureCollection> featureColls = new ArrayList<FeatureCollection>();
@@ -203,7 +203,10 @@ public class PortrayalServiceTest {
         Graphics2D g = img.createGraphics();
         g.setColor(Color.RED);
         g.fill(new Rectangle(0, 0, 100, 100));
-        GridCoverage2D coverage = GCF.create("test1", img, env);
+        GCF.reset();
+        GCF.setEnvelope(env);
+        GCF.setRenderedImage(img);
+        GridCoverage2D coverage = GCF.getGridCoverage2D();
         coverages.add(coverage);
 
         env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
@@ -213,7 +216,10 @@ public class PortrayalServiceTest {
         g = img.createGraphics();
         g.setColor(Color.RED);
         g.fill(new Rectangle(0, 0, 100, 100));
-        coverage = GCF.create("test2", img, env);
+        GCF.reset();
+        GCF.setEnvelope(env);
+        GCF.setRenderedImage(img);
+        coverage = GCF.getGridCoverage2D();
         coverages.add(coverage);
 
         //create some ND coverages ---------------------------------------------
@@ -232,7 +238,10 @@ public class PortrayalServiceTest {
                 env.setRange(2, k, k+1);
                 env.setRange(3, i, i+1);
                 img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
-                coverage = GCF.create("2D", img, env);
+                GCF.reset();
+                GCF.setEnvelope(env);
+                GCF.setRenderedImage(img);
+                coverage = GCF.getGridCoverage2D();
                 eles.add(coverage);
             }
             temps.add(new CoverageStack("3D", eles));

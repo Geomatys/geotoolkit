@@ -16,11 +16,13 @@
  */
 package org.geotoolkit.wps;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.wps.v100.GetCapabilities100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
@@ -78,10 +80,11 @@ public class GetCapabilitiesTest {
                     + "</wps:GetCapabilities>\n";
 
             String result = StringUtilities.removeXmlns(stringWriter.toString());
-            assertEquals(expectedMarshalledRequest, result);
+            XMLComparator comparator = new XMLComparator(expectedMarshalledRequest, result);
+            comparator.compare();
             WPSMarshallerPool.getInstance().recycle(marshaller);
 
-        } catch (JAXBException ex) {
+        } catch (Exception ex) {
             fail(ex.getLocalizedMessage());
             return;
         }
