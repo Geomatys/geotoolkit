@@ -32,8 +32,6 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.display2d.GO2Hints;
-import org.geotoolkit.display2d.ext.vectorfield.VectorFieldSymbolizer;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.DefaultLiteral;
@@ -671,8 +669,9 @@ public class Styles {
     //////////////////////////////////////////////////////////////////////
 
     public static MutableStyle vectorFieldtRaster(){
-        final Symbolizer symbol = new VectorFieldSymbolizer();
-        final MutableStyle style = SF.style(symbol);
+        //todo replace by cell symbolizer
+        //final Symbolizer symbol = new VectorFieldSymbolizer();
+        final MutableStyle style = SF.style();
         return style;
     }
 
