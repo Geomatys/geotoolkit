@@ -962,7 +962,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             }
             final RenderedImage image = this.image;
             if (image != null) {
-                return new GeneralGridEnvelope(image, getGridDimension(2));
+                final Envelope envelope = this.envelope;
+                return new GeneralGridEnvelope(image, getGridDimension(envelope != null ? envelope.getDimension() : 2));
             }
         }
         return extent;
