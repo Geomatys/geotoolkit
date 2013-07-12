@@ -100,8 +100,8 @@ public class GmlXMLBindingTest {
         result = StringUtilities.removeXmlns(result);
 
         String expResult = "<gml:Envelope srsName=\"urn:ogc:def:crs:EPSG:6.8:4283\" gml:id=\"bound-1\" >" + '\n' +
-                           "    <gml:lowerCorner>-30.711 134.196</gml:lowerCorner>" + '\n' +
-                           "    <gml:upperCorner>-30.702 134.205</gml:upperCorner>" + '\n' +
+                           "  <gml:lowerCorner>-30.711 134.196</gml:lowerCorner>" + '\n' +
+                           "  <gml:upperCorner>-30.702 134.205</gml:upperCorner>" + '\n' +
                            "</gml:Envelope>" + '\n' ;
         final XMLComparator comparator = new XMLComparator(expResult, result);
         comparator.compare();
@@ -134,7 +134,7 @@ public class GmlXMLBindingTest {
         result = StringUtilities.removeXmlns(result);
 
         expResult = "<gml:LineStringSegment >" + '\n' +
-                    "    <gml:posList>1.0 1.1 1.2</gml:posList>" + '\n' +
+                    "  <gml:posList>1.0 1.1 1.2</gml:posList>" + '\n' +
                     "</gml:LineStringSegment>" + '\n' ;
         assertEquals(expResult, result);
 
@@ -154,8 +154,8 @@ public class GmlXMLBindingTest {
         result = StringUtilities.removeXmlns(result);
 
         expResult = "<gml:LineStringSegment >" + '\n' +
-                    "    <gml:pos>1.1 1.2</gml:pos>" + '\n' +
-                    "    <gml:pos>2.3 48.1</gml:pos>" + '\n' +
+                    "  <gml:pos>1.1 1.2</gml:pos>" + '\n' +
+                    "  <gml:pos>2.3 48.1</gml:pos>" + '\n' +
                     "</gml:LineStringSegment>" + '\n' ;
         assertEquals(expResult, result);
 
@@ -169,7 +169,7 @@ public class GmlXMLBindingTest {
         expResult.setPosList(posList);
 
         String xml = "<gml:LineStringSegment xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
-                     "    <gml:posList>1.0 1.1 1.2</gml:posList>" + '\n' +
+                     "  <gml:posList>1.0 1.1 1.2</gml:posList>" + '\n' +
                      "</gml:LineStringSegment>" + '\n' ;
 
         Object result = unmarshaller.unmarshal(new StringReader(xml));
@@ -188,8 +188,8 @@ public class GmlXMLBindingTest {
 
 
         xml       = "<gml:LineStringSegment xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
-                    "    <gml:pos>1.1 1.2</gml:pos>" + '\n' +
-                    "    <gml:pos>2.3 48.1</gml:pos>" + '\n' +
+                    "  <gml:pos>1.1 1.2</gml:pos>" + '\n' +
+                    "  <gml:pos>2.3 48.1</gml:pos>" + '\n' +
                     "</gml:LineStringSegment>" + '\n' ;
 
         result = unmarshaller.unmarshal(new StringReader(xml));
@@ -208,8 +208,8 @@ public class GmlXMLBindingTest {
 
 
         String xml = "<gml:TimePeriod xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
-                     "    <gml:beginPosition>2002-08-01</gml:beginPosition>" + '\n' +
-                     "    <gml:endPosition>2003-08-01</gml:endPosition>" + '\n' +
+                     "  <gml:beginPosition>2002-08-01</gml:beginPosition>" + '\n' +
+                     "  <gml:endPosition>2003-08-01</gml:endPosition>" + '\n' +
                      "</gml:TimePeriod>" + '\n' ;
 
         Object result = unmarshaller.unmarshal(new StringReader(xml));
@@ -224,7 +224,7 @@ public class GmlXMLBindingTest {
 
 
         xml = "<gml:TimePeriod xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
-              "    <gml:beginPosition>2002-08-01</gml:beginPosition>" + '\n' +
+              "  <gml:beginPosition>2002-08-01</gml:beginPosition>" + '\n' +
               "</gml:TimePeriod>" + '\n' ;
 
         result = unmarshaller.unmarshal(new StringReader(xml));
