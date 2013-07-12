@@ -4,8 +4,6 @@
  */
 package org.geotoolkit.skos.xml;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.xml.MarshallerPool;
@@ -14,16 +12,17 @@ import org.apache.sis.xml.MarshallerPool;
  *
  * @author guilhem
  */
-public class SkosMarshallerPool {
+public final class SkosMarshallerPool {
 
-    private static MarshallerPool instance;
+    private static final MarshallerPool instance;
     static {
         try {
             instance = new MarshallerPool(JAXBContext.newInstance("org.geotoolkit.skos.xml:org.apache.sis.internal.jaxb.geometry"), null);
         } catch (JAXBException ex) {
-            Logger.getLogger(SkosMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
+            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
     }
+
     private SkosMarshallerPool() {}
 
     public static MarshallerPool getInstance() {

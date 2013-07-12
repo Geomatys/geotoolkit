@@ -19,8 +19,6 @@
 package org.geotoolkit.wmts.xml;
 
 import java.util.Collections;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.xml.MarshallerPool;
@@ -30,9 +28,9 @@ import org.apache.sis.xml.XML;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class WMTSMarshallerPool {
+public final class WMTSMarshallerPool {
 
-    private static MarshallerPool instance;
+    private static final MarshallerPool instance;
     static {
         try {
             instance = new MarshallerPool(JAXBContext.newInstance(
@@ -42,9 +40,10 @@ public class WMTSMarshallerPool {
                  "org.geotoolkit.ows.xml.v110"),
                     Collections.singletonMap(XML.DEFAULT_NAMESPACE, "http://www.opengis.net/wmts/1.0"));
         } catch (JAXBException ex) {
-            Logger.getLogger(WMTSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
+            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
     }
+
     private WMTSMarshallerPool() {}
 
     public static MarshallerPool getInstance() {

@@ -16,19 +16,17 @@
  */
 package org.geotoolkit.wps.xml;
 
-import java.util.logging.Level;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class WPSMarshallerPool {
+public final class WPSMarshallerPool {
 
-    private static MarshallerPool instance;
+    private static final MarshallerPool instance;
     static {
         try {
             instance = new MarshallerPool(JAXBContext.newInstance(
@@ -38,9 +36,10 @@ public class WPSMarshallerPool {
                     + "org.apache.sis.internal.jaxb.geometry:"
                     + "org.geotoolkit.mathml.xml"), null);
         } catch (JAXBException ex) {
-            Logging.getLogger(WPSMarshallerPool.class).log(Level.SEVERE, null, ex);
+            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
     }
+
     private WPSMarshallerPool() {}
 
     public static MarshallerPool getInstance() {

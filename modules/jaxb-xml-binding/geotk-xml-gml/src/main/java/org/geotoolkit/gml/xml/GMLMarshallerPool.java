@@ -28,7 +28,7 @@ import org.apache.sis.xml.MarshallerPool;
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class GMLMarshallerPool {
+public final class GMLMarshallerPool {
 
     private static final MarshallerPool instance;
     static {

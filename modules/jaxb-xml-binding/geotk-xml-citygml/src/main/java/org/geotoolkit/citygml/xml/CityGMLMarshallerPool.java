@@ -17,8 +17,6 @@
 
 package org.geotoolkit.citygml.xml;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.xml.MarshallerPool;
@@ -27,9 +25,9 @@ import org.apache.sis.xml.MarshallerPool;
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class CityGMLMarshallerPool {
+public final class CityGMLMarshallerPool {
 
-    private static MarshallerPool instance;
+    private static final MarshallerPool instance;
     static {
         try {
             instance = new MarshallerPool(JAXBContext.newInstance(
@@ -42,9 +40,10 @@ public class CityGMLMarshallerPool {
                     "org.geotoolkit.citygml.xml.v100.landuse:" +
                     "org.geotoolkit.citygml.xml.v100.transportation"), null);
         } catch (JAXBException ex) {
-            Logger.getLogger(CityGMLMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
+            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
     }
+
     private CityGMLMarshallerPool() {}
 
     public static MarshallerPool getInstance() {

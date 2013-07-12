@@ -19,8 +19,6 @@ package org.geotoolkit.wms.xml;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.xml.MarshallerPool;
@@ -30,15 +28,15 @@ import org.apache.sis.xml.XML;
  *
  * @author guilhem
  */
-public class WMSMarshallerPool {
+public final class WMSMarshallerPool {
 
     /**
-     * we separte the v 1.3.0 instance in order to marshall with no prefix (QGIS issue)
+     * we separate the v 1.3.0 instance in order to marshall with no prefix (QGIS issue)
      */
-    private static MarshallerPool instancev130;
+    private static final MarshallerPool instancev130;
     static {
         try {
-            final Map<String, String> properties = new HashMap<String, String>();
+            final Map<String, String> properties = new HashMap<>();
             properties.put(XML.DEFAULT_NAMESPACE, "http://www.opengis.net/wms");
             instancev130 = new MarshallerPool(JAXBContext.newInstance(
                                           "org.geotoolkit.ogc.xml.exception:" +
@@ -47,11 +45,11 @@ public class WMSMarshallerPool {
                                           "org.geotoolkit.inspire.xml.vs:" +
                                           "org.apache.sis.internal.jaxb.geometry"), properties);
         } catch (JAXBException ex) {
-            Logger.getLogger(WMSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
+            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
     }
 
-    private static MarshallerPool instance;
+    private static final MarshallerPool instance;
     static {
         try {
             instance = new MarshallerPool(JAXBContext.newInstance(
@@ -62,9 +60,10 @@ public class WMSMarshallerPool {
                     "org.geotoolkit.inspire.xml.vs:" +
                     "org.apache.sis.internal.jaxb.geometry"), null);
         } catch (JAXBException ex) {
-            Logger.getLogger(WMSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
+            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
     }
+
     private WMSMarshallerPool() {}
 
     public static MarshallerPool getInstance() {

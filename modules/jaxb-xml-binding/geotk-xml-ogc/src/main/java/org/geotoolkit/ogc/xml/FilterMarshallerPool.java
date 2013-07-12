@@ -17,8 +17,6 @@
 
 package org.geotoolkit.ogc.xml;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.xml.MarshallerPool;
@@ -27,9 +25,9 @@ import org.apache.sis.xml.MarshallerPool;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class FilterMarshallerPool {
+public final class FilterMarshallerPool {
 
-    private static MarshallerPool instance;
+    private static final MarshallerPool instance;
     static {
         try {
             instance = new MarshallerPool(JAXBContext.newInstance(
@@ -38,7 +36,7 @@ public class FilterMarshallerPool {
                     "org.apache.sis.internal.jaxb.geometry:" +
                     "org.geotoolkit.gml.xml.v311"), null);
         } catch (JAXBException ex) {
-            Logger.getLogger(FilterMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
+            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
     }
 

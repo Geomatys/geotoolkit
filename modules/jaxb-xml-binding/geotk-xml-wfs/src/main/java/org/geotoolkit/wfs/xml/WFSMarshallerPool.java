@@ -17,8 +17,6 @@
 
 package org.geotoolkit.wfs.xml;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.xml.MarshallerPool;
@@ -27,9 +25,9 @@ import org.apache.sis.xml.MarshallerPool;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class WFSMarshallerPool {
+public final class WFSMarshallerPool {
 
-    private static MarshallerPool instance;
+    private static final MarshallerPool instance;
     static {
         try {
             instance = new MarshallerPool(JAXBContext.newInstance(
@@ -37,16 +35,16 @@ public class WFSMarshallerPool {
                     + "org.geotoolkit.wfs.xml.v200:"
                     + "org.apache.sis.internal.jaxb.geometry"), null);
         } catch (JAXBException ex) {
-            Logger.getLogger(WFSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
+            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
     }
 
-    private static MarshallerPool instance100;
+    private static final MarshallerPool instance100;
     static {
         try {
             instance100 = new MarshallerPool(JAXBContext.newInstance("org.geotoolkit.wfs.xml.v100:org.geotoolkit.gml.xml.v212"), null);
         } catch (JAXBException ex) {
-            Logger.getLogger(WFSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
+            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
     }
 
