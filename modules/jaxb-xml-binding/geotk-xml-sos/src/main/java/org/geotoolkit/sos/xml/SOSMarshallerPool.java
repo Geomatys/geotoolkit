@@ -17,9 +17,11 @@
 
 package org.geotoolkit.sos.xml;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.xml.MarshallerPool;
+
+import static org.geotoolkit.gml.xml.GMLMarshallerPool.createJAXBContext;
+
 
 /**
  *
@@ -30,7 +32,7 @@ public final class SOSMarshallerPool {
     private static final MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool(JAXBContext.newInstance(
+            instance = new MarshallerPool(createJAXBContext(
                     "org.geotoolkit.sos.xml.v100:" +
                     "org.geotoolkit.sos.xml.v200:" +
                     "org.geotoolkit.ogc.xml.v200:" +
@@ -43,7 +45,8 @@ public final class SOSMarshallerPool {
                     "org.geotoolkit.sampling.xml.v100:" +
                     "org.geotoolkit.sampling.xml.v200:" +
                     "org.geotoolkit.samplingspatial.xml.v200:" +
-                    "org.apache.sis.internal.jaxb.geometry"), null);
+                    "org.apache.sis.internal.jaxb.geometry",
+                    SOSMarshallerPool.class.getClassLoader()), null);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }

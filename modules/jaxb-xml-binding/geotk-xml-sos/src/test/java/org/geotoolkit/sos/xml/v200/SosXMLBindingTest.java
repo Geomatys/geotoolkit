@@ -72,8 +72,6 @@ public class SosXMLBindingTest {
 
     /**
      * Test simple Record Marshalling.
-     *
-     * @throws JAXBException
      */
     @Test
     public void marshallingTest() throws Exception {
@@ -90,9 +88,9 @@ public class SosXMLBindingTest {
         result = StringUtilities.removeXmlns(result);
         result = result.replace("ns20", "sos");
 
-        String expResult = "<sos:InsertObservationResponse >" + '\n' +
-                           "    <sos:observation>new-id</sos:observation>"  + '\n' +
-                           "</sos:InsertObservationResponse>" + '\n' ;
+        String expResult = "<sos:InsertObservationResponse >\n" +
+                           "  <sos:observation>new-id</sos:observation>\n" +
+                           "</sos:InsertObservationResponse>\n" ;
         final XMLComparator comparator = new XMLComparator(expResult, result);
         comparator.compare();
 
@@ -102,9 +100,9 @@ public class SosXMLBindingTest {
     public void umarshallingTest() throws Exception {
        final InsertObservationResponseType expResult = new InsertObservationResponseType(Arrays.asList("new-id"));
 
-        String xml = "<sos:InsertObservationResponse xmlns:sos=\"http://www.opengis.net/sos/2.0\">" + '\n' +
-                     "    <sos:observation>new-id</sos:observation>"  + '\n' +
-                     "</sos:InsertObservationResponse>" + '\n' ;
+        String xml = "<sos:InsertObservationResponse xmlns:sos=\"http://www.opengis.net/sos/2.0\">\n" +
+                     "  <sos:observation>new-id</sos:observation>\n" +
+                     "</sos:InsertObservationResponse>\n" ;
 
         Object result = unmarshaller.unmarshal(new StringReader(xml));
 
