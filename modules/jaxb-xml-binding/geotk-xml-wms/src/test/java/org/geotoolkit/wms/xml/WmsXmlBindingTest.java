@@ -323,7 +323,7 @@ public class WmsXmlBindingTest {
         "                <gmd:temporalElement>" + '\n' +
         "                    <gmd:EX_TemporalExtent>" + '\n' +
         "                        <gmd:extent>" + '\n' +
-        "                            <gml:TimePeriod gml:id=\"extent\">" + '\n' +
+        "                            <gml:TimePeriod>" + '\n' +
         "                                <gml:beginPosition>1970-01-02T10:20:00+01:00</gml:beginPosition>" + '\n' +
         "                                <gml:endPosition>1970-01-02T10:20:00.001+01:00</gml:endPosition>" + '\n' +
         "                            </gml:TimePeriod>" + '\n' +
@@ -468,7 +468,7 @@ public class WmsXmlBindingTest {
         "                <gmd:temporalElement>" + '\n' +
         "                    <gmd:EX_TemporalExtent>" + '\n' +
         "                        <gmd:extent>" + '\n' +
-        "                            <gml:TimePeriod gml:id=\"extent\">" + '\n' +
+        "                            <gml:TimePeriod>" + '\n' +
         "                                <gml:beginPosition>1970-01-02T10:20:00+01:00</gml:beginPosition>" + '\n' +
         "                                <gml:endPosition>1970-01-02T10:20:00.001+01:00</gml:endPosition>" + '\n' +
         "                            </gml:TimePeriod>" + '\n' +
@@ -641,7 +641,7 @@ public class WmsXmlBindingTest {
         // SimpleInternationalString because it detected that there is only one locale.
         // Perform the same change in our expected result in order to allow comparison.
         cresult.setExplanation(new SimpleInternationalString(cresult.getExplanation().toString()));
-        
+
         assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getExplanation().toString(), result.getInspireExtendedCapabilities().getConformity().getExplanation().toString());
         assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getSpecification().getCollectiveTitle(), result.getInspireExtendedCapabilities().getConformity().getSpecification().getCollectiveTitle());
         assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getSpecification().getCitedResponsibleParties(), result.getInspireExtendedCapabilities().getConformity().getSpecification().getCitedResponsibleParties());
