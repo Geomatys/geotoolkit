@@ -51,6 +51,16 @@ public class AnchoredMarshallerPool extends MarshallerPool {
     private Map<String,Object> anchors;
 
     /**
+     * Creates a new factory for the given JAXB context, with a default empty namespace.
+     *
+     * @param  context       The JAXB context.
+     * @throws JAXBException If the JAXB context can not be created.
+     */
+    public AnchoredMarshallerPool(final JAXBContext context) throws JAXBException {
+        super(context, null);
+    }
+
+    /**
      * Creates a new factory for the given class to be bound, with a default empty namespace.
      *
      * @param  classesToBeBound The classes to be bound, for example {@code DefaultMetadata.class}.

@@ -115,8 +115,6 @@ public class CswXMLBindingTest {
 
     /**
      * Test simple Record Marshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void recordMarshalingTest() throws JAXBException {
@@ -131,7 +129,7 @@ public class CswXMLBindingTest {
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
 
-        List<SimpleLiteral> subject = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> subject = new ArrayList<>();
         subject.add(new SimpleLiteral("oceans elevation NASA/JPL/JASON-1"));
         subject.add(new SimpleLiteral("oceans elevation 2"));
 
@@ -140,7 +138,7 @@ public class CswXMLBindingTest {
         SimpleLiteral references = new SimpleLiteral("http://keel.esri.com/output/TOOLKIT_Browse_Metadata_P7540_T8020_D1098.xml");
         SimpleLiteral spatial    = new SimpleLiteral("northlimit=65.9999999720603; eastlimit=180; southlimit=-66.0000000558794; westlimit=-180;");
 
-        List<BoundingBoxType> bbox = new ArrayList<BoundingBoxType>();
+        List<BoundingBoxType> bbox = new ArrayList<>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
 
         RecordType record = new RecordType(id, title, type, subject, null, modified, null, Abstract, bbox, null, null, null, spatial, references);
@@ -150,22 +148,22 @@ public class CswXMLBindingTest {
 
         String result = sw.toString();
         String expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:Record xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
-        "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>" + '\n' +
-        "    <dc:title>(JASON-1)</dc:title>"                                        + '\n' +
-        "    <dc:type>clearinghouse</dc:type>"                                      + '\n' +
-        "    <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>"            + '\n' +
-        "    <dc:subject>oceans elevation 2</dc:subject>"                           + '\n' +
-        "    <dct:modified>2007-11-15 21:26:49</dct:modified>"                      + '\n' +
-        "    <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>" + '\n' +
-        "    <dct:references>http://keel.esri.com/output/TOOLKIT_Browse_Metadata_P7540_T8020_D1098.xml</dct:references>" + '\n' +
-        "    <dct:spatial>northlimit=65.9999999720603; eastlimit=180; southlimit=-66.0000000558794; westlimit=-180;</dct:spatial>" + '\n' +
-        "    <ows:WGS84BoundingBox dimensions=\"2\">"                                                + '\n' +
-        "        <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"          + '\n' +
-        "        <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"          + '\n' +
-        "    </ows:WGS84BoundingBox>"                                               + '\n' +
-        "</csw:Record>" + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:Record xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "  <dc:title>(JASON-1)</dc:title>\n" +
+        "  <dc:type>clearinghouse</dc:type>\n" +
+        "  <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>\n" +
+        "  <dc:subject>oceans elevation 2</dc:subject>\n" +
+        "  <dct:modified>2007-11-15 21:26:49</dct:modified>\n" +
+        "  <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>\n" +
+        "  <dct:references>http://keel.esri.com/output/TOOLKIT_Browse_Metadata_P7540_T8020_D1098.xml</dct:references>\n" +
+        "  <dct:spatial>northlimit=65.9999999720603; eastlimit=180; southlimit=-66.0000000558794; westlimit=-180;</dct:spatial>\n" +
+        "  <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "    <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "    <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "  </ows:WGS84BoundingBox>\n" +
+        "</csw:Record>\n";
 
         //we remove the 2 first line because the xlmns are not always in the same order.
         expResult = expResult.substring(expResult.indexOf('\n') + 1);
@@ -181,8 +179,6 @@ public class CswXMLBindingTest {
 
     /**
      * Test simple Record Marshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void recordUnmarshalingTest() throws JAXBException {
@@ -194,37 +190,37 @@ public class CswXMLBindingTest {
          */
 
         String xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:Record xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
-        "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>" + '\n' +
-        "    <dc:title>(JASON-1)</dc:title>"                                        + '\n' +
-        "    <dc:type>clearinghouse</dc:type>"                                      + '\n' +
-        "    <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>"            + '\n' +
-        "    <dc:subject>oceans elevation 2</dc:subject>"                           + '\n' +
-        "    <dc:format>binary</dc:format>"                                         + '\n' +
-        "    <dc:date>2007-12-01</dc:date>"                                         + '\n' +
-        "    <dc:publisher>geomatys</dc:publisher>"                                 + '\n' +
-        "    <dc:creator>geomatys</dc:creator>"                                 + '\n' +
-        "    <dct:modified>2007-11-15 21:26:49</dct:modified>"                      + '\n' +
-        "    <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>" + '\n' +
-        "    <dct:spatial>northlimit=65.9999999720603; eastlimit=180; southlimit=-66.0000000558794; westlimit=-180;</dct:spatial>" + '\n' +
-        "    <dct:references>http://keel.esri.com/output/TOOLKIT_Browse_Metadata_P7540_T8020_D1098.xml</dct:references>" + '\n' +
-        "    <ows:WGS84BoundingBox dimensions=\"2\">"                                                + '\n' +
-        "        <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"          + '\n' +
-        "        <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"          + '\n' +
-        "    </ows:WGS84BoundingBox>"                                               + '\n' +
-        "</csw:Record>" + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:Record xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "  <dc:title>(JASON-1)</dc:title>\n" +
+        "  <dc:type>clearinghouse</dc:type>\n" +
+        "  <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>\n" +
+        "  <dc:subject>oceans elevation 2</dc:subject>\n" +
+        "  <dc:format>binary</dc:format>\n" +
+        "  <dc:date>2007-12-01</dc:date>\n" +
+        "  <dc:publisher>geomatys</dc:publisher>\n" +
+        "  <dc:creator>geomatys</dc:creator>\n" +
+        "  <dct:modified>2007-11-15 21:26:49</dct:modified>\n" +
+        "  <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>\n" +
+        "  <dct:spatial>northlimit=65.9999999720603; eastlimit=180; southlimit=-66.0000000558794; westlimit=-180;</dct:spatial>\n" +
+        "  <dct:references>http://keel.esri.com/output/TOOLKIT_Browse_Metadata_P7540_T8020_D1098.xml</dct:references>\n" +
+        "  <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "    <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "    <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "  </ows:WGS84BoundingBox>\n" +
+        "</csw:Record>\n";
 
         StringReader sr = new StringReader(xml);
 
-        JAXBElement jb = (JAXBElement) unmarshaller.unmarshal(sr);
+        JAXBElement<?> jb = (JAXBElement<?>) unmarshaller.unmarshal(sr);
         RecordType result = (RecordType) jb.getValue();
 
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
 
-        List<SimpleLiteral> subject = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> subject = new ArrayList<>();
         subject.add(new SimpleLiteral("oceans elevation NASA/JPL/JASON-1"));
         subject.add(new SimpleLiteral("oceans elevation 2"));
 
@@ -237,7 +233,7 @@ public class CswXMLBindingTest {
         SimpleLiteral distributor = new SimpleLiteral("geomatys");
         SimpleLiteral creator = new SimpleLiteral("geomatys");
 
-        List<BoundingBoxType> bbox = new ArrayList<BoundingBoxType>();
+        List<BoundingBoxType> bbox = new ArrayList<>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
 
         RecordType expResult = new RecordType(id, title, type, subject, format, modified, date, Abstract, bbox, creator, distributor, null, spatial, references);
@@ -267,30 +263,30 @@ public class CswXMLBindingTest {
          */
 
         xml =
-        "<csw:Record xmlns:csw=\"http://www.opengis.net/cat/csw\" xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">" + '\n' +
-        "   <dc:identifier>ESIGNGRAVIMÉTRICOPENINSULAYBALEARES200703070000</dc:identifier>"                      + '\n' +
-        "   <dc:title>Estudio Gravimétrico de la Península Ibérica y Baleares</dc:title>"                        + '\n' +
-        "   <dc:title>Mapa de Anomalías Gravimétricas</dc:title>"                                                + '\n' +
-        "   <dc:creator>Instituto Geográfico Nacional</dc:creator>"                                              + '\n' +
-        "   <dc:subject>http://www.fao.org/aos/concept#4668.Gravimetría</dc:subject>"                            + '\n' +
-        "   <dc:subject>Anomalías Gravimétricas</dc:subject>"                                                    + '\n' +
-        "   <dc:subject>Anomalías Aire Libre</dc:subject>"                                                       + '\n' +
-        "   <dc:subject>Anomalías Bouguer</dc:subject>"                                                          + '\n' +
-        "   <dc:subject>Información geocientífica</dc:subject>"                                                  + '\n' +
-        "   <dc:description>El Estudio Gravimétrico de la Península Ibérica y Baleares, que representa las anomalías gravimétricas de esa zona, fue generado por el Instituto Geográfico Nacional en el año 1996. El estudio está constituido por dos mapas; Anomalías Gravimétricas Aire Libre de la Península Ibérica y Baleares, Anomalías Gravimétricas Bouguer de la Península Ibérica y Baleares más una memoria. Inicialmente para su generación se creó una base de datos gravimétrica homogénea a partir de observaciones de distinta procedencia, también se formó un modelo digital del terreno homogéneo a partir de otros modelos digitales del terreno procedentes de España, Portugal y Francia. Los mapas contienen isolíneas de anomalías gravimétricas en intervalos de 2mGal. Los datos se almacenan en formato DGN.</dc:description>" + '\n' +
-        "   <dc:date>2007-03-07</dc:date>"                                                                       + '\n' +
-        "   <dc:type>mapHardcopy</dc:type>"                                                                      + '\n' +
-        "   <dc:type>mapDigital</dc:type>"                                                                       + '\n' +
-        "   <dc:type>documentHardcopy</dc:type>"                                                                 + '\n' +
-        "   <dc:format>DGN - Microstation format (Intergraph Corporation)</dc:format>"                           + '\n' +
-        "   <dc:format>Papel</dc:format>"                                                                        + '\n' +
-        "   <dc:identifier>www.cnig.es</dc:identifier>"                                                          + '\n' +
-        "   <dc:source>El Banco de Datos Gravimétricos es una base de datos compuesta principalmente por las observaciones realizadas por el Instituto Geográfico Nacional desde 1960. Además se han añadido los datos del Instituto Portugués de Geografía y Catastro, del proyecto ECORS, de la Universidad de Cantabria y del Bureau Gravimétrico Internacional.</dc:source>" + '\n' +
-        "   <dc:source>Para la creación del Modelo Digital del Terreno a escala 1:200.000 para toda la Península Ibérica, áreas marinas y terrestres adyacentes, en particular, se ha dispuesto de la siguiente información; Modelo Digital del Terreno a escala 1:200.000, Modelo Digital del Terreno obtenido del Defense Mapping Agency de los Estados Unidos, para completar la zona de Portugal; Modelo Digital del Terreno obtenido del Instituto Geográfico Nacional de Francia para la parte francesa del Pirineo y el Modelo Digital del Terreno generado a partir de las cartas náuticas del Instituto Hidrográfico de la Marina de España, que completa la parte marina hasta los 167 km. de la costa con un ancho de malla de 5 km.</dc:source>" + '\n' +
-        "   <dc:language>es</dc:language>"                                                                       + '\n' +
-        "   <dcterms:spatial>northlimit=43.83; southlimit=36.00; westlimit=-9.35; eastlimit=4.32;</dcterms:spatial>" + '\n' +
-        "   <dcterms:spatial>ESPAÑA.ANDALUCÍA</dcterms:spatial>"                                                 + '\n' +
-        "   <dcterms:spatial>ESPAÑA.ARAGÓN</dcterms:spatial>"                                                    + '\n' +
+        "<csw:Record xmlns:csw=\"http://www.opengis.net/cat/csw\" xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n" +
+        "  <dc:identifier>ESIGNGRAVIMÉTRICOPENINSULAYBALEARES200703070000</dc:identifier>\n" +
+        "  <dc:title>Estudio Gravimétrico de la Península Ibérica y Baleares</dc:title>\n" +
+        "  <dc:title>Mapa de Anomalías Gravimétricas</dc:title>\n" +
+        "  <dc:creator>Instituto Geográfico Nacional</dc:creator>\n" +
+        "  <dc:subject>http://www.fao.org/aos/concept#4668.Gravimetría</dc:subject>\n" +
+        "  <dc:subject>Anomalías Gravimétricas</dc:subject>\n" +
+        "  <dc:subject>Anomalías Aire Libre</dc:subject>\n" +
+        "  <dc:subject>Anomalías Bouguer</dc:subject>\n" +
+        "  <dc:subject>Información geocientífica</dc:subject>\n" +
+        "  <dc:description>El Estudio Gravimétrico de la Península Ibérica y Baleares, que representa las anomalías gravimétricas de esa zona, fue generado por el Instituto Geográfico Nacional en el año 1996. El estudio está constituido por dos mapas; Anomalías Gravimétricas Aire Libre de la Península Ibérica y Baleares, Anomalías Gravimétricas Bouguer de la Península Ibérica y Baleares más una memoria. Inicialmente para su generación se creó una base de datos gravimétrica homogénea a partir de observaciones de distinta procedencia, también se formó un modelo digital del terreno homogéneo a partir de otros modelos digitales del terreno procedentes de España, Portugal y Francia. Los mapas contienen isolíneas de anomalías gravimétricas en intervalos de 2mGal. Los datos se almacenan en formato DGN.</dc:description>\n" +
+        "  <dc:date>2007-03-07</dc:date>\n" +
+        "  <dc:type>mapHardcopy</dc:type>\n" +
+        "  <dc:type>mapDigital</dc:type>\n" +
+        "  <dc:type>documentHardcopy</dc:type>\n" +
+        "  <dc:format>DGN - Microstation format (Intergraph Corporation)</dc:format>\n" +
+        "  <dc:format>Papel</dc:format>\n" +
+        "  <dc:identifier>www.cnig.es</dc:identifier>\n" +
+        "  <dc:source>El Banco de Datos Gravimétricos es una base de datos compuesta principalmente por las observaciones realizadas por el Instituto Geográfico Nacional desde 1960. Además se han añadido los datos del Instituto Portugués de Geografía y Catastro, del proyecto ECORS, de la Universidad de Cantabria y del Bureau Gravimétrico Internacional.</dc:source>\n" +
+        "  <dc:source>Para la creación del Modelo Digital del Terreno a escala 1:200.000 para toda la Península Ibérica, áreas marinas y terrestres adyacentes, en particular, se ha dispuesto de la siguiente información; Modelo Digital del Terreno a escala 1:200.000, Modelo Digital del Terreno obtenido del Defense Mapping Agency de los Estados Unidos, para completar la zona de Portugal; Modelo Digital del Terreno obtenido del Instituto Geográfico Nacional de Francia para la parte francesa del Pirineo y el Modelo Digital del Terreno generado a partir de las cartas náuticas del Instituto Hidrográfico de la Marina de España, que completa la parte marina hasta los 167 km. de la costa con un ancho de malla de 5 km.</dc:source>\n" +
+        "  <dc:language>es</dc:language>\n" +
+        "  <dcterms:spatial>northlimit=43.83; southlimit=36.00; westlimit=-9.35; eastlimit=4.32;</dcterms:spatial>\n" +
+        "  <dcterms:spatial>ESPAÑA.ANDALUCÍA</dcterms:spatial>\n" +
+        "  <dcterms:spatial>ESPAÑA.ARAGÓN</dcterms:spatial>\n" +
         "</csw:Record>";
 
         sr = new StringReader(xml);
@@ -305,30 +301,30 @@ public class CswXMLBindingTest {
          */
 
         xml =
-        "<csw:Record xmlns:csw=\"http://www.opengis.net/cat/csw\" xmlns:dcterms=\"http://www.purl.org/dc/terms/\" xmlns:dc=\"http://www.purl.org/dc/elements/1.1/\">" + '\n' +
-        "   <dc:identifier>ESIGNGRAVIMÉTRICOPENINSULAYBALEARES200703070000</dc:identifier>"                      + '\n' +
-        "   <dc:title>Estudio Gravimétrico de la Península Ibérica y Baleares</dc:title>"                        + '\n' +
-        "   <dc:title>Mapa de Anomalías Gravimétricas</dc:title>"                                                + '\n' +
-        "   <dc:creator>Instituto Geográfico Nacional</dc:creator>"                                              + '\n' +
-        "   <dc:subject>http://www.fao.org/aos/concept#4668.Gravimetría</dc:subject>"                            + '\n' +
-        "   <dc:subject>Anomalías Gravimétricas</dc:subject>"                                                    + '\n' +
-        "   <dc:subject>Anomalías Aire Libre</dc:subject>"                                                       + '\n' +
-        "   <dc:subject>Anomalías Bouguer</dc:subject>"                                                          + '\n' +
-        "   <dc:subject>Información geocientífica</dc:subject>"                                                  + '\n' +
-        "   <dc:description>El Estudio Gravimétrico de la Península Ibérica y Baleares, que representa las anomalías gravimétricas de esa zona, fue generado por el Instituto Geográfico Nacional en el año 1996. El estudio está constituido por dos mapas; Anomalías Gravimétricas Aire Libre de la Península Ibérica y Baleares, Anomalías Gravimétricas Bouguer de la Península Ibérica y Baleares más una memoria. Inicialmente para su generación se creó una base de datos gravimétrica homogénea a partir de observaciones de distinta procedencia, también se formó un modelo digital del terreno homogéneo a partir de otros modelos digitales del terreno procedentes de España, Portugal y Francia. Los mapas contienen isolíneas de anomalías gravimétricas en intervalos de 2mGal. Los datos se almacenan en formato DGN.</dc:description>" + '\n' +
-        "   <dc:date>2007-03-07</dc:date>"                                                                       + '\n' +
-        "   <dc:type>mapHardcopy</dc:type>"                                                                      + '\n' +
-        "   <dc:type>mapDigital</dc:type>"                                                                       + '\n' +
-        "   <dc:type>documentHardcopy</dc:type>"                                                                 + '\n' +
-        "   <dc:format>DGN - Microstation format (Intergraph Corporation)</dc:format>"                           + '\n' +
-        "   <dc:format>Papel</dc:format>"                                                                        + '\n' +
-        "   <dc:identifier>www.cnig.es</dc:identifier>"                                                          + '\n' +
-        "   <dc:source>El Banco de Datos Gravimétricos es una base de datos compuesta principalmente por las observaciones realizadas por el Instituto Geográfico Nacional desde 1960. Además se han añadido los datos del Instituto Portugués de Geografía y Catastro, del proyecto ECORS, de la Universidad de Cantabria y del Bureau Gravimétrico Internacional.</dc:source>" + '\n' +
-        "   <dc:source>Para la creación del Modelo Digital del Terreno a escala 1:200.000 para toda la Península Ibérica, áreas marinas y terrestres adyacentes, en particular, se ha dispuesto de la siguiente información; Modelo Digital del Terreno a escala 1:200.000, Modelo Digital del Terreno obtenido del Defense Mapping Agency de los Estados Unidos, para completar la zona de Portugal; Modelo Digital del Terreno obtenido del Instituto Geográfico Nacional de Francia para la parte francesa del Pirineo y el Modelo Digital del Terreno generado a partir de las cartas náuticas del Instituto Hidrográfico de la Marina de España, que completa la parte marina hasta los 167 km. de la costa con un ancho de malla de 5 km.</dc:source>" + '\n' +
-        "   <dc:language>es</dc:language>"                                                                       + '\n' +
-        "   <dcterms:spatial>northlimit=43.83; southlimit=36.00; westlimit=-9.35; eastlimit=4.32;</dcterms:spatial>" + '\n' +
-        "   <dcterms:spatial>ESPAÑA.ANDALUCÍA</dcterms:spatial>"                                                 + '\n' +
-        "   <dcterms:spatial>ESPAÑA.ARAGÓN</dcterms:spatial>"                                                    + '\n' +
+        "<csw:Record xmlns:csw=\"http://www.opengis.net/cat/csw\" xmlns:dcterms=\"http://www.purl.org/dc/terms/\" xmlns:dc=\"http://www.purl.org/dc/elements/1.1/\">\n" +
+        "  <dc:identifier>ESIGNGRAVIMÉTRICOPENINSULAYBALEARES200703070000</dc:identifier>\n" +
+        "  <dc:title>Estudio Gravimétrico de la Península Ibérica y Baleares</dc:title>\n" +
+        "  <dc:title>Mapa de Anomalías Gravimétricas</dc:title>\n" +
+        "  <dc:creator>Instituto Geográfico Nacional</dc:creator>\n" +
+        "  <dc:subject>http://www.fao.org/aos/concept#4668.Gravimetría</dc:subject>\n" +
+        "  <dc:subject>Anomalías Gravimétricas</dc:subject>\n" +
+        "  <dc:subject>Anomalías Aire Libre</dc:subject>\n" +
+        "  <dc:subject>Anomalías Bouguer</dc:subject>\n" +
+        "  <dc:subject>Información geocientífica</dc:subject>\n" +
+        "  <dc:description>El Estudio Gravimétrico de la Península Ibérica y Baleares, que representa las anomalías gravimétricas de esa zona, fue generado por el Instituto Geográfico Nacional en el año 1996. El estudio está constituido por dos mapas; Anomalías Gravimétricas Aire Libre de la Península Ibérica y Baleares, Anomalías Gravimétricas Bouguer de la Península Ibérica y Baleares más una memoria. Inicialmente para su generación se creó una base de datos gravimétrica homogénea a partir de observaciones de distinta procedencia, también se formó un modelo digital del terreno homogéneo a partir de otros modelos digitales del terreno procedentes de España, Portugal y Francia. Los mapas contienen isolíneas de anomalías gravimétricas en intervalos de 2mGal. Los datos se almacenan en formato DGN.</dc:description>\n" +
+        "  <dc:date>2007-03-07</dc:date>\n" +
+        "  <dc:type>mapHardcopy</dc:type>\n" +
+        "  <dc:type>mapDigital</dc:type>\n" +
+        "  <dc:type>documentHardcopy</dc:type>\n" +
+        "  <dc:format>DGN - Microstation format (Intergraph Corporation)</dc:format>\n" +
+        "  <dc:format>Papel</dc:format>\n" +
+        "  <dc:identifier>www.cnig.es</dc:identifier>\n" +
+        "  <dc:source>El Banco de Datos Gravimétricos es una base de datos compuesta principalmente por las observaciones realizadas por el Instituto Geográfico Nacional desde 1960. Además se han añadido los datos del Instituto Portugués de Geografía y Catastro, del proyecto ECORS, de la Universidad de Cantabria y del Bureau Gravimétrico Internacional.</dc:source>\n" +
+        "  <dc:source>Para la creación del Modelo Digital del Terreno a escala 1:200.000 para toda la Península Ibérica, áreas marinas y terrestres adyacentes, en particular, se ha dispuesto de la siguiente información; Modelo Digital del Terreno a escala 1:200.000, Modelo Digital del Terreno obtenido del Defense Mapping Agency de los Estados Unidos, para completar la zona de Portugal; Modelo Digital del Terreno obtenido del Instituto Geográfico Nacional de Francia para la parte francesa del Pirineo y el Modelo Digital del Terreno generado a partir de las cartas náuticas del Instituto Hidrográfico de la Marina de España, que completa la parte marina hasta los 167 km. de la costa con un ancho de malla de 5 km.</dc:source>\n" +
+        "  <dc:language>es</dc:language>\n" +
+        "  <dcterms:spatial>northlimit=43.83; southlimit=36.00; westlimit=-9.35; eastlimit=4.32;</dcterms:spatial>\n" +
+        "  <dcterms:spatial>ESPAÑA.ANDALUCÍA</dcterms:spatial>\n" +
+        "  <dcterms:spatial>ESPAÑA.ARAGÓN</dcterms:spatial>\n" +
         "</csw:Record>";
 
         sr = new StringReader(xml);
@@ -343,8 +339,6 @@ public class CswXMLBindingTest {
 
     /**
      * Test summary Record Marshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void summmaryRecordMarshalingTest() throws JAXBException {
@@ -359,19 +353,19 @@ public class CswXMLBindingTest {
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
 
-        List<SimpleLiteral> subject = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> subject = new ArrayList<>();
         subject.add(new SimpleLiteral("oceans elevation NASA/JPL/JASON-1"));
         subject.add(new SimpleLiteral("oceans elevation 2"));
 
-        List<SimpleLiteral> formats = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> formats = new ArrayList<>();
         formats.add(new SimpleLiteral("format 11-11"));
         formats.add(new SimpleLiteral("format 22-22"));
 
         SimpleLiteral modified         = new SimpleLiteral("2007-11-15 21:26:49");
-        List<SimpleLiteral> Abstract   = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> Abstract   = new ArrayList<>();
         Abstract.add(new SimpleLiteral("Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm."));
 
-        List<BoundingBoxType> bbox = new ArrayList<BoundingBoxType>();
+        List<BoundingBoxType> bbox = new ArrayList<>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
 
         SummaryRecordType record = new SummaryRecordType(id, title, type,  bbox, subject, formats, modified, Abstract);
@@ -381,22 +375,22 @@ public class CswXMLBindingTest {
 
         String result = sw.toString();
         String expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:SummaryRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
-        "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>" + '\n' +
-        "    <dc:title>(JASON-1)</dc:title>"                                        + '\n' +
-        "    <dc:type>clearinghouse</dc:type>"                                      + '\n' +
-        "    <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>"            + '\n' +
-        "    <dc:subject>oceans elevation 2</dc:subject>"                           + '\n' +
-        "    <dc:format>format 11-11</dc:format>"                                   + '\n' +
-        "    <dc:format>format 22-22</dc:format>"                                   + '\n' +
-        "    <dct:modified>2007-11-15 21:26:49</dct:modified>"                      + '\n' +
-        "    <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>" + '\n' +
-        "    <ows:WGS84BoundingBox dimensions=\"2\">"                                                + '\n' +
-        "        <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"          + '\n' +
-        "        <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"          + '\n' +
-        "    </ows:WGS84BoundingBox>"                                               + '\n' +
-        "</csw:SummaryRecord>" + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:SummaryRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "  <dc:title>(JASON-1)</dc:title>\n" +
+        "  <dc:type>clearinghouse</dc:type>\n" +
+        "  <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>\n" +
+        "  <dc:subject>oceans elevation 2</dc:subject>\n" +
+        "  <dc:format>format 11-11</dc:format>\n" +
+        "  <dc:format>format 22-22</dc:format>\n" +
+        "  <dct:modified>2007-11-15 21:26:49</dct:modified>\n" +
+        "  <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>\n" +
+        "  <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "    <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "    <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "  </ows:WGS84BoundingBox>\n" +
+        "</csw:SummaryRecord>\n";
 
         //we remove the 2 first line because the xlmns are not always in the same order.
         expResult = expResult.substring(expResult.indexOf('\n') + 1);
@@ -412,31 +406,31 @@ public class CswXMLBindingTest {
          * Test marshalling csw summmary Record v2.0.2
          */
 
-        List<SimpleLiteral> ids    = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> ids    = new ArrayList<>();
         ids.add(new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}"));
         ids.add(new SimpleLiteral("urn:ogc-x:df:F7807C8AB645"));
-        List<SimpleLiteral> titles = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> titles = new ArrayList<>();
         titles.add(new SimpleLiteral("(JASON-1)"));
         titles.add(new SimpleLiteral("(JASON-2)"));
 
         type       = new SimpleLiteral("clearinghouse");
 
-        subject = new ArrayList<SimpleLiteral>();
+        subject = new ArrayList<>();
         subject.add(new SimpleLiteral("oceans elevation NASA/JPL/JASON-1"));
         subject.add(new SimpleLiteral("oceans elevation 2"));
 
-        formats = new ArrayList<SimpleLiteral>();
+        formats = new ArrayList<>();
         formats.add(new SimpleLiteral("format 11-11"));
         formats.add(new SimpleLiteral("format 22-22"));
 
-        List<SimpleLiteral> modifieds   = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> modifieds   = new ArrayList<>();
         modifieds.add(new SimpleLiteral("2007-11-15 21:26:49"));
         modifieds.add(new SimpleLiteral("2007-11-15 21:26:48"));
-        Abstract   = new ArrayList<SimpleLiteral>();
+        Abstract   = new ArrayList<>();
         Abstract.add(new SimpleLiteral("Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm."));
         Abstract.add(new SimpleLiteral("Jason-2 blablablablabla."));
 
-        bbox = new ArrayList<BoundingBoxType>();
+        bbox = new ArrayList<>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
         bbox.add(new WGS84BoundingBoxType(100, -6.04, -144, 5.9));
 
@@ -447,30 +441,30 @@ public class CswXMLBindingTest {
 
         result = sw.toString();
         expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:SummaryRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
-        "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>" + '\n' +
-        "    <dc:identifier>urn:ogc-x:df:F7807C8AB645</dc:identifier>" + '\n' +
-        "    <dc:title>(JASON-1)</dc:title>"                                        + '\n' +
-        "    <dc:title>(JASON-2)</dc:title>"                                        + '\n' +
-        "    <dc:type>clearinghouse</dc:type>"                                      + '\n' +
-        "    <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>"            + '\n' +
-        "    <dc:subject>oceans elevation 2</dc:subject>"                           + '\n' +
-        "    <dc:format>format 11-11</dc:format>"                                   + '\n' +
-        "    <dc:format>format 22-22</dc:format>"                                   + '\n' +
-        "    <dct:modified>2007-11-15 21:26:49</dct:modified>"                      + '\n' +
-        "    <dct:modified>2007-11-15 21:26:48</dct:modified>"                      + '\n' +
-        "    <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>" + '\n' +
-        "    <dct:abstract>Jason-2 blablablablabla.</dct:abstract>" + '\n' +
-        "    <ows:WGS84BoundingBox dimensions=\"2\">"                                                + '\n' +
-        "        <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"          + '\n' +
-        "        <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"          + '\n' +
-        "    </ows:WGS84BoundingBox>"                                               + '\n' +
-        "    <ows:WGS84BoundingBox dimensions=\"2\">"                                                + '\n' +
-        "        <ows:LowerCorner>100.0 -6.04</ows:LowerCorner>"          + '\n' +
-        "        <ows:UpperCorner>-144.0 5.9</ows:UpperCorner>"          + '\n' +
-        "    </ows:WGS84BoundingBox>"                                               + '\n' +
-        "</csw:SummaryRecord>" + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:SummaryRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "  <dc:identifier>urn:ogc-x:df:F7807C8AB645</dc:identifier>\n" +
+        "  <dc:title>(JASON-1)</dc:title>\n" +
+        "  <dc:title>(JASON-2)</dc:title>\n" +
+        "  <dc:type>clearinghouse</dc:type>\n" +
+        "  <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>\n" +
+        "  <dc:subject>oceans elevation 2</dc:subject>\n" +
+        "  <dc:format>format 11-11</dc:format>\n" +
+        "  <dc:format>format 22-22</dc:format>\n" +
+        "  <dct:modified>2007-11-15 21:26:49</dct:modified>\n" +
+        "  <dct:modified>2007-11-15 21:26:48</dct:modified>\n" +
+        "  <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>\n" +
+        "  <dct:abstract>Jason-2 blablablablabla.</dct:abstract>\n" +
+        "  <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "    <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "    <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "  </ows:WGS84BoundingBox>\n" +
+        "  <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "    <ows:LowerCorner>100.0 -6.04</ows:LowerCorner>\n" +
+        "    <ows:UpperCorner>-144.0 5.9</ows:UpperCorner>\n" +
+        "  </ows:WGS84BoundingBox>\n" +
+        "</csw:SummaryRecord>\n";
 
         //we remove the 2 first line because the xlmns are not always in the same order.
         expResult = expResult.substring(expResult.indexOf('\n') + 1);
@@ -486,8 +480,6 @@ public class CswXMLBindingTest {
 
     /**
      * Test summary Record Marshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void summmaryRecordUnmarshalingTest() throws JAXBException {
@@ -500,44 +492,44 @@ public class CswXMLBindingTest {
          */
 
         String xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:SummaryRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
-        "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>" + '\n' +
-        "    <dc:title>(JASON-1)</dc:title>"                                        + '\n' +
-        "    <dc:type>clearinghouse</dc:type>"                                      + '\n' +
-        "    <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>"            + '\n' +
-        "    <dc:subject>oceans elevation 2</dc:subject>"                           + '\n' +
-        "    <dc:format>format 11-11</dc:format>"                                   + '\n' +
-        "    <dc:format>format 22-22</dc:format>"                                   + '\n' +
-        "    <dct:modified>2007-11-15 21:26:49</dct:modified>"                      + '\n' +
-        "    <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>" + '\n' +
-        "    <ows:WGS84BoundingBox dimensions=\"2\">"                                                + '\n' +
-        "        <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"          + '\n' +
-        "        <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"          + '\n' +
-        "    </ows:WGS84BoundingBox>"                                               + '\n' +
-        "</csw:SummaryRecord>" + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:SummaryRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "  <dc:title>(JASON-1)</dc:title>\n" +
+        "  <dc:type>clearinghouse</dc:type>\n" +
+        "  <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>\n" +
+        "  <dc:subject>oceans elevation 2</dc:subject>\n" +
+        "  <dc:format>format 11-11</dc:format>\n" +
+        "  <dc:format>format 22-22</dc:format>\n" +
+        "  <dct:modified>2007-11-15 21:26:49</dct:modified>\n" +
+        "  <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>\n" +
+        "  <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "    <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "    <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "  </ows:WGS84BoundingBox>\n" +
+        "</csw:SummaryRecord>\n";
 
         StringReader sr = new StringReader(xml);
-        JAXBElement<SummaryRecordType> jb = (JAXBElement) unmarshaller.unmarshal(sr);
+        JAXBElement<SummaryRecordType> jb = (JAXBElement<SummaryRecordType>) unmarshaller.unmarshal(sr);
         SummaryRecordType result = jb.getValue();
 
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
 
-        List<SimpleLiteral> subject = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> subject = new ArrayList<>();
         subject.add(new SimpleLiteral("oceans elevation NASA/JPL/JASON-1"));
         subject.add(new SimpleLiteral("oceans elevation 2"));
 
-        List<SimpleLiteral> formats = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> formats = new ArrayList<>();
         formats.add(new SimpleLiteral("format 11-11"));
         formats.add(new SimpleLiteral("format 22-22"));
 
         SimpleLiteral modified         = new SimpleLiteral("2007-11-15 21:26:49");
-        List<SimpleLiteral> Abstract   = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> Abstract   = new ArrayList<>();
         Abstract.add(new SimpleLiteral("Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm."));
 
-        List<BoundingBoxType> bbox = new ArrayList<BoundingBoxType>();
+        List<BoundingBoxType> bbox = new ArrayList<>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
 
         SummaryRecordType expResult = new SummaryRecordType(id, title, type,  bbox, subject, formats, modified, Abstract);
@@ -550,61 +542,61 @@ public class CswXMLBindingTest {
          */
 
         xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:SummaryRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
-        "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>" + '\n' +
-        "    <dc:identifier>urn:ogc-x:df:F7807C8AB645</dc:identifier>" + '\n' +
-        "    <dc:title>(JASON-1)</dc:title>"                                        + '\n' +
-        "    <dc:title>(JASON-2)</dc:title>"                                        + '\n' +
-        "    <dc:type>clearinghouse</dc:type>"                                      + '\n' +
-        "    <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>"            + '\n' +
-        "    <dc:subject>oceans elevation 2</dc:subject>"                           + '\n' +
-        "    <dc:format>format 11-11</dc:format>"                                   + '\n' +
-        "    <dc:format>format 22-22</dc:format>"                                   + '\n' +
-        "    <dct:modified>2007-11-15 21:26:49</dct:modified>"                      + '\n' +
-        "    <dct:modified>2007-11-15 21:26:48</dct:modified>"                      + '\n' +
-        "    <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>" + '\n' +
-        "    <dct:abstract>Jason-2 blablablablabla.</dct:abstract>" + '\n' +
-        "    <ows:WGS84BoundingBox dimensions=\"2\">"                                                + '\n' +
-        "        <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"          + '\n' +
-        "        <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"          + '\n' +
-        "    </ows:WGS84BoundingBox>"                                               + '\n' +
-        "    <ows:WGS84BoundingBox dimensions=\"2\">"                                                + '\n' +
-        "        <ows:LowerCorner>100.0 -6.04</ows:LowerCorner>"          + '\n' +
-        "        <ows:UpperCorner>-144.0 5.9</ows:UpperCorner>"          + '\n' +
-        "    </ows:WGS84BoundingBox>"                                               + '\n' +
-        "</csw:SummaryRecord>" + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:SummaryRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "  <dc:identifier>urn:ogc-x:df:F7807C8AB645</dc:identifier>\n" +
+        "  <dc:title>(JASON-1)</dc:title>\n" +
+        "  <dc:title>(JASON-2)</dc:title>\n" +
+        "  <dc:type>clearinghouse</dc:type>\n" +
+        "  <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>\n" +
+        "  <dc:subject>oceans elevation 2</dc:subject>\n" +
+        "  <dc:format>format 11-11</dc:format>\n" +
+        "  <dc:format>format 22-22</dc:format>\n" +
+        "  <dct:modified>2007-11-15 21:26:49</dct:modified>\n" +
+        "  <dct:modified>2007-11-15 21:26:48</dct:modified>\n" +
+        "  <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>\n" +
+        "  <dct:abstract>Jason-2 blablablablabla.</dct:abstract>\n" +
+        "  <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "    <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "    <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "  </ows:WGS84BoundingBox>\n" +
+        "  <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "    <ows:LowerCorner>100.0 -6.04</ows:LowerCorner>\n" +
+        "    <ows:UpperCorner>-144.0 5.9</ows:UpperCorner>\n" +
+        "  </ows:WGS84BoundingBox>\n" +
+        "</csw:SummaryRecord>\n";
 
         sr = new StringReader(xml);
         jb = (JAXBElement) unmarshaller.unmarshal(sr);
         result = jb.getValue();
 
 
-        List<SimpleLiteral> ids    = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> ids    = new ArrayList<>();
         ids.add(new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}"));
         ids.add(new SimpleLiteral("urn:ogc-x:df:F7807C8AB645"));
-        List<SimpleLiteral> titles = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> titles = new ArrayList<>();
         titles.add(new SimpleLiteral("(JASON-1)"));
         titles.add(new SimpleLiteral("(JASON-2)"));
 
         type       = new SimpleLiteral("clearinghouse");
 
-        subject = new ArrayList<SimpleLiteral>();
+        subject = new ArrayList<>();
         subject.add(new SimpleLiteral("oceans elevation NASA/JPL/JASON-1"));
         subject.add(new SimpleLiteral("oceans elevation 2"));
 
-        formats = new ArrayList<SimpleLiteral>();
+        formats = new ArrayList<>();
         formats.add(new SimpleLiteral("format 11-11"));
         formats.add(new SimpleLiteral("format 22-22"));
 
-        List<SimpleLiteral> modifieds   = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> modifieds   = new ArrayList<>();
         modifieds.add(new SimpleLiteral("2007-11-15 21:26:49"));
         modifieds.add(new SimpleLiteral("2007-11-15 21:26:48"));
-        Abstract   = new ArrayList<SimpleLiteral>();
+        Abstract   = new ArrayList<>();
         Abstract.add(new SimpleLiteral("Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm."));
         Abstract.add(new SimpleLiteral("Jason-2 blablablablabla."));
 
-        bbox = new ArrayList<BoundingBoxType>();
+        bbox = new ArrayList<>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
         bbox.add(new WGS84BoundingBoxType(100, -6.04, -144, 5.9));
 
@@ -616,8 +608,6 @@ public class CswXMLBindingTest {
 
     /**
      * Test brief Record Marshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void briefRecordMarshalingTest() throws JAXBException {
@@ -632,7 +622,7 @@ public class CswXMLBindingTest {
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
 
-        List<BoundingBoxType> bbox = new ArrayList<BoundingBoxType>();
+        List<BoundingBoxType> bbox = new ArrayList<>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
 
         BriefRecordType record = new BriefRecordType(id, title, type, bbox);
@@ -642,16 +632,16 @@ public class CswXMLBindingTest {
 
         String result = sw.toString();
         String expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"               + '\n' +
-        "<csw:BriefRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
-        "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>"   + '\n' +
-        "    <dc:title>(JASON-1)</dc:title>"                                          + '\n' +
-        "    <dc:type>clearinghouse</dc:type>"                                        + '\n' +
-        "    <ows:WGS84BoundingBox dimensions=\"2\">"                                 + '\n' +
-        "        <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"          + '\n' +
-        "        <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"          + '\n' +
-        "    </ows:WGS84BoundingBox>"                                                 + '\n' +
-        "</csw:BriefRecord>" + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:BriefRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "  <dc:title>(JASON-1)</dc:title>\n" +
+        "  <dc:type>clearinghouse</dc:type>\n" +
+        "  <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "    <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "    <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "  </ows:WGS84BoundingBox>\n" +
+        "</csw:BriefRecord>\n";
 
         //we remove the 2 first line because the xlmns are not always in the same order.
         expResult = expResult.substring(expResult.indexOf('\n') + 1);
@@ -666,17 +656,17 @@ public class CswXMLBindingTest {
          * Test marshalling csw Record v2.0.2
          */
 
-        List<SimpleLiteral> identifiers = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> identifiers = new ArrayList<>();
         identifiers.add(new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}"));
         identifiers.add(new SimpleLiteral("urn:ogc:x-def:F7807C8AB645"));
 
-        List<SimpleLiteral> titles = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> titles = new ArrayList<>();
         titles.add(new SimpleLiteral("(JASON-1)"));
         titles.add(new SimpleLiteral("(JASON-2)"));
 
         type       = new SimpleLiteral("clearinghouse");
 
-        bbox = new ArrayList<BoundingBoxType>();
+        bbox = new ArrayList<>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
         bbox.add(new WGS84BoundingBoxType(176, -16.4, -178, 6.1));
 
@@ -687,22 +677,22 @@ public class CswXMLBindingTest {
 
         result = sw.toString();
         expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"               + '\n' +
-        "<csw:BriefRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
-        "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>"   + '\n' +
-        "    <dc:identifier>urn:ogc:x-def:F7807C8AB645</dc:identifier>"               + '\n' +
-        "    <dc:title>(JASON-1)</dc:title>"                                          + '\n' +
-        "    <dc:title>(JASON-2)</dc:title>"                                          + '\n' +
-        "    <dc:type>clearinghouse</dc:type>"                                        + '\n' +
-        "    <ows:WGS84BoundingBox dimensions=\"2\">"                                 + '\n' +
-        "        <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"          + '\n' +
-        "        <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"          + '\n' +
-        "    </ows:WGS84BoundingBox>"                                                 + '\n' +
-        "    <ows:WGS84BoundingBox dimensions=\"2\">"                                 + '\n' +
-        "        <ows:LowerCorner>176.0 -16.4</ows:LowerCorner>"          + '\n' +
-        "        <ows:UpperCorner>-178.0 6.1</ows:UpperCorner>"          + '\n' +
-        "    </ows:WGS84BoundingBox>"                                                 + '\n' +
-        "</csw:BriefRecord>" + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:BriefRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "  <dc:identifier>urn:ogc:x-def:F7807C8AB645</dc:identifier>\n" +
+        "  <dc:title>(JASON-1)</dc:title>\n" +
+        "  <dc:title>(JASON-2)</dc:title>\n" +
+        "  <dc:type>clearinghouse</dc:type>\n" +
+        "  <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "    <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "    <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "  </ows:WGS84BoundingBox>\n" +
+        "  <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "    <ows:LowerCorner>176.0 -16.4</ows:LowerCorner>\n" +
+        "    <ows:UpperCorner>-178.0 6.1</ows:UpperCorner>\n" +
+        "  </ows:WGS84BoundingBox>\n" +
+        "</csw:BriefRecord>\n";
 
         //we remove the 2 first line because the xlmns are not always in the same order.
         expResult = expResult.substring(expResult.indexOf('\n') + 1);
@@ -718,8 +708,6 @@ public class CswXMLBindingTest {
 
     /**
      * Test brief Record Unmarshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void briefRecordUnmarshalingTest() throws JAXBException {
@@ -732,26 +720,26 @@ public class CswXMLBindingTest {
          */
 
         String xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"               + '\n' +
-        "<csw:BriefRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
-        "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>"   + '\n' +
-        "    <dc:title>(JASON-1)</dc:title>"                                          + '\n' +
-        "    <dc:type>clearinghouse</dc:type>"                                        + '\n' +
-        "    <ows:WGS84BoundingBox dimensions=\"2\">"                                 + '\n' +
-        "        <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"          + '\n' +
-        "        <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"          + '\n' +
-        "    </ows:WGS84BoundingBox>"                                                 + '\n' +
-        "</csw:BriefRecord>" + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:BriefRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "  <dc:title>(JASON-1)</dc:title>\n" +
+        "  <dc:type>clearinghouse</dc:type>\n" +
+        "  <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "    <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "    <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "  </ows:WGS84BoundingBox>\n" +
+        "</csw:BriefRecord>\n";
 
         StringReader sr = new StringReader(xml);
-        JAXBElement<BriefRecordType> jb = (JAXBElement) unmarshaller.unmarshal(sr);
+        JAXBElement<BriefRecordType> jb = (JAXBElement<BriefRecordType>) unmarshaller.unmarshal(sr);
         BriefRecordType result = jb.getValue();
 
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
 
-        List<BoundingBoxType> bbox = new ArrayList<BoundingBoxType>();
+        List<BoundingBoxType> bbox = new ArrayList<>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
 
         BriefRecordType expResult = new BriefRecordType(id, title, type, bbox);
@@ -762,38 +750,38 @@ public class CswXMLBindingTest {
          * Test marshalling csw Record v2.0.2
          */
 
-        xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"               + '\n' +
-        "<csw:BriefRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
-        "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>"   + '\n' +
-        "    <dc:identifier>urn:ogc:x-def:F7807C8AB645</dc:identifier>"               + '\n' +
-        "    <dc:title>(JASON-1)</dc:title>"                                          + '\n' +
-        "    <dc:title>(JASON-2)</dc:title>"                                          + '\n' +
-        "    <dc:type>clearinghouse</dc:type>"                                        + '\n' +
-        "    <ows:WGS84BoundingBox dimensions=\"2\">"                                 + '\n' +
-        "        <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"          + '\n' +
-        "        <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"          + '\n' +
-        "    </ows:WGS84BoundingBox>"                                                 + '\n' +
-        "    <ows:WGS84BoundingBox dimensions=\"2\">"                                 + '\n' +
-        "        <ows:LowerCorner>176.0 -16.4</ows:LowerCorner>"          + '\n' +
-        "        <ows:UpperCorner>-178.0 6.1</ows:UpperCorner>"          + '\n' +
-        "    </ows:WGS84BoundingBox>"                                                 + '\n' +
-        "</csw:BriefRecord>" + '\n';
+        xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:BriefRecord xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "  <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "  <dc:identifier>urn:ogc:x-def:F7807C8AB645</dc:identifier>\n" +
+        "  <dc:title>(JASON-1)</dc:title>\n" +
+        "  <dc:title>(JASON-2)</dc:title>\n" +
+        "  <dc:type>clearinghouse</dc:type>\n" +
+        "  <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "    <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "    <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "  </ows:WGS84BoundingBox>\n" +
+        "  <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "    <ows:LowerCorner>176.0 -16.4</ows:LowerCorner>\n" +
+        "    <ows:UpperCorner>-178.0 6.1</ows:UpperCorner>\n" +
+        "  </ows:WGS84BoundingBox>\n" +
+        "</csw:BriefRecord>\n";
 
         sr = new StringReader(xml);
         jb = (JAXBElement<BriefRecordType>) unmarshaller.unmarshal(sr);
         result = jb.getValue();
 
-        List<SimpleLiteral> identifiers = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> identifiers = new ArrayList<>();
         identifiers.add(new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}"));
         identifiers.add(new SimpleLiteral("urn:ogc:x-def:F7807C8AB645"));
 
-        List<SimpleLiteral> titles = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> titles = new ArrayList<>();
         titles.add(new SimpleLiteral("(JASON-1)"));
         titles.add(new SimpleLiteral("(JASON-2)"));
 
         type       = new SimpleLiteral("clearinghouse");
 
-        bbox = new ArrayList<BoundingBoxType>();
+        bbox = new ArrayList<>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
         bbox.add(new WGS84BoundingBoxType(176, -16.4, -178, 6.1));
 
@@ -806,8 +794,6 @@ public class CswXMLBindingTest {
 
     /**
      * Test getRecordById request Marshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void getRecordByIdResponseMarshalingTest() throws JAXBException {
@@ -822,7 +808,7 @@ public class CswXMLBindingTest {
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
 
-        List<SimpleLiteral> subject = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> subject = new ArrayList<>();
         subject.add(new SimpleLiteral("oceans elevation NASA/JPL/JASON-1"));
         subject.add(new SimpleLiteral("oceans elevation 2"));
 
@@ -831,14 +817,14 @@ public class CswXMLBindingTest {
         SimpleLiteral references = new SimpleLiteral("http://keel.esri.com/output/TOOLKIT_Browse_Metadata_P7540_T8020_D1098.xml");
         SimpleLiteral spatial    = new SimpleLiteral("northlimit=65.9999999720603; eastlimit=180; southlimit=-66.0000000558794; westlimit=-180;");
 
-        List<BoundingBoxType> bbox = new ArrayList<BoundingBoxType>();
+        List<BoundingBoxType> bbox = new ArrayList<>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
 
         RecordType record           = new RecordType(id, title, type, subject, null, modified, null, Abstract, bbox, null, null, null, spatial, references);
         BriefRecordType briefRecord = new BriefRecordType(id, title, type, bbox);
         SummaryRecordType sumRecord = new SummaryRecordType(id, title, type, bbox, subject, null, modified, Abstract);
 
-        List<AbstractRecordType> records = new ArrayList<AbstractRecordType>();
+        List<AbstractRecordType> records = new ArrayList<>();
         records.add(record);
         records.add(briefRecord);
         records.add(sumRecord);
@@ -851,46 +837,46 @@ public class CswXMLBindingTest {
 
 
         String expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:GetRecordByIdResponse xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
-        "    <csw:Record>"                                                              + '\n' +
-        "        <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>" + '\n' +
-        "        <dc:title>(JASON-1)</dc:title>"                                        + '\n' +
-        "        <dc:type>clearinghouse</dc:type>"                                      + '\n' +
-        "        <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>"            + '\n' +
-        "        <dc:subject>oceans elevation 2</dc:subject>"                           + '\n' +
-        "        <dct:modified>2007-11-15 21:26:49</dct:modified>"                      + '\n' +
-        "        <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>" + '\n' +
-        "        <dct:references>http://keel.esri.com/output/TOOLKIT_Browse_Metadata_P7540_T8020_D1098.xml</dct:references>" + '\n' +
-        "        <dct:spatial>northlimit=65.9999999720603; eastlimit=180; southlimit=-66.0000000558794; westlimit=-180;</dct:spatial>" + '\n' +
-        "        <ows:WGS84BoundingBox dimensions=\"2\">"                               + '\n' +
-        "            <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"        + '\n' +
-        "            <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"        + '\n' +
-        "        </ows:WGS84BoundingBox>"                                               + '\n' +
-        "    </csw:Record>"                                                             + '\n' +
-        "    <csw:BriefRecord>"                                                         + '\n' +
-        "        <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>" + '\n' +
-        "        <dc:title>(JASON-1)</dc:title>"                                        + '\n' +
-        "        <dc:type>clearinghouse</dc:type>"                                      + '\n' +
-        "        <ows:WGS84BoundingBox dimensions=\"2\">"                               + '\n' +
-        "            <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"        + '\n' +
-        "            <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"        + '\n' +
-        "        </ows:WGS84BoundingBox>"                                               + '\n' +
-        "    </csw:BriefRecord>"                                                        + '\n' +
-        "    <csw:SummaryRecord>"                                                              + '\n' +
-        "        <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>" + '\n' +
-        "        <dc:title>(JASON-1)</dc:title>"                                        + '\n' +
-        "        <dc:type>clearinghouse</dc:type>"                                      + '\n' +
-        "        <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>"            + '\n' +
-        "        <dc:subject>oceans elevation 2</dc:subject>"                           + '\n' +
-        "        <dct:modified>2007-11-15 21:26:49</dct:modified>"                      + '\n' +
-        "        <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>" + '\n' +
-        "        <ows:WGS84BoundingBox dimensions=\"2\">"                               + '\n' +
-        "            <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"        + '\n' +
-        "            <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"        + '\n' +
-        "        </ows:WGS84BoundingBox>"                                               + '\n' +
-        "    </csw:SummaryRecord>"                                                             + '\n' +
-        "</csw:GetRecordByIdResponse>" + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:GetRecordByIdResponse xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "  <csw:Record>\n" +
+        "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "    <dc:title>(JASON-1)</dc:title>\n" +
+        "    <dc:type>clearinghouse</dc:type>\n" +
+        "    <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>\n" +
+        "    <dc:subject>oceans elevation 2</dc:subject>\n" +
+        "    <dct:modified>2007-11-15 21:26:49</dct:modified>\n" +
+        "    <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>\n" +
+        "    <dct:references>http://keel.esri.com/output/TOOLKIT_Browse_Metadata_P7540_T8020_D1098.xml</dct:references>\n" +
+        "    <dct:spatial>northlimit=65.9999999720603; eastlimit=180; southlimit=-66.0000000558794; westlimit=-180;</dct:spatial>\n" +
+        "    <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "      <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "      <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "    </ows:WGS84BoundingBox>\n" +
+        "  </csw:Record>\n" +
+        "  <csw:BriefRecord>\n" +
+        "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "    <dc:title>(JASON-1)</dc:title>\n" +
+        "    <dc:type>clearinghouse</dc:type>\n" +
+        "    <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "      <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "      <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "    </ows:WGS84BoundingBox>\n" +
+        "  </csw:BriefRecord>\n" +
+        "  <csw:SummaryRecord>\n" +
+        "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "    <dc:title>(JASON-1)</dc:title>\n" +
+        "    <dc:type>clearinghouse</dc:type>\n" +
+        "    <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>\n" +
+        "    <dc:subject>oceans elevation 2</dc:subject>\n" +
+        "    <dct:modified>2007-11-15 21:26:49</dct:modified>\n" +
+        "    <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>\n" +
+        "    <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "      <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "      <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "    </ows:WGS84BoundingBox>\n" +
+        "  </csw:SummaryRecord>\n" +
+        "</csw:GetRecordByIdResponse>\n";
 
         //we remove the 2 first line because the xlmns are not always in the same order.
         expResult = expResult.substring(expResult.indexOf('\n') + 1);
@@ -908,8 +894,6 @@ public class CswXMLBindingTest {
 
     /**
      * Test getRecordById request Marshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void getRecordByIdResponseUnMarshalingTest() throws JAXBException {
@@ -925,7 +909,7 @@ public class CswXMLBindingTest {
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
 
-        List<SimpleLiteral> subject = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> subject = new ArrayList<>();
         subject.add(new SimpleLiteral("oceans elevation NASA/JPL/JASON-1"));
         subject.add(new SimpleLiteral("oceans elevation 2"));
 
@@ -934,14 +918,14 @@ public class CswXMLBindingTest {
         SimpleLiteral references = new SimpleLiteral("http://keel.esri.com/output/TOOLKIT_Browse_Metadata_P7540_T8020_D1098.xml");
         SimpleLiteral spatial    = new SimpleLiteral("northlimit=65.9999999720603; eastlimit=180; southlimit=-66.0000000558794; westlimit=-180;");
 
-        List<BoundingBoxType> bbox = new ArrayList<BoundingBoxType>();
+        List<BoundingBoxType> bbox = new ArrayList<>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
 
         RecordType record           = new RecordType(id, title, type, subject, null, modified, null, Abstract, bbox, null, null, null, spatial, references);
         BriefRecordType briefRecord = new BriefRecordType(id, title, type, bbox);
         SummaryRecordType sumRecord = new SummaryRecordType(id, title, type, bbox, subject, null, modified, Abstract);
 
-        List<AbstractRecordType> records = new ArrayList<AbstractRecordType>();
+        List<AbstractRecordType> records = new ArrayList<>();
         records.add(record);
         records.add(briefRecord);
         records.add(sumRecord);
@@ -950,46 +934,46 @@ public class CswXMLBindingTest {
 
 
         String xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:GetRecordByIdResponse xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
-        "    <csw:Record>"                                                              + '\n' +
-        "        <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>" + '\n' +
-        "        <dc:title>(JASON-1)</dc:title>"                                        + '\n' +
-        "        <dc:type>clearinghouse</dc:type>"                                      + '\n' +
-        "        <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>"            + '\n' +
-        "        <dc:subject>oceans elevation 2</dc:subject>"                           + '\n' +
-        "        <dct:modified>2007-11-15 21:26:49</dct:modified>"                      + '\n' +
-        "        <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>" + '\n' +
-        "        <dct:references>http://keel.esri.com/output/TOOLKIT_Browse_Metadata_P7540_T8020_D1098.xml</dct:references>" + '\n' +
-        "        <dct:spatial>northlimit=65.9999999720603; eastlimit=180; southlimit=-66.0000000558794; westlimit=-180;</dct:spatial>" + '\n' +
-        "        <ows:WGS84BoundingBox dimensions=\"2\">"                               + '\n' +
-        "            <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"        + '\n' +
-        "            <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"        + '\n' +
-        "        </ows:WGS84BoundingBox>"                                               + '\n' +
-        "    </csw:Record>"                                                             + '\n' +
-        "    <csw:BriefRecord>"                                                         + '\n' +
-        "        <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>" + '\n' +
-        "        <dc:title>(JASON-1)</dc:title>"                                        + '\n' +
-        "        <dc:type>clearinghouse</dc:type>"                                      + '\n' +
-        "        <ows:WGS84BoundingBox dimensions=\"2\">"                               + '\n' +
-        "            <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"        + '\n' +
-        "            <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"        + '\n' +
-        "        </ows:WGS84BoundingBox>"                                               + '\n' +
-        "    </csw:BriefRecord>"                                                        + '\n' +
-        "    <csw:SummaryRecord>"                                                              + '\n' +
-        "        <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>" + '\n' +
-        "        <dc:title>(JASON-1)</dc:title>"                                        + '\n' +
-        "        <dc:type>clearinghouse</dc:type>"                                      + '\n' +
-        "        <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>"            + '\n' +
-        "        <dc:subject>oceans elevation 2</dc:subject>"                           + '\n' +
-        "        <dct:modified>2007-11-15 21:26:49</dct:modified>"                      + '\n' +
-        "        <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>" + '\n' +
-        "        <ows:WGS84BoundingBox dimensions=\"2\">"                               + '\n' +
-        "            <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"        + '\n' +
-        "            <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"        + '\n' +
-        "        </ows:WGS84BoundingBox>"                                               + '\n' +
-        "    </csw:SummaryRecord>"                                                             + '\n' +
-        "</csw:GetRecordByIdResponse>" + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:GetRecordByIdResponse xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "  <csw:Record>\n" +
+        "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "    <dc:title>(JASON-1)</dc:title>\n" +
+        "    <dc:type>clearinghouse</dc:type>\n" +
+        "    <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>\n" +
+        "    <dc:subject>oceans elevation 2</dc:subject>\n" +
+        "    <dct:modified>2007-11-15 21:26:49</dct:modified>\n" +
+        "    <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>\n" +
+        "    <dct:references>http://keel.esri.com/output/TOOLKIT_Browse_Metadata_P7540_T8020_D1098.xml</dct:references>\n" +
+        "    <dct:spatial>northlimit=65.9999999720603; eastlimit=180; southlimit=-66.0000000558794; westlimit=-180;</dct:spatial>\n" +
+        "    <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "      <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "      <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "    </ows:WGS84BoundingBox>\n" +
+        "  </csw:Record>\n" +
+        "  <csw:BriefRecord>\n" +
+        "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "    <dc:title>(JASON-1)</dc:title>\n" +
+        "    <dc:type>clearinghouse</dc:type>\n" +
+        "    <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "      <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "      <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "    </ows:WGS84BoundingBox>\n" +
+        "  </csw:BriefRecord>\n" +
+        "  <csw:SummaryRecord>\n" +
+        "    <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "    <dc:title>(JASON-1)</dc:title>\n" +
+        "    <dc:type>clearinghouse</dc:type>\n" +
+        "    <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>\n" +
+        "    <dc:subject>oceans elevation 2</dc:subject>\n" +
+        "    <dct:modified>2007-11-15 21:26:49</dct:modified>\n" +
+        "    <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>\n" +
+        "    <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "      <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "      <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "    </ows:WGS84BoundingBox>\n" +
+        "  </csw:SummaryRecord>\n" +
+        "</csw:GetRecordByIdResponse>\n";
 
 
         GetRecordByIdResponse result = ((JAXBElement<GetRecordByIdResponse>) unmarshaller.unmarshal(new StringReader(xml))).getValue();
@@ -1009,8 +993,6 @@ public class CswXMLBindingTest {
 
     /**
      * Test simple Record Marshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void getRecordsMarshalingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
@@ -1023,7 +1005,7 @@ public class CswXMLBindingTest {
         /*
          * we build the first filter : < dublinCore:Title IS LIKE '*' >
          */
-        List<QName> typeNames  = new ArrayList<QName>();
+        List<QName> typeNames  = new ArrayList<>();
         PropertyNameType pname = new PropertyNameType("dc:Title");
         PropertyIsLikeType pil = new PropertyIsLikeType(pname, "something?", "*", "?", "\\");
         NotType n              = new NotType(pil);
@@ -1043,22 +1025,22 @@ public class CswXMLBindingTest {
 
 
         String expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:GetRecords maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw/2.0.2\" outputFormat=\"application/xml\" resultType=\"results\" version=\"2.0.2\" service=\"CSW\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
-        "    <csw:Query typeNames=\"csw:Record\">" + '\n' +
-        "        <csw:ElementSetName>full</csw:ElementSetName>"                         + '\n' +
-        "        <csw:Constraint version=\"1.1.0\">"                                    + '\n' +
-        "            <ogc:Filter>"                                                      + '\n' +
-        "                <ogc:Not>"                                                     + '\n' +
-        "                    <ogc:PropertyIsLike wildCard=\"*\" singleChar=\"?\" escapeChar=\"\\\">"    + '\n' +
-        "                        <ogc:PropertyName>dc:Title</ogc:PropertyName>"         + '\n' +
-        "                        <ogc:Literal>something?</ogc:Literal>"                 + '\n' +
-        "                    </ogc:PropertyIsLike>"                                     + '\n' +
-        "                </ogc:Not>"                                                    + '\n' +
-        "            </ogc:Filter>"                                                     + '\n' +
-        "        </csw:Constraint>"                                                     + '\n' +
-        "    </csw:Query>"                                                              + '\n' ;
-        //"</csw:GetRecords>" + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:GetRecords maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw/2.0.2\" outputFormat=\"application/xml\" resultType=\"results\" version=\"2.0.2\" service=\"CSW\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "  <csw:Query typeNames=\"csw:Record\">\n" +
+        "    <csw:ElementSetName>full</csw:ElementSetName>\n" +
+        "    <csw:Constraint version=\"1.1.0\">\n" +
+        "      <ogc:Filter>\n" +
+        "        <ogc:Not>\n" +
+        "          <ogc:PropertyIsLike wildCard=\"*\" singleChar=\"?\" escapeChar=\"\\\">\n" +
+        "            <ogc:PropertyName>dc:Title</ogc:PropertyName>\n" +
+        "            <ogc:Literal>something?</ogc:Literal>\n" +
+        "          </ogc:PropertyIsLike>\n" +
+        "        </ogc:Not>\n" +
+        "      </ogc:Filter>\n" +
+        "    </csw:Constraint>\n" +
+        "  </csw:Query>\n" ;
+        //"</csw:GetRecords>\n";
         LOGGER.finer("RESULT:\n" + result);
 
         //we remove the 2 first line because the xlmns are not always in the same order.
@@ -1080,7 +1062,7 @@ public class CswXMLBindingTest {
 
 
         org.geotoolkit.csw.xml.v200.QueryConstraintType constraint200 = new org.geotoolkit.csw.xml.v200.QueryConstraintType(filter1, "1.1.0");
-        typeNames  = new ArrayList<QName>();
+        typeNames  = new ArrayList<>();
         typeNames.add( org.geotoolkit.csw.xml.v200.ObjectFactory._Record_QNAME);
         org.geotoolkit.csw.xml.v200.QueryType query200 = new org.geotoolkit.csw.xml.v200.QueryType(typeNames, new org.geotoolkit.csw.xml.v200.ElementSetNameType(ElementSetType.FULL), constraint200);
 
@@ -1094,22 +1076,22 @@ public class CswXMLBindingTest {
 
 
         expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<cat:GetRecords maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw\" outputFormat=\"application/xml\" resultType=\"results\" version=\"2.0.0\" service=\"CSW\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:cat=\"http://www.opengis.net/cat/csw\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
-        "    <cat:Query typeNames=\"cat:Record\">" + '\n' +
-        "        <cat:ElementSetName>full</cat:ElementSetName>"                         + '\n' +
-        "        <cat:Constraint version=\"1.1.0\">"                                    + '\n' +
-        "            <ogc:Filter>"                                                      + '\n' +
-        "                <ogc:Not>"                                                     + '\n' +
-        "                    <ogc:PropertyIsLike wildCard=\"*\" singleChar=\"?\" escapeChar=\"\\\">"    + '\n' +
-        "                        <ogc:PropertyName>dc:Title</ogc:PropertyName>"         + '\n' +
-        "                        <ogc:Literal>something?</ogc:Literal>"                 + '\n' +
-        "                    </ogc:PropertyIsLike>"                                     + '\n' +
-        "                </ogc:Not>"                                                    + '\n' +
-        "            </ogc:Filter>"                                                     + '\n' +
-        "        </cat:Constraint>"                                                     + '\n' +
-        "    </cat:Query>"                                                              + '\n';
-        //"</cat:GetRecords>" + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<cat:GetRecords maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw\" outputFormat=\"application/xml\" resultType=\"results\" version=\"2.0.0\" service=\"CSW\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:cat=\"http://www.opengis.net/cat/csw\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "  <cat:Query typeNames=\"cat:Record\">\n" +
+        "    <cat:ElementSetName>full</cat:ElementSetName>\n" +
+        "    <cat:Constraint version=\"1.1.0\">\n" +
+        "      <ogc:Filter>\n" +
+        "        <ogc:Not>\n" +
+        "          <ogc:PropertyIsLike wildCard=\"*\" singleChar=\"?\" escapeChar=\"\\\">\n" +
+        "            <ogc:PropertyName>dc:Title</ogc:PropertyName>\n" +
+        "            <ogc:Literal>something?</ogc:Literal>\n" +
+        "          </ogc:PropertyIsLike>\n" +
+        "        </ogc:Not>\n" +
+        "      </ogc:Filter>\n" +
+        "    </cat:Constraint>\n" +
+        "  </cat:Query>\n";
+        //"</cat:GetRecords>\n";
         LOGGER.finer("RESULT:\n" + result);
 
         //we remove the 2 first line because the xlmns are not always in the same order.
@@ -1131,8 +1113,6 @@ public class CswXMLBindingTest {
 
     /**
      * Test simple Record Marshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void getRecordsUnMarshalingTest() throws JAXBException {
@@ -1144,22 +1124,22 @@ public class CswXMLBindingTest {
          */
 
         String xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:GetRecords maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw/2.0.2\" outputFormat=\"application/xml\" resultType=\"results\" version=\"2.0.2\" service=\"CSW\"  xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
-        "    <csw:Query typeNames=\"csw:Record\">" + '\n' +
-        "        <csw:ElementSetName>full</csw:ElementSetName>"                         + '\n' +
-        "        <csw:Constraint version=\"1.1.0\">"                                    + '\n' +
-        "            <ogc:Filter>"                                                      + '\n' +
-        "                <ogc:Not>"                                                     + '\n' +
-        "                    <ogc:PropertyIsLike wildCard=\"*\" singleChar=\"?\" escapeChar=\"\\\">"    + '\n' +
-        "                        <ogc:PropertyName>dc:Title</ogc:PropertyName>"         + '\n' +
-        "                        <ogc:Literal>something?</ogc:Literal>"                 + '\n' +
-        "                    </ogc:PropertyIsLike>"                                     + '\n' +
-        "                </ogc:Not>"                                                    + '\n' +
-        "            </ogc:Filter>"                                                     + '\n' +
-        "        </csw:Constraint>"                                                     + '\n' +
-        "    </csw:Query>"                                                              + '\n' +
-        "</csw:GetRecords>" + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:GetRecords maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw/2.0.2\" outputFormat=\"application/xml\" resultType=\"results\" version=\"2.0.2\" service=\"CSW\"  xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "  <csw:Query typeNames=\"csw:Record\">\n" +
+        "    <csw:ElementSetName>full</csw:ElementSetName>\n" +
+        "    <csw:Constraint version=\"1.1.0\">\n" +
+        "      <ogc:Filter>\n" +
+        "        <ogc:Not>\n" +
+        "          <ogc:PropertyIsLike wildCard=\"*\" singleChar=\"?\" escapeChar=\"\\\">\n" +
+        "            <ogc:PropertyName>dc:Title</ogc:PropertyName>\n" +
+        "            <ogc:Literal>something?</ogc:Literal>\n" +
+        "          </ogc:PropertyIsLike>\n" +
+        "        </ogc:Not>\n" +
+        "      </ogc:Filter>\n" +
+        "    </csw:Constraint>\n" +
+        "  </csw:Query>\n" +
+        "</csw:GetRecords>\n";
 
         StringReader sr = new StringReader(xml);
 
@@ -1168,7 +1148,7 @@ public class CswXMLBindingTest {
         /*
          * we build the first filter : < dublinCore:Title IS LIKE '*' >
          */
-        List<QName> typeNames  = new ArrayList<QName>();
+        List<QName> typeNames  = new ArrayList<>();
         PropertyNameType pname = new PropertyNameType("dc:Title");
         PropertyIsLikeType pil = new PropertyIsLikeType(pname, "something?", "*", "?", "\\");
         NotType n              = new NotType(pil);
@@ -1194,25 +1174,25 @@ public class CswXMLBindingTest {
         assertEquals(expResult.getAbstractQuery(), gres.getAbstractQuery());
         assertEquals(expResult, result);
 
-        xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<cat:GetRecords maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw\" outputFormat=\"application/xml\" resultType=\"results\" version=\"2.0.0\" service=\"CSW\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:cat=\"http://www.opengis.net/cat/csw\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
-        "    <cat:Query typeNames=\"cat:Record\">" + '\n' +
-        "        <cat:ElementSetName>full</cat:ElementSetName>"                         + '\n' +
-        "        <cat:Constraint version=\"1.1.0\">"                                    + '\n' +
-        "            <ogc:Filter>"                                                      + '\n' +
-        "                <ogc:Not>"                                                     + '\n' +
-        "                    <ogc:PropertyIsLike wildCard=\"*\" singleChar=\"?\" escapeChar=\"\\\">"    + '\n' +
-        "                        <ogc:PropertyName>dc:Title</ogc:PropertyName>"         + '\n' +
-        "                        <ogc:Literal>something?</ogc:Literal>"                 + '\n' +
-        "                    </ogc:PropertyIsLike>"                                     + '\n' +
-        "                </ogc:Not>"                                                    + '\n' +
-        "            </ogc:Filter>"                                                     + '\n' +
-        "        </cat:Constraint>"                                                     + '\n' +
-        "    </cat:Query>"                                                              + '\n' +
-        "</cat:GetRecords>" + '\n';
+        xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<cat:GetRecords maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw\" outputFormat=\"application/xml\" resultType=\"results\" version=\"2.0.0\" service=\"CSW\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:cat=\"http://www.opengis.net/cat/csw\" xmlns:dct=\"http://purl.org/dc/terms/\">\n" +
+        "  <cat:Query typeNames=\"cat:Record\">\n" +
+        "    <cat:ElementSetName>full</cat:ElementSetName>\n" +
+        "    <cat:Constraint version=\"1.1.0\">\n" +
+        "      <ogc:Filter>\n" +
+        "        <ogc:Not>\n" +
+        "          <ogc:PropertyIsLike wildCard=\"*\" singleChar=\"?\" escapeChar=\"\\\">\n" +
+        "            <ogc:PropertyName>dc:Title</ogc:PropertyName>\n" +
+        "            <ogc:Literal>something?</ogc:Literal>\n" +
+        "          </ogc:PropertyIsLike>\n" +
+        "        </ogc:Not>\n" +
+        "      </ogc:Filter>\n" +
+        "    </cat:Constraint>\n" +
+        "  </cat:Query>\n" +
+        "</cat:GetRecords>\n";
 
         org.geotoolkit.csw.xml.v200.QueryConstraintType constraint200 = new org.geotoolkit.csw.xml.v200.QueryConstraintType(filter1, "1.1.0");
-        typeNames  = new ArrayList<QName>();
+        typeNames  = new ArrayList<>();
         typeNames.add( org.geotoolkit.csw.xml.v200.ObjectFactory._Record_QNAME);
         org.geotoolkit.csw.xml.v200.QueryType query200 = new org.geotoolkit.csw.xml.v200.QueryType(typeNames, new org.geotoolkit.csw.xml.v200.ElementSetNameType(ElementSetType.FULL), constraint200);
 
@@ -1234,8 +1214,6 @@ public class CswXMLBindingTest {
 
     /**
      * Test simple Record Marshalling.
-     *
-     * @throws java.lang.Exception
      */
     @Test
     public void updateMarshalingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
@@ -1279,18 +1257,18 @@ public class CswXMLBindingTest {
         request = new TransactionType("CSW", "2.0.2", update);
 
          String expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:Transaction verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" >"             + '\n' +
-        "    <csw:Update>"                                                                           + '\n' +
-        "        <csw:RecordProperty>"                                                               + '\n' +
-        "            <csw:Name>/csw:Record/dc:contributor</csw:Name>"                                + '\n' +
-        "            <csw:Value xsi:type=\"xsd:string\">Jane</csw:Value>"                            + '\n' +
-        "        </csw:RecordProperty>"                                                              + '\n' +
-        "        <csw:Constraint version=\"1.1.0\">"                                                 + '\n' +
-        "            <csw:CqlText>identifier='{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}'</csw:CqlText>" + '\n' +
-        "        </csw:Constraint>"                                                                  + '\n' +
-        "    </csw:Update>"                                                                          + '\n' +
-        "</csw:Transaction>"+ '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:Transaction verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" >\n" +
+        "  <csw:Update>\n" +
+        "    <csw:RecordProperty>\n" +
+        "      <csw:Name>/csw:Record/dc:contributor</csw:Name>\n" +
+        "      <csw:Value xsi:type=\"xsd:string\">Jane</csw:Value>\n" +
+        "    </csw:RecordProperty>\n" +
+        "    <csw:Constraint version=\"1.1.0\">\n" +
+        "      <csw:CqlText>identifier='{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}'</csw:CqlText>\n" +
+        "    </csw:Constraint>\n" +
+        "  </csw:Update>\n" +
+        "</csw:Transaction>\n";
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(request, sw);
@@ -1312,34 +1290,34 @@ public class CswXMLBindingTest {
         request = new TransactionType("CSW", "2.0.2", update);
 
         expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:Transaction verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" >"             + '\n' +
-        "    <csw:Update>"                                                                           + '\n' +
-        "        <csw:RecordProperty>"                                                               + '\n' +
-        "            <csw:Name>/gmd:MD_Metadata/identificationInfo/extent/geographicElement</csw:Name>" + '\n' +
-        "            <csw:Value xsi:type=\"gmd:EX_GeographicBoundingBox_Type\">"                     + '\n' +
-        "                <gmd:extentTypeCode>"                                                       + '\n' +
-        "                    <gco:Boolean>true</gco:Boolean>"                                        + '\n' +
-        "                </gmd:extentTypeCode>"                                                      + '\n' +
-        "                <gmd:westBoundLongitude>"                                                   + '\n' +
-        "                    <gco:Decimal>1.1</gco:Decimal>"                                         + '\n' +
-        "                </gmd:westBoundLongitude>"                                                  + '\n' +
-        "                <gmd:eastBoundLongitude>"                                                   + '\n' +
-        "                    <gco:Decimal>1.1</gco:Decimal>"                                         + '\n' +
-        "                </gmd:eastBoundLongitude>"                                                  + '\n' +
-        "                <gmd:southBoundLatitude>"                                                   + '\n' +
-        "                    <gco:Decimal>1.1</gco:Decimal>"                                         + '\n' +
-        "                </gmd:southBoundLatitude>"                                                  + '\n' +
-        "                <gmd:northBoundLatitude>"                                                   + '\n' +
-        "                    <gco:Decimal>1.1</gco:Decimal>"                                         + '\n' +
-        "                </gmd:northBoundLatitude>"                                                  + '\n' +
-        "            </csw:Value>"                                                                   + '\n' +
-        "        </csw:RecordProperty>"                                                              + '\n' +
-        "        <csw:Constraint version=\"1.1.0\">"                                                 + '\n' +
-        "            <csw:CqlText>identifier='{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}'</csw:CqlText>" + '\n' +
-        "        </csw:Constraint>"                                                                  + '\n' +
-        "    </csw:Update>"                                                                          + '\n' +
-        "</csw:Transaction>"+ '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:Transaction verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" >\n" +
+        "  <csw:Update>\n" +
+        "    <csw:RecordProperty>\n" +
+        "      <csw:Name>/gmd:MD_Metadata/identificationInfo/extent/geographicElement</csw:Name>\n" +
+        "      <csw:Value xsi:type=\"gmd:EX_GeographicBoundingBox_Type\">\n" +
+        "        <gmd:extentTypeCode>\n" +
+        "          <gco:Boolean>true</gco:Boolean>\n" +
+        "        </gmd:extentTypeCode>\n" +
+        "        <gmd:westBoundLongitude>\n" +
+        "          <gco:Decimal>1.1</gco:Decimal>\n" +
+        "        </gmd:westBoundLongitude>\n" +
+        "        <gmd:eastBoundLongitude>\n" +
+        "          <gco:Decimal>1.1</gco:Decimal>\n" +
+        "        </gmd:eastBoundLongitude>\n" +
+        "        <gmd:southBoundLatitude>\n" +
+        "          <gco:Decimal>1.1</gco:Decimal>\n" +
+        "        </gmd:southBoundLatitude>\n" +
+        "        <gmd:northBoundLatitude>\n" +
+        "          <gco:Decimal>1.1</gco:Decimal>\n" +
+        "        </gmd:northBoundLatitude>\n" +
+        "      </csw:Value>\n" +
+        "    </csw:RecordProperty>\n" +
+        "    <csw:Constraint version=\"1.1.0\">\n" +
+        "      <csw:CqlText>identifier='{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}'</csw:CqlText>\n" +
+        "    </csw:Constraint>\n" +
+        "  </csw:Update>\n" +
+        "</csw:Transaction>\n";
 
         sw = new StringWriter();
         marshaller.marshal(request, sw);
@@ -1370,18 +1348,18 @@ public class CswXMLBindingTest {
 
 
         String xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:Transaction xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" >"             + '\n' +
-        "    <csw:Update>"                                                                           + '\n' +
-        "        <csw:RecordProperty>"                                                               + '\n' +
-        "            <csw:Name>/csw:Record/dc:contributor</csw:Name>"                                + '\n' +
-        "            <csw:Value xsi:type=\"xs:string\" >Jane</csw:Value>"                           + '\n' +
-        "        </csw:RecordProperty>"                                                              + '\n' +
-        "        <csw:Constraint version=\"1.1.0\">"                                                 + '\n' +
-        "            <csw:CqlText>identifier='{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}'</csw:CqlText>" + '\n' +
-        "        </csw:Constraint>"                                                                  + '\n' +
-        "    </csw:Update>"                                                                          + '\n' +
-        "</csw:Transaction>"+ '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:Transaction xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" >\n" +
+        "  <csw:Update>\n" +
+        "    <csw:RecordProperty>\n" +
+        "      <csw:Name>/csw:Record/dc:contributor</csw:Name>\n" +
+        "      <csw:Value xsi:type=\"xs:string\" >Jane</csw:Value>\n" +
+        "    </csw:RecordProperty>\n" +
+        "    <csw:Constraint version=\"1.1.0\">\n" +
+        "      <csw:CqlText>identifier='{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}'</csw:CqlText>\n" +
+        "    </csw:Constraint>\n" +
+        "  </csw:Update>\n" +
+        "</csw:Transaction>\n";
 
         TransactionType result = (TransactionType) unmarshaller.unmarshal(new StringReader(xml));
 
@@ -1394,34 +1372,34 @@ public class CswXMLBindingTest {
 
 
         xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:Transaction verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" xmlns:gco=\"http://www.isotc211.org/2005/gco\">" + '\n' +
-        "    <csw:Update>"                                                                           + '\n' +
-        "        <csw:RecordProperty>"                                                               + '\n' +
-        "            <csw:Name>/gmd:MD_Metadata/identificationInfo/extent/geographicElement</csw:Name>" + '\n' +
-        "            <csw:Value xsi:type=\"gmd:EX_GeographicBoundingBox_Type\" >"                    + '\n' +
-        "                <gmd:extentTypeCode>"                                                       + '\n' +
-        "                    <gco:Boolean>true</gco:Boolean>"                                        + '\n' +
-        "                </gmd:extentTypeCode>"                                                      + '\n' +
-        "                <gmd:westBoundLongitude>"                                                   + '\n' +
-        "                    <gco:Decimal>1.1</gco:Decimal>"                                         + '\n' +
-        "                </gmd:westBoundLongitude>"                                                  + '\n' +
-        "                <gmd:eastBoundLongitude>"                                                   + '\n' +
-        "                    <gco:Decimal>1.1</gco:Decimal>"                                         + '\n' +
-        "                </gmd:eastBoundLongitude>"                                                  + '\n' +
-        "                <gmd:southBoundLatitude>"                                                   + '\n' +
-        "                    <gco:Decimal>1.1</gco:Decimal>"                                         + '\n' +
-        "                </gmd:southBoundLatitude>"                                                  + '\n' +
-        "                <gmd:northBoundLatitude>"                                                   + '\n' +
-        "                    <gco:Decimal>1.1</gco:Decimal>"                                         + '\n' +
-        "                </gmd:northBoundLatitude>"                                                  + '\n' +
-        "            </csw:Value>"                                                                   + '\n' +
-        "        </csw:RecordProperty>"                                                              + '\n' +
-        "        <csw:Constraint version=\"1.1.0\">"                                                 + '\n' +
-        "            <csw:CqlText>identifier='{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}'</csw:CqlText>" + '\n' +
-        "        </csw:Constraint>"                                                                  + '\n' +
-        "    </csw:Update>"                                                                          + '\n' +
-        "</csw:Transaction>"+ '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:Transaction verboseResponse=\"false\" version=\"2.0.2\" service=\"CSW\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" xmlns:gco=\"http://www.isotc211.org/2005/gco\">\n" +
+        "  <csw:Update>\n" +
+        "    <csw:RecordProperty>\n" +
+        "      <csw:Name>/gmd:MD_Metadata/identificationInfo/extent/geographicElement</csw:Name>\n" +
+        "      <csw:Value xsi:type=\"gmd:EX_GeographicBoundingBox_Type\" >\n" +
+        "        <gmd:extentTypeCode>\n" +
+        "          <gco:Boolean>true</gco:Boolean>\n" +
+        "        </gmd:extentTypeCode>\n" +
+        "        <gmd:westBoundLongitude>\n" +
+        "          <gco:Decimal>1.1</gco:Decimal>\n" +
+        "        </gmd:westBoundLongitude>\n" +
+        "        <gmd:eastBoundLongitude>\n" +
+        "          <gco:Decimal>1.1</gco:Decimal>\n" +
+        "        </gmd:eastBoundLongitude>\n" +
+        "        <gmd:southBoundLatitude>\n" +
+        "          <gco:Decimal>1.1</gco:Decimal>\n" +
+        "        </gmd:southBoundLatitude>\n" +
+        "        <gmd:northBoundLatitude>\n" +
+        "          <gco:Decimal>1.1</gco:Decimal>\n" +
+        "        </gmd:northBoundLatitude>\n" +
+        "      </csw:Value>\n" +
+        "    </csw:RecordProperty>\n" +
+        "    <csw:Constraint version=\"1.1.0\">\n" +
+        "      <csw:CqlText>identifier='{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}'</csw:CqlText>\n" +
+        "    </csw:Constraint>\n" +
+        "  </csw:Update>\n" +
+        "</csw:Transaction>\n";
 
         result = (TransactionType) unmarshaller.unmarshal(new StringReader(xml));
 
@@ -1447,23 +1425,23 @@ public class CswXMLBindingTest {
 
 
         String xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<csw:Capabilities version=\"2.0.2\"  xmlns:ows=\"http://www.opengis.net/ows\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\">"  + '\n' +
-        "   <ows:OperationsMetadata>"                                                                                                        + '\n' +
-        "       <ows:ExtendedCapabilities>"                                                                                                  + '\n' +
-        "           <ins:MultiLingualCapabilities xmlns:ins=\"http://www.inspire.org\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">"         + '\n' +
-        "               <ins:Languages>"                                                                                                     + '\n' +
-        "                   <ins:Language>GER</ins:Language>"                                                                                + '\n' +
-        "                   <ins:Language>DUT</ins:Language>"                                                                                + '\n' +
-        "               </ins:Languages>"                                                                                                    + '\n' +
-        "               <ins:TranslatedCapabilities>"                                                                                        + '\n' +
-        "                   <ins:Document xlink:href=\"http://www.somehost.com/capabilities_german.xml\" language=\"GER\"/>"                 + '\n' +
-        "                   <ins:Document xlink:href=\"http://www.somehost.com/capabilities_dutch.xml\"  language=\"DUT\"/>"                 + '\n' +
-        "               </ins:TranslatedCapabilities>"                                                                                       + '\n' +
-        "          </ins:MultiLingualCapabilities>"                                                                                           + '\n' +
-        "      </ows:ExtendedCapabilities>"                                                                                                  + '\n' +
-        "   </ows:OperationsMetadata>"                                                                                                       + '\n' +
-        "</csw:Capabilities>"+ '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:Capabilities version=\"2.0.2\"  xmlns:ows=\"http://www.opengis.net/ows\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\">\n" +
+        " <ows:OperationsMetadata>\n" +
+        "   <ows:ExtendedCapabilities>\n" +
+        "     <ins:MultiLingualCapabilities xmlns:ins=\"http://www.inspire.org\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n" +
+        "       <ins:Languages>\n" +
+        "         <ins:Language>GER</ins:Language>\n" +
+        "         <ins:Language>DUT</ins:Language>\n" +
+        "       </ins:Languages>\n" +
+        "       <ins:TranslatedCapabilities>\n" +
+        "         <ins:Document xlink:href=\"http://www.somehost.com/capabilities_german.xml\" language=\"GER\"/>\n" +
+        "         <ins:Document xlink:href=\"http://www.somehost.com/capabilities_dutch.xml\"  language=\"DUT\"/>\n" +
+        "       </ins:TranslatedCapabilities>\n" +
+        "    </ins:MultiLingualCapabilities>\n" +
+        "  </ows:ExtendedCapabilities>\n" +
+        " </ows:OperationsMetadata>\n" +
+        "</csw:Capabilities>\n";
 
         Capabilities result = (Capabilities) unmarshaller.unmarshal(new StringReader(xml));
 
@@ -1496,23 +1474,23 @@ public class CswXMLBindingTest {
 
 
         String expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                                        + '\n' +
-        "<csw:Capabilities version=\"2.0.2\" >"                                                                                + '\n' +
-        "    <ows:OperationsMetadata>"                                                                                         + '\n' +
-        "        <ows:ExtendedCapabilities>"                                                                                   + '\n' +
-        "            <ins:MultiLingualCapabilities>"                                                                           + '\n' +
-        "                <ins:Languages>"                                                                                      + '\n' +
-        "                    <ins:Language>GER</ins:Language>"                                                                 + '\n' +
-        "                    <ins:Language>DUT</ins:Language>"                                                                 + '\n' +
-        "                </ins:Languages>"                                                                                     + '\n' +
-        "                <ins:TranslatedCapabilities>"                                                                         + '\n' +
-        "                    <ins:Document language=\"GER\" xlink:href=\"http://www.somehost.com/capabilities_german.xml\"/>"  + '\n' +
-        "                    <ins:Document language=\"DUT\" xlink:href=\"http://www.somehost.com/capabilities_dutch.xml\"/>"   + '\n' +
-        "                </ins:TranslatedCapabilities>"                                                                        + '\n' +
-        "            </ins:MultiLingualCapabilities>"                                                                          + '\n' +
-        "        </ows:ExtendedCapabilities>"                                                                                  + '\n' +
-        "    </ows:OperationsMetadata>"                                                                                        + '\n' +
-        "</csw:Capabilities>"+ '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<csw:Capabilities version=\"2.0.2\" >\n" +
+        "  <ows:OperationsMetadata>\n" +
+        "    <ows:ExtendedCapabilities>\n" +
+        "      <ins:MultiLingualCapabilities>\n" +
+        "        <ins:Languages>\n" +
+        "          <ins:Language>GER</ins:Language>\n" +
+        "          <ins:Language>DUT</ins:Language>\n" +
+        "        </ins:Languages>\n" +
+        "        <ins:TranslatedCapabilities>\n" +
+        "          <ins:Document language=\"GER\" xlink:href=\"http://www.somehost.com/capabilities_german.xml\"/>\n" +
+        "          <ins:Document language=\"DUT\" xlink:href=\"http://www.somehost.com/capabilities_dutch.xml\"/>\n" +
+        "        </ins:TranslatedCapabilities>\n" +
+        "      </ins:MultiLingualCapabilities>\n" +
+        "    </ows:ExtendedCapabilities>\n" +
+        "  </ows:OperationsMetadata>\n" +
+        "</csw:Capabilities>\n";
 
         OperationsMetadata om = new OperationsMetadata();
 
