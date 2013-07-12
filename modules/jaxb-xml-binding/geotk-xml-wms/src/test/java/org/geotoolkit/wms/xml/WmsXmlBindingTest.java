@@ -30,6 +30,7 @@ import org.opengis.util.NameFactory;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import org.opengis.metadata.citation.Citation;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -64,10 +65,16 @@ import org.junit.*;
 import org.opengis.metadata.citation.OnLineFunction;
 import org.opengis.metadata.citation.PresentationForm;
 import org.opengis.metadata.citation.Role;
+import org.opengis.metadata.extent.Extent;
+import org.opengis.metadata.extent.TemporalExtent;
 import org.opengis.metadata.maintenance.ScopeCode;
+import org.opengis.metadata.quality.ConformanceResult;
 import javax.xml.bind.JAXBContext;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
+
+import static org.apache.sis.test.TestUtilities.getSingleton;
+
 
 /**
  *
@@ -642,15 +649,30 @@ public class WmsXmlBindingTest {
         // Perform the same change in our expected result in order to allow comparison.
         cresult.setExplanation(new SimpleInternationalString(cresult.getExplanation().toString()));
 
-        assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getExplanation().toString(), result.getInspireExtendedCapabilities().getConformity().getExplanation().toString());
-        assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getSpecification().getCollectiveTitle(), result.getInspireExtendedCapabilities().getConformity().getSpecification().getCollectiveTitle());
-        assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getSpecification().getCitedResponsibleParties(), result.getInspireExtendedCapabilities().getConformity().getSpecification().getCitedResponsibleParties());
-        assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getSpecification().getAlternateTitles(), result.getInspireExtendedCapabilities().getConformity().getSpecification().getAlternateTitles());
-        assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getSpecification(), result.getInspireExtendedCapabilities().getConformity().getSpecification());
-        assertEquals(expResult.getInspireExtendedCapabilities().getConformity(), result.getInspireExtendedCapabilities().getConformity());
-        assertEquals(expResult.getInspireExtendedCapabilities().getResourceType(), result.getInspireExtendedCapabilities().getResourceType());
-        assertEquals(expResult.getInspireExtendedCapabilities(), result.getInspireExtendedCapabilities());
-        assertEquals(expResult, result);
+        final ExtendedCapabilitiesType expCapabilities =       expResult.getInspireExtendedCapabilities();
+        final ExtendedCapabilitiesType    capabilities =          result.getInspireExtendedCapabilities();
+        final ConformanceResult          expConformity = expCapabilities.getConformity();
+        final ConformanceResult             conformity =    capabilities.getConformity();
+        final Citation                expSpecification =   expConformity.getSpecification();
+        final Citation                   specification =      conformity.getSpecification();
+        final Extent                       expTemporal = expCapabilities.getTemporalRefererence();
+        final Extent                          temporal =    capabilities.getTemporalRefererence();
+        final TemporalExtent         expTemporalExtent = getSingleton(expTemporal.getTemporalElements());
+        final TemporalExtent            temporalExtent = getSingleton(temporal.getTemporalElements());
+
+        assertEquals(expConformity.getExplanation().toString(),     conformity.getExplanation().toString());
+        assertEquals(expSpecification.getCollectiveTitle(),         specification.getCollectiveTitle());
+        assertEquals(expSpecification.getCitedResponsibleParties(), specification.getCitedResponsibleParties());
+        assertEquals(expSpecification.getAlternateTitles(),         specification.getAlternateTitles());
+        assertEquals(expSpecification,                              specification);
+        assertEquals(expConformity,                                 conformity);
+        assertEquals(expCapabilities.getResourceType(),             capabilities.getResourceType());
+        assertEquals(expTemporal.getDescription(),                  temporal.getDescription());
+        assertEquals(expTemporalExtent.getExtent(),                 temporalExtent.getExtent());
+        assertEquals(expTemporalExtent,                             temporalExtent);
+        assertEquals(expTemporal,                                   temporal);
+        assertEquals(expCapabilities,                               capabilities);
+        assertEquals(expResult,                                     result);
 
     }
 }

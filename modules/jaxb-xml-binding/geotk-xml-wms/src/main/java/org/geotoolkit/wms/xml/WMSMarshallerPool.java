@@ -19,10 +19,12 @@ package org.geotoolkit.wms.xml;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.XML;
+
+import static org.geotoolkit.gml.xml.GMLMarshallerPool.createJAXBContext;
+
 
 /**
  *
@@ -38,12 +40,13 @@ public final class WMSMarshallerPool {
         try {
             final Map<String, String> properties = new HashMap<>();
             properties.put(XML.DEFAULT_NAMESPACE, "http://www.opengis.net/wms");
-            instancev130 = new MarshallerPool(JAXBContext.newInstance(
-                                          "org.geotoolkit.ogc.xml.exception:" +
-                                          "org.geotoolkit.wms.xml.v130:" +
-                                          "org.geotoolkit.sld.xml.v110:" +
-                                          "org.geotoolkit.inspire.xml.vs:" +
-                                          "org.apache.sis.internal.jaxb.geometry"), properties);
+            instancev130 = new MarshallerPool(createJAXBContext(
+                    "org.geotoolkit.ogc.xml.exception:" +
+                    "org.geotoolkit.wms.xml.v130:" +
+                    "org.geotoolkit.sld.xml.v110:" +
+                    "org.geotoolkit.inspire.xml.vs:" +
+                    "org.apache.sis.internal.jaxb.geometry",
+                    WMSMarshallerPool.class.getClassLoader()), properties);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
@@ -52,13 +55,14 @@ public final class WMSMarshallerPool {
     private static final MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool(JAXBContext.newInstance(
+            instance = new MarshallerPool(createJAXBContext(
                     "org.geotoolkit.ogc.xml.exception:" +
                     "org.geotoolkit.wms.xml.v111:" +
                     "org.geotoolkit.wms.xml.v130:" +
                     "org.geotoolkit.sld.xml.v110:" +
                     "org.geotoolkit.inspire.xml.vs:" +
-                    "org.apache.sis.internal.jaxb.geometry"), null);
+                    "org.apache.sis.internal.jaxb.geometry",
+                    WMSMarshallerPool.class.getClassLoader()), null);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
