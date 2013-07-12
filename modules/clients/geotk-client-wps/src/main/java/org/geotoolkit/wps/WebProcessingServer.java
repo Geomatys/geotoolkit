@@ -869,14 +869,15 @@ scan:   for (final ProcessBriefType processBriefType : processBrief) {
             final ClientSecurity security = getClientSecurity();
             final URL statusLocation = security.secure(new URL(((ExecuteResponse) respObj).getStatusLocation()));
             Object tmpResponse;
-            int timeLapse = 1000;
         /*
          * We start querying distant status location. To be aware of process success (or failure), we keep doing request
          * over time, until we get the right content. The time interval used for checking increase at each request, to
          * avoid overloading.
          */
+            final int maxTimeLapse = 128000;
+            int timeLapse = 250;
             while (true) {
-                timeLapse = timeLapse * 2;
+                timeLapse = Math.min(timeLapse * 2, maxTimeLapse);
                 synchronized (this) {
                     wait(timeLapse);
                 }

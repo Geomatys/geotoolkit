@@ -74,7 +74,7 @@ public class ComplexToCoverageConverter extends AbstractComplexInputConverter<Gr
                         final ImageInputStream inStream = ImageIO.createImageInputStream(is);
                         final ImageReader reader;
                         if (source.getMimeType() != null) {
-                            reader = XImageIO.getReaderByMIMEType(source.getMimeType(), inStream, null, null);
+                            reader = XImageIO.getReaderByMIMEType(source.getMimeType(), inStream, Boolean.FALSE, Boolean.FALSE);
                         } else {
                             reader = XImageIO.getReader(inStream, null, Boolean.FALSE);
                         }

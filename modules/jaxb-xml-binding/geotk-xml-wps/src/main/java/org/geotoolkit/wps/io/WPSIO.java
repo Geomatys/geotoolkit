@@ -169,6 +169,8 @@ public final class WPSIO {
         FORMATSUPPORTS.add(new FormatSupport(Number.class, IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null, true));
         FORMATSUPPORTS.add(new FormatSupport(Boolean.class, IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null, true));
         FORMATSUPPORTS.add(new FormatSupport(String.class, IOType.BOTH, null, WPSEncoding.UTF8.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(String.class, IOType.BOTH, WPSMimeType.TEXT_PLAIN.val(), WPSEncoding.UTF8.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(String.class, IOType.BOTH, WPSMimeType.APP_JSON.val(), WPSEncoding.UTF8.getValue(), null, true));
 
         FORMATSUPPORTS.add(new FormatSupport(File.class, IOType.BOTH, WPSMimeType.APP_OCTET.val(), null, null, true));
         FORMATSUPPORTS.add(new FormatSupport(File.class, IOType.BOTH, WPSMimeType.APP_ZIP.val(), null, null, true));

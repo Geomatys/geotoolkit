@@ -51,8 +51,8 @@ public class ComplexToFileConverter extends AbstractComplexInputConverter<File> 
             result = File.createTempFile(fileName, suffix);
 
             final List<Object> data = source.getContent();
-            if (data.size() != 1) {
-                throw new NonconvertibleObjectException("Only one object in Complex content.");
+            if (data.size() < 1) {
+                throw new NonconvertibleObjectException("There's no available data in this complex content.");
             }
             String rawData = (String) data.get(0);
             if (params != null && params.get(ENCODING).equals(WPSEncoding.BASE64.getValue())) {
