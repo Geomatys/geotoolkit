@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.index.tree.star;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -29,6 +30,7 @@ import org.geotoolkit.index.tree.io.TreeVisitorResult;
 import org.geotoolkit.index.tree.NodeFactory;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
@@ -76,12 +78,16 @@ public class StarRTree extends AbstractTree {
      * {@inheritDoc }.
      */
     @Override
-    public void search(double[] regionSearch, TreeVisitor visitor) throws IllegalArgumentException {
+    public void search(double[] regionSearch, TreeVisitor visitor) throws StoreIndexException {
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
         ArgumentChecks.ensureNonNull("search : visitor", visitor);
         final Node root = this.getRoot();
         if (root != null && !root.isEmpty()) {
-            nodeSearch(root, regionSearch, visitor);
+            try {
+                nodeSearch(root, regionSearch, visitor);
+            } catch (IOException ex) {
+                throw new StoreIndexException(ex);
+            }
         }
     }
         
@@ -89,14 +95,18 @@ public class StarRTree extends AbstractTree {
      * {@inheritDoc }.
      */
     @Override
-    public void insert(Object object, double... coordinates) throws IllegalArgumentException {
+    public void insert(Object object, double... coordinates) throws StoreIndexException {
         super.insert(object, coordinates);
         super.eltCompteur++;
         final Node root       = getRoot();
-        if (root == null || root.isEmpty()) {
-            setRoot(createNode(this, null, null, new Object[]{object}, new double[][]{coordinates}));
-        } else {
-            nodeInsert(root, object, coordinates);
+        try{
+            if (root == null || root.isEmpty()) {
+                setRoot(createNode(this, null, null, new Object[]{object}, new double[][]{coordinates}));
+            } else {
+                nodeInsert(root, object, coordinates);
+            }
+        } catch (IOException ex) {
+            throw new StoreIndexException(ex);
         }
     }
         
@@ -104,11 +114,15 @@ public class StarRTree extends AbstractTree {
      * {@inheritDoc }.
      */
     @Override
-    public boolean delete(Object object, double... coordinates) throws IllegalArgumentException {
+    public boolean delete(Object object, double... coordinates) throws StoreIndexException {
         ArgumentChecks.ensureNonNull("remove : object", object);
         ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
         final Node root = getRoot();
-        if (root != null) return deleteNode(root, object, coordinates);
+        if (root != null) try {
+            return deleteNode(root, object, coordinates);
+        } catch (IOException ex) {
+            throw new StoreIndexException(ex);
+        }
         return false;
     }
         
@@ -116,11 +130,15 @@ public class StarRTree extends AbstractTree {
      * {@inheritDoc }.
      */
     @Override
-    public boolean remove(Object object, double... coordinates) throws IllegalArgumentException {
+    public boolean remove(Object object, double... coordinates) throws StoreIndexException {
         ArgumentChecks.ensureNonNull("remove : object", object);
         ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
         final Node root = getRoot();
-        if (root != null) return removeNode(root, object, coordinates);
+        if (root != null) try {
+            return removeNode(root, object, coordinates);
+        } catch (IOException ex) {
+            throw new StoreIndexException(ex);
+        }
         return false;
     }
 
@@ -131,7 +149,7 @@ public class StarRTree extends AbstractTree {
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
      */
-    private static TreeVisitorResult nodeSearch(final Node candidate, final double[] regionSearch, final TreeVisitor visitor) {
+    private static TreeVisitorResult nodeSearch(final Node candidate, final double[] regionSearch, final TreeVisitor visitor) throws IOException {
         final TreeVisitorResult tvr = visitor.filter(candidate);
         if (isTerminate(tvr)) return tvr;
         final double[] bound = candidate.getBoundary();
@@ -197,7 +215,7 @@ public class StarRTree extends AbstractTree {
      * @throws IllegalArgumentException if {@code Node} candidate is null.
      * @throws IllegalArgumentException if {@code Envelope} entry is null.
      */
-    private static void nodeInsert(final Node candidate, final Object object, final double[] coordinate ) throws IllegalArgumentException {
+    private static void nodeInsert(final Node candidate, final Object object, final double[] coordinate ) throws StoreIndexException, IOException {
         assert candidate.checkInternal() : "nodeInsert : candidate not conform";
         if (candidate.isLeaf()) {
             candidate.addElement(object, coordinate);
@@ -282,7 +300,7 @@ public class StarRTree extends AbstractTree {
      * @throws IllegalArgumentException if {@code Node} listSubnode is empty.
      * @return {@code Node} which will be appropriate to contain entry.
      */
-    private static Node chooseSubTree(final Node parent, final double[] coordinate) {
+    private static Node chooseSubTree(final Node parent, final double[] coordinate) throws IOException {
         assert parent.checkInternal() : "chooseSubTree : begin candidate not conform";
         final Node[] childrenList = parent.getChildren();
 
@@ -380,7 +398,7 @@ public class StarRTree extends AbstractTree {
      *
      * @return Two appropriate {@code Node} in List in accordance with R*Tree split properties.
      */
-    private static List<Node> nodeSplit(final Node candidate) throws IllegalArgumentException {
+    private static List<Node> nodeSplit(final Node candidate) throws IllegalArgumentException, IOException {
         assert candidate.checkInternal() : "nodeSplit : begin candidate not conform";
         final int splitIndex = defineSplitAxis(candidate);
         final boolean isLeaf = candidate.isLeaf();
@@ -544,7 +562,7 @@ public class StarRTree extends AbstractTree {
      * @throws IllegalArgumentException if candidate is null.
      * @return prefered ordinate index to split.
      */
-    private static int defineSplitAxis(final Node candidate) {
+    private static int defineSplitAxis(final Node candidate) throws IOException {
         ArgumentChecks.ensureNonNull("candidate : ", candidate);
         assert candidate.checkInternal() : "defineSplitAxis : begin candidate not conform";
         
@@ -626,7 +644,7 @@ public class StarRTree extends AbstractTree {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private static boolean deleteNode(final Node candidate, final Object object, final double... coordinates) throws IllegalArgumentException {
+    private static boolean deleteNode(final Node candidate, final Object object, final double... coordinates) throws StoreIndexException, IOException {
         ArgumentChecks.ensureNonNull("DeleteNode : Node candidate", candidate);
         ArgumentChecks.ensureNonNull("DeleteNode : object", object);
         ArgumentChecks.ensureNonNull("DeleteNode : coordinates", coordinates);
@@ -678,7 +696,7 @@ public class StarRTree extends AbstractTree {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private static boolean removeNode(final Node candidate, final Object object, final double... coordinates) throws IllegalArgumentException{
+    private static boolean removeNode(final Node candidate, final Object object, final double... coordinates) throws StoreIndexException, IOException{
         ArgumentChecks.ensureNonNull("removeNode : Node candidate", candidate);
         ArgumentChecks.ensureNonNull("removeNode : Node candidate", candidate);
         assert candidate.checkInternal() : "removeNode : begin candidate not conform";
@@ -723,7 +741,7 @@ public class StarRTree extends AbstractTree {
      * @param candidate {@code Node} to begin condense.
      * @throws IllegalArgumentException if candidate is null.
      */
-    private static void trim(final Node candidate) throws IllegalArgumentException {
+    private static void trim(final Node candidate) throws StoreIndexException, IOException {
         ArgumentChecks.ensureNonNull("trim : Node candidate", candidate);
         
         List<double[]> reinsertListCoords = null;
@@ -790,7 +808,7 @@ public class StarRTree extends AbstractTree {
      * @throws IllegalArgumentException if nodeA or nodeB are not tree leaf.
      * @throws IllegalArgumentException if nodeA or nodeB, and their sub-nodes, don't contains some {@code Envelope} entry(ies).
      */
-    private static void branchGrafting(final Node nodeA, final Node nodeB ) throws IllegalArgumentException {
+    private static void branchGrafting(final Node nodeA, final Node nodeB ) throws IllegalArgumentException, IOException {
         if(!nodeA.isLeaf() || !nodeB.isLeaf()) throw new IllegalArgumentException("branchGrafting : not leaf");
         assert nodeA.getParent() == nodeB.getParent() : "branchGrafting : NodeA and NodeB should have same parent.";
         assert nodeA.getParent().checkInternal()      : "branchGrafting : nodeA and B parent not conform.";
@@ -891,7 +909,7 @@ public class StarRTree extends AbstractTree {
      * @throws IllegalArgumentException if {@code Node} candidate is null.
      * @return all Entry within subNodes at more 33% largest of this {@code Node}.
      */
-    private static void getElementAtMore33PerCent(final Node candidate, LinkedList<Object> listObjects, final LinkedList<double[]> listCoords) {
+    private static void getElementAtMore33PerCent(final Node candidate, LinkedList<Object> listObjects, final LinkedList<double[]> listCoords) throws IOException {
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidate", candidate);
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : listObjects", listObjects);
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : listCoords", listCoords);
@@ -910,7 +928,7 @@ public class StarRTree extends AbstractTree {
      * @throws IllegalArgumentException if {@code Node} candidate is null.
      * @return all Entry within subNodes at more 33% largest of this {@code Node}.
      */
-    private static void getElementAtMore33PerCent(final Node candidate, double[] candidateCentroid, double distancePermit, LinkedList<Object> listObjects, final LinkedList<double[]> listCoords) {
+    private static void getElementAtMore33PerCent(final Node candidate, double[] candidateCentroid, double distancePermit, LinkedList<Object> listObjects, final LinkedList<double[]> listCoords) throws IOException {
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidateCentroid", candidateCentroid);
         ArgumentChecks.ensureStrictlyPositive("getElementsAtMore33PerCent : distancePermit", distancePermit);
         assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
@@ -937,7 +955,7 @@ public class StarRTree extends AbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public Node createNode(Tree tree, Node parent, Node[] children, Object[] objects, double[][] coordinates) {
+    public Node createNode(Tree tree, Node parent, Node[] children, Object[] objects, double[][] coordinates) throws IOException {
         if (coordinates != null && ((coordinates[0].length % 2) != 0)) 
             throw new IllegalArgumentException("coordinate dimension is not correct");
         

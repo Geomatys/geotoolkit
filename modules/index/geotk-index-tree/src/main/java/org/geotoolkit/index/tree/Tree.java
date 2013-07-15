@@ -16,8 +16,10 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.io.IOException;
 import java.util.Iterator;
 import org.geotoolkit.index.tree.calculator.Calculator;
+import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
@@ -45,7 +47,7 @@ public interface Tree {
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
     @Deprecated
-    void search(Envelope regionSearch, TreeVisitor visitor) throws IllegalArgumentException;
+    void search(Envelope regionSearch, TreeVisitor visitor) throws IllegalArgumentException, StoreIndexException;
 
     /**
      * Insert a {@code Entry} into Rtree.
@@ -54,7 +56,7 @@ public interface Tree {
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
     @Deprecated
-    void insert(Envelope entry) throws IllegalArgumentException;
+    void insert(Envelope entry) throws IllegalArgumentException, StoreIndexException;
 
     /**
      * Insert all {@code Entry} into Rtree.
@@ -63,7 +65,7 @@ public interface Tree {
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
     @Deprecated
-    void insertAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException;
+    void insertAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException, StoreIndexException;
 
     /**
      * Find a {@code Envelope} (entry) into the tree and delete it.
@@ -72,7 +74,7 @@ public interface Tree {
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
     @Deprecated
-    boolean delete(Envelope entry) throws IllegalArgumentException;
+    boolean delete(Envelope entry) throws IllegalArgumentException, StoreIndexException;
 
     /**
      * Find a {@code Envelope} (entry) into the tree and delete it.
@@ -81,7 +83,7 @@ public interface Tree {
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
     @Deprecated
-    void deleteAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException;
+    void deleteAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException, StoreIndexException;
 
 
     /**Find a {@code Envelope} (entry) from Iterator into the tree and delete it.
@@ -94,7 +96,7 @@ public interface Tree {
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
     @Deprecated
-    boolean remove(Envelope entry) throws IllegalArgumentException;
+    boolean remove(Envelope entry) throws IllegalArgumentException, StoreIndexException;
 
 
     /**Find all {@code Envelope} (entry) from Iterator into the tree and delete it.
@@ -107,7 +109,7 @@ public interface Tree {
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
     @Deprecated
-    void removeAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException;
+    void removeAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException, StoreIndexException;
     
     /**
      * Find some {@code Entry} which intersect regionSearch parameter
@@ -121,7 +123,7 @@ public interface Tree {
      * @param result List of Entr(y)(ies).
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
-    void search(double[] regionSearch, TreeVisitor visitor) throws IllegalArgumentException;
+    void search(double[] regionSearch, TreeVisitor visitor) throws IllegalArgumentException, StoreIndexException;
 
     /**
      * Insert a {@code Entry} into Rtree.
@@ -129,7 +131,7 @@ public interface Tree {
      * @param Entry to insert into tree.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
-    void insert(Object object, double... coordinates) throws IllegalArgumentException;
+    void insert(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException;
 
     /**
      * Find a {@code Envelope} (entry) into the tree and delete it.
@@ -137,7 +139,7 @@ public interface Tree {
      * @param Entry to delete.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
-    boolean delete(Object object, double... coordinates) throws IllegalArgumentException;
+    boolean delete(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException;
 
     /**Find a {@code Envelope} (entry) from Iterator into the tree and delete it.
      *
@@ -148,7 +150,7 @@ public interface Tree {
      * @param Entry to delete.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
-    boolean remove(Object object, double... coordinates) throws IllegalArgumentException;
+    boolean remove(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException;
 
     /**
      * @return max number authorized by tree cells.
@@ -165,7 +167,7 @@ public interface Tree {
      *
      * @param root new root.
      */
-    void setRoot(Node root);
+    void setRoot(Node root) throws StoreIndexException;
 
     /**
      * @return associate crs.
@@ -185,7 +187,7 @@ public interface Tree {
     /**
      * Clear tree (tree root Node becomme null).
      */
-    void clear();
+    void clear() throws StoreIndexException;
 
     /**
      * Return elements number within tree.
@@ -199,7 +201,9 @@ public interface Tree {
      *
      * @return all tree data set boundary.
      */
-    double[] getExtent();
+    double[] getExtent() throws StoreIndexException;
+    
+    void close() throws StoreIndexException;
     
     /**Create a node in accordance with this properties.
      *
@@ -210,5 +214,5 @@ public interface Tree {
      * @param coordinates lower upper bounding box coordinates table.
      * @return appropriate Node from tree.
      */
-    Node createNode(Tree tree, Node parent, Node[] children, Object[] objects, double[][] coordinates) throws IllegalArgumentException;
+    Node createNode(Tree tree, Node parent, Node[] children, Object[] objects, double[][] coordinates) throws IllegalArgumentException, IOException;
 }

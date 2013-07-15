@@ -16,9 +16,10 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.io.IOException;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
+import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
-import org.opengis.referencing.operation.TransformException;
 
 /**Create Hilbert R-Tree test suite in 3D Cartesian space.
  *
@@ -26,7 +27,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class HilbertRtree3DTest extends HilbertRtreeTest {
 
-    public HilbertRtree3DTest() throws TransformException {
+    public HilbertRtree3DTest() throws StoreIndexException, IOException {
         super(new HilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_3D));
     }
 }

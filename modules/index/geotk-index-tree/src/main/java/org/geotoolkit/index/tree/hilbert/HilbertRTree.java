@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.index.tree.hilbert;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.Classes;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
+import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -106,12 +108,16 @@ public class HilbertRTree extends AbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void search(double[] regionSearch, TreeVisitor visitor) throws IllegalArgumentException {
+    public void search(double[] regionSearch, TreeVisitor visitor) throws StoreIndexException {
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
         ArgumentChecks.ensureNonNull("search : visitor", visitor);
         final Node root = this.getRoot();
         if (root != null && !root.isEmpty()) {
-            searchHilbertNode(root, regionSearch, visitor);
+            try {
+                searchHilbertNode(root, regionSearch, visitor);
+            } catch (IOException ex) {
+                throw new StoreIndexException(ex);
+            }
         }
     }
     
@@ -119,14 +125,18 @@ public class HilbertRTree extends AbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void insert(Object object, double... coordinates) throws IllegalArgumentException {
+    public void insert(Object object, double... coordinates) throws StoreIndexException {
         super.insert(object, coordinates);
         super.eltCompteur++;
         final Node root       = getRoot();
-        if (root == null || root.isEmpty()) {
-            setRoot(createNode(this, null, null, new Object[]{object}, new double[][]{coordinates}));
-        } else {
-            insertNode(root, object, coordinates);
+        try {
+            if (root == null || root.isEmpty()) {
+                setRoot(createNode(this, null, null, new Object[]{object}, new double[][]{coordinates}));
+            } else {
+                insertNode(root, object, coordinates);
+            }
+        } catch (IOException ex){
+            throw new StoreIndexException(ex);
         }
     }
 
@@ -134,11 +144,15 @@ public class HilbertRTree extends AbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public boolean delete(Object object, double... coordinates) throws IllegalArgumentException {
+    public boolean delete(Object object, double... coordinates) throws StoreIndexException {
         ArgumentChecks.ensureNonNull("remove : object", object);
         ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
         final Node root = getRoot();
-        if (root != null) return deleteHilbertNode(root, object, coordinates);
+        if (root != null) try {
+            return deleteHilbertNode(root, object, coordinates);
+        } catch (IOException ex) {
+            throw new StoreIndexException(ex);
+        }
         return false;
     }
     
@@ -146,11 +160,15 @@ public class HilbertRTree extends AbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public boolean remove(Object object, double... coordinates) throws IllegalArgumentException {
+    public boolean remove(Object object, double... coordinates) throws StoreIndexException {
         ArgumentChecks.ensureNonNull("remove : object", object);
         ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
         final Node root = getRoot();
-        if (root != null) return removeHilbertNode(root, object, coordinates);
+        if (root != null) try {
+            return removeHilbertNode(root, object, coordinates);
+        } catch (IOException ex) {
+            throw new StoreIndexException(ex);
+        }
         return false;
     }
 
@@ -161,7 +179,7 @@ public class HilbertRTree extends AbstractTree {
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
      */
-    public static TreeVisitorResult searchHilbertNode(final Node candidate, final double[] regionSearch, final TreeVisitor visitor) {
+    public static TreeVisitorResult searchHilbertNode(final Node candidate, final double[] regionSearch, final TreeVisitor visitor) throws IOException {
         assert candidate.checkInternal() : "searchHilbertNode : begin candidate not conform.";
         final TreeVisitorResult tvr = visitor.filter(candidate);
         if (isTerminate(tvr)) return tvr;
@@ -234,7 +252,7 @@ public class HilbertRTree extends AbstractTree {
      * @param entry to insert.
      * @throws IllegalArgumentException if candidate or entry are null.
      */
-    public static void insertNode(final Node candidate, final Object object, final double... coordinates) throws IllegalArgumentException{
+    public static void insertNode(final Node candidate, final Object object, final double... coordinates) throws IllegalArgumentException, IOException{
         ArgumentChecks.ensureNonNull("impossible to insert a null object", object);
         ArgumentChecks.ensureNonNull("impossible to insert a null coordinates", coordinates);
         assert candidate.checkInternal() : "insertNode : begin candidate not conform.";
@@ -360,7 +378,7 @@ public class HilbertRTree extends AbstractTree {
      * @throws IllegalArgumentException if candidate is null.
      * @return prefered ordinate index to split.
      */
-    private static int defineSplitAxis(final Node candidate) {
+    private static int defineSplitAxis(final Node candidate) throws IOException {
         ArgumentChecks.ensureNonNull("defineSplitAxis : ", candidate);
         assert candidate.checkInternal() : "defineSplitAxis : begin candidate not conform.";
         final boolean isLeaf = candidate.isLeaf();
@@ -450,7 +468,7 @@ public class HilbertRTree extends AbstractTree {
      * @return Two appropriate {@code Node} in List in accordance with
      * R*Tree split properties.
      */
-    private static List<Node> hilbertNodeSplit(final Node candidate) throws IllegalArgumentException{
+    private static List<Node> hilbertNodeSplit(final Node candidate) throws IllegalArgumentException, IOException{
         assert candidate.checkInternal() : "hilbertNodeSplit : begin candidate not conform.";
         final int splitIndex  = defineSplitAxis(candidate);
         final boolean isLeaf  = candidate.isLeaf();
@@ -594,7 +612,7 @@ public class HilbertRTree extends AbstractTree {
      * @throws IllegalArgumentException if entry is null.
      * @return subnode chosen.
      */
-    public static Node chooseSubtree(final Node candidate, final double[] entry) {
+    public static Node chooseSubtree(final Node candidate, final double[] entry) throws IOException {
         ArgumentChecks.ensureNonNull("impossible to choose subtree with entry null", entry);
         assert candidate.checkInternal() : "chooseSubtree : begin candidate not conform.";
         final boolean isLeaf = candidate.isLeaf();
@@ -697,7 +715,7 @@ public class HilbertRTree extends AbstractTree {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private static boolean deleteHilbertNode(final Node candidate, final Object object, final double... coordinates) throws IllegalArgumentException{
+    private static boolean deleteHilbertNode(final Node candidate, final Object object, final double... coordinates) throws StoreIndexException, IOException{
         ArgumentChecks.ensureNonNull("deleteHilbertNode Node candidate : ", candidate);
         ArgumentChecks.ensureNonNull("deleteHilbertNode Envelope coordinates : ", coordinates);
         assert candidate.checkInternal() : "chooseSubtree : begin candidate not conform.";
@@ -749,7 +767,7 @@ public class HilbertRTree extends AbstractTree {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private static boolean removeHilbertNode(final Node candidate, final Object object, final double... coordinates) throws IllegalArgumentException{
+    private static boolean removeHilbertNode(final Node candidate, final Object object, final double... coordinates) throws StoreIndexException, IOException{
         ArgumentChecks.ensureNonNull("deleteHilbertNode Node candidate : ", candidate);
         ArgumentChecks.ensureNonNull("deleteHilbertNode Envelope coordinates : ", coordinates);
         assert candidate.checkInternal() : "chooseSubtree : begin candidate not conform.";
@@ -794,7 +812,7 @@ public class HilbertRTree extends AbstractTree {
      *
      * @param candidate {@code Node} to begin condense.
      */
-    public static void trim(final Node candidate) throws IllegalArgumentException {
+    public static void trim(final Node candidate) throws IllegalArgumentException, IOException, StoreIndexException {
         if (!candidate.isLeaf()) {
             for (int i = candidate.getChildCount() - 1; i >= 0; i--) {
                 final Node child = candidate.getChild(i);
@@ -846,7 +864,7 @@ public class HilbertRTree extends AbstractTree {
      * @param listObjects all objects stored in candidate Node leafs.
      * @param listCoordinates all objects boundary stored in candidate sub-node leafs.
      */
-    private static void getElements(final Node candidate, final List<Object> listObjects, final List<double[]> listCoordinates) {
+    private static void getElements(final Node candidate, final List<Object> listObjects, final List<double[]> listCoordinates) throws IOException {
         final int size = candidate.getChildCount();
         if (candidate.isLeaf()) {
             for (int i = 0; i < size; i++) {
@@ -870,7 +888,7 @@ public class HilbertRTree extends AbstractTree {
      * {@inheritDoc }.
      */
     @Override
-    public Node createNode(Tree tree, Node parent, Node[] children, Object[] objects, double[][] coordinates) throws IllegalArgumentException {
+    public Node createNode(Tree tree, Node parent, Node[] children, Object[] objects, double[][] coordinates) throws IllegalArgumentException, IOException {
         if (!(tree instanceof HilbertRTree)) {
             throw new IllegalArgumentException("argument tree : "+tree.getClass().getName()+" not adapted to create an Hilbert RTree Node");
         }

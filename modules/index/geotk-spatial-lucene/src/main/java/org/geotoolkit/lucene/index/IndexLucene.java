@@ -35,6 +35,7 @@ import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.FileUtilities;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -170,6 +171,8 @@ public abstract class IndexLucene {
             } catch (IllegalArgumentException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             } catch (TransformException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+            } catch (StoreIndexException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             }
         } else {

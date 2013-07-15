@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -24,6 +25,7 @@ import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
+import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.star.StarRTree;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
@@ -32,7 +34,6 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**Test trees with {@code CoordinateReferenceSystem} Temporal.
@@ -56,7 +57,7 @@ public class SpatioTemporalTreeTest extends TreeTest{
 
     }
 
-    public void setTree(Tree tree, int indexTemp){
+    public void setTree(Tree tree, int indexTemp) throws StoreIndexException, IOException{
         this.indexTemp = indexTemp;
         this.tree = tree;
         this.crs = tree.getCrs();
@@ -82,7 +83,7 @@ public class SpatioTemporalTreeTest extends TreeTest{
     }
     
     @Test
-    public void testHilbert(){
+    public void testHilbert() throws StoreIndexException, IOException{
         CoordinateReferenceSystem crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, CARTESIAN_2DCRS});
         final Tree hilbertA = new HilbertRTree(4, 2, crsCompound, NODEFACTORY);
         setTree(hilbertA, 0);
@@ -126,7 +127,7 @@ public class SpatioTemporalTreeTest extends TreeTest{
     }
 
     @Test
-    public void testStar(){
+    public void testStar() throws StoreIndexException, IOException{
         CoordinateReferenceSystem crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, CARTESIAN_2DCRS});
         final Tree starRTreeA = new StarRTree(4, crsCompound, NODEFACTORY);
         setTree(starRTreeA, 0);
@@ -150,7 +151,7 @@ public class SpatioTemporalTreeTest extends TreeTest{
     }
 
     @Test
-    public void testBasic(){
+    public void testBasic() throws StoreIndexException, IOException{
         CoordinateReferenceSystem crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, CARTESIAN_2DCRS});
         final Tree basicA = new BasicRTree(4, crsCompound, SplitCase.QUADRATIC, NODEFACTORY);
         setTree(basicA, 0);
@@ -173,7 +174,7 @@ public class SpatioTemporalTreeTest extends TreeTest{
         assertTrue(checkTreeElts(tree));
     }
 
-    public void test(){
+    public void test() throws StoreIndexException, IOException{
         final GeneralEnvelope areaSearch1 = new GeneralEnvelope(crs);
         initAreaSearch(areaSearch1, 0, 9);
         final List listSearch = new ArrayList();
@@ -200,7 +201,7 @@ public class SpatioTemporalTreeTest extends TreeTest{
         assertTrue(compareList(listSearch, listRef));
     }
 
-    public void initAreaSearch(final GeneralEnvelope area, final double tBeg, final double tEnd) {
+    public void initAreaSearch(final GeneralEnvelope area, final double tBeg, final double tEnd) throws IOException {
         area.setEnvelope(tree.getRoot().getBoundary());
         area.setRange(indexTemp, tBeg, tEnd);
     }

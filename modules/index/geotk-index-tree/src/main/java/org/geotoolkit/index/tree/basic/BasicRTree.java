@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.index.tree.basic;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -36,6 +37,7 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.index.tree.DefaultNode;
 import static org.geotoolkit.index.tree.basic.SplitCase.LINEAR;
 import static org.geotoolkit.index.tree.basic.SplitCase.QUADRATIC;
+import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -79,27 +81,14 @@ public class BasicRTree extends AbstractTree {
      * {@inheritDoc }.
      */
     @Override
-    public void search(double[] regionSearch, TreeVisitor visitor) throws IllegalArgumentException {
+    public void search(double[] regionSearch, TreeVisitor visitor) throws IllegalArgumentException, StoreIndexException {
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
         ArgumentChecks.ensureNonNull("search : result", visitor);
         final Node root = getRoot();
-        if (root != null && !root.isEmpty()) nodeSearch(root, visitor, regionSearch);
-    }
-    
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void insert(Object object, double... coordinates) throws IllegalArgumentException {
-        ArgumentChecks.ensureNonNull("insert : object", object);
-        ArgumentChecks.ensureNonNull("insert : coordinates", coordinates);
-        super.insert(object, coordinates);
-        super.eltCompteur++;
-        final Node root       = getRoot();
-        if (root == null || root.isEmpty()) {
-            setRoot(createNode(this, null, null, new Object[]{object}, new double[][]{coordinates}));
-        } else {
-            nodeInsert(root, object, coordinates);
+        if (root != null && !root.isEmpty()) try {
+            nodeSearch(root, visitor, regionSearch);
+        } catch (IOException ex) {
+            throw new StoreIndexException(ex);
         }
     }
     
@@ -107,11 +96,36 @@ public class BasicRTree extends AbstractTree {
      * {@inheritDoc }.
      */
     @Override
-    public boolean delete(Object object, double... coordinates) throws IllegalArgumentException {
+    public void insert(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException {
+        ArgumentChecks.ensureNonNull("insert : object", object);
+        ArgumentChecks.ensureNonNull("insert : coordinates", coordinates);
+        super.insert(object, coordinates);
+        super.eltCompteur++;
+        final Node root       = getRoot();
+        try {
+            if (root == null || root.isEmpty()) {
+                setRoot(createNode(this, null, null, new Object[]{object}, new double[][]{coordinates}));
+            } else {
+                nodeInsert(root, object, coordinates);
+            }
+        } catch (IOException ex) {
+            throw new StoreIndexException(ex);
+        }
+    }
+    
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public boolean delete(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException {
         ArgumentChecks.ensureNonNull("delete : object", object);
         ArgumentChecks.ensureNonNull("delete : coordinates", coordinates);
         final Node root = getRoot();
-        if (root != null) return deleteNode(root, object, coordinates);
+        if (root != null) try {
+            return deleteNode(root, object, coordinates);
+        } catch (IOException ex) {
+            throw new StoreIndexException(ex);
+        }
         return false;
     }
     
@@ -119,11 +133,15 @@ public class BasicRTree extends AbstractTree {
      * {@inheritDoc }.
      */
     @Override
-    public boolean remove(Object object, double... coordinates) throws IllegalArgumentException {
+    public boolean remove(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException {
         ArgumentChecks.ensureNonNull("remove : object", object);
         ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
         final Node root = getRoot();
-        if (root != null) return removeNode(root, object, coordinates);
+        if (root != null) try {
+            return removeNode(root, object, coordinates);
+        } catch (IOException ex) {
+            throw new StoreIndexException(ex);
+        }
         return false;
     }
     
@@ -141,7 +159,7 @@ public class BasicRTree extends AbstractTree {
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
      */
-    private static TreeVisitorResult nodeSearch(final Node candidate, final TreeVisitor visitor, double... regionSearch){
+    private static TreeVisitorResult nodeSearch(final Node candidate, final TreeVisitor visitor, double... regionSearch) throws IOException{
         final TreeVisitorResult tvr = visitor.filter(candidate);
         if (isTerminate(tvr)) return tvr;
         final double[] bound = candidate.getBoundary();
@@ -209,7 +227,7 @@ public class BasicRTree extends AbstractTree {
      * @throws IllegalArgumentException if {@code Node} candidate is null.
      * @throws IllegalArgumentException if {@code Envelope} entry is null.
      */
-    private static void nodeInsert(final Node candidate, final Object object, double... coordinates) throws IllegalArgumentException{
+    private static void nodeInsert(final Node candidate, final Object object, double... coordinates) throws IllegalArgumentException, IOException{
         assert candidate.checkInternal() : "nodeInsert : begin : candidate not conform";
         if (candidate.isLeaf()) {
             assert candidate.getCoordsCount() <= candidate.getTree().getMaxElements() : "too of element before insertion in leaf";
@@ -290,7 +308,7 @@ public class BasicRTree extends AbstractTree {
      * @throws IllegalArgumentException if nodeA or nodeB are not tree leaf.
      * @throws IllegalArgumentException if nodeA or nodeB, and their subnodes, don't contains some {@code Entry}.
      */
-    private static void branchGrafting(final Node nodeA, final Node nodeB ) throws IllegalArgumentException {
+    private static void branchGrafting(final Node nodeA, final Node nodeB ) throws IllegalArgumentException, IOException {
         if(!nodeA.isLeaf() || !nodeB.isLeaf()) throw new IllegalArgumentException("branchGrafting : not leaf");
         assert nodeA.getParent() == nodeB.getParent() : "branchGrafting : NodeA and NodeB should have same parent.";
         assert nodeA.getParent().checkInternal()      : "branchGrafting : nodeA and B parent not conform.";
@@ -372,7 +390,7 @@ public class BasicRTree extends AbstractTree {
      * @throws IllegalArgumentException if candidate elements number is lesser 2.
      * @return {@code Node} List which contains two {@code Node} (split result of candidate).
      */
-    private static List<Node> splitNode(final Node candidate) throws IllegalArgumentException {
+    private static List<Node> splitNode(final Node candidate) throws IllegalArgumentException, IOException {
         ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
         if (DefaultTreeUtils.countElements(candidate) < 2) 
             throw new IllegalArgumentException("not enought elements within " + candidate + " to split.");
@@ -662,7 +680,7 @@ public class BasicRTree extends AbstractTree {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private static boolean deleteNode(final Node candidate, final Object object, final double... coordinate) throws IllegalArgumentException {
+    private static boolean deleteNode(final Node candidate, final Object object, final double... coordinate) throws IllegalArgumentException, StoreIndexException, IOException {
         ArgumentChecks.ensureNonNull("DeleteNode : Node candidate", candidate);
         ArgumentChecks.ensureNonNull("DeleteNode : Object candidate", object);
         ArgumentChecks.ensureNonNull("DeleteNode : double[] coordinate", coordinate);
@@ -713,7 +731,7 @@ public class BasicRTree extends AbstractTree {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private static boolean removeNode(final Node candidate, final Object object, final double... coordinate) throws IllegalArgumentException{
+    private static boolean removeNode(final Node candidate, final Object object, final double... coordinate) throws IllegalArgumentException, StoreIndexException, IOException{
         ArgumentChecks.ensureNonNull("removeNode : Node candidate", candidate);
         ArgumentChecks.ensureNonNull("removeNode : Object object", object);
         ArgumentChecks.ensureNonNull("removeNode : double[] coordinate", coordinate);
@@ -755,7 +773,7 @@ public class BasicRTree extends AbstractTree {
      * @param candidate {@code Node} to begin condense.
      * @throws IllegalArgumentException if candidate is null.
      */
-    private static void trim(final Node candidate) throws IllegalArgumentException {
+    private static void trim(final Node candidate) throws IllegalArgumentException, IOException, StoreIndexException {
         ArgumentChecks.ensureNonNull("trim : Node candidate", candidate);
         List<double[]> reinsertListCoords = null;
         List<Object> reinsertListObjects = null;
@@ -823,7 +841,7 @@ public class BasicRTree extends AbstractTree {
      * @throws IllegalArgumentException if children is empty.
      * @return {@code Node} which is appropriate to contain shape.
      */
-    private static Node chooseSubtree(final Node candidate, final double... coordinates) {
+    private static Node chooseSubtree(final Node candidate, final double... coordinates) throws IOException {
         ArgumentChecks.ensureNonNull("chooseSubtree : candidate", candidate);
         ArgumentChecks.ensureNonNull("chooseSubtree : coordinates", coordinates);
         assert candidate.checkInternal() : "chooseSubtree : candidate not conform";
@@ -870,7 +888,7 @@ public class BasicRTree extends AbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public Node createNode(Tree tree, Node parent, Node[] children, Object[] objects, double[][] coordinates) {
+    public Node createNode(Tree tree, Node parent, Node[] children, Object[] objects, double[][] coordinates) throws IOException {
         if (coordinates != null && ((coordinates[0].length % 2) != 0)) 
             throw new IllegalArgumentException("coordinate dimension is not correct");
         

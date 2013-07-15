@@ -16,10 +16,12 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.io.IOException;
 import java.util.Iterator;
 import org.geotoolkit.index.tree.calculator.*;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -59,7 +61,7 @@ public abstract class AbstractTree implements Tree{
      */
     @Deprecated
     @Override
-    public void search(Envelope regionSearch, TreeVisitor visitor) throws IllegalArgumentException {
+    public void search(Envelope regionSearch, TreeVisitor visitor) throws IllegalArgumentException, StoreIndexException {
         search(DefaultTreeUtils.getCoords(regionSearch), visitor);
     }
     
@@ -68,7 +70,7 @@ public abstract class AbstractTree implements Tree{
      */
     @Deprecated
     @Override
-    public void insert(Envelope entry) throws IllegalArgumentException {
+    public void insert(Envelope entry) throws IllegalArgumentException, StoreIndexException {
         ArgumentChecks.ensureNonNull("insert : entry", entry);
         final int dim = entry.getDimension();
         for (int d = 0; d < dim; d++)
@@ -81,7 +83,7 @@ public abstract class AbstractTree implements Tree{
      * {@inheritDoc}
      */
     @Override
-    public void insertAll(Iterator<? extends Envelope> itr) {
+    public void insertAll(Iterator<? extends Envelope> itr) throws StoreIndexException {
         while (itr.hasNext()) {
             insert(itr.next());
         }
@@ -92,7 +94,7 @@ public abstract class AbstractTree implements Tree{
      */
     @Deprecated
     @Override
-    public boolean delete(Envelope entry) throws IllegalArgumentException {
+    public boolean delete(Envelope entry) throws IllegalArgumentException, StoreIndexException {
         return delete(entry, DefaultTreeUtils.getCoords(entry));
     }
 
@@ -101,7 +103,7 @@ public abstract class AbstractTree implements Tree{
      */
     @Deprecated
     @Override
-    public void deleteAll(Iterator<? extends Envelope> itr){
+    public void deleteAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException, StoreIndexException{
         while (itr.hasNext()) {
             delete(itr.next());
         }
@@ -112,7 +114,7 @@ public abstract class AbstractTree implements Tree{
      */
     @Deprecated
     @Override
-    public boolean remove(Envelope entry) throws IllegalArgumentException {
+    public boolean remove(Envelope entry) throws IllegalArgumentException, StoreIndexException {
         return remove(entry, DefaultTreeUtils.getCoords(entry));
     }
 
@@ -121,7 +123,7 @@ public abstract class AbstractTree implements Tree{
      */
     @Deprecated
     @Override
-    public void removeAll(Iterator<? extends Envelope> itr){
+    public void removeAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException, StoreIndexException{
         while (itr.hasNext()) {
             remove(itr.next());
         }
@@ -131,7 +133,7 @@ public abstract class AbstractTree implements Tree{
      * {@inheritDoc}
      */
     @Override
-    public void insert(Object object, double... coordinates) throws IllegalArgumentException {
+    public void insert(Object object, double... coordinates) throws IllegalArgumentException , StoreIndexException{
         ArgumentChecks.ensureNonNull("insert : object", object);
         ArgumentChecks.ensureNonNull("insert : coordinates", coordinates);
         for (double d : coordinates)
@@ -159,7 +161,7 @@ public abstract class AbstractTree implements Tree{
      * {@inheritDoc}
      */
     @Override
-    public void setRoot(Node root) {
+    public void setRoot(Node root) throws StoreIndexException{
         this.root = root;
     }
     /**
@@ -198,7 +200,7 @@ public abstract class AbstractTree implements Tree{
      * {@inheritDoc}
      */
     @Override
-    public void clear() {
+    public void clear() throws StoreIndexException {
         setRoot(null);
     }
 
@@ -216,17 +218,26 @@ public abstract class AbstractTree implements Tree{
     public void setElementsNumber(int value) {
         this.eltCompteur = value;
     }
+    
+    @Override
+    public void close() throws StoreIndexException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public double[] getExtent() {
+    public double[] getExtent() throws StoreIndexException {
         final Node node = getRoot();
         if (node == null) {
             return null;
         } else {
-            return node.getBoundary().clone();
+            try {
+                return node.getBoundary().clone();
+            } catch (IOException ex) {
+                throw new StoreIndexException("abstract Tree : "+this.getClass().getName()+ " impossible to read root node boundary.", ex);
+            }
         }
     }
 }

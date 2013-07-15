@@ -26,9 +26,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
-import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
-import org.geotoolkit.index.tree.io.TreeReader;
-import org.geotoolkit.index.tree.io.TreeWriter;
 import org.geotoolkit.index.tree.star.StarRTree;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.apache.sis.util.ArgumentChecks;
@@ -36,7 +33,6 @@ import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.TestedEnvelope3D;
 import org.geotoolkit.index.tree.Tree;
 import static org.junit.Assert.assertTrue;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
@@ -70,7 +66,7 @@ public class ReaderWriterTest {
      * @throws ClassNotFoundException
      */
     @Test
-    public void basicRTreeTest() throws IOException, ClassNotFoundException, TransformException {
+    public void basicRTreeTest() throws StoreIndexException, IOException, TransformException, ClassNotFoundException{
         setBasicRTree();
         TreeWriter.write(treeRef, fil);
         TreeReader.read(treeTest, fil);
@@ -84,7 +80,7 @@ public class ReaderWriterTest {
      * @throws ClassNotFoundException
      */
     @Test
-    public void starRTreeTest() throws IOException, ClassNotFoundException, TransformException {
+    public void starRTreeTest() throws StoreIndexException, IOException, ClassNotFoundException, TransformException {
         setStarRTree();
         TreeWriter.write(treeRef, fil);
         TreeReader.read(treeTest, fil);
@@ -98,7 +94,7 @@ public class ReaderWriterTest {
      * @throws ClassNotFoundException
      */
     @Test
-    public void hilbertRTreeTest() throws IOException, ClassNotFoundException, TransformException {
+    public void hilbertRTreeTest() throws StoreIndexException, IOException, ClassNotFoundException, TransformException {
         setHilbertRTree();
         TreeWriter.write(treeRef, fil);
         TreeReader.read(treeTest, fil);
@@ -106,7 +102,7 @@ public class ReaderWriterTest {
     }
 
     @Test
-    public void multiTest() throws IOException, ClassNotFoundException, TransformException {
+    public void multiTest() throws StoreIndexException, IOException, ClassNotFoundException, TransformException {
         final TreeWriter treeW = new TreeWriter();
         final TreeReader treeR = new TreeReader();
 
@@ -147,7 +143,7 @@ public class ReaderWriterTest {
     /**
      * Affect (Basic) R-Tree on two tree test.
      */
-    private void setBasicRTree() throws TransformException {
+    private void setBasicRTree() throws StoreIndexException, IOException {
         treeRef  = new BasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR);
         treeTest = new BasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR);
         insert();
@@ -156,7 +152,7 @@ public class ReaderWriterTest {
     /**
      * Affect R*Tree on two tree test.
      */
-    private void setStarRTree() throws TransformException {
+    private void setStarRTree() throws StoreIndexException, IOException {
         treeRef  = new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D);
         treeTest = new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D);
         insert();
@@ -165,7 +161,7 @@ public class ReaderWriterTest {
     /**
      * Affect Hilbert RTree on two tree test.
      */
-    private void setHilbertRTree() throws TransformException {
+    private void setHilbertRTree() throws StoreIndexException, IOException{
         treeRef  = new HilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_3D);
         treeTest = new HilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_3D);
         insert();
@@ -174,7 +170,7 @@ public class ReaderWriterTest {
     /**
      * Shuffle entries data list and insert in treeRef.
      */
-    private void insert() throws TransformException {
+    private void insert() throws StoreIndexException, IOException {
         ArgumentChecks.ensureNonNull("insert : lData", lData);
         Collections.shuffle(lData);
         for (GeneralEnvelope shape : lData) {
@@ -192,7 +188,7 @@ public class ReaderWriterTest {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    private void testTree() throws IOException, ClassNotFoundException, TransformException {
+    private void testTree() throws StoreIndexException, IOException {
         ArgumentChecks.ensureNonNull("testTree : treeRef", treeRef);
         ArgumentChecks.ensureNonNull("testTree : treeTest", treeTest);
         final List listSearchTreeRef = new ArrayList<Envelope>();
@@ -237,7 +233,7 @@ public class ReaderWriterTest {
      * @param tree
      * @return leaf list.
      */
-    private List<Node> getAllLeaf(final Tree tree) {
+    private List<Node> getAllLeaf(final Tree tree) throws IOException {
         ArgumentChecks.ensureNonNull("getAllLeaf : tree", tree);
         final List<Node> listLeaf = new ArrayList<Node>();
         getLeaf((Node) tree.getRoot(), listLeaf);
@@ -251,7 +247,7 @@ public class ReaderWriterTest {
      * @param node to study
      * @param listLeaf
      */
-    private void getLeaf(final Node node, final List<Node> listLeaf) {
+    private void getLeaf(final Node node, final List<Node> listLeaf) throws IOException {
         ArgumentChecks.ensureNonNull("getLeaf : node", node);
         ArgumentChecks.ensureNonNull("getLeaf : listLeaf", listLeaf);
         if (node.isLeaf()) {
@@ -274,7 +270,7 @@ public class ReaderWriterTest {
      * @throws IllegalArgumentException if listTreeRef or listTreeTest is null.
      * @return true if listTreeRef contains same elements from listTreeTest.
      */
-    private boolean compareListLeaf(final List<Node> listTreeRef, final List<Node> listTreeTest) {
+    private boolean compareListLeaf(final List<Node> listTreeRef, final List<Node> listTreeTest) throws IOException {
         ArgumentChecks.ensureNonNull("compareListLeaf : listTreeRef", listTreeRef);
         ArgumentChecks.ensureNonNull("compareListLeaf : listTreeTest", listTreeTest);
 
@@ -307,7 +303,7 @@ public class ReaderWriterTest {
      * @param nodeB
      * @return true if 3 assertion are verified else false.
      */
-    private boolean compareLeaf(final Node nodeA, final Node nodeB) {
+    private boolean compareLeaf(final Node nodeA, final Node nodeB) throws IOException {
         ArgumentChecks.ensureNonNull("compareLeaf : nodeA", nodeA);
         ArgumentChecks.ensureNonNull("compareLeaf : nodeB", nodeB);
 

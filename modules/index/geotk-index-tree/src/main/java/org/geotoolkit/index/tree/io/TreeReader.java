@@ -119,7 +119,7 @@ public class TreeReader {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public void read(final Tree tree) throws IOException, ClassNotFoundException, IllegalArgumentException, TransformException {
+    public void read(final Tree tree) throws IOException, ClassNotFoundException, StoreIndexException, TransformException {
         ArgumentChecks.ensureNonNull("read : tree", tree);
         final List<Node> listNodes = new ArrayList<Node>();
         final Map<Integer, Node> index = new HashMap<Integer, Node>();
@@ -212,7 +212,7 @@ public class TreeReader {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public static void read(final Tree tree, final Object input) throws IOException, ClassNotFoundException, IllegalArgumentException, TransformException {
+    public static void read(final Tree tree, final Object input) throws IOException, ClassNotFoundException, StoreIndexException, TransformException {
         ArgumentChecks.ensureNonNull("static read : tree", tree);
         ArgumentChecks.ensureNonNull("static read : input", input);
         final TreeReader reader = new TreeReader();

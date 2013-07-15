@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.index.tree.calculator;
 
+import java.io.IOException;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.Node;
 
@@ -31,7 +32,8 @@ public class CalculatorND extends Calculator {
      * {@inheritDoc }.
      */
     @Override
-    public double getDistance(Node nodeA, Node nodeB) {
+    @Deprecated
+    public double getDistance(Node nodeA, Node nodeB) throws IOException {
         return getDistanceBetween2Envelopes(nodeA.getBoundary(), nodeB.getBoundary());
     }
 

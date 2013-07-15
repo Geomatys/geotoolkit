@@ -16,14 +16,16 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
-import org.opengis.geometry.DirectPosition;
+import org.geotoolkit.index.tree.io.TreeVisitor;
+import org.geotoolkit.index.tree.io.TreeVisitorResult;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Class which contains tree test utils methods.
@@ -67,6 +69,38 @@ public abstract class TreeTest {
     }
     
     /**
+     * Compare 2 lists elements.
+     *
+     * <blockquote><font size=-1> <strong> NOTE: return {@code true} if listA
+     * and listB are empty. </strong> </font></blockquote>
+     *
+     * @param listA
+     * @param listB
+     * @throws IllegalArgumentException if listA or ListB is null.
+     * @return true if listA contains same elements from listB.
+     */
+    protected boolean compareLists(final List<double[]> listA, final List<double[]> listB) {
+        ArgumentChecks.ensureNonNull("compareList : listA", listA);
+        ArgumentChecks.ensureNonNull("compareList : listB", listB);
+
+        if (listA.isEmpty() && listB.isEmpty()) return true;
+        if (listA.size() != listB.size()) return false;
+
+        boolean shapequals = false;
+        for (double[] objA : listA) {
+            for (double[] objB : listB) {
+                if (Arrays.equals(objA, objB)) {
+                    shapequals = true;
+                    break;
+                }
+            }
+            if (!shapequals) return false;
+            shapequals = false;
+        }
+        return true;
+    }
+    
+    /**
      * Return boundary of all element union from list parameter.
      * 
      * @param list
@@ -83,12 +117,28 @@ public abstract class TreeTest {
     }
     
     /**
+     * Return boundary of all element union from list parameter.
+     * 
+     * @param list
+     * @return boundary of all elements union from list parameter.
+     */
+    protected double[] getExtent(final List<double[]> list) {
+        ArgumentChecks.ensureNonNull("compareList : listA", list);
+        assert(!list.isEmpty()):"list to get envelope min should not be empty.";
+        final double[] ge = list.get(0).clone();
+        for (int i = 1; i < list.size(); i++) {
+            DefaultTreeUtils.add(ge, list.get(i));
+        }
+        return ge;
+    }
+    
+    /**
      * Find all entries number in a {@link Tree}.
      * 
      * @param tree where to looking for entries.
      * @return all entries number in a {@link Tree}.
      */
-    protected boolean checkTreeElts(Tree tree) {
+    protected boolean checkTreeElts(Tree tree) throws IOException {
         final int treeElement = tree.getElementsNumber();
         if (tree instanceof HilbertRTree) {
             return DefaultTreeUtils.countEltsInHilbertNode(tree.getRoot(), 0) == treeElement;
@@ -103,23 +153,13 @@ public abstract class TreeTest {
      * @param position the median of future entry.
      * @return {@code GeneralEnvelope} entry.
      */
-    public static GeneralEnvelope createEntry(final DirectPosition position) {
-        final double[] coord = position.getCoordinate();
-        final int length = coord.length;
-        final double[] coordLow = new double[length];
-        final double[] coordUpp = new double[length];
+    public static double[] createEntry(final double[] position) {
+        final int length = position.length;
+        final double[] envelope = new double[length << 1];
         for (int i = 0; i < length; i++) {
-            coordLow[i] = coord[i] - (Math.random() * 5 + 5);
-            coordUpp[i] = coord[i] + (Math.random() * 5 + 5);
+            envelope[i] = position[i] - (Math.random() * 5 + 5);
+            envelope[i+length] = position[i] + (Math.random() * 5 + 5);
         }
-        final CoordinateReferenceSystem crs = position.getCoordinateReferenceSystem();
-        if (crs == null) return new GeneralEnvelope(new GeneralDirectPosition(coordLow), new GeneralDirectPosition(coordUpp));
-        final GeneralDirectPosition dpLow = new GeneralDirectPosition(crs);
-        final GeneralDirectPosition dpUpp = new GeneralDirectPosition(crs);
-        for (int i = 0; i < length; i++) {
-            dpLow.setOrdinate(i, coordLow[i]);
-            dpUpp.setOrdinate(i, coordUpp[i]);
-        }
-        return new GeneralEnvelope(dpLow, dpUpp);
+        return envelope;
     }
 }

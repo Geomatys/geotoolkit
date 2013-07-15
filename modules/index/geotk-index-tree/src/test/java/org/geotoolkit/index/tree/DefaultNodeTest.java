@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.io.IOException;
 import java.util.Arrays;
 import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
@@ -40,7 +41,7 @@ public class DefaultNodeTest {
                                                     new double[]{2.5, 2.5, 3.5, 3.5},
                                                     new double[]{-3.5, 2.5, -2.5, 3.5}};
     private final Node[] children;
-    public DefaultNodeTest() {
+    public DefaultNodeTest() throws IOException {
         children = new Node[objects.length];
         for (int i = 0, s = objects.length; i < s; i++) {
             children[i] = new DefaultNode(TREE, null, null, null, null, new Object[]{objects[i]}, new double[][]{coordinates[i]});
@@ -51,7 +52,7 @@ public class DefaultNodeTest {
      * Test {@link DefaultNode} creation.
      */
     @Test
-    public void initTest() {
+    public void initTest() throws IOException {
         dn = new DefaultNode(TREE);
         assertTrue(dn.getParent() == null);
         assertTrue(dn.getBound() == null);
@@ -111,7 +112,7 @@ public class DefaultNodeTest {
      * Test adding and deleting element in a {@link DefaultNode} which is leaf.
      */
     @Test
-    public void insertRemoveElements() {
+    public void insertRemoveElements() throws IOException {
         dn = new DefaultNode(TREE);
         
         // insert
@@ -295,7 +296,7 @@ public class DefaultNodeTest {
      * Test adding and deleting element in a {@link DefaultNode} which is not leaf.
      */
     @Test
-    public void insertRemoveNode() {
+    public void insertRemoveNode() throws IOException {
         dn = new DefaultNode(TREE);
         
         // insert

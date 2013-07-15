@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.io.IOException;
+
 /**
  * Create appropriate {@code Node} to R-Tree.
  *
@@ -34,7 +36,7 @@ public final class DefaultNodeFactory implements NodeFactory {
      * {@inheritDoc }
      */
     @Override
-    public Node createNode(Tree tree, Node parent, double[] lowerCorner, double[] upperCorner, Node[] children, Object[] objects, double[][] objectsCoordinates) {
+    public Node createNode(Tree tree, Node parent, double[] lowerCorner, double[] upperCorner, Node[] children, Object[] objects, double[][] objectsCoordinates) throws IOException {
         return new DefaultNode(tree, parent, lowerCorner, upperCorner, children, objects, objectsCoordinates);
     }
 }

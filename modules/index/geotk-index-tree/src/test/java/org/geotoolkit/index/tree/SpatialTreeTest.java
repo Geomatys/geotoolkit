@@ -16,20 +16,17 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import junit.framework.Assert;
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.index.tree.io.StoreIndexException;
 import static org.junit.Assert.*;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.junit.Test;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CartesianCS;
@@ -45,12 +42,12 @@ import org.opengis.referencing.operation.TransformException;
 public abstract class SpatialTreeTest extends TreeTest{
 
     protected final Tree tree;
-    protected final List<Envelope> lData = new ArrayList<Envelope>();
+    protected final List<double[]> lData = new ArrayList<double[]>();
     protected final CoordinateReferenceSystem crs;
     protected final int dimension;
     protected final double[] minMax;
 
-    public SpatialTreeTest(Tree tree) throws TransformException {
+    public SpatialTreeTest(Tree tree) throws StoreIndexException, IOException {
         ArgumentChecks.ensureNonNull("tree", tree);
         crs = tree.getCrs();
         ArgumentChecks.ensureNonNull("crs", crs);
@@ -59,9 +56,9 @@ public abstract class SpatialTreeTest extends TreeTest{
         this.tree = tree;
         final CoordinateSystem cs = crs.getCoordinateSystem();
         minMax = new double[2*dimension];
-        final DirectPosition centerEntry = new GeneralDirectPosition(crs);
+        final double[] centerEntry = new double[dimension];
         if (cs instanceof CartesianCS) {
-            for(int l = 0; l<2*dimension; l+=2) {
+            for(int l = 0; l < 2 * dimension; l+=2) {
                 minMax[l] = -1500;
                 minMax[l+1] = 1500;
             }
@@ -69,7 +66,7 @@ public abstract class SpatialTreeTest extends TreeTest{
                 for (int nbCoords = 0; nbCoords < this.dimension; nbCoords++) {
                     double value = (Math.random() < 0.5) ? -1 : 1;
                     value *= 1500 * Math.random();
-                    centerEntry.setOrdinate(nbCoords, value);
+                    centerEntry[nbCoords] = value;
                 }
                 lData.add(createEntry(centerEntry));
             }
@@ -79,10 +76,10 @@ public abstract class SpatialTreeTest extends TreeTest{
             minMax[2] = -90;
             minMax[3] = 90;
             for (int i = 0; i<3000; i++) {
-                centerEntry.setOrdinate(0, (Math.random()-0.5) * 2*170);
-                centerEntry.setOrdinate(1, (Math.random()-0.5) * 2*80);
+                centerEntry[0] = (Math.random()-0.5) * 2*170;
+                centerEntry[1] = (Math.random()-0.5) * 2*80;
                 if(cs.getDimension()>2) {
-                    centerEntry.setOrdinate(2, Math.random()*8800);
+                    centerEntry[2] = Math.random()*8800;
                     minMax[4] = -8800;
                     minMax[5] = 8800;
                 }
@@ -100,10 +97,10 @@ public abstract class SpatialTreeTest extends TreeTest{
      * @throws TransformException if lData entries can't be transform into tree
      * crs.
      */
-    protected void insert() throws IllegalArgumentException, TransformException {
+    protected void insert() throws StoreIndexException, IOException {
         double[] add = null;
         for (int i = 0, s = lData.size(); i < s; i++) {
-            final double[] env = DefaultTreeUtils.getCoords(lData.get(i));
+            final double[] env = lData.get(i);
             if (add == null) add = env.clone();
             add = DefaultTreeUtils.add(add, env);
             tree.insert(lData.get(i), env);
@@ -117,12 +114,13 @@ public abstract class SpatialTreeTest extends TreeTest{
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void insertTest() throws MismatchedReferenceSystemException {
+    public void insertTest() throws StoreIndexException, IOException{
+        if (tree.getRoot() == null) insert();
         final double[] gr = ((Node) tree.getRoot()).getBoundary();
-        final double[] gem = super.getEnvelopeMin(lData);
+        final double[] gem = super.getExtent(lData);
         assertTrue(Arrays.equals(gr, gem));
         final double[] envSearch = gr.clone();
-        final List listSearch = new ArrayList<Envelope>();
+        final List listSearch = new ArrayList<double[]>();
         tree.search(envSearch, new DefaultTreeVisitor(listSearch));
         assertTrue(listSearch.size() == lData.size());
         assertTrue(tree.getElementsNumber() == lData.size());
@@ -143,14 +141,15 @@ public abstract class SpatialTreeTest extends TreeTest{
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void checkBoundaryTest() throws MismatchedReferenceSystemException {
+    public void checkBoundaryTest() throws StoreIndexException, IOException {
+        if (tree.getRoot() == null) insert();
         checkNodeBoundaryTest(tree.getRoot());
     }
 
     /**
      * Compare boundary node from its children boundary.
      */
-    protected void checkNodeBoundaryTest(final Node node) {
+    protected void checkNodeBoundaryTest(final Node node) throws IOException {
         if(!node.isLeaf()){
             for (int i = 0, s = node.getChildCount(); i < s; i++) {
                 checkNodeBoundaryTest(node.getChild(i));
@@ -165,14 +164,14 @@ public abstract class SpatialTreeTest extends TreeTest{
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void queryOnBorderTest() throws IllegalArgumentException, TransformException {
-        final List<GeneralEnvelope> lGE = new ArrayList<GeneralEnvelope>();
-        for (Envelope env : lData) {
-            assertTrue(tree.delete(env, getCoords(env)));
-        }
+    public void queryOnBorderTest() throws StoreIndexException, IOException {
+        if (tree.getRoot() == null) insert(); 
+        final List<double[]> lGE = new ArrayList<double[]>();
         
-        final List<Envelope> lGERef = new ArrayList<Envelope>();
-        final GeneralEnvelope gR = new GeneralEnvelope(crs);
+        if (tree.getRoot() != null) for (double[] env : lData) assertTrue(tree.delete(env, env));
+        
+        final List<double[]> lGERef = new ArrayList<double[]>();
+        final double[] gR ;
         
         assertTrue(tree.getElementsNumber() == 0);
         assertTrue(tree.getRoot().isEmpty());
@@ -182,34 +181,31 @@ public abstract class SpatialTreeTest extends TreeTest{
         if (dimension == 2) {
             for (int i = 0; i < 20; i++) {
                 for (int j = 0; j < 20; j++) {
-                    final GeneralEnvelope gE = new GeneralEnvelope(crs);
-                    gE.setEnvelope(5 * i, 5 * j, 5 * i, 5 * j);
+                    final double[] gE = new double[]{5 * i, 5 * j, 5 * i, 5 * j};
                     lGE.add(gE);
                     if (i == 19 && j > 3 && j < 18) {
                         lGERef.add(gE);
                     }
                 }
             }
-            gR.setEnvelope(93, 18, 130, 87);
+            gR = new double[]{93, 18, 130, 87};
         } else {
             for (int i = 0; i < 20; i++) {
                 for (int j = 0; j < 20; j++) {
-                    final GeneralEnvelope gE = new GeneralEnvelope(crs);
-                    gE.setEnvelope(5 * i, 5 * j, 20, 5 * i, 5 * j, 20);
+                    final double[] gE = new double[]{5 * i, 5 * j, 20, 5 * i, 5 * j, 20};
                     lGE.add(gE);
                     if (i == 19 && j > 3 && j < 18) {
                         lGERef.add(gE);
                     }
                 }
             }
-            gR.setEnvelope(93, 18, 19, 130, 87, 21);
+            gR = new double[]{93, 18, 19, 130, 87, 21};
         }
-        for (Envelope env : lGE) {
-            tree.insert(env, getCoords(env));
-        }
-        final List lGES = new ArrayList<Envelope>();
-        tree.search(getCoords(gR), new DefaultTreeVisitor(lGES));
-        assertTrue(compareList(lGERef, lGES));
+        
+        for (double[] env : lGE) tree.insert(env, env);
+        final List lGES = new ArrayList<double[]>();
+        tree.search(gR, new DefaultTreeVisitor(lGES));
+        assertTrue(compareLists(lGERef, lGES));
         assertTrue(checkTreeElts(tree));
     }
 
@@ -217,7 +213,7 @@ public abstract class SpatialTreeTest extends TreeTest{
      * Assert avoid null pointer exception.
      */
     @Test
-    public void checkExtends(){
+    public void checkExtends() throws StoreIndexException, IOException {
         tree.setRoot(null);
         assertTrue(tree.getExtent() == null);
     }
@@ -226,7 +222,7 @@ public abstract class SpatialTreeTest extends TreeTest{
     /**
      * Compare boundary node from his children or elements boundary.
      */
-    public boolean checkBoundaryNode(final Node node) {
+    public boolean checkBoundaryNode(final Node node) throws IOException {
         final double[] subBound;
         if (node.isLeaf()) {
             final int s = node.getCoordsCount();
@@ -249,10 +245,11 @@ public abstract class SpatialTreeTest extends TreeTest{
      * Test search query inside tree.
      */
     @Test
-    public void queryInsideTest() throws MismatchedReferenceSystemException {
-        final List listSearch = new ArrayList<Envelope>();
-        tree.search(getEnvelopeMin(lData), new DefaultTreeVisitor(listSearch));
-        assertTrue(compareList(lData, listSearch));
+    public void queryInsideTest() throws StoreIndexException, IOException {
+        if (tree.getRoot() == null) insert();
+        final List listSearch = new ArrayList<double[]>();
+        tree.search(getExtent(lData), new DefaultTreeVisitor(listSearch));
+        assertTrue(compareLists(lData, listSearch));
         assertTrue(checkTreeElts(tree));
     }
 
@@ -262,13 +259,14 @@ public abstract class SpatialTreeTest extends TreeTest{
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void queryOutsideTest() throws MismatchedReferenceSystemException {
+    public void queryOutsideTest() throws StoreIndexException, IOException {
+        if (tree.getRoot() == null) insert();
         final double[] areaSearch = new double[dimension<<1];
         for (int i = 0; i < dimension; i++) {
             areaSearch[i] = minMax[i+1]+100;
             areaSearch[dimension+i] = minMax[i+1]+2000;
         }
-        final List listSearch = new ArrayList<Envelope>();
+        final List listSearch = new ArrayList<double[]>();
         tree.search(areaSearch, new DefaultTreeVisitor(listSearch));
         assertTrue(listSearch.isEmpty());
         assertTrue(checkTreeElts(tree));
@@ -280,40 +278,42 @@ public abstract class SpatialTreeTest extends TreeTest{
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void insertDelete() throws IllegalArgumentException, TransformException {
+    public void insertDelete() throws StoreIndexException, IOException {
+        if (tree.getRoot() == null) insert();
+        
         Collections.shuffle(lData);
         for (int i = 0, s = lData.size(); i < s; i++) {
-            Envelope env = lData.get(i);
-            assertTrue(tree.delete(env, getCoords(env)));
+            double[] env = lData.get(i);
+            assertTrue(tree.delete(env, env));
         }
         final double[] areaSearch = new double[dimension << 1];
         for (int i = 0; i < dimension; i++) {
             areaSearch[i] = minMax[2 * i];
             areaSearch[i + dimension] = minMax[2 * i + 1];
         }
-        final List listSearch = new ArrayList<Envelope>();
+        final List listSearch = new ArrayList<double[]>();
         tree.search(areaSearch, new DefaultTreeVisitor(listSearch));
         assertTrue(listSearch.isEmpty());
         assertTrue(tree.getElementsNumber() == 0);
         assertTrue(checkTreeElts(tree));
         insert();
         tree.search(areaSearch, new DefaultTreeVisitor(listSearch));
-        assertTrue(compareList(listSearch, lData));
+        assertTrue(compareLists(listSearch, lData));
         assertTrue(checkTreeElts(tree));
     }
     
-    protected boolean checkElementInsertion(final Node candidate, List<Envelope> listRef) {
+    protected boolean checkElementInsertion(final Node candidate, List<double[]> listRef) throws IOException {
         if (candidate.isLeaf()) {
             final int siz = candidate.getCoordsCount();
             assert (siz == candidate.getObjectCount()) : "coord and object should be same length.";
             for (int i = 0; i < siz; i++) {
                 Object cuObj = candidate.getObject(i);
                 double[] coords = candidate.getCoordinate(i);
-                assertTrue(Arrays.equals(coords, getCoords((Envelope)cuObj)));
+                assertTrue(Arrays.equals(coords, (double[])cuObj));
                 boolean found = false;
                 for (int il = 0, s = listRef.size(); il < s; il++) {
                     if (cuObj == listRef.get(il)) {
-                        if (Arrays.equals(coords, getCoords(listRef.get(il)))) {
+                        if (Arrays.equals(coords, listRef.get(il))) {
                             found = true;
                             break;
                         }
@@ -331,7 +331,7 @@ public abstract class SpatialTreeTest extends TreeTest{
         }
     }
     
-    private boolean checkTree(Node candidate) {
+    private boolean checkTree(Node candidate) throws IOException {
         assert !candidate.isEmpty();
         if (!candidate.isLeaf()) {
             for (int i = 0; i < candidate.getChildCount(); i++) {

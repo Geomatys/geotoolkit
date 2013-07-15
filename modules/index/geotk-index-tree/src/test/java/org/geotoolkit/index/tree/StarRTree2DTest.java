@@ -16,9 +16,10 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.io.IOException;
+import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.star.StarRTree;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Create R*Tree test suite in 2D Euclidean space.
@@ -27,7 +28,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class StarRTree2DTest extends SpatialTreeTest {
 
-    public StarRTree2DTest() throws IllegalArgumentException, TransformException {
+    public StarRTree2DTest() throws StoreIndexException, IOException {
         super(new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_2D));
     }
 }

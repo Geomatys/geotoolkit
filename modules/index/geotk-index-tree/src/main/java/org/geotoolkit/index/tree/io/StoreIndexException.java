@@ -14,21 +14,28 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree;
+package org.geotoolkit.index.tree.io;
 
-import java.io.IOException;
-import org.geotoolkit.index.tree.hilbert.HilbertRTree;
-import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.apache.sis.storage.DataStoreException;
 
 /**
- * Create Hilbert R-Tree test suite in 2D Cartesian space.
  *
- * @author Rémi Marechal (Geomatys).
+ * @author Remi Marechal (Geomatys).
  */
-public class HilbertRTree2DTest extends HilbertRtreeTest {
+public class StoreIndexException extends DataStoreException {
 
-    public HilbertRTree2DTest() throws StoreIndexException, IOException {
-        super(new HilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D));
+    public StoreIndexException(Throwable thrwbl) {
+        super(thrwbl);
+    }
+
+    public StoreIndexException(String string) {
+        super(string);
+    }
+
+    public StoreIndexException() {
+    }
+
+    public StoreIndexException(String string, Throwable thrwbl) {
+        super(string, thrwbl);
     }
 }

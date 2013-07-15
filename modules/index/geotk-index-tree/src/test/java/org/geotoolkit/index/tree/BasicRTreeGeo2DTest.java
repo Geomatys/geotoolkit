@@ -16,10 +16,11 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.io.IOException;
 import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
+import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.opengis.referencing.operation.TransformException;
 
 /**Create R-Tree test suite in geographic 2D space.
  *
@@ -27,7 +28,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class BasicRTreeGeo2DTest extends SpatialTreeTest {
 
-    public BasicRTreeGeo2DTest() throws TransformException {
+    public BasicRTreeGeo2DTest() throws StoreIndexException, IOException {
         super(new BasicRTree(4, DefaultGeographicCRS.WGS84, SplitCase.QUADRATIC));
     }
 }

@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +27,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.gui.swing.tree.Trees;
 import static org.geotoolkit.index.tree.Node.PROP_ISLEAF;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.index.tree.hilbert.HilbertNode;
 import org.apache.sis.util.logging.Logging;
-import org.opengis.geometry.Envelope;
 
 /**
  * Create a Node adapting with Euclidean dimensions datas.
@@ -59,7 +57,7 @@ public class DefaultNode extends Node {
      *
      * @param tree
      */
-    public DefaultNode(final Tree tree) {
+    public DefaultNode(final Tree tree) throws IOException {
         this(tree, null, null, null, null, null, null);
     }
 
@@ -72,7 +70,7 @@ public class DefaultNode extends Node {
      * @throws IllegalArgumentException if tree pointer is null.
      */
     public DefaultNode(final Tree tree, final Node parent, final double[] lowerCorner, final double[] upperCorner, 
-            final Node[] children, final Object[] objects, final double[][] coordinates) {
+            final Node[] children, final Object[] objects, final double[][] coordinates) throws IOException {
         super(tree);
         this.parent = parent;
         final int maxSizePermit = tree.getMaxElements();
@@ -176,10 +174,15 @@ public class DefaultNode extends Node {
      */
     @Override
     public String toString() {
-        final List toString = (isLeaf()) ? Arrays.asList(objects):Arrays.asList(children);
-        String strparent =  (parent == null)?"null":String.valueOf(parent.hashCode());
-        return Trees.toString(Classes.getShortClassName(this)+" : "+this.hashCode()+" parent : "+strparent
-                + " leaf : "+isLeaf()+ " userPropLeaf : "+(Boolean)getUserProperty(PROP_ISLEAF), toString);
+        try {
+            final List toString = (isLeaf()) ? Arrays.asList(objects):Arrays.asList(children);
+            String strparent =  (parent == null)?"null":String.valueOf(parent.hashCode());
+            return Trees.toString(Classes.getShortClassName(this)+" : "+this.hashCode()+" parent : "+strparent
+                    + " leaf : "+isLeaf()+ " userPropLeaf : "+(Boolean)getUserProperty(PROP_ISLEAF), toString);
+        } catch (IOException ex) {
+            Logger.getLogger(DefaultNode.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
     
     /**
@@ -278,7 +281,7 @@ public class DefaultNode extends Node {
      * {@inheritDoc}
      */
     @Override
-    public void addElement(Object object, double... coordinate) {
+    public void addElement(Object object, double... coordinate) throws IOException{
         if (children != null) 
             throw new IllegalStateException("You can't add element in a Node which isn't leaf.");
         if (objects == null) objects = new Object[tree.getMaxElements() << 1];
@@ -292,18 +295,13 @@ public class DefaultNode extends Node {
      * {@inheritDoc}
      */
     @Override
-    public void addElements(Object[] objects, double[][] coordinates) {
+    public void addElements(Object[] objects, double[][] coordinates) throws IOException {
         ArgumentChecks.ensureNonNull("Objects", objects);
         ArgumentChecks.ensureNonNull("coordinates", coordinates);
         final int l = objects.length;
         assert (l == coordinates.length) : "addElements : objects and coordinates tables should have same lenght";
         if (l > (objects.length - countObjects))
             throw new IllegalArgumentException("You try to insert more elements than remaining place in elements table");
-        
-//        System.arraycopy(objects, 0, elements, countElements, l);
-//        System.arraycopy(coordinates, 0, this.coordinates, countChild, l);
-//        countElements += l;
-//        countCoords += l;
         for (int i = 0; i < l; i++) {
             if (objects[i] != null) addElement(objects[i], coordinates[i]);
         }
@@ -426,7 +424,7 @@ public class DefaultNode extends Node {
      * {@inheritDoc }.
      */
     @Override
-    public boolean checkInternal() { 
+    public boolean checkInternal() throws IOException { 
         if (isEmpty()) {
             //: "Node should never be empty.";
             LOGGER.log(Level.WARNING, "candidate is empty");

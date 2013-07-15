@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.index.tree.calculator;
 
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.List;
 import org.geotoolkit.index.tree.Node;
 import org.apache.sis.util.ArgumentChecks;
-import org.opengis.geometry.Envelope;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
+import org.geotoolkit.index.tree.FileNode;
 
 /**
  * Define a generic Calculator to define computing rules of tree.
@@ -37,7 +37,7 @@ public abstract class Calculator {
      * @return distance between nodeA, nodeB.
      */
     @Deprecated
-    public abstract double getDistance(final Node nodeA, final Node nodeB);
+    public abstract double getDistance(final Node nodeA, final Node nodeB) throws IOException;
     
     /**
      * @param envelop
@@ -90,7 +90,7 @@ public abstract class Calculator {
      * @param list : elements which will be sorted.
      * @return sorted list.
      */
-    public void sortList(int index, boolean lowerOrUpper, List list, List<Object> listObject) {
+    public void sortList(int index, boolean lowerOrUpper, List list, List<Object> listObject) throws IOException {
         ArgumentChecks.ensureNonNull("list", list);
         if (list.isEmpty()) return ;
         boolean alreadySort;
@@ -125,6 +125,42 @@ public abstract class Calculator {
                     alreadySort = false;
                     list.add(id2-1, list.remove(id2));
                     if (!isNode && listObject != null) listObject.add(id2-1,listObject.remove(id2));
+                }
+            }
+            if (alreadySort) break;
+        }
+    }
+    
+    /**
+     * Sort elements list.
+     * 
+     * @param index : ordinate choosen to compare.
+     * @param lowerOrUpper : true to sort from "lower boundary", false from "upper boundary"
+     * @param list : elements which will be sorted.
+     * @return sorted list.
+     */
+    public void sortList(int index, boolean lowerOrUpper, List<Node> list) throws IOException {
+        ArgumentChecks.ensureNonNull("list", list);
+        if (list.isEmpty()) return ;
+        final int siz = list.size();
+        double[] env1, env2;
+        double val1, val2;
+        boolean alreadySort;
+        for (int bornMin = 0; bornMin < siz-1; bornMin++) {
+            alreadySort = true;
+            for (int id2 = siz-1; id2 > bornMin; id2--) {
+                env1 = list.get(id2).getBoundary();
+                env2 = list.get(id2-1).getBoundary();
+                if (lowerOrUpper) {
+                    val1 = getMinimum(env1, index);
+                    val2 = getMinimum(env2, index);
+                } else {
+                    val1 = getMaximum(env1, index);
+                    val2 = getMaximum(env2, index);
+                }
+                if (val2 > val1) {
+                    alreadySort = false;
+                    list.add(id2-1, list.remove(id2));
                 }
             }
             if (alreadySort) break;

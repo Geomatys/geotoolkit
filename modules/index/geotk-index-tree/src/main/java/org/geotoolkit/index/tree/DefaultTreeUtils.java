@@ -16,12 +16,14 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.io.IOException;
 import java.util.List;
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.geometry.Envelope;
 
-/**Some utilities methods.
+/**
+ * Some utilities methods.
  *
  * @author Rémi Maréchal (Geomatys).
  */
@@ -46,7 +48,7 @@ public class DefaultTreeUtils {
      * @param count current count.
      * @return entries number contained in a {@link Node}.
      */
-    public static int countElementsRecursively(Node node, int count) {
+    public static int countElementsRecursively(Node node, int count) throws IOException {
         if (node == null) return count;
         if (node.isLeaf()) {
             assert (node.getCoordsCount() == node.getObjectCount());
@@ -66,7 +68,7 @@ public class DefaultTreeUtils {
      * @param count element counter. When caller call this method normaly zero. 
      * @return all element number within this Node.
      */
-    public static int countEltsInHilbertNode(final Node candidate, int count) {
+    public static int countEltsInHilbertNode(final Node candidate, int count) throws IOException {
         final int size = candidate.getChildCount();
         if (candidate.isLeaf()) {
             for (int i = 0; i < size; i++) {
@@ -149,10 +151,10 @@ public class DefaultTreeUtils {
         ArgumentChecks.ensureNonNull("getDistanceBetween2Positions : positionA", positionA);
         ArgumentChecks.ensureNonNull("getDistanceBetween2Positions : positionB", positionB);
         final int length = positionA.length;
-        if(length!=positionB.length)
+        if (length != positionB.length)
             throw new IllegalArgumentException("getDistanceBetween2Positions : positionA and positionB are not in same dimension");
         final double[] tab = new double[length];
-        for (int i =0; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             tab[i] = positionA[i] - positionB[i];
         }
         return MathFunctions.magnitude(tab);
@@ -205,7 +207,7 @@ public class DefaultTreeUtils {
      * @throws IllegalArgumentException if {@code Envelope} list lS is empty.
      * @return GeneralEnvelope which is general boundary.
      */
-    public static double[] getEnvelopeMin(final List lGE){
+    public static double[] getEnvelopeMin(final List lGE) throws IOException{
         ArgumentChecks.ensureNonNull("getEnveloppeMin : lGE", lGE);
         if(lGE.isEmpty()){
             throw new IllegalArgumentException("impossible to get Enveloppe : empty list");
@@ -274,9 +276,6 @@ public class DefaultTreeUtils {
     public static double[] add(double[] envelopeA, double[] envelopeB) {
         ArgumentChecks.ensureNonNull("EnvelopeA", envelopeA);
         ArgumentChecks.ensureNonNull("EnvelopeB", envelopeB);
-        if (envelopeA.length != envelopeB.length) {
-            System.out.println("");
-        }
         assert (envelopeA.length == envelopeB.length) :"getUnion : envelope should have same dimension number.";
         final int dim = envelopeA.length >> 1;
         for (int i = 0, d = dim; i < dim; i++, d++) {

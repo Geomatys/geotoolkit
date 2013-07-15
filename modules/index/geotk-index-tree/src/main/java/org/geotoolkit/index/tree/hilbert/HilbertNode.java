@@ -16,9 +16,11 @@
  */
 package org.geotoolkit.index.tree.hilbert;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
@@ -46,11 +48,11 @@ public class HilbertNode extends DefaultNode {
     private static final Logger LOGGER = Logging.getLogger(HilbertNode.class);
     private static final double LN2 = 0.6931471805599453;
     
-    public HilbertNode(Tree tree) {
+    public HilbertNode(Tree tree) throws IOException {
         super(tree);
     }
 
-    public HilbertNode(Tree tree, Node parent, double[] lowerCorner, double[] upperCorner, Node[] children, Object[] objects, double[][] coordinates) {
+    public HilbertNode(Tree tree, Node parent, double[] lowerCorner, double[] upperCorner, Node[] children, Object[] objects, double[][] coordinates) throws IOException {
         super(tree, parent, lowerCorner, upperCorner, children, null, null);
         setUserProperty(PROP_ISLEAF, false);
         setUserProperty(PROP_HILBERT_ORDER, 0);
@@ -103,7 +105,7 @@ public class HilbertNode extends DefaultNode {
      * {@inheritDoc }.
      */
     @Override
-    public void addElement(Object object, double... coordinate) {
+    public void addElement(Object object, double... coordinate) throws IOException{
         final int dimension = coordinate.length >> 1;
         assert tree.getCrs().getCoordinateSystem().getDimension() == (dimension) : "dimension between coordinates and tree crs should be same.";
         final Node parent = getParent();
@@ -161,7 +163,7 @@ public class HilbertNode extends DefaultNode {
      * {@inheritDoc }. 
      */
     @Override
-    public boolean isFull() {
+    public boolean isFull() throws IOException {
         if (isLeaf()) {
             for (int i = 0, s = getChildCount(); i < s; i++) {
                 if (!getChild(i).isFull()) {
@@ -181,7 +183,7 @@ public class HilbertNode extends DefaultNode {
      * @param coordinate boundary of element which will be insert.
      * @return Return the appropriate table index of Hilbert cell else return -1 if all cell are full.
      */
-    private int getAppropriateCellIndex(double... coordinate) {
+    private int getAppropriateCellIndex(double... coordinate) throws IOException {
         if ((Integer) getUserProperty(PROP_HILBERT_ORDER) < 1) {//only one cell.
             return (children[0].isFull()) ? -1 : 0;
         }
@@ -201,7 +203,7 @@ public class HilbertNode extends DefaultNode {
      * @throws IllegalStateException if no another cell is find.
      * @return index of another subnode.
      */
-    private int findCell(int index) {
+    private int findCell(int index) throws IOException {
         if (!isLeaf()) throw new IllegalArgumentException("impossible to find another leaf in Node which isn't LEAF tree");
         final int siz   = getChildCount();
         assert (index < siz) : "wrong index in findAnotherCell"; 
@@ -224,7 +226,7 @@ public class HilbertNode extends DefaultNode {
      * {@inheritDoc }. 
      */
     @Override
-    protected double[] calculateBounds() {
+    protected double[] calculateBounds() throws IOException {
         double[] boundary = null;    
         final int s = getChildCount();
         for(int i = 0; i < s; i++) {
@@ -245,9 +247,14 @@ public class HilbertNode extends DefaultNode {
      */
     @Override
     public String toString() {
-        String strparent =  (parent == null)?"null":String.valueOf(parent.hashCode());
-        return Trees.toString(Classes.getShortClassName(this)+" : "+this.hashCode()+" parent : "+strparent
-                + " leaf : "+isLeaf()+ " userPropLeaf : "+(Boolean)getUserProperty(PROP_ISLEAF), Arrays.asList(children));
+        try {
+            String strparent =  (parent == null)?"null":String.valueOf(parent.hashCode());
+            return Trees.toString(Classes.getShortClassName(this)+" : "+this.hashCode()+" parent : "+strparent
+                    + " leaf : "+isLeaf()+ " userPropLeaf : "+(Boolean)getUserProperty(PROP_ISLEAF), Arrays.asList(children));
+        } catch (IOException ex) {
+            Logger.getLogger(HilbertNode.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
     
     /**
@@ -292,7 +299,7 @@ public class HilbertNode extends DefaultNode {
      * @throws IllegalArgumentException if entry is null.
      * @return integer the entry Hilbert order.
      */
-    private int getHVOfEntry(double[] objectBoundary) {
+    private int getHVOfEntry(double[] objectBoundary) throws IOException {
         ArgumentChecks.ensureNonNull("impossible to define Hilbert coordinate with null entry", objectBoundary);
         final double[] ptCE = getMedian(objectBoundary);
         final double[] bound = getBoundary().clone();
@@ -320,7 +327,7 @@ public class HilbertNode extends DefaultNode {
      * {@inheritDoc }.
      */
     @Override
-    public boolean checkInternal() {
+    public boolean checkInternal() throws IOException {
         if (isEmpty()) {
             //: "Node should never be empty.";
             throw new IllegalStateException("Candidate is empty.");

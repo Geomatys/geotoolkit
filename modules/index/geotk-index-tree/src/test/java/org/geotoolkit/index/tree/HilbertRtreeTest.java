@@ -16,13 +16,12 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.add;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.getCoords;
+import org.geotoolkit.index.tree.io.StoreIndexException;
 import static org.junit.Assert.assertTrue;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -30,7 +29,7 @@ import org.opengis.referencing.operation.TransformException;
  */
  abstract class HilbertRtreeTest extends SpatialTreeTest {
 
-    public HilbertRtreeTest(Tree tree) throws TransformException {
+    public HilbertRtreeTest(Tree tree) throws StoreIndexException, IOException {
         super(tree);
     }
     
@@ -39,7 +38,7 @@ import org.opengis.referencing.operation.TransformException;
      * {@inheritDoc}
      */
     @Override
-    public boolean checkBoundaryNode(final Node node) {
+    public boolean checkBoundaryNode(final Node node) throws IOException {
         double[] globalEnv = null;
         final int size = node.getChildCount();
         if (node.isLeaf()) {
@@ -69,11 +68,11 @@ import org.opengis.referencing.operation.TransformException;
     }
 
     @Override
-    protected boolean checkTreeElts(Tree tree) {
+    protected boolean checkTreeElts(Tree tree) throws IOException {
         return (tree.getElementsNumber() == countEltsInHilbertNode(tree.getRoot(), 0));
     }
     
-    private static int countEltsInHilbertNode(final Node candidate, int count) {
+    private static int countEltsInHilbertNode(final Node candidate, int count) throws IOException {
         final int size = candidate.getChildCount();
         if (candidate.isLeaf()) {
             for (int i = 0; i < size; i++) {
@@ -91,7 +90,7 @@ import org.opengis.referencing.operation.TransformException;
     }
     
     @Override
-    protected boolean checkElementInsertion(final Node candidate, List<Envelope> listRef) {
+    protected boolean checkElementInsertion(final Node candidate, List<double[]> listRef) throws IOException {
         final int siz = candidate.getChildCount();
         if (candidate.isLeaf()) {
             for (int i = 0; i < siz; i++) {
@@ -100,11 +99,11 @@ import org.opengis.referencing.operation.TransformException;
                 for (int j = 0, sc = cuCell.getCoordsCount(); j < sc; j++) {
                     Object cuObj = cuCell.getObject(j);
                     double[] coords = cuCell.getCoordinate(j);
-                    assertTrue(Arrays.equals(coords, getCoords((Envelope)cuObj)));
+                    assertTrue(Arrays.equals(coords, (double[])cuObj));
                     boolean found = false;
                     for (int il = 0, s = listRef.size(); il < s; il++) {
                         if (cuObj == listRef.get(il)) {
-                            if (Arrays.equals(coords, getCoords(listRef.get(il)))) {
+                            if (Arrays.equals(coords, listRef.get(il))) {
                                 found = true;
                                 break;
                             }

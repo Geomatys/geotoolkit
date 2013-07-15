@@ -47,6 +47,7 @@ import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.index.tree.Tree;
+import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.LuceneUtils;
@@ -411,6 +412,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             LOGGER.log(Level.WARNING, "CorruptIndexException while indexing document: " + ex.getMessage(), ex);
         } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "IOException while indexing document: " + ex.getMessage(), ex);
+        } catch (StoreIndexException ex) {
+            LOGGER.log(Level.WARNING, "StoreIndexException while indexing document: " + ex.getMessage(), ex);
         }
     }
 
@@ -506,6 +509,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             } catch (FactoryException ex) {
                 LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
             } catch (MismatchedReferenceSystemException ex) {
+                LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
+            } catch (StoreIndexException ex) {
                 LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
             }
         }

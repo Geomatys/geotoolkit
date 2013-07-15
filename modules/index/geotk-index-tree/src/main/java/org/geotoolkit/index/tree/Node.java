@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.index.tree;
 
-import org.apache.sis.util.ArgumentChecks;
+import java.io.IOException;
 /**
  * Create "generic" Node.
  *
@@ -33,7 +33,7 @@ public abstract class Node {
     protected final Tree tree;
     
     public Node(Tree tree) {
-        ArgumentChecks.ensureNonNull("tree", tree);
+//        ArgumentChecks.ensureNonNull("tree", tree);
         this.tree = tree;
     }
 
@@ -90,14 +90,14 @@ public abstract class Node {
      * 
      * @param node will be added.
      */
-    public abstract void addChild(Node node);
+    public abstract void addChild(Node node) throws IOException;
     
     /**
      * Add some of sug-node.
      * 
      * @param nodes sub-node table.
      */
-    public abstract void addChildren(Node[] nodes);
+    public abstract void addChildren(Node[] nodes) throws IOException;
     
     /**
      * Return sub-node (child) at index i.
@@ -112,7 +112,7 @@ public abstract class Node {
      * 
      * @return all sub-nodes within this Node. 
      */
-    public abstract Node[] getChildren();
+    public abstract Node[] getChildren() throws IOException;
     
     /**
      * Remove sub-node from this Node at i index.
@@ -160,7 +160,7 @@ public abstract class Node {
      * @param object object which will be stored.
      * @param coordinate object coordinates.
      */
-    public abstract void addElement(Object object, double... coordinate);//set element et stock
+    public abstract void addElement(Object object, double... coordinate) throws IOException;//set element et stock
     
     /**
      * Add some of element in this Node.
@@ -169,7 +169,7 @@ public abstract class Node {
      * @param coordinates some of respective object coordinates.
      * @throws IllegalArgumentException if objects and coordinates table haven't got same length.
      */
-    public abstract void addElements(Object[] objects, double[][] coordinates);
+    public abstract void addElements(Object[] objects, double[][] coordinates) throws IOException;
     
     /**
      * Remove and return object at index i in this Node.
@@ -233,14 +233,14 @@ public abstract class Node {
      * 
      * @return {@code true} if Node is consistent from some of rules.
      */
-    public abstract boolean checkInternal();
+    public abstract boolean checkInternal() throws IOException;
     
     /**
      * A leaf is a {@code Node} at extremity of {@code Tree} which contains only entries.
      *
      * @return true if it is a leaf else false (branch).
      */
-    public boolean isLeaf() {
+    public boolean isLeaf() throws IOException {
         final Object userPropIsLeaf = getUserProperty(PROP_ISLEAF);
         if (userPropIsLeaf != null) {
             return (Boolean)userPropIsLeaf;
@@ -268,7 +268,7 @@ public abstract class Node {
      * @return true if node elements number equals or overflow max elements
      *         number autorized by {@code Tree} else false.
      */
-    public boolean isFull() {
+    public boolean isFull() throws IOException {
         final Object userPropIsLeaf = getUserProperty(PROP_ISLEAF);
         if (Boolean.TRUE.equals(userPropIsLeaf)) {
             for(int i = 0, s = getChildCount(); i < s; i++){
@@ -301,7 +301,7 @@ public abstract class Node {
      * </font></blockquote>
      * @return boundary.
      */
-    public double[] getBoundary() {
+    public double[] getBoundary() throws IOException {
         double[] env = getBound();
         if (env != null) {
             return env;
@@ -323,7 +323,7 @@ public abstract class Node {
     /**
      * Compute {@code Node} boundary from stocked sub-node or entries .
      */
-    protected double[] calculateBounds() {
+    protected double[] calculateBounds() throws IOException {
         double[] boundary = null;    
         final int s;
         if (isLeaf()) {

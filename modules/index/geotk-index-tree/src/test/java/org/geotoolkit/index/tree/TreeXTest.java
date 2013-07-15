@@ -16,11 +16,13 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.filter.SpatialFilterType;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
+import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeX;
 import org.geotoolkit.index.tree.star.StarRTree;
@@ -41,7 +43,7 @@ public class TreeXTest extends TreeTest {
     TreeVisitor defVisit = new DefaultTreeVisitor(listSearch);
     Tree tree = new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D);
 
-    public TreeXTest() {
+    public TreeXTest() throws StoreIndexException, IOException {
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);
         for(int z = 0; z<=200; z+=20) {
             for(int y = 0; y<=200; y+=20) {
@@ -54,7 +56,7 @@ public class TreeXTest extends TreeTest {
     }
 
     @Test
-    public void testContains() {
+    public void testContains() throws StoreIndexException, IOException {
         final List<Envelope> listRef = new ArrayList<Envelope>();
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);
         geTemp.setEnvelope(115, 135, 35, 125, 145, 45);
@@ -69,7 +71,7 @@ public class TreeXTest extends TreeTest {
     }
 
     @Test
-    public void testDisjoint() {
+    public void testDisjoint() throws StoreIndexException, IOException {
         final List<Envelope> listRef = new ArrayList<Envelope>();
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);
         for(int z = 0; z<=100; z+=20) {
@@ -90,7 +92,7 @@ public class TreeXTest extends TreeTest {
     }
 
     @Test
-    public void testWithin() {
+    public void testWithin() throws StoreIndexException, IOException {
         final List<Envelope> listRef = new ArrayList<Envelope>();
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);
         for(int z = 0; z<=200; z+=20) {
@@ -109,7 +111,7 @@ public class TreeXTest extends TreeTest {
     }
 
     @Test
-    public void testTouches() {
+    public void testTouches() throws StoreIndexException, IOException {
         final List<Envelope> listRef = new ArrayList<Envelope>();
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);
         for(int z = 0; z<=200; z+=20) {
@@ -130,7 +132,7 @@ public class TreeXTest extends TreeTest {
     }
 
     @Test
-    public void testEquals() {
+    public void testEquals() throws StoreIndexException, IOException {
         final List<Envelope> listRef = new ArrayList<Envelope>();
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);
         geTemp.setEnvelope(115, 135, 35, 125, 145, 45);
@@ -145,7 +147,7 @@ public class TreeXTest extends TreeTest {
     }
 
     @Test
-    public void testOverlaps() {
+    public void testOverlaps() throws StoreIndexException, IOException {
         final List<Envelope> listRef = new ArrayList<Envelope>();
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);
         for(int z = 0; z<=200; z+=20){

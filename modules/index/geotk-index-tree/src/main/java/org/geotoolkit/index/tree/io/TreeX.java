@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.index.tree.io;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.util.ArgumentChecks;
@@ -45,7 +46,7 @@ public final class TreeX {
      * @see SpatialFilterType
      */
     @Deprecated
-    public static void search(final Tree tree, final Envelope regionSearch, final SpatialFilterType logicFilter, final TreeVisitor visitor) {
+    public static void search(final Tree tree, final Envelope regionSearch, final SpatialFilterType logicFilter, final TreeVisitor visitor) throws StoreIndexException {
         ArgumentChecks.ensureNonNull("TreeX search : tree", tree);
         ArgumentChecks.ensureNonNull("TreeX search : Envelope", regionSearch);
         ArgumentChecks.ensureNonNull("TreeX search : SpatialFilterType", logicFilter);
@@ -53,77 +54,6 @@ public final class TreeX {
         if (!CRS.equalsIgnoreMetadata(regionSearch.getCoordinateReferenceSystem(), tree.getCrs())) 
             throw new IllegalArgumentException("TreeX search : the 2 CRS within tree and region search should be equals.");
         search(tree, getCoords(regionSearch), logicFilter, visitor);
-        
-//        final List listSearch = new ArrayList<Envelope>();
-//        final GeneralEnvelope areaSearch = new GeneralEnvelope(regionSearch);
-//        TreeVisitor defVisitor = new DefaultTreeVisitor(listSearch);
-//        switch(logicFilter){
-//            case INTERSECTS : {
-//                tree.search(regionSearch, visitor);
-//            } break;
-//            case BBOX : {
-//                tree.search(regionSearch, visitor);
-//            } break;
-//            case CONTAINS : {
-//                tree.search(areaSearch, defVisitor);
-//                for(int i = 0; i < listSearch.size(); i++){
-//                    final Envelope env = (Envelope) listSearch.get(i);
-//                    if(new GeneralEnvelope(env).contains(areaSearch, true))visitor.visit(env);
-//                }
-//            } break;
-//            case DISJOINT : {
-//                tree.search(areaSearch, defVisitor);
-//                final List listRef = new ArrayList<Envelope>();
-//                final GeneralEnvelope rootBound = new GeneralEnvelope(tree.getCrs());
-//                rootBound.setEnvelope(tree.getRoot().getBoundary());
-//                tree.search(rootBound, new DefaultTreeVisitor(listRef));
-//                for(int i = 0; i < listRef.size(); i++) {
-//                    final Envelope envRef = (Envelope)listRef.get(i);
-//                    boolean find = false;
-//                    for(int j = 0; j < listSearch.size(); j++) {
-//                        final Envelope envSearch = (Envelope) listSearch.get(j);
-//                        if(envRef == envSearch){
-//                            find = true;
-//                            break;
-//                        }
-//                    }
-//                    if(!find)visitor.visit(envRef);
-//                }
-//            } break;
-//            case WITHIN : {
-//                tree.search(areaSearch, defVisitor);
-//                for(int i = 0; i < listSearch.size(); i++){
-//                    final Envelope env = (Envelope) listSearch.get(i);
-//                    if(areaSearch.contains(env, true))visitor.visit(env);
-//                }
-//            } break;
-//            case TOUCHES : {
-//                tree.search(areaSearch, defVisitor);
-//                for(int i = 0; i < listSearch.size(); i++){
-//                    final Envelope env = (Envelope) listSearch.get(i);
-//                    final GeneralEnvelope ge = new GeneralEnvelope(env);
-//                    if(ge.intersects(areaSearch, true)&&!ge.intersects(areaSearch, false))visitor.visit(env);
-//                }
-//            } break;
-//
-//            case EQUALS : {
-//                tree.search(areaSearch, defVisitor);
-//                for(int i = 0; i < listSearch.size(); i++){
-//                    final Envelope env = (Envelope) listSearch.get(i);
-//                    final GeneralEnvelope ge = new GeneralEnvelope(env);
-//                    if(ge.equals(areaSearch, 1E-9, true))visitor.visit(env);
-//                }
-//            } break;
-//            case OVERLAPS : {
-//                tree.search(areaSearch, defVisitor);
-//                for(int i = 0; i < listSearch.size(); i++){
-//                    final Envelope env = (Envelope) listSearch.get(i);
-//                    final GeneralEnvelope ge = new GeneralEnvelope(env);
-//                    if(ge.intersects(areaSearch, false)&&!ge.contains(areaSearch, true)&&!areaSearch.contains(ge, true))visitor.visit(env);
-//                }
-//            } break;
-//            default : throw new IllegalStateException("not implemented yet");
-//        }
     }
     
     /**
@@ -135,7 +65,7 @@ public final class TreeX {
      * @param visitor
      * @see SpatialFilterType
      */
-    public static void search(final Tree tree, final double[] regionSearch, final SpatialFilterType logicFilter, final TreeVisitor visitor) {
+    public static void search(final Tree tree, final double[] regionSearch, final SpatialFilterType logicFilter, final TreeVisitor visitor) throws StoreIndexException {
         final List listSearch = new ArrayList();
         TreeVisitor defVisitor = new DefaultTreeVisitor(listSearch);
         switch(logicFilter){
@@ -155,7 +85,11 @@ public final class TreeX {
             case DISJOINT : {
                 tree.search(regionSearch, defVisitor);
                 final List listRef = new ArrayList<Envelope>();
-                tree.search(tree.getRoot().getBoundary(), new DefaultTreeVisitor(listRef));
+                try {
+                    tree.search(tree.getRoot().getBoundary(), new DefaultTreeVisitor(listRef));
+                } catch (IOException ex) {
+                    throw new StoreIndexException("TreeX.search() : during disjoint case impossible to define root boundary.", ex);
+                }
                 for(int i = 0; i < listRef.size(); i++) {
                     final Envelope envRef = (Envelope)listRef.get(i);
                     boolean find = false;

@@ -40,6 +40,7 @@ import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeX;
 import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.index.tree.io.StoreIndexException;
 
 import static org.geotoolkit.lucene.LuceneUtils.*;
         
@@ -116,6 +117,13 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
                         treeSearch = true;
                     } catch (FactoryException ex) {
                         throw new IOException(ex);
+                    } catch (StoreIndexException ex) {
+                        Throwable cause = ex.getCause();
+                        if (cause instanceof IOException) {
+                            throw (IOException) cause;
+                        } else {
+                            throw new IOException(ex);
+                        }
                     }
                 } else {
                     LOGGER.log(Level.WARNING, "Not a literal for spatial filter:{0}", sp.getExpression2());
@@ -126,19 +134,26 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
                 if (sp.getExpression2() instanceof Literal) {
                     final Literal lit = (Literal) sp.getExpression2();
                     final Envelope boundFilter = getReprojectedEnvelope(lit.getValue(), tree.getCrs());
-
-                    if (filterType == SpatialFilterType.CROSSES || !envelopeOnly) {
-                        if (filterType == SpatialFilterType.DISJOINT) {
-                            reverse = true;
+                    try {
+                        if (filterType == SpatialFilterType.CROSSES || !envelopeOnly) {
+                            if (filterType == SpatialFilterType.DISJOINT) {
+                                reverse = true;
+                            }
+                            tree.search(boundFilter, treeVisitor);
+                            treeSearch = true;
+                            envelopeOnly = false;
+                        } else {
+                            TreeX.search(tree, boundFilter, filterType, treeVisitor);
+                            treeSearch = true;
                         }
-                        tree.search(boundFilter, treeVisitor);
-                        treeSearch = true;
-                        envelopeOnly = false;
-                    } else {
-                        TreeX.search(tree, boundFilter, filterType, treeVisitor);
-                        treeSearch = true;
+                    } catch (StoreIndexException ex) {
+                        Throwable cause = ex.getCause();
+                        if (cause instanceof IOException) {
+                            throw (IOException) cause;
+                        } else {
+                            throw new IOException(ex);
+                        }
                     }
-
                 } else {
                     LOGGER.log(Level.WARNING, "Not a literal for spatial filter:{0}", sp.getExpression2());
                 }

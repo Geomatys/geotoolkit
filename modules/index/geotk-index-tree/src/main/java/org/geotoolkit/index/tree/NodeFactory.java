@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.io.IOException;
+
 /**
  * Create {@code Node}.
  *
@@ -34,5 +36,5 @@ public interface NodeFactory {
      */
     
     Node createNode(final Tree tree, final Node parent, final double[] lowerCorner, final double[] upperCorner, 
-            final Node[] children, final Object[] objects, final double[][] objectsCoordinates);
+            final Node[] children, final Object[] objects, final double[][] objectsCoordinates) throws IOException;
 }
