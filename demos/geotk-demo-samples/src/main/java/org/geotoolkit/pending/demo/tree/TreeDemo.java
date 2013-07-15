@@ -12,6 +12,7 @@ import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
+import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.io.TreeReader;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeWriter;
@@ -35,7 +36,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class TreeDemo {
 
-    public static void main(String[] args) throws TransformException, IOException, ClassNotFoundException {
+    public static void main(String[] args) throws TransformException, IOException, ClassNotFoundException, StoreIndexException {
         Demos.init();
         
         /**
