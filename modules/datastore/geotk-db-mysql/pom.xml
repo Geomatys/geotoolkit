@@ -7,7 +7,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>geotk-jdbc</artifactId>
+    <artifactId>featurestore</artifactId>
     <version>4.x-SNAPSHOT</version>
   </parent>
 
@@ -16,9 +16,9 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>geotk-jdbc-mysql</artifactId>
+  <artifactId>geotk-db-mysql</artifactId>
   <packaging>jar</packaging>
-  <name>FeatureStore JDBC MySQL</name>
+  <name>FeatureStore MySQL</name>
 
   <description>
     FeatureStore for MySQL database.
@@ -44,25 +44,32 @@
   <dependencies>
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-jdbc-core</artifactId>
+      <artifactId>geotk-db-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>5.1.16</version>
+    </dependency>
+    <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.iharder</groupId>
+      <artifactId>base64</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-jdbc-core</artifactId>
+      <artifactId>geotk-db-core</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-epsg-javadb</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

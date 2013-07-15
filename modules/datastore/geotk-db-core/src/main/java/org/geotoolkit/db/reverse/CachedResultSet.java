@@ -35,7 +35,14 @@ public class CachedResultSet {
     
     private final List<Map> records = new ArrayList<Map>();
 
+    public CachedResultSet() {
+    }
+    
     public CachedResultSet(ResultSet rs, String ... columns) throws SQLException {        
+        append(rs, columns);
+    }
+    
+    public void append(ResultSet rs, String ... columns) throws SQLException {        
         while(rs.next()){
             final Map record = new HashMap();
             for(String col : columns){

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011, Geomatys
+ *    (C) 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,23 +14,19 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.mysql;
+package org.geotoolkit.db.mysql;
 
-import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
-import org.geotoolkit.data.jdbc.PreparedFilterToSQL;
+import org.geotoolkit.db.DefaultJDBCFeatureStore;
+import org.opengis.parameter.ParameterValueGroup;
 
-public class MySQLPSFilterToSql extends PreparedFilterToSQL {
+/**
+ *
+ * @author Johann Sorel (Geomatys)
+ */
+public class MySQLFeatureStore extends DefaultJDBCFeatureStore{
 
-    final FilterToSqlHelper helper;
-
-    public MySQLPSFilterToSql(final MySQLPSDialect dialect) {
-        super(dialect);
-        helper = new FilterToSqlHelper(this);
+    public MySQLFeatureStore(ParameterValueGroup params, String factoryId) {
+        super(params, factoryId);
     }
-
-    @Override
-    protected DefaultFilterCapabilities createFilterCapabilities() {
-        return FilterToSqlHelper.createFilterCapabilities();
-    }
-
+    
 }

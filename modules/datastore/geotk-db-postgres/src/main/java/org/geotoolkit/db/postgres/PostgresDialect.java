@@ -388,6 +388,11 @@ final class PostgresDialect extends AbstractSQLDialect{
     }
 
     @Override
+    public boolean supportGlobalMetadata() {
+        return true;
+    }
+    
+    @Override
     public FilterCapabilities getFilterCapabilities() {
         return FILTER_CAPABILITIES;
     }

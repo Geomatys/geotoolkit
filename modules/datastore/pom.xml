@@ -108,6 +108,7 @@
     <module>geotk-geojson</module>
     <module>geotk-db-core</module>
     <module>geotk-db-postgres</module>
+    <module>geotk-db-mysql</module>
     <module>geotk-s57</module>
     <module>geotk-mapinfo</module>
   </modules>

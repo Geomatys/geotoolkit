@@ -42,6 +42,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public interface SQLDialect {
     
+    boolean supportGlobalMetadata();
+    
     Version getVersion(String schema) throws SQLException;
     
     FilterCapabilities getFilterCapabilities();
