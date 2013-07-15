@@ -624,7 +624,7 @@
                 <keywords>true</keywords>        <!-- Adds HTML meta keyword tags to the generated files.        -->
                 <breakiterator>true</breakiterator>
                 <excludePackageNames>${javadoc.exclude}</excludePackageNames>
-                <stylesheetfile>src/main/javadoc/stylesheet.css</stylesheetfile>
+                <!-- stylesheetfile>src/main/javadoc/stylesheet.css</stylesheetfile -->
 
                 <!-- Custom taglets implemented in Java. -->
                 <taglets>
