@@ -31,7 +31,13 @@ public class Version {
     protected final String label;
     protected final Date date;
 
-    public Version(VersionHistory history, String label, Date date) {
+    /**
+     * Create a Version.
+     * @param history mandatory instance of {@link VersionHistory} for exemple a {@link VersionControl}
+     * @param label mandatory arbitrary name for the version
+     * @param date mandatory date of the version
+     */
+    public Version(final VersionHistory history, final String label, final Date date) {
         ArgumentChecks.ensureNonNull("history", history);
         ArgumentChecks.ensureNonNull("label", label);
         ArgumentChecks.ensureNonNull("date", date);
