@@ -182,7 +182,8 @@ public final class DataBaseModel {
         }
 
         clearCache();
-        schemas = new HashMap<String, SchemaMetaModel>();
+        schemas = new HashMap<>();
+        final SQLDialect dialect = store.getDialect();
 
         Connection cx = null;
         try {
@@ -207,26 +208,63 @@ public final class DataBaseModel {
                     Column.TYPE_NAME,
                     Column.IS_NULLABLE,
                     Column.IS_AUTOINCREMENT);
-            cachePrimaryKeys = new CachedResultSet(metadata.getPrimaryKeys(null, null, null),
-                    Column.TABLE_SCHEM,
-                    Column.TABLE_NAME,
-                    Column.COLUMN_NAME);
-            cacheImportedKeys = new CachedResultSet(metadata.getImportedKeys(null, null, null),
-                    ImportedKey.FKTABLE_SCHEM,
-                    ImportedKey.FKTABLE_NAME,
-                    ImportedKey.FKCOLUMN_NAME,
-                    ImportedKey.PKTABLE_SCHEM,
-                    ImportedKey.PKTABLE_NAME,
-                    ImportedKey.PKCOLUMN_NAME,
-                    ImportedKey.DELETE_RULE);
-            cacheExportedKeys = new CachedResultSet(metadata.getExportedKeys(null, null, null),
-                    ImportedKey.PKTABLE_SCHEM,
-                    ImportedKey.PKTABLE_NAME,
-                    ExportedKey.PKCOLUMN_NAME,
-                    ExportedKey.FKTABLE_SCHEM,
-                    ExportedKey.FKTABLE_NAME,
-                    ExportedKey.FKCOLUMN_NAME,
-                    ImportedKey.DELETE_RULE);
+            if(dialect.supportGlobalMetadata()){
+                cachePrimaryKeys = new CachedResultSet(metadata.getPrimaryKeys(null, null, null),
+                        Column.TABLE_SCHEM,
+                        Column.TABLE_NAME,
+                        Column.COLUMN_NAME);
+                cacheImportedKeys = new CachedResultSet(metadata.getImportedKeys(null, null, null),
+                        ImportedKey.FKTABLE_SCHEM,
+                        ImportedKey.FKTABLE_NAME,
+                        ImportedKey.FKCOLUMN_NAME,
+                        ImportedKey.PKTABLE_SCHEM,
+                        ImportedKey.PKTABLE_NAME,
+                        ImportedKey.PKCOLUMN_NAME,
+                        ImportedKey.DELETE_RULE);
+                cacheExportedKeys = new CachedResultSet(metadata.getExportedKeys(null, null, null),
+                        ImportedKey.PKTABLE_SCHEM,
+                        ImportedKey.PKTABLE_NAME,
+                        ExportedKey.PKCOLUMN_NAME,
+                        ExportedKey.FKTABLE_SCHEM,
+                        ExportedKey.FKTABLE_NAME,
+                        ExportedKey.FKCOLUMN_NAME,
+                        ImportedKey.DELETE_RULE);
+            }else{
+                //we have to loop ourself on all schema and tables to collect informations
+                cachePrimaryKeys = new CachedResultSet();
+                cacheImportedKeys = new CachedResultSet();
+                cacheExportedKeys = new CachedResultSet();
+                
+                final Iterator<Map> ite = cacheSchemas.filter(Filter.INCLUDE);
+                while(ite.hasNext()) {
+                    final String schemaName = (String)ite.next().get(Schema.TABLE_SCHEM);
+                    final Filter filter = FF.equals(FF.property(Table.TABLE_SCHEM), FF.literal(schemaName));
+                    final Iterator<Map> tableite = cacheTables.filter(filter);
+                    while (tableite.hasNext()) {
+                        final Map info = tableite.next();
+                        cachePrimaryKeys.append(metadata.getPrimaryKeys(null, schemaName, (String)info.get(Table.TABLE_NAME)),
+                            Column.TABLE_SCHEM,
+                            Column.TABLE_NAME,
+                            Column.COLUMN_NAME);
+                        cacheImportedKeys.append(metadata.getImportedKeys(null, schemaName, (String)info.get(Table.TABLE_NAME)),
+                            ImportedKey.FKTABLE_SCHEM,
+                            ImportedKey.FKTABLE_NAME,
+                            ImportedKey.FKCOLUMN_NAME,
+                            ImportedKey.PKTABLE_SCHEM,
+                            ImportedKey.PKTABLE_NAME,
+                            ImportedKey.PKCOLUMN_NAME,
+                            ImportedKey.DELETE_RULE);
+                        cacheExportedKeys.append(metadata.getExportedKeys(null, schemaName, (String)info.get(Table.TABLE_NAME)),
+                            ImportedKey.PKTABLE_SCHEM,
+                            ImportedKey.PKTABLE_NAME,
+                            ExportedKey.PKCOLUMN_NAME,
+                            ExportedKey.FKTABLE_SCHEM,
+                            ExportedKey.FKTABLE_NAME,
+                            ExportedKey.FKCOLUMN_NAME,
+                            ImportedKey.DELETE_RULE);
+                    }
+                }
+            }
 
 
             ////////////////////////////////////////////////////////////////////////////////
