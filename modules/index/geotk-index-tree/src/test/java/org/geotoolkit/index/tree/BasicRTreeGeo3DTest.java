@@ -29,6 +29,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 public class BasicRTreeGeo3DTest extends SpatialTreeTest {
 
     public BasicRTreeGeo3DTest() throws StoreIndexException, IOException {
-        super(new BasicRTree(4, DefaultGeographicCRS.WGS84_3D, SplitCase.QUADRATIC));
+        super(DefaultGeographicCRS.WGS84_3D);
+        tree = new BasicRTree(4, crs, SplitCase.QUADRATIC, tEM);
     }
 }

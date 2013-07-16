@@ -30,6 +30,7 @@ import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 public class BasicRTree3DTest extends SpatialTreeTest {
 
     public BasicRTree3DTest() throws StoreIndexException, IOException {
-        super(new BasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.QUADRATIC));
+        super(DefaultEngineeringCRS.CARTESIAN_3D);
+        tree = new BasicRTree(4, crs, SplitCase.QUADRATIC, tEM);
     }
 }

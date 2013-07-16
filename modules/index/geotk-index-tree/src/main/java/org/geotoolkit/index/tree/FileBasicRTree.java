@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
@@ -30,6 +29,7 @@ import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import static org.geotoolkit.index.tree.basic.SplitCase.LINEAR;
 import static org.geotoolkit.index.tree.basic.SplitCase.QUADRATIC;
 import org.geotoolkit.index.tree.io.StoreIndexException;
+import org.geotoolkit.index.tree.io.TreeElementMapper;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -37,7 +37,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Remi Marechal(Geomatys).
  */
-public class FileBasicRTree extends AbstractTree {
+public class FileBasicRTree<E> extends AbstractTree<E> {
 
     /**
      * Number to identify tree file.
@@ -53,8 +53,8 @@ public class FileBasicRTree extends AbstractTree {
 //        
 //    }
 
-    public FileBasicRTree(final File outPut, final int maxElements, final CoordinateReferenceSystem crs, final SplitCase choice) throws StoreIndexException {
-        super(maxElements, crs, DefaultNodeFactory.INSTANCE);
+    public FileBasicRTree(final File outPut, final int maxElements, final CoordinateReferenceSystem crs, final SplitCase choice, final TreeElementMapper treeEltMap) throws StoreIndexException {
+        super(maxElements, crs, DefaultNodeFactory.INSTANCE, treeEltMap);
         ArgumentChecks.ensureNonNull("Create FileBasicRTree : outPut", outPut);
         ArgumentChecks.ensureNonNull("Create FileBasicRTree : CRS", crs);
         ArgumentChecks.ensureNonNull("Create FileBasicRTree : SplitCase choice", choice);
@@ -69,7 +69,7 @@ public class FileBasicRTree extends AbstractTree {
     }
     
     @Override
-    public void search(double[] regionSearch, TreeVisitor visitor) throws IllegalArgumentException, StoreIndexException {
+    public void search(double[] regionSearch, TreeVisitor visitor) throws StoreIndexException {
         // root node always begin at index 1 because 0 is reserved for no sibling or children.
         final Node root = getRoot();
         if (root != null && !root.isEmpty()) {
@@ -84,7 +84,7 @@ public class FileBasicRTree extends AbstractTree {
     
     @Override
     public void insert(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException {
-        super.insert(object, coordinates);
+//        super.insert(object, coordinates);
         try {
             eltCompteur++;
             Node root = getRoot();
@@ -677,11 +677,6 @@ public class FileBasicRTree extends AbstractTree {
         final Node root = getRoot();
         final String strRoot = (root == null || root.isEmpty()) ?"null":root.toString();
         return Classes.getShortClassName(this) + "\n" + strRoot;
-    }
-
-    @Override
-    public boolean delete(Object object, double... coordinates) throws IllegalArgumentException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

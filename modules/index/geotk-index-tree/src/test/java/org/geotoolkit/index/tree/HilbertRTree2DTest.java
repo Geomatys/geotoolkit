@@ -29,6 +29,7 @@ import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 public class HilbertRTree2DTest extends HilbertRtreeTest {
 
     public HilbertRTree2DTest() throws StoreIndexException, IOException {
-        super(new HilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D));
+        super(DefaultEngineeringCRS.CARTESIAN_2D);
+        tree = new HilbertRTree(4, 2, crs, tEM);
     }
 }

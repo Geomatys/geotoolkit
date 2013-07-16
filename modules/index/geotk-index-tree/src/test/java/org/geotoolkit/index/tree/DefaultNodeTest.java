@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
+import org.geotoolkit.index.tree.io.TreeElementMapperTest;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.junit.Assert;
 import static org.junit.Assert.*;
@@ -32,7 +33,7 @@ import org.junit.Test;
  */
 public class DefaultNodeTest {
     
-    private final static Tree TREE = new BasicRTree(5, DefaultEngineeringCRS.CARTESIAN_2D, SplitCase.LINEAR);
+    private final static Tree TREE = new BasicRTree(5, DefaultEngineeringCRS.CARTESIAN_2D, SplitCase.LINEAR, new TreeElementMapperTest(null));
     private DefaultNode dn;
     private String[] objects = new String[]{"(0,0)","(-3,-3)","(3,-3)","(3,3)","(-3,3)"};
     private double[][] coordinates = new double[][]{new double[]{-0.5, -0.5, 0.5, 0.5},

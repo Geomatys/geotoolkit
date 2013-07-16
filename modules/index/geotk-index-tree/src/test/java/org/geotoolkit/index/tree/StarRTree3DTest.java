@@ -29,6 +29,7 @@ import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 public class StarRTree3DTest extends SpatialTreeTest {
 
     public StarRTree3DTest() throws StoreIndexException, IOException {
-        super(new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D));
+        super(DefaultEngineeringCRS.CARTESIAN_3D);
+        tree = new StarRTree(4, crs, tEM);
     }
 }

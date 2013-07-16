@@ -22,7 +22,9 @@ import org.geotoolkit.index.tree.calculator.*;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.index.tree.io.StoreIndexException;
+import org.geotoolkit.index.tree.io.TreeElementMapper;
 import org.geotoolkit.index.tree.io.TreeVisitor;
+import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -33,7 +35,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel        (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public abstract class AbstractTree implements Tree{
+public abstract class AbstractTree<E> implements Tree<E> {
 
     protected NodeFactory nodefactory;
     private Node root;
@@ -41,105 +43,75 @@ public abstract class AbstractTree implements Tree{
     protected CoordinateReferenceSystem crs;
     protected Calculator calculator;
     protected int eltCompteur = 0;
+    protected final TreeElementMapper<E> treeEltMap;
+    private int treeIdentifier;
 
     /**
      * To create an R-Tree use {@linkplain TreeFactory}.
      */
     @Deprecated
-    protected AbstractTree(int nbMaxElement, CoordinateReferenceSystem crs, NodeFactory nodefactory) {
+    protected AbstractTree(int nbMaxElement, CoordinateReferenceSystem crs, NodeFactory nodefactory, TreeElementMapper<E> treeEltMap) {
         ArgumentChecks.ensureNonNull("Create Tree : CRS", crs);
         ArgumentChecks.ensureNonNull("Create NodeFactory : nodefactory", nodefactory);
         ArgumentChecks.ensureBetween("Create Tree : maxElements", 2, Integer.MAX_VALUE, nbMaxElement);
+        ArgumentChecks.ensureNonNull("Create TreeElementMapper : treeEltMap", treeEltMap);
+        this.treeEltMap = treeEltMap;
         this.calculator = new CalculatorND();
         this.nodefactory  = nodefactory;
         this.nbMaxElement = nbMaxElement;
         this.crs = crs;
+        treeIdentifier = 1;
     }
 
     /**
      * {@inheritDoc}
      */
-    @Deprecated
     @Override
     public void search(Envelope regionSearch, TreeVisitor visitor) throws IllegalArgumentException, StoreIndexException {
         search(DefaultTreeUtils.getCoords(regionSearch), visitor);
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    @Deprecated
-    @Override
-    public void insert(Envelope entry) throws IllegalArgumentException, StoreIndexException {
-        ArgumentChecks.ensureNonNull("insert : entry", entry);
-        final int dim = entry.getDimension();
-        for (int d = 0; d < dim; d++)
-            if (Double.isNaN(entry.getMinimum(d)) || Double.isNaN(entry.getMaximum(d)))
-                throw new IllegalArgumentException("entry Envelope contain at least one NAN value");
-        insert(entry, DefaultTreeUtils.getCoords(entry));
-    }
+    public abstract void search(double[] regionSearch, TreeVisitor visitor) throws StoreIndexException ;
+    
     
     /**
      * {@inheritDoc}
      */
     @Override
-    public void insertAll(Iterator<? extends Envelope> itr) throws StoreIndexException {
-        while (itr.hasNext()) {
-            insert(itr.next());
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Deprecated
-    @Override
-    public boolean delete(Envelope entry) throws IllegalArgumentException, StoreIndexException {
-        return delete(entry, DefaultTreeUtils.getCoords(entry));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Deprecated
-    @Override
-    public void deleteAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException, StoreIndexException{
-        while (itr.hasNext()) {
-            delete(itr.next());
-        }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Deprecated
-    @Override
-    public boolean remove(Envelope entry) throws IllegalArgumentException, StoreIndexException {
-        return remove(entry, DefaultTreeUtils.getCoords(entry));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Deprecated
-    @Override
-    public void removeAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException, StoreIndexException{
-        while (itr.hasNext()) {
-            remove(itr.next());
-        }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void insert(Object object, double... coordinates) throws IllegalArgumentException , StoreIndexException{
+    public void insert(E object) throws IllegalArgumentException , StoreIndexException{
         ArgumentChecks.ensureNonNull("insert : object", object);
-        ArgumentChecks.ensureNonNull("insert : coordinates", coordinates);
+        final Envelope env = treeEltMap.getEnvelope(object);
+        if (!CRS.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()))
+            throw new IllegalArgumentException("During insertion element should have same CoordinateReferenceSystem as Tree.");
+        final double[] coordinates = DefaultTreeUtils.getCoords(env);
         for (double d : coordinates)
             if (Double.isNaN(d))
                 throw new IllegalArgumentException("coordinates contain at least one NAN value");
+        treeEltMap.setTreeIdentifier(object, treeIdentifier);
+        insert(treeIdentifier, coordinates);
+        treeIdentifier++;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public abstract void insert(Object object, double... coordinates) throws StoreIndexException;
+    
+    @Override
+    public boolean remove(E object) throws StoreIndexException {
+        ArgumentChecks.ensureNonNull("insert : object", object);
+        final Envelope env = treeEltMap.getEnvelope(object);
+        if (!CRS.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()))
+            throw new IllegalArgumentException("During insertion element should have same CoordinateReferenceSystem as Tree.");
+        final double[] coordinates = DefaultTreeUtils.getCoords(env);
+        for (double d : coordinates)
+            if (Double.isNaN(d))
+                throw new IllegalArgumentException("coordinates contain at least one NAN value");
+        final int treeID = treeEltMap.getTreeIdentifier(object);
+        return remove(treeID, coordinates);
+    }
+    
+    protected abstract boolean remove(Object object, double... coordinates) throws StoreIndexException;
     
     /**
      * {@inheritDoc}
@@ -163,6 +135,10 @@ public abstract class AbstractTree implements Tree{
     @Override
     public void setRoot(Node root) throws StoreIndexException{
         this.root = root;
+        if (root == null) {
+            treeEltMap.clear();
+            treeIdentifier = 1;
+        }
     }
     /**
      * {@inheritDoc}
@@ -217,6 +193,11 @@ public abstract class AbstractTree implements Tree{
      */
     public void setElementsNumber(int value) {
         this.eltCompteur = value;
+    }
+
+    @Override
+    public TreeElementMapper getTreeElementMapper() {
+        return treeEltMap;
     }
     
     @Override
