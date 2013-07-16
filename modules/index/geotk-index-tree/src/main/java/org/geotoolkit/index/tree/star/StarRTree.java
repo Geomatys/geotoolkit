@@ -31,6 +31,7 @@ import org.geotoolkit.index.tree.NodeFactory;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.index.tree.io.StoreIndexException;
+import org.geotoolkit.index.tree.io.TreeElementMapper;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
@@ -57,8 +58,8 @@ public class StarRTree extends AbstractTree {
      * @param nodefactory  : made to create tree {@code Node}.
      * @return R*Tree.
      */
-    public StarRTree(int nbMaxElement, CoordinateReferenceSystem crs) {
-        this(nbMaxElement, crs, DefaultNodeFactory.INSTANCE);
+    public StarRTree(int nbMaxElement, CoordinateReferenceSystem crs, TreeElementMapper treeEltMap) {
+        this(nbMaxElement, crs, DefaultNodeFactory.INSTANCE, treeEltMap);
     }
 
     /**
@@ -70,8 +71,8 @@ public class StarRTree extends AbstractTree {
      * @return R*Tree.
      */
     @Deprecated
-    public StarRTree(int nbMaxElement, CoordinateReferenceSystem crs, NodeFactory nodefactory) {
-        super(nbMaxElement, crs, nodefactory);
+    public StarRTree(int nbMaxElement, CoordinateReferenceSystem crs, NodeFactory nodefactory, TreeElementMapper treeEltMap) {
+        super(nbMaxElement, crs, nodefactory, treeEltMap);
     }
     
     /**
@@ -96,7 +97,7 @@ public class StarRTree extends AbstractTree {
      */
     @Override
     public void insert(Object object, double... coordinates) throws StoreIndexException {
-        super.insert(object, coordinates);
+//        super.insert(object, coordinates);
         super.eltCompteur++;
         final Node root       = getRoot();
         try{
@@ -110,21 +111,21 @@ public class StarRTree extends AbstractTree {
         }
     }
         
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public boolean delete(Object object, double... coordinates) throws StoreIndexException {
-        ArgumentChecks.ensureNonNull("remove : object", object);
-        ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
-        final Node root = getRoot();
-        if (root != null) try {
-            return deleteNode(root, object, coordinates);
-        } catch (IOException ex) {
-            throw new StoreIndexException(ex);
-        }
-        return false;
-    }
+//    /**
+//     * {@inheritDoc }.
+//     */
+//    @Override
+//    public boolean delete(Object object, double... coordinates) throws StoreIndexException {
+//        ArgumentChecks.ensureNonNull("remove : object", object);
+//        ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
+//        final Node root = getRoot();
+//        if (root != null) try {
+//            return deleteNode(root, object, coordinates);
+//        } catch (IOException ex) {
+//            throw new StoreIndexException(ex);
+//        }
+//        return false;
+//    }
         
     /**
      * {@inheritDoc }.
@@ -708,7 +709,7 @@ public class StarRTree extends AbstractTree {
                 assert (sc == candidate.getObjectCount()) :"removeNode : coordinates and objects stored should have same size.";
                 for (int i = sc - 1; i >= 0; i--) {
                     if (Arrays.equals(candidate.getCoordinate(i), coordinates)) { // faire un && logic
-                        if (object == candidate.getObject(i)) {
+                        if (object.equals(candidate.getObject(i))) {
                             candidate.removeCoordinate(i);
                             candidate.removeObject(i);
                             removed = true;

@@ -32,6 +32,7 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.Classes;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.io.StoreIndexException;
+import org.geotoolkit.index.tree.io.TreeElementMapper;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -60,8 +61,8 @@ public class HilbertRTree extends AbstractTree {
      * @throws IllegalArgumentException if maxElements <= 0.
      * @throws IllegalArgumentException if hilbertOrder <= 0.
      */
-    public HilbertRTree(int nbMaxElement, int hilbertOrder, CoordinateReferenceSystem crs) {
-        this(nbMaxElement, hilbertOrder, crs, DefaultNodeFactory.INSTANCE);
+    public HilbertRTree(int nbMaxElement, int hilbertOrder, CoordinateReferenceSystem crs, TreeElementMapper treeEltMap) {
+        this(nbMaxElement, hilbertOrder, crs, DefaultNodeFactory.INSTANCE, treeEltMap);
     }
 
     /**
@@ -83,8 +84,8 @@ public class HilbertRTree extends AbstractTree {
      * @throws IllegalArgumentException if hilbertOrder <= 0.
      */
     @Deprecated
-    public HilbertRTree(int nbMaxElement, int hilbertOrder, CoordinateReferenceSystem crs, NodeFactory nodefactory) {
-        super(nbMaxElement, crs, nodefactory);
+    public HilbertRTree(int nbMaxElement, int hilbertOrder, CoordinateReferenceSystem crs, NodeFactory nodefactory, TreeElementMapper treeEltMap) {
+        super(nbMaxElement, crs, nodefactory, treeEltMap);
         ArgumentChecks.ensureStrictlyPositive("impossible to create Hilbert Rtree with order <= 0", hilbertOrder);
         this.hilbertOrder = hilbertOrder;
     }
@@ -126,7 +127,7 @@ public class HilbertRTree extends AbstractTree {
      */
     @Override
     public void insert(Object object, double... coordinates) throws StoreIndexException {
-        super.insert(object, coordinates);
+//        super.insert(object, coordinates);
         super.eltCompteur++;
         final Node root       = getRoot();
         try {
@@ -140,21 +141,21 @@ public class HilbertRTree extends AbstractTree {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean delete(Object object, double... coordinates) throws StoreIndexException {
-        ArgumentChecks.ensureNonNull("remove : object", object);
-        ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
-        final Node root = getRoot();
-        if (root != null) try {
-            return deleteHilbertNode(root, object, coordinates);
-        } catch (IOException ex) {
-            throw new StoreIndexException(ex);
-        }
-        return false;
-    }
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    public boolean delete(Object object, double... coordinates) throws StoreIndexException {
+//        ArgumentChecks.ensureNonNull("remove : object", object);
+//        ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
+//        final Node root = getRoot();
+//        if (root != null) try {
+//            return deleteHilbertNode(root, object, coordinates);
+//        } catch (IOException ex) {
+//            throw new StoreIndexException(ex);
+//        }
+//        return false;
+//    }
     
     /**
      * {@inheritDoc}
@@ -779,7 +780,7 @@ public class HilbertRTree extends AbstractTree {
                     if (!cuCell.isEmpty() && intersects(cuCell.getBoundary(), coordinates, true)) {
                         for (int j = cuCell.getCoordsCount() - 1; j >= 0; j--) {
                             if (Arrays.equals(coordinates, cuCell.getCoordinate(j))
-                             && cuCell.getObject(j) == object) {// by reference
+                             && cuCell.getObject(j).equals(object)) {// by reference
                                 cuCell.removeCoordinate(j);
                                 cuCell.removeObject(j);
                                 removed = true;
