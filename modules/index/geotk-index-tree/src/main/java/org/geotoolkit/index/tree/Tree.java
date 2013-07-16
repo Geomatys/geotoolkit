@@ -20,7 +20,6 @@ import java.io.IOException;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.io.TreeElementMapper;
-import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -46,7 +45,21 @@ public interface Tree<E> {
      * @param result List of Entr(y)(ies).
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
-    void search(Envelope regionSearch, TreeVisitor visitor) throws IllegalArgumentException, StoreIndexException;
+    int[] searchID(Envelope regionSearch) throws StoreIndexException;
+    
+//    /**
+//     * Find some {@code Entry} which intersect regionSearch parameter
+//     * and add them into result {@code List} parameter.
+//     *
+//     * <blockquote><font size=-1>
+//     * <strong>NOTE: if no result found, the list passed in parameter is unchanged.</strong>
+//     * </font></blockquote>
+//     *
+//     * @param regionSearch Define the region to find Shape within tree.
+//     * @param result List of Entr(y)(ies).
+//     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
+//     */
+//    Iterable<E> search(Envelope regionSearch) throws StoreIndexException;
     
     /**
      * Insert a {@code Entry} into Rtree.
@@ -54,7 +67,7 @@ public interface Tree<E> {
      * @param Entry to insert into tree.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
-    void insert(E object) throws IllegalArgumentException, StoreIndexException;
+    void insert(E object) throws StoreIndexException;
 
     /**
      * Find a {@code Envelope} (entry) from Iterator into the tree and delete it.
@@ -66,7 +79,7 @@ public interface Tree<E> {
      * @param Entry to delete.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
-    boolean remove(E object) throws IllegalArgumentException, StoreIndexException;
+    boolean remove(E object) throws StoreIndexException;
 
     TreeElementMapper<E> getTreeElementMapper();
     

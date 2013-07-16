@@ -23,9 +23,6 @@ import java.util.List;
 import org.geotoolkit.index.tree.*;
 import static org.geotoolkit.index.tree.Node.*;
 import org.geotoolkit.index.tree.calculator.Calculator;
-import static org.geotoolkit.index.tree.io.TVR.*;
-import org.geotoolkit.index.tree.io.TreeVisitor;
-import org.geotoolkit.index.tree.io.TreeVisitorResult;
 import org.geotoolkit.index.tree.NodeFactory;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
@@ -109,17 +106,21 @@ public class HilbertRTree extends AbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void search(double[] regionSearch, TreeVisitor visitor) throws StoreIndexException {
+    public int[] searchID(double[] regionSearch) throws StoreIndexException {
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
-        ArgumentChecks.ensureNonNull("search : visitor", visitor);
         final Node root = this.getRoot();
         if (root != null && !root.isEmpty()) {
+            currentLength   = 100;
+            currentPosition = 0;
+            tabSearch       = new int[currentLength];
             try {
-                searchHilbertNode(root, regionSearch, visitor);
+                searchHilbertNode(root, regionSearch);
+                return Arrays.copyOf(tabSearch, currentPosition);
             } catch (IOException ex) {
                 throw new StoreIndexException(ex);
             }
         }
+        return null;
     }
     
     /**
@@ -172,7 +173,7 @@ public class HilbertRTree extends AbstractTree {
         }
         return false;
     }
-
+    
     /**
      * Find all {@code Envelope} (entries) which intersect regionSearch
      * parameter.
@@ -180,10 +181,8 @@ public class HilbertRTree extends AbstractTree {
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
      */
-    public static TreeVisitorResult searchHilbertNode(final Node candidate, final double[] regionSearch, final TreeVisitor visitor) throws IOException {
+    public void searchHilbertNode(final Node candidate, final double[] regionSearch) throws IOException {
         assert candidate.checkInternal() : "searchHilbertNode : begin candidate not conform.";
-        final TreeVisitorResult tvr = visitor.filter(candidate);
-        if (isTerminate(tvr)) return tvr;
         final double[] bound = candidate.getBoundary();
         if (bound != null) {
             if (regionSearch == null) {
@@ -192,59 +191,130 @@ public class HilbertRTree extends AbstractTree {
                         final Node cuCell = candidate.getChild(i);
                         if (!cuCell.isEmpty()) {
                             for (int j = 0, sc = cuCell.getObjectCount(); j < sc; j++) {
-                                final TreeVisitorResult tvrTemp = visitor.visit(cuCell.getObject(j));
-                                if (isTerminate(tvrTemp))   return tvrTemp;
-                                if (isSkipSibling(tvrTemp)) break;
+                                if (currentPosition == currentLength) {
+                                    currentLength = currentLength << 1;
+                                    final int[] tabTemp = tabSearch;
+                                    tabSearch = new int[currentLength];
+                                    System.arraycopy(tabTemp, 0, tabSearch, 0, currentPosition);
+                                }
+                                tabSearch[currentPosition++] = (int) cuCell.getObject(j);
                             }
                         }
                     }
                 } else {
-                    if (!isSkipSubTree(tvr)) {
-                        for (int i = 0, s = candidate.getChildCount(); i < s; i++) {
-                            final TreeVisitorResult tvrTemp = searchHilbertNode(candidate.getChild(i), null, visitor);
-                            if (isTerminate(tvrTemp))   return tvrTemp;
-                            if (isSkipSibling(tvrTemp)) break;
-                        }
+                    for (int i = 0, s = candidate.getChildCount(); i < s; i++) {
+                        searchHilbertNode(candidate.getChild(i), null);
                     }
                 }
             } else {
                 if (contains(regionSearch, bound, true)) {
-                    searchHilbertNode(candidate, null, visitor);
+                    searchHilbertNode(candidate, null);
                 } else if(intersects(regionSearch, bound, true)) {
                     if (candidate.isLeaf()) {
                         for (int i = 0, s = candidate.getChildCount(); i < s; i++) {
                             final Node cuCell = candidate.getChild(i);
-                            TreeVisitorResult tvrTemp = null;
                             if (!cuCell.isEmpty()) {
                                 if (intersects(regionSearch, cuCell.getBoundary(), true)) {
                                     assert (candidate.getCoordsCount() == candidate.getObjectCount()) : "";
                                     for (int j = 0, sc = cuCell.getCoordsCount(); j < sc; j++) {
                                         final double[] cuCoords = cuCell.getCoordinate(j);
                                         if (intersects(regionSearch, cuCoords, true)) {
-                                            tvrTemp = visitor.visit(cuCell.getObject(j));
+                                            if (currentPosition == currentLength) {
+                                                currentLength = currentLength << 1;
+                                                final int[] tabTemp = tabSearch;
+                                                tabSearch = new int[currentLength];
+                                                System.arraycopy(tabTemp, 0, tabSearch, 0, currentPosition);
+                                            }
+                                            tabSearch[currentPosition++] = (int) cuCell.getObject(j);
                                         }
-                                        if (isTerminate(tvrTemp) && tvrTemp != null)   return tvrTemp;
-                                        if (isSkipSibling(tvrTemp) && tvrTemp != null) break;
                                     }
                                 }
                             }
-                            if (isSkipSibling(tvrTemp)) break;
                         }
                     }else{
-                        if (!isSkipSubTree(tvr)) {
-                            for (int i = 0, s = candidate.getChildCount(); i < s; i++) {
-                                final TreeVisitorResult tvrTemp = searchHilbertNode(candidate.getChild(i), regionSearch, visitor);
-                                if (isTerminate(tvrTemp))   return tvrTemp;
-                                if (isSkipSibling(tvrTemp)) break;
-                            }
+                        for (int i = 0, s = candidate.getChildCount(); i < s; i++) {
+                            searchHilbertNode(candidate.getChild(i), regionSearch);
                         }
                     }
                 }
             }
-            return tvr;
         }
-        return TreeVisitorResult.TERMINATE;
     }
+    
+    
+
+//    /**
+//     * Find all {@code Envelope} (entries) which intersect regionSearch
+//     * parameter.
+//     *
+//     * @param regionSearch area of search.
+//     * @param result {@code List} where is add search resulting.
+//     */
+//    public static TreeVisitorResult searchHilbertNode(final Node candidate, final double[] regionSearch, final TreeVisitor visitor) throws IOException {
+//        assert candidate.checkInternal() : "searchHilbertNode : begin candidate not conform.";
+//        final TreeVisitorResult tvr = visitor.filter(candidate);
+//        if (isTerminate(tvr)) return tvr;
+//        final double[] bound = candidate.getBoundary();
+//        if (bound != null) {
+//            if (regionSearch == null) {
+//                if (candidate.isLeaf()) {
+//                    for (int i = 0, s = candidate.getChildCount(); i < s; i++) {
+//                        final Node cuCell = candidate.getChild(i);
+//                        if (!cuCell.isEmpty()) {
+//                            for (int j = 0, sc = cuCell.getObjectCount(); j < sc; j++) {
+//                                final TreeVisitorResult tvrTemp = visitor.visit(cuCell.getObject(j));
+//                                if (isTerminate(tvrTemp))   return tvrTemp;
+//                                if (isSkipSibling(tvrTemp)) break;
+//                            }
+//                        }
+//                    }
+//                } else {
+//                    if (!isSkipSubTree(tvr)) {
+//                        for (int i = 0, s = candidate.getChildCount(); i < s; i++) {
+//                            final TreeVisitorResult tvrTemp = searchHilbertNode(candidate.getChild(i), null, visitor);
+//                            if (isTerminate(tvrTemp))   return tvrTemp;
+//                            if (isSkipSibling(tvrTemp)) break;
+//                        }
+//                    }
+//                }
+//            } else {
+//                if (contains(regionSearch, bound, true)) {
+//                    searchHilbertNode(candidate, null, visitor);
+//                } else if(intersects(regionSearch, bound, true)) {
+//                    if (candidate.isLeaf()) {
+//                        for (int i = 0, s = candidate.getChildCount(); i < s; i++) {
+//                            final Node cuCell = candidate.getChild(i);
+//                            TreeVisitorResult tvrTemp = null;
+//                            if (!cuCell.isEmpty()) {
+//                                if (intersects(regionSearch, cuCell.getBoundary(), true)) {
+//                                    assert (candidate.getCoordsCount() == candidate.getObjectCount()) : "";
+//                                    for (int j = 0, sc = cuCell.getCoordsCount(); j < sc; j++) {
+//                                        final double[] cuCoords = cuCell.getCoordinate(j);
+//                                        if (intersects(regionSearch, cuCoords, true)) {
+//                                            tvrTemp = visitor.visit(cuCell.getObject(j));
+//                                        }
+//                                        if (isTerminate(tvrTemp) && tvrTemp != null)   return tvrTemp;
+//                                        if (isSkipSibling(tvrTemp) && tvrTemp != null) break;
+//                                    }
+//                                }
+//                            }
+//                            if (isSkipSibling(tvrTemp)) break;
+//                        }
+//                    }else{
+//                        if (!isSkipSubTree(tvr)) {
+//                            for (int i = 0, s = candidate.getChildCount(); i < s; i++) {
+//                                final TreeVisitorResult tvrTemp = searchHilbertNode(candidate.getChild(i), regionSearch, visitor);
+//                                if (isTerminate(tvrTemp))   return tvrTemp;
+//                                if (isSkipSibling(tvrTemp)) break;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            return tvr;
+//        }
+//        return TreeVisitorResult.TERMINATE;
+//    }
 
     /**
      * Insert entry in {@code Node} in accordance with R-Tree properties.

@@ -30,7 +30,6 @@ import static org.geotoolkit.index.tree.basic.SplitCase.LINEAR;
 import static org.geotoolkit.index.tree.basic.SplitCase.QUADRATIC;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.io.TreeElementMapper;
-import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -69,17 +68,18 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
     }
     
     @Override
-    public void search(double[] regionSearch, TreeVisitor visitor) throws StoreIndexException {
+    public int[] searchID(double[] regionSearch) throws StoreIndexException {
         // root node always begin at index 1 because 0 is reserved for no sibling or children.
         final Node root = getRoot();
         if (root != null && !root.isEmpty()) {
             try {
-                tAF.search(((FileNode)root).getNodeId(), regionSearch, visitor);
+                return tAF.search(((FileNode)root).getNodeId(), regionSearch);
             } catch (IOException ex) {
                 throw new StoreIndexException(this.getClass().getName()+" impossible to find stored elements at "
                         +Arrays.toString(regionSearch)+" region search area.", ex);
             }
         }
+        return null;
     }
     
     @Override
@@ -645,8 +645,11 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
             trim (tAF.readNode(candidate.getParentId()));
         } else {
             // generaly root have some changes.
-            if (candidate.isEmpty()) setRoot(null);
-            else setRoot(candidate);
+            if (candidate.isEmpty()) {
+                setRoot(null);
+            } else {
+                setRoot(candidate);
+            }
         }
         if (reinsertListCoords != null) {
             assert (reinsertListObjects != null) : "trim : listObjects should not be null.";

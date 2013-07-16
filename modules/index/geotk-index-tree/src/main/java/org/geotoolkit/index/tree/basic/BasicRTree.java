@@ -28,9 +28,6 @@ import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
-import static org.geotoolkit.index.tree.io.TVR.*;
-import org.geotoolkit.index.tree.io.TreeVisitor;
-import org.geotoolkit.index.tree.io.TreeVisitorResult;
 import org.geotoolkit.index.tree.NodeFactory;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
@@ -82,15 +79,19 @@ public class BasicRTree extends AbstractTree {
      * {@inheritDoc }.
      */
     @Override
-    public void search(double[] regionSearch, TreeVisitor visitor) throws IllegalArgumentException, StoreIndexException {
+    public int[] searchID(double[] regionSearch) throws StoreIndexException {
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
-        ArgumentChecks.ensureNonNull("search : result", visitor);
         final Node root = getRoot();
         if (root != null && !root.isEmpty()) try {
-            nodeSearch(root, visitor, regionSearch);
+            currentLength   = 100;
+            currentPosition = 0;
+            tabSearch       = new int[currentLength];
+            nodeSearch(root, regionSearch);
+            return Arrays.copyOf(tabSearch, currentPosition);
         } catch (IOException ex) {
             throw new StoreIndexException(ex);
         }
+        return null;
     }
     
     /**
@@ -153,68 +154,123 @@ public class BasicRTree extends AbstractTree {
         return this.choice;
     }
 
-    
-    /**Find all {@code Envelope} which intersect regionSearch parameter in {@code Node}.
+    /**
+     * Find all {@code Envelope} which intersect regionSearch parameter in {@code Node}.
      *
      * @param candidate current Node
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
      */
-    private static TreeVisitorResult nodeSearch(final Node candidate, final TreeVisitor visitor, double... regionSearch) throws IOException{
-        final TreeVisitorResult tvr = visitor.filter(candidate);
-        if (isTerminate(tvr)) return tvr;
+    private void nodeSearch(final Node candidate, double... regionSearch) throws IOException{
         final double[] bound = candidate.getBoundary();
         if (bound != null) {
             if (regionSearch == null) {
                 if (candidate.isLeaf()) {
                     for (int i = 0, l = candidate.getObjectCount(); i < l; i++) {// avec les count pour eviter les pointeurs null
-                        final TreeVisitorResult tvrTemp = visitor.visit(candidate.getObject(i));
-                        if (isTerminate(tvrTemp))   return tvrTemp;
-                        if (isSkipSibling(tvrTemp)) break;
+                        if (currentPosition == currentLength) {
+                            currentLength = currentLength << 1;
+                            final int[] tabTemp = tabSearch;
+                            tabSearch = new int[currentLength];
+                            System.arraycopy(tabTemp, 0, tabSearch, 0, currentPosition);
+                        }
+                        tabSearch[currentPosition++] = (int) candidate.getObject(i);
                     }
                 } else {
-                    if (!isSkipSubTree(tvr)) {
-                        for (int i = 0, l = candidate.getChildCount(); i < l; i++) {//avec les counts pour eviter les pointeurs null
-                            final TreeVisitorResult tvrTemp = nodeSearch(candidate.getChild(i), visitor, null);//filter
-                            if (isTerminate(tvrTemp))   return tvrTemp;
-                            if (isSkipSibling(tvrTemp)) break;
-                        }
+                    for (int i = 0, l = candidate.getChildCount(); i < l; i++) {//avec les counts pour eviter les pointeurs null
+                        nodeSearch(candidate.getChild(i), null);
                     }
                 }
             } else {
                 final double[] rS = regionSearch.clone();
                 if (contains(rS, bound, true)) {
-                    nodeSearch(candidate, visitor, null);
+                    nodeSearch(candidate, null);
                 } else if (intersects(rS, bound, true)) {
                     if (candidate.isLeaf()) {
                         final int nbrElts = candidate.getCoordsCount();
                         //paranoiac assert
                         assert (nbrElts == candidate.getObjectCount()) : "search node : coordinate and object number should be similary";
-                        for (int i = 0, l = candidate.getCoordsCount(); i<l; i++) {
-                            TreeVisitorResult tvrTemp = null;
+                        for (int i = 0; i < nbrElts; i++) {
                             if (intersects(rS, candidate.getCoordinate(i), true)) {//a revoir pour passer un tableau a get coords et eviter la creation d'un nouveau
-                                tvrTemp = visitor.visit(candidate.getObject(i));
-                            }
-                            if (tvrTemp != null) {
-                                if (isTerminate(tvrTemp))   return tvrTemp;
-                                if (isSkipSibling(tvrTemp)) break;
+                                if (currentPosition == currentLength) {
+                                    currentLength = currentLength << 1;
+                                    final int[] tabTemp = tabSearch;
+                                    tabSearch = new int[currentLength];
+                                    System.arraycopy(tabTemp, 0, tabSearch, 0, currentPosition);
+                                }
+                                tabSearch[currentPosition++] = (int) candidate.getObject(i);
                             }
                         }
                     } else {
-                        if (!isSkipSubTree(tvr)) {
-                            for (int i = 0, l = candidate.getChildCount(); i < l; i++) {
-                                final TreeVisitorResult tvrTemp = nodeSearch(candidate.getChild(i), visitor, regionSearch);
-                                if (isTerminate(tvrTemp))   return tvrTemp;
-                                if (isSkipSibling(tvrTemp)) break;
-                            }
+                        for (int i = 0, l = candidate.getChildCount(); i < l; i++) {
+                            nodeSearch(candidate.getChild(i), regionSearch);
                         }
                     }
                 }
             }
-            return tvr;
         }
-        return TreeVisitorResult.TERMINATE;
     }
+    
+//    /**Find all {@code Envelope} which intersect regionSearch parameter in {@code Node}.
+//     *
+//     * @param candidate current Node
+//     * @param regionSearch area of search.
+//     * @param result {@code List} where is add search resulting.
+//     */
+//    private static TreeVisitorResult nodeSearch(final Node candidate, final TreeVisitor visitor, double... regionSearch) throws IOException{
+//        final TreeVisitorResult tvr = visitor.filter(candidate);
+//        if (isTerminate(tvr)) return tvr;
+//        final double[] bound = candidate.getBoundary();
+//        if (bound != null) {
+//            if (regionSearch == null) {
+//                if (candidate.isLeaf()) {
+//                    for (int i = 0, l = candidate.getObjectCount(); i < l; i++) {// avec les count pour eviter les pointeurs null
+//                        final TreeVisitorResult tvrTemp = visitor.visit(candidate.getObject(i));
+//                        if (isTerminate(tvrTemp))   return tvrTemp;
+//                        if (isSkipSibling(tvrTemp)) break;
+//                    }
+//                } else {
+//                    if (!isSkipSubTree(tvr)) {
+//                        for (int i = 0, l = candidate.getChildCount(); i < l; i++) {//avec les counts pour eviter les pointeurs null
+//                            final TreeVisitorResult tvrTemp = nodeSearch(candidate.getChild(i), visitor, null);//filter
+//                            if (isTerminate(tvrTemp))   return tvrTemp;
+//                            if (isSkipSibling(tvrTemp)) break;
+//                        }
+//                    }
+//                }
+//            } else {
+//                final double[] rS = regionSearch.clone();
+//                if (contains(rS, bound, true)) {
+//                    nodeSearch(candidate, visitor, null);
+//                } else if (intersects(rS, bound, true)) {
+//                    if (candidate.isLeaf()) {
+//                        final int nbrElts = candidate.getCoordsCount();
+//                        //paranoiac assert
+//                        assert (nbrElts == candidate.getObjectCount()) : "search node : coordinate and object number should be similary";
+//                        for (int i = 0, l = candidate.getCoordsCount(); i<l; i++) {
+//                            TreeVisitorResult tvrTemp = null;
+//                            if (intersects(rS, candidate.getCoordinate(i), true)) {//a revoir pour passer un tableau a get coords et eviter la creation d'un nouveau
+//                                tvrTemp = visitor.visit(candidate.getObject(i));
+//                            }
+//                            if (tvrTemp != null) {
+//                                if (isTerminate(tvrTemp))   return tvrTemp;
+//                                if (isSkipSibling(tvrTemp)) break;
+//                            }
+//                        }
+//                    } else {
+//                        if (!isSkipSubTree(tvr)) {
+//                            for (int i = 0, l = candidate.getChildCount(); i < l; i++) {
+//                                final TreeVisitorResult tvrTemp = nodeSearch(candidate.getChild(i), visitor, regionSearch);
+//                                if (isTerminate(tvrTemp))   return tvrTemp;
+//                                if (isSkipSibling(tvrTemp)) break;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            return tvr;
+//        }
+//        return TreeVisitorResult.TERMINATE;
+//    }
 
     /**
      * Insert new {@code Envelope} in branch and re-organize {@code Node} if it's necessary.

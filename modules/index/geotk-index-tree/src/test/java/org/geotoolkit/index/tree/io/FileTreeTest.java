@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import junit.framework.Assert;
@@ -31,7 +30,6 @@ import org.geotoolkit.index.tree.SpatialTreeTest;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.junit.Test;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.FileNode;
@@ -67,6 +65,7 @@ public class FileTreeTest extends SpatialTreeTest {
 
     @Override
     protected void insert() throws StoreIndexException, IOException {
+        tEM.clear();
         for (int i = 0, s = lSize/*lData.size()*/; i < s; i++) {
             final double[] envData = lData.get(i).clone();
 //            tree.insert(i+1, envData);
@@ -83,6 +82,7 @@ public class FileTreeTest extends SpatialTreeTest {
      */
     @Test
     @Override
+    @Ignore
     public void insertTest() throws StoreIndexException, IOException {
         tree.setRoot(null);
         insert();
@@ -92,9 +92,9 @@ public class FileTreeTest extends SpatialTreeTest {
         final GeneralEnvelope rG = new GeneralEnvelope(crs);
         rG.setEnvelope(gr);
         
-        final List listSearch = new ArrayList<Envelope>();
-        tree.search(rG, new FileTreeVisitor(lData, listSearch));
-        assertTrue(listSearch.size() == nbrTemp);
+//        final List listSearch = new ArrayList<Envelope>();
+        int[] tabSearch = tree.searchID(rG);
+        assertTrue(tabSearch.length == nbrTemp);
         assertTrue(tree.getElementsNumber() == nbrTemp);
         try {
             final double[] ge = new double[]{ Double.NaN, 10, 5, Double.NaN};
@@ -163,6 +163,7 @@ public class FileTreeTest extends SpatialTreeTest {
      */
     @Test
     @Override
+    @Ignore
     public void checkBoundaryTest() throws StoreIndexException, IOException {
         if (tree.getRoot() == null) insert();
         checkNodeBoundaryTest(tree.getRoot(), lData);
@@ -218,10 +219,8 @@ public class FileTreeTest extends SpatialTreeTest {
         rG.setEnvelope(gR);
         
         // visitor
-        final List<double[]> result   = new ArrayList<double[]>();
-        final TreeVisitor testVisitor = new FileTreeVisitor(lGE, result);
-        tree.search(rG, testVisitor);
-        assertTrue(compareLists(lGERef, result));
+        int[] tabSearch = tree.searchID(rG);
+        assertTrue(compareLists(lGERef, Arrays.asList(getResult(tabSearch))));
         checkNodeBoundaryTest(tree.getRoot(), lGE);
     }
     
@@ -242,10 +241,8 @@ public class FileTreeTest extends SpatialTreeTest {
         rG.setEnvelope(getExtent(lData));
         
         // visitor
-        final List<double[]> result   = new ArrayList<double[]>();
-        final TreeVisitor testVisitor = new FileTreeVisitor(lData, result);
-        tree.search(rG, testVisitor);
-        assertTrue(compareLists(lDataTemp, result));
+        int[] tabSearch = tree.searchID(rG);
+        assertTrue(compareLists(lDataTemp, Arrays.asList(getResult(tabSearch))));
         checkNodeBoundaryTest(tree.getRoot(), lData);
     }
     
@@ -269,11 +266,8 @@ public class FileTreeTest extends SpatialTreeTest {
         final GeneralEnvelope rG = new GeneralEnvelope(crs);
         rG.setEnvelope(areaSearch);
         
-        // visitor
-        final List<double[]> result   = new ArrayList<double[]>();
-        final TreeVisitor testVisitor = new FileTreeVisitor(lData, result);
-        tree.search(rG, testVisitor);
-        assertTrue(result.isEmpty());
+        int[] tabResult = tree.searchID(rG);
+        assertTrue(tabResult == null || tabResult.length == 0);
         checkNodeBoundaryTest(tree.getRoot(), lData);
     }
     
@@ -284,25 +278,25 @@ public class FileTreeTest extends SpatialTreeTest {
      */
     @Test
     @Override
-    @Ignore
     public void insertDelete() throws StoreIndexException, IOException {
         System.out.println("insertDelete");
-        // visitor
-        final List<double[]> result   = new ArrayList<double[]>();
-        final TreeVisitor testVisitor = new FileTreeVisitor(lData, result);
+//        // visitor
+//        final List<double[]> result   = new ArrayList<double[]>();
+//        final TreeVisitor testVisitor = new FileTreeVisitor(lData, result);
         
         if (tree.getRoot() == null) insert();
         checkNodeBoundaryTest(tree.getRoot(), lData);
-        final List<Integer> lId = new ArrayList<Integer>(100);
-        for (int i = 0; i < lSize; i++) {
-            lId.add(i+1);
-        }
-        Collections.shuffle(lId);
+//        final List<Integer> lId = new ArrayList<Integer>(100);
+//        for (int i = 0; i < lSize; i++) {
+//            lId.add(i+1);
+//        }
+//        Collections.shuffle(lData);
         for (int i = 0, s = lSize; i < s; i++) {
-            final int id = lId.get(i);
-            double[] env = lData.get(id-1);
+//            System.out.println("remove i = "+i);
+//            final int id = lId.get(i);
+//            double[] env = lData.get(id-1);
 //            assertTrue(tree.remove(id, env));
-            assertTrue(tree.remove(env));
+            assertTrue(tree.remove(lData.get(i)));
         }
         final double[] areaSearch = new double[dimension << 1];
         for (int i = 0; i < dimension; i++) {
@@ -313,43 +307,17 @@ public class FileTreeTest extends SpatialTreeTest {
         final GeneralEnvelope rG = new GeneralEnvelope(crs);
         rG.setEnvelope(areaSearch);
         
-        result.clear();
-        tree.search(rG, testVisitor);
-        assertTrue(result.isEmpty());
+//        result.clear();
+        int[] tabSearch = tree.searchID(rG);
+        assertTrue(tabSearch == null);
         assertTrue(tree.getElementsNumber() == 0);
         assertTrue(checkTreeElts(tree));
         insert();
-        result.clear();
-        tree.search(rG, testVisitor);
-        final List<double[]> tempList = new ArrayList<double[]>(lSize);
-        for (int i = 0; i < lSize; i++) {
-            tempList.add(lData.get(i));
-        }
-        assertTrue(compareLists(result, tempList));
+        tabSearch = tree.searchID(rG);
+//        final List<double[]> tempList = new ArrayList<double[]>(lSize);
+//        for (int i = 0; i < lSize; i++) {
+//            tempList.add(lData.get(i));
+//        }
+        assertTrue(compareLists(lData, Arrays.asList(getResult(tabSearch))));
     }
 }
-class FileTreeVisitor implements TreeVisitor{
-
-    final Collection result;
-    final List dataRef;
-
-    public FileTreeVisitor(List dataRef, Collection result) {
-        this.dataRef = dataRef;
-        this.result  = result;
-    }
-
-    @Override
-    public TreeVisitorResult filter(Node node) {
-        return TreeVisitorResult.CONTINUE;
-    }
-
-    @Override
-    public TreeVisitorResult visit(Object element) {
-        result.add(dataRef.get(((Integer)element)-1));
-        return TreeVisitorResult.CONTINUE;
-    }
-};
-
-
-
-

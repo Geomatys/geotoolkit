@@ -24,10 +24,11 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.intersects;
-import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -48,7 +49,13 @@ public class TreeAccessFile {
     private final long bufferLength;
     private int nodeId = 1;
     private List<Integer> recycleID = new LinkedList<>();
-
+    
+    //attribut define for research
+    private int[] tabSearch;
+    private int currentLength;
+    private int currentPosition;
+    private double[] regionSearch;
+    
     public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, int maxElements, CoordinateReferenceSystem crs) throws IOException{
 
         int dimension = crs.getCoordinateSystem().getDimension();
@@ -96,9 +103,16 @@ public class TreeAccessFile {
         writeBufferLimit = 0;
     }
     
+    public int[] search(int nodeID, double[] regionSearch) throws IOException {
+        currentLength     = 100;
+        tabSearch         = new int[currentLength];
+        currentPosition   = 0;
+        this.regionSearch = regionSearch;
+        internalSearch(nodeID);
+        return Arrays.copyOf(tabSearch, currentPosition);
+    }
     
-    
-    public void search(int nodeID, double[] regionSearch, TreeVisitor visitor) throws IOException {
+    public void internalSearch(int nodeID) throws IOException {
         adjustBuffer(nodeID);// faire des move buffposition
         final int searchIndex = (int) ((beginPosition + (nodeID - 1) * nodeSize) - currentBufferPosition);
         byteBuffer.limit(searchIndex + nodeSize);
@@ -112,15 +126,21 @@ public class TreeAccessFile {
         final int child   = byteBuffer.getInt();// appel avant de suivre voisin risk de perte de cursor
         final int chCount = byteBuffer.getInt();
         if (sibling != 0) {
-            search(sibling, regionSearch, visitor);
+            internalSearch(sibling);
         }
         if (intersects(boundary, regionSearch, true)) {
             if (child > 0) {
-                search(child, regionSearch, visitor);
+                internalSearch(child);
             } else {
                 if (child == 0)
                     throw new IllegalStateException("child index should never be 0.");
-                visitor.visit(-child);
+                if (currentPosition == currentLength) {
+                    currentLength = currentLength << 1;
+                    final int[] tabTemp = tabSearch;
+                    tabSearch = new int[currentLength];
+                    System.arraycopy(tabTemp, 0, tabSearch, 0, currentPosition);
+                }
+                tabSearch[currentPosition++] = -child;
             }
         } 
     }
