@@ -21,6 +21,8 @@ import javax.xml.bind.JAXBException;
 import org.geotoolkit.xml.AnchoredMarshallerPool;
 import org.apache.sis.xml.MarshallerPool;
 
+import static org.geotoolkit.gml.xml.GMLMarshallerPool.createJAXBContext;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -30,7 +32,7 @@ public final class EBRIMMarshallerPool {
     private static final MarshallerPool instance;
     static {
         try {
-            instance = new AnchoredMarshallerPool(EBRIMClassesContext.getAllClasses());
+            instance = new AnchoredMarshallerPool(createJAXBContext(EBRIMClassesContext.getAllClasses()));
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
         }
