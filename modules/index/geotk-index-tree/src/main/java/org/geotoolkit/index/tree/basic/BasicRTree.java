@@ -38,6 +38,7 @@ import org.geotoolkit.index.tree.DefaultNode;
 import static org.geotoolkit.index.tree.basic.SplitCase.LINEAR;
 import static org.geotoolkit.index.tree.basic.SplitCase.QUADRATIC;
 import org.geotoolkit.index.tree.io.StoreIndexException;
+import org.geotoolkit.index.tree.io.TreeElementMapper;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -58,8 +59,8 @@ public class BasicRTree extends AbstractTree {
      * @param choice                : made to split "linear" or "quadratic".
      * @return Basic RTree.
      */
-    public BasicRTree(final int maxElements, CoordinateReferenceSystem crs, final SplitCase choice) {
-        this(maxElements, crs, choice, DefaultNodeFactory.INSTANCE);
+    public BasicRTree(final int maxElements, CoordinateReferenceSystem crs, final SplitCase choice, TreeElementMapper treeEltMap) {
+        this(maxElements, crs, choice, DefaultNodeFactory.INSTANCE, treeEltMap);
     }
 
     /**
@@ -72,8 +73,8 @@ public class BasicRTree extends AbstractTree {
      * @return Basic RTree.
      */
     @Deprecated
-    public BasicRTree(final int maxElements, CoordinateReferenceSystem crs, final SplitCase choice, NodeFactory nodefactory) {
-        super(maxElements, crs, nodefactory);
+    public BasicRTree(final int maxElements, CoordinateReferenceSystem crs, final SplitCase choice, NodeFactory nodefactory, TreeElementMapper treeEltMap) {
+        super(maxElements, crs, nodefactory, treeEltMap);
         this.choice = choice;
     }
         
@@ -99,7 +100,7 @@ public class BasicRTree extends AbstractTree {
     public void insert(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException {
         ArgumentChecks.ensureNonNull("insert : object", object);
         ArgumentChecks.ensureNonNull("insert : coordinates", coordinates);
-        super.insert(object, coordinates);
+//        super.insert(object, coordinates);
         super.eltCompteur++;
         final Node root       = getRoot();
         try {
@@ -113,21 +114,21 @@ public class BasicRTree extends AbstractTree {
         }
     }
     
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public boolean delete(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException {
-        ArgumentChecks.ensureNonNull("delete : object", object);
-        ArgumentChecks.ensureNonNull("delete : coordinates", coordinates);
-        final Node root = getRoot();
-        if (root != null) try {
-            return deleteNode(root, object, coordinates);
-        } catch (IOException ex) {
-            throw new StoreIndexException(ex);
-        }
-        return false;
-    }
+//    /**
+//     * {@inheritDoc }.
+//     */
+//    @Override
+//    public boolean delete(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException {
+//        ArgumentChecks.ensureNonNull("delete : object", object);
+//        ArgumentChecks.ensureNonNull("delete : coordinates", coordinates);
+//        final Node root = getRoot();
+//        if (root != null) try {
+//            return deleteNode(root, object, coordinates);
+//        } catch (IOException ex) {
+//            throw new StoreIndexException(ex);
+//        }
+//        return false;
+//    }
     
     /**
      * {@inheritDoc }.
@@ -741,7 +742,7 @@ public class BasicRTree extends AbstractTree {
                 assert (countElts == candidate.getCoordsCount()) :"removeNode : coordinate and object table should have same length.";
                 boolean removed = false;
                 for (int i = countElts - 1; i >= 0; i--) {
-                    if (candidate.getObject(i) == object
+                    if (candidate.getObject(i).equals(object)// a modifier avec les integer
                      && Arrays.equals(candidate.getCoordinate(i), coordinate)) {
                         removed = true;
                         candidate.removeCoordinate(i);

@@ -28,6 +28,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 public class HilbertRTreeGeo3DTest extends HilbertRtreeTest{
 
     public HilbertRTreeGeo3DTest() throws StoreIndexException, IOException {
-        super(new HilbertRTree(4,3, DefaultGeographicCRS.WGS84_3D));
+        super(DefaultGeographicCRS.WGS84_3D);
+        tree = new HilbertRTree(4,3, crs, tEM);
     }
 }

@@ -29,6 +29,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 public class StarRTreeGeo2DTest extends SpatialTreeTest {
 
     public StarRTreeGeo2DTest() throws StoreIndexException, IOException {
-        super(new StarRTree(4, DefaultGeographicCRS.WGS84));
+        super(DefaultGeographicCRS.WGS84);
+        tree = new StarRTree(4, crs, tEM);
     }
 }

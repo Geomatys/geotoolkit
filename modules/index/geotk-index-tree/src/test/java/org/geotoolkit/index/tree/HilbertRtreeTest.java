@@ -22,6 +22,7 @@ import java.util.List;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.add;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import static org.junit.Assert.assertTrue;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -29,8 +30,8 @@ import static org.junit.Assert.assertTrue;
  */
  abstract class HilbertRtreeTest extends SpatialTreeTest {
 
-    public HilbertRtreeTest(Tree tree) throws StoreIndexException, IOException {
-        super(tree);
+    public HilbertRtreeTest(CoordinateReferenceSystem crs) throws StoreIndexException, IOException {
+        super(crs);
     }
     
     
