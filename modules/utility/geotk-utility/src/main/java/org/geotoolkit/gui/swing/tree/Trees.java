@@ -60,7 +60,12 @@ import org.geotoolkit.internal.io.IOUtilities;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated The {@linkplain org.apache.sis.util.collection.TreeTable tree model in Apache SIS}
+ *             is no longer based on Swing tree interfaces. Swing dependencies will be phased out
+ *             since Swing itself is likely to be replaced by JavaFX in future JDK versions.
  */
+@Deprecated
 public final class Trees extends Static {
     /**
      * Do not allows instantiation of this class.
