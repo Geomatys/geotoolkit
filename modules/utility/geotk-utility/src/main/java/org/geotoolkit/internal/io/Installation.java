@@ -24,8 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.prefs.Preferences;
-
-import org.geotoolkit.internal.OS;
+import org.apache.sis.internal.system.OS;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.logging.Logging;

@@ -27,6 +27,7 @@ import java.io.StringWriter;
 import javax.imageio.ImageWriter;
 
 import org.apache.sis.test.DependsOn;
+import org.apache.sis.internal.system.OS;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.io.LineReader;
@@ -37,7 +38,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.test.PlatformDependentTest;
 import org.geotoolkit.test.image.ImageTestBase;
-import org.geotoolkit.internal.OS;
 
 import org.junit.*;
 import static org.junit.Assert.*;

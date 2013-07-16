@@ -24,6 +24,7 @@
       <replacefilter token="org.geotoolkit.geometry.GeneralDirectPosition"          value="org.apache.sis.geometry.GeneralDirectPosition"/>
       <replacefilter token="org.geotoolkit.geometry.ImmutableEnvelope"              value="org.apache.sis.geometry.ImmutableEnvelope"/>
       <replacefilter token="org.geotoolkit.image.io.stream.ChannelImageInputStream" value="org.apache.sis.internal.storage.ChannelImageInputStream"/>
+      <replacefilter token="org.geotoolkit.internal.OS"                             value="org.apache.sis.internal.system.OS"/>
       <replacefilter token="org.geotoolkit.internal.jaxb.code"                      value="org.apache.sis.internal.jaxb.code"/>
       <replacefilter token="org.geotoolkit.internal.jaxb.gco"                       value="org.apache.sis.internal.jaxb.gco"/>
       <replacefilter token="org.geotoolkit.internal.jaxb.gmd"                       value="org.apache.sis.internal.jaxb.gmd"/>

@@ -20,9 +20,9 @@ package org.geotoolkit.coverage.sql;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import org.geotoolkit.internal.OS;
+import org.apache.sis.internal.system.OS;
 import org.junit.*;
+
 import static org.junit.Assert.*;
 
 

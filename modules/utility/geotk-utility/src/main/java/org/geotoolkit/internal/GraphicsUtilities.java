@@ -19,7 +19,7 @@ package org.geotoolkit.internal;
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-
+import org.apache.sis.internal.system.OS;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.logging.Logging;
 
