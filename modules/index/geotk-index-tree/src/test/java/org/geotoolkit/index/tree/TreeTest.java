@@ -18,13 +18,10 @@ package org.geotoolkit.index.tree;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
-import org.geotoolkit.index.tree.io.TreeVisitor;
-import org.geotoolkit.index.tree.io.TreeVisitorResult;
 import org.opengis.geometry.Envelope;
 
 /**
