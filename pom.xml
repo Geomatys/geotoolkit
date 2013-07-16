@@ -552,7 +552,7 @@
               </reportSet>
             </reportSets>
             <configuration>
-              <source>1.6</source>             <!-- Enables javadoc to handle assertions present in J2SE 1.4.  -->
+              <source>1.7</source>             <!-- Enables javadoc to handle assertions present in J2SE 1.4.  -->
               <encoding>UTF-8</encoding>       <!-- The encoding of the source files.                          -->
               <docencoding>UTF-8</docencoding> <!-- The encoding of the generated HTML files.                  -->
               <charset>UTF-8</charset>         <!-- Specifies the HTML character set for this document.        -->
