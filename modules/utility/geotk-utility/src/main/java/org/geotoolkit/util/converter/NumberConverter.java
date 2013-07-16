@@ -32,7 +32,10 @@ import org.apache.sis.util.Numbers;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.util.ObjectConverters}.
  */
+@Deprecated
 @Immutable
 abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements Serializable {
     /**

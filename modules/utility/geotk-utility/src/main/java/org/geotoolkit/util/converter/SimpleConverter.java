@@ -36,7 +36,10 @@ import org.geotoolkit.resources.Errors;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.util.ObjectConverters}.
  */
+@Deprecated
 public abstract class SimpleConverter<S,T> implements ObjectConverter<S,T> {
     /**
      * Default constructor.

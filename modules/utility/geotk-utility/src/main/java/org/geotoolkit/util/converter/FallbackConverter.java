@@ -51,7 +51,10 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.util.ObjectConverters}.
  */
+@Deprecated
 final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConverter<S,T>, Serializable {
     /**
      * For cross-version compatibility.

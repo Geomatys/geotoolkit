@@ -30,7 +30,10 @@ import java.util.LinkedList;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.util.UnconvertibleObjectException}.
  */
+@Deprecated
 public class NonconvertibleObjectException extends Exception {
     /**
      * For cross-version compatibility.

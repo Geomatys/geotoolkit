@@ -30,7 +30,10 @@ import net.jcip.annotations.ThreadSafe;
  *
  * @since 3.02
  * @module
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.util.ObjectConverters}.
  */
+@Deprecated
 @ThreadSafe
 class HeuristicRegistry extends ConverterRegistry {
     /**

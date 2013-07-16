@@ -51,7 +51,10 @@ package org.geotoolkit.util.converter;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.util.ObjectConverter}.
  */
+@Deprecated
 public interface ObjectConverter<S,T> {
     /**
      * Returns the base type of source objects.

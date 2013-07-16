@@ -58,7 +58,10 @@ import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.util.ObjectConverters}.
  */
+@Deprecated
 @ThreadSafe
 public class ConverterRegistry {
     /**

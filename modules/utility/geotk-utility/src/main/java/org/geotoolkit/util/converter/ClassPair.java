@@ -34,7 +34,10 @@ import net.jcip.annotations.Immutable;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.util.ObjectConverters}.
  */
+@Deprecated
 @Immutable
 class ClassPair<S,T> {
     /**

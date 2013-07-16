@@ -35,7 +35,10 @@ import net.jcip.annotations.Immutable;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.util.ObjectConverters}.
  */
+@Deprecated
 @Immutable
 abstract class DateConverter<T> extends SimpleConverter<Date,T> implements Serializable {
     /**

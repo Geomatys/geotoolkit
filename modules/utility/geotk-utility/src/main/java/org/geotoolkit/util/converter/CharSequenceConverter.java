@@ -32,7 +32,10 @@ import net.jcip.annotations.Immutable;
  *
  * @since 3.02
  * @module
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.util.ObjectConverters}.
  */
+@Deprecated
 @Immutable
 final class CharSequenceConverter<T> extends SimpleConverter<CharSequence,T> implements Serializable {
     /**

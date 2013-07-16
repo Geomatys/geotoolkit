@@ -42,7 +42,10 @@ import org.apache.sis.util.iso.SimpleInternationalString;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.util.ObjectConverters}.
  */
+@Deprecated
 @Immutable
 abstract class StringConverter<T> extends SimpleConverter<String,T> implements Serializable {
     /**

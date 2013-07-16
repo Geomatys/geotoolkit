@@ -32,7 +32,10 @@ import net.jcip.annotations.Immutable;
  *
  * @since 3.01
  * @module
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.util.ObjectConverters}.
  */
+@Deprecated
 @Immutable
 abstract class URIConverter<T> extends SimpleConverter<URI,T> implements Serializable {
     /**

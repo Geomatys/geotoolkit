@@ -33,7 +33,10 @@ import net.jcip.annotations.Immutable;
  *
  * @since 3.02
  * @module
+ *
+ * @deprecated Replaced by Apache SIS {@link org.apache.sis.util.ObjectConverters}.
  */
+@Deprecated
 @Immutable
 abstract class CollectionConverter<T> extends SimpleConverter<Collection<?>,T> implements Serializable {
     /**
