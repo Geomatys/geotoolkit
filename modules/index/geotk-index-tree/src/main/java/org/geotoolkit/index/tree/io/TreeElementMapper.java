@@ -58,10 +58,4 @@ public interface TreeElementMapper<E> {
      * @return object from its tree identifier.
      */
     public E getObjectFromTreeIdentifier(int treeIdentifier);
-    
-    /**
-     * Initialize TreeElementMapper like just after creating.
-     */
-    public void clear();
-    
 }

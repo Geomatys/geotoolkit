@@ -22,7 +22,7 @@ public class TreeElementMapperTest implements TreeElementMapper<double[]> {
     private final List<Integer> lID;
 
     public TreeElementMapperTest(CoordinateReferenceSystem crs) {
-        this.crs = crs;
+        this.crs   = crs;
         this.lData = new ArrayList<double[]>();
         this.lID   = new ArrayList<Integer>();
     }
@@ -60,7 +60,6 @@ public class TreeElementMapperTest implements TreeElementMapper<double[]> {
         throw new IllegalStateException("impossible to found Data.");
     }
 
-    @Override
     public void clear() {
         lData.clear();
         lID.clear();

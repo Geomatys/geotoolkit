@@ -17,13 +17,11 @@
 package org.geotoolkit.index.tree;
 
 import java.io.IOException;
-import java.util.Iterator;
 import org.geotoolkit.index.tree.calculator.*;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.io.TreeElementMapper;
-import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -45,6 +43,11 @@ public abstract class AbstractTree<E> implements Tree<E> {
     protected int eltCompteur = 0;
     protected final TreeElementMapper<E> treeEltMap;
     private int treeIdentifier;
+    
+    // search
+    protected int currentLength;
+    protected int currentPosition;
+    protected int[] tabSearch;
 
     /**
      * To create an R-Tree use {@linkplain TreeFactory}.
@@ -67,11 +70,11 @@ public abstract class AbstractTree<E> implements Tree<E> {
      * {@inheritDoc}
      */
     @Override
-    public void search(Envelope regionSearch, TreeVisitor visitor) throws IllegalArgumentException, StoreIndexException {
-        search(DefaultTreeUtils.getCoords(regionSearch), visitor);
+    public int[] searchID(Envelope regionSearch) throws StoreIndexException {
+        return searchID(DefaultTreeUtils.getCoords(regionSearch));
     }
     
-    public abstract void search(double[] regionSearch, TreeVisitor visitor) throws StoreIndexException ;
+    public abstract int[] searchID(double[] regionSearch) throws StoreIndexException ;
     
     
     /**
@@ -136,7 +139,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
     public void setRoot(Node root) throws StoreIndexException{
         this.root = root;
         if (root == null) {
-            treeEltMap.clear();
+//            treeEltMap.clear();
             treeIdentifier = 1;
         }
     }
