@@ -34,7 +34,7 @@ import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.test.Commons;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.internal.rmi.RMI;
+import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.test.image.ImageTestBase;
 
 import org.junit.*;
@@ -231,7 +231,7 @@ public final strictfp class MosaicReadWriteTest extends ImageTestBase {
      * which will create an image of 20 pixels height.
      */
     private MosaicBuilder builder(final int... subsamplings) throws IOException {
-        targetDirectory = new File(RMI.getSharedTemporaryDirectory(), "mosaic-test");
+        targetDirectory = new File(TemporaryFile.getSharedTemporaryDirectory(), "mosaic-test");
         assertTrue(targetDirectory.mkdir());
         final MosaicBuilder builder = new MosaicBuilder();
         builder.setUntiledImageBounds(new Rectangle(4*S, 2*S));

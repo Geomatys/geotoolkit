@@ -69,7 +69,7 @@ import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.image.io.RawFile;
 import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.internal.rmi.RMI;
+import org.geotoolkit.internal.io.TemporaryFile;
 
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
 
@@ -1080,7 +1080,7 @@ search: for (final Tile tile : tiles) {
          * Checks the space available in the temporary directory, which
          * will contain the temporary uncompressed files for source tiles.
          */
-        long available = RMI.getSharedTemporaryDirectory().getUsableSpace();
+        long available = TemporaryFile.getSharedTemporaryDirectory().getUsableSpace();
         long required = 4L * 1024 * 1024; // Arbitrary margin of 4 Mb.
         if (input instanceof MosaicImageReader) {
             boolean compressed = false;
@@ -1281,7 +1281,15 @@ search: for (final Tile tile : tiles) {
                 // Note: we must not use reader.getInput() since it may be an ImageInputStream.
                 tiles.add(new Tile(reader.getOriginatingProvider(), input, 0, new Point(), (Dimension) null));
             }
-            temporaryFiles.putAll(RMI.execute(new TileCopier(tiles, op)));
+            /*
+             * TODO: Folllowing has been disabled for now because the whole org.geotoolkit.internal.rmi package
+             *       has been removed. This is because JDK8 provides a new "fork join" framework make our stuff
+             *       obsolete (but we didn't migrated to JDK8 yet). The plan is to rewrite the functionality
+             *       from scratch in the Apache SIS project. Since the temporary files are optional, disabling
+             *       this code should not break the application. It may make it much slower, but we had issues
+             *       with the RAW format used by this code anyway.
+             */
+//          temporaryFiles.putAll(RMI.execute(new TileCopier(tiles, op)));
         }
         return reader;
     }

@@ -53,6 +53,11 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
     private static final Map<String,TemporaryFile> REFERENCES = new HashMap<>();
 
     /**
+     * The temporary directory, or {@code null} if none.
+     */
+    private static File sharedTemporaryDirectory;
+
+    /**
      * Registers a shutdown hook which will delete every files not yet deleted.
      */
     static {
@@ -77,6 +82,27 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
     private TemporaryFile(final File file) {
         super(file, ReferenceQueueConsumer.DEFAULT.queue);
         path = file.getPath();
+    }
+
+    /**
+     * Returns the temporary directory.
+     *
+     * @return The temporary directory to use.
+     */
+    public static synchronized File getSharedTemporaryDirectory() {
+        File directory = sharedTemporaryDirectory;
+        if (directory == null) {
+            directory = new File(System.getProperty("java.io.tmpdir", "/tmp"), "Geotoolkit.org");
+            if (!directory.isDirectory()) {
+                if (!directory.mkdir()) {
+                    // If we can't create the Geotoolkit subdirectory,
+                    // stay in the usual tmp directory.
+                    directory = directory.getParentFile();
+                }
+            }
+            sharedTemporaryDirectory = directory;
+        }
+        return directory;
     }
 
     /**
