@@ -15,6 +15,7 @@
  *    Lesser General Public License for more details.
  */
 package org.geotoolkit.index.tree;
+import org.geotoolkit.index.tree.access.TreeAccess;
 import java.io.IOException;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 
@@ -38,9 +39,9 @@ public class FileNode extends Node {
     private int siblingId;
     private int childId;// < 0 si ce nest pas un FileNode
     private int childCount;
-    private TreeAccessFile tAF;
+    private TreeAccess tAF;
 
-    public FileNode(TreeAccessFile tAF, int nodeId, double[] boundary, int parentId, int siblingId, int childId) {
+    public FileNode(TreeAccess tAF, int nodeId, double[] boundary, int parentId, int siblingId, int childId) {
         super(null);// en attente
         this.tAF        = tAF;
         this.nodeId     = nodeId;
@@ -136,10 +137,27 @@ public class FileNode extends Node {
     @Override
     public void addChildren(Node[] nodes) throws IOException {
         for(Node fnod : nodes) {
+            final FileNode fNod = ((FileNode)fnod);
             // all elements should be distinct.
             ((FileNode)fnod).setSiblingId(0);
-            addChild(fnod);
+//            addChild(fnod);
+            /*****************************************************/
+            // connect child at other children (its sibling).
+            childCount++;
+            final int nextSibling = getChildId();
+            setChildId(fNod.getNodeId());
+            fNod.setParentId(getNodeId());
+            fNod.setSiblingId(nextSibling);
+            if (boundary == null) {
+                boundary = fNod.getBoundary().clone();
+            }
+            add(boundary, fNod.getBoundary());
+//            tAF.writeNode(this);
+//            assert Arrays.equals(node.getBoundary(), assertBound);
+            tAF.writeNode(fNod);
+            
         }
+        tAF.writeNode(this);
     }
 
     public FileNode getChild() throws IOException {

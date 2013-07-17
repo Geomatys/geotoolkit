@@ -14,57 +14,55 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree;
+package org.geotoolkit.index.tree.basic;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.index.tree.basic.SplitCase;
-import org.geotoolkit.index.tree.calculator.Calculator;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
+import org.geotoolkit.index.tree.AbstractTree;
+import org.geotoolkit.index.tree.DefaultNodeFactory;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.add;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.contains;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.getSpan;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.intersects;
+import org.geotoolkit.index.tree.FileNode;
+import org.geotoolkit.index.tree.Node;
+import org.geotoolkit.index.tree.Tree;
+import org.geotoolkit.index.tree.access.TreeAccess;
 import static org.geotoolkit.index.tree.basic.SplitCase.LINEAR;
 import static org.geotoolkit.index.tree.basic.SplitCase.QUADRATIC;
+import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.io.TreeElementMapper;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
- * @author Remi Marechal(Geomatys).
+ * @author rmarechal
  */
-public class FileBasicRTree<E> extends AbstractTree<E> {
-
-    /**
-     * Number to identify tree file.
-     */
-    public final static int MAGIC_NUMBER = 188047901;
+public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
+    
     private final SplitCase choice;
-    private final double versionNumber = 0.1;
-    private int nodeId = 1;
-    private TreeAccessFile tAF;
+    private final TreeAccess treeAccess;
     
     
 //    public FileBasicRTree(File input) {
 //        
 //    }
 
-    public FileBasicRTree(final File outPut, final int maxElements, final CoordinateReferenceSystem crs, final SplitCase choice, final TreeElementMapper treeEltMap) throws StoreIndexException {
+    public AbstractBasicRTree(final TreeAccess treeAccess, final int maxElements, final CoordinateReferenceSystem crs, 
+            final SplitCase choice, final TreeElementMapper treeEltMap) throws StoreIndexException {
         super(maxElements, crs, DefaultNodeFactory.INSTANCE, treeEltMap);
-        ArgumentChecks.ensureNonNull("Create FileBasicRTree : outPut", outPut);
-        ArgumentChecks.ensureNonNull("Create FileBasicRTree : CRS", crs);
-        ArgumentChecks.ensureNonNull("Create FileBasicRTree : SplitCase choice", choice);
-        ArgumentChecks.ensureBetween("Create FileBasicRTree : maxElements", 2, Integer.MAX_VALUE, maxElements);
+        ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);
+        ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);
+        ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : SplitCase choice", choice);
+        ArgumentChecks.ensureBetween("Create AbstractBasicRTree : maxElements", 2, Integer.MAX_VALUE, maxElements);
         this.choice      = choice;
         this.eltCompteur = 0;
-        try {
-            this.tAF = new TreeAccessFile(outPut, MAGIC_NUMBER, versionNumber, maxElements, crs);
-        } catch (IOException ex) {
-            throw new StoreIndexException("FileBasicRTree constructor<init> : impossible to create TreeAccessFile.", ex);
-        }
+        this.treeAccess = treeAccess;
     }
     
     @Override
@@ -73,7 +71,7 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
         final Node root = getRoot();
         if (root != null && !root.isEmpty()) {
             try {
-                return tAF.search(((FileNode)root).getNodeId(), regionSearch);
+                return treeAccess.search(((FileNode)root).getNodeId(), regionSearch);
             } catch (IOException ex) {
                 throw new StoreIndexException(this.getClass().getName()+" impossible to find stored elements at "
                         +Arrays.toString(regionSearch)+" region search area.", ex);
@@ -89,14 +87,14 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
             eltCompteur++;
             Node root = getRoot();
             if (root == null || root.isEmpty()) {
-                root = createNode(tAF, null, 0, 0, 0);
-                root.addChild(createNode(tAF, coordinates, 1, 0, -((Integer)object)));
+                root = createNode(treeAccess, null, 0, 0, 0);
+                root.addChild(createNode(treeAccess, coordinates, 1, 0, -((Integer)object)));
                 setRoot(root);
             } else {
                 final Node newRoot = nodeInsert(root, object, coordinates);
                 if (newRoot != null) {
                     setRoot(newRoot);
-                    tAF.writeNode((FileNode)newRoot);
+                    treeAccess.writeNode((FileNode)newRoot);
                 }
             }
         } catch (IOException ex) {
@@ -107,9 +105,9 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
     @Override
     public void setRoot(Node root) throws StoreIndexException {
         if (root == null) {
-            nodeId = 1;
+//            nodeId = 1;
             try {
-                tAF.rewind();
+                treeAccess.rewind();
             } catch (IOException ex) {
                 throw new StoreIndexException("Impossible to rewind TreeAccessFile.", ex);
             }
@@ -130,7 +128,7 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
         FileNode subCandidateParent = null;
         if (fileCandidate.isLeaf()) {
             assert fileCandidate.checkInternal() : "nodeInsert : leaf before add.";
-            fileCandidate.addChild(createNode(tAF, coordinates, fileCandidate.getNodeId(), 0, -((Integer)object)));
+            fileCandidate.addChild(createNode(treeAccess, coordinates, fileCandidate.getNodeId(), 0, -((Integer)object)));
             assert fileCandidate.checkInternal() : "nodeInsert : leaf after add.";
         } else {
             assert fileCandidate.checkInternal() : "nodeInsert : Node before insert.";
@@ -145,7 +143,7 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
         if (subCandidateParent != null) {
             fileCandidate = subCandidateParent;
         }
-        tAF.writeNode(fileCandidate); 
+        treeAccess.writeNode(fileCandidate); 
         assert fileCandidate.checkInternal() : "nodeInsert : after insert.";
         
         if (fileCandidate.getChildCount() > getMaxElements()) {
@@ -193,7 +191,7 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
                 assert split2.checkInternal() : "nodeInsert : split2.";
                 assert fileCandidate.checkInternal() : "nodeInsert : split root.";
             } else {
-                final FileNode parent = tAF.readNode(candidateParentID);
+                final FileNode parent = treeAccess.readNode(candidateParentID);
                 parent.removeChild(fileCandidate);
                 parent.addChild(split1);
                 parent.addChild(split2);
@@ -348,13 +346,13 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
         if (!isLeaf && r1ChCount == 1) {
             result1 = result1Children[0];
         } else {
-            result1 = createNode(tAF, null, 0, 0, 0);
+            result1 = createNode(treeAccess, null, 0, 0, 0);
             result1.addChildren(result1Children);
         }
         if (!isLeaf && r2ChCount == 1) {
             result2 = result2Children[0];
         } else {
-            result2 = createNode(tAF, null, 0, 0, 0);
+            result2 = createNode(treeAccess, null, 0, 0, 0);
             result2.addChildren(result2Children);
         }
         // check result
@@ -382,7 +380,7 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
         final Calculator calc = getCalculator();
         final int childCount = candidate.getChildCount();
         if (childCount == 0) throw new IllegalArgumentException("chooseSubtree : children is empty");
-        if (childCount == 1) return tAF.readNode(candidate.getChildId());
+        if (childCount == 1) return treeAccess.readNode(candidate.getChildId());
         final Node[] children = candidate.getChildren();
         assert children.length == childCount : "choose subtree : childcount should have same length as children table.";
         for (Node fNod : children) {
@@ -437,7 +435,7 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
     private void branchGrafting(final FileNode nodeA, final FileNode nodeB ) throws IllegalArgumentException, IOException {
         if(!nodeA.isLeaf() || !nodeB.isLeaf()) throw new IllegalArgumentException("branchGrafting : not leaf");
         assert nodeA.getParentId()== nodeB.getParentId(): "branchGrafting : NodeA and NodeB should have same parent.";
-        assert tAF.readNode(nodeA.getParentId()).checkInternal() : "branchGrafting : nodeA and B parent not conform.";
+        assert treeAccess.readNode(nodeA.getParentId()).checkInternal() : "branchGrafting : nodeA and B parent not conform.";
         assert nodeA.checkInternal()                  : "branchGrafting : at begin candidate not conform";
         assert nodeB.checkInternal()                  : "branchGrafting : at begin candidate not conform";
         final int nodeACount = nodeA.getChildCount();
@@ -510,7 +508,7 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
             nodeB.addChild(newChild);
         }
         assert nodeA.getParentId()== nodeB.getParentId() : "branchGrafting : NodeA and NodeB should have same parent.";
-        assert tAF.readNode(nodeA.getParentId()).checkInternal()      : "branchGrafting : nodeA and B parent not conform.";
+        assert treeAccess.readNode(nodeA.getParentId()).checkInternal()      : "branchGrafting : nodeA and B parent not conform.";
         assert nodeA.checkInternal()                  : "branchGrafting : at end candidate not conform";
         assert nodeB.checkInternal()                  : "branchGrafting : at end candidate not conform";
     }
@@ -554,7 +552,7 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
                 int sibl = candidate.getChildId();
                 boolean removed = false;
                 while (sibl != 0) {
-                    final FileNode currentData = tAF.readNode(sibl);
+                    final FileNode currentData = treeAccess.readNode(sibl);
                     if (((Integer)object) == -currentData.getChildId()
                        && Arrays.equals(currentData.getBoundary(), coordinate)) {
                         removed = true;
@@ -571,7 +569,7 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
             } else {
                 int sibl = candidate.getChildId();
                 while (sibl != 0) {
-                    final FileNode currentChild = tAF.readNode(sibl);
+                    final FileNode currentChild = treeAccess.readNode(sibl);
                     final boolean removed = removeNode(currentChild, object, coordinate);
                     if (removed) return true;
                     sibl = currentChild.getSiblingId();
@@ -597,7 +595,7 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
         if (candidate.getChildId() != 0 && !candidate.isLeaf()) {
             int sibl = candidate.getChildId();
             while (sibl != 0) {
-                final FileNode currentChild = tAF.readNode(sibl);
+                final FileNode currentChild = treeAccess.readNode(sibl);
                 // empty child
                 if (currentChild.isEmpty()) {
                     candidate.removeChild(currentChild);
@@ -609,7 +607,7 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
                     }
                     int cuChildSibl = currentChild.getChildId();
                     while (cuChildSibl != 0) {
-                        final FileNode currentData = tAF.readNode(cuChildSibl);
+                        final FileNode currentData = treeAccess.readNode(cuChildSibl);
                         reinsertListCoords.add(currentData.getBoundary());// risk de .clone a voir
                         reinsertListObjects.add(-currentData.getChildId());
                         cuChildSibl = currentData.getSiblingId();
@@ -626,7 +624,7 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
                     // child own a single sub-child and its not a leaf.
                     if (currentChild.getChildCount() == 1) {
                         assert !currentChild.isLeaf() : "Trim : current child should not be leaf.";
-                        final FileNode cChild = tAF.readNode(currentChild.getChildId());
+                        final FileNode cChild = treeAccess.readNode(currentChild.getChildId());
                         assert Arrays.equals(currentChild.getBoundary(), cChild.getBoundary()) : "Node with only one element should have same boundary than its stored element.";
                         candidate.removeChild(currentChild);
                         candidate.addChild(cChild);
@@ -637,12 +635,12 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
         }
         if (candiBound != null) {
             candidate.setBound(candiBound);
-             tAF.writeNode(candidate);
+             treeAccess.writeNode(candidate);
             assert candidate.checkInternal() : "trim : candidate not conform";
         }
             
         if (candidate.getParentId()!= 0) {
-            trim (tAF.readNode(candidate.getParentId()));
+            trim (treeAccess.readNode(candidate.getParentId()));
         } else {
             // generaly root have some changes.
             if (candidate.isEmpty()) {
@@ -663,13 +661,12 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
         }
     }
 
-    public FileNode createNode(TreeAccessFile tAF, double[] boundary, int parentId, int siblingId, int childId) throws IllegalArgumentException {
-        
-        return tAF.createNode(boundary, parentId, siblingId, childId);
+    public FileNode createNode(TreeAccess tA, double[] boundary, int parentId, int siblingId, int childId) throws IllegalArgumentException {
+        return tA.createNode(boundary, parentId, siblingId, childId);
     }
     
-    public TreeAccessFile getTreeAccess(){
-        return tAF;
+    public TreeAccess getTreeAccess(){
+        return treeAccess;
     }
     
     /**
@@ -690,7 +687,7 @@ public class FileBasicRTree<E> extends AbstractTree<E> {
     @Override
     public void close() throws StoreIndexException {
         try {
-            tAF.close();
+            treeAccess.close();
         } catch (IOException ex) {
             throw new StoreIndexException("FileBasicRTree : close(). Impossible to close TreeAccessFile.", ex);
         }
