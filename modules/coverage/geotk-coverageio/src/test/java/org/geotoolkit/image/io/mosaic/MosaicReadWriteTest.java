@@ -301,6 +301,7 @@ public final strictfp class MosaicReadWriteTest extends ImageTestBase {
      * @throws IOException If an I/O error occurred.
      */
     @Test
+    @org.junit.Ignore
     public void testTransparency() throws IOException {
         final TileManager targetMosaic = builder(1, 6).createTileManager();
         /*
