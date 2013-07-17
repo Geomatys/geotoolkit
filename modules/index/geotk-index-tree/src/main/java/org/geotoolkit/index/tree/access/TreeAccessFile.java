@@ -14,8 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree;
+package org.geotoolkit.index.tree.access;
 
+import org.geotoolkit.index.tree.access.TreeAccess;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -24,10 +25,10 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import org.geotoolkit.index.tree.FileNode;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.intersects;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -35,7 +36,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author rmarechal
  */
-public class TreeAccessFile {
+public class TreeAccessFile extends TreeAccess {
     
     private final int boundLength;
     private final int nodeSize;
@@ -47,14 +48,8 @@ public class TreeAccessFile {
     private long currentBufferPosition;
     private int writeBufferLimit;
     private final long bufferLength;
-    private int nodeId = 1;
+//    private int nodeId = 1;
     private List<Integer> recycleID = new LinkedList<>();
-    
-    //attribut define for research
-    private int[] tabSearch;
-    private int currentLength;
-    private int currentPosition;
-    private double[] regionSearch;
     
     public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, int maxElements, CoordinateReferenceSystem crs) throws IOException{
 
@@ -220,6 +215,7 @@ public class TreeAccessFile {
     }
     
     public void rewind() throws IOException{
+        super.rewind();
         byteBuffer.position(0);
         byteBuffer.limit(writeBufferLimit);
         int writtenByte = 0;
@@ -229,7 +225,7 @@ public class TreeAccessFile {
         inOutChannel.position(beginPosition);
         currentBufferPosition = beginPosition;
         writeBufferLimit = 0;
-        nodeId = 1;
+//        nodeId = 1;
         recycleID.clear();
     }
      public void close() throws IOException{
@@ -241,11 +237,10 @@ public class TreeAccessFile {
         }
         inOutChannel.close();
      }
-     
+//     
      public FileNode createNode(double[] boundary, int parentId, int siblingId, int childId) {
-//         final int currentID = (!recycleID.isEmpty()) ? recycleID.remove(0) : nodeId++;
-//         return new FileNode(this, currentID, boundary, parentId, siblingId, childId);
-         return new FileNode(this, nodeId++, boundary, parentId, siblingId, childId);
+         final int currentID = (!recycleID.isEmpty()) ? recycleID.remove(0) : nodeId++;
+         return new FileNode(this, currentID, boundary, parentId, siblingId, childId);
      }
      
 }
