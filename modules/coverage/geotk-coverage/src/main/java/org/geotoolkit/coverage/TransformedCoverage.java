@@ -33,7 +33,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 
 
 /**

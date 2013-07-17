@@ -30,7 +30,7 @@ import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -112,7 +112,7 @@ public final strictfp class GridToEnvelopeMapperTest {
         } catch (MismatchedDimensionException e) {
             // This is the expected exception.
         }
-        envelope = envelope.getSubEnvelope(0, 2);
+        envelope = envelope.subEnvelope(0, 2);
         mapper.setEnvelope(envelope);
         assertSame(envelope, mapper.getEnvelope());
 

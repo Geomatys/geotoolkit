@@ -63,7 +63,7 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.InvalidGridGeometryException;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.geometry.Envelopes;
 

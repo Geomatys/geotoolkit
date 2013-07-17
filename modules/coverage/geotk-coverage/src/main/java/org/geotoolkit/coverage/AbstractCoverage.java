@@ -71,7 +71,7 @@ import org.opengis.util.Record;
 import org.opengis.util.RecordType;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
@@ -1013,8 +1013,8 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
                                                     final RenderingHints hints)
         {
             final GeneralMatrix matrix;
-            final GeneralEnvelope srcEnvelope = new GeneralEnvelope(bounds);
-            final GeneralEnvelope dstEnvelope = new GeneralEnvelope(gridBounds);
+            final GeneralEnvelope srcEnvelope = new org.geotoolkit.geometry.GeneralEnvelope(bounds);
+            final GeneralEnvelope dstEnvelope = new org.geotoolkit.geometry.GeneralEnvelope(gridBounds);
             if (crs != null) {
                 final CoordinateSystem cs = crs.getCoordinateSystem();
                 final AxisDirection[] axis = new AxisDirection[] {

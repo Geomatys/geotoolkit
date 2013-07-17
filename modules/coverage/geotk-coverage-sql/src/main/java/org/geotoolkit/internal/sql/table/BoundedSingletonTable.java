@@ -29,7 +29,7 @@ import java.awt.geom.Rectangle2D;
 import org.geotoolkit.util.DateRange;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.Envelope2D;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.coverage.sql.CoverageEnvelope;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
@@ -180,7 +180,9 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
                             } catch (RuntimeException e) {
                                 throw new IllegalRecordException(e, this, results, bboxColumn, null);
                             }
-                            final XRectangle2D region = (XRectangle2D) ge.toRectangle2D();
+                            final XRectangle2D region = XRectangle2D.createFromExtremums(
+                                    ge.getMinimum(0), ge.getMinimum(1),
+                                    ge.getMaximum(0), ge.getMaximum(1));
                             region.intersect(envelope.getHorizontalRange());
                             envelope.setHorizontalRange(region);
                         }

@@ -47,7 +47,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.geometry.Envelopes;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.coverage.GridSampleDimension;

@@ -53,7 +53,7 @@
  * </ul>
  *
  * {@section Geometry WKT}
- * The {@link org.geotoolkit.geometry.GeneralEnvelope} and
+ * The {@link org.apache.sis.geometry.GeneralEnvelope} and
  * {@link org.geotoolkit.geometry.GeneralDirectPosition} classes provide their own, limited,
  * WKT parsing and formatting services for the {@code BOX} and {@code POINT} elements.
  *

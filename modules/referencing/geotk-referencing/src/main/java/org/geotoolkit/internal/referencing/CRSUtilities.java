@@ -40,7 +40,7 @@ import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 
@@ -325,8 +325,8 @@ public final class CRSUtilities extends Static {
         toAdd.add(0, currentCRS);
         final GeneralEnvelope expanded = new GeneralEnvelope(new DefaultCompoundCRS("Temporarily expanded",
                 toAdd.toArray(new CoordinateReferenceSystem[toAdd.size()])));
-        expanded.setToNull();
-        expanded.setSubEnvelope(envelope, 0);
+        expanded.setToNaN();
+        expanded.subEnvelope(0, envelope.getDimension()).setEnvelope(envelope);
         return expanded;
     }
 

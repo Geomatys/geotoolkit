@@ -267,7 +267,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
      * @throws IllegalArgumentException
      *          If {@code anchor} is not valid.
      *
-     * @see org.geotoolkit.geometry.GeneralEnvelope#GeneralEnvelope(GridEnvelope, PixelInCell,
+     * @see org.apache.sis.geometry.GeneralEnvelope#GeneralEnvelope(GridEnvelope, PixelInCell,
      *      org.opengis.referencing.operation.MathTransform,
      *      org.opengis.referencing.crs.CoordinateReferenceSystem)
      */

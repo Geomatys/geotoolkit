@@ -38,7 +38,7 @@
  *     <td>&nbsp;{@link java.awt.geom.Point2D}&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;A box in a multi-dimensional space&nbsp;</td>
- *     <td>&nbsp;{@link org.geotoolkit.geometry.GeneralEnvelope}&nbsp;</td>
+ *     <td>&nbsp;{@link org.apache.sis.geometry.GeneralEnvelope}&nbsp;</td>
  *     <td>&nbsp;</td>
  *     <td>&nbsp;{@link org.geotoolkit.geometry.Envelope2D}&nbsp;</td>
  *     <td>&nbsp;{@link java.awt.geom.Rectangle2D}&nbsp;</td>

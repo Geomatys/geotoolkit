@@ -35,14 +35,16 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public final class DirectPositionView implements DirectPosition {
     /**
-     * The ordinate values.
+     * The ordinate values. This is a direct reference to the array given to the constructor.
+     * The length of this array may be greater then the number of dimensions.
      */
     private final double[] ordinates;
 
     /**
      * The index of the first value in the {@linkplain #ordinates} array.
+     * This field is non-final in order to allow the caller to move the view over an array of coordinates.
      */
-    private final int offset;
+    public int offset;
 
     /**
      * The number of valid ordinate values.

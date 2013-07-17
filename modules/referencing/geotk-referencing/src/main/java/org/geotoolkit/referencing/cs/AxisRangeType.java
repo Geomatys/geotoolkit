@@ -35,7 +35,7 @@ import org.geotoolkit.internal.referencing.AxisDirections;
  * <p>
  * The range of axis values usually don't have any impact on coordinate transformations.
  * However, they have an impact on methods that verify the <cite>domain of validity</cite>,
- * for example {@link org.geotoolkit.geometry.GeneralEnvelope#reduceToDomain(boolean)}.
+ * for example {@link org.apache.sis.geometry.GeneralEnvelope#reduceToDomain(boolean)}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20

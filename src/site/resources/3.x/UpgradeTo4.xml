@@ -22,6 +22,7 @@
       <replacefilter token="org.geotoolkit.geometry.DirectPosition2D"               value="org.apache.sis.geometry.DirectPosition2D"/>
       <replacefilter token="org.geotoolkit.geometry.Envelope2D"                     value="org.apache.sis.geometry.Envelope2D"/>
       <replacefilter token="org.geotoolkit.geometry.GeneralDirectPosition"          value="org.apache.sis.geometry.GeneralDirectPosition"/>
+      <replacefilter token="org.geotoolkit.geometry.GeneralEnvelope"                value="org.apache.sis.geometry.GeneralEnvelope"/>
       <replacefilter token="org.geotoolkit.geometry.ImmutableEnvelope"              value="org.apache.sis.geometry.ImmutableEnvelope"/>
       <replacefilter token="org.geotoolkit.image.io.stream.ChannelImageInputStream" value="org.apache.sis.internal.storage.ChannelImageInputStream"/>
       <replacefilter token="org.geotoolkit.internal.OS"                             value="org.apache.sis.internal.system.OS"/>

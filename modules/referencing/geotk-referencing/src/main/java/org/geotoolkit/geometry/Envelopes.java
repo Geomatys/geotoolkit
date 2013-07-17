@@ -38,7 +38,10 @@ import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.AbstractEnvelope;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.internal.referencing.DirectPositionView;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display.shape.ShapeUtilities;
@@ -99,7 +102,7 @@ public final class Envelopes extends Static {
      * @return The envelope in terms of the specified CRS, or {@code null} if none.
      *
      * @see CRS#getEnvelope(CoordinateReferenceSystem)
-     * @see org.geotoolkit.geometry.GeneralEnvelope#reduceToDomain(boolean)
+     * @see org.apache.sis.geometry.GeneralEnvelope#reduceToDomain(boolean)
      */
     public static Envelope getDomainOfValidity(final CoordinateReferenceSystem crs) {
         return CRS.getEnvelope(crs);
@@ -170,7 +173,7 @@ public final class Envelopes extends Static {
                     }
                     envelope = transform(operation, envelope);
                 }
-                assert AbstractEnvelope.equalsIgnoreMetadata(targetCRS, envelope.getCoordinateReferenceSystem(), true);
+                assert org.geotoolkit.geometry.GeneralEnvelope.equalsIgnoreMetadata(targetCRS, envelope.getCoordinateReferenceSystem(), true);
             }
         }
         return envelope;
@@ -205,7 +208,9 @@ public final class Envelopes extends Static {
                     envelope.getMinimum(0), envelope.getMinimum(1),
                     envelope.getMaximum(0), envelope.getMaximum(1));
             transform((MathTransform2D) transform, tmp, tmp);
-            return new GeneralEnvelope(tmp);
+            return new GeneralEnvelope(
+                    new double[] {tmp.getMinX(), tmp.getMinY()},
+                    new double[] {tmp.getMaxX(), tmp.getMaxY()});
         }
         return transform(transform, envelope, null);
     }
@@ -265,6 +270,8 @@ public final class Envelopes extends Static {
         for (int i=sourceDim; --i>=0;) {
             sourcePt[i] = envelope.getMinimum(i);
         }
+        // A window over a single coordinate in the 'ordinates' array.
+        final DirectPositionView ordinatesView = new DirectPositionView(ordinates, 0, targetDim);
         /*
          * Iterates over every minimal, maximal and median ordinate values (3 points) along each
          * dimension. The total number of iterations is 3 ^ (number of source dimensions).
@@ -293,7 +300,7 @@ public final class Envelopes extends Static {
                 recoverableException(e); // Log only if the above call was successful.
             }
             /*
-             * The transformed point has been savec for future reuse after the enclosing
+             * The transformed point has been saved for future reuse after the enclosing
              * 'while' loop. Now add the transformed point to the destination envelope.
              */
             if (transformed == null) {
@@ -303,7 +310,8 @@ public final class Envelopes extends Static {
                     transformed.setRange(i, value, value);
                 }
             } else {
-                transformed.add(ordinates, offset);
+                ordinatesView.offset = offset;
+                transformed.add(ordinatesView);
             }
             /*
              * Get the next point coordinate. The 'coordinateIndex' variable is an index in base 3
@@ -336,7 +344,8 @@ public final class Envelopes extends Static {
          * the Rectangle2D case the calculation was bundled right inside the main loop in order
          * to avoid the need for storage.
          */
-        double[] temporary = targetPt;
+        DirectPosition temporary = null;
+        final DirectPositionView sourceView = new DirectPositionView(sourcePt, 0, sourceDim);
         for (pointIndex=0; pointIndex < derivatives.length; pointIndex++) {
             final Matrix D1 = derivatives[pointIndex];
             if (D1 != null) {
@@ -384,11 +393,8 @@ public final class Envelopes extends Static {
                                                 }
                                                 sourcePt[dim] = ordinate;
                                             }
-                                            if (temporary == null) {
-                                                temporary = new double[targetDim];
-                                            }
-                                            transform.transform(sourcePt, 0, temporary, 0, 1);
-                                            transformed.add(temporary, 0);
+                                            temporary = transform.transform(sourceView, temporary);
+                                            transformed.add(temporary);
                                         }
                                     }
                                 } while ((isP2 = !isP2) == true);

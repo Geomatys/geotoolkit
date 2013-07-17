@@ -216,7 +216,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
             GeneralEnvelope env = null;
             extent    = other.getExtent();
             gridToCRS = other.getGridToCRS();
-            if (extent!=null && gridToCRS!=null) {
+            if (extent != null && gridToCRS != null) {
                 env = new GeneralEnvelope(extent, PixelInCell.CELL_CENTER, gridToCRS, null);
                 env.roundIfAlmostInteger(360, ULP_TOLERANCE);
             }
@@ -305,7 +305,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
             env.roundIfAlmostInteger(360, ULP_TOLERANCE);
         } else if (crs != null) {
             env = new GeneralEnvelope(crs);
-            env.setToNull();
+            env.setToNaN();
         }
         envelope = (env != null) ? new ImmutableEnvelope(env) : null;
     }
@@ -354,7 +354,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
             this.extent = null;
             return;
         }
-        final GeneralEnvelope transformed;
+        final org.apache.sis.geometry.GeneralEnvelope transformed;
         try {
             transformed = Envelopes.transform(gridToCRS.inverse(), envelope);
         } catch (TransformException exception) {

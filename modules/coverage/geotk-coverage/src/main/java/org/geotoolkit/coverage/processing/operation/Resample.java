@@ -38,7 +38,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
