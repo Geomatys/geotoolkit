@@ -59,7 +59,7 @@ import org.geotoolkit.process.coverage.copy.StatisticOp;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
 import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.image.jai.FloodFill;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
@@ -155,10 +155,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
                     //calculate best intersection area
                     final Envelope2D covEnv = dataCoverage.getEnvelope2D();
-                    final GeneralEnvelope tmp = new GeneralEnvelope(renderingContext.getPaintingObjectiveBounds2D());                    
+                    final GeneralEnvelope tmp = new GeneralEnvelope(renderingContext.getPaintingObjectiveBounds2D());
                     tmp.intersect(CRS.transform(covEnv, targetCRS));
-                    
-                    if(tmp.isNull() || tmp.isEmpty()){
+
+                    if(tmp.isEmpty()){
                         dataCoverage = null;
                     }else{
                         //calculate gridgeometry
@@ -166,7 +166,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                         final GeneralEnvelope dispEnv = CRS.transform(trs, tmp);
                         final int width = (int)Math.round(dispEnv.getSpan(0));
                         final int height = (int)Math.round(dispEnv.getSpan(1));
-                        
+
                         if(width<=0 || height<=0){
                             dataCoverage = null;
                         }else{
@@ -214,7 +214,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                                 final Map<String,Object> analyze = StatisticOp.analyze(
                                         projectedCoverage.getLayer().getCoverageReader(),projectedCoverage.getLayer().getImageIndex());
                                 final double[] minArray = (double[])analyze.get(StatisticOp.MINIMUM);
-                                final double[] maxArray = (double[])analyze.get(StatisticOp.MAXIMUM); 
+                                final double[] maxArray = (double[])analyze.get(StatisticOp.MAXIMUM);
                                 final double min = findExtremum(minArray, true);
                                 final double max = findExtremum(maxArray, false);
 
@@ -560,18 +560,18 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         if (function instanceof Categorize) {
             final Categorize categorize = (Categorize) function;
             recolorImage = (RenderedImage) categorize.evaluate(image);
-        
+
         } else if(function instanceof Interpolate) {
             final Interpolate interpolate = (Interpolate) function;
             recolorImage = (RenderedImage) interpolate.evaluate(image);
-            
+
         } else if(function instanceof Jenks) {
             final Jenks jenks = (Jenks) function;
             recolorImage = (RenderedImage) jenks.evaluate(image);
         }
-        
+
         return recolorImage;
-        
+
     }
 
     private static RenderedImage equalize(final RenderedImage source) {
@@ -729,7 +729,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         pb.add(lookup);
         return JAI.create("lookup", pb, null);
     }
-    
+
     /**
      * Find the min or max values in an array of double
      * @param data double array

@@ -33,7 +33,7 @@ import org.geotoolkit.client.AbstractServer;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.client.ServerFinder;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 import org.geotoolkit.ows.xml.v110.ExceptionReport;

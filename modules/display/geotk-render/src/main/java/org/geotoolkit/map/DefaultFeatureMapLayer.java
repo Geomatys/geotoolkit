@@ -29,7 +29,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.apache.sis.geometry.Envelope2D;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;

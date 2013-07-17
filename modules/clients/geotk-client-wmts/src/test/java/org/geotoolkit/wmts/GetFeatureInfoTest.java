@@ -19,7 +19,7 @@ package org.geotoolkit.wmts;
 import org.geotoolkit.wmts.v100.GetFeatureInfo100;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.junit.Test;
 import org.opengis.util.FactoryException;

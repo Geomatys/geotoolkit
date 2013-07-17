@@ -38,7 +38,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.process.AbstractProcess;
@@ -167,7 +167,8 @@ public class KrigingProcess extends AbstractProcess {
 //                new Rectangle2D.Double(renderedImage.getMinX(), renderedImage.getMinY(), renderedImage.getWidth(), renderedImage.getHeight()));
 //        env.setCoordinateReferenceSystem(crs);
         final GeneralEnvelope env = new GeneralEnvelope(
-                new Rectangle2D.Double(x0, y0, spanX, spanY));
+                new double[] {x0, y0},
+                new double[] {x0 + spanX, y0 + spanY});
         env.setCoordinateReferenceSystem(crs);
 
         final GridCoverage2D coverage = toCoverage(cz, cx, cy, env);

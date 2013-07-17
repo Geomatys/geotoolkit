@@ -21,7 +21,7 @@ import java.awt.geom.Point2D;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WMSCoverageReference;
 import org.opengis.feature.type.Name;

@@ -59,7 +59,7 @@ import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.geometry.Envelopes;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.decoration.AbstractMapDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;

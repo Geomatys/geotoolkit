@@ -30,7 +30,7 @@ import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.geotoolkit.filter.SpatialFilterType;
 import org.geotoolkit.geometry.Envelopes;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.referencing.CRS;

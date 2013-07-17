@@ -23,7 +23,7 @@ import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.DefaultPyramid;
 import org.geotoolkit.coverage.GridMosaic;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.osmtms.GetTileRequest;
 import org.geotoolkit.osmtms.OSMTileMapServer;
 import org.geotoolkit.referencing.CRS;

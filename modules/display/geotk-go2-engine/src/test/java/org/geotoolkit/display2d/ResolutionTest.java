@@ -17,7 +17,7 @@
 package org.geotoolkit.display2d;
 
 import java.util.List;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import static org.junit.Assert.assertTrue;
 import org.opengis.geometry.Envelope;

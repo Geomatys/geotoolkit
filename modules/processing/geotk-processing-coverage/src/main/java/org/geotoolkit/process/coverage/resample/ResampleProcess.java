@@ -45,7 +45,7 @@ import org.geotoolkit.coverage.processing.CannotReprojectException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.Envelopes;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import static org.geotoolkit.image.interpolation.InterpolationCase.BILINEAR;

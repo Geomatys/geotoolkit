@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import org.geotoolkit.geometry.DefaultBoundingBox;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.StyleConstants;
 import static org.apache.sis.util.ArgumentChecks.*;
@@ -143,7 +143,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
 
         }
 
-        if(result == null|| result.isEmpty() || result.isInfinite() || result.isNull()){
+        if (result == null|| result.isEmpty()) {
             //we could not find a valid envelope
             result = new GeneralEnvelope(CRS.getEnvelope(crs));
         }

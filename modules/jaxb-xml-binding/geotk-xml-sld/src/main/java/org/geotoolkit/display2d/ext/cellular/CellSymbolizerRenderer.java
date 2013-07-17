@@ -48,7 +48,7 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.apache.sis.geometry.Envelope2D;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.apache.sis.math.Statistics;
@@ -215,7 +215,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                 final GeneralEnvelope tmp = new GeneralEnvelope(renderingContext.getPaintingObjectiveBounds2D());
                 tmp.intersect(CRS.transform(covEnv, targetCRS));
 
-                if(tmp.isNull() || tmp.isEmpty()){
+                if(tmp.isEmpty()){
                     dataCoverage = null;
                 }else{
                     //calculate gridgeometry

@@ -46,7 +46,7 @@ import org.geotoolkit.display2d.style.labeling.decimate.DecimationLabelRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;

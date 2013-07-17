@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;

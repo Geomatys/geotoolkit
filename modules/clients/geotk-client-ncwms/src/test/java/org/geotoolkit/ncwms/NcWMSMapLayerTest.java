@@ -22,7 +22,7 @@ import java.awt.Dimension;
 import java.net.MalformedURLException;
 import javax.xml.bind.JAXBException;
 
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.ncwms.map.NcWMSMapLayer;
 import org.geotoolkit.wms.xml.WMSVersion;

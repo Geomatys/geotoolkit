@@ -34,7 +34,7 @@ import net.sf.jasperreports.engine.JasperReport;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.StyleConstants;

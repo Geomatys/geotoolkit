@@ -32,7 +32,7 @@ import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.primitive.AbstractGraphic;
 import org.geotoolkit.display.primitive.AbstractReferencedGraphic;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.display.canvas.Canvas;

@@ -37,7 +37,7 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
@@ -145,7 +145,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
                     }
                     objCRS = new DefaultCompoundCRS(objCRS.getName().getCode() + " + time", objCRS, temporalCRS);
                     final GeneralEnvelope merged = new GeneralEnvelope(objCRS);
-                    merged.setSubEnvelope(objBounds, 0);
+                    merged.subEnvelope(0, objBounds.getDimension()).setEnvelope(objBounds);
                     merged.setRange(objBounds.getDimension(), lastTime - day, lastTime);
                     objBounds = merged;
                 }

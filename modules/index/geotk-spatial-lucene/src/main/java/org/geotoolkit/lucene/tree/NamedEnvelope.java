@@ -18,7 +18,7 @@
 package org.geotoolkit.lucene.tree;
 
 import java.io.*;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 

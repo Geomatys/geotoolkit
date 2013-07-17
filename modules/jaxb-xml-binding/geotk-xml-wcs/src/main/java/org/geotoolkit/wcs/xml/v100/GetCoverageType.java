@@ -34,7 +34,7 @@ import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.wcs.xml.GetCoverage;
 
 import org.geotoolkit.wcs.xml.StringUtilities;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;

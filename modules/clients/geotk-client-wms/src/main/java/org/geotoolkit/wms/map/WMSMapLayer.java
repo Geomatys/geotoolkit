@@ -23,7 +23,7 @@ import java.net.URL;
 import java.util.Map;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;

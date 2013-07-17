@@ -21,7 +21,7 @@ import org.geotoolkit.ncwms.v130.NcGetTimeseries130;
 import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.junit.Test;
 import org.opengis.util.FactoryException;

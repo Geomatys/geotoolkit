@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.client.util;
 
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 
 import org.opengis.geometry.Envelope;
 

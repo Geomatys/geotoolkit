@@ -19,7 +19,7 @@ package org.geotoolkit.wcs;
 import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.wcs.v100.GetCoverage100;
 import org.junit.Test;

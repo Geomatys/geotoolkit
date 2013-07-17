@@ -22,7 +22,7 @@ import java.net.URL;
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
 
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.ncwms.NcWMSCoverageReference;
 import org.geotoolkit.ncwms.NcWebMapServer;
 import org.geotoolkit.wms.GetMapRequest;

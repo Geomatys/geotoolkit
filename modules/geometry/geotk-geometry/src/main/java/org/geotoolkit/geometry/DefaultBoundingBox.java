@@ -24,6 +24,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.DirectPosition2D;
+import org.apache.sis.geometry.GeneralEnvelope;
 
 /**
  *

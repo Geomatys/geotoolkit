@@ -25,7 +25,7 @@ import javax.imageio.ImageIO;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.lang.Setup;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 

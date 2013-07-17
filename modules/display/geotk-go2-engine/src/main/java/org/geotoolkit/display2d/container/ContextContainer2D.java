@@ -31,7 +31,7 @@ import org.geotoolkit.display.primitive.ReferencedGraphic;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.CRS;
@@ -59,7 +59,7 @@ import org.opengis.style.Symbolizer;
  * This is the general usecase of a renderer, this renderer is made to work
  * with MapContext objects, each MapContext describing MapLayers and related coverages or
  * features.ContextContainer2D
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -114,7 +114,7 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
     }
 
     protected final PropertyChangeSupport support = new PropertyChangeSupport(this);
-    
+
     /**
      * CreContextContainer2D with no particular hints.
      */
@@ -141,10 +141,10 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
             if(context != null){
                 Envelope env = context.getBounds();
                 if( CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(),crs) ){
-                    GeneralEnvelope genv = new GeneralEnvelope(env);
+                    org.geotoolkit.geometry.GeneralEnvelope genv = new org.geotoolkit.geometry.GeneralEnvelope(env);
                     return genv.toRectangle2D();
                 }else{
-                    GeneralEnvelope genv = (GeneralEnvelope) CRS.transform(env, crs);
+                    org.geotoolkit.geometry.GeneralEnvelope genv = new org.geotoolkit.geometry.GeneralEnvelope(CRS.transform(env, crs));
                     return genv.toRectangle2D();
                 }
             }

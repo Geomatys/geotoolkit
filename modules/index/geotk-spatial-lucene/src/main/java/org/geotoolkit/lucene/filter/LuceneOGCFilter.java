@@ -33,7 +33,7 @@ import org.apache.lucene.util.DocIdBitSet;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.SpatialFilterType;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.index.tree.io.TreeVisitor;

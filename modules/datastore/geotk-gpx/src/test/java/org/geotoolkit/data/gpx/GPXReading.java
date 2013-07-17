@@ -31,7 +31,7 @@ import org.geotoolkit.data.AbstractReadingTests.ExpectedResult;
 import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.gpx.model.GPXModelConstants;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.opengis.feature.type.Name;

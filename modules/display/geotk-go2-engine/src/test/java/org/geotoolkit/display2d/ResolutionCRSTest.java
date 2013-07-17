@@ -17,7 +17,7 @@
 package org.geotoolkit.display2d;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;

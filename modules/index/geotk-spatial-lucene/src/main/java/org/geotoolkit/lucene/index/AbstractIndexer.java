@@ -44,7 +44,7 @@ import org.apache.lucene.util.Version;
 
 // Geotoolkit dependencies
 import org.geotoolkit.geometry.Envelopes;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.io.StoreIndexException;

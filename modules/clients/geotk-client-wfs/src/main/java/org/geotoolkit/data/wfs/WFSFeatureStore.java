@@ -61,7 +61,7 @@ import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;

@@ -33,7 +33,7 @@ import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.DirectPosition2D;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
@@ -54,7 +54,7 @@ import org.geotoolkit.resources.Errors;
  * @author Johann Sorel
  *
  * @see org.apache.sis.geometry.Envelope2D
- * @see org.geotoolkit.geometry.GeneralEnvelope
+ * @see org.apache.sis.geometry.GeneralEnvelope
  * @see org.opengis.metadata.extent.GeographicBoundingBox
  */
 public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Envelope,BoundingBox {
