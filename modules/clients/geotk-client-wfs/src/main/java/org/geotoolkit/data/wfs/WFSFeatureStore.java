@@ -387,6 +387,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
             if(obj instanceof TransactionResponse){
                 final TransactionResponse tr = (TransactionResponse) obj;
+                fireFeaturesAdded(groupName, null); // TODO list the feature added
                 return tr.getInsertedFID();
             }else{
                 throw new DataStoreException("Unexpected response : "+ obj.getClass());
@@ -429,6 +430,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
         try {
             final InputStream response = request.getResponseStream();
             response.close();
+            fireFeaturesUpdated(groupName, null);// TODO list the feature updated
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
@@ -451,6 +453,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
         try {
             final InputStream response = request.getResponseStream();
             response.close();
+            fireFeaturesDeleted(groupName, null);// TODO list the feature deleted
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
