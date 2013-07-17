@@ -73,6 +73,7 @@ public class WPSConverterRegistry {
         register(ReferenceToGridCoverage2DConverter         .getInstance());
         register(ReferenceToGridCoverageReaderConverter     .getInstance());
         register(ReferenceToRenderedImageConverter          .getInstance());
+        register(ReferenceToStringConverter                 .getInstance());
 
         //Object -> ComplexDataType converters
         register(FeatureCollectionToComplexConverter        .getInstance());
