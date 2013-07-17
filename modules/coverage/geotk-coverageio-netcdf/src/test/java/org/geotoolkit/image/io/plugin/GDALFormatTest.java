@@ -27,7 +27,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelope2D;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;

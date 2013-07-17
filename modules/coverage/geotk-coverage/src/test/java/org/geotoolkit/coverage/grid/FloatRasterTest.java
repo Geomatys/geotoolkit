@@ -26,7 +26,7 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 

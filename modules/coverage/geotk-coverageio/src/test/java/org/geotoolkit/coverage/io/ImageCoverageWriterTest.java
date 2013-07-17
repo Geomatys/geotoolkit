@@ -33,7 +33,7 @@ import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.io.LineReader;
 import org.geotoolkit.io.LineReaders;
 import org.geotoolkit.image.SampleModels;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.test.PlatformDependentTest;

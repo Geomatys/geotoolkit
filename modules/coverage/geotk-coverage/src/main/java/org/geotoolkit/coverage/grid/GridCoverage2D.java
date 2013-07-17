@@ -57,7 +57,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.geometry.TransformedDirectPosition;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.GridSampleDimension;

@@ -20,7 +20,7 @@ package org.geotoolkit.coverage.grid;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.IOException;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.junit.*;
 

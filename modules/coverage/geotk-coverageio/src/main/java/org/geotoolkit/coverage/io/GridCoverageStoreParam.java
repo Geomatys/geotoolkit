@@ -28,7 +28,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.AxisRangeType;

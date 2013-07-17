@@ -25,7 +25,7 @@ import java.sql.SQLException;
 import org.geotoolkit.util.DateRange;
 import org.apache.sis.measure.Latitude;
 import org.apache.sis.measure.Longitude;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 
 import org.geotoolkit.internal.sql.table.Database;

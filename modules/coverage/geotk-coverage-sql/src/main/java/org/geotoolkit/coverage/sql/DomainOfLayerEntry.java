@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.awt.geom.Dimension2D;
 
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.geometry.Envelope2D;
+import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.internal.sql.table.DefaultEntry;
 
 
