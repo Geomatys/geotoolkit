@@ -21,8 +21,7 @@ public class FileBasicTree2DTest extends AbstractTreeTest {
 
     public FileBasicTree2DTest() throws StoreIndexException, IOException {
         super(DefaultEngineeringCRS.CARTESIAN_2D);
-//        tree = new FileBasicRTree(File.createTempFile("test", "tree"), 3, crs, SplitCase.LINEAR, tEM);
-        tree = new FileBasicRTree(new File("/home/rmarechal/Documents/tree.test"), 3, crs, SplitCase.LINEAR, tEM);
+        tree = new FileBasicRTree(File.createTempFile("test", "tree"), 3, crs, SplitCase.LINEAR, tEM);
         tAF  = ((AbstractBasicRTree)tree).getTreeAccess();
     }
     

@@ -39,7 +39,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author rmarechal
  */
-public class AbstractTreeTest extends SpatialTreeTest {
+public abstract class AbstractTreeTest extends SpatialTreeTest {
 
     int nbrTemp = 0;
     
