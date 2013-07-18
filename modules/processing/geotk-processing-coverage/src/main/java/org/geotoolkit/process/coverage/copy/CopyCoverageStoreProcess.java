@@ -104,7 +104,11 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         final Boolean       reduce   = value(REDUCE_TO_DOMAIN,     inputParameters);
 
         try {
+            final float size = inStore.getNames().size();
+            int inc = 0;
             for(Name n : inStore.getNames()){
+
+                fireProgressing("Copying "+n+".", (int)((inc*100f)/size), false);
                 final CoverageReference inRef = inStore.getCoverageReference(n);
                 final Name name = inRef.getName();
                 if (erase) {
@@ -120,6 +124,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
                     throw new DataStoreException("The given coverage reference is not a pyramidal model, "
                     + "this process only work with this kind of model.");
                 }
+                inc++;
             }
         } catch (DataStoreException ex) {
             throw new ProcessException(ex.getLocalizedMessage(), this, ex);
