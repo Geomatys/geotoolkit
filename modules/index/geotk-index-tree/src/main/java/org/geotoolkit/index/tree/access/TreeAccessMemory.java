@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.index.tree.access;
 
-import org.geotoolkit.index.tree.access.TreeAccess;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.index.tree.FileNode;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.intersects;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -33,10 +33,12 @@ public class TreeAccessMemory extends TreeAccess {
     private FileNode[] tabNode;
     private List<Integer> recycleID;
 
-    public TreeAccessMemory() {
+    public TreeAccessMemory(final int maxElements, final CoordinateReferenceSystem crs) {
+        super(maxElements, crs);
         tabNodeLength = 100;
         tabNode = new FileNode[tabNodeLength];
         recycleID = new ArrayList<Integer>();
+        root = null;
     }
     
     

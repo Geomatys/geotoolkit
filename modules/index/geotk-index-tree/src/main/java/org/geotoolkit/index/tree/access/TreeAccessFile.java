@@ -16,10 +16,12 @@
  */
 package org.geotoolkit.index.tree.access;
 
+import java.io.ByteArrayInputStream;
 import org.geotoolkit.index.tree.access.TreeAccess;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -48,13 +50,69 @@ public class TreeAccessFile extends TreeAccess {
     private long currentBufferPosition;
     private int writeBufferLimit;
     private final long bufferLength;
-//    private int nodeId = 1;
-    private List<Integer> recycleID = new LinkedList<>();
+    private List<Integer> recycleID = new LinkedList<Integer>();
     
-    public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, int maxElements, CoordinateReferenceSystem crs) throws IOException{
-
-        int dimension = crs.getCoordinateSystem().getDimension();
+    public TreeAccessFile( final File input, final int magicNumber, final double versionNumber ) throws IOException, ClassNotFoundException {
+        super();
         
+        // stream
+        inOutStream  = new RandomAccessFile(input, "rw");
+        inOutChannel = inOutStream.getChannel();
+        
+        /***************************  read head ******************************/
+        // write magicNumber
+        final int mgNumber  = inOutStream.readInt();
+        if (magicNumber != mgNumber)
+            throw new IllegalArgumentException("tree type identifier should match. expected identifier : "+magicNumber+". Found : "+mgNumber);
+        
+        // read ByteOrder
+        final boolean fbool = inOutStream.readBoolean();
+        final ByteOrder bO  = (fbool) ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;
+        // read version number
+        final double vN = inOutStream.readDouble();
+        if (vN != versionNumber)
+            throw new IllegalArgumentException("Wrong version number. Expected : "+versionNumber+". Version found in tree file : "+vN);
+        // read maxElement
+        maxElement = inOutStream.readInt();
+        // read nodeID
+        nodeId = inOutStream.readInt();
+        if (nodeId == 0)
+            throw new IllegalStateException("User shouldn't invoked tree.close() methode after insertion. You should build again RTree.");
+        treeIdentifier = inOutStream.readInt();
+        // read CRS
+        final int byteTabLength   = inOutStream.readInt();
+        final byte[] crsByteArray = new byte[byteTabLength];
+        inOutStream.read(crsByteArray, 0, byteTabLength);
+        final ObjectInputStream crsInputS = new ObjectInputStream(new ByteArrayInputStream(crsByteArray));
+        crs = (CoordinateReferenceSystem) crsInputS.readObject();
+        crsInputS.close();
+        /*****************************  end head ******************************/
+        
+        final int dimension = crs.getCoordinateSystem().getDimension();
+        this.boundLength = dimension << 1;
+        
+        // Node size : boundary weigth + parent ID + 1st sibling Integer + 1st child Integer + child number.
+        nodeSize = (dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2;
+        
+        // buffer attributs
+        final int div = 8192 / nodeSize;// 4096
+        this.bufferLength = div * nodeSize;
+        byteBuffer = ByteBuffer.allocateDirect((int)bufferLength);
+        byteBuffer.order(bO);
+        
+        beginPosition = inOutChannel.position();
+        currentBufferPosition = beginPosition;
+        writeBufferLimit = 0;
+        
+        // root 
+        inOutChannel.read(byteBuffer, currentBufferPosition);
+        root = this.readNode(1);
+    }
+    
+    public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, int maxElements, CoordinateReferenceSystem crs) throws IOException {
+        super(maxElements, crs);
+        
+        int dimension = crs.getCoordinateSystem().getDimension();
         this.boundLength = dimension << 1;
         
         // Node size : boundary weigth + parent ID + 1st sibling Integer + 1st child Integer + child number.
@@ -72,7 +130,7 @@ public class TreeAccessFile extends TreeAccess {
         inOutChannel = inOutStream.getChannel();
         
         /***************************  write head ******************************/
-        final ByteArrayOutputStream temp = new ByteArrayOutputStream();
+        final ByteArrayOutputStream temp   = new ByteArrayOutputStream();
         final ObjectOutputStream objOutput = new ObjectOutputStream(temp);
         // write magicNumber
         inOutStream.writeInt(magicNumber);
@@ -82,8 +140,10 @@ public class TreeAccessFile extends TreeAccess {
         inOutStream.writeDouble(versionNumber);
         // write element number per Node
         inOutStream.writeInt(maxElements);
-        // write dimension
-        inOutStream.writeInt(dimension);
+        // write nodeID
+        inOutStream.writeInt(0);
+        // write treeIdentifier
+        inOutStream.writeInt(0);
         // write CRS
         objOutput.writeObject(crs);
         objOutput.flush();
@@ -94,10 +154,14 @@ public class TreeAccessFile extends TreeAccess {
         /*****************************  end head ******************************/
         
         beginPosition = inOutChannel.position();
-        currentBufferPosition   = beginPosition;
+        currentBufferPosition = beginPosition;
         writeBufferLimit = 0;
+        
+        // root 
+        root = null;
     }
     
+    @Override
     public int[] search(int nodeID, double[] regionSearch) throws IOException {
         currentLength     = 100;
         tabSearch         = new int[currentLength];
@@ -107,6 +171,7 @@ public class TreeAccessFile extends TreeAccess {
         return Arrays.copyOf(tabSearch, currentPosition);
     }
     
+    @Override
     public void internalSearch(int nodeID) throws IOException {
         adjustBuffer(nodeID);// faire des move buffposition
         final int searchIndex = (int) ((beginPosition + (nodeID - 1) * nodeSize) - currentBufferPosition);
@@ -116,10 +181,12 @@ public class TreeAccessFile extends TreeAccess {
         for (int i = 0; i < boundLength; i++) {
             boundary[i] = byteBuffer.getDouble();
         }
-        final int parent  = byteBuffer.getInt();
+//        final int parent  = byteBuffer.getInt();
+        byteBuffer.position(byteBuffer.position() + 4);
         final int sibling = byteBuffer.getInt();
         final int child   = byteBuffer.getInt();// appel avant de suivre voisin risk de perte de cursor
-        final int chCount = byteBuffer.getInt();
+//        final int chCount = byteBuffer.getInt();
+        byteBuffer.position(byteBuffer.position() + 4);
         if (sibling != 0) {
             internalSearch(sibling);
         }
@@ -146,6 +213,7 @@ public class TreeAccessFile extends TreeAccess {
      * @return
      * @throws IOException 
      */
+    @Override
     public FileNode readNode(final int indexNode) throws IOException {
         adjustBuffer(indexNode);
         final int readIndex = (int) ((beginPosition + (indexNode - 1) * nodeSize) - currentBufferPosition);
@@ -169,6 +237,7 @@ public class TreeAccessFile extends TreeAccess {
      * @param candidate
      * @throws IOException 
      */
+    @Override
     public void writeNode(final FileNode candidate) throws IOException {
         final int indexNode    = candidate.getNodeId();
         adjustBuffer(indexNode);
@@ -210,10 +279,12 @@ public class TreeAccessFile extends TreeAccess {
      * @param candidate
      * @throws IOException 
      */
+    @Override
     public void deleteNode(final FileNode candidate) throws IOException {
         recycleID.add(candidate.getNodeId());
     }
     
+    @Override
     public void rewind() throws IOException{
         super.rewind();
         byteBuffer.position(0);
@@ -225,9 +296,10 @@ public class TreeAccessFile extends TreeAccess {
         inOutChannel.position(beginPosition);
         currentBufferPosition = beginPosition;
         writeBufferLimit = 0;
-//        nodeId = 1;
         recycleID.clear();
     }
+    
+    @Override
      public void close() throws IOException{
         byteBuffer.position(0);
         byteBuffer.limit(writeBufferLimit);
@@ -235,12 +307,17 @@ public class TreeAccessFile extends TreeAccess {
         while (writtenByte != writeBufferLimit) {
             writtenByte = inOutChannel.write(byteBuffer, currentBufferPosition);
         }
+        // write nodeID
+        inOutChannel.position(17); // a checker
+        inOutStream.writeInt(nodeId);
+        inOutStream.writeInt(treeIdentifier);
+        //close
         inOutChannel.close();
      }
 //     
+    @Override
      public FileNode createNode(double[] boundary, int parentId, int siblingId, int childId) {
          final int currentID = (!recycleID.isEmpty()) ? recycleID.remove(0) : nodeId++;
          return new FileNode(this, currentID, boundary, parentId, siblingId, childId);
      }
-     
 }

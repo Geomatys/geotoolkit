@@ -37,7 +37,6 @@ import static org.geotoolkit.index.tree.basic.SplitCase.QUADRATIC;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.io.TreeElementMapper;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -48,21 +47,16 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
     private final SplitCase choice;
     private final TreeAccess treeAccess;
     
-    
-//    public FileBasicRTree(File input) {
-//        
-//    }
-
-    public AbstractBasicRTree(final TreeAccess treeAccess, final int maxElements, final CoordinateReferenceSystem crs, 
-            final SplitCase choice, final TreeElementMapper treeEltMap) throws StoreIndexException {
-        super(maxElements, crs, DefaultNodeFactory.INSTANCE, treeEltMap);
+    public AbstractBasicRTree(final TreeAccess treeAccess, final SplitCase choice, final TreeElementMapper treeEltMap) throws StoreIndexException {
+        super(treeAccess.getMaxElementPerCells(), treeAccess.getCRS(), DefaultNodeFactory.INSTANCE, treeEltMap);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : SplitCase choice", choice);
-        ArgumentChecks.ensureBetween("Create AbstractBasicRTree : maxElements", 2, Integer.MAX_VALUE, maxElements);
         this.choice      = choice;
         this.eltCompteur = 0;
         this.treeAccess = treeAccess;
+        super.setRoot(treeAccess.getRoot());
+        treeIdentifier = treeAccess.getTreeIdentifier();
     }
     
     @Override
@@ -226,7 +220,7 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
         if (childNumber < 2) 
             throw new IllegalArgumentException("not enought elements within " + candidate + " to split.");
         final Calculator calc = getCalculator();
-        final int maxElmnts = getMaxElements();
+        final int maxElmnts   = getMaxElements();
         
         final Node[] children = candidate.getChildren();
         assert childNumber == children.length : "SplitNode : childnumber should be same as children length value.";
@@ -687,6 +681,7 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
     @Override
     public void close() throws StoreIndexException {
         try {
+            treeAccess.setTreeIdentifier(treeIdentifier);
             treeAccess.close();
         } catch (IOException ex) {
             throw new StoreIndexException("FileBasicRTree : close(). Impossible to close TreeAccessFile.", ex);

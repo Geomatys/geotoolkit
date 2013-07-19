@@ -60,6 +60,7 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
     @Override
     protected void insert() throws StoreIndexException, IOException {
         tEM.clear();
+        nbrTemp = 0;
         for (int i = 0, s = lSize/*lData.size()*/; i < s; i++) {
             final double[] envData = lData.get(i).clone();
             tree.insert(envData);
@@ -168,6 +169,7 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
     @Override
     public void queryOnBorderTest() throws StoreIndexException, IOException {
         tree.setRoot(null);
+        tEM.clear();
         final List<double[]> lGE = new ArrayList<double[]>();
         
         final List<double[]> lGERef = new ArrayList<double[]>();

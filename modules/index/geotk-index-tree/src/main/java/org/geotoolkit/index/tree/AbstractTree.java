@@ -42,7 +42,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
     protected Calculator calculator;
     protected int eltCompteur = 0;
     protected final TreeElementMapper<E> treeEltMap;
-    private int treeIdentifier;
+    protected int treeIdentifier;
     
     // search
     protected int currentLength;
@@ -63,7 +63,6 @@ public abstract class AbstractTree<E> implements Tree<E> {
         this.nodefactory  = nodefactory;
         this.nbMaxElement = nbMaxElement;
         this.crs = crs;
-        treeIdentifier = 1;
     }
 
     /**
