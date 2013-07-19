@@ -149,6 +149,7 @@ public final class TreeX {
         int[] tabSearch = tree.searchID(regionSearch);
         int[] tabResult = new int[tabSearch.length];
         int currentPosition = 0;
+        try {
         switch (logicFilter) {
             case INTERSECTS : case BBOX : {
                 return tabSearch;
@@ -219,5 +220,8 @@ public final class TreeX {
             default : throw new IllegalStateException("not implemented yet");
         }
         return Arrays.copyOf(tabResult, currentPosition);
+        } catch (IOException ex) {
+            throw new StoreIndexException(ex);
+        }
     }
 }

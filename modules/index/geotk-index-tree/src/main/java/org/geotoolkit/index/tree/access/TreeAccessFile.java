@@ -17,7 +17,6 @@
 package org.geotoolkit.index.tree.access;
 
 import java.io.ByteArrayInputStream;
-import org.geotoolkit.index.tree.access.TreeAccess;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;

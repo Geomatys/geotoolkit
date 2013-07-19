@@ -46,7 +46,7 @@ public abstract class SpatialTreeTest extends TreeTest{
     protected final CoordinateReferenceSystem crs;
     protected final int dimension;
     protected final double[] minMax;
-    protected final TreeElementMapperTest tEM;
+    protected TreeElementMapper<double[]> tEM;
 
     public SpatialTreeTest(CoordinateReferenceSystem crs) throws StoreIndexException, IOException {
 //        ArgumentChecks.ensureNonNull("tree", tree);
@@ -368,7 +368,7 @@ public abstract class SpatialTreeTest extends TreeTest{
         }
     }
     
-    protected double[][] getResult(int[] tabID) {
+    protected double[][] getResult(int[] tabID) throws IOException {
         final int l = tabID.length;
         double[][] tabResult = new double[l][];
         for (int i = 0; i < l; i++) {
