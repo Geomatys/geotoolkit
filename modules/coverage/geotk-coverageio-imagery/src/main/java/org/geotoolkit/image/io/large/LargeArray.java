@@ -16,25 +16,28 @@
  */
 package org.geotoolkit.image.io.large;
 
-import java.awt.Point;
-import java.awt.image.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.LinkedList;
+import org.geotoolkit.image.io.IllegalImageDimensionException;
+import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.util.ArgumentChecks;
+import org.geotoolkit.util.FileUtilities;
+
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.media.jai.RasterFactory;
-import org.geotoolkit.image.io.IllegalImageDimensionException;
-import org.geotoolkit.image.io.XImageIO;
-import org.apache.sis.util.ArgumentChecks;
+import java.awt.*;
+import java.awt.image.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedList;
 
 /**
- * Stock all {@link Raster} contained from define {@link RenderedImage}.
+ * Stock all {@link java.awt.image.Raster} contained from define {@link java.awt.image.RenderedImage}.
  *
  * @author Rémi Maréchal (Geomatys).
+ * @author Alexis Manin  (Geomatys).
  */
-class LargeList {
+class LargeArray {
 
     private static final String TEMPORARY_PATH = System.getProperty("java.io.tmpdir");
     private static final String FORMAT = "tiff";
@@ -43,11 +46,10 @@ class LargeList {
 
     private long memoryCapacity;
     private long remainingCapacity;
-    private final LinkedList<LargeRaster> list;
     private final int minTileX;
     private final int minTileY;
-    private final int numXTiles;
-    private final int numYTiles;
+    private final int numTilesX;
+    private final int numTilesY;
     private final QuadTreeDirectory qTD;
     private final String dirPath;
     private final ColorModel cm;
@@ -61,28 +63,30 @@ class LargeList {
     private final ImageWriter imgWriter;
     private final boolean isWritableRenderedImage;
 
+    private final WritableRaster[] array;
+
+    private final LinkedList<Integer> stack = new LinkedList<Integer>();
 
     /**
-     * <p>List which contain {@link Raster} from {@link RenderedImage} owner.<br/>
-     * If somme of {@link Raster} weight within list exceed memory capacity, {@link Raster} are stored
+     * <p>List which contain {@link java.awt.image.Raster} from {@link java.awt.image.RenderedImage} owner.<br/>
+     * If somme of {@link java.awt.image.Raster} weight within array exceed memory capacity, {@link java.awt.image.Raster} are stored
      * on hard disk at appropriate quad tree emplacement in temporary system directory.<br/><br/>
      *
-     * Note : {@link Raster} are stored in tiff format to avoid onerous, compression decompression, cost during disk writing reading.</p>
+     * Note : {@link java.awt.image.Raster} are stored in tiff format to avoid onerous, compression decompression, cost during disk writing reading.</p>
      *
-     * @param ri {@link RenderedImage} which contain all raster in list.
+     * @param ri {@link java.awt.image.RenderedImage} which contain all raster in array.
      * @param memoryCapacity storage capacity in Byte.
-     * @throws IOException if impossible to create {@link ImageReader} or {@link ImageWriter}.
+     * @throws java.io.IOException if impossible to create {@link javax.imageio.ImageReader} or {@link javax.imageio.ImageWriter}.
      */
-    LargeList(RenderedImage ri, long memoryCapacity) throws IOException {
+    LargeArray(RenderedImage ri, long memoryCapacity) throws IOException {
         //cache properties.
-        this.list           = new LinkedList<LargeRaster>();
         this.memoryCapacity = memoryCapacity;
         isWritableRenderedImage = ri instanceof WritableRenderedImage;
         //image owner properties.
         this.cm                = ri.getColorModel();
         this.remainingCapacity = memoryCapacity;
-        this.numXTiles         = ri.getNumXTiles();
-        this.numYTiles         = ri.getNumYTiles();
+        this.numTilesX = ri.getNumXTiles();
+        this.numTilesY = ri.getNumYTiles();
         this.riMinX            = ri.getMinX();
         this.riMinY            = ri.getMinY();
         this.riTileWidth       = ri.getTileWidth();
@@ -92,7 +96,7 @@ class LargeList {
 
         //quad tree directory architecture.
         this.dirPath = TEMPORARY_PATH + "/img_"+ri.hashCode();
-        this.qTD     = new QuadTreeDirectory(dirPath, numXTiles, numYTiles, FORMAT, true);
+        this.qTD     = new QuadTreeDirectory(dirPath, numTilesX, numTilesY, FORMAT, true);
         qTD.create4rchitecture();
 
         //reader writer
@@ -108,44 +112,44 @@ class LargeList {
             case DataBuffer.TYPE_SHORT     : dataTypeWeight = 2; break;
             case DataBuffer.TYPE_UNDEFINED : dataTypeWeight = 8; break;
             case DataBuffer.TYPE_USHORT    : dataTypeWeight = 2; break;
-            default : throw new IllegalStateException("unknow raster data type");
+            default : throw new IllegalStateException("unknown raster data type");
         }
+        
+        array = new WritableRaster[numTilesX*numTilesY];
     }
 
     /**
-     * Add a {@link Raster} in list and check list to don't exceed memory capacity.
+     * Add a {@link java.awt.image.Raster} in array and check array to don't exceed memory capacity.
      *
      * @param tileX mosaic index in X direction of raster will be stocked.
      * @param tileY mosaic index in Y direction of raster will be stocked.
-     * @param raster raster will be stocked in list.
-     * @throws IOException if an error occurs during writing.
+     * @param raster raster will be stocked in array.
+     * @throws java.io.IOException if an error occurs during writing.
      */
     void add(int tileX, int tileY, WritableRaster raster) throws IOException {
         final int tX = tileX - minTileX;
         final int tY = tileY - minTileY;
         final long rastWeight = getRasterWeight(raster);
         if (rastWeight > memoryCapacity) throw new IllegalImageDimensionException("raster too large");
-        list.addLast(new LargeRaster(tX, tY, rastWeight, checkRaster(raster, tX, tY)));
+        final int indice = getIndice(tX, tY);
+        array[indice] = checkRaster(raster, tX, tY);
+        stack.addLast(indice);
         remainingCapacity -= rastWeight;
-        checkList();
+        checkArray();
     }
 
     /**
-     * Remove {@link Raster} at tileX tileY mosaic coordinates.
+     * Remove {@link java.awt.image.Raster} at tileX tileY mosaic coordinates.
      *
-     * @param tX mosaic index in X direction.
-     * @param tY mosaic index in Y direction.
+     * @param tileX mosaic index in X direction.
+     * @param tileY mosaic index in Y direction.
      */
     void remove(int tileX, int tileY) {
         final int tX = tileX - minTileX;
         final int tY = tileY - minTileY;
-        for (int id = 0, s = list.size(); id < s; id++) {
-            final LargeRaster lr = list.get(id);
-            if (lr.getGridX() == tX && lr.getGridY() == tY) {
-                list.remove(id);
-                break;
-            }
-        }
+        final int indice = getIndice(tX, tY);
+        array[indice] = null;
+        stack.removeFirstOccurrence(indice);
         //quad tree
         final File removeFile = new File(qTD.getPath(tX, tY));
         //delete on hard disk if exist.
@@ -153,51 +157,47 @@ class LargeList {
     }
 
     /**
-     * Return {@link Raster} at tileX tileY mosaic coordinates.
+     * Return {@link java.awt.image.Raster} at tileX tileY mosaic coordinates.
      *
      * @param tileX mosaic index in X direction.
      * @param tileY mosaic index in Y direction.
      * @return Raster at tileX tileY mosaic coordinates.
-     * @throws IOException if an error occurs during reading..
+     * @throws java.io.IOException if an error occurs during reading..
      */
     Raster getRaster(int tileX, int tileY) throws IOException {
+        WritableRaster res;
+        
         final int tX = tileX - minTileX;
         final int tY = tileY - minTileY;
-        for (int id = 0; id < list.size(); id++) {
-            final LargeRaster lr = list.get(id);
-            if (lr.getGridX() == tX && lr.getGridY() == tY) return lr.getRaster();
+
+        if ((res = array[tY * numTilesX + tX]) == null) {
+            final File getFile = new File(qTD.getPath(tX, tY));
+
+            if (getFile.exists()) {
+                imgReader.setInput(ImageIO.createImageInputStream(getFile));
+                final BufferedImage buff = imgReader.read(0);
+                imgReader.dispose();
+                //add in cache array.
+                res = buff.getRaster();
+                final int indice = getIndice(tX, tY);
+                array[indice] = checkRaster(res, tX, tY);
+                stack.addLast(indice);
+                remainingCapacity -= getRasterWeight(res);
+                checkArray();
+            }
         }
-        final File getFile = new File(qTD.getPath(tX, tY));
-        if (getFile.exists()) {
-            imgReader.setInput(ImageIO.createImageInputStream(getFile));
-            final BufferedImage buff = imgReader.read(0);
-            imgReader.dispose();
-            //add in cache list.
-            final Raster wr       = checkRaster(buff.getRaster(), tX, tY);
-            final long rastWeight = getRasterWeight(wr);
-            list.addLast(new LargeRaster(tX, tY, rastWeight, wr));
-            remainingCapacity -= rastWeight;
-            checkList();
-            return wr;
-        }
-        return null;
+        
+        return res;
     }
 
     /**
-     * Return all {@link Raster} within this cache system.
+     * Return all {@link java.awt.image.Raster} within this cache system.
      *
      * @return all raster within this cache system.
-     * @throws IOException if impossible to read raster from disk.
+     * @throws java.io.IOException if impossible to read raster from disk.
      */
     Raster[] getTiles() throws IOException {
-        int id = 0;
-        final Raster[] rasters = new Raster[numXTiles * numYTiles];
-        for (int ty = minTileY, tmy = minTileY+numYTiles; ty < tmy; ty++) {
-            for (int tx = minTileX, tmx = minTileX+numXTiles; tx < tmx; tx++) {
-                rasters[id++] = getRaster(tx, ty);
-            }
-        }
-        return rasters;
+        return array;
     }
 
     /**
@@ -205,29 +205,31 @@ class LargeList {
      */
     void removeTiles() {
         remainingCapacity = memoryCapacity;
-        list.clear();
+        for (int i = 0 ; i < array.length ; i++) {
+            array[i] = null;
+        }
+        stack.clear();
         final File removeFile = new File(dirPath);
-        cleanDirectory(removeFile);
-        removeFile.delete();
+        FileUtilities.deleteDirectory(removeFile);
     }
 
     /**
-     * Affect a new memory capacity and update {@link Raster} list from new memory capacity set.
+     * Affect a new memory capacity and update {@link java.awt.image.Raster} array from new memory capacity set.
      *
      * @param memoryCapacity new memory capacity.
-     * @throws IllegalImageDimensionException if capacity is too low from raster weight.
-     * @throws IOException if impossible to write raster on disk.
+     * @throws org.geotoolkit.image.io.IllegalImageDimensionException if capacity is too low from raster weight.
+     * @throws java.io.IOException if impossible to write raster on disk.
      */
     void setCapacity(long memoryCapacity) throws IllegalImageDimensionException, IOException {
         ArgumentChecks.ensurePositive("LargeList : memory capacity", memoryCapacity);
         final long diff    = this.memoryCapacity - memoryCapacity;
         remainingCapacity -= diff;
-        checkList();
+        checkArray();
         this.memoryCapacity = memoryCapacity;
     }
 
     /**
-     * Define the weight of a {@link Raster}.
+     * Define the weight of a {@link java.awt.image.Raster}.
      *
      * @param raster raster which will be weigh.
      * @return raster weight.
@@ -239,11 +241,11 @@ class LargeList {
     }
 
     /**
-     * Write {@link Raster} on hard disk.
+     * Write {@link java.awt.image.Raster} on hard disk.
      *
      * @param path emplacement to write.
      * @param raster raster which will be writing.
-     * @throws IOException if impossible to write raster on disk.
+     * @throws java.io.IOException if impossible to write raster on disk.
      */
     private void writeRaster(File path, Raster raster) throws IOException {
         final WritableRaster wr  = RasterFactory.createWritableRaster(raster.getSampleModel(), raster.getDataBuffer(), WPOINT);
@@ -255,41 +257,31 @@ class LargeList {
     }
 
     /**
-     * Write {@link Raster} within {@link LargeRaster} object on hard disk at appropriate quad tree emplacement.
+     * Write {@link java.awt.image.Raster} within {@link org.geotoolkit.image.io.large.LargeRaster} object on hard disk at appropriate quad tree emplacement.
      *
-     * @param lRaster object which contain raster.
-     * @throws IOException if impossible to write raster on disk.
+     *
+     * @param raster object which contain raster.
+     * @throws java.io.IOException if impossible to write raster on disk.
      */
-    private void writeRaster(LargeRaster lRaster) throws IOException {
-        final File file = new File(qTD.getPath(lRaster.getGridX(), lRaster.getGridY()));
+    private void writeRaster(WritableRaster raster, int tileX, int tileY) throws IOException {
+        final File file = new File(qTD.getPath(tileX, tileY));
         if (!file.exists() || isWritableRenderedImage) {
-            writeRaster(file, lRaster.getRaster());
+            writeRaster(file, raster);
         }
     }
 
-    /**
-     * Clean all subDirectory of {@link parentDirectory}.
-     *
-     * @param parentDirectory directory which will be cleaned.
-     */
-    private void cleanDirectory(File parentDirectory) {
-        for (File file : parentDirectory.listFiles()) {
-            if (file.isDirectory()) cleanDirectory(file);
-            file.delete();
-        }
-    }
 
     /**
-     * <p>Verify that {@link Raster} coordinate is agree from {@link RenderedImage} location.<br/>
-     * If location is correct return {@link Raster} else return new {@link Raster} with correct<br/>
-     * location but with same internal value from {@link Raster}.</p>
+     * <p>Verify that {@link java.awt.image.Raster} coordinate is agree from {@link java.awt.image.RenderedImage} location.<br/>
+     * If location is correct return {@link java.awt.image.Raster} else return new {@link java.awt.image.Raster} with correct<br/>
+     * location but with same internal value from {@link java.awt.image.Raster}.</p>
      *
      * @param raster raster will be checked.
      * @param tx tile location within renderedImage owner in X direction.
      * @param ty tile location within renderedImage owner in Y direction.
      * @return raster with correct coordinate from its image owner.
      */
-    private Raster checkRaster(WritableRaster raster, int tx, int ty) {
+    private WritableRaster checkRaster(WritableRaster raster, int tx, int ty) {
         final int mx = riTileWidth  * tx + riMinX;
         final int my = riTileHeight * ty + riMinY;
         if (raster.getMinX() != mx || raster.getMinY() != my) {
@@ -300,21 +292,24 @@ class LargeList {
     }
 
     /**
-     * <p>Verify that list weight do not exceed memory capacity.<br/>
-     * If memory capacity is exceed write {@link Raster} on hard disk up to don't exceed memory capacity.</p>
+     * <p>Verify that array weight do not exceed memory capacity.<br/>
+     * If memory capacity is exceed write {@link java.awt.image.Raster} on hard disk up to don't exceed memory capacity.</p>
      *
-     * @throws IllegalImageDimensionException if raster too large for this Tilecache.
-     * @throws IOException if impossible to write raster.
+     * @throws org.geotoolkit.image.io.IllegalImageDimensionException if raster too large for this Tilecache.
+     * @throws java.io.IOException if impossible to write raster.
      */
-    private void checkList() throws IOException {
+    private void checkArray() throws IOException {
         while (remainingCapacity < 0) {
-            if (list.isEmpty())
-                throw new IllegalImageDimensionException("raster too large");
-            final LargeRaster lr = list.pollFirst();
-            remainingCapacity   += lr.getWeight();
+            final int toRemove = stack.getFirst();
+            final WritableRaster raster = array[toRemove];
+            remainingCapacity   += getRasterWeight(raster);
             //quad tree
-            writeRaster(lr);
+            writeRaster(raster, toRemove % numTilesX, toRemove / numTilesX);
         }
+    }
+    
+    private int getIndice(int tileX, int tileY) {
+        return tileY*numTilesX+tileX;
     }
 }
 
