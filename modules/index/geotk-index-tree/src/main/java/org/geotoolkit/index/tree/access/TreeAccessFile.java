@@ -48,7 +48,7 @@ public class TreeAccessFile extends TreeAccess {
     private final ByteBuffer byteBuffer;
     private long currentBufferPosition;
     private int writeBufferLimit;
-    private final long bufferLength;
+    private final int bufferLength;
     private List<Integer> recycleID = new LinkedList<Integer>();
     
     public TreeAccessFile( final File input, final int magicNumber, final double versionNumber ) throws IOException, ClassNotFoundException {
@@ -60,7 +60,7 @@ public class TreeAccessFile extends TreeAccess {
         
         /***************************  read head ******************************/
         // write magicNumber
-        final int mgNumber  = inOutStream.readInt();
+        final int mgNumber = inOutStream.readInt();
         if (magicNumber != mgNumber)
             throw new IllegalArgumentException("tree type identifier should match. expected identifier : "+magicNumber+". Found : "+mgNumber);
         
@@ -96,7 +96,7 @@ public class TreeAccessFile extends TreeAccess {
         // buffer attributs
         final int div = 8192 / nodeSize;// 4096
         this.bufferLength = div * nodeSize;
-        byteBuffer = ByteBuffer.allocateDirect((int)bufferLength);
+        byteBuffer = ByteBuffer.allocateDirect(bufferLength);
         byteBuffer.order(bO);
         
         beginPosition = inOutChannel.position();
@@ -172,7 +172,7 @@ public class TreeAccessFile extends TreeAccess {
     
     @Override
     public void internalSearch(int nodeID) throws IOException {
-        adjustBuffer(nodeID);// faire des move buffposition
+        adjustBuffer(nodeID);
         final int searchIndex = (int) ((beginPosition + (nodeID - 1) * nodeSize) - currentBufferPosition);
         byteBuffer.limit(searchIndex + nodeSize);
         byteBuffer.position(searchIndex);
@@ -180,12 +180,10 @@ public class TreeAccessFile extends TreeAccess {
         for (int i = 0; i < boundLength; i++) {
             boundary[i] = byteBuffer.getDouble();
         }
-//        final int parent  = byteBuffer.getInt();
-        byteBuffer.position(byteBuffer.position() + 4);
+        byteBuffer.position(byteBuffer.position() + 4);// step parent ID
         final int sibling = byteBuffer.getInt();
-        final int child   = byteBuffer.getInt();// appel avant de suivre voisin risk de perte de cursor
-//        final int chCount = byteBuffer.getInt();
-        byteBuffer.position(byteBuffer.position() + 4);
+        final int child   = byteBuffer.getInt();
+        byteBuffer.position(byteBuffer.position() + 4);// step child count
         if (sibling != 0) {
             internalSearch(sibling);
         }
@@ -243,7 +241,7 @@ public class TreeAccessFile extends TreeAccess {
         final int writeIndex = (int) ((beginPosition + (indexNode - 1) * nodeSize) - currentBufferPosition);
         final int currentLimit = writeIndex + nodeSize;
         writeBufferLimit = Math.max(writeBufferLimit, currentLimit);
-        byteBuffer.limit(writeIndex + nodeSize);
+        byteBuffer.limit(currentLimit);
         byteBuffer.position(writeIndex);
         double[] candidateBound = candidate.getBoundary();
         for (int i = 0; i < boundLength; i++) {

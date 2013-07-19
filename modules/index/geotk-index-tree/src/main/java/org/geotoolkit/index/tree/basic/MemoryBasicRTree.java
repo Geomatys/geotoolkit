@@ -18,7 +18,7 @@ package org.geotoolkit.index.tree.basic;
 
 import org.geotoolkit.index.tree.access.TreeAccessMemory;
 import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.geotoolkit.index.tree.io.TreeElementMapper;
+import org.geotoolkit.index.tree.mapper.TreeElementMapper;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
