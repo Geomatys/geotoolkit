@@ -7,6 +7,8 @@ package org.geotoolkit.index.tree.access;
 import java.io.IOException;
 import java.util.Arrays;
 import org.geotoolkit.index.tree.FileNode;
+import org.geotoolkit.index.tree.Node;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -14,14 +16,26 @@ import org.geotoolkit.index.tree.FileNode;
  */
 public abstract class TreeAccess {
    
+    protected CoordinateReferenceSystem crs;
+    protected int maxElement;
+    protected FileNode root;
+    
     protected int nodeId = 1;
     //attribut define for research
     protected int[] tabSearch;
     protected int currentLength;
     protected int currentPosition;
     protected double[] regionSearch;
+    
+    protected int treeIdentifier;
 
-    public TreeAccess() {
+    protected TreeAccess() {
+    }
+    
+    protected TreeAccess(final int maxElement, final CoordinateReferenceSystem crs){
+        this.maxElement = maxElement;
+        this.crs        = crs;
+        treeIdentifier  = 1;
     }
     
     public int[] search(int nodeID, double[] regionSearch) throws IOException {
@@ -61,6 +75,26 @@ public abstract class TreeAccess {
      * @throws IOException 
      */
     public abstract void deleteNode(final FileNode candidate) throws IOException;
+    
+    public CoordinateReferenceSystem getCRS(){
+        return crs;
+    }
+    
+    public int getMaxElementPerCells(){
+        return maxElement;
+    }
+    
+    public Node getRoot(){
+        return root;
+    }
+    
+    public void setTreeIdentifier(final int treeIdentifier){
+        this.treeIdentifier = treeIdentifier;
+    }
+
+    public int getTreeIdentifier() {
+        return treeIdentifier;
+    }
     
     /**
      * 
