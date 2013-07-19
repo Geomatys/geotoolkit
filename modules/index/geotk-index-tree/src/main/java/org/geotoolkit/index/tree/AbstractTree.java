@@ -17,6 +17,8 @@
 package org.geotoolkit.index.tree;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.index.tree.calculator.*;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
@@ -81,17 +83,21 @@ public abstract class AbstractTree<E> implements Tree<E> {
      */
     @Override
     public void insert(E object) throws IllegalArgumentException , StoreIndexException{
-        ArgumentChecks.ensureNonNull("insert : object", object);
-        final Envelope env = treeEltMap.getEnvelope(object);
-        if (!CRS.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()))
-            throw new IllegalArgumentException("During insertion element should have same CoordinateReferenceSystem as Tree.");
-        final double[] coordinates = DefaultTreeUtils.getCoords(env);
-        for (double d : coordinates)
-            if (Double.isNaN(d))
-                throw new IllegalArgumentException("coordinates contain at least one NAN value");
-        treeEltMap.setTreeIdentifier(object, treeIdentifier);
-        insert(treeIdentifier, coordinates);
-        treeIdentifier++;
+        try {
+            ArgumentChecks.ensureNonNull("insert : object", object);
+            final Envelope env = treeEltMap.getEnvelope(object);
+            if (!CRS.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()))
+                throw new IllegalArgumentException("During insertion element should have same CoordinateReferenceSystem as Tree.");
+            final double[] coordinates = DefaultTreeUtils.getCoords(env);
+            for (double d : coordinates)
+                if (Double.isNaN(d))
+                    throw new IllegalArgumentException("coordinates contain at least one NAN value");
+            treeEltMap.setTreeIdentifier(object, treeIdentifier);
+            insert(treeIdentifier, coordinates);
+            treeIdentifier++;
+        } catch (IOException ex) {
+            throw new StoreIndexException(ex);
+        }
     }
     
     /**
@@ -101,16 +107,20 @@ public abstract class AbstractTree<E> implements Tree<E> {
     
     @Override
     public boolean remove(E object) throws StoreIndexException {
-        ArgumentChecks.ensureNonNull("insert : object", object);
-        final Envelope env = treeEltMap.getEnvelope(object);
-        if (!CRS.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()))
-            throw new IllegalArgumentException("During insertion element should have same CoordinateReferenceSystem as Tree.");
-        final double[] coordinates = DefaultTreeUtils.getCoords(env);
-        for (double d : coordinates)
-            if (Double.isNaN(d))
-                throw new IllegalArgumentException("coordinates contain at least one NAN value");
-        final int treeID = treeEltMap.getTreeIdentifier(object);
-        return remove(treeID, coordinates);
+        try {
+            ArgumentChecks.ensureNonNull("insert : object", object);
+            final Envelope env = treeEltMap.getEnvelope(object);
+            if (!CRS.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()))
+                throw new IllegalArgumentException("During insertion element should have same CoordinateReferenceSystem as Tree.");
+            final double[] coordinates = DefaultTreeUtils.getCoords(env);
+            for (double d : coordinates)
+                if (Double.isNaN(d))
+                    throw new IllegalArgumentException("coordinates contain at least one NAN value");
+            final int treeID = treeEltMap.getTreeIdentifier(object);
+            return remove(treeID, coordinates);
+        } catch (IOException ex) {
+            throw new StoreIndexException(ex);
+        }
     }
     
     protected abstract boolean remove(Object object, double... coordinates) throws StoreIndexException;

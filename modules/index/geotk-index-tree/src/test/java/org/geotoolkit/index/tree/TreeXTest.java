@@ -232,4 +232,10 @@ class TreeXElementMapperTest implements TreeElementMapper<Envelope> {
         }
         throw new IllegalStateException("impossible to found Data.");
     }    
+
+    @Override
+    public void clear() {
+        lData.clear();
+        lID.clear();
+    }
 }

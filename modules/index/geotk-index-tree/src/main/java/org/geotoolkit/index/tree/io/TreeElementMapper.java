@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.index.tree.io;
 
+import java.io.IOException;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -31,7 +32,7 @@ public interface TreeElementMapper<E> {
      * @param object
      * @return an appropriate tree identifier from object define by user.
      */
-    public int getTreeIdentifier(E object);
+    public int getTreeIdentifier(E object) throws IOException;
     
     /**
      * Return {@link Envelope} boundary from object.
@@ -39,7 +40,7 @@ public interface TreeElementMapper<E> {
      * @param object
      * @return {@link Envelope} boundary from object. 
      */
-    public Envelope getEnvelope(E object);
+    public Envelope getEnvelope(E object) throws IOException;
     
     /**
      * Affect a tree identifier define by user.
@@ -47,7 +48,7 @@ public interface TreeElementMapper<E> {
      * @param object
      * @param treeIdentifier 
      */
-    public void setTreeIdentifier(E object, int treeIdentifier);
+    public void setTreeIdentifier(E object, int treeIdentifier) throws IOException;
     
     /**
      * <p>Return object from its tree identifier.<br/>
@@ -57,5 +58,10 @@ public interface TreeElementMapper<E> {
      * @param treeIdentifier
      * @return object from its tree identifier.
      */
-    public E getObjectFromTreeIdentifier(int treeIdentifier);
+    public E getObjectFromTreeIdentifier(int treeIdentifier) throws IOException;
+    
+    /**
+     * Initialize attributs like just after class constructor.
+     */
+    public void clear();
 }
