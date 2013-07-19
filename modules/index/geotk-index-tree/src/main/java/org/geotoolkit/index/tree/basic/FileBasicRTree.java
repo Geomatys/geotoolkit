@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import org.geotoolkit.index.tree.access.TreeAccessFile;
 import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.geotoolkit.index.tree.io.TreeElementMapper;
+import org.geotoolkit.index.tree.mapper.TreeElementMapper;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

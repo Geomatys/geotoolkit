@@ -23,7 +23,7 @@ import org.geotoolkit.index.tree.calculator.*;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.geotoolkit.index.tree.io.TreeElementMapper;
+import org.geotoolkit.index.tree.mapper.TreeElementMapper;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

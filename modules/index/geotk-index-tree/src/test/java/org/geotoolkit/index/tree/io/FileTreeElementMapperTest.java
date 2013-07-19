@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.index.tree.io;
 
+import org.geotoolkit.index.tree.mapper.FileTreeElementMapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -34,13 +35,13 @@ public class FileTreeElementMapperTest extends FileTreeElementMapper<double[]> {
     final int boundLength;
 
     public FileTreeElementMapperTest(final CoordinateReferenceSystem crs, final File inOutPut) throws IOException {
-        super(inOutPut, (crs.getCoordinateSystem().getDimension() << 1) * Double.SIZE);
+        super(inOutPut, ((crs.getCoordinateSystem().getDimension() << 1) * Double.SIZE)>>3);
         this.crs = crs;
         boundLength = crs.getCoordinateSystem().getDimension() << 1;
     }
 
     @Override
-    protected boolean areaEquals(double[] objectA, double[] objectB) {
+    protected boolean areEquals(double[] objectA, double[] objectB) {
         return Arrays.equals(objectA, objectB);
     }
     
@@ -60,7 +61,7 @@ public class FileTreeElementMapperTest extends FileTreeElementMapper<double[]> {
     @Override
     protected void writeObject(double[] Object) throws IOException {
         for (int i = 0; i < boundLength; i++) {
-            inOutStream.writeDouble(Object[i]);
+            byteBuffer.putDouble(Object[i]);
         }
     }
 
@@ -71,7 +72,7 @@ public class FileTreeElementMapperTest extends FileTreeElementMapper<double[]> {
     protected double[] readObject() throws IOException {
         final double[] result = new double[boundLength];
         for (int i = 0; i < boundLength; i++) {
-            result[i] = inOutStream.readDouble();
+            result[i] = byteBuffer.getDouble();
         }
         return result;
     }

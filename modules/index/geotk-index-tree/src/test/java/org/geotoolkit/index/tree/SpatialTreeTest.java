@@ -24,7 +24,7 @@ import junit.framework.Assert;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.geotoolkit.index.tree.io.TreeElementMapper;
+import org.geotoolkit.index.tree.mapper.TreeElementMapper;
 import org.geotoolkit.index.tree.io.TreeElementMapperTest;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -372,7 +372,12 @@ public abstract class SpatialTreeTest extends TreeTest{
         final int l = tabID.length;
         double[][] tabResult = new double[l][];
         for (int i = 0; i < l; i++) {
-            tabResult[i] = tEM.getObjectFromTreeIdentifier(tabID[i]);
+            try {
+                tabResult[i] = tEM.getObjectFromTreeIdentifier(tabID[i]);
+            } catch (Exception ex) {
+                System.out.println("");
+            }
+//            tabResult[i] = tEM.getObjectFromTreeIdentifier(tabID[i]);
         }
         return tabResult;
     }

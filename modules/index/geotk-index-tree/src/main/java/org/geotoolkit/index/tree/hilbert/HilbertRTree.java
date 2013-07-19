@@ -29,7 +29,7 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.Classes;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.geotoolkit.index.tree.io.TreeElementMapper;
+import org.geotoolkit.index.tree.mapper.TreeElementMapper;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

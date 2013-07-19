@@ -19,7 +19,7 @@ package org.geotoolkit.index.tree;
 import java.io.IOException;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.geotoolkit.index.tree.io.TreeElementMapper;
+import org.geotoolkit.index.tree.mapper.TreeElementMapper;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

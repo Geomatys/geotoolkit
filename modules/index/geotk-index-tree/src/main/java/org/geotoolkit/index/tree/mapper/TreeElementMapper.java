@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.io;
+package org.geotoolkit.index.tree.mapper;
 
 import java.io.IOException;
 import org.opengis.geometry.Envelope;
@@ -63,5 +63,5 @@ public interface TreeElementMapper<E> {
     /**
      * Initialize attributs like just after class constructor.
      */
-    public void clear();
+    public void clear() throws IOException;
 }

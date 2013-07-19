@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.filter.SpatialFilterType;
 import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.geotoolkit.index.tree.io.TreeElementMapper;
+import org.geotoolkit.index.tree.mapper.TreeElementMapper;
 import org.geotoolkit.index.tree.io.TreeX;
 import org.geotoolkit.index.tree.star.StarRTree;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
