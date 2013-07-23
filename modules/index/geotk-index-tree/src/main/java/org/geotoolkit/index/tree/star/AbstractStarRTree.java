@@ -14,26 +14,22 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.basic;
+package org.geotoolkit.index.tree.star;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.index.tree.AbstractTree;
 import org.geotoolkit.index.tree.DefaultNodeFactory;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.add;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.contains;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.getSpan;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.intersects;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.FileNode;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.access.TreeAccess;
-import static org.geotoolkit.index.tree.basic.SplitCase.LINEAR;
-import static org.geotoolkit.index.tree.basic.SplitCase.QUADRATIC;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.mapper.TreeElementMapper;
@@ -42,16 +38,20 @@ import org.geotoolkit.index.tree.mapper.TreeElementMapper;
  *
  * @author rmarechal
  */
-public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
+public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
     
-    private final SplitCase choice;
+    /**
+     * In accordance with R*Tree properties.
+     * To avoid unnecessary split permit to
+     * reinsert some elements just one time.
+     */
+    boolean insertAgain = true;
     
-    public AbstractBasicRTree(final TreeAccess treeAccess, final SplitCase choice, final TreeElementMapper treeEltMap) throws StoreIndexException {
+    
+    public AbstractStarRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
         super(treeAccess, treeAccess.getCRS(), treeEltMap);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);
-        ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : SplitCase choice", choice);
-        this.choice      = choice;
         this.eltCompteur = 0;
         this.treeAccess = treeAccess;
         super.setRoot(treeAccess.getRoot());
@@ -94,22 +94,8 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
             throw new StoreIndexException(this.getClass().getName()+"Tree.insert(), impossible to add element.", ex);
         }
     }
-
-    @Override
-    public void setRoot(Node root) throws StoreIndexException {
-        if (root == null) {
-//            nodeId = 1;
-            try {
-                treeAccess.rewind();
-            } catch (IOException ex) {
-                throw new StoreIndexException("Impossible to rewind TreeAccessFile.", ex);
-            }
-            setElementsNumber(0);
-        }
-        super.setRoot(root);
-    }
     
-    private Node nodeInsert(Node candidate, Object object, double... coordinates) throws IOException{
+    private Node nodeInsert(Node candidate, Object object, double... coordinates) throws IOException, StoreIndexException {
         assert candidate instanceof FileNode;
         FileNode fileCandidate = (FileNode) candidate;
         assert !fileCandidate.isData() : "nodeInsert : candidate should never be data type.";
@@ -140,7 +126,28 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
         assert fileCandidate.checkInternal() : "nodeInsert : after insert.";
         
         if (fileCandidate.getChildCount() > getMaxElements()) {
-            assert fileCandidate.checkInternal() : "nodeInsert : before Branch grafting.";
+            /******************************** 33 % *****************************/
+            if (getIA()) {
+                setIA(false);
+                final LinkedList<Object> listObjects  = new LinkedList<Object>();
+                final LinkedList<double[]> listCoords = new LinkedList<double[]>(); // faire des list privée
+                getElementAtMore33PerCent(candidate, listObjects, listCoords);
+                final int siz = listCoords.size();
+                assert (siz == listObjects.size()) :"getElementAtMore33Percent : nodeInsert : lists should have same size.";
+                final int treeIdent = treeIdentifier;
+                for (int i = 0; i < siz; i++) {
+                    remove(listObjects.get(i), listCoords.get(i));
+                }
+                for (int i = 0; i< siz; i++) {
+                    insert(listObjects.get(i), listCoords.get(i));
+                }
+                setIA(true);
+                treeIdentifier = treeIdent;
+                return null;
+            }
+            assert fileCandidate.checkInternal() : "nodeInsert : after insert again element a 33% distance.";
+            /*******************************************************************/
+            
 //            /*********************** Branch grafting **************************/
 //            if (fileCandidate.isLeaf() && fileCandidate.getParentId() != 0) {
 //                /**
@@ -166,35 +173,38 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
 //                    }
 //                }
 //            }
+//            assert fileCandidate.checkInternal() : "nodeInsert : after Branch grafting.";
 //            /******************************************************************/
-            assert fileCandidate.checkInternal() : "nodeInsert : after Branch grafting.";
-            // split
-            final Node[] splitTable = splitNode(fileCandidate);
-            final FileNode split1 = (FileNode)splitTable[0];
-            final FileNode split2 = (FileNode)splitTable[1];
             
-            final int candidateParentID = fileCandidate.getParentId();
-            if (candidateParentID == 0) { // on est sur le noeud root
-                // on clear le candidate
-                assert fileCandidate.getSiblingId() == 0 : "nodeInsert : split root : root should not have sibling.";
-                fileCandidate.clear();
-                fileCandidate.addChild(split1);
-                fileCandidate.addChild(split2);     
-                assert split1.checkInternal() : "nodeInsert : split1.";
-                assert split2.checkInternal() : "nodeInsert : split2.";
-                assert fileCandidate.checkInternal() : "nodeInsert : split root.";
-            } else {
-                final FileNode parent = treeAccess.readNode(candidateParentID);
-                parent.removeChild(fileCandidate);
-                parent.addChild(split1);
-                parent.addChild(split2);
-                assert split1.checkInternal() : "nodeInsert : split1.";
-                assert split2.checkInternal() : "nodeInsert : split2.";
-                assert parent.checkInternal() : "nodeInsert : split node.";
-                /**
-                 * Candidate parent is modified, return it to re-affect appropriate parent object in up-Insert().
-                 */
-                return parent;
+            if (fileCandidate.getChildCount() > getMaxElements()) {
+                // split
+                final Node[] splitTable = splitNode(fileCandidate);
+                final FileNode split1 = (FileNode)splitTable[0];
+                final FileNode split2 = (FileNode)splitTable[1];
+
+                final int candidateParentID = fileCandidate.getParentId();
+                if (candidateParentID == 0) { // on est sur le noeud root
+                    // on clear le candidate
+                    assert fileCandidate.getSiblingId() == 0 : "nodeInsert : split root : root should not have sibling.";
+                    fileCandidate.clear();
+                    fileCandidate.addChild(split1);
+                    fileCandidate.addChild(split2);     
+                    assert split1.checkInternal() : "nodeInsert : split1.";
+                    assert split2.checkInternal() : "nodeInsert : split2.";
+                    assert fileCandidate.checkInternal() : "nodeInsert : split root.";
+                } else {
+                    final FileNode parent = treeAccess.readNode(candidateParentID);
+                    parent.removeChild(fileCandidate);
+                    parent.addChild(split1);
+                    parent.addChild(split2);
+                    assert split1.checkInternal() : "nodeInsert : split1.";
+                    assert split2.checkInternal() : "nodeInsert : split2.";
+                    assert parent.checkInternal() : "nodeInsert : split node.";
+                    /**
+                     * Candidate parent is modified, return it to re-affect appropriate parent object in up-Insert().
+                     */
+                    return parent;
+                }
             }
         }
         /**
@@ -202,162 +212,6 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
          * return currently Node else return null;
          */
         return (subCandidateParent != null && fileCandidate.getParentId() == 0) ? fileCandidate : null;
-    }
-    
-    /**
-     * Split a overflow {@code Node} in accordance with R-Tree properties.
-     *
-     * @param candidate {@code Node} to Split.
-     * @throws IllegalArgumentException if candidate is null.
-     * @throws IllegalArgumentException if candidate elements number is lesser 2.
-     * @return {@code Node} List which contains two {@code Node} (split result of candidate).
-     */
-    private Node[] splitNode(final FileNode candidate) throws IllegalArgumentException, IOException {
-        ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
-        // debug
-        int counta = treeAccess.getCountAdjust();
-        assert candidate.checkInternal() : "splitNode : begin.";
-        int childNumber = candidate.getChildCount();
-        if (childNumber < 2) 
-            throw new IllegalArgumentException("not enought elements within " + candidate + " to split.");
-        final Calculator calc = getCalculator();
-        final int maxElmnts   = getMaxElements();
-        
-        final Node[] children = candidate.getChildren();
-        assert childNumber == children.length : "SplitNode : childnumber should be same as children length value.";
-        
-        Node s1 = null;
-        Node s2 = null;
-        
-        double refValue = Double.NEGATIVE_INFINITY;
-        double tempValue;
-        int index1 = 0;
-        int index2 = 0;
-        
-        switch (choice) {
-            case LINEAR: {
-                for (int i = 0; i < childNumber - 1; i++) {
-                    for (int j = i + 1; j < childNumber; j++) {
-                        tempValue = calc.getDistanceEnvelope(children[i].getBoundary(), children[j].getBoundary());
-                        if (tempValue > refValue) {
-                            s1     = children[i];
-                            s2     = children[j];
-                            index1 = i;
-                            index2 = j;
-                            refValue = tempValue;
-                        }
-                    }
-                }
-            }
-            break;
-
-            case QUADRATIC: {
-                double[] rectGlobal, bound1, bound2;
-                for (int i = 0; i < childNumber - 1; i++) {
-                    for (int j = i + 1; j < childNumber; j++) {
-                        bound1 = children[i].getBoundary();
-                        bound2 = children[j].getBoundary();
-                        
-                        rectGlobal = bound1.clone();
-                        add(rectGlobal, bound2);
-                        tempValue  = calc.getSpace(rectGlobal) - calc.getSpace(bound1) - calc.getSpace(bound2);
-                        if (tempValue > refValue) {
-                            s1     = children[i];
-                            s2     = children[j];
-                            index1 = i;
-                            index2 = j;
-                            refValue = tempValue;
-                        }
-                    }
-                }
-            }
-            break;
-        }
-        
-        assert (s1 != null && s2 != null) : "s1 || s2 == null";
-        
-        final int maxid = Math.max(index1, index2);
-        System.arraycopy(children, maxid+1, children, maxid, children.length-maxid-1);
-        children[children.length-1] = null;
-        
-        final int minid = Math.min(index1, index2);
-        System.arraycopy(children, minid+1, children, minid, children.length-minid-1);
-        children[children.length-1] = null;
-        childNumber -= 2;
-        
-        double[] r1Temp, r2Temp;
-        double demimaxE = maxElmnts / 3.0;
-        demimaxE = Math.max(demimaxE, 1);
-        
-        //result1 attributs
-        int r1ChCount = 0;
-        Node[] result1Children = new FileNode[childNumber+1];
-        
-        //result2 attributs
-        int r2ChCount = 0;
-        Node[] result2Children = new FileNode[childNumber+1];
-        
-        //add s1 s2
-        result1Children[r1ChCount++] = s1;
-        result2Children[r2ChCount++] = s2;
-
-        for (int i = 0, s = childNumber; i < s; i++) {
-            Node currentFileNode = children[i];
-            r1Temp = s1.getBoundary().clone();
-            add(r1Temp, currentFileNode.getBoundary());
-            r2Temp = s2.getBoundary().clone();
-            add(r2Temp, currentFileNode.getBoundary());
-            
-            final double area1 = calc.getSpace(r1Temp);
-            final double area2 = calc.getSpace(r2Temp);
-            int r1nbE = r1ChCount; // a supprimer
-            int r2nbE = r2ChCount;
-            
-            if (area1 < area2) {
-                if (r2nbE <= demimaxE && r1nbE > demimaxE) {
-                    result2Children[r2ChCount++] = currentFileNode;
-                } else {
-                    result1Children[r1ChCount++] = currentFileNode;
-                }
-            } else if (area1 == area2) {
-                if (r1nbE < r2nbE) {
-                    result1Children[r1ChCount++] = currentFileNode;
-                } else {
-                    result2Children[r2ChCount++] = currentFileNode;
-                }
-            } else {
-                if (r1nbE <= demimaxE && r2nbE > demimaxE) {
-                    result1Children[r1ChCount++] = currentFileNode;
-                } else {
-                    result2Children[r2ChCount++] = currentFileNode;
-                }
-            }
-        }
-        result1Children = Arrays.copyOf(result1Children, r1ChCount);
-        result2Children = Arrays.copyOf(result2Children, r2ChCount);
-                
-        final Node result1, result2;
-        final boolean isLeaf = candidate.isLeaf();
-        if (!isLeaf && r1ChCount == 1) {
-            result1 = result1Children[0];
-            ((FileNode)result1).setSiblingId(0);
-        } else {
-            result1 = createNode(treeAccess, null, 0, 0, 0);
-            result1.addChildren(result1Children);
-        }
-        if (!isLeaf && r2ChCount == 1) {
-            result2 = result2Children[0];
-            ((FileNode)result2).setSiblingId(0);
-        } else {
-            result2 = createNode(treeAccess, null, 0, 0, 0);
-            result2.addChildren(result2Children);
-        }
-        // check result
-        assert result1.checkInternal() : "splitNode : result1.";
-        assert result2.checkInternal() : "splitNode : result2.";
-        
-        countadjust+=(treeAccess.getCountAdjust()-counta);
-        return new Node[]{result1, result2};
     }
     
     /**
@@ -408,7 +262,7 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
                 result = dn;
                 area = areaTemp;
                 nbElmt = nbe;
-            } else if (areaTemp== area) {
+            } else if (areaTemp == area) {
                 if (nbe < nbElmt) {
                     result = dn;
                     area = areaTemp;
@@ -418,6 +272,54 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
         }
         assert candidate.checkInternal() : "chooseSubtree : candidate not conform";
         return result;
+    }
+    
+    /**
+     * Recover lesser 33% largest of {@code Node} candidate within it.
+     *
+     * @throws IllegalArgumentException if {@code Node} candidate is null.
+     * @return all Entry within subNodes at more 33% largest of this {@code Node}.
+     */
+    private void getElementAtMore33PerCent(final Node candidate, LinkedList<Object> listObjects, final LinkedList<double[]> listCoords) throws IOException {
+        ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidate", candidate);
+        ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : listObjects", listObjects);
+        ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : listCoords", listCoords);
+        assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
+        final double[] canBound = candidate.getBoundary();
+        final double[] candidateCentroid = getMedian(canBound);
+        final Calculator calc = getCalculator();
+        final double distPermit = calc.getDistancePoint(getLowerCorner(canBound), getUpperCorner(canBound)) / 1.666666666;
+        getElementAtMore33PerCent((FileNode)candidate, candidateCentroid, distPermit, listObjects, listCoords);
+        assert candidate.checkInternal() : "getElementAtMore33PerCent : end candidate not conform";
+    }
+    
+    /**
+     * Recover lesser 33% largest of {@code Node} candidate within it.
+     *
+     * @throws IllegalArgumentException if {@code Node} candidate is null.
+     * @return all Entry within subNodes at more 33% largest of this {@code Node}.
+     */
+    private void getElementAtMore33PerCent(final FileNode candidate, double[] candidateCentroid, double distancePermit, LinkedList<Object> listObjects, final LinkedList<double[]> listCoords) throws IOException {
+        ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidateCentroid", candidateCentroid);
+        ArgumentChecks.ensureStrictlyPositive("getElementsAtMore33PerCent : distancePermit", distancePermit);
+        assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
+        if (candidate.isLeaf()) {
+            int sibl = candidate.getChildId();
+            while (sibl != 0) {
+                final FileNode data = treeAccess.readNode(sibl); // voir pour aameliorer algo descendre juska data
+                listObjects.add(-data.getChildId());
+                listCoords.add(data.getBoundary());
+                sibl = data.getSiblingId();
+            }
+        } else {
+            int sibl = candidate.getChildId();
+            while (sibl != 0) {
+                final FileNode child = treeAccess.readNode(sibl);
+                getElementAtMore33PerCent(child, candidateCentroid, distancePermit, listObjects, listCoords);
+                sibl = child.getSiblingId();
+            }
+        }
+        assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
     }
     
     /**
@@ -510,6 +412,186 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
         assert treeAccess.readNode(nodeA.getParentId()).checkInternal()      : "branchGrafting : nodeA and B parent not conform.";
         assert nodeA.checkInternal()                  : "branchGrafting : at end candidate not conform";
         assert nodeB.checkInternal()                  : "branchGrafting : at end candidate not conform";
+    }
+    
+    /**
+     * Split a overflow {@code Node} in accordance with R-Tree properties.
+     *
+     * @param candidate {@code Node} to Split.
+     * @throws IllegalArgumentException if candidate is null.
+     * @throws IllegalArgumentException if candidate elements number is lesser 2.
+     * @return {@code Node} List which contains two {@code Node} (split result of candidate).
+     */
+    private Node[] splitNode(final FileNode candidate) throws IllegalArgumentException, IOException {
+        ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
+        assert candidate.checkInternal() : "splitNode : begin.";
+        // debug
+        int counta = treeAccess.getCountAdjust();
+        int childNumber = candidate.getChildCount();
+        if (childNumber < 2) 
+            throw new IllegalArgumentException("not enought elements within " + candidate + " to split.");
+        
+        final Node[] children = candidate.getChildren();
+        assert childNumber == children.length : "SplitNode : childnumber should be same as children length value.";
+        
+        final Calculator calc = getCalculator();
+        final int splitIndex  = defineSplitAxis(children);
+        
+        final int size = children.length;
+        final double size04 = size * 0.4;
+        final int demiSize = (int) ((size04 >= 1) ? size04 : 1);
+        double[] unionTabA, unionTabB;
+        
+        // find a solution where overlaps between 2 groups is the smallest. 
+        double bulkTemp;
+        double bulkRef = Double.POSITIVE_INFINITY;
+        
+        // in case where overlaps equal 0 (no overlaps) find the smallest group area.
+        double areaTemp;
+        double areaRef = Double.POSITIVE_INFINITY;
+        
+        // solution
+        int index = 0;
+        boolean lower_or_upper = true;
+        
+        int cut2;
+        //compute with lower and after upper
+        for(int lu = 0; lu < 2; lu++) {
+            calc.sort(splitIndex, (lu == 0), children);
+            for(int cut = demiSize; cut <= size - demiSize; cut++) {
+                cut2 = size - cut;
+                final Node[] splitTabA = new Node[cut];
+                final Node[] splitTabB = new Node[cut2];
+                System.arraycopy(children, 0, splitTabA, 0, cut);
+                System.arraycopy(children, cut, splitTabB, 0, cut2);
+                // bulk computing
+                unionTabA = splitTabA[0].getBoundary().clone();
+                for (int i = 1; i < cut; i++) {
+                    add(unionTabA, splitTabA[i].getBoundary());
+                }
+                unionTabB = splitTabB[0].getBoundary().clone();
+                for (int i = 1; i < cut2; i++) {
+                    add(unionTabB, splitTabB[i].getBoundary());
+                }
+                bulkTemp = calc.getOverlaps(unionTabA, unionTabB);
+                if (bulkTemp == 0) {
+                    areaTemp = calc.getEdge(unionTabA) + calc.getEdge(unionTabB);
+                    if (areaTemp < areaRef) {
+                        areaRef        = areaTemp;
+                        index          = cut;
+                        lower_or_upper = (lu == 0);
+                    }
+                } else {
+                    if (!Double.isInfinite(areaRef)) continue; // a better solution was already found.
+                    if (bulkTemp < bulkRef) {
+                        bulkRef        = bulkTemp;
+                        index          = cut;
+                        lower_or_upper = (lu == 0);
+                    }
+                }
+            }
+        }
+        
+        // best organization solution 
+        calc.sort(splitIndex, lower_or_upper, children);
+        final int lengthResult2 = size - index;
+        final Node[] result1Children = new Node[index];
+        final Node[] result2Children = new Node[lengthResult2];
+                
+        final Node result1, result2;
+        final boolean isLeaf = candidate.isLeaf();
+        if (!isLeaf && index == 1) {
+            result1 = children[0];
+            ((FileNode)result1).setSiblingId(0);
+        } else {
+            result1 = createNode(treeAccess, null, 0, 0, 0);
+            System.arraycopy(children, 0, result1Children, 0, index);
+            result1.addChildren(result1Children);
+        }
+        if (!isLeaf && lengthResult2 == 1) {
+            result2 = children[size-1];
+            ((FileNode)result2).setSiblingId(0);
+        } else {
+            result2 = createNode(treeAccess, null, 0, 0, 0);
+            System.arraycopy(children, index, result2Children, 0, lengthResult2);
+            result2.addChildren(result2Children);
+        }
+        // check result
+        assert result1.checkInternal() : "splitNode : result1.";
+        assert result2.checkInternal() : "splitNode : result2.";
+        countadjust+=(treeAccess.getCountAdjust()-counta);
+        return new Node[]{result1, result2};
+    }
+    
+    /**
+     * Compute and define which axis to split {@code Node} candidate.
+     *
+     * <blockquote><font size=-1>
+     * <strong>NOTE: Define split axis method decides a split axis among all dimensions.
+     *               The chosen axis is the one with smallest overall perimeter or area (in function with dimension size).
+     *               It work by sorting all entry or {@code Node}, from their left boundary coordinates.
+     *               Then it considers every divisions of the sorted list that ensure each node is at least 40% full.
+     *               The algorithm compute perimeter or area of two result {@code Node} from every division.
+     *               A second pass repeat this process with respect their right boundary coordinates.
+     *               Finally the overall perimeter or area on one axis is the sum of all perimeter or area obtained from the two pass.</strong>
+     * </font></blockquote>
+     *
+     * @throws IllegalArgumentException if candidate is null.
+     * @return prefered ordinate index to split.
+     */
+    private int defineSplitAxis(final Node[] children) throws IOException {
+        ArgumentChecks.ensureNonNull("candidate : ", children);
+        
+        final int size = children.length;
+        final double[][] childsBound = new double[size][];
+        int cbID = 0;
+        for (Node nod : children) childsBound[cbID++] = nod.getBoundary();
+        
+        final Calculator calc = getCalculator();
+        final double size04 = size * 0.4;
+        final int demiSize = (int) ((size04 >= 1) ? size04 : 1);
+        double[][] splitTabA, splitTabB;
+        double[] gESPLA, gESPLB;
+        double bulkTemp;
+        double bulkRef = Double.POSITIVE_INFINITY;
+        int index = 0;
+        final double[] globalEltsArea = getEnvelopeMin(childsBound);
+        final int dim = globalEltsArea.length/2;//decal bit
+        
+        // if glogaleArea.span(currentDim) == 0 || if all elements have same span
+        // value as global area on current ordinate, impossible to split on this axis.
+        unappropriateOrdinate :
+        for (int indOrg = 0; indOrg < dim; indOrg++) {
+            final double globalSpan = getSpan(globalEltsArea, indOrg);
+            boolean isSameSpan = true;
+            //check if its possible to split on this currently ordinate.
+            for (double[] elt : childsBound) {
+                if (!(Math.abs(getSpan(elt, indOrg) - globalSpan) <= 1E-9)) {
+                    isSameSpan = false;
+                    break;
+                }
+            }
+            if (globalSpan <= 1E-9 || isSameSpan) continue unappropriateOrdinate;
+            bulkTemp = 0;
+            for (int left_or_right = 0; left_or_right < 2; left_or_right++) {
+                calc.sort(indOrg, left_or_right == 0, childsBound);
+                for (int cut = demiSize, sdem = size - demiSize; cut <= sdem; cut++) {
+                    splitTabA = new double[cut][];
+                    splitTabB = new double[size - cut][];
+                    System.arraycopy(childsBound, 0, splitTabA, 0, cut);
+                    System.arraycopy(childsBound, cut, splitTabB, 0, size-cut);
+                    gESPLA     = getEnvelopeMin(splitTabA);
+                    gESPLB     = getEnvelopeMin(splitTabB);
+                    bulkTemp  += calc.getEdge(gESPLA);
+                    bulkTemp  += calc.getEdge(gESPLB);
+                }
+            }
+            if(bulkTemp < bulkRef) {
+                bulkRef = bulkTemp;
+                index = indOrg;
+            }
+        }
+        return index;
     }
     
     @Override
@@ -666,6 +748,24 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
     
     public TreeAccess getTreeAccess(){
         return treeAccess;
+    }
+    
+    /**
+     * Get statement from re-insert state.
+     *
+     * @return true if it's permit to re-insert else false.
+     */
+    private boolean getIA() {
+        return insertAgain;
+    }
+
+    /**
+     * Affect statement to permit or not, re-insertion.
+     * 
+     * @param insertAgain
+     */
+    private void setIA(boolean insertAgain) {
+        this.insertAgain = insertAgain;
     }
     
     /**

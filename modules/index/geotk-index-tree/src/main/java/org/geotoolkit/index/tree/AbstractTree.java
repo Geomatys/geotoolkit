@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import org.geotoolkit.index.tree.calculator.*;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.index.tree.access.TreeAccess;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.mapper.TreeElementMapper;
 import org.geotoolkit.referencing.CRS;
@@ -37,7 +38,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public abstract class AbstractTree<E> implements Tree<E> {
 
-    protected NodeFactory nodefactory;
+    protected TreeAccess treeAccess;
     private Node root;
     private final int nbMaxElement;
     protected CoordinateReferenceSystem crs;
@@ -51,20 +52,24 @@ public abstract class AbstractTree<E> implements Tree<E> {
     protected int currentPosition;
     protected int[] tabSearch;
 
+    //dfebug
+    protected int countadjust;
+    
     /**
      * To create an R-Tree use {@linkplain TreeFactory}.
      */
-    @Deprecated
-    protected AbstractTree(int nbMaxElement, CoordinateReferenceSystem crs, NodeFactory nodefactory, TreeElementMapper<E> treeEltMap) {
+    protected AbstractTree(TreeAccess treeAccess, CoordinateReferenceSystem crs, TreeElementMapper<E> treeEltMap) {
         ArgumentChecks.ensureNonNull("Create Tree : CRS", crs);
-        ArgumentChecks.ensureNonNull("Create NodeFactory : nodefactory", nodefactory);
-        ArgumentChecks.ensureBetween("Create Tree : maxElements", 2, Integer.MAX_VALUE, nbMaxElement);
+        ArgumentChecks.ensureNonNull("Create TreeAccess : treeAccess", treeAccess);
         ArgumentChecks.ensureNonNull("Create TreeElementMapper : treeEltMap", treeEltMap);
+        this.treeAccess = treeAccess;
         this.treeEltMap = treeEltMap;
         this.calculator = new CalculatorND();
-        this.nodefactory  = nodefactory;
-        this.nbMaxElement = nbMaxElement;
+        this.nbMaxElement = treeAccess.getMaxElementPerCells();
+        ArgumentChecks.ensureBetween("Create Tree : maxElements", 2, Integer.MAX_VALUE, nbMaxElement);
         this.crs = crs;
+        //debug
+        this.countadjust = 0;
     }
 
     /**
@@ -148,7 +153,11 @@ public abstract class AbstractTree<E> implements Tree<E> {
     public void setRoot(Node root) throws StoreIndexException{
         this.root = root;
         if (root == null) {
-//            treeEltMap.clear();
+            try {
+               treeAccess.rewind();
+            } catch (IOException ex) {
+                throw new StoreIndexException("Impossible to rewind treeAccess during setRoot(null).", ex);
+            }
             treeIdentifier = 1;
         }
     }
@@ -173,7 +182,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
      */
     @Override
     public NodeFactory getNodeFactory() {
-        return this.nodefactory;
+        return null;
     }
 
     /**

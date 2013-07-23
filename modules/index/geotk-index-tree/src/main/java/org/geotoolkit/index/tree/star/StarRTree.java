@@ -36,7 +36,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Create R*Tree.
  *
  * @author Rémi Maréchal (Geomatys)
- * @author Johann Sorel  (Geomatys).
  */
 public class StarRTree extends AbstractTree {
 
@@ -69,7 +68,7 @@ public class StarRTree extends AbstractTree {
      */
     @Deprecated
     public StarRTree(int nbMaxElement, CoordinateReferenceSystem crs, NodeFactory nodefactory, TreeElementMapper treeEltMap) {
-        super(nbMaxElement, crs, nodefactory, treeEltMap);
+        super(null, crs, treeEltMap);
     }
     
     /**
@@ -262,7 +261,8 @@ public class StarRTree extends AbstractTree {
 //        return TreeVisitorResult.TERMINATE;
 //    }
 
-    /**Insert new {@code Entry} in branch and re-organize {@code Node} if it's necessary.
+    /**
+     * Insert new {@code Entry} in branch and re-organize {@code Node} if it's necessary.
      *
      * <blockquote><font size=-1>
      * <strong>NOTE: insertion is in accordance with R*Tree properties.</strong>
@@ -315,7 +315,7 @@ public class StarRTree extends AbstractTree {
                     }
                 }
             }
-            for (int i = 0,len = candidate.getChildCount(); i < len; i++) {
+            for (int i = 0, len = candidate.getChildCount(); i < len; i++) {
                 if (DefaultTreeUtils.countElements(candidate.getChild(i)) > candidate.getTree().getMaxElements()) {
                     final Node child = candidate.removeChild(i);
                     final List<Node> l = nodeSplit(child);
@@ -946,7 +946,8 @@ public class StarRTree extends AbstractTree {
         assert nodeB.checkInternal()                  : "branchGrafting : at end candidate not conform";
     }
 
-    /**Get statement from re-insert state.
+    /**
+     * Get statement from re-insert state.
      *
      * @return true if it's permit to re-insert else false.
      */
@@ -954,7 +955,9 @@ public class StarRTree extends AbstractTree {
         return insertAgain;
     }
 
-    /**Affect statement to permit or not, re-insertion.
+    /**
+     * Affect statement to permit or not, re-insertion.
+     * 
      * @param insertAgain
      */
     private void setIA(boolean insertAgain) {

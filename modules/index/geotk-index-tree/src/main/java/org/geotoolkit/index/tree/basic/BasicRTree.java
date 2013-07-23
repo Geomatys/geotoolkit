@@ -71,7 +71,7 @@ public class BasicRTree extends AbstractTree {
      */
     @Deprecated
     public BasicRTree(final int maxElements, CoordinateReferenceSystem crs, final SplitCase choice, NodeFactory nodefactory, TreeElementMapper treeEltMap) {
-        super(maxElements, crs, nodefactory, treeEltMap);
+        super(null, crs, treeEltMap);
         this.choice = choice;
     }
         

@@ -277,6 +277,7 @@ public class TreeAccessFile extends TreeAccess {
      * @throws IOException 
      */
     private void adjustBuffer(final int nodeID) throws IOException {
+        countAdjust++;
         rwIndex = beginPosition + (nodeID - 1) * nodeSize;
         if (rwIndex < currentBufferPosition || rwIndex >= currentBufferPosition + bufferLength) {
             // write current data within bytebuffer in channel.
