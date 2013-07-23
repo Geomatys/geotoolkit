@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 /**
  * Handles a full date, with time stamp. By default, do not display seconds.
@@ -28,6 +29,7 @@ import java.util.GregorianCalendar;
  */
 public class JTimeStamp extends javax.swing.JComponent {
     private boolean displaySeconds = false;
+    private TimeZone timeZone;
 
     /**
      * Creates new form JTimeStamp
@@ -112,7 +114,7 @@ public class JTimeStamp extends javax.swing.JComponent {
             datePicker.setDate(t);
             final Calendar calendar = GregorianCalendar.getInstance(); 
             calendar.setTime(t);   
-            final int hour  = calendar.get(Calendar.HOUR_OF_DAY);
+            final int hour = calendar.get(Calendar.HOUR_OF_DAY);
             final int minute = calendar.get(Calendar.MINUTE);
             hours.setValue(hour);
             minutes.setValue(minute);
@@ -133,6 +135,11 @@ public class JTimeStamp extends javax.swing.JComponent {
             if (displaySeconds) {
                 calendar.set(Calendar.SECOND, (Integer)seconds.getValue());
             }
+
+            if (timeZone != null) {
+                return new Date(calendar.getTimeInMillis() + 
+                        (timeZone.getOffset(calendar.getTimeInMillis()) - TimeZone.getDefault().getOffset(calendar.getTimeInMillis())));
+            }
             return new Date(calendar.getTimeInMillis());
         }
         return null;
@@ -150,5 +157,10 @@ public class JTimeStamp extends javax.swing.JComponent {
             seconds.setVisible(true);
             guiSecondColon.setVisible(true);
         }
+    }
+
+    public void setTimeZone(final TimeZone timeZone) {
+        this.timeZone = timeZone;
+        datePicker.setTimeZone(timeZone);
     }
 }
