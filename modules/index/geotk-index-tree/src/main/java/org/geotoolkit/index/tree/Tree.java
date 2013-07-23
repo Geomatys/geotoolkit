@@ -113,6 +113,7 @@ public interface Tree<E> {
     /**
      * @return NodeFactory to create adapted Tree Node.
      */
+    @Deprecated
     NodeFactory getNodeFactory();
 
     /**

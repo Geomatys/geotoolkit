@@ -166,4 +166,76 @@ public abstract class Calculator {
             if (alreadySort) break;
         }
     }
+    
+    /**
+     * Sort elements list.
+     * 
+     * @param index : ordinate choosen to compare.
+     * @param lowerOrUpper : true to sort from "lower boundary", false from "upper boundary"
+     * @param list : elements which will be sorted.
+     * @return sorted list.
+     */
+    public void sort(int index, boolean lowerOrUpper, double[][] tabBoundary) throws IOException {
+        ArgumentChecks.ensureNonNull("list", tabBoundary);
+        if (tabBoundary.length == 0) return ;
+        final int siz = tabBoundary.length;
+        double[] envExchange;
+        double val1, val2;
+        boolean alreadySort;
+        for (int bornMin = 0; bornMin < siz-1; bornMin++) {
+            alreadySort = true;
+            for (int id2 = siz-1; id2 > bornMin; id2--) {
+                if (lowerOrUpper) {
+                    val1 = getMinimum(tabBoundary[id2], index);
+                    val2 = getMinimum(tabBoundary[id2 - 1], index);
+                } else {
+                    val1 = getMaximum(tabBoundary[id2], index);
+                    val2 = getMaximum(tabBoundary[id2 - 1], index);
+                }
+                if (val2 > val1) {
+                    alreadySort        = false;
+                    envExchange        = tabBoundary[id2-1];
+                    tabBoundary[id2-1] = tabBoundary[id2];
+                    tabBoundary[id2]   = envExchange;
+                }
+            }
+            if (alreadySort) break;
+        }
+    }
+    
+    /**
+     * Sort elements list.
+     * 
+     * @param index : ordinate choosen to compare.
+     * @param lowerOrUpper : true to sort from "lower boundary", false from "upper boundary"
+     * @param list : elements which will be sorted.
+     * @return sorted list.
+     */
+    public void sort(int index, boolean lowerOrUpper, Node[] children) throws IOException {
+        ArgumentChecks.ensureNonNull("children", children);
+        if (children.length == 0) return ;
+        final int siz = children.length;
+        Node nodeExchange;
+        double val1, val2;
+        boolean alreadySort;
+        for (int bornMin = 0; bornMin < siz-1; bornMin++) {
+            alreadySort = true;
+            for (int id2 = siz-1; id2 > bornMin; id2--) {
+                if (lowerOrUpper) {
+                    val1 = getMinimum(children[id2].getBoundary(), index);
+                    val2 = getMinimum(children[id2 - 1].getBoundary(), index);
+                } else {
+                    val1 = getMaximum(children[id2].getBoundary(), index);
+                    val2 = getMaximum(children[id2 - 1].getBoundary(), index);
+                }
+                if (val2 > val1) {
+                    alreadySort     = false;
+                    nodeExchange    = children[id2-1];
+                    children[id2-1] = children[id2];
+                    children[id2]   = nodeExchange;
+                }
+            }
+            if (alreadySort) break;
+        }
+    }
 }

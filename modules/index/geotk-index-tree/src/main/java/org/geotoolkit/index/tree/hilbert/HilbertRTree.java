@@ -82,7 +82,7 @@ public class HilbertRTree extends AbstractTree {
      */
     @Deprecated
     public HilbertRTree(int nbMaxElement, int hilbertOrder, CoordinateReferenceSystem crs, NodeFactory nodefactory, TreeElementMapper treeEltMap) {
-        super(nbMaxElement, crs, nodefactory, treeEltMap);
+        super(null, crs, treeEltMap);
         ArgumentChecks.ensureStrictlyPositive("impossible to create Hilbert Rtree with order <= 0", hilbertOrder);
         this.hilbertOrder = hilbertOrder;
     }

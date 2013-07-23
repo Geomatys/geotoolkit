@@ -14,22 +14,23 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree;
+package org.geotoolkit.index.tree.basic;
 
 import java.io.IOException;
+import org.geotoolkit.index.tree.SpatialTreeTest;
+import org.geotoolkit.index.tree.basic.BasicRTree;
+import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.geotoolkit.index.tree.star.StarRTree;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
-/**
- * Create R*Tree test suite in 3D Euclidean space.
+/**Create R-Tree test suite in geographic 2D space.
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class StarRTree3DTest extends SpatialTreeTest {
+public class BasicRTreeGeo2DTest extends SpatialTreeTest {
 
-    public StarRTree3DTest() throws StoreIndexException, IOException {
-        super(DefaultEngineeringCRS.CARTESIAN_3D);
-        tree = new StarRTree(4, crs, tEM);
+    public BasicRTreeGeo2DTest() throws StoreIndexException, IOException {
+        super(DefaultGeographicCRS.WGS84);
+        tree = new BasicRTree(4, crs, SplitCase.QUADRATIC, tEM);
     }
 }

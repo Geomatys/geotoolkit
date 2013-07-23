@@ -14,23 +14,26 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree;
+package org.geotoolkit.index.tree.star;
 
+import java.io.File;
 import java.io.IOException;
-import org.geotoolkit.index.tree.basic.BasicRTree;
-import org.geotoolkit.index.tree.basic.SplitCase;
+import org.geotoolkit.index.tree.basic.AbstractBasicRTree;
+import org.geotoolkit.index.tree.io.AbstractTreeTest;
+import org.geotoolkit.index.tree.io.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 
 /**
- * Create (Basic) R-Tree test suite in 2D.
  *
- * @author Rémi Marechal (Geomatys).
+ * @author rmarechal
  */
-public class BasicRTree2DTest extends SpatialTreeTest {
+public class WritableFileStarRTree2DTest extends AbstractTreeTest {
 
-    public BasicRTree2DTest() throws StoreIndexException, IOException {
-        super( DefaultEngineeringCRS.CARTESIAN_2D);
-        tree = new BasicRTree(4, crs, SplitCase.QUADRATIC, tEM);
+    public WritableFileStarRTree2DTest() throws StoreIndexException, IOException {
+        super(DefaultEngineeringCRS.CARTESIAN_2D);
+        tEM = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
+        tree = new FileStarRTree(File.createTempFile("test", "tree"), 4, crs, tEM);
+        tAF  = ((AbstractStarRTree)tree).getTreeAccess();
     }
 }

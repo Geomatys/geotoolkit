@@ -271,6 +271,7 @@ public class FileNode extends Node {
     
     @Override
     public boolean checkInternal() throws IOException {
+        if (isEmpty()) return true;
         if (getChildId() < 0) {
             if (!isData()) {
                 throw new IllegalStateException("with childID < 0 isData() should return true.");
@@ -279,21 +280,21 @@ public class FileNode extends Node {
                 throw new IllegalStateException("in data childcount always equals to 1.");
             }
         } else {
-            int verifChildCount = 1;
-            final FileNode firstChild = getChild();
-            if (firstChild.getParentId() != getNodeId()) {
-                throw new IllegalStateException("firstChild should have parent ID equals to this.nodeID.");
-            }
-            final double[] boundTemp = firstChild.getBoundary().clone();
-            int sibl = firstChild.getSiblingId();
+            int verifChildCount = 0;
+            double[] boundTemp = null;
+            int sibl = getChildId();
             while (sibl != 0) {
-                final FileNode cuSibl = tAF.readNode(sibl);
-                if (cuSibl.getParentId() != getNodeId()) {
-                    throw new IllegalStateException("firstChild sibling should have parent ID equals to this.nodeID.");
+                final FileNode cuChild = tAF.readNode(sibl);
+                if (cuChild.getParentId() != getNodeId()) {
+                    throw new IllegalStateException("Child sibling should have parent ID equals to this.nodeID.");
                 }
-                add(boundTemp, cuSibl.getBoundary());
+                if (boundTemp == null) {
+                    boundTemp = cuChild.getBoundary().clone();
+                } else {
+                    add(boundTemp, cuChild.getBoundary());
+                }
                 verifChildCount++;
-                sibl = cuSibl.getSiblingId();
+                sibl = cuChild.getSiblingId();
             }
             if (isData()) {
                 throw new IllegalStateException("with childID > 0 isData() should return false.");
