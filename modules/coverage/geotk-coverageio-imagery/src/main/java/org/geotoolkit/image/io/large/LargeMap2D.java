@@ -16,9 +16,9 @@
 */
 package org.geotoolkit.image.io.large;
 
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.IllegalImageDimensionException;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.util.ArgumentChecks;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
