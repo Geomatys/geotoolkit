@@ -100,7 +100,6 @@
     <module>geotk-gpx</module>
     <module>geotk-kml</module>
     <module>geotk-shapefile</module>
-    <module>geotk-jdbc</module>
     <module>geotk-om</module>
     <module>geotk-osm-core</module>
     <module>geotk-osm-xml</module>

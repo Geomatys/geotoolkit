@@ -3,8 +3,7 @@ package org.geotoolkit.pending.demo.datamodel.postgis;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.MemoryFeatureStore;
-import org.geotoolkit.data.postgis.PostgisNGFeatureStoreFactory;
+import org.geotoolkit.db.postgres.PostgresFeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.gui.swing.go2.JMap2DFrame;
 import org.geotoolkit.map.MapBuilder;
@@ -21,14 +20,14 @@ public class PostgisDemo {
     public static void main(String[] args) throws DataStoreException {
         Demos.init();
         
-        System.out.println(PostgisNGFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
+        System.out.println(PostgresFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
-        final ParameterValueGroup parameters = PostgisNGFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(PostgisNGFeatureStoreFactory.HOST, parameters).setValue("hote");
-        Parameters.getOrCreate(PostgisNGFeatureStoreFactory.PORT, parameters).setValue(5432);
-        Parameters.getOrCreate(PostgisNGFeatureStoreFactory.DATABASE, parameters).setValue("base");
-        Parameters.getOrCreate(PostgisNGFeatureStoreFactory.USER, parameters).setValue("user");
-        Parameters.getOrCreate(PostgisNGFeatureStoreFactory.PASSWORD, parameters).setValue("secret");
+        final ParameterValueGroup parameters = PostgresFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        Parameters.getOrCreate(PostgresFeatureStoreFactory.HOST, parameters).setValue("hote");
+        Parameters.getOrCreate(PostgresFeatureStoreFactory.PORT, parameters).setValue(5432);
+        Parameters.getOrCreate(PostgresFeatureStoreFactory.DATABASE, parameters).setValue("base");
+        Parameters.getOrCreate(PostgresFeatureStoreFactory.USER, parameters).setValue("user");
+        Parameters.getOrCreate(PostgresFeatureStoreFactory.PASSWORD, parameters).setValue("secret");
         
         final FeatureStore store = FeatureStoreFinder.open(parameters);
         

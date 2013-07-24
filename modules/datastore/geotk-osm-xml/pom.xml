@@ -65,7 +65,7 @@
       </dependency>
       <dependency>
           <groupId>org.geotoolkit.pending</groupId>
-          <artifactId>geotk-jdbc-postgis</artifactId>
+          <artifactId>geotk-db-postgres</artifactId>
           <version>${project.version}</version>
       </dependency>
 

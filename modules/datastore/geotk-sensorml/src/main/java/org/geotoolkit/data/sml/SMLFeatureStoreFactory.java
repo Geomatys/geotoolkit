@@ -68,50 +68,50 @@ public class SMLFeatureStoreFactory extends AbstractFeatureStoreFactory {
      * Parameter for database port
      */
     public static final ParameterDescriptor<Integer> PORT =
-             new DefaultParameterDescriptor<Integer>("port","Port",Integer.class,5432, false);
+             new DefaultParameterDescriptor<>("port","Port",Integer.class,5432, false);
 
     /**
      * Parameter identifying the OM datastore
      */
     public static final ParameterDescriptor<String> DBTYPE =
-            new DefaultParameterDescriptor<String>("dbtype","DbType",String.class, "SML",true);
+            new DefaultParameterDescriptor<>("dbtype","DbType",String.class, "SML",true);
 
     /**
      * Parameter for database type (postgres, derby, ...)
      */
     public static final ParameterDescriptor<String> SGBDTYPE =
-            new DefaultParameterDescriptor<String>(Collections.singletonMap("name", "sgbdtype"),
+            new DefaultParameterDescriptor<>(Collections.singletonMap("name", "sgbdtype"),
             String.class, new String[]{"derby","postgres"},null,null,null,null,true);
 
     /**
      * Parameter for database url for derby database
      */
     public static final ParameterDescriptor<String> DERBYURL =
-             new DefaultParameterDescriptor<String>("derbyurl","DerbyURL",String.class, null, false);
+             new DefaultParameterDescriptor<>("derbyurl","DerbyURL",String.class, null, false);
 
     /**
      * Parameter for database host
      */
     public static final ParameterDescriptor<String> HOST =
-             new DefaultParameterDescriptor<String>("host","Host", String.class, "localhost", false);
+             new DefaultParameterDescriptor<>("host","Host", String.class, "localhost", false);
 
     /**
      * Parameter for database name
      */
     public static final ParameterDescriptor<String> DATABASE =
-             new DefaultParameterDescriptor<String>("database","Database", String.class, null, false);
+             new DefaultParameterDescriptor<>("database","Database", String.class, null, false);
 
     /**
      * Parameter for database user name
      */
     public static final ParameterDescriptor<String> USER =
-             new DefaultParameterDescriptor<String>("user","User", String.class, null, false);
+             new DefaultParameterDescriptor<>("user","User", String.class, null, false);
 
     /**
      * Parameter for database user password
      */
     public static final ParameterDescriptor<String> PASSWD =
-             new DefaultParameterDescriptor<String>("password","Password", String.class, null, false);
+             new DefaultParameterDescriptor<>("password","Password", String.class, null, false);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("SMLParameters",

@@ -4,7 +4,7 @@ package org.geotoolkit.pending.demo.processing;
 import java.net.URL;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.data.postgis.PostgisNGFeatureStoreFactory;
+import org.geotoolkit.db.postgres.PostgresFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.process.Process;
@@ -23,7 +23,7 @@ public class FeatureCopyDemo {
         
         final FeatureStore source = FeatureStoreFinder.open(shpParams);
         
-        final ParameterValueGroup pgParams = PostgisNGFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        final ParameterValueGroup pgParams = PostgresFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         ParametersExt.getOrCreateValue(pgParams,"host").setValue("host");
         ParametersExt.getOrCreateValue(pgParams,"port").setValue(5432);
         ParametersExt.getOrCreateValue(pgParams,"database").setValue("database");
