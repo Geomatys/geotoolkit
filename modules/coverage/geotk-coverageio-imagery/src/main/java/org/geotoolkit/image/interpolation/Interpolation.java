@@ -259,8 +259,8 @@ public abstract class Interpolation {
         if (y<minY) minY--;
 
         //Adjust area interpolation on x, y center.
-        for (int i = 0; i<windowSide/2-1;i++) minX--;
-        for (int i = 0; i<windowSide/2-1;i++) minY--;
+        minX-= windowSide/2-1;
+        minY-= windowSide/2-1;
 
         //Adjust area from lower corner.
         minX = Math.max(minX, bx);

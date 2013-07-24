@@ -29,6 +29,8 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 /**
@@ -63,7 +65,7 @@ class LargeArray {
     private final ImageWriter imgWriter;
     private final boolean isWritableRenderedImage;
 
-    private final WritableRaster[] array;
+    private final LargeRaster[] array;
 
     private final LinkedList<Integer> stack = new LinkedList<Integer>();
 
@@ -115,7 +117,7 @@ class LargeArray {
             default : throw new IllegalStateException("unknown raster data type");
         }
         
-        array = new WritableRaster[numTilesX*numTilesY];
+        array = new LargeRaster[numTilesX*numTilesY];
     }
 
     /**
@@ -132,7 +134,7 @@ class LargeArray {
         final long rastWeight = getRasterWeight(raster);
         if (rastWeight > memoryCapacity) throw new IllegalImageDimensionException("raster too large");
         final int indice = getIndice(tX, tY);
-        array[indice] = checkRaster(raster, tX, tY);
+        array[indice] = new LargeRaster(tX, tY, rastWeight, checkRaster(raster, tX, tY));
         stack.addLast(indice);
         remainingCapacity -= rastWeight;
         checkArray();
@@ -165,12 +167,13 @@ class LargeArray {
      * @throws java.io.IOException if an error occurs during reading..
      */
     Raster getRaster(int tileX, int tileY) throws IOException {
-        WritableRaster res;
+        Raster res = null;
         
         final int tX = tileX - minTileX;
         final int tY = tileY - minTileY;
 
-        if ((res = array[tY * numTilesX + tX]) == null) {
+        LargeRaster lRaster;
+        if ((lRaster = array[tY * numTilesX + tX]) == null) {
             final File getFile = new File(qTD.getPath(tX, tY));
 
             if (getFile.exists()) {
@@ -180,11 +183,14 @@ class LargeArray {
                 //add in cache array.
                 res = buff.getRaster();
                 final int indice = getIndice(tX, tY);
-                array[indice] = checkRaster(res, tX, tY);
+                final long rastWeight = getRasterWeight(res);
+                array[indice] = new LargeRaster(tX, tY, rastWeight, checkRaster((WritableRaster)res, tX, tY));
                 stack.addLast(indice);
-                remainingCapacity -= getRasterWeight(res);
+                remainingCapacity -= rastWeight;
                 checkArray();
             }
+        } else {
+            res = lRaster.getRaster();
         }
         
         return res;
@@ -197,7 +203,10 @@ class LargeArray {
      * @throws java.io.IOException if impossible to read raster from disk.
      */
     Raster[] getTiles() throws IOException {
-        return array;
+        Raster[] result = new Raster[array.length];
+        int rID = 0;
+        for (LargeRaster lr : array) if (lr != null) result[rID++] = lr.getRaster();
+        return Arrays.copyOf(result, rID);
     }
 
     /**
@@ -301,10 +310,10 @@ class LargeArray {
     private void checkArray() throws IOException {
         while (remainingCapacity < 0) {
             final int toRemove = stack.getFirst();
-            final WritableRaster raster = array[toRemove];
-            remainingCapacity   += getRasterWeight(raster);
+            final LargeRaster raster = array[toRemove];
+            remainingCapacity   += raster.getWeight();
             //quad tree
-            writeRaster(raster, toRemove % numTilesX, toRemove / numTilesX);
+            writeRaster((WritableRaster)raster.getRaster(), raster.getGridX(), raster.getGridY());
         }
     }
     
