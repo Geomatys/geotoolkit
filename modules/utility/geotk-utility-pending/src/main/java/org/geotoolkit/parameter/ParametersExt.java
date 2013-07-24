@@ -242,8 +242,8 @@ public final class ParametersExt {
      
     /**
      * Add a GeneralParameterDescriptor to a ParameterDescriptorGroup.
-     *
-     * @param root
+     * 
+     * @param root ParameterDescriptorGroup. Will not be modified.
      * @param newParam GeneralParameterDescriptor to add
      * @return the new ParameterDescriptorGroup
      */
@@ -326,5 +326,40 @@ public final class ParametersExt {
         paramMap.put(IdentifiedObject.REMARKS_KEY, remarks);
 
         return new DefaultParameterDescriptorGroup(paramMap, min, max, parameters.toArray(new GeneralParameterDescriptor[parameters.size()]));
+    }
+    
+    /**
+     * Deep copy from a ParameterValueGroup source to a target ParameterValueGroup.
+     * 
+     * @param source
+     * @param target 
+     */
+    public static void deepCopy(ParameterValueGroup source, ParameterValueGroup target) {
+        
+        for (GeneralParameterDescriptor paramDesc : source.getDescriptor().descriptors()) {
+            final String paramCode = paramDesc.getName().getCode();
+            
+            if (paramDesc instanceof ParameterDescriptor) {
+                final ParameterValue paramValue = source.parameter(paramCode);
+                target.parameter(paramCode).setValue(paramValue.getValue());
+            } else {
+                
+                final List<ParameterValueGroup> sourceValues = source.groups(paramCode);
+                int targetValuesSize = target.groups(paramCode).size();
+                
+                if (targetValuesSize < sourceValues.size()) {
+                    int toAdd = sourceValues.size() - targetValuesSize;
+                    for (int i = 0; i < toAdd; i++) {
+                        target.addGroup(paramCode);
+                    }
+                }
+                
+                final List<ParameterValueGroup> targetValues = target.groups(paramCode); 
+                
+                for (int i = 0; i < targetValues.size(); i++) {
+                    deepCopy(sourceValues.get(i), targetValues.get(i));
+                }
+            }
+        }
     }
 }
