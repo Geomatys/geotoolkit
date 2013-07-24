@@ -77,7 +77,6 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
      */
     @Test
     @Override
-    @Ignore
     public void insertTest() throws StoreIndexException, IOException {
         tree.setRoot(null);
         insert();
@@ -209,7 +208,7 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
 //        System.out.println(tree.toString());
         final GeneralEnvelope rG = new GeneralEnvelope(crs);
         rG.setEnvelope(gR);
-        
+        System.out.println(tree.toString());
         // visitor
         int[] tabSearch = tree.searchID(rG);
         assertTrue(compareLists(lGERef, Arrays.asList(getResult(tabSearch))));
@@ -221,7 +220,6 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
      */
     @Test
     @Override
-    @Ignore
     public void queryInsideTest() throws StoreIndexException, IOException {
         if (tree.getRoot() == null) insert();
         final List<double[]> lDataTemp = new ArrayList<double[]>();
@@ -245,7 +243,6 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
      */
     @Test
     @Override
-    @Ignore
     public void queryOutsideTest() throws StoreIndexException, IOException {
 //        System.out.println("queryOutsideTest");
         if (tree.getRoot() == null) insert();
@@ -270,7 +267,6 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
      */
     @Test
     @Override
-    @Ignore
     public void insertDelete() throws StoreIndexException, IOException {
 //        System.out.println("insertDelete");
         if (tree.getRoot() == null) insert();

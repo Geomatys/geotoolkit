@@ -53,7 +53,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
     protected int[] tabSearch;
 
     //dfebug
-    protected int countadjust;
+//    protected int countadjust;
     
     /**
      * To create an R-Tree use {@linkplain TreeFactory}.
@@ -69,7 +69,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
         ArgumentChecks.ensureBetween("Create Tree : maxElements", 2, Integer.MAX_VALUE, nbMaxElement);
         this.crs = crs;
         //debug
-        this.countadjust = 0;
+//        this.countadjust = 0;
     }
 
     /**
