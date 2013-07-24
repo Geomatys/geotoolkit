@@ -310,7 +310,7 @@ public class LargeRenderedImage implements RenderedImage {
      * {@inheritDoc }.
      */
     @Override
-    public Raster getTile(int tileX, int tileY) {
+    public synchronized Raster getTile(int tileX, int tileY) {
         if (isRead[tileY][tileX]) return tilecache.getTile(this, tileX, tileY);
         // si elle na pas ete demandée :
         // 1 : la demandée au reader
