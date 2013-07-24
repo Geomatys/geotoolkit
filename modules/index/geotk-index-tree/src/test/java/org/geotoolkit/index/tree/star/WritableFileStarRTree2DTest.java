@@ -18,7 +18,6 @@ package org.geotoolkit.index.tree.star;
 
 import java.io.File;
 import java.io.IOException;
-import org.geotoolkit.index.tree.basic.AbstractBasicRTree;
 import org.geotoolkit.index.tree.io.AbstractTreeTest;
 import org.geotoolkit.index.tree.io.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.io.StoreIndexException;

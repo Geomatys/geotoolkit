@@ -47,6 +47,11 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
      */
     boolean insertAgain = true;
     
+    private final LinkedList<Object> listObjects  = new LinkedList<Object>();
+    private final LinkedList<double[]> listCoords = new LinkedList<double[]>(); 
+    
+    boolean travelUpBeforeInsertAgain = false;
+    
     
     public AbstractStarRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
         super(treeAccess, treeAccess.getCRS(), treeEltMap);
@@ -84,10 +89,30 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
                 root.addChild(createNode(treeAccess, coordinates, 1, 0, -((Integer)object)));
                 setRoot(root);
             } else {
+                travelUpBeforeInsertAgain = false;
                 final Node newRoot = nodeInsert(root, object, coordinates);
                 if (newRoot != null) {
                     setRoot(newRoot);
                     treeAccess.writeNode((FileNode)newRoot);
+                }
+                /**
+                 * Insert again. Property named Tree re-balancing. 
+                 */
+                if (travelUpBeforeInsertAgain) {
+                    travelUpBeforeInsertAgain = false;
+                    // insert again
+                    final int siz = listCoords.size();
+                    assert (siz == listObjects.size()) : "getElementAtMore33Percent : nodeInsert : lists should have same size.";
+                    setIA(false);
+                    final int treeIdent = treeIdentifier; // gere quand root == null
+                    for (int i = 0; i < siz; i++) {
+                        assert remove(listObjects.get(i), listCoords.get(i));
+                    }
+                    for (int i = 0; i< siz; i++) {
+                        insert(listObjects.get(i), listCoords.get(i));
+                    }
+                    setIA(true);
+                    treeIdentifier = treeIdent;
                 }
             }
         } catch (IOException ex) {
@@ -113,6 +138,10 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
             assert fileCandidate.checkInternal() : "nodeInsert : Node before insert.";
             subCandidateParent = (FileNode)nodeInsert(chooseSubtree(fileCandidate, coordinates), object, coordinates);
             add(fileCandidate.getBoundary(), coordinates);
+//            if (travelUpBeforeInsertAgain) {
+//                treeAccess.writeNode(fileCandidate); 
+//                return null;
+//            }
         }
         
         /**
@@ -123,26 +152,28 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
             fileCandidate = subCandidateParent;
         }
         treeAccess.writeNode(fileCandidate); 
+        if (travelUpBeforeInsertAgain) return null;
         assert fileCandidate.checkInternal() : "nodeInsert : after insert.";
         
         if (fileCandidate.getChildCount() > getMaxElements()) {
             /******************************** 33 % *****************************/
-            if (getIA()) {
-                setIA(false);
-                final LinkedList<Object> listObjects  = new LinkedList<Object>();
-                final LinkedList<double[]> listCoords = new LinkedList<double[]>(); // faire des list privée
+            if (getIA() && fileCandidate.isLeaf()) {
+                listObjects.clear();
+                listCoords.clear();
                 getElementAtMore33PerCent(candidate, listObjects, listCoords);
-                final int siz = listCoords.size();
-                assert (siz == listObjects.size()) :"getElementAtMore33Percent : nodeInsert : lists should have same size.";
-                final int treeIdent = treeIdentifier;
-                for (int i = 0; i < siz; i++) {
-                    remove(listObjects.get(i), listCoords.get(i));
-                }
-                for (int i = 0; i< siz; i++) {
-                    insert(listObjects.get(i), listCoords.get(i));
-                }
-                setIA(true);
-                treeIdentifier = treeIdent;
+//                final int siz = listCoords.size();
+//                assert (siz == listObjects.size()) :"getElementAtMore33Percent : nodeInsert : lists should have same size.";
+//                setIA(false);
+//                final int treeIdent = treeIdentifier; // gere quand root == null
+//                for (int i = 0; i < siz; i++) {
+//                    assert remove(listObjects.get(i), listCoords.get(i));
+//                }
+//                for (int i = 0; i< siz; i++) {
+//                    insert(listObjects.get(i), listCoords.get(i));
+//                }
+//                setIA(true);
+//                treeIdentifier = treeIdent;
+                travelUpBeforeInsertAgain = true;
                 return null;
             }
             assert fileCandidate.checkInternal() : "nodeInsert : after insert again element a 33% distance.";
@@ -229,7 +260,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
     private Node chooseSubtree(final FileNode candidate, final double... coordinates) throws IOException {
         ArgumentChecks.ensureNonNull("chooseSubtree : candidate", candidate);
         ArgumentChecks.ensureNonNull("chooseSubtree : coordinates", coordinates);
-        assert candidate.checkInternal() : "chooseSubtree : candidate not conform";
+//        assert candidate.checkInternal() : "chooseSubtree : candidate not conform";
         final Calculator calc = getCalculator();
         final int childCount = candidate.getChildCount();
         if (childCount == 0) throw new IllegalArgumentException("chooseSubtree : children is empty");
@@ -238,6 +269,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
         assert children.length == childCount : "choose subtree : childcount should have same length as children table.";
         for (Node fNod : children) {
             assert fNod.checkInternal() : "chooseSubTree : test contains.";
+            // on pourrai essayer d'equilibré l'arbre si plusieurs contienne une meme donnée la donner a celui qui a le moin d'element
             if (contains(fNod.getBoundary(), coordinates, true)) return fNod;
         }
         Node result = children[0];
@@ -270,7 +302,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
                 }
             }
         }
-        assert candidate.checkInternal() : "chooseSubtree : candidate not conform";
+//        assert candidate.checkInternal() : "chooseSubtree : candidate not conform";
         return result;
     }
     
@@ -519,7 +551,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
         // check result
         assert result1.checkInternal() : "splitNode : result1.";
         assert result2.checkInternal() : "splitNode : result2.";
-        countadjust+=(treeAccess.getCountAdjust()-counta);
+//        countadjust+=(treeAccess.getCountAdjust()-counta);
         return new Node[]{result1, result2};
     }
     

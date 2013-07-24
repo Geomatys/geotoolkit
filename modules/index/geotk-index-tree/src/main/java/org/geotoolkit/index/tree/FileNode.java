@@ -320,7 +320,7 @@ public class FileNode extends Node {
                 toString = Arrays.asList(getChildren());
                 String strparent =  (getParentId() == 0) ? "null" : (""+getParentId());
                 return Trees.toString(Classes.getShortClassName(this)+" parent : "+strparent+" : ID : "+getNodeId()
-                    + " leaf : "+isLeaf()+" sibling : "+getSiblingId()+" child "+getChildId()+" children number : "+getChildCount(), toString);
+                    + " leaf : "+isLeaf()+" sibling : "+getSiblingId()+" child "+getChildId()+" children number : "+getChildCount()+Arrays.toString(getBoundary()), toString);
             } else {
                 return Classes.getShortClassName(this)+"Data : parent : "+getParentId()+" ID : "+/*this.hashCode()*/getNodeId()+" sibling : "+getSiblingId()+" value : "+(-getChildId())+" bound : "+Arrays.toString(getBoundary());
             }

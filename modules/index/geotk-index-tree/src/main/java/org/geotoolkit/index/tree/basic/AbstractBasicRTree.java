@@ -356,7 +356,7 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
         assert result1.checkInternal() : "splitNode : result1.";
         assert result2.checkInternal() : "splitNode : result2.";
         
-        countadjust+=(treeAccess.getCountAdjust()-counta);
+//        countadjust+=(treeAccess.getCountAdjust()-counta);
         return new Node[]{result1, result2};
     }
     
