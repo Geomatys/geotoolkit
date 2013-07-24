@@ -19,7 +19,7 @@ package org.geotoolkit.data;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.storage.DataStoreException;
+import org.apache.sis.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -57,18 +57,18 @@ public class WrapFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
-        featureStore.createSchema(typeName, featureType);
+    public void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+        featureStore.createFeatureType(typeName, featureType);
     }
 
     @Override
-    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
-        featureStore.updateSchema(typeName, featureType);
+    public void updateFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+        featureStore.updateFeatureType(typeName, featureType);
     }
 
     @Override
-    public void deleteSchema(Name typeName) throws DataStoreException {
-        featureStore.deleteSchema(typeName);
+    public void deleteFeatureType(Name typeName) throws DataStoreException {
+        featureStore.deleteFeatureType(typeName);
     }
 
     @Override
