@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import java.util.*;
 
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.AtomicReader;
 import org.apache.lucene.index.AtomicReaderContext;
 import org.apache.lucene.index.DocsEnum;
 import org.apache.lucene.index.Term;
@@ -64,7 +65,17 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
     public static final PropertyName GEOMETRY_PROPERTY = FactoryFinder.getFilterFactory(null).property(GEOMETRY_FIELD_NAME);
     public static final Term GEOMETRY_FIELD            = new Term(GEOMETRY_FIELD_NAME);
     public static final Term META_FIELD                = new Term("metafile", "doc");
-    
+
+    private static final Set<String> GEOMETRY_FIELDS = new HashSet<String>(1);
+    static {
+        GEOMETRY_FIELDS.add(GEOMETRY_FIELD_NAME);
+    }
+
+    private static final Set<String> ID_FIELDS = new HashSet<String>(1);
+    static {
+        ID_FIELDS.add(IDENTIFIER_FIELD_NAME);
+    }
+
     private final SpatialFilterType filterType;
 
     private static final Logger LOGGER = Logging.getLogger(LuceneOGCFilter.class);
@@ -84,6 +95,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
         return filter;
     }
     
+    @Override
     public void applyRtreeOnFilter(final Tree rTree, final boolean envelopeOnly) {
         this.tree         = rTree;
         this.envelopeOnly = envelopeOnly;
@@ -95,7 +107,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
     @Override
     public DocIdSet getDocIdSet(final AtomicReaderContext ctx, final Bits b) throws IOException {
 
-        final Set<Integer> treeMatching = new HashSet<Integer>();
+        final Set<String> treeMatching = new HashSet<String>();
         boolean treeSearch = false;
         boolean reverse = false;
         boolean distanceFilter = false;
@@ -166,12 +178,15 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
         } else {
             LOGGER.finer("Null R-tree in spatial search");
         }
-        
-        final DocIdBitSet set = new DocIdBitSet(new BitSet(ctx.reader().maxDoc()));
-        final DocsEnum termDocs = ctx.reader().termDocsEnum(META_FIELD);
+
+        final AtomicReader reader = ctx.reader();
+        final DocIdBitSet set = new DocIdBitSet(new BitSet(reader.maxDoc()));
+        final DocsEnum termDocs = reader.termDocsEnum(META_FIELD);
         while (termDocs.nextDoc() != DocsEnum.NO_MORE_DOCS){
             final int docId     = termDocs.docID();
-            final boolean match = treeMatching.contains(docId);
+            final Document doc  = reader.document(docId, ID_FIELDS);
+            final String id     = doc.get(IDENTIFIER_FIELD_NAME);
+            final boolean match = treeMatching.contains(id);
             if (treeSearch && reverse && !match) {
                 set.getBitSet().set(docId);
 
@@ -179,10 +194,8 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
                 if (envelopeOnly && !distanceFilter) {
                     set.getBitSet().set(docId);
                 } else {
-                    final Set<String> fieldsToLoad = new HashSet<String>();
-                    fieldsToLoad.add(GEOMETRY_FIELD_NAME);
-                    final Document doc = ctx.reader().document(docId, fieldsToLoad);
-                    if (filter.evaluate(doc)) {
+                    final Document geoDoc = reader.document(docId, GEOMETRY_FIELDS);
+                    if (filter.evaluate(geoDoc)) {
                         set.getBitSet().set(docId);
                     }
                 }

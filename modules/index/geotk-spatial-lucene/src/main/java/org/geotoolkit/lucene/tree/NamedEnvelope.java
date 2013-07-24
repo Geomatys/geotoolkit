@@ -35,7 +35,7 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
     /**
      * The identifier of the envelope.
      */
-    private int id;
+    private String id;
 
     /**
      * Empty constructor required by the externalizable pattern.
@@ -47,7 +47,7 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
     /**
      * Build a new envelope with the specified CRS and name.
      */
-    public NamedEnvelope(final CoordinateReferenceSystem crs, final int id) {
+    public NamedEnvelope(final CoordinateReferenceSystem crs, final String id) {
         super(crs);
         this.id = id;
     }
@@ -55,7 +55,7 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
     /**
      * Build a new envelope from the specified one and affect a name to it.
      */
-    public NamedEnvelope(final Envelope env, final int id ) {
+    public NamedEnvelope(final Envelope env, final String id) {
         super(env);
         this.id = id;
     }
@@ -63,7 +63,7 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
     /**
      * @return the name / identifier bounded to the envelope
      */
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -76,7 +76,7 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
         stream.writeDouble(super.getLower(1));
         stream.writeDouble(super.getUpper(0));
         stream.writeDouble(super.getUpper(1));
-        stream.writeInt(id);
+        stream.writeUTF(id);
     }
 
     /**
@@ -88,16 +88,15 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
         final double miny = stream.readDouble();
         final double maxx = stream.readDouble();
         final double maxy = stream.readDouble();
-        final int id      = stream.readInt();
-        this.id = id;
+        this.id           = stream.readUTF();
         setRange(0, minx, maxx);
         setRange(1, miny, maxy);
     }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 17 * hash + this.id;
+        int hash = 7;
+        hash = 11 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
 

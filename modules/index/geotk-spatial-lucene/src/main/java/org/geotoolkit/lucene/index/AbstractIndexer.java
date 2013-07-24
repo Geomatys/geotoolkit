@@ -31,14 +31,10 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.Version;
 
@@ -386,18 +382,10 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
             // look for DOC ID for R-Tree removal
             if (rTree != null) {
-                final IndexReader reader      = DirectoryReader.open(dir);
-                final IndexSearcher searcher  = new IndexSearcher(reader);
-                final TopDocs docs            = searcher.search(query, 1);
-                if (docs.totalHits > 0) {
-                    int docID = docs.scoreDocs[0].doc;
-                    if (rTree.getElementsNumber() > 0) {
-                        final NamedEnvelope env = new NamedEnvelope(rTree.getCrs(), docID);
-                        rTree.remove(env);
-                        writeTree();
-                    }
+                final NamedEnvelope env = new NamedEnvelope(rTree.getCrs(), identifier);
+                if (rTree.remove(env)) {
+                     writeTree();
                 }
-                reader.close();
             }
 
             final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_40, analyzer);
@@ -501,8 +489,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         NamedEnvelope namedBound = null;
         if (rTree != null) {
             try {
-                final int id     =  Integer.parseInt(doc.get("docid"));
-                namedBound = getNamedEnvelope(id, geom, rTree.getCrs());
+                final String id = doc.get("id");
+                namedBound      = getNamedEnvelope(id, geom, rTree.getCrs());
                 rTree.insert(namedBound);
             } catch (TransformException ex) {
                 LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
@@ -518,7 +506,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         return namedBound;
     }
     
-    public static NamedEnvelope getNamedEnvelope(final int id, final Geometry geom, final CoordinateReferenceSystem crs) throws FactoryException, TransformException {
+    public static NamedEnvelope getNamedEnvelope(final String id, final Geometry geom, final CoordinateReferenceSystem crs) throws FactoryException, TransformException {
         final Envelope jtsBound = geom.getEnvelopeInternal();
         final String epsgCode = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
         final CoordinateReferenceSystem geomCRS = CRS.decode(epsgCode);

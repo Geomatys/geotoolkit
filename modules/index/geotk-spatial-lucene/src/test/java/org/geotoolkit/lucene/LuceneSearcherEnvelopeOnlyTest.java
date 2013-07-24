@@ -256,19 +256,19 @@ public class LuceneSearcherEnvelopeOnlyTest {
         int nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
-        List<Integer> results = new ArrayList<Integer>();
+        List<String> results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             NamedEnvelope doc = (NamedEnvelope) docs.get(i);
-            int id =  doc.getId();
+            String id =  doc.getId();
             results.add(id);
             LOGGER.log(Level.FINER, "\tid: {0}", id);
         }
 
         //we verify that we obtain the correct results
         assertEquals(nbResults, 3);
-        assertTrue(results.contains(1));
-        assertTrue(results.contains(2) || results.contains(6)); // depends on test order
-        assertTrue(results.contains(4));
+        assertTrue(results.contains("box 2"));
+        assertTrue(results.contains("box 2 projected")); // depends on test order
+        assertTrue(results.contains("box 4"));
 
         /*
          * The same box in a diferent crs
@@ -288,19 +288,19 @@ public class LuceneSearcherEnvelopeOnlyTest {
         nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS= 3395: nb Results: {0}", nbResults);
 
-        results = new ArrayList<Integer>();
+        results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             NamedEnvelope doc = (NamedEnvelope) docs.get(i);
-            Integer name =  doc.getId();
+            String name =  doc.getId();
             results.add(name);
             LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
 
         //we verify that we obtain the correct results
         assertEquals(nbResults, 3);
-        assertTrue(results.contains(1));
-        assertTrue(results.contains(2) || results.contains(6)); // depends on test order
-        assertTrue(results.contains(4));
+        assertTrue(results.contains("box 2"));
+        assertTrue(results.contains("box 2 projected")); // depends on test order
+        assertTrue(results.contains("box 4"));
 
         /*
          * second bbox
@@ -318,20 +318,20 @@ public class LuceneSearcherEnvelopeOnlyTest {
         nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 2 CRS= 4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<Integer>();
+        results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             NamedEnvelope doc = (NamedEnvelope) docs.get(i);
-            int name =  doc.getId();
+            String name =  doc.getId();
             results.add(name);
             LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
 
          //we verify that we obtain the correct results
         assertEquals(nbResults, 4);
-        assertTrue(results.contains(3));
-        assertTrue(results.contains(1));
-        assertTrue(results.contains(2) || results.contains(6)); // depends on test order
-        assertTrue(results.contains(5));
+        assertTrue(results.contains("box 3"));
+        assertTrue(results.contains("box 2"));
+        assertTrue(results.contains("box 2 projected")); // depends on test order
+        assertTrue(results.contains("box 5"));
 
         /*
          * third bbox
@@ -349,17 +349,17 @@ public class LuceneSearcherEnvelopeOnlyTest {
         nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 3 CRS= 4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<Integer>();
+        results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             NamedEnvelope doc = (NamedEnvelope) docs.get(i);
-            int name =  doc.getId();
+            String name =  doc.getId();
             results.add(name);
             LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
 
          //we verify that we obtain the correct results
         assertEquals(nbResults, 1);
-        assertTrue(results.contains(5));
+        assertTrue(results.contains("box 5"));
     }
 
     /**
