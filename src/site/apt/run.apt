@@ -5,13 +5,10 @@
 
 Running Geotoolkit.org
 
-  Geotk requires Java 6. No extension is required for the referencing and metadata
-  modules. However if the coverage module is also used, then Geotk requires some
-  additional dependencies listed in the <Running modules beyond GeoAPI 3.0> section
-  below.
-
-
-* Running modules defined by GeoAPI 3.0
+  Geotk requires Java 7.
+  If the coverage or display modules are also used, then Geotk requires also the
+  {{{http://www.oracle.com/technetwork/java/current-142188.html}Java Advanced Imaging}} library.
+  Note that this library is pre-installed on MacOS X.
 
   While not mandatory, the referencing module works better with a connection to an
   {{{http://www.epsg.org/}EPSG}} database. The database will be created automatically
@@ -34,46 +31,9 @@ Running Geotoolkit.org
 
 ** Maven configuration
 
-  <Geotk for GeoAPI 3.0> is deployed into the {{{http://search.maven.org/}Maven Central}} repository,
-  and consequently does not require any explicit repository declaration. The following example is
-  sufficient for running Geotk referencing services with the optional - but recommended - EPSG
-  database.
-
-+---------------------------------------------+
-<dependencies>
-  <dependency>
-    <groupId>org.geotoolkit</groupId>
-    <artifactId>geotk-referencing</artifactId>
-    <version>3.20-geoapi-3.0</version>
-  </dependency>
-  <dependency>
-    <groupId>org.geotoolkit</groupId>
-    <artifactId>geotk-epsg</artifactId>
-    <version>3.20-geoapi-3.0</version>
-    <scope>runtime</scope>
-  </dependency>
-  <dependency>
-    <groupId>org.apache.derby</groupId>
-    <artifactId>derby</artifactId>
-    <version>10.8.2.2</version>
-    <scope>runtime</scope>
-  </dependency>
-</dependencies>
-+---------------------------------------------+
-
-
-* Running modules beyond GeoAPI 3.0
-
-  If the coverage or display modules are also used, then Geotk requires also the
-  {{{http://www.oracle.com/technetwork/java/current-142188.html}Java Advanced Imaging}} library.
-  Note that this library is pre-installed on MacOS X.
-
-
-** Maven configuration
-
   Because modules beyond metadata and referencing are not yet deployed on Maven Central, projects
   need to declare the Geotk repository in order to use them. The example below uses the Coverage
-  I/O services, together with the same referencing services than the previous example.
+  I/O services:
 
 +---------------------------------------------+
 <repositories>
@@ -88,12 +48,12 @@ Running Geotoolkit.org
   <dependency>
     <groupId>org.geotoolkit</groupId>
     <artifactId>geotk-coverageio</artifactId>
-    <version>4.0-M0</version>
+    <version>4.0-M1</version>
   </dependency>
   <dependency>
     <groupId>org.geotoolkit</groupId>
     <artifactId>geotk-epsg</artifactId>
-    <version>4.0-M0</version>
+    <version>4.0-M1</version>
     <scope>runtime</scope>
   </dependency>
   <dependency>
@@ -104,7 +64,3 @@ Running Geotoolkit.org
   </dependency>
 </dependencies>
 +---------------------------------------------+
-
-  Note that the version number in the later example is <<<4.0-M0>>> rather <<<4.0-M0-geoapi-3.0>>>
-  because those Geotk modules depend on GeoAPI version <<<3.1-M04>>>, which is not yet
-  standardized by OGC.

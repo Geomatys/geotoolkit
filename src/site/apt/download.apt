@@ -65,7 +65,7 @@ Downloading Geotoolkit.org Binaries
 </dependencies>
 +---------------------------------------------------------+
 
-  The above example is sufficient for any version ending in <<<-geoapi-3.0>>>. If the <<<3.20>>> or <<<4.0-M0>>>
+  The above example is sufficient for any version ending in <<<-geoapi-3.0>>>. If the <<<3.20>>> or <<<4.0-M1>>>
   version is wanted instead than <<<3.20-geoapi-3.0>>> (in order to use modules that are beyond
   GeoAPI 3.0 interfaces), then the following repository must be declared in the root <<<pom.xml>>>
   file.
@@ -108,23 +108,23 @@ Downloading Geotoolkit.org Binaries
 *----------------------------------------+------------------------------------+---------------------------+
 || File                                  || Content                           || Prerequites             ||
 *----------------------------------------+------------------------------------+---------------------------+
-| <<<geotk-bundle-metadata.pack.gz>>>    | • jsr-275.jar\                     | • Java 6                  |
+| <<<geotk-bundle-metadata.pack.gz>>>    | • jsr-275.jar\                     | • Java 7                  |
 |                                        | • jcip-annotations.jar\            |                           |
 |                                        | • geoapi-pending.jar\              |                           |
 |                                        | • geotk-utility.jar\               |                           |
 |                                        | • geotk-metadata.jar\              |                           |
 *----------------------------------------+------------------------------------+---------------------------+
-| <<<geotk-bundle-referencing.pack.gz>>> | <All the metadata pack plus:>\     | • Java 6\                 |
+| <<<geotk-bundle-referencing.pack.gz>>> | <All the metadata pack plus:>\     | • Java 7\                 |
 |                                        | • vecmath.jar\                     | • JavaDB (<optional>)     |
 |                                        | • geotk-referencing.jar\           |                           |
 |                                        | • geotk-epsg.jar                   |                           |
 *----------------------------------------+------------------------------------+---------------------------+
-| <<<geotk-bundle-coverage.pack.gz>>>    | <All the referencing pack plus:>\  | • Java 6\                 |
+| <<<geotk-bundle-coverage.pack.gz>>>    | <All the referencing pack plus:>\  | • Java 7\                 |
 |                                        | • geotk-coverage.jar\              | • Java Advanced Imaging\  |
 |                                        | • geotk-coverageio.jar\            | • JavaDB (<optional>)     |
 |                                        | • jai_imageio.jar\                 |                           |
 *----------------------------------------+------------------------------------+---------------------------+
-| <<<geotk-bundle-netcdf.pack.gz>>>      | <All the coverage pack plus:>\     | • Java 6\                 |
+| <<<geotk-bundle-netcdf.pack.gz>>>      | <All the coverage pack plus:>\     | • Java 7\                 |
 |                                        | • geotk-coverageio-netcdf.jar\     | • Java Advanced Imaging\  |
 |                                        | • netcdf.jar\                      | • JavaDB (<optional>)     |
 |                                        | • udunits.jar\                     |                           |
@@ -140,7 +140,7 @@ Downloading Geotoolkit.org Binaries
 |                                        | • slf4j-api.jar\                   |                           |
 |                                        | • slf4j-jdk14.jar                  |                           |
 *----------------------------------------+------------------------------------+---------------------------+
-| <<<geotk-bundle-storage.pack.gz>>>     | <All the coverage pack plus:>\     | • Java 6\                 |
+| <<<geotk-bundle-storage.pack.gz>>>     | <All the coverage pack plus:>\     | • Java 7\                 |
 |                                        | • geotk-metadata-sql.jar\          | • Java Advanced Imaging   |
 |                                        | • geotk-coverage-sql.jar\          |                           |
 |                                        | • geotk-epsg-javadb.jar\           |                           |
@@ -148,7 +148,7 @@ Downloading Geotoolkit.org Binaries
 |                                        | • derbyLocale_*.jar\               |                           |
 |                                        | • postgresql.jar                   |                           |
 *----------------------------------------+------------------------------------+---------------------------+
-| <<<geotk-bundle.pack.gz>>>             | <All the storage pack plus:>\      | • Java 6\                 |
+| <<<geotk-bundle.pack.gz>>>             | <All the storage pack plus:>\      | • Java 7\                 |
 |                                        | • geotk-setup.jar\                 | • Java Advanced Imaging   |
 |                                        | • geotk-display.jar\               |                           |
 |                                        | • geotk-widgets-swing.jar\         |                           |
@@ -166,11 +166,11 @@ Downloading Geotoolkit.org Binaries
   installation directory.
 
   For example, users who wish to use the georeferencing functionality of Geotk can select the
-  <<<geotk-bundle-referencing-4.0-M0.pack.gz>>> archive for download. Once downloaded, the archive
+  <<<geotk-bundle-referencing-4.0-M1.pack.gz>>> archive for download. Once downloaded, the archive
   can then be expanded with the following command:
 
 -----------------------------------------------------------------------------------------------
-unpack200 --remove-pack-file geotk-bundle-referencing-4.0-M0.pack.gz geotk-bundle-referencing.jar
+unpack200 --remove-pack-file geotk-bundle-referencing-4.0-M1.pack.gz geotk-bundle-referencing.jar
 -----------------------------------------------------------------------------------------------
 
   where the name of the target file, <<<geotk-bundle-referencing.jar>>> in this example, can be any

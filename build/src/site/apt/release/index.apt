@@ -77,8 +77,8 @@ ln -s $GEOTK_HOME/build/src/site/resources/release/fix-html.xml
   the Geotk version numbers and the deployment server:
 
 --------------------------------------------------------
-export OLD_VERSION="4.0-M0"
-export NEW_VERSION="4.0-M1"
+export OLD_VERSION="4.0-M1"
+export NEW_VERSION="4.0-M2"
 export GEOTK_SERVER=(... insert foo@server.com here ...)
 --------------------------------------------------------
 
