@@ -14,13 +14,14 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.hilbert;
+package org.geotoolkit.index.tree.hilbert.iterator;
 import java.util.BitSet;
 import java.util.Iterator;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-/**Test Hilbert curve creation in dimension n at order 9 if it is possible.
+/**
+ * Test Hilbert curve creation in dimension n at order 9 if it is possible.
  *
  * <blockquote><font size=-1>
  * <strong>NOTE: test is possible if dimension*order &lt; 30.({@code int} size limit value).</strong>

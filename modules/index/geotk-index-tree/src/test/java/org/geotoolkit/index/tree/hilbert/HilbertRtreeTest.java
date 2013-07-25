@@ -14,11 +14,14 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree;
+package org.geotoolkit.index.tree.hilbert;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import org.geotoolkit.index.tree.Node;
+import org.geotoolkit.index.tree.SpatialTreeTest;
+import org.geotoolkit.index.tree.Tree;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.add;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import static org.junit.Assert.assertTrue;

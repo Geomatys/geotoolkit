@@ -14,15 +14,15 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.hilbert;
+package org.geotoolkit.index.tree.hilbert.iterator;
 
 /**
- * Test Hilbert curve creation in dimension 7.
+ * Test Hilbert curve creation in dimension 2.
  *
  * @author Rémi Marechal(Geomatys).
  */
-public class Hilbert7DTest extends HilbertTest {
-    public Hilbert7DTest() {
-        super(7);
+public class Hilbert2DTest extends HilbertTest {
+    public Hilbert2DTest() {
+        super(2);
     }
 }

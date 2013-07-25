@@ -16,13 +16,19 @@
  */
 package org.geotoolkit.index.tree.hilbert;
 
-/**
- * Test Hilbert curve creation in dimension 8.
+import java.io.IOException;
+import org.geotoolkit.index.tree.hilbert.HilbertRTree;
+import org.geotoolkit.index.tree.io.StoreIndexException;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+
+/**Create Hilbert R-Tree test suite in 3D Geographical space.
  *
- * @author Rémi Marechal(Geomatys).
+ * @author Rémi Marechal (Geomatys).
  */
-public class Hilbert9DTest extends HilbertTest {
-    public Hilbert9DTest() {
-        super(9);
+public class HilbertRTreeGeo3DTest extends HilbertRtreeTest{
+
+    public HilbertRTreeGeo3DTest() throws StoreIndexException, IOException {
+        super(DefaultGeographicCRS.WGS84_3D);
+        tree = new HilbertRTree(4,3, crs, tEM);
     }
 }
