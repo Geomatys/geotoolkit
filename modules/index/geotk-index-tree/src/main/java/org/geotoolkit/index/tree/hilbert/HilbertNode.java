@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.index.tree.hilbert;
 
+import org.geotoolkit.index.tree.hilbert.iterator.HilbertIterator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
