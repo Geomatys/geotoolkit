@@ -52,7 +52,6 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : SplitCase choice", choice);
         this.choice      = choice;
-        this.eltCompteur = 0;
         this.treeAccess = treeAccess;
         super.setRoot(treeAccess.getRoot());
         treeIdentifier = treeAccess.getTreeIdentifier();
@@ -95,19 +94,19 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
         }
     }
 
-    @Override
-    public void setRoot(Node root) throws StoreIndexException {
-        if (root == null) {
-//            nodeId = 1;
-            try {
-                treeAccess.rewind();
-            } catch (IOException ex) {
-                throw new StoreIndexException("Impossible to rewind TreeAccessFile.", ex);
-            }
-            setElementsNumber(0);
-        }
-        super.setRoot(root);
-    }
+//    @Override
+//    public void setRoot(Node root) throws StoreIndexException {
+//        if (root == null) {
+////            nodeId = 1;
+//            try {
+//                treeAccess.rewind();
+//            } catch (IOException ex) {
+//                throw new StoreIndexException("Impossible to rewind TreeAccessFile.", ex);
+//            }
+//            setElementsNumber(0);
+//        }
+//        super.setRoot(root);
+//    }
     
     private Node nodeInsert(Node candidate, Object object, double... coordinates) throws IOException{
         assert candidate instanceof FileNode;
@@ -214,8 +213,6 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
      */
     private Node[] splitNode(final FileNode candidate) throws IllegalArgumentException, IOException {
         ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
-        // debug
-        int counta = treeAccess.getCountAdjust();
         assert candidate.checkInternal() : "splitNode : begin.";
         int childNumber = candidate.getChildCount();
         if (childNumber < 2) 
@@ -356,7 +353,6 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
         assert result1.checkInternal() : "splitNode : result1.";
         assert result2.checkInternal() : "splitNode : result2.";
         
-//        countadjust+=(treeAccess.getCountAdjust()-counta);
         return new Node[]{result1, result2};
     }
     
@@ -477,7 +473,7 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
         final int size04 = (int) Math.max(size * 0.4, 1);
         for (int cut = size04; cut < size-size04; cut++) {
             envA = listFN.get(0).getBoundary().clone();
-            for (int i = 1; i<cut; i++) {
+            for (int i = 1; i < cut; i++) {
                 add(envA, listFN.get(i).getBoundary());
             }
             envB = listFN.get(cut).getBoundary().clone();
@@ -687,6 +683,7 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
     public void close() throws StoreIndexException {
         try {
             treeAccess.setTreeIdentifier(treeIdentifier);
+            treeAccess.setEltNumber(getElementsNumber());
             treeAccess.close();
         } catch (IOException ex) {
             throw new StoreIndexException("FileBasicRTree : close(). Impossible to close TreeAccessFile.", ex);

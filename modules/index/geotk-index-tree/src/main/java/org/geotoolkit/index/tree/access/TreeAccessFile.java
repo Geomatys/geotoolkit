@@ -72,7 +72,7 @@ public class TreeAccessFile extends TreeAccess {
         inOutChannel = inOutStream.getChannel();
         
         /***************************  read head ******************************/
-        // write magicNumber
+        // read magicNumber
         final int mgNumber = inOutStream.readInt();
         if (magicNumber != mgNumber)
             throw new IllegalArgumentException("tree type identifier should match. expected identifier : "+magicNumber+". Found : "+mgNumber);
@@ -91,6 +91,8 @@ public class TreeAccessFile extends TreeAccess {
         if (nodeId == 0)
             throw new IllegalStateException("User shouldn't invoked tree.close() methode after insertion. You should build again RTree.");
         treeIdentifier = inOutStream.readInt();
+        // read element number within tree
+        eltNumber = inOutStream.readInt();
         // read CRS
         final int byteTabLength   = inOutStream.readInt();
         final byte[] crsByteArray = new byte[byteTabLength];
@@ -107,7 +109,7 @@ public class TreeAccessFile extends TreeAccess {
         nodeSize = (dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2;
         
         // buffer attributs
-        final int div = 8192 / nodeSize;// 4096 In future define a better approppriate value by benchmark.
+        final int div = 819200 / nodeSize;// 4096 In future define a better approppriate value by benchmark.
         this.bufferLength = div * nodeSize;
         byteBuffer = ByteBuffer.allocateDirect(bufferLength);
         byteBuffer.order(bO);
@@ -142,7 +144,7 @@ public class TreeAccessFile extends TreeAccess {
         // Node size : boundary weigth + parent ID + 1st sibling Integer + 1st child Integer + child number.
         nodeSize = (dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2;
         
-        final int div = 8192 / nodeSize;// 4096
+        final int div = 819200 / nodeSize;// 4096
         this.bufferLength = div * nodeSize;
         // ByteBuffer
         final ByteOrder bO = ByteOrder.nativeOrder();
@@ -167,6 +169,8 @@ public class TreeAccessFile extends TreeAccess {
         // write nodeID
         inOutStream.writeInt(0);
         // write treeIdentifier
+        inOutStream.writeInt(0);
+        // write element number within tree
         inOutStream.writeInt(0);
         // write CRS
         objOutput.writeObject(crs);
@@ -277,7 +281,6 @@ public class TreeAccessFile extends TreeAccess {
      * @throws IOException 
      */
     private void adjustBuffer(final int nodeID) throws IOException {
-        countAdjust++;
         rwIndex = beginPosition + (nodeID - 1) * nodeSize;
         if (rwIndex < currentBufferPosition || rwIndex >= currentBufferPosition + bufferLength) {
             // write current data within bytebuffer in channel.
@@ -339,6 +342,7 @@ public class TreeAccessFile extends TreeAccess {
         inOutChannel.position(17); // a checker
         inOutStream.writeInt(nodeId);
         inOutStream.writeInt(treeIdentifier);
+        inOutStream.writeInt(eltNumber);
         //close
         inOutChannel.close();
      }
