@@ -32,14 +32,14 @@ public class FileStarRTree<E> extends AbstractStarRTree<E> {
     /**
      * Number to identify tree file.
      */
-    private final static int MAGIC_NUMBER      = 23107209;
+    private final static int STAR_NUMBER      = 23107209;
     private final static double VERSION_NUMBER = 0.1;
     
      public FileStarRTree(final File outPut, final int maxElements, final CoordinateReferenceSystem crs, final TreeElementMapper treeEltMap) throws StoreIndexException, IOException {
-        super(new TreeAccessFile(outPut, MAGIC_NUMBER, VERSION_NUMBER, maxElements, crs), treeEltMap);
+        super(new TreeAccessFile(outPut, STAR_NUMBER, VERSION_NUMBER, maxElements, crs), treeEltMap);
     }
     
     public FileStarRTree(final File input, final TreeElementMapper treeEltMap) throws IOException, StoreIndexException, ClassNotFoundException {
-        super(new TreeAccessFile(input, MAGIC_NUMBER, VERSION_NUMBER), treeEltMap);
+        super(new TreeAccessFile(input, STAR_NUMBER, VERSION_NUMBER), treeEltMap);
     } 
 }

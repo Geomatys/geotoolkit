@@ -32,14 +32,14 @@ public class FileBasicRTree<E> extends AbstractBasicRTree<E> {
     /**
      * Number to identify tree file.
      */
-    private final static int MAGIC_NUMBER      = 188047901;
+    private final static int BASIC_NUMBER      = 188047901;
     private final static double VERSION_NUMBER = 0.1;
 
     public FileBasicRTree(final File outPut, final int maxElements, final CoordinateReferenceSystem crs, final SplitCase choice, final TreeElementMapper treeEltMap) throws StoreIndexException, IOException {
-        super(new TreeAccessFile(outPut, MAGIC_NUMBER, VERSION_NUMBER, maxElements, crs), choice, treeEltMap);
+        super(new TreeAccessFile(outPut, BASIC_NUMBER, VERSION_NUMBER, maxElements, crs), choice, treeEltMap);
     }
     
     public FileBasicRTree(final File input, final SplitCase choice, final TreeElementMapper treeEltMap) throws IOException, StoreIndexException, ClassNotFoundException {
-        super(new TreeAccessFile(input, MAGIC_NUMBER, VERSION_NUMBER), choice, treeEltMap);
+        super(new TreeAccessFile(input, BASIC_NUMBER, VERSION_NUMBER), choice, treeEltMap);
     } 
 }

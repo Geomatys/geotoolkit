@@ -14,22 +14,20 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.basic;
+package org.geotoolkit.index.tree.star;
 
-import java.io.IOException;
-import org.geotoolkit.index.tree.io.AbstractTreeTest;
+import org.geotoolkit.index.tree.access.TreeAccessMemory;
 import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.geotoolkit.index.tree.mapper.TreeElementMapper;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
  * @author Remi Marechal (Geomatys).
  */
-public class MemoryBasicRTree2DTest extends AbstractTreeTest {
+public class MemoryStarRTree<E> extends AbstractStarRTree<E>{
 
-    public MemoryBasicRTree2DTest() throws StoreIndexException, IOException {
-        super(DefaultEngineeringCRS.CARTESIAN_2D);
-        tree = new MemoryBasicRTree(3, crs, SplitCase.LINEAR, tEM);
-        tAF  = ((AbstractBasicRTree)tree).getTreeAccess();
+    public MemoryStarRTree(int maxElements, CoordinateReferenceSystem crs, TreeElementMapper treeEltMap) throws StoreIndexException {
+        super(new TreeAccessMemory(maxElements, crs), treeEltMap);
     }
 }

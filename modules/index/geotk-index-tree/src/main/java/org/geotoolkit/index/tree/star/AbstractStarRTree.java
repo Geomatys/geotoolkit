@@ -57,7 +57,6 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
         super(treeAccess, treeAccess.getCRS(), treeEltMap);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);
-        this.eltCompteur = 0;
         this.treeAccess = treeAccess;
         super.setRoot(treeAccess.getRoot());
         treeIdentifier = treeAccess.getTreeIdentifier();
@@ -104,6 +103,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
                     final int siz = listCoords.size();
                     assert (siz == listObjects.size()) : "getElementAtMore33Percent : nodeInsert : lists should have same size.";
                     setIA(false);
+                    final int nbrElt = getElementsNumber();
                     final int treeIdent = treeIdentifier; // gere quand root == null
                     for (int i = 0; i < siz; i++) {
                         assert remove(listObjects.get(i), listCoords.get(i));
@@ -112,6 +112,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
                         insert(listObjects.get(i), listCoords.get(i));
                     }
                     setIA(true);
+                    assert nbrElt == getElementsNumber() : "During Insert again element number within tree should not change.";
                     treeIdentifier = treeIdent;
                 }
             }
@@ -138,10 +139,6 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
             assert fileCandidate.checkInternal() : "nodeInsert : Node before insert.";
             subCandidateParent = (FileNode)nodeInsert(chooseSubtree(fileCandidate, coordinates), object, coordinates);
             add(fileCandidate.getBoundary(), coordinates);
-//            if (travelUpBeforeInsertAgain) {
-//                treeAccess.writeNode(fileCandidate); 
-//                return null;
-//            }
         }
         
         /**
@@ -161,18 +158,6 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
                 listObjects.clear();
                 listCoords.clear();
                 getElementAtMore33PerCent(candidate, listObjects, listCoords);
-//                final int siz = listCoords.size();
-//                assert (siz == listObjects.size()) :"getElementAtMore33Percent : nodeInsert : lists should have same size.";
-//                setIA(false);
-//                final int treeIdent = treeIdentifier; // gere quand root == null
-//                for (int i = 0; i < siz; i++) {
-//                    assert remove(listObjects.get(i), listCoords.get(i));
-//                }
-//                for (int i = 0; i< siz; i++) {
-//                    insert(listObjects.get(i), listCoords.get(i));
-//                }
-//                setIA(true);
-//                treeIdentifier = treeIdent;
                 travelUpBeforeInsertAgain = true;
                 return null;
             }
@@ -457,8 +442,6 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
     private Node[] splitNode(final FileNode candidate) throws IllegalArgumentException, IOException {
         ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
         assert candidate.checkInternal() : "splitNode : begin.";
-        // debug
-        int counta = treeAccess.getCountAdjust();
         int childNumber = candidate.getChildCount();
         if (childNumber < 2) 
             throw new IllegalArgumentException("not enought elements within " + candidate + " to split.");
@@ -819,6 +802,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
     public void close() throws StoreIndexException {
         try {
             treeAccess.setTreeIdentifier(treeIdentifier);
+            treeAccess.setEltNumber(eltCompteur);
             treeAccess.close();
         } catch (IOException ex) {
             throw new StoreIndexException("FileBasicRTree : close(). Impossible to close TreeAccessFile.", ex);

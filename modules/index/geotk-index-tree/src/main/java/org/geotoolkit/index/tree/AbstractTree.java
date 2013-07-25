@@ -43,7 +43,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
     private final int nbMaxElement;
     protected CoordinateReferenceSystem crs;
     protected Calculator calculator;
-    protected int eltCompteur = 0;
+    protected int eltCompteur;
     protected final TreeElementMapper<E> treeEltMap;
     protected int treeIdentifier;
     
@@ -66,6 +66,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
         this.treeEltMap = treeEltMap;
         this.calculator = new CalculatorND();
         this.nbMaxElement = treeAccess.getMaxElementPerCells();
+        this.eltCompteur = treeAccess.getEltNumber();
         ArgumentChecks.ensureBetween("Create Tree : maxElements", 2, Integer.MAX_VALUE, nbMaxElement);
         this.crs = crs;
         //debug
@@ -159,6 +160,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
                 throw new StoreIndexException("Impossible to rewind treeAccess during setRoot(null).", ex);
             }
             treeIdentifier = 1;
+            eltCompteur = 0;
         }
     }
     /**

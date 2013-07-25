@@ -14,11 +14,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.basic;
+package org.geotoolkit.index.tree.star;
 
 import java.io.File;
 import java.io.IOException;
 import org.geotoolkit.index.tree.io.AbstractTreeTest;
+import org.geotoolkit.index.tree.io.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 
@@ -26,16 +27,17 @@ import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
  *
  * @author rmarechal
  */
-public class ReadeableFileBasicTree2DTest extends AbstractTreeTest {
-    public ReadeableFileBasicTree2DTest() throws StoreIndexException, IOException, ClassNotFoundException {
+public class ReadeableStarRTree2DTest  extends AbstractTreeTest {
+
+    public ReadeableStarRTree2DTest() throws StoreIndexException, IOException, ClassNotFoundException {
         super(DefaultEngineeringCRS.CARTESIAN_2D);
         final File inOutFile = File.createTempFile("test", "tree");
-        tree = new FileBasicRTree(inOutFile, 3, crs, SplitCase.LINEAR, tEM);
-        tAF  = ((AbstractBasicRTree)tree).getTreeAccess();
-        
+        tEM = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
+        tree = new FileStarRTree(inOutFile, 4, crs, tEM);
+        tAF  = ((AbstractStarRTree)tree).getTreeAccess();
         insert();
         tree.close();
-        tree = new FileBasicRTree(inOutFile, SplitCase.LINEAR, tEM);
-        tAF  = ((AbstractBasicRTree)tree).getTreeAccess();
+        tree = new FileStarRTree(inOutFile, tEM);
+        tAF  = ((AbstractStarRTree)tree).getTreeAccess();
     }
 }

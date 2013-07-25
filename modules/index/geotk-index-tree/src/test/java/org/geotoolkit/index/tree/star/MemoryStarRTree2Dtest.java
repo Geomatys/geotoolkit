@@ -14,9 +14,8 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.basic;
+package org.geotoolkit.index.tree.star;
 
-import java.io.File;
 import java.io.IOException;
 import org.geotoolkit.index.tree.io.AbstractTreeTest;
 import org.geotoolkit.index.tree.io.StoreIndexException;
@@ -24,18 +23,14 @@ import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 
 /**
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
  */
-public class ReadeableFileBasicTree2DTest extends AbstractTreeTest {
-    public ReadeableFileBasicTree2DTest() throws StoreIndexException, IOException, ClassNotFoundException {
+public class MemoryStarRTree2Dtest extends AbstractTreeTest{
+
+    public MemoryStarRTree2Dtest() throws StoreIndexException, IOException {
         super(DefaultEngineeringCRS.CARTESIAN_2D);
-        final File inOutFile = File.createTempFile("test", "tree");
-        tree = new FileBasicRTree(inOutFile, 3, crs, SplitCase.LINEAR, tEM);
-        tAF  = ((AbstractBasicRTree)tree).getTreeAccess();
-        
-        insert();
-        tree.close();
-        tree = new FileBasicRTree(inOutFile, SplitCase.LINEAR, tEM);
-        tAF  = ((AbstractBasicRTree)tree).getTreeAccess();
+        tree = new MemoryStarRTree(4, crs, tEM);
+        tAF  = ((AbstractStarRTree)tree).getTreeAccess();
     }
+    
 }

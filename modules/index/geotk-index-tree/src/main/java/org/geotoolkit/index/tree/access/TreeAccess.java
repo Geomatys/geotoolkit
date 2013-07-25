@@ -28,9 +28,8 @@ public abstract class TreeAccess {
     protected double[] regionSearch;
     
     protected int treeIdentifier;
+    protected int eltNumber;
     
-    //debug 
-    protected int countAdjust;
 
     protected TreeAccess() {
     }
@@ -39,7 +38,6 @@ public abstract class TreeAccess {
         this.maxElement = maxElement;
         this.crs        = crs;
         treeIdentifier  = 1;
-        countAdjust = 0;
     }
     
     public int[] search(int nodeID, double[] regionSearch) throws IOException {
@@ -99,10 +97,13 @@ public abstract class TreeAccess {
     public int getTreeIdentifier() {
         return treeIdentifier;
     }
-    
-    //debug
-    public int getCountAdjust() {
-        return countAdjust;
+
+    public void setEltNumber(int eltNumber) {
+        this.eltNumber = eltNumber;
+    }
+
+    public int getEltNumber() {
+        return eltNumber;
     }
     
     /**
