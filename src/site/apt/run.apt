@@ -29,7 +29,7 @@ Running Geotoolkit.org
   The above-cited Setup application can also create the EPSG database on PostgreSQL,
   using connection parameters which must be explicitly specified.
 
-** Maven configuration
+* Maven configuration
 
   Because modules beyond metadata and referencing are not yet deployed on Maven Central, projects
   need to declare the Geotk repository in order to use them. The example below uses the Coverage
