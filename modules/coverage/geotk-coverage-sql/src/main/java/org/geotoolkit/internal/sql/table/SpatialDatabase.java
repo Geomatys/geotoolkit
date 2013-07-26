@@ -37,7 +37,7 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.extent.Extents;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
@@ -202,7 +202,7 @@ public class SpatialDatabase extends Database {
         id.put(CoordinateReferenceSystem.NAME_KEY, spatialCRS.getName().getCode() +
                 " + Time(" + temporalCRS.getName().getCode() + ')');
         if (world) {
-            id.put(CoordinateReferenceSystem.DOMAIN_OF_VALIDITY_KEY, DefaultExtent.WORLD);
+            id.put(CoordinateReferenceSystem.DOMAIN_OF_VALIDITY_KEY, Extents.WORLD);
         }
         return new DefaultCompoundCRS(id, spatialCRS, temporalCRS);
     }

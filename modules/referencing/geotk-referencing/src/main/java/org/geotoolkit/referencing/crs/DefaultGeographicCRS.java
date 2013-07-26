@@ -40,7 +40,7 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.measure.Measure;
-import org.apache.sis.metadata.iso.extent.DefaultExtent;
+import org.apache.sis.metadata.iso.extent.Extents;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.cs.AxisRangeType;
@@ -117,7 +117,7 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
             "WGS 84 (geographic 3D)" // EPSG:4327 name.
         };
         properties.put(ALIAS_KEY, alias);
-        properties.put(DOMAIN_OF_VALIDITY_KEY, DefaultExtent.WORLD);
+        properties.put(DOMAIN_OF_VALIDITY_KEY, Extents.WORLD);
         // Do not declare EPSG identifiers, because axis order are not the same.
         WGS84    = new DefaultGeographicCRS(properties, DefaultGeodeticDatum.WGS84,
                                             DefaultEllipsoidalCS.GEODETIC_2D);
