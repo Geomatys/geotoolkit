@@ -463,11 +463,19 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             cnx.setReadOnly(false);
 
             final int layerId = store.getLayerId(cnx,name.getLocalPart());
+            String versionStr;
+            if (version != null && !version.getLabel().equals(PGVersionControl.UNSET)) {
+                versionStr = TemporalUtilities.toISO8601Z(version.getDate(), TimeZone.getTimeZone("GMT+0"));
+            } else {
+                versionStr = PGVersionControl.UNSET;
+            }
+            
             final StringBuilder query = new StringBuilder();
-            query.append("SELECT \"id\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\",\"min\",\"max\"");
+            query.append("SELECT \"id\",\"version\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\",\"min\",\"max\" ");
             query.append("FROM ").append(store.encodeTableName("Band"));
-            query.append("WHERE ");
+            query.append(" WHERE ");
             query.append("\"layerId\"=").append(Integer.valueOf(layerId));
+            query.append(" AND \"version\" LIKE \'").append(versionStr).append("\' ");
             query.append("ORDER BY \"indice\" ASC");
 
             stmt = cnx.createStatement();
@@ -544,10 +552,19 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                 for (int i = 0; i < dimensions.size(); i++) {
 
                     final GridSampleDimension dim = dimensions.get(i);
+                    String versionStr;
+                    if (version != null && !version.getLabel().equals(PGVersionControl.UNSET)) {
+                        versionStr = TemporalUtilities.toISO8601Z(version.getDate(), TimeZone.getTimeZone("GMT+0"));
+                    } else {
+                        versionStr = PGVersionControl.UNSET;
+                    }
                     final String description = dim.getDescription() != null ? dim.getDescription().toString() : "";
                     final String unit = dim.getUnits() != null ? dim.getUnits().toString() : "";
-                    final double min = Double.isInfinite(dim.getMinimumValue()) ? minDimValues[i] : dim.getMinimumValue();
-                    final double max = Double.isInfinite(dim.getMaximumValue()) ? maxDimValues[i] : dim.getMaximumValue();
+                    double min = Double.isInfinite(dim.getMinimumValue()) ? minDimValues[i] : dim.getMinimumValue();
+                    double max = Double.isInfinite(dim.getMaximumValue()) ? maxDimValues[i] : dim.getMaximumValue();
+                    min = fixCloseToZero(min);
+                    max = fixCloseToZero(max);
+
                     final double[] pNoData = dim.getNoDataValues();
                     Double[] noData = new Double[0];
                     if (pNoData != null) {
@@ -560,20 +577,21 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                     final StringBuilder query = new StringBuilder();
                     query.append("INSERT INTO ");
                     query.append(store.encodeTableName("Band"));
-                    query.append(" (\"layerId\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\", \"min\", \"max\") ");
-                    query.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                    query.append(" (\"layerId\",\"version\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\", \"min\", \"max\") ");
+                    query.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 
                     pstmt = cnx.prepareStatement(query.toString());
 
-                    pstmt.setInt(1, layerId);
-                    pstmt.setInt(2, i);
-                    pstmt.setString(3, description);
-                    pstmt.setInt(4, (WKBRasterConstants.getPixelType(dim.getSampleDimensionType())) );
-                    pstmt.setString(5, unit);
-                    pstmt.setArray(6, cnx.createArrayOf("float8", noData));
-                    pstmt.setDouble(7, min);
-                    pstmt.setDouble(8, max);
+                    pstmt.setInt(   1, layerId);
+                    pstmt.setString(2, versionStr);
+                    pstmt.setInt(   3, i);
+                    pstmt.setString(4, description);
+                    pstmt.setInt(   5, (WKBRasterConstants.getPixelType(dim.getSampleDimensionType())) );
+                    pstmt.setString(6, unit);
+                    pstmt.setArray( 7, cnx.createArrayOf("float8", noData));
+                    pstmt.setDouble(8, min);
+                    pstmt.setDouble(9, max);
 
                     pstmt.executeUpdate();
                 }
@@ -584,6 +602,21 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                 store.closeSafe(cnx, pstmt, rs);
             }
         }
+    }
+
+    /**
+     * Postgres do not like this value.
+     * Caused by : ERROR: "4.9E-324" is out of range for type double precision
+     * org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2103)
+     *
+     * @param d
+     * @return
+     */
+    private static double fixCloseToZero(double d){
+        if(d == 4.9E-324){
+            return 0.0;
+        }
+        return d;
     }
 
 }
