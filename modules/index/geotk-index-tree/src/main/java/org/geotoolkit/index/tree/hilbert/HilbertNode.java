@@ -37,7 +37,6 @@ import org.geotoolkit.index.tree.Node;
 import static org.geotoolkit.index.tree.Node.PROP_HILBERT_ORDER;
 import static org.geotoolkit.index.tree.Node.PROP_ISLEAF;
 import org.geotoolkit.index.tree.Tree;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * Sub class of {@link DefaultNode} adapted for {@link HilbertRTree} tree.
@@ -46,14 +45,14 @@ import org.apache.sis.util.logging.Logging;
  */
 public class HilbertNode extends DefaultNode {
 
-    private static final Logger LOGGER = Logging.getLogger(HilbertNode.class);
     private static final double LN2 = 0.6931471805599453;
     
     public HilbertNode(Tree tree) throws IOException {
         super(tree);
     }
 
-    public HilbertNode(Tree tree, Node parent, double[] lowerCorner, double[] upperCorner, Node[] children, Object[] objects, double[][] coordinates) throws IOException {
+    public HilbertNode(Tree tree, Node parent, double[] lowerCorner, double[] upperCorner, 
+            Node[] children, Object[] objects, double[][] coordinates) throws IOException {
         super(tree, parent, lowerCorner, upperCorner, children, null, null);
         setUserProperty(PROP_ISLEAF, false);
         setUserProperty(PROP_HILBERT_ORDER, 0);
@@ -106,7 +105,7 @@ public class HilbertNode extends DefaultNode {
      * {@inheritDoc }.
      */
     @Override
-    public void addElement(Object object, double... coordinate) throws IOException{
+    public void addElement(Object object, double... coordinate) throws IOException {
         final int dimension = coordinate.length >> 1;
         assert tree.getCrs().getCoordinateSystem().getDimension() == (dimension) : "dimension between coordinates and tree crs should be same.";
         final Node parent = getParent();
@@ -195,7 +194,7 @@ public class HilbertNode extends DefaultNode {
     /**
      * To answer Hilbert criterion and to avoid call split method, in some case
      * we constrain tree leaf to choose another cell to insert Entry.<br/>
-     * Return -1 if alll cells are full.
+     * Return -1 if all cells are full.
      *
      * @param index of subnode which is normally chosen.
      * @param ptEntryCentroid subnode chosen centroid.

@@ -112,7 +112,7 @@ public abstract class HilbertTest {
      * Verify all bitset table box.
      */
     private void validPath() {
-        for(int j = 0, l=validPath.length(); j<l; j++) {
+        for(int j = 0, l = validPath.length(); j < l; j++) {
             assertTrue (validPath.get(j));
         }
     }
