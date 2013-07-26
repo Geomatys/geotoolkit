@@ -33,13 +33,13 @@ import org.geotoolkit.gui.swing.tree.Trees;
  */
 public class FileNode extends Node {
     
-    private final int nodeId;
-    private double[] boundary;
-    private int parentId;
-    private int siblingId;
-    private int childId;// < 0 si ce nest pas un FileNode
-    private int childCount;
-    private TreeAccess tAF;
+    protected final int nodeId;
+    protected double[] boundary;
+    protected int parentId;
+    protected int siblingId;
+    protected int childId;// < 0 si ce nest pas un FileNode
+    protected int childCount;
+    protected TreeAccess tAF;
 
     public FileNode(TreeAccess tAF, int nodeId, double[] boundary, int parentId, int siblingId, int childId) {
         super(null);// en attente
@@ -196,7 +196,7 @@ public class FileNode extends Node {
                 }
                 tAF.writeNode(this);
             } else {
-                // connect sibling with its net sibling.
+                // connect sibling with its next sibling.
                 FileNode precChild = tAF.readNode(getChildId());
                 boundary = precChild.getBoundary().clone();
                 int sibl = precChild.getSiblingId();

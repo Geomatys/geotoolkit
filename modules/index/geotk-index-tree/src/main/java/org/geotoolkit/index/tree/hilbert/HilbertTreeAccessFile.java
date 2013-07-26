@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.access;
+package org.geotoolkit.index.tree.hilbert;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,17 +29,17 @@ import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import org.geotoolkit.index.tree.FileNode;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.intersects;
+import org.geotoolkit.index.tree.FileNode;
+import org.geotoolkit.index.tree.access.TreeAccess;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * Store all {@link Node} architecture use by {@link Tree} on disk drive.
- * 
- * @author Remi Marechal (Geomatys).
+ *
+ * @author rmarechal
  */
-public class TreeAccessFile extends TreeAccess {
-    
+public class HilbertTreeAccessFile extends TreeAccess {
+
     private final int boundLength;
     private final int nodeSize;
     private final int beginPosition;
@@ -53,6 +53,9 @@ public class TreeAccessFile extends TreeAccess {
     private final int bufferLength;
     private int rwIndex;
     
+    // hilbert properties
+    private int hilbertOrder;
+    
     private List<Integer> recycleID = new LinkedList<Integer>();
     
     /**
@@ -64,7 +67,7 @@ public class TreeAccessFile extends TreeAccess {
      * @throws IOException if problem during read or write Node.
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
-    public TreeAccessFile( final File input, final int magicNumber, final double versionNumber ) throws IOException, ClassNotFoundException {
+    public HilbertTreeAccessFile( final File input, final int magicNumber, final double versionNumber ) throws IOException, ClassNotFoundException {
         super();
         
         // stream
@@ -85,7 +88,9 @@ public class TreeAccessFile extends TreeAccess {
         if (vN != versionNumber)
             throw new IllegalArgumentException("Wrong version number. Expected : "+versionNumber+". Version found in tree file : "+vN);
         // read maxElement
-        maxElement = inOutStream.readInt();
+        maxElement   = inOutStream.readInt();
+        // read hilbert Order
+        hilbertOrder = inOutStream.readInt();
         // read nodeID
         nodeId = inOutStream.readInt();
         if (nodeId == 0)
@@ -135,11 +140,15 @@ public class TreeAccessFile extends TreeAccess {
      * @param crs 
      * @throws IOException if problem during read or write Node.
      */
-    public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, int maxElements, CoordinateReferenceSystem crs) throws IOException {
+    public HilbertTreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
+            final int maxElements, final int hilbertOrder, final CoordinateReferenceSystem crs) throws IOException {
         super(maxElements, crs);
         
-        int dimension = crs.getCoordinateSystem().getDimension();
-        this.boundLength = dimension << 1;
+        int dimension     = crs.getCoordinateSystem().getDimension();
+        this.boundLength  = dimension << 1;
+        
+        // hilbert properties
+        this.hilbertOrder = hilbertOrder;
         
         // Node size : boundary weigth + parent ID + 1st sibling Integer + 1st child Integer + child number.
         nodeSize = (dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2;
@@ -166,6 +175,8 @@ public class TreeAccessFile extends TreeAccess {
         inOutStream.writeDouble(versionNumber);
         // write element number per Node
         inOutStream.writeInt(maxElements);
+        // write hilbert order
+        inOutStream.writeInt(hilbertOrder);
         // write nodeID
         inOutStream.writeInt(0);
         // write treeIdentifier
@@ -339,7 +350,7 @@ public class TreeAccessFile extends TreeAccess {
             writtenByte = inOutChannel.write(byteBuffer, currentBufferPosition);
         }
         // write nodeID
-        inOutChannel.position(17); // a checker
+        inOutChannel.position(21); // a checker
         inOutStream.writeInt(nodeId);
         inOutStream.writeInt(treeIdentifier);
         inOutStream.writeInt(eltNumber);
@@ -355,4 +366,8 @@ public class TreeAccessFile extends TreeAccess {
          final int currentID = (!recycleID.isEmpty()) ? recycleID.remove(0) : nodeId++;
          return new FileNode(this, currentID, boundary, parentId, siblingId, childId);
      }
+    
+    protected int getHilbertOrder() {
+        return hilbertOrder;
+    }
 }
