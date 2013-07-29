@@ -29,6 +29,12 @@ import org.opengis.geometry.Envelope;
  */
 public class DefaultTreeUtils {
 
+    // javadoc
+    public final static byte IS_LEAF  = 1;
+    public final static byte IS_DATA  = 2;
+    public final static byte IS_CELL  = 4;
+    public final static byte IS_OTHER = 8;
+    
     private DefaultTreeUtils() {
     }
 

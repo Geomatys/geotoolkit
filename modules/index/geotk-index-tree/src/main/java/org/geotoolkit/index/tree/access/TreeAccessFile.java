@@ -105,8 +105,8 @@ public class TreeAccessFile extends TreeAccess {
         final int dimension = crs.getCoordinateSystem().getDimension();
         this.boundLength = dimension << 1;
         
-        // Node size : boundary weigth + parent ID + 1st sibling Integer + 1st child Integer + child number.
-        nodeSize = (dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2;
+        // Node size : boundary weigth + isLeaf boolean + parent ID Integer + 1st sibling Integer + 1st child Integer + child number.
+        nodeSize = (dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2 + 1;
         
         // buffer attributs
         final int div = 819200 / nodeSize;// 4096 In future define a better approppriate value by benchmark.
@@ -141,8 +141,8 @@ public class TreeAccessFile extends TreeAccess {
         int dimension = crs.getCoordinateSystem().getDimension();
         this.boundLength = dimension << 1;
         
-        // Node size : boundary weigth + parent ID + 1st sibling Integer + 1st child Integer + child number.
-        nodeSize = (dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2;
+        // Node size : boundary weigth + isLeaf boolean + parent ID Integer + 1st sibling Integer + 1st child Integer + child number.
+        nodeSize = ((dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2) + 1;
         
         final int div = 819200 / nodeSize; // 4096
         this.bufferLength = div * nodeSize;
@@ -212,7 +212,7 @@ public class TreeAccessFile extends TreeAccess {
         for (int i = 0; i < boundLength; i++) {
             boundary[i] = byteBuffer.getDouble();
         }
-        byteBuffer.position(byteBuffer.position() + 4);// step parent ID
+        byteBuffer.position(byteBuffer.position() + 5);// step properties (1 byte) and step parent ID (int  : 4 byte)
         final int sibling = byteBuffer.getInt();
         final int child   = byteBuffer.getInt();
         byteBuffer.position(byteBuffer.position() + 4);// step child count
@@ -246,11 +246,12 @@ public class TreeAccessFile extends TreeAccess {
         for (int i = 0; i < boundLength; i++) {
             boundary[i] = byteBuffer.getDouble();
         }
-        final int parentId   = byteBuffer.getInt();
-        final int siblingId  = byteBuffer.getInt();
-        final int childId    = byteBuffer.getInt();
-        final int childCount = byteBuffer.getInt();
-        final FileNode redNode = new FileNode(this, indexNode, boundary, parentId, siblingId, childId);
+        final byte properties  = byteBuffer.get();
+        final int parentId     = byteBuffer.getInt();
+        final int siblingId    = byteBuffer.getInt();
+        final int childId      = byteBuffer.getInt();
+        final int childCount   = byteBuffer.getInt();
+        final FileNode redNode = new FileNode(this, indexNode, boundary, properties, parentId, siblingId, childId);
         redNode.setChildCount(childCount);
         return redNode;
     }
@@ -267,6 +268,7 @@ public class TreeAccessFile extends TreeAccess {
         for (int i = 0; i < boundLength; i++) {
             byteBuffer.putDouble(candidateBound[i]);
         }
+        byteBuffer.put(candidate.getProperties());
         byteBuffer.putInt(candidate.getParentId());
         byteBuffer.putInt(candidate.getSiblingId());
         byteBuffer.putInt(candidate.getChildId());
@@ -351,8 +353,8 @@ public class TreeAccessFile extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-     public FileNode createNode(double[] boundary, int parentId, int siblingId, int childId) {
+     public FileNode createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
          final int currentID = (!recycleID.isEmpty()) ? recycleID.remove(0) : nodeId++;
-         return new FileNode(this, currentID, boundary, parentId, siblingId, childId);
+         return new FileNode(this, currentID, boundary, properties, parentId, siblingId, childId);
      }
 }

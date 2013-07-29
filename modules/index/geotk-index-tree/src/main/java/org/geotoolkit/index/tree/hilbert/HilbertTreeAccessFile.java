@@ -59,6 +59,12 @@ public class HilbertTreeAccessFile extends TreeAccess {
     private List<Integer> recycleID = new LinkedList<Integer>();
     
     /**
+     * In Hilbert RTree they exist Node which call cell and within each Hilbert leaf.
+     * This cells may have no boundary its an expected comportement. 
+     */
+    private final double[] firstBound; 
+    
+    /**
      * Build a {@link Tree} from a already filled {@link File}.
      * 
      * @param input {@code File} which already contains {@link Node} architecture.
@@ -110,6 +116,10 @@ public class HilbertTreeAccessFile extends TreeAccess {
         final int dimension = crs.getCoordinateSystem().getDimension();
         this.boundLength = dimension << 1;
         
+        // first bound
+        firstBound = new double[boundLength];
+        Arrays.fill(firstBound, Double.NaN);
+        
         // Node size : boundary weigth + parent ID + 1st sibling Integer + 1st child Integer + child number.
         nodeSize = (dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2;
         
@@ -149,6 +159,10 @@ public class HilbertTreeAccessFile extends TreeAccess {
         
         // hilbert properties
         this.hilbertOrder = hilbertOrder;
+        
+        // first bound
+        firstBound = new double[boundLength];
+        Arrays.fill(firstBound, Double.NaN);
         
         // Node size : boundary weigth + parent ID + 1st sibling Integer + 1st child Integer + child number.
         nodeSize = (dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2;
@@ -257,11 +271,12 @@ public class HilbertTreeAccessFile extends TreeAccess {
         for (int i = 0; i < boundLength; i++) {
             boundary[i] = byteBuffer.getDouble();
         }
-        final int parentId   = byteBuffer.getInt();
-        final int siblingId  = byteBuffer.getInt();
-        final int childId    = byteBuffer.getInt();
-        final int childCount = byteBuffer.getInt();
-        final FileNode redNode = new FileNode(this, indexNode, boundary, parentId, siblingId, childId);
+        final byte properties  = byteBuffer.get();
+        final int parentId     = byteBuffer.getInt();
+        final int siblingId    = byteBuffer.getInt();
+        final int childId      = byteBuffer.getInt();
+        final int childCount   = byteBuffer.getInt();
+        final FileNode redNode = new FileHilbertNode(this, indexNode, boundary, properties, parentId, siblingId, childId);
         redNode.setChildCount(childCount);
         return redNode;
     }
@@ -278,6 +293,7 @@ public class HilbertTreeAccessFile extends TreeAccess {
         for (int i = 0; i < boundLength; i++) {
             byteBuffer.putDouble(candidateBound[i]);
         }
+        byteBuffer.put(candidate.getProperties());
         byteBuffer.putInt(candidate.getParentId());
         byteBuffer.putInt(candidate.getSiblingId());
         byteBuffer.putInt(candidate.getChildId());
@@ -362,9 +378,9 @@ public class HilbertTreeAccessFile extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-     public FileNode createNode(double[] boundary, int parentId, int siblingId, int childId) {
+     public FileNode createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
          final int currentID = (!recycleID.isEmpty()) ? recycleID.remove(0) : nodeId++;
-         return new FileNode(this, currentID, boundary, parentId, siblingId, childId);
+         return new FileHilbertNode(this, currentID, (boundary == null) ? firstBound : boundary, properties, parentId, siblingId, childId);
      }
     
     protected int getHilbertOrder() {

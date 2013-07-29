@@ -174,15 +174,10 @@ public class DefaultNode extends Node {
      */
     @Override
     public String toString() {
-        try {
-            final List toString = (isLeaf()) ? Arrays.asList(objects):Arrays.asList(children);
-            String strparent =  (parent == null)?"null":String.valueOf(parent.hashCode());
-            return Trees.toString(Classes.getShortClassName(this)+" : "+this.hashCode()+" parent : "+strparent
-                    + " leaf : "+isLeaf()+ " userPropLeaf : "+(Boolean)getUserProperty(PROP_ISLEAF), toString);
-        } catch (IOException ex) {
-            Logger.getLogger(DefaultNode.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
+        final List toString = (isLeaf()) ? Arrays.asList(objects):Arrays.asList(children);
+        String strparent =  (parent == null)?"null":String.valueOf(parent.hashCode());
+        return Trees.toString(Classes.getShortClassName(this)+" : "+this.hashCode()+" parent : "+strparent
+                + " leaf : "+isLeaf()+ " userPropLeaf : "+(Boolean)getUserProperty(PROP_ISLEAF), toString);
     }
     
     /**
@@ -474,5 +469,10 @@ public class DefaultNode extends Node {
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean isLeaf() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

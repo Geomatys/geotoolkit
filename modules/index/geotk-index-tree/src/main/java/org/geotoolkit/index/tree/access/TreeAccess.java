@@ -128,7 +128,7 @@ public abstract class TreeAccess {
      * @param childId
      * @return 
      */
-    public FileNode createNode(double[] boundary, int parentId, int siblingId, int childId){
-        return new FileNode(this, nodeId++, boundary, parentId, siblingId, childId);
+    public FileNode createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
+        return new FileNode(this, nodeId++, boundary, properties, parentId, siblingId, childId);
     }
 }

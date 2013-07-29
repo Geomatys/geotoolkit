@@ -40,8 +40,12 @@ public class FileNode extends Node {
     protected int childId;// < 0 si ce nest pas un FileNode
     protected int childCount;
     protected TreeAccess tAF;
+    
+//    private Map<String, Object> userProperties;
+    
+    protected byte properties;
 
-    public FileNode(TreeAccess tAF, int nodeId, double[] boundary, int parentId, int siblingId, int childId) {
+    public FileNode(TreeAccess tAF, int nodeId, double[] boundary, byte properties, int parentId, int siblingId, int childId) {
         super(null);// en attente
         this.tAF        = tAF;
         this.nodeId     = nodeId;
@@ -50,6 +54,8 @@ public class FileNode extends Node {
         this.siblingId  = siblingId;
         this.childId    = childId;
         this.childCount = (childId != 0) ? 1 : 0;
+        this.properties = properties;
+//        setUserProperty(PROP_ISLEAF, isLeaf);
     }
 
     public int getNodeId() {
@@ -79,15 +85,33 @@ public class FileNode extends Node {
     public void setChildId(int childId) {
         this.childId = childId;
     }
+
+        /**
+         * @param key
+         * @return user property for given key
+         */
+        @Override
+        public Object getUserProperty(final String key) {
+            return null;
+        }
     
-    @Override
-    public Object getUserProperty(String key) {
-        return null;
+        /**
+         * Add user property with key access.
+         *
+         * @param key
+         * @param value Object will be stocked.
+         */
+        @Override
+        public void setUserProperty(final String key, final Object value) {
+            
+        }
+    
+    public byte getProperties() {
+        return properties;
     }
 
-    @Override
-    public void setUserProperty(String key, Object value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setProperties(byte properties) {
+        this.properties = properties;
     }
     
     /**
@@ -112,12 +136,8 @@ public class FileNode extends Node {
      * @return true if it is a leaf else false (branch).
      */
     @Override
-    public boolean isLeaf() throws IOException {
-        final Object userPropIsLeaf = getUserProperty(PROP_ISLEAF);
-        if (userPropIsLeaf != null) {
-            return (Boolean)userPropIsLeaf;
-        }
-        return !isData() && tAF.readNode(childId).isData();
+    public boolean isLeaf() {
+        return (properties &  IS_LEAF) !=  0;
     }
     
     /**
@@ -126,7 +146,8 @@ public class FileNode extends Node {
      * @return true if it is a leaf else false (branch).
      */
     public boolean isData() {
-        return childId < 0;
+//        return childId < 0;
+        return (properties &  IS_DATA) !=  0;
     }
 
     @Override
@@ -260,7 +281,7 @@ public class FileNode extends Node {
         setChildId(nod.getNodeId());
         nod.setParentId(getNodeId());
         nod.setSiblingId(nextSibling);
-        if (boundary == null) {
+        if (boundary == null || ArraysExt.hasNaN(boundary)) {
             boundary = node.getBoundary().clone();
         }
         add(boundary, node.getBoundary());
@@ -308,6 +329,13 @@ public class FileNode extends Node {
         }
         return true;
     }
+
+    @Override
+    public boolean isFull() throws IOException {
+        return getChildCount() >= tAF.getMaxElementPerCells();
+    }
+    
+    
     
     /**
      * {@inheritDoc}.
@@ -317,7 +345,7 @@ public class FileNode extends Node {
         final List toString;
         try {
             if (!isData()) {
-                toString = Arrays.asList(getChildren());
+                toString = Arrays.asList(this.getChildren());
                 String strparent =  (getParentId() == 0) ? "null" : (""+getParentId());
                 return Trees.toString(Classes.getShortClassName(this)+" parent : "+strparent+" : ID : "+getNodeId()
                     + " leaf : "+isLeaf()+" sibling : "+getSiblingId()+" child "+getChildId()+" children number : "+getChildCount()+Arrays.toString(getBoundary()), toString);

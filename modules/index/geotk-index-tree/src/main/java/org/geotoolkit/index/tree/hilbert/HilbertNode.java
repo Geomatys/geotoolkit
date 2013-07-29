@@ -247,14 +247,9 @@ public class HilbertNode extends DefaultNode {
      */
     @Override
     public String toString() {
-        try {
-            String strparent =  (parent == null)?"null":String.valueOf(parent.hashCode());
-            return Trees.toString(Classes.getShortClassName(this)+" : "+this.hashCode()+" parent : "+strparent
-                    + " leaf : "+isLeaf()+ " userPropLeaf : "+(Boolean)getUserProperty(PROP_ISLEAF), Arrays.asList(children));
-        } catch (IOException ex) {
-            Logger.getLogger(HilbertNode.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
+        String strparent =  (parent == null)?"null":String.valueOf(parent.hashCode());
+        return Trees.toString(Classes.getShortClassName(this)+" : "+this.hashCode()+" parent : "+strparent
+                + " leaf : "+isLeaf()+ " userPropLeaf : "+(Boolean)getUserProperty(PROP_ISLEAF), Arrays.asList(children));
     }
     
     /**
