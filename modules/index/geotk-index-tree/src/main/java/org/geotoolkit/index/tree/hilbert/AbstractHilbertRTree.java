@@ -84,8 +84,8 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
             eltCompteur++;
             Node root = getRoot();
             if (root == null || root.isEmpty()) {
-                root = createNode(treeAccess, null, 0, 0, 0);
-                root.addChild(createNode(treeAccess, coordinates, 1, 0, -((Integer)object)));
+                root = createNode(treeAccess, null, IS_LEAF, 0, 0, 0);
+                root.addChild(createNode(treeAccess, coordinates, IS_DATA, 1, 0, -((Integer)object)));
                 setRoot(root);
             } else {
                 final Node newRoot = nodeInsert(root, object, coordinates);
@@ -159,7 +159,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
                 }
             } else {
                 assert candidate.checkInternal() : "insertNode : leaf not full just before insert candidate not conform.";
-                fileCandidate.addChild(createNode(treeAccess, coordinates, fileCandidate.getNodeId(), 0, -((Integer)object)));
+                fileCandidate.addChild(createNode(treeAccess, coordinates, IS_DATA, fileCandidate.getNodeId(), 0, -((Integer)object)));
                 assert candidate.checkInternal() : "insertNode : leaf not full just after insert candidate not conform.";
             }
         } else {
@@ -264,6 +264,8 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
         final Node[] children = candidate.getChildren();
         assert childNumber == children.length : "SplitNode : childnumber should be same as children length value.";
         
+        final byte candidateProperties = candidate.getProperties();
+        
         final Calculator calc = getCalculator();
         final int splitIndex  = defineSplitAxis(children);
         
@@ -334,7 +336,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
             result1 = children[0];
             ((FileNode)result1).setSiblingId(0);
         } else {
-            result1 = createNode(treeAccess, null, 0, 0, 0);
+            result1 = createNode(treeAccess, null, candidateProperties, 0, 0, 0);
             System.arraycopy(children, 0, result1Children, 0, index);
             result1.addChildren(result1Children);
         }
@@ -342,7 +344,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
             result2 = children[size-1];
             ((FileNode)result2).setSiblingId(0);
         } else {
-            result2 = createNode(treeAccess, null, 0, 0, 0);
+            result2 = createNode(treeAccess, null, candidateProperties, 0, 0, 0);
             System.arraycopy(children, index, result2Children, 0, lengthResult2);
             result2.addChildren(result2Children);
         }
@@ -640,8 +642,8 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
         }
     }
 
-    public FileNode createNode(TreeAccess tA, double[] boundary, int parentId, int siblingId, int childId) throws IllegalArgumentException {
-        return tA.createNode(boundary, parentId, siblingId, childId);
+    public FileNode createNode(TreeAccess tA, double[] boundary, byte properties, int parentId, int siblingId, int childId) throws IllegalArgumentException {
+        return tA.createNode(boundary, properties, parentId, siblingId, childId);
     }
     
     public TreeAccess getTreeAccess(){

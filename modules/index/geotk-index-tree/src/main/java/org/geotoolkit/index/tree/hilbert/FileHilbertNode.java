@@ -7,20 +7,13 @@ package org.geotoolkit.index.tree.hilbert;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.index.tree.DefaultTreeUtils;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.contains;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.getMedian;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.getMinimum;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.getSpan;
+import org.apache.sis.util.ArraysExt;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.FileNode;
 import org.geotoolkit.index.tree.Node;
 import static org.geotoolkit.index.tree.Node.PROP_HILBERT_ORDER;
-import static org.geotoolkit.index.tree.Node.PROP_ISLEAF;
-import org.geotoolkit.index.tree.access.TreeAccess;
 import org.geotoolkit.index.tree.hilbert.iterator.HilbertIterator;
 
 /**
@@ -35,42 +28,17 @@ public class FileHilbertNode extends FileNode {
     private final List<Node> data = new ArrayList<Node>();
     private int dataCount;
     
-    /**
-     * Properties use only by Hilbert RTree.
-     */
-    private Map<String, Object> userProperties;
-    
-    public FileHilbertNode(HilbertTreeAccessFile tAF, int nodeId, double[] boundary, int parentId, int siblingId, int childId) {
-        super(tAF, nodeId, boundary, parentId, siblingId, childId);
-        setUserProperty(PROP_ISLEAF, false);
-        setUserProperty(PROP_HILBERT_ORDER, 0);
+
+    public FileHilbertNode(HilbertTreeAccessFile tAF, int nodeId, double[] boundary, byte properties, int parentId, int siblingId, int childId) {
+        super(tAF, nodeId, boundary, properties, parentId, siblingId, childId);
+//        setUserProperty(PROP_ISLEAF, false);
+//        setUserProperty(PROP_HILBERT_ORDER, 0);
         dimension = tAF.getCRS().getCoordinateSystem().getDimension();
         boundTemp = new double[dimension << 1];
         Arrays.fill(boundTemp, Double.NaN);
         dataCount = 0;
     }
 
-    /**
-     * @param key
-     * @return user property for given key
-     */
-    @Override
-    public Object getUserProperty(final String key) {
-        if (userProperties == null) return null;
-        return userProperties.get(key);
-    }
-
-    /**Add user property with key access.
-     *
-     * @param key
-     * @param value Object will be stocked.
-     */
-    @Override
-    public void setUserProperty(final String key, final Object value) {
-        if (userProperties == null) userProperties = new HashMap<String, Object>();
-        userProperties.put(key, value);
-    }
-        
     private boolean isInternalyFull() throws IOException {
         int sibl = getChildId();
         while (sibl != 0) {
@@ -85,16 +53,15 @@ public class FileHilbertNode extends FileNode {
     @Override
     public void addChild(Node node) throws IOException {
         final FileNode fnod = (FileNode)node;
-        if (fnod.isData()) {
+        if (isLeaf()) {
             // si c pas une feuille sa veux dire que c la premiere insertion
             // alors on la fait devenir feuille 
-            if (!isLeaf()) { 
-                setUserProperty(PROP_ISLEAF, true); 
-                setUserProperty(PROP_HILBERT_ORDER, 0);
-                super.addChild(tAF.createNode(boundTemp, this.getNodeId(), 0, 0));
+            assert fnod.isData() : "future added child should be data.";
+            if (boundary == null || ArraysExt.hasNaN(boundary)) { 
+                super.addChild(tAF.createNode(boundTemp, (byte) IS_CELL, this.getNodeId(), 0, 0));
             }
             final double[] nodeBound = node.getBoundary().clone();
-            DefaultTreeUtils.add(getBoundary(), nodeBound);
+            add(getBoundary(), nodeBound);
             children = super.getChildren();
             final int index = getAppropriateCellIndex(nodeBound);
             // la feuille est elle full ??
@@ -115,7 +82,7 @@ public class FileHilbertNode extends FileNode {
                 // on creer les cells null
                 final int nbCell = currentOrder == 0 ? 1 : 2 << (dimension * currentOrder - 1);
                 for (int i = 0; i < nbCell; i++) {
-                    super.addChild(tAF.createNode(boundTemp, this.getNodeId(), 0, 0));
+                    super.addChild(tAF.createNode(boundTemp, IS_CELL, this.getNodeId(), 0, 0));
                 }
                 for (Node dat : data) {
                     addChild(dat);
@@ -123,11 +90,21 @@ public class FileHilbertNode extends FileNode {
             } else {
                 children[index].addChild(node);
                 dataCount++;
+                double[] cuChildBound = children[index].getBoundary();
+                if (boundary == null || ArraysExt.hasNaN(boundary)) {
+                    boundary = cuChildBound.clone();
+                } else {
+                    add(boundary, cuChildBound);
+                }
                 tAF.writeNode(this);
             }
         } else {
             super.addChild(node); 
         }
+    }
+    
+    public boolean isCell() {
+        return (properties & IS_CELL) != 0;
     }
 
     @Override
@@ -146,7 +123,7 @@ public class FileHilbertNode extends FileNode {
 
     @Override
     public int getChildCount() {
-        return ((boolean) getUserProperty(PROP_ISLEAF)) ? dataCount : super.getChildCount();
+        return isLeaf() ? dataCount : super.getChildCount();
     }
    
     @Override
@@ -213,7 +190,7 @@ public class FileHilbertNode extends FileNode {
         ArgumentChecks.ensureNonNull("impossible to define Hilbert coordinate with null entry", objectBoundary);
         final double[] ptCE = getMedian(objectBoundary);
         final double[] bound = getBoundary().clone();
-        DefaultTreeUtils.add(bound, objectBoundary);
+        add(bound, objectBoundary);
         final int order = (Integer) getUserProperty(PROP_HILBERT_ORDER);
         if (! contains(bound, ptCE)) throw new IllegalArgumentException("entry is out of this node boundary");
 

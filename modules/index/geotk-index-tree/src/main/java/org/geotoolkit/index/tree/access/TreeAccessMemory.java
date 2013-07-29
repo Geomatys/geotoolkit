@@ -120,8 +120,8 @@ public class TreeAccessMemory extends TreeAccess {
      * @return 
      */
     @Override
-    public FileNode createNode(double[] boundary, int parentId, int siblingId, int childId){
+    public FileNode createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId){
         final int currentID = (recycleID.isEmpty()) ? nodeId++ : recycleID.remove(0);
-        return new FileNode(this, currentID, boundary, parentId, siblingId, childId);
+        return new FileNode(this, currentID, boundary, properties, parentId, siblingId, childId);
     }
 }

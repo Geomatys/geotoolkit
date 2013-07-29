@@ -240,13 +240,7 @@ public abstract class Node {
      *
      * @return true if it is a leaf else false (branch).
      */
-    public boolean isLeaf() throws IOException {
-        final Object userPropIsLeaf = getUserProperty(PROP_ISLEAF);
-        if (userPropIsLeaf != null) {
-            return (Boolean)userPropIsLeaf;
-        }
-        return getChildren() == null;
-    }
+    public abstract boolean isLeaf();
 
     /**
      * @return true if {@code Node} contains nothing else false.

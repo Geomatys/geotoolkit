@@ -23,11 +23,7 @@ import java.util.List;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.index.tree.AbstractTree;
-import org.geotoolkit.index.tree.DefaultNodeFactory;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.add;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.contains;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.getSpan;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.intersects;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.FileNode;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Tree;
@@ -79,8 +75,8 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
             eltCompteur++;
             Node root = getRoot();
             if (root == null || root.isEmpty()) {
-                root = createNode(treeAccess, null, 0, 0, 0);
-                root.addChild(createNode(treeAccess, coordinates, 1, 0, -((Integer)object)));
+                root = createNode(treeAccess, null, IS_LEAF, 0, 0, 0);
+                root.addChild(createNode(treeAccess, coordinates, IS_DATA, 1, 0, -((Integer)object)));
                 setRoot(root);
             } else {
                 final Node newRoot = nodeInsert(root, object, coordinates);
@@ -120,7 +116,7 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
         FileNode subCandidateParent = null;
         if (fileCandidate.isLeaf()) {
             assert fileCandidate.checkInternal() : "nodeInsert : leaf before add.";
-            fileCandidate.addChild(createNode(treeAccess, coordinates, fileCandidate.getNodeId(), 0, -((Integer)object)));
+            fileCandidate.addChild(createNode(treeAccess, coordinates, IS_DATA, fileCandidate.getNodeId(), 0, -((Integer)object)));
             assert fileCandidate.checkInternal() : "nodeInsert : leaf after add.";
         } else {
             assert fileCandidate.checkInternal() : "nodeInsert : Node before insert.";
@@ -177,6 +173,7 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
                 // on clear le candidate
                 assert fileCandidate.getSiblingId() == 0 : "nodeInsert : split root : root should not have sibling.";
                 fileCandidate.clear();
+                fileCandidate.setProperties(IS_OTHER);
                 fileCandidate.addChild(split1);
                 fileCandidate.addChild(split2);     
                 assert split1.checkInternal() : "nodeInsert : split1.";
@@ -222,6 +219,8 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
         
         final Node[] children = candidate.getChildren();
         assert childNumber == children.length : "SplitNode : childnumber should be same as children length value.";
+        
+        final byte candidateProperties = candidate.getProperties();
         
         Node s1 = null;
         Node s2 = null;
@@ -339,14 +338,14 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
             result1 = result1Children[0];
             ((FileNode)result1).setSiblingId(0);
         } else {
-            result1 = createNode(treeAccess, null, 0, 0, 0);
+            result1 = createNode(treeAccess, null, candidateProperties, 0, 0, 0);
             result1.addChildren(result1Children);
         }
         if (!isLeaf && r2ChCount == 1) {
             result2 = result2Children[0];
             ((FileNode)result2).setSiblingId(0);
         } else {
-            result2 = createNode(treeAccess, null, 0, 0, 0);
+            result2 = createNode(treeAccess, null, candidateProperties, 0, 0, 0);
             result2.addChildren(result2Children);
         }
         // check result
@@ -656,8 +655,8 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
         }
     }
 
-    public FileNode createNode(TreeAccess tA, double[] boundary, int parentId, int siblingId, int childId) throws IllegalArgumentException {
-        return tA.createNode(boundary, parentId, siblingId, childId);
+    public FileNode createNode(TreeAccess tA, double[] boundary, byte properties, int parentId, int siblingId, int childId) throws IllegalArgumentException {
+        return tA.createNode(boundary, properties, parentId, siblingId, childId);
     }
     
     public TreeAccess getTreeAccess(){
