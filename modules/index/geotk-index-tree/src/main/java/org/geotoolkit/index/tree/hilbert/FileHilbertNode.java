@@ -8,8 +8,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.Classes;
+import org.geotoolkit.gui.swing.tree.Trees;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.FileNode;
 import org.geotoolkit.index.tree.Node;
@@ -27,16 +31,20 @@ public class FileHilbertNode extends FileNode {
     private final double[] boundTemp;
     private final List<Node> data = new ArrayList<Node>();
     private int dataCount;
+    private int currentHilbertOrder;
     
 
-    public FileHilbertNode(HilbertTreeAccessFile tAF, int nodeId, double[] boundary, byte properties, int parentId, int siblingId, int childId) {
+    public FileHilbertNode(HilbertTreeAccessFile tAF, int nodeId, double[] boundary, byte properties, int parentId, int siblingId, int childId) throws IOException {
         super(tAF, nodeId, boundary, properties, parentId, siblingId, childId);
-//        setUserProperty(PROP_ISLEAF, false);
-//        setUserProperty(PROP_HILBERT_ORDER, 0);
         dimension = tAF.getCRS().getCoordinateSystem().getDimension();
         boundTemp = new double[dimension << 1];
         Arrays.fill(boundTemp, Double.NaN);
         dataCount = 0;
+        currentHilbertOrder = 0;
+        
+        if ((boundary == null || ArraysExt.hasNaN(boundary)) && ((properties & IS_LEAF) != 0)) { 
+            super.addChild(tAF.createNode(boundTemp, (byte) IS_CELL, this.getNodeId(), 0, 0));
+        }
     }
 
     private boolean isInternalyFull() throws IOException {
@@ -46,9 +54,37 @@ public class FileHilbertNode extends FileNode {
             if (!fhn.isFull()) {
                 return false;
             }
+            sibl = fhn.getSiblingId();
         }
         return true;
     }
+
+    public int getCurrentHilbertOrder() {
+        return currentHilbertOrder;
+    }
+
+    public void setCurrentHilbertOrder(int currentHilbertOrder) {
+        this.currentHilbertOrder = currentHilbertOrder;
+    }
+
+    public int getDataCount() {
+        return dataCount;
+    }
+
+    public void setDataCount(int dataCount) {
+        this.dataCount = dataCount;
+    }
+
+    @Override
+    public void addChildren(Node[] nodes) throws IOException {
+        for (Node nod : nodes) {
+            final FileNode fnod = (FileNode) nod;
+            fnod.setSiblingId(0);
+            addChild(fnod);
+        }
+    }
+    
+    
     
     @Override
     public void addChild(Node node) throws IOException {
@@ -57,9 +93,6 @@ public class FileHilbertNode extends FileNode {
             // si c pas une feuille sa veux dire que c la premiere insertion
             // alors on la fait devenir feuille 
             assert fnod.isData() : "future added child should be data.";
-            if (boundary == null || ArraysExt.hasNaN(boundary)) { 
-                super.addChild(tAF.createNode(boundTemp, (byte) IS_CELL, this.getNodeId(), 0, 0));
-            }
             final double[] nodeBound = node.getBoundary().clone();
             add(getBoundary(), nodeBound);
             children = super.getChildren();
@@ -67,24 +100,29 @@ public class FileHilbertNode extends FileNode {
             // la feuille est elle full ??
             if (index == -1) {
                 // increase hilbert order
-                int currentOrder = (int) getUserProperty(PROP_HILBERT_ORDER);
-                assert currentOrder++ < ((HilbertTreeAccessFile)tAF).getHilbertOrder() : "impossible to increase node hilbert order";
+                assert currentHilbertOrder++ < ((HilbertTreeAccessFile)tAF).getHilbertOrder() : "impossible to increase node hilbert order";
                 // on recupere tout les elements contenu dans cette feuille.
                 data.clear();
                 for (Node cnod : children) {
                     final FileNode fcnod = (FileNode)cnod;
                     int dataSibl = fcnod.getChildId();
                     while (dataSibl != 0) {
-                        data.add(tAF.readNode(dataSibl));
+                        final FileHilbertNode currentData = (FileHilbertNode) tAF.readNode(dataSibl);
+                        dataSibl = currentData.getSiblingId();
+                        currentData.setSiblingId(0);// become distinc
+                        data.add(currentData);
                     }
+//                    super.removeChild(fnod);
                     tAF.deleteNode(fcnod);
                 }
+                clear();
                 // on creer les cells null
-                final int nbCell = currentOrder == 0 ? 1 : 2 << (dimension * currentOrder - 1);
+                final int nbCell = currentHilbertOrder == 0 ? 1 : 2 << (dimension * currentHilbertOrder - 1);
                 for (int i = 0; i < nbCell; i++) {
                     super.addChild(tAF.createNode(boundTemp, IS_CELL, this.getNodeId(), 0, 0));
                 }
-                for (Node dat : data) {
+                data.add(node);
+                for (Node dat : data) { //problem ici
                     addChild(dat);
                 }
             } else {
@@ -108,6 +146,14 @@ public class FileHilbertNode extends FileNode {
     }
 
     @Override
+    public void clear() {
+        super.clear(); 
+        dataCount = 0;
+    }
+    
+    
+
+    @Override
     public Node[] getChildren() throws IOException {
         final Node[] superChilds = super.getChildren();
         if (!isLeaf()) return superChilds;
@@ -116,19 +162,72 @@ public class FileHilbertNode extends FileNode {
         for (Node sc : superChilds) {
             final Node[] currentDataTab = sc.getChildren();
             final int cuDTLength = currentDataTab.length;
-            System.arraycopy(currentDataTab, 0, dataChilds, dcID+=cuDTLength, cuDTLength);
+            System.arraycopy(currentDataTab, 0, dataChilds, dcID, cuDTLength);
+            dcID += cuDTLength;
         }
+        assert dcID == dataCount : "FileHilbertNode : getChildren : dataCount and data number doesn't match.";
         return dataChilds;
     }
 
     @Override
-    public int getChildCount() {
-        return isLeaf() ? dataCount : super.getChildCount();
+    public boolean checkInternal() throws IOException {
+        if (isLeaf()) {
+            if (isEmpty()) return true;
+            double[] superBound = null;
+            Node[] superChilds = super.getChildren();
+            int nbrData = 0;
+            for (Node nod : superChilds) {
+                final FileNode currSC = (FileNode)nod;
+                if (currSC.getParentId() != nodeId)
+                    throw new IllegalStateException("cell parent ID should be equals to this.nodeID.");
+                if (!currSC.isEmpty()) {
+                    final double[] currBound = currSC.getBoundary().clone();
+                    final int currNID = currSC.getNodeId();
+                    if (superBound == null) {
+                        superBound = currBound;
+                    } else {
+                        add(superBound, currBound);
+                    }
+                    double[] dataBound = null;
+                    Node[] dataChilds = currSC.getChildren();
+                    for (Node dat : dataChilds) {
+                        FileNode fdat = (FileNode)dat;
+                        if (dataBound == null) {
+                            dataBound = fdat.getBoundary().clone();
+                        } else {
+                            add(dataBound, fdat.getBoundary());
+                        }
+                        if (fdat.getParentId() != currNID)
+                            throw new IllegalStateException("data parent ID should be equals to its parent cell ID.");
+                        nbrData++;
+                    }
+                    if (!Arrays.equals(dataBound, currBound))
+                        throw new IllegalStateException("add data boundary should have same boundary than its cell boundary. expected : "+Arrays.toString(dataBound)+"  found : "+Arrays.toString(currBound));
+                }
+            }
+            if (!Arrays.equals(superBound, getBoundary()))
+                throw new IllegalStateException("add cells boundary should have same boundary than this boundary. expected : "+Arrays.toString(getBoundary())+"  found : "+Arrays.toString(superBound));
+            if (dataCount != nbrData)
+                throw new IllegalStateException("data number should be same than leaf data count. expected : "+nbrData+"  found : "+dataCount);
+            return true;
+        } else {
+            return super.checkInternal();
+        }
+    }
+
+    @Override
+    public boolean isEmpty() {
+        if (isLeaf()) return dataCount == 0;
+        return super.isEmpty();
     }
    
     @Override
     public boolean isFull() throws IOException {
-        return isInternalyFull() && getUserProperty(PROP_HILBERT_ORDER) == ((HilbertTreeAccessFile) tAF).getHilbertOrder();
+        if (isLeaf()) {
+            return isInternalyFull() && currentHilbertOrder == ((HilbertTreeAccessFile)tAF).getHilbertOrder();
+        } else {
+            return super.isFull();
+        }
     }
     
     /**
@@ -138,7 +237,7 @@ public class FileHilbertNode extends FileNode {
      * @return Return the appropriate table index of Hilbert cell else return -1 if all cell are full.
      */
     private int getAppropriateCellIndex(double... coordinate) throws IOException {
-        if ((Integer) getUserProperty(PROP_HILBERT_ORDER) < 1) {//only one cell.
+        if (currentHilbertOrder < 1) {//only one cell.
             return (children[0].isFull()) ? -1 : 0;
         }
         final int index = getHVOfEntry(coordinate);
@@ -191,7 +290,7 @@ public class FileHilbertNode extends FileNode {
         final double[] ptCE = getMedian(objectBoundary);
         final double[] bound = getBoundary().clone();
         add(bound, objectBoundary);
-        final int order = (Integer) getUserProperty(PROP_HILBERT_ORDER);
+        final int order = currentHilbertOrder;
         if (! contains(bound, ptCE)) throw new IllegalArgumentException("entry is out of this node boundary");
 
         int[] hCoord = getHilbCoord(ptCE, bound, order);
@@ -243,6 +342,29 @@ public class FileHilbertNode extends FileNode {
     }
     
     
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public String toString() {
+        final List toString;
+        try {
+            if (!isData()) {
+                toString = Arrays.asList(super.getChildren());
+                String strparent =  (getParentId() == 0) ? "null" : (""+getParentId());
+                final String strHilbertLeaf = (isLeaf()) 
+                        ? " hilbert Order : "+getCurrentHilbertOrder() +" children number : "+getChildCount()+" data number : "+getDataCount()
+                        : " children number : "+getChildCount();
+                return Trees.toString(Classes.getShortClassName(this)+" parent : "+strparent+" : ID : "+getNodeId()
+                    + " leaf : "+isLeaf()+" sibling : "+getSiblingId()+" child "+getChildId()+strHilbertLeaf+"  "+Arrays.toString(getBoundary()), toString);
+            } else {
+                return Classes.getShortClassName(this)+"Data : parent : "+getParentId()+" ID : "+getNodeId()+" sibling : "+getSiblingId()+" value : "+(-getChildId())+" bound : "+Arrays.toString(getBoundary());
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(FileNode.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
     
     
     

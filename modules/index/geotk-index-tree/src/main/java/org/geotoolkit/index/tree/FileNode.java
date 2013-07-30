@@ -195,6 +195,7 @@ public class FileNode extends Node {
             children[id++] = cuN;
             sibl = cuN.getSiblingId();
         }
+        assert id == childCount : "FileNode : getChildren : childCound and child number doesn't match.";
         return children;
     }
 
@@ -350,7 +351,7 @@ public class FileNode extends Node {
                 return Trees.toString(Classes.getShortClassName(this)+" parent : "+strparent+" : ID : "+getNodeId()
                     + " leaf : "+isLeaf()+" sibling : "+getSiblingId()+" child "+getChildId()+" children number : "+getChildCount()+Arrays.toString(getBoundary()), toString);
             } else {
-                return Classes.getShortClassName(this)+"Data : parent : "+getParentId()+" ID : "+/*this.hashCode()*/getNodeId()+" sibling : "+getSiblingId()+" value : "+(-getChildId())+" bound : "+Arrays.toString(getBoundary());
+                return Classes.getShortClassName(this)+"Data : parent : "+getParentId()+" ID : "+getNodeId()+" sibling : "+getSiblingId()+" value : "+(-getChildId())+" bound : "+Arrays.toString(getBoundary());
             }
         } catch (IOException ex) {
             Logger.getLogger(FileNode.class.getName()).log(Level.SEVERE, null, ex);

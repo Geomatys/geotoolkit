@@ -114,14 +114,16 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
                 Node[] lSp = splitNode(fileCandidate);
                 if (lSp != null) {
 
-                    final FileNode lsp0 = (FileNode) lSp[0];
-                    final FileNode lsp1 = (FileNode) lSp[1];
+                    FileNode lsp0 = (FileNode) lSp[0];
+                    FileNode lsp1 = (FileNode) lSp[1];
+                    assert lsp0.checkInternal() : "insertNode : just after split.lsp0";
+                    assert lsp1.checkInternal() : "insertNode : just after split.lsp1";
                     
-
                     if (fileCandidate.getParentId() != 0) {
                         FileNode parentCandidate = treeAccess.readNode(fileCandidate.getParentId());
-                        parentCandidate.removeChild(fileCandidate);
-                        
+//                        parentCandidate.removeChild(fileCandidate);
+                        final int lsp0Id = lsp0.getNodeId();
+                        final int lsp1Id = lsp1.getNodeId();
                         /**
                          * <p>Add in candidate temporary to force to add element in one of splitted Node
                          * else algorithm can choose another node of lspo and lsp1, from parent children.<br/>
@@ -131,28 +133,44 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
                         lsp0.setParentId(fileCandidate.getNodeId());
                         lsp1.setParentId(fileCandidate.getNodeId());
                         fileCandidate.clear();
-                        fileCandidate.setUserProperty(PROP_ISLEAF, false);
-                        fileCandidate.setUserProperty(PROP_HILBERT_ORDER, 0);
+                        fileCandidate.setProperties(IS_OTHER);
+                        ((FileHilbertNode)fileCandidate).setCurrentHilbertOrder(0);
+                        fileCandidate.setParentId(0);
+//                        fileCandidate.setSiblingId(0);
+//                        fileCandidate.setUserProperty(PROP_ISLEAF, false);
+//                        fileCandidate.setUserProperty(PROP_HILBERT_ORDER, 0);
                         fileCandidate.addChild(lsp0);
                         fileCandidate.addChild(lsp1);
                         nodeInsert(fileCandidate, object, coordinates);
+                        assert fileCandidate.checkInternal() : "insertNode : split with parent not null.";
                         candidate.clear();
                         
-                        lsp0.setParent(parentCandidate);
+                        lsp0 = treeAccess.readNode(lsp0Id);
+                        lsp1 = treeAccess.readNode(lsp1Id);
+                        
+                        assert lsp0.checkInternal() : "insertNode : split with parent not null.lsp0";
+                        assert lsp1.checkInternal() : "insertNode : split with parent not null.lsp1";
+                        System.out.println(lsp0.toString());
+                        parentCandidate.removeChild(fileCandidate);
+                        lsp0.setParentId(parentCandidate.getNodeId());
+                        lsp0.setSiblingId(0);
                         parentCandidate.addChild(lsp0);
-                        lsp1.setParent(parentCandidate);
+                        lsp1.setParentId(parentCandidate.getNodeId());
+                        lsp1.setSiblingId(0);
                         parentCandidate.addChild(lsp1);
                         return parentCandidate;
                     } else {
                         candidate.clear();
-                        candidate.setUserProperty(PROP_ISLEAF, false);
-                        candidate.setUserProperty(PROP_HILBERT_ORDER, 0);
-                        lsp0.setParent(candidate);
-                        lsp1.setParent(candidate);
+//                        candidate.setUserProperty(PROP_ISLEAF, false);
+//                        candidate.setUserProperty(PROP_HILBERT_ORDER, 0);
+                        fileCandidate.setProperties(IS_OTHER);
+                        ((FileHilbertNode)fileCandidate).setCurrentHilbertOrder(0);
+                        lsp0.setParentId(fileCandidate.getNodeId());
+                        lsp1.setParentId(fileCandidate.getNodeId());
                         candidate.addChild(lsp0);
                         candidate.addChild(lsp1);
                         nodeInsert(candidate, object, coordinates);
-                        assert candidate.getBound() == null: "boundary should be null";
+//                        assert candidate.getBoundary() == null : "boundary should be null";
                     }
                 } else {
                     throw new IllegalStateException("Normaly split leaf never null");
@@ -257,7 +275,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
     private Node[] splitNode(final FileNode candidate) throws IllegalArgumentException, IOException {
         ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
         assert candidate.checkInternal() : "splitNode : begin.";
-        int childNumber = candidate.getChildCount();
+        int childNumber = (candidate.isLeaf())?((FileHilbertNode)candidate).getDataCount():candidate.getChildCount();
         if (childNumber < 2) 
             throw new IllegalArgumentException("not enought elements within " + candidate + " to split.");
         
@@ -371,6 +389,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
         ArgumentChecks.ensureNonNull("chooseSubtree : candidate", candidate);
         ArgumentChecks.ensureNonNull("chooseSubtree : coordinates", coordinates);
 //        assert candidate.checkInternal() : "chooseSubtree : candidate not conform";
+        if (candidate.isLeaf()) throw new IllegalStateException("jdhvzd");
         final Calculator calc = getCalculator();
         final int childCount = candidate.getChildCount();
         if (childCount == 0) throw new IllegalArgumentException("chooseSubtree : children is empty");

@@ -29,6 +29,9 @@ import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.sis.util.ArraysExt;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.intersects;
 import org.geotoolkit.index.tree.FileNode;
 import org.geotoolkit.index.tree.access.TreeAccess;
@@ -121,7 +124,7 @@ public class HilbertTreeAccessFile extends TreeAccess {
         Arrays.fill(firstBound, Double.NaN);
         
         // Node size : boundary weigth + parent ID + 1st sibling Integer + 1st child Integer + child number.
-        nodeSize = (dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2;
+        nodeSize = ((dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2) + 1 +4 + 4;
         
         // buffer attributs
         final int div = 819200 / nodeSize;// 4096 In future define a better approppriate value by benchmark.
@@ -164,8 +167,8 @@ public class HilbertTreeAccessFile extends TreeAccess {
         firstBound = new double[boundLength];
         Arrays.fill(firstBound, Double.NaN);
         
-        // Node size : boundary weigth + parent ID + 1st sibling Integer + 1st child Integer + child number.
-        nodeSize = (dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2;
+        // Node size : boundary weigth + parent ID + 1st sibling Integer + 1st child Integer + child number.+datacount+currenthilbertorder
+        nodeSize = ((dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2) + 1 + 4 + 4;
         
         final int div = 819200 / nodeSize; // 4096
         this.bufferLength = div * nodeSize;
@@ -237,14 +240,15 @@ public class HilbertTreeAccessFile extends TreeAccess {
         for (int i = 0; i < boundLength; i++) {
             boundary[i] = byteBuffer.getDouble();
         }
-        byteBuffer.position(byteBuffer.position() + 4);// step parent ID
+        byteBuffer.position(byteBuffer.position() + 5);// step properties (1 byte) and step parent ID (int : 4 bytes)
         final int sibling = byteBuffer.getInt();
         final int child   = byteBuffer.getInt();
-        byteBuffer.position(byteBuffer.position() + 4);// step child count
+        byteBuffer.position(byteBuffer.position() + 12);// step hilbertOrder, step child count and step dataCount
         if (sibling != 0) {
             internalSearch(sibling);
         }
-        if (intersects(boundary, regionSearch, true)) {
+        // trouver a ameliorer avec les valeurs de hilbert qui aide en cas de feuille
+        if (!ArraysExt.hasNaN(boundary) && intersects(boundary, regionSearch, true)) {
             if (child > 0) {
                 internalSearch(child);
             } else {
@@ -271,13 +275,17 @@ public class HilbertTreeAccessFile extends TreeAccess {
         for (int i = 0; i < boundLength; i++) {
             boundary[i] = byteBuffer.getDouble();
         }
-        final byte properties  = byteBuffer.get();
-        final int parentId     = byteBuffer.getInt();
-        final int siblingId    = byteBuffer.getInt();
-        final int childId      = byteBuffer.getInt();
-        final int childCount   = byteBuffer.getInt();
-        final FileNode redNode = new FileHilbertNode(this, indexNode, boundary, properties, parentId, siblingId, childId);
+        final byte properties         = byteBuffer.get();
+        final int parentId            = byteBuffer.getInt();
+        final int siblingId           = byteBuffer.getInt();
+        final int childId             = byteBuffer.getInt();
+        final int currentHilbertOrder = byteBuffer.getInt();
+        final int childCount          = byteBuffer.getInt();
+        final int dataCount           = byteBuffer.getInt();
+        final FileHilbertNode redNode = new FileHilbertNode(this, indexNode, boundary, properties, parentId, siblingId, childId);
+        redNode.setCurrentHilbertOrder(currentHilbertOrder);
         redNode.setChildCount(childCount);
+        redNode.setDataCount(dataCount);
         return redNode;
     }
         
@@ -297,7 +305,9 @@ public class HilbertTreeAccessFile extends TreeAccess {
         byteBuffer.putInt(candidate.getParentId());
         byteBuffer.putInt(candidate.getSiblingId());
         byteBuffer.putInt(candidate.getChildId());
+        byteBuffer.putInt(((FileHilbertNode)candidate).getCurrentHilbertOrder());
         byteBuffer.putInt(candidate.getChildCount());
+        byteBuffer.putInt(((FileHilbertNode)candidate).getDataCount());
     }
     
     /**
@@ -380,7 +390,12 @@ public class HilbertTreeAccessFile extends TreeAccess {
     @Override
      public FileNode createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
          final int currentID = (!recycleID.isEmpty()) ? recycleID.remove(0) : nodeId++;
-         return new FileHilbertNode(this, currentID, (boundary == null) ? firstBound : boundary, properties, parentId, siblingId, childId);
+        try {
+            return new FileHilbertNode(this, currentID, (boundary == null) ? firstBound : boundary, properties, parentId, siblingId, childId);
+        } catch (IOException ex) {
+            Logger.getLogger(HilbertTreeAccessFile.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null; //// attention a modifier try catch c null
      }
     
     protected int getHilbertOrder() {
