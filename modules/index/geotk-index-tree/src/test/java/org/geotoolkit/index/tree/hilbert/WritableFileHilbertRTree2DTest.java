@@ -33,7 +33,7 @@ public class WritableFileHilbertRTree2DTest extends AbstractTreeTest {
     public WritableFileHilbertRTree2DTest() throws StoreIndexException, IOException {
         super(DefaultEngineeringCRS.CARTESIAN_2D);
         tEM = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
-        tree = new FileHilbertRTree(File.createTempFile("test", "tree"), 4, 2, crs, tEM);
+        tree = new FileHilbertRTree(File.createTempFile("test", "tree"), 4, 1, crs, tEM);
         tAF = ((AbstractHilbertRTree)tree).getTreeAccess();
     }
 }
