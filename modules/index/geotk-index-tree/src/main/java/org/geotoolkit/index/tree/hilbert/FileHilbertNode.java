@@ -32,6 +32,7 @@ public class FileHilbertNode extends FileNode {
     private final List<Node> data = new ArrayList<Node>();
     private int dataCount;
     private int currentHilbertOrder;
+    private static final double LN2 = 0.6931471805599453;
     
 
     public FileHilbertNode(HilbertTreeAccessFile tAF, int nodeId, double[] boundary, byte properties, int parentId, int siblingId, int childId) throws IOException {
@@ -122,7 +123,7 @@ public class FileHilbertNode extends FileNode {
                     super.addChild(tAF.createNode(boundTemp, IS_CELL, this.getNodeId(), 0, 0));
                 }
                 data.add(node);
-                for (Node dat : data) { //problem ici
+                for (Node dat : data) { 
                     addChild(dat);
                 }
             } else {
@@ -140,6 +141,92 @@ public class FileHilbertNode extends FileNode {
             super.addChild(node); 
         }
     }
+
+    @Override
+    public boolean removeChild(FileNode node) throws IOException {
+        
+        if (isLeaf()) {
+            children = super.getChildren();
+            if (currentHilbertOrder < 1) {
+                assert children.length == 1 : "removeChild : hilbertLeaf : leaf should have only one cell.";
+                final boolean removed = ((FileNode)children[0]).removeChild(node);
+                if (removed) {
+                    dataCount--;
+                    boundary = (dataCount > 0) ? children[0].getBoundary().clone() : boundTemp;
+                    tAF.writeNode(this);
+                }
+                return removed;
+            } else {
+                final double[] nodeBoundary = node.getBoundary();
+                int index = getHVOfEntry(boundary);
+                assert index < children.length : "index out of children bound. Expected : "+children.length+" found index : "+index;
+                boolean removed = false;
+                boolean oneTime = true;
+                int s = children.length;
+                final int imax = s-1;
+                double[] boundAdd = null;// voir pour travailler directement avec la boundary.
+                /**
+                 * Begin loop at index to be in accordance with Hilbert RTree properties.
+                 */
+                for (int i = index; i < s; i++) {
+                    if (!children[i].isEmpty()){
+                        if (!removed) {
+                            removed = ((FileNode)children[i]).removeChild(node);
+                            if (removed) dataCount--;
+                        }
+                        // boundary 
+                        if (boundAdd == null) {
+                            boundAdd = children[i].getBoundary().clone();
+                        } else {
+                            add(boundAdd, children[i].getBoundary());
+                        }
+                    }
+                        
+                    if (i == imax && oneTime) {
+                        oneTime = false;
+                        i = -1;
+                        s = index;
+                    }
+                }
+                if (!removed) return false;
+                // affect new boundary
+                boundary = boundAdd;
+                tAF.writeNode(this);
+                final int maxElts = tAF.getMaxElementPerCells();
+                final int hOrder = (dataCount <= maxElts) ? 0 : (int)((Math.log(dataCount-1)-Math.log(maxElts))/(dimension*LN2)) + 1;
+                assert hOrder <= currentHilbertOrder : "HilbertLeaf : hilbert Order compute after remove is not correct. Expected : <= "+currentHilbertOrder+" found : "+hOrder;
+                if (hOrder < currentHilbertOrder) {
+                    // on recupere tout les elements contenu dans cette feuille.
+                    data.clear();
+                    for (Node cnod : children) {
+                        final FileNode fcnod = (FileNode)cnod;
+                        int dataSibl = fcnod.getChildId();
+                        while (dataSibl != 0) {
+                            final FileHilbertNode currentData = (FileHilbertNode) tAF.readNode(dataSibl);
+                            dataSibl = currentData.getSiblingId();
+                            currentData.setSiblingId(0);// become distinc
+                            data.add(currentData);
+                        }
+    //                    super.removeChild(fnod);
+                        tAF.deleteNode(fcnod);
+                    }
+                    clear();
+                    currentHilbertOrder = hOrder;
+                    // on creer les cells null
+                    final int nbCell = currentHilbertOrder == 0 ? 1 : 2 << (dimension * currentHilbertOrder - 1);
+                    for (int i = 0; i < nbCell; i++) {
+                        super.addChild(tAF.createNode(boundTemp, IS_CELL, this.getNodeId(), 0, 0));
+                    }
+                    for (Node dat : data) { 
+                        addChild(dat);
+                    }
+                }
+                return true;
+            }
+        }
+        return super.removeChild(node);
+    }
+    
     
     public boolean isCell() {
         return (properties & IS_CELL) != 0;

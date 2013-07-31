@@ -199,13 +199,21 @@ public class FileNode extends Node {
         return children;
     }
 
-    public void removeChild(FileNode node) throws IOException {
-        
+    public boolean removeChild(FileNode node) throws IOException {
+        boolean found = false;
         if (childCount == 1) {
-            childCount--;
-            assert node.getNodeId() == getChildId() : "child ID should be same as node Id";
-            setChildId(0);
-            tAF.writeNode(this);
+            if (node.getNodeId() == getChildId()) {
+                childCount--;
+                setChildId(0);
+//                boundary = null;
+                tAF.writeNode(this);
+                found = true;
+            }
+//            childCount--;
+//            assert node.getNodeId() == getChildId() : "child ID should be same as node Id";
+//            setChildId(0);
+//            tAF.writeNode(this);
+//            found = true;
         } else {
             
             if (((Integer) getChildId()) == node.getNodeId()) {
@@ -217,12 +225,13 @@ public class FileNode extends Node {
                     add(boundary, children[i].getBoundary());
                 }
                 tAF.writeNode(this);
+                found = true;
             } else {
                 // connect sibling with its next sibling.
                 FileNode precChild = tAF.readNode(getChildId());
                 boundary = precChild.getBoundary().clone();
                 int sibl = precChild.getSiblingId();
-                boolean found = false;
+                
                 while (sibl != 0) {
                     if (sibl == node.getNodeId()) {
                         sibl = node.getSiblingId();
@@ -236,12 +245,15 @@ public class FileNode extends Node {
                         add(boundary, precChild.getBoundary());
                     }
                 }
-                assert found : "removechild : child not found";
-                childCount--;
-                tAF.writeNode(this);
+//                assert found : "removechild : child not found";
+                if (found) {
+                    childCount--;
+                    tAF.writeNode(this);
+                }
             }
         }
-        tAF.deleteNode(node);
+        if (found) tAF.deleteNode(node);
+        return found;
     }
 
     public void removeChildren(FileNode[] nodes) throws IOException {
