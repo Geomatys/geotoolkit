@@ -88,7 +88,7 @@ public class WebFeatureServer extends AbstractServer implements FeatureStore{
         if(version == null){
             throw new IllegalArgumentException("unknowned version : "+ version);
         }
-        Parameters.getOrCreate(WFSFeatureStoreFactory.VERSION, parameters).setValue(version);
+        Parameters.getOrCreate(WFSFeatureStoreFactory.VERSION, parameters).setValue(version.getCode());
         Parameters.getOrCreate(WFSFeatureStoreFactory.POST_REQUEST, parameters).setValue(usePost);
         this.capabilities = null;
     }
