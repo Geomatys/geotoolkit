@@ -202,17 +202,24 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
             }
             gR = new double[]{93, 18, 19, 130, 87, 21};
         }
-        for (int i = 0,  s = lGE.size(); i < s; i++) {
+        int siz = 5;
+        for (int i = 0,  s = siz/*lGE.size()*/; i < s; i++) {
             System.out.println("i = "+i);
-//            /*if (i>45) */System.out.println(tree.toString());
             tree.insert(lGE.get(i));
+            System.out.println(tree.toString());
         }
-        final GeneralEnvelope rG = new GeneralEnvelope(crs);
-        rG.setEnvelope(gR);
+        
+        for (int i = 0,  s = siz/*lGE.size()*/; i < s; i++) {
+            System.out.println("i = "+i);
+            tree.remove(lGE.get(i));
+            System.out.println(tree.toString());
+        }
+//        final GeneralEnvelope rG = new GeneralEnvelope(crs);
+//        rG.setEnvelope(gR);
         System.out.println(tree.toString());
         // visitor
-        int[] tabSearch = tree.searchID(rG);
-        assertTrue(compareLists(lGERef, Arrays.asList(getResult(tabSearch))));
+//        int[] tabSearch = tree.searchID(rG);
+//        assertTrue(compareLists(lGERef, Arrays.asList(getResult(tabSearch))));
 //        checkNodeBoundaryTest(tree.getRoot(), lGE);
     }
     
