@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.GeometryProperty;
 
 
 /**
@@ -56,7 +57,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "GeometryPropertyType", propOrder = {
     "abstractGeometry"
 })
-public class GeometryPropertyType {
+public class GeometryPropertyType implements GeometryProperty {
 
     @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<? extends AbstractGeometryType> abstractGeometry;
@@ -234,6 +235,7 @@ public class GeometryPropertyType {
      *     {@code <}{@link MultiSolidType }{@code >}
      *
      */
+    @Override
     public AbstractGeometryType getAbstractGeometry() {
         if (abstractGeometry != null) {
             return abstractGeometry.getValue();

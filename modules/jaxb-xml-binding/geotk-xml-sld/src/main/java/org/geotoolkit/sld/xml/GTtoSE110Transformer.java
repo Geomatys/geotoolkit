@@ -40,6 +40,7 @@ import org.geotoolkit.gml.GMLUtilities;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeType;
+import org.geotoolkit.gml.xml.v311.MultiGeometryType;
 import org.geotoolkit.gml.xml.v311.ObjectFactory;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.PolygonType;
@@ -47,7 +48,6 @@ import org.geotoolkit.ogc.xml.v110.AbstractIdType;
 import org.geotoolkit.ogc.xml.v110.AndType;
 import org.geotoolkit.ogc.xml.v110.BBOXType;
 import org.geotoolkit.ogc.xml.v110.BeyondType;
-import org.geotoolkit.ogc.xml.v110.BinaryComparisonOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryLogicOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryOperatorType;
 import org.geotoolkit.ogc.xml.v110.ComparisonOpsType;
@@ -588,7 +588,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
                 lst.add(FF.equals(n, FF.literal(ident.getID().toString())));
             }
 
-            if(lst.size() == 0){
+            if(lst.isEmpty()){
                 return null;
             }else if(lst.size() == 1){
                 return visitFilter(lst.get(0));
@@ -636,6 +636,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
                     jaxGeom = gml_factory.createPoint((PointType) gt);
                 } else if (gt instanceof PolygonType) {
                     jaxGeom = gml_factory.createPolygon((PolygonType) gt);
+                } else if (gt instanceof MultiGeometryType) {
+                    jaxGeom = gml_factory.createMultiGeometry((MultiGeometryType) gt);
                 } else if (gt != null) {
                     throw new IllegalArgumentException("unexpected Geometry type:" + gt.getClass().getName());
                 } else {
@@ -649,6 +651,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
                     jaxGeom = gml_factory.createPoint((PointType) gt);
                 } else if (gt instanceof PolygonType) {
                     jaxGeom = gml_factory.createPolygon((PolygonType) gt);
+                } else if (gt instanceof MultiGeometryType) {
+                    jaxGeom = gml_factory.createMultiGeometry((MultiGeometryType) gt);
                 } else if (gt != null) {
                     throw new IllegalArgumentException("unexpected Geometry type:" + gt.getClass().getName());
                 } else {
@@ -821,7 +825,6 @@ public class GTtoSE110Transformer implements StyleVisitor{
             //we store only the online resource
             return visit(fts.getOnlineResource(), null);
         } else {
-            Object obj = null;
 
             //try to figure out if we have here a coverage FTS or not
             boolean isCoverage = false;
@@ -847,6 +850,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
                 isCoverage = false;
             }
 
+            final Object obj;
             //create the sld FTS
             if(isCoverage){
                 //coverage type

@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.GeometryProperty;
 
 
 /**
@@ -57,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "GeometryPropertyType", propOrder = {
     "abstractGeometry"
 })
-public class GeometryPropertyType {
+public class GeometryPropertyType implements GeometryProperty {
 
     @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private JAXBElement<? extends AbstractGeometryType> abstractGeometry;
@@ -122,7 +123,7 @@ public class GeometryPropertyType {
      *     {@link JAXBElement }{@code <}{@link PointType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractGeometryType> getAbstractGeometry() {
+    public JAXBElement<? extends AbstractGeometryType> getJbAbstractGeometry() {
         return abstractGeometry;
     }
 
@@ -162,30 +163,119 @@ public class GeometryPropertyType {
      *     {@link JAXBElement }{@code <}{@link PointType }{@code >}
      *     
      */
-    public void setAbstractGeometry(JAXBElement<? extends AbstractGeometryType> value) {
+    public void setJbAbstractGeometry(JAXBElement<? extends AbstractGeometryType> value) {
         this.abstractGeometry = ((JAXBElement<? extends AbstractGeometryType> ) value);
+    }
+
+    /**
+     * Gets the value of the abstractGeometry property.
+     *
+     * @return
+     *     possible object is
+     *     {@code <}{@link OrientableSurfaceType }{@code >}
+     *     {@code <}{@link AbstractSolidType }{@code >}
+     *     {@code <}{@link MultiSurfaceType }{@code >}
+     *     {@code <}{@link AbstractGeometricAggregateType }{@code >}
+     *     {@code <}{@link SolidType }{@code >}
+     *     {@code <}{@link TinType }{@code >}
+     *     {@code <}{@link MultiGeometryType }{@code >}
+     *     {@code <}{@link SurfaceType }{@code >}
+     *     {@code <}{@link MultiPointType }{@code >}
+     *     {@code <}{@link LineStringType }{@code >}
+     *     {@code <}{@link AbstractCurveType }{@code >}
+     *     {@code <}{@link AbstractSurfaceType }{@code >}
+     *     {@code <}{@link LinearRingType }{@code >}
+     *     {@code <}{@link AbstractRingType }{@code >}
+     *     {@code <}{@link TriangulatedSurfaceType }{@code >}
+     *     {@code <}{@link PolyhedralSurfaceType }{@code >}
+     *     {@code <}{@link CurveType }{@code >}
+     *     {@code <}{@link MultiLineStringType }{@code >}
+     *     {@code <}{@link AbstractGeometryType }{@code >}
+     *     {@code <}{@link OrientableCurveType }{@code >}
+     *     {@code <}{@link MultiPolygonType }{@code >}
+     *     {@code <}{@link PolygonType }{@code >}
+     *     {@code <}{@link RingType }{@code >}
+     *     {@code <}{@link MultiCurveType }{@code >}
+     *     {@code <}{@link AbstractGeometricPrimitiveType }{@code >}
+     *     {@code <}{@link PointType }{@code >}
+     *     {@code <}{@link MultiSolidType }{@code >}
+     *
+     */
+    @Override
+    public AbstractGeometryType getAbstractGeometry() {
+        if (abstractGeometry != null) {
+            return abstractGeometry.getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the value of the abstractGeometry property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@code <}{@link OrientableSurfaceType }{@code >}
+     *     {@code <}{@link AbstractSolidType }{@code >}
+     *     {@code <}{@link MultiSurfaceType }{@code >}
+     *     {@code <}{@link AbstractGeometricAggregateType }{@code >}
+     *     {@code <}{@link SolidType }{@code >}
+     *     {@code <}{@link TinType }{@code >}
+     *     {@code <}{@link MultiGeometryType }{@code >}
+     *     {@code <}{@link SurfaceType }{@code >}
+     *     {@code <}{@link MultiPointType }{@code >}
+     *     {@code <}{@link LineStringType }{@code >}
+     *     {@code <}{@link AbstractCurveType }{@code >}
+     *     {@code <}{@link AbstractSurfaceType }{@code >}
+     *     {@code <}{@link LinearRingType }{@code >}
+     *     {@code <}{@link AbstractRingType }{@code >}
+     *     {@code <}{@link TriangulatedSurfaceType }{@code >}
+     *     {@code <}{@link PolyhedralSurfaceType }{@code >}
+     *     {@code <}{@link CurveType }{@code >}
+     *     {@code <}{@link MultiLineStringType }{@code >}
+     *     {@code <}{@link AbstractGeometryType }{@code >}
+     *     {@code <}{@link OrientableCurveType }{@code >}
+     *     {@code <}{@link MultiPolygonType }{@code >}
+     *     {@code <}{@link PolygonType }{@code >}
+     *     {@code <}{@link RingType }{@code >}
+     *     {@code <}{@link MultiCurveType }{@code >}
+     *     {@code <}{@link AbstractGeometricPrimitiveType }{@code >}
+     *     {@code <}{@link PointType }{@code >}
+     *     {@code <}{@link MultiSolidType }{@code >}
+     *
+     */
+    public void setAbstractGeometry(final AbstractGeometryType value) {
+        final ObjectFactory factory = new ObjectFactory();
+        if (value instanceof PolygonType) {
+            abstractGeometry = factory.createPolygon((PolygonType) value);
+        } else if (value instanceof CurveType) {
+            abstractGeometry = factory.createCurve((CurveType) value);
+        } else if (value instanceof OrientableSurfaceType) {
+            abstractGeometry = factory.createOrientableSurface((OrientableSurfaceType) value);
+        } else if (value instanceof LinearRingType) {
+            abstractGeometry = factory.createLinearRing((LinearRingType) value);
+        } else if (value instanceof RingType) {
+            abstractGeometry = factory.createRing((RingType) value);
+        } else if (value instanceof PointType) {
+            abstractGeometry = factory.createPoint((PointType) value);
+        } else if (value instanceof LineStringType) {
+            abstractGeometry = factory.createLineString((LineStringType) value);
+        } else if (value instanceof MultiCurveType) {
+            abstractGeometry = factory.createMultiCurve((MultiCurveType) value);
+        } else if (value instanceof MultiPointType) {
+            abstractGeometry = factory.createMultiPoint((MultiPointType) value);
+        } else if (value instanceof MultiSolidType) {
+            abstractGeometry = factory.createMultiSolid((MultiSolidType) value);
+        } else if (value instanceof MultiSurfaceType) {
+            abstractGeometry = factory.createMultiSurface((MultiSurfaceType) value);
+        } else {
+            throw new IllegalArgumentException("unexpected geometry type:" + value);
+        }
     }
 
     /**
      * Gets the value of the nilReason property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the nilReason property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getNilReason().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
      * 
      */
     public List<String> getNilReason() {
