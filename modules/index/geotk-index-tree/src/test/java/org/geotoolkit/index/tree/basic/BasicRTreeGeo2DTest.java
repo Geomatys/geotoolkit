@@ -23,7 +23,8 @@ import org.geotoolkit.index.tree.io.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
-/**Create R-Tree test suite in geographic 2D space.
+/**
+ * Create R-Tree test suite in geographic 2D space.
  *
  * @author Rémi Marechal (Geomatys).
  */

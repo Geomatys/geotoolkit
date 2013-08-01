@@ -25,7 +25,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.index.tree.AbstractTree;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
-import org.geotoolkit.index.tree.FileNode;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.access.TreeAccess;
@@ -67,7 +66,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
         final Node root = getRoot();
         if (root != null && !root.isEmpty()) {
             try {
-                return treeAccess.search(((FileNode)root).getNodeId(), regionSearch);
+                return treeAccess.search(((Node)root).getNodeId(), regionSearch);
             } catch (IOException ex) {
                 throw new StoreIndexException(this.getClass().getName()+" impossible to find stored elements at "
                         +Arrays.toString(regionSearch)+" region search area.", ex);
@@ -91,7 +90,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
                 final Node newRoot = nodeInsert(root, object, coordinates);
                 if (newRoot != null) {
                     setRoot(newRoot);
-                    treeAccess.writeNode((FileNode)newRoot);
+                    treeAccess.writeNode((Node)newRoot);
                 }
                 /**
                  * Insert again. Property named Tree re-balancing. 
@@ -121,22 +120,22 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
     }
     
     private Node nodeInsert(Node candidate, Object object, double... coordinates) throws IOException, StoreIndexException {
-        assert candidate instanceof FileNode;
-        FileNode fileCandidate = (FileNode) candidate;
+        assert candidate instanceof Node;
+        Node fileCandidate = (Node) candidate;
         assert !fileCandidate.isData() : "nodeInsert : candidate should never be data type.";
         /**
          * During travel down recursively candidate parent may be modified.
          * When travel up recursively if candidate should be modified, get
          * new candidate object updated from sub-method.
          */
-        FileNode subCandidateParent = null;
+        Node subCandidateParent = null;
         if (fileCandidate.isLeaf()) {
             assert fileCandidate.checkInternal() : "nodeInsert : leaf before add.";
             fileCandidate.addChild(createNode(treeAccess, coordinates, IS_DATA, fileCandidate.getNodeId(), 0, -((Integer)object)));
             assert fileCandidate.checkInternal() : "nodeInsert : leaf after add.";
         } else {
             assert fileCandidate.checkInternal() : "nodeInsert : Node before insert.";
-            subCandidateParent = (FileNode)nodeInsert(chooseSubtree(fileCandidate, coordinates), object, coordinates);
+            subCandidateParent = (Node)nodeInsert(chooseSubtree(fileCandidate, coordinates), object, coordinates);
             add(fileCandidate.getBoundary(), coordinates);
         }
         
@@ -194,8 +193,8 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
             if (fileCandidate.getChildCount() > getMaxElements()) {
                 // split
                 final Node[] splitTable = splitNode(fileCandidate);
-                final FileNode split1 = (FileNode)splitTable[0];
-                final FileNode split2 = (FileNode)splitTable[1];
+                final Node split1 = (Node)splitTable[0];
+                final Node split2 = (Node)splitTable[1];
 
                 final int candidateParentID = fileCandidate.getParentId();
                 if (candidateParentID == 0) { // on est sur le noeud root
@@ -209,7 +208,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
                     assert split2.checkInternal() : "nodeInsert : split2.";
                     assert fileCandidate.checkInternal() : "nodeInsert : split root.";
                 } else {
-                    final FileNode parent = treeAccess.readNode(candidateParentID);
+                    final Node parent = treeAccess.readNode(candidateParentID);
                     parent.removeChild(fileCandidate);
                     parent.addChild(split1);
                     parent.addChild(split2);
@@ -242,7 +241,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
      * @throws IllegalArgumentException if children is empty.
      * @return {@code Node} which is appropriate to contain shape.
      */
-    private Node chooseSubtree(final FileNode candidate, final double... coordinates) throws IOException {
+    private Node chooseSubtree(final Node candidate, final double... coordinates) throws IOException {
         ArgumentChecks.ensureNonNull("chooseSubtree : candidate", candidate);
         ArgumentChecks.ensureNonNull("chooseSubtree : coordinates", coordinates);
 //        assert candidate.checkInternal() : "chooseSubtree : candidate not conform";
@@ -306,7 +305,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
         final double[] candidateCentroid = getMedian(canBound);
         final Calculator calc = getCalculator();
         final double distPermit = calc.getDistancePoint(getLowerCorner(canBound), getUpperCorner(canBound)) / 1.666666666;
-        getElementAtMore33PerCent((FileNode)candidate, candidateCentroid, distPermit, listObjects, listCoords);
+        getElementAtMore33PerCent((Node)candidate, candidateCentroid, distPermit, listObjects, listCoords);
         assert candidate.checkInternal() : "getElementAtMore33PerCent : end candidate not conform";
     }
     
@@ -316,14 +315,14 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
      * @throws IllegalArgumentException if {@code Node} candidate is null.
      * @return all Entry within subNodes at more 33% largest of this {@code Node}.
      */
-    private void getElementAtMore33PerCent(final FileNode candidate, double[] candidateCentroid, double distancePermit, LinkedList<Object> listObjects, final LinkedList<double[]> listCoords) throws IOException {
+    private void getElementAtMore33PerCent(final Node candidate, double[] candidateCentroid, double distancePermit, LinkedList<Object> listObjects, final LinkedList<double[]> listCoords) throws IOException {
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidateCentroid", candidateCentroid);
         ArgumentChecks.ensureStrictlyPositive("getElementsAtMore33PerCent : distancePermit", distancePermit);
         assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
         if (candidate.isLeaf()) {
             int sibl = candidate.getChildId();
             while (sibl != 0) {
-                final FileNode data = treeAccess.readNode(sibl); // voir pour aameliorer algo descendre juska data
+                final Node data = treeAccess.readNode(sibl); // voir pour aameliorer algo descendre juska data
                 listObjects.add(-data.getChildId());
                 listCoords.add(data.getBoundary());
                 sibl = data.getSiblingId();
@@ -331,7 +330,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
         } else {
             int sibl = candidate.getChildId();
             while (sibl != 0) {
-                final FileNode child = treeAccess.readNode(sibl);
+                final Node child = treeAccess.readNode(sibl);
                 getElementAtMore33PerCent(child, candidateCentroid, distancePermit, listObjects, listCoords);
                 sibl = child.getSiblingId();
             }
@@ -350,7 +349,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
      * @throws IllegalArgumentException if nodeA or nodeB are not tree leaf.
      * @throws IllegalArgumentException if nodeA or nodeB, and their subnodes, don't contains some {@code Entry}.
      */
-    private void branchGrafting(final FileNode nodeA, final FileNode nodeB ) throws IllegalArgumentException, IOException {
+    private void branchGrafting(final Node nodeA, final Node nodeB ) throws IllegalArgumentException, IOException {
         if(!nodeA.isLeaf() || !nodeB.isLeaf()) throw new IllegalArgumentException("branchGrafting : not leaf");
         assert nodeA.getParentId()== nodeB.getParentId(): "branchGrafting : NodeA and NodeB should have same parent.";
         assert treeAccess.readNode(nodeA.getParentId()).checkInternal() : "branchGrafting : nodeA and B parent not conform.";
@@ -416,12 +415,12 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
         nodeA.clear();
         nodeB.clear();
         for (int i = 0; i < index; i++) {
-            final FileNode newChild = (FileNode)listFN.get(i);
+            final Node newChild = (Node)listFN.get(i);
             newChild.setSiblingId(0);
             nodeA.addChild(newChild);
         }
         for (int i = index; i < size; i++) {
-            final FileNode newChild = (FileNode)listFN.get(i);
+            final Node newChild = (Node)listFN.get(i);
             newChild.setSiblingId(0);
             nodeB.addChild(newChild);
         }
@@ -439,7 +438,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
      * @throws IllegalArgumentException if candidate elements number is lesser 2.
      * @return {@code Node} List which contains two {@code Node} (split result of candidate).
      */
-    private Node[] splitNode(final FileNode candidate) throws IllegalArgumentException, IOException {
+    private Node[] splitNode(final Node candidate) throws IllegalArgumentException, IOException {
         ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
         assert candidate.checkInternal() : "splitNode : begin.";
         int childNumber = candidate.getChildCount();
@@ -519,7 +518,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
         final boolean isLeaf = candidate.isLeaf();
         if (!isLeaf && index == 1) {
             result1 = children[0];
-            ((FileNode)result1).setSiblingId(0);
+            ((Node)result1).setSiblingId(0);
         } else {
             result1 = createNode(treeAccess, null, properties, 0, 0, 0);
             System.arraycopy(children, 0, result1Children, 0, index);
@@ -527,7 +526,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
         }
         if (!isLeaf && lengthResult2 == 1) {
             result2 = children[size-1];
-            ((FileNode)result2).setSiblingId(0);
+            ((Node)result2).setSiblingId(0);
         } else {
             result2 = createNode(treeAccess, null, properties, 0, 0, 0);
             System.arraycopy(children, index, result2Children, 0, lengthResult2);
@@ -618,7 +617,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
         final Node root = getRoot();
         if (root != null) {
             try {
-                final boolean removed = removeNode((FileNode)root, object, coordinates);
+                final boolean removed = removeNode((Node)root, object, coordinates);
                 return removed;
             } catch (IOException ex) {
                 throw new StoreIndexException(this.getClass().getName()
@@ -641,7 +640,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private boolean removeNode(final FileNode candidate, final Object object, final double... coordinate) throws IllegalArgumentException, StoreIndexException, IOException{
+    private boolean removeNode(final Node candidate, final Object object, final double... coordinate) throws IllegalArgumentException, StoreIndexException, IOException{
         ArgumentChecks.ensureNonNull("removeNode : Node candidate", candidate);
         ArgumentChecks.ensureNonNull("removeNode : Object object", object);
         ArgumentChecks.ensureNonNull("removeNode : double[] coordinate", coordinate);
@@ -650,7 +649,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
                 int sibl = candidate.getChildId();
                 boolean removed = false;
                 while (sibl != 0) {
-                    final FileNode currentData = treeAccess.readNode(sibl);
+                    final Node currentData = treeAccess.readNode(sibl);
                     if (((Integer)object) == -currentData.getChildId()
                        && Arrays.equals(currentData.getBoundary(), coordinate)) {
                         removed = true;
@@ -667,7 +666,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
             } else {
                 int sibl = candidate.getChildId();
                 while (sibl != 0) {
-                    final FileNode currentChild = treeAccess.readNode(sibl);
+                    final Node currentChild = treeAccess.readNode(sibl);
                     final boolean removed = removeNode(currentChild, object, coordinate);
                     if (removed) return true;
                     sibl = currentChild.getSiblingId();
@@ -685,7 +684,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
      * @param candidate {@code Node} to begin condense.
      * @throws IllegalArgumentException if candidate is null.
      */
-    private void trim(final FileNode candidate) throws IllegalArgumentException, IOException, StoreIndexException {
+    private void trim(final Node candidate) throws IllegalArgumentException, IOException, StoreIndexException {
         ArgumentChecks.ensureNonNull("trim : Node candidate", candidate);
         List<double[]> reinsertListCoords = null;
         List<Object> reinsertListObjects = null;
@@ -693,7 +692,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
         if (candidate.getChildId() != 0 && !candidate.isLeaf()) {
             int sibl = candidate.getChildId();
             while (sibl != 0) {
-                final FileNode currentChild = treeAccess.readNode(sibl);
+                final Node currentChild = treeAccess.readNode(sibl);
                 // empty child
                 if (currentChild.isEmpty()) {
                     candidate.removeChild(currentChild);
@@ -705,7 +704,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
                     }
                     int cuChildSibl = currentChild.getChildId();
                     while (cuChildSibl != 0) {
-                        final FileNode currentData = treeAccess.readNode(cuChildSibl);
+                        final Node currentData = treeAccess.readNode(cuChildSibl);
                         reinsertListCoords.add(currentData.getBoundary());// risk de .clone a voir
                         reinsertListObjects.add(-currentData.getChildId());
                         cuChildSibl = currentData.getSiblingId();
@@ -722,7 +721,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
                     // child own a single sub-child and its not a leaf.
                     if (currentChild.getChildCount() == 1) {
                         assert !currentChild.isLeaf() : "Trim : current child should not be leaf.";
-                        final FileNode cChild = treeAccess.readNode(currentChild.getChildId());
+                        final Node cChild = treeAccess.readNode(currentChild.getChildId());
                         assert Arrays.equals(currentChild.getBoundary(), cChild.getBoundary()) : "Node with only one element should have same boundary than its stored element.";
                         candidate.removeChild(currentChild);
                         candidate.addChild(cChild);
@@ -732,7 +731,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
             }
         }
         if (candiBound != null) {
-            candidate.setBound(candiBound);
+            candidate.setBoundary(candiBound);
              treeAccess.writeNode(candidate);
             assert candidate.checkInternal() : "trim : candidate not conform";
         }
@@ -759,7 +758,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
         }
     }
 
-    public FileNode createNode(TreeAccess tA, double[] boundary, byte properties, int parentId, int siblingId, int childId) throws IllegalArgumentException {
+    public Node createNode(TreeAccess tA, double[] boundary, byte properties, int parentId, int siblingId, int childId) throws IllegalArgumentException {
         return tA.createNode(boundary, properties, parentId, siblingId, childId);
     }
     

@@ -227,14 +227,6 @@ public abstract class AbstractTree<E> implements Tree<E> {
     @Override
     public double[] getExtent() throws StoreIndexException {
         final Node node = getRoot();
-        if (node == null) {
-            return null;
-        } else {
-            try {
-                return node.getBoundary().clone();
-            } catch (IOException ex) {
-                throw new StoreIndexException("abstract Tree : "+this.getClass().getName()+ " impossible to read root node boundary.", ex);
-            }
-        }
+        return (node == null) ? null : node.getBoundary().clone();
     }
 }

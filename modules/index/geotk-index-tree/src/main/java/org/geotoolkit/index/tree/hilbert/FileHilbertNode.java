@@ -15,7 +15,7 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.gui.swing.tree.Trees;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
-import org.geotoolkit.index.tree.FileNode;
+import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.access.TreeAccess;
 import org.geotoolkit.index.tree.hilbert.iterator.HilbertIterator;
@@ -24,7 +24,7 @@ import org.geotoolkit.index.tree.hilbert.iterator.HilbertIterator;
  *
  * @author rmarechal
  */
-public class FileHilbertNode extends FileNode {
+public class FileHilbertNode extends Node {
 
     private Node[] children;
     private int dimension;
@@ -79,7 +79,7 @@ public class FileHilbertNode extends FileNode {
     @Override
     public void addChildren(Node[] nodes) throws IOException {
         for (Node nod : nodes) {
-            final FileNode fnod = (FileNode) nod;
+            final Node fnod = (Node) nod;
             fnod.setSiblingId(0);
             addChild(fnod);
         }
@@ -89,7 +89,7 @@ public class FileHilbertNode extends FileNode {
     
     @Override
     public void addChild(Node node) throws IOException {
-        final FileNode fnod = (FileNode)node;
+        final Node fnod = (Node)node;
         if (isLeaf()) {
             // si c pas une feuille sa veux dire que c la premiere insertion
             // alors on la fait devenir feuille 
@@ -105,7 +105,7 @@ public class FileHilbertNode extends FileNode {
                 // on recupere tout les elements contenu dans cette feuille.
                 data.clear();
                 for (Node cnod : children) {
-                    final FileNode fcnod = (FileNode)cnod;
+                    final Node fcnod = (Node)cnod;
                     int dataSibl = fcnod.getChildId();
                     while (dataSibl != 0) {
                         final FileHilbertNode currentData = (FileHilbertNode) tAF.readNode(dataSibl);
@@ -143,13 +143,13 @@ public class FileHilbertNode extends FileNode {
     }
 
     @Override
-    public boolean removeChild(FileNode node) throws IOException {
+    public boolean removeChild(Node node) throws IOException {
         
         if (isLeaf()) {
             children = super.getChildren();
             if (currentHilbertOrder < 1) {
                 assert children.length == 1 : "removeChild : hilbertLeaf : leaf should have only one cell.";
-                final boolean removed = ((FileNode)children[0]).removeChild(node);
+                final boolean removed = ((Node)children[0]).removeChild(node);
                 if (removed) {
                     dataCount--;
                     boundary = (dataCount > 0) ? children[0].getBoundary().clone() : boundTemp;
@@ -171,7 +171,7 @@ public class FileHilbertNode extends FileNode {
                 for (int i = index; i < s; i++) {
                     if (!children[i].isEmpty()){
                         if (!removed) {
-                            removed = ((FileNode)children[i]).removeChild(node);
+                            removed = ((Node)children[i]).removeChild(node);
                             if (removed) dataCount--;
                         }
                         // boundary 
@@ -199,7 +199,7 @@ public class FileHilbertNode extends FileNode {
                     // on recupere tout les elements contenu dans cette feuille.
                     data.clear();
                     for (Node cnod : children) {
-                        final FileNode fcnod = (FileNode)cnod;
+                        final Node fcnod = (Node)cnod;
                         int dataSibl = fcnod.getChildId();
                         while (dataSibl != 0) {
                             final FileHilbertNode currentData = (FileHilbertNode) tAF.readNode(dataSibl);
@@ -264,7 +264,7 @@ public class FileHilbertNode extends FileNode {
             Node[] superChilds = super.getChildren();
             int nbrData = 0;
             for (Node nod : superChilds) {
-                final FileNode currSC = (FileNode)nod;
+                final Node currSC = (Node)nod;
                 if (currSC.getParentId() != nodeId)
                     throw new IllegalStateException("cell parent ID should be equals to this.nodeID.");
                 if (!currSC.isEmpty()) {
@@ -278,7 +278,7 @@ public class FileHilbertNode extends FileNode {
                     double[] dataBound = null;
                     Node[] dataChilds = currSC.getChildren();
                     for (Node dat : dataChilds) {
-                        FileNode fdat = (FileNode)dat;
+                        Node fdat = (Node)dat;
                         if (dataBound == null) {
                             dataBound = fdat.getBoundary().clone();
                         } else {
@@ -448,7 +448,7 @@ public class FileHilbertNode extends FileNode {
                 return Classes.getShortClassName(this)+"Data : parent : "+getParentId()+" ID : "+getNodeId()+" sibling : "+getSiblingId()+" value : "+(-getChildId())+" bound : "+Arrays.toString(getBoundary());
             }
         } catch (IOException ex) {
-            Logger.getLogger(FileNode.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }

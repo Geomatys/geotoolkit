@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.List;
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.index.tree.access.TreeAccess;
+import org.geotoolkit.index.tree.hilbert.FileHilbertNode;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -37,15 +39,6 @@ public class DefaultTreeUtils {
     
     private DefaultTreeUtils() {
     }
-
-    /**
-     * @param node to denominate elements number.
-     * @return elements number within node.
-     */
-    public static int countElements(Node node) {
-        assert (node.getCoordsCount() == node.getObjectCount()) :"countElements : coordinate and object table should have same length";
-        return node.getChildCount() + node.getObjectCount();
-    }
     
     /**
      * Compute recursively entries number contained in a {@link Node}.
@@ -57,11 +50,14 @@ public class DefaultTreeUtils {
     public static int countElementsRecursively(Node node, int count) throws IOException {
         if (node == null) return count;
         if (node.isLeaf()) {
-            assert (node.getCoordsCount() == node.getObjectCount());
-            count = count + node.getCoordsCount();
+            count = count + node.getChildCount();
         } else {
-            for (int i = 0, s = node.getChildCount(); i < s; i++) {
-                count = countElementsRecursively(node.getChild(i), count);
+            final TreeAccess tac = node.getTreeAccess();
+            int sibl = node.getChildId();
+            while (sibl != 0) {
+                final Node currentChild = tac.readNode(sibl);
+                count = countElementsRecursively(currentChild, count);
+                sibl = currentChild.getSiblingId();
             }
         }
         return count;
@@ -74,18 +70,17 @@ public class DefaultTreeUtils {
      * @param count element counter. When caller call this method normaly zero. 
      * @return all element number within this Node.
      */
-    public static int countEltsInHilbertNode(final Node candidate, int count) throws IOException {
-        final int size = candidate.getChildCount();
-        if (candidate.isLeaf()) {
-            for (int i = 0; i < size; i++) {
-                final Node cuCell = candidate.getChild(i);
-                final int ccount = cuCell.getCoordsCount();
-                assert  ccount == cuCell.getObjectCount() : "countEltsInHilbertNode : coord and object length must concord.";
-                count += ccount;
-            }
+    public static int countEltsInHilbertNode(final FileHilbertNode hNode, int count) throws IOException {
+        if (hNode == null) return count;
+        if (hNode.isLeaf()) {
+            count = count + hNode.getDataCount();
         } else {
-            for (int i = 0; i < size; i++) {
-                count = countEltsInHilbertNode(candidate.getChild(i), count);
+            final TreeAccess tac = hNode.getTreeAccess();
+            int sibl = hNode.getChildId();
+            while (sibl != 0) {
+                final Node currentChild = tac.readNode(sibl);
+                count = countElementsRecursively(currentChild, count);
+                sibl = currentChild.getSiblingId();
             }
         }
         return count;

@@ -7,7 +7,7 @@ package org.geotoolkit.index.tree.hilbert;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.index.tree.FileNode;
+import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.access.TreeAccessMemory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -23,7 +23,7 @@ public class HilbertTreeAccessMemory extends TreeAccessMemory {
     }
 
     @Override
-    public FileNode createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
+    public Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
         final int currentID = (recycleID.isEmpty()) ? nodeId++ : recycleID.remove(0);
         try {
             return new FileHilbertNode(this, currentID, boundary, properties, parentId, siblingId, childId);
