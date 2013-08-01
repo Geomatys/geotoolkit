@@ -56,8 +56,8 @@ public class HilbertTreeAccessFile extends TreeAccess {
     private final int bufferLength;
     private int rwIndex;
     
-    // hilbert properties
-    private int hilbertOrder;
+//    // hilbert properties
+//    private int hilbertOrder;
     
     private List<Integer> recycleID = new LinkedList<Integer>();
     
@@ -82,7 +82,6 @@ public class HilbertTreeAccessFile extends TreeAccess {
         // stream
         inOutStream  = new RandomAccessFile(input, "rw");
         inOutChannel = inOutStream.getChannel();
-        
         /*****************************  read head ******************************/
         // read magicNumber
         final int mgNumber = inOutStream.readInt();
@@ -397,8 +396,4 @@ public class HilbertTreeAccessFile extends TreeAccess {
         }
         return null; //// attention a modifier try catch c null
      }
-    
-    protected int getHilbertOrder() {
-        return hilbertOrder;
-    }
 }

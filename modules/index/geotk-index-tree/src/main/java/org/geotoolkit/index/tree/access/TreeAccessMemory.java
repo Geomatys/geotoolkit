@@ -31,7 +31,7 @@ public class TreeAccessMemory extends TreeAccess {
 
     private int tabNodeLength;
     private FileNode[] tabNode;
-    private List<Integer> recycleID;
+    protected List<Integer> recycleID;
 
     public TreeAccessMemory(final int maxElements, final CoordinateReferenceSystem crs) {
         super(maxElements, crs);

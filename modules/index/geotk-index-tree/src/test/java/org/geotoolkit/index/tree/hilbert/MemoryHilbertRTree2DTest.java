@@ -16,24 +16,21 @@
  */
 package org.geotoolkit.index.tree.hilbert;
 
-import java.io.File;
 import java.io.IOException;
 import org.geotoolkit.index.tree.io.AbstractTreeTest;
-import org.geotoolkit.index.tree.io.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 
-
 /**
  *
- * @author Remi Marechal (Geomatys).
+ * @author rmarechal
  */
-public class WritableFileHilbertRTree2DTest extends AbstractTreeTest {
+public class MemoryHilbertRTree2DTest extends AbstractTreeTest {
 
-    public WritableFileHilbertRTree2DTest() throws StoreIndexException, IOException {
+    public MemoryHilbertRTree2DTest() throws StoreIndexException, IOException {
         super(DefaultEngineeringCRS.CARTESIAN_2D);
-        tEM = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
-        tree = new FileHilbertRTree(File.createTempFile("test", "tree"), 4, 2, crs, tEM);
+        tree = new MemoryHilbertRTree(4, 2, crs, tEM);
         tAF = ((AbstractHilbertRTree)tree).getTreeAccess();
     }
+    
 }

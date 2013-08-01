@@ -31,6 +31,7 @@ import static org.geotoolkit.index.tree.Node.PROP_HILBERT_ORDER;
 import static org.geotoolkit.index.tree.Node.PROP_ISLEAF;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.access.TreeAccess;
+import org.geotoolkit.index.tree.access.TreeAccessFile;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.mapper.TreeElementMapper;
@@ -53,8 +54,10 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
 //    
 //    boolean travelUpBeforeInsertAgain = false;
     
-    public AbstractHilbertRTree(final HilbertTreeAccessFile treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
+    public AbstractHilbertRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
         super(treeAccess, treeAccess.getCRS(), treeEltMap);
+//        if (!(treeAccess instanceof HilbertTreeAccessFile))
+//            throw new IllegalArgumentException("HilbertRTree init : you should specify a HilbertTreeAccess");
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);
         this.treeAccess = treeAccess;
@@ -599,22 +602,31 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
                 // empty child
                 if (currentChild.isEmpty()) {
                     candidate.removeChild(currentChild);
-                } else if (currentChild.isLeaf() 
-                     && currentChild.getChildCount() <= getMaxElements() / 3) {// other condition
-                    if (reinsertListCoords == null) {
-                        reinsertListCoords  = new ArrayList<double[]>();
-                        reinsertListObjects = new ArrayList<Object>();
-                    }
-                    int cuChildSibl = currentChild.getChildId();
-                    while (cuChildSibl != 0) {
-                        final FileNode currentData = treeAccess.readNode(cuChildSibl);
-                        reinsertListCoords.add(currentData.getBoundary());// risk de .clone a voir
-                        reinsertListObjects.add(-currentData.getChildId());
-                        cuChildSibl = currentData.getSiblingId();
-                        currentChild.removeChild(currentData);
-                        setElementsNumber(getElementsNumber()-1);
-                    }
-                    candidate.removeChild(currentChild);
+//                } else if (currentChild.isLeaf() 
+//                     && ((FileHilbertNode)currentChild).getDataCount() <= getMaxElements() / 3) {// other condition
+//                    if (reinsertListCoords == null) {
+//                        reinsertListCoords  = new ArrayList<double[]>();
+//                        reinsertListObjects = new ArrayList<Object>();
+//                    }
+//                    int cuCellSibl = currentChild.getChildId();
+//                    while (cuCellSibl != 0) {
+//                        final FileNode currentCell = treeAccess.readNode(cuCellSibl);
+//                        int cuDataSibl = currentCell.getChildId();
+//                        while (cuDataSibl != 0) {
+//                            final FileNode currentData = treeAccess.readNode(cuDataSibl);
+//                            reinsertListCoords.add(currentData.getBoundary());// risk de .clone a voir
+//                            reinsertListObjects.add(-currentData.getChildId());
+//                            setElementsNumber(getElementsNumber()-1);
+//                            cuDataSibl = currentData.getSiblingId();
+//                            currentChild.removeChild(currentData);
+//                        }
+////                            reinsertListCoords.add(currentCell.getBoundary());// risk de .clone a voir
+////                            reinsertListObjects.add(-currentCell.getChildId());
+//                        cuCellSibl = currentCell.getSiblingId();
+////                        currentChild.removeChild(currentCell);
+////                        setElementsNumber(getElementsNumber()-1);
+//                    }
+//                    candidate.removeChild(currentChild);
                 } else {
                     if (candiBound == null) {
                         candiBound = currentChild.getBoundary().clone();
@@ -622,7 +634,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
                         add(candiBound, currentChild.getBoundary());
                     }
                     // child own a single sub-child and its not a leaf.
-                    if (currentChild.getChildCount() == 1) {
+                    if (!currentChild.isLeaf() && currentChild.getChildCount() == 1) {
                         assert !currentChild.isLeaf() : "Trim : current child should not be leaf.";
                         final FileNode cChild = treeAccess.readNode(currentChild.getChildId());
                         assert Arrays.equals(currentChild.getBoundary(), cChild.getBoundary()) : "Node with only one element should have same boundary than its stored element.";

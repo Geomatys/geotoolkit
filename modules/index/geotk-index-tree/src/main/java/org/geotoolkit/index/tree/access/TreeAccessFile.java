@@ -106,7 +106,7 @@ public class TreeAccessFile extends TreeAccess {
         this.boundLength = dimension << 1;
         
         // Node size : boundary weigth + isLeaf boolean + parent ID Integer + 1st sibling Integer + 1st child Integer + child number.
-        nodeSize = (dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2 + 1;
+        nodeSize = ((dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2) + 1;
         
         // buffer attributs
         final int div = 819200 / nodeSize;// 4096 In future define a better approppriate value by benchmark.
