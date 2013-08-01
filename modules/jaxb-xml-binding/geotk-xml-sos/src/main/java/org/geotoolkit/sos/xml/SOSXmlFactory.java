@@ -28,6 +28,7 @@ import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.gml.xml.GMLXmlFactory;
 import org.geotoolkit.gml.xml.LineString;
 import org.geotoolkit.gml.xml.Point;
+import org.geotoolkit.gml.xml.Polygon;
 import org.geotoolkit.gml.xml.TimeIndeterminateValueType;
 import org.geotoolkit.observation.xml.OMXmlFactory;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
@@ -767,6 +768,45 @@ public class SOSXmlFactory {
             return new org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType(id, name, description, "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve",
                                                                           (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature, 
                                                                           (org.geotoolkit.gml.xml.v321.LineStringType)location,
+                                                                          (org.geotoolkit.gml.xml.v321.EnvelopeType)env);
+        } else {
+            throw new IllegalArgumentException("unexpected sos version number:" + version);
+        }
+    }
+
+    public static SamplingFeature buildSamplingPolygon(final String version, final String id, final String name, final String description, final FeatureProperty sampledFeature,
+                              final Polygon location, final Double areaValue, final String uom, final Envelope env) {
+        if ("1.0.0".equals(version)) {
+            if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v311.FeaturePropertyType)) {
+                throw new IllegalArgumentException("unexpected object version for sampled feature element");
+            }
+            if (location != null && !(location instanceof org.geotoolkit.gml.xml.v311.PolygonType)) {
+                throw new IllegalArgumentException("unexpected object version for location element");
+            }
+            if (env != null && !(env instanceof org.geotoolkit.gml.xml.v311.EnvelopeType)) {
+                throw new IllegalArgumentException("unexpected object version for env element");
+            }
+            final org.geotoolkit.gml.xml.v311.MeasureType length;
+            if (areaValue != null) {
+                length = new org.geotoolkit.gml.xml.v311.MeasureType(areaValue, uom);
+            } else {
+                length = new org.geotoolkit.gml.xml.v311.MeasureType(0.0, uom);
+            }
+            return new org.geotoolkit.sampling.xml.v100.SamplingSurfaceType(id, name, description,
+                                                                          (org.geotoolkit.gml.xml.v311.FeaturePropertyType)sampledFeature,
+                                                                          new org.geotoolkit.gml.xml.v311.SurfacePropertyType((org.geotoolkit.gml.xml.v311.PolygonType)location),
+                                                                          length,
+                                                                          (org.geotoolkit.gml.xml.v311.EnvelopeType)env);
+        } else if ("2.0.0".equals(version)) {
+            if (sampledFeature != null && !(sampledFeature instanceof org.geotoolkit.gml.xml.v321.FeaturePropertyType)) {
+                throw new IllegalArgumentException("unexpected object version for sampled feature element");
+            }
+            if (location != null && !(location instanceof org.geotoolkit.gml.xml.v321.PolygonType)) {
+                throw new IllegalArgumentException("unexpected object version for location element");
+            }
+            return new org.geotoolkit.samplingspatial.xml.v200.SFSpatialSamplingFeatureType(id, name, description, "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve",
+                                                                          (org.geotoolkit.gml.xml.v321.FeaturePropertyType)sampledFeature,
+                                                                          (org.geotoolkit.gml.xml.v321.PolygonType)location,
                                                                           (org.geotoolkit.gml.xml.v321.EnvelopeType)env);
         } else {
             throw new IllegalArgumentException("unexpected sos version number:" + version);

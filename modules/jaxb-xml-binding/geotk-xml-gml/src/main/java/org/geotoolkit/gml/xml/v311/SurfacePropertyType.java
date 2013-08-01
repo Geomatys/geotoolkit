@@ -80,6 +80,29 @@ public class SurfacePropertyType implements SurfaceProperty {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public SurfacePropertyType() {
+
+    }
+
+    public SurfacePropertyType(final AbstractSurfaceType surface) {
+        final ObjectFactory factory = new ObjectFactory();
+        if (surface instanceof OrientableSurfaceType) {
+            this.abstractSurface = factory.createOrientableSurface((OrientableSurfaceType)surface);
+        } else if (surface instanceof TriangulatedSurfaceType) {
+            this.abstractSurface = factory.createTriangulatedSurface((TriangulatedSurfaceType)surface);
+        } else if (surface instanceof PolyhedralSurfaceType) {
+            this.abstractSurface = factory.createPolyhedralSurface((PolyhedralSurfaceType)surface);
+        } else if (surface instanceof PolygonType) {
+            this.abstractSurface = factory.createPolygon((PolygonType)surface);
+        } else if (surface instanceof TinType) {
+            this.abstractSurface = factory.createTin((TinType)surface);
+        } else if (surface instanceof SurfaceType) {
+            this.abstractSurface = factory.createSurface((SurfaceType)surface);
+        } else if (surface instanceof AbstractSurfaceType) {
+            this.abstractSurface = factory.createAbstractSurface((AbstractSurfaceType)surface);
+        }
+    }
+    
     /**
      * Gets the value of the abstractSurface property.
      * 
