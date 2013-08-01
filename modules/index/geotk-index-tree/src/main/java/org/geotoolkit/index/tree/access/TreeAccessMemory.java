@@ -19,7 +19,7 @@ package org.geotoolkit.index.tree.access;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.index.tree.FileNode;
+import org.geotoolkit.index.tree.Node;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.intersects;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -30,13 +30,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class TreeAccessMemory extends TreeAccess {
 
     private int tabNodeLength;
-    private FileNode[] tabNode;
+    private Node[] tabNode;
     protected List<Integer> recycleID;
 
     public TreeAccessMemory(final int maxElements, final CoordinateReferenceSystem crs) {
         super(maxElements, crs);
         tabNodeLength = 100;
-        tabNode = new FileNode[tabNodeLength];
+        tabNode = new Node[tabNodeLength];
         recycleID = new ArrayList<Integer>();
         root = null;
     }
@@ -45,7 +45,7 @@ public class TreeAccessMemory extends TreeAccess {
     
     @Override
     protected void internalSearch(int nodeID) throws IOException{ //algorithm a ameliorer
-        final FileNode candidate = readNode(nodeID);
+        final Node candidate = readNode(nodeID);
         if (intersects(regionSearch, candidate.getBoundary(), true)) {
             if (candidate.isData()) {
                 if (currentPosition == currentLength) {
@@ -59,7 +59,7 @@ public class TreeAccessMemory extends TreeAccess {
                 int sibl = candidate.getChildId();
                 while (sibl != 0) {
                     internalSearch(sibl);
-                    final FileNode currentChild = readNode(sibl);
+                    final Node currentChild = readNode(sibl);
                     sibl = currentChild.getSiblingId();
                 }
             }
@@ -67,16 +67,16 @@ public class TreeAccessMemory extends TreeAccess {
     }
     
     @Override
-    public FileNode readNode(int indexNode) throws IOException {
+    public Node readNode(int indexNode) throws IOException {
         return tabNode[indexNode-1];
     }
 
     @Override
-    public void writeNode(FileNode candidate) throws IOException {
+    public void writeNode(Node candidate) throws IOException {
         final int candidateID = candidate.getNodeId();
         if (candidateID > tabNodeLength) {
-            final FileNode[] tfn = tabNode;
-            tabNode = new FileNode[candidateID << 1];
+            final Node[] tfn = tabNode;
+            tabNode = new Node[candidateID << 1];
             System.arraycopy(tfn, 0, tabNode, 0, tabNodeLength);
             tabNodeLength = candidateID << 1;
         }
@@ -84,7 +84,7 @@ public class TreeAccessMemory extends TreeAccess {
     }
 
     @Override
-    public void deleteNode(FileNode candidate) throws IOException {
+    public void deleteNode(Node candidate) throws IOException {
 //        final int candidateNodeId = candidate.getNodeId();
 //        for (int i = 0; i < listNode.size(); i++) {
 //            final FileNode currentFN = listNode.get(i);
@@ -102,7 +102,7 @@ public class TreeAccessMemory extends TreeAccess {
     public void rewind() throws IOException {
         super.rewind();
         tabNodeLength = 100;
-        tabNode = new FileNode[tabNodeLength];
+        tabNode = new Node[tabNodeLength];
         recycleID.clear();
     }
 
@@ -120,8 +120,8 @@ public class TreeAccessMemory extends TreeAccess {
      * @return 
      */
     @Override
-    public FileNode createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId){
+    public Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId){
         final int currentID = (recycleID.isEmpty()) ? nodeId++ : recycleID.remove(0);
-        return new FileNode(this, currentID, boundary, properties, parentId, siblingId, childId);
+        return new Node(this, currentID, boundary, properties, parentId, siblingId, childId);
     }
 }

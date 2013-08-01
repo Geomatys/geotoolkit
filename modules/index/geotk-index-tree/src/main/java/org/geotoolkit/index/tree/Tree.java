@@ -111,7 +111,7 @@ public interface Tree<E> {
     Calculator getCalculator();
 
     /**
-     * Clear tree (tree root Node becomme null).
+     * Clear tree (tree root Node become null).
      */
     void clear() throws StoreIndexException;
 
@@ -129,9 +129,14 @@ public interface Tree<E> {
      */
     double[] getExtent() throws StoreIndexException;
     
+    /**
+     * 
+     * @throws StoreIndexException 
+     */
     void close() throws StoreIndexException;
     
-    /**Create a node in accordance with this properties.
+    /**
+     * Create a node in accordance with this properties.
      *
      * @param tree pointer on Tree.
      * @param parent pointer on parent {@code Node}.

@@ -29,7 +29,7 @@ import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import org.geotoolkit.index.tree.FileNode;
+import org.geotoolkit.index.tree.Node;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.intersects;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -240,7 +240,7 @@ public class TreeAccessFile extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-    public FileNode readNode(final int indexNode) throws IOException {
+    public Node readNode(final int indexNode) throws IOException {
         adjustBuffer(indexNode);
         final double[] boundary = new double[boundLength];
         for (int i = 0; i < boundLength; i++) {
@@ -251,7 +251,7 @@ public class TreeAccessFile extends TreeAccess {
         final int siblingId    = byteBuffer.getInt();
         final int childId      = byteBuffer.getInt();
         final int childCount   = byteBuffer.getInt();
-        final FileNode redNode = new FileNode(this, indexNode, boundary, properties, parentId, siblingId, childId);
+        final Node redNode = new Node(this, indexNode, boundary, properties, parentId, siblingId, childId);
         redNode.setChildCount(childCount);
         return redNode;
     }
@@ -260,7 +260,7 @@ public class TreeAccessFile extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-    public void writeNode(final FileNode candidate) throws IOException {
+    public void writeNode(final Node candidate) throws IOException {
         final int indexNode    = candidate.getNodeId();
         adjustBuffer(indexNode);
         writeBufferLimit = Math.max(writeBufferLimit, byteBuffer.limit());
@@ -307,7 +307,7 @@ public class TreeAccessFile extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-    public void deleteNode(final FileNode candidate) throws IOException {
+    public void deleteNode(final Node candidate) throws IOException {
         recycleID.add(candidate.getNodeId());
     }
         
@@ -353,8 +353,8 @@ public class TreeAccessFile extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-     public FileNode createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
+     public Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
          final int currentID = (!recycleID.isEmpty()) ? recycleID.remove(0) : nodeId++;
-         return new FileNode(this, currentID, boundary, properties, parentId, siblingId, childId);
+         return new Node(this, currentID, boundary, properties, parentId, siblingId, childId);
      }
 }

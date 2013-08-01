@@ -33,7 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.util.ArraysExt;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.intersects;
-import org.geotoolkit.index.tree.FileNode;
+import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.access.TreeAccess;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -268,7 +268,7 @@ public class HilbertTreeAccessFile extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-    public FileNode readNode(final int indexNode) throws IOException {
+    public Node readNode(final int indexNode) throws IOException {
         adjustBuffer(indexNode);
         final double[] boundary = new double[boundLength];
         for (int i = 0; i < boundLength; i++) {
@@ -292,7 +292,7 @@ public class HilbertTreeAccessFile extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-    public void writeNode(final FileNode candidate) throws IOException {
+    public void writeNode(final Node candidate) throws IOException {
         final int indexNode    = candidate.getNodeId();
         adjustBuffer(indexNode);
         writeBufferLimit = Math.max(writeBufferLimit, byteBuffer.limit());
@@ -341,7 +341,7 @@ public class HilbertTreeAccessFile extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-    public void deleteNode(final FileNode candidate) throws IOException {
+    public void deleteNode(final Node candidate) throws IOException {
         recycleID.add(candidate.getNodeId());
     }
         
@@ -387,7 +387,7 @@ public class HilbertTreeAccessFile extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-     public FileNode createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
+     public Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
          final int currentID = (!recycleID.isEmpty()) ? recycleID.remove(0) : nodeId++;
         try {
             return new FileHilbertNode(this, currentID, (boundary == null) ? firstBound : boundary, properties, parentId, siblingId, childId);

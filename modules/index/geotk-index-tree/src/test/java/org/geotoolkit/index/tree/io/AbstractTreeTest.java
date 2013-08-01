@@ -19,28 +19,32 @@ package org.geotoolkit.index.tree.io;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import junit.framework.Assert;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.SpatialTreeTest;
+import org.apache.sis.util.ArgumentChecks;
 import org.junit.Test;
-import org.opengis.referencing.operation.TransformException;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
-import org.geotoolkit.index.tree.FileNode;
+import org.geotoolkit.index.tree.Node;
+import org.geotoolkit.index.tree.Tree;
+import org.geotoolkit.index.tree.TreeTest;
+import static org.geotoolkit.index.tree.TreeTest.createEntry;
 import org.geotoolkit.index.tree.access.TreeAccess;
-import org.junit.After;
-import org.junit.AfterClass;
+import org.geotoolkit.index.tree.mapper.TreeElementMapper;
 import static org.junit.Assert.assertTrue;
 import org.junit.Ignore;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CartesianCS;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.EllipsoidalCS;
 
 
 /**
  *
  * @author rmarechal
  */
-public abstract class AbstractTreeTest extends SpatialTreeTest {
+public abstract class AbstractTreeTest extends TreeTest {
 
     int nbrTemp = 0;
     
@@ -48,9 +52,54 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
     int lSize = 3000;
     
     protected TreeAccess tAF;
+    protected Tree<double[]> tree;
+    protected final List<double[]> lData = new ArrayList<double[]>();
+    protected final CoordinateReferenceSystem crs;
+    protected final int dimension;
+    protected final double[] minMax;
+    protected TreeElementMapper<double[]> tEM;
     
     public AbstractTreeTest(CoordinateReferenceSystem crs) throws StoreIndexException, IOException {
-        super(crs);
+        ArgumentChecks.ensureNonNull("crs", crs);
+        this.crs = crs;
+        this.dimension = crs.getCoordinateSystem().getDimension();
+        ArgumentChecks.ensurePositive("dimension", this.dimension);
+//        this.tree = tree;
+        final CoordinateSystem cs = crs.getCoordinateSystem();
+        minMax = new double[2 * dimension];
+        final double[] centerEntry = new double[dimension];
+        if (cs instanceof CartesianCS) {
+            for(int l = 0; l < 2 * dimension; l+=2) {
+                minMax[l] = -1500;
+                minMax[l+1] = 1500;
+            }
+            for (int i = 0; i < 3000; i++) {
+                for (int nbCoords = 0; nbCoords < this.dimension; nbCoords++) {
+                    double value = (Math.random() < 0.5) ? -1 : 1;
+                    value *= 1500 * Math.random();
+                    centerEntry[nbCoords] = value;
+                }
+                lData.add(createEntry(centerEntry));
+            }
+        } else if (cs instanceof EllipsoidalCS) {
+            minMax[0] = -180;
+            minMax[1] = 180;
+            minMax[2] = -90;
+            minMax[3] = 90;
+            for (int i = 0; i < 3000; i++) {
+                centerEntry[0] = (Math.random()-0.5) * 2*170;
+                centerEntry[1] = (Math.random()-0.5) * 2*80;
+                if(cs.getDimension()>2) {
+                    centerEntry[2] = Math.random()*8800;
+                    minMax[4] = -8800;
+                    minMax[5] = 8800;
+                }
+                lData.add(createEntry(centerEntry));
+            }
+        } else {
+            throw new IllegalArgumentException("invalid crs, Coordinate system type :"+ cs.getClass() +" is not supported");
+        }
+        tEM = new TreeElementMapperTest(crs);
     }
     
 //    @After
@@ -58,7 +107,6 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
 //        tree.close();
 //    }
 
-    @Override
     protected void insert() throws StoreIndexException, IOException {
         tEM.clear();
         nbrTemp = 0;
@@ -76,8 +124,6 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    @Override
-//    @Ignore
     public void insertTest() throws StoreIndexException, IOException {
         tree.setRoot(null);
         insert();
@@ -98,7 +144,6 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
             assertTrue(ex instanceof IllegalArgumentException);
             //ok
         }
-//        checkNodeBoundaryTest(tree.getRoot(), lData);
     }
     
     /**
@@ -107,16 +152,16 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
     protected void checkNodeBoundaryTest(final Node node, List<double[]> listRef) throws StoreIndexException, IOException {
         assertTrue(checkBoundaryNode(node));
         if (!node.isLeaf()) {
-            int sibl = ((FileNode)node).getChildId();
+            int sibl = ((Node)node).getChildId();
             while (sibl != 0) {
-                final FileNode currentChild = tAF.readNode(sibl);
+                final Node currentChild = tAF.readNode(sibl);
                 checkNodeBoundaryTest(currentChild, listRef);
                 sibl = currentChild.getSiblingId();
             }
         } else {
-            int sibl = ((FileNode)node).getChildId();
+            int sibl = ((Node)node).getChildId();
             while (sibl != 0) {
-                final FileNode currentData = tAF.readNode(sibl);
+                final Node currentData = tAF.readNode(sibl);
                 assertTrue(currentData.isData());
                 final int currentValue = - currentData.getChildId();
                 final int listId = currentValue -1;
@@ -132,13 +177,12 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
     /**
      * Compare boundary node from his children or elements boundary.
      */
-    @Override
     public boolean checkBoundaryNode(final Node node) throws IOException {
         double[] subBound = null;
         final double[] currentBoundary = node.getBoundary().clone();
-        int sibl = ((FileNode)node).getChildId();
+        int sibl = ((Node)node).getChildId();
         while (sibl != 0) {
-            final FileNode currentChild = tAF.readNode(sibl);
+            final Node currentChild = tAF.readNode(sibl);
             if (subBound == null) {
                 subBound = currentChild.getBoundary().clone();
             } else {
@@ -155,7 +199,6 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    @Override
     @Ignore
     public void checkBoundaryTest() throws StoreIndexException, IOException {
         if (tree.getRoot() == null) insert();
@@ -168,7 +211,6 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    @Override
     public void queryOnBorderTest() throws StoreIndexException, IOException {
         tree.setRoot(null);
         tEM.clear();
@@ -202,22 +244,13 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
             }
             gR = new double[]{93, 18, 19, 130, 87, 21};
         }
-        int siz = lGE.size();
-        for (int i = 0,  s = siz/*lGE.size()*/; i < s; i++) {
-            System.out.println("insert i = "+i);
+        for (int i = 0,  s = lGE.size(); i < s; i++) {
+//            System.out.println("insert i = "+i);
             tree.insert(lGE.get(i));
-//            System.out.println(tree.toString());
         }
-        
-//        for (int i = 0,  s = siz/*lGE.size()*/; i < s; i++) {
-//            System.out.println("remove i = "+i);
-//            tree.remove(lGE.get(i));
-////            System.out.println(tree.toString());
-//        }
         final GeneralEnvelope rG = new GeneralEnvelope(crs);
         rG.setEnvelope(gR);
-//        System.out.println(tree.toString());
-//      // visitor
+        
         int[] tabSearch = tree.searchID(rG);
         assertTrue(compareLists(lGERef, Arrays.asList(getResult(tabSearch))));
 //        checkNodeBoundaryTest(tree.getRoot(), lGE);
@@ -227,8 +260,6 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
      * Test search query inside tree.
      */
     @Test
-    @Override
-//    @Ignore
     public void queryInsideTest() throws StoreIndexException, IOException {
         if (tree.getRoot() == null) insert();
         final List<double[]> lDataTemp = new ArrayList<double[]>();
@@ -251,10 +282,7 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    @Override
-//    @Ignore
     public void queryOutsideTest() throws StoreIndexException, IOException {
-//        System.out.println("queryOutsideTest");
         if (tree.getRoot() == null) insert();
         final double[] areaSearch = new double[dimension<<1];
         for (int i = 0; i < dimension; i++) {
@@ -276,13 +304,10 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    @Override
-//    @Ignore
     public void insertDelete() throws StoreIndexException, IOException {
-//        System.out.println("insertDelete");
         if (tree.getRoot() == null) insert();
 //        checkNodeBoundaryTest(tree.getRoot(), lData);
-//        Collections.shuffle(lData);
+        Collections.shuffle(lData);
         for (int i = 0, s = lSize; i < s; i++) {
             assertTrue(tree.remove(lData.get(i)));
         }
@@ -303,4 +328,19 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
         tabSearch = tree.searchID(rG);
         assertTrue(compareLists(lData, Arrays.asList(getResult(tabSearch))));
     }
+    
+    protected double[][] getResult(int[] tabID) throws IOException {
+        final int l = tabID.length;
+        double[][] tabResult = new double[l][];
+        for (int i = 0; i < l; i++) {
+            try {
+                tabResult[i] = tEM.getObjectFromTreeIdentifier(tabID[i]);
+            } catch (Exception ex) {
+                System.out.println("");
+            }
+//            tabResult[i] = tEM.getObjectFromTreeIdentifier(tabID[i]);
+        }
+        return tabResult;
+    }
+    
 }

@@ -17,21 +17,15 @@
 package org.geotoolkit.index.tree.hilbert;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.index.tree.AbstractTree;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
-import org.geotoolkit.index.tree.FileNode;
 import org.geotoolkit.index.tree.Node;
-import static org.geotoolkit.index.tree.Node.PROP_HILBERT_ORDER;
-import static org.geotoolkit.index.tree.Node.PROP_ISLEAF;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.access.TreeAccess;
-import org.geotoolkit.index.tree.access.TreeAccessFile;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.mapper.TreeElementMapper;
@@ -71,7 +65,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
         final Node root = getRoot();
         if (root != null && !root.isEmpty()) {
             try {
-                return treeAccess.search(((FileNode)root).getNodeId(), regionSearch);
+                return treeAccess.search(((Node)root).getNodeId(), regionSearch);
             } catch (IOException ex) {
                 throw new StoreIndexException(this.getClass().getName()+" impossible to find stored elements at "
                         +Arrays.toString(regionSearch)+" region search area.", ex);
@@ -94,7 +88,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
                 final Node newRoot = nodeInsert(root, object, coordinates);
                 if (newRoot != null) {
                     setRoot(newRoot);
-                    treeAccess.writeNode((FileNode)newRoot);
+                    treeAccess.writeNode((Node)newRoot);
                 }
             }
         } catch (IOException ex) {
@@ -103,27 +97,27 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
     }
     
     private Node nodeInsert(Node candidate, Object object, double... coordinates) throws IOException{
-        assert candidate instanceof FileNode;
-        FileNode fileCandidate = (FileNode) candidate;
+        assert candidate instanceof Node;
+        Node fileCandidate = (Node) candidate;
         assert !fileCandidate.isData() : "nodeInsert : candidate should never be data type.";
         /**
          * During travel down recursively candidate parent may be modified.
          * When travel up recursively if candidate should be modified, get
          * new candidate object updated from sub-method.
          */
-        FileNode subCandidateParent = null;
+        Node subCandidateParent = null;
         if (fileCandidate.isLeaf()) {
             if (fileCandidate.isFull()) {
                 Node[] lSp = splitNode(fileCandidate);
                 if (lSp != null) {
 
-                    FileNode lsp0 = (FileNode) lSp[0];
-                    FileNode lsp1 = (FileNode) lSp[1];
+                    Node lsp0 = (Node) lSp[0];
+                    Node lsp1 = (Node) lSp[1];
                     assert lsp0.checkInternal() : "insertNode : just after split.lsp0";
                     assert lsp1.checkInternal() : "insertNode : just after split.lsp1";
                     
                     if (fileCandidate.getParentId() != 0) {
-                        FileNode parentCandidate = treeAccess.readNode(fileCandidate.getParentId());
+                        Node parentCandidate = treeAccess.readNode(fileCandidate.getParentId());
 //                        parentCandidate.removeChild(fileCandidate);
                         final int lsp0Id = lsp0.getNodeId();
                         final int lsp1Id = lsp1.getNodeId();
@@ -184,7 +178,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
             }
         } else {
             assert fileCandidate.checkInternal() : "nodeInsert : Node before insert.";
-            subCandidateParent = (FileNode)nodeInsert(chooseSubtree(fileCandidate, coordinates), object, coordinates);
+            subCandidateParent = (Node)nodeInsert(chooseSubtree(fileCandidate, coordinates), object, coordinates);
             add(fileCandidate.getBoundary(), coordinates);
             
             /**
@@ -230,8 +224,8 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
                 assert fileCandidate.checkInternal() : "nodeInsert : after Branch grafting.";
                 // split
                 final Node[] splitTable = splitNode(fileCandidate);
-                final FileNode split1 = (FileNode)splitTable[0];
-                final FileNode split2 = (FileNode)splitTable[1];
+                final Node split1 = (Node)splitTable[0];
+                final Node split2 = (Node)splitTable[1];
 
                 final int candidateParentID = fileCandidate.getParentId();
                 if (candidateParentID == 0) { // on est sur le noeud root
@@ -244,7 +238,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
                     assert split2.checkInternal() : "nodeInsert : split2.";
                     assert fileCandidate.checkInternal() : "nodeInsert : split root.";
                 } else {
-                    final FileNode parent = treeAccess.readNode(candidateParentID);
+                    final Node parent = treeAccess.readNode(candidateParentID);
                     parent.removeChild(fileCandidate);
                     parent.addChild(split1);
                     parent.addChild(split2);
@@ -274,7 +268,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
      * @throws IllegalArgumentException if candidate elements number is lesser 2.
      * @return {@code Node} List which contains two {@code Node} (split result of candidate).
      */
-    private Node[] splitNode(final FileNode candidate) throws IllegalArgumentException, IOException {
+    private Node[] splitNode(final Node candidate) throws IllegalArgumentException, IOException {
         ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
         assert candidate.checkInternal() : "splitNode : begin.";
         int childNumber = (candidate.isLeaf())?((FileHilbertNode)candidate).getDataCount():candidate.getChildCount();
@@ -354,7 +348,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
         final boolean isLeaf = candidate.isLeaf();
         if (!isLeaf && index == 1) {
             result1 = children[0];
-            ((FileNode)result1).setSiblingId(0);
+            ((Node)result1).setSiblingId(0);
         } else {
             result1 = createNode(treeAccess, null, candidateProperties, 0, 0, 0);
             System.arraycopy(children, 0, result1Children, 0, index);
@@ -362,7 +356,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
         }
         if (!isLeaf && lengthResult2 == 1) {
             result2 = children[size-1];
-            ((FileNode)result2).setSiblingId(0);
+            ((Node)result2).setSiblingId(0);
         } else {
             result2 = createNode(treeAccess, null, candidateProperties, 0, 0, 0);
             System.arraycopy(children, index, result2Children, 0, lengthResult2);
@@ -387,7 +381,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
      * @throws IllegalArgumentException if children is empty.
      * @return {@code Node} which is appropriate to contain shape.
      */
-    private Node chooseSubtree(final FileNode candidate, final double... coordinates) throws IOException {
+    private Node chooseSubtree(final Node candidate, final double... coordinates) throws IOException {
         ArgumentChecks.ensureNonNull("chooseSubtree : candidate", candidate);
         ArgumentChecks.ensureNonNull("chooseSubtree : coordinates", coordinates);
 //        assert candidate.checkInternal() : "chooseSubtree : candidate not conform";
@@ -516,7 +510,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
         final Node root = getRoot();
         if (root != null) {
             try {
-                final boolean removed = removeNode((FileNode)root, object, coordinates);
+                final boolean removed = removeNode((Node)root, object, coordinates);
                 return removed;
             } catch (IOException ex) {
                 throw new StoreIndexException(this.getClass().getName()
@@ -539,7 +533,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private boolean removeNode(final FileNode candidate, final Object object, final double... coordinate) throws IllegalArgumentException, StoreIndexException, IOException{
+    private boolean removeNode(final Node candidate, final Object object, final double... coordinate) throws IllegalArgumentException, StoreIndexException, IOException{
         ArgumentChecks.ensureNonNull("removeNode : Node candidate", candidate);
         ArgumentChecks.ensureNonNull("removeNode : Object object", object);
         ArgumentChecks.ensureNonNull("removeNode : double[] coordinate", coordinate);
@@ -548,10 +542,10 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
                 int childSibl = candidate.getChildId();
                 boolean removed = false;
                 while (childSibl != 0) {
-                        final FileNode currentChild = treeAccess.readNode(childSibl);
+                        final Node currentChild = treeAccess.readNode(childSibl);
                         int datasibl = currentChild.getChildId();
                         while (datasibl != 0) {
-                            final FileNode currentData = treeAccess.readNode(datasibl);
+                            final Node currentData = treeAccess.readNode(datasibl);
                             if (((Integer)object) == -currentData.getChildId()
                                && Arrays.equals(currentData.getBoundary(), coordinate)) {
                                 removed = true;
@@ -571,7 +565,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
             } else {
                 int sibl = candidate.getChildId();
                 while (sibl != 0) {
-                    final FileNode currentChild = treeAccess.readNode(sibl);
+                    final Node currentChild = treeAccess.readNode(sibl);
                     final boolean removed = removeNode(currentChild, object, coordinate);
                     if (removed) return true;
                     sibl = currentChild.getSiblingId();
@@ -589,7 +583,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
      * @param candidate {@code Node} to begin condense.
      * @throws IllegalArgumentException if candidate is null.
      */
-    private void trim(final FileNode candidate) throws IllegalArgumentException, IOException, StoreIndexException {
+    private void trim(final Node candidate) throws IllegalArgumentException, IOException, StoreIndexException {
         ArgumentChecks.ensureNonNull("trim : Node candidate", candidate);
         List<double[]> reinsertListCoords = null;
         List<Object> reinsertListObjects = null;
@@ -597,7 +591,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
         if (candidate.getChildId() != 0 && !candidate.isLeaf()) {
             int sibl = candidate.getChildId();
             while (sibl != 0) {
-                final FileNode currentChild = treeAccess.readNode(sibl);
+                final Node currentChild = treeAccess.readNode(sibl);
                 // empty child
                 if (currentChild.isEmpty()) {
                     candidate.removeChild(currentChild);
@@ -635,7 +629,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
                     // child own a single sub-child and its not a leaf.
                     if (!currentChild.isLeaf() && currentChild.getChildCount() == 1) {
                         assert !currentChild.isLeaf() : "Trim : current child should not be leaf.";
-                        final FileNode cChild = treeAccess.readNode(currentChild.getChildId());
+                        final Node cChild = treeAccess.readNode(currentChild.getChildId());
                         assert Arrays.equals(currentChild.getBoundary(), cChild.getBoundary()) : "Node with only one element should have same boundary than its stored element.";
                         candidate.removeChild(currentChild);
                         candidate.addChild(cChild);
@@ -645,7 +639,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
             }
         }
         if (candiBound != null) {
-            candidate.setBound(candiBound);
+            candidate.setBoundary(candiBound);
              treeAccess.writeNode(candidate);
             assert candidate.checkInternal() : "trim : candidate not conform";
         }
@@ -672,7 +666,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
         }
     }
 
-    public FileNode createNode(TreeAccess tA, double[] boundary, byte properties, int parentId, int siblingId, int childId) throws IllegalArgumentException {
+    public Node createNode(TreeAccess tA, double[] boundary, byte properties, int parentId, int siblingId, int childId) throws IllegalArgumentException {
         return tA.createNode(boundary, properties, parentId, siblingId, childId);
     }
     

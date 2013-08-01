@@ -21,7 +21,7 @@ import java.util.List;
 import org.geotoolkit.index.tree.Node;
 import org.apache.sis.util.ArgumentChecks;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
-import org.geotoolkit.index.tree.FileNode;
+import org.geotoolkit.index.tree.Node;
 
 /**
  * Define a generic Calculator to define computing rules of tree.

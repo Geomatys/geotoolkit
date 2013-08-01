@@ -18,7 +18,6 @@ package org.geotoolkit.index.tree.access;
 
 import java.io.IOException;
 import java.util.Arrays;
-import org.geotoolkit.index.tree.FileNode;
 import org.geotoolkit.index.tree.Node;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -30,7 +29,7 @@ public abstract class TreeAccess {
    
     protected CoordinateReferenceSystem crs;
     protected int maxElement;
-    protected FileNode root;
+    protected Node root;
     
     protected int nodeId = 1;
     //attribut define for research
@@ -77,21 +76,21 @@ public abstract class TreeAccess {
      * @return
      * @throws IOException 
      */
-    public abstract FileNode readNode(final int indexNode) throws IOException;
+    public abstract Node readNode(final int indexNode) throws IOException;
     
     /**
      * 
      * @param candidate
      * @throws IOException 
      */
-    public abstract void writeNode(final FileNode candidate) throws IOException;
+    public abstract void writeNode(final Node candidate) throws IOException;
     
     /**
      * 
      * @param candidate
      * @throws IOException 
      */
-    public abstract void deleteNode(final FileNode candidate) throws IOException;
+    public abstract void deleteNode(final Node candidate) throws IOException;
     
     public CoordinateReferenceSystem getCRS(){
         return crs;
@@ -151,7 +150,7 @@ public abstract class TreeAccess {
      * @param childId
      * @return 
      */
-    public FileNode createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
-        return new FileNode(this, nodeId++, boundary, properties, parentId, siblingId, childId);
+    public Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
+        return new Node(this, nodeId++, boundary, properties, parentId, siblingId, childId);
     }
 }

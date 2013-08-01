@@ -164,13 +164,9 @@ public final class TreeX {
             } break;
             case DISJOINT : {
                 int[] tabRef;
-                try {
-                    final GeneralEnvelope env = new GeneralEnvelope(tree.getCrs());
-                    env.setEnvelope(tree.getRoot().getBoundary());
-                    tabRef = tree.searchID(env);
-                } catch (IOException ex) {
-                    throw new StoreIndexException("TreeX.search() : during disjoint case impossible to define root boundary.", ex);
-                }
+                final GeneralEnvelope env = new GeneralEnvelope(tree.getCrs());
+                env.setEnvelope(tree.getRoot().getBoundary());
+                tabRef = tree.searchID(env);
                 tabResult = new int[Math.max(tabSearch.length, tabRef.length)];
                 for(int i = 0; i < tabRef.length; i++) {
                     final Envelope envRef = (Envelope) tEM.getObjectFromTreeIdentifier(tabRef[i]);
