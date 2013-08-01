@@ -25,9 +25,9 @@ import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
  *
  * @author Remi Marechal (Geomatys).
  */
-public class MemoryStarRTree2Dtest extends AbstractTreeTest{
+public class MemoryStarRTree2DTest extends AbstractTreeTest{
 
-    public MemoryStarRTree2Dtest() throws StoreIndexException, IOException {
+    public MemoryStarRTree2DTest() throws StoreIndexException, IOException {
         super(DefaultEngineeringCRS.CARTESIAN_2D);
         tree = new MemoryStarRTree(4, crs, tEM);
         tAF  = ((AbstractStarRTree)tree).getTreeAccess();

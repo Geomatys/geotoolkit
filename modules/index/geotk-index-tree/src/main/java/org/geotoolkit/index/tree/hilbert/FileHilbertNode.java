@@ -17,7 +17,7 @@ import org.geotoolkit.gui.swing.tree.Trees;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.FileNode;
 import org.geotoolkit.index.tree.Node;
-import static org.geotoolkit.index.tree.Node.PROP_HILBERT_ORDER;
+import org.geotoolkit.index.tree.access.TreeAccess;
 import org.geotoolkit.index.tree.hilbert.iterator.HilbertIterator;
 
 /**
@@ -35,7 +35,7 @@ public class FileHilbertNode extends FileNode {
     private static final double LN2 = 0.6931471805599453;
     
 
-    public FileHilbertNode(HilbertTreeAccessFile tAF, int nodeId, double[] boundary, byte properties, int parentId, int siblingId, int childId) throws IOException {
+    public FileHilbertNode(TreeAccess tAF, int nodeId, double[] boundary, byte properties, int parentId, int siblingId, int childId) throws IOException {
         super(tAF, nodeId, boundary, properties, parentId, siblingId, childId);
         dimension = tAF.getCRS().getCoordinateSystem().getDimension();
         boundTemp = new double[dimension << 1];
@@ -101,7 +101,7 @@ public class FileHilbertNode extends FileNode {
             // la feuille est elle full ??
             if (index == -1) {
                 // increase hilbert order
-                assert currentHilbertOrder++ < ((HilbertTreeAccessFile)tAF).getHilbertOrder() : "impossible to increase node hilbert order";
+                assert currentHilbertOrder++ < tAF.getHilbertOrder() : "impossible to increase node hilbert order";
                 // on recupere tout les elements contenu dans cette feuille.
                 data.clear();
                 for (Node cnod : children) {
@@ -311,7 +311,7 @@ public class FileHilbertNode extends FileNode {
     @Override
     public boolean isFull() throws IOException {
         if (isLeaf()) {
-            return isInternalyFull() && currentHilbertOrder == ((HilbertTreeAccessFile)tAF).getHilbertOrder();
+            return isInternalyFull() && currentHilbertOrder == tAF.getHilbertOrder();
         } else {
             return super.isFull();
         }

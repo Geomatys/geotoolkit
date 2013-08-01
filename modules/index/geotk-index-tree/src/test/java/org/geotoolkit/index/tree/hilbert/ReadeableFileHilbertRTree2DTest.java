@@ -23,17 +23,22 @@ import org.geotoolkit.index.tree.io.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 
-
 /**
  *
- * @author Remi Marechal (Geomatys).
+ * @author rmarechal
  */
-public class WritableFileHilbertRTree2DTest extends AbstractTreeTest {
+public class ReadeableFileHilbertRTree2DTest extends AbstractTreeTest {
 
-    public WritableFileHilbertRTree2DTest() throws StoreIndexException, IOException {
+    public ReadeableFileHilbertRTree2DTest() throws StoreIndexException, IOException, ClassNotFoundException {
         super(DefaultEngineeringCRS.CARTESIAN_2D);
-        tEM = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
-        tree = new FileHilbertRTree(File.createTempFile("test", "tree"), 4, 2, crs, tEM);
-        tAF = ((AbstractHilbertRTree)tree).getTreeAccess();
+        final File inOutFile = File.createTempFile("test", "tree");
+        tEM  = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
+        tree = new FileHilbertRTree(inOutFile, 4, 2, crs, tEM);
+        tAF  = ((AbstractHilbertRTree)tree).getTreeAccess();
+        insert();
+        tree.close();
+        tree = new FileHilbertRTree(inOutFile, tEM);
+        tAF  = ((AbstractHilbertRTree)tree).getTreeAccess();
     }
+    
 }
