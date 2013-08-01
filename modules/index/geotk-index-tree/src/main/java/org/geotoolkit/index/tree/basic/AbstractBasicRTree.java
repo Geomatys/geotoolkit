@@ -25,7 +25,6 @@ import org.apache.sis.util.Classes;
 import org.geotoolkit.index.tree.AbstractTree;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.access.TreeAccess;
 import static org.geotoolkit.index.tree.basic.SplitCase.LINEAR;
@@ -655,13 +654,10 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
         }
     }
 
+    @Override
     public Node createNode(TreeAccess tA, double[] boundary, byte properties, int parentId, int siblingId, int childId) throws IllegalArgumentException {
         return tA.createNode(boundary, properties, parentId, siblingId, childId);
-    }
-    
-    public TreeAccess getTreeAccess(){
-        return treeAccess;
-    }
+    }    
     
     /**
      * {@inheritDoc}
@@ -673,19 +669,14 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
         return Classes.getShortClassName(this) + "\n" + strRoot;
     }
 
-    @Override
-    public Node createNode(Tree tree, Node parent, Node[] children, Object[] objects, double[][] coordinates) throws IllegalArgumentException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void close() throws StoreIndexException {
-        try {
-            treeAccess.setTreeIdentifier(treeIdentifier);
-            treeAccess.setEltNumber(getElementsNumber());
-            treeAccess.close();
-        } catch (IOException ex) {
-            throw new StoreIndexException("FileBasicRTree : close(). Impossible to close TreeAccessFile.", ex);
-        }
-    }
+//    @Override
+//    public void close() throws StoreIndexException {
+//        try {
+//            treeAccess.setTreeIdentifier(treeIdentifier);
+//            treeAccess.setEltNumber(getElementsNumber());
+//            treeAccess.close();
+//        } catch (IOException ex) {
+//            throw new StoreIndexException("FileBasicRTree : close(). Impossible to close TreeAccessFile.", ex);
+//        }
+//    }
 }

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.io.IOException;
+import org.geotoolkit.index.tree.access.TreeAccess;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.mapper.TreeElementMapper;
@@ -89,10 +89,11 @@ public interface Tree<E> {
     int getMaxElements();
 
     /**
-     * @return tree trunk.
+     * 
+     * @return 
      */
     Node getRoot();
-
+    
     /**
      * Affect a new root {@code Node}.
      *
@@ -145,5 +146,5 @@ public interface Tree<E> {
      * @param coordinates lower upper bounding box coordinates table.
      * @return appropriate Node from tree.
      */
-    Node createNode(Tree tree, Node parent, Node[] children, Object[] objects, double[][] coordinates) throws IllegalArgumentException, IOException;
+    Node createNode(TreeAccess tA, double[] boundary, byte properties, int parentId, int siblingId, int childId);
 }

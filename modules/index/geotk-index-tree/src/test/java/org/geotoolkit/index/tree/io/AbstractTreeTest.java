@@ -127,7 +127,7 @@ public abstract class AbstractTreeTest extends TreeTest {
     public void insertTest() throws StoreIndexException, IOException {
         tree.setRoot(null);
         insert();
-        final double[] gr = ((Node) tree.getRoot()).getBoundary();
+        final double[] gr = tree.getRoot().getBoundary();
         final double[] envSearch = gr.clone();
         
         final GeneralEnvelope rG = new GeneralEnvelope(crs);
@@ -152,14 +152,14 @@ public abstract class AbstractTreeTest extends TreeTest {
     protected void checkNodeBoundaryTest(final Node node, List<double[]> listRef) throws StoreIndexException, IOException {
         assertTrue(checkBoundaryNode(node));
         if (!node.isLeaf()) {
-            int sibl = ((Node)node).getChildId();
+            int sibl = node.getChildId();
             while (sibl != 0) {
                 final Node currentChild = tAF.readNode(sibl);
                 checkNodeBoundaryTest(currentChild, listRef);
                 sibl = currentChild.getSiblingId();
             }
         } else {
-            int sibl = ((Node)node).getChildId();
+            int sibl = node.getChildId();
             while (sibl != 0) {
                 final Node currentData = tAF.readNode(sibl);
                 assertTrue(currentData.isData());
@@ -180,7 +180,7 @@ public abstract class AbstractTreeTest extends TreeTest {
     public boolean checkBoundaryNode(final Node node) throws IOException {
         double[] subBound = null;
         final double[] currentBoundary = node.getBoundary().clone();
-        int sibl = ((Node)node).getChildId();
+        int sibl = node.getChildId();
         while (sibl != 0) {
             final Node currentChild = tAF.readNode(sibl);
             if (subBound == null) {
