@@ -298,7 +298,7 @@ public abstract class AbstractTreeTest extends SpatialTreeTest {
         int[] tabSearch = tree.searchID(rG);
         assertTrue(tabSearch == null);
         assertTrue(tree.getElementsNumber() == 0);
-        assertTrue(checkTreeElts(tree));
+////        assertTrue(checkTreeElts(tree));
         insert();
         tabSearch = tree.searchID(rG);
         assertTrue(compareLists(lData, Arrays.asList(getResult(tabSearch))));

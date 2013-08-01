@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.index.tree.basic;
 
+import java.io.File;
 import java.io.IOException;
-import org.geotoolkit.index.tree.SpatialTreeTest;
-import org.geotoolkit.index.tree.basic.BasicRTree;
-import org.geotoolkit.index.tree.basic.SplitCase;
+import org.geotoolkit.index.tree.io.AbstractTreeTest;
+import org.geotoolkit.index.tree.io.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
@@ -27,10 +27,12 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class BasicRTreeGeo2DTest extends SpatialTreeTest {
+public class BasicRTreeGeo2DTest extends AbstractTreeTest {
 
     public BasicRTreeGeo2DTest() throws StoreIndexException, IOException {
         super(DefaultGeographicCRS.WGS84);
-        tree = new BasicRTree(4, crs, SplitCase.QUADRATIC, tEM);
+        tEM = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
+        tree = new FileBasicRTree(File.createTempFile("test", "tree"), 3, crs, SplitCase.QUADRATIC, tEM);
+        tAF  = ((AbstractBasicRTree)tree).getTreeAccess();
     }
 }

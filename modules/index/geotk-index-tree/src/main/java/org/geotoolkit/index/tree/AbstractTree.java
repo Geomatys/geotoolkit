@@ -179,13 +179,6 @@ public abstract class AbstractTree<E> implements Tree<E> {
         return this.calculator;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public NodeFactory getNodeFactory() {
-        return null;
-    }
 
     /**
      * {@inheritDoc}
