@@ -153,7 +153,6 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
                         
                         assert lsp0.checkInternal() : "insertNode : split with parent not null.lsp0";
                         assert lsp1.checkInternal() : "insertNode : split with parent not null.lsp1";
-                        System.out.println(lsp0.toString());
                         parentCandidate.removeChild(fileCandidate);
                         lsp0.setParentId(parentCandidate.getNodeId());
                         lsp0.setSiblingId(0);

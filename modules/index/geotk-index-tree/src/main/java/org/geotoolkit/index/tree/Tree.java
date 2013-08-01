@@ -111,12 +111,6 @@ public interface Tree<E> {
     Calculator getCalculator();
 
     /**
-     * @return NodeFactory to create adapted Tree Node.
-     */
-    @Deprecated
-    NodeFactory getNodeFactory();
-
-    /**
      * Clear tree (tree root Node becomme null).
      */
     void clear() throws StoreIndexException;

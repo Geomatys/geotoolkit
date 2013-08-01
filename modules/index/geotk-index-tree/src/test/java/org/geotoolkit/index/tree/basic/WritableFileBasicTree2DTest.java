@@ -18,9 +18,6 @@ package org.geotoolkit.index.tree.basic;
 
 import java.io.File;
 import java.io.IOException;
-import org.geotoolkit.index.tree.basic.AbstractBasicRTree;
-import org.geotoolkit.index.tree.basic.FileBasicRTree;
-import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.io.AbstractTreeTest;
 import org.geotoolkit.index.tree.io.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.io.StoreIndexException;
@@ -37,8 +34,6 @@ public class WritableFileBasicTree2DTest extends AbstractTreeTest {
         super(DefaultEngineeringCRS.CARTESIAN_2D);
         tEM = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
         tree = new FileBasicRTree(File.createTempFile("test", "tree"), 3, crs, SplitCase.LINEAR, tEM);
-//        tree = new FileBasicRTree(File.createTempFile("test", "tree"), 3, crs, 
-//                SplitCase.LINEAR, new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper")));
         tAF  = ((AbstractBasicRTree)tree).getTreeAccess();
     }
     

@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.index.tree.hilbert.HilbertRTree;
+import org.geotoolkit.index.tree.hilbert.AbstractHilbertRTree;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -137,7 +137,7 @@ public abstract class TreeTest {
      */
     protected boolean checkTreeElts(Tree tree) throws IOException {
         final int treeElement = tree.getElementsNumber();
-        if (tree instanceof HilbertRTree) {
+        if (tree instanceof AbstractHilbertRTree) {
             return DefaultTreeUtils.countEltsInHilbertNode(tree.getRoot(), 0) == treeElement;
         }
         return DefaultTreeUtils.countElementsRecursively(tree.getRoot(), 0) == treeElement;
