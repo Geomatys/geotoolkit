@@ -358,6 +358,8 @@ public class OMXmlFactory {
                 return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingSolid((org.geotoolkit.sampling.xml.v100.SamplingSolidType)feature));
             } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingSurfaceType) {
                 return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingSurface((org.geotoolkit.sampling.xml.v100.SamplingSurfaceType)feature));
+            } else if (feature instanceof org.geotoolkit.sampling.xml.v100.SamplingFeatureType) {
+                return new org.geotoolkit.gml.xml.v311.FeaturePropertyType(samplingFactory.createSamplingFeature((org.geotoolkit.sampling.xml.v100.SamplingFeatureType)feature));
             } else if (feature != null) {
                 throw new IllegalArgumentException("unexpected object version");
             }
