@@ -17,8 +17,6 @@
 package org.geotoolkit.index.tree;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.index.tree.calculator.*;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
@@ -218,9 +216,19 @@ public abstract class AbstractTree<E> implements Tree<E> {
     
     @Override
     public void close() throws StoreIndexException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            treeAccess.setTreeIdentifier(treeIdentifier);
+            treeAccess.setEltNumber(eltCompteur);
+            treeAccess.close();
+        } catch (IOException ex) {
+            throw new StoreIndexException("FileBasicRTree : close(). Impossible to close TreeAccessFile.", ex);
+        }
     }
 
+    public TreeAccess getTreeAccess() {
+        return treeAccess;
+    }    
+    
     /**
      * {@inheritDoc}
      */
