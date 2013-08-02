@@ -41,6 +41,8 @@ public abstract class TreeAccess {
     protected int treeIdentifier;
     protected int eltNumber;
     
+    protected double[] nanBound;
+    
     // a voir par la suite comment y degager
     protected int hilbertOrder;
     

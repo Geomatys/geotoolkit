@@ -139,8 +139,6 @@ public class Node {
         for(Node fnod : nodes) {
             // all elements should be distinct.
             fnod.setSiblingId(0);
-//            addChild(fnod);
-            /*****************************************************/
             // connect child at other children (its sibling).
             childCount++;
             final int nextSibling = getChildId();
@@ -149,10 +147,10 @@ public class Node {
             fnod.setSiblingId(nextSibling);
             if (boundary == null) {
                 boundary = fnod.getBoundary().clone();
+            } else {
+                add(boundary, fnod.getBoundary());
             }
-            add(boundary, fnod.getBoundary());
             tAF.writeNode(fnod);
-            
         }
         tAF.writeNode(this);
     }
@@ -225,6 +223,48 @@ public class Node {
         if (found) tAF.deleteNode(node);
         return found;
     }
+    
+    public boolean removeData(Object object, double ...coordinates) throws IOException {
+        if (!((properties & 5) != 0))// test isleaf or iscell
+            throw new IllegalStateException("You should not call removeData() method on a no leaf or cell Node.");
+        if (isEmpty()) return false;
+        final Node[] children = getChildren();
+        final int l = children.length;
+        assert childCount == l;
+        int index = -1;
+        for (int i = 0; i < l; i++) {
+            final Node currentData = children[i];
+            if (((Integer)object) == -currentData.getChildId()
+               && Arrays.equals(currentData.getBoundary(), coordinates)) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) return false;
+        childCount--;
+        tAF.deleteNode(children[index]);
+        if (index == 0) {
+            if (l == 1) {
+                setChildId(0);
+                boundary = null;
+            } else {
+                setChildId(children[1].getNodeId());
+                boundary = children[1].getBoundary().clone();
+                for (int i = 2; i < l; i++) {
+                    add(boundary, children[i].getBoundary());
+                }
+            }
+        } else {
+            children[index-1].setSiblingId(children[index].getSiblingId());
+            tAF.writeNode(children[index-1]);
+            boundary = children[0].getBoundary().clone();
+            for (int i = 1; i < l; i++) {
+                if (i != index) add(boundary, children[i].getBoundary());
+            }
+        }
+        tAF.writeNode(this);
+        return true;
+    }
 
     public void removeChildren(Node[] nodes) throws IOException {
         for (Node nod : nodes) {
@@ -251,7 +291,7 @@ public class Node {
     }
 
     public void addChild(Node node) throws IOException {
-        final double[] assertBound = node.getBoundary().clone();
+        final double[] nodeBoundary = node.getBoundary();
         assert node.getSiblingId() == 0 : "future added element should be distinct from others.";
         // connect child at other children (its sibling).
         childCount++;
@@ -259,12 +299,14 @@ public class Node {
         setChildId(node.getNodeId());
         node.setParentId(getNodeId());
         node.setSiblingId(nextSibling);
-        if (boundary == null || ArraysExt.hasNaN(boundary)) {
-            boundary = node.getBoundary().clone();
+        if (nodeBoundary != null) {
+            if (boundary == null || ArraysExt.hasNaN(boundary)) {
+                boundary = nodeBoundary.clone();
+            } else {
+                add(boundary, nodeBoundary);
+            }
         }
-        add(boundary, node.getBoundary());
         tAF.writeNode(this);
-        assert Arrays.equals(node.getBoundary(), assertBound);
         tAF.writeNode(node);
     }
     

@@ -46,7 +46,7 @@ public class TreeAccessMemory extends TreeAccess {
     @Override
     protected void internalSearch(int nodeID) throws IOException{ //algorithm a ameliorer
         final Node candidate = readNode(nodeID);
-        if (intersects(regionSearch, candidate.getBoundary(), true)) {
+        if (!candidate.isEmpty() && intersects(regionSearch, candidate.getBoundary(), true)) {
             if (candidate.isData()) {
                 if (currentPosition == currentLength) {
                     currentLength = currentLength << 1;

@@ -245,7 +245,6 @@ public abstract class AbstractTreeTest extends TreeTest {
             gR = new double[]{93, 18, 19, 130, 87, 21};
         }
         for (int i = 0,  s = lGE.size(); i < s; i++) {
-//            System.out.println("insert i = "+i);
             tree.insert(lGE.get(i));
         }
         final GeneralEnvelope rG = new GeneralEnvelope(crs);
