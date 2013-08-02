@@ -1,6 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009-2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.index.tree.hilbert;
 
@@ -16,19 +28,17 @@ import org.apache.sis.util.Classes;
 import org.geotoolkit.gui.swing.tree.Trees;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.access.TreeAccess;
 import org.geotoolkit.index.tree.hilbert.iterator.HilbertIterator;
 
 /**
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
  */
 public class FileHilbertNode extends Node {
 
     private Node[] children;
     private int dimension;
-    private final double[] boundTemp;
     private final List<Node> data = new ArrayList<Node>();
     private int dataCount;
     private int currentHilbertOrder;
@@ -38,13 +48,10 @@ public class FileHilbertNode extends Node {
     public FileHilbertNode(TreeAccess tAF, int nodeId, double[] boundary, byte properties, int parentId, int siblingId, int childId) throws IOException {
         super(tAF, nodeId, boundary, properties, parentId, siblingId, childId);
         dimension = tAF.getCRS().getCoordinateSystem().getDimension();
-        boundTemp = new double[dimension << 1];
-        Arrays.fill(boundTemp, Double.NaN);
         dataCount = 0;
         currentHilbertOrder = 0;
-        
         if ((boundary == null || ArraysExt.hasNaN(boundary)) && ((properties & IS_LEAF) != 0)) { 
-            super.addChild(tAF.createNode(boundTemp, (byte) IS_CELL, this.getNodeId(), 0, 0));
+            super.addChild(tAF.createNode(null, (byte) IS_CELL, this.getNodeId(), 0, 0));
         }
     }
 
@@ -85,21 +92,25 @@ public class FileHilbertNode extends Node {
         }
     }
     
-    
-    
     @Override
     public void addChild(Node node) throws IOException {
-        final Node fnod = (Node)node;
-        if (isLeaf()) {
+        if (isLeaf() && node.isData()) {
             // si c pas une feuille sa veux dire que c la premiere insertion
             // alors on la fait devenir feuille 
-            assert fnod.isData() : "future added child should be data.";
+            assert node.isData() : "future added child should be data.";
             final double[] nodeBound = node.getBoundary().clone();
-            add(getBoundary(), nodeBound);
+            if (boundary == null) {
+                boundary = nodeBound;
+            } else {
+                add(boundary, nodeBound);
+            }
+//            add(getBoundary(), nodeBound);
             children = super.getChildren();
             final int index = getAppropriateCellIndex(nodeBound);
             // la feuille est elle full ??
             if (index == -1) {
+                // boundary a garder
+                final double[] boundIncrease = boundary.clone();
                 // increase hilbert order
                 assert currentHilbertOrder++ < tAF.getHilbertOrder() : "impossible to increase node hilbert order";
                 // on recupere tout les elements contenu dans cette feuille.
@@ -120,10 +131,11 @@ public class FileHilbertNode extends Node {
                 // on creer les cells null
                 final int nbCell = currentHilbertOrder == 0 ? 1 : 2 << (dimension * currentHilbertOrder - 1);
                 for (int i = 0; i < nbCell; i++) {
-                    super.addChild(tAF.createNode(boundTemp, IS_CELL, this.getNodeId(), 0, 0));
+                    super.addChild(tAF.createNode(null, IS_CELL, this.getNodeId(), 0, 0));
                 }
                 data.add(node);
                 for (Node dat : data) { 
+                    setBoundary(boundIncrease);
                     addChild(dat);
                 }
             } else {
@@ -143,22 +155,23 @@ public class FileHilbertNode extends Node {
     }
 
     @Override
-    public boolean removeChild(Node node) throws IOException {
-        
+    public boolean removeData(Object object, double... coordinates) throws IOException {
+        if (!((properties & 5) != 0))// test isleaf or iscell
+            throw new IllegalStateException("You should not call removeData() method on a no leaf or cell Node.");
         if (isLeaf()) {
             children = super.getChildren();
             if (currentHilbertOrder < 1) {
                 assert children.length == 1 : "removeChild : hilbertLeaf : leaf should have only one cell.";
-                final boolean removed = ((Node)children[0]).removeChild(node);
+                final boolean removed = children[0].removeData(object, coordinates);
                 if (removed) {
                     dataCount--;
-                    boundary = (dataCount > 0) ? children[0].getBoundary().clone() : boundTemp;
+                    boundary = (dataCount > 0) ? children[0].getBoundary().clone() : null;
                     tAF.writeNode(this);
                 }
                 return removed;
             } else {
-                final double[] nodeBoundary = node.getBoundary();
-                int index = getHVOfEntry(boundary);
+                final double[] objectBoundary = coordinates.clone();
+                int index = getHVOfEntry(objectBoundary);
                 assert index < children.length : "index out of children bound. Expected : "+children.length+" found index : "+index;
                 boolean removed = false;
                 boolean oneTime = true;
@@ -169,19 +182,20 @@ public class FileHilbertNode extends Node {
                  * Begin loop at index to be in accordance with Hilbert RTree properties.
                  */
                 for (int i = index; i < s; i++) {
-                    if (!children[i].isEmpty()){
+                    if (!children[i].isEmpty()) {
                         if (!removed) {
-                            removed = ((Node)children[i]).removeChild(node);
+                            removed = children[i].removeData(object, coordinates);
                             if (removed) dataCount--;
                         }
-                        // boundary 
-                        if (boundAdd == null) {
-                            boundAdd = children[i].getBoundary().clone();
-                        } else {
-                            add(boundAdd, children[i].getBoundary());
+                        if (!children[i].isEmpty()) {
+                            // boundary 
+                            if (boundAdd == null) {
+                                boundAdd = children[i].getBoundary().clone();
+                            } else {
+                                add(boundAdd, children[i].getBoundary());
+                            }
                         }
                     }
-                        
                     if (i == imax && oneTime) {
                         oneTime = false;
                         i = -1;
@@ -207,7 +221,6 @@ public class FileHilbertNode extends Node {
                             currentData.setSiblingId(0);// become distinc
                             data.add(currentData);
                         }
-    //                    super.removeChild(fnod);
                         tAF.deleteNode(fcnod);
                     }
                     clear();
@@ -215,17 +228,19 @@ public class FileHilbertNode extends Node {
                     // on creer les cells null
                     final int nbCell = currentHilbertOrder == 0 ? 1 : 2 << (dimension * currentHilbertOrder - 1);
                     for (int i = 0; i < nbCell; i++) {
-                        super.addChild(tAF.createNode(boundTemp, IS_CELL, this.getNodeId(), 0, 0));
+                        super.addChild(tAF.createNode(null, IS_CELL, this.getNodeId(), 0, 0));
                     }
                     for (Node dat : data) { 
+                        setBoundary(boundAdd);
                         addChild(dat);
                     }
                 }
                 return true;
             }
         }
-        return super.removeChild(node);
+        return super.removeData(object, coordinates);
     }
+    
     
     
     public boolean isCell() {

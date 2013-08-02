@@ -55,6 +55,7 @@ public class TreeAccessFile extends TreeAccess {
     
     private List<Integer> recycleID = new LinkedList<Integer>();
     
+    
     /**
      * Build a {@link Tree} from a already filled {@link File}.
      * 
@@ -105,11 +106,15 @@ public class TreeAccessFile extends TreeAccess {
         final int dimension = crs.getCoordinateSystem().getDimension();
         this.boundLength = dimension << 1;
         
+        //nanbound
+        nanBound = new double[boundLength];
+        Arrays.fill(nanBound, Double.NaN);
+        
         // Node size : boundary weigth + isLeaf boolean + parent ID Integer + 1st sibling Integer + 1st child Integer + child number.
         nodeSize = ((dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2) + 1;
         
         // buffer attributs
-        final int div = 819200 / nodeSize;// 4096 In future define a better approppriate value by benchmark.
+        final int div = 4096 / nodeSize;// 4096 In future define a better approppriate value by benchmark.
         this.bufferLength = div * nodeSize;
         byteBuffer = ByteBuffer.allocateDirect(bufferLength);
         byteBuffer.order(bO);
@@ -141,10 +146,14 @@ public class TreeAccessFile extends TreeAccess {
         int dimension = crs.getCoordinateSystem().getDimension();
         this.boundLength = dimension << 1;
         
+        //nanbound
+        nanBound = new double[boundLength];
+        Arrays.fill(nanBound, Double.NaN);
+        
         // Node size : boundary weigth + isLeaf boolean + parent ID Integer + 1st sibling Integer + 1st child Integer + child number.
         nodeSize = ((dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2) + 1;
         
-        final int div = 819200 / nodeSize; // 4096
+        final int div = 4096 / nodeSize; // 4096
         this.bufferLength = div * nodeSize;
         // ByteBuffer
         final ByteOrder bO = ByteOrder.nativeOrder();
@@ -265,6 +274,7 @@ public class TreeAccessFile extends TreeAccess {
         adjustBuffer(indexNode);
         writeBufferLimit = Math.max(writeBufferLimit, byteBuffer.limit());
         double[] candidateBound = candidate.getBoundary();
+        if (candidateBound == null) candidateBound = nanBound;
         for (int i = 0; i < boundLength; i++) {
             byteBuffer.putDouble(candidateBound[i]);
         }

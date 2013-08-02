@@ -68,42 +68,7 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
     }
     
     @Override
-    public void insert(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException {
-//        super.insert(object, coordinates);
-        try {
-            eltCompteur++;
-            Node root = getRoot();
-            if (root == null || root.isEmpty()) {
-                root = createNode(treeAccess, null, IS_LEAF, 0, 0, 0);
-                root.addChild(createNode(treeAccess, coordinates, IS_DATA, 1, 0, -((Integer)object)));
-                setRoot(root);
-            } else {
-                final Node newRoot = nodeInsert(root, object, coordinates);
-                if (newRoot != null) {
-                    setRoot(newRoot);
-                    treeAccess.writeNode((Node)newRoot);
-                }
-            }
-        } catch (IOException ex) {
-            throw new StoreIndexException(this.getClass().getName()+"Tree.insert(), impossible to add element.", ex);
-        }
-    }
-
-//    @Override
-//    public void setRoot(Node root) throws StoreIndexException {
-//        if (root == null) {
-////            nodeId = 1;
-//            try {
-//                treeAccess.rewind();
-//            } catch (IOException ex) {
-//                throw new StoreIndexException("Impossible to rewind TreeAccessFile.", ex);
-//            }
-//            setElementsNumber(0);
-//        }
-//        super.setRoot(root);
-//    }
-    
-    private Node nodeInsert(Node candidate, Object object, double... coordinates) throws IOException{
+    protected Node nodeInsert(Node candidate, Object object, double... coordinates) throws IOException{
         assert candidate instanceof Node;
         Node fileCandidate = (Node) candidate;
         assert !fileCandidate.isData() : "nodeInsert : candidate should never be data type.";
@@ -207,7 +172,8 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
      * @throws IllegalArgumentException if candidate elements number is lesser 2.
      * @return {@code Node} List which contains two {@code Node} (split result of candidate).
      */
-    private Node[] splitNode(final Node candidate) throws IllegalArgumentException, IOException {
+    @Override
+    protected Node[] splitNode(final Node candidate) throws IllegalArgumentException, IOException {
         ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
         assert candidate.checkInternal() : "splitNode : begin.";
         int childNumber = candidate.getChildCount();
@@ -354,65 +320,65 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
         return new Node[]{result1, result2};
     }
     
-    /**
-     * Find appropriate {@code Node} to insert {@code Envelope} entry.
-     * To define appropriate Node, criterion are :
-     *      - require minimum area enlargement to cover shape.
-     *      - or put into {@code Node} with lesser elements number in case of area equals.
-     *
-     * @param children List of {@code Node}.
-     * @param entry {@code Envelope} to add.
-     * @throws IllegalArgumentException if children or entry are null.
-     * @throws IllegalArgumentException if children is empty.
-     * @return {@code Node} which is appropriate to contain shape.
-     */
-    private Node chooseSubtree(final Node candidate, final double... coordinates) throws IOException {
-        ArgumentChecks.ensureNonNull("chooseSubtree : candidate", candidate);
-        ArgumentChecks.ensureNonNull("chooseSubtree : coordinates", coordinates);
-        assert candidate.checkInternal() : "chooseSubtree : candidate not conform";
-        final Calculator calc = getCalculator();
-        final int childCount = candidate.getChildCount();
-        if (childCount == 0) throw new IllegalArgumentException("chooseSubtree : children is empty");
-        if (childCount == 1) return treeAccess.readNode(candidate.getChildId());
-        final Node[] children = candidate.getChildren();
-        assert children.length == childCount : "choose subtree : childcount should have same length as children table.";
-        for (Node fNod : children) {
-            assert fNod.checkInternal() : "chooseSubTree : test contains.";
-            if (contains(fNod.getBoundary(), coordinates, true)) return fNod;
-        }
-        Node result = children[0];
-        double[] addBound = result.getBoundary().clone();
-        for(int i = 1; i < childCount; i++) {
-            add(addBound, children[i].getBoundary());
-        }
-        double area = calc.getSpace(addBound);
-        double nbElmt = result.getChildCount();
-        double areaTemp;
-        for (int i = 0; i < childCount; i++) {
-            final Node dn = children[i];
-            assert dn.checkInternal() : "chooseSubtree : find subtree.";
-            final double[] dnBoundary = dn.getBoundary();
-            final double[] rnod = dnBoundary.clone();
-            add(rnod, coordinates);
-            final int nbe = dn.getChildCount();
-            final double[] assertBound = dnBoundary.clone();
-            areaTemp = calc.getEnlargement(dnBoundary, rnod);
-            assert Arrays.equals(dnBoundary, assertBound);
-            if (areaTemp < area) {
-                result = dn;
-                area = areaTemp;
-                nbElmt = nbe;
-            } else if (areaTemp== area) {
-                if (nbe < nbElmt) {
-                    result = dn;
-                    area = areaTemp;
-                    nbElmt = nbe;
-                }
-            }
-        }
-        assert candidate.checkInternal() : "chooseSubtree : candidate not conform";
-        return result;
-    }
+//    /**
+//     * Find appropriate {@code Node} to insert {@code Envelope} entry.
+//     * To define appropriate Node, criterion are :
+//     *      - require minimum area enlargement to cover shape.
+//     *      - or put into {@code Node} with lesser elements number in case of area equals.
+//     *
+//     * @param children List of {@code Node}.
+//     * @param entry {@code Envelope} to add.
+//     * @throws IllegalArgumentException if children or entry are null.
+//     * @throws IllegalArgumentException if children is empty.
+//     * @return {@code Node} which is appropriate to contain shape.
+//     */
+//    private Node chooseSubtree(final Node candidate, final double... coordinates) throws IOException {
+//        ArgumentChecks.ensureNonNull("chooseSubtree : candidate", candidate);
+//        ArgumentChecks.ensureNonNull("chooseSubtree : coordinates", coordinates);
+//        assert candidate.checkInternal() : "chooseSubtree : candidate not conform";
+//        final Calculator calc = getCalculator();
+//        final int childCount = candidate.getChildCount();
+//        if (childCount == 0) throw new IllegalArgumentException("chooseSubtree : children is empty");
+//        if (childCount == 1) return treeAccess.readNode(candidate.getChildId());
+//        final Node[] children = candidate.getChildren();
+//        assert children.length == childCount : "choose subtree : childcount should have same length as children table.";
+//        for (Node fNod : children) {
+//            assert fNod.checkInternal() : "chooseSubTree : test contains.";
+//            if (contains(fNod.getBoundary(), coordinates, true)) return fNod;
+//        }
+//        Node result = children[0];
+//        double[] addBound = result.getBoundary().clone();
+//        for(int i = 1; i < childCount; i++) {
+//            add(addBound, children[i].getBoundary());
+//        }
+//        double area = calc.getSpace(addBound);
+//        double nbElmt = result.getChildCount();
+//        double areaTemp;
+//        for (int i = 0; i < childCount; i++) {
+//            final Node dn = children[i];
+//            assert dn.checkInternal() : "chooseSubtree : find subtree.";
+//            final double[] dnBoundary = dn.getBoundary();
+//            final double[] rnod = dnBoundary.clone();
+//            add(rnod, coordinates);
+//            final int nbe = dn.getChildCount();
+//            final double[] assertBound = dnBoundary.clone();
+//            areaTemp = calc.getEnlargement(dnBoundary, rnod);
+//            assert Arrays.equals(dnBoundary, assertBound);
+//            if (areaTemp < area) {
+//                result = dn;
+//                area = areaTemp;
+//                nbElmt = nbe;
+//            } else if (areaTemp== area) {
+//                if (nbe < nbElmt) {
+//                    result = dn;
+//                    area = areaTemp;
+//                    nbElmt = nbe;
+//                }
+//            }
+//        }
+//        assert candidate.checkInternal() : "chooseSubtree : candidate not conform";
+//        return result;
+//    }
     
     /**
      * Exchange some entry(ies) between two nodes in aim to find best form with lesser overlaps.
@@ -506,23 +472,23 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
         assert nodeB.checkInternal()                  : "branchGrafting : at end candidate not conform";
     }
     
-    @Override
-    public boolean remove(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException {
-        ArgumentChecks.ensureNonNull("remove : object", object);
-        ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
-        final Node root = getRoot();
-        if (root != null) {
-            try {
-                final boolean removed = removeNode((Node)root, object, coordinates);
-                return removed;
-            } catch (IOException ex) {
-                throw new StoreIndexException(this.getClass().getName()
-                        +"impossible to remove object : "+object.toString()
-                        +" at coordinates : "+Arrays.toString(coordinates), ex);
-            }
-        }
-        return false;
-    }
+//    @Override
+//    public boolean remove(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException {
+//        ArgumentChecks.ensureNonNull("remove : object", object);
+//        ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
+//        final Node root = getRoot();
+//        if (root != null) {
+//            try {
+//                final boolean removed = removeNode(root, object, coordinates);
+//                return removed;
+//            } catch (IOException ex) {
+//                throw new StoreIndexException(this.getClass().getName()
+//                        +"impossible to remove object : "+object.toString()
+//                        +" at coordinates : "+Arrays.toString(coordinates), ex);
+//            }
+//        }
+//        return false;
+//    }
     
     /**
      * Travel {@code Tree}, find {@code Entry} if it exist and delete it from reference.
@@ -536,24 +502,14 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private boolean removeNode(final Node candidate, final Object object, final double... coordinate) throws IllegalArgumentException, StoreIndexException, IOException{
+    @Override
+    protected boolean removeNode(final Node candidate, final Object object, final double... coordinate) throws  StoreIndexException, IOException {
         ArgumentChecks.ensureNonNull("removeNode : Node candidate", candidate);
         ArgumentChecks.ensureNonNull("removeNode : Object object", object);
         ArgumentChecks.ensureNonNull("removeNode : double[] coordinate", coordinate);
         if(intersects(candidate.getBoundary(), coordinate, true)){
             if (candidate.isLeaf()) {
-                int sibl = candidate.getChildId();
-                boolean removed = false;
-                while (sibl != 0) {
-                    final Node currentData = treeAccess.readNode(sibl);
-                    if (((Integer)object) == -currentData.getChildId()
-                       && Arrays.equals(currentData.getBoundary(), coordinate)) {
-                        removed = true;
-                        candidate.removeChild(currentData);
-                        break;
-                    }
-                    sibl = currentData.getSiblingId();
-                }
+                boolean removed = candidate.removeData(object, coordinate);
                 if (removed) {
                     setElementsNumber(getElementsNumber()-1);
                     trim(candidate);
@@ -580,7 +536,8 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
      * @param candidate {@code Node} to begin condense.
      * @throws IllegalArgumentException if candidate is null.
      */
-    private void trim(final Node candidate) throws IllegalArgumentException, IOException, StoreIndexException {
+    @Override
+    protected void trim(final Node candidate) throws IllegalArgumentException, IOException, StoreIndexException {
         ArgumentChecks.ensureNonNull("trim : Node candidate", candidate);
         List<double[]> reinsertListCoords = null;
         List<Object> reinsertListObjects = null;
@@ -653,30 +610,5 @@ public abstract class AbstractBasicRTree<E> extends AbstractTree<E> {
             assert (reinsertListObjects == null) : "trim : listObjects should be null.";
         }
     }
-
-    @Override
-    public Node createNode(TreeAccess tA, double[] boundary, byte properties, int parentId, int siblingId, int childId) throws IllegalArgumentException {
-        return tA.createNode(boundary, properties, parentId, siblingId, childId);
-    }    
     
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        final Node root = getRoot();
-        final String strRoot = (root == null || root.isEmpty()) ?"null":root.toString();
-        return Classes.getShortClassName(this) + "\n" + strRoot;
-    }
-
-//    @Override
-//    public void close() throws StoreIndexException {
-//        try {
-//            treeAccess.setTreeIdentifier(treeIdentifier);
-//            treeAccess.setEltNumber(getElementsNumber());
-//            treeAccess.close();
-//        } catch (IOException ex) {
-//            throw new StoreIndexException("FileBasicRTree : close(). Impossible to close TreeAccessFile.", ex);
-//        }
-//    }
 }

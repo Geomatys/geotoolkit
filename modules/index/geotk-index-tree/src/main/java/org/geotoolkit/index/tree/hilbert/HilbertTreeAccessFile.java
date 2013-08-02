@@ -118,6 +118,10 @@ public class HilbertTreeAccessFile extends TreeAccess {
         final int dimension = crs.getCoordinateSystem().getDimension();
         this.boundLength = dimension << 1;
         
+        //nanbound
+        nanBound = new double[boundLength];
+        Arrays.fill(nanBound, Double.NaN);
+        
         // first bound
         firstBound = new double[boundLength];
         Arrays.fill(firstBound, Double.NaN);
@@ -158,6 +162,10 @@ public class HilbertTreeAccessFile extends TreeAccess {
         
         int dimension     = crs.getCoordinateSystem().getDimension();
         this.boundLength  = dimension << 1;
+        
+        //nanbound
+        nanBound = new double[boundLength];
+        Arrays.fill(nanBound, Double.NaN);
         
         // hilbert properties
         this.hilbertOrder = hilbertOrder;
@@ -297,6 +305,7 @@ public class HilbertTreeAccessFile extends TreeAccess {
         adjustBuffer(indexNode);
         writeBufferLimit = Math.max(writeBufferLimit, byteBuffer.limit());
         double[] candidateBound = candidate.getBoundary();
+        if (candidateBound == null) candidateBound = nanBound;
         for (int i = 0; i < boundLength; i++) {
             byteBuffer.putDouble(candidateBound[i]);
         }
