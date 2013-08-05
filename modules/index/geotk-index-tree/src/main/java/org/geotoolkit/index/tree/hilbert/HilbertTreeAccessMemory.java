@@ -26,7 +26,7 @@ public class HilbertTreeAccessMemory extends TreeAccessMemory {
     public Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
         final int currentID = (recycleID.isEmpty()) ? nodeId++ : recycleID.remove(0);
         try {
-            return new FileHilbertNode(this, currentID, boundary, properties, parentId, siblingId, childId);
+            return new HilbertNode(this, currentID, boundary, properties, parentId, siblingId, childId);
         } catch (IOException ex) {
             Logger.getLogger(HilbertTreeAccessMemory.class.getName()).log(Level.SEVERE, null, ex);
         }

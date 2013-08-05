@@ -30,7 +30,7 @@ public class MemoryStarRTree2DTest extends AbstractTreeTest{
     public MemoryStarRTree2DTest() throws StoreIndexException, IOException {
         super(DefaultEngineeringCRS.CARTESIAN_2D);
         tree = new MemoryStarRTree(4, crs, tEM);
-        tAF  = ((AbstractStarRTree)tree).getTreeAccess();
+        tAF  = ((StarRTree)tree).getTreeAccess();
     }
     
 }

@@ -30,6 +30,6 @@ public class MemoryBasicRTree2DTest extends AbstractTreeTest {
     public MemoryBasicRTree2DTest() throws StoreIndexException, IOException {
         super(DefaultEngineeringCRS.CARTESIAN_2D);
         tree = new MemoryBasicRTree(3, crs, SplitCase.LINEAR, tEM);
-        tAF  = ((AbstractBasicRTree)tree).getTreeAccess();
+        tAF  = ((BasicRTree)tree).getTreeAccess();
     }
 }

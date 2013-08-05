@@ -25,7 +25,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author rmarechal
  */
-public class MemoryBasicRTree<E> extends AbstractBasicRTree<E> {
+public class MemoryBasicRTree<E> extends BasicRTree<E> {
 
     public MemoryBasicRTree(int maxElements, CoordinateReferenceSystem crs, SplitCase choice, TreeElementMapper treeEltMap) throws StoreIndexException {
         super(new TreeAccessMemory(maxElements, crs), choice, treeEltMap);

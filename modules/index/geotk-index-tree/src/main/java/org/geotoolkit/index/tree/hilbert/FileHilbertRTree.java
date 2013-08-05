@@ -26,7 +26,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Remi Marechal (Geomatys).
  */
-public class FileHilbertRTree<E> extends AbstractHilbertRTree<E> {
+public class FileHilbertRTree<E> extends HilbertRTree<E> {
     /**
      * Number to identify tree file.
      */

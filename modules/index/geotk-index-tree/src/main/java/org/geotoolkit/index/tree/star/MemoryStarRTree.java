@@ -25,7 +25,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Remi Marechal (Geomatys).
  */
-public class MemoryStarRTree<E> extends AbstractStarRTree<E>{
+public class MemoryStarRTree<E> extends StarRTree<E>{
 
     public MemoryStarRTree(int maxElements, CoordinateReferenceSystem crs, TreeElementMapper treeEltMap) throws StoreIndexException {
         super(new TreeAccessMemory(maxElements, crs), treeEltMap);

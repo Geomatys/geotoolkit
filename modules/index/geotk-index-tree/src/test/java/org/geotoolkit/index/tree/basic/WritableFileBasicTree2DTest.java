@@ -34,7 +34,7 @@ public class WritableFileBasicTree2DTest extends AbstractTreeTest {
         super(DefaultEngineeringCRS.CARTESIAN_2D);
         tEM = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
         tree = new FileBasicRTree(File.createTempFile("test", "tree"), 3, crs, SplitCase.LINEAR, tEM);
-        tAF  = ((AbstractBasicRTree)tree).getTreeAccess();
+        tAF  = ((BasicRTree)tree).getTreeAccess();
     }
     
 }

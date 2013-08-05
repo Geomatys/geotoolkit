@@ -26,7 +26,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.filter.SpatialFilterType;
 import static org.geotoolkit.filter.SpatialFilterType.*;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
+import static org.geotoolkit.index.tree.TreeUtils.*;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.Envelope;
 

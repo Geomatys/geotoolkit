@@ -20,13 +20,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Classes;
 import org.geotoolkit.index.tree.AbstractTree;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
+import static org.geotoolkit.index.tree.TreeUtils.*;
 import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.access.TreeAccess;
-import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.mapper.TreeElementMapper;
 
@@ -34,44 +31,15 @@ import org.geotoolkit.index.tree.mapper.TreeElementMapper;
  *
  * @author Remi Marechal (Geomatys).
  */
-public class AbstractHilbertRTree<E> extends AbstractTree<E> {
-    
-//     /**
-//     * In accordance with R*Tree properties.
-//     * To avoid unnecessary split permit to
-//     * reinsert some elements just one time.
-//     */
-//    boolean insertAgain = true;
-//    
-//    private final LinkedList<Object> listObjects  = new LinkedList<Object>();
-//    private final LinkedList<double[]> listCoords = new LinkedList<double[]>(); 
-//    
-//    boolean travelUpBeforeInsertAgain = false;
-    
-    public AbstractHilbertRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
+public class HilbertRTree<E> extends AbstractTree<E> {
+        
+    public HilbertRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
         super(treeAccess, treeAccess.getCRS(), treeEltMap);
-//        if (!(treeAccess instanceof HilbertTreeAccessFile))
-//            throw new IllegalArgumentException("HilbertRTree init : you should specify a HilbertTreeAccess");
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);
         this.treeAccess = treeAccess;
         super.setRoot(treeAccess.getRoot());
         treeIdentifier = treeAccess.getTreeIdentifier();
-    }
-    
-    @Override
-    public int[] searchID(double[] regionSearch) throws StoreIndexException {
-        // root node always begin at index 1 because 0 is reserved for no sibling or children.
-        final Node root = getRoot();
-        if (root != null && !root.isEmpty()) {
-            try {
-                return treeAccess.search(((Node)root).getNodeId(), regionSearch);
-            } catch (IOException ex) {
-                throw new StoreIndexException(this.getClass().getName()+" impossible to find stored elements at "
-                        +Arrays.toString(regionSearch)+" region search area.", ex);
-            }
-        }
-        return null;
     }
     
     @Override
@@ -110,7 +78,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
                         lsp1.setParentId(fileCandidate.getNodeId());
                         fileCandidate.clear();
                         fileCandidate.setProperties(IS_OTHER);
-                        ((FileHilbertNode)fileCandidate).setCurrentHilbertOrder(0);
+                        ((HilbertNode)fileCandidate).setCurrentHilbertOrder(0);
                         fileCandidate.setParentId(0);
 //                        fileCandidate.setSiblingId(0);
 //                        fileCandidate.setUserProperty(PROP_ISLEAF, false);
@@ -139,7 +107,7 @@ public class AbstractHilbertRTree<E> extends AbstractTree<E> {
 //                        candidate.setUserProperty(PROP_ISLEAF, false);
 //                        candidate.setUserProperty(PROP_HILBERT_ORDER, 0);
                         fileCandidate.setProperties(IS_OTHER);
-                        ((FileHilbertNode)fileCandidate).setCurrentHilbertOrder(0);
+                        ((HilbertNode)fileCandidate).setCurrentHilbertOrder(0);
                         lsp0.setParentId(fileCandidate.getNodeId());
                         lsp1.setParentId(fileCandidate.getNodeId());
                         candidate.addChild(lsp0);

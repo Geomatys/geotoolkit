@@ -21,9 +21,9 @@ import java.util.Arrays;
 import org.geotoolkit.index.tree.calculator.*;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
+import static org.geotoolkit.index.tree.TreeUtils.*;
 import org.geotoolkit.index.tree.access.TreeAccess;
-import org.geotoolkit.index.tree.hilbert.FileHilbertNode;
+import org.geotoolkit.index.tree.hilbert.HilbertNode;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.mapper.TreeElementMapper;
 import org.geotoolkit.referencing.CRS;
@@ -78,11 +78,20 @@ public abstract class AbstractTree<E> implements Tree<E> {
      */
     @Override
     public int[] searchID(Envelope regionSearch) throws StoreIndexException {
-        return searchID(DefaultTreeUtils.getCoords(regionSearch));
-    }
-    
-    public abstract int[] searchID(double[] regionSearch) throws StoreIndexException ;
-    
+//        return searchID(DefaultTreeUtils.getCoords(regionSearch));
+        // root node always begin at index 1 because 0 is reserved for no sibling or children.
+        final Node root = getRoot();
+        final double[] regSearch = TreeUtils.getCoords(regionSearch);
+        if (root != null && !root.isEmpty()) {
+            try {
+                return treeAccess.search(root.getNodeId(), regSearch);
+            } catch (IOException ex) {
+                throw new StoreIndexException(this.getClass().getName()+" impossible to find stored elements at "
+                        +Arrays.toString(regSearch)+" region search area.", ex);
+            }
+        }
+        return null;
+    }    
     
     /**
      * {@inheritDoc}
@@ -94,7 +103,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
             final Envelope env = treeEltMap.getEnvelope(object);
             if (!CRS.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()))
                 throw new IllegalArgumentException("During insertion element should have same CoordinateReferenceSystem as Tree.");
-            final double[] coordinates = DefaultTreeUtils.getCoords(env);
+            final double[] coordinates = TreeUtils.getCoords(env);
             for (double d : coordinates)
                 if (Double.isNaN(d))
                     throw new IllegalArgumentException("coordinates contain at least one NAN value");
@@ -380,7 +389,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
             final Envelope env = treeEltMap.getEnvelope(object);
             if (!CRS.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()))
                 throw new IllegalArgumentException("During insertion element should have same CoordinateReferenceSystem as Tree.");
-            final double[] coordinates = DefaultTreeUtils.getCoords(env);
+            final double[] coordinates = TreeUtils.getCoords(env);
             for (double d : coordinates)
                 if (Double.isNaN(d))
                     throw new IllegalArgumentException("coordinates contain at least one NAN value");

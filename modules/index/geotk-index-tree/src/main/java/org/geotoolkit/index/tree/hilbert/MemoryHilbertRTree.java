@@ -12,7 +12,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author rmarechal
  */
-public class MemoryHilbertRTree<E> extends AbstractHilbertRTree<E> {
+public class MemoryHilbertRTree<E> extends HilbertRTree<E> {
 
     public MemoryHilbertRTree(int maxElements, final int hilbertOrder, CoordinateReferenceSystem crs, TreeElementMapper treeEltMap) throws StoreIndexException {
         super(new HilbertTreeAccessMemory(maxElements, hilbertOrder, crs), treeEltMap);

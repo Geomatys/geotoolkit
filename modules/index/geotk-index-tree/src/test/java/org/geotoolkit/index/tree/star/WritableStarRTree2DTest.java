@@ -27,12 +27,12 @@ import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
  *
  * @author rmarechal
  */
-public class WritableFileStarRTree2DTest extends AbstractTreeTest {
+public class WritableStarRTree2DTest extends AbstractTreeTest {
 
-    public WritableFileStarRTree2DTest() throws StoreIndexException, IOException {
+    public WritableStarRTree2DTest() throws StoreIndexException, IOException {
         super(DefaultEngineeringCRS.CARTESIAN_2D);
         tEM = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
         tree = new FileStarRTree(File.createTempFile("test", "tree"), 4, crs, tEM);
-        tAF  = ((AbstractStarRTree)tree).getTreeAccess();
+        tAF  = ((StarRTree)tree).getTreeAccess();
     }
 }

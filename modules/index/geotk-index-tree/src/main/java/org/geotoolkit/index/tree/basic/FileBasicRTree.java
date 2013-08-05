@@ -27,7 +27,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Remi Marechal(Geomatys).
  */
-public class FileBasicRTree<E> extends AbstractBasicRTree<E> {
+public class FileBasicRTree<E> extends BasicRTree<E> {
 
     /**
      * Number to identify tree file.

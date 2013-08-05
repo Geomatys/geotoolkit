@@ -32,14 +32,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.util.ArraysExt;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.intersects;
+import static org.geotoolkit.index.tree.TreeUtils.intersects;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.access.TreeAccess;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
  */
 public class HilbertTreeAccessFile extends TreeAccess {
 
@@ -55,17 +55,8 @@ public class HilbertTreeAccessFile extends TreeAccess {
     private int writeBufferLimit;
     private final int bufferLength;
     private int rwIndex;
-    
-//    // hilbert properties
-//    private int hilbertOrder;
-    
+        
     private List<Integer> recycleID = new LinkedList<Integer>();
-    
-    /**
-     * In Hilbert RTree they exist Node which call cell and within each Hilbert leaf.
-     * This cells may have no boundary its an expected comportement. 
-     */
-    private final double[] firstBound; 
     
     /**
      * Build a {@link Tree} from a already filled {@link File}.
@@ -122,10 +113,6 @@ public class HilbertTreeAccessFile extends TreeAccess {
         nanBound = new double[boundLength];
         Arrays.fill(nanBound, Double.NaN);
         
-        // first bound
-        firstBound = new double[boundLength];
-        Arrays.fill(firstBound, Double.NaN);
-        
         // Node size : boundary weigth + parent ID + 1st sibling Integer + 1st child Integer + child number.
         nodeSize = ((dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2) + 1 +4 + 4;
         
@@ -147,7 +134,8 @@ public class HilbertTreeAccessFile extends TreeAccess {
     /**
      * Build and insert {@link Node} architecture in a {@link File}.<br/>
      * If file is not empty, data within it will be overwrite.<br/>
-     * If file does not exist a file will be create.
+     * If file does not exist a file will be create.<br/>
+     * The default length value of ByteBuffer which read and write on hard disk, is 4096 Bytes.
      * 
      * @param outPut {@code File} where {@link Node} architecture which will be write.
      * @param magicNumber {@code Integer} single {@link Tree} code.
@@ -158,6 +146,24 @@ public class HilbertTreeAccessFile extends TreeAccess {
      */
     public HilbertTreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
             final int maxElements, final int hilbertOrder, final CoordinateReferenceSystem crs) throws IOException {
+        this(outPut, magicNumber, versionNumber, maxElements, hilbertOrder, crs, DEFAULT_BUFFER_LENGTH);
+    }
+    
+    /**
+     * Build and insert {@link Node} architecture in a {@link File}.<br/>
+     * If file is not empty, data within it will be overwrite.<br/>
+     * If file does not exist a file will be create.
+     * 
+     * @param outPut {@code File} where {@link Node} architecture which will be write.
+     * @param magicNumber {@code Integer} single {@link Tree} code.
+     * @param versionNumber version number.
+     * @param maxElements element number per cell.
+     * @param crs 
+     * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
+     * @throws IOException if problem during read or write Node.
+     */
+    public HilbertTreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, final int maxElements, 
+            final int hilbertOrder, final CoordinateReferenceSystem crs, final int byteBufferLength) throws IOException {
         super(maxElements, crs);
         
         int dimension     = crs.getCoordinateSystem().getDimension();
@@ -169,10 +175,6 @@ public class HilbertTreeAccessFile extends TreeAccess {
         
         // hilbert properties
         this.hilbertOrder = hilbertOrder;
-        
-        // first bound
-        firstBound = new double[boundLength];
-        Arrays.fill(firstBound, Double.NaN);
         
         // Node size : boundary weigth + parent ID + 1st sibling Integer + 1st child Integer + child number.+datacount+currenthilbertorder
         nodeSize = ((dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2) + 1 + 4 + 4;
@@ -222,19 +224,6 @@ public class HilbertTreeAccessFile extends TreeAccess {
         
         // root 
         root = null;
-    }
-    
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public int[] search(int nodeID, double[] regionSearch) throws IOException {
-        currentLength     = 100;
-        tabSearch         = new int[currentLength];
-        currentPosition   = 0;
-        this.regionSearch = regionSearch;
-        internalSearch(nodeID);
-        return Arrays.copyOf(tabSearch, currentPosition);
     }
         
     /**
@@ -289,7 +278,7 @@ public class HilbertTreeAccessFile extends TreeAccess {
         final int currentHilbertOrder = byteBuffer.getInt();
         final int childCount          = byteBuffer.getInt();
         final int dataCount           = byteBuffer.getInt();
-        final FileHilbertNode redNode = new FileHilbertNode(this, indexNode, boundary, properties, parentId, siblingId, childId);
+        final HilbertNode redNode = new HilbertNode(this, indexNode, boundary, properties, parentId, siblingId, childId);
         redNode.setCurrentHilbertOrder(currentHilbertOrder);
         redNode.setChildCount(childCount);
         redNode.setDataCount(dataCount);
@@ -313,9 +302,9 @@ public class HilbertTreeAccessFile extends TreeAccess {
         byteBuffer.putInt(candidate.getParentId());
         byteBuffer.putInt(candidate.getSiblingId());
         byteBuffer.putInt(candidate.getChildId());
-        byteBuffer.putInt(((FileHilbertNode)candidate).getCurrentHilbertOrder());
+        byteBuffer.putInt(((HilbertNode)candidate).getCurrentHilbertOrder());
         byteBuffer.putInt(candidate.getChildCount());
-        byteBuffer.putInt(((FileHilbertNode)candidate).getDataCount());
+        byteBuffer.putInt(((HilbertNode)candidate).getDataCount());
     }
     
     /**
@@ -350,7 +339,7 @@ public class HilbertTreeAccessFile extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-    public void deleteNode(final Node candidate) throws IOException {
+    public void removeNode(final Node candidate) {
         recycleID.add(candidate.getNodeId());
     }
         
@@ -399,7 +388,7 @@ public class HilbertTreeAccessFile extends TreeAccess {
      public Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
          final int currentID = (!recycleID.isEmpty()) ? recycleID.remove(0) : nodeId++;
         try {
-            return new FileHilbertNode(this, currentID, (boundary == null) ? firstBound : boundary, properties, parentId, siblingId, childId);
+            return new HilbertNode(this, currentID, (boundary == null) ? nanBound : boundary, properties, parentId, siblingId, childId);
         } catch (IOException ex) {
             Logger.getLogger(HilbertTreeAccessFile.class.getName()).log(Level.SEVERE, null, ex);
         }
