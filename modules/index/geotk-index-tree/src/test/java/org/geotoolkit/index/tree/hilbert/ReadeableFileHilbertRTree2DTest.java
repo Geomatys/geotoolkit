@@ -34,11 +34,11 @@ public class ReadeableFileHilbertRTree2DTest extends AbstractTreeTest {
         final File inOutFile = File.createTempFile("test", "tree");
         tEM  = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
         tree = new FileHilbertRTree(inOutFile, 4, 2, crs, tEM);
-        tAF  = ((AbstractHilbertRTree)tree).getTreeAccess();
+        tAF  = ((HilbertRTree)tree).getTreeAccess();
         insert();
         tree.close();
         tree = new FileHilbertRTree(inOutFile, tEM);
-        tAF  = ((AbstractHilbertRTree)tree).getTreeAccess();
+        tAF  = ((HilbertRTree)tree).getTreeAccess();
     }
     
 }

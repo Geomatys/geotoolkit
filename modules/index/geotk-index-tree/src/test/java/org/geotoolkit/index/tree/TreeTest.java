@@ -21,8 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.index.tree.hilbert.AbstractHilbertRTree;
-import org.geotoolkit.index.tree.hilbert.FileHilbertNode;
+import org.geotoolkit.index.tree.hilbert.HilbertRTree;
+import org.geotoolkit.index.tree.hilbert.HilbertNode;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -107,9 +107,9 @@ public abstract class TreeTest {
     protected double[] getEnvelopeMin(final List<Envelope> list) {
         ArgumentChecks.ensureNonNull("compareList : listA", list);
         assert(!list.isEmpty()):"list to get envelope min should not be empty.";
-        final double[] ge = DefaultTreeUtils.getCoords(list.get(0));
+        final double[] ge = TreeUtils.getCoords(list.get(0));
         for (int i = 1; i < list.size();i++) {
-            DefaultTreeUtils.add(ge, DefaultTreeUtils.getCoords(list.get(i)));
+            TreeUtils.add(ge, TreeUtils.getCoords(list.get(i)));
         }
         return ge;
     }
@@ -125,7 +125,7 @@ public abstract class TreeTest {
         assert(!list.isEmpty()):"list to get envelope min should not be empty.";
         final double[] ge = list.get(0).clone();
         for (int i = 1; i < list.size(); i++) {
-            DefaultTreeUtils.add(ge, list.get(i));
+            TreeUtils.add(ge, list.get(i));
         }
         return ge;
     }
@@ -138,10 +138,10 @@ public abstract class TreeTest {
      */
     protected boolean checkTreeElts(Tree tree) throws IOException {
         final int treeElement = tree.getElementsNumber();
-        if (tree instanceof AbstractHilbertRTree) {
-            return DefaultTreeUtils.countEltsInHilbertNode((FileHilbertNode)tree.getRoot(), 0) == treeElement;
+        if (tree instanceof HilbertRTree) {
+            return TreeUtils.countEltsInHilbertNode((HilbertNode)tree.getRoot(), 0) == treeElement;
         }
-        return DefaultTreeUtils.countElementsRecursively(tree.getRoot(), 0) == treeElement;
+        return TreeUtils.countElementsRecursively(tree.getRoot(), 0) == treeElement;
     }
     
 

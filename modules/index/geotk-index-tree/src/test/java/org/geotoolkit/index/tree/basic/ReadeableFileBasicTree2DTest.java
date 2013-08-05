@@ -31,11 +31,11 @@ public class ReadeableFileBasicTree2DTest extends AbstractTreeTest {
         super(DefaultEngineeringCRS.CARTESIAN_2D);
         final File inOutFile = File.createTempFile("test", "tree");
         tree = new FileBasicRTree(inOutFile, 3, crs, SplitCase.LINEAR, tEM);
-        tAF  = ((AbstractBasicRTree)tree).getTreeAccess();
+        tAF  = ((BasicRTree)tree).getTreeAccess();
         
         insert();
         tree.close();
         tree = new FileBasicRTree(inOutFile, SplitCase.LINEAR, tEM);
-        tAF  = ((AbstractBasicRTree)tree).getTreeAccess();
+        tAF  = ((BasicRTree)tree).getTreeAccess();
     }
 }

@@ -26,16 +26,17 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.gui.swing.tree.Trees;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
+import static org.geotoolkit.index.tree.TreeUtils.*;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.access.TreeAccess;
 import org.geotoolkit.index.tree.hilbert.iterator.HilbertIterator;
 
 /**
+ * Appropriate Node which match with HilbertRTree properties.
  *
  * @author Remi Marechal (Geomatys).
  */
-public class FileHilbertNode extends Node {
+public class HilbertNode extends Node {
 
     private Node[] children;
     private int dimension;
@@ -45,7 +46,7 @@ public class FileHilbertNode extends Node {
     private static final double LN2 = 0.6931471805599453;
     
 
-    public FileHilbertNode(TreeAccess tAF, int nodeId, double[] boundary, byte properties, int parentId, int siblingId, int childId) throws IOException {
+    public HilbertNode(TreeAccess tAF, int nodeId, double[] boundary, byte properties, int parentId, int siblingId, int childId) throws IOException {
         super(tAF, nodeId, boundary, properties, parentId, siblingId, childId);
         dimension = tAF.getCRS().getCoordinateSystem().getDimension();
         dataCount = 0;
@@ -58,7 +59,7 @@ public class FileHilbertNode extends Node {
     private boolean isInternalyFull() throws IOException {
         int sibl = getChildId();
         while (sibl != 0) {
-            final FileHilbertNode fhn = (FileHilbertNode) tAF.readNode(sibl);
+            final HilbertNode fhn = (HilbertNode) tAF.readNode(sibl);
             if (!fhn.isFull()) {
                 return false;
             }
@@ -119,13 +120,13 @@ public class FileHilbertNode extends Node {
                     final Node fcnod = (Node)cnod;
                     int dataSibl = fcnod.getChildId();
                     while (dataSibl != 0) {
-                        final FileHilbertNode currentData = (FileHilbertNode) tAF.readNode(dataSibl);
+                        final HilbertNode currentData = (HilbertNode) tAF.readNode(dataSibl);
                         dataSibl = currentData.getSiblingId();
                         currentData.setSiblingId(0);// become distinc
                         data.add(currentData);
                     }
 //                    super.removeChild(fnod);
-                    tAF.deleteNode(fcnod);
+                    tAF.removeNode(fcnod);
                 }
                 clear();
                 // on creer les cells null
@@ -216,12 +217,12 @@ public class FileHilbertNode extends Node {
                         final Node fcnod = (Node)cnod;
                         int dataSibl = fcnod.getChildId();
                         while (dataSibl != 0) {
-                            final FileHilbertNode currentData = (FileHilbertNode) tAF.readNode(dataSibl);
+                            final HilbertNode currentData = (HilbertNode) tAF.readNode(dataSibl);
                             dataSibl = currentData.getSiblingId();
                             currentData.setSiblingId(0);// become distinc
                             data.add(currentData);
                         }
-                        tAF.deleteNode(fcnod);
+                        tAF.removeNode(fcnod);
                     }
                     clear();
                     currentHilbertOrder = hOrder;

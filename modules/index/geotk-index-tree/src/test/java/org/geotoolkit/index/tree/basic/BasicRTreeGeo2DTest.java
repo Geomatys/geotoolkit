@@ -26,14 +26,14 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 /**
  * Create R-Tree test suite in geographic 2D space.
  *
- * @author Rémi Marechal (Geomatys).
+ * @author Rémi Maréchal (Geomatys).
  */
 public class BasicRTreeGeo2DTest extends AbstractTreeTest {
 
     public BasicRTreeGeo2DTest() throws StoreIndexException, IOException {
         super(DefaultGeographicCRS.WGS84);
-        tEM = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
+        tEM  = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
         tree = new FileBasicRTree(File.createTempFile("test", "tree"), 3, crs, SplitCase.QUADRATIC, tEM);
-        tAF  = ((AbstractBasicRTree)tree).getTreeAccess();
+        tAF  = ((BasicRTree)tree).getTreeAccess();
     }
 }

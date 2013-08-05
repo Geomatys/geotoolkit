@@ -34,10 +34,10 @@ public class ReadeableStarRTree2DTest  extends AbstractTreeTest {
         final File inOutFile = File.createTempFile("test", "tree");
         tEM = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
         tree = new FileStarRTree(inOutFile, 4, crs, tEM);
-        tAF  = ((AbstractStarRTree)tree).getTreeAccess();
+        tAF  = ((StarRTree)tree).getTreeAccess();
         insert();
         tree.close();
         tree = new FileStarRTree(inOutFile, tEM);
-        tAF  = ((AbstractStarRTree)tree).getTreeAccess();
+        tAF  = ((StarRTree)tree).getTreeAccess();
     }
 }

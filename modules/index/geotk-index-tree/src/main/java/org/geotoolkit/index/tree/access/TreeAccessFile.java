@@ -30,34 +30,67 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import org.geotoolkit.index.tree.Node;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.intersects;
+import static org.geotoolkit.index.tree.TreeUtils.intersects;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * {@link TreeAccess} implementation.<br/>
  * Store all {@link Node} architecture use by {@link Tree} on disk drive.
  * 
  * @author Remi Marechal (Geomatys).
  */
 public class TreeAccessFile extends TreeAccess {
-    
+    /**
+     * boundary table value length of each Node.
+     */
     private final int boundLength;
-    private final int nodeSize;
-    private final int beginPosition;
-    private final RandomAccessFile inOutStream;
-    private final FileChannel inOutChannel;
-    
-    // byte buffer attributs
-    private final ByteBuffer byteBuffer;
-    private long currentBufferPosition;
-    private int writeBufferLimit;
-    private final int bufferLength;
-    private int rwIndex;
-    
-    private List<Integer> recycleID = new LinkedList<Integer>();
-    
     
     /**
-     * Build a {@link Tree} from a already filled {@link File}.
+     * Length in Byte unit of a Node in file on hard disk. 
+     */
+    private final int nodeSize;
+    
+    /**
+     * {@link FileChannel} position just after write or read file head.<br/>
+     * Its also file position of first Node red or written.
+     */
+    private final int beginPosition;
+    
+    /**
+     * Stream to read and write Tree information and Node.
+     */
+    private final RandomAccessFile inOutStream;
+    
+    /**
+     * Channel to read and write Tree information and Node.
+     */
+    private final FileChannel inOutChannel;
+    
+    /**
+     * {@link ByteBuffer} to read and write Node from file on hard disk.
+     */
+    private final ByteBuffer byteBuffer;
+    
+    /**
+     * ByteBuffer Length.
+     */
+    private final int bufferLength;
+    
+    /**
+     * ByteBuffer attributs use to read and write.
+     */
+    private long currentBufferPosition;
+    private int writeBufferLimit;
+    private int rwIndex;
+    
+    /**
+     * Store identifier of all removed Node to re-use them. 
+     */
+    private List<Integer> recycleID = new LinkedList<Integer>();
+    
+    /**
+     * Build a {@link Tree} from a already filled {@link File}.<br/>
+     * The default length value of ByteBuffer which read and write on hard disk, is 4096 Bytes.
      * 
      * @param input {@code File} which already contains {@link Node} architecture.
      * @param magicNumber {@code Integer} single {@link Tree} code.
@@ -65,7 +98,21 @@ public class TreeAccessFile extends TreeAccess {
      * @throws IOException if problem during read or write Node.
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
-    public TreeAccessFile( final File input, final int magicNumber, final double versionNumber ) throws IOException, ClassNotFoundException {
+    public TreeAccessFile(final File input, final int magicNumber, final double versionNumber)  throws IOException, ClassNotFoundException {
+        this(input, magicNumber, versionNumber, DEFAULT_BUFFER_LENGTH);
+    }
+    
+    /**
+     * Build a {@link Tree} from a already filled {@link File}.
+     * 
+     * @param input {@code File} which already contains {@link Node} architecture.
+     * @param magicNumber {@code Integer} single {@link Tree} code.
+     * @param versionNumber tree version.
+     * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
+     * @throws IOException if problem during read or write Node.
+     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
+     */
+    public TreeAccessFile( final File input, final int magicNumber, final double versionNumber , final int byteBufferLength) throws IOException, ClassNotFoundException {
         super();
         
         // stream
@@ -114,7 +161,7 @@ public class TreeAccessFile extends TreeAccess {
         nodeSize = ((dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2) + 1;
         
         // buffer attributs
-        final int div = 4096 / nodeSize;// 4096 In future define a better approppriate value by benchmark.
+        final int div = byteBufferLength / nodeSize;
         this.bufferLength = div * nodeSize;
         byteBuffer = ByteBuffer.allocateDirect(bufferLength);
         byteBuffer.order(bO);
@@ -131,7 +178,8 @@ public class TreeAccessFile extends TreeAccess {
     /**
      * Build and insert {@link Node} architecture in a {@link File}.<br/>
      * If file is not empty, data within it will be overwrite.<br/>
-     * If file does not exist a file will be create.
+     * If file does not exist a file will be create.<br/>
+     * The default length value of ByteBuffer which read and write on hard disk, is 4096 Bytes.
      * 
      * @param outPut {@code File} where {@link Node} architecture which will be write.
      * @param magicNumber {@code Integer} single {@link Tree} code.
@@ -140,7 +188,26 @@ public class TreeAccessFile extends TreeAccess {
      * @param crs 
      * @throws IOException if problem during read or write Node.
      */
-    public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, int maxElements, CoordinateReferenceSystem crs) throws IOException {
+    public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
+            final int maxElements, final CoordinateReferenceSystem crs) throws IOException {
+        this(outPut, magicNumber, versionNumber, maxElements, crs, DEFAULT_BUFFER_LENGTH);
+    }
+    
+    /**
+     * Build and insert {@link Node} architecture in a {@link File}.<br/>
+     * If file is not empty, data within it will be overwrite.<br/>
+     * If file does not exist a file will be create.
+     * 
+     * @param outPut {@code File} where {@link Node} architecture which will be write.
+     * @param magicNumber {@code Integer} single {@link Tree} code.
+     * @param versionNumber version number.
+     * @param maxElements element number per cell.
+     * @param crs 
+     * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
+     * @throws IOException if problem during read or write Node.
+     */
+    public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
+            final int maxElements, final CoordinateReferenceSystem crs, final int byteBufferLength) throws IOException {
         super(maxElements, crs);
         
         int dimension = crs.getCoordinateSystem().getDimension();
@@ -153,7 +220,7 @@ public class TreeAccessFile extends TreeAccess {
         // Node size : boundary weigth + isLeaf boolean + parent ID Integer + 1st sibling Integer + 1st child Integer + child number.
         nodeSize = ((dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2) + 1;
         
-        final int div = 4096 / nodeSize; // 4096
+        final int div = byteBufferLength / nodeSize; // 4096
         this.bufferLength = div * nodeSize;
         // ByteBuffer
         final ByteOrder bO = ByteOrder.nativeOrder();
@@ -317,7 +384,7 @@ public class TreeAccessFile extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-    public void deleteNode(final Node candidate) throws IOException {
+    public void removeNode(final Node candidate) {
         recycleID.add(candidate.getNodeId());
     }
         

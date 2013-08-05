@@ -20,12 +20,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.index.tree.Node;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.intersects;
+import static org.geotoolkit.index.tree.TreeUtils.intersects;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * Store all {@link Node} architecture use by {@link Tree} in memory computer.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
  */
 public class TreeAccessMemory extends TreeAccess {
 
@@ -40,8 +41,6 @@ public class TreeAccessMemory extends TreeAccess {
         recycleID = new ArrayList<Integer>();
         root = null;
     }
-    
-    
     
     @Override
     protected void internalSearch(int nodeID) throws IOException{ //algorithm a ameliorer
@@ -84,15 +83,7 @@ public class TreeAccessMemory extends TreeAccess {
     }
 
     @Override
-    public void deleteNode(Node candidate) throws IOException {
-//        final int candidateNodeId = candidate.getNodeId();
-//        for (int i = 0; i < listNode.size(); i++) {
-//            final FileNode currentFN = listNode.get(i);
-//            if (candidateNodeId == currentFN.getNodeId()) {
-//                listNode.remove(i);
-//                return;
-//            }
-//        }
+    public void removeNode(Node candidate) {
         final int candID = candidate.getNodeId();
         recycleID.add(candID);
         tabNode[candID-1] = null;

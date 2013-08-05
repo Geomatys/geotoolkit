@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.index.tree.access.TreeAccess;
-import org.geotoolkit.index.tree.hilbert.FileHilbertNode;
+import org.geotoolkit.index.tree.hilbert.HilbertNode;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -29,7 +29,7 @@ import org.opengis.geometry.Envelope;
  *
  * @author Rémi Maréchal (Geomatys).
  */
-public class DefaultTreeUtils {
+public class TreeUtils {
 
     // javadoc
     public final static byte IS_LEAF  = 1;
@@ -37,7 +37,7 @@ public class DefaultTreeUtils {
     public final static byte IS_CELL  = 4;
     public final static byte IS_OTHER = 8;
     
-    private DefaultTreeUtils() {
+    private TreeUtils() {
     }
     
     /**
@@ -70,7 +70,7 @@ public class DefaultTreeUtils {
      * @param count element counter. When caller call this method normaly zero. 
      * @return all element number within this Node.
      */
-    public static int countEltsInHilbertNode(final FileHilbertNode hNode, int count) throws IOException {
+    public static int countEltsInHilbertNode(final HilbertNode hNode, int count) throws IOException {
         if (hNode == null) return count;
         if (hNode.isLeaf()) {
             count = count + hNode.getDataCount();

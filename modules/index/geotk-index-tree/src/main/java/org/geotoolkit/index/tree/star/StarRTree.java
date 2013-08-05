@@ -22,21 +22,21 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Classes;
 import org.geotoolkit.index.tree.AbstractTree;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
+import static org.geotoolkit.index.tree.TreeUtils.*;
 import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.access.TreeAccess;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.mapper.TreeElementMapper;
 
 /**
+ * Tree implementation.
+ * R* Tree.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
  */
-public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
+public abstract class StarRTree<E> extends AbstractTree<E> {
     
     /**
      * In accordance with R*Tree properties.
@@ -51,7 +51,7 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
     boolean travelUpBeforeInsertAgain = false;
     
     
-    public AbstractStarRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
+    public StarRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
         super(treeAccess, treeAccess.getCRS(), treeEltMap);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);
@@ -77,21 +77,6 @@ public abstract class AbstractStarRTree<E> extends AbstractTree<E> {
      */
     private void setIA(boolean insertAgain) {
         this.insertAgain = insertAgain;
-    }
-    
-    @Override
-    public int[] searchID(double[] regionSearch) throws StoreIndexException {
-        // root node always begin at index 1 because 0 is reserved for no sibling or children.
-        final Node root = getRoot();
-        if (root != null && !root.isEmpty()) {
-            try {
-                return treeAccess.search(((Node)root).getNodeId(), regionSearch);
-            } catch (IOException ex) {
-                throw new StoreIndexException(this.getClass().getName()+" impossible to find stored elements at "
-                        +Arrays.toString(regionSearch)+" region search area.", ex);
-            }
-        }
-        return null;
     }
     
     @Override

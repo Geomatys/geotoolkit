@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.List;
 import org.geotoolkit.index.tree.Node;
 import org.apache.sis.util.ArgumentChecks;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
+import static org.geotoolkit.index.tree.TreeUtils.*;
 import org.geotoolkit.index.tree.Node;
 
 /**

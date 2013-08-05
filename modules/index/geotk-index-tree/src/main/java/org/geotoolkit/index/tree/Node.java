@@ -17,7 +17,7 @@
 package org.geotoolkit.index.tree;
 import org.geotoolkit.index.tree.access.TreeAccess;
 import java.io.IOException;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
+import static org.geotoolkit.index.tree.TreeUtils.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -220,7 +220,7 @@ public class Node {
                 }
             }
         }
-        if (found) tAF.deleteNode(node);
+        if (found) tAF.removeNode(node);
         return found;
     }
     
@@ -242,7 +242,7 @@ public class Node {
         }
         if (index == -1) return false;
         childCount--;
-        tAF.deleteNode(children[index]);
+        tAF.removeNode(children[index]);
         if (index == 0) {
             if (l == 1) {
                 setChildId(0);

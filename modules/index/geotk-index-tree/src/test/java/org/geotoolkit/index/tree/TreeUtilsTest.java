@@ -19,7 +19,7 @@ package org.geotoolkit.index.tree;
 import java.util.Arrays;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
+import static org.geotoolkit.index.tree.TreeUtils.*;
 import org.junit.Assert;
 
 /**
@@ -27,11 +27,11 @@ import org.junit.Assert;
  *
  * @author Remi Marechal (Geomatys)
  */
-public class DefaultTreeUtilsTest {
+public class TreeUtilsTest {
 
     private static final double EPSILON = 1E-12;
     
-    public DefaultTreeUtilsTest() {
+    public TreeUtilsTest() {
     }
     
     /**

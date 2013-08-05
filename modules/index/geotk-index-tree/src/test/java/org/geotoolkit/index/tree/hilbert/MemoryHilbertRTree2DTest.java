@@ -30,7 +30,7 @@ public class MemoryHilbertRTree2DTest extends AbstractTreeTest {
     public MemoryHilbertRTree2DTest() throws StoreIndexException, IOException {
         super(DefaultEngineeringCRS.CARTESIAN_2D);
         tree = new MemoryHilbertRTree(4, 2, crs, tEM);
-        tAF = ((AbstractHilbertRTree)tree).getTreeAccess();
+        tAF = ((HilbertRTree)tree).getTreeAccess();
     }
     
 }
