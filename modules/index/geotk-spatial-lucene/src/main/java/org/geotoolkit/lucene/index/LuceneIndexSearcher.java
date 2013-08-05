@@ -83,9 +83,9 @@ public class LuceneIndexSearcher extends IndexLucene {
     private final boolean isCacheEnabled;
 
     /**
-     * A list of metadata ID ordered by DocID.
+     * A Map of DocID -> metadata ID .
      */
-    private List<String> identifiers;
+    private final Map<Integer, String> identifiers = new HashMap<Integer, String>();
     
     /**
      * A list of numeric fields names.
@@ -198,12 +198,14 @@ public class LuceneIndexSearcher extends IndexLucene {
      * Fill the list of identifiers ordered by doc ID
      */
     private void initIdentifiersList() throws IOException {
-        identifiers = new ArrayList<String>();
+        final Map<Integer, String> temp = new HashMap<Integer, String>();
         final long nbDoc = searcher.collectionStatistics("id").maxDoc();
         for (int i = 0; i < nbDoc; i++) {
             final String metadataID = getMatchingID(searcher.doc(i));
-            identifiers.add(i, metadataID);
+            temp.put(i, metadataID);
         }
+        identifiers.clear();
+        identifiers.putAll(temp);
         LOGGER.log(logLevel, "{0} records found.", identifiers.size());
     }
 
@@ -222,6 +224,20 @@ public class LuceneIndexSearcher extends IndexLucene {
             throw new IndexingException("Corruption exception encountered during refreshing the index searcher", ex);
         } catch (IOException ex) {
             throw new IndexingException("IO Exception during refreshing the index searcher", ex);
+        }
+    }
+
+    /**
+     * Add the metadata id to the list of result if its present in the identifiers.
+     * @param results
+     * @param docID
+     */
+    private void addToResult(final Set<String> results, final int docID) {
+        final String metadataID = identifiers.get(docID);
+        if (metadataID != null) {
+            results.add(metadataID);
+        } else {
+            LOGGER.log(Level.WARNING, "Unable to find a metadata ID for doc :{0}", docID);
         }
     }
 
@@ -367,7 +383,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                     docs = searcher.search(query, filter, maxRecords);
                 }
                 for (ScoreDoc doc : docs.scoreDocs) {
-                    results.add(identifiers.get(doc.doc));
+                    addToResult(results, doc.doc);
                 }
 
             // for a OR we need to perform many request
@@ -382,11 +398,10 @@ public class LuceneIndexSearcher extends IndexLucene {
                     hits2 = searcher.search(SIMPLE_QUERY, spatialQuery.getSpatialFilter(), maxRecords);
                 }
                 for (ScoreDoc doc : hits1.scoreDocs) {
-                    results.add(identifiers.get(doc.doc));
+                    addToResult(results, doc.doc);
                 }
                 for (ScoreDoc doc : hits2.scoreDocs) {
-                    final String id = identifiers.get(doc.doc);
-                    results.add(id);
+                    addToResult(results, doc.doc);
                 }
 
             // for a NOT we need to perform many request
@@ -399,7 +414,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 }
                 final Set<String> unWanteds = new LinkedHashSet<String>();
                 for (ScoreDoc doc : hits1.scoreDocs) {
-                    unWanteds.add(identifiers.get(doc.doc));
+                    addToResult(unWanteds, doc.doc);
                 }
 
                 final TopDocs hits2;
@@ -410,7 +425,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 }
                 for (ScoreDoc doc : hits2.scoreDocs) {
                     final String id = identifiers.get(doc.doc);
-                    if (!unWanteds.contains(id)) {
+                    if (id != null && !unWanteds.contains(id)) {
                         results.add(id);
                     }
                 }
