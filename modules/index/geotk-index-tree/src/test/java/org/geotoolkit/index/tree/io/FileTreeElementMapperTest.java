@@ -76,5 +76,4 @@ public class FileTreeElementMapperTest extends FileTreeElementMapper<double[]> {
         }
         return result;
     }
-
 }

@@ -27,66 +27,72 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import org.geotoolkit.index.tree.Node;
 import static org.geotoolkit.index.tree.TreeUtils.intersects;
+import org.geotoolkit.index.tree.hilbert.HilbertTreeAccessFile;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * {@link TreeAccess} implementation.<br/>
  * Store all {@link Node} architecture use by {@link Tree} on disk drive.
  * 
- * @author Remi Marechal (Geomatys).
+ * @author Rémi Maréchal (Geomatys).
  */
 public class TreeAccessFile extends TreeAccess {
+    
+    /**
+     * Number of Integer per Node.<br/><br/>
+     * parent ID<br/>
+     * sibling ID<br/>
+     * child ID<br/>
+     * children number.
+     * 
+     * @see HilbertTreeAccessFile#INT_NUMBER
+     */
+    private static int INT_NUMBER = 4;
+    
     /**
      * boundary table value length of each Node.
      */
-    private final int boundLength;
+    protected final int boundLength;
     
     /**
      * Length in Byte unit of a Node in file on hard disk. 
      */
-    private final int nodeSize;
+    protected final int nodeSize;
     
     /**
      * {@link FileChannel} position just after write or read file head.<br/>
      * Its also file position of first Node red or written.
      */
-    private final int beginPosition;
+    protected final int beginPosition;
     
     /**
      * Stream to read and write Tree information and Node.
      */
-    private final RandomAccessFile inOutStream;
+    protected final RandomAccessFile inOutStream;
     
     /**
      * Channel to read and write Tree information and Node.
      */
-    private final FileChannel inOutChannel;
+    protected final FileChannel inOutChannel;
     
     /**
      * {@link ByteBuffer} to read and write Node from file on hard disk.
      */
-    private final ByteBuffer byteBuffer;
+    protected final ByteBuffer byteBuffer;
     
     /**
      * ByteBuffer Length.
      */
-    private final int bufferLength;
+    protected final int bufferLength;
     
     /**
      * ByteBuffer attributs use to read and write.
      */
-    private long currentBufferPosition;
-    private int writeBufferLimit;
-    private int rwIndex;
-    
-    /**
-     * Store identifier of all removed Node to re-use them. 
-     */
-    private List<Integer> recycleID = new LinkedList<Integer>();
+    protected long currentBufferPosition;
+    protected int writeBufferLimit;
+    protected int rwIndex;
     
     /**
      * Build a {@link Tree} from a already filled {@link File}.<br/>
@@ -95,11 +101,12 @@ public class TreeAccessFile extends TreeAccess {
      * @param input {@code File} which already contains {@link Node} architecture.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber tree version.
+     * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process. 
      * @throws IOException if problem during read or write Node.
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
-    public TreeAccessFile(final File input, final int magicNumber, final double versionNumber)  throws IOException, ClassNotFoundException {
-        this(input, magicNumber, versionNumber, DEFAULT_BUFFER_LENGTH);
+    protected TreeAccessFile(final File input, final int magicNumber, final double versionNumber, final int integerNumberPerNode)  throws IOException, ClassNotFoundException {
+        this(input, magicNumber, versionNumber, DEFAULT_BUFFER_LENGTH, integerNumberPerNode);
     }
     
     /**
@@ -112,7 +119,23 @@ public class TreeAccessFile extends TreeAccess {
      * @throws IOException if problem during read or write Node.
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
-    public TreeAccessFile( final File input, final int magicNumber, final double versionNumber , final int byteBufferLength) throws IOException, ClassNotFoundException {
+    public TreeAccessFile( final File input, final int magicNumber, final double versionNumber) throws IOException, ClassNotFoundException{
+        this(input, magicNumber, versionNumber, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
+    }
+    
+    /**
+     * Build a {@link Tree} from a already filled {@link File}.
+     * 
+     * @param input {@code File} which already contains {@link Node} architecture.
+     * @param magicNumber {@code Integer} single {@link Tree} code.
+     * @param versionNumber tree version.
+     * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
+     * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process. 
+     * @throws IOException if problem during read or write Node.
+     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
+     */
+    public TreeAccessFile( final File input, final int magicNumber, final double versionNumber , 
+            final int byteBufferLength, final int integerNumberPerNode) throws IOException, ClassNotFoundException {
         super();
         
         // stream
@@ -134,6 +157,8 @@ public class TreeAccessFile extends TreeAccess {
             throw new IllegalArgumentException("Wrong version number. Expected : "+versionNumber+". Version found in tree file : "+vN);
         // read maxElement
         maxElement = inOutStream.readInt();
+        // read hilbert Order
+        hilbertOrder = inOutStream.readInt();
         // read nodeID
         nodeId = inOutStream.readInt();
         if (nodeId == 0)
@@ -150,15 +175,18 @@ public class TreeAccessFile extends TreeAccess {
         crsInputS.close();
         /*****************************  end head ******************************/
         
-        final int dimension = crs.getCoordinateSystem().getDimension();
-        this.boundLength = dimension << 1;
+        this.boundLength = crs.getCoordinateSystem().getDimension() << 1;
         
         //nanbound
         nanBound = new double[boundLength];
         Arrays.fill(nanBound, Double.NaN);
         
-        // Node size : boundary weigth + isLeaf boolean + parent ID Integer + 1st sibling Integer + 1st child Integer + child number.
-        nodeSize = ((dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2) + 1;
+        /**
+         * Node size : boundary weigth + Byte properties + n Integers.<br/><br/>
+         * 
+         * see INT_NUMBER attribut.
+         */
+        nodeSize = (boundLength * Double.SIZE + Integer.SIZE * integerNumberPerNode) / 8 + 1;
         
         // buffer attributs
         final int div = byteBufferLength / nodeSize;
@@ -174,23 +202,23 @@ public class TreeAccessFile extends TreeAccess {
         inOutChannel.read(byteBuffer, currentBufferPosition);
         root = this.readNode(1);
     }
-    
+        
     /**
      * Build and insert {@link Node} architecture in a {@link File}.<br/>
      * If file is not empty, data within it will be overwrite.<br/>
-     * If file does not exist a file will be create.<br/>
-     * The default length value of ByteBuffer which read and write on hard disk, is 4096 Bytes.
+     * If file does not exist a file will be create.
      * 
      * @param outPut {@code File} where {@link Node} architecture which will be write.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber version number.
      * @param maxElements element number per cell.
      * @param crs 
+     * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
      * @throws IOException if problem during read or write Node.
      */
     public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
-            final int maxElements, final CoordinateReferenceSystem crs) throws IOException {
-        this(outPut, magicNumber, versionNumber, maxElements, crs, DEFAULT_BUFFER_LENGTH);
+            final int maxElements, final CoordinateReferenceSystem crs, final int integerNumberPerNode) throws IOException {
+        this(outPut, magicNumber, versionNumber, maxElements, crs, DEFAULT_BUFFER_LENGTH, integerNumberPerNode);
     }
     
     /**
@@ -207,18 +235,43 @@ public class TreeAccessFile extends TreeAccess {
      * @throws IOException if problem during read or write Node.
      */
     public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
-            final int maxElements, final CoordinateReferenceSystem crs, final int byteBufferLength) throws IOException {
-        super(maxElements, crs);
+            final int maxElements, final CoordinateReferenceSystem crs) throws IOException {
+        this(outPut, magicNumber, versionNumber, maxElements, crs, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
+    }
+    
+    /**
+     * Build and insert {@link Node} architecture in a {@link File}.<br/>
+     * If file is not empty, data within it will be overwrite.<br/>
+     * If file does not exist a file will be create.
+     * 
+     * @param outPut {@code File} where {@link Node} architecture which will be write.
+     * @param magicNumber {@code Integer} single {@link Tree} code.
+     * @param versionNumber version number.
+     * @param maxElements element number per cell.
+     * @param crs 
+     * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
+     * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process. 
+     * @throws IOException if problem during read or write Node.
+     */
+    public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
+            final int maxElements, final CoordinateReferenceSystem crs, final int byteBufferLength, final int integerNumberPerNode) throws IOException {
+        super();
         
-        int dimension = crs.getCoordinateSystem().getDimension();
-        this.boundLength = dimension << 1;
+        this.crs = crs;
+        this.maxElement = maxElements;
+        
+        this.boundLength = crs.getCoordinateSystem().getDimension() << 1;
         
         //nanbound
         nanBound = new double[boundLength];
         Arrays.fill(nanBound, Double.NaN);
         
-        // Node size : boundary weigth + isLeaf boolean + parent ID Integer + 1st sibling Integer + 1st child Integer + child number.
-        nodeSize = ((dimension * Double.SIZE + ((Integer.SIZE) << 1)) >> 2) + 1;
+        /**
+         * Node size : boundary weigth + Byte properties + n Integers.<br/><br/>
+         * 
+         * see INT_NUMBER attribut.
+         */
+        nodeSize = (boundLength * Double.SIZE + Integer.SIZE * integerNumberPerNode) / 8 + 1;
         
         final int div = byteBufferLength / nodeSize; // 4096
         this.bufferLength = div * nodeSize;
@@ -242,6 +295,8 @@ public class TreeAccessFile extends TreeAccess {
         inOutStream.writeDouble(versionNumber);
         // write element number per Node
         inOutStream.writeInt(maxElements);
+        // write hilbert order
+        inOutStream.writeInt(hilbertOrder);
         // write nodeID
         inOutStream.writeInt(0);
         // write treeIdentifier
@@ -263,19 +318,6 @@ public class TreeAccessFile extends TreeAccess {
         
         // root 
         root = null;
-    }
-    
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public int[] search(int nodeID, double[] regionSearch) throws IOException {
-        currentLength     = 100;
-        tabSearch         = new int[currentLength];
-        currentPosition   = 0;
-        this.regionSearch = regionSearch;
-        internalSearch(nodeID);
-        return Arrays.copyOf(tabSearch, currentPosition);
     }
         
     /**
@@ -359,7 +401,7 @@ public class TreeAccessFile extends TreeAccess {
      * @param treeIdentifier 
      * @throws IOException 
      */
-    private void adjustBuffer(final int nodeID) throws IOException {
+    protected void adjustBuffer(final int nodeID) throws IOException {
         rwIndex = beginPosition + (nodeID - 1) * nodeSize;
         if (rwIndex < currentBufferPosition || rwIndex >= currentBufferPosition + bufferLength) {
             // write current data within bytebuffer in channel.
@@ -403,7 +445,6 @@ public class TreeAccessFile extends TreeAccess {
         inOutChannel.position(beginPosition);
         currentBufferPosition = beginPosition;
         writeBufferLimit = 0;
-        recycleID.clear();
     }
         
     /**
@@ -418,20 +459,11 @@ public class TreeAccessFile extends TreeAccess {
             writtenByte = inOutChannel.write(byteBuffer, currentBufferPosition);
         }
         // write nodeID
-        inOutChannel.position(17); // a checker
+        inOutChannel.position(21); 
         inOutStream.writeInt(nodeId);
         inOutStream.writeInt(treeIdentifier);
         inOutStream.writeInt(eltNumber);
         //close
         inOutChannel.close();
-     }
-       
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-     public Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
-         final int currentID = (!recycleID.isEmpty()) ? recycleID.remove(0) : nodeId++;
-         return new Node(this, currentID, boundary, properties, parentId, siblingId, childId);
      }
 }
