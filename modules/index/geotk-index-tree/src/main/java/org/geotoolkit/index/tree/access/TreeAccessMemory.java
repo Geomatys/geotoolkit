@@ -17,8 +17,6 @@
 package org.geotoolkit.index.tree.access;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import org.geotoolkit.index.tree.Node;
 import static org.geotoolkit.index.tree.TreeUtils.intersects;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -32,16 +30,19 @@ public class TreeAccessMemory extends TreeAccess {
 
     private int tabNodeLength;
     private Node[] tabNode;
-    protected List<Integer> recycleID;
 
     public TreeAccessMemory(final int maxElements, final CoordinateReferenceSystem crs) {
-        super(maxElements, crs);
-        tabNodeLength = 100;
-        tabNode = new Node[tabNodeLength];
-        recycleID = new ArrayList<Integer>();
-        root = null;
+        super();
+        this.crs        = crs;
+        this.maxElement = maxElements;
+        tabNodeLength   = 100;
+        tabNode         = new Node[tabNodeLength];
+        root            = null;
     }
     
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     protected void internalSearch(int nodeID) throws IOException{ //algorithm a ameliorer
         final Node candidate = readNode(nodeID);
@@ -65,11 +66,17 @@ public class TreeAccessMemory extends TreeAccess {
         }
     }
     
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Node readNode(int indexNode) throws IOException {
         return tabNode[indexNode-1];
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void writeNode(Node candidate) throws IOException {
         final int candidateID = candidate.getNodeId();
@@ -82,6 +89,9 @@ public class TreeAccessMemory extends TreeAccess {
         tabNode[candidateID-1] = candidate;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void removeNode(Node candidate) {
         final int candID = candidate.getNodeId();
@@ -89,30 +99,24 @@ public class TreeAccessMemory extends TreeAccess {
         tabNode[candID-1] = null;
     }
 
+    /**
+     * {@inheritDoc }
+     * 
+     * @throws IOException no exception in this implementation.
+     */
     @Override
     public void rewind() throws IOException {
         super.rewind();
         tabNodeLength = 100;
         tabNode = new Node[tabNodeLength];
-        recycleID.clear();
     }
 
+    /**
+     * Do Nothing.
+     * @throws IOException 
+     */
     @Override
     public void close() throws IOException {
         // nothing
-    }
-    
-    /**
-     * 
-     * @param boundary
-     * @param parentId
-     * @param siblingId
-     * @param childId
-     * @return 
-     */
-    @Override
-    public Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId){
-        final int currentID = (recycleID.isEmpty()) ? nodeId++ : recycleID.remove(0);
-        return new Node(this, currentID, boundary, properties, parentId, siblingId, childId);
     }
 }

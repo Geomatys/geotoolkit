@@ -19,10 +19,10 @@ package org.geotoolkit.index.tree.access;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import org.geotoolkit.index.tree.AbstractTree;
 import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.basic.BasicRTree;
-import org.geotoolkit.index.tree.star.StarRTree;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -113,18 +113,15 @@ public abstract class TreeAccess {
      */
     protected int hilbertOrder;
     
-    protected TreeAccess() {
-    }
+    /**
+     * Store identifier of all removed Node to re-use them. 
+     */
+    protected List<Integer> recycleID = new LinkedList<Integer>();
     
     /**
      * Create a TreeAccess.
-     * 
-     * @param maxElement maximum element number for each Tree Leaf. 
-     * @param crs current CoordinateReferenceSystem
      */
-    protected TreeAccess(final int maxElement, final CoordinateReferenceSystem crs) {
-        this.maxElement = maxElement;
-        this.crs        = crs;
+    protected TreeAccess() {
         treeIdentifier  = 1;
     }
     
@@ -262,6 +259,7 @@ public abstract class TreeAccess {
      */
     public void rewind() throws IOException {
         nodeId = 1;
+        recycleID.clear();
     }
     
     /**
@@ -284,6 +282,7 @@ public abstract class TreeAccess {
      * @return Node adapted from Tree implementation.
      */
     public Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
-        return new Node(this, nodeId++, boundary, properties, parentId, siblingId, childId);
+        final int currentID = (recycleID.isEmpty()) ? nodeId++ : recycleID.remove(0);
+        return new Node(this, currentID, boundary, properties, parentId, siblingId, childId);
     }
 }
