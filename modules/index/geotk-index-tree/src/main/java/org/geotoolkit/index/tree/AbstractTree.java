@@ -102,7 +102,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
      * {@inheritDoc}
      */
     @Override
-    public int[] searchID(Envelope regionSearch) throws StoreIndexException {
+    public int[] searchID(final Envelope regionSearch) throws StoreIndexException {
         ArgumentChecks.ensureNonNull("Envelope regionSearch", regionSearch);
         final Node root = getRoot();
         final double[] regSearch = TreeUtilities.getCoords(regionSearch);
@@ -121,7 +121,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
      * {@inheritDoc}
      */
     @Override
-    public void insert(E object) throws IllegalArgumentException , StoreIndexException{
+    public void insert(final E object) throws IllegalArgumentException , StoreIndexException{
         try {
             ArgumentChecks.ensureNonNull("insert : object", object);
             final Envelope env = treeEltMap.getEnvelope(object);
@@ -142,16 +142,16 @@ public abstract class AbstractTree<E> implements Tree<E> {
     /**
      * {@inheritDoc}
      */
-    protected void insert(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException {
+    protected void insert(final int identifier, final double... coordinates) throws IllegalArgumentException, StoreIndexException {
         try {
             eltCompteur++;
             Node root = getRoot();
             if (root == null || root.isEmpty()) {
                 root = createNode(treeAccess, null, IS_LEAF, 0, 0, 0);
-                root.addChild(createNode(treeAccess, coordinates, IS_DATA, 1, 0, -((Integer)object)));
+                root.addChild(createNode(treeAccess, coordinates, IS_DATA, 1, 0, -identifier));
                 setRoot(root);
             } else {
-                final Node newRoot = nodeInsert(root, object, coordinates);
+                final Node newRoot = nodeInsert(root, identifier, coordinates);
                 if (newRoot != null) {
                     setRoot(newRoot);
                     treeAccess.writeNode((Node)newRoot);
@@ -162,7 +162,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
         }
     }
     
-    protected abstract Node nodeInsert(Node candidate, Object object, double ...coordinates) throws IOException;
+    protected abstract Node nodeInsert(final Node candidate, final int identifier, final double ...coordinates) throws IOException;
     
     /**
      * Find appropriate {@code Node} to insert {@code Envelope} entry.<br/><br/>
@@ -394,7 +394,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
     }
     
     @Override
-    public boolean remove(E object) throws StoreIndexException {
+    public boolean remove(final E object) throws StoreIndexException {
         try {
             ArgumentChecks.ensureNonNull("insert : object", object);
             final Envelope env = treeEltMap.getEnvelope(object);
@@ -411,17 +411,17 @@ public abstract class AbstractTree<E> implements Tree<E> {
         }
     }
     
-    protected boolean remove(Object object, double... coordinates) throws StoreIndexException {
-        ArgumentChecks.ensureNonNull("remove : object", object);
+    protected boolean remove(final int identifier, final double... coordinates) throws StoreIndexException {
+        ArgumentChecks.ensureNonNull("remove : object", identifier);
         ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
         final Node root = getRoot();
         if (root != null) {
             try {
-                final boolean removed = removeNode(root, object, coordinates);
+                final boolean removed = removeNode(root, identifier, coordinates);
                 return removed;
             } catch (IOException ex) {
                 throw new StoreIndexException(this.getClass().getName()
-                        +"impossible to remove object : "+object.toString()
+                        +"impossible to remove object : "+identifier
                         +" at coordinates : "+Arrays.toString(coordinates), ex);
             }
         }
@@ -440,13 +440,13 @@ public abstract class AbstractTree<E> implements Tree<E> {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    protected boolean removeNode(final Node candidate, final Object object, final double... coordinate) throws IllegalArgumentException, StoreIndexException, IOException{
+    protected boolean removeNode(final Node candidate, final int identifier, final double... coordinate) throws IllegalArgumentException, StoreIndexException, IOException{
         ArgumentChecks.ensureNonNull("removeNode : Node candidate", candidate);
-        ArgumentChecks.ensureNonNull("removeNode : Object object", object);
+        ArgumentChecks.ensureNonNull("removeNode : Object object", identifier);
         ArgumentChecks.ensureNonNull("removeNode : double[] coordinate", coordinate);
         if(intersects(candidate.getBoundary(), coordinate, true)){
             if (candidate.isLeaf()) {
-                boolean removed = candidate.removeData(object, coordinate);
+                boolean removed = candidate.removeData(identifier, coordinate);
                 if (removed) {
                     setElementsNumber(getElementsNumber()-1);
                     trim(candidate);
@@ -456,7 +456,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
                 int sibl = candidate.getChildId();
                 while (sibl != 0) {
                     final Node currentChild = treeAccess.readNode(sibl);
-                    final boolean removed = removeNode(currentChild, object, coordinate);
+                    final boolean removed = removeNode(currentChild, identifier, coordinate);
                     if (removed) return true;
                     sibl = currentChild.getSiblingId();
                 }
@@ -494,7 +494,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
      * {@inheritDoc}
      */
     @Override
-    public void setRoot(Node root) throws StoreIndexException{
+    public void setRoot(final Node root) throws StoreIndexException{
         this.root = root;
         if (root == null) {
             try {
@@ -533,7 +533,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
     /**
      * {@inheritDoc}
      */
-    public void setElementsNumber(int value) {
+    public void setElementsNumber(final int value) {
         this.eltCompteur = value;
     }
 
@@ -578,7 +578,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
     
     
     @Override
-    public Node createNode(TreeAccess tA, double[] boundary, byte properties, int parentId, int siblingId, int childId) throws IllegalArgumentException {
+    public Node createNode(final TreeAccess tA, final double[] boundary, final byte properties, final int parentId, final int siblingId, final int childId) throws IllegalArgumentException {
         return tA.createNode(boundary, properties, parentId, siblingId, childId);
     }
 }

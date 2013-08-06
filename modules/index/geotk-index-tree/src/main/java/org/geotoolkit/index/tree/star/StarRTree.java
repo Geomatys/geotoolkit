@@ -45,7 +45,7 @@ public abstract class StarRTree<E> extends AbstractTree<E> {
      */
     boolean insertAgain = true;
     
-    private final LinkedList<Object> listObjects  = new LinkedList<Object>();
+    private final LinkedList<Integer> listObjects  = new LinkedList<Integer>();
     private final LinkedList<double[]> listCoords = new LinkedList<double[]>(); 
     
     boolean travelUpBeforeInsertAgain = false;
@@ -79,18 +79,18 @@ public abstract class StarRTree<E> extends AbstractTree<E> {
     }
     
     @Override
-    public void insert(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException {
+    public void insert(int identifier, double... coordinates) throws IllegalArgumentException, StoreIndexException {
 //        super.insert(object, coordinates);
         try {
             eltCompteur++;
             Node root = getRoot();
             if (root == null || root.isEmpty()) {
                 root = createNode(treeAccess, null, IS_LEAF, 0, 0, 0);
-                root.addChild(createNode(treeAccess, coordinates, IS_DATA, 1, 0, -((Integer)object)));
+                root.addChild(createNode(treeAccess, coordinates, IS_DATA, 1, 0, -identifier));
                 setRoot(root);
             } else {
                 travelUpBeforeInsertAgain = false;
-                final Node newRoot = nodeInsert(root, object, coordinates);
+                final Node newRoot = nodeInsert(root, identifier, coordinates);
                 if (newRoot != null) {
                     setRoot(newRoot);
                     treeAccess.writeNode((Node)newRoot);
@@ -123,7 +123,7 @@ public abstract class StarRTree<E> extends AbstractTree<E> {
     }
     
     @Override
-    protected Node nodeInsert(Node candidate, Object object, double... coordinates) throws IOException {
+    protected Node nodeInsert(Node candidate, int identifier, double... coordinates) throws IOException {
         assert candidate instanceof Node;
         Node fileCandidate = (Node) candidate;
         assert !fileCandidate.isData() : "nodeInsert : candidate should never be data type.";
@@ -135,11 +135,11 @@ public abstract class StarRTree<E> extends AbstractTree<E> {
         Node subCandidateParent = null;
         if (fileCandidate.isLeaf()) {
             assert fileCandidate.checkInternal() : "nodeInsert : leaf before add.";
-            fileCandidate.addChild(createNode(treeAccess, coordinates, IS_DATA, fileCandidate.getNodeId(), 0, -((Integer)object)));
+            fileCandidate.addChild(createNode(treeAccess, coordinates, IS_DATA, fileCandidate.getNodeId(), 0, -((Integer)identifier)));
             assert fileCandidate.checkInternal() : "nodeInsert : leaf after add.";
         } else {
             assert fileCandidate.checkInternal() : "nodeInsert : Node before insert.";
-            subCandidateParent = (Node)nodeInsert(chooseSubtree(fileCandidate, coordinates), object, coordinates);
+            subCandidateParent = (Node)nodeInsert(chooseSubtree(fileCandidate, coordinates), identifier, coordinates);
             add(fileCandidate.getBoundary(), coordinates);
         }
         
@@ -239,7 +239,7 @@ public abstract class StarRTree<E> extends AbstractTree<E> {
      * @throws IllegalArgumentException if {@code Node} candidate is null.
      * @return all Entry within subNodes at more 33% largest of this {@code Node}.
      */
-    private void getElementAtMore33PerCent(final Node candidate, LinkedList<Object> listObjects, final LinkedList<double[]> listCoords) throws IOException {
+    private void getElementAtMore33PerCent(final Node candidate, LinkedList<Integer> listObjects, final LinkedList<double[]> listCoords) throws IOException {
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidate", candidate);
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : listObjects", listObjects);
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : listCoords", listCoords);
@@ -257,7 +257,7 @@ public abstract class StarRTree<E> extends AbstractTree<E> {
      * @throws IllegalArgumentException if {@code Node} candidate is null.
      * @return all Entry within subNodes at more 33% largest of this {@code Node}.
      */
-    private void getElementAtMore33PerCent(final Node candidate, double[] candidateCentroid, double distancePermit, LinkedList<Object> listObjects, final LinkedList<double[]> listCoords) throws IOException {
+    private void getElementAtMore33PerCent(final Node candidate, double[] candidateCentroid, double distancePermit, LinkedList<Integer> listObjects, final LinkedList<double[]> listCoords) throws IOException {
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidateCentroid", candidateCentroid);
         ArgumentChecks.ensureStrictlyPositive("getElementsAtMore33PerCent : distancePermit", distancePermit);
         assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
@@ -383,7 +383,7 @@ public abstract class StarRTree<E> extends AbstractTree<E> {
     protected void trim(final Node candidate) throws IllegalArgumentException, IOException, StoreIndexException {
         ArgumentChecks.ensureNonNull("trim : Node candidate", candidate);
         List<double[]> reinsertListCoords = null;
-        List<Object> reinsertListObjects = null;
+        List<Integer> reinsertListObjects = null;
             double[] candiBound = null;
         if (candidate.getChildId() != 0 && !candidate.isLeaf()) {
             int sibl = candidate.getChildId();
@@ -396,7 +396,7 @@ public abstract class StarRTree<E> extends AbstractTree<E> {
                      && currentChild.getChildCount() <= getMaxElements() / 3) {// other condition
                     if (reinsertListCoords == null) {
                         reinsertListCoords  = new ArrayList<double[]>();
-                        reinsertListObjects = new ArrayList<Object>();
+                        reinsertListObjects = new ArrayList<Integer>();
                     }
                     int cuChildSibl = currentChild.getChildId();
                     while (cuChildSibl != 0) {
