@@ -44,7 +44,7 @@ public interface Tree<E> {
      * @param result List of Entr(y)(ies).
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
-    int[] searchID(Envelope regionSearch) throws StoreIndexException;
+    int[] searchID(final Envelope regionSearch) throws StoreIndexException;
     
 //    /**
 //     * Find some {@code Entry} which intersect regionSearch parameter
@@ -66,7 +66,7 @@ public interface Tree<E> {
      * @param Entry to insert into tree.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
-    void insert(E object) throws StoreIndexException;
+    void insert(final E object) throws StoreIndexException;
 
     /**
      * Find a {@code Envelope} (entry) from Iterator into the tree and delete it.
@@ -78,7 +78,7 @@ public interface Tree<E> {
      * @param Entry to delete.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
-    boolean remove(E object) throws StoreIndexException;
+    boolean remove(final E object) throws StoreIndexException;
 
     /**
      * Return {@link TreeElementMapper} use to store inserted data and their tree identifiers.
@@ -105,7 +105,7 @@ public interface Tree<E> {
      *
      * @param root new root.
      */
-    void setRoot(Node root) throws StoreIndexException;
+    void setRoot(final Node root) throws StoreIndexException;
 
     /**
      * @return associate crs.
@@ -147,5 +147,5 @@ public interface Tree<E> {
      * @param coordinates lower upper bounding box coordinates table.
      * @return appropriate Node from tree.
      */
-    Node createNode(TreeAccess tA, double[] boundary, byte properties, int parentId, int siblingId, int childId);
+    Node createNode(final TreeAccess tA, final double[] boundary, final byte properties, final int parentId, final int siblingId, final int childId);
 }

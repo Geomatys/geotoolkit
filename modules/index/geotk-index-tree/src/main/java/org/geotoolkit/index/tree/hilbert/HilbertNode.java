@@ -36,7 +36,7 @@ import org.geotoolkit.index.tree.hilbert.iterator.HilbertIterator;
  *
  * @author Remi Marechal (Geomatys).
  */
-public class HilbertNode extends Node {
+public final class HilbertNode extends Node {
 
     private Node[] children;
     private int dimension;
@@ -148,7 +148,7 @@ public class HilbertNode extends Node {
                 final double[] boundIncrease = boundary.clone();
                 // increase hilbert order
                 assert currentHilbertOrder++ < tAF.getHilbertOrder() : "impossible to increase node hilbert order";
-                // on recupere tout les elements contenu dans cette feuille.
+                // get all data within this leaf
                 data.clear();
                 for (Node cnod : children) {
                     final Node fcnod = (Node)cnod;
@@ -189,14 +189,14 @@ public class HilbertNode extends Node {
     }
 
     @Override
-    public boolean removeData(Object object, double... coordinates) throws IOException {
+    public boolean removeData(final int identifier, final double... coordinates) throws IOException {
         if (!((properties & 5) != 0))// test isleaf or iscell
             throw new IllegalStateException("You should not call removeData() method on a no leaf or cell Node.");
         if (isLeaf()) {
             children = super.getChildren();
             if (currentHilbertOrder < 1) {
                 assert children.length == 1 : "removeChild : hilbertLeaf : leaf should have only one cell.";
-                final boolean removed = children[0].removeData(object, coordinates);
+                final boolean removed = children[0].removeData(identifier, coordinates);
                 if (removed) {
                     dataCount--;
                     boundary = (dataCount > 0) ? children[0].getBoundary().clone() : null;
@@ -218,7 +218,7 @@ public class HilbertNode extends Node {
                 for (int i = index; i < s; i++) {
                     if (!children[i].isEmpty()) {
                         if (!removed) {
-                            removed = children[i].removeData(object, coordinates);
+                            removed = children[i].removeData(identifier, coordinates);
                             if (removed) dataCount--;
                         }
                         if (!children[i].isEmpty()) {
@@ -272,7 +272,7 @@ public class HilbertNode extends Node {
                 return true;
             }
         }
-        return super.removeData(object, coordinates);
+        return super.removeData(identifier, coordinates);
     }
     
     

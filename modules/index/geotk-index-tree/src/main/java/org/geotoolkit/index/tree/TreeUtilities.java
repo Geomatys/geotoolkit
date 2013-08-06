@@ -17,7 +17,6 @@
 package org.geotoolkit.index.tree;
 
 import java.io.IOException;
-import java.util.List;
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.index.tree.access.TreeAccess;
@@ -31,10 +30,29 @@ import org.opengis.geometry.Envelope;
  */
 public class TreeUtilities {
 
-    // javadoc
+    /**
+     * Properties which define if a {@link Node} is a leaf.<br/>
+     * See {@link Node#isLeaf()}.
+     */
     public final static byte IS_LEAF  = 1;
+    
+    /**
+     * Properties which define if a {@link Node} is a data, which mean its child id represent tree identifier of a data.<br/>
+     * See {@link Node#isData()}.
+     */
     public final static byte IS_DATA  = 2;
+    
+    /**
+     * Properties which define if a {@link Node} is a Hilbert Cell.<br/>
+     * See {@link HilbertNode}.<br/>
+     * See {@link HilbertNode#isCell() }.
+     */
     public final static byte IS_CELL  = 4;
+    
+    /**
+     * Properties which define if a {@link Node} is a "tree branch" 
+     * which mean Node with no particularity properties.
+     */
     public final static byte IS_OTHER = 8;
     
     private TreeUtilities() {
@@ -47,7 +65,7 @@ public class TreeUtilities {
      * @param count current count.
      * @return entries number contained in a {@link Node}.
      */
-    public static int countElementsRecursively(Node node, int count) throws IOException {
+    public static int countElementsRecursively(final Node node, int count) throws IOException {
         if (node == null) return count;
         if (node.isLeaf()) {
             count = count + node.getChildCount();
@@ -103,7 +121,8 @@ public class TreeUtilities {
         return bulk;
     }
     
-    /**Compute "Envelope" perimeter from its double coordinates table.
+    /**
+     * Compute "Envelope" perimeter from its double coordinates table.
      *
      * @param envelope coordinates.
      * @throws IllegalArgumentException if envelope is null.
@@ -119,7 +138,8 @@ public class TreeUtilities {
         return 2 * perim;//decal bit
     }
     
-    /**Compute overlaps between two {@code Envelop}.
+    /**
+     * Compute overlaps between two {@code Envelop}.
      *
      * <blockquote><font size=-1>
      * <strong>NOTE: In first time : compute intersection {@code Envelope} between envelopA and envelopB.
@@ -200,38 +220,6 @@ public class TreeUtilities {
         return envelope;
     }
     
-    /**
-     * Compute general boundary of all {@code Envelope} passed in parameter.
-     *
-     * @param lS GeneralEnvelope List.
-     * @throws IllegalArgumentException if {@code Envelope} list lS is null.
-     * @throws IllegalArgumentException if {@code Envelope} list lS is empty.
-     * @return GeneralEnvelope which is general boundary.
-     */
-    public static double[] getEnvelopeMin(final List lGE) throws IOException{
-        ArgumentChecks.ensureNonNull("getEnveloppeMin : lGE", lGE);
-        if(lGE.isEmpty()){
-            throw new IllegalArgumentException("impossible to get Enveloppe : empty list");
-        }
-        Object first = lGE.get(0);
-        if (!(first instanceof double[]) && !(first instanceof Node))
-            throw new IllegalArgumentException("list elements should be instance of Node or Double[] : use only for tree work.");
-        final boolean isNode = first instanceof Node;
-        final double[] envlop = (isNode) ? ((Node)first).getBoundary().clone() : ((double[])first).clone();
-        if (isNode) {
-            for(int i = 1, s = lGE.size(); i < s; i++) {
-                add(envlop, ((Node)lGE.get(i)).getBoundary());
-            }
-        } else {
-            double[] coords;// = new double[envlop.length];
-            for(int i = 1, s = lGE.size(); i < s; i++) {
-                coords = (double[])lGE.get(i);
-                add(envlop, coords);
-            }
-        }
-        return envlop;
-    }
-    
     public static boolean arrayEquals(final double[] expected, final double[] value, final double epsilon) {
         ArgumentChecks.ensureNonNull("arrayEquals : expected : ", expected);
         ArgumentChecks.ensureNonNull("arrayEquals : value : ", value);
@@ -251,16 +239,10 @@ public class TreeUtilities {
      * @param coords table where is store coordinate. if null a new table is create.
      * @return double coordinate table which contain Envelope coordinate.
      */
-    public static double[] getCoords(Envelope envelope) {
+    public static double[] getCoords(final Envelope envelope) {
         ArgumentChecks.ensureNonNull("getCoords : envelope", envelope);
         final int dim = envelope.getDimension();
         final double[] coords = new double[dim <<1];
-//        if (coords == null) {
-//            coords = new double[dim << 1];//decal bit
-//        } else {
-//            if (coords.length != (dim << 1)) //decalbit
-//                throw new IllegalArgumentException("coords table length not in accordance with envelope dimension");
-//        }
         for (int i = 0, d = dim; i < dim; i++, d++) {
             coords[i] = envelope.getMinimum(i);
             coords[d] = envelope.getMaximum(i);
@@ -274,7 +256,7 @@ public class TreeUtilities {
      * 
      * @return envelopeA which contain result of union.
      */
-    public static double[] add(double[] envelopeA, double[] envelopeB) {
+    public static double[] add(final double[] envelopeA, final double[] envelopeB) {
         ArgumentChecks.ensureNonNull("EnvelopeA", envelopeA);
         ArgumentChecks.ensureNonNull("EnvelopeB", envelopeB);
         assert (envelopeA.length == envelopeB.length) :"getUnion : envelope should have same dimension number.";
@@ -291,7 +273,7 @@ public class TreeUtilities {
      * 
      * @return double table which contain result of intersection or null if none.
      */
-    public static double[] intersect(double[] envelopeA, double[] envelopeB) {
+    public static double[] intersect(final double[] envelopeA, final double[] envelopeB) {
         ArgumentChecks.ensureNonNull("EnvelopeA", envelopeA);
         ArgumentChecks.ensureNonNull("EnvelopeB", envelopeB);
         assert (envelopeA.length == envelopeB.length) :"intersect : envelope should have same dimension number.";
@@ -306,11 +288,12 @@ public class TreeUtilities {
     }
     
     /**
+     * Return true if there is intersection between two "envelope" coordinate double tables.
      * 
      * @param envelopeA first envelope coordinates.
      * @param envelopeB second envelope coordinates.
-     * @param edgeInclusive 
-     * @return 
+     * @param edgeInclusive if true return true if the 2 "envelope" just touches else false.
+     * @return true if there is intersection else false.
      */
     public static boolean intersects(final double[] envelopeA, final double[] envelopeB, final boolean edgeInclusive) {
         ArgumentChecks.ensureNonNull("EnvelopeA", envelopeA);
@@ -326,6 +309,13 @@ public class TreeUtilities {
         return true;
     }
     
+    /**
+     * Return true if the 2 "envelopes" touches them else false.
+     * 
+     * @param envelopeA first envelope coordinates.
+     * @param envelopeB second envelope coordinates.
+     * @return true if the 2 "envelopes" touches them else false.
+     */
     public static boolean touches(final double[] envelopeA, final double[] envelopeB){
         final double epsilon = 1E-15;
         if (!intersects(envelopeA, envelopeB, true)) return false;
@@ -410,7 +400,7 @@ public class TreeUtilities {
      * @param envelope
      * @return span value at index i from envelope table coordinates.
      */
-    public static double getSpan(final double[] envelope, int i){
+    public static double getSpan(final double[] envelope, final int i){
         ArgumentChecks.ensureNonNull("getSpan : envelop", envelope);
         int dim = envelope.length;
         assert (dim % 2 == 0) : "envelope dimension invalide. It should be modulo 2";

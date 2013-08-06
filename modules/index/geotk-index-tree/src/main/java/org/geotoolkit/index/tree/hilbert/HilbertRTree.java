@@ -42,7 +42,7 @@ public class HilbertRTree<E> extends AbstractTree<E> {
     }
     
     @Override
-    protected Node nodeInsert(Node candidate, Object object, double... coordinates) throws IOException{
+    protected Node nodeInsert(Node candidate, int identifier, double... coordinates) throws IOException{
         assert candidate instanceof Node;
         Node fileCandidate = (Node) candidate;
         assert !fileCandidate.isData() : "nodeInsert : candidate should never be data type.";
@@ -80,7 +80,7 @@ public class HilbertRTree<E> extends AbstractTree<E> {
                         fileCandidate.setParentId(0);
                         fileCandidate.addChild(lsp0);
                         fileCandidate.addChild(lsp1);
-                        nodeInsert(fileCandidate, object, coordinates);
+                        nodeInsert(fileCandidate, identifier, coordinates);
                         assert fileCandidate.checkInternal() : "insertNode : split with parent not null.";
                         candidate.clear();
                         
@@ -105,19 +105,19 @@ public class HilbertRTree<E> extends AbstractTree<E> {
                         lsp1.setParentId(fileCandidate.getNodeId());
                         candidate.addChild(lsp0);
                         candidate.addChild(lsp1);
-                        nodeInsert(candidate, object, coordinates);
+                        nodeInsert(candidate, identifier, coordinates);
                     }
                 } else {
                     throw new IllegalStateException("Normaly split leaf never null");
                 }
             } else {
                 assert candidate.checkInternal() : "insertNode : leaf not full just before insert candidate not conform.";
-                fileCandidate.addChild(createNode(treeAccess, coordinates, IS_DATA, fileCandidate.getNodeId(), 0, -((Integer)object)));
+                fileCandidate.addChild(createNode(treeAccess, coordinates, IS_DATA, fileCandidate.getNodeId(), 0, -identifier));
                 assert candidate.checkInternal() : "insertNode : leaf not full just after insert candidate not conform.";
             }
         } else {
             assert fileCandidate.checkInternal() : "nodeInsert : Node before insert.";
-            subCandidateParent = (Node)nodeInsert(chooseSubtree(fileCandidate, coordinates), object, coordinates);
+            subCandidateParent = (Node)nodeInsert(chooseSubtree(fileCandidate, coordinates), identifier, coordinates);
             add(fileCandidate.getBoundary(), coordinates);
             
             /**
@@ -284,7 +284,7 @@ public class HilbertRTree<E> extends AbstractTree<E> {
             final int reSize = reinsertListCoords.size();
             assert (reSize == reinsertListObjects.size()) : "reinsertLists should have same size";
             for (int i = 0; i < reSize; i++) {
-                insert(reinsertListObjects.get(i), reinsertListCoords.get(i));
+                insert((int)reinsertListObjects.get(i), reinsertListCoords.get(i));
             }
         } else {
             assert (reinsertListObjects == null) : "trim : listObjects should be null.";

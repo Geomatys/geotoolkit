@@ -26,7 +26,6 @@ import static org.geotoolkit.index.tree.TreeUtilities.*;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.access.TreeAccess;
 import static org.geotoolkit.index.tree.basic.SplitCase.*;
-import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.mapper.TreeElementMapper;
 
@@ -64,7 +63,7 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
      * {@inheritDoc }.
      */
     @Override
-    protected Node nodeInsert(Node candidate, Object object, double... coordinates) throws IOException{
+    protected Node nodeInsert(Node candidate, int identifier, double... coordinates) throws IOException{
         assert candidate instanceof Node;
         Node fileCandidate = (Node) candidate;
         assert !fileCandidate.isData() : "nodeInsert : candidate should never be data type.";
@@ -76,11 +75,11 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
         Node subCandidateParent = null;
         if (fileCandidate.isLeaf()) {
             assert fileCandidate.checkInternal() : "nodeInsert : leaf before add.";
-            fileCandidate.addChild(createNode(treeAccess, coordinates, IS_DATA, fileCandidate.getNodeId(), 0, -((Integer)object)));
+            fileCandidate.addChild(createNode(treeAccess, coordinates, IS_DATA, fileCandidate.getNodeId(), 0, -identifier));
             assert fileCandidate.checkInternal() : "nodeInsert : leaf after add.";
         } else {
             assert fileCandidate.checkInternal() : "nodeInsert : Node before insert.";
-            subCandidateParent = (Node)nodeInsert(chooseSubtree(fileCandidate, coordinates), object, coordinates);
+            subCandidateParent = (Node)nodeInsert(chooseSubtree(fileCandidate, coordinates), identifier, coordinates);
             add(fileCandidate.getBoundary(), coordinates);
         }
         
@@ -419,13 +418,13 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
      * @return true if entry is find and deleted else false.
      */
     @Override
-    protected boolean removeNode(final Node candidate, final Object object, final double... coordinate) throws  StoreIndexException, IOException {
+    protected boolean removeNode(final Node candidate, final int identifier, final double... coordinate) throws  StoreIndexException, IOException {
         ArgumentChecks.ensureNonNull("removeNode : Node candidate", candidate);
-        ArgumentChecks.ensureNonNull("removeNode : Object object", object);
+        ArgumentChecks.ensureNonNull("removeNode : Object object", identifier);
         ArgumentChecks.ensureNonNull("removeNode : double[] coordinate", coordinate);
         if(intersects(candidate.getBoundary(), coordinate, true)){
             if (candidate.isLeaf()) {
-                boolean removed = candidate.removeData(object, coordinate);
+                boolean removed = candidate.removeData(identifier, coordinate);
                 if (removed) {
                     setElementsNumber(getElementsNumber()-1);
                     trim(candidate);
@@ -435,7 +434,7 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
                 int sibl = candidate.getChildId();
                 while (sibl != 0) {
                     final Node currentChild = treeAccess.readNode(sibl);
-                    final boolean removed = removeNode(currentChild, object, coordinate);
+                    final boolean removed = removeNode(currentChild, identifier, coordinate);
                     if (removed) return true;
                     sibl = currentChild.getSiblingId();
                 }
@@ -456,7 +455,7 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
     protected void trim(final Node candidate) throws IllegalArgumentException, IOException, StoreIndexException {
         ArgumentChecks.ensureNonNull("trim : Node candidate", candidate);
         List<double[]> reinsertListCoords = null;
-        List<Object> reinsertListObjects = null;
+        List<Integer> reinsertListObjects = null;
             double[] candiBound = null;
         if (candidate.getChildId() != 0 && !candidate.isLeaf()) {
             int sibl = candidate.getChildId();
@@ -469,7 +468,7 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
                      && currentChild.getChildCount() <= getMaxElements() / 3) {// other condition
                     if (reinsertListCoords == null) {
                         reinsertListCoords  = new ArrayList<double[]>();
-                        reinsertListObjects = new ArrayList<Object>();
+                        reinsertListObjects = new ArrayList<Integer>();
                     }
                     int cuChildSibl = currentChild.getChildId();
                     while (cuChildSibl != 0) {
@@ -520,7 +519,7 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
             final int reSize = reinsertListCoords.size();
             assert (reSize == reinsertListObjects.size()) : "reinsertLists should have same size";
             for (int i = 0; i < reSize; i++) {
-                insert(reinsertListObjects.get(i), reinsertListCoords.get(i));
+                insert((int)reinsertListObjects.get(i), reinsertListCoords.get(i));
             }
         } else {
             assert (reinsertListObjects == null) : "trim : listObjects should be null.";
