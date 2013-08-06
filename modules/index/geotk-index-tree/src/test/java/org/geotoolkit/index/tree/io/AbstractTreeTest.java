@@ -25,7 +25,7 @@ import junit.framework.Assert;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.junit.Test;
-import static org.geotoolkit.index.tree.TreeUtils.*;
+import static org.geotoolkit.index.tree.TreeUtilities.*;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeTest;

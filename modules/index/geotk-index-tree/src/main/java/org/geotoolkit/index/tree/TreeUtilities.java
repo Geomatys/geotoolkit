@@ -29,7 +29,7 @@ import org.opengis.geometry.Envelope;
  *
  * @author Rémi Maréchal (Geomatys).
  */
-public class TreeUtils {
+public class TreeUtilities {
 
     // javadoc
     public final static byte IS_LEAF  = 1;
@@ -37,7 +37,7 @@ public class TreeUtils {
     public final static byte IS_CELL  = 4;
     public final static byte IS_OTHER = 8;
     
-    private TreeUtils() {
+    private TreeUtilities() {
     }
     
     /**

@@ -17,7 +17,6 @@
 package org.geotoolkit.index.tree;
 
 import org.geotoolkit.index.tree.access.TreeAccess;
-import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.mapper.TreeElementMapper;
 import org.opengis.geometry.Envelope;
@@ -81,16 +80,23 @@ public interface Tree<E> {
      */
     boolean remove(E object) throws StoreIndexException;
 
+    /**
+     * Return {@link TreeElementMapper} use to store inserted data and their tree identifiers.
+     * 
+     * @return {@link TreeElementMapper} use to store inserted data and their tree identifiers.
+     */
     TreeElementMapper<E> getTreeElementMapper();
     
     /**
-     * @return max number authorized by tree cells.
+     * @return maximum element number authorized by tree cells.
      */
     int getMaxElements();
 
     /**
+     * Return Tree trunk {@link Node}.<br/>
+     * May return {@code null} if Tree is empty.
      * 
-     * @return 
+     * @return Tree trunk.
      */
     Node getRoot();
     
@@ -105,11 +111,6 @@ public interface Tree<E> {
      * @return associate crs.
      */
     CoordinateReferenceSystem getCrs();
-
-    /**
-     * @return Calculator to effectuate Tree compute.
-     */
-    Calculator getCalculator();
 
     /**
      * Clear tree (tree root Node become null).

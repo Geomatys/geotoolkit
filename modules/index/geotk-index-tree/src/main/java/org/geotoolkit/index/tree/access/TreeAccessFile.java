@@ -28,7 +28,7 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import org.geotoolkit.index.tree.Node;
-import static org.geotoolkit.index.tree.TreeUtils.intersects;
+import static org.geotoolkit.index.tree.TreeUtilities.intersects;
 import org.geotoolkit.index.tree.hilbert.HilbertTreeAccessFile;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -59,23 +59,23 @@ public class TreeAccessFile extends TreeAccess {
     /**
      * Length in Byte unit of a Node in file on hard disk. 
      */
-    protected final int nodeSize;
+    private final int nodeSize;
     
     /**
      * {@link FileChannel} position just after write or read file head.<br/>
      * Its also file position of first Node red or written.
      */
-    protected final int beginPosition;
+    private final int beginPosition;
     
     /**
      * Stream to read and write Tree information and Node.
      */
-    protected final RandomAccessFile inOutStream;
+    private final RandomAccessFile inOutStream;
     
     /**
      * Channel to read and write Tree information and Node.
      */
-    protected final FileChannel inOutChannel;
+    private final FileChannel inOutChannel;
     
     /**
      * {@link ByteBuffer} to read and write Node from file on hard disk.
@@ -85,14 +85,14 @@ public class TreeAccessFile extends TreeAccess {
     /**
      * ByteBuffer Length.
      */
-    protected final int bufferLength;
+    private final int bufferLength;
     
     /**
      * ByteBuffer attributs use to read and write.
      */
-    protected long currentBufferPosition;
     protected int writeBufferLimit;
-    protected int rwIndex;
+    private long currentBufferPosition;
+    private int rwIndex;
     
     /**
      * Build a {@link Tree} from a already filled {@link File}.<br/>
@@ -101,12 +101,12 @@ public class TreeAccessFile extends TreeAccess {
      * @param input {@code File} which already contains {@link Node} architecture.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber tree version.
-     * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process. 
+     * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
      * @throws IOException if problem during read or write Node.
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
-    protected TreeAccessFile(final File input, final int magicNumber, final double versionNumber, final int integerNumberPerNode)  throws IOException, ClassNotFoundException {
-        this(input, magicNumber, versionNumber, DEFAULT_BUFFER_LENGTH, integerNumberPerNode);
+    public TreeAccessFile(final File input, final int magicNumber, final double versionNumber, final int byteBufferLength)  throws IOException, ClassNotFoundException {
+        this(input, magicNumber, versionNumber, byteBufferLength, INT_NUMBER);
     }
     
     /**
@@ -134,7 +134,7 @@ public class TreeAccessFile extends TreeAccess {
      * @throws IOException if problem during read or write Node.
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
-    public TreeAccessFile( final File input, final int magicNumber, final double versionNumber , 
+    protected TreeAccessFile( final File input, final int magicNumber, final double versionNumber , 
             final int byteBufferLength, final int integerNumberPerNode) throws IOException, ClassNotFoundException {
         super();
         
@@ -202,7 +202,7 @@ public class TreeAccessFile extends TreeAccess {
         inOutChannel.read(byteBuffer, currentBufferPosition);
         root = this.readNode(1);
     }
-        
+    
     /**
      * Build and insert {@link Node} architecture in a {@link File}.<br/>
      * If file is not empty, data within it will be overwrite.<br/>
@@ -217,8 +217,8 @@ public class TreeAccessFile extends TreeAccess {
      * @throws IOException if problem during read or write Node.
      */
     public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
-            final int maxElements, final CoordinateReferenceSystem crs, final int integerNumberPerNode) throws IOException {
-        this(outPut, magicNumber, versionNumber, maxElements, crs, DEFAULT_BUFFER_LENGTH, integerNumberPerNode);
+            final int maxElements, final CoordinateReferenceSystem crs, final int byteBufferLength) throws IOException {
+        this(outPut, magicNumber, versionNumber, maxElements, crs, byteBufferLength, INT_NUMBER);
     }
     
     /**
@@ -253,7 +253,7 @@ public class TreeAccessFile extends TreeAccess {
      * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process. 
      * @throws IOException if problem during read or write Node.
      */
-    public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
+    protected TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
             final int maxElements, final CoordinateReferenceSystem crs, final int byteBufferLength, final int integerNumberPerNode) throws IOException {
         super();
         

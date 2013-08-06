@@ -41,6 +41,9 @@ public class TreeElementMapperTest implements TreeElementMapper<double[]> {
         this.lID   = new ArrayList<Integer>();
     }
     
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public int getTreeIdentifier(double[] object) {
         for (int i = 0, s = lData.size(); i < s; i++) {
@@ -51,6 +54,9 @@ public class TreeElementMapperTest implements TreeElementMapper<double[]> {
         throw new IllegalStateException("impossible to found treeIdentifier.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Envelope getEnvelope(double[] object) {
         final GeneralEnvelope env = new GeneralEnvelope(crs);
@@ -58,12 +64,18 @@ public class TreeElementMapperTest implements TreeElementMapper<double[]> {
         return env;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void setTreeIdentifier(double[] object, int treeIdentifier) {
         lData.add(object);
         lID.add(treeIdentifier);
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public double[] getObjectFromTreeIdentifier(int treeIdentifier) {
         for (int i = 0, l = lID.size(); i < l; i++) {
@@ -74,6 +86,9 @@ public class TreeElementMapperTest implements TreeElementMapper<double[]> {
         throw new IllegalStateException("impossible to found Data.");
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void clear() {
         lData.clear();

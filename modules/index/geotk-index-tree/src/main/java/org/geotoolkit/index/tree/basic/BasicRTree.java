@@ -22,21 +22,32 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.index.tree.AbstractTree;
-import static org.geotoolkit.index.tree.TreeUtils.*;
+import static org.geotoolkit.index.tree.TreeUtilities.*;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.access.TreeAccess;
-import static org.geotoolkit.index.tree.basic.SplitCase.LINEAR;
-import static org.geotoolkit.index.tree.basic.SplitCase.QUADRATIC;
+import static org.geotoolkit.index.tree.basic.SplitCase.*;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.mapper.TreeElementMapper;
 
 /**
+ * BasicRTree : Tree implementation.
+ * 
+ * It's a Tree implementation with a faster insertion and remove action, 
+ * but search is lesser fast than other Trees.<br/>
+ * If stored datas are often updated, which mean more insertion or remove, 
+ * it's a Tree implementation which respond to this criteria. <br/><br/>
+ * 
+ * Note : In this RTree version it exist two made to split a Node named : LINEAR and QUADRATIC.<br/>
+ * For more information see {@link SplitCase} javadoc.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
+ * @see SplitCase.
  */
 public abstract class BasicRTree<E> extends AbstractTree<E> {
-    
+    /**
+     * Split made choice.
+     */
     private final SplitCase choice;
     
     public BasicRTree(final TreeAccess treeAccess, final SplitCase choice, final TreeElementMapper treeEltMap) throws StoreIndexException {
@@ -45,11 +56,13 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : SplitCase choice", choice);
         this.choice      = choice;
-        this.treeAccess = treeAccess;
         super.setRoot(treeAccess.getRoot());
         treeIdentifier = treeAccess.getTreeIdentifier();
     }
     
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     protected Node nodeInsert(Node candidate, Object object, double... coordinates) throws IOException{
         assert candidate instanceof Node;
@@ -162,7 +175,6 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
         int childNumber = candidate.getChildCount();
         if (childNumber < 2) 
             throw new IllegalArgumentException("not enought elements within " + candidate + " to split.");
-        final Calculator calc = getCalculator();
         final int maxElmnts   = getMaxElements();
         
         final Node[] children = candidate.getChildren();
@@ -182,7 +194,7 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
             case LINEAR: {
                 for (int i = 0; i < childNumber - 1; i++) {
                     for (int j = i + 1; j < childNumber; j++) {
-                        tempValue = calc.getDistanceEnvelope(children[i].getBoundary(), children[j].getBoundary());
+                        tempValue = calculator.getDistanceEnvelope(children[i].getBoundary(), children[j].getBoundary());
                         if (tempValue > refValue) {
                             s1     = children[i];
                             s2     = children[j];
@@ -204,7 +216,7 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
                         
                         rectGlobal = bound1.clone();
                         add(rectGlobal, bound2);
-                        tempValue  = calc.getSpace(rectGlobal) - calc.getSpace(bound1) - calc.getSpace(bound2);
+                        tempValue  = calculator.getSpace(rectGlobal) - calculator.getSpace(bound1) - calculator.getSpace(bound2);
                         if (tempValue > refValue) {
                             s1     = children[i];
                             s2     = children[j];
@@ -252,8 +264,8 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
             r2Temp = s2.getBoundary().clone();
             add(r2Temp, currentFileNode.getBoundary());
             
-            final double area1 = calc.getSpace(r1Temp);
-            final double area2 = calc.getSpace(r2Temp);
+            final double area1 = calculator.getSpace(r1Temp);
+            final double area2 = calculator.getSpace(r2Temp);
             int r1nbE = r1ChCount; // a supprimer
             int r2nbE = r2ChCount;
             
@@ -302,66 +314,6 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
         
         return new Node[]{result1, result2};
     }
-    
-//    /**
-//     * Find appropriate {@code Node} to insert {@code Envelope} entry.
-//     * To define appropriate Node, criterion are :
-//     *      - require minimum area enlargement to cover shape.
-//     *      - or put into {@code Node} with lesser elements number in case of area equals.
-//     *
-//     * @param children List of {@code Node}.
-//     * @param entry {@code Envelope} to add.
-//     * @throws IllegalArgumentException if children or entry are null.
-//     * @throws IllegalArgumentException if children is empty.
-//     * @return {@code Node} which is appropriate to contain shape.
-//     */
-//    private Node chooseSubtree(final Node candidate, final double... coordinates) throws IOException {
-//        ArgumentChecks.ensureNonNull("chooseSubtree : candidate", candidate);
-//        ArgumentChecks.ensureNonNull("chooseSubtree : coordinates", coordinates);
-//        assert candidate.checkInternal() : "chooseSubtree : candidate not conform";
-//        final Calculator calc = getCalculator();
-//        final int childCount = candidate.getChildCount();
-//        if (childCount == 0) throw new IllegalArgumentException("chooseSubtree : children is empty");
-//        if (childCount == 1) return treeAccess.readNode(candidate.getChildId());
-//        final Node[] children = candidate.getChildren();
-//        assert children.length == childCount : "choose subtree : childcount should have same length as children table.";
-//        for (Node fNod : children) {
-//            assert fNod.checkInternal() : "chooseSubTree : test contains.";
-//            if (contains(fNod.getBoundary(), coordinates, true)) return fNod;
-//        }
-//        Node result = children[0];
-//        double[] addBound = result.getBoundary().clone();
-//        for(int i = 1; i < childCount; i++) {
-//            add(addBound, children[i].getBoundary());
-//        }
-//        double area = calc.getSpace(addBound);
-//        double nbElmt = result.getChildCount();
-//        double areaTemp;
-//        for (int i = 0; i < childCount; i++) {
-//            final Node dn = children[i];
-//            assert dn.checkInternal() : "chooseSubtree : find subtree.";
-//            final double[] dnBoundary = dn.getBoundary();
-//            final double[] rnod = dnBoundary.clone();
-//            add(rnod, coordinates);
-//            final int nbe = dn.getChildCount();
-//            final double[] assertBound = dnBoundary.clone();
-//            areaTemp = calc.getEnlargement(dnBoundary, rnod);
-//            assert Arrays.equals(dnBoundary, assertBound);
-//            if (areaTemp < area) {
-//                result = dn;
-//                area = areaTemp;
-//                nbElmt = nbe;
-//            } else if (areaTemp== area) {
-//                if (nbe < nbElmt) {
-//                    result = dn;
-//                    area = areaTemp;
-//                    nbElmt = nbe;
-//                }
-//            }
-//        }
-//        assert candidate.checkInternal() : "chooseSubtree : candidate not conform";
-//        return result;
-//    }
     
     /**
      * Exchange some entry(ies) between two nodes in aim to find best form with lesser overlaps.
@@ -412,8 +364,7 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
             }
         }
         assert indexSplit != -1 : "BranchGrafting : indexSplit not find"+indexSplit;
-        final Calculator calc = getCalculator();
-        calc.sortList(indexSplit, true, listFN);
+        calculator.sortList(indexSplit, true, listFN);
         double[] envB, envA;
         double overLapsRef = Double.POSITIVE_INFINITY;
         int index = -1;
@@ -427,7 +378,7 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
             for (int i = cut + 1; i < size; i++) {
                 add(envB, listFN.get(i).getBoundary());
             }
-            double overLapsTemp = calc.getOverlaps(envA, envB);
+            double overLapsTemp = calculator.getOverlaps(envA, envB);
             if (overLapsTemp < overLapsRef) {
                 overLapsRef = overLapsTemp;
                 index = cut;
@@ -454,24 +405,6 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
         assert nodeA.checkInternal()                  : "branchGrafting : at end candidate not conform";
         assert nodeB.checkInternal()                  : "branchGrafting : at end candidate not conform";
     }
-    
-//    @Override
-//    public boolean remove(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException {
-//        ArgumentChecks.ensureNonNull("remove : object", object);
-//        ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
-//        final Node root = getRoot();
-//        if (root != null) {
-//            try {
-//                final boolean removed = removeNode(root, object, coordinates);
-//                return removed;
-//            } catch (IOException ex) {
-//                throw new StoreIndexException(this.getClass().getName()
-//                        +"impossible to remove object : "+object.toString()
-//                        +" at coordinates : "+Arrays.toString(coordinates), ex);
-//            }
-//        }
-//        return false;
-//    }
     
     /**
      * Travel {@code Tree}, find {@code Entry} if it exist and delete it from reference.
@@ -593,5 +526,4 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
             assert (reinsertListObjects == null) : "trim : listObjects should be null.";
         }
     }
-    
 }

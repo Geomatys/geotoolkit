@@ -179,12 +179,6 @@ public abstract class FileTreeElementMapper<E> implements TreeElementMapper<E> {
      * @throws IOException 
      */
     public void close() throws IOException {
-//        byteBuffer.position(0);
-//        byteBuffer.limit(writeBufferLimit);
-//        int writtenByte = 0;
-//        while (writtenByte != writeBufferLimit) {
-//            writtenByte = inOutChannel.write(byteBuffer, currentBufferPosition);
-//        }
         this.clear();
         inOutChannel.close();
         inOutStream.close();
