@@ -19,7 +19,7 @@ package org.geotoolkit.index.tree;
 import java.util.Arrays;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.geotoolkit.index.tree.TreeUtils.*;
+import static org.geotoolkit.index.tree.TreeUtilities.*;
 import org.junit.Assert;
 
 /**

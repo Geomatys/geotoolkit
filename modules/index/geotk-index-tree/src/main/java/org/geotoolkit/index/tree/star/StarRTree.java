@@ -23,7 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.index.tree.AbstractTree;
-import static org.geotoolkit.index.tree.TreeUtils.*;
+import static org.geotoolkit.index.tree.TreeUtilities.*;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.access.TreeAccess;
 import org.geotoolkit.index.tree.calculator.Calculator;
@@ -55,7 +55,6 @@ public abstract class StarRTree<E> extends AbstractTree<E> {
         super(treeAccess, treeAccess.getCRS(), treeEltMap);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);
-        this.treeAccess = treeAccess;
         super.setRoot(treeAccess.getRoot());
         treeIdentifier = treeAccess.getTreeIdentifier();
     }
@@ -247,8 +246,7 @@ public abstract class StarRTree<E> extends AbstractTree<E> {
         assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
         final double[] canBound = candidate.getBoundary();
         final double[] candidateCentroid = getMedian(canBound);
-        final Calculator calc = getCalculator();
-        final double distPermit = calc.getDistancePoint(getLowerCorner(canBound), getUpperCorner(canBound)) / 1.666666666;
+        final double distPermit = calculator.getDistancePoint(getLowerCorner(canBound), getUpperCorner(canBound)) / 1.666666666;
         getElementAtMore33PerCent((Node)candidate, candidateCentroid, distPermit, listObjects, listCoords);
         assert candidate.checkInternal() : "getElementAtMore33PerCent : end candidate not conform";
     }
@@ -331,8 +329,7 @@ public abstract class StarRTree<E> extends AbstractTree<E> {
             }
         }
         assert indexSplit != -1 : "BranchGrafting : indexSplit not find"+indexSplit;
-        final Calculator calc = getCalculator();
-        calc.sortList(indexSplit, true, listFN);
+        calculator.sortList(indexSplit, true, listFN);
         double[] envB, envA;
         double overLapsRef = Double.POSITIVE_INFINITY;
         int index = -1;
@@ -346,7 +343,7 @@ public abstract class StarRTree<E> extends AbstractTree<E> {
             for (int i = cut + 1; i < size; i++) {
                 add(envB, listFN.get(i).getBoundary());
             }
-            double overLapsTemp = calc.getOverlaps(envA, envB);
+            double overLapsTemp = calculator.getOverlaps(envA, envB);
             if (overLapsTemp < overLapsRef) {
                 overLapsRef = overLapsTemp;
                 index = cut;

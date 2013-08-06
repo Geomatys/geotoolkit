@@ -107,9 +107,9 @@ public abstract class TreeTest {
     protected double[] getEnvelopeMin(final List<Envelope> list) {
         ArgumentChecks.ensureNonNull("compareList : listA", list);
         assert(!list.isEmpty()):"list to get envelope min should not be empty.";
-        final double[] ge = TreeUtils.getCoords(list.get(0));
+        final double[] ge = TreeUtilities.getCoords(list.get(0));
         for (int i = 1; i < list.size();i++) {
-            TreeUtils.add(ge, TreeUtils.getCoords(list.get(i)));
+            TreeUtilities.add(ge, TreeUtilities.getCoords(list.get(i)));
         }
         return ge;
     }
@@ -125,7 +125,7 @@ public abstract class TreeTest {
         assert(!list.isEmpty()):"list to get envelope min should not be empty.";
         final double[] ge = list.get(0).clone();
         for (int i = 1; i < list.size(); i++) {
-            TreeUtils.add(ge, list.get(i));
+            TreeUtilities.add(ge, list.get(i));
         }
         return ge;
     }
@@ -139,9 +139,9 @@ public abstract class TreeTest {
     protected boolean checkTreeElts(Tree tree) throws IOException {
         final int treeElement = tree.getElementsNumber();
         if (tree instanceof HilbertRTree) {
-            return TreeUtils.countEltsInHilbertNode((HilbertNode)tree.getRoot(), 0) == treeElement;
+            return TreeUtilities.countEltsInHilbertNode((HilbertNode)tree.getRoot(), 0) == treeElement;
         }
-        return TreeUtils.countElementsRecursively(tree.getRoot(), 0) == treeElement;
+        return TreeUtilities.countElementsRecursively(tree.getRoot(), 0) == treeElement;
     }
     
 

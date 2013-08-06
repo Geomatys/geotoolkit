@@ -17,7 +17,7 @@
 package org.geotoolkit.index.tree.calculator;
 
 import java.io.IOException;
-import static org.geotoolkit.index.tree.TreeUtils.*;
+import static org.geotoolkit.index.tree.TreeUtilities.*;
 import org.geotoolkit.index.tree.Node;
 
 /**

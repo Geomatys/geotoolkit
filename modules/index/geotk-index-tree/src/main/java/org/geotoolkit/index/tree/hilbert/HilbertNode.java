@@ -26,7 +26,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.gui.swing.tree.Trees;
-import static org.geotoolkit.index.tree.TreeUtils.*;
+import static org.geotoolkit.index.tree.TreeUtilities.*;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.access.TreeAccess;
 import org.geotoolkit.index.tree.hilbert.iterator.HilbertIterator;
@@ -46,16 +46,20 @@ public class HilbertNode extends Node {
     private static final double LN2 = 0.6931471805599453;
     
 
-    public HilbertNode(TreeAccess tAF, int nodeId, double[] boundary, byte properties, int parentId, int siblingId, int childId) throws IOException {
+    public HilbertNode(TreeAccess tAF, int nodeId, double[] boundary, byte properties, int parentId, int siblingId, int childId) {
         super(tAF, nodeId, boundary, properties, parentId, siblingId, childId);
         dimension = tAF.getCRS().getCoordinateSystem().getDimension();
         dataCount = 0;
         currentHilbertOrder = 0;
-        if ((boundary == null || ArraysExt.hasNaN(boundary)) && ((properties & IS_LEAF) != 0)) { 
-            super.addChild(tAF.createNode(null, (byte) IS_CELL, this.getNodeId(), 0, 0));
-        }
     }
 
+    /**
+     * Return true if all leaf Cells are full else false.<br/>
+     * A cell is full when it contains maximum elements number permit by tree.
+     * 
+     * @return true if all leaf Cells are full else false.
+     * @throws IOException 
+     */
     private boolean isInternalyFull() throws IOException {
         int sibl = getChildId();
         while (sibl != 0) {
@@ -68,22 +72,49 @@ public class HilbertNode extends Node {
         return true;
     }
 
+    /**
+     * Return current hilbert value of HilbertNode.<br/>
+     * If Node is not a leaf it is always 0.<br/>
+     * Else if node is a leaf value begin at 0 to n where n is the higher value permit by tree.
+     * 
+     * @return current hilbert value of HilbertNode.
+     */
     public int getCurrentHilbertOrder() {
         return currentHilbertOrder;
     }
 
+    /**
+     * Affect an appropriate hilbert order to this HilbertNode.
+     * 
+     * @param currentHilbertOrder 
+     */
     public void setCurrentHilbertOrder(int currentHilbertOrder) {
         this.currentHilbertOrder = currentHilbertOrder;
     }
 
+    /**
+     * Return number of datas within this HilbertNode.<br/>
+     * If Node is not a leaf it is always 0.<br/>
+     * Else data number is equal to sum of all child number from leaf cells.
+     * 
+     * @return number of datas within this HilbertNode.
+     */
     public int getDataCount() {
         return dataCount;
     }
 
+    /**
+     * Affect an appropriate data number to this HilbertNode.
+     * 
+     * @param dataCount 
+     */
     public void setDataCount(int dataCount) {
         this.dataCount = dataCount;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void addChildren(Node[] nodes) throws IOException {
         for (Node nod : nodes) {
@@ -96,8 +127,11 @@ public class HilbertNode extends Node {
     @Override
     public void addChild(Node node) throws IOException {
         if (isLeaf() && node.isData()) {
-            // si c pas une feuille sa veux dire que c la premiere insertion
-            // alors on la fait devenir feuille 
+            
+            if ((boundary == null || ArraysExt.hasNaN(boundary)) && getChildCount() == 0) { 
+                super.addChild(tAF.createNode(null, (byte) IS_CELL, this.getNodeId(), 0, 0));
+            }
+            
             assert node.isData() : "future added child should be data.";
             final double[] nodeBound = node.getBoundary().clone();
             if (boundary == null) {
@@ -125,7 +159,6 @@ public class HilbertNode extends Node {
                         currentData.setSiblingId(0);// become distinc
                         data.add(currentData);
                     }
-//                    super.removeChild(fnod);
                     tAF.removeNode(fcnod);
                 }
                 clear();
@@ -243,19 +276,27 @@ public class HilbertNode extends Node {
     }
     
     
-    
+    /**
+     * Return true if this HilbertNode is a Tree cell else false.
+     * 
+     * @return true if this HilbertNode is a Tree cell else false.
+     */
     public boolean isCell() {
         return (properties & IS_CELL) != 0;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void clear() {
         super.clear(); 
         dataCount = 0;
     }
     
-    
-
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Node[] getChildren() throws IOException {
         final Node[] superChilds = super.getChildren();
@@ -272,6 +313,9 @@ public class HilbertNode extends Node {
         return dataChilds;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public boolean checkInternal() throws IOException {
         if (isLeaf()) {
@@ -318,12 +362,28 @@ public class HilbertNode extends Node {
         }
     }
 
+    /**
+     * Return true if this HilbertNode is empty.<br/>
+     * If hilbertNode is a tree leaf, it define empty when its all leaf cells are empty.<br/>
+     * Else it define empty like normaly comportement when it has no children.
+     * 
+     * @return true if this HilbertNode is empty.
+     */
     @Override
     public boolean isEmpty() {
         if (isLeaf()) return dataCount == 0;
         return super.isEmpty();
     }
    
+    /**
+     * Return true if HilbertNode is full.<br/>
+     * If hilbertNode is a tree leaf, it define full when its all leaf cells are full 
+     * and its hilbertOrder reach the maximum hilbert order permit by Hilbert Tree implementation.<br/>
+     * Else it define full like normaly comportement when it has children number equal to maximum elements per Node permit by tree.
+     * 
+     * @return true if HilbertNode is full.
+     * @throws IOException 
+     */
     @Override
     public boolean isFull() throws IOException {
         if (isLeaf()) {
@@ -468,7 +528,4 @@ public class HilbertNode extends Node {
         }
         return null;
     }
-    
-    
-    
 }

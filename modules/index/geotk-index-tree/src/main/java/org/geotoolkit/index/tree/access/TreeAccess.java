@@ -23,6 +23,9 @@ import java.util.LinkedList;
 import java.util.List;
 import org.geotoolkit.index.tree.AbstractTree;
 import org.geotoolkit.index.tree.Node;
+import org.geotoolkit.index.tree.hilbert.HilbertNode;
+import org.geotoolkit.index.tree.hilbert.HilbertTreeAccessFile;
+import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -280,6 +283,9 @@ public abstract class TreeAccess {
      * @param siblingId sibling or neighbour Node.
      * @param childId child Node identifier or stored value if Node is a leaf. 
      * @return Node adapted from Tree implementation.
+     * @throws StoreIndexException if write problem during HilbertNode creation.
+     * @see HilbertTreeAccessFile#createNode(double[], byte, int, int, int) 
+     * @see HilbertNode#HilbertNode(org.geotoolkit.index.tree.access.TreeAccess, int, double[], byte, int, int, int) 
      */
     public Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
         final int currentID = (recycleID.isEmpty()) ? nodeId++ : recycleID.remove(0);

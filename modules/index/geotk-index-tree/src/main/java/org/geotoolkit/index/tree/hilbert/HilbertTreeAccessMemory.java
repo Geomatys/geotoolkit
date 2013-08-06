@@ -1,36 +1,52 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009-2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.index.tree.hilbert;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.access.TreeAccessMemory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * {@link TreeAccess} implementation adapted for {@link HilberRTree} which store data and Tree identifier in computer memory.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys)
  */
 public class HilbertTreeAccessMemory extends TreeAccessMemory {
 
-    public HilbertTreeAccessMemory(int maxElements, int hilbertOrder, CoordinateReferenceSystem crs) {
+    /**
+     * Build a TreeAccess adapted for HilbertRTree, and store tree information in memory.
+     * 
+     * @param maxElements max element permit in each tree cells.
+     * @param hilbertOrder maximum hilbert order value permit for each tree leaf.
+     * @param crs Tree {@link CoordinateReferenceSystem}.
+     * @see HilbertRTree
+     * @see HilbertNode
+     */
+    public HilbertTreeAccessMemory(final int maxElements, final int hilbertOrder, final CoordinateReferenceSystem crs) {
         super(maxElements, crs);
         super.hilbertOrder = hilbertOrder;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
         final int currentID = (recycleID.isEmpty()) ? nodeId++ : recycleID.remove(0);
-        try {
             return new HilbertNode(this, currentID, boundary, properties, parentId, siblingId, childId);
-        } catch (IOException ex) {
-            Logger.getLogger(HilbertTreeAccessMemory.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
     }
-    
 }

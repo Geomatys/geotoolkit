@@ -21,9 +21,8 @@ import java.util.Arrays;
 import org.geotoolkit.index.tree.calculator.*;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
-import static org.geotoolkit.index.tree.TreeUtils.*;
+import static org.geotoolkit.index.tree.TreeUtilities.*;
 import org.geotoolkit.index.tree.access.TreeAccess;
-import org.geotoolkit.index.tree.hilbert.HilbertNode;
 import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.index.tree.mapper.TreeElementMapper;
 import org.geotoolkit.referencing.CRS;
@@ -38,39 +37,65 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public abstract class AbstractTree<E> implements Tree<E> {
 
-    protected TreeAccess treeAccess;
-    private Node root;
-    private final int nbMaxElement;
-    protected CoordinateReferenceSystem crs;
-    protected Calculator calculator;
-    protected int eltCompteur;
-    protected final TreeElementMapper<E> treeEltMap;
-    protected int treeIdentifier;
-    
-    // search
-    protected int currentLength;
-    protected int currentPosition;
-    protected int[] tabSearch;
-
-    //dfebug
-//    protected int countadjust;
+    /**
+     * Object which store Tree informations in memory or on hard disk.
+     */
+    protected final TreeAccess treeAccess;
     
     /**
-     * To create an R-Tree use {@linkplain TreeFactory}.
+     * Maximum element authorized per Node.
      */
-    protected AbstractTree(TreeAccess treeAccess, CoordinateReferenceSystem crs, TreeElementMapper<E> treeEltMap) {
+    private final int maxElementPerNode;
+    
+    /**
+     * data {@link CoordinateReferenceSystem}.
+     */
+    protected final CoordinateReferenceSystem crs;
+    
+    /**
+     * Object which effectuate compute needed by tree to store datas.
+     */
+    protected final Calculator calculator;
+    
+    /**
+     * Object which link data and Tree identifier.
+     */
+    private final TreeElementMapper<E> treeEltMap;
+    
+    /**
+     * identifier use by tree which is linked at a data.<br/>
+     * Each identifier is link on only one distinct data.
+     */
+    protected int treeIdentifier;
+    
+    /**
+     * Data number stored in this Tree.
+     */
+    protected int eltCompteur;
+    
+    /**
+     * Tree trunk. Root Node.
+     */
+    private Node root;
+    
+    /**
+     * Tree fundation implementation.
+     * 
+     * @param treeAccess to store Tree informations in memory or on hard disk.
+     * @param crs data {@link CoordinateReferenceSystem}.
+     * @param treeEltMap to link data and Tree identifier.
+     */
+    protected AbstractTree(final TreeAccess treeAccess, final CoordinateReferenceSystem crs, final TreeElementMapper<E> treeEltMap) {
         ArgumentChecks.ensureNonNull("Create Tree : CRS", crs);
         ArgumentChecks.ensureNonNull("Create TreeAccess : treeAccess", treeAccess);
         ArgumentChecks.ensureNonNull("Create TreeElementMapper : treeEltMap", treeEltMap);
-        this.treeAccess = treeAccess;
-        this.treeEltMap = treeEltMap;
-        this.calculator = new CalculatorND();
-        this.nbMaxElement = treeAccess.getMaxElementPerCells();
-        this.eltCompteur = treeAccess.getEltNumber();
-        ArgumentChecks.ensureBetween("Create Tree : maxElements", 2, Integer.MAX_VALUE, nbMaxElement);
-        this.crs = crs;
-        //debug
-//        this.countadjust = 0;
+        this.maxElementPerNode = treeAccess.getMaxElementPerCells();
+        ArgumentChecks.ensureBetween("Create Tree : maxElements", 2, Integer.MAX_VALUE, maxElementPerNode);
+        this.treeAccess        = treeAccess;
+        this.treeEltMap        = treeEltMap;
+        this.calculator        = new CalculatorND();
+        this.eltCompteur       = treeAccess.getEltNumber();
+        this.crs               = crs;
     }
 
     /**
@@ -78,10 +103,9 @@ public abstract class AbstractTree<E> implements Tree<E> {
      */
     @Override
     public int[] searchID(Envelope regionSearch) throws StoreIndexException {
-//        return searchID(DefaultTreeUtils.getCoords(regionSearch));
-        // root node always begin at index 1 because 0 is reserved for no sibling or children.
+        ArgumentChecks.ensureNonNull("Envelope regionSearch", regionSearch);
         final Node root = getRoot();
-        final double[] regSearch = TreeUtils.getCoords(regionSearch);
+        final double[] regSearch = TreeUtilities.getCoords(regionSearch);
         if (root != null && !root.isEmpty()) {
             try {
                 return treeAccess.search(root.getNodeId(), regSearch);
@@ -103,7 +127,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
             final Envelope env = treeEltMap.getEnvelope(object);
             if (!CRS.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()))
                 throw new IllegalArgumentException("During insertion element should have same CoordinateReferenceSystem as Tree.");
-            final double[] coordinates = TreeUtils.getCoords(env);
+            final double[] coordinates = TreeUtilities.getCoords(env);
             for (double d : coordinates)
                 if (Double.isNaN(d))
                     throw new IllegalArgumentException("coordinates contain at least one NAN value");
@@ -118,8 +142,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
     /**
      * {@inheritDoc}
      */
-    public void insert(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException {
-//        super.insert(object, coordinates);
+    protected void insert(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException {
         try {
             eltCompteur++;
             Node root = getRoot();
@@ -142,9 +165,9 @@ public abstract class AbstractTree<E> implements Tree<E> {
     protected abstract Node nodeInsert(Node candidate, Object object, double ...coordinates) throws IOException;
     
     /**
-     * Find appropriate {@code Node} to insert {@code Envelope} entry.
-     * To define appropriate Node, criterion are :
-     *      - require minimum area enlargement to cover shape.
+     * Find appropriate {@code Node} to insert {@code Envelope} entry.<br/><br/>
+     * To define appropriate Node, criterion are :<br/>
+     *      - require minimum area enlargement to cover shape.<br/>
      *      - or put into {@code Node} with lesser elements number in case of area equals.
      *
      * @param children List of {@code Node}.
@@ -156,8 +179,6 @@ public abstract class AbstractTree<E> implements Tree<E> {
     protected Node chooseSubtree(final Node candidate, final double... coordinates) throws IOException {
         ArgumentChecks.ensureNonNull("chooseSubtree : candidate", candidate);
         ArgumentChecks.ensureNonNull("chooseSubtree : coordinates", coordinates);
-//        assert candidate.checkInternal() : "chooseSubtree : candidate not conform";
-        final Calculator calc = getCalculator();
         final int childCount = candidate.getChildCount();
         if (childCount == 0) throw new IllegalArgumentException("chooseSubtree : children is empty");
         if (childCount == 1) return treeAccess.readNode(candidate.getChildId());
@@ -173,7 +194,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
         for(int i = 1; i < childCount; i++) {
             add(addBound, children[i].getBoundary());
         }
-        double area = calc.getSpace(addBound);
+        double area = calculator.getSpace(addBound);
         double nbElmt = result.getChildCount();
         double areaTemp;
         for (int i = 0; i < childCount; i++) {
@@ -184,7 +205,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
             add(rnod, coordinates);
             final int nbe = dn.getChildCount();
             final double[] assertBound = dnBoundary.clone();
-            areaTemp = calc.getEnlargement(dnBoundary, rnod);
+            areaTemp = calculator.getEnlargement(dnBoundary, rnod);
             assert Arrays.equals(dnBoundary, assertBound);
             if (areaTemp < area) {
                 result = dn;
@@ -198,7 +219,6 @@ public abstract class AbstractTree<E> implements Tree<E> {
                 }
             }
         }
-//        assert candidate.checkInternal() : "chooseSubtree : candidate not conform";
         return result;
     }
     
@@ -213,16 +233,9 @@ public abstract class AbstractTree<E> implements Tree<E> {
     protected Node[] splitNode(final Node candidate) throws IllegalArgumentException, IOException {
         ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
         assert candidate.checkInternal() : "splitNode : begin.";
-//        int childNumber = (candidate.isLeaf())?((FileHilbertNode)candidate).getDataCount():candidate.getChildCount();
-//        if (childNumber < 2) 
-//            throw new IllegalArgumentException("not enought elements within " + candidate + " to split.");
         
         final Node[] children = candidate.getChildren();
-//        assert childNumber == children.length : "SplitNode : childnumber should be same as children length value.";
-        
         final byte candidateProperties = candidate.getProperties();
-        
-        final Calculator calc = getCalculator();
         final int splitIndex  = defineSplitAxis(children);
         
         final int size = children.length;
@@ -245,7 +258,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
         int cut2;
         //compute with lower and after upper
         for(int lu = 0; lu < 2; lu++) {
-            calc.sort(splitIndex, (lu == 0), children);
+            calculator.sort(splitIndex, (lu == 0), children);
             for(int cut = demiSize; cut <= size - demiSize; cut++) {
                 cut2 = size - cut;
                 final Node[] splitTabA = new Node[cut];
@@ -261,9 +274,9 @@ public abstract class AbstractTree<E> implements Tree<E> {
                 for (int i = 1; i < cut2; i++) {
                     add(unionTabB, splitTabB[i].getBoundary());
                 }
-                bulkTemp = calc.getOverlaps(unionTabA, unionTabB);
+                bulkTemp = calculator.getOverlaps(unionTabA, unionTabB);
                 if (bulkTemp == 0) {
-                    areaTemp = calc.getEdge(unionTabA) + calc.getEdge(unionTabB);
+                    areaTemp = calculator.getEdge(unionTabA) + calculator.getEdge(unionTabB);
                     if (areaTemp < areaRef) {
                         areaRef        = areaTemp;
                         index          = cut;
@@ -281,7 +294,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
         }
         
         // best organization solution 
-        calc.sort(splitIndex, lower_or_upper, children);
+        calculator.sort(splitIndex, lower_or_upper, children);
         final int lengthResult2 = size - index;
         final Node[] result1Children = new Node[index];
         final Node[] result2Children = new Node[lengthResult2];
@@ -307,7 +320,6 @@ public abstract class AbstractTree<E> implements Tree<E> {
         // check result
         assert result1.checkInternal() : "splitNode : result1.";
         assert result2.checkInternal() : "splitNode : result2.";
-//        countadjust += (treeAccess.getCountAdjust()-counta);
         return new Node[]{result1, result2};
     }    
     
@@ -335,7 +347,6 @@ public abstract class AbstractTree<E> implements Tree<E> {
         int cbID = 0;
         for (Node nod : children) childsBound[cbID++] = nod.getBoundary();
         
-        final Calculator calc = getCalculator();
         final double size04 = size * 0.4;
         final int demiSize = (int) ((size04 >= 1) ? size04 : 1);
         double[][] splitTabA, splitTabB;
@@ -362,7 +373,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
             if (globalSpan <= 1E-9 || isSameSpan) continue unappropriateOrdinate;
             bulkTemp = 0;
             for (int left_or_right = 0; left_or_right < 2; left_or_right++) {
-                calc.sort(indOrg, left_or_right == 0, childsBound);
+                calculator.sort(indOrg, left_or_right == 0, childsBound);
                 for (int cut = demiSize, sdem = size - demiSize; cut <= sdem; cut++) {
                     splitTabA = new double[cut][];
                     splitTabB = new double[size - cut][];
@@ -370,8 +381,8 @@ public abstract class AbstractTree<E> implements Tree<E> {
                     System.arraycopy(childsBound, cut, splitTabB, 0, size-cut);
                     gESPLA     = getEnvelopeMin(splitTabA);
                     gESPLB     = getEnvelopeMin(splitTabB);
-                    bulkTemp  += calc.getEdge(gESPLA);
-                    bulkTemp  += calc.getEdge(gESPLB);
+                    bulkTemp  += calculator.getEdge(gESPLA);
+                    bulkTemp  += calculator.getEdge(gESPLB);
                 }
             }
             if(bulkTemp < bulkRef) {
@@ -389,7 +400,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
             final Envelope env = treeEltMap.getEnvelope(object);
             if (!CRS.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()))
                 throw new IllegalArgumentException("During insertion element should have same CoordinateReferenceSystem as Tree.");
-            final double[] coordinates = TreeUtils.getCoords(env);
+            final double[] coordinates = TreeUtilities.getCoords(env);
             for (double d : coordinates)
                 if (Double.isNaN(d))
                     throw new IllegalArgumentException("coordinates contain at least one NAN value");
@@ -400,7 +411,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
         }
     }
     
-    public boolean remove(Object object, double... coordinates) throws StoreIndexException {
+    protected boolean remove(Object object, double... coordinates) throws StoreIndexException {
         ArgumentChecks.ensureNonNull("remove : object", object);
         ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
         final Node root = getRoot();
@@ -468,7 +479,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
      */
     @Override
     public int getMaxElements() {
-        return this.nbMaxElement;
+        return this.maxElementPerNode;
     }
 
     /**
@@ -501,14 +512,6 @@ public abstract class AbstractTree<E> implements Tree<E> {
     @Override
     public CoordinateReferenceSystem getCrs(){
         return crs;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Calculator getCalculator() {
-        return this.calculator;
     }
 
     /**

@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.index.tree.AbstractTree;
-import static org.geotoolkit.index.tree.TreeUtils.*;
+import static org.geotoolkit.index.tree.TreeUtilities.*;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.access.TreeAccess;
 import org.geotoolkit.index.tree.io.StoreIndexException;
@@ -37,7 +37,6 @@ public class HilbertRTree<E> extends AbstractTree<E> {
         super(treeAccess, treeAccess.getCRS(), treeEltMap);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);
-        this.treeAccess = treeAccess;
         super.setRoot(treeAccess.getRoot());
         treeIdentifier = treeAccess.getTreeIdentifier();
     }
@@ -65,14 +64,13 @@ public class HilbertRTree<E> extends AbstractTree<E> {
                     
                     if (fileCandidate.getParentId() != 0) {
                         Node parentCandidate = treeAccess.readNode(fileCandidate.getParentId());
-//                        parentCandidate.removeChild(fileCandidate);
                         final int lsp0Id = lsp0.getNodeId();
                         final int lsp1Id = lsp1.getNodeId();
                         /**
                          * <p>Add in candidate temporary to force to add element in one of splitted Node
                          * else algorithm can choose another node of lspo and lsp1, from parent children.<br/>
-                         * That is not wrong behavior because after split an another Node, from candidate parent children,
-                         * may be choosen and the split become caduc.</p>
+                         * That is not wrong behavior because after split, an another Node from candidate parent children,
+                         * may be choosen and the split become caducous.</p>
                          */
                         lsp0.setParentId(fileCandidate.getNodeId());
                         lsp1.setParentId(fileCandidate.getNodeId());
@@ -80,9 +78,6 @@ public class HilbertRTree<E> extends AbstractTree<E> {
                         fileCandidate.setProperties(IS_OTHER);
                         ((HilbertNode)fileCandidate).setCurrentHilbertOrder(0);
                         fileCandidate.setParentId(0);
-//                        fileCandidate.setSiblingId(0);
-//                        fileCandidate.setUserProperty(PROP_ISLEAF, false);
-//                        fileCandidate.setUserProperty(PROP_HILBERT_ORDER, 0);
                         fileCandidate.addChild(lsp0);
                         fileCandidate.addChild(lsp1);
                         nodeInsert(fileCandidate, object, coordinates);
@@ -104,8 +99,6 @@ public class HilbertRTree<E> extends AbstractTree<E> {
                         return parentCandidate;
                     } else {
                         candidate.clear();
-//                        candidate.setUserProperty(PROP_ISLEAF, false);
-//                        candidate.setUserProperty(PROP_HILBERT_ORDER, 0);
                         fileCandidate.setProperties(IS_OTHER);
                         ((HilbertNode)fileCandidate).setCurrentHilbertOrder(0);
                         lsp0.setParentId(fileCandidate.getNodeId());
@@ -113,7 +106,6 @@ public class HilbertRTree<E> extends AbstractTree<E> {
                         candidate.addChild(lsp0);
                         candidate.addChild(lsp1);
                         nodeInsert(candidate, object, coordinates);
-//                        assert candidate.getBoundary() == null : "boundary should be null";
                     }
                 } else {
                     throw new IllegalStateException("Normaly split leaf never null");
@@ -175,7 +167,7 @@ public class HilbertRTree<E> extends AbstractTree<E> {
                 final Node split2 = (Node)splitTable[1];
 
                 final int candidateParentID = fileCandidate.getParentId();
-                if (candidateParentID == 0) { // on est sur le noeud root
+                if (candidateParentID == 0) { 
                     // on clear le candidate
                     assert fileCandidate.getSiblingId() == 0 : "nodeInsert : split root : root should not have sibling.";
                     fileCandidate.clear();
@@ -297,25 +289,5 @@ public class HilbertRTree<E> extends AbstractTree<E> {
         } else {
             assert (reinsertListObjects == null) : "trim : listObjects should be null.";
         }
-    }
-
-    
-//    /**
-//     * Get statement from re-insert state.
-//     *
-//     * @return true if it's permit to re-insert else false.
-//     */
-//    private boolean getIA() {
-//        return insertAgain;
-//    }
-//
-//    /**
-//     * Affect statement to permit or not, re-insertion.
-//     * 
-//     * @param insertAgain
-//     */
-//    private void setIA(boolean insertAgain) {
-//        this.insertAgain = insertAgain;
-//    }
-    
+    }    
 }
