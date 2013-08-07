@@ -26,6 +26,9 @@ import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.hilbert.HilbertNode;
 import org.geotoolkit.index.tree.hilbert.HilbertTreeAccessFile;
 import org.geotoolkit.index.tree.StoreIndexException;
+import org.geotoolkit.index.tree.basic.BasicRTree;
+import org.geotoolkit.index.tree.basic.SplitCase;
+import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -120,6 +123,12 @@ public abstract class TreeAccess {
      * Store identifier of all removed Node to re-use them. 
      */
     protected List<Integer> recycleID = new LinkedList<Integer>();
+    
+    /**
+     * Split Made, only use by {@link BasicRTree} implementation.<br/>
+     * see {@link SplitCase}.
+     */
+    protected SplitCase splitMade;
     
     /**
      * Create a TreeAccess.
@@ -244,13 +253,26 @@ public abstract class TreeAccess {
     }
 
     /**
-     * Only use in hilbert RTree.
+     * Only use in {@link HilbertRTree} Tree implementation.<br/>
+     * 
+     * Return maximum leaf Hilbert order.
      * 
      * @return Leaf Hilbert Order.
      * @see #hilbertOrder
      */
     public int getHilbertOrder() {
         return hilbertOrder;
+    }
+
+    /**
+     * Only use by {@link BasicRTree} Tree implementation.<br/>
+     * Return split Node made.
+     * 
+     * @return split Node made.
+     * @see #splitMade.
+     */
+    public SplitCase getSplitMade() {
+        return splitMade;
     }
     
     /**

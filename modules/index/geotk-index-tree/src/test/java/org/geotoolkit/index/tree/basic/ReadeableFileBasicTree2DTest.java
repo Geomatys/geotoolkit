@@ -35,7 +35,7 @@ public class ReadeableFileBasicTree2DTest extends AbstractTreeTest {
         
         insert();
         tree.close();
-        tree = new FileBasicRTree(inOutFile, SplitCase.LINEAR, tEM);
+        tree = new FileBasicRTree(inOutFile, tEM);
         tAF  = ((BasicRTree)tree).getTreeAccess();
     }
 }

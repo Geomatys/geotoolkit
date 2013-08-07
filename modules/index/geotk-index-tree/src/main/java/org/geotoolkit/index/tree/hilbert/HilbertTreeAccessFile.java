@@ -85,7 +85,7 @@ public class HilbertTreeAccessFile extends TreeAccessFile {
      */
     public HilbertTreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
             final int maxElements, final int hilbertOrder, final CoordinateReferenceSystem crs) throws IOException {
-        super(outPut, magicNumber, versionNumber, maxElements, crs, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
+        super(outPut, magicNumber, versionNumber, maxElements, null, crs, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
     }
     
     /**
@@ -104,7 +104,7 @@ public class HilbertTreeAccessFile extends TreeAccessFile {
      */
     public HilbertTreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
             final int maxElements, final int hilbertOrder, final CoordinateReferenceSystem crs, final int byteBufferLength) throws IOException {
-        super(outPut, magicNumber, versionNumber, maxElements, crs, byteBufferLength, INT_NUMBER);
+        super(outPut, magicNumber, versionNumber, maxElements, null, crs, byteBufferLength, INT_NUMBER);
     }
         
     /**
