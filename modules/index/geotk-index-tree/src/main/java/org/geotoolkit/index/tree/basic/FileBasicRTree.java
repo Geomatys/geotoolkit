@@ -18,7 +18,6 @@ package org.geotoolkit.index.tree.basic;
 
 import java.io.File;
 import java.io.IOException;
-import org.geotoolkit.internal.tree.TreeAccess;
 import org.geotoolkit.internal.tree.TreeAccessFile;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.TreeElementMapper;
@@ -33,7 +32,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class FileBasicRTree<E> extends BasicRTree<E> {
 
     /**
-     * Number to identify tree file.
+     * Number to identify tree in file.
      */
     private final static int BASIC_NUMBER      = 188047901;
     private final static double VERSION_NUMBER = 0.1;
@@ -41,8 +40,7 @@ public class FileBasicRTree<E> extends BasicRTree<E> {
     /**
      * Create a new {@link BasicRTree} implementation which store Tree architecture on hard drive.<br/><br/>
      * 
-     * Note : the default buffer length which read and write on hard drive from 
-     * {@link TreeAccessFile} is 4096 {@code Byte}.
+     * Note : the default buffer length which read and write on hard drive  is 4096 {@code Byte}.
      * 
      * @param outPut File which contain path where Tree information will be stored.
      * @param maxElements maximum children value permit per Node.
@@ -52,8 +50,6 @@ public class FileBasicRTree<E> extends BasicRTree<E> {
      * @throws StoreIndexException
      * @throws IOException 
      * @see BasicRTree
-     * @see TreeAccessFile#TreeAccessFile(java.io.File, int, double, int, org.opengis.referencing.crs.CoordinateReferenceSystem) 
-     * @see TreeAccess#DEFAULT_BUFFER_LENGTH
      * @see SplitCase
      * @see TreeElementMapper
      */
@@ -77,7 +73,6 @@ public class FileBasicRTree<E> extends BasicRTree<E> {
      * @throws StoreIndexException
      * @throws IOException 
      * @see BasicRTree
-     * @see TreeAccessFile#TreeAccessFile(java.io.File, int, double, int, org.opengis.referencing.crs.CoordinateReferenceSystem, int) 
      * @see SplitCase
      * @see TreeElementMapper
      */
@@ -89,8 +84,7 @@ public class FileBasicRTree<E> extends BasicRTree<E> {
     /**
      * Create a {@link BasicRTree} implementation from an already filled file which contain {@link BasicRTree} architecture.<br/><br/>
      * 
-     * Note : the default buffer length which read and write on hard drive from 
-     * {@link TreeAccessFile} is 4096 {@code Byte}.
+     * Note : the default buffer length which read and write on hard drive is 4096 {@code Byte}.
      * 
      * @param input File already filled by old {@link BasicRTree} implementation.
      * @param choice split made choice.
@@ -98,6 +92,9 @@ public class FileBasicRTree<E> extends BasicRTree<E> {
      * @throws IOException if problem during head reading from already filled file.
      * @throws StoreIndexException if file isn't already filled by {@link BasicRTree} implementation.
      * @throws ClassNotFoundException if file doesn't exist.
+     * @see BasicRTree
+     * @see SplitCase
+     * @see TreeElementMapper
      */
     public FileBasicRTree(final File input, final SplitCase choice, final TreeElementMapper<E> treeEltMap) throws IOException, StoreIndexException, ClassNotFoundException {
         super(new TreeAccessFile(input, BASIC_NUMBER, VERSION_NUMBER), choice, treeEltMap);
@@ -116,6 +113,9 @@ public class FileBasicRTree<E> extends BasicRTree<E> {
      * @throws IOException if problem during head reading from already filled file.
      * @throws StoreIndexException if file isn't already filled by {@link BasicRTree} implementation.
      * @throws ClassNotFoundException if file doesn't exist.
+     * @see BasicRTree
+     * @see SplitCase
+     * @see TreeElementMapper
      */
     public FileBasicRTree(final File input, final SplitCase choice, final TreeElementMapper<E> treeEltMap, 
             final int byteBufferLength) throws IOException, StoreIndexException, ClassNotFoundException {

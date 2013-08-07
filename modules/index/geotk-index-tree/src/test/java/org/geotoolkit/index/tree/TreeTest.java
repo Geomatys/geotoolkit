@@ -21,8 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.index.tree.hilbert.HilbertRTree;
-import org.geotoolkit.index.tree.hilbert.HilbertNode;
 import org.opengis.geometry.Envelope;
 
 /**

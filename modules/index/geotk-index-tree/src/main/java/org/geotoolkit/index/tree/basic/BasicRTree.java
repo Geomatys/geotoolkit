@@ -519,7 +519,6 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
              treeAccess.writeNode(candidate);
             assert candidate.checkInternal() : "trim : candidate not conform";
         }
-            
         if (candidate.getParentId()!= 0) {
             trim (treeAccess.readNode(candidate.getParentId()));
         } else {
