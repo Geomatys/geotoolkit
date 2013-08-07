@@ -30,32 +30,48 @@ import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.TreeElementMapper;
 
 /**
- * Tree implementation.
- * R* Tree.
- *
+ * StarRTree (R* Tree) : tree implementation.<br/><br/>
+ * 
+ * It's a Tree implementation with a average duration insertion and search action.<br/>
+ * In the case of use, if we don't know there will be a lot of data insertion or update action forthcoming, 
+ * this implementation is by default recommended.<br/><br/>
+ * 
+ * Note : insertion action is more longer than BasicRTree, because in case of overfully Node, 
+ * a re-insertion of all data over 33% distance near Node centroid is effectuate.<br/>
+ * In some case this re-insertion action permit to avoid node splitting which is expensive resource in terms.
+ * 
  * @author Remi Marechal (Geomatys).
  */
-public abstract class StarRTree<E> extends AbstractTree<E> {
+abstract class StarRTree<E> extends AbstractTree<E> {
     
     /**
-     * In accordance with R*Tree properties.
+     * In accordance with R* Tree properties.
      * To avoid unnecessary split permit to
      * reinsert some elements just one time.
      */
     boolean insertAgain = true;
     
-    private final LinkedList<Integer> listObjects  = new LinkedList<Integer>();
-    private final LinkedList<double[]> listCoords = new LinkedList<double[]>(); 
+    /**
+     * List to store data which will be insert again. 
+     */
+    private final LinkedList<Integer> listIdentifier = new LinkedList<Integer>();
+    private final LinkedList<double[]> listCoords    = new LinkedList<double[]>(); 
     
+    /**
+     * Boolean required to stop and travel up recursively insertion action to insert select data.
+     */
     boolean travelUpBeforeInsertAgain = false;
     
     /**
+     * Create a R* Tree implementation.
      * 
-     * @param treeAccess
-     * @param treeEltMap
+     * @param treeAccess object in which all Tree information are stored.
+     * @param treeEltMap object in which data and tree identifier are stored.
      * @throws StoreIndexException 
+     * @see TreeAccess
+     * @see TreeElementMapper
      */
-    public StarRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
+    protected StarRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
         super(treeAccess, treeAccess.getCRS(), treeEltMap);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);
@@ -82,6 +98,9 @@ public abstract class StarRTree<E> extends AbstractTree<E> {
         this.insertAgain = insertAgain;
     }
     
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void insert(int identifier, double... coordinates) throws IllegalArgumentException, StoreIndexException {
 //        super.insert(object, coordinates);
@@ -106,15 +125,16 @@ public abstract class StarRTree<E> extends AbstractTree<E> {
                     travelUpBeforeInsertAgain = false;
                     // insert again
                     final int siz = listCoords.size();
-                    assert (siz == listObjects.size()) : "getElementAtMore33Percent : nodeInsert : lists should have same size.";
+                    assert (siz == listIdentifier.size()) : "getElementAtMore33Percent : nodeInsert : lists should have same size.";
                     setIA(false);
                     final int nbrElt = getElementsNumber();
                     final int treeIdent = treeIdentifier; // gere quand root == null
                     for (int i = 0; i < siz; i++) {
-                        assert remove(listObjects.get(i), listCoords.get(i));
+                        assert remove(listIdentifier.get(i), listCoords.get(i)) : "remove data should succeed during re-inserting event. "
+                                + "data identifier : "+listIdentifier.get(i)+" data boundary : "+Arrays.toString(listCoords.get(i));
                     }
                     for (int i = 0; i< siz; i++) {
-                        insert(listObjects.get(i), listCoords.get(i));
+                        insert(listIdentifier.get(i), listCoords.get(i));
                     }
                     setIA(true);
                     assert nbrElt == getElementsNumber() : "During Insert again element number within tree should not change.";
@@ -126,6 +146,9 @@ public abstract class StarRTree<E> extends AbstractTree<E> {
         }
     }
     
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     protected Node nodeInsert(Node candidate, int identifier, double... coordinates) throws IOException {
         assert candidate instanceof Node;
@@ -161,9 +184,9 @@ public abstract class StarRTree<E> extends AbstractTree<E> {
         if (fileCandidate.getChildCount() > getMaxElements()) {
             /******************************** 33 % *****************************/
             if (getIA() && fileCandidate.isLeaf()) {
-                listObjects.clear();
+                listIdentifier.clear();
                 listCoords.clear();
-                getElementAtMore33PerCent(candidate, listObjects, listCoords);
+                getElementAtMore33PerCent(candidate, listIdentifier, listCoords);
                 travelUpBeforeInsertAgain = true;
                 return null;
             }

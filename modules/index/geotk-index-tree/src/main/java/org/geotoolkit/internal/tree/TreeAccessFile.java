@@ -29,9 +29,7 @@ import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import org.geotoolkit.index.tree.Node;
 import static org.geotoolkit.index.tree.TreeUtilities.intersects;
-import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
-import org.geotoolkit.index.tree.hilbert.HilbertTreeAccessFile;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

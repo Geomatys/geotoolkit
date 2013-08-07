@@ -20,7 +20,6 @@ import java.io.IOException;
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.internal.tree.TreeAccess;
-import org.geotoolkit.index.tree.hilbert.HilbertNode;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -68,7 +67,7 @@ public class TreeUtilities {
     public static int countElementsRecursively(final Node node, int count) throws IOException {
         if (node == null) return count;
         if (node.isLeaf()) {
-            count = count + ((node instanceof HilbertNode)?((HilbertNode)node).getDataCount() : node.getChildCount());
+//            count = count + ((node instanceof HilbertNode)?((HilbertNode)node).getDataCount() : node.getChildCount());
         } else {
             final TreeAccess tac = node.getTreeAccess();
             int sibl = node.getChildId();

@@ -25,7 +25,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Remi Marechal (Geomatys)
  */
-public class HilbertTreeAccessMemory extends TreeAccessMemory {
+final class HilbertTreeAccessMemory extends TreeAccessMemory {
 
     /**
      * Build a TreeAccess adapted for HilbertRTree, and store tree information in memory.
@@ -36,7 +36,7 @@ public class HilbertTreeAccessMemory extends TreeAccessMemory {
      * @see HilbertRTree
      * @see HilbertNode
      */
-    public HilbertTreeAccessMemory(final int maxElements, final int hilbertOrder, final CoordinateReferenceSystem crs) {
+    HilbertTreeAccessMemory(final int maxElements, final int hilbertOrder, final CoordinateReferenceSystem crs) {
         super(maxElements, crs);
         super.hilbertOrder = hilbertOrder;
     }

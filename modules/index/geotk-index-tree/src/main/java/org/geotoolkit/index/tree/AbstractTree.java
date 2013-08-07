@@ -161,10 +161,21 @@ public abstract class AbstractTree<E> implements Tree<E> {
         }
     }
     
+    /**
+     * Insert data in the current {@link Node}.<br/><br/>
+     * 
+     * In some case, parent candidate Node is modify and it is returned during recursively travel up. 
+     * 
+     * @param candidate current Node in travel down insertion.
+     * @param identifier data tree identifier.
+     * @param coordinates data boundary
+     * @return parent candidate Node.
+     * @throws IOException if problem during hard drive writing.
+     */
     protected abstract Node nodeInsert(final Node candidate, final int identifier, final double ...coordinates) throws IOException;
     
     /**
-     * Find appropriate {@code Node} to insert {@code Envelope} entry.<br/><br/>
+     * Find appropriate {@code Node} to insert data.<br/><br/>
      * To define appropriate Node, criterion are :<br/>
      *      - require minimum area enlargement to cover shape.<br/>
      *      - or put into {@code Node} with lesser elements number in case of area equals.
@@ -392,6 +403,9 @@ public abstract class AbstractTree<E> implements Tree<E> {
         return index;
     }
     
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public boolean remove(final E object) throws StoreIndexException {
         try {
@@ -410,6 +424,14 @@ public abstract class AbstractTree<E> implements Tree<E> {
         }
     }
     
+    /**
+     * Remove data.
+     * 
+     * @param identifier data tree identifier.
+     * @param coordinates data boundary
+     * @return true if data have been correctively removed else false.
+     * @throws IOException if problem during hard drive writing.
+     */
     protected boolean remove(final int identifier, final double... coordinates) throws StoreIndexException {
         ArgumentChecks.ensureNonNull("remove : object", identifier);
         ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
@@ -428,16 +450,16 @@ public abstract class AbstractTree<E> implements Tree<E> {
     }
     
     /**
-     * Travel {@code Tree}, find {@code Entry} if it exist and delete it from reference.
+     * Travel {@code Tree}, find data if it exist and remove it.
      *
      * <blockquote><font size=-1>
      * <strong>NOTE: Moreover {@code Tree} is condensate after a deletion to stay conform about R-Tree properties.</strong>
      * </font></blockquote>
      *
-     * @param candidate {@code Node}  where to delete.
-     * @param entry {@code Envelope} to delete.
+     * @param identifier data tree identifier.
+     * @param coordinates data boundary
      * @throws IllegalArgumentException if candidate or entry is null.
-     * @return true if entry is find and deleted else false.
+     * @return true if entry is found and removed else false.
      */
     protected boolean removeNode(final Node candidate, final int identifier, final double... coordinate) throws IllegalArgumentException, StoreIndexException, IOException{
         ArgumentChecks.ensureNonNull("removeNode : Node candidate", candidate);
@@ -575,7 +597,9 @@ public abstract class AbstractTree<E> implements Tree<E> {
         return Classes.getShortClassName(this) + "\n" + strRoot;
     }
     
-    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Node createNode(final TreeAccess tA, final double[] boundary, final byte properties, final int parentId, final int siblingId, final int childId) throws IllegalArgumentException {
         return tA.createNode(boundary, properties, parentId, siblingId, childId);

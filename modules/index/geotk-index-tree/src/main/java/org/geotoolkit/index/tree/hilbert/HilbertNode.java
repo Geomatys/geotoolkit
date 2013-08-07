@@ -36,7 +36,7 @@ import org.geotoolkit.path.iterator.HilbertIterator;
  *
  * @author Remi Marechal (Geomatys).
  */
-public final class HilbertNode extends Node {
+final class HilbertNode extends Node {
 
     private Node[] children;
     private int dimension;
@@ -46,7 +46,7 @@ public final class HilbertNode extends Node {
     private static final double LN2 = 0.6931471805599453;
     
 
-    public HilbertNode(TreeAccess tAF, int nodeId, double[] boundary, byte properties, int parentId, int siblingId, int childId) {
+    HilbertNode(TreeAccess tAF, int nodeId, double[] boundary, byte properties, int parentId, int siblingId, int childId) {
         super(tAF, nodeId, boundary, properties, parentId, siblingId, childId);
         dimension = tAF.getCRS().getCoordinateSystem().getDimension();
         dataCount = 0;
