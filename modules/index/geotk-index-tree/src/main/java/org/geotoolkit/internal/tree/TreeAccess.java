@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.access;
+package org.geotoolkit.internal.tree;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -25,7 +25,7 @@ import org.geotoolkit.index.tree.AbstractTree;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.hilbert.HilbertNode;
 import org.geotoolkit.index.tree.hilbert.HilbertTreeAccessFile;
-import org.geotoolkit.index.tree.io.StoreIndexException;
+import org.geotoolkit.index.tree.StoreIndexException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -227,7 +227,7 @@ public abstract class TreeAccess {
     /**
      * Affect new element number value.
      * 
-     * @param eltNumber 
+     * @param eltNumber new element number value.
      * @see AbstractTree#close() 
      */
     public void setEltNumber(int eltNumber) {

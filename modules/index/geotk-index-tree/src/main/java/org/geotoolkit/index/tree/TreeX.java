@@ -14,9 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.io;
+package org.geotoolkit.index.tree;
 
-import org.geotoolkit.index.tree.mapper.TreeElementMapper;
+import org.geotoolkit.index.tree.TreeElementMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.index.tree.star;
 
-import org.geotoolkit.index.tree.access.TreeAccessMemory;
-import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.geotoolkit.index.tree.mapper.TreeElementMapper;
+import org.geotoolkit.internal.tree.TreeAccessMemory;
+import org.geotoolkit.index.tree.StoreIndexException;
+import org.geotoolkit.index.tree.TreeElementMapper;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

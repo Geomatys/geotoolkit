@@ -17,7 +17,7 @@
 package org.geotoolkit.index.tree.hilbert;
 
 import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.access.TreeAccessMemory;
+import org.geotoolkit.internal.tree.TreeAccessMemory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

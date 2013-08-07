@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.mapper;
+package org.geotoolkit.index.tree;
 
 import java.io.IOException;
 import org.opengis.geometry.Envelope;

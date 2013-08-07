@@ -138,9 +138,6 @@ public abstract class TreeTest {
      */
     protected boolean checkTreeElts(Tree tree) throws IOException {
         final int treeElement = tree.getElementsNumber();
-        if (tree instanceof HilbertRTree) {
-            return TreeUtilities.countEltsInHilbertNode((HilbertNode)tree.getRoot(), 0) == treeElement;
-        }
         return TreeUtilities.countElementsRecursively(tree.getRoot(), 0) == treeElement;
     }
     

@@ -28,8 +28,8 @@ import org.apache.sis.util.Classes;
 import org.geotoolkit.gui.swing.tree.Trees;
 import static org.geotoolkit.index.tree.TreeUtilities.*;
 import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.access.TreeAccess;
-import org.geotoolkit.index.tree.hilbert.iterator.HilbertIterator;
+import org.geotoolkit.internal.tree.TreeAccess;
+import org.geotoolkit.path.iterator.HilbertIterator;
 
 /**
  * Appropriate Node which match with HilbertRTree properties.
