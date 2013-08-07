@@ -38,7 +38,7 @@ import org.geotoolkit.index.tree.TreeElementMapper;
  * it's a Tree implementation which respond to this criteria. <br/><br/>
  * 
  * Note : In this RTree version it exist two made to split a Node named : LINEAR and QUADRATIC.<br/>
- * For more information see {@link SplitCase} javadoc.
+ * For more informations see {@link SplitCase} javadoc.
  *
  * @author Remi Marechal (Geomatys).
  * @see SplitCase.
@@ -60,12 +60,12 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
      * @see SplitCase
      * @see TreeElementMapper
      */
-    protected BasicRTree(final TreeAccess treeAccess, final SplitCase choice, final TreeElementMapper treeEltMap) throws StoreIndexException {
+    protected BasicRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
         super(treeAccess, treeAccess.getCRS(), treeEltMap);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);
+        this.choice    = treeAccess.getSplitMade();
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : SplitCase choice", choice);
-        this.choice      = choice;
         super.setRoot(treeAccess.getRoot());
         treeIdentifier = treeAccess.getTreeIdentifier();
     }

@@ -55,7 +55,7 @@ public class FileBasicRTree<E> extends BasicRTree<E> {
      */
     public FileBasicRTree(final File outPut, final int maxElements, final CoordinateReferenceSystem crs,
             final SplitCase choice, final TreeElementMapper<E> treeEltMap) throws StoreIndexException, IOException {
-        super(new TreeAccessFile(outPut, BASIC_NUMBER, VERSION_NUMBER, maxElements, crs), choice, treeEltMap);
+        super(new TreeAccessFile(outPut, BASIC_NUMBER, VERSION_NUMBER, maxElements, choice, crs), treeEltMap);
     }
     
     /**
@@ -78,7 +78,7 @@ public class FileBasicRTree<E> extends BasicRTree<E> {
      */
     public FileBasicRTree(final File outPut, final int maxElements, final CoordinateReferenceSystem crs, 
             final SplitCase choice, final TreeElementMapper<E> treeEltMap, final int byteBufferLength) throws StoreIndexException, IOException {
-        super(new TreeAccessFile(outPut, BASIC_NUMBER, VERSION_NUMBER, maxElements, crs, byteBufferLength), choice, treeEltMap);
+        super(new TreeAccessFile(outPut, BASIC_NUMBER, VERSION_NUMBER, maxElements, choice, crs, byteBufferLength), treeEltMap);
     }
     
     /**
@@ -96,8 +96,8 @@ public class FileBasicRTree<E> extends BasicRTree<E> {
      * @see SplitCase
      * @see TreeElementMapper
      */
-    public FileBasicRTree(final File input, final SplitCase choice, final TreeElementMapper<E> treeEltMap) throws IOException, StoreIndexException, ClassNotFoundException {
-        super(new TreeAccessFile(input, BASIC_NUMBER, VERSION_NUMBER), choice, treeEltMap);
+    public FileBasicRTree(final File input, final TreeElementMapper<E> treeEltMap) throws IOException, StoreIndexException, ClassNotFoundException {
+        super(new TreeAccessFile(input, BASIC_NUMBER, VERSION_NUMBER), treeEltMap);
     } 
     
     /**
@@ -117,8 +117,8 @@ public class FileBasicRTree<E> extends BasicRTree<E> {
      * @see SplitCase
      * @see TreeElementMapper
      */
-    public FileBasicRTree(final File input, final SplitCase choice, final TreeElementMapper<E> treeEltMap, 
+    public FileBasicRTree(final File input, final TreeElementMapper<E> treeEltMap, 
             final int byteBufferLength) throws IOException, StoreIndexException, ClassNotFoundException {
-        super(new TreeAccessFile(input, BASIC_NUMBER, VERSION_NUMBER), choice, treeEltMap);
+        super(new TreeAccessFile(input, BASIC_NUMBER, VERSION_NUMBER), treeEltMap);
     } 
 }

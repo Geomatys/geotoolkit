@@ -26,7 +26,6 @@ import org.geotoolkit.index.tree.AbstractTree;
 import static org.geotoolkit.index.tree.TreeUtilities.*;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.internal.tree.TreeAccess;
-import org.geotoolkit.internal.tree.Calculator;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.TreeElementMapper;
 
@@ -50,7 +49,12 @@ public abstract class StarRTree<E> extends AbstractTree<E> {
     
     boolean travelUpBeforeInsertAgain = false;
     
-    
+    /**
+     * 
+     * @param treeAccess
+     * @param treeEltMap
+     * @throws StoreIndexException 
+     */
     public StarRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
         super(treeAccess, treeAccess.getCRS(), treeEltMap);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);

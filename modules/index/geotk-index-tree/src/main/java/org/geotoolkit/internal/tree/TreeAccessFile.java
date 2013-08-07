@@ -29,6 +29,8 @@ import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import org.geotoolkit.index.tree.Node;
 import static org.geotoolkit.index.tree.TreeUtilities.intersects;
+import org.geotoolkit.index.tree.basic.BasicRTree;
+import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.hilbert.HilbertTreeAccessFile;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -159,6 +161,9 @@ public class TreeAccessFile extends TreeAccess {
         maxElement = inOutStream.readInt();
         // read hilbert Order
         hilbertOrder = inOutStream.readInt();
+        // read SplitCase
+        final byte sm = inOutStream.readByte();
+        splitMade = ((sm & ((byte)1)) != 0) ? SplitCase.QUADRATIC : SplitCase.LINEAR;
         // read nodeID
         nodeId = inOutStream.readInt();
         if (nodeId == 0)
@@ -206,6 +211,46 @@ public class TreeAccessFile extends TreeAccess {
     /**
      * Build and insert {@link Node} architecture in a {@link File}.<br/>
      * If file is not empty, data within it will be overwrite.<br/>
+     * If file does not exist a file will be create.<br/><br/>
+     * 
+     * Constructor only use by {@link BasicRTree} implementation.
+     * 
+     * @param outPut {@code File} where {@link Node} architecture which will be write.
+     * @param magicNumber {@code Integer} single {@link Tree} code.
+     * @param versionNumber version number.
+     * @param maxElements element number per cell.
+     * @param crs 
+     * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
+     * @throws IOException if problem during read or write Node.
+     */
+    public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, final int maxElements, 
+            final SplitCase splitMade, final CoordinateReferenceSystem crs, final int byteBufferLength) throws IOException {
+        this(outPut, magicNumber, versionNumber, maxElements, splitMade, crs, byteBufferLength, INT_NUMBER);
+    }
+    
+    /**
+     * Build and insert {@link Node} architecture in a {@link File}.<br/>
+     * If file is not empty, data within it will be overwrite.<br/>
+     * If file does not exist a file will be create.<br/><br/>
+     * 
+     * Constructor only use by {@link BasicRTree} implementation.
+     * 
+     * @param outPut {@code File} where {@link Node} architecture which will be write.
+     * @param magicNumber {@code Integer} single {@link Tree} code.
+     * @param versionNumber version number.
+     * @param maxElements element number per cell.
+     * @param crs 
+     * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
+     * @throws IOException if problem during read or write Node.
+     */
+    public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, final int maxElements, 
+             final SplitCase splitMade, final CoordinateReferenceSystem crs) throws IOException {
+        this(outPut, magicNumber, versionNumber, maxElements, splitMade, crs, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
+    }
+    
+    /**
+     * Build and insert {@link Node} architecture in a {@link File}.<br/>
+     * If file is not empty, data within it will be overwrite.<br/>
      * If file does not exist a file will be create.
      * 
      * @param outPut {@code File} where {@link Node} architecture which will be write.
@@ -218,7 +263,7 @@ public class TreeAccessFile extends TreeAccess {
      */
     public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
             final int maxElements, final CoordinateReferenceSystem crs, final int byteBufferLength) throws IOException {
-        this(outPut, magicNumber, versionNumber, maxElements, crs, byteBufferLength, INT_NUMBER);
+        this(outPut, magicNumber, versionNumber, maxElements, null, crs, byteBufferLength, INT_NUMBER);
     }
     
     /**
@@ -236,7 +281,7 @@ public class TreeAccessFile extends TreeAccess {
      */
     public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
             final int maxElements, final CoordinateReferenceSystem crs) throws IOException {
-        this(outPut, magicNumber, versionNumber, maxElements, crs, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
+        this(outPut, magicNumber, versionNumber, maxElements, null, crs, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
     }
     
     /**
@@ -253,14 +298,14 @@ public class TreeAccessFile extends TreeAccess {
      * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process. 
      * @throws IOException if problem during read or write Node.
      */
-    protected TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
-            final int maxElements, final CoordinateReferenceSystem crs, final int byteBufferLength, final int integerNumberPerNode) throws IOException {
+    protected TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, final int maxElements,
+            final SplitCase splitMade, final CoordinateReferenceSystem crs, final int byteBufferLength, final int integerNumberPerNode) throws IOException {
         super();
         
-        this.crs = crs;
-        this.maxElement = maxElements;
-        
+        this.crs         = crs;
+        this.maxElement  = maxElements;
         this.boundLength = crs.getCoordinateSystem().getDimension() << 1;
+        this.splitMade   = splitMade;
         
         //nanbound
         nanBound = new double[boundLength];
@@ -269,7 +314,7 @@ public class TreeAccessFile extends TreeAccess {
         /**
          * Node size : boundary weigth + Byte properties + n Integers.<br/><br/>
          * 
-         * see INT_NUMBER attribut.
+         * see this.INT_NUMBER attribut.
          */
         nodeSize = (boundLength * Double.SIZE + Integer.SIZE * integerNumberPerNode) / 8 + 1;
         
@@ -297,6 +342,8 @@ public class TreeAccessFile extends TreeAccess {
         inOutStream.writeInt(maxElements);
         // write hilbert order
         inOutStream.writeInt(hilbertOrder);
+        // write splitCase
+        inOutStream.writeByte((byte) ((splitMade == null || splitMade == SplitCase.LINEAR) ? 0 : 1));
         // write nodeID
         inOutStream.writeInt(0);
         // write treeIdentifier
@@ -459,7 +506,7 @@ public class TreeAccessFile extends TreeAccess {
             writtenByte = inOutChannel.write(byteBuffer, currentBufferPosition);
         }
         // write nodeID
-        inOutChannel.position(21); 
+        inOutChannel.position(22); 
         inOutStream.writeInt(nodeId);
         inOutStream.writeInt(treeIdentifier);
         inOutStream.writeInt(eltNumber);

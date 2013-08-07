@@ -19,6 +19,7 @@ package org.geotoolkit.internal.tree;
 import java.io.IOException;
 import org.geotoolkit.index.tree.Node;
 import static org.geotoolkit.index.tree.TreeUtilities.intersects;
+import org.geotoolkit.index.tree.basic.SplitCase;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -31,13 +32,18 @@ public class TreeAccessMemory extends TreeAccess {
     private int tabNodeLength;
     private Node[] tabNode;
 
-    public TreeAccessMemory(final int maxElements, final CoordinateReferenceSystem crs) {
+    public TreeAccessMemory(final int maxElements, final SplitCase splitMade, final CoordinateReferenceSystem crs) {
         super();
         this.crs        = crs;
         this.maxElement = maxElements;
         tabNodeLength   = 100;
         tabNode         = new Node[tabNodeLength];
         root            = null;
+        this.splitMade  = splitMade;
+    }
+    
+    public TreeAccessMemory(final int maxElements, final CoordinateReferenceSystem crs) {
+        this(maxElements, null, crs);
     }
     
     /**
