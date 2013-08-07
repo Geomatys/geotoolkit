@@ -60,6 +60,14 @@ public class MultiCurveType extends AbstractGeometricAggregateType implements Mu
     private List<CurvePropertyType> curveMember;
     private CurveArrayPropertyType curveMembers;
 
+    public MultiCurveType() {
+
+    }
+
+    public MultiCurveType(final List<CurvePropertyType> curveMember) {
+        this.curveMember = curveMember;
+    }
+
     /**
      * Gets the value of the curveMember property.
      * 

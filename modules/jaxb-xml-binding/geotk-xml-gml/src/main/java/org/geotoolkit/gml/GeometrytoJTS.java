@@ -154,8 +154,11 @@ public class GeometrytoJTS {
             return toJTS((org.geotoolkit.gml.xml.MultiCurve)gml);
         } else if(gml instanceof org.geotoolkit.gml.xml.MultiPolygon){
             return toJTS((org.geotoolkit.gml.xml.MultiPolygon)gml);
-        } else if(gml instanceof MultiSurface){
-            return toJTS((MultiSurface)gml);
+        } else if(gml instanceof org.geotoolkit.gml.xml.MultiSurface){
+            return toJTS((org.geotoolkit.gml.xml.MultiSurface)gml);
+
+        } else if(gml instanceof org.geotoolkit.gml.xml.MultiGeometry){
+            return toJTS((org.geotoolkit.gml.xml.MultiGeometry)gml);
 
         } else if(gml instanceof org.geotoolkit.gml.xml.LinearRing){
             return toJTS((org.geotoolkit.gml.xml.LinearRing)gml);
