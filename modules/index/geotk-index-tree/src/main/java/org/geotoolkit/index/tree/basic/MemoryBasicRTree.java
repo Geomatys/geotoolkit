@@ -22,21 +22,22 @@ import org.geotoolkit.index.tree.TreeElementMapper;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * 
+ * {@link BasicRTree} implementation which store all Nodes in memory.
  *
  * @author Rémi Marechal (Geomatys).
  */
 public class MemoryBasicRTree<E> extends BasicRTree<E> {
 
     /**
+     * Create a new {@link BasicRTree} implementation which store Tree architecture memory.
      * 
-     * @param maxElements
-     * @param crs
-     * @param choice
-     * @param treeEltMap
+     * @param maxElements maximum children value permit per Node.
+     * @param crs Tree {@link CoordinateReferenceSystem}.
+     * @param choice split made choice.
+     * @param treeEltMap object which store tree identifier and data.
      * @throws StoreIndexException 
      */
-    public MemoryBasicRTree(int maxElements, CoordinateReferenceSystem crs, SplitCase choice, TreeElementMapper treeEltMap) throws StoreIndexException {
+    public MemoryBasicRTree(final int maxElements, final CoordinateReferenceSystem crs, final SplitCase choice, final TreeElementMapper treeEltMap) throws StoreIndexException {
         super(new TreeAccessMemory(maxElements, crs), choice, treeEltMap);
     }
 }
