@@ -90,7 +90,7 @@ public final class Strings extends Static {
     private static boolean isUpperCase(final CharSequence text, int lower, final int upper) {
         while (lower < upper) {
             final int c = codePointAt(text, lower);
-            if (!isUpperCase(c)) {
+            if (!Character.isUpperCase(c)) {
                 return false;
             }
             lower += charCount(c);
