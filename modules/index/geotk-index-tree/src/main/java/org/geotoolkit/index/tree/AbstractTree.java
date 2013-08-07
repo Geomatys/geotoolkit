@@ -16,15 +16,14 @@
  */
 package org.geotoolkit.index.tree;
 
+import org.geotoolkit.internal.tree.CalculatorND;
+import org.geotoolkit.internal.tree.Calculator;
 import java.io.IOException;
 import java.util.Arrays;
-import org.geotoolkit.index.tree.calculator.*;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import static org.geotoolkit.index.tree.TreeUtilities.*;
-import org.geotoolkit.index.tree.access.TreeAccess;
-import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.geotoolkit.index.tree.mapper.TreeElementMapper;
+import org.geotoolkit.internal.tree.TreeAccess;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

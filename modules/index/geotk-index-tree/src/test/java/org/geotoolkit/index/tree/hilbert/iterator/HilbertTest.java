@@ -15,6 +15,7 @@
  *    Lesser General Public License for more details.
  */
 package org.geotoolkit.index.tree.hilbert.iterator;
+import org.geotoolkit.path.iterator.HilbertIterator;
 import java.util.BitSet;
 import java.util.Iterator;
 import static org.junit.Assert.assertTrue;

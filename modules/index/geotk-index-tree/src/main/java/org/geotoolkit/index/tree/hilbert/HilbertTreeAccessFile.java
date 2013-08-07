@@ -21,7 +21,7 @@ import java.io.IOException;
 import org.apache.sis.util.ArraysExt;
 import static org.geotoolkit.index.tree.TreeUtilities.intersects;
 import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.access.TreeAccessFile;
+import org.geotoolkit.internal.tree.TreeAccessFile;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

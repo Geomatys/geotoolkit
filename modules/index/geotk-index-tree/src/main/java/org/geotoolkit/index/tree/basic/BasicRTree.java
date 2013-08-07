@@ -24,17 +24,17 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.index.tree.AbstractTree;
 import static org.geotoolkit.index.tree.TreeUtilities.*;
 import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.access.TreeAccess;
+import org.geotoolkit.internal.tree.TreeAccess;
 import static org.geotoolkit.index.tree.basic.SplitCase.*;
-import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.geotoolkit.index.tree.mapper.TreeElementMapper;
+import org.geotoolkit.index.tree.StoreIndexException;
+import org.geotoolkit.index.tree.TreeElementMapper;
 
 /**
  * BasicRTree : Tree implementation.
  * 
  * It's a Tree implementation with a faster insertion and remove action, 
  * but search is lesser fast than other Trees.<br/>
- * If stored datas are often updated, which mean more insertion or remove, 
+ * If stored datas are often updated, which mean more insertions or removes action, 
  * it's a Tree implementation which respond to this criteria. <br/><br/>
  * 
  * Note : In this RTree version it exist two made to split a Node named : LINEAR and QUADRATIC.<br/>
@@ -49,7 +49,18 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
      */
     private final SplitCase choice;
     
-    public BasicRTree(final TreeAccess treeAccess, final SplitCase choice, final TreeElementMapper treeEltMap) throws StoreIndexException {
+    /**
+     * Create a Basic RTree implementaion.
+     * 
+     * @param treeAccess object in which all Tree information are stored.
+     * @param choice split made choice.
+     * @param treeEltMap object in which data and tree identifier are stored.
+     * @throws StoreIndexException 
+     * @see TreeAccess
+     * @see SplitCase
+     * @see TreeElementMapper
+     */
+    protected BasicRTree(final TreeAccess treeAccess, final SplitCase choice, final TreeElementMapper treeEltMap) throws StoreIndexException {
         super(treeAccess, treeAccess.getCRS(), treeEltMap);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);
@@ -190,6 +201,9 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
         int index2 = 0;
         
         switch (choice) {
+            /**
+             * Find the two further Nodes.
+             */
             case LINEAR: {
                 for (int i = 0; i < childNumber - 1; i++) {
                     for (int j = i + 1; j < childNumber; j++) {
@@ -206,6 +220,10 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
             }
             break;
 
+            /**
+             * Find the two which create as much dead space as possible.<br/>
+             * With dead space mean the most empty area between them.
+             */
             case QUADRATIC: {
                 double[] rectGlobal, bound1, bound2;
                 for (int i = 0; i < childNumber - 1; i++) {
@@ -265,23 +283,21 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
             
             final double area1 = calculator.getSpace(r1Temp);
             final double area2 = calculator.getSpace(r2Temp);
-            int r1nbE = r1ChCount; // a supprimer
-            int r2nbE = r2ChCount;
             
             if (area1 < area2) {
-                if (r2nbE <= demimaxE && r1nbE > demimaxE) {
+                if (r2ChCount <= demimaxE && r1ChCount > demimaxE) {
                     result2Children[r2ChCount++] = currentFileNode;
                 } else {
                     result1Children[r1ChCount++] = currentFileNode;
                 }
             } else if (area1 == area2) {
-                if (r1nbE < r2nbE) {
+                if (r1ChCount < r2ChCount) {
                     result1Children[r1ChCount++] = currentFileNode;
                 } else {
                     result2Children[r2ChCount++] = currentFileNode;
                 }
             } else {
-                if (r1nbE <= demimaxE && r2nbE > demimaxE) {
+                if (r1ChCount <= demimaxE && r2ChCount > demimaxE) {
                     result1Children[r1ChCount++] = currentFileNode;
                 } else {
                     result2Children[r2ChCount++] = currentFileNode;

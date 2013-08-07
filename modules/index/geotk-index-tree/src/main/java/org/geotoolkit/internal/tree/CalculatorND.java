@@ -14,11 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.calculator;
+package org.geotoolkit.internal.tree;
 
-import java.io.IOException;
 import static org.geotoolkit.index.tree.TreeUtilities.*;
-import org.geotoolkit.index.tree.Node;
 
 /**
  * {@link Calculator} defined to compute multi-dimensionnal geometric operations.
@@ -28,15 +26,6 @@ import org.geotoolkit.index.tree.Node;
  */
 public class CalculatorND extends Calculator {
     
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    @Deprecated
-    public double getDistance(Node nodeA, Node nodeB) throws IOException {
-        return getDistanceBetween2Envelopes(nodeA.getBoundary(), nodeB.getBoundary());
-    }
-
     /**
      * {@inheritDoc }.
      */

@@ -19,7 +19,7 @@ package org.geotoolkit.index.tree;
 import java.io.IOException;
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.index.tree.access.TreeAccess;
+import org.geotoolkit.internal.tree.TreeAccess;
 import org.geotoolkit.index.tree.hilbert.HilbertNode;
 import org.opengis.geometry.Envelope;
 
@@ -68,33 +68,10 @@ public class TreeUtilities {
     public static int countElementsRecursively(final Node node, int count) throws IOException {
         if (node == null) return count;
         if (node.isLeaf()) {
-            count = count + node.getChildCount();
+            count = count + ((node instanceof HilbertNode)?((HilbertNode)node).getDataCount() : node.getChildCount());
         } else {
             final TreeAccess tac = node.getTreeAccess();
             int sibl = node.getChildId();
-            while (sibl != 0) {
-                final Node currentChild = tac.readNode(sibl);
-                count = countElementsRecursively(currentChild, count);
-                sibl = currentChild.getSiblingId();
-            }
-        }
-        return count;
-    }
-    
-    /**
-     * Compute recursively all element within {@link HilbertNode} candidate and its sub-Node.
-     * 
-     * @param candidate Node where there are stored elements. 
-     * @param count element counter. When caller call this method normaly zero. 
-     * @return all element number within this Node.
-     */
-    public static int countEltsInHilbertNode(final HilbertNode hNode, int count) throws IOException {
-        if (hNode == null) return count;
-        if (hNode.isLeaf()) {
-            count = count + hNode.getDataCount();
-        } else {
-            final TreeAccess tac = hNode.getTreeAccess();
-            int sibl = hNode.getChildId();
             while (sibl != 0) {
                 final Node currentChild = tac.readNode(sibl);
                 count = countElementsRecursively(currentChild, count);

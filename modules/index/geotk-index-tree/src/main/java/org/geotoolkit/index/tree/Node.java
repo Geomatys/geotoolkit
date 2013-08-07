@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 package org.geotoolkit.index.tree;
-import org.geotoolkit.index.tree.access.TreeAccess;
+import org.geotoolkit.internal.tree.TreeAccess;
 import java.io.IOException;
 import static org.geotoolkit.index.tree.TreeUtilities.*;
 
@@ -26,8 +26,9 @@ import java.util.logging.Logger;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.index.tree.access.TreeAccessFile;
-import org.geotoolkit.index.tree.access.TreeAccessMemory;
+import org.geotoolkit.internal.tree.TreeAccessFile;
+import org.geotoolkit.internal.tree.TreeAccessMemory;
+import org.geotoolkit.index.tree.hilbert.HilbertNode;
 
 /**
  * Default implementation Node use in Tree.<br/><br/>
@@ -267,9 +268,11 @@ public class Node {
     }
     
     /**
+     * Add some children Node.
      * 
-     * @param nodes
-     * @throws IOException 
+     * @param nodes children Node which will be added.
+     * @throws IOException if problem during Node writing from {@link TreeAccessFile}.
+     * @see TreeAccessFile#writeNode(org.geotoolkit.index.tree.Node) 
      */
     public void addChildren(final Node[] nodes) throws IOException {
         for(Node fnod : nodes) {
@@ -291,6 +294,15 @@ public class Node {
         tAF.writeNode(this);
     }
 
+    /**
+     * Return all children from this Node.<br/><br/>
+     * 
+     * Note : if is leaf all children returned are data type else other type.
+     * 
+     * @return all children from this Node.
+     * @throws IOException if problem during Node reading from {@link TreeAccessFile}. 
+     * @see TreeAccessFile#readNode(int) 
+     */
     public Node[] getChildren() throws IOException {
         final Node[] children = new Node[childCount];
         int sibl = getChildId();
@@ -304,6 +316,16 @@ public class Node {
         return children;
     }
 
+    /**
+     * Remove specified child Node.<br/><br/>
+     * 
+     * Return true if child Node was found and should be removed else false.
+     * 
+     * @param node Node which will be removed.
+     * @return true if child Node was found and should be removed else false.
+     * @throws IOException if problem during Node writing from {@link TreeAccessFile}.
+     * @see TreeAccessFile#writeNode(org.geotoolkit.index.tree.Node) 
+     */
     public boolean removeChild(final Node node) throws IOException {
         boolean found = false;
         if (childCount == 1) {
@@ -354,6 +376,17 @@ public class Node {
         return found;
     }
     
+    /**
+     * Remove specified data.<br/><br/>
+     * 
+     * Return true if data was found and should be removed else false.
+     * 
+     * @param identifier tree identifier.
+     * @param coordinates data boundary
+     * @return true if data was found and should be removed else false.
+     * @throws IOException if problem during Node writing from {@link TreeAccessFile}.
+     * @see TreeAccessFile#writeNode(org.geotoolkit.index.tree.Node) 
+     */
     public boolean removeData(final int identifier, final double ...coordinates) throws IOException {
         if (!((properties & 5) != 0))// test isleaf or iscell
             throw new IllegalStateException("You should not call removeData() method on a no leaf or cell Node.");
@@ -395,31 +428,44 @@ public class Node {
         tAF.writeNode(this);
         return true;
     }
-
-    public void removeChildren(final Node[] nodes) throws IOException {
-        for (Node nod : nodes) {
-            removeChild(nod);
-        }
-    }
     
+    /**
+     * Initialize Node.
+     */
     public void clear() {
-        boundary = null;
-        childId = 0;
+        boundary   = null;
+        childId    = 0;
         childCount = 0;
     }
 
+    /**
+     * Return children number.
+     * 
+     * @return children number.
+     */
     public int getChildCount() {
         return childCount;
     }
     
     /**
-     * Only use for assertion.
-     * @return 
+     * Affect a new children number value.
+     * 
+     * @param value new children number value.
+     * @see TreeAccessFile#readNode(int) 
      */
     public void setChildCount(final int value) {
         childCount = value;
     }
 
+    /**
+     * Add a new child in this Node.<br/><br/>
+     * 
+     * Added child own a sibling id equal to last child Node identifier.
+     * 
+     * @param node added child.
+     * @throws IOException if problem during Node writing from {@link TreeAccessFile}.
+     * @see TreeAccessFile#writeNode(org.geotoolkit.index.tree.Node) 
+     */
     public void addChild(final Node node) throws IOException {
         final double[] nodeBoundary = node.getBoundary();
         assert node.getSiblingId() == 0 : "future added element should be distinct from others.";
@@ -440,6 +486,15 @@ public class Node {
         tAF.writeNode(node);
     }
     
+    /**
+     * Verify some internal Node properties.<br/><br/>
+     * 
+     * Return false if a Node properties doesn't match with an expected results else true.
+     * 
+     * @return false if a Node properties doesn't match with an expected results else true.
+     * @throws IOException if problem during Node reading from {@link TreeAccessFile}. 
+     * @see TreeAccessFile#readNode(int) 
+     */
     public boolean checkInternal() throws IOException {
         if (isEmpty()) return true;
         if (getChildId() < 0) {
@@ -479,6 +534,15 @@ public class Node {
         return true;
     }
 
+    /**
+     * Return true if children number is higher than maximum elements permit 
+     * per Node else false.
+     * 
+     * @return true if children number is higher than maximum elements permit per Node else false.
+     * @throws IOException if problem during reading Node in {@link TreeAccessFile}.
+     * But exception only return from {@link HilbertNode} sub-implementation.
+     * @see HilbertNode#isFull() 
+     */
     public boolean isFull() throws IOException {
         return getChildCount() >= tAF.getMaxElementPerCells();
     }
@@ -504,6 +568,9 @@ public class Node {
         return null;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public boolean equals(final Object obj) {
         if (!(obj instanceof Node)) return false;

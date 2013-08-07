@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.index.tree.io;
 
+import org.geotoolkit.index.tree.StoreIndexException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,8 +31,8 @@ import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeTest;
 import static org.geotoolkit.index.tree.TreeTest.createEntry;
-import org.geotoolkit.index.tree.access.TreeAccess;
-import org.geotoolkit.index.tree.mapper.TreeElementMapper;
+import org.geotoolkit.internal.tree.TreeAccess;
+import org.geotoolkit.index.tree.TreeElementMapper;
 import static org.junit.Assert.assertTrue;
 import org.junit.Ignore;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

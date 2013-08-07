@@ -23,9 +23,9 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.index.tree.AbstractTree;
 import static org.geotoolkit.index.tree.TreeUtilities.*;
 import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.access.TreeAccess;
-import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.geotoolkit.index.tree.mapper.TreeElementMapper;
+import org.geotoolkit.internal.tree.TreeAccess;
+import org.geotoolkit.index.tree.StoreIndexException;
+import org.geotoolkit.index.tree.TreeElementMapper;
 
 /**
  *

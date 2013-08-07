@@ -16,9 +16,7 @@
  */
 package org.geotoolkit.index.tree;
 
-import org.geotoolkit.index.tree.access.TreeAccess;
-import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.geotoolkit.index.tree.mapper.TreeElementMapper;
+import org.geotoolkit.internal.tree.TreeAccess;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -27,7 +25,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Define a generic Tree.
  *
  * @author Rémi Maréchal       (Geomatys).
- * @author Johann Sorel        (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
 public interface Tree<E> {
