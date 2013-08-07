@@ -23,12 +23,8 @@ import java.util.LinkedList;
 import java.util.List;
 import org.geotoolkit.index.tree.AbstractTree;
 import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.hilbert.HilbertNode;
-import org.geotoolkit.index.tree.hilbert.HilbertTreeAccessFile;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
-import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

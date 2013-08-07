@@ -22,12 +22,22 @@ import org.geotoolkit.index.tree.TreeElementMapper;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * {@link StarRTree} implementation which store all Nodes in memory.
  *
  * @author Remi Marechal (Geomatys).
  */
-public class MemoryStarRTree<E> extends StarRTree<E>{
+public class MemoryStarRTree<E> extends StarRTree<E> {
 
-    public MemoryStarRTree(int maxElements, CoordinateReferenceSystem crs, TreeElementMapper treeEltMap) throws StoreIndexException {
+    /**
+     * Create a new {@link StarRTree} implementation which store Tree architecture in memory.
+     * 
+     * @param maxElements
+     * @param crs
+     * @param treeEltMap
+     * @throws StoreIndexException in this tree implementation exception never occur.
+     * @see TreeElementMapper
+     */
+    public MemoryStarRTree(final int maxElements, final CoordinateReferenceSystem crs, final TreeElementMapper treeEltMap) throws StoreIndexException {
         super(new TreeAccessMemory(maxElements, crs), treeEltMap);
     }
 }

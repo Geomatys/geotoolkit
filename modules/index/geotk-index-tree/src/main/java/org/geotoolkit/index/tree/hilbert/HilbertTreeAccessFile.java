@@ -30,7 +30,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Remi Marechal (Geomatys).
  */
-public class HilbertTreeAccessFile extends TreeAccessFile {
+final class HilbertTreeAccessFile extends TreeAccessFile {
 
     /**
      * Hilbert Node attributs Number.<br/>
@@ -52,7 +52,7 @@ public class HilbertTreeAccessFile extends TreeAccessFile {
      * @throws IOException if problem during read or write Node.
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
-    public HilbertTreeAccessFile( final File input, final int magicNumber, final double versionNumber ) throws IOException, ClassNotFoundException {
+    HilbertTreeAccessFile( final File input, final int magicNumber, final double versionNumber ) throws IOException, ClassNotFoundException {
         super(input, magicNumber, versionNumber, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
     }
     
@@ -66,7 +66,7 @@ public class HilbertTreeAccessFile extends TreeAccessFile {
      * @throws IOException if problem during read or write Node.
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
-    public HilbertTreeAccessFile( final File input, final int magicNumber, final double versionNumber, final int byteBufferLength) throws IOException, ClassNotFoundException {
+    HilbertTreeAccessFile( final File input, final int magicNumber, final double versionNumber, final int byteBufferLength) throws IOException, ClassNotFoundException {
         super(input, magicNumber, versionNumber, byteBufferLength, INT_NUMBER);
     }
     
@@ -83,7 +83,7 @@ public class HilbertTreeAccessFile extends TreeAccessFile {
      * @param crs 
      * @throws IOException if problem during read or write Node.
      */
-    public HilbertTreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
+    HilbertTreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
             final int maxElements, final int hilbertOrder, final CoordinateReferenceSystem crs) throws IOException {
         super(outPut, magicNumber, versionNumber, maxElements, null, crs, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
     }
@@ -102,7 +102,7 @@ public class HilbertTreeAccessFile extends TreeAccessFile {
      * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
      * @throws IOException if problem during read or write Node.
      */
-    public HilbertTreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
+    HilbertTreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
             final int maxElements, final int hilbertOrder, final CoordinateReferenceSystem crs, final int byteBufferLength) throws IOException {
         super(outPut, magicNumber, versionNumber, maxElements, null, crs, byteBufferLength, INT_NUMBER);
     }

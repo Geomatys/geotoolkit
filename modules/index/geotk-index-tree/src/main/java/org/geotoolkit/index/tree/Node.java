@@ -28,7 +28,6 @@ import org.apache.sis.util.Classes;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.internal.tree.TreeAccessFile;
 import org.geotoolkit.internal.tree.TreeAccessMemory;
-import org.geotoolkit.index.tree.hilbert.HilbertNode;
 
 /**
  * Default implementation Node use in Tree.<br/><br/>
@@ -36,10 +35,10 @@ import org.geotoolkit.index.tree.hilbert.HilbertNode;
  * In Tree, Node architecture is organize like a chained list.<br/><br/>
  * 
  * &nbsp;N1 (root)<br/>
- * &nbsp;&nbsp;|-&gt;N2---------------------------&gt;N3----------------------------&gt;N4<br/>
- * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|--&gt;N5--&gt;N6--&gt;N7&nbsp;&nbsp;
- * &nbsp;&nbsp;&nbsp;|--&gt;N8--&gt;N9--&gt;N10&nbsp;&nbsp;&nbsp;&nbsp;
- * &nbsp;|--&gt;N11--&gt;N12--&gt;N13<br/><br/>
+ * &nbsp;&nbsp;/-&gt;N2---------------------------&gt;N3----------------------------&gt;N4<br/>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/--&gt;N5--&gt;N6--&gt;N7&nbsp;&nbsp;
+ * &nbsp;&nbsp;&nbsp;/--&gt;N8--&gt;N9--&gt;N10&nbsp;&nbsp;&nbsp;&nbsp;
+ * &nbsp;/--&gt;N11--&gt;N12--&gt;N13<br/><br/>
  * 
  * Note : Neither Node has an identifier equal to 0.<br/>
  * zero is reserved to significate end of chained list or no parent like tree root Node.
@@ -263,7 +262,7 @@ public class Node {
      * 
      * @return true if Node don't contains children else false.
      */
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return childCount == 0;
     }
     

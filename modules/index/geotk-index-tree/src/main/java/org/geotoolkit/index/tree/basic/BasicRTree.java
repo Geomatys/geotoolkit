@@ -30,12 +30,12 @@ import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.TreeElementMapper;
 
 /**
- * BasicRTree : Tree implementation.
+ * BasicRTree : Tree implementation.<br/><br/>
  * 
  * It's a Tree implementation with a faster insertion and remove action, 
  * but search is lesser fast than other Trees.<br/>
  * If stored datas are often updated, which mean more insertions or removes action, 
- * it's a Tree implementation which respond to this criteria. <br/><br/>
+ * it's a Tree implementation which respond to this criteria.<br/><br/>
  * 
  * Note : In this RTree version it exist two made to split a Node named : LINEAR and QUADRATIC.<br/>
  * For more informations see {@link SplitCase} javadoc.
@@ -43,14 +43,15 @@ import org.geotoolkit.index.tree.TreeElementMapper;
  * @author Remi Marechal (Geomatys).
  * @see SplitCase.
  */
-public abstract class BasicRTree<E> extends AbstractTree<E> {
+abstract class BasicRTree<E> extends AbstractTree<E> {
+    
     /**
      * Split made choice.
      */
     private final SplitCase choice;
     
     /**
-     * Create a Basic RTree implementaion.
+     * Create a Basic RTree implementation.
      * 
      * @param treeAccess object in which all Tree information are stored.
      * @param choice split made choice.
@@ -74,7 +75,7 @@ public abstract class BasicRTree<E> extends AbstractTree<E> {
      * {@inheritDoc }.
      */
     @Override
-    protected Node nodeInsert(Node candidate, int identifier, double... coordinates) throws IOException{
+    protected Node nodeInsert(Node candidate, int identifier, double... coordinates) throws IOException {
         assert candidate instanceof Node;
         Node fileCandidate = (Node) candidate;
         assert !fileCandidate.isData() : "nodeInsert : candidate should never be data type.";

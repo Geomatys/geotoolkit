@@ -29,13 +29,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class MemoryBasicRTree<E> extends BasicRTree<E> {
 
     /**
-     * Create a new {@link BasicRTree} implementation which store Tree architecture memory.
+     * Create a new {@link BasicRTree} implementation which store Tree architecture in memory.
      * 
      * @param maxElements maximum children value permit per Node.
      * @param crs Tree {@link CoordinateReferenceSystem}.
      * @param choice split made choice.
      * @param treeEltMap object which store tree identifier and data.
-     * @throws StoreIndexException 
+     * @throws StoreIndexException StoreIndexException in this tree implementation exception never occur.
      */
     public MemoryBasicRTree(final int maxElements, final CoordinateReferenceSystem crs, final SplitCase choice, final TreeElementMapper treeEltMap) throws StoreIndexException {
         super(new TreeAccessMemory(maxElements, choice, crs), treeEltMap);

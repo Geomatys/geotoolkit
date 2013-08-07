@@ -31,9 +31,9 @@ import org.geotoolkit.index.tree.TreeElementMapper;
  *
  * @author Remi Marechal (Geomatys).
  */
-public class HilbertRTree<E> extends AbstractTree<E> {
+abstract class HilbertRTree<E> extends AbstractTree<E> {
         
-    public HilbertRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
+    protected HilbertRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
         super(treeAccess, treeAccess.getCRS(), treeEltMap);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);
@@ -47,7 +47,7 @@ public class HilbertRTree<E> extends AbstractTree<E> {
         Node fileCandidate = (Node) candidate;
         assert !fileCandidate.isData() : "nodeInsert : candidate should never be data type.";
         /**
-         * During travel down recursively candidate parent may be modified.
+         * During travel down recursively candidate parent may be modified.<br/>
          * When travel up recursively if candidate should be modified, get
          * new candidate object updated from sub-method.
          */
@@ -67,10 +67,10 @@ public class HilbertRTree<E> extends AbstractTree<E> {
                         final int lsp0Id = lsp0.getNodeId();
                         final int lsp1Id = lsp1.getNodeId();
                         /**
-                         * <p>Add in candidate temporary to force to add element in one of splitted Node
+                         * Add in candidate temporary to force to add element in one of splitted Node
                          * else algorithm can choose another node of lspo and lsp1, from parent children.<br/>
                          * That is not wrong behavior because after split, an another Node from candidate parent children,
-                         * may be choosen and the split become caducous.</p>
+                         * may be choosen and the split become caducous.
                          */
                         lsp0.setParentId(fileCandidate.getNodeId());
                         lsp1.setParentId(fileCandidate.getNodeId());
