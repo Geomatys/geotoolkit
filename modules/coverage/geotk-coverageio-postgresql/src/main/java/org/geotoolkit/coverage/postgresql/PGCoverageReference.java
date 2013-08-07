@@ -454,6 +454,8 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
     public List<GridSampleDimension> getSampleDimensions(int index) throws DataStoreException{
         final List<GridSampleDimension> dimensions = new LinkedList<GridSampleDimension>();
 
+        boolean versionSupport = isVersionColumnExist();
+
         Connection cnx = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -471,12 +473,20 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             }
             
             final StringBuilder query = new StringBuilder();
-            query.append("SELECT \"id\",\"version\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\",\"min\",\"max\" ");
-            query.append("FROM ").append(store.encodeTableName("Band"));
-            query.append(" WHERE ");
-            query.append("\"layerId\"=").append(Integer.valueOf(layerId));
-            query.append(" AND \"version\" LIKE \'").append(versionStr).append("\' ");
-            query.append("ORDER BY \"indice\" ASC");
+            if(versionSupport) {
+                query.append("SELECT \"id\",\"version\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\",\"min\",\"max\" ");
+                query.append("FROM ").append(store.encodeTableName("Band"));
+                query.append(" WHERE ");
+                query.append("\"layerId\"=").append(Integer.valueOf(layerId));
+                query.append(" AND \"version\" LIKE \'").append(versionStr).append("\' ");
+                query.append("ORDER BY \"indice\" ASC");
+            } else {
+                query.append("SELECT \"id\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\",\"min\",\"max\" ");
+                query.append("FROM ").append(store.encodeTableName("Band"));
+                query.append(" WHERE ");
+                query.append("\"layerId\"=").append(Integer.valueOf(layerId));
+                query.append("ORDER BY \"indice\" ASC");
+            }
 
             stmt = cnx.createStatement();
             rs = stmt.executeQuery(query.toString());
@@ -529,6 +539,8 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
     @Override
     public void createSampleDimension(List<GridSampleDimension> dimensions, final Map<String, Object> analyse) throws DataStoreException {
 
+        boolean versionSupport = isVersionColumnExist();
+
         if (dimensions != null) {
             double[] maxDimValues = new double[dimensions.size()];
             double[] minDimValues =  new double[dimensions.size()];
@@ -575,23 +587,44 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                     }
 
                     final StringBuilder query = new StringBuilder();
-                    query.append("INSERT INTO ");
-                    query.append(store.encodeTableName("Band"));
-                    query.append(" (\"layerId\",\"version\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\", \"min\", \"max\") ");
-                    query.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    if (versionSupport) {
+                        query.append("INSERT INTO ");
+                        query.append(store.encodeTableName("Band"));
+                        query.append(" (\"layerId\",\"version\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\", \"min\", \"max\") ");
+                        query.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+                        pstmt = cnx.prepareStatement(query.toString());
+
+                        pstmt.setInt(   1, layerId);
+                        pstmt.setString(2, versionStr);
+                        pstmt.setInt(   3, i);
+                        pstmt.setString(4, description);
+                        pstmt.setInt(   5, (WKBRasterConstants.getPixelType(dim.getSampleDimensionType())) );
+                        pstmt.setString(6, unit);
+                        pstmt.setArray( 7, cnx.createArrayOf("float8", noData));
+                        pstmt.setDouble(8, min);
+                        pstmt.setDouble(9, max);
+
+                    } else {
+                        query.append("INSERT INTO ");
+                        query.append(store.encodeTableName("Band"));
+                        query.append(" (\"layerId\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\", \"min\", \"max\") ");
+                        query.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+
+                        pstmt = cnx.prepareStatement(query.toString());
+
+                        pstmt.setInt(   1, layerId);
+                        pstmt.setInt(   2, i);
+                        pstmt.setString(3, description);
+                        pstmt.setInt(   4, (WKBRasterConstants.getPixelType(dim.getSampleDimensionType())) );
+                        pstmt.setString(5, unit);
+                        pstmt.setArray( 6, cnx.createArrayOf("float8", noData));
+                        pstmt.setDouble(7, min);
+                        pstmt.setDouble(8, max);
+                    }
 
 
-                    pstmt = cnx.prepareStatement(query.toString());
 
-                    pstmt.setInt(   1, layerId);
-                    pstmt.setString(2, versionStr);
-                    pstmt.setInt(   3, i);
-                    pstmt.setString(4, description);
-                    pstmt.setInt(   5, (WKBRasterConstants.getPixelType(dim.getSampleDimensionType())) );
-                    pstmt.setString(6, unit);
-                    pstmt.setArray( 7, cnx.createArrayOf("float8", noData));
-                    pstmt.setDouble(8, min);
-                    pstmt.setDouble(9, max);
 
                     pstmt.executeUpdate();
                 }
@@ -601,6 +634,30 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             }finally{
                 store.closeSafe(cnx, pstmt, rs);
             }
+        }
+    }
+
+
+    private boolean isVersionColumnExist() {
+        Connection cnx = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            cnx = store.getDataSource().getConnection();
+            cnx.setReadOnly(false);
+
+            final StringBuilder query = new StringBuilder();
+            query.append("SELECT \"version\" ");
+            query.append("FROM ").append(store.encodeTableName("Band"));
+
+            stmt = cnx.createStatement();
+            rs = stmt.executeQuery(query.toString());
+            return rs.next();
+
+        } catch(SQLException ex) {
+            return false;
+        } finally {
+            store.closeSafe(cnx, stmt, rs);
         }
     }
 
