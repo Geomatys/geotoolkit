@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.hilbert.iterator;
+package org.geotoolkit.path.iterator;
 import org.geotoolkit.path.iterator.HilbertIterator;
 import java.util.BitSet;
 import java.util.Iterator;
