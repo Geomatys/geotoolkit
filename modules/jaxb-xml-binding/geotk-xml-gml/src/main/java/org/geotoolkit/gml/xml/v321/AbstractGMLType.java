@@ -43,6 +43,7 @@ import org.apache.sis.xml.IdentifierMap;
 import org.apache.sis.xml.IdentifierSpace;
 import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.Identifier;
+import org.apache.sis.xml.IdentifiedObject;
 
 
 /**
@@ -103,7 +104,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      */
     @XmlTransient
     protected Collection<Identifier> identifiers;
-    
+
     /**
      *  Empty constructor used by JAXB.
      */
@@ -366,7 +367,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
          */
         return new IdentifierMapWithSpecialCases(identifiers);
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 5;
