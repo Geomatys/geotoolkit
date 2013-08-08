@@ -676,8 +676,13 @@ public final class DataBaseModel {
                 try {
                     cx = store.getDataSource().getConnection();
                     final Class type = dialect.getJavaType(sqlType, sqlTypeName);
-                    atb.setName(columnName);
-                    atb.setBinding(type);
+                    if (type.equals(Geometry.class)) {
+                        // try to determine the real geometric type
+                        dialect.decodeGeometryColumnType(atb, cx, result, i);
+                    } else {
+                        atb.setName(columnName);
+                        atb.setBinding(type);
+                    }
                 } catch (SQLException e) {
                     throw new DataStoreException("Error occurred analyzing column : " + columnName, e);
                 } finally {

@@ -115,6 +115,7 @@ import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.postgresql.jdbc4.Jdbc4ResultSetMetaData;
 
 /**
  * Postgres/Postgis dialect.
@@ -870,7 +871,68 @@ final class PostgresDialect extends AbstractSQLDialect{
 
         atb.setBinding(geometryClass);
     }
-    
+
+
+    @Override
+    public void decodeGeometryColumnType(final AttributeTypeBuilder atb, final Connection cx, final ResultSet rs, final int columnIndex) throws SQLException {
+
+        final Jdbc4ResultSetMetaData metadata = (Jdbc4ResultSetMetaData)rs.getMetaData();
+
+        String typeName             = metadata.getColumnTypeName(columnIndex);
+        final String columnName     = metadata.getColumnName(columnIndex);
+        final String columnBaseName = metadata.getBaseColumnName(columnIndex);
+        final String schemaName     = metadata.getBaseSchemaName(columnIndex);
+        final String tableName      = metadata.getTableName(columnIndex);
+        final String tableBaseName  = metadata.getBaseTableName(columnIndex);
+
+        typeName = typeName.toUpperCase();
+        if (!TYPE_TO_ST_TYPE_MAP.containsKey(typeName)) {
+            return;
+        }
+
+        String gType = null;
+        if(tableName == null || tableName.isEmpty()){
+            //this column informations seems to come from a custom sql query
+            //the result will be the natural encoding of postgis which is hexadecimal EWKB
+            atb.addUserData(GEOM_ENCODING, PostgresDialect.GeometryEncoding.HEXEWKB);
+
+        }else{
+            //this column informations comes from a real table
+            atb.addUserData(GEOM_ENCODING, PostgresDialect.GeometryEncoding.WKB);
+        }
+
+        //first attempt, try with the geometry metadata
+        Statement statement = null;
+        ResultSet result = null;
+        try {
+            final StringBuilder sb = new StringBuilder("SELECT TYPE FROM GEOMETRY_COLUMNS WHERE ");
+            sb.append("F_TABLE_SCHEMA = '").append(schemaName).append("' ");
+            sb.append("AND F_TABLE_NAME = '").append(tableBaseName).append("' ");
+            sb.append("AND F_GEOMETRY_COLUMN = '").append(columnBaseName).append('\'');
+            final String sqlStatement = sb.toString();
+            featurestore.getLogger().log(Level.FINE, "Geometry type check; {0} ", sqlStatement);
+            statement = cx.createStatement();
+            result = statement.executeQuery(sqlStatement);
+            if (result.next()) {
+                gType = result.getString(1);
+            }
+        } finally {
+            JDBCFeatureStoreUtilities.closeSafe(featurestore.getLogger(),null,statement,result);
+        }
+        
+
+        // decode the type
+        Class geometryClass = null;
+        if (gType != null) {
+            geometryClass = (Class) TYPENAME_TO_CLASS.get(gType.replaceFirst("ST_", "").toUpperCase());
+        }
+        if (geometryClass == null) {
+            geometryClass = Geometry.class;
+        }
+
+        atb.setName(columnName);
+        atb.setBinding(geometryClass);
+    }
     
     @Override
     public Integer getGeometrySRID(String schemaName, final String tableName, final String columnName,

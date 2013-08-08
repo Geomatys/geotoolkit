@@ -53,6 +53,7 @@ import org.geotoolkit.db.dialect.AbstractSQLDialect;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
 import org.geotoolkit.filter.capability.DefaultComparisonOperators;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
@@ -496,6 +497,11 @@ public class MySQLDialect extends AbstractSQLDialect {
 
     @Override
     public Geometry decodeGeometryValue(GeometryDescriptor descriptor, ResultSet rs, int column) throws IOException, SQLException {
+        throw new UnsupportedOperationException("Geometry types not supported in MySQL.");
+    }
+
+    @Override
+    public void decodeGeometryColumnType(AttributeTypeBuilder atb, Connection cx, ResultSet rs, int columnIndex) throws SQLException {
         throw new UnsupportedOperationException("Geometry types not supported in MySQL.");
     }
 
