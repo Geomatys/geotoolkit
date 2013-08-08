@@ -74,7 +74,7 @@ public abstract class AbstractTreeTest extends TreeTest {
                 minMax[l] = -1500;
                 minMax[l+1] = 1500;
             }
-            for (int i = 0; i < 3000; i++) {
+            for (int i = 0; i < lSize; i++) {
                 for (int nbCoords = 0; nbCoords < this.dimension; nbCoords++) {
                     double value = (Math.random() < 0.5) ? -1 : 1;
                     value *= 1500 * Math.random();
@@ -87,7 +87,7 @@ public abstract class AbstractTreeTest extends TreeTest {
             minMax[1] = 180;
             minMax[2] = -90;
             minMax[3] = 90;
-            for (int i = 0; i < 3000; i++) {
+            for (int i = 0; i < lSize; i++) {
                 centerEntry[0] = (Math.random()-0.5) * 2*170;
                 centerEntry[1] = (Math.random()-0.5) * 2*80;
                 if(cs.getDimension()>2) {
@@ -100,7 +100,7 @@ public abstract class AbstractTreeTest extends TreeTest {
         } else {
             throw new IllegalArgumentException("invalid crs, Coordinate system type :"+ cs.getClass() +" is not supported");
         }
-        tEM = new TreeElementMapperTest(crs);
+//        tEM = new TreeElementMapperTest(crs);
     }
     
 //    @After
@@ -272,6 +272,7 @@ public abstract class AbstractTreeTest extends TreeTest {
         
         // visitor
         int[] tabSearch = tree.searchID(rG);
+        List<double[]> ld = Arrays.asList(getResult(tabSearch));
         assertTrue(compareLists(lDataTemp, Arrays.asList(getResult(tabSearch))));
 //        checkNodeBoundaryTest(tree.getRoot(), lData);
     }
@@ -307,7 +308,7 @@ public abstract class AbstractTreeTest extends TreeTest {
     public void insertDelete() throws StoreIndexException, IOException {
         if (tree.getRoot() == null) insert();
 //        checkNodeBoundaryTest(tree.getRoot(), lData);
-        Collections.shuffle(lData);
+//        Collections.shuffle(lData);
         for (int i = 0, s = lSize; i < s; i++) {
             assertTrue(tree.remove(lData.get(i)));
         }

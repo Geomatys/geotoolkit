@@ -86,7 +86,7 @@ public final class FileHilbertRTree<E> extends HilbertRTree<E> {
      * @param treeEltMap object which store tree identifier and data.
      * @throws IOException if problem during head reading from already filled file.
      * @throws StoreIndexException if file isn't already filled by {@link HilbertRTree} implementation.
-     * @throws ClassNotFoundException if file doesn't exist.
+     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      * @see HilbertRTree
      * @see TreeElementMapper
      */
@@ -105,7 +105,7 @@ public final class FileHilbertRTree<E> extends HilbertRTree<E> {
      * @param byteBufferLength length in Byte unit of the buffer which read and write all Tree Node on hard disk by TreeAccess object.
      * @throws IOException if problem during head reading from already filled file.
      * @throws StoreIndexException if file isn't already filled by {@link HilbertRTree} implementation.
-     * @throws ClassNotFoundException if file doesn't exist.
+     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      * @see HilbertRTree
      * @see TreeElementMapper
      */

@@ -29,7 +29,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * 
  * @author Remi Marechal(Geomatys).
  */
-public class FileBasicRTree<E> extends BasicRTree<E> {
+public final class FileBasicRTree<E> extends BasicRTree<E> {
 
     /**
      * Number to identify tree in file.
@@ -91,7 +91,7 @@ public class FileBasicRTree<E> extends BasicRTree<E> {
      * @param treeEltMap object which store tree identifier and data.
      * @throws IOException if problem during head reading from already filled file.
      * @throws StoreIndexException if file isn't already filled by {@link BasicRTree} implementation.
-     * @throws ClassNotFoundException if file doesn't exist.
+     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      * @see BasicRTree
      * @see SplitCase
      * @see TreeElementMapper
@@ -112,7 +112,7 @@ public class FileBasicRTree<E> extends BasicRTree<E> {
      * @param byteBufferLength length in Byte unit of the buffer which read and write all Tree Node on hard disk by TreeAccess object.
      * @throws IOException if problem during head reading from already filled file.
      * @throws StoreIndexException if file isn't already filled by {@link BasicRTree} implementation.
-     * @throws ClassNotFoundException if file doesn't exist.
+     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      * @see BasicRTree
      * @see SplitCase
      * @see TreeElementMapper

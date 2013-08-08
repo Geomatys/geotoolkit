@@ -26,7 +26,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class MemoryBasicRTree<E> extends BasicRTree<E> {
+public final class MemoryBasicRTree<E> extends BasicRTree<E> {
 
     /**
      * Create a new {@link BasicRTree} implementation which store Tree architecture in memory.

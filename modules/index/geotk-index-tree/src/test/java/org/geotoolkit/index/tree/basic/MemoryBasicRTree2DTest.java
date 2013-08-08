@@ -19,6 +19,7 @@ package org.geotoolkit.index.tree.basic;
 import java.io.IOException;
 import org.geotoolkit.index.tree.AbstractTreeTest;
 import org.geotoolkit.index.tree.StoreIndexException;
+import org.geotoolkit.index.tree.TreeElementMapperTest;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 
 /**
@@ -29,6 +30,7 @@ public class MemoryBasicRTree2DTest extends AbstractTreeTest {
 
     public MemoryBasicRTree2DTest() throws StoreIndexException, IOException {
         super(DefaultEngineeringCRS.CARTESIAN_2D);
+        tEM = new TreeElementMapperTest(crs);
         tree = new MemoryBasicRTree(3, crs, SplitCase.LINEAR, tEM);
         tAF  = ((BasicRTree)tree).getTreeAccess();
     }
