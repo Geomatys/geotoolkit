@@ -95,8 +95,9 @@ public class TreeAccessFile extends TreeAccess {
     private int rwIndex;
     
     /**
-     * Build a {@link Tree} from a already filled {@link File}.<br/>
-     * The default length value of ByteBuffer which read and write on hard disk, is 4096 Bytes.
+     * Build a {@link Tree} from a already filled {@link File}.<br/><br/>
+     * 
+     * Note : The default length value of ByteBuffer which read and write on hard disk, is 4096 Bytes.
      * 
      * @param input {@code File} which already contains {@link Node} architecture.
      * @param magicNumber {@code Integer} single {@link Tree} code.

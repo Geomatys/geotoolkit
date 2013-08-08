@@ -20,9 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
-import org.geotoolkit.index.tree.AbstractTree;
-import org.geotoolkit.index.tree.Tree;
+import org.apache.sis.util.ArgumentChecks;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -32,37 +32,168 @@ import org.opengis.geometry.Envelope;
  */
 public abstract class FileTreeElementMapper<E> implements TreeElementMapper<E> {
 
-    protected final RandomAccessFile inOutStream;
+    /**
+     * FileTreeElementMapper identifier.
+     */
+    private final static int TREE_ELT_MAP_NUMBER = 44034146;
+    
+    /**
+     * Default byte buffer length.
+     */
+    private final static int DEFAULT_BUFFER_LENGTH = 4096;
+    
+    /**
+     * Stream to read and write data informations and tree identifiers.
+     */
+    private final RandomAccessFile inOutStream;
+    
+    /**
+     * Channel to read and write data informations and tree identifiers.
+     */
     private final FileChannel inOutChannel;
+    
+    /**
+     * Size in {@code Byte} of object which will be mapped. 
+     */
     private final int objSize;
+    
+    /**
+     * {@link FileChannel} position just after write or read file head.<br/>
+     * Its also file position of first Node red or written.
+     */
+    private final int beginPosition;
+    
+    /**
+     * Last mapped object {@link FileChannel} position. 
+     */
     private int maxPosition;
     
-    // byte buffer
+    /**
+     * {@link ByteBuffer} to read and write data informations and tree identifiers from file on hard disk.
+     */
     protected final ByteBuffer byteBuffer;
+    
+    /**
+     * ByteBuffer Length.
+     */
+    private final int bufferLength;
+    
+    /**
+     * ByteBuffer attributs use to read and write.
+     */
+    private int rwIndex;
     private int currentBufferPosition;
     private int writeBufferLimit;
-    private final int bufferLength;
-    private int rwIndex;
 
+    /**
+     * Store element on disk at file path emplacement.<br/>
+     * Consist to store identifier use during {@link Tree} insertion.<br/><br/>
+     * 
+     * Note : The default length value of ByteBuffer which read and write on hard disk, is 4096 Bytes.
+     * 
+     * @param outPut to store element on disk.
+     * @param objectSize size in {@code Byte} unit of elements which will be store.
+     * @see AbstractTree#insert(java.lang.Object) 
+     * @throws IOException if problem during {@link RandomAccessFile} creation.
+     */
+    protected FileTreeElementMapper(final File outPut, final int objectSize) throws IOException {
+        this(outPut, DEFAULT_BUFFER_LENGTH, objectSize);
+    }
+    
     /**
      * Store element on disk at file path emplacement.<br/>
      * Consist to store identifier use during {@link Tree} insertion.
      * 
-     * @param inOutPut to store element on disk.
-     * @param size size in {@code Byte} unit of elements which will be store.
+     * @param outPut to store element on disk.
+     * @param bufferLength length in Byte unit of the buffer which read and write on hard drive.
+     * @param objectSize size in {@code Byte} unit of elements which will be store.
      * @see AbstractTree#insert(java.lang.Object) 
-     * @throws IOException 
+     * @throws IOException if problem during {@link RandomAccessFile} creation.
      */
-    protected FileTreeElementMapper(final File inOutPut, final int size) throws IOException {
-        inOutStream           = new RandomAccessFile(inOutPut, "rw");
+    protected FileTreeElementMapper(final File outPut, final int bufferLength, final int objectSize) throws IOException {
+        ArgumentChecks.ensureNonNull("output file", outPut);
+        ArgumentChecks.ensureStrictlyPositive("buffer length", bufferLength);
+        ArgumentChecks.ensureStrictlyPositive("object size", objectSize);
+        inOutStream           = new RandomAccessFile(outPut, "rw");
         inOutChannel          = inOutStream.getChannel();
-        objSize               = size;
-        final int div         = 4096 / objSize;
-        bufferLength          = div * objSize;
+        objSize               = objectSize;
+        final int div         = bufferLength / objSize;
+        this.bufferLength     = div * objSize;
         byteBuffer            = ByteBuffer.allocateDirect(bufferLength);
+        final ByteOrder bO    = ByteOrder.nativeOrder();
+        byteBuffer.order(bO);
+        
+        /****************************** write head *****************************/
+        // write identifier
+        inOutStream.writeInt(TREE_ELT_MAP_NUMBER);
+        // write buffer order
+        inOutStream.writeBoolean(bO == ByteOrder.LITTLE_ENDIAN);
+        // write objSize
+        inOutStream.writeInt(objSize);
+        // write maxPosition
+        inOutStream.writeInt(0);
+        /******************************* end head *****************************/
+        
+        beginPosition         = (int) inOutChannel.position();
         writeBufferLimit      = 0;
-        currentBufferPosition = 0;
-        maxPosition           = 0;
+        currentBufferPosition = beginPosition;
+        maxPosition           = beginPosition;
+    }
+    
+    /**
+     * Store element on disk at file path emplacement.<br/>
+     * Consist to store identifier use during {@link Tree} insertion.<br/><br/>
+     * 
+     * Note : The default length value of ByteBuffer which read and write on hard disk, is 4096 Bytes.
+     * 
+     * @param inPut to store element on disk.
+     * @param objectSize size in {@code Byte} unit of elements which will be store.
+     * @see AbstractTree#insert(java.lang.Object) 
+     * @throws IOException if problem during {@link RandomAccessFile} creation.
+     */
+    protected FileTreeElementMapper(final File inPut) throws IOException {
+        this(DEFAULT_BUFFER_LENGTH, inPut);
+    }
+    
+    /**
+     * Store element on disk at file path emplacement.<br/>
+     * Consist to store identifier use during {@link Tree} insertion.
+     * 
+     * @param inPut to store element on disk.
+     * @param bufferLength length in Byte unit of the buffer which read and write on hard drive.
+     * @see AbstractTree#insert(java.lang.Object) 
+     * @throws IOException if problem during {@link RandomAccessFile} creation.
+     */
+    protected FileTreeElementMapper(final int bufferLength, final File inPut) throws IOException {
+        ArgumentChecks.ensureNonNull("inPut file", inPut);
+        ArgumentChecks.ensureStrictlyPositive("buffer length", bufferLength);
+        inOutStream           = new RandomAccessFile(inPut, "rw");
+        inOutChannel          = inOutStream.getChannel();
+        
+        /*************************** read head ********************************/
+        // read mapper identifier
+        final int identifier  = inOutStream.readInt();
+        if (identifier != TREE_ELT_MAP_NUMBER)
+            throw new IllegalArgumentException("input file don't contain TreeElementMapper information.");
+        // read ByteOrder
+        final boolean fbool   = inOutStream.readBoolean();
+        final ByteOrder bO    = (fbool) ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;
+        // read object size
+        objSize               = inOutStream.readInt();
+        // read maxposition
+        maxPosition           = inOutStream.readInt();
+        /**************************** end head reading ************************/
+        
+        final int div         = bufferLength / objSize;
+        this.bufferLength     = div * objSize;
+        byteBuffer            = ByteBuffer.allocateDirect(bufferLength);
+        byteBuffer.order(bO);
+        beginPosition         = (int) inOutChannel.position();
+        writeBufferLimit      = 0;
+        currentBufferPosition = beginPosition;
+        
+        // load buffer
+        inOutChannel.read(byteBuffer, currentBufferPosition);
     }
     
     /**
@@ -96,7 +227,7 @@ public abstract class FileTreeElementMapper<E> implements TreeElementMapper<E> {
      * @throws IOException 
      */
     private void adjustBuffer(final int treeIdentifier) throws IOException {
-        rwIndex = (treeIdentifier - 1) * objSize;
+        rwIndex = beginPosition + (treeIdentifier - 1) * objSize;
         if (rwIndex < currentBufferPosition || rwIndex >= currentBufferPosition + bufferLength) {
             // write in chanel
             byteBuffer.position(0);
@@ -107,8 +238,8 @@ public abstract class FileTreeElementMapper<E> implements TreeElementMapper<E> {
             }
             writeBufferLimit = 0;
             byteBuffer.clear();
-            final int div = rwIndex / bufferLength;
-            currentBufferPosition = div * bufferLength;
+            final int div = (rwIndex - beginPosition) / bufferLength;
+            currentBufferPosition = div * bufferLength + beginPosition;
             inOutChannel.read(byteBuffer, currentBufferPosition);
         }
         rwIndex -= currentBufferPosition;
@@ -122,16 +253,19 @@ public abstract class FileTreeElementMapper<E> implements TreeElementMapper<E> {
     @Override
     public int getTreeIdentifier(E object) throws IOException {
         int treeIdentifier = 1;
-        for (int currentPos = 0; currentPos < maxPosition; currentPos += objSize) {
+        for (int currentPos = beginPosition; currentPos < maxPosition; currentPos += objSize) {
             adjustBuffer(treeIdentifier);                           
             final E currentObject = readObject();
             if (areEquals(currentObject, object)) return treeIdentifier;
             treeIdentifier++;
         }
-        if (maxPosition == 0) throw new IllegalStateException(this.getClass().getName()+".getTreeIdentifier() : you must set object before.");
+        if (maxPosition == beginPosition) throw new IllegalStateException(this.getClass().getName()+".getTreeIdentifier() : you must set object before.");
         throw new IllegalStateException(this.getClass().getName()+".getTreeIdentifier() : impossible to find treeIdentifier for object : "+object.toString());
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Envelope getEnvelope(E object)  throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -168,9 +302,9 @@ public abstract class FileTreeElementMapper<E> implements TreeElementMapper<E> {
         while (writtenByte != writeBufferLimit) {
             writtenByte = inOutChannel.write(byteBuffer, currentBufferPosition);
         }
-        currentBufferPosition = 0;
+        currentBufferPosition = beginPosition;
         writeBufferLimit = 0;
-        maxPosition = 0;
+        maxPosition = beginPosition;
     }
     
     /**
@@ -179,7 +313,17 @@ public abstract class FileTreeElementMapper<E> implements TreeElementMapper<E> {
      * @throws IOException 
      */
     public void close() throws IOException {
-        this.clear();
+        byteBuffer.position(0);
+        byteBuffer.limit(writeBufferLimit);
+        int writtenByte = 0;
+        while (writtenByte != writeBufferLimit) {
+            writtenByte = inOutChannel.write(byteBuffer, currentBufferPosition);
+        }
+        
+        //step mapper Identifier, byteOrder and object size.
+        inOutChannel.position(9);
+        
+        inOutStream.writeInt(maxPosition);
         inOutChannel.close();
         inOutStream.close();
     }

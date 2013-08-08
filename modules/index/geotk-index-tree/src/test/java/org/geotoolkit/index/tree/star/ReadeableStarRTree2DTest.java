@@ -29,6 +29,12 @@ import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
  */
 public class ReadeableStarRTree2DTest  extends AbstractTreeTest {
 
+    /**
+     * 
+     * @throws StoreIndexException
+     * @throws IOException
+     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
+     */
     public ReadeableStarRTree2DTest() throws StoreIndexException, IOException, ClassNotFoundException {
         super(DefaultEngineeringCRS.CARTESIAN_2D);
         final File inOutFile = File.createTempFile("test", "tree");

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.index.tree;
 
-import org.geotoolkit.index.tree.FileTreeElementMapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -34,8 +33,14 @@ public class FileTreeElementMapperTest extends FileTreeElementMapper<double[]> {
     final CoordinateReferenceSystem crs;
     final int boundLength;
 
-    public FileTreeElementMapperTest(final CoordinateReferenceSystem crs, final File inOutPut) throws IOException {
-        super(inOutPut, ((crs.getCoordinateSystem().getDimension() << 1) * Double.SIZE)>>3);
+    public FileTreeElementMapperTest(final CoordinateReferenceSystem crs, final File outPut) throws IOException {
+        super(outPut, ((crs.getCoordinateSystem().getDimension() << 1) * Double.SIZE)>>3);
+        this.crs = crs;
+        boundLength = crs.getCoordinateSystem().getDimension() << 1;
+    }
+    
+    public FileTreeElementMapperTest(final File input, final CoordinateReferenceSystem crs) throws IOException {
+        super(input);
         this.crs = crs;
         boundLength = crs.getCoordinateSystem().getDimension() << 1;
     }

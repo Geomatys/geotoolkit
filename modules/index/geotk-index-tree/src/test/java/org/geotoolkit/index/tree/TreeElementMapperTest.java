@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.index.tree;
 
-import org.geotoolkit.index.tree.TreeElementMapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
