@@ -27,11 +27,11 @@ import org.junit.Assert;
  *
  * @author Remi Marechal (Geomatys)
  */
-public class TreeUtilsTest {
+public class TreeUtilitiesTest {
 
     private static final double EPSILON = 1E-12;
     
-    public TreeUtilsTest() {
+    public TreeUtilitiesTest() {
     }
     
     /**

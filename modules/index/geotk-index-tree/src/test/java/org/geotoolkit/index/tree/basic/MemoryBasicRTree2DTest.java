@@ -17,7 +17,7 @@
 package org.geotoolkit.index.tree.basic;
 
 import java.io.IOException;
-import org.geotoolkit.index.tree.io.AbstractTreeTest;
+import org.geotoolkit.index.tree.AbstractTreeTest;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 
