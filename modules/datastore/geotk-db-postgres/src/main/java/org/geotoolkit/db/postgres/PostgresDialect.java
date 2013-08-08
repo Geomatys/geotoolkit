@@ -1032,11 +1032,15 @@ final class PostgresDialect extends AbstractSQLDialect{
                     reader = new WKBReader(featurestore.getGeometryFactory());
                     wkbReader.set(reader);
                 }
-                try {
-                    return (Geometry) reader.read(Base64.decode(rs.getBytes(column)));
-                } catch (ParseException ex) {
-                    throw new IOException(ex.getMessage(),ex);
+                final byte[] encodedValue = rs.getBytes(column);
+                if (encodedValue != null) {
+                    try {
+                        return (Geometry) reader.read(Base64.decode(encodedValue));
+                    } catch (ParseException ex) {
+                        throw new IOException(ex.getMessage(),ex);
+                    }
                 }
+                return null;
             default:
                 throw new IllegalStateException("Can not decode geometry not knowing it's encoding.");
         }
