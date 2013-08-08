@@ -79,13 +79,14 @@ final class HilbertTreeAccessFile extends TreeAccessFile {
      * @param outPut {@code File} where {@link Node} architecture which will be write.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber version number.
+     * @param hilbertOrder maximum hilbert order value permit for each tree leaf.
      * @param maxElements element number per cell.
      * @param crs 
      * @throws IOException if problem during read or write Node.
      */
     HilbertTreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
             final int maxElements, final int hilbertOrder, final CoordinateReferenceSystem crs) throws IOException {
-        super(outPut, magicNumber, versionNumber, maxElements, null, crs, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
+        super(outPut, magicNumber, versionNumber, maxElements, hilbertOrder, null, crs, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
     }
     
     /**
@@ -97,14 +98,14 @@ final class HilbertTreeAccessFile extends TreeAccessFile {
      * @param outPut {@code File} where {@link Node} architecture which will be write.
      * @param magicNumber {@code Integer} single {@link Tree} code.
      * @param versionNumber version number.
-     * @param maxElements element number per cell.
+     * @param hilbertOrder maximum hilbert order value permit for each tree leaf.
      * @param crs 
      * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
      * @throws IOException if problem during read or write Node.
      */
     HilbertTreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
             final int maxElements, final int hilbertOrder, final CoordinateReferenceSystem crs, final int byteBufferLength) throws IOException {
-        super(outPut, magicNumber, versionNumber, maxElements, null, crs, byteBufferLength, INT_NUMBER);
+        super(outPut, magicNumber, versionNumber, maxElements, hilbertOrder, null, crs, byteBufferLength, INT_NUMBER);
     }
         
     /**

@@ -19,6 +19,7 @@ package org.geotoolkit.index.tree;
 import org.apache.sis.storage.DataStoreException;
 
 /**
+ * Exception in realtion with RTree exception.
  *
  * @author Remi Marechal (Geomatys).
  */
