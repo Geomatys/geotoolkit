@@ -20,6 +20,7 @@ package org.geotoolkit.gml.xml.v321;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -28,15 +29,20 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.sis.internal.jaxb.IdentifierMapWithSpecialCases;
 import org.geotoolkit.gml.xml.AbstractGML;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.apache.sis.metadata.AbstractMetadata;
 import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.xml.IdentifierMap;
+import org.apache.sis.xml.IdentifierSpace;
 import org.geotoolkit.util.Utilities;
+import org.opengis.metadata.Identifier;
 
 
 /**
@@ -78,7 +84,7 @@ import org.geotoolkit.util.Utilities;
     AbstractFeatureType.class,
     DefinitionBaseType.class
 })
-public abstract class AbstractGMLType extends AbstractMetadata implements AbstractGML, Serializable, Entry {
+public abstract class AbstractGMLType extends AbstractMetadata implements AbstractGML, Serializable, Entry, IdentifiedObject {
 
     private List<MetaDataPropertyType> metaDataProperty;
     private StringOrRefType description;
@@ -92,6 +98,13 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     private String id;
 
     /**
+     * All identifiers associated with this metadata, or {@code null} if none.
+     * This field is initialized to a non-null value when first needed.
+     */
+    @XmlTransient
+    protected Collection<Identifier> identifiers;
+    
+    /**
      *  Empty constructor used by JAXB.
      */
     protected AbstractGMLType() {}
@@ -100,7 +113,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      *  Simple super constructor to initialize the entry name.
      */
     public AbstractGMLType(final String id) {
-        this.id = id;
+        setId(id);
     }
 
     public AbstractGMLType(final AbstractGML that) {
@@ -111,7 +124,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
             if (that.getDescriptionReference() != null) {
                 this.descriptionReference = new ReferenceType(that.getDescriptionReference());
             }
-            this.id = that.getId();
+            setId(that.getId());
             if (that.getName() != null) {
                 this.name = new ArrayList<CodeType>();
                 this.name.add(new CodeType(that.getName()));
@@ -132,7 +145,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     }
 
     public AbstractGMLType(final String id, final String name, final String description, final ReferenceType descriptionReference) {
-        this.id = id;
+        setId(id);
         if (name != null) {
             this.name = new ArrayList<CodeType>();
             this.name.add(new CodeType(name));
@@ -302,6 +315,9 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      */
     @Override
     public void setId(String value) {
+        if (value != null) {
+            getIdentifierMap().put(IdentifierSpace.ID, value);
+        }
         this.id = value;
     }
 
@@ -327,6 +343,30 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         return false;
     }
 
+     @Override
+    public Collection<? extends Identifier> getIdentifiers() {
+        if (identifiers == null) {
+            identifiers = new ArrayList<Identifier>();
+        }
+        return identifiers;
+    }
+
+    @Override
+    public IdentifierMap getIdentifierMap() {
+        /*
+         * Do not invoke getIdentifiers(), because some subclasses like DefaultCitation and
+         * DefaultObjective override getIdentifiers() in order to return a filtered list.
+         */
+        if (identifiers == null) {
+            identifiers = new ArrayList<Identifier>();
+        }
+        /*
+         * We do not cache (for now) the IdentifierMap because it is cheap to create, and if were
+         * caching it we would need anyway to check if 'identifiers' still references the same list.
+         */
+        return new IdentifierMapWithSpecialCases(identifiers);
+    }
+    
     @Override
     public int hashCode() {
         int hash = 5;

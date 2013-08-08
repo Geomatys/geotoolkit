@@ -17,20 +17,28 @@
 package org.geotoolkit.gml.xml.v311;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.sis.internal.jaxb.IdentifierMapWithSpecialCases;
 import org.geotoolkit.gml.xml.AbstractGML;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.apache.sis.metadata.AbstractMetadata;
 import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.xml.IdentifiedObject;
+import org.apache.sis.xml.IdentifierMap;
+import org.apache.sis.xml.IdentifierSpace;
+import org.opengis.metadata.Identifier;
 
 
 /**
@@ -74,7 +82,7 @@ import org.apache.sis.util.ComparisonMode;
     AbstractGeometryType.class,
     AbstractFeatureType.class
 })
-public abstract class AbstractGMLType extends AbstractMetadata implements AbstractGML, Serializable, Entry {
+public abstract class AbstractGMLType extends AbstractMetadata implements AbstractGML, Serializable, Entry, IdentifiedObject  {
 
     //protected List<MetaDataPropertyType> metaDataProperty;
     private String description;
@@ -86,6 +94,13 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     private String id;
     private CodeType parameterName;
 
+    /**
+     * All identifiers associated with this metadata, or {@code null} if none.
+     * This field is initialized to a non-null value when first needed.
+     */
+    @XmlTransient
+    protected Collection<Identifier> identifiers;
+    
     /**
      *  Empty constructor used by JAXB.
      */
@@ -100,7 +115,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
             if (a.getDescriptionReference() != null) {
                 this.descriptionReference = new ReferenceType(a.getDescriptionReference()); 
             }
-            this.id = a.getId();
+            setId(a.getId());
             this.name = a.getName();
             if (a.getParameterName() != null){
                 this.parameterName = new CodeType(a.getParameterName().getValue(), a.getParameterName().getCodeSpace());
@@ -112,11 +127,11 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      *  Simple super constructor to initialize the entry name.
      */
     public AbstractGMLType(final String id) {
-        this.id = id;
+        setId(id);
     }
 
     public AbstractGMLType(final String id, final String name, final String description, final ReferenceType descriptionReference) {
-        this.id = id;
+        setId(id);
         this.name = name;
         this.description = description;
         this.descriptionReference = descriptionReference;
@@ -202,7 +217,49 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      */
     @Override
     public void setId(final String value) {
+        if (value != null) {
+            getIdentifierMap().put(IdentifierSpace.ID, value);
+        }
         this.id = value;
+    }
+
+    /**
+     * @return the parameterName
+     */
+    @Override
+    public CodeType getParameterName() {
+        return parameterName;
+    }
+
+    /**
+     * @param parameterName the parameterName to set
+     */
+    public void setParameterName(final CodeType parameterName) {
+        this.parameterName = parameterName;
+    }
+
+    @Override
+    public Collection<? extends Identifier> getIdentifiers() {
+        if (identifiers == null) {
+            identifiers = new ArrayList<Identifier>();
+        }
+        return identifiers;
+    }
+
+    @Override
+    public IdentifierMap getIdentifierMap() {
+        /*
+         * Do not invoke getIdentifiers(), because some subclasses like DefaultCitation and
+         * DefaultObjective override getIdentifiers() in order to return a filtered list.
+         */
+        if (identifiers == null) {
+            identifiers = new ArrayList<Identifier>();
+        }
+        /*
+         * We do not cache (for now) the IdentifierMap because it is cheap to create, and if were
+         * caching it we would need anyway to check if 'identifiers' still references the same list.
+         */
+        return new IdentifierMapWithSpecialCases(identifiers);
     }
 
     /**
@@ -253,20 +310,4 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         }
         return sb.toString();
     }
-
-    /**
-     * @return the parameterName
-     */
-    @Override
-    public CodeType getParameterName() {
-        return parameterName;
-    }
-
-    /**
-     * @param parameterName the parameterName to set
-     */
-    public void setParameterName(final CodeType parameterName) {
-        this.parameterName = parameterName;
-    }
-
 }
