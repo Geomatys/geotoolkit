@@ -32,20 +32,54 @@ import org.geotoolkit.internal.tree.TreeAccess;
 import org.geotoolkit.path.iterator.HilbertIterator;
 
 /**
- * Appropriate Node which match with HilbertRTree properties.
- *
+ * Appropriate Node which match with {@link HilbertRTree} properties.<br/><br/>
+ * 
+ * In the case where HilbertNode is not a leaf, it adopte same comportement like a "standard" {@link Node}.<br/>
+ * Whereas in case where HilbertNode is a leaf, this Node own an additionnal Node level above datas storage which named cells.<br/>
+ * Each of them cells, sub-divide leaf in area of equal size and they are scheduled successively following <a href = "http://en.wikipedia.org/wiki/Hilbert_curve">Hilbert curve</a>.<br/>
+ * Shedule this cells from this curve permit to determine more faster in which cell store or find data that considerably accelerate search action.
+ * 
  * @author Remi Marechal (Geomatys).
  */
 final class HilbertNode extends Node {
 
-    private Node[] children;
+    /**
+     * Space dimension needed to compute appropriate leaf cells number.
+     */
     private int dimension;
+    
+    /**
+     * Data list use durring increase or decrease Hilbert order.
+     */
     private final List<Node> data = new ArrayList<Node>();
+    
+    /**
+     * data number within a leaf.<br/>
+     * If Node is not a leaf data number always equal to zero.
+     */
     private int dataCount;
+    
+    /**
+     * Current leaf Hilbert value.<br/>
+     * 
+     * If Node is not a leaf hilbert order number always equal to zero.
+     */
     private int currentHilbertOrder;
     private static final double LN2 = 0.6931471805599453;
     
-
+    /**
+     * Create a Node adapted for Hilbert Tree implementation.
+     * 
+     * @param tAF Object which store Node attributs.
+     * @param nodeId invariable single integer Node identifier.
+     * @param boundary double table which represent boundary Node coordinates.
+     * @param properties define type of Node. see ({@link Node#properties}).
+     * @param parentId identifier of parent Node Tree architecture.
+     * @param siblingId identifier of sibling Node.
+     * @param childId if Node is a data it is the identifier of the data which is 
+     * store in this tree (see {@link Node#childId}) else it is the first child of this Node. 
+     * @see TreeAccess
+     */
     HilbertNode(TreeAccess tAF, int nodeId, double[] boundary, byte properties, int parentId, int siblingId, int childId) {
         super(tAF, nodeId, boundary, properties, parentId, siblingId, childId);
         dimension = tAF.getCRS().getCoordinateSystem().getDimension();
@@ -124,6 +158,9 @@ final class HilbertNode extends Node {
         }
     }
     
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void addChild(Node node) throws IOException {
         if (isLeaf() && node.isData()) {
@@ -139,12 +176,10 @@ final class HilbertNode extends Node {
             } else {
                 add(boundary, nodeBound);
             }
-//            add(getBoundary(), nodeBound);
-            children = super.getChildren();
-            final int index = getAppropriateCellIndex(nodeBound);
-            // la feuille est elle full ??
+            final Node[] children = super.getChildren();
+            final int index = getAppropriateCellIndex(children, nodeBound);
+            
             if (index == -1) {
-                // boundary a garder
                 final double[] boundIncrease = boundary.clone();
                 // increase hilbert order
                 assert currentHilbertOrder++ < tAF.getHilbertOrder() : "impossible to increase node hilbert order";
@@ -162,7 +197,7 @@ final class HilbertNode extends Node {
                     tAF.removeNode(fcnod);
                 }
                 clear();
-                // on creer les cells null
+                // empty cells creation.
                 final int nbCell = currentHilbertOrder == 0 ? 1 : 2 << (dimension * currentHilbertOrder - 1);
                 for (int i = 0; i < nbCell; i++) {
                     super.addChild(tAF.createNode(null, IS_CELL, this.getNodeId(), 0, 0));
@@ -188,12 +223,15 @@ final class HilbertNode extends Node {
         }
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public boolean removeData(final int identifier, final double... coordinates) throws IOException {
         if (!((properties & 5) != 0))// test isleaf or iscell
             throw new IllegalStateException("You should not call removeData() method on a no leaf or cell Node.");
         if (isLeaf()) {
-            children = super.getChildren();
+            final Node[] children = super.getChildren();
             if (currentHilbertOrder < 1) {
                 assert children.length == 1 : "removeChild : hilbertLeaf : leaf should have only one cell.";
                 final boolean removed = children[0].removeData(identifier, coordinates);
@@ -399,12 +437,12 @@ final class HilbertNode extends Node {
      * @param coordinate boundary of element which will be insert.
      * @return Return the appropriate table index of Hilbert cell else return -1 if all cell are full.
      */
-    private int getAppropriateCellIndex(double... coordinate) throws IOException {
+    private int getAppropriateCellIndex(final Node[] children, final double... coordinate) throws IOException {
         if (currentHilbertOrder < 1) {//only one cell.
             return (children[0].isFull()) ? -1 : 0;
         }
         final int index = getHVOfEntry(coordinate);
-        return findCell(index);
+        return findCell(children, index);
     }
     
     /**
@@ -419,7 +457,7 @@ final class HilbertNode extends Node {
      * @throws IllegalStateException if no another cell is find.
      * @return index of another subnode.
      */
-    private int findCell(int index) throws IOException {
+    private int findCell(final Node[] children, final int index) throws IOException {
         if (!isLeaf()) throw new IllegalArgumentException("impossible to find another leaf in Node which isn't LEAF tree");
         final int siz   = getChildCount();
         assert (index < siz) : "wrong index in findAnotherCell"; 

@@ -495,6 +495,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
      * @throws IllegalArgumentException if candidate is null.
      */
     protected abstract void trim(final Node candidate) throws IllegalArgumentException, IOException, StoreIndexException ;
+    
     /**
      * {@inheritDoc}
      */
@@ -527,6 +528,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
             eltCompteur = 0;
         }
     }
+    
     /**
      * {@inheritDoc}
      */
@@ -558,11 +560,17 @@ public abstract class AbstractTree<E> implements Tree<E> {
         this.eltCompteur = value;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public TreeElementMapper getTreeElementMapper() {
         return treeEltMap;
     }
     
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void close() throws StoreIndexException {
         try {

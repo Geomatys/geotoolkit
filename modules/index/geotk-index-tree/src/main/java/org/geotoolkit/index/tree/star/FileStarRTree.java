@@ -51,7 +51,7 @@ public class FileStarRTree<E> extends StarRTree<E> {
      * @see StarRTree
      * @see TreeElementMapper
      */
-    public FileStarRTree(final File outPut, final int maxElements, final CoordinateReferenceSystem crs, final TreeElementMapper treeEltMap) throws StoreIndexException, IOException {
+    public FileStarRTree(final File outPut, final int maxElements, final CoordinateReferenceSystem crs, final TreeElementMapper<E> treeEltMap) throws StoreIndexException, IOException {
         super(new TreeAccessFile(outPut, STAR_NUMBER, VERSION_NUMBER, maxElements, crs), treeEltMap);
     }
     
@@ -71,7 +71,7 @@ public class FileStarRTree<E> extends StarRTree<E> {
      * @see StarRTree
      * @see TreeElementMapper
      */
-    public FileStarRTree(final File outPut, final int maxElements, final CoordinateReferenceSystem crs, final TreeElementMapper treeEltMap, final int byteBufferLength) throws StoreIndexException, IOException {
+    public FileStarRTree(final File outPut, final int maxElements, final CoordinateReferenceSystem crs, final TreeElementMapper<E> treeEltMap, final int byteBufferLength) throws StoreIndexException, IOException {
         super(new TreeAccessFile(outPut, STAR_NUMBER, VERSION_NUMBER, maxElements, crs), treeEltMap);
     }
     
@@ -88,7 +88,7 @@ public class FileStarRTree<E> extends StarRTree<E> {
      * @see StarRTree
      * @see TreeElementMapper
      */
-    public FileStarRTree(final File input, final TreeElementMapper treeEltMap) throws IOException, StoreIndexException, ClassNotFoundException {
+    public FileStarRTree(final File input, final TreeElementMapper<E> treeEltMap) throws IOException, StoreIndexException, ClassNotFoundException {
         super(new TreeAccessFile(input, STAR_NUMBER, VERSION_NUMBER), treeEltMap);
     }
     
@@ -107,7 +107,7 @@ public class FileStarRTree<E> extends StarRTree<E> {
      * @see StarRTree
      * @see TreeElementMapper
      */
-    public FileStarRTree(final File input, final TreeElementMapper treeEltMap, final int byteBufferLength) throws IOException, StoreIndexException, ClassNotFoundException {
+    public FileStarRTree(final File input, final TreeElementMapper<E> treeEltMap, final int byteBufferLength) throws IOException, StoreIndexException, ClassNotFoundException {
         super(new TreeAccessFile(input, STAR_NUMBER, VERSION_NUMBER), treeEltMap);
     } 
 }

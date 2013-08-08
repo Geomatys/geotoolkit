@@ -37,7 +37,7 @@ import org.geotoolkit.index.tree.TreeElementMapper;
  * If stored datas are often updated, which mean more insertions or removes action, 
  * it's a Tree implementation which respond to this criteria.<br/><br/>
  * 
- * Note : In this RTree version it exist two made to split a Node named : LINEAR and QUADRATIC.<br/>
+ * Note : In this RTree version it exist two made to split a Node, named : LINEAR and QUADRATIC.<br/>
  * For more informations see {@link SplitCase} javadoc.
  *
  * @author Remi Marechal (Geomatys).

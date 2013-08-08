@@ -28,11 +28,31 @@ import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.TreeElementMapper;
 
 /**
+ * HilbertRTree : Tree implementation.<br/><br/>
+ * 
+ * It's a Tree implementation with a long duration insertion but the most search action.<br/>
+ * If stored datas are rarely updated, which mean few insertions or removes action after Tree already filled, 
+ * it's a Tree implementation which respond to this criteria.<br/><br/>
+ * 
+ * Note : insertion action is more longer than other Trees, because in case of overfully Node, 
+ * a re-insertion of all data over 33% distance near Node centroid is effectuate.<br/>
+ * In some case this re-insertion action permit to avoid node splitting which is expensive resource in terms.<br/>
+ * Moreover insertion in leaf Node need some additionnal calculates to define in which cell data will be store. 
  *
  * @author Remi Marechal (Geomatys).
+ * @see HilbertNode
  */
 abstract class HilbertRTree<E> extends AbstractTree<E> {
-        
+    
+    /**
+     * Create a Hilbert RTree implementation.
+     * 
+     * @param treeAccess object in which all Tree information are stored.
+     * @param treeEltMap object in which data and tree identifier are stored.
+     * @throws StoreIndexException 
+     * @see TreeAccess
+     * @see TreeElementMapper
+     */
     protected HilbertRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
         super(treeAccess, treeAccess.getCRS(), treeEltMap);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);
@@ -41,6 +61,11 @@ abstract class HilbertRTree<E> extends AbstractTree<E> {
         treeIdentifier = treeAccess.getTreeIdentifier();
     }
     
+    /**
+     * {@inheritDoc }.<br/><br/>
+     * Note : in this implementation, a fully leaf Node is split before overflowing 
+     * whereas in other tree implementation Node is overflow and after splitted.  
+     */
     @Override
     protected Node nodeInsert(Node candidate, int identifier, double... coordinates) throws IOException{
         assert candidate instanceof Node;
@@ -117,7 +142,7 @@ abstract class HilbertRTree<E> extends AbstractTree<E> {
             }
         } else {
             assert fileCandidate.checkInternal() : "nodeInsert : Node before insert.";
-            subCandidateParent = (Node)nodeInsert(chooseSubtree(fileCandidate, coordinates), identifier, coordinates);
+            subCandidateParent = nodeInsert(chooseSubtree(fileCandidate, coordinates), identifier, coordinates);
             add(fileCandidate.getBoundary(), coordinates);
             
             /**

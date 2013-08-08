@@ -223,7 +223,7 @@ public class TreeAccessFile extends TreeAccess {
      */
     public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, final int maxElements, 
             final SplitCase splitMade, final CoordinateReferenceSystem crs, final int byteBufferLength) throws IOException {
-        this(outPut, magicNumber, versionNumber, maxElements, splitMade, crs, byteBufferLength, INT_NUMBER);
+        this(outPut, magicNumber, versionNumber, maxElements, 0, splitMade, crs, byteBufferLength, INT_NUMBER);
     }
     
     /**
@@ -243,7 +243,7 @@ public class TreeAccessFile extends TreeAccess {
      */
     public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, final int maxElements, 
              final SplitCase splitMade, final CoordinateReferenceSystem crs) throws IOException {
-        this(outPut, magicNumber, versionNumber, maxElements, splitMade, crs, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
+        this(outPut, magicNumber, versionNumber, maxElements, 0, splitMade, crs, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
     }
     
     /**
@@ -261,7 +261,7 @@ public class TreeAccessFile extends TreeAccess {
      */
     public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
             final int maxElements, final CoordinateReferenceSystem crs, final int byteBufferLength) throws IOException {
-        this(outPut, magicNumber, versionNumber, maxElements, null, crs, byteBufferLength, INT_NUMBER);
+        this(outPut, magicNumber, versionNumber, maxElements, 0, null, crs, byteBufferLength, INT_NUMBER);
     }
     
     /**
@@ -279,7 +279,7 @@ public class TreeAccessFile extends TreeAccess {
      */
     public TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
             final int maxElements, final CoordinateReferenceSystem crs) throws IOException {
-        this(outPut, magicNumber, versionNumber, maxElements, null, crs, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
+        this(outPut, magicNumber, versionNumber, maxElements, 0, null, crs, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
     }
     
     /**
@@ -296,14 +296,15 @@ public class TreeAccessFile extends TreeAccess {
      * @param integerNumberPerNode integer number per Node which will be red/written during Node reading/writing process. 
      * @throws IOException if problem during read or write Node.
      */
-    protected TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, final int maxElements,
+    protected TreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, final int maxElements, final int hilbertOrder,
             final SplitCase splitMade, final CoordinateReferenceSystem crs, final int byteBufferLength, final int integerNumberPerNode) throws IOException {
         super();
         
-        this.crs         = crs;
-        this.maxElement  = maxElements;
-        this.boundLength = crs.getCoordinateSystem().getDimension() << 1;
-        this.splitMade   = splitMade;
+        this.crs          = crs;
+        this.maxElement   = maxElements;
+        this.boundLength  = crs.getCoordinateSystem().getDimension() << 1;
+        this.hilbertOrder = hilbertOrder;
+        this.splitMade    = splitMade;
         
         //nanbound
         nanBound = new double[boundLength];
