@@ -92,8 +92,14 @@ public class PrimaryKey {
         return fid.toString();
     }
     
-    public Object[] decodeFID(final String fid) {        
-        final String[] parts = fid.split("\\.");
+    public Object[] decodeFID(final String fid) {
+        final String[] parts;
+        //handle empty Strings
+        if (fid.isEmpty()){
+            parts = new String[]{"",""};
+        } else {
+            parts = fid.split("\\.");
+        }
         final Object[] values = new Object[parts.length-1];
         
         //ignore the first part which is the featuretype name
