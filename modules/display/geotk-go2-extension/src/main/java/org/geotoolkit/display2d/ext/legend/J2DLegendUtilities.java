@@ -414,7 +414,8 @@ public class J2DLegendUtilities {
             
             if (childItem instanceof MapLayer) {
                 final MapLayer ml = (MapLayer) childItem;
-                final Dimension preferred = DefaultGlyphService.glyphPreferredSize(ml.getStyle(), null, ml);
+                final Dimension preferred = new Dimension(0, 0); 
+                DefaultGlyphService.glyphPreferredSize(ml.getStyle(), preferred, ml);
                 if (preferred != null) {
                     if (preferred.width > toSet.width) {
                         toSet.width = preferred.width;
@@ -426,7 +427,6 @@ public class J2DLegendUtilities {
                 estimateNoTemplate(childItem, toSet);
             }
         }
-        checkMinimumSize(toSet);
     }
     
     /**
