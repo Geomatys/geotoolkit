@@ -64,4 +64,9 @@ public interface TreeElementMapper<E> {
      * Initialize attributs like just after class constructor.
      */
     public void clear() throws IOException;
+    
+    /**
+     * Close write and read stream if exist.
+     */
+    public void close() throws IOException;
 }

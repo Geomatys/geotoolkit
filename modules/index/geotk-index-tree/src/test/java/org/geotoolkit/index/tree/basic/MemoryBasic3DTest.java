@@ -14,25 +14,27 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.star;
+package org.geotoolkit.index.tree.basic;
 
-import java.io.File;
 import java.io.IOException;
-import org.geotoolkit.index.tree.AbstractTreeTest;
-import org.geotoolkit.index.tree.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 
 /**
+ * Create a BasicRTree Test suite in computer memory in a Cartesian 3D space.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
+ * @see DefaultEngineeringCRS#CARTESIAN_3D
  */
-public class WritableStarRTree2DTest extends AbstractTreeTest {
+public final class MemoryBasic3DTest  extends MemoryBasicRTreeTest {
 
-    public WritableStarRTree2DTest() throws StoreIndexException, IOException {
-        super(DefaultEngineeringCRS.CARTESIAN_2D);
-        tEM = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
-        tree = new FileStarRTree(File.createTempFile("test", "tree"), 4, crs, tEM);
-        tAF  = ((StarRTree)tree).getTreeAccess();
+    /**
+     * Create a memory BasicRTree Test suite in a Cartesian 2D space.
+     * 
+     * @throws StoreIndexException should never thrown.
+     * @throws IOException should never thrown.
+     */
+    public MemoryBasic3DTest() throws StoreIndexException, IOException {
+        super(DefaultEngineeringCRS.CARTESIAN_3D);
     }
 }

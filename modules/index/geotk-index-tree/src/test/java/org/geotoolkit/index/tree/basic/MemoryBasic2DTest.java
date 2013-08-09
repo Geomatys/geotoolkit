@@ -16,24 +16,25 @@
  */
 package org.geotoolkit.index.tree.basic;
 
-import java.io.File;
 import java.io.IOException;
-import org.geotoolkit.index.tree.AbstractTreeTest;
-import org.geotoolkit.index.tree.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 
 /**
- * Create R-Tree test suite in geographic 2D space.
+ * Create a BasicRTree Test suite in computer memory in a Cartesian 2D space.
  *
- * @author Rémi Maréchal (Geomatys).
+ * @author Remi Marechal (Geomatys).
+ * @see DefaultEngineeringCRS#CARTESIAN_2D
  */
-public class BasicRTreeGeo2DTest extends AbstractTreeTest {
+public final class MemoryBasic2DTest extends MemoryBasicRTreeTest {
 
-    public BasicRTreeGeo2DTest() throws StoreIndexException, IOException {
-        super(DefaultGeographicCRS.WGS84);
-        tEM  = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
-        tree = new FileBasicRTree(File.createTempFile("test", "tree"), 3, crs, SplitCase.QUADRATIC, tEM);
-        tAF  = ((BasicRTree)tree).getTreeAccess();
+    /**
+     * Create a memory BasicRTree Test suite in a Cartesian 2D space.
+     * 
+     * @throws StoreIndexException should never thrown.
+     * @throws IOException should never thrown.
+     */
+    public MemoryBasic2DTest() throws StoreIndexException, IOException {
+        super(DefaultEngineeringCRS.CARTESIAN_2D);
     }
 }

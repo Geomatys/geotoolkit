@@ -14,25 +14,29 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.star;
+package org.geotoolkit.index.tree.basic;
 
 import java.io.IOException;
 import org.geotoolkit.index.tree.AbstractTreeTest;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.TreeElementMapperTest;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * Create a generic BasicRTree Test suite where Tree is store in computer memory.
  *
  * @author Remi Marechal (Geomatys).
  */
-public class MemoryStarRTree2DTest extends AbstractTreeTest{
+abstract class MemoryBasicRTreeTest extends AbstractTreeTest {
 
-    public MemoryStarRTree2DTest() throws StoreIndexException, IOException {
-        super(DefaultEngineeringCRS.CARTESIAN_2D);
-        tEM = new TreeElementMapperTest(crs);
-        tree = new MemoryStarRTree(4, crs, tEM);
-        tAF  = ((StarRTree)tree).getTreeAccess();
+    /**
+     * Create a generic BasicRTree Test suite, stored in memory,  with {@link CoordinateReferenceSystem} define by user.
+     * 
+     * @param crs
+     * @throws StoreIndexException should never thrown.
+     * @throws IOException should never thrown.
+     */
+    protected MemoryBasicRTreeTest(final CoordinateReferenceSystem crs) throws StoreIndexException, IOException {
+        super(new MemoryBasicRTree(4, crs, SplitCase.QUADRATIC, new TreeElementMapperTest(crs)));
     }
-    
 }

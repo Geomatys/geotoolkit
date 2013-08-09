@@ -19,37 +19,38 @@ package org.geotoolkit.index.tree.basic;
 import java.io.File;
 import java.io.IOException;
 import org.geotoolkit.index.tree.AbstractTreeTest;
-import org.geotoolkit.index.tree.FileTreeElementMapper;
 import org.geotoolkit.index.tree.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.geotoolkit.index.tree.TreeElementMapperTest;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * Create a generic BasicRTree Test suite where Tree is store on hard drive.<br/>
+ * Test is effectuate with file already filled by tree architecture.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
  */
-public class ReadeableFileBasicTree2DTest extends AbstractTreeTest {
-    
+abstract class ReadeableBasicRTreeTest extends AbstractTreeTest {
+
     /**
+     * Create a generic BasicRTree Test suite with file already filled by tree architecture
+     * and a {@link CoordinateReferenceSystem} define by user.
      * 
-     * @throws StoreIndexException
-     * @throws IOException
+     * @param crs
+     * @throws IOException if problem during head reading from already filled file.
+     * @throws StoreIndexException if file isn't already filled by {@link BasicRTree} implementation.
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
-    public ReadeableFileBasicTree2DTest() throws StoreIndexException, IOException, ClassNotFoundException {
-        super(DefaultEngineeringCRS.CARTESIAN_2D);
+    protected ReadeableBasicRTreeTest(final CoordinateReferenceSystem crs) throws StoreIndexException, IOException, ClassNotFoundException {
+        super(crs);
         final File inOutFile = File.createTempFile("test", "tree");
         final File treeMapperFile = File.createTempFile("test", "mapper");
-        tEM = new FileTreeElementMapperTest(crs, treeMapperFile);
+        tEM  = new FileTreeElementMapperTest(crs, treeMapperFile);
         tree = new FileBasicRTree(inOutFile, 3, crs, SplitCase.LINEAR, tEM);
-        tAF  = ((BasicRTree)tree).getTreeAccess();
         
         insert();
         tree.close();
-        ((FileTreeElementMapper)tEM).close();
-        tEM = new FileTreeElementMapperTest(treeMapperFile, crs);
+        tEM.close();
+        tEM  = new FileTreeElementMapperTest(treeMapperFile, crs);
         tree = new FileBasicRTree(inOutFile, tEM);
-        tAF  = ((BasicRTree)tree).getTreeAccess();
     }
 }
