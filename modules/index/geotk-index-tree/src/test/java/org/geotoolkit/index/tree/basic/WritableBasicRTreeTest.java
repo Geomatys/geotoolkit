@@ -21,20 +21,24 @@ import java.io.IOException;
 import org.geotoolkit.index.tree.AbstractTreeTest;
 import org.geotoolkit.index.tree.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * Create a generic BasicRTree Test suite where Tree is store on hard drive.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
  */
-public class WritableFileBasicTree2DTest extends AbstractTreeTest {
+abstract class WritableBasicRTreeTest extends AbstractTreeTest {
 
-    
-    public WritableFileBasicTree2DTest() throws StoreIndexException, IOException {
-        super(DefaultEngineeringCRS.CARTESIAN_2D);
-        tEM = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
-        tree = new FileBasicRTree(File.createTempFile("test", "tree"), 3, crs, SplitCase.LINEAR, tEM);
-        tAF  = ((BasicRTree)tree).getTreeAccess();
+    /**
+     * Create a generic BasicRTree Test suite, stored on File,  with {@link CoordinateReferenceSystem} define by user.
+     * 
+     * @param crs
+     * @throws StoreIndexException during Tree creation.
+     * @throws IOException if problem during TreeElementMapper or Tree head writing.
+     */
+    protected WritableBasicRTreeTest(final CoordinateReferenceSystem crs) throws StoreIndexException, IOException {
+        super(new FileBasicRTree(File.createTempFile("tree", "test"), 4, crs, SplitCase.LINEAR,
+                new FileTreeElementMapperTest(crs, File.createTempFile("mapper", "test"))));
     }
-    
 }

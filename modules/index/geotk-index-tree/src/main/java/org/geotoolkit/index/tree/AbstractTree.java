@@ -582,7 +582,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
         }
     }
 
-    public TreeAccess getTreeAccess() {
+    TreeAccess getTreeAccess() {
         return treeAccess;
     }    
     

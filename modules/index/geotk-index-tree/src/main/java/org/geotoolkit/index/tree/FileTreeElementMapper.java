@@ -312,6 +312,7 @@ public abstract class FileTreeElementMapper<E> implements TreeElementMapper<E> {
      * 
      * @throws IOException 
      */
+    @Override
     public void close() throws IOException {
         byteBuffer.position(0);
         byteBuffer.limit(writeBufferLimit);

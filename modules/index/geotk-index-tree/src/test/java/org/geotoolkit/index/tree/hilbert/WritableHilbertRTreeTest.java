@@ -21,30 +21,24 @@ import java.io.IOException;
 import org.geotoolkit.index.tree.AbstractTreeTest;
 import org.geotoolkit.index.tree.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * Create a generic HilbertRTree Test suite where Tree is store on hard drive.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
  */
-public class ReadeableFileHilbertRTree2DTest extends AbstractTreeTest {
+abstract class WritableHilbertRTreeTest extends AbstractTreeTest {
 
     /**
+     * Create a generic HilbertRTree Test suite, stored on File,  with {@link CoordinateReferenceSystem} define by user.
      * 
-     * @throws StoreIndexException
-     * @throws IOException
-     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
+     * @param crs
+     * @throws StoreIndexException during Tree creation.
+     * @throws IOException if problem during TreeElementMapper or Tree head writing.
      */
-    public ReadeableFileHilbertRTree2DTest() throws StoreIndexException, IOException, ClassNotFoundException {
-        super(DefaultEngineeringCRS.CARTESIAN_2D);
-        final File inOutFile = File.createTempFile("test", "tree");
-        tEM  = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
-        tree = new FileHilbertRTree(inOutFile, 4, 2, crs, tEM);
-        tAF  = ((HilbertRTree)tree).getTreeAccess();
-        insert();
-        tree.close();
-        tree = new FileHilbertRTree(inOutFile, tEM);
-        tAF  = ((HilbertRTree)tree).getTreeAccess();
+    protected WritableHilbertRTreeTest(final CoordinateReferenceSystem crs) throws StoreIndexException, IOException {
+        super(new FileHilbertRTree(File.createTempFile("hilbertTree", "test"), 4, 2, crs, 
+                new FileTreeElementMapperTest(crs, File.createTempFile("mapper", "test"))));
     }
-    
 }

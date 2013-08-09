@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.index.tree;
 
-import org.geotoolkit.index.tree.StoreIndexException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,12 +26,8 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.junit.Test;
 import static org.geotoolkit.index.tree.TreeUtilities.*;
-import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.index.tree.TreeTest;
 import static org.geotoolkit.index.tree.TreeTest.createEntry;
 import org.geotoolkit.internal.tree.TreeAccess;
-import org.geotoolkit.index.tree.TreeElementMapper;
 import static org.junit.Assert.assertTrue;
 import org.junit.Ignore;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -60,12 +55,10 @@ public abstract class AbstractTreeTest extends TreeTest {
     protected final double[] minMax;
     protected TreeElementMapper<double[]> tEM;
     
-    public AbstractTreeTest(CoordinateReferenceSystem crs) throws StoreIndexException, IOException {
-        ArgumentChecks.ensureNonNull("crs", crs);
+    protected AbstractTreeTest(final CoordinateReferenceSystem crs) throws StoreIndexException, IOException {
         this.crs = crs;
         this.dimension = crs.getCoordinateSystem().getDimension();
         ArgumentChecks.ensurePositive("dimension", this.dimension);
-//        this.tree = tree;
         final CoordinateSystem cs = crs.getCoordinateSystem();
         minMax = new double[2 * dimension];
         final double[] centerEntry = new double[dimension];
@@ -100,13 +93,51 @@ public abstract class AbstractTreeTest extends TreeTest {
         } else {
             throw new IllegalArgumentException("invalid crs, Coordinate system type :"+ cs.getClass() +" is not supported");
         }
-//        tEM = new TreeElementMapperTest(crs);
-    }
+    } 
     
-//    @After
-//    public void close() throws StoreIndexException, IOException {
-//        tree.close();
-//    }
+    protected AbstractTreeTest(final Tree tree) throws StoreIndexException, IOException {
+        this(tree.getCrs());
+        this.tree = tree;
+        this.tEM  = tree.getTreeElementMapper();
+        
+//        this.dimension = crs.getCoordinateSystem().getDimension();
+//        ArgumentChecks.ensurePositive("dimension", this.dimension);
+////        this.tree = tree;
+//        final CoordinateSystem cs = crs.getCoordinateSystem();
+//        minMax = new double[2 * dimension];
+//        final double[] centerEntry = new double[dimension];
+//        if (cs instanceof CartesianCS) {
+//            for(int l = 0; l < 2 * dimension; l+=2) {
+//                minMax[l] = -1500;
+//                minMax[l+1] = 1500;
+//            }
+//            for (int i = 0; i < lSize; i++) {
+//                for (int nbCoords = 0; nbCoords < this.dimension; nbCoords++) {
+//                    double value = (Math.random() < 0.5) ? -1 : 1;
+//                    value *= 1500 * Math.random();
+//                    centerEntry[nbCoords] = value;
+//                }
+//                lData.add(createEntry(centerEntry));
+//            }
+//        } else if (cs instanceof EllipsoidalCS) {
+//            minMax[0] = -180;
+//            minMax[1] = 180;
+//            minMax[2] = -90;
+//            minMax[3] = 90;
+//            for (int i = 0; i < lSize; i++) {
+//                centerEntry[0] = (Math.random()-0.5) * 2*170;
+//                centerEntry[1] = (Math.random()-0.5) * 2*80;
+//                if(cs.getDimension()>2) {
+//                    centerEntry[2] = Math.random()*8800;
+//                    minMax[4] = -8800;
+//                    minMax[5] = 8800;
+//                }
+//                lData.add(createEntry(centerEntry));
+//            }
+//        } else {
+//            throw new IllegalArgumentException("invalid crs, Coordinate system type :"+ cs.getClass() +" is not supported");
+//        }
+    }
 
     protected void insert() throws StoreIndexException, IOException {
         tEM.clear();
@@ -203,6 +234,7 @@ public abstract class AbstractTreeTest extends TreeTest {
     @Ignore
     public void checkBoundaryTest() throws StoreIndexException, IOException {
         if (tree.getRoot() == null) insert();
+        tAF = ((AbstractTree)tree).getTreeAccess();
         checkNodeBoundaryTest(tree.getRoot(), lData);
     }
     
@@ -308,7 +340,7 @@ public abstract class AbstractTreeTest extends TreeTest {
     public void insertDelete() throws StoreIndexException, IOException {
         if (tree.getRoot() == null) insert();
 //        checkNodeBoundaryTest(tree.getRoot(), lData);
-//        Collections.shuffle(lData);
+        Collections.shuffle(lData);
         for (int i = 0, s = lSize; i < s; i++) {
             assertTrue(tree.remove(lData.get(i)));
         }
@@ -339,7 +371,6 @@ public abstract class AbstractTreeTest extends TreeTest {
             } catch (Exception ex) {
                 System.out.println("");
             }
-//            tabResult[i] = tEM.getObjectFromTreeIdentifier(tabID[i]);
         }
         return tabResult;
     }

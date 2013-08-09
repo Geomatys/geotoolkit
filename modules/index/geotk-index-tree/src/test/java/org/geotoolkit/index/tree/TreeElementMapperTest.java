@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -92,5 +93,13 @@ public class TreeElementMapperTest implements TreeElementMapper<double[]> {
     public void clear() {
         lData.clear();
         lID.clear();
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void close() throws IOException {
+        // do nothing
     }
 }

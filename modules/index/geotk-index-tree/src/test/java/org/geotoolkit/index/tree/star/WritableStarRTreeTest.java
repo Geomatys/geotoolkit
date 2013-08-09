@@ -21,29 +21,24 @@ import java.io.IOException;
 import org.geotoolkit.index.tree.AbstractTreeTest;
 import org.geotoolkit.index.tree.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * Create a generic StarRTree Test suite where Tree is store on hard drive.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
  */
-public class ReadeableStarRTree2DTest  extends AbstractTreeTest {
+abstract class WritableStarRTreeTest extends AbstractTreeTest {
 
     /**
+     * Create a generic StarRTree Test suite, stored on File, with {@link CoordinateReferenceSystem} define by user.
      * 
-     * @throws StoreIndexException
-     * @throws IOException
-     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
+     * @param crs
+     * @throws StoreIndexException during Tree creation.
+     * @throws IOException if problem during TreeElementMapper or Tree head writing.
      */
-    public ReadeableStarRTree2DTest() throws StoreIndexException, IOException, ClassNotFoundException {
-        super(DefaultEngineeringCRS.CARTESIAN_2D);
-        final File inOutFile = File.createTempFile("test", "tree");
-        tEM = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
-        tree = new FileStarRTree(inOutFile, 4, crs, tEM);
-        tAF  = ((StarRTree)tree).getTreeAccess();
-        insert();
-        tree.close();
-        tree = new FileStarRTree(inOutFile, tEM);
-        tAF  = ((StarRTree)tree).getTreeAccess();
+    protected WritableStarRTreeTest(final CoordinateReferenceSystem crs) throws StoreIndexException, IOException {
+        super(new FileStarRTree(File.createTempFile("starRTree", "tree"), 4, crs, 
+                new FileTreeElementMapperTest(crs, File.createTempFile("mapper", "test"))));
     }
 }

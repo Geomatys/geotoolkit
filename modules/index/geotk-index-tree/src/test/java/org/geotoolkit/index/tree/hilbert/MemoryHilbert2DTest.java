@@ -17,22 +17,24 @@
 package org.geotoolkit.index.tree.hilbert;
 
 import java.io.IOException;
-import org.geotoolkit.index.tree.AbstractTreeTest;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.geotoolkit.index.tree.TreeElementMapperTest;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 
 /**
+ * Create a HilbertRTree Test suite stored in computer memory in a Cartesian 2D space.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
+ * @see DefaultEngineeringCRS#CARTESIAN_2D
  */
-public class MemoryHilbertRTree2DTest extends AbstractTreeTest {
+public final class MemoryHilbert2DTest extends MemoryHilbertRTreeTest {
 
-    public MemoryHilbertRTree2DTest() throws StoreIndexException, IOException {
+    /**
+     * Create a memory HilbertRTree Test suite in a Cartesian 2D space.
+     * 
+     * @throws StoreIndexException should never thrown.
+     * @throws IOException should never thrown.
+     */
+    public MemoryHilbert2DTest() throws StoreIndexException, IOException {
         super(DefaultEngineeringCRS.CARTESIAN_2D);
-        tEM = new TreeElementMapperTest(crs);
-        tree = new MemoryHilbertRTree(4, 2, crs, tEM);
-        tAF = ((HilbertRTree)tree).getTreeAccess();
     }
-    
 }

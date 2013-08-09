@@ -16,24 +16,27 @@
  */
 package org.geotoolkit.index.tree.hilbert;
 
-import java.io.File;
 import java.io.IOException;
 import org.geotoolkit.index.tree.AbstractTreeTest;
-import org.geotoolkit.index.tree.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
-
+import org.geotoolkit.index.tree.TreeElementMapperTest;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * Create a generic HilbertRTree Test suite where Tree is store in computer memory.
  *
  * @author Remi Marechal (Geomatys).
  */
-public class WritableFileHilbertRTree2DTest extends AbstractTreeTest {
+abstract class MemoryHilbertRTreeTest extends AbstractTreeTest {
 
-    public WritableFileHilbertRTree2DTest() throws StoreIndexException, IOException {
-        super(DefaultEngineeringCRS.CARTESIAN_2D);
-        tEM = new FileTreeElementMapperTest(crs, File.createTempFile("test", "mapper"));
-        tree = new FileHilbertRTree(File.createTempFile("test", "tree"), 4, 2, crs, tEM);
-        tAF = ((HilbertRTree)tree).getTreeAccess();
+    /**
+     * Create a generic HilbertRTree Test suite, stored in memory,  with {@link CoordinateReferenceSystem} define by user.
+     * 
+     * @param crs
+     * @throws StoreIndexException should never thrown.
+     * @throws IOException should never thrown.
+     */
+    protected MemoryHilbertRTreeTest(final CoordinateReferenceSystem crs) throws StoreIndexException, IOException {
+        super(new MemoryHilbertRTree(4, 2, crs, new TreeElementMapperTest(crs)));
     }
 }
