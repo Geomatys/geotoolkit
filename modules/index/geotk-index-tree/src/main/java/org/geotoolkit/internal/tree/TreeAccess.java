@@ -30,8 +30,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  * Mechanic to store Tree architecture.<br/><br/>
  * It exist two differents implementation.<br/>
- * One which write each Tree {@link Node} in a file at place specified by user.<br/>
- * The other store in memory each Node.
+ * One which write each Tree {@link Node} and other Tree informations in a file at place specified by user.<br/>
+ * The other, store in computer memory each Node.
  * 
  * @see TreeAccessFile
  * @see TreeAccessMemory
@@ -44,7 +44,7 @@ public abstract class TreeAccess {
      * 
      * @see TreeAccessFile
      */
-    protected static final int DEFAULT_BUFFER_LENGTH = 819200;// 4096 
+    protected static final int DEFAULT_BUFFER_LENGTH = 4096;
     
     /**
      * CoordinateReferenceSystem attribut use by Tree.

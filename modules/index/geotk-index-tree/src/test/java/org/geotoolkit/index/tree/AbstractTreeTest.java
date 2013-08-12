@@ -31,9 +31,8 @@ import org.geotoolkit.internal.tree.TreeAccess;
 import static org.junit.Assert.assertTrue;
 import org.junit.Ignore;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.EllipsoidalCS;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 
 /**
@@ -45,7 +44,7 @@ public abstract class AbstractTreeTest extends TreeTest {
     int nbrTemp = 0;
     
     //debug 
-    int lSize = 3000;
+    int lSize = 300;
     
     protected TreeAccess tAF;
     protected Tree<double[]> tree;
@@ -55,88 +54,33 @@ public abstract class AbstractTreeTest extends TreeTest {
     protected final double[] minMax;
     protected TreeElementMapper<double[]> tEM;
     
-    protected AbstractTreeTest(final CoordinateReferenceSystem crs) throws StoreIndexException, IOException {
+    protected AbstractTreeTest(final CoordinateReferenceSystem crs) {
         this.crs = crs;
         this.dimension = crs.getCoordinateSystem().getDimension();
         ArgumentChecks.ensurePositive("dimension", this.dimension);
         final CoordinateSystem cs = crs.getCoordinateSystem();
         minMax = new double[2 * dimension];
+        final double cartesianValue = 1E6;
+        for (int i = 0; i < dimension; i++) {
+            final CoordinateSystemAxis csa = cs.getAxis(i);
+            final double minV = csa.getMinimumValue();
+            minMax[i] = ( ! Double.isInfinite(minV)) ? minV : (minV < 0) ? -cartesianValue : cartesianValue;
+            final double maxV = csa.getMaximumValue();
+            minMax[i + dimension] = ( ! Double.isInfinite(maxV)) ? maxV : (maxV < 0) ? -cartesianValue : cartesianValue;
+        }
         final double[] centerEntry = new double[dimension];
-        if (cs instanceof CartesianCS) {
-            for(int l = 0; l < 2 * dimension; l+=2) {
-                minMax[l] = -1500;
-                minMax[l+1] = 1500;
+        for (int i = 0; i < lSize; i++) {
+            for (int d = 0; d < dimension; d++) {
+                centerEntry[d] = (minMax[d+dimension]-minMax[d]) * Math.random() * Math.random() + minMax[d];
             }
-            for (int i = 0; i < lSize; i++) {
-                for (int nbCoords = 0; nbCoords < this.dimension; nbCoords++) {
-                    double value = (Math.random() < 0.5) ? -1 : 1;
-                    value *= 1500 * Math.random();
-                    centerEntry[nbCoords] = value;
-                }
-                lData.add(createEntry(centerEntry));
-            }
-        } else if (cs instanceof EllipsoidalCS) {
-            minMax[0] = -180;
-            minMax[1] = 180;
-            minMax[2] = -90;
-            minMax[3] = 90;
-            for (int i = 0; i < lSize; i++) {
-                centerEntry[0] = (Math.random()-0.5) * 2*170;
-                centerEntry[1] = (Math.random()-0.5) * 2*80;
-                if(cs.getDimension()>2) {
-                    centerEntry[2] = Math.random()*8800;
-                    minMax[4] = -8800;
-                    minMax[5] = 8800;
-                }
-                lData.add(createEntry(centerEntry));
-            }
-        } else {
-            throw new IllegalArgumentException("invalid crs, Coordinate system type :"+ cs.getClass() +" is not supported");
+            lData.add(createEntry(centerEntry));
         }
     } 
     
-    protected AbstractTreeTest(final Tree tree) throws StoreIndexException, IOException {
+    protected AbstractTreeTest(final Tree tree) {
         this(tree.getCrs());
         this.tree = tree;
         this.tEM  = tree.getTreeElementMapper();
-        
-//        this.dimension = crs.getCoordinateSystem().getDimension();
-//        ArgumentChecks.ensurePositive("dimension", this.dimension);
-////        this.tree = tree;
-//        final CoordinateSystem cs = crs.getCoordinateSystem();
-//        minMax = new double[2 * dimension];
-//        final double[] centerEntry = new double[dimension];
-//        if (cs instanceof CartesianCS) {
-//            for(int l = 0; l < 2 * dimension; l+=2) {
-//                minMax[l] = -1500;
-//                minMax[l+1] = 1500;
-//            }
-//            for (int i = 0; i < lSize; i++) {
-//                for (int nbCoords = 0; nbCoords < this.dimension; nbCoords++) {
-//                    double value = (Math.random() < 0.5) ? -1 : 1;
-//                    value *= 1500 * Math.random();
-//                    centerEntry[nbCoords] = value;
-//                }
-//                lData.add(createEntry(centerEntry));
-//            }
-//        } else if (cs instanceof EllipsoidalCS) {
-//            minMax[0] = -180;
-//            minMax[1] = 180;
-//            minMax[2] = -90;
-//            minMax[3] = 90;
-//            for (int i = 0; i < lSize; i++) {
-//                centerEntry[0] = (Math.random()-0.5) * 2*170;
-//                centerEntry[1] = (Math.random()-0.5) * 2*80;
-//                if(cs.getDimension()>2) {
-//                    centerEntry[2] = Math.random()*8800;
-//                    minMax[4] = -8800;
-//                    minMax[5] = 8800;
-//                }
-//                lData.add(createEntry(centerEntry));
-//            }
-//        } else {
-//            throw new IllegalArgumentException("invalid crs, Coordinate system type :"+ cs.getClass() +" is not supported");
-//        }
     }
 
     protected void insert() throws StoreIndexException, IOException {
@@ -179,50 +123,37 @@ public abstract class AbstractTreeTest extends TreeTest {
     }
     
     /**
-     * Compare boundary node from its children boundary.
+     * Compare node properties from its children.<br/>
+     * Compare Node boundary from its sub-Nodes boundary sum.<br/>
+     * Moreover verify conformity of stored datas.
      */    
-    protected void checkNodeBoundaryTest(final Node node, List<double[]> listRef) throws StoreIndexException, IOException {
-        assertTrue(checkBoundaryNode(node));
-        if (!node.isLeaf()) {
-            int sibl = node.getChildId();
-            while (sibl != 0) {
-                final Node currentChild = tAF.readNode(sibl);
-                checkNodeBoundaryTest(currentChild, listRef);
-                sibl = currentChild.getSiblingId();
-            }
-        } else {
-            int sibl = node.getChildId();
-            while (sibl != 0) {
-                final Node currentData = tAF.readNode(sibl);
-                assertTrue(currentData.isData());
-                final int currentValue = - currentData.getChildId();
-                final int listId = currentValue -1;
-                assertTrue("bad ID = "+(currentValue)
-                        +" expected : "+Arrays.toString(listRef.get(listId))
-                        +" found : "+Arrays.toString(currentData.getBoundary()), Arrays.equals(currentData.getBoundary(), listRef.get(listId)));
-                sibl = currentData.getSiblingId();
-            }
-        }
-        assertTrue(checkBoundaryNode(node));
-    }
-    
-    /**
-     * Compare boundary node from his children or elements boundary.
-     */
-    public boolean checkBoundaryNode(final Node node) throws IOException {
-        double[] subBound = null;
-        final double[] currentBoundary = node.getBoundary().clone();
+    protected void checkNode(final Node node, List<double[]> listRef) throws StoreIndexException, IOException {
+        final double[] nodeBoundary = node.getBoundary();
+        double[] subNodeBound = null;
         int sibl = node.getChildId();
         while (sibl != 0) {
             final Node currentChild = tAF.readNode(sibl);
-            if (subBound == null) {
-                subBound = currentChild.getBoundary().clone();
+            assertTrue("Node child should never be empty.", !currentChild.isEmpty());
+            if (subNodeBound == null) {
+                subNodeBound = currentChild.getBoundary().clone();
             } else {
-                add(subBound, currentChild.getBoundary());
+                add(subNodeBound, currentChild.getBoundary());
+            }
+            if (node.isLeaf()) {
+                assertTrue(currentChild.isData());
+                final int currentValue = - currentChild.getChildId();
+                final int listId = currentValue -1;
+                assertTrue("bad ID = "+(currentValue)
+                        +" expected : "+Arrays.toString(listRef.get(listId))
+                        +" found : "+Arrays.toString(currentChild.getBoundary()), Arrays.equals(currentChild.getBoundary(), listRef.get(listId)));
+            } else {
+                checkNode(currentChild, listRef);
             }
             sibl = currentChild.getSiblingId();
         }
-        return Arrays.equals(subBound, currentBoundary);
+        assertTrue("Node should have a boundary equals from its sub-Nodes boundary sum : "
+            +" Node boundary = "+Arrays.toString(nodeBoundary)
+            +"sub-nodes sum = "+Arrays.toString(subNodeBound), Arrays.equals(nodeBoundary, subNodeBound));
     }
     
     /**
@@ -231,11 +162,10 @@ public abstract class AbstractTreeTest extends TreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    @Ignore
-    public void checkBoundaryTest() throws StoreIndexException, IOException {
+    public void checkNodeTest() throws StoreIndexException, IOException {
         if (tree.getRoot() == null) insert();
         tAF = ((AbstractTree)tree).getTreeAccess();
-        checkNodeBoundaryTest(tree.getRoot(), lData);
+        checkNode(tree.getRoot(), lData);
     }
     
     /**
@@ -304,7 +234,7 @@ public abstract class AbstractTreeTest extends TreeTest {
         
         // visitor
         int[] tabSearch = tree.searchID(rG);
-        List<double[]> ld = Arrays.asList(getResult(tabSearch));
+//        List<double[]> ld = Arrays.asList(getResult(tabSearch));
         assertTrue(compareLists(lDataTemp, Arrays.asList(getResult(tabSearch))));
 //        checkNodeBoundaryTest(tree.getRoot(), lData);
     }
@@ -344,14 +274,9 @@ public abstract class AbstractTreeTest extends TreeTest {
         for (int i = 0, s = lSize; i < s; i++) {
             assertTrue(tree.remove(lData.get(i)));
         }
-        final double[] areaSearch = new double[dimension << 1];
-        for (int i = 0; i < dimension; i++) {
-            areaSearch[i] = minMax[2 * i];
-            areaSearch[i + dimension] = minMax[2 * i + 1];
-        }
         
         final GeneralEnvelope rG = new GeneralEnvelope(crs);
-        rG.setEnvelope(areaSearch);
+        rG.setEnvelope(minMax.clone());
         
         int[] tabSearch = tree.searchID(rG);
         assertTrue(tabSearch == null);
@@ -374,5 +299,4 @@ public abstract class AbstractTreeTest extends TreeTest {
         }
         return tabResult;
     }
-    
 }

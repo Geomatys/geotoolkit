@@ -18,7 +18,6 @@ package org.geotoolkit.index.tree.hilbert;
 
 import java.io.File;
 import java.io.IOException;
-import org.geotoolkit.index.tree.AbstractTreeTest;
 import org.geotoolkit.index.tree.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -29,7 +28,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Remi Marechal (Geomatys).
  */
-abstract class ReadeableHilbertRTreeTest extends AbstractTreeTest {
+abstract class ReadeableHilbertRTreeTest extends HilbertTest {
 
     /**
      * Create a generic HilbertRTree Test suite with file already filled by tree architecture
@@ -40,7 +39,7 @@ abstract class ReadeableHilbertRTreeTest extends AbstractTreeTest {
      * @throws StoreIndexException if file isn't already filled by {@link HilbertRTree} implementation.
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
-    protected ReadeableHilbertRTreeTest(final CoordinateReferenceSystem crs) throws StoreIndexException, IOException, ClassNotFoundException {
+    protected ReadeableHilbertRTreeTest(final CoordinateReferenceSystem crs) throws IOException, StoreIndexException, ClassNotFoundException {
         super(crs);
         final File inOutFile = File.createTempFile("test", "tree");
         final File treeMapperFile = File.createTempFile("test", "mapper");

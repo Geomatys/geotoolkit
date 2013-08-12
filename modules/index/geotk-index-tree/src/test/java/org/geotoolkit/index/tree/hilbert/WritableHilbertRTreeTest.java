@@ -18,7 +18,6 @@ package org.geotoolkit.index.tree.hilbert;
 
 import java.io.File;
 import java.io.IOException;
-import org.geotoolkit.index.tree.AbstractTreeTest;
 import org.geotoolkit.index.tree.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -28,7 +27,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Remi Marechal (Geomatys).
  */
-abstract class WritableHilbertRTreeTest extends AbstractTreeTest {
+abstract class WritableHilbertRTreeTest extends HilbertTest {
 
     /**
      * Create a generic HilbertRTree Test suite, stored on File,  with {@link CoordinateReferenceSystem} define by user.
