@@ -21,6 +21,7 @@ import java.awt.Shape;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
+import java.util.Locale;
 
 import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display.shape.XRectangle2D;
@@ -103,7 +104,7 @@ public abstract class AbstractReferencedGraphic2D extends AbstractReferencedGrap
     @Override
     public void setZOrderHint(final double zOrderHint) {
         if (Double.isNaN(zOrderHint)) {
-            throw new IllegalArgumentException(Errors.getResources(getLocale()).getString(
+            throw new IllegalArgumentException(Errors.getResources(Locale.getDefault()).getString(
                     Errors.Keys.ILLEGAL_ARGUMENT_2, "zOrderHint", zOrderHint));
         }
         final double oldZOrder;
@@ -114,7 +115,7 @@ public abstract class AbstractReferencedGraphic2D extends AbstractReferencedGrap
             }
             this.zOrder = zOrderHint;
         }
-        propertyListeners.firePropertyChange(Z_ORDER_HINT_PROPERTY, oldZOrder, zOrderHint);
+        firePropertyChange(Z_ORDER_HINT_PROPERTY, oldZOrder, zOrderHint);
     }
     
     /**
@@ -157,7 +158,7 @@ public abstract class AbstractReferencedGraphic2D extends AbstractReferencedGrap
             old = displayBounds;
             displayBounds = bounds;
             if (hasBoundsListeners) {
-                propertyListeners.firePropertyChange(DISPLAY_BOUNDS_PROPERTY, old, bounds);
+                firePropertyChange(DISPLAY_BOUNDS_PROPERTY, old, bounds);
             }
         }
     }
@@ -221,14 +222,14 @@ public abstract class AbstractReferencedGraphic2D extends AbstractReferencedGrap
         
     }
 
-    /**
-     * Invoked when a property change listener has been {@linkplain #addPropertyChangeListener
-     * added} or {@linkplain #removePropertyChangeListener removed}.
-     */
-    @Override
-    protected void listenersChanged() {
-        super.listenersChanged();
-        hasBoundsListeners = propertyListeners.hasListeners(DISPLAY_BOUNDS_PROPERTY);
-    }
+//    /**
+//     * Invoked when a property change listener has been {@linkplain #addPropertyChangeListener
+//     * added} or {@linkplain #removePropertyChangeListener removed}.
+//     */
+//    @Override
+//    protected void listenersChanged() {
+//        super.listenersChanged();
+//        hasBoundsListeners = propertyListeners.hasListeners(DISPLAY_BOUNDS_PROPERTY);
+//    }
 
 }

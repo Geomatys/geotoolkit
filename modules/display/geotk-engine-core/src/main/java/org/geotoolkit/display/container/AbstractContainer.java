@@ -35,6 +35,7 @@ import org.geotoolkit.display.primitive.AbstractReferencedGraphic;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display.primitive.SceneNode;
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.container.ContainerListener;
@@ -74,7 +75,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
      * preserved no matter how {@link #sortedGraphics} reorder graphics. This is because we
      * want to preserve to {@link #add} contract for 2D graphics whit a z-value.
      */
-    protected final Map<G,G> graphics = new LinkedHashMap<G,G>();
+    protected final Map<G,G> graphics = new LinkedHashMap<>();
 
     /**
      * The set of {@link Graphic}s given to the user. This set is act like a
@@ -130,7 +131,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
     protected void graphicPropertyChanged(final Graphic graphic, final PropertyChangeEvent propEvent){
         final String propertyName = propEvent.getPropertyName();
                 
-        if(propertyName.equals(AbstractGraphic.VISIBLE_PROPERTY)){
+        if(propertyName.equals(SceneNode.VISIBLE_KEY)){
             ContainerEvent event = new DefaultContainerEvent(this, graphic);
             fireGraphicChanged(event);
         }else if(propertyName.equals(AbstractReferencedGraphic.ENVELOPE_PROPERTY)){
@@ -385,7 +386,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
     }
     
     /**
-     * Convinient method to propagate added graphics on renderer listeners.
+     * Convenient method to propagate added graphics on renderer listeners.
      * 
      * @param event : RendererEvent event to propagate.
      */
@@ -397,7 +398,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
     }
     
     /**
-     * Convinient method to propagate removed graphics on renderer listeners.
+     * Convenient method to propagate removed graphics on renderer listeners.
      * 
      * @param event : RendererEvent event to propagate.
      */
@@ -409,7 +410,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
     }
         
     /**
-     * Convinient method to propagate graphics changes on renderer listeners.
+     * Convenient method to propagate graphics changes on renderer listeners.
      * 
      * @param event : RendererEvent event to propagate.
      */
@@ -421,7 +422,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
     }
 
     /**
-     * Convinient method to propagate graphics display changes on renderer listeners.
+     * Convenient method to propagate graphics display changes on renderer listeners.
      *
      * @param event : RendererEvent event to propagate.
      */

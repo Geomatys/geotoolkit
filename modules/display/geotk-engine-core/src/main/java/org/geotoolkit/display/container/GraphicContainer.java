@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2013, Geomatys
+ *    (C) 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,29 +14,28 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display.canvas.control;
+package org.geotoolkit.display.container;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display.primitive.SceneNode;
 
 /**
- * Monitor which try to never fail the rendering.
+ * A Graphic Container holds a scene definition.
+ * The scene tree might not be modifiable or dynamic.
  * 
  * @author Johann Sorel (Geomatys)
- * @module pending
  */
-public class NeverFailMonitor extends AbstractCanvasMonitor{
-
-    private static final Logger LOGGER = Logging.getLogger(NeverFailMonitor.class);
+public interface GraphicContainer<G extends SceneNode> {
     
     /**
-     * {@inheritDoc }
+     * Get the root scene node.
+     * @return SceneNode, can be null.
      */
-    @Override
-    public void exceptionOccured(final Exception ex, final Level level) {
-        //just log the error
-        LOGGER.log(level,"", ex);
-    }
-
+    SceneNode getRoot();
+    
+    /**
+     * Set the root scene node.
+     * @param node SceneNode, can be null.
+     */
+    void setRoot(SceneNode node);
+    
 }

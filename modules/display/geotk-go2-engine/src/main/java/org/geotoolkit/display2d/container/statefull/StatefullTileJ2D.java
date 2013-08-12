@@ -35,7 +35,6 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -78,8 +77,8 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
     private boolean loaded = false;
 
     public StatefullTileJ2D(GridMosaic mosaic, Point3d coordinate, J2DCanvas canvas, 
-            StatefullPyramidalCoverageLayerJ2D parent, CoverageMapLayer item, CachedRule[] rules) {
-        super(canvas, parent, item);
+            CoverageMapLayer item, CachedRule[] rules) {
+        super(canvas, item);
         this.mosaic = mosaic;
         this.coordinate = coordinate;
         this.rules = rules;
@@ -179,7 +178,7 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
                     for(final CachedRule rule : rules){
                         for(final CachedSymbolizer symbol : rule.symbolizers()){
                             if(symbol.getSource() instanceof RasterSymbolizer){
-                                ri = DefaultRasterSymbolizerRenderer.applyStyle(coverage, (RasterSymbolizer)symbol.getSource(), hints, false);
+                                ri = DefaultRasterSymbolizerRenderer.applyStyle(coverage, (RasterSymbolizer)symbol.getSource(), getHints(false), false);
                                 break;
                             }
                         }

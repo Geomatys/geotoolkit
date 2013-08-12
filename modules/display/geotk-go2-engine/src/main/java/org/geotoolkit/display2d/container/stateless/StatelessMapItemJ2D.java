@@ -34,6 +34,7 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.display.primitive.SceneNode;
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -64,7 +65,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
     private final ItemListener.Weak weakListener = new ItemListener.Weak(this);
 
     //childs
-    private final Map<MapItem, GraphicJ2D> itemGraphics = new HashMap<MapItem, GraphicJ2D>();
+    private final Map<MapItem, GraphicJ2D> itemGraphics = new HashMap<>();
 
     protected final T item;
 
@@ -99,6 +100,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
         for(int i=0,n=childs.size(); i<n; i++){
             final MapItem child = childs.get(i);
             final GraphicJ2D gj2d = parseChild(child, i);
+            getChildren().add((SceneNode)gj2d);
             itemGraphics.put(child, gj2d);
         }
 
@@ -128,7 +130,6 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
             g2d = new StatelessMapItemJ2D(getCanvas(), child);
         }
 
-        g2d.setParent(this);
         g2d.setZOrderHint(index);
         return g2d;
     }

@@ -30,7 +30,7 @@ import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.primitive.Graphic;
 
 /**
- * Abstract Container 2D extends Abstract container by providing a convinient method
+ * Abstract Container 2D extends Abstract container by providing a convenient method
  * to grab a sorted list of graphic sorted on Z order.
  *
  * @author Martin Desruisseaux (IRD)
@@ -169,7 +169,7 @@ public abstract class AbstractContainer2D extends AbstractContainer{
 
 
     /**
-     * Returns a rectangle that completly encloses all {@linkplain ReferencedGraphic#getEnvelope
+     * Returns a rectangle that completely encloses all {@linkplain ReferencedGraphic#getEnvelope
      * graphic envelopes} managed by this canvas. Note that there is no guarantee that the returned
      * rectangle is the smallest bounding box that encloses the canvas, only that the canvas lies
      * entirely within the indicated rectangle.
@@ -178,7 +178,7 @@ public abstract class AbstractContainer2D extends AbstractContainer{
      * {@link org.geotoolkit.display.canvas.map.DefaultMapState#getEnvelope}, since the later returns
      * an envelope that encloses only the <em>visible</em> canvas area and is scale-dependent. This
      * {@code ReferencedCanvas2D.getEnvelope2D()} method is scale-independent. Both envelopes are
-     * equal if the {@linkplain #getScale scale} is choosen in such a way that all graphics can fit
+     * equal if the {@linkplain #getScale scale} is chosen in such a way that all graphics can fit
      * in the {@linkplain #getDisplayBounds canvas visible area}.
      *
      * @return The envelope for this canvas in terms of {@linkplain #getObjectiveCRS objective CRS}.

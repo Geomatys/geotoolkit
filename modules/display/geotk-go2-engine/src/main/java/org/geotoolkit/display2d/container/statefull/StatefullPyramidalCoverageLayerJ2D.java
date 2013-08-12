@@ -63,7 +63,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
     private final PyramidalCoverageReference model;
     private final double tolerance;
     private final CoverageFinder coverageFinder;
-    private final Map<Point3d,StatefullTileJ2D> gtiles = new TreeMap<Point3d, StatefullTileJ2D>(new Comparator<Point3d>() {
+    private final Map<Point3d,StatefullTileJ2D> gtiles = new TreeMap<>(new Comparator<Point3d>() {
         @Override
         public int compare(Point3d c1, Point3d c2) {            
             final double zdiff = c2.z - c1.z; //we want lower res tiles to be painted first  
@@ -85,17 +85,16 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         }
     });
 
-    @Deprecated
-    public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final StatefullMapItemJ2D parent, final CoverageMapLayer layer) {
-        super(canvas, parent, layer);
+    public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer) {
+        super(canvas, layer);
         this.coverageFinder = CoverageFinderFactory.createDefaultCoverageFinder();
         model = (PyramidalCoverageReference)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
         weakStoreListener.registerSource(layer.getCoverageReference());
     }
     
-    public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final StatefullMapItemJ2D parent, final CoverageMapLayer layer, CoverageFinder coverageFinder) {
-        super(canvas, parent, layer);
+    public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer, CoverageFinder coverageFinder) {
+        super(canvas, layer);
         this.coverageFinder = coverageFinder;
         model = (PyramidalCoverageReference)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
@@ -285,7 +284,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         
         for(Point3d c : ttiles){
             if(!gtiles.containsKey(c)){
-                gtiles.put(c,new StatefullTileJ2D(mosaic, c, getCanvas(), this, item, rules));
+                gtiles.put(c,new StatefullTileJ2D(mosaic, c, getCanvas(), item, rules));
             }
         }
         

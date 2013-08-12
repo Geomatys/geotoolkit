@@ -31,6 +31,7 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.display.primitive.SceneNode;
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -68,36 +69,26 @@ public class StatefullMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
     
     
     //childs
-    private final Map<MapItem, GraphicJ2D> itemGraphics = new HashMap<MapItem, GraphicJ2D>();
+    private final Map<MapItem, GraphicJ2D> itemGraphics = new HashMap<>();
     protected final T item;
 
-    public StatefullMapItemJ2D(final J2DCanvas canvas, final StatefullMapItemJ2D parent, final T item){
+    public StatefullMapItemJ2D(final J2DCanvas canvas,final T item){
         super(canvas);
-        super.setParent(parent);
-        this.item = item;
-
-        if(parent == null){
-            queue = new ArrayBlockingQueue(100000);
-            exec = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), Runtime.getRuntime().availableProcessors(), 
-                    1, TimeUnit.MINUTES, queue, 
-                    LOCAL_REJECT_EXECUTION_HANDLER);
-        }
-        
+        this.item = item;        
         parseItem(this.item);
         weakListener.registerSource(item);
-        
     }
 
     protected ThreadPoolExecutor getExecutor(){
         if(parent != null){
             return ((StatefullMapItemJ2D)parent).getExecutor();
+        }else if(exec == null){
+            queue = new ArrayBlockingQueue(100000);
+            exec = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), Runtime.getRuntime().availableProcessors(), 
+                    1, TimeUnit.MINUTES, queue, 
+                    LOCAL_REJECT_EXECUTION_HANDLER);
         }
         return exec;
-    }
-    
-    @Override
-    public void setParent(Graphic parent) {
-        throw new RuntimeException("Not allowed to modify parent in statefull mode.");
     }
     
     @Override
@@ -139,23 +130,23 @@ public class StatefullMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
 
         final StatefullMapItemJ2D g2d;
         if (child instanceof FeatureMapLayer){
-            g2d = new StatefullFeatureMapLayerJ2D(getCanvas(), this, (FeatureMapLayer)child);
+            g2d = new StatefullFeatureMapLayerJ2D(getCanvas(), (FeatureMapLayer)child);
         }else if (child instanceof CoverageMapLayer){
             final CoverageMapLayer layer = (CoverageMapLayer) child;
             final CoverageReference ref = layer.getCoverageReference();
             if(ref != null && ref instanceof PyramidalCoverageReference){
                 //pyramidal model, we can improve rendering
                 //TODO not ready yet
-                g2d = new StatefullPyramidalCoverageLayerJ2D(getCanvas(), this, (CoverageMapLayer)child);
+                g2d = new StatefullPyramidalCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)child);
 //                g2d = new StatefullMapLayerJ2D(getCanvas(), this, (CoverageMapLayer)child);
             }else{
                 //normal coverage
-                g2d = new StatefullMapLayerJ2D(getCanvas(), this, (CoverageMapLayer)child);
+                g2d = new StatefullMapLayerJ2D(getCanvas(), (CoverageMapLayer)child);
             }            
         }else if (child instanceof MapLayer){
-            g2d = new StatefullMapLayerJ2D(getCanvas(), this, (MapLayer)child);
+            g2d = new StatefullMapLayerJ2D(getCanvas(), (MapLayer)child);
         }else{
-            g2d = new StatefullMapItemJ2D(getCanvas(), this, child);
+            g2d = new StatefullMapItemJ2D(getCanvas(), child);
         }
 
         g2d.setZOrderHint(index);
@@ -211,6 +202,7 @@ public class StatefullMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
         if(CollectionChangeEvent.ITEM_ADDED == type){
             for(final MapItem child : event.getItems()){
                 final GraphicJ2D gj2d = parseChild(child, item.items().indexOf(child));
+                getChildren().add((SceneNode)gj2d);
                 itemGraphics.put(child, gj2d);
             }
             //change other layers indexes

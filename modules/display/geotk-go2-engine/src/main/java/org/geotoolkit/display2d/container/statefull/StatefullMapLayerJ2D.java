@@ -50,8 +50,8 @@ public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2
     protected volatile GridCoverage2D buffer = null;
     private volatile Updater updater = null;
     
-    public StatefullMapLayerJ2D(J2DCanvas canvas, StatefullMapItemJ2D parent, T item) {
-        super(canvas, parent, item);
+    public StatefullMapLayerJ2D(J2DCanvas canvas, T item) {
+        super(canvas, item);
     }
 
     @Override
