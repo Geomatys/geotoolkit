@@ -67,6 +67,7 @@ import org.geotoolkit.lang.Builder;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
 import org.apache.sis.util.iso.Types;
+import org.apache.sis.measure.Angle;
 import org.apache.sis.metadata.KeyNamePolicy;
 import org.apache.sis.metadata.TypeValuePolicy;
 import org.apache.sis.metadata.MetadataStandard;
@@ -625,6 +626,9 @@ public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat>
         }
         if (Boolean.class.isAssignableFrom(type)) {
             return DATATYPE_BOOLEAN;
+        }
+        if (Angle.class.isAssignableFrom(type)) {
+            return DATATYPE_DOUBLE;
         }
         return DATATYPE_STRING;
     }
