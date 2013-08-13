@@ -22,6 +22,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -29,7 +31,6 @@ import java.util.logging.Logger;
 import javax.swing.ComboBoxEditor;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -40,8 +41,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
-import org.opengis.display.canvas.CanvasEvent;
-import org.opengis.display.canvas.CanvasListener;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -52,10 +51,10 @@ import org.opengis.referencing.operation.TransformException;
 public class JScaleCombo extends JComboBox {
 
     private JMap2D map = null;
-    private final CanvasListener listener = new CanvasListener() {
+    private final PropertyChangeListener listener = new PropertyChangeListener() {
 
         @Override
-        public void canvasChanged(CanvasEvent ce) {
+        public void propertyChange(PropertyChangeEvent evt) {
             removeItemListener(action);
             try {
                 final double  scale = map.getCanvas().getController().getGeographicScale();
@@ -66,7 +65,6 @@ public class JScaleCombo extends JComboBox {
             } catch (TransformException ex) {
                 Logger.getLogger(JScaleCombo.class.getName()).log(Level.WARNING, null, ex);
             }
-            
         }
     };
     private final ItemListener action = new ItemListener() {
@@ -136,13 +134,13 @@ public class JScaleCombo extends JComboBox {
 
     public void setMap(final JMap2D map) {
         if (this.map != null) {
-            this.map.getCanvas().removeCanvasListener(listener);
+            this.map.getCanvas().removePropertyChangeListener(listener);
         }
 
         this.map = map;
 
         if (this.map != null) {
-            this.map.getCanvas().addCanvasListener(listener);
+            this.map.getCanvas().addPropertyChangeListener(listener);
         }
 
     }

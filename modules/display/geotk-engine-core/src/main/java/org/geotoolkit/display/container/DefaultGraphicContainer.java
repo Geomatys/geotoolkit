@@ -18,8 +18,8 @@ package org.geotoolkit.display.container;
 
 import java.util.Objects;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.display.canvas.Canvas;
 import org.geotoolkit.display.primitive.SceneNode;
-import org.opengis.display.canvas.Canvas;
 
 /**
  *

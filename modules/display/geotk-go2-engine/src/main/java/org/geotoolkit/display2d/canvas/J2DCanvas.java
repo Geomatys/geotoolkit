@@ -17,7 +17,6 @@
 package org.geotoolkit.display2d.canvas;
 
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
@@ -45,9 +44,6 @@ import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display.primitive.SceneNode;
 import org.geotoolkit.display.primitive.SpatialNode;
-import org.geotoolkit.display2d.container.MultiThreadedRendering;
-import org.geotoolkit.map.MapItem;
-import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

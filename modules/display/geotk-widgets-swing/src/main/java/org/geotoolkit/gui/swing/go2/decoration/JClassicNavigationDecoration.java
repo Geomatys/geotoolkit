@@ -47,7 +47,7 @@ import javax.swing.JComponent;
 
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 
 /**
  *
@@ -523,7 +523,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
 
         @Override
         public void propertyChange(final PropertyChangeEvent arg0) {
-            if(ReferencedCanvas2D.OBJECTIVE_TO_DISPLAY_PROPERTY.equals(arg0.getPropertyName())){
+            if(AbstractReferencedCanvas2D.OBJECTIVE_TO_DISPLAY_PROPERTY.equals(arg0.getPropertyName())){
                 final double rotation = map.getCanvas().getController().getRotation();
 
                 if(rotation != getRotation()){

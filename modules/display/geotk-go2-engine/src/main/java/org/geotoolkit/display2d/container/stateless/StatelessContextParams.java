@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,7 @@
 package org.geotoolkit.display2d.container.stateless;
 
 import java.awt.geom.AffineTransform;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
@@ -34,7 +34,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class StatelessContextParams<T extends MapLayer> {
 
     public RenderingContext2D context;
-    public final ReferencedCanvas2D canvas;
+    public final AbstractReferencedCanvas2D canvas;
     public final T layer;
     public final AffineTransform objectiveToDisplay = new AffineTransform(2,0,0,2,0,0);
     public final GeometryCSTransformer objToDisplayTransformer =
@@ -42,7 +42,7 @@ public class StatelessContextParams<T extends MapLayer> {
     public CoordinateReferenceSystem objectiveCRS;
     public CoordinateReferenceSystem displayCRS;
 
-    public StatelessContextParams(final ReferencedCanvas2D canvas, final T layer){
+    public StatelessContextParams(final AbstractReferencedCanvas2D canvas, final T layer){
         this.canvas = canvas;
         this.layer = layer;
     }

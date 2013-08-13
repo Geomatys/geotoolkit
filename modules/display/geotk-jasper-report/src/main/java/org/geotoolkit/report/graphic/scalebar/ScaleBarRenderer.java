@@ -33,7 +33,7 @@ import javax.measure.unit.SI;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRenderable;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.scalebar.DefaultScaleBarTemplate;
 import org.geotoolkit.display2d.ext.scalebar.J2DScaleBarUtilities;
@@ -110,8 +110,8 @@ public class ScaleBarRenderer implements JRRenderable{
         final Graphics2D g2d = (Graphics2D) g.create();
         final Rectangle area = rect.getBounds();
 
-        if(canvas instanceof ReferencedCanvas2D){
-            ReferencedCanvas2D c2d = (ReferencedCanvas2D) canvas;
+        if(canvas instanceof AbstractReferencedCanvas2D){
+            AbstractReferencedCanvas2D c2d = (AbstractReferencedCanvas2D) canvas;
 
             try {
                 final double[] center = c2d.getController().getCenter().getCoordinate();

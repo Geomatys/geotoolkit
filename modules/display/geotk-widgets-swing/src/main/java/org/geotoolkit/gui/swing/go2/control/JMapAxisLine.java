@@ -30,10 +30,8 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.unit.SI;
 import javax.swing.AbstractAction;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -45,17 +43,14 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.DefaultCanvasController2D;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.navigator.DoubleRenderer;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
-import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
 
@@ -511,7 +506,7 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
 
     @Override
     public void propertyChange(final PropertyChangeEvent evt) {
-        if(evt.getPropertyName().equals(ReferencedCanvas2D.ENVELOPE_PROPERTY)){
+        if(evt.getPropertyName().equals(AbstractReferencedCanvas2D.ENVELOPE_PROPERTY)){
             Double[] range = ((DefaultCanvasController2D)map.getCanvas().getController()).getAxisRange(axisIndexFinder);
 
             if(range == null){

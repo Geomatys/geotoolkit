@@ -56,13 +56,12 @@ import javax.swing.SwingConstants;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.apache.sis.geometry.DirectPosition2D;
+import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.jdesktop.swingx.JXBusyLabel;
 
-import org.opengis.display.canvas.CanvasEvent;
-import org.opengis.display.canvas.CanvasListener;
 import org.opengis.display.canvas.RenderingState;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -373,7 +372,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
             baseMapContainer.remove(verticalSplit);
             baseMapContainer.add(BorderLayout.CENTER, baseMapComponent);
             baseMapComponent.removeMouseMotionListener(listener);
-            this.map.getCanvas().removeCanvasListener(listener);
+            this.map.getCanvas().removePropertyChangeListener(listener);
         }
         
          this.map = map;
@@ -383,7 +382,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
             baseMapContainer = map.getUIContainer();
             baseMapComponent = map.getComponent(0);
             baseMapComponent.addMouseMotionListener(listener);
-            this.map.getCanvas().addCanvasListener(listener);
+            this.map.getCanvas().addPropertyChangeListener(listener);
             map.getCanvas().addPropertyChangeListener(listener);
  
             baseMapContainer.remove(baseMapComponent);
@@ -417,7 +416,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
         return guiCombo.getStepSize();
     }
 
-    private class myListener extends MouseMotionAdapter implements PropertyChangeListener,CanvasListener{
+    private class myListener extends MouseMotionAdapter implements PropertyChangeListener{
 
         @Override
         public void mouseMoved(final MouseEvent e) {
@@ -457,18 +456,15 @@ public class JCoordinateBar extends AbstractMapControlBar {
             if(J2DCanvas.OBJECTIVE_CRS_PROPERTY.equals(arg0.getPropertyName())){
                 CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
                 guiCRS.setText(crs.getName().toString());
-            }
-        }
-
-        @Override
-        public void canvasChanged(final CanvasEvent event) {
-
-            if(RenderingState.ON_HOLD.equals(event.getNewRenderingstate())){
-                guiPainting.setBusy(false);
-            }else if(RenderingState.RENDERING.equals(event.getNewRenderingstate())){
-                guiPainting.setBusy(true);
-            }else{
-                guiPainting.setBusy(false);
+            }else if(AbstractCanvas.RENDERSTATE_KEY.equals(arg0.getPropertyName())){
+                final RenderingState state = (RenderingState) arg0.getNewValue();
+                if(RenderingState.ON_HOLD.equals(state)){
+                    guiPainting.setBusy(false);
+                }else if(RenderingState.RENDERING.equals(state)){
+                    guiPainting.setBusy(true);
+                }else{
+                    guiPainting.setBusy(false);
+                }
             }
         }
 

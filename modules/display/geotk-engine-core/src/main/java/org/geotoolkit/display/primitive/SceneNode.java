@@ -28,11 +28,11 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.display.DisplayElement;
 import org.geotoolkit.display.SceneVisitor;
+import org.geotoolkit.display.canvas.Canvas;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.CollectionChangeListener;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
-import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
 
 /**

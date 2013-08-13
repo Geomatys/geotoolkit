@@ -21,15 +21,15 @@ import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.canvas.Canvas;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyle;
-import org.opengis.display.canvas.Canvas;
 
 /**
  *
@@ -83,7 +83,7 @@ public class IsolineGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
     @Override
     public Collection<GraphicJ2D> createGraphics(final MapLayer layer, final Canvas canvas) {
 
-        if(canvas instanceof ReferencedCanvas2D && layer instanceof FeatureMapLayer){
+        if(canvas instanceof AbstractReferencedCanvas2D && layer instanceof FeatureMapLayer){
             final J2DCanvas refCanvas = (J2DCanvas) canvas;
             final Collection<GraphicJ2D> graphics = new ArrayList<GraphicJ2D>();
             
