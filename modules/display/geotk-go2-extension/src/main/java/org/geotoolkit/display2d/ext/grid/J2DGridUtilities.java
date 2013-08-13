@@ -56,6 +56,8 @@ import org.opengis.referencing.operation.MathTransform;
  */
 public class J2DGridUtilities {
 
+    private static final double MIN = 1e-6;
+    
     private J2DGridUtilities() {
     }
 
@@ -99,6 +101,11 @@ public class J2DGridUtilities {
         try{
             //reduce grid bounds to validity area
             Envelope gridBounds = CRS.transform(context.getCanvasObjectiveBounds2D(), gridCRS);
+            
+            if(Math.abs(gridBounds.getSpan(0)) < MIN || Math.abs(gridBounds.getSpan(1)) < MIN ){
+                return;
+            }
+            
             
             Envelope validity = CRS.getEnvelope(gridCRS);
             if(validity != null){
