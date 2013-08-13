@@ -17,7 +17,7 @@
 
 package org.geotoolkit.display2d.service;
 
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 
 /**

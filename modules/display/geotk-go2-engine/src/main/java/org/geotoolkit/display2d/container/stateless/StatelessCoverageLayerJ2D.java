@@ -27,9 +27,9 @@ import org.geotoolkit.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -67,7 +67,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
     }
     
     public StatelessCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer, final boolean ignoreBuilders){
-        super(canvas, layer);
+        super(canvas, layer, false);
 
         this.ignoreBuilders = ignoreBuilders;
         
@@ -195,7 +195,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
             return graphics;
         }
 
-        if(graphics == null) graphics = new ArrayList<Graphic>();
+        if(graphics == null) graphics = new ArrayList<>();
         if(mask instanceof SearchAreaJ2D){
             graphics = searchAt(item,rules,renderingContext,(SearchAreaJ2D)mask,filter,graphics);
         }else{

@@ -70,7 +70,7 @@ public class Resolution {
      * Sum of {@code Envelope} sub-division.
      * @see #find(org.opengis.geometry.Envelope).
      */
-    private final List<Envelope> result = new ArrayList<Envelope>();
+    private final List<Envelope> result = new ArrayList<>();
 
     /**
      * Double proportionality value.
@@ -82,13 +82,13 @@ public class Resolution {
      * List of multi-dimensional index ordinate.
      * @see #getSourceResolution(org.opengis.geometry.Envelope).
      */
-    private final List<int[]> listOrdinate = new ArrayList<int[]>();
+    private final List<int[]> listOrdinate = new ArrayList<>();
 
     /**
      * Fifo list use about fractionate {@code Envelope}.
      * @see #fractionate() .
      */
-    private final LinkedList<Envelope> envelopeFifo = new LinkedList<Envelope>();
+    private final LinkedList<Envelope> envelopeFifo = new LinkedList<>();
 
     /**
      * {@code CoordinateReferenceSystem} from current {@code Envelope}.

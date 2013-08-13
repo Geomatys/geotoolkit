@@ -25,7 +25,7 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.PyramidalCoverageReference;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.container.stateless.StatelessCoverageLayerJ2D;
 import org.geotoolkit.display2d.container.stateless.StatelessPyramidalCoverageLayerJ2D;

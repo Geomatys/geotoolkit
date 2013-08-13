@@ -66,7 +66,7 @@ import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreListener;
 import org.geotoolkit.data.FeatureStoreManagementEvent;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.display2d.service.DefaultGlyphService;

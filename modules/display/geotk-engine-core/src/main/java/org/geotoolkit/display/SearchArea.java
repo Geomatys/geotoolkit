@@ -14,12 +14,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display.primitive;
+package org.geotoolkit.display;
 
 import org.opengis.geometry.Geometry;
 
 /**
- * A search area describe the geometric element that sould contain or intersect
+ * A search area describe the geometric element that should contain or intersect
  * the graphic features.
  *
  * @author Johann Sorel (Geomatys)

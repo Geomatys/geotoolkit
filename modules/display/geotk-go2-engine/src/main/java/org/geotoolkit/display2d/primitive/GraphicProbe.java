@@ -19,11 +19,12 @@ package org.geotoolkit.display2d.primitive;
 
 import java.util.List;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.geometry.Envelope;
 
 /**
  * A Graphic object that render nothing and fires an event when it is repainted.
@@ -31,7 +32,7 @@ import org.opengis.display.primitive.Graphic;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GraphicProbe extends AbstractGraphicJ2D{
+public class GraphicProbe extends GraphicJ2D{
 
     private final ProbeMonitor monitor;
 
@@ -48,6 +49,16 @@ public class GraphicProbe extends AbstractGraphicJ2D{
     @Override
     public List<Graphic> getGraphicAt(final RenderingContext context, final SearchArea mask, final VisitFilter filter, final List<Graphic> graphics) {
         return graphics;
+    }
+
+    @Override
+    public Object getUserObject() {
+        return null;
+    }
+
+    @Override
+    public Envelope getEnvelope() {
+        return null;
     }
 
     public static interface ProbeMonitor{

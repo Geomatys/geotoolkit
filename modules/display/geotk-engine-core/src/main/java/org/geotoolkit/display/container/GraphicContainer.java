@@ -16,7 +16,12 @@
  */
 package org.geotoolkit.display.container;
 
+import java.util.Collections;
+import java.util.List;
+import org.geotoolkit.display.DisplayElement;
+import org.geotoolkit.display.FlattenVisitor;
 import org.geotoolkit.display.primitive.SceneNode;
+import org.opengis.display.canvas.Canvas;
 
 /**
  * A Graphic Container holds a scene definition.
@@ -24,18 +29,48 @@ import org.geotoolkit.display.primitive.SceneNode;
  * 
  * @author Johann Sorel (Geomatys)
  */
-public interface GraphicContainer<G extends SceneNode> {
+public abstract class GraphicContainer extends DisplayElement{
+    
+    /**
+     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
+     * {@linkplain GraphicContainer#getRoot node } changed.
+     */
+    public static final String ROOT_KEY = "root";
+    
+    /**
+     * Get the canvas attached to this container.
+     * @return Canvas
+     */
+    public abstract Canvas getCanvas();
     
     /**
      * Get the root scene node.
      * @return SceneNode, can be null.
      */
-    SceneNode getRoot();
+    public abstract SceneNode getRoot();
     
     /**
      * Set the root scene node.
      * @param node SceneNode, can be null.
      */
-    void setRoot(SceneNode node);
+    public abstract void setRoot(SceneNode node);
+    
+    /**
+     * Get a list snapshot of the scene nodes.
+     * @return List<SceneNode> never null.
+     */
+    public List<SceneNode> flatten(boolean onlyVisible){
+        final SceneNode root = getRoot();
+        if(root == null){
+            return Collections.EMPTY_LIST;
+        }
+        return (List)root.accept( (onlyVisible)?FlattenVisitor.ONLY_VISIBLE:FlattenVisitor.ALL, null);
+    }
+    
+    /**
+     * Clear any cache used by the container.
+     */
+    public void clearCache(){
+    }
     
 }

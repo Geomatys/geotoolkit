@@ -16,20 +16,34 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import org.geotoolkit.display.primitive.ReferencedGraphic2D;
+import org.geotoolkit.display.primitive.SpatialNode;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.opengis.display.primitive.Graphic;
 
 /**
- * Base class for Geotoolkit implementations of {@link Graphic}
+ * Base class for GeotoolKit implementations of {@link Graphic}
  * primitives in java2d. This implementation is designed for use with
  * {@link org.geotoolkit.display2d.canvas.J2DCanvas}.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface GraphicJ2D extends ReferencedGraphic2D {
+public abstract class GraphicJ2D extends SpatialNode {
 
+    public GraphicJ2D(J2DCanvas canvas) {
+        super(canvas);
+    }
+
+    public GraphicJ2D(J2DCanvas canvas, boolean allowChildren) {
+        super(canvas, allowChildren);
+    }
+
+    @Override
+    public J2DCanvas getCanvas() {
+        return (J2DCanvas)super.getCanvas();
+    }
+    
     /**
      * Called by the J2DCanvas to ask the graphic object to paint itself on the canvas
      * using the rendering context parameters.
@@ -39,6 +53,6 @@ public interface GraphicJ2D extends ReferencedGraphic2D {
      */
     public abstract void paint(final RenderingContext2D context);
 
-    public Object getUserObject();
+    public abstract Object getUserObject();
     
 }

@@ -6,16 +6,17 @@ import java.awt.Graphics2D;
 import java.util.List;
 
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
 
 import org.opengis.display.primitive.Graphic;
+import org.opengis.geometry.Envelope;
 
 
-public class SquaresGraphic extends AbstractGraphicJ2D{
+public class SquaresGraphic extends GraphicJ2D{
 
     public SquaresGraphic(J2DCanvas canvas){
         super(canvas);
@@ -41,6 +42,16 @@ public class SquaresGraphic extends AbstractGraphicJ2D{
     @Override
     public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
         return graphics;
+    }
+
+    @Override
+    public Object getUserObject() {
+        return null;
+    }
+
+    @Override
+    public Envelope getEnvelope() {
+        return null;
     }
 
 }

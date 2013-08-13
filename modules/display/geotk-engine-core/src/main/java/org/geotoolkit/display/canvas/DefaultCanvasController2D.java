@@ -97,11 +97,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
             final double diffX = center.getOrdinate(0) - oldCenter.getOrdinate(0);
             final double diffY = center.getOrdinate(1) - oldCenter.getOrdinate(1);
             translateObjective(diffX, diffY);
-        } catch (NoninvertibleTransformException ex) {
-            canvas.getLogger().log(Level.WARNING, ex.getMessage(),ex);
-        } catch (FactoryException ex) {
-            canvas.getLogger().log(Level.WARNING, ex.getMessage(),ex);
-        } catch (TransformException ex) {
+        } catch (NoninvertibleTransformException | FactoryException | TransformException ex) {
             canvas.getLogger().log(Level.WARNING, ex.getMessage(),ex);
         }
     }

@@ -2,8 +2,8 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2009 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -44,9 +44,8 @@ import javax.swing.event.MouseInputListener;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
-import org.geotoolkit.display.canvas.GraphicVisitor;
-import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.container.AbstractContainer2D;
+import org.geotoolkit.display2d.GraphicVisitor;
+import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
@@ -64,6 +63,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 
@@ -95,7 +95,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
     private final DefaultSelectionDecoration selectionPane = new DefaultSelectionDecoration();
     private final GraphicVisitor visitor = new AbstractGraphicVisitor() {
 
-        private final Map<MapLayer,Set<FeatureId>> selection = new HashMap<MapLayer, Set<FeatureId>>();
+        private final Map<MapLayer,Set<FeatureId>> selection = new HashMap<>();
 
         @Override
         public void startVisit() {
@@ -133,7 +133,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
             Set<FeatureId> ids = selection.get(layer);
 
             if(ids == null){
-                ids = new HashSet<FeatureId>();
+                ids = new HashSet<>();
                 selection.put(layer, ids);
             }
 
@@ -198,17 +198,17 @@ public class DefaultSelectionHandler implements CanvasHandler {
         if(original == null){
             original = FF.id(new HashSet<Identifier>());
         }else if(ids == null){
-            ids = new HashSet<Identifier>();
+            ids = new HashSet<>();
         }
         
         if(key == KeyEvent.VK_SHIFT){
             //add selection
-            final Set<Identifier> in = new HashSet<Identifier>(ids);
+            final Set<Identifier> in = new HashSet<>(ids);
             in.addAll(((Id)original).getIdentifiers());
             f = FF.id(in);
         } else if (key == KeyEvent.VK_CONTROL){
             //remove the commun part selection
-            final Set<Identifier> in = new HashSet<Identifier>(((Id)original).getIdentifiers());
+            final Set<Identifier> in = new HashSet<>(((Id)original).getIdentifiers());
             if(ids != null){
                 in.removeAll(ids);
             }
@@ -230,14 +230,14 @@ public class DefaultSelectionHandler implements CanvasHandler {
         if (points.size() > 2) {
 
             if(geographicArea){
-                AbstractContainer2D container = map2D.getCanvas().getContainer();
+                GraphicContainer container = map2D.getCanvas().getContainer();
 
                 if(container instanceof ContextContainer2D){
                     final ContextContainer2D cc = (ContextContainer2D) container;
                     final MapContext context = cc.getContext();
                     
                     //make a geographic selection
-                    final List<Coordinate> coords = new ArrayList<Coordinate>();
+                    final List<Coordinate> coords = new ArrayList<>();
                     for(Point p : points){
                         coords.add(new Coordinate(p.x, p.y));
                     }
@@ -247,12 +247,12 @@ public class DefaultSelectionHandler implements CanvasHandler {
                     final LinearRing ring = GEOMETRY_FACTORY.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
                     final Polygon poly = GEOMETRY_FACTORY.createPolygon(ring, new LinearRing[0]);
 
-                    final List<MapLayer> layers = new ArrayList<MapLayer>(context.layers());
+                    final List<MapLayer> layers = new ArrayList<>(context.layers());
 
                     for(MapLayer layer : layers){
                         if(layer instanceof FeatureMapLayer && layer.isSelectable() && layer.isVisible()){
                             FeatureMapLayer fml = (FeatureMapLayer)layer;
-                            final Set<Identifier> ids = new HashSet<Identifier>();
+                            final Set<Identifier> ids = new HashSet<>();
 
                             final FeatureMapLayer fl = (FeatureMapLayer) layer;
                             final String geoStr = fl.getCollection().getFeatureType().getGeometryDescriptor().getLocalName();
@@ -335,7 +335,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         private int key;
 
         Point lastValid = null;
-        final List<Point> points = new ArrayList<Point>();
+        final List<Point> points = new ArrayList<>();
         private int startX = 0;
         private int startY = 0;
         private boolean selecting = false;
@@ -413,12 +413,12 @@ public class DefaultSelectionHandler implements CanvasHandler {
                 points.add(new Point(startX, startY));
                 points.add(new Point(startX, eventPoint.y));
                 points.add(eventPoint);
-                selectionPane.setPoints(new ArrayList<Point>(points));
+                selectionPane.setPoints(new ArrayList<>(points));
             }else{
                 if(eventPoint.distance(lastValid) > 6){
                     lastValid = eventPoint;
                     points.add(new Point(e.getX(), e.getY()));
-                    selectionPane.setPoints(new ArrayList<Point>(points));
+                    selectionPane.setPoints(new ArrayList<>(points));
                 }
             }
         }

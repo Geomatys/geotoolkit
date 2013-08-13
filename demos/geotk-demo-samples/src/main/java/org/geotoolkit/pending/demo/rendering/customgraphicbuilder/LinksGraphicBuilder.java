@@ -6,7 +6,7 @@ import java.awt.Image;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.FeatureMapLayer;

@@ -33,7 +33,7 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.processing.CoverageProcessingException;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.DefaultProjectedFeature;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;

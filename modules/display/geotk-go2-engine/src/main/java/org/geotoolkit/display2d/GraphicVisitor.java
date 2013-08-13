@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,9 +14,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display.canvas;
+package org.geotoolkit.display2d;
 
-import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display.SearchArea;
+import org.geotoolkit.display.canvas.RenderingContext;
 import org.opengis.display.primitive.Graphic;
 
 /**
@@ -39,7 +40,7 @@ public interface GraphicVisitor {
     void endVisit();
 
     /**
-     * Called when a valide graphic has been found.
+     * Called when a valid graphic has been found.
      *
      * @param graphic : graphic that validate the visiting parameters
      */
@@ -47,7 +48,7 @@ public interface GraphicVisitor {
 
     /**
      * Should return true when the visitor want to stop the search process.
-     * For exemple the visitor may stop on the first graphic he uncounter.
+     * For example the visitor may stop on the first graphic he encounter.
      */
     boolean isStopRequested();
 

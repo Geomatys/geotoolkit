@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -38,10 +38,10 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
-import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -65,7 +65,6 @@ import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -86,9 +85,8 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     private final double tolerance;
     private final CoverageFinder coverageFinder;
 
-    @Deprecated
     public StatelessPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer){
-        super(canvas, layer);
+        super(canvas, layer, false);
         this.coverageFinder = CoverageFinderFactory.createDefaultCoverageFinder();
         model = (PyramidalCoverageReference)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
@@ -96,7 +94,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     }
     
     public StatelessPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer, CoverageFinder coverageFinder){
-        super(canvas, layer);
+        super(canvas, layer, false);
         this.coverageFinder = coverageFinder;
         model = (PyramidalCoverageReference)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value

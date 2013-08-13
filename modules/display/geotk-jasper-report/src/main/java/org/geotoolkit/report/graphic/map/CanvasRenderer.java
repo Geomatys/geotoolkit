@@ -31,11 +31,11 @@ import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.DefaultCanvasController2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
-import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display.container.GraphicContainer;
 
 import org.opengis.display.canvas.RenderingState;
 import org.opengis.geometry.Envelope;
@@ -106,7 +106,7 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
         fireRenderingStateChanged(RenderingState.RENDERING);
 
         final Graphics2D output = g2d;
-        output.addRenderingHints(hints);
+        output.addRenderingHints(getHints(true));
 
         final DefaultRenderingContext2D context = prepareContext(context2D, output,null);
 
@@ -115,9 +115,9 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
             painter.paint(context2D);
         }
 
-        final AbstractContainer2D renderer2D = getContainer();
-        if(renderer2D != null){
-            render(context, renderer2D.getSortedGraphics());
+        final GraphicContainer container = getContainer();
+        if(container != null){
+            render(context, container.flatten(true));
         }
 
         /**

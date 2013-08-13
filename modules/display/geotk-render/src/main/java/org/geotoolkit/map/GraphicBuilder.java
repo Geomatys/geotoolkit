@@ -18,15 +18,15 @@ package org.geotoolkit.map;
 
 import java.awt.Image;
 import java.util.Collection;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
 
 /**
- * A graphic builder is a convinient way to build the same datas in a different
+ * A graphic builder is a convenient way to build the same datas in a different
  * collection of graphic object, with different rendering and behavior.
  * 
- * For exemple a maplayer may provide a graphic builder for Java2D graphics
+ * For example a maplayer may provide a graphic builder for Java2D graphics
  * and another one for 3D rendering.
  * 
  * @author Johann Sorel (Geomatys)

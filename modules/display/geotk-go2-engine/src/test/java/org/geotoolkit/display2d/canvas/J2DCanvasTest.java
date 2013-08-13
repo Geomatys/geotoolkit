@@ -21,7 +21,7 @@ import java.awt.Dimension;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.Date;
 
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;

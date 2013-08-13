@@ -27,15 +27,15 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.primitive.SceneNode;
-import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -44,13 +44,14 @@ import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.geometry.Envelope;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StatefullMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D implements ItemListener{
+public class StatefullMapItemJ2D<T extends MapItem> extends GraphicJ2D implements ItemListener{
     
     private final ItemListener.Weak weakListener = new ItemListener.Weak(this);
 
@@ -72,10 +73,20 @@ public class StatefullMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
     private final Map<MapItem, GraphicJ2D> itemGraphics = new HashMap<>();
     protected final T item;
 
-    public StatefullMapItemJ2D(final J2DCanvas canvas,final T item){
-        super(canvas);
-        this.item = item;        
-        parseItem(this.item);
+    public StatefullMapItemJ2D(final J2DCanvas canvas,final T item, boolean allowChildren){
+        super(canvas, allowChildren);
+        this.item = item;
+        
+        //build children nodes
+        final List<MapItem> childs = item.items();
+        for(int i=0,n=childs.size(); i<n; i++){
+            final MapItem child = childs.get(i);
+            final GraphicJ2D gj2d = parseChild(child);
+            itemGraphics.put(child, gj2d);
+            getChildren().add(gj2d);
+        }
+        
+        //listen to mapitem changes
         weakListener.registerSource(item);
     }
 
@@ -114,19 +125,14 @@ public class StatefullMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
         
     }
 
+    @Override
+    public Envelope getEnvelope() {
+        return null;
+    }
+    
     // create graphics ---------------------------------------------------------
 
-    private void parseItem(final MapItem candidate){
-        final List<MapItem> childs = candidate.items();
-        for(int i=0,n=childs.size(); i<n; i++){
-            final MapItem child = childs.get(i);
-            final GraphicJ2D gj2d = parseChild(child, i);
-            itemGraphics.put(child, gj2d);
-        }
-
-    }
-
-    protected GraphicJ2D parseChild(final MapItem child, final int index){
+    protected GraphicJ2D parseChild(final MapItem child){
 
         final StatefullMapItemJ2D g2d;
         if (child instanceof FeatureMapLayer){
@@ -136,20 +142,17 @@ public class StatefullMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
             final CoverageReference ref = layer.getCoverageReference();
             if(ref != null && ref instanceof PyramidalCoverageReference){
                 //pyramidal model, we can improve rendering
-                //TODO not ready yet
                 g2d = new StatefullPyramidalCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)child);
-//                g2d = new StatefullMapLayerJ2D(getCanvas(), this, (CoverageMapLayer)child);
             }else{
                 //normal coverage
-                g2d = new StatefullMapLayerJ2D(getCanvas(), (CoverageMapLayer)child);
+                g2d = new StatefullMapLayerJ2D(getCanvas(), (CoverageMapLayer)child, false);
             }            
         }else if (child instanceof MapLayer){
-            g2d = new StatefullMapLayerJ2D(getCanvas(), (MapLayer)child);
+            g2d = new StatefullMapLayerJ2D(getCanvas(), (MapLayer)child, false);
         }else{
-            g2d = new StatefullMapItemJ2D(getCanvas(), child);
+            g2d = new StatefullMapItemJ2D(getCanvas(), child, true);
         }
 
-        g2d.setZOrderHint(index);
         return g2d;
     }
 
@@ -200,45 +203,33 @@ public class StatefullMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
         final int type = event.getType();
 
         if(CollectionChangeEvent.ITEM_ADDED == type){
+            final NumberRange range = event.getRange();
+            int index = (int) range.getMinDouble();
             for(final MapItem child : event.getItems()){
-                final GraphicJ2D gj2d = parseChild(child, item.items().indexOf(child));
-                getChildren().add((SceneNode)gj2d);
+                final GraphicJ2D gj2d = parseChild(child);
+                getChildren().add(index,(SceneNode)gj2d);
                 itemGraphics.put(child, gj2d);
+                index++;
             }
-            //change other layers indexes
-            final List<MapItem> children = item.items();
-            for(int i=0,n=children.size(); i<n; i++){
-                final MapItem layer = children.get(i);
-                final GraphicJ2D gra = itemGraphics.get(layer);
-                if(gra != null){
-                    gra.setZOrderHint(i);
-                }
-            }
+            
             //TODO should call a repaint only on this graphic
             getCanvas().getController().repaint();
             
         }else if(CollectionChangeEvent.ITEM_REMOVED == type){
             for(final MapItem child : event.getItems()){
-                final GraphicJ2D gra = itemGraphics.get(child);
+                //remove the graphic
+                final GraphicJ2D gra = itemGraphics.remove(child);
                 if(gra != null){
+                    getChildren().remove(gra);
                     gra.dispose();
                 }
-                //remove the graphic
-                itemGraphics.remove(child);
             }
-            //change other layers indexes
-            final List<MapItem> children = item.items();
-            for(int i=0,n=children.size(); i<n; i++){
-                final MapItem child = children.get(i);
-                final GraphicJ2D gra = itemGraphics.get(child);
-                if(gra != null){
-                    gra.setZOrderHint(i);
-                }
-            }
+            
             //TODO should call a repaint only on this graphic
             getCanvas().getController().repaint();
         }
 
     }
+
     
 }

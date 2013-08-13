@@ -29,7 +29,7 @@ import java.util.logging.Level;
 import javax.swing.JComponent;
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.DefaultCanvasController2D;
-import org.geotoolkit.display.container.AbstractContainer2D;
+import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.factory.Hints;
 import org.opengis.display.canvas.RenderingState;
 import org.opengis.geometry.Envelope;
@@ -137,7 +137,7 @@ public class J2DCanvasSwing extends J2DCanvas{
             clipBounds = new Rectangle(dim);
         }
         output.setClip(clipBounds);
-        output.addRenderingHints(hints);
+        output.addRenderingHints(getHints(true));
 
         final DefaultRenderingContext2D context = prepareContext(context2D, output,null);
 
@@ -146,9 +146,9 @@ public class J2DCanvasSwing extends J2DCanvas{
             painter.paint(context2D);
         }
 
-        final AbstractContainer2D container = getContainer();
+        final GraphicContainer container = getContainer();
         if(container != null){
-            render(context, container.getSortedGraphics());
+            render(context, container.flatten(true));
         }
 
         /**
@@ -172,7 +172,7 @@ public class J2DCanvasSwing extends J2DCanvas{
     
     
     /**
-     * Stores the requested visible area if the canvas size is not knowned yet.
+     * Stores the requested visible area if the canvas size is still unknown.
      */
     private class DelayedController extends DefaultCanvasController2D{
 
