@@ -264,14 +264,6 @@ public abstract class FileTreeElementMapper<E> implements TreeElementMapper<E> {
     }
 
     /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Envelope getEnvelope(E object)  throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    /**
      * {@inheritDoc }.
      */
     @Override
