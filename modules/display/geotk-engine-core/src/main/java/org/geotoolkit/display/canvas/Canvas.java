@@ -16,14 +16,26 @@
  */
 package org.geotoolkit.display.canvas;
 
+import org.geotoolkit.display.DisplayElement;
 import org.geotoolkit.display.container.GraphicContainer;
+import org.geotoolkit.factory.Hints;
+import org.opengis.display.canvas.CanvasController;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface Canvas {
+public abstract class Canvas extends DisplayElement {
+
+    public Canvas() {
+    }
+
+    public Canvas(Hints hints) {
+        super(hints);
+    }
     
-    GraphicContainer getContainer();
+    public abstract CanvasController getController();
+    
+    public abstract GraphicContainer getContainer();
     
 }

@@ -20,8 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import org.geotoolkit.display.DisplayElement;
 import org.geotoolkit.display.FlattenVisitor;
+import org.geotoolkit.display.canvas.Canvas;
 import org.geotoolkit.display.primitive.SceneNode;
-import org.opengis.display.canvas.Canvas;
 
 /**
  * A Graphic Container holds a scene definition.

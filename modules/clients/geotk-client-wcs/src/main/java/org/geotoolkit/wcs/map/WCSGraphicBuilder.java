@@ -35,6 +35,7 @@ import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.SearchArea;
+import org.geotoolkit.display.canvas.Canvas;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -42,7 +43,6 @@ import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 
-import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

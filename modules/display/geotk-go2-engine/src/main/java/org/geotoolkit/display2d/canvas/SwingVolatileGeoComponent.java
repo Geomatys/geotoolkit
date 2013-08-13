@@ -21,6 +21,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.*;
 import java.awt.image.RenderedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
@@ -28,6 +30,7 @@ import javax.swing.Timer;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.opengis.display.canvas.CanvasEvent;
@@ -71,11 +74,17 @@ public class SwingVolatileGeoComponent extends JComponent{
         });
         
         canvas = new J2DCanvasVolatile(crs,null);
-        canvas.addCanvasListener(new CanvasListener() {
+        canvas.addPropertyChangeListener(new PropertyChangeListener() {
 
             @Override
-            public void canvasChanged(CanvasEvent event) {
-                if(RenderingState.RENDERING.equals(event.getNewRenderingstate())){
+            public void propertyChange(PropertyChangeEvent evt) {
+                if(!AbstractCanvas.RENDERSTATE_KEY.equals(evt.getPropertyName())){
+                    return;
+                }
+                
+                final RenderingState state = (RenderingState) evt.getNewValue();
+                
+                if(RenderingState.RENDERING.equals(state)){
                     timer.start();
                 }else{
                     final Object val = canvas.getRenderingHint(GO2Hints.KEY_BEHAVIOR_MODE);

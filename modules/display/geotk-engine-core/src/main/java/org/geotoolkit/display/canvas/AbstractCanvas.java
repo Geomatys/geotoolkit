@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,22 +16,14 @@
  */
 package org.geotoolkit.display.canvas;
 
-import javax.swing.event.EventListenerList;
 import org.geotoolkit.display.DisplayElement;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.canvas.control.FailOnErrorMonitor;
-import org.geotoolkit.display.canvas.event.DefaultCanvasEvent;
 import org.geotoolkit.factory.Hints;
 
-import org.opengis.display.canvas.Canvas;
-import org.opengis.display.canvas.CanvasEvent;
-import org.opengis.display.canvas.CanvasListener;
-import org.opengis.display.canvas.CanvasState;
-import org.opengis.display.canvas.RenderingState;
-import org.opengis.geometry.DirectPosition;
-
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.opengis.display.canvas.RenderingState;
 
 /**
  * Manages the display and user manipulation of {@link Graphic} instances. A newly constructed
@@ -60,16 +51,21 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * @module pending
  * @since 2.3
  * @version $Id$
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractCanvas<T extends GraphicContainer> extends DisplayElement implements Canvas{
+public abstract class AbstractCanvas<T extends GraphicContainer> extends Canvas {
 
     /**
      * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
      * {@linkplain AbstractCanvas#getMonitor canvas monitor} changed.
      */
     public static final String MONITOR_KEY = "monitor";
+    /**
+     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
+     * {@linkplain AbstractCanvas#getRenderState canvas state} changed.
+     */
+    public static final String RENDERSTATE_KEY = "renderstate";
 
     /**
      * Small number for floating point compare.
@@ -82,15 +78,12 @@ public abstract class AbstractCanvas<T extends GraphicContainer> extends Display
     protected T container;
 
     /**
-     * Canvas listeners list.
-     */
-    private final EventListenerList canvasListeners = new EventListenerList();
-
-    /**
      * The monitor assigned to this canvas, can not be null.
      */
     protected CanvasMonitor monitor = new FailOnErrorMonitor();
 
+    private RenderingState renderState = null;
+    
     /**
      * Creates an initial empty canvas.
      *
@@ -115,6 +108,11 @@ public abstract class AbstractCanvas<T extends GraphicContainer> extends Display
         return container;
     }
 
+    public RenderingState getRenderState() {
+        return renderState;
+    }
+
+    
     /**
      * Returns the monitor assigned to this {@code Canvas}, it can not be null.
      *
@@ -176,57 +174,11 @@ public abstract class AbstractCanvas<T extends GraphicContainer> extends Display
 
 
     //--------------Canvas Listeners convinient methods-------------------------
-    /**
-     * Adds the given listener that will be notified when the state of this
-     * {@code Canvas} has changed.
-     */
-    @Override
-    public void addCanvasListener(final CanvasListener listener) {
-        canvasListeners.add(CanvasListener.class, listener);
-    }
 
-    /**
-     * Removes the given listener.
-     */
-    @Override
-    public void removeCanvasListener(final CanvasListener listener) {
-        canvasListeners.remove(CanvasListener.class, listener);
-    }
-
-    /**
-     * Fire a canvas event to all canvas listeners.
-     *
-     * @param event CanvasEvent
-     */
-    protected void fireCanvasEvent(final CanvasEvent event){
-        final CanvasListener[] listeners = canvasListeners.getListeners(CanvasListener.class);
-        for(final CanvasListener listener : listeners){
-            listener.canvasChanged(event);
-        }
-    }
-
-    private RenderingState oldState = null;
     protected void fireRenderingStateChanged(final RenderingState state){
-        final CanvasEvent event = new DefaultCanvasEvent(this, null, null, null, oldState, state);
-        fireCanvasEvent(event);
-        oldState = state;
+        final RenderingState old = renderState;
+        renderState = state;
+        firePropertyChange(RENDERSTATE_KEY, old, state);
     }
 
-
-    //////////////////////////////////////////////////////////////////////////
-    // Obsolete methods, TODO should be removed from geoapi //////////////////
-    //////////////////////////////////////////////////////////////////////////
-
-    @Override
-    @Deprecated
-    public CanvasState getState() {
-        throw new UnsupportedOperationException("Not supported. Obsolete.");
-    }
-
-    @Override
-    @Deprecated
-    public boolean isVisible(final DirectPosition coordinate) {
-        throw new UnsupportedOperationException("Not supported. Obsolete.");
-    }
-    
 }

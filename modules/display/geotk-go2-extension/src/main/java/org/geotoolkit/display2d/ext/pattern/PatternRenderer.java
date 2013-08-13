@@ -26,7 +26,7 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.processing.Operations;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -111,7 +111,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
 
 
         //paint all dynamicly generated features -------------------------------
-        final ReferencedCanvas2D canvas = renderingContext.getCanvas();
+        final AbstractReferencedCanvas2D canvas = renderingContext.getCanvas();
         final CoordinateReferenceSystem dataCRS = dataCoverage.getCoordinateReferenceSystem();
         final StatelessContextParams params = new StatelessContextParams(canvas,null);
         final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS();

@@ -20,7 +20,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.container.stateless.DefaultProjectedGeometry;
@@ -48,7 +48,7 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
 
     protected final StatelessContextParams params;
     protected final Map<String,DefaultProjectedGeometry> geometries =
-            new LinkedHashMap<String,DefaultProjectedGeometry>(); //linked hashmap is faster than hashmap on iteration.
+            new LinkedHashMap<>(); //linked hashmap is faster than hashmap on iteration.
     protected T candidate;
 
 
@@ -172,7 +172,7 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
     }
 
     @Override
-    public ReferencedCanvas2D getCanvas() {
+    public AbstractReferencedCanvas2D getCanvas() {
         return params.canvas;
     }
 

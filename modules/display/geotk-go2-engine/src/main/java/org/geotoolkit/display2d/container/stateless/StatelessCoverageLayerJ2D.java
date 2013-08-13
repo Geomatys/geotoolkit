@@ -148,7 +148,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
             final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) item.getGraphicBuilder(GraphicJ2D.class);
             if(builder != null){
                 //this layer has a special graphic rendering, use it instead of normal rendering
-                final Collection<GraphicJ2D> graphics = builder.createGraphics(item, canvas);
+                final Collection<GraphicJ2D> graphics = builder.createGraphics(item, getCanvas());
                 for(GraphicJ2D gra : graphics){
                     gra.paint(context);
                 }

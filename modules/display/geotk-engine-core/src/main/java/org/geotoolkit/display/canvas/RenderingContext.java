@@ -21,7 +21,6 @@ import java.awt.geom.AffineTransform;
 import java.util.Date;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.factory.Hints;
-import org.opengis.display.canvas.Canvas;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;

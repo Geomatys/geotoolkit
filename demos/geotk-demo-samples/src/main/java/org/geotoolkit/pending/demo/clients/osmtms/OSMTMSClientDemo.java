@@ -31,7 +31,7 @@ public class OSMTMSClientDemo {
 
         final MapContext context = createOSMTMSContext();
 
-        JMap2DFrame.show(context,true,null);
+        JMap2DFrame.show(context,false,null);
 
     }
 

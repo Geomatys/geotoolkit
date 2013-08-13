@@ -22,6 +22,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -39,12 +40,10 @@ import org.geotoolkit.gui.swing.go2.decoration.ColorDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.DefaultInformationDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
-import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
-import org.opengis.display.canvas.CanvasEvent;
-import org.opengis.display.canvas.CanvasListener;
+import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.opengis.display.canvas.RenderingState;
 import org.opengis.referencing.operation.TransformException;
 
@@ -115,10 +114,10 @@ public class JMap2D extends JPanel{
         canvas.getController().setAutoRepaint(true);
 
 
-        canvas.addCanvasListener(new CanvasListener() {
+        canvas.addPropertyChangeListener(new PropertyChangeListener() {
 
             @Override
-            public void canvasChanged(CanvasEvent event) {
+            public void propertyChange(PropertyChangeEvent evt) {
 
                 if(canvas.getController().isAutoRepaint()){
                     //dont show the painting icon if the cans is in auto render mode
@@ -126,14 +125,15 @@ public class JMap2D extends JPanel{
                     return;
                 }
 
-                System.out.println("EVENT " + event.getNewRenderingstate());
-
-                if(RenderingState.ON_HOLD.equals(event.getNewRenderingstate())){
-                    getInformationDecoration().setPaintingIconVisible(false);
-                }else if(RenderingState.RENDERING.equals(event.getNewRenderingstate())){
-                    getInformationDecoration().setPaintingIconVisible(true);
-                }else{
-                    getInformationDecoration().setPaintingIconVisible(false);
+                if(AbstractCanvas.RENDERSTATE_KEY.equals(evt.getPropertyName())){
+                    final RenderingState state = (RenderingState) evt.getNewValue();
+                    if(RenderingState.ON_HOLD.equals(state)){
+                        getInformationDecoration().setPaintingIconVisible(false);
+                    }else if(RenderingState.RENDERING.equals(state)){
+                        getInformationDecoration().setPaintingIconVisible(true);
+                    }else{
+                        getInformationDecoration().setPaintingIconVisible(false);
+                    }
                 }
             }
         });

@@ -46,8 +46,6 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.visitor.ListingColorVisitor;
 import org.opengis.display.canvas.RenderingState;
-import org.opengis.display.container.GraphicsContainer;
-import org.opengis.display.primitive.Graphic;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -279,7 +277,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
 
         });
 
-        for(Graphic gra : graphics){
+        for(SceneNode gra : graphics){
             if(!(gra instanceof GraphicJ2D)){
                 //this node has no visual representation
                 continue;
