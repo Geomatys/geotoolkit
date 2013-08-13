@@ -17,8 +17,8 @@
 
 package org.geotoolkit.display2d.style;
 
-import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedObject;

@@ -65,7 +65,7 @@ public interface MapContext extends MapItem{
     List<MapLayer> layers();
 
     /**
-     * Return the enveloppe of all layers.
+     * Return the envelope of all layers.
      */
     Envelope getBounds() throws IOException;
 

@@ -86,7 +86,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
     });
 
     public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer) {
-        super(canvas, layer);
+        super(canvas, layer, true);
         this.coverageFinder = CoverageFinderFactory.createDefaultCoverageFinder();
         model = (PyramidalCoverageReference)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
@@ -94,7 +94,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
     }
     
     public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer, CoverageFinder coverageFinder) {
-        super(canvas, layer);
+        super(canvas, layer, true);
         this.coverageFinder = coverageFinder;
         model = (PyramidalCoverageReference)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value
@@ -238,7 +238,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         }
         
         //tiles to render         
-        final Set<Point3d> ttiles = new HashSet<Point3d>();
+        final Set<Point3d> ttiles = new HashSet<>();
         
         for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){   
             for(int tileRow=(int)tileMinRow; tileRow<tileMaxRow; tileRow++){
@@ -252,7 +252,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         }
 
         //update graphic tiles -------------------------------------------------
-        final Collection<Point3d> toRemove = new ArrayList<Point3d>();
+        final Collection<Point3d> toRemove = new ArrayList<>();
         loop:
         for(StatefullTileJ2D st : gtiles.values()){
             if(ttiles.contains(st.getCoordinate())){
@@ -350,7 +350,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         if(tileMaxRow > gridHeight) tileMaxRow = gridHeight;
                 
         //tiles to render         
-        final Set<Point3d> ttiles = new HashSet<Point3d>();
+        final Set<Point3d> ttiles = new HashSet<>();
         
         if( ((tileMaxCol-tileMinCol)*(tileMaxRow-tileMinRow)) > 100){
             

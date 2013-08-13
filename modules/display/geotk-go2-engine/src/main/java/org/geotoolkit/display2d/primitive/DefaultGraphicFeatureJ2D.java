@@ -27,8 +27,8 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.*;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -58,7 +58,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements ProjectedFeature {
+public class DefaultGraphicFeatureJ2D extends GraphicJ2D implements ProjectedFeature {
 
     private final FeatureMapLayer layer;
 
@@ -258,12 +258,7 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
 
     @Override
     public Envelope getEnvelope() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean intersects(Envelope candidateEnvelope) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return feature.getBounds();
     }
 
 }

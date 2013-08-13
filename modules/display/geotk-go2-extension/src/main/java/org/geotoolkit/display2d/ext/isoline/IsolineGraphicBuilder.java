@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.FeatureMapLayer;

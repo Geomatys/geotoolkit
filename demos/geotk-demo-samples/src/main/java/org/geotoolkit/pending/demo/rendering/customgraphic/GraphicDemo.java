@@ -53,7 +53,7 @@ public class GraphicDemo {
         final SquaresGraphic graphic = new SquaresGraphic(canvas);
 
         //add the graphic in the scene
-        canvas.getContainer().add(graphic);
+        canvas.getContainer().getRoot().getChildren().add(graphic);
 
 
         final JFrame frm = new JFrame();

@@ -21,10 +21,11 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.logging.Level;
 import static javax.swing.SwingConstants.*;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
+import org.opengis.geometry.Envelope;
 
 /**
  * Java2D graphic object displaying a north arrow.
@@ -45,6 +46,16 @@ public class GraphicNorthArrowJ2D extends PositionedGraphic2D{
         this.template = template;
     }
 
+    @Override
+    public Object getUserObject() {
+        return template;
+    }
+
+    @Override
+    public Envelope getEnvelope() {
+        return null;
+    }
+    
     /**
      * {@inheritDoc }
      */

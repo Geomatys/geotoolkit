@@ -43,7 +43,7 @@ public abstract class AbstractMapItem implements MapItem {
     
     protected final EventListenerList listeners = new EventListenerList();
 
-    private final Map<String,Object> parameters = new HashMap<String,Object>();
+    private final Map<String,Object> parameters = new HashMap<>();
 
     protected String name = null;
 

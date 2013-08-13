@@ -30,10 +30,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
-import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.*;
@@ -78,7 +78,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
     protected final StatelessContextParams params;
     
     public StatelessCollectionLayerJ2D(final J2DCanvas canvas, final T layer){
-        super(canvas, layer);
+        super(canvas, layer, false);
         params = new StatelessContextParams(canvas,layer);
     }
     

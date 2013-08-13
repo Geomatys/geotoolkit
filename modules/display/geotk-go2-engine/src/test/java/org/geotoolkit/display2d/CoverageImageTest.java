@@ -35,7 +35,7 @@ import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;

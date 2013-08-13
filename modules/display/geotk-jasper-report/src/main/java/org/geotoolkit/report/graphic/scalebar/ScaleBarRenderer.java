@@ -34,7 +34,7 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRenderable;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.scalebar.DefaultScaleBarTemplate;
 import org.geotoolkit.display2d.ext.scalebar.J2DScaleBarUtilities;
 import org.geotoolkit.display2d.ext.scalebar.ScaleBarTemplate;

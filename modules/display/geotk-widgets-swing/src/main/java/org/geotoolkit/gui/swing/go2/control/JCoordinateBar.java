@@ -2,8 +2,8 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2009 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -61,8 +60,6 @@ import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.jdesktop.swingx.JXBusyLabel;
-import org.jdesktop.swingx.JXMultiSplitPane;
-import org.jdesktop.swingx.MultiSplitLayout;
 
 import org.opengis.display.canvas.CanvasEvent;
 import org.opengis.display.canvas.CanvasListener;
@@ -387,7 +384,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
             baseMapComponent = map.getComponent(0);
             baseMapComponent.addMouseMotionListener(listener);
             this.map.getCanvas().addCanvasListener(listener);
-            map.getCanvas().addPropertyChangeListener(J2DCanvas.OBJECTIVE_CRS_PROPERTY, listener);
+            map.getCanvas().addPropertyChangeListener(listener);
  
             baseMapContainer.remove(baseMapComponent);
  
@@ -457,8 +454,10 @@ public class JCoordinateBar extends AbstractMapControlBar {
 
         @Override
         public void propertyChange(final PropertyChangeEvent arg0) {
-            CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
-            guiCRS.setText(crs.getName().toString());
+            if(J2DCanvas.OBJECTIVE_CRS_PROPERTY.equals(arg0.getPropertyName())){
+                CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
+                guiCRS.setText(crs.getName().toString());
+            }
         }
 
         @Override

@@ -35,7 +35,7 @@ public class StatefullFeatureMapLayerJ2D extends StatefullMapLayerJ2D<FeatureMap
 
     
     public StatefullFeatureMapLayerJ2D(J2DCanvas canvas, FeatureMapLayer layer) {
-        super(canvas, layer);
+        super(canvas, layer, false);
         final Session session = layer.getCollection().getSession();
         weakSessionListener.registerSource(session);
     }

@@ -27,7 +27,7 @@ import javax.swing.JComponent;
 import javax.swing.Timer;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.opengis.display.canvas.CanvasEvent;

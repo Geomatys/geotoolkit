@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display.exception;
+package org.geotoolkit.display;
 
 /**
  * Exception that may be thrown by a portraying operation.

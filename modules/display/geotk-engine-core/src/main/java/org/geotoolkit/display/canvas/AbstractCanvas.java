@@ -18,10 +18,11 @@
 package org.geotoolkit.display.canvas;
 
 import javax.swing.event.EventListenerList;
+import org.geotoolkit.display.DisplayElement;
+import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.canvas.control.FailOnErrorMonitor;
 import org.geotoolkit.display.canvas.event.DefaultCanvasEvent;
-import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.factory.Hints;
 
 import org.opengis.display.canvas.Canvas;
@@ -29,15 +30,13 @@ import org.opengis.display.canvas.CanvasEvent;
 import org.opengis.display.canvas.CanvasListener;
 import org.opengis.display.canvas.CanvasState;
 import org.opengis.display.canvas.RenderingState;
-import org.opengis.display.container.ContainerEvent;
-import org.opengis.display.container.ContainerListener;
 import org.opengis.geometry.DirectPosition;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Manages the display and user manipulation of {@link Graphic} instances. A newly constructed
- * {@code Canvas} is initially empty. To make something appears, {@link Graphic}s must be added
+ * {@code Canvas} is initial empty. To make something appears, {@link Graphic}s must be added
  * using the {@link AbstractContainer#add(org.opengis.display.primitive.Graphic) } method.
  * The visual content depends of the {@code Graphic}
  * subclass. The contents are usually symbols, features or images, but some implementations
@@ -64,45 +63,18 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * @author Martin Desruisseaux (IRD)
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractCanvas<T extends AbstractContainer> extends DisplayObject implements Canvas{
+public abstract class AbstractCanvas<T extends GraphicContainer> extends DisplayElement implements Canvas{
 
     /**
      * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
      * {@linkplain AbstractCanvas#getMonitor canvas monitor} changed.
      */
-    public static final String MONITOR_PROPERTY = "monitor";
+    public static final String MONITOR_KEY = "monitor";
 
     /**
-     * Small number for floating point comparaisons.
+     * Small number for floating point compare.
      */
     protected static final double EPS = 1E-12;
-
-    /**
-     * Listener on the renderer to be notified when graphics change.
-     */
-    private final ContainerListener containerListener = new ContainerListener() {
-
-        @Override
-        public void graphicsAdded(ContainerEvent event) {
-            AbstractCanvas.this.graphicsAdded(event);
-        }
-
-        @Override
-        public void graphicsRemoved(ContainerEvent event) {
-            AbstractCanvas.this.graphicsRemoved(event);
-        }
-
-        @Override
-        public void graphicsChanged(ContainerEvent event) {
-            AbstractCanvas.this.graphicsChanged(event);
-        }
-
-        @Override
-        public void graphicsDisplayChanged(ContainerEvent event){
-            AbstractCanvas.this.graphicsDisplayChanged(event);
-        }
-
-    };
 
     /**
      * Container used by this canvas
@@ -120,7 +92,7 @@ public abstract class AbstractCanvas<T extends AbstractContainer> extends Displa
     protected CanvasMonitor monitor = new FailOnErrorMonitor();
 
     /**
-     * Creates an initially empty canvas.
+     * Creates an initial empty canvas.
      *
      * @param hints The initial set of hints, or {@code null} if none.
      */
@@ -128,22 +100,11 @@ public abstract class AbstractCanvas<T extends AbstractContainer> extends Displa
         super(hints);
     }
 
-    
-
     /**
      * Set the graphics container for this canvas.
      */
     public void setContainer(final T container){
-        if(this.container != null){
-            this.container.removeContainerListener(containerListener);
-        }
-
         this.container = container;
-
-        if(this.container != null){
-            this.container.addContainerListener(containerListener);
-        }
-        
     }
 
     /**
@@ -178,7 +139,7 @@ public abstract class AbstractCanvas<T extends AbstractContainer> extends Displa
             old = this.monitor;
             this.monitor = monitor;
         }
-        propertyListeners.firePropertyChange(MONITOR_PROPERTY, old, monitor);
+        firePropertyChange(MONITOR_KEY, old, monitor);
     }
 
     /**
@@ -249,35 +210,6 @@ public abstract class AbstractCanvas<T extends AbstractContainer> extends Displa
         final CanvasEvent event = new DefaultCanvasEvent(this, null, null, null, oldState, state);
         fireCanvasEvent(event);
         oldState = state;
-    }
-
-    //------------------------container events-----------------------------------
-    /**
-     * This method is automaticly called when a event is generate by the canvas
-     * container when a graphic object is added.
-     */
-    protected void graphicsAdded(final ContainerEvent event) {
-    }
-
-    /**
-     * This method is automaticly called when a event is generate by the canvas
-     * container when a graphic object is removed.
-     */
-    protected void graphicsRemoved(final ContainerEvent event) {
-    }
-
-    /**
-     * This method is automaticly called when a event is generate by the canvas
-     * container when a graphic object changes.
-     */
-    protected void graphicsChanged(final ContainerEvent event) {
-    }
-
-    /**
-     * This method is automaticly called when a event is generate by the canvas
-     * container when a graphic display changes.
-     */
-    protected void graphicsDisplayChanged(final ContainerEvent event) {
     }
 
 

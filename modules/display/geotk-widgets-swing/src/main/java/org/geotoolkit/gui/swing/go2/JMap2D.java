@@ -34,7 +34,6 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasSwing;
 import org.geotoolkit.display2d.canvas.SwingVolatileGeoComponent;
 import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.display2d.container.DefaultContextContainer2D;
 import org.geotoolkit.gui.swing.BufferLayout;
 import org.geotoolkit.gui.swing.go2.decoration.ColorDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.DefaultInformationDecoration;
@@ -112,7 +111,7 @@ public class JMap2D extends JPanel{
         mapDecorationPane.add(geoComponent, Integer.valueOf(0));
         mapDecorationPane.revalidate();
 
-        canvas.setContainer(new DefaultContextContainer2D(canvas, statefull));
+        canvas.setContainer(new ContextContainer2D(canvas, statefull));
         canvas.getController().setAutoRepaint(true);
 
 
@@ -160,7 +159,7 @@ public class JMap2D extends JPanel{
     
     /**
      * Must be called when the map2d is not used anymore.
-     * to avoid memoryleack if it uses thread or other resources
+     * to avoid memory leak if it uses thread or other resources
      */
     public void dispose() {
         canvas.dispose();

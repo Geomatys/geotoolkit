@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,50 +18,45 @@ package org.geotoolkit.display.primitive;
 
 import java.util.List;
 import java.util.logging.Level;
-import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
-import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.canvas.VisitFilter;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.display.SearchArea;
+import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.referencing.CRS;
+import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
-
 /**
- * A graphic implementation with default support for Coordinate Reference System (CRS) management.
- * This class provides some methods specific to the GeotoolKit implementation of graphic primitive.
- * The {@link org.geotoolkit.display.canvas.ReferencedCanvas} expects instances of this class.
- *
- * @module pending
- * @since 2.3
- * @version $Id$
- * @author Martin Desruisseaux (IRD)
+ * 
+ * 
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractReferencedGraphic extends AbstractGraphic implements ReferencedGraphic {
-    
-    /**
-     * Constructs a new graphic.
-     */
-    protected AbstractReferencedGraphic(final AbstractReferencedCanvas2D canvas)
-            throws IllegalArgumentException {
+public abstract class SpatialNode extends SceneNode{
+
+    public SpatialNode(Canvas canvas) {
         super(canvas);
     }
 
-    @Override
-    public AbstractReferencedCanvas2D getCanvas() {
-        return (AbstractReferencedCanvas2D) super.getCanvas();
+    public SpatialNode(Canvas canvas, boolean allowChildren) {
+        super(canvas, allowChildren);
     }
+    
+    /**
+     * Returns an envelope that completely encloses the graphic. Note that there is no guarantee
+     * that the returned envelope is the smallest bounding box that encloses the graphic, only
+     * that the graphic lies entirely within the indicated envelope.
+     * <p>
+     * The default implementation returns a {@linkplain GeneralEnvelope#setToNull null envelope}.
+     * Subclasses should compute their envelope and invoke {@link #setEnvelope} as soon as they can.
+     *
+     * @see #setEnvelope
+     */
+    public abstract Envelope getEnvelope();
 
-    @Override
-    public Envelope getEnvelope() {
-        return null;
-    }
-
-    @Override
-    public boolean intersects(final Envelope candidateEnvelope) {
+    public boolean intersects(final Envelope candidateEnvelope){
         final Envelope graphicEnv = getEnvelope();
         if(graphicEnv == null){
             return true;
@@ -93,7 +87,6 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
      * @param point : point in display crs
      * @return ReferencedGraphic, can be this object or a child object
      */
-    @Override
     public abstract List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics);
-
+    
 }

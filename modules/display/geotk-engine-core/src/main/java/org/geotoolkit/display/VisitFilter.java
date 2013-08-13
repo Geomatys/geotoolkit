@@ -14,28 +14,15 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.container.stateless;
-
-import java.util.Collection;
-import java.util.Collections;
-import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.display2d.container.ContextGraphicBuilder;
-import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.map.MapContext;
+package org.geotoolkit.display;
 
 /**
+ * Filtering type that can be used to limit graphic visiting.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
  */
-public class StatelessContextGraphicBuilder implements ContextGraphicBuilder{
+public enum VisitFilter {
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Collection<? extends GraphicJ2D> createGraphics(final J2DCanvas canvas, final MapContext context) {
-        return Collections.singleton(new StatelessMapItemJ2D(canvas, context));
-    }
-
+    INTERSECTS,
+    WITHIN
 }

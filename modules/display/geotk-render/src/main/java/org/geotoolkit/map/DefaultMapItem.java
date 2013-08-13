@@ -27,7 +27,7 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCopyOnWriteArrayList;
 
 /**
- * Sample map item. not a layer or a mapcontext.
+ * Sample map item. not a layer or a map context.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending

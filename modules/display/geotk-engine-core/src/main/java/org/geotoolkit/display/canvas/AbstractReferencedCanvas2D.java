@@ -24,6 +24,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -69,8 +70,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
      * {@link CoordinateOperationFactory#createOperation} as much as possible. If a
      * transformation is not available in this collection, then the usual factory will be used.
      */
-    private final transient Map<CoordinateReferenceSystem,MathTransform> transforms =
-            new HashMap<CoordinateReferenceSystem,MathTransform>();
+    private final transient Map<CoordinateReferenceSystem,MathTransform> transforms = new HashMap<>();
 
     private final Rectangle2D.Double displayBounds = new Rectangle2D.Double(0, 0, 0, 0);
     private final AffineTransform objToDisp = new AffineTransform(1, 0, 0, 1, 0, 0);
@@ -134,7 +134,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
 
         envelope = new GeneralEnvelope(objective);
         objectiveCRS2D = CRSUtilities.getCRS2D(objective);
-        propertyListeners.firePropertyChange(OBJECTIVE_CRS_PROPERTY, oldObjectiveCRS, envelope.getCoordinateReferenceSystem());
+        firePropertyChange(OBJECTIVE_CRS_PROPERTY, oldObjectiveCRS, envelope.getCoordinateReferenceSystem());
 
         if(preserve != null){
             //restore previous visible area
@@ -196,7 +196,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
         envelope.setRange(0, canvasObjectiveBounds.getMinX(), canvasObjectiveBounds.getMaxX());
         envelope.setRange(1, canvasObjectiveBounds.getMinY(), canvasObjectiveBounds.getMaxY());
         //fire event
-        propertyListeners.firePropertyChange(ENVELOPE_PROPERTY, old, envelope);
+        firePropertyChange(ENVELOPE_PROPERTY, old, envelope);
     }
 
     //only available in this package by the controller --------------------
@@ -222,7 +222,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
         final Envelope old = envelope.clone();
         envelope.setRange(ordinate, min, max);
         //fire event
-        propertyListeners.firePropertyChange(ENVELOPE_PROPERTY, old, envelope);
+        firePropertyChange(ENVELOPE_PROPERTY, old, envelope);
 
         repaintIfAuto();
     }
@@ -253,7 +253,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
 
             //fire event and repaint
             updateEnvelope();
-            propertyListeners.firePropertyChange(OBJECTIVE_TO_DISPLAY_PROPERTY, old, getObjectiveToDisplay());
+            firePropertyChange(OBJECTIVE_TO_DISPLAY_PROPERTY, old, getObjectiveToDisplay());
             repaintIfAuto();
 
         }
@@ -315,7 +315,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
 
                 //fire event and repaint
                 updateEnvelope();
-                propertyListeners.firePropertyChange(OBJECTIVE_TO_DISPLAY_PROPERTY, old, getObjectiveToDisplay());
+                firePropertyChange(OBJECTIVE_TO_DISPLAY_PROPERTY, old, getObjectiveToDisplay());
                 repaintIfAuto();
             }
         }
@@ -471,7 +471,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
         final Logger logger = getLogger();
         if (logger.isLoggable(Level.FINER)) {
             // FINER is the default level for entering, returning, or throwing an exception.
-            final LogRecord record = Loggings.getResources(getLocale()).getLogRecord(Level.FINER,
+            final LogRecord record = Loggings.getResources(Locale.getDefault()).getLogRecord(Level.FINER,
                     Loggings.Keys.INITIALIZING_TRANSFORMATION_2,
                     toString(sourceCRS), toString(targetCRS));
             record.setSourceClassName (sourceClassName.getName());

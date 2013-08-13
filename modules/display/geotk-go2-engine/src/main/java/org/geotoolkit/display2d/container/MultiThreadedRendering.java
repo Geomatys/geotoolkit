@@ -45,7 +45,7 @@ public class MultiThreadedRendering{
     private final MapItem context;
     private final Map<MapItem, GraphicJ2D> layerGraphics;
     private final RenderingContext2D renderingContext;
-    private final SortedMap<Integer, BufferedImage> buffers = new TreeMap<Integer, BufferedImage>();
+    private final SortedMap<Integer, BufferedImage> buffers = new TreeMap<>();
 
 
     public MultiThreadedRendering(final MapItem context,

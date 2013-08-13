@@ -173,6 +173,12 @@ public class DisplayElement {
         hints.put(key, value);
     }
     
+    public void setRenderingHints(Hints hints){
+        if(hints==null) return;
+        final Hints th = getHints(true);
+        th.add(hints);
+    }
+    
     /**
      * Method that can be called when an object is no longer needed. Implementations may use
      * this method to release resources, if needed. Implementations may also implement this

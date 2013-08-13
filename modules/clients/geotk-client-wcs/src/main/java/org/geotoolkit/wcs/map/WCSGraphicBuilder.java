@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -31,14 +31,13 @@ import javax.imageio.ImageIO;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
-import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
@@ -84,7 +83,7 @@ final class WCSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
     }
 
-    private static class WCSGraphic extends AbstractGraphicJ2D{
+    private static class WCSGraphic extends GraphicJ2D{
 
         private final WCSMapLayer layer;
 
@@ -140,6 +139,16 @@ final class WCSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         @Override
         public List<Graphic> getGraphicAt(final RenderingContext context, final SearchArea mask, final VisitFilter filter, final List<Graphic> graphics) {
             return graphics;
+        }
+
+        @Override
+        public Object getUserObject() {
+            return layer;
+        }
+
+        @Override
+        public Envelope getEnvelope() {
+            return layer.getBounds();
         }
 
     }

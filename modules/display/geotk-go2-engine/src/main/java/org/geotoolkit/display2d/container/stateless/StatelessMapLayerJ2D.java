@@ -28,8 +28,8 @@ import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
@@ -81,9 +81,9 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
     private SoftReference<Collection<? extends GraphicJ2D>> weakGraphic = null;
     
 
-    public StatelessMapLayerJ2D(final J2DCanvas canvas, final T layer){
+    public StatelessMapLayerJ2D(final J2DCanvas canvas, final T layer, boolean allowChildren){
         //do not use layer crs here, to long to calculate
-        super(canvas, layer);
+        super(canvas, layer, allowChildren);
         weakListener.registerSource(layer);
     }
 

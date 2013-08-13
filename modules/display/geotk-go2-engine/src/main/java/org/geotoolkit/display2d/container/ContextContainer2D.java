@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,16 +18,12 @@ package org.geotoolkit.display2d.container;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.display.canvas.AbstractCanvas;
-import org.geotoolkit.display.container.AbstractContainer2D;
-import org.geotoolkit.display.primitive.ReferencedGraphic;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -39,6 +35,11 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display.container.DefaultGraphicContainer;
+import org.geotoolkit.display.primitive.SceneNode;
+import org.geotoolkit.display2d.container.statefull.StatefullMapItemJ2D;
+import org.geotoolkit.display2d.container.stateless.StatelessMapItemJ2D;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.opengis.display.canvas.CanvasState;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
@@ -56,14 +57,14 @@ import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
 
 /**
- * This is the general usecase of a renderer, this renderer is made to work
+ * This is the general use case of a renderer, this renderer is made to work
  * with MapContext objects, each MapContext describing MapLayers and related coverages or
  * features.ContextContainer2D
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract  class ContextContainer2D extends AbstractContainer2D{
+public class ContextContainer2D extends DefaultGraphicContainer{
 
     public static final String CONTEXT_PROPERTY = "context";
 
@@ -89,7 +90,7 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
         final Fill selectionFill = GO2Utilities.STYLE_FACTORY.fill(selectionColor, GO2Utilities.FILTER_FACTORY.literal(0.6f));
         final Expression wkn = StyleConstants.MARK_CIRCLE;
         final Mark mark = GO2Utilities.STYLE_FACTORY.mark(wkn, selectionFill, selectionStroke);
-        final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
+        final List<GraphicalSymbol> symbols = new ArrayList<>();
         symbols.add(mark);
         final Expression opacity = GO2Utilities.FILTER_FACTORY.literal(1d);
         final Expression expSize = GO2Utilities.FILTER_FACTORY.literal(14);
@@ -113,13 +114,22 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
         DEFAULT_SELECTION_STYLE = style;
     }
 
-    protected final PropertyChangeSupport support = new PropertyChangeSupport(this);
-
+    
+    private GraphicJ2D contextGraphic = null;
+    private final boolean statefull;
+    private MapContext context = null;
+    
     /**
      * CreContextContainer2D with no particular hints.
      */
-    protected ContextContainer2D(final J2DCanvas canvas){
-        super(canvas);
+    public ContextContainer2D(final J2DCanvas canvas, final boolean statefull){
+        super(canvas, new SceneNode(canvas));
+        this.statefull = statefull;
+    }
+
+    @Override
+    public J2DCanvas getCanvas() {
+        return (J2DCanvas)super.getCanvas();
     }
 
     /**
@@ -127,13 +137,15 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
      */
     @Override
     public void dispose() {
-        super.dispose();
+        final SceneNode root = getRoot();
+        if(root!=null){
+            root.dispose();
+        }
     }
 
     /**
      * {@inheritDoc }
      */
-    @Override
     public Rectangle2D getGraphicsEnvelope2D() {
         CoordinateReferenceSystem crs = getCanvas().getObjectiveCRS();
         try {
@@ -149,9 +161,7 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
                 }
             }
 
-        } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        } catch (TransformException ex) {
+        } catch (IOException | TransformException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }
 
@@ -159,7 +169,7 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
     }
 
     /**
-     * Returns an envelope that completly encloses all {@linkplain ReferencedGraphic#getEnvelope()
+     * Returns an envelope that completely encloses all {@linkplain ReferencedGraphic#getEnvelope()
      * graphic envelopes} managed by this canvas. Note that there is no guarantee that the returned
      * envelope is the smallest bounding box that encloses the canvas, only that the canvas lies
      * entirely within the indicated envelope.
@@ -168,12 +178,11 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
      * {@link CanvasState#getCenter() }, since the later returns
      * an envelope that encloses only the <em>visible</em> canvas area and is scale-dependent. This
      * {@code ReferencedCanvas.getEnvelope()} method is scale-independent. Both envelopes are equal
-     * if the scale is choosen in such a way that all graphics fit exactly in the canvas visible
+     * if the scale is chosen in such a way that all graphics fit exactly in the canvas visible
      * area.
      *
      * @return The envelope for this canvas in terms of {@linkplain AbstractCanvas#getObjectiveCRS() objective CRS}.
      */
-    @Override
     public GeneralEnvelope getGraphicsEnvelope(){
         CoordinateReferenceSystem crs = getCanvas().getObjectiveCRS();
         try {
@@ -191,9 +200,7 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
                 }
             }
 
-        } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        } catch (TransformException ex) {
+        } catch (IOException | TransformException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }
 
@@ -204,35 +211,51 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
     }
 
     /**
-     * @inheritDoc
-     */
-    @Override
-    protected void updateObjectiveCRS(final CoordinateReferenceSystem crs)
-            throws TransformException{
-    }
-
-    /**
      * Set the mapcontext to render.
      * this will remove all previous graphics builded with the context.
      * <b>Caution</b> this should not remove graphics unrelated to the context.
      *
-     * @param context : Mapcontext to render
+     * @param context : MapContext to render
      */
-    public abstract void setContext(MapContext context);
+    public void setContext(MapContext context){
+        
+        if(this.context != null && context != null){
+            if(this.context.equals(context)){
+                //same context
+                return;
+            }
+        }
+
+        //dispose previous context graphic
+        if(contextGraphic!=null){
+            getRoot().getChildren().remove(contextGraphic);
+            contextGraphic.dispose();
+        }
+        
+        final MapContext oldcontext = this.context;
+        this.context = context;
+
+        if(this.context != null){
+            //create the new graphics
+            if(statefull){
+                contextGraphic = new StatefullMapItemJ2D(getCanvas(), context, true);
+            }else{
+                contextGraphic = new StatelessMapItemJ2D(getCanvas(), context, true);
+            }
+            
+            getRoot().getChildren().add(contextGraphic);
+        }
+
+        firePropertyChange(CONTEXT_PROPERTY, oldcontext, this.context);
+    }
 
     /**
      * Returns the currently renderered map context
      *
-     * @return Mapcontext or null
+     * @return MapContext or null
      */
-    public abstract MapContext getContext();
-
-    public void addPropertyChangeListener(final PropertyChangeListener listener){
-        support.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(final PropertyChangeListener listener){
-        support.removePropertyChangeListener(listener);
+    public MapContext getContext(){
+        return context;
     }
 
 }

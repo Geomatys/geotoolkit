@@ -15,7 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.xml.bind.JAXBException;
 
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.DefaultBackgroundTemplate;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendService;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendTemplate;

@@ -40,7 +40,7 @@ import javax.swing.SwingConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.ext.grid.DefaultGridTemplate;
 import org.geotoolkit.display2d.ext.grid.GraphicGridJ2D;
@@ -171,7 +171,7 @@ public final class DecorationXMLParser {
 
         final Map<String, String> params = parseParameters(decoNode);
         final BackgroundTemplate background = parseBackground(decoNode);
-        final Map<String, Object> parsed = new HashMap<String, Object>();
+        final Map<String, Object> parsed = new HashMap<>();
 
         //offsets are the same for everyone
         parsed.put(PARAM_OFFSET_X, parseInteger(params.get(PARAM_OFFSET_X), 0));
@@ -903,7 +903,7 @@ public final class DecorationXMLParser {
 
     public static class DecorationExtension implements PortrayalExtension {
 
-        private final List<Map<String, Object>> decorations = new ArrayList<Map<String, Object>>();
+        private final List<Map<String, Object>> decorations = new ArrayList<>();
 
         List<Map<String, Object>> getParameters() {
             return decorations;
@@ -921,26 +921,26 @@ public final class DecorationXMLParser {
                     final PositionedGraphic2D compasDeco = new GraphicNorthArrowJ2D(canvas, arrowTemplate);
                     compasDeco.setPosition((Integer) params.get(PARAM_POSITION));
                     compasDeco.setOffset((Integer) params.get(PARAM_OFFSET_X), (Integer) params.get(PARAM_OFFSET_Y));
-                    canvas.getContainer().add(compasDeco);
+                    canvas.getContainer().getRoot().getChildren().add(compasDeco);
 
                 } else if (type.equalsIgnoreCase(TYPE_GRID)) {
                     final GridTemplate gridTemplate = (GridTemplate) params.get(TYPE_GRID);
                     final GraphicGridJ2D girdDeco = new GraphicGridJ2D(canvas, gridTemplate);
-                    canvas.getContainer().add(girdDeco);
+                    canvas.getContainer().getRoot().getChildren().add(girdDeco);
 
                 } else if (type.equalsIgnoreCase(TYPE_IMAGE)) {
                     final ImageTemplate imgTemplate = (ImageTemplate) params.get(TYPE_IMAGE);
                     final PositionedGraphic2D imageDeco = new GraphicImageJ2D(canvas, imgTemplate);
                     imageDeco.setPosition((Integer) params.get(PARAM_POSITION));
                     imageDeco.setOffset((Integer) params.get(PARAM_OFFSET_X), (Integer) params.get(PARAM_OFFSET_Y));
-                    canvas.getContainer().add(imageDeco);
+                    canvas.getContainer().getRoot().getChildren().add(imageDeco);
 
                 } else if (type.equalsIgnoreCase(TYPE_LEGEND)) {
                     final LegendTemplate legendTemplate = (LegendTemplate) params.get(TYPE_LEGEND);
                     final GraphicLegendJ2D legendDeco = new GraphicLegendJ2D(canvas, legendTemplate);
                     legendDeco.setPosition((Integer) params.get(PARAM_POSITION));
                     legendDeco.setOffset((Integer) params.get(PARAM_OFFSET_X), (Integer) params.get(PARAM_OFFSET_Y));
-                    canvas.getContainer().add(legendDeco);
+                    canvas.getContainer().getRoot().getChildren().add(legendDeco);
 
                 } else if (type.equalsIgnoreCase(TYPE_SCALE_GRAPHIC)) {
                     final ScaleBarTemplate template = (ScaleBarTemplate) params.get(TYPE_SCALE_GRAPHIC);
@@ -948,7 +948,7 @@ public final class DecorationXMLParser {
                     scaleDeco.setTemplate(template);
                     scaleDeco.setPosition((Integer) params.get(PARAM_POSITION));
                     scaleDeco.setOffset((Integer) params.get(PARAM_OFFSET_X), (Integer) params.get(PARAM_OFFSET_Y));
-                    canvas.getContainer().add(scaleDeco);
+                    canvas.getContainer().getRoot().getChildren().add(scaleDeco);
 
                 } else if (type.equalsIgnoreCase(TYPE_SCALE_NUMERIC)) {
                     //not handle yet
@@ -957,7 +957,7 @@ public final class DecorationXMLParser {
                     final PositionedGraphic2D textDeco = new GraphicTextJ2D(canvas, textTemplate);
                     textDeco.setPosition((Integer) params.get(PARAM_POSITION));
                     textDeco.setOffset((Integer) params.get(PARAM_OFFSET_X), (Integer) params.get(PARAM_OFFSET_Y));
-                    canvas.getContainer().add(textDeco);
+                    canvas.getContainer().getRoot().getChildren().add(textDeco);
 
                 }
 

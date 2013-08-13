@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,15 +14,22 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display.canvas;
+package org.geotoolkit.display;
+
+import org.geotoolkit.display.primitive.SceneNode;
 
 /**
- * Filtering type that can be used to limit graphic visiting.
  *
  * @author Johann Sorel (Geomatys)
  */
-public enum VisitFilter {
-
-    INTERSECTS,
-    WITHIN
+public interface SceneVisitor {
+    
+    /**
+     * 
+     * @param node
+     * @param extraData
+     * @return visit result
+     */
+    Object visit(SceneNode node, Object extraData);
+    
 }

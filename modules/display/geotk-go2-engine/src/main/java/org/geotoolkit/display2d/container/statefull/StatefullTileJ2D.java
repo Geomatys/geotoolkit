@@ -78,7 +78,7 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
 
     public StatefullTileJ2D(GridMosaic mosaic, Point3d coordinate, J2DCanvas canvas, 
             CoverageMapLayer item, CachedRule[] rules) {
-        super(canvas, item);
+        super(canvas, item, false);
         this.mosaic = mosaic;
         this.coordinate = coordinate;
         this.rules = rules;

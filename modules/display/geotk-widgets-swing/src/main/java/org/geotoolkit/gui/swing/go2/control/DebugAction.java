@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -105,8 +105,7 @@ public class DebugAction extends AbstractMapAction {
 
             if (map != null) {
                 final GraphicProbe gp = new GraphicProbe(map.getCanvas(), this);
-                gp.setZOrderHint(Double.MIN_VALUE);
-                map.getCanvas().getContainer().add(gp);
+                map.getCanvas().getContainer().getRoot().getChildren().add(gp);
             }
 
         }

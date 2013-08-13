@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
@@ -20,6 +19,8 @@ package org.geotoolkit.gui.swing.go2.control.navigation;
 import java.awt.event.ActionEvent;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.logging.Level;
+import org.geotoolkit.display.container.GraphicContainer;
+import org.geotoolkit.display2d.container.ContextContainer2D;
 
 import org.geotoolkit.gui.swing.go2.control.AbstractMapAction;
 import org.geotoolkit.gui.swing.resource.IconBundle;
@@ -43,16 +44,15 @@ public class ZoomAllAction extends AbstractMapAction {
     @Override
     public void actionPerformed(final ActionEvent arg0) {
         if (map != null) {
-            final Envelope rect = map.getCanvas().getContainer().getGraphicsEnvelope();
-            try {
-                map.getCanvas().getController().setVisibleArea(rect);
-            } catch (TransformException ex) {
-                getLogger().log(Level.WARNING, null, ex);
-            } catch (IllegalArgumentException ex) {
-                getLogger().log(Level.WARNING, null, ex);
-            } catch (NoninvertibleTransformException ex) {
-                getLogger().log(Level.WARNING, null, ex);
-            } 
+            final GraphicContainer container = map.getCanvas().getContainer();
+            if(container instanceof ContextContainer2D){
+                final Envelope rect = ((ContextContainer2D)container).getGraphicsEnvelope();
+                try {
+                    map.getCanvas().getController().setVisibleArea(rect);
+                } catch (TransformException | IllegalArgumentException | NoninvertibleTransformException ex) {
+                    getLogger().log(Level.WARNING, null, ex);
+                } 
+            }
         }
     }
 

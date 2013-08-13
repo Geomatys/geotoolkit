@@ -20,13 +20,14 @@ package org.geotoolkit.display2d.ext.grid;
 
 import java.util.List;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.geometry.Envelope;
 
 /**
  * Graphic decoration to paint a grid.
@@ -34,7 +35,7 @@ import org.opengis.display.primitive.Graphic;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GraphicGridJ2D extends AbstractGraphicJ2D{
+public class GraphicGridJ2D extends GraphicJ2D{
 
     private final GridTemplate template;
 
@@ -52,6 +53,16 @@ public class GraphicGridJ2D extends AbstractGraphicJ2D{
     @Override
     public List<Graphic> getGraphicAt(final RenderingContext context, final SearchArea mask, final VisitFilter filter, final List<Graphic> graphics) {
         return graphics;
+    }
+
+    @Override
+    public Object getUserObject() {
+        return null;
+    }
+
+    @Override
+    public Envelope getEnvelope() {
+        return null;
     }
 
 

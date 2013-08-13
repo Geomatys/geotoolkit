@@ -22,13 +22,14 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.logging.Level;
 import static javax.swing.SwingConstants.*;
-import org.geotoolkit.display.container.AbstractContainer2D;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
 import org.geotoolkit.map.MapContext;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -56,7 +57,7 @@ public class GraphicLegendJ2D extends PositionedGraphic2D{
             return;
         }
         
-        final AbstractContainer2D container = getCanvas().getContainer();
+        final GraphicContainer container = getCanvas().getContainer();
         if(!(container instanceof ContextContainer2D)) return;
 
         final ContextContainer2D cc = (ContextContainer2D) container;
@@ -124,6 +125,16 @@ public class GraphicLegendJ2D extends PositionedGraphic2D{
         } catch (PortrayalException ex) {
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
         }
+    }
+
+    @Override
+    public Object getUserObject() {
+        return null;
+    }
+
+    @Override
+    public Envelope getEnvelope() {
+        return null;
     }
 
 }

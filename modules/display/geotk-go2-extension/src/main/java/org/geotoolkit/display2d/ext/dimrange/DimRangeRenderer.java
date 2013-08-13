@@ -30,7 +30,7 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.processing.ColorMap;
 import org.geotoolkit.coverage.processing.CoverageProcessingException;
 import org.geotoolkit.coverage.processing.Operations;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;

@@ -18,7 +18,7 @@
 package org.geotoolkit.display2d.service;
 
 import java.awt.Shape;
-import org.geotoolkit.display.canvas.GraphicVisitor;
+import org.geotoolkit.display2d.GraphicVisitor;
 
 /**
  *

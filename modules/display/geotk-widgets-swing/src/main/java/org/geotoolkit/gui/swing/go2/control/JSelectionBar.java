@@ -43,7 +43,6 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
-import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.gui.swing.go2.JMap2D;
@@ -56,6 +55,7 @@ import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.GeotkClipboard;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display.container.GraphicContainer;
 import org.opengis.filter.Filter;
 import org.openide.awt.DropDownButtonFactory;
 
@@ -173,13 +173,13 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
     }
 
     private void copyToClipboard(boolean systemclipboard, boolean append){
-        final AbstractContainer2D container = map.getCanvas().getContainer();
+        final GraphicContainer container = map.getCanvas().getContainer();
 
         if(container instanceof ContextContainer2D){
             final ContextContainer2D cc = (ContextContainer2D) container;
             final MapContext context = cc.getContext();
 
-            final List<FeatureCollection> selections = new ArrayList<FeatureCollection>();
+            final List<FeatureCollection> selections = new ArrayList<>();
             final StringBuilder sb = new StringBuilder();
             for(MapLayer layer : context.layers()){
                 if(layer instanceof FeatureMapLayer){
@@ -198,9 +198,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
                                     sb.append("\n");
                                 }
                             }
-                        } catch (DataStoreException ex) {
-                            LOGGER.log(Level.WARNING, ex.getMessage(),ex);
-                        } catch (FeatureStoreRuntimeException ex) {
+                        } catch (DataStoreException | FeatureStoreRuntimeException ex) {
                             LOGGER.log(Level.WARNING, ex.getMessage(),ex);
                         }finally {
                             if(ite != null){

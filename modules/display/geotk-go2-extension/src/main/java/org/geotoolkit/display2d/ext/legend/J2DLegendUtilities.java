@@ -35,7 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
