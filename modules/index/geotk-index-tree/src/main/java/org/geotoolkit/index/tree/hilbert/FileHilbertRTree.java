@@ -78,7 +78,7 @@ public final class FileHilbertRTree<E> extends HilbertRTree<E> {
     }
     
     /**
-     * Create a {@link HilbertRTree} implementation from an already filled file which contain {@link HilbertRTree} architecture.<br/><br/>
+     * Open a {@link HilbertRTree} implementation from an already filled file which contain {@link HilbertRTree} architecture.<br/><br/>
      * 
      * Note : the default buffer length which read and write on hard drive is 4096 {@code Byte}.
      * 
@@ -95,7 +95,7 @@ public final class FileHilbertRTree<E> extends HilbertRTree<E> {
     }
     
     /**
-     * Create a {@link HilbertRTree} implementation from an already filled file which contain {@link HilbertRTree} architecture.<br/><br/>
+     * Open a {@link HilbertRTree} implementation from an already filled file which contain {@link HilbertRTree} architecture.<br/><br/>
      * 
      * Note : in this implementation user may choose length of buffer which read and write on hard drive.<br/>
      * User may increase reading and writing performance in function of the owned memory.

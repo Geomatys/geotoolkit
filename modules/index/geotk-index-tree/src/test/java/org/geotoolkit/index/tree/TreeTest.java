@@ -64,6 +64,22 @@ public abstract class TreeTest {
         return true;
     }
     
+    protected boolean compareID (final int[] tabA, final int[] tabB) {
+        if (tabA.length != tabB.length) return false;
+        if (tabA.length == 0 && tabB.length == 0) return true;
+        for (int intA : tabA) {
+            boolean found = false;
+            for (int intB : tabB) {
+                if (intA == intB) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) return false;
+        }
+        return true;
+    }
+    
     /**
      * Compare 2 lists elements.
      *

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.util.Iterator;
 import org.geotoolkit.internal.tree.TreeAccess;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
@@ -43,19 +44,19 @@ public interface Tree<E> {
      */
     int[] searchID(final Envelope regionSearch) throws StoreIndexException;
     
-//    /**
-//     * Find some {@code Entry} which intersect regionSearch parameter
-//     * and add them into result {@code List} parameter.
-//     *
-//     * <blockquote><font size=-1>
-//     * <strong>NOTE: if no result found, the list passed in parameter is unchanged.</strong>
-//     * </font></blockquote>
-//     *
-//     * @param regionSearch Define the region to find Shape within tree.
-//     * @param result List of Entr(y)(ies).
-//     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
-//     */
-//    Iterable<E> search(Envelope regionSearch) throws StoreIndexException;
+    /**
+     * Find some {@code Entry} which intersect regionSearch parameter
+     * and add them into result {@code List} parameter.
+     *
+     * <blockquote><font size=-1>
+     * <strong>NOTE: if no result found, the list passed in parameter is unchanged.</strong>
+     * </font></blockquote>
+     *
+     * @param regionSearch Define the region to find Shape within tree.
+     * @param result List of Entr(y)(ies).
+     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
+     */
+    TreeIdentifierIterator search(final Envelope regionSearch) throws StoreIndexException;
     
     /**
      * Insert a {@code Entry} into Rtree.

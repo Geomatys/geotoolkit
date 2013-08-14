@@ -29,31 +29,62 @@ import static org.geotoolkit.index.tree.TreeUtilities.*;
 import static org.geotoolkit.index.tree.TreeTest.createEntry;
 import org.geotoolkit.internal.tree.TreeAccess;
 import static org.junit.Assert.assertTrue;
-import org.junit.Ignore;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 
 /**
+ * Test suite adapted for all {@link Tree} implementation.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
  */
 public abstract class AbstractTreeTest extends TreeTest {
-
-    int nbrTemp = 0;
+    /**
+     * data number inserted in Tree.
+     */
+    private final int lSize = 300;
     
-    //debug 
-    int lSize = 300;
+    /**
+     * Data list which contain data use in this test series.
+     */
+    private final List<double[]> lData = new ArrayList<double[]>();
     
+    /**
+     * Tree CRS.
+     */
+    private final CoordinateReferenceSystem crs;
+    
+    /**
+     * Dimension of Tree CRS space.
+     */
+    private final int dimension;
+    
+    /**
+     * double table which contain "extends" area of all data.
+     */
+    private final double[] minMax;
+    
+    /**
+     * Contain Tree Node architecture.
+     */
     protected TreeAccess tAF;
+    
+    /**
+     * Tested Tree.
+     */
     protected Tree<double[]> tree;
-    protected final List<double[]> lData = new ArrayList<double[]>();
-    protected final CoordinateReferenceSystem crs;
-    protected final int dimension;
-    protected final double[] minMax;
+    
+    /**
+     * Do link between between TreeIdentifier and objects.
+     */
     protected TreeElementMapper<double[]> tEM;
     
+    /**
+     * Create tests series from specified {@link CoordinateReferenceSystem}.
+     * 
+     * @param crs 
+     */
     protected AbstractTreeTest(final CoordinateReferenceSystem crs) {
         this.crs = crs;
         this.dimension = crs.getCoordinateSystem().getDimension();
@@ -77,21 +108,30 @@ public abstract class AbstractTreeTest extends TreeTest {
         }
     } 
     
+    /**
+     * Create test series from specified {@link Tree}.
+     * 
+     * @param tree Tree which will be test.
+     */
     protected AbstractTreeTest(final Tree tree) {
         this(tree.getCrs());
         this.tree = tree;
         this.tEM  = tree.getTreeElementMapper();
     }
 
+    /**
+     * Insert appropriate elements in Tree.
+     * 
+     * @throws StoreIndexException if problem during insertion.
+     * @throws IOException if problem during {@link TreeElementMapper#clear() } method.
+     */
     protected void insert() throws StoreIndexException, IOException {
         tEM.clear();
-        nbrTemp = 0;
-        for (int i = 0, s = lSize/*lData.size()*/; i < s; i++) {
+        for (int i = 0, s = lSize; i < s; i++) {
             final double[] envData = lData.get(i).clone();
             tree.insert(envData);
-//            checkNodeBoundaryTest(tree.getRoot(), lData);
-            nbrTemp++;
         }
+        assertTrue("after massive insertion root node should not be null", tree.getRoot() != null);
     }
     
     /**
@@ -110,8 +150,15 @@ public abstract class AbstractTreeTest extends TreeTest {
         rG.setEnvelope(gr);
         
         int[] tabSearch = tree.searchID(rG);
-        assertTrue(tabSearch.length == nbrTemp);
-        assertTrue(tree.getElementsNumber() == nbrTemp);
+        final TreeIdentifierIterator triter = tree.search(rG);
+        final int[] tabIterSearch = new int[tabSearch.length];
+        int tabID = 0;
+        while (triter.hasNext()) {
+            tabIterSearch[tabID++] = triter.nextInt();
+        }
+        assertTrue("comparison between tabSearch from iterator not equals with tabSearch", compareID(tabSearch, tabIterSearch));
+        assertTrue(tabSearch.length == lSize);
+        assertTrue(tree.getElementsNumber() == lSize);
         try {
             final double[] ge = new double[]{ Double.NaN, 10, 5, Double.NaN};
             tree.insert(ge);
@@ -213,9 +260,15 @@ public abstract class AbstractTreeTest extends TreeTest {
         final GeneralEnvelope rG = new GeneralEnvelope(crs);
         rG.setEnvelope(gR);
         
-        int[] tabSearch = tree.searchID(rG);
+        final int[] tabSearch = tree.searchID(rG);
+        final TreeIdentifierIterator triter = tree.search(rG);
+        final int[] tabIterSearch = new int[tabSearch.length];
+        int tabID = 0;
+        while (triter.hasNext()) {
+            tabIterSearch[tabID++] = triter.nextInt();
+        }
+        assertTrue("comparison between tabSearch from iterator not equals with tabSearch", compareID(tabSearch, tabIterSearch));
         assertTrue(compareLists(lGERef, Arrays.asList(getResult(tabSearch))));
-//        checkNodeBoundaryTest(tree.getRoot(), lGE);
     }
     
     /**
@@ -232,11 +285,15 @@ public abstract class AbstractTreeTest extends TreeTest {
         final GeneralEnvelope rG = new GeneralEnvelope(crs);
         rG.setEnvelope(getExtent(lData));
         
-        // visitor
         int[] tabSearch = tree.searchID(rG);
-//        List<double[]> ld = Arrays.asList(getResult(tabSearch));
+        final TreeIdentifierIterator triter = tree.search(rG);
+        final int[] tabIterSearch = new int[tabSearch.length];
+        int tabID = 0;
+        while (triter.hasNext()) {
+            tabIterSearch[tabID++] = triter.nextInt();
+        }
+        assertTrue("comparison between tabSearch from iterator not equals with tabSearch", compareID(tabSearch, tabIterSearch));
         assertTrue(compareLists(lDataTemp, Arrays.asList(getResult(tabSearch))));
-//        checkNodeBoundaryTest(tree.getRoot(), lData);
     }
     
      /**
@@ -257,8 +314,14 @@ public abstract class AbstractTreeTest extends TreeTest {
         rG.setEnvelope(areaSearch);
         
         int[] tabResult = tree.searchID(rG);
-        assertTrue(tabResult == null || tabResult.length == 0);
-//        checkNodeBoundaryTest(tree.getRoot(), lData);
+        final TreeIdentifierIterator triter = tree.search(rG);
+        final int[] tabIterSearch = new int[tabResult.length];
+        int tabID = 0;
+        while (triter.hasNext()) {
+            tabIterSearch[tabID++] = triter.nextInt();
+        }
+        assertTrue("comparison between tabSearch from iterator not equals with tabSearch", compareID(tabResult, tabIterSearch));
+        assertTrue(tabResult.length == 0);
     }
     
     /**
@@ -269,7 +332,6 @@ public abstract class AbstractTreeTest extends TreeTest {
     @Test
     public void insertDelete() throws StoreIndexException, IOException {
         if (tree.getRoot() == null) insert();
-//        checkNodeBoundaryTest(tree.getRoot(), lData);
         Collections.shuffle(lData);
         for (int i = 0, s = lSize; i < s; i++) {
             assertTrue(tree.remove(lData.get(i)));
@@ -279,23 +341,40 @@ public abstract class AbstractTreeTest extends TreeTest {
         rG.setEnvelope(minMax.clone());
         
         int[] tabSearch = tree.searchID(rG);
-        assertTrue(tabSearch == null);
+        TreeIdentifierIterator triter = tree.search(rG);
+        int[] tabIterSearch = new int[tabSearch.length];
+        int tabID = 0;
+        while (triter.hasNext()) {
+            Assert.fail("test should not be pass here.");
+            tabIterSearch[tabID++] = triter.nextInt();
+        }
+        assertTrue(tabSearch.length == 0);
         assertTrue(tree.getElementsNumber() == 0);
-////        assertTrue(checkTreeElts(tree));
+        
         insert();
         tabSearch = tree.searchID(rG);
+        triter    = tree.search(rG);
+        tabIterSearch = new int[tabSearch.length];
+        tabID = 0;
+        while (triter.hasNext()) {
+            tabIterSearch[tabID++] = triter.nextInt();
+        }
+        assertTrue("comparison between tabSearch from iterator not equals with tabSearch", compareID(tabSearch, tabIterSearch));
         assertTrue(compareLists(lData, Arrays.asList(getResult(tabSearch))));
     }
     
+    /**
+     * Return result given by {@link TreeElementMapper} from tree identifier table given in parameter.
+     * 
+     * @param tabID tree identifier table results.
+     * @return all object result (in our case Object = double[]).
+     * @throws IOException if problem during tree identifier "translate".
+     */
     protected double[][] getResult(int[] tabID) throws IOException {
         final int l = tabID.length;
         double[][] tabResult = new double[l][];
         for (int i = 0; i < l; i++) {
-            try {
-                tabResult[i] = tEM.getObjectFromTreeIdentifier(tabID[i]);
-            } catch (Exception ex) {
-                System.out.println("");
-            }
+            tabResult[i] = tEM.getObjectFromTreeIdentifier(tabID[i]);
         }
         return tabResult;
     }
