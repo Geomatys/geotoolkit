@@ -50,66 +50,113 @@ public final class TreeX {
         ArgumentChecks.ensureNonNull("TreeX search : SpatialFilterType", logicFilter);
         if (!CRS.equalsIgnoreMetadata(regionSearch.getCoordinateReferenceSystem(), tree.getCrs())) 
             throw new IllegalArgumentException("TreeX search : the 2 CRS within tree and region search should be equals.");
-        TreeElementMapper tEM = tree.getTreeElementMapper();
-        int[] tabSearch = tree.searchID(regionSearch);
-        int[] tabResult = new int[tabSearch.length];
+        final TreeElementMapper tEM = tree.getTreeElementMapper();
+        TreeIdentifierIterator iterSearch = tree.search(regionSearch);
+        int tabResultLength = 100;
+        int[] tabResult = new int[tabResultLength];
         int currentPosition = 0;
         try {
             switch (logicFilter) {
                 case INTERSECTS : case BBOX : {
-                    return tabSearch;
+                    return tree.searchID(regionSearch);
                 } 
                 case CONTAINS : {
-                    for (int i = 0; i < tabSearch.length; i++) {
-                        final Envelope env = (Envelope) tEM.getObjectFromTreeIdentifier(tabSearch[i]);
-                        if (contains(getCoords(env), getCoords(regionSearch), true)) tabResult[currentPosition++] = tabSearch[i];
+                    while (iterSearch.hasNext()) {
+                        final int currentTreeID = iterSearch.nextInt();
+                         final Envelope env = tEM.getEnvelope(tEM.getObjectFromTreeIdentifier(currentTreeID));
+                        if (contains(getCoords(env), getCoords(regionSearch), true)) {
+                            if (currentPosition == tabResultLength) {
+                                tabResultLength = tabResultLength << 1;
+                                final int[] tabTemp = tabResult;
+                                tabResult = new int[tabResultLength];
+                                System.arraycopy(tabTemp, 0, tabResult, 0, currentPosition);
+                            }
+                            tabResult[currentPosition++] = currentTreeID;
+                        }
                     }
                 } break;
                 case DISJOINT : {
-                    int[] tabRef;
-                    final GeneralEnvelope env = new GeneralEnvelope(tree.getCrs());
-                    env.setEnvelope(tree.getRoot().getBoundary());
-                    tabRef = tree.searchID(env);
-                    tabResult = new int[Math.max(tabSearch.length, tabRef.length)];
-                    for(int i = 0; i < tabRef.length; i++) {
-                        final Envelope envRef = (Envelope) tEM.getObjectFromTreeIdentifier(tabRef[i]);
-                        boolean find = false;
-                        for(int j = 0; j < tabSearch.length; j++) {
-                            final Envelope envSearch = (Envelope) tEM.getObjectFromTreeIdentifier(tabSearch[j]);
-                            if(envRef == envSearch){
-                                find = true;
-                                break;
+                    final GeneralEnvelope treeExtends = new GeneralEnvelope(tree.getCrs());
+                    treeExtends.setEnvelope(tree.getExtent());
+                    final TreeIdentifierIterator allIter = tree.search(treeExtends);
+                    
+                    while (allIter.hasNext()) {
+                        final int currentTreeID = allIter.nextInt();
+                         final Envelope env = tEM.getEnvelope(tEM.getObjectFromTreeIdentifier(currentTreeID));
+                        if (!intersects(getCoords(env), getCoords(regionSearch), true)) {
+                            if (currentPosition == tabResultLength) {
+                                tabResultLength = tabResultLength << 1;
+                                final int[] tabTemp = tabResult;
+                                tabResult = new int[tabResultLength];
+                                System.arraycopy(tabTemp, 0, tabResult, 0, currentPosition);
                             }
+                            tabResult[currentPosition++] = currentTreeID;
                         }
-                        if (!find) tabResult[currentPosition++] = tabRef[i];
                     }
                 } break;
                 case WITHIN : {
-                    for ( int i = 0; i < tabSearch.length; i++) {
-                        final Envelope env = (Envelope) tEM.getObjectFromTreeIdentifier(tabSearch[i]);
-                        if (contains(getCoords(regionSearch), getCoords(env), true)) tabResult[currentPosition++] = tabSearch[i];
+                    
+                    while (iterSearch.hasNext()) {
+                        final int currentTreeID = iterSearch.nextInt();
+                         final Envelope env = tEM.getEnvelope(tEM.getObjectFromTreeIdentifier(currentTreeID));
+                        if (contains(getCoords(regionSearch), getCoords(env), true)) {
+                            if (currentPosition == tabResultLength) {
+                                tabResultLength = tabResultLength << 1;
+                                final int[] tabTemp = tabResult;
+                                tabResult = new int[tabResultLength];
+                                System.arraycopy(tabTemp, 0, tabResult, 0, currentPosition);
+                            }
+                            tabResult[currentPosition++] = currentTreeID;
+                        }
                     }
                 } break;
                 case TOUCHES : {
-                    for(int i = 0; i < tabSearch.length; i++){
-                        final Envelope env = (Envelope) tEM.getObjectFromTreeIdentifier(tabSearch[i]);
-                        if (touches(getCoords(regionSearch), getCoords(env))) tabResult[currentPosition++] = tabSearch[i];
+                    while (iterSearch.hasNext()) {
+                        final int currentTreeID = iterSearch.nextInt();
+                         final Envelope env = tEM.getEnvelope(tEM.getObjectFromTreeIdentifier(currentTreeID));
+                        if (touches(getCoords(regionSearch), getCoords(env))) {
+                            if (currentPosition == tabResultLength) {
+                                tabResultLength = tabResultLength << 1;
+                                final int[] tabTemp = tabResult;
+                                tabResult = new int[tabResultLength];
+                                System.arraycopy(tabTemp, 0, tabResult, 0, currentPosition);
+                            }
+                            tabResult[currentPosition++] = currentTreeID;
+                        }
                     }
                 } break;
                 case EQUALS : {
-                    for(int i = 0; i < tabSearch.length; i++){
-                        final Envelope envelop = (Envelope) tEM.getObjectFromTreeIdentifier(tabSearch[i]);
-                        final double[] env = getCoords(envelop);
-                        if (arrayEquals(env, getCoords(regionSearch), 1E-9)) tabResult[currentPosition++] = tabSearch[i];
+                    while (iterSearch.hasNext()) {
+                        final int currentTreeID = iterSearch.nextInt();
+                         final Envelope env = tEM.getEnvelope(tEM.getObjectFromTreeIdentifier(currentTreeID));
+                        if (arrayEquals(getCoords(env), getCoords(regionSearch), 1E-9)) {
+                            if (currentPosition == tabResultLength) {
+                                tabResultLength = tabResultLength << 1;
+                                final int[] tabTemp = tabResult;
+                                tabResult = new int[tabResultLength];
+                                System.arraycopy(tabTemp, 0, tabResult, 0, currentPosition);
+                            }
+                            tabResult[currentPosition++] = currentTreeID;
+                        }
                     }
                 } break;
                 case OVERLAPS : {
-                    for (int i = 0; i < tabSearch.length; i++) {
-                        final Envelope envelop = (Envelope) tEM.getObjectFromTreeIdentifier(tabSearch[i]);
-                        final double[] env = getCoords(envelop);
+                    
+                    while (iterSearch.hasNext()) {
+                        final int currentTreeID = iterSearch.nextInt();
+                         final Envelope envelop = tEM.getEnvelope(tEM.getObjectFromTreeIdentifier(currentTreeID));
+                         final double[] env = getCoords(envelop);
                         if (intersects(getCoords(regionSearch), env, false) 
                         && !contains(env, getCoords(regionSearch), true) 
-                        && !contains(getCoords(regionSearch), env, true)) tabResult[currentPosition++] = tabSearch[i];
+                        && !contains(getCoords(regionSearch), env, true)) {
+                            if (currentPosition == tabResultLength) {
+                                tabResultLength = tabResultLength << 1;
+                                final int[] tabTemp = tabResult;
+                                tabResult = new int[tabResultLength];
+                                System.arraycopy(tabTemp, 0, tabResult, 0, currentPosition);
+                            }
+                            tabResult[currentPosition++] = currentTreeID;
+                        }
                     }
                 } break;
                 default : throw new IllegalStateException("not implemented yet");
