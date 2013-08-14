@@ -22,18 +22,19 @@ import org.geotoolkit.data.iso8211.ISO8211Reader;
 
 /**
  * Wrap an ISO 8211 Reader, returning S-57 objects for each field.
- * 
+ *
  * Not thread safe.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class S57FileReader extends S57Reader {
-    
+
     protected ISO8211Reader isoReader;
-    
+
     public S57FileReader() {
     }
-    
+
+    @Override
     public void setInput(Object input){
         if(input instanceof ISO8211Reader){
             this.isoReader = (ISO8211Reader) input;
@@ -42,26 +43,26 @@ public class S57FileReader extends S57Reader {
             this.isoReader.setInput(input);
         }
     }
-        
+
     @Override
     protected void findNext() throws IOException {
         if(record != null){
             //already found
             return;
         }
-        
+
         while(isoReader.hasNext() && record==null){
             final DataRecord rec = isoReader.next();
-            if(predicate!=null && !predicate.match(rec)) continue;                
+            if(predicate!=null && !predicate.match(rec)) continue;
             record = toS57Object(rec);
         }
     }
-    
+
     @Override
     public void dispose() throws IOException{
         if(isoReader!= null){
             isoReader.dispose();
         }
     }
-    
+
 }

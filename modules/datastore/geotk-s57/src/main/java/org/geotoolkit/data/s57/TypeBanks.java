@@ -110,9 +110,11 @@ public final class TypeBanks extends Static {
         return getBanks(null);
     }
 
-    public static int getFeatureTypeCode(String name) throws DataStoreException{
+    public static int getFeatureTypeCode(final String name) throws DataStoreException{
         int code = -1;
-        for(TypeBank bank : getBanks()){
+        final Iterator<TypeBank> ite = getBanks().iterator();
+        while(ite.hasNext() && code == -1){
+            final TypeBank bank = ite.next();
             try{
                 code = bank.getFeatureTypeCode(name);
             }catch(DataStoreException ex){
@@ -125,9 +127,11 @@ public final class TypeBanks extends Static {
         return code;
     }
 
-    public static String getFeatureTypeName(int code) throws DataStoreException{
+    public static String getFeatureTypeName(final int code) throws DataStoreException{
         String name = null;
-        for(TypeBank bank : getBanks()){
+        final Iterator<TypeBank> ite = getBanks().iterator();
+        while(ite.hasNext() && name == null){
+            final TypeBank bank = ite.next();
             try{
                 name = bank.getFeatureTypeName(code);
             }catch(DataStoreException ex){
@@ -140,9 +144,11 @@ public final class TypeBanks extends Static {
         return name;
     }
 
-    public static int getPropertyTypeCode(String name) throws DataStoreException{
+    public static int getPropertyTypeCode(final String name) throws DataStoreException{
         int code = -1;
-        for(TypeBank bank : getBanks()){
+        final Iterator<TypeBank> ite = getBanks().iterator();
+        while(ite.hasNext() && code == -1){
+            final TypeBank bank = ite.next();
             try{
                 code = bank.getPropertyTypeCode(name);
             }catch(DataStoreException ex){
@@ -155,9 +161,11 @@ public final class TypeBanks extends Static {
         return code;
     }
 
-    public static String getPropertyTypeName(int code) throws DataStoreException{
+    public static String getPropertyTypeName(final int code) throws DataStoreException{
         String name = null;
-        for(TypeBank bank : getBanks()){
+        final Iterator<TypeBank> ite = getBanks().iterator();
+        while(ite.hasNext() && name == null){
+            final TypeBank bank = ite.next();
             try{
                 name = bank.getPropertyTypeName(code);
             }catch(DataStoreException ex){
@@ -170,9 +178,11 @@ public final class TypeBanks extends Static {
         return name;
     }
 
-    public static FeatureType getFeatureType(String name, CoordinateReferenceSystem crs) throws DataStoreException{
+    public static FeatureType getFeatureType(final String name, CoordinateReferenceSystem crs) throws DataStoreException{
         FeatureType type = null;
-        for(TypeBank bank : getBanks()){
+        final Iterator<TypeBank> ite = getBanks().iterator();
+        while(ite.hasNext() && type == null){
+            final TypeBank bank = ite.next();
             try{
                 type = bank.getFeatureType(name,crs);
             }catch(DataStoreException ex){
@@ -185,11 +195,14 @@ public final class TypeBanks extends Static {
         return type;
     }
 
-    public static FeatureType getFeatureType(int code, CoordinateReferenceSystem crs) throws DataStoreException{
+    public static FeatureType getFeatureType(final int code, CoordinateReferenceSystem crs) throws DataStoreException{
         FeatureType type = null;
-        for(TypeBank bank : getBanks()){
+        final Iterator<TypeBank> ite = getBanks().iterator();
+        while(ite.hasNext() && type == null){
+            final TypeBank bank = ite.next();
             try{
                 type = bank.getFeatureType(code,crs);
+                if(type!=null) break;
             }catch(DataStoreException ex){
                 //normal
             }
@@ -202,7 +215,9 @@ public final class TypeBanks extends Static {
 
     public static AttributeDescriptor getAttributeDescriptor(final String name) throws DataStoreException{
         AttributeDescriptor type = null;
-        for(TypeBank bank : getBanks()){
+        final Iterator<TypeBank> ite = getBanks().iterator();
+        while(ite.hasNext() && type == null){
+            final TypeBank bank = ite.next();
             try{
                 type = bank.getAttributeDescriptor(name);
             }catch(DataStoreException ex){
@@ -217,7 +232,9 @@ public final class TypeBanks extends Static {
 
     public static AttributeDescriptor getAttributeDescriptor(final int code) throws DataStoreException{
         AttributeDescriptor type = null;
-        for(TypeBank bank : getBanks()){
+        final Iterator<TypeBank> ite = getBanks().iterator();
+        while(ite.hasNext() && type == null){
+            final TypeBank bank = ite.next();
             try{
                 type = bank.getAttributeDescriptor(code);
             }catch(DataStoreException ex){

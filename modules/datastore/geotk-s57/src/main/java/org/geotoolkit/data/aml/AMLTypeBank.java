@@ -53,7 +53,7 @@ public final class AMLTypeBank implements TypeBank{
     private static Map<String,AMLAttribute> PT_ACC_KEY = new HashMap<>();
     private static Map<Integer,AMLAttribute> PT_CODE_KEY = new HashMap<>();
 
-    private AMLTypeBank(){}
+    public AMLTypeBank(){}
 
     private synchronized static Map<Integer,AMLAttribute> getAttributeByCodeMap(){
         getAttributeByAccMap();
@@ -79,7 +79,7 @@ public final class AMLTypeBank implements TypeBank{
      */
     @Override
     public Set<String> getFeatureTypeNames(){
-        final Set<String> names = new HashSet<String>();
+        final Set<String> names = new HashSet<>();
 
         final List<AMLFeatureType> types = getAMLObjects(AMLFeatureType.class);
         for(AMLFeatureType type : types){

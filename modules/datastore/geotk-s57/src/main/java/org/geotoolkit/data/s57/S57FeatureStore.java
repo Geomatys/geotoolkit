@@ -25,11 +25,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
@@ -38,7 +41,6 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.data.s57.annexe.S57TypeBank;
 import org.geotoolkit.data.s57.model.DataSetIdentification;
 import org.geotoolkit.data.s57.model.DataSetParameter;
 import org.geotoolkit.data.s57.model.FeatureRecord;
@@ -46,7 +48,6 @@ import org.geotoolkit.data.s57.model.S57FileReader;
 import org.geotoolkit.data.s57.model.S57Object;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
-import org.apache.sis.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -57,6 +58,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.data.s57.model.S57Reader;
 import org.geotoolkit.data.s57.model.S57UpdatedReader;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -74,9 +76,27 @@ public class S57FeatureStore extends AbstractFeatureStore{
     static final String BUNDLE_PATH = "org/geotoolkit/s57/bundle";
 
     private final QueryCapabilities capa = new DefaultQueryCapabilities(false, true);
+
+    /**
+     * Root file for S57 data. Can be a folder.
+     */
     private final File file;
-    private Set<FeatureType> types = null;
-    private Set<Name> names = null;
+
+    /**
+     * List of main S57 files, files that finish with the ".000" extension.
+     */
+    private List<File> mainFiles;
+
+    private final Map<File,List<Name>> fileTypes = new HashMap<>();
+    /**
+     * Feature types known.
+     */
+    private Set<FeatureType> types;
+
+    /**
+     * Names of feature types known.
+     */
+    private Set<Name> names;
 
     //S-57 metadata/description records
     private DataSetIdentification datasetIdentification;
@@ -111,7 +131,12 @@ public class S57FeatureStore extends AbstractFeatureStore{
     public VersionControl getVersioning(Name typeName) throws VersioningException {
         try {
             typeCheck(typeName);
-            return loadHistory();
+            final File file = getMainFileForTypeName(typeName);
+
+            if (file == null) {
+                throw new VersioningException("No main file!");
+            }
+            return loadHistory(file);
         } catch (DataStoreException ex) {
             throw new VersioningException(ex);
         }
@@ -144,35 +169,50 @@ public class S57FeatureStore extends AbstractFeatureStore{
         types = new HashSet<>();
         names = new HashSet<>();
 
-        final S57Reader reader = getS57Reader(null);
-        try{
-            while(reader.hasNext()){
-                final S57Object obj = reader.next();
-                if(obj instanceof DataSetIdentification){
-                    datasetIdentification = (DataSetIdentification) obj;
-                }else if(obj instanceof DataSetParameter){
-                    datasetParameter = (DataSetParameter) obj;
-                    crs = datasetParameter.buildCoordinateReferenceSystem();
-                }else if(obj instanceof FeatureRecord){
-                    final FeatureRecord rec = (FeatureRecord) obj;
-                    final int objlCode = rec.code;
-                    final FeatureType type = TypeBanks.getFeatureType(objlCode, crs);
-                    if(type == null){
-                        throw new DataStoreException("Unknown feature type OBJL : "+objlCode);
+        findMainFiles(null);
+
+        for (File mainFile : mainFiles) {
+            final S57Reader reader = getS57Reader(mainFile, null);
+            try{
+                final List<Name> fileNames = new ArrayList<>();
+                while(reader.hasNext()){
+                    final S57Object obj = reader.next();
+                    if(obj instanceof DataSetIdentification){
+                        datasetIdentification = (DataSetIdentification) obj;
+                    }else if(obj instanceof DataSetParameter){
+                        datasetParameter = (DataSetParameter) obj;
+                        crs = datasetParameter.buildCoordinateReferenceSystem();
+                    }else if(obj instanceof FeatureRecord){
+                        final FeatureRecord rec = (FeatureRecord) obj;
+                        final int objlCode = rec.code;
+                        FeatureType type = TypeBanks.getFeatureType(objlCode, crs);
+                        final FeatureTypeBuilder ftBuilder = new FeatureTypeBuilder();
+                        ftBuilder.copy(type);
+
+                        final DefaultName typeName = new DefaultName(type.getName().getNamespaceURI(),
+                                mainFile.getName().substring(0, mainFile.getName().length() - 4) +"_"+ type.getName().getLocalPart());
+                        ftBuilder.setName(typeName);
+                        type = ftBuilder.buildFeatureType();
+
+                        if(type == null){
+                            throw new DataStoreException("Unknown feature type OBJL : "+objlCode);
+                        }
+                        type.getUserData().put(S57TYPECODE, rec.code);
+                        types.add(type);
+                        names.add(type.getName());
+                        fileNames.add(type.getName());
                     }
-                    type.getUserData().put(S57TYPECODE, rec.code);
-                    types.add(type);
-                    names.add(type.getName());
+                    fileTypes.put(mainFile, fileNames);
                 }
-            }
-        }catch(IOException ex){
-            throw new DataStoreException(ex);
-        }finally{
-            try {
-                reader.dispose();
-            } catch (IOException ex) {
-                //we tryed
-                getLogger().log(Level.WARNING, ex.getMessage(), ex);
+            }catch(IOException ex){
+                throw new DataStoreException(ex);
+            }finally{
+                try {
+                    reader.dispose();
+                } catch (IOException ex) {
+                    //we tryed
+                    getLogger().log(Level.WARNING, ex.getMessage(), ex);
+                }
             }
         }
     }
@@ -184,13 +224,14 @@ public class S57FeatureStore extends AbstractFeatureStore{
         /** find the whished version */
         final Date vdate = query.getVersionDate();
         final String vlabel = query.getVersionLabel();
+        final File file = getMainFileForTypeName(query.getTypeName());
         S57Version wantedVersion = null;
         if(vdate!=null || vlabel != null){
             try{
                 if(vdate!=null){
-                    wantedVersion = (S57Version) loadHistory().getVersion(vdate);
+                    wantedVersion = (S57Version) loadHistory(file).getVersion(vdate);
                 }else{
-                    wantedVersion = (S57Version) loadHistory().getVersion(vlabel);
+                    wantedVersion = (S57Version) loadHistory(file).getVersion(vlabel);
                 }
             }catch(VersioningException ex){
                 throw new DataStoreException(ex);
@@ -198,16 +239,16 @@ public class S57FeatureStore extends AbstractFeatureStore{
         }
 
 
-        final S57Reader s57reader = getS57Reader(wantedVersion);
+        final S57Reader s57reader = getS57Reader(file, wantedVersion);
         final FeatureReader reader = new S57FeatureReader(this,ft,
                 (Integer)ft.getUserData().get(S57TYPECODE),s57reader,
                 datasetIdentification,datasetParameter);
         return handleRemaining(reader, query);
     }
 
-    private S57Reader getS57Reader(final S57Version version) throws DataStoreException{
+    private S57Reader getS57Reader(final File file, final S57Version version) throws DataStoreException{
 
-        final List<S57Version> versions = loadHistory().list();
+        final List<S57Version> versions = loadHistory(file).list();
 
         S57Reader reader = null;
         for(S57Version v : versions){
@@ -231,10 +272,12 @@ public class S57FeatureStore extends AbstractFeatureStore{
      * @return VersionHistory
      * @throws DataStoreException
      */
-    private synchronized S57VersionControl loadHistory() throws DataStoreException{
+    private synchronized S57VersionControl loadHistory(final File mainFile) throws DataStoreException{
         if(history!=null) return history;
-        final List<File> updateFiles = findUpdateFiles(null, null, null);
-        updateFiles.add(0, findMainFile(null));
+
+        final String baseName = mainFile.getName().substring(0, mainFile.getName().length()-4);
+        final List<File> updateFiles = findUpdateFiles(baseName, null, null);
+        updateFiles.add(0, mainFile);
         history = new S57VersionControl(updateFiles);
         return history;
     }
@@ -244,23 +287,25 @@ public class S57FeatureStore extends AbstractFeatureStore{
      * extension .000
      * @return File if found, DataStoreException otherwise
      */
-    private File findMainFile(File root) throws DataStoreException{
-        if(root == null){
+    private void findMainFiles(File root) throws DataStoreException {
+        if (mainFiles == null) {
+            mainFiles = new ArrayList<File>();
+        }
+
+        if (root == null) {
             root = file;
         }
 
-        if(root.isDirectory()){
+        if (root.isDirectory()) {
             //search sub files
-            for(File f : root.listFiles()){
-                File candidate = findMainFile(f);
-                if(candidate!=null) return candidate;
-            }
-        }else{
-            if(root.getName().endsWith(".000")){
-                return root;
+            for (File f : root.listFiles()) {
+                findMainFiles(f);
             }
         }
-        throw new DataStoreException("Could not find any S-57 base file, named xxx.000");
+
+        if (root.getName().endsWith(".000")) {
+           mainFiles.add(root);
+        }
     }
 
     /**
@@ -269,24 +314,21 @@ public class S57FeatureStore extends AbstractFeatureStore{
      * @param root
      * @return List<File>, never null
      */
-    private List<File> findUpdateFiles(String baseName,List<File> updateFiles, File root) throws DataStoreException{
-        if(root == null){
+    private List<File> findUpdateFiles(String baseName, List<File> updateFiles, File root) throws DataStoreException {
+        if (root == null) {
             root = file;
         }
-        if(baseName==null){
-            File main = findMainFile(null);
-            baseName = main.getName().substring(0, main.getName().length()-4);
-        }
-        if(updateFiles==null){
+        if (updateFiles == null) {
             updateFiles = new ArrayList<File>();
         }
-        if(root.isDirectory()){
+
+        if (root.isDirectory()) {
             //search sub files
-            for(File f : root.listFiles()){
+            for (File f : root.listFiles()) {
                 findUpdateFiles(baseName, updateFiles, f);
             }
-        }else{
-            if(root.getName().startsWith(baseName) && !root.getName().endsWith(".000")){
+        } else {
+            if (root.getName().startsWith(baseName) && !root.getName().endsWith(".000")) {
                 updateFiles.add(root);
             }
         }
@@ -296,6 +338,16 @@ public class S57FeatureStore extends AbstractFeatureStore{
         return updateFiles;
     }
 
+
+    private File getMainFileForTypeName(final Name typeName) {
+        for (Entry<File,List<Name>> entry : fileTypes.entrySet()) {
+            final List<Name> names = entry.getValue();
+            if (names.contains(typeName)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // WRITING OPERATIONS //////////////////////////////////////////////////////
