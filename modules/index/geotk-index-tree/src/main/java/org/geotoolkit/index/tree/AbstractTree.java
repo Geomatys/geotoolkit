@@ -20,11 +20,11 @@ import org.geotoolkit.internal.tree.CalculatorND;
 import org.geotoolkit.internal.tree.Calculator;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Iterator;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import static org.geotoolkit.index.tree.TreeUtilities.*;
 import org.geotoolkit.internal.tree.TreeAccess;
+import org.geotoolkit.path.iterator.HilbertIterator;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -205,11 +205,19 @@ public abstract class AbstractTree<E> implements Tree<E> {
         if (childCount == 1) return treeAccess.readNode(candidate.getChildId());
         final Node[] children = candidate.getChildren();
         assert children.length == childCount : "choose subtree : childcount should have same length as children table.";
-        for (Node fNod : children) {
+        Node containNode = null;
+        int cNElt = Integer.MAX_VALUE;
+        for (final Node fNod : children) {
             assert fNod.checkInternal() : "chooseSubTree : test contains.";
-            // on pourrai essayer d'equilibré l'arbre si plusieurs contienne une meme donnée la donner a celui qui a le moin d'element
-            if (contains(fNod.getBoundary(), coordinates, true)) return fNod;
+            if (contains(fNod.getBoundary(), coordinates, true)) {
+                final int chCount = fNod.getChildCount();
+                if (chCount < cNElt) {
+                    containNode = fNod;
+                    cNElt       = chCount;
+                }
+            }
         }
+        if (containNode != null) return containNode;
         Node result = children[0];
         double[] addBound = result.getBoundary().clone();
         for(int i = 1; i < childCount; i++) {
@@ -230,12 +238,12 @@ public abstract class AbstractTree<E> implements Tree<E> {
             assert Arrays.equals(dnBoundary, assertBound);
             if (areaTemp < area) {
                 result = dn;
-                area = areaTemp;
+                area   = areaTemp;
                 nbElmt = nbe;
             } else if (areaTemp == area) {
                 if (nbe < nbElmt) {
                     result = dn;
-                    area = areaTemp;
+                    area   = areaTemp;
                     nbElmt = nbe;
                 }
             }
@@ -255,13 +263,13 @@ public abstract class AbstractTree<E> implements Tree<E> {
         ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
         assert candidate.checkInternal() : "splitNode : begin.";
         
-        final Node[] children = candidate.getChildren();
+        final Node[] children          = candidate.getChildren();
         final byte candidateProperties = candidate.getProperties();
-        final int splitIndex  = defineSplitAxis(children);
+        final int splitIndex           = defineSplitAxis(children);
         
-        final int size = children.length;
+        final int size      = children.length;
         final double size04 = size * 0.4;
-        final int demiSize = (int) ((size04 >= 1) ? size04 : 1);
+        final int demiSize  = (int) ((size04 >= 1) ? size04 : 1);
         double[] unionTabA, unionTabB;
         
         // find a solution where overlaps between 2 groups is the smallest. 
@@ -316,7 +324,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
         
         // best organization solution 
         calculator.sort(splitIndex, lower_or_upper, children);
-        final int lengthResult2 = size - index;
+        final int lengthResult2      = size - index;
         final Node[] result1Children = new Node[index];
         final Node[] result2Children = new Node[lengthResult2];
                 
@@ -363,20 +371,20 @@ public abstract class AbstractTree<E> implements Tree<E> {
     protected int defineSplitAxis(final Node[] children) throws IOException {
         ArgumentChecks.ensureNonNull("candidate : ", children);
         
-        final int size = children.length;
+        final int size               = children.length;
         final double[][] childsBound = new double[size][];
         int cbID = 0;
         for (Node nod : children) childsBound[cbID++] = nod.getBoundary();
         
         final double size04 = size * 0.4;
-        final int demiSize = (int) ((size04 >= 1) ? size04 : 1);
+        final int demiSize  = (int) ((size04 >= 1) ? size04 : 1);
         double[][] splitTabA, splitTabB;
         double[] gESPLA, gESPLB;
         double bulkTemp;
         double bulkRef = Double.POSITIVE_INFINITY;
-        int index = 0;
+        int index      = 0;
         final double[] globalEltsArea = getEnvelopeMin(childsBound);
-        final int dim = globalEltsArea.length/2;//decal bit
+        final int dim = globalEltsArea.length >> 1;
         
         // if glogaleArea.span(currentDim) == 0 || if all elements have same span
         // value as global area on current ordinate, impossible to split on this axis.
@@ -488,7 +496,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
                 int sibl = candidate.getChildId();
                 while (sibl != 0) {
                     final Node currentChild = treeAccess.readNode(sibl);
-                    final boolean removed = removeNode(currentChild, identifier, coordinate);
+                    final boolean removed   = removeNode(currentChild, identifier, coordinate);
                     if (removed) return true;
                     sibl = currentChild.getSiblingId();
                 }

@@ -23,7 +23,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import org.apache.sis.util.ArgumentChecks;
-import org.opengis.geometry.Envelope;
 
 /**
  * Define a default abstract {@link TreeElementMapper} class, to store tree Identifiers on disk.
