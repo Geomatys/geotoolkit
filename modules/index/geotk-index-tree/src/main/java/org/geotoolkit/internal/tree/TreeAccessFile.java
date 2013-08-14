@@ -28,6 +28,7 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import org.geotoolkit.index.tree.Node;
+import org.geotoolkit.index.tree.StoreIndexException;
 import static org.geotoolkit.index.tree.TreeUtilities.intersects;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -476,7 +477,7 @@ public class TreeAccessFile extends TreeAccess {
     public void removeNode(final Node candidate) {
         recycleID.add(candidate.getNodeId());
     }
-        
+    
     /**
      * {@inheritDoc }.
      */

@@ -76,7 +76,7 @@ public class FileStarRTree<E> extends StarRTree<E> {
     }
     
     /**
-     * Create a {@link StarRTree} implementation from an already filled file which contain {@link StarRTree} architecture.<br/><br/>
+     * Open a {@link StarRTree} implementation from an already filled file which contain {@link StarRTree} architecture.<br/><br/>
      * 
      * Note : the default buffer length which read and write on hard drive is 4096 {@code Byte}.
      * 
@@ -93,7 +93,7 @@ public class FileStarRTree<E> extends StarRTree<E> {
     }
     
     /**
-     * Create a {@link StarRTree} implementation from an already filled file which contain {@link StarRTree} architecture.<br/><br/>
+     * Open a {@link StarRTree} implementation from an already filled file which contain {@link StarRTree} architecture.<br/><br/>
      * 
      * Note : in this implementation user may choose length of buffer which read and write on hard drive.<br/>
      * User may increase reading and writing performance in function of the owned memory.

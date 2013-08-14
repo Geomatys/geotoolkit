@@ -20,6 +20,7 @@ import org.geotoolkit.internal.tree.CalculatorND;
 import org.geotoolkit.internal.tree.Calculator;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Iterator;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import static org.geotoolkit.index.tree.TreeUtilities.*;
@@ -113,8 +114,18 @@ public abstract class AbstractTree<E> implements Tree<E> {
                         +Arrays.toString(regSearch)+" region search area.", ex);
             }
         }
-        return null;
+        return new int[0];
     }    
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public TreeIdentifierIterator search(final Envelope regionSearch) throws StoreIndexException {
+        ArgumentChecks.ensureNonNull("Envelope regionSearch", regionSearch);
+        final double[] regSearch = TreeUtilities.getCoords(regionSearch);
+        return new TreeIntegerIdentifierIterator(treeAccess, regSearch);
+    }
     
     /**
      * {@inheritDoc}

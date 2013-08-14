@@ -204,8 +204,9 @@ public abstract class TreeAccess {
      * Return root Node.
      * 
      * @return root Node.
+     * @throws StoreIndexException if problem during tree root node reading.
      */
-    public Node getRoot(){
+    public Node getRoot() throws StoreIndexException {
         return root;
     }
     
@@ -216,7 +217,7 @@ public abstract class TreeAccess {
      * @param treeIdentifier 
      * @see AbstractTree#close() 
      */
-    public void setTreeIdentifier(final int treeIdentifier){
+    public void setTreeIdentifier(final int treeIdentifier) {
         this.treeIdentifier = treeIdentifier;
     }
 
