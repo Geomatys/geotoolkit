@@ -56,29 +56,6 @@ public class TreeUtilities {
     
     private TreeUtilities() {
     }
-    
-    /**
-     * Compute recursively entries number contained in a {@link Node}.
-     * 
-     * @param node current within entries are. 
-     * @param count current count.
-     * @return entries number contained in a {@link Node}.
-     */
-    public static int countElementsRecursively(final Node node, int count) throws IOException {
-        if (node == null) return count;
-        if (node.isLeaf()) {
-//            count = count + ((node instanceof HilbertNode)?((HilbertNode)node).getDataCount() : node.getChildCount());
-        } else {
-            final TreeAccess tac = node.getTreeAccess();
-            int sibl = node.getChildId();
-            while (sibl != 0) {
-                final Node currentChild = tac.readNode(sibl);
-                count = countElementsRecursively(currentChild, count);
-                sibl = currentChild.getSiblingId();
-            }
-        }
-        return count;
-    }
 
     /**
      * Compute "envelope" bulk from its double coordinates table.
@@ -111,7 +88,7 @@ public class TreeUtilities {
         if (dim != 2) throw new IllegalArgumentException("getGeneralEnvelopPerimeter : compute envelop perimeter with more or lesser than two dimension have no sens");
         double perim = 0;
         for (int i = 0, l = dim; i < l; i++) perim += getSpan(envelope, i);
-        return 2 * perim;//decal bit
+        return 2 * perim;
     }
     
     /**

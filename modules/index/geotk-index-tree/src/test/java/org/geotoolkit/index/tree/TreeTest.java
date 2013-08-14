@@ -145,18 +145,6 @@ public abstract class TreeTest {
     }
     
     /**
-     * Find all entries number in a {@link Tree}.
-     * 
-     * @param tree where to looking for entries.
-     * @return all entries number in a {@link Tree}.
-     */
-    protected boolean checkTreeElts(Tree tree) throws IOException {
-        final int treeElement = tree.getElementsNumber();
-        return TreeUtilities.countElementsRecursively(tree.getRoot(), 0) == treeElement;
-    }
-    
-
-    /**
      * Create a default adapted test entry({@code GeneralEnvelope}).
      *
      * @param position the median of future entry.

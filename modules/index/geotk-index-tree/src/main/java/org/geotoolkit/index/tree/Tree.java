@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.util.Iterator;
 import org.geotoolkit.internal.tree.TreeAccess;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
