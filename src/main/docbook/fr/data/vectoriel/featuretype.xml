@@ -121,7 +121,7 @@
             </programlisting>
 
         <para>
-            Une attention particulière à été portée sur les différentes méthode toString() afin de simplifier le debuggage.
+            Une attention particulière a été portée sur les différentes méthodes toString() afin de simplifier le debuggage.
         </para>
 
             <programlisting>

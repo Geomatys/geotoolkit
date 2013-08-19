@@ -33,7 +33,7 @@
         </para>
 
 
-        <para>Un Maplayer définit une source de données (image, vecteur ou distante) combinée à un filtre et un style.</para>
+        <para>Un MapLayer définit une source de données (image, vecteur ou distante) combinée à un filtre et un style.</para>
 
         <para>
             Il existe plusieurs implémentations de MapLayer, mais on en distingue deux en particulier :

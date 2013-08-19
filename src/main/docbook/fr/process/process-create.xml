@@ -221,7 +221,7 @@
             </example>
 
             <para>
-                Par la suite lorsque on voudra créer les valeurs des paramètres d'entrer pour les donner à notre processus, il suffira de d'appeler la méthode createValue() sur le ParameterDescriptorGroup
+                Par la suite lorsqu'on voudra créer les valeurs des paramètres d'entrer pour les donner à notre processus, il suffira de d'appeler la méthode createValue() sur le ParameterDescriptorGroup
                 représentant les entrées du processus. Cette méthode retournera alors un ParameterValueGroup construit à partir des ParameterDescriptor.
             </para>
 
@@ -341,7 +341,7 @@
                 <para>
                     Sur un objet Process, on a accès à plusieurs méthodes permetant d'attacher des écouteurs à celui-ci, qui permettent de donner des informations sur
                     le déroulement de du traitement.
-                    Ces écouteurs doivent implémener l'interface <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/process/ProcessListener.html"> ProcessListener </link>
+                    Ces écouteurs doivent implémenter l'interface <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/process/ProcessListener.html"> ProcessListener </link>
                     qui définit quatres méthodes avec en paramètre <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/process/ProcessEvent.html"> ProcessEvent </link> :
                 </para>
                 <itemizedlist>
@@ -352,12 +352,12 @@
                 </itemizedlist>
 
                 <para>
-                    Les énévements started et completed sont lancé automatiquement lors de l'appel à la méthode call() (Voir <xref linkend="execProcess"/>).
-                    L'énévement failed est lui aussi lancer automatiquement lorsque la méhode execute d'un process lance une exception.
-                    L'énévements progressing est quand à lui à la charge du développeur et doit être lancer par le biai de la méthode
+                    Les événements started et completed sont lancés automatiquement lors de l'appel à la méthode call() (Voir <xref linkend="execProcess"/>).
+                    L'événement failed est lui aussi lancé automatiquement lorsque la méhode execute d'un process lance une exception.
+                    L'événement progressing est quand à lui à la charge du développeur et doit être lancé par le biai de la méthode
                     <link xlink:href="http://pending.geotoolkit.org/apidocs/org/geotoolkit/process/AbstractProcess.html#fireProgressing">fireProgressing()</link>
-                    lorsqu'une progression peux être calculer. On peux également fournir des résultats intermédiaire lors du lancement de l'énévement progressing.
-                    Cette énévement n'est pas obligatoir, mais il est préféable de l'implémenter pour les traitements longs.
+                    lorsqu'une progression peux être calculé. On peux également fournir des résultats intermédiaire lors du lancement de l'énévement progressing.
+                    Cette énévement n'est pas obligatoire, mais il est préféable de l'implémenter pour les traitements longs.
                 </para>
 
                 <example>
@@ -375,7 +375,7 @@
             <section>
                 <title>Arrêt inopiné d'un processus</title>
                 <para>
-                    L'execution d'un processus peux également être arréter en plein milieu d'un traitement seulement si celui-ci le permet. Pour cela, le programme doit
+                    L'exécution d'un processus peux également être arrêtée en plein milieu d'un traitement seulement si celui-ci le permet. Pour cela, le programme doit
                     regarder l'état d'un boolean pour continuer le traitement. Si l'état du processus est "canceled" le processus doit alors lancer une CancellationException.
                 </para>
 

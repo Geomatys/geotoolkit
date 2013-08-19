@@ -31,7 +31,7 @@
     <section>
 
         <title>Filter</title>
-        <para>Les filtres sont là pour définir les contraintes lors des requêtes ou des traitements. Cela permet par exemple de ne sélectionner que les Feature doit l'attribut 'pays' est égal à 'France'.</para>
+        <para>Les filtres sont là pour définir les contraintes lors des requêtes ou des traitements. Cela permet par exemple de ne sélectionner que les Feature dont l'attribut 'pays' est égal à 'France'.</para>
 
         <figure>
             <title>Structure des filtres</title>

@@ -17,7 +17,7 @@
         <para>
             Un process (ou processus), est un traitement effectué sur des données. Ces traitements peuvent être plus ou moins complexes, avec la possibilité de les chaîner pour des applications particulières.
         </para>
-        <para> Geotoolkit contient plusieurs type de process organiser par modules permettant des
+        <para> Geotoolkit contient plusieurs types de process organisés par modules permettant des
             traitements basiques. </para>
         <para>
             On y trouve donc les modules suivant :
