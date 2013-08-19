@@ -72,7 +72,7 @@
                 </listitem>
                 <listitem>Geometrie : similaire au AttributeDescriptor mais limité aux géométries et disposant d'informations complémentaires comme le CRS
                 </listitem>
-                <listitem> : peu utilisé cela peut faire référence à une valeur calculée ou à des fonctionnalités
+                <listitem>Operation : peu utilisé cela peut faire référence à une valeur calculée ou à des fonctionnalités
                 </listitem>
                 <listitem>Association : permet de faire un lien vers d'autre Feature pour exprimer une relation.</listitem>
             </itemizedlist>
