@@ -242,7 +242,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
 
                     // single quotes must be escaped to have a valid sql string
                     final String escaped = encoding.replaceAll("'", "''");
-                    sb.append(escaped);
+                    sb.append('"').append(escaped).append('"');
                 }else{
                     writeValue(sb,o,-1);
                 }
