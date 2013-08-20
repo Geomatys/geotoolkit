@@ -358,6 +358,7 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
         if(query.retrieveAllProperties()) {
             returnedFeatureType = queryFeatureType = (FeatureType) baseType;
         } else {
+            //TODO BUG here, query with filter on a not returned geometry field crash
             returnedFeatureType = (FeatureType) FeatureTypeBuilder.retype(tableType, query.getPropertyNames());
             final FilterAttributeExtractor extractor = new FilterAttributeExtractor(tableType);
             postFilter.accept(extractor, null);
