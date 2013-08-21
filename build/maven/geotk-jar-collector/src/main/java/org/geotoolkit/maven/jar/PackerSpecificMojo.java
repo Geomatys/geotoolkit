@@ -89,20 +89,25 @@ public class PackerSpecificMojo extends AbstractMojo {
                     "jsr-275-*.jar",
                     "jcip-annotations-*.jar",
                     "geoapi-pending-*.jar",
+                    "sis-utility-*.jar",
+                    "sis-metadata-*.jar",
                     "geotk-utility-"  + VERSION + ".jar",
                     "geotk-metadata-" + VERSION + ".jar"
             });
             packer.addPack(metadata, referencing, new String[] {
                     "vecmath-*.jar",
+                    "sis-referencing-*.jar",
                     "geotk-epsg-"        + VERSION + ".jar",
                     "geotk-referencing-" + VERSION + ".jar" // Last in order to pickup its main class.
             });
             packer.addPack(referencing, coverage, new String[] {
+                    "sis-storage-*.jar",
                     "geotk-coverage-"    + VERSION + ".jar",
                     "geotk-coverageio-"  + VERSION + ".jar",
                     "jai_imageio-*.jar"
             });
             packer.addPack(coverage, netcdf, new String[] {
+                    "sis-netcdf-*.jar",
                     "geotk-coverageio-netcdf-" + VERSION + ".jar",
                     "netcdf-*.jar",
                     "udunits-*.jar",
