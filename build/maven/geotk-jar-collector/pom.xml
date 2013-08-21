@@ -26,9 +26,7 @@
   <packaging>maven-plugin</packaging>
   <name>JAR collector</name>
   <description>
-    Copies all JAR files (including dependencies) in the target directory
-    of the parent project descriptor. Also provides an executable main
-    class for packaging those JAR files as PACK200 bundles.
+    Provides an executable main class for packaging JAR files as PACK200 bundles.
   </description>
 
 
@@ -48,24 +46,4 @@
       </roles>
     </developer>
   </developers>
-
-
-  <!-- ===========================================================
-           JAR packaging
-       =========================================================== -->
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <mainClass>org.geotoolkit.maven.jar.Packer</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>

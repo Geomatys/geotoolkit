@@ -26,9 +26,8 @@ import org.apache.maven.project.MavenProject;
 
 
 /**
- * Merges the binaries produced by <code>JarCollector</code> and compress them using Pack200.
- * This mojo delegates the work to <code>Packer</code>, which can be invoked from the command
- * line without Maven. Maven invocation syntax is:
+ * Merges the binaries produced by <code>sis-build-helper</code> and compress them using Pack200.
+ * This mojo delegates the work to <code>Packer</code>, which can be invoked from the command line:
  *
  * <blockquote><code>mvn org.geotoolkit.project:geotk-jar-collector:pack --non-recursive</code></blockquote>
  *

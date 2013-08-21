@@ -43,7 +43,7 @@ public final class Packer implements FilenameFilter {
      * The sub-directory containing JAR files.
      * This directory must exists; it will not be created.
      */
-    private static final String JAR_DIRECTORY = Collector.SUB_DIRECTORY;
+    private static final String JAR_DIRECTORY = "binaries";
 
     /**
      * The sub-directory containing pack files. This directory
@@ -53,7 +53,7 @@ public final class Packer implements FilenameFilter {
 
     /**
      * The Maven target directory. Should contains the {@code "binaries"} sub-directory,
-     * which should contains all JAR files collected by {@code geotk-jar-collector} plugin.
+     * which should contains all JAR files collected by {@code sis-build-helper} plugin.
      */
     private final File targetDirectory;
 

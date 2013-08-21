@@ -5,35 +5,8 @@
 
 JAR collector
 
-  Copies all JAR files (including dependencies) in the target directory of the parent project
-  descriptor. Also provides an executable main class for packaging those JAR files as PACK200
-  bundles.
-
-  To copy JAR files in the target directory of the parent project descriptor, put the following
-  code fragment in the <<<pom.xml>>> file of the modules for which to copy the JARs and replace
-  <<<$\{geotoolkit.version\}>>> by the Geotoolkit version used. The JARs of all sub-modules will
-  be copied as well.
-
-+-----------------------------------------------------------------------
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.geotoolkit.project</groupId>
-        <artifactId>geotk-jar-collector</artifactId>
-        <version>${geotoolkit.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>collect</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-+-----------------------------------------------------------------------
-
-  To merges the binaries produced by the above step and compress them using Pack200,
+  Provides an executable main class for packaging JAR files as PACK200 bundles.
+  To merges the binaries produced by <<<sis-build-helper>>> and compress them using Pack200,
   invoke the following from the command line. Do not forget the <<<--non-recursive>>>
   option, otherwise the Mojo will waste CPU by executing itself many time.
 
