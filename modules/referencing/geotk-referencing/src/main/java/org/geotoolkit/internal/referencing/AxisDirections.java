@@ -178,7 +178,7 @@ public final class AxisDirections extends Static {
                 if (direction.equals(d)) {
                     return i;
                 }
-                if (fallback < 0 && opposite.equals(d)) {
+                if (fallback < 0 && opposite != null && opposite.equals(d)) {
                     fallback = i;
                 }
             }
