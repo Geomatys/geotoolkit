@@ -83,13 +83,13 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.geotoolkit.project</groupId>
-        <artifactId>geotk-jar-collector</artifactId>
-        <version>${geotoolkit.version}</version>
+        <groupId>org.apache.sis.core</groupId>
+        <artifactId>sis-build-helper</artifactId>
+        <version>${sis.version}</version>
         <executions>
           <execution>
             <goals>
-              <goal>collect</goal>
+              <goal>collect-jars</goal>
             </goals>
           </execution>
         </executions>
