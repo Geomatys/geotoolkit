@@ -16,23 +16,34 @@
  */
 package org.geotoolkit.s52.dai;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Describes meaning & use of symbology elements.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class Exposition extends DAIField{
+public abstract class Exposition extends DAIField{
 
     /** A(1/15) : free text for symbology explanation */
     public String EXPT;
 
-    public Exposition(String code) {
+    protected Exposition(String code) {
         super(code);
     }
 
     @Override
+    public Map<String, Object> getSubFields() {
+        final Map<String,Object> map = new LinkedHashMap<>();
+        map.put("EXPT", EXPT);
+        return map;
+    }
+
+    @Override
     protected void readSubFields(String str) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final int[] offset = new int[1];
+        EXPT = readStringByDelim(str, offset, DELIM_1F, true); //be tolerance, delimiter missing in some files
     }
 
 }

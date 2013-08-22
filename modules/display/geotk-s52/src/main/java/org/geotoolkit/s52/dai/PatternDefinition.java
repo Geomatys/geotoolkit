@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.s52.dai;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Pattern Definition.
  * defines several pattern‑parameters.
@@ -54,8 +57,38 @@ public class PatternDefinition extends DAIField{
     }
 
     @Override
+    public Map<String, Object> getSubFields() {
+        final Map<String,Object> map = new LinkedHashMap<>();
+        map.put("PANM", PANM);
+        map.put("PADF", PADF);
+        map.put("PATP", PATP);
+        map.put("PASP", PASP);
+        map.put("PAMI", PAMI);
+        map.put("PAMA", PAMA);
+        map.put("PACL", PACL);
+        map.put("PARW", PARW);
+        map.put("PAHL", PAHL);
+        map.put("PAVL", PAVL);
+        map.put("PBXC", PBXC);
+        map.put("PBXR", PBXR);
+        return map;
+    }
+
+    @Override
     protected void readSubFields(String str) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final int[] offset = new int[1];
+        PANM = readStringBySize(str, offset, 8);
+        PADF = readStringBySize(str, offset, 1);
+        PATP = readStringBySize(str, offset, 3);
+        PASP = readStringBySize(str, offset, 3);
+        PAMI = readIntBySize(str, offset, 5);
+        PAMA = readIntBySize(str, offset, 5);
+        PACL = readIntBySize(str, offset, 5);
+        PARW = readIntBySize(str, offset, 5);
+        PAHL = readIntBySize(str, offset, 5);
+        PAVL = readIntBySize(str, offset, 5);
+        PBXC = readIntBySize(str, offset, 5);
+        PBXR = readIntBySize(str, offset, 5);
     }
 
 }

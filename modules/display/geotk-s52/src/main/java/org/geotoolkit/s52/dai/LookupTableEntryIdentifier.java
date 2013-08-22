@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.s52.dai;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Identifies a look-up table Entry module.
  *
@@ -41,7 +44,7 @@ public class LookupTableEntryIdentifier extends DAIField{
      * 'P' Point */
     public String FTYP;
     /** I(5) : Display Priority */
-    public int DPRI;  		  	
+    public int DPRI;
     /** A(1) : Radar Priority -
      * 'O' presentation on top radar
      * 'S' presentation suppressed by radar */
@@ -56,8 +59,30 @@ public class LookupTableEntryIdentifier extends DAIField{
     }
 
     @Override
+    public Map<String, Object> getSubFields() {
+        final Map<String,Object> map = new LinkedHashMap<>();
+        map.put("MODN", MODN);
+        map.put("RCID", RCID);
+        map.put("STAT", STAT);
+        map.put("OBCL", OBCL);
+        map.put("FTYP", FTYP);
+        map.put("DPRI", DPRI);
+        map.put("RPRI", RPRI);
+        map.put("TNAM", TNAM);
+        return map;
+    }
+
+    @Override
     protected void readSubFields(String str) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final int[] offset = new int[1];
+        MODN = readStringBySize(str, offset, 2);
+        RCID = readIntBySize(str, offset, 5);
+        STAT = readStringBySize(str, offset, 3);
+        OBCL = readStringBySize(str, offset, 6);
+        FTYP = readStringBySize(str, offset, 1);
+        DPRI = readIntBySize(str, offset, 5);
+        RPRI = readStringBySize(str, offset, 1);
+        TNAM = readStringByDelim(str, offset, DELIM_1F);
     }
 
 }

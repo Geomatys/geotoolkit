@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.s52.dai;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Color Definition CIE.
  * Describes CIE‑System's colour‑definition
@@ -40,8 +43,24 @@ public class ColorDefinitionCIE extends DAIField{
     }
 
     @Override
+    public Map<String, Object> getSubFields() {
+        final Map<String,Object> map = new LinkedHashMap<>();
+        map.put("CTOK", CTOK);
+        map.put("CHRX", CHRX);
+        map.put("CHRY", CHRY);
+        map.put("CLUM", CLUM);
+        map.put("CUSE", CUSE);
+        return map;
+    }
+
+    @Override
     protected void readSubFields(String str) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final int[] offset = new int[1];
+        CTOK = readStringBySize(str, offset, 5);
+        CHRX = readDoubleByDelim(str, offset, DELIM_1F);
+        CHRY = readDoubleByDelim(str, offset, DELIM_1F);
+        CLUM = readDoubleByDelim(str, offset, DELIM_1F);
+        CUSE = readStringByDelim(str, offset, DELIM_1F);
     }
 
 }

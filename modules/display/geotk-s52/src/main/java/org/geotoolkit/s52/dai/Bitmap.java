@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.s52.dai;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Contains one row of a raster image;
  * Each pixel is represented by a letter (ASCII>=64);
@@ -25,19 +28,27 @@ package org.geotoolkit.s52.dai;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class Bitmap extends DAIField{
+public abstract class Bitmap extends DAIField{
 
     /** A(1/15) : Raster Bit‑map Row ‑ maximal length 122 characters;
      * The length shall be identical to content of PAHL‑field. */
     public String BITR;
 
-    public Bitmap(String code) {
+    protected Bitmap(String code) {
         super(code);
     }
 
     @Override
+    public Map<String, Object> getSubFields() {
+        final Map<String,Object> map = new LinkedHashMap<>();
+        map.put("BITR", BITR);
+        return map;
+    }
+
+    @Override
     protected void readSubFields(String str) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final int[] offset = new int[1];
+        BITR = readStringByDelim(str, offset, DELIM_1F, true); //be tolerance, delimiter missing in some files
     }
 
 }

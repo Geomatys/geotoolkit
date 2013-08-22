@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.s52.dai;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Linestyle Definition.
  * Defines several linestyle‑parameters.
@@ -49,13 +52,33 @@ public class LinestyleDefinition extends DAIField{
      * where 0<= LBXR <=32767; */
     public int LBXR;
 
-    public LinestyleDefinition(String code) {
+    public LinestyleDefinition() {
         super("LIND");
     }
 
     @Override
+    public Map<String, Object> getSubFields() {
+        final Map<String,Object> map = new LinkedHashMap<>();
+        map.put("LINM", LINM);
+        map.put("LICL", LICL);
+        map.put("LIRW", LIRW);
+        map.put("LIHL", LIHL);
+        map.put("LIVL", LIVL);
+        map.put("LBXC", LBXC);
+        map.put("LBXR", LBXR);
+        return map;
+    }
+
+    @Override
     protected void readSubFields(String str) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final int[] offset = new int[1];
+        LINM = readStringBySize(str, offset, 8);
+        LICL = readIntBySize(str, offset, 5);
+        LIRW = readIntBySize(str, offset, 5);
+        LIHL = readIntBySize(str, offset, 5);
+        LIVL = readIntBySize(str, offset, 5);
+        LBXC = readIntBySize(str, offset, 5);
+        LBXR = readIntBySize(str, offset, 5);
     }
 
 }

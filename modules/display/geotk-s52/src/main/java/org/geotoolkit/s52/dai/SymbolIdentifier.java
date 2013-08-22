@@ -20,24 +20,25 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Linestyle Identifier.
- * identifies a linestyle‑module.
+ * Symbol Identifier.
+ * identifies a symbol‑module.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class LinestyleIdentifier extends DAIField{
+public class SymbolIdentifier extends DAIField{
 
-    /** A(2) : Module Identifier (Module Name): presently a constant string ='LS';
-     * labels a module of 'Linestyle'‑type. */
+    /** A(2) : Module Identifier (Module Name): presently a constant string ='SY';
+     * labels a module of the 'Symbol'‑type. */
     public String MODN;
     /** I(5) : Record Identifier: continuous numbering where x is 00000 < x < 32768;
-     * uniquely identifies a linestyle‑module within the data‑transfer‑set.*/
+     * uniquely identifies a symbol‑module within the data‑transfer‑set. */
     public int RCID;
-    /** A(3) : status of the module contents: 'NIL' no change, used for new editions and editions */
+    /** A(3) : status of the module contents:
+     * 'NIL' no change, used for new editions and editions. */
     public String STAT;
 
-    public LinestyleIdentifier() {
-        super("LNST");
+    public SymbolIdentifier() {
+        super("SYMB");
     }
 
     @Override

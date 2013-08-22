@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.s52.dai;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Contains a vector image definition;
  * Colors are identified by a letter (ASCII>=64);
@@ -25,18 +28,26 @@ package org.geotoolkit.s52.dai;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class Vector extends DAIField{
+public abstract class Vector extends DAIField{
 
     /** A(1/15) : String of vector commands; */
     public String VECD;
 
-    public Vector(String code) {
+    protected Vector(String code) {
         super(code);
     }
 
     @Override
+    public Map<String, Object> getSubFields() {
+        final Map<String,Object> map = new LinkedHashMap<>();
+        map.put("VECD", VECD);
+        return map;
+    }
+
+    @Override
     protected void readSubFields(String str) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final int[] offset = new int[1];
+        VECD = readStringByDelim(str, offset, DELIM_1F, true); //be tolerance, delimiter missing in some files
     }
 
 }

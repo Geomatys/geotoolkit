@@ -16,35 +16,34 @@
  */
 package org.geotoolkit.s52.dai;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import org.geotoolkit.gui.swing.tree.Trees;
 
 /**
- * Display Category.
- * Defines membership within a display category.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DisplayCategory extends DAIField{
+public class DAIModuleRecord {
 
-    /** A(1/15) : Name of the display category */
-    public String DSCN;
+    private int id;
+    private final List<DAIField> fields = new ArrayList<>();
 
-    public DisplayCategory() {
-        super("DISC");
+    public DAIModuleRecord(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public List<DAIField> getFields() {
+        return fields;
     }
 
     @Override
-    public Map<String, Object> getSubFields() {
-        final Map<String,Object> map = new LinkedHashMap<>();
-        map.put("DSCN", DSCN);
-        return map;
-    }
-
-    @Override
-    protected void readSubFields(String str) {
-        final int[] offset = new int[1];
-        DSCN = readStringByDelim(str, offset, DELIM_1F);
+    public String toString() {
+        return Trees.toString("Module "+id, fields);
     }
 
 }

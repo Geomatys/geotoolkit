@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.s52.dai;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Symbol Definition.
  * Defines several symbol‑parameters.
@@ -58,8 +61,30 @@ public class SymbolDefinition extends DAIField{
     }
 
     @Override
+    public Map<String, Object> getSubFields() {
+        final Map<String,Object> map = new LinkedHashMap<>();
+        map.put("SYNM", SYNM);
+        map.put("SYDF", SYDF);
+        map.put("SYCL", SYCL);
+        map.put("SYRW", SYRW);
+        map.put("SYHL", SYHL);
+        map.put("SYVL", SYVL);
+        map.put("SBXC", SBXC);
+        map.put("SBXR", SBXR);
+        return map;
+    }
+
+    @Override
     protected void readSubFields(String str) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final int[] offset = new int[1];
+        SYNM = readStringBySize(str, offset, 8);
+        SYDF = readStringBySize(str, offset, 1);
+        SYCL = readIntBySize(str, offset, 5);
+        SYRW = readIntBySize(str, offset, 5);
+        SYHL = readIntBySize(str, offset, 5);
+        SYVL = readIntBySize(str, offset, 5);
+        SBXC = readIntBySize(str, offset, 5);
+        SBXR = readIntBySize(str, offset, 5);
     }
 
 }

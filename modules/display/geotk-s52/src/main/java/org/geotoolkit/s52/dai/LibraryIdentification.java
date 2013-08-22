@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.s52.dai;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Forms unique module identification within the exchange set.
  *
@@ -56,8 +59,38 @@ public class LibraryIdentification extends DAIField{
     }
 
     @Override
+    public Map<String, Object> getSubFields() {
+        final Map<String,Object> map = new LinkedHashMap<>();
+        map.put("MODN", MODN);
+        map.put("RCID", RCID);
+        map.put("EXPP", EXPP);
+        map.put("PTYP", PTYP);
+        map.put("ESID", ESID);
+        map.put("EDTN", EDTN);
+        map.put("CODT", CODT);
+        map.put("COTI", COTI);
+        map.put("VRDT", VRDT);
+        map.put("PROF", PROF);
+        map.put("OCDT", OCDT);
+        map.put("COMT", COMT);
+        return map;
+    }
+
+    @Override
     protected void readSubFields(String str) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final int[] offset = new int[1];
+        MODN = readStringBySize(str, offset, 2);
+        RCID = readIntBySize(str, offset, 5);
+        EXPP = readStringBySize(str, offset, 3);
+        PTYP = readStringByDelim(str, offset, DELIM_1F);
+        ESID = readStringByDelim(str, offset, DELIM_1F);
+        EDTN = readStringByDelim(str, offset, DELIM_1F);
+        CODT = readStringBySize(str, offset, 8);
+        COTI = readStringBySize(str, offset, 6);
+        VRDT = readStringBySize(str, offset, 8);
+        PROF = readStringBySize(str, offset, 2);
+        OCDT = readStringBySize(str, offset, 8);
+        COMT = readStringByDelim(str, offset, DELIM_1F);
     }
 
 }

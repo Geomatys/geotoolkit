@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.s52.dai;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Color table identifier.
  * Identifies a color‑table.
@@ -44,8 +47,22 @@ public class ColorTableIdentifier extends DAIField{
     }
 
     @Override
+    public Map<String, Object> getSubFields() {
+        final Map<String,Object> map = new LinkedHashMap<>();
+        map.put("MODN", MODN);
+        map.put("RCID", RCID);
+        map.put("STAT", STAT);
+        map.put("CTUS", CTUS);
+        return map;
+    }
+
+    @Override
     protected void readSubFields(String str) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final int[] offset = new int[1];
+        MODN = readStringBySize(str, offset, 2);
+        RCID = readIntBySize(str, offset, 5);
+        STAT = readStringBySize(str, offset, 3);
+        CTUS = readStringByDelim(str, offset, DELIM_1F);
     }
 
 }

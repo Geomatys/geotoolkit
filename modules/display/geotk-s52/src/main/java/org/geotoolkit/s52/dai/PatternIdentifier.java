@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.s52.dai;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Pattern Identifier.
  * Identifies a pattern‑module.
@@ -40,8 +43,20 @@ public class PatternIdentifier extends DAIField{
     }
 
     @Override
+    public Map<String, Object> getSubFields() {
+        final Map<String,Object> map = new LinkedHashMap<>();
+        map.put("MODN", MODN);
+        map.put("RCID", RCID);
+        map.put("STAT", STAT);
+        return map;
+    }
+
+    @Override
     protected void readSubFields(String str) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final int[] offset = new int[1];
+        MODN = readStringBySize(str, offset, 2);
+        RCID = readIntBySize(str, offset, 5);
+        STAT = readStringBySize(str, offset, 3);
     }
 
 }
