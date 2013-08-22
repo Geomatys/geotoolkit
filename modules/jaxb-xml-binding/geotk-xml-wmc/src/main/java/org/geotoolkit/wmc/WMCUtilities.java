@@ -83,6 +83,19 @@ public class WMCUtilities {
     }
 
     /**
+     * Get a {@linkplain MarshallerPool marshaller pool} for the WMC binding.
+     *
+     * @return The {@linkplain MarshallerPool marshaller pool}.
+     * @throws JAXBException 
+     */
+    public static MarshallerPool getMarshallerPool() throws JAXBException {
+        return new MarshallerPool(JAXBContext.newInstance(
+                "org.geotoolkit.ogc.xml.exception:" +
+                "org.geotoolkit.wmc.xml.v110:" +
+                "org.geotoolkit.ogc.xml.v100"), null);
+    }
+
+    /**
      * This method will get WMC informations to create a new valid
      * {@link MapContext}.
      *
@@ -91,10 +104,7 @@ public class WMCUtilities {
      * @throws JAXBException if the xml cannot be read.
      */
     public static MapContext getMapContext(InputStream source) throws JAXBException {
-        final MarshallerPool pool = new MarshallerPool(JAXBContext.newInstance(
-                "org.geotoolkit.ogc.xml.exception:" +
-                "org.geotoolkit.wmc.xml.v110:" +
-                "org.geotoolkit.ogc.xml.v100"), null);
+        final MarshallerPool pool = getMarshallerPool();
         final Unmarshaller um = pool.acquireUnmarshaller();
         Object o = um.unmarshal(source);
         if (o instanceof JAXBElement) {
