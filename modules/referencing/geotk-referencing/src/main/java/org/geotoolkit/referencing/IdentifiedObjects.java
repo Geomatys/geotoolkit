@@ -23,7 +23,6 @@ package org.geotoolkit.referencing;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.Comparator;
 import java.util.Collection;
@@ -169,10 +168,12 @@ public final class IdentifiedObjects extends Static {
      *
      * @param  info The identified object to view as a properties map.
      * @return An view of the identified object as an immutable map.
+     *
+     * @deprecated Moved to Apache SIS.
      */
+    @Deprecated
     public static Map<String,?> getProperties(final IdentifiedObject info) {
-        ensureNonNull("info", info);
-        return new Properties(info);
+        return org.apache.sis.referencing.IdentifiedObjects.getProperties(info);
     }
 
     /**
@@ -233,13 +234,16 @@ public final class IdentifiedObjects extends Static {
      *         specified authority was found.
      *
      * @see AbstractIdentifiedObject#getName(Citation)
+     *
+     * @deprecated Moved to Apache SIS.
      */
+    @Deprecated
     public static String getName(final IdentifiedObject info, final Citation authority) {
         if (info instanceof AbstractIdentifiedObject) {
             // Gives a chances to subclasses to get their overridden method invoked.
             return ((AbstractIdentifiedObject) info).getName(authority);
         }
-        return name(info, authority, null);
+        return org.apache.sis.referencing.IdentifiedObjects.getName(info, authority);
     }
 
     /**
@@ -254,11 +258,12 @@ public final class IdentifiedObjects extends Static {
      *         specified authority was found.
      *
      * @since 3.20
+     *
+     * @deprecated Moved to Apache SIS.
      */
+    @Deprecated
     public static Set<String> getNames(final IdentifiedObject info, final Citation authority) {
-        final Set<String> names = new LinkedHashSet<>(8);
-        name(info, authority, names);
-        return names;
+        return org.apache.sis.referencing.IdentifiedObjects.getNames(info, authority);
     }
 
     /**
@@ -272,7 +277,10 @@ public final class IdentifiedObjects extends Static {
      * @return The object's name (either a {@linkplain ReferenceIdentifier#getCode code} or a
      *         {@linkplain GenericName#tip name tip}), or {@code null} if no name matching the
      *         specified authority was found.
+     *
+     * @deprecated Moved to Apache SIS.
      */
+    @Deprecated
     static String name(final IdentifiedObject info, final Citation authority, final Collection<String> addTo) {
         if (info != null) {
             Identifier identifier = info.getName();
@@ -365,13 +373,16 @@ public final class IdentifiedObjects extends Static {
      *         authority was found.
      *
      * @see AbstractIdentifiedObject#getIdentifier(Citation)
+     *
+     * @deprecated Moved to Apache SIS.
      */
+    @Deprecated
     public static ReferenceIdentifier getIdentifier(final IdentifiedObject object, final Citation authority) {
         if (object instanceof AbstractIdentifiedObject) {
             // Gives a chances to subclasses to get their overridden method invoked.
             return ((AbstractIdentifiedObject) object).getIdentifier(authority);
         }
-        return identifier(object, authority);
+        return org.apache.sis.referencing.IdentifiedObjects.getIdentifier(object, authority);
     }
 
     /**
@@ -420,22 +431,12 @@ public final class IdentifiedObjects extends Static {
      *
      * @see #getIdentifier(IdentifiedObject, Citation)
      * @see #lookupIdentifier(IdentifiedObject, boolean)
+     *
+     * @deprecated Moved to Apache SIS.
      */
+    @Deprecated
     public static String getIdentifier(final IdentifiedObject object) {
-        if (object != null) {
-            final Iterator<ReferenceIdentifier> it = iterator(object.getIdentifiers());
-            if (it != null) while (it.hasNext()) {
-                final String code = toString(it.next());
-                if (code != null) { // Paranoiac check.
-                    return code;
-                }
-            }
-            final String name = toString(object.getName());
-            if (name != null) { // Paranoiac check.
-                return name;
-            }
-        }
-        return null;
+        return org.apache.sis.referencing.IdentifiedObjects.getIdentifierCode(object);
     }
 
     /**
@@ -589,13 +590,15 @@ public final class IdentifiedObjects extends Static {
      *         matches the specified {@code name}.
      *
      * @see AbstractIdentifiedObject#nameMatches(String)
+     *
+     * @deprecated Moved to Apache SIS.
      */
+    @Deprecated
     public static boolean nameMatches(final IdentifiedObject object, final String name) {
         if (object instanceof AbstractIdentifiedObject) {
             return ((AbstractIdentifiedObject) object).nameMatches(name);
         } else {
-            ensureNonNull("object", object);
-            return nameMatches(object, object.getAlias(), name);
+            return org.apache.sis.referencing.IdentifiedObjects.nameMatches(object, name);
         }
     }
 
@@ -607,12 +610,12 @@ public final class IdentifiedObjects extends Static {
      * @param o1 The first object to compare by name.
      * @param o2 The second object to compare by name.
      * @return {@code true} if both objects have a common name.
+     *
+     * @deprecated Moved to Apache SIS.
      */
+    @Deprecated
     public static boolean nameMatches(final IdentifiedObject o1, final IdentifiedObject o2) {
-        ensureNonNull("o1", o1);
-        ensureNonNull("o2", o2);
-        return nameMatches(o1, o2.getName().getCode()) ||
-               nameMatches(o2, o1.getName().getCode());
+        return org.apache.sis.referencing.IdentifiedObjects.nameMatches(o1, o2);
     }
 
     /**
@@ -676,23 +679,11 @@ public final class IdentifiedObjects extends Static {
      * @see NamedIdentifier#toString()
      *
      * @since 3.20
+     *
+     * @deprecated Moved to Apache SIS.
      */
+    @Deprecated
     public static String toString(final Identifier identifier) {
-        if (identifier == null) {
-            return null;
-        }
-        if (identifier instanceof GenericName) {
-            // The toString() behavior is specified by the GenericName javadoc.
-            return identifier.toString();
-        }
-        final String code = identifier.getCode();
-        if (identifier instanceof ReferenceIdentifier) {
-            final String cs = ((ReferenceIdentifier) identifier).getCodeSpace();
-            if (cs != null) {
-                return cs + DefaultNameSpace.DEFAULT_SEPARATOR + code;
-            }
-        }
-        final String authority = org.apache.sis.internal.util.Citations.getIdentifier(identifier.getAuthority());
-        return (authority != null) ? (authority + DefaultNameSpace.DEFAULT_SEPARATOR + code) : code;
+        return org.apache.sis.referencing.IdentifiedObjects.toString(identifier);
     }
 }

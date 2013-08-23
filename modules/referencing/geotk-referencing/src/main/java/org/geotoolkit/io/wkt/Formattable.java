@@ -32,7 +32,10 @@ package org.geotoolkit.io.wkt;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
+ @Deprecated
 public interface Formattable {
     /**
      * Formats the inner part of a <cite>Well Known Text</cite> (WKT) element. This method is

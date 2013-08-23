@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.0
  */
-@DependsOn({SymbolsTest.class, FormattingTest.class})
+@DependsOn(FormattingTest.class)
 public final strictfp class ParserTest {
     /**
      * Parses all elements from the specified file. Parsing creates a set of

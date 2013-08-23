@@ -61,7 +61,10 @@ import static javax.measure.unit.NonSI.DEGREE_ANGLE;
  *
  * @since 3.20
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
+ @Deprecated
 public enum Convention {
     /**
      * The <A HREF="http://www.opengeospatial.org">Open Geospatial consortium</A> convention.

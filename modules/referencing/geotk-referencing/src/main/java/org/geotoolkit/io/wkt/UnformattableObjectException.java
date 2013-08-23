@@ -35,8 +35,11 @@ import org.geotoolkit.resources.Errors;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
-public class UnformattableObjectException extends UnsupportedOperationException {
+@Deprecated
+public class UnformattableObjectException extends org.apache.sis.io.wkt.UnformattableObjectException {
     /**
      * For cross-version compatibility.
      */

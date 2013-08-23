@@ -40,7 +40,10 @@ import org.geotoolkit.internal.InternalUtilities;
  * @since 2.1
  * @level advanced
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
+ @Deprecated
 @Immutable
 public class Symbols implements Serializable {
     /**

@@ -86,7 +86,10 @@ import org.geotoolkit.resources.Errors;
  * @since 2.0
  * @level advanced
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
+ @Deprecated
 @Visitor(Formattable.class)
 public class Formatter {
     /**

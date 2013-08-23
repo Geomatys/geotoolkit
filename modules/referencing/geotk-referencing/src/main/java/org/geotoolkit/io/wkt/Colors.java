@@ -32,7 +32,10 @@ import org.geotoolkit.io.X364;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
+ @Deprecated
 public class Colors implements Serializable {
     /**
      * For cross-version compatibility.
@@ -65,7 +68,10 @@ public class Colors implements Serializable {
      * @since 3.00
      * @level advanced
      * @module
+     *
+     * @deprecated Moved to Apache SIS.
      */
+    @Deprecated
     public static enum Element {
         /**
          * Floating point numbers (excluding integer types).

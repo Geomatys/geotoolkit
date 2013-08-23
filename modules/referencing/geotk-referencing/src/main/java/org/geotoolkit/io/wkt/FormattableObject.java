@@ -60,7 +60,10 @@ import org.apache.sis.util.Classes;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
+ @Deprecated
 public class FormattableObject implements Formattable {
     /**
      * The formatter for the {@link #toWKT()} method.
