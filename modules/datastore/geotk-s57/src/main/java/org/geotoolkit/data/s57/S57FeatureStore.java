@@ -70,38 +70,38 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class S57FeatureStore extends AbstractFeatureStore{
 
     public static final String S57TYPECODE = "S-57 Code";
-    
+
     static final String BUNDLE_PATH = "org/geotoolkit/s57/bundle";
-    
+
     private final QueryCapabilities capa = new DefaultQueryCapabilities(false, true);
     private final File file;
     private Set<FeatureType> types = null;
     private Set<Name> names = null;
-    
+
     //S-57 metadata/description records
     private DataSetIdentification datasetIdentification;
     private DataSetParameter datasetParameter;
     private CoordinateReferenceSystem crs;
     //versioning informations
     private S57VersionControl history;
-    
+
     public S57FeatureStore(final ParameterValueGroup params) throws DataStoreException{
         super(params);
-        
+
         final URL url = (URL) params.parameter(S57FeatureStoreFactory.URLP.getName().toString()).getValue();
         try {
             this.file = new File(url.toURI());
         } catch (URISyntaxException ex) {
             throw new DataStoreException(ex);
         }
-        
+
     }
-    
+
     @Override
     public FeatureStoreFactory getFactory() {
         return FeatureStoreFinder.getFactoryById(S57FeatureStoreFactory.NAME);
     }
-    
+
     @Override
     public QueryCapabilities getQueryCapabilities() {
         return capa;
@@ -116,12 +116,12 @@ public class S57FeatureStore extends AbstractFeatureStore{
             throw new VersioningException(ex);
         }
     }
-    
+
     @Override
     public void refreshMetaModel() {
         //do nothing, types are not dynamic like a database
     }
-    
+
     @Override
     public Set<Name> getNames() throws DataStoreException {
         loadTypes();
@@ -141,9 +141,9 @@ public class S57FeatureStore extends AbstractFeatureStore{
 
     private synchronized void loadTypes()throws DataStoreException {
         if(types!= null) return;
-        types = new HashSet<FeatureType>();
-        names = new HashSet<Name>();
-        
+        types = new HashSet<>();
+        names = new HashSet<>();
+
         final S57Reader reader = getS57Reader(null);
         try{
             while(reader.hasNext()){
@@ -156,14 +156,14 @@ public class S57FeatureStore extends AbstractFeatureStore{
                 }else if(obj instanceof FeatureRecord){
                     final FeatureRecord rec = (FeatureRecord) obj;
                     final int objlCode = rec.code;
-                    final FeatureType type = S57TypeBank.getFeatureType(objlCode,crs);
+                    final FeatureType type = TypeBanks.getFeatureType(objlCode, crs);
                     if(type == null){
                         throw new DataStoreException("Unknown feature type OBJL : "+objlCode);
                     }
                     type.getUserData().put(S57TYPECODE, rec.code);
                     types.add(type);
                     names.add(type.getName());
-                }                
+                }
             }
         }catch(IOException ex){
             throw new DataStoreException(ex);
@@ -176,11 +176,11 @@ public class S57FeatureStore extends AbstractFeatureStore{
             }
         }
     }
-    
+
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         final FeatureType ft = getFeatureType(query.getTypeName());
-        
+
         /** find the whished version */
         final Date vdate = query.getVersionDate();
         final String vlabel = query.getVersionLabel();
@@ -196,8 +196,8 @@ public class S57FeatureStore extends AbstractFeatureStore{
                 throw new DataStoreException(ex);
             }
         }
-        
-        
+
+
         final S57Reader s57reader = getS57Reader(wantedVersion);
         final FeatureReader reader = new S57FeatureReader(this,ft,
                 (Integer)ft.getUserData().get(S57TYPECODE),s57reader,
@@ -206,9 +206,9 @@ public class S57FeatureStore extends AbstractFeatureStore{
     }
 
     private S57Reader getS57Reader(final S57Version version) throws DataStoreException{
-        
+
         final List<S57Version> versions = loadHistory().list();
-        
+
         S57Reader reader = null;
         for(S57Version v : versions){
             if(reader==null){
@@ -225,20 +225,20 @@ public class S57FeatureStore extends AbstractFeatureStore{
         }
         return reader;
     }
-    
+
     /**
      * Rebuild history.
      * @return VersionHistory
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     private synchronized S57VersionControl loadHistory() throws DataStoreException{
         if(history!=null) return history;
         final List<File> updateFiles = findUpdateFiles(null, null, null);
         updateFiles.add(0, findMainFile(null));
-        history = new S57VersionControl(updateFiles);        
+        history = new S57VersionControl(updateFiles);
         return history;
     }
-    
+
     /**
      * Search for the main file, it must be somewhere in the given path and have the
      * extension .000
@@ -248,13 +248,13 @@ public class S57FeatureStore extends AbstractFeatureStore{
         if(root == null){
             root = file;
         }
-        
+
         if(root.isDirectory()){
             //search sub files
             for(File f : root.listFiles()){
                 File candidate = findMainFile(f);
                 if(candidate!=null) return candidate;
-            }            
+            }
         }else{
             if(root.getName().endsWith(".000")){
                 return root;
@@ -262,7 +262,7 @@ public class S57FeatureStore extends AbstractFeatureStore{
         }
         throw new DataStoreException("Could not find any S-57 base file, named xxx.000");
     }
-    
+
     /**
      * Search for update files.
      * @param updateFiles
@@ -276,7 +276,7 @@ public class S57FeatureStore extends AbstractFeatureStore{
         if(baseName==null){
             File main = findMainFile(null);
             baseName = main.getName().substring(0, main.getName().length()-4);
-        }        
+        }
         if(updateFiles==null){
             updateFiles = new ArrayList<File>();
         }
@@ -284,23 +284,23 @@ public class S57FeatureStore extends AbstractFeatureStore{
             //search sub files
             for(File f : root.listFiles()){
                 findUpdateFiles(baseName, updateFiles, f);
-            }            
+            }
         }else{
             if(root.getName().startsWith(baseName) && !root.getName().endsWith(".000")){
                 updateFiles.add(root);
             }
         }
-        
+
         //sort files
         Collections.sort(updateFiles);
         return updateFiles;
     }
-    
-    
+
+
     ////////////////////////////////////////////////////////////////////////////
     // WRITING OPERATIONS //////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-        
+
     @Override
     public void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Writing not supported yet.");
@@ -315,7 +315,7 @@ public class S57FeatureStore extends AbstractFeatureStore{
     public void deleteFeatureType(Name typeName) throws DataStoreException {
         throw new DataStoreException("Writing not supported yet.");
     }
-    
+
     @Override
     public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         throw new DataStoreException("Writing not supported yet.");
@@ -330,7 +330,7 @@ public class S57FeatureStore extends AbstractFeatureStore{
     public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
         throw new DataStoreException("Writing not supported yet.");
     }
-    
+
     @Override
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter, Hints hints) throws DataStoreException {
         return handleWriter(typeName, filter, hints);

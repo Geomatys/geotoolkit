@@ -34,6 +34,7 @@ import org.geotoolkit.data.s57.S57FeatureStore;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.data.s57.TypeBank;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -42,25 +43,27 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Give access to all S-57 feature and property types.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
-public final class S57TypeBank {
+public class S57TypeBank implements TypeBank{
 
-    private static final URL PATH_FEATURE_TYPE = S57TypeBank.class.getResource("/org/geotoolkit/s57/S57FeatureType.properties");
-    private static final URL PATH_PROPERTY_TYPE = S57TypeBank.class.getResource("/org/geotoolkit/s57/S57PropertyType.properties");
-    private static final Properties FEATURE_TYPES = new Properties();
-    private static final Properties PROPERTY_TYPES = new Properties();
-    
-    private static Map<String,String> FT_ACC_KEY = new HashMap<String, String>();
-    private static Map<Integer,String> FT_CODE_KEY = new HashMap<Integer,String>();
-    private static Map<String,String> PT_ACC_KEY = new HashMap<String, String>();
-    private static Map<Integer,String> PT_CODE_KEY = new HashMap<Integer,String>();
-    
-    static {
+    private final Properties FEATURE_TYPES = new Properties();
+    private final Properties PROPERTY_TYPES = new Properties();
+    private final Map<String,String> FT_ACC_KEY = new HashMap<>();
+    private final Map<Integer,String> FT_CODE_KEY = new HashMap<>();
+    private final Map<String,String> PT_ACC_KEY = new HashMap<>();
+    private final Map<Integer,String> PT_CODE_KEY = new HashMap<>();
+
+    public S57TypeBank() {
+        this(S57TypeBank.class.getResource("/org/geotoolkit/s57/S57FeatureType.properties"),
+             S57TypeBank.class.getResource("/org/geotoolkit/s57/S57PropertyType.properties"));
+    }
+
+    public S57TypeBank(URL featureTypeFile, URL propertyTypeFile) {
         InputStream stream = null;
         try {
-            stream = PATH_FEATURE_TYPE.openStream();
+            stream = featureTypeFile.openStream();
             FEATURE_TYPES.load(stream);
             for(Object key : FEATURE_TYPES.keySet()){
                 final String str = key.toString();
@@ -80,7 +83,7 @@ public final class S57TypeBank {
             }
         }
         try {
-            stream = PATH_PROPERTY_TYPE.openStream();
+            stream = propertyTypeFile.openStream();
             PROPERTY_TYPES.load(stream);
             for(Object key : PROPERTY_TYPES.keySet()){
                 final String str = key.toString();
@@ -100,67 +103,71 @@ public final class S57TypeBank {
             }
         }
     }
-    
-    private S57TypeBank() {        
-    }
-    
-    public static Set<String> getFeatureTypeNames(){
+
+    @Override
+    public Set<String> getFeatureTypeNames(){
         return FT_ACC_KEY.keySet();
     }
-    
-    public static int getFeatureTypeCode(String name) throws DataStoreException{
+
+    @Override
+    public int getFeatureTypeCode(String name) throws DataStoreException{
         name = name.toUpperCase();
         String key = FT_ACC_KEY.get(name);
         if(key == null) throw new DataStoreException("No feature type for name : "+ name);
         return splitKey(key).getKey();
     }
-    
-    public static String getFeatureTypeName(int code) throws DataStoreException{
+
+    @Override
+    public String getFeatureTypeName(int code) throws DataStoreException{
         String key = FT_CODE_KEY.get(code);
         if(key == null) throw new DataStoreException("No feature type for code : "+ code);
         return splitKey(key).getValue();
     }
-    
-    public static int getPropertyTypeCode(String name) throws DataStoreException{
+
+    @Override
+    public int getPropertyTypeCode(String name) throws DataStoreException{
         name = name.toUpperCase();
         String key = PT_ACC_KEY.get(name);
         if(key == null) throw new DataStoreException("No property type for name : "+ name);
         return splitKey(key).getKey();
     }
-    
-    public static String getPropertyTypeName(int code) throws DataStoreException{
+
+    @Override
+    public String getPropertyTypeName(int code) throws DataStoreException{
         String key = PT_CODE_KEY.get(code);
         if(key == null) throw new DataStoreException("No property type for code : "+ code);
         return splitKey(key).getValue();
     }
-    
-    public static FeatureType getFeatureType(String name, CoordinateReferenceSystem crs) throws DataStoreException{
+
+    @Override
+    public FeatureType getFeatureType(String name, CoordinateReferenceSystem crs) throws DataStoreException{
         String key = FT_ACC_KEY.get(name);
         if(key == null) throw new DataStoreException("No feature type for name : "+ name);
         return getFeatureTypeByKey(key,crs);
     }
-    
-    public static FeatureType getFeatureType(int code, CoordinateReferenceSystem crs) throws DataStoreException{
+
+    @Override
+    public FeatureType getFeatureType(int code, CoordinateReferenceSystem crs) throws DataStoreException{
         String key = FT_CODE_KEY.get(code);
         if(key == null) throw new DataStoreException("No feature type for code : "+ code);
         return getFeatureTypeByKey(key,crs);
     }
-    
-    private static FeatureType getFeatureTypeByKey(String key, CoordinateReferenceSystem crs) throws DataStoreException{
+
+    private FeatureType getFeatureTypeByKey(String key, CoordinateReferenceSystem crs) throws DataStoreException{
         ArgumentChecks.ensureNonNull("crs", crs);
-        
+
         final String values = FEATURE_TYPES.get(key).toString();
         Entry<Integer,String> entry = splitKey(key);
         final S57FeatureType sft = new S57FeatureType();
         sft.code = entry.getKey();
         sft.acronym = entry.getValue();
         sft.fromFormattedString(values);
-        
+
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(sft.acronym);
         //add a geometry type
         ftb.add("spatial", Geometry.class, crs);
-        
+
         final List<String> allAtts = new ArrayList<String>();
         allAtts.addAll(sft.attA);
         allAtts.addAll(sft.attB);
@@ -171,26 +178,28 @@ public final class S57TypeBank {
             ftb.add(attDesc);
         }
 
-        final FeatureType ft = ftb.buildFeatureType();   
+        final FeatureType ft = ftb.buildFeatureType();
         // do we need a cache here ?
         return ft;
     }
-    
-    public static AttributeDescriptor getAttributeDescriptor(final String code) throws DataStoreException{
+
+    @Override
+    public AttributeDescriptor getAttributeDescriptor(final String code) throws DataStoreException{
         final String key = PT_ACC_KEY.get(code);
         if(key == null) throw new DataStoreException("No property type for code : "+ code);
         return getAttributeDescriptorByKey(key);
     }
-    
-    public static AttributeDescriptor getAttributeDescriptor(final int code) throws DataStoreException{
+
+    @Override
+    public AttributeDescriptor getAttributeDescriptor(final int code) throws DataStoreException{
         final String key = PT_CODE_KEY.get(code);
         if(key == null) throw new DataStoreException("No property type for code : "+ code);
         return getAttributeDescriptorByKey(key);
     }
-    
-    public static AttributeDescriptor getAttributeDescriptorByKey(final String propertyKey){
+
+    public AttributeDescriptor getAttributeDescriptorByKey(final String propertyKey){
         final Entry<Integer,String> entry = splitKey(propertyKey);
-        
+
         final String pvalues = PROPERTY_TYPES.getProperty(propertyKey);
         final S57PropertyType pt = new S57PropertyType();
         pt.code = entry.getKey();
@@ -219,22 +228,22 @@ public final class S57TypeBank {
         }else{
             throw new RuntimeException("unknowned property type : "+pt.type);
         }
-        
+
         final AttributeTypeBuilder atb = new AttributeTypeBuilder();
         atb.setName(pt.acronym);
-        atb.setBinding(binding);        
+        atb.setBinding(binding);
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         adb.setName(pt.acronym);
         adb.setMinOccurs(1);
         adb.setMaxOccurs(1);
         adb.setNillable(true);
         adb.setType(atb.buildType());
-        
+
         final AttributeDescriptor attDesc = adb.buildDescriptor();
         attDesc.getUserData().put(S57FeatureStore.S57TYPECODE, pt.code);
         return attDesc;
     }
-    
+
     /**
      * Split the key which is composed of 'Integer:String'
      * @param key
@@ -242,9 +251,9 @@ public final class S57TypeBank {
      */
     private static Entry<Integer,String> splitKey(final String key){
         final int index = key.indexOf('.');
-        return new AbstractMap.SimpleImmutableEntry<Integer, String>(
-                Integer.valueOf(key.substring(0,index)), 
+        return new AbstractMap.SimpleImmutableEntry<>(
+                Integer.valueOf(key.substring(0,index)),
                 key.substring(index+1));
     }
-    
+
 }

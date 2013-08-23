@@ -28,15 +28,19 @@ import org.geotoolkit.gui.swing.tree.Trees;
  * @author Johann Sorel (Geomatys)
  */
 public class S57FeatureType implements Serializable {
-    String acronym;
-    int code;
-    String fullName;
-    String description;
-    String remarks;
-    String reference;
-    List<String> attA = new ArrayList<String>();
-    List<String> attB = new ArrayList<String>();
-    List<String> attC = new ArrayList<String>();
+    public String acronym;
+    public int code;
+    public String fullName;
+    public String description;
+    public String remarks;
+    public String reference;
+    /**
+     * indicates the allowable geometric forms. Point, line or area.
+     */
+    public String geometricPrimitive;
+    public List<String> attA = new ArrayList<>();
+    public List<String> attB = new ArrayList<>();
+    public List<String> attC = new ArrayList<>();
 
     @Override
     public String toString() {
@@ -65,6 +69,10 @@ public class S57FeatureType implements Serializable {
         sb.append(toFormattedString(attA)).append(';');
         sb.append(toFormattedString(attB)).append(';');
         sb.append(toFormattedString(attC));
+        if(geometricPrimitive != null){
+            sb.append(';');
+            sb.append(geometricPrimitive);
+        }
         return sb.toString();
     }
 
@@ -90,7 +98,7 @@ public class S57FeatureType implements Serializable {
 
     public void fromFormattedString(String str) {
         final String[] parts = str.split(";", -1);
-        if (parts.length != 7) {
+        if (parts.length != 7 && parts.length != 8) {
             throw new IllegalArgumentException("more divisions then expected :" + parts.length);
         }
         int i = 0;
@@ -101,6 +109,9 @@ public class S57FeatureType implements Serializable {
         attA.addAll(toList(parts[i++]));
         attB.addAll(toList(parts[i++]));
         attC.addAll(toList(parts[i++]));
+        if(parts.length == 8){
+            this.geometricPrimitive = parts[i++];
+        }
     }
 
     private static List toList(String str) {
@@ -108,5 +119,5 @@ public class S57FeatureType implements Serializable {
         if(parts.length==1 && parts[0].isEmpty()) return Collections.EMPTY_LIST;
         return Arrays.asList(parts);
     }
-    
+
 }

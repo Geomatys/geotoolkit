@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.s57.annexe;
+package org.geotoolkit.data.s57.internal;
 
 import com.lowagie.text.pdf.PRTokeniser;
 import com.lowagie.text.pdf.PdfArray;
@@ -28,15 +28,15 @@ import com.lowagie.text.pdf.PdfString;
 import com.lowagie.text.pdf.RandomAccessFileOrArray;
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import org.geotoolkit.data.s57.S57FeatureStore;
+import org.geotoolkit.data.s57.annexe.S57FeatureType;
+import org.geotoolkit.data.s57.annexe.S57PropertyType;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -47,62 +47,68 @@ import org.opengis.feature.type.FeatureType;
  * Used only to rebuild types from S-57 annexes.
  * S-57_AppendixA_Chapter1_31ApAch1.pdf
  * S-57_AppendixA_Chapter2_31ApAch2.pdf
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class S57AnnexeParser {
 
-    private final Map<String,S57FeatureType> s57ftypes;
-    private final Map<String,S57PropertyType> s57ptypes;
-    private final Map<String, FeatureType> featureTypes = new HashMap<String, FeatureType>();
-    
+    public final Map<String,S57FeatureType> s57ftypes;
+    public final Map<String,S57PropertyType> s57ptypes;
+    public final Map<String, FeatureType> featureTypes = new HashMap<>();
+
     public static void main(String[] args) throws IOException {
-        
+
         args = new String[]{
             "/home/jsorel/TRAVAIL/1_Specification/IHO/S-57_AppendixA_Chapter1_31ApAch1.pdf",
             "/home/jsorel/TRAVAIL/1_Specification/IHO/S-57_AppendixA_Chapter2_31ApAch2.pdf"
         };
         S57AnnexeParser parser = new S57AnnexeParser(args[0], args[1]);
-        
+
         System.out.println(parser.s57ftypes.size());
         System.out.println(parser.s57ptypes.size());
-        
+
         for(S57FeatureType sft : parser.s57ftypes.values()){
             System.out.println(sft.toFormattedString());
             sft.fromFormattedString(sft.toFormattedString());
         }
-        
+
         System.out.println("---------------------------------");
         for(S57PropertyType sft : parser.s57ptypes.values()){
             System.out.println(sft.toFormattedString());
             sft.fromFormattedString(sft.toFormattedString());
         }
-        
+
     }
-    
+
     public S57AnnexeParser() throws IOException {
         this(
             "/home/jsorel/TRAVAIL/1_Specification/IHO/S-57_AppendixA_Chapter1_31ApAch1.pdf",
             "/home/jsorel/TRAVAIL/1_Specification/IHO/S-57_AppendixA_Chapter2_31ApAch2.pdf");
     }
-    
+
     public S57AnnexeParser(String an1, String an2) throws IOException {
-        s57ftypes = parseFeatureTypes(an1);
-        s57ptypes = parsePropertyTypes(an2);
-        
+        this(an1,17,-1,
+             an2,10,-1);
+
     }
-    
+
+    public S57AnnexeParser(String an1, int startPage1, int endPage1, String an2, int startPage2, int endPage2) throws IOException {
+        s57ftypes = parseFeatureTypes(an1,startPage1,endPage1);
+        s57ptypes = parsePropertyTypes(an2,startPage2,endPage2);
+
+    }
+
     public FeatureType getFeatureType(String name){
         FeatureType ft = featureTypes.get(name);
         if(ft!=null) return ft;
-        
+
         final S57FeatureType sft = s57ftypes.get(name);
-        
+
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(sft.acronym);
         //add a geometry type
         ftb.add("spatial", Geometry.class, DefaultGeographicCRS.WGS84);
-        
+
         final List<String> allAtts = new ArrayList<String>();
         allAtts.addAll(sft.attA);
         allAtts.addAll(sft.attB);
@@ -138,10 +144,10 @@ public final class S57AnnexeParser {
 
         ft = ftb.buildFeatureType();
         featureTypes.put(ft.getName().getLocalPart(), ft);
-        
+
         return ft;
     }
-    
+
     public FeatureType getFeatureType(int code){
         for(S57FeatureType sft : s57ftypes.values()){
             if(sft.code == code){
@@ -150,20 +156,22 @@ public final class S57AnnexeParser {
         }
         return null;
     }
-    
-    
-    private static Map<String,S57FeatureType> parseFeatureTypes(String path) throws IOException {
-        final Map<String,S57FeatureType> featureTypes = new HashMap<String,S57FeatureType>();
-        
-        final PdfReader reader = new PdfReader(path);        
+
+
+    private static Map<String,S57FeatureType> parseFeatureTypes(String path, int startPage, int endPage) throws IOException {
+        final Map<String,S57FeatureType> featureTypes = new HashMap<>();
+
+        final PdfReader reader = new PdfReader(path);
         final int nbPages = reader.getNumberOfPages();
-        
-        for(int i=0;i<nbPages+1;i++){
-            if(i<17)continue;
-            
+
+        if(startPage<0) startPage = 0;
+        if(endPage<0) endPage = nbPages;
+
+        for(int i=startPage;i<endPage+1;i++){
+
             final byte[] streamBytes = reader.getPageContent(i);
             final PRTokeniser tokenizer = new PRTokeniser(new RandomAccessFileOrArray(streamBytes));
-            
+
             StringBuilder sb = new StringBuilder();
             sb.setLength(0);
             while (tokenizer.nextToken()) {
@@ -171,19 +179,19 @@ public final class S57AnnexeParser {
                     sb.append(tokenizer.getStringValue());
                 }
             }
-            
+
             final S57FeatureType type = new S57FeatureType();
-            
+
             final String str = sb.toString();
-            
+
             if(str.contains("DELETED - DO NOT USE")) continue;
             if(!str.contains("Acronym: "))continue;
-            
+
             int index1 = str.indexOf("Acronym:")+8;
             int index2 = str.indexOf("Code:");
             type.acronym = str.substring(index1, index2).trim();
             index2 += 5;
-            
+
             //find the end of the code
             for(index1=index2;;index1++){
                 char c = str.charAt(index1);
@@ -197,7 +205,7 @@ public final class S57AnnexeParser {
             if(index1>0){
                 type.fullName = str.substring(index2+size, index1).trim();
             }
-            
+
             index1 = str.indexOf("Set Attribute_A:")+16;
             index2 = str.indexOf("Set Attribute_B:");
             String[] parts = str.substring(index1, index2).split(";|,");
@@ -206,7 +214,7 @@ public final class S57AnnexeParser {
                 if(part.isEmpty()) continue;
                 type.attA.add(part);
             }
-            
+
             index1 = str.indexOf("Set Attribute_B:")+16;
             index2 = str.indexOf("Set Attribute_C:");
             parts = str.substring(index1, index2).split(";|,");
@@ -215,7 +223,7 @@ public final class S57AnnexeParser {
                 if(part.isEmpty()) continue;
                 type.attB.add(part);
             }
-            
+
             index1 = str.indexOf("Set Attribute_C:")+16;
             index2 = str.indexOf("Definition:");
             parts = str.substring(index1, index2).split(";|,");
@@ -224,7 +232,7 @@ public final class S57AnnexeParser {
                 if(part.isEmpty()) continue;
                 type.attC.add(part);
             }
-            
+
             index2+=11;
             index1 = str.indexOf("Reference:");
             int dsize = 10;
@@ -240,7 +248,7 @@ public final class S57AnnexeParser {
                 dsize = 11;
             }
             type.description = str.substring(index2, index1).trim();
-            
+
             if(noref){
                 index1+=8;
                 index2 = str.indexOf("Object Class:");
@@ -249,33 +257,35 @@ public final class S57AnnexeParser {
                 index1+=dsize;
                 index2 = str.indexOf("Remarks:");
                 type.reference = str.substring(index1, index2).trim();
-                
+
                 index2+=8;
                 index1 = str.indexOf("Object Class:");
                 type.remarks = str.substring(index2, index1).trim();
             }
-            
+
             index1 = str.indexOf("Object Class:")+13;
             type.fullName = str.substring(index1).trim();
-            
-            featureTypes.put(type.acronym,type);         
+
+            featureTypes.put(type.acronym,type);
         }
-        
+
         return featureTypes;
     }
-    
-    private static Map<String,S57PropertyType> parsePropertyTypes(String path) throws IOException {
-        final Map<String,S57PropertyType> propertyTypes = new HashMap<String,S57PropertyType>();
-        
-        final PdfReader reader = new PdfReader(path);        
+
+    private static Map<String,S57PropertyType> parsePropertyTypes(String path, int startPage, int endPage) throws IOException {
+        final Map<String,S57PropertyType> propertyTypes = new HashMap<>();
+
+        final PdfReader reader = new PdfReader(path);
         final int nbPages = reader.getNumberOfPages();
-        
-        for(int i=0;i<nbPages+1;i++){            
-            if(i<10)continue;            
-            
+
+        if(startPage<0) startPage = 0;
+        if(endPage<0) endPage = nbPages;
+
+        for(int i=startPage;i<endPage+1;i++){
+
             final byte[] streamBytes = reader.getPageContent(i);
             final PRTokeniser tokenizer = new PRTokeniser(new RandomAccessFileOrArray(streamBytes));
-            
+
             StringBuilder sb = new StringBuilder();
             sb.setLength(0);
             while (tokenizer.nextToken()) {
@@ -283,20 +293,20 @@ public final class S57AnnexeParser {
                     sb.append(tokenizer.getStringValue());
                 }
             }
-            
-            final S57PropertyType type = new S57PropertyType();            
+
+            final S57PropertyType type = new S57PropertyType();
             String str = sb.toString();
             String lstr = str.toLowerCase();
             //System.out.println(str);
-            
+
             if(str.contains("DELETED - DO NOT USE")) continue;
             if(!lstr.contains("acronym: "))continue;
-            
+
             int index1 = lstr.indexOf("acronym:")+8;
             int index2 = lstr.indexOf("code:");
             type.acronym = str.substring(index1, index2).trim();
             index2 += 5;
-            
+
             //find the end of the code
             for(index1=index2;;index1++){
                 char c = str.charAt(index1);
@@ -307,7 +317,7 @@ public final class S57AnnexeParser {
             type.code = Integer.valueOf(codestr.trim());
             str = str.substring(index1);
             lstr = str.toLowerCase();
-            
+
             final String attType = "attribute type:";
             final String att2Type = "input type:";
             final String expinput = "expected input:";
@@ -323,9 +333,9 @@ public final class S57AnnexeParser {
             final String attribute = "attribute:";
             final String int1ref = "int 1 reference:";
             final String chartref = "chart specification:";
-            
 
-            
+
+
             final TreeMap<Integer,String> map = new TreeMap();
             map.put(lstr.indexOf(attType), attType);
             map.put(lstr.indexOf(att2Type), att2Type);
@@ -355,7 +365,7 @@ public final class S57AnnexeParser {
                 }else{
                     clip = str.substring(index+val.length(),end).trim();
                 }
-                
+
                 if(val == attType){
                     type.type = clip;
                 }else if(val == att2Type){
@@ -379,7 +389,7 @@ public final class S57AnnexeParser {
                         previous = desci+desc.length()+1;
                         type.expecteds.add(ecodestr);
                     }
-                    
+
                 }else if(val == definition){
                     type.definition = clip;
                 }else if(val == definitions){
@@ -402,15 +412,15 @@ public final class S57AnnexeParser {
                     type.fullName = clip;
                 }
             }
-                
+
             propertyTypes.put(type.acronym,type);
         }
-        
+
         return propertyTypes;
     }
-    
+
     private static String toString(String name, PdfObject candidate, final int depth){
-        
+
         if(candidate instanceof PdfName){
             return name+" "+((PdfName)candidate).toString();
         }else if(candidate instanceof PdfNumber){
@@ -420,19 +430,19 @@ public final class S57AnnexeParser {
         }else if(candidate instanceof PdfBoolean){
             return name+" "+((PdfBoolean)candidate).booleanValue();
         }
-        
+
         if(depth == 0){
             return name +" ...";
         }
-        
+
         final List<String> values = new ArrayList<String>();
-        
+
         if(candidate instanceof PdfArray){
             final PdfArray array = (PdfArray) candidate;
             for(int i=0,n=array.size();i<n;i++){
                 final PdfObject obj = array.getDirectObject(i);
                 values.add(toString("["+i+"]",obj,depth-1));
-            }  
+            }
         }else if(candidate instanceof PdfDictionary){
             final PdfDictionary dico = (PdfDictionary) candidate;
             final Set<PdfName> names = dico.getKeys();
@@ -443,5 +453,5 @@ public final class S57AnnexeParser {
         }
         return Trees.toString(name, values);
     }
-    
+
 }

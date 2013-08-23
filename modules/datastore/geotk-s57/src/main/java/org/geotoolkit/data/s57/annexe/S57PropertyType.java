@@ -26,19 +26,19 @@ import org.geotoolkit.gui.swing.tree.Trees;
  * @author Johann Sorel (Geomatys)
  */
 public class S57PropertyType implements Serializable {
-    String acronym;
-    int code;
-    String fullName;
-    String type;
-    List<String> expecteds = new ArrayList<String>();
-    String definition;
-    String references;
-    Double minimum;
-    Double maximum;
-    String remarks;
-    String indication;
-    String format;
-    String exemple;
+    public String acronym;
+    public int code;
+    public String fullName;
+    public String type;
+    public List<String> expecteds = new ArrayList<>();
+    public String definition;
+    public String references;
+    public Double minimum;
+    public Double maximum;
+    public String remarks;
+    public String indication;
+    public String format;
+    public String exemple;
 
     @Override
     public String toString() {
@@ -109,5 +109,5 @@ public class S57PropertyType implements Serializable {
         }
         return Double.valueOf(str);
     }
-    
+
 }
