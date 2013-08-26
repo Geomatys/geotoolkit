@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wms.xml.v130;
 
+import java.lang.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,11 +27,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractGeographicBoundingBox;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractLogoURL;
 import org.opengis.geometry.Envelope;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -493,10 +498,27 @@ public class Layer implements AbstractLayer {
 
     @Override
     public Envelope getEnvelope() {
-        final AbstractGeographicBoundingBox bbox = getEXGeographicBoundingBox();
-        if(bbox != null){
-            return new GeneralEnvelope(bbox);
+        if(getBoundingBox().isEmpty()){
+            final AbstractGeographicBoundingBox bbox = getEXGeographicBoundingBox();
+            if(bbox != null){
+                GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+                env.setRange(0, bbox.getWestBoundLongitude(), bbox.getEastBoundLongitude());
+                env.setRange(1, bbox.getSouthBoundLatitude(), bbox.getNorthBoundLatitude());
+                return env;
+            }
+            return null;
         }
+
+        final BoundingBox bbox = getBoundingBox().get(0);
+        try {
+            GeneralEnvelope env = new GeneralEnvelope(CRS.decode(bbox.getCRS()));
+            env.setRange(0, bbox.getMinx(), bbox.getMaxx());
+            env.setRange(1, bbox.getMiny(), bbox.getMaxy());
+            return env;
+        } catch (FactoryException e) {
+            Logging.getLogger(Layer.class).warning(e.getMessage());
+        }
+
         return null;
     }
 
