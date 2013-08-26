@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.wms.xml.v130;
 
-import java.lang.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

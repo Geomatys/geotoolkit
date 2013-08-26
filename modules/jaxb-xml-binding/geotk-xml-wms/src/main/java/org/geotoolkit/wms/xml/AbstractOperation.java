@@ -17,7 +17,6 @@
 package org.geotoolkit.wms.xml;
 
 import java.util.List;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
