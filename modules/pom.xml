@@ -81,7 +81,7 @@
   <!--         copies all JARs in a single directory.              -->
   <!-- =========================================================== -->
   <build>
-    <plugins>
+    <!--plugins>
       <plugin>
         <groupId>org.geotoolkit.project</groupId>
         <artifactId>geotk-jar-collector</artifactId>
@@ -94,7 +94,7 @@
           </execution>
         </executions>
       </plugin>
-    </plugins>
+    </plugins-->
   </build>
 
 
