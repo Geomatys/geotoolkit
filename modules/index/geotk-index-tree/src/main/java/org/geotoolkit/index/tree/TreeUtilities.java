@@ -16,10 +16,8 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.io.IOException;
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.internal.tree.TreeAccess;
 import org.opengis.geometry.Envelope;
 
 /**
