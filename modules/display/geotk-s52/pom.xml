@@ -57,6 +57,11 @@
             <artifactId>geotk-go2</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-svg</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

@@ -27,7 +27,7 @@ import java.net.URL;
 
 /**
  * S-52 Lookup table reader.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class LookupTableReader {
@@ -48,6 +48,7 @@ public class LookupTableReader {
         dispose();
         input = null;
         stream = null;
+        ds = null;
         closeOnDispose = false;
     }
 
