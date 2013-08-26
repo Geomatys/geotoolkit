@@ -7,6 +7,7 @@ CREATE TABLE "Layer"(
 
 CREATE TABLE "Band"(
   "id" serial NOT NULL,
+  "version" character varying(100),
   "layerId" integer NOT NULL,
   "indice" integer NOT NULL,
   "description" character varying(500) NOT NULL,
@@ -15,11 +16,10 @@ CREATE TABLE "Band"(
   "noData" real[],
   "min" double precision NOT NULL,
   "max" double precision NOT NULL,
-  CONSTRAINT band_pk PRIMARY KEY (id),
+  CONSTRAINT band_pk PRIMARY KEY (id , version ),
   CONSTRAINT band_fk_layer FOREIGN KEY ("layerId")
       REFERENCES "Layer" (id) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE,
-  CONSTRAINT band_unique_indice UNIQUE ("layerId","indice")
+      ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE "Pyramid"(

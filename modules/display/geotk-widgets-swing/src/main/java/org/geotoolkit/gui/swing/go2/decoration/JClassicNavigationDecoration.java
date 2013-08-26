@@ -2,8 +2,8 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2009 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -45,9 +45,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 
 /**
  *
@@ -523,11 +523,12 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
 
         @Override
         public void propertyChange(final PropertyChangeEvent arg0) {
-            
-            final double rotation = map.getCanvas().getController().getRotation();
-            
-            if(rotation != getRotation()){
-                setRotation(rotation);
+            if(AbstractReferencedCanvas2D.OBJECTIVE_TO_DISPLAY_PROPERTY.equals(arg0.getPropertyName())){
+                final double rotation = map.getCanvas().getController().getRotation();
+
+                if(rotation != getRotation()){
+                    setRotation(rotation);
+                }
             }
         }
     };
@@ -567,11 +568,11 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
     public void setMap2D(final JMap2D map) {
         
         if(this.map != null){
-            this.map.getCanvas().removePropertyChangeListener(ReferencedCanvas2D.OBJECTIVE_TO_DISPLAY_PROPERTY,propertyListener);
+            this.map.getCanvas().removePropertyChangeListener(propertyListener);
         }
         
         this.map = map;
-        this.map.getCanvas().addPropertyChangeListener(ReferencedCanvas2D.OBJECTIVE_TO_DISPLAY_PROPERTY,propertyListener);
+        this.map.getCanvas().addPropertyChangeListener(propertyListener);
     }
 
     @Override

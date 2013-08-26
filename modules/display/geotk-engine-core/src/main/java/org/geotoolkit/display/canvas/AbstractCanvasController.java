@@ -28,7 +28,7 @@ import org.opengis.util.InternationalString;
 public abstract class AbstractCanvasController implements CanvasController{
 
     /**
-     * Small number for floating point comparaisons.
+     * Small number for floating point compare.
      */
     protected static final double EPS = 1E-12;
     

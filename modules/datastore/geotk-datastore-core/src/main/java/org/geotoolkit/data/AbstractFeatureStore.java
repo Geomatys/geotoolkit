@@ -268,12 +268,20 @@ public abstract class AbstractFeatureStore extends AbstractStorage implements Fe
         // TODO query = addSeparateFeatureHint(query);
         
         if(query.retrieveAllProperties()){
-            //we simplify it, get only geometry attributs
+            //we simplify it, get only geometry attributs + sort attribute
             final FeatureType ft = getFeatureType(query.getTypeName());
             final List<Name> names = new ArrayList<Name>();
             for(PropertyDescriptor desc : ft.getDescriptors()){
                 if(desc instanceof GeometryDescriptor){
                     names.add(desc.getName());
+                } else if (query.getSortBy() != null) {
+                    for (SortBy sortBy : query.getSortBy()) {
+                        final String propName = sortBy.getPropertyName().getPropertyName();
+                        if (desc.getName().toString().equals(propName) ||
+                            desc.getName().getLocalPart().equals(propName)) {
+                            names.add(desc.getName());
+                        }
+                    }
                 }
             }
             

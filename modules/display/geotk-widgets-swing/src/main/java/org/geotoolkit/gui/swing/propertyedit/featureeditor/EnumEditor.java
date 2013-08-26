@@ -34,6 +34,7 @@ public class EnumEditor extends PropertyValueEditor implements ActionListener{
     public EnumEditor() {
         super(new BorderLayout());
         add(BorderLayout.CENTER, component);
+        component.addActionListener(this);
         component.addFocusListener(this);
     }
 

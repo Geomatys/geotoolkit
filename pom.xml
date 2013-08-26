@@ -120,7 +120,7 @@
   <!-- =========================================================== -->
 
   <properties>
-    <sis.version>0.3-jdk7</sis.version>
+    <sis.version>0.4-jdk7-SNAPSHOT</sis.version>
     <geotoolkit.version>4.x-SNAPSHOT</geotoolkit.version>
   </properties>
 
@@ -564,7 +564,7 @@
               <keywords>true</keywords>        <!-- Adds HTML meta keyword tags to the generated files.        -->
               <breakiterator>true</breakiterator>
               <excludePackageNames>
-                org.geotoolkit.coverage.geotiff:org.geotoolkit.display3d:org.geotoolkit.gui.swing.go3:com.vividsolutions:org.geotoolkit.legacy
+                org.geotoolkit.coverage.geotiff:org.geotoolkit.display3d:com.vividsolutions:org.geotoolkit.legacy
               </excludePackageNames>
 
               <!-- Custom taglets implemented in Java. -->

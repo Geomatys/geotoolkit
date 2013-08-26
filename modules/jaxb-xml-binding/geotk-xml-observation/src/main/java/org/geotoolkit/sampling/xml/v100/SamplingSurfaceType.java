@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.v311.EnvelopeType;
+import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v311.MeasureType;
 import org.geotoolkit.gml.xml.v311.SurfacePropertyType;
 import org.opengis.geometry.Geometry;
@@ -61,6 +63,34 @@ public class SamplingSurfaceType extends SpatiallyExtensiveSamplingFeatureType {
     @XmlElement(required = true)
     private SurfacePropertyType shape;
     private MeasureType area;
+
+    public SamplingSurfaceType() {
+
+    }
+
+    public SamplingSurfaceType(final String            id,
+                             final String              name,
+                             final String              description,
+                             final FeaturePropertyType sampledFeature,
+                             final SurfacePropertyType shape,
+                             final MeasureType area){
+        super(id, name, description, sampledFeature);
+        this.area = area;
+        this.shape  = shape;
+    }
+
+    public SamplingSurfaceType(final String            id,
+                             final String              name,
+                             final String              description,
+                             final FeaturePropertyType sampledFeature,
+                             final SurfacePropertyType shape,
+                             final MeasureType area,
+                             final EnvelopeType env){
+        super(id, name, description, sampledFeature);
+        this.area = area;
+        this.shape  = shape;
+        setBoundedBy(env);
+    }
 
     /**
      * Gets the value of the shape property.

@@ -154,6 +154,7 @@ public class Utils {
         CLASS_BINDING.put("PolyHedralSurfacePropertyType", MultiPolygon.class);
         CLASS_BINDING.put("MultiSurfacePropertyType",      MultiPolygon.class);
         CLASS_BINDING.put("MultiPolygonPropertyType",      MultiPolygon.class);
+        CLASS_BINDING.put("MultiPolygon",                  MultiPolygon.class);
         CLASS_BINDING.put("Polygon",                       Polygon.class);
         CLASS_BINDING.put("PolygonPropertyType",           Polygon.class);
         CLASS_BINDING.put("Ring",                          LinearRing.class);
@@ -253,7 +254,7 @@ public class Utils {
         GEOMETRY_NAME_BINDING_311.put(GeometryCollection.class, new QName(GML_311_NAMESPACE, "MultiGeometry"));
         GEOMETRY_NAME_BINDING_311.put(MultiLineString.class,    new QName(GML_311_NAMESPACE, "CompositeCurve"));
         GEOMETRY_NAME_BINDING_311.put(Envelope.class,           new QName(GML_311_NAMESPACE, "Envelope"));
-        GEOMETRY_NAME_BINDING_311.put(MultiPolygon.class,       new QName(GML_311_NAMESPACE, "MultiGeometry"));
+        GEOMETRY_NAME_BINDING_311.put(MultiPolygon.class,       new QName(GML_311_NAMESPACE, "MultiPolygon"));
         GEOMETRY_NAME_BINDING_311.put(Polygon.class,            new QName(GML_311_NAMESPACE, "Polygon"));
         GEOMETRY_NAME_BINDING_311.put(LinearRing.class,         new QName(GML_311_NAMESPACE, "Ring"));
     }
@@ -267,7 +268,7 @@ public class Utils {
         GEOMETRY_NAME_BINDING_321.put(GeometryCollection.class, new QName(GML_321_NAMESPACE, "MultiGeometryType"));
         GEOMETRY_NAME_BINDING_321.put(MultiLineString.class,    new QName(GML_321_NAMESPACE, "CompositeCurveType"));
         GEOMETRY_NAME_BINDING_321.put(Envelope.class,           new QName(GML_321_NAMESPACE, "EnvelopeTypr"));
-        GEOMETRY_NAME_BINDING_321.put(MultiPolygon.class,       new QName(GML_321_NAMESPACE, "MultiGeometryType"));
+        GEOMETRY_NAME_BINDING_321.put(MultiPolygon.class,       new QName(GML_321_NAMESPACE, "MultiPolygonType"));
         GEOMETRY_NAME_BINDING_321.put(Polygon.class,            new QName(GML_321_NAMESPACE, "PolygonType"));
         GEOMETRY_NAME_BINDING_321.put(LinearRing.class,         new QName(GML_321_NAMESPACE, "RingType"));
     }

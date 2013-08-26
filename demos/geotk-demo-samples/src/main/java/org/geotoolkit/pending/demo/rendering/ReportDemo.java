@@ -25,13 +25,11 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.GenericMappingFeatureIterator;
 import org.geotoolkit.data.memory.mapping.FeatureMapper;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.display2d.ext.DecorationXMLParser;
 import org.geotoolkit.display2d.ext.grid.DefaultGridTemplate;
 import org.geotoolkit.display2d.ext.grid.GraphicGridJ2D;
 import org.geotoolkit.display2d.ext.grid.GridTemplate;
-import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.OutputDef;
 import org.geotoolkit.display2d.service.PortrayalExtension;
@@ -146,7 +144,7 @@ public class ReportDemo {
                     final PortrayalExtension ext = new PortrayalExtension() {
                         @Override
                         public void completeCanvas(J2DCanvas canvas) throws PortrayalException {
-                            canvas.getContainer().add(new GraphicGridJ2D(canvas, gridTemplate));
+                            canvas.getContainer().getRoot().getChildren().add(new GraphicGridJ2D(canvas, gridTemplate));
                         }
                     };
                     final CanvasDef canvasDef = new CanvasDef(new Dimension(1, 1), Color.WHITE,false);
@@ -154,7 +152,9 @@ public class ReportDemo {
                     final ViewDef viewDef = new ViewDef(CRS.transform(context.getBounds(), CRS.decode("EPSG:3395")),0);
                     final MapDef mapdef = new MapDef(canvasDef,sceneDef,viewDef,null);
                     modified.getProperty("map3").setValue(mapdef);
-                }catch(Exception ex){ex.printStackTrace();}
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
 
 
                 //casual attributs -------------------

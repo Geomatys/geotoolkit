@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -50,8 +50,8 @@ public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2
     protected volatile GridCoverage2D buffer = null;
     private volatile Updater updater = null;
     
-    public StatefullMapLayerJ2D(J2DCanvas canvas, StatefullMapItemJ2D parent, T item) {
-        super(canvas, parent, item);
+    public StatefullMapLayerJ2D(J2DCanvas canvas, T item, boolean allowChildren) {
+        super(canvas, item, allowChildren);
     }
 
     @Override

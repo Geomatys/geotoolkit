@@ -31,7 +31,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import org.geotoolkit.display.container.AbstractContainer2D;
+import org.geotoolkit.display.container.GraphicContainer;
+import org.geotoolkit.display.primitive.SceneNode;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
@@ -45,7 +46,6 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.visitor.ListingColorVisitor;
 import org.opengis.display.canvas.RenderingState;
-import org.opengis.display.primitive.Graphic;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -136,7 +136,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
             clipBounds = new Rectangle(dim);
         }
         output.setClip(clipBounds);
-        output.addRenderingHints(hints);
+        output.addRenderingHints(getHints(true));
 
         final DefaultRenderingContext2D context = prepareContext(context2D, output,null);
 
@@ -145,9 +145,9 @@ public class J2DCanvasBuffered extends J2DCanvas{
             painter.paint(context2D);
         }
 
-        final AbstractContainer2D container = getContainer();
+        final GraphicContainer container = getContainer();
         if(container != null){
-            render(context, container.getSortedGraphics());
+            render(context, container.flatten(true));
         }
 
         /**
@@ -193,7 +193,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
             }
 
             //check graphic object and see if we can predict colors
-            final Set<Integer> colors = extractColors(getContainer().getSortedGraphics());
+            final Set<Integer> colors = extractColors(getContainer().flatten(true));
 
             if(colors != null){
                 //translucent background
@@ -211,7 +211,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
                 //see of we can determinate the background color, only if there is no AA.
                 if(!AA && painter instanceof SolidColorPainter){
                     //check graphic object and see if we can predict colors
-                    final Set<Integer> colors = extractColors(getContainer().getSortedGraphics());
+                    final Set<Integer> colors = extractColors(getContainer().flatten(true));
 
                     if(colors != null){
                         final Color bgColor = ((SolidColorPainter)painter).getColor();
@@ -260,9 +260,9 @@ public class J2DCanvasBuffered extends J2DCanvas{
      * @param graphics graphics to explore
      * @return Set of colors used by the graphics or null if unpredictable.
      */
-    private static SortedSet<Integer> extractColors(final List<Graphic> graphics){
+    private static SortedSet<Integer> extractColors(final List<SceneNode> graphics){
 
-        SortedSet<Integer> colors = new TreeSet<Integer>(new Comparator<Integer>(){
+        SortedSet<Integer> colors = new TreeSet<>(new Comparator<Integer>(){
             @Override
             public int compare(Integer o1, Integer o2) {
                 //place 0 always first
@@ -277,7 +277,11 @@ public class J2DCanvasBuffered extends J2DCanvas{
 
         });
 
-        for(Graphic gra : graphics){
+        for(SceneNode gra : graphics){
+            if(!(gra instanceof GraphicJ2D)){
+                //this node has no visual representation
+                continue;
+            }
             if(gra instanceof StatelessMapItemJ2D){
                 final StatelessMapItemJ2D cn = (StatelessMapItemJ2D) gra;
                 colors = extractColors(cn.getUserObject(), colors);

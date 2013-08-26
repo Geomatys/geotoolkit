@@ -331,7 +331,7 @@ public class DefaultSession extends AbstractSession {
      * Test if a version is set, raise an error if it's the case.
      * Version must not be set when doing writing operations
      */
-    private void checkVersion() throws DataStoreException {
+    protected void checkVersion() throws DataStoreException {
         if(version!=null){
             throw new DataStoreException("Session is opened on version : "+version+". "
                     + "Writing operations are not allowed, open a session without version to support writing.");

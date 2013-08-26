@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -27,7 +26,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
@@ -35,6 +33,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.collection.Cache;
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
@@ -47,7 +46,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class DefaultProjectedCoverage implements ProjectedCoverage {
 
-    private final Cache<GridCoverageReadParam,GridCoverage2D> cache = new Cache<GridCoverageReadParam,GridCoverage2D>(1,0,false);
+    private final Cache<GridCoverageReadParam,GridCoverage2D> cache = new Cache<>(1,0,false);
 
     private final StatelessContextParams params;
     private final CoverageMapLayer layer;
@@ -160,7 +159,7 @@ public class DefaultProjectedCoverage implements ProjectedCoverage {
     }
 
     @Override
-    public ReferencedCanvas2D getCanvas() {
+    public AbstractReferencedCanvas2D getCanvas() {
         return params.canvas;
     }
 

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -28,7 +28,7 @@ import java.util.logging.Level;
 public interface CanvasMonitor {
 
     /**
-     * Inovked by the canvas when the rendering process started.
+     * Invoked by the canvas when the rendering process started.
      */
     void renderingStarted();
 
@@ -39,7 +39,7 @@ public interface CanvasMonitor {
 
     /**
      * Returns {@code true} if the canvas in currently rendering.
-     * This method should be usable in multithread environment.
+     * This method should be usable in multi-thread environment.
      * @return true if the rendering is in progress.
      */
     boolean isRendering();
@@ -56,7 +56,7 @@ public interface CanvasMonitor {
     boolean stopRequested();
 
     /**
-     * Used by the canv or the graphic objects when an exception occured.
+     * Used by the canvas or the graphic objects when an exception occured.
      * The monitor may stop the rendering process depending on his behavior and the error type.
      */
     void exceptionOccured(Exception ex, Level level);

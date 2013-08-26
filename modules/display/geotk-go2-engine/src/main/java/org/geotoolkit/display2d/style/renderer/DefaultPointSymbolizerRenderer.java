@@ -25,8 +25,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.Iterator;
 import javax.measure.unit.NonSI;
-import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
@@ -126,7 +126,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
 
             }else{
                 final Point pt2d = geom.getCentroid();
-                if(pt2d == null){
+                if(pt2d == null || pt2d.isEmpty()){
                     //no geometry
                     return;
                 }
@@ -154,7 +154,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                 }
             }else{
                 final Point pt2d = geom.getCentroid();
-                if(pt2d == null){
+                if(pt2d == null || pt2d.isEmpty()){
                     //no geometry
                     return;
                 }
@@ -260,7 +260,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
             }else if(geom!=null){
 
                 final Point pt2d = geom.getCentroid();
-                if(pt2d == null){
+                if(pt2d == null || pt2d.isEmpty()){
                     //no geometry
                     return;
                 }

@@ -18,7 +18,7 @@
 package org.geotoolkit.display2d.primitive;
 
 import java.awt.Shape;
-import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display.SearchArea;
 
 /**
  * Extended search area for java2d use.

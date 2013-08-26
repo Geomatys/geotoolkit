@@ -19,6 +19,7 @@ package org.geotoolkit.gml;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
@@ -153,8 +154,11 @@ public class GeometrytoJTS {
             return toJTS((org.geotoolkit.gml.xml.MultiCurve)gml);
         } else if(gml instanceof org.geotoolkit.gml.xml.MultiPolygon){
             return toJTS((org.geotoolkit.gml.xml.MultiPolygon)gml);
-        } else if(gml instanceof MultiSurface){
-            return toJTS((MultiSurface)gml);
+        } else if(gml instanceof org.geotoolkit.gml.xml.MultiSurface){
+            return toJTS((org.geotoolkit.gml.xml.MultiSurface)gml);
+
+        } else if(gml instanceof org.geotoolkit.gml.xml.MultiGeometry){
+            return toJTS((org.geotoolkit.gml.xml.MultiGeometry)gml);
 
         } else if(gml instanceof org.geotoolkit.gml.xml.LinearRing){
             return toJTS((org.geotoolkit.gml.xml.LinearRing)gml);
@@ -244,7 +248,7 @@ public class GeometrytoJTS {
         if(coord != null){
             final List<Double> values = coord.getValues();
             final Coordinate[] coordinates = new Coordinate[values.size() / 2];
-            if (values != null && !values.isEmpty()) {
+            if (!values.isEmpty()) {
                 int cpt = 0;
                 for (int i=0; i < values.size(); i = i + 2) {
                     coordinates[cpt] = new Coordinate(values.get(i), values.get(i + 1));
@@ -358,6 +362,21 @@ public class GeometrytoJTS {
         }
 
         final MultiPoint geom = GF.createMultiPoint(members);
+        JTS.setCRS(geom, crs);
+        return geom;
+    }
+    
+    public static GeometryCollection toJTS(final org.geotoolkit.gml.xml.MultiGeometry gml) throws NoSuchAuthorityCodeException, FactoryException{
+        final List<? extends GeometryProperty> geoms = gml.getGeometryMember();
+        final Geometry[] members = new Geometry[geoms.size()];
+
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
+
+        for(int i=0,n=geoms.size(); i<n; i++){
+            members[i] = toJTS(geoms.get(i).getAbstractGeometry());
+        }
+
+        final GeometryCollection geom = GF.createGeometryCollection(members);
         JTS.setCRS(geom, crs);
         return geom;
     }

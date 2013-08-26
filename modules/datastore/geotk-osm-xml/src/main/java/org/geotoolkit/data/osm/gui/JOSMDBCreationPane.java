@@ -35,7 +35,7 @@ import org.geotoolkit.data.osm.xml.OSMXMLReader;
 import org.geotoolkit.data.osm.model.Node;
 import org.geotoolkit.data.osm.model.Relation;
 import org.geotoolkit.data.osm.model.Way;
-import org.geotoolkit.data.postgis.PostgisNGFeatureStoreFactory;
+import org.geotoolkit.db.postgres.PostgresFeatureStoreFactory;
 
 import org.jdesktop.swingx.JXErrorPane;
 
@@ -350,11 +350,11 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         final File f = osmFile;
 
         pgDB = new OSMPostgresDB(
-                dbParameters.get(PostgisNGFeatureStoreFactory.HOST.getName().getCode()).toString() +":"+
-                dbParameters.get(PostgisNGFeatureStoreFactory.PORT.getName().getCode()).toString(),
-                dbParameters.get(PostgisNGFeatureStoreFactory.DATABASE.getName().getCode()).toString(),
-                dbParameters.get(PostgisNGFeatureStoreFactory.USER.getName().getCode()).toString(),
-                dbParameters.get(PostgisNGFeatureStoreFactory.PASSWORD.getName().getCode()).toString()
+                dbParameters.get(PostgresFeatureStoreFactory.HOST.getName().getCode()).toString() +":"+
+                dbParameters.get(PostgresFeatureStoreFactory.PORT.getName().getCode()).toString(),
+                dbParameters.get(PostgresFeatureStoreFactory.DATABASE.getName().getCode()).toString(),
+                dbParameters.get(PostgresFeatureStoreFactory.USER.getName().getCode()).toString(),
+                dbParameters.get(PostgresFeatureStoreFactory.PASSWORD.getName().getCode()).toString()
                 );
 
 

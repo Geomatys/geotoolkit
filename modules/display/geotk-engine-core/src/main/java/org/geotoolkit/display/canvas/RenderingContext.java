@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,7 +21,6 @@ import java.awt.geom.AffineTransform;
 import java.util.Date;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.factory.Hints;
-import org.opengis.display.canvas.Canvas;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
@@ -79,14 +77,14 @@ public interface RenderingContext {
     CoordinateReferenceSystem getObjectiveCRS();
 
     /**
-     * Returns only the 2D composant of the objective crs.
+     * Returns only the 2D component of the objective CRS.
      * @return Objective CRS 2D
      */
     CoordinateReferenceSystem getObjectiveCRS2D();
 
     /**
      * Returns the rendering display CRS. this may not be at all time
-     * the same crs as the canvas, because the canvas might be update while rendering.
+     * the same CRS as the canvas, because the canvas might be update while rendering.
      * @return Display CRS
      */
     CoordinateReferenceSystem getDisplayCRS();

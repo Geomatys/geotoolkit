@@ -54,7 +54,7 @@
     <dependencies>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-jdbc-core</artifactId>
+            <artifactId>geotk-db-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 

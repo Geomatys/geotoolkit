@@ -10,7 +10,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.postgis.PostgisNGFeatureStoreFactory;
+import org.geotoolkit.db.postgres.PostgresFeatureStoreFactory;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -94,7 +94,7 @@ public class FeatureStoreReadingDemo {
 
         //find out how to describe things
         System.out.println(ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
-        System.out.println(PostgisNGFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
+        System.out.println(PostgresFeatureStoreFactory.PARAMETERS_DESCRIPTOR);
 
         final ParameterValueGroup parameters = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         parameters.parameter("url").setValue(FeatureStoreReadingDemo.class.getResource("/data/world/Countries.shp"));

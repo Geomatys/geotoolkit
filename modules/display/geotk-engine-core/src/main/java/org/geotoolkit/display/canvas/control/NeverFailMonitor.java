@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,8 @@ import java.util.logging.Logger;
 import org.apache.sis.util.logging.Logging;
 
 /**
- * Monitor which tryes to never fail the rendering.
+ * Monitor which try to never fail the rendering.
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */

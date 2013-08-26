@@ -28,11 +28,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.unit.SI;
 import static javax.swing.SwingConstants.*;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.opengis.geometry.Envelope;
 
 /**
  * Java2D graphic object displaying a scalebar.
@@ -62,6 +63,16 @@ public class GraphicScaleBarJ2D extends PositionedGraphic2D{
         this.template = template;
     }
 
+    @Override
+    public Object getUserObject() {
+        return template;
+    }
+
+    @Override
+    public Envelope getEnvelope() {
+        return null;
+    }
+    
     /**
      * {@inheritDoc }
      */

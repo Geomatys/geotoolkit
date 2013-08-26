@@ -21,10 +21,10 @@ xmlns = {
     @XmlJavaTypeAdapter(type=CharSequence.class, value=CharSequenceAdapter.class),
     @XmlJavaTypeAdapter(GO_Decimal.class),
     @XmlJavaTypeAdapter(type=double.class, value=GO_Decimal.class),
-    @XmlJavaTypeAdapter(GO_Decimal.AsFloat.class),
-    @XmlJavaTypeAdapter(type=float.class, value=GO_Decimal.AsFloat.class),
-    @XmlJavaTypeAdapter(GO_Integer.AsLong.class),
-    @XmlJavaTypeAdapter(type=long.class, value=GO_Integer.AsLong.class)
+    @XmlJavaTypeAdapter(GO_Decimal32.class),
+    @XmlJavaTypeAdapter(type=float.class, value=GO_Decimal32.class),
+    @XmlJavaTypeAdapter(GO_Integer64.class),
+    @XmlJavaTypeAdapter(type=long.class, value=GO_Integer64.class)
 })
 package org.geotoolkit.util;
 

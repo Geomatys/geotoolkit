@@ -20,12 +20,10 @@ import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.VolatileImage;
-import java.lang.ref.WeakReference;
 import java.util.logging.Level;
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.DefaultCanvasController2D;
-import org.geotoolkit.display.container.AbstractContainer;
-import org.geotoolkit.display.container.AbstractContainer2D;
+import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.factory.Hints;
@@ -202,10 +200,9 @@ public class J2DCanvasVolatile extends J2DCanvas{
         fireRenderingStateChanged(RenderingState.RENDERING);
 
         try{
-            final AbstractContainer renderer         = getContainer();
-            if(renderer != null && renderer instanceof AbstractContainer2D){
-                final AbstractContainer2D renderer2D = (AbstractContainer2D) renderer;
-                render(context2D, renderer2D.getSortedGraphics());
+            final GraphicContainer container = getContainer();
+            if(container != null){
+                render(context2D, container.flatten(true));
             }
         }catch(Exception ex){
             //volatile canvas must never lock itself.

@@ -23,6 +23,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.MultiGeometry;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -51,7 +52,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
     "geometryMember",
     "geometryMembers"
 })
-public class MultiGeometryType extends AbstractGeometricAggregateType {
+public class MultiGeometryType extends AbstractGeometricAggregateType implements MultiGeometry {
 
     private List<GeometryPropertyType> geometryMember;
     private GeometryArrayPropertyType geometryMembers;
@@ -60,6 +61,7 @@ public class MultiGeometryType extends AbstractGeometricAggregateType {
      * Gets the value of the geometryMember property.
      * 
      */
+    @Override
     public List<GeometryPropertyType> getGeometryMember() {
         if (geometryMember == null) {
             geometryMember = new ArrayList<GeometryPropertyType>();

@@ -38,6 +38,7 @@ import java.util.logging.Level;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.db.JDBCFeatureStore;
 import static org.geotoolkit.db.JDBCFeatureStoreUtilities.*;
+import static org.geotoolkit.data.AbstractFeatureStore.*;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.db.reverse.ColumnMetaModel.Type;
 import org.geotoolkit.db.reverse.MetaDataConstants.Column;
@@ -663,7 +664,7 @@ public final class DataBaseModel {
                 final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder(FTF);
                 final AttributeTypeBuilder atb = new AttributeTypeBuilder(FTF);
 
-                adb.setName(namespace, columnName);
+                adb.setName(ensureGMLNS(namespace, columnName));
                 adb.setMinOccurs(1);
                 adb.setMaxOccurs(1);
 
@@ -671,13 +672,18 @@ public final class DataBaseModel {
                 adb.setNillable(nullable == metadata.columnNullable);
 
 
-                atb.setName(namespace, columnName);
+                atb.setName(ensureGMLNS(namespace, columnName));
                 Connection cx = null;
                 try {
                     cx = store.getDataSource().getConnection();
                     final Class type = dialect.getJavaType(sqlType, sqlTypeName);
-                    atb.setName(columnName);
-                    atb.setBinding(type);
+                    if (type.equals(Geometry.class)) {
+                        // try to determine the real geometric type
+                        dialect.decodeGeometryColumnType(atb, cx, result, i);
+                    } else {
+                        atb.setName(columnName); // why so this a sencond time ?
+                        atb.setBinding(type);
+                    }
                 } catch (SQLException e) {
                     throw new DataStoreException("Error occurred analyzing column : " + columnName, e);
                 } finally {
@@ -729,10 +735,10 @@ public final class DataBaseModel {
 
                     adb.reset();
                     adb.copy((AttributeDescriptor) desc);
-                    adb.setName(namespace,name);
+                    adb.setName(ensureGMLNS(namespace,name));
                     atb.reset();
                     atb.copy((AttributeType) type);
-                    atb.setName(namespace,name);
+                    atb.setName(ensureGMLNS(namespace,name));
                     adb.setType(atb.buildType());
 
                     //Set the CRS if it's a geometry

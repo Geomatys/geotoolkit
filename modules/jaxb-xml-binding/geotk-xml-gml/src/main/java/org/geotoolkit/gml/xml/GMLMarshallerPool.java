@@ -18,7 +18,6 @@
 package org.geotoolkit.gml.xml;
 
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Collections;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -59,16 +58,7 @@ public final class GMLMarshallerPool {
      */
     public static JAXBContext createJAXBContext(final String packages, final ClassLoader loader) throws JAXBException {
         final Map<String,?> properties = properties();
-        try {
-            return JAXBContext.newInstance(packages, loader, properties);
-        } catch (JAXBException e) {
-            /*
-             * The JAXB implementation bundled in JDK6+ has "internal" in the package names and property names.
-             * But the JAXB implementation used by Glassfish does not have the "internal" part. If we have not
-             * been able to instantiate the context with the internal implementation, try with the endorsed one.
-             */
-            return JAXBContext.newInstance(packages, loader, toEndorsed(properties));
-        }
+        return JAXBContext.newInstance(packages, loader, properties);
     }
 
     /**
@@ -81,11 +71,7 @@ public final class GMLMarshallerPool {
      */
     public static JAXBContext createJAXBContext(final Class<?>... classes) throws JAXBException {
         final Map<String,?> properties = properties();
-        try {
-            return JAXBContext.newInstance(classes, properties);
-        } catch (JAXBException e) {
-            return JAXBContext.newInstance(classes, toEndorsed(properties));
-        }
+        return JAXBContext.newInstance(classes, properties);
     }
 
     /**
@@ -93,21 +79,10 @@ public final class GMLMarshallerPool {
      */
     private static Map<String,?> properties() {
         /*
-         * The SIS and the Geotk classes have the same XML type name in the "http://www.opengis.net/gml" namespace.
-         * This is because SIS provides an incomplete implementation, which shall be replaced by the Geotk one until
-         * we ported the temporal module to SIS. So we try to use the vendor-specific 'subclassReplacements' property
-         * for replacing SIS classes by the Geotk ones.
+         * A previous implementation was setting the vendor-specific "com.sun.xml.bind.subclassReplacements"
+         * property here. This has been removed, but we keep the mechanism in case we need to reinsert some
+         * properties later.
          */
-        final Map<Class<?>, Class<?>> subclassReplacements = new HashMap<>(4);
-        subclassReplacements.put(org.apache.sis.internal.jaxb.gml.TimeInstant.class, org.geotoolkit.gml.xml.v311.TimeInstantType.class);
-        subclassReplacements.put(org.apache.sis.internal.jaxb.gml.TimePeriod.class,  org.geotoolkit.gml.xml.v311.TimePeriodType.class);
-        return Collections.singletonMap("com.sun.xml.internal.bind.subclassReplacements", subclassReplacements);
-    }
-
-    /**
-     * Converts the given JDK internal JAXB properties of the endorsed JAXB properties.
-     */
-    private static Map<String,?> toEndorsed(final Map<String,?> properties) {
-        return Collections.singletonMap("com.sun.xml.bind.subclassReplacements", properties.values().iterator().next());
+        return Collections.emptyMap();
     }
 }

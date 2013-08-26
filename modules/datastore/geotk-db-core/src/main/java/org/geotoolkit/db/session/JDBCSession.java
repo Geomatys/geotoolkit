@@ -18,13 +18,12 @@ package org.geotoolkit.db.session;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
+
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreContentEvent;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.AddDelta;
 import org.geotoolkit.data.session.DefaultSession;
 import org.geotoolkit.data.session.Delta;
@@ -38,14 +37,24 @@ import org.geotoolkit.version.Version;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
+import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
+import org.opengis.filter.identity.Identifier;
 
 /**
  * Provide JDBC transaction support for asynchrone sessions.
  * 
  * @author Johann Sorel (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  */
 public class JDBCSession extends DefaultSession {
+
+    /**
+     * Arbitrary max number of ID in a Filter used to remove Features.
+     * This is to avoid "stack depth limit exceeded" exception when
+     * removing a lot of Features in a single SQL query.
+     */
+    private static final int MAX_ID_IN_REQUEST = 5000;
 
     private Connection transaction = null;
     
@@ -145,6 +154,82 @@ public class JDBCSession extends DefaultSession {
                 }
             }
             transaction = null;
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     * Override here split remove query in order to avoid
+     * "stack depth limit exceeded" exception.
+     */
+    @Override
+    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+        checkVersion();
+        //will raise an error if the name doesn't exist
+        store.getFeatureType(groupName);
+
+        if(isAsynchrone()){
+
+            List<Id> removeIdFilters = new ArrayList<Id>();
+
+            //split Id filter
+            if(filter instanceof Id) {
+                final Id removed = (Id)filter;
+                if (removed.getIDs().size() > MAX_ID_IN_REQUEST) {
+
+                    Set<Identifier> identifiers = new HashSet<Identifier>();
+                    for (Identifier id : removed.getIdentifiers()) {
+                        identifiers.add(id);
+
+                        //flush in list of filters
+                        if (identifiers.size() == MAX_ID_IN_REQUEST) {
+                            removeIdFilters.add(FF.id(identifiers));
+                            identifiers.clear();
+                        }
+                    }
+                    if(!identifiers.isEmpty()) {
+                        removeIdFilters.add(FF.id(identifiers));
+                    }
+
+                } else {
+                    removeIdFilters.add(removed);
+                }
+
+            } else {
+                Set<Identifier> identifiers = new HashSet<Identifier>();
+                final QueryBuilder qb = new QueryBuilder(groupName);
+                qb.setFilter(filter);
+                final FeatureIterator ite = getFeatureIterator(qb.buildQuery());
+                try{
+                    while(ite.hasNext()){
+                        identifiers.add(ite.next().getIdentifier());
+
+                        //flush in list of filters
+                        if (identifiers.size() == MAX_ID_IN_REQUEST) {
+                            removeIdFilters.add(FF.id(identifiers));
+                            identifiers.clear();
+                        }
+                    }
+
+                    if(!identifiers.isEmpty()) {
+                        removeIdFilters.add(FF.id(identifiers));
+                    }
+                }finally{
+                    ite.close();
+                }
+
+                if(removeIdFilters.isEmpty()){
+                    //no feature match this filter, no need to create to remove delta
+                    return;
+                }
+            }
+
+            for (final Id removeIdFilter : removeIdFilters) {
+                getDiff().add(createRemoveDelta(this, groupName, removeIdFilter));
+            }
+            fireSessionChanged();
+        }else{
+            store.removeFeatures(groupName, filter);
         }
     }
     

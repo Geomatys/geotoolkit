@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.swing.JComponent;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.scalebar.DefaultScaleBarTemplate;
 import org.geotoolkit.display2d.ext.scalebar.J2DScaleBarUtilities;
 import org.geotoolkit.display2d.ext.scalebar.ScaleBarTemplate;

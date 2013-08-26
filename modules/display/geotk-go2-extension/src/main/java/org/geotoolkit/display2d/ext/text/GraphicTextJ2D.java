@@ -24,6 +24,7 @@ import static javax.swing.SwingConstants.*;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
+import org.opengis.geometry.Envelope;
 
 /**
  * Graphic decoration to paint a text.
@@ -43,6 +44,16 @@ public class GraphicTextJ2D extends PositionedGraphic2D{
         this.template = template;
     }
 
+    @Override
+    public Object getUserObject() {
+        return template;
+    }
+
+    @Override
+    public Envelope getEnvelope() {
+        return null;
+    }
+    
     @Override
     protected void paint(final RenderingContext2D context, final int position, final int[] offset) {
         

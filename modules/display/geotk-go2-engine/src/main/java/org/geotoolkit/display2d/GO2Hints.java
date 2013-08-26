@@ -18,7 +18,7 @@ package org.geotoolkit.display2d;
 
 import java.awt.RenderingHints.Key;
 import java.awt.image.ColorModel;
-import org.geotoolkit.display.canvas.HintKey;
+import org.geotoolkit.display.HintKey;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.map.ElevationModel;

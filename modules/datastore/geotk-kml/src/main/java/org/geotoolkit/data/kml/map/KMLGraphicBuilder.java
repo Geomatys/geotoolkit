@@ -73,16 +73,13 @@ import org.geotoolkit.data.kml.model.StyleState;
 import org.geotoolkit.data.kml.model.Vec2;
 import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xsd.Cdata;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.container.stateless.DefaultProjectedGeometry;
-import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
@@ -96,11 +93,14 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.display.SearchArea;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.canvas.Canvas;
 
-import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
+import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.MathTransform;
@@ -161,7 +161,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
 
     @Override
     public Collection<GraphicJ2D> createGraphics(MapLayer layer, Canvas canvas) {
-        if (layer instanceof KmlMapLayer && canvas instanceof ReferencedCanvas2D) {
+        if (layer instanceof KmlMapLayer && canvas instanceof AbstractReferencedCanvas2D) {
             return Collections.singleton((GraphicJ2D) new KMLGraphic((J2DCanvas) canvas, (KmlMapLayer) layer));
         } else {
             return Collections.emptyList();
@@ -628,7 +628,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         }
     }
 
-    private static class KMLGraphic extends AbstractGraphicJ2D {
+    private static class KMLGraphic extends GraphicJ2D {
 
         private final KmlCache cache;
         private RenderingContext2D context2d;
@@ -1404,6 +1404,16 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
                         property.getValue().toString());
             }
             return toInspect;
+        }
+
+        @Override
+        public Object getUserObject() {
+            return null;
+        }
+
+        @Override
+        public Envelope getEnvelope() {
+            return null;
         }
         
     }

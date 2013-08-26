@@ -26,9 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
-import org.geotoolkit.display.container.AbstractContainer2D;
-import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendService;
@@ -37,6 +35,7 @@ import org.geotoolkit.display2d.primitive.GraphicProbe;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.map.MapContext;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display.container.GraphicContainer;
 
 /**
  * Legend decoration placed on the right of the map pane.
@@ -69,8 +68,7 @@ public class LegendDecoration extends AbstractMapDecoration implements GraphicPr
 
         if (map != null) {
             final GraphicProbe gp = new GraphicProbe(map.getCanvas(), this);
-            gp.setZOrderHint(Double.MIN_VALUE);
-            map.getCanvas().getContainer().add(gp);
+            map.getCanvas().getContainer().getRoot().getChildren().add(gp);
             update(map.getContainer().getContext());
         }
 
@@ -105,13 +103,10 @@ public class LegendDecoration extends AbstractMapDecoration implements GraphicPr
     @Override
     public void contextPaint(final RenderingContext2D context) {
 
-        final AbstractContainer2D container = context.getCanvas().getContainer();
-        if (!(container instanceof ContextContainer2D)) {
-            return;
+        final GraphicContainer container = context.getCanvas().getContainer();
+        if (container instanceof ContextContainer2D) {
+            final ContextContainer2D cc = (ContextContainer2D) container;
+            update(cc.getContext());
         }
-
-        final ContextContainer2D cc = (ContextContainer2D) container;
-        update(cc.getContext());
-        
     }
 }

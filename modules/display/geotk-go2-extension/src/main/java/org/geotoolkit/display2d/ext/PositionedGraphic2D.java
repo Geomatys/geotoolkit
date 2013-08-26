@@ -22,11 +22,11 @@ import java.awt.Rectangle;
 import java.util.List;
 import javax.swing.SwingConstants;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display.VisitFilter;
+import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.opengis.display.primitive.Graphic;
 
 /**
@@ -34,7 +34,7 @@ import org.opengis.display.primitive.Graphic;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class PositionedGraphic2D extends AbstractGraphicJ2D{
+public abstract class PositionedGraphic2D extends GraphicJ2D{
 
     private int position = SwingConstants.SOUTH_EAST;
     private int[] offset = new int[]{0,0};

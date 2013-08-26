@@ -16,21 +16,22 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
-import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
+import org.opengis.geometry.Envelope;
 
 
-public class LinksGraphic extends AbstractGraphicJ2D{
+public class LinksGraphic extends GraphicJ2D{
 
     private final FeatureMapLayer layer;
 
@@ -114,6 +115,16 @@ public class LinksGraphic extends AbstractGraphicJ2D{
     @Override
     public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
         return graphics;
+    }
+
+    @Override
+    public Object getUserObject() {
+        return null;
+    }
+
+    @Override
+    public Envelope getEnvelope() {
+        return null;
     }
 
 }

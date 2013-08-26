@@ -81,8 +81,6 @@
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-jasperreport</artifactId>        <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-jaxp-core</artifactId>           <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-jaxp-gml</artifactId>            <version>${project.version}</version></dependency>
-        <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-jdbc-core</artifactId>           <version>${project.version}</version></dependency>
-        <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-jdbc-postgis</artifactId>        <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-jtswrapper</artifactId>          <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-om</artifactId>                  <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-osm-core</artifactId>            <version>${project.version}</version></dependency>

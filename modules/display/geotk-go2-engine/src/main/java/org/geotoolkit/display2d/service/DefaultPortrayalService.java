@@ -58,10 +58,10 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.canvas.CanvasController2D;
-import org.geotoolkit.display.canvas.GraphicVisitor;
-import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.display2d.GraphicVisitor;
+import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.*;
@@ -69,7 +69,6 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.display2d.container.DefaultContextContainer2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -101,13 +100,13 @@ public final class DefaultPortrayalService implements PortrayalService{
     /**
      * Cache the last CoverageWriter.
      */
-    private static final AtomicReference<GridCoverageWriter> WRITER_CACHE = new AtomicReference<GridCoverageWriter>();
+    private static final AtomicReference<GridCoverageWriter> WRITER_CACHE = new AtomicReference<>();
 
     /**
      * Cache the link between mime-type -> java-type
      * exemple : image/png -> png
      */
-    static final Map<String,String> MIME_CACHE = new ConcurrentHashMap<String, String>();
+    static final Map<String,String> MIME_CACHE = new ConcurrentHashMap<>();
 
     private DefaultPortrayalService(){}
 
@@ -142,7 +141,7 @@ public final class DefaultPortrayalService implements PortrayalService{
 
         final MapContext context = convertCoverage(coverage);
         final J2DCanvasBuffered canvas = new  J2DCanvasBuffered(coverage.getCoordinateReferenceSystem(),canvasDimension);
-        final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
+        final ContextContainer2D renderer = new ContextContainer2D(canvas, false);
         canvas.setContainer(renderer);
 
         renderer.setContext(context);
@@ -247,7 +246,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         final Envelope contextEnv = viewDef.getEnvelope();
         final CoordinateReferenceSystem crs = contextEnv.getCoordinateReferenceSystem();
 
-        final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
+        final ContextContainer2D renderer = new ContextContainer2D(canvas, false);
         canvas.setContainer(renderer);
 
         final Color bgColor = canvasDef.getBackground();
@@ -283,9 +282,7 @@ public final class DefaultPortrayalService implements PortrayalService{
             if (viewDef.getAzimuth() != 0) {
                 control.rotate( -Math.toRadians(viewDef.getAzimuth()) );
             }
-        } catch (NoninvertibleTransformException ex) {
-            throw new PortrayalException(ex);
-        } catch (TransformException ex) {
+        } catch (NoninvertibleTransformException | TransformException ex) {
             throw new PortrayalException(ex);
         }
 
@@ -644,7 +641,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         final boolean strechImage = canvasDef.isStretchImage();
 
         final J2DCanvasBuffered canvas = new  J2DCanvasBuffered(contextEnv.getCoordinateReferenceSystem(),canvasDimension,hints);
-        final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
+        final ContextContainer2D renderer = new ContextContainer2D(canvas, false);
         canvas.setContainer(renderer);
 
         renderer.setContext(context);

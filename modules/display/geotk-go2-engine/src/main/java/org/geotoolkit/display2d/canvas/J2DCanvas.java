@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2010, Geomatys
+ *    (C) 2008 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,6 @@
 package org.geotoolkit.display2d.canvas;
 
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
@@ -28,12 +27,9 @@ import java.util.logging.Level;
 import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.DefaultCanvasController2D;
-import org.geotoolkit.display.canvas.GraphicVisitor;
+import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.container.AbstractContainer;
-import org.geotoolkit.display.container.AbstractContainer2D;
-import org.geotoolkit.display.primitive.ReferencedGraphic;
+import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
@@ -45,7 +41,9 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.opengis.display.container.ContainerEvent;
+import org.geotoolkit.display.container.GraphicContainer;
+import org.geotoolkit.display.primitive.SceneNode;
+import org.geotoolkit.display.primitive.SpatialNode;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -87,26 +85,18 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
     /**
      * {@inheritDoc }
      */
-    @Override
-    public AbstractContainer2D getContainer() {
-        return (AbstractContainer2D) super.getContainer();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    protected void graphicsDisplayChanged(final ContainerEvent event) {
-        for(Graphic gra : event.getGraphics()){
-            if(gra instanceof GraphicJ2D){
-                final GraphicJ2D j2d = (GraphicJ2D) gra;
-                final Rectangle rect = j2d.getDisplayBounds().getBounds();
-                if(getController().isAutoRepaint()){
-                    repaint(rect);
-                }
-            }
-        }
-    }
+//    @Override
+//    protected void graphicsDisplayChanged(final ContainerEvent event) {
+//        for(Graphic gra : event.getGraphics()){
+//            if(gra instanceof GraphicJ2D){
+//                final GraphicJ2D j2d = (GraphicJ2D) gra;
+//                final Rectangle rect = j2d.getDisplayBounds().getBounds();
+//                if(getController().isAutoRepaint()){
+//                    repaint(rect);
+//                }
+//            }
+//        }
+//    }
 
     @Override
     public void dispose() {
@@ -133,7 +123,7 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
 
         final AffineTransform2D objToDisp = getObjectiveToDisplay();
 
-        if(output != null) output.addRenderingHints(hints);
+        if(output != null) output.addRenderingHints(getHints(true));
 
         final Shape canvasObjectShape;
 
@@ -182,8 +172,26 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
         return context;
     }
 
-    protected void render(final RenderingContext2D context2D, final List<Graphic> graphics){
+    protected void render(final RenderingContext2D context2D, final List<SceneNode> graphics){
 
+        //TODO update multithreading rendering for scene tree model
+//        final Boolean mt = (Boolean) context2D.getRenderingHints().get(GO2Hints.KEY_MULTI_THREAD);
+//        
+//        if(Boolean.TRUE.equals(mt)){
+//            final MultiThreadedRendering rendering = new MultiThreadedRendering(this.item, this.itemGraphics, renderingContext);
+//            rendering.render();
+//        }else{
+//            for(final MapItem child : item.items()){
+//                if(renderingContext.getMonitor().stopRequested()) break;
+//                final GraphicJ2D gra = itemGraphics.get(child);
+//                if(gra != null){
+//                    gra.paint(renderingContext);
+//                }else{
+//                    getLogger().log(Level.WARNING, "GrahicContextJ2D, paint method : strange, no graphic object affected to layer :{0}", child.getName());
+//                }
+//            }
+//        }
+        
         /*
          * Draw all graphics, starting with the one with the lowest <var>z</var> value. Before
          * to start the actual drawing,  we will notify all graphics that they are about to be
@@ -218,7 +226,7 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
     /**
      * Visit the {@code Graphics} that occupy the given shape.
      * You should give an Area Object if you can, this will avoid many creation
-     * while testting.
+     * while testing.
      */
     public void getGraphicsIn(final Shape displayShape, final GraphicVisitor visitor, final VisitFilter filter) {
         ensureNonNull("mask", displayShape);
@@ -227,11 +235,11 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
 
         visitor.startVisit();
 
-        final AbstractContainer container = (AbstractContainer) getContainer();
+        final GraphicContainer container = getContainer();
 
         if(container != null){
 
-            final List<Graphic> candidates = new ArrayList<Graphic>();
+            final List<Graphic> candidates = new ArrayList<>();
 
             final DefaultRenderingContext2D searchContext = context2D;
             prepareContext(searchContext,null,null);
@@ -247,65 +255,33 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
                     objectiveGeometryISO, displayGeometryISO,
                     objectiveGeometryJTS, displayGeometryJTS,
                     objectiveShape, displayShape);
+            
+            final List<SceneNode> sorted = container.flatten(true);
+            //reverse the list order
+            Collections.reverse(sorted);
+            
+            //see if the visitor request a stop-----------------------------
+            if(visitor.isStopRequested()){ visitor.endVisit(); return; }
+            //--------------------------------------------------------------
 
-            if(container instanceof AbstractContainer2D){
-                final AbstractContainer2D r2d = (AbstractContainer2D) container;
-                //defensive copy
-                final List<Graphic> sorted = new ArrayList<Graphic>(r2d.getSortedGraphics());
-                //reverse the list order
-                Collections.reverse(sorted);
+            for(final Graphic graphic : sorted){
+                search(searchMask,searchContext,graphic,filter,candidates);
 
-                //see if the visitor request a stop-----------------------------
+                //see if the visitor request a stop-------------------------
                 if(visitor.isStopRequested()){ visitor.endVisit(); return; }
-                //--------------------------------------------------------------
+                //----------------------------------------------------------
 
-                for(final Graphic graphic : sorted){
-                    search(searchMask,searchContext,graphic,filter,candidates);
+                //send the found graphics to the visitor
+                for(final Graphic candidate : candidates){
+                    visitor.visit(candidate,searchContext,searchMask);
 
-                    //see if the visitor request a stop-------------------------
+                    //see if the visitor request a stop---------------------
                     if(visitor.isStopRequested()){ visitor.endVisit(); return; }
-                    //----------------------------------------------------------
+                    //------------------------------------------------------
 
-                    //send the found graphics to the visitor
-                    for(final Graphic candidate : candidates){
-                        visitor.visit(candidate,searchContext,searchMask);
-
-                        //see if the visitor request a stop---------------------
-                        if(visitor.isStopRequested()){ visitor.endVisit(); return; }
-                        //------------------------------------------------------
-
-                    }
-                    //empty the list for next search
-                    candidates.clear();
                 }
-
-            }else{
-                //defensive copy
-                final List<Graphic> lstGraphics = new ArrayList<Graphic>(container.graphics());
-
-                //see if the visitor request a stop-----------------------------
-                if(visitor.isStopRequested()){ visitor.endVisit(); return; }
-                //--------------------------------------------------------------
-
-                for(final Graphic graphic : lstGraphics){
-                    search(searchMask,searchContext,graphic,filter,candidates);
-
-                    //see if the visitor request a stop-------------------------
-                    if(visitor.isStopRequested()){ visitor.endVisit(); return; }
-                    //----------------------------------------------------------
-
-                    //send the found graphics to the visitor
-                    for(final Graphic candidate : candidates){
-                        visitor.visit(candidate,searchContext,searchMask);
-
-                        //see if the visitor request a stop---------------------
-                        if(visitor.isStopRequested()){ visitor.endVisit(); return; }
-                        //------------------------------------------------------
-
-                    }
-                    //empty the list for next search
-                    candidates.clear();
-                }
+                //empty the list for next search
+                candidates.clear();
             }
         }
 
@@ -313,8 +289,8 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
     }
 
     private void search(final SearchAreaJ2D mask, final RenderingContext context, final Graphic graphic, final VisitFilter filter, final List<Graphic> lst){
-        if(graphic instanceof ReferencedGraphic){
-            final ReferencedGraphic ref = (ReferencedGraphic) graphic;
+        if(graphic instanceof SpatialNode){
+            final SpatialNode ref = (SpatialNode) graphic;
             ref.getGraphicAt(context, mask, filter, lst);
         }
     }

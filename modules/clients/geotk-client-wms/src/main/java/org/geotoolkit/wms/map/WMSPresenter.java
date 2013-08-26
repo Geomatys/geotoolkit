@@ -44,7 +44,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.DefaultProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;

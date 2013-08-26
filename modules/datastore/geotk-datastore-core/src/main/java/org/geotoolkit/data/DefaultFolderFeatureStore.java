@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import org.apache.sis.storage.DataStoreException;
 import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.*;
 import static org.geotoolkit.data.AbstractFolderFeatureStoreFactory.*;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
@@ -232,7 +233,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore{
      */
     @Override
     public QueryCapabilities getQueryCapabilities() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultQueryCapabilities(false, false);
     }
 
     /**

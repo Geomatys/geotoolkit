@@ -34,7 +34,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -43,11 +43,9 @@ import org.geotoolkit.display2d.container.stateless.DefaultProjectedGeometry;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.apache.sis.util.logging.Logging;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 /**
  * Abstract Decoration to easely render objective CRS geometries.
@@ -129,7 +127,7 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
 
         //check if the map has a Java2D canvas
         if(map == null) return;
-        final ReferencedCanvas2D candidate = map.getCanvas();
+        final AbstractReferencedCanvas2D candidate = map.getCanvas();
         if(!(candidate instanceof J2DCanvas)) return;
 
         final J2DCanvas canvas = (J2DCanvas) candidate;

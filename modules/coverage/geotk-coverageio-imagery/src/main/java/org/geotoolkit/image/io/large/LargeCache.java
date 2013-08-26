@@ -36,8 +36,12 @@ import org.apache.sis.util.logging.Logging;
 public class LargeCache implements TileCache {
 
     private static final Logger LOGGER = Logging.getLogger(LargeCache.class.getName());
+
+    /** Default cache capacity. 256 grayscale raster of 1024px width by 1024 px height. */
+    private static final long DEFAULT_CAPACITY = 1024l*1024l*8l*256l;
+
     private long memoryCapacity;
-    private HashMap<RenderedImage, LargeList> map  = new HashMap<RenderedImage, LargeList>();
+    private HashMap<RenderedImage, LargeMap2D> map  = new HashMap<RenderedImage, LargeMap2D>();
 
     private static LargeCache INSTANCE;
 
@@ -49,10 +53,13 @@ public class LargeCache implements TileCache {
      * Stock Raster while memory capacity does not exceed else write in temporary file.</p>
      *
      * @param memoryCapacity memory allocation authorized for all stored image.
-     *                       Size in byte unit.
+     *                       Size in byte unit. If <= 0, we put a default capacity.
      * @return TileCache
      */
     public static LargeCache getInstance(long memoryCapacity) {
+        if (memoryCapacity <= 0) {
+            memoryCapacity = DEFAULT_CAPACITY;
+        }
         if (INSTANCE == null) INSTANCE = new LargeCache(memoryCapacity);
         return INSTANCE;
     }
@@ -65,14 +72,14 @@ public class LargeCache implements TileCache {
         if (!(raster instanceof WritableRaster))
             throw new IllegalArgumentException("raster must be WritableRaster instance");
         final WritableRaster wRaster = (WritableRaster) raster;
-        LargeList lL = null;
+        LargeMap2D lL = null;
         if (map.containsKey(ri)) {
             lL = map.get(ri);
         } else {
             final long mC = memoryCapacity / (map.size() + 1);
             updateLList(mC);
             try {
-                lL = new LargeList(ri, mC);
+                lL = new LargeMap2D(ri, mC);
             } catch (IOException ex) {
                 LOGGER.log(Level.SEVERE, "impossible to create cache list", ex);
             }
@@ -100,7 +107,7 @@ public class LargeCache implements TileCache {
     public void remove(RenderedImage ri, int i, int i1) {
         if (!map.containsKey(ri))
             throw new IllegalArgumentException("renderedImage don't exist in this "+LargeCache.class.getName());
-        final LargeList lL = map.get(ri);
+        final LargeMap2D lL = map.get(ri);
         lL.remove(i, i1);
     }
 
@@ -141,7 +148,7 @@ public class LargeCache implements TileCache {
     @Override
     public void removeTiles(RenderedImage ri) {
         if (map.containsKey(ri)) {
-            final LargeList lL = map.get(ri);
+            final LargeMap2D lL = map.get(ri);
             lL.removeTiles();
             map.remove(ri);
         }
@@ -154,12 +161,12 @@ public class LargeCache implements TileCache {
     public void addTiles(RenderedImage ri, Point[] points, Raster[] rasters, Object o) {
         if (points.length != rasters.length)
             throw new IllegalArgumentException("points and rasters tables must have same length.");
-        LargeList lL = null;
+        LargeMap2D lL = null;
         if (map.containsKey(ri)) {
             lL = map.get(ri);
         } else {
             try {
-                lL = new LargeList(ri, memoryCapacity/(map.size()+1));
+                lL = new LargeMap2D(ri, memoryCapacity/(map.size()+1));
             } catch (IOException ex) {
                 LOGGER.log(Level.SEVERE, "impossible to create cache list", ex);
             }
@@ -183,7 +190,7 @@ public class LargeCache implements TileCache {
     public Raster[] getTiles(RenderedImage ri, Point[] points) {
         if (!map.containsKey(ri))
             throw new IllegalArgumentException("renderedImage don't exist in this "+LargeCache.class.getName());
-        final LargeList lL = map.get(ri);
+        final LargeMap2D lL = map.get(ri);
         final int l        = points.length;
         final Raster[] rasters = new Raster[l];
         for (int id = 0; id < l; id++) {
@@ -243,8 +250,6 @@ public class LargeCache implements TileCache {
      * Affect a new memory capacity and update {@link Raster} list from new memory capacity set.
      *
      * @param listMemoryCapacity new memory capacity.
-     * @throws IllegalImageDimensionException if capacity is too low from raster weight.
-     * @throws IOException if impossible to write raster on disk.
      */
     private void updateLList(long listMemoryCapacity) {
         for (RenderedImage r : map.keySet()) {

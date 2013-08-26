@@ -25,7 +25,7 @@ import java.awt.geom.Rectangle2D;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRenderable;
 
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.northarrow.DefaultNorthArrowTemplate;
 import org.geotoolkit.display2d.ext.northarrow.J2DNorthArrowUtilities;
 import org.geotoolkit.display2d.ext.northarrow.NorthArrowTemplate;

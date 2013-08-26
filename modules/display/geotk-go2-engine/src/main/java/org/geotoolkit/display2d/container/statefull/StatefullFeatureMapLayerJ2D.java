@@ -34,8 +34,8 @@ public class StatefullFeatureMapLayerJ2D extends StatefullMapLayerJ2D<FeatureMap
     protected FeatureStoreListener.Weak weakSessionListener = new FeatureStoreListener.Weak(this);
 
     
-    public StatefullFeatureMapLayerJ2D(J2DCanvas canvas, StatefullMapItemJ2D parent, FeatureMapLayer layer) {
-        super(canvas, parent, layer);
+    public StatefullFeatureMapLayerJ2D(J2DCanvas canvas, FeatureMapLayer layer) {
+        super(canvas, layer, false);
         final Session session = layer.getCollection().getSession();
         weakSessionListener.registerSource(session);
     }

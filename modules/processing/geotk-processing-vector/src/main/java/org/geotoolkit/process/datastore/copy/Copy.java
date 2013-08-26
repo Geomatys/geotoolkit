@@ -16,32 +16,42 @@
  */
 package org.geotoolkit.process.datastore.copy;
 
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.Name;
+import org.opengis.filter.Filter;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.parameter.ParameterValueGroup;
+
+import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.storage.DataStoreException;
+
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
-import static org.geotoolkit.parameter.Parameters.*;
+import org.geotoolkit.filter.DefaultPropertyName;
+import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.version.Version;
+import org.geotoolkit.version.VersioningException;
+
+import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.process.datastore.copy.CopyDescriptor.*;
-import org.apache.sis.storage.DataStoreException;
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.Name;
-import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Copy feature from one featurestore to another.
+ * Copy feature from one datastore to another.
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  * @module pending
  */
 public class Copy extends AbstractProcess {
@@ -59,26 +69,31 @@ public class Copy extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
 
-        fireProcessStarted("Starting copy.");
-
-        final FeatureStore sourceDS    = value(SOURCE_STORE, inputParameters);
-        final FeatureStore targetDS    = value(TARGET_STORE, inputParameters);
+        final FeatureStore sourceDS = value(SOURCE_STORE, inputParameters);
+        final FeatureStore targetDS = value(TARGET_STORE, inputParameters);
         final Boolean eraseParam    = value(ERASE,        inputParameters);
+        final Boolean newVersion    = value(NEW_VERSION,  inputParameters);
+        // Type name can be removed, it's embedded in the query param.
         final String typenameParam  = value(TYPE_NAME,    inputParameters);
         final Query queryParam      = value(QUERY,        inputParameters);
 
-        final Set<Name> names;
+        final Session sourceSS = sourceDS.createSession(false);
+        final Session targetSS = targetDS.createSession(true);
+
+        boolean reBuildQuery = false;
+
+        final String queryName;
         if (queryParam != null) {
-            //if a query is given, ignore type name parameter
-            try {
-                insert(queryParam, sourceDS, targetDS, eraseParam);
-            } catch (DataStoreException ex) {
-                throw new ProcessException(ex.getMessage(), this, ex);
-            }
-            return;
+            queryName = queryParam.getTypeName().getLocalPart();
+            reBuildQuery = true;
+        } else if (typenameParam != null) {
+            queryName = typenameParam;
+        } else {
+            queryName = "*";
         }
 
-        if ("*".equals(typenameParam)) {
+        final Set<Name> names;
+        if ("*".equals(queryName)) {
             //all values
             try {
                 names = sourceDS.getNames();
@@ -88,7 +103,8 @@ public class Copy extends AbstractProcess {
         } else {
             //pick only the wanted names
             names = new HashSet<Name>();
-            for(String s : typenameParam.split(",")) {
+            final List<String> wanted = UnmodifiableArrayList.wrap(queryName.split(","));
+            for(String s : wanted) {
                 try{
                     final FeatureType type = sourceDS.getFeatureType(s);
                     names.add(type.getName());
@@ -101,72 +117,108 @@ public class Copy extends AbstractProcess {
         final float size = names.size();
         int inc = 0;
         for (Name n : names) {
-            fireProgressing("Copying "+n.getLocalPart()+".", (int)((inc*100f)/size), false);
+            fireProgressing("Copying "+n+".", (int)((inc*100f)/size), false);
             try {
-                insert(n, sourceDS, targetDS, eraseParam);
+
+                Query query;
+                if (reBuildQuery) {
+                    QueryBuilder builder = new QueryBuilder(queryParam);
+                    builder.setTypeName(n);
+                    query = builder.buildQuery();
+                } else {
+                    query = queryParam != null ? queryParam : QueryBuilder.all(n);
+                }
+
+                insert(n, sourceSS, targetSS, query, eraseParam, newVersion);
             } catch (DataStoreException ex) {
                 throw new ProcessException(ex.getMessage(), this, ex);
             }
             inc++;
         }
 
-        fireProcessCompleted("Copy successful.");
+        try {
+            targetSS.commit();
+
+            //find last version
+            Date lastVersionDate = null;
+            for (Name n : names) {
+                if(targetSS.getFeatureStore().getQueryCapabilities().handleVersioning()) {
+                    final List<Version> versions = targetSS.getFeatureStore().getVersioning(n).list();
+                    if (!versions.isEmpty()) {
+                        if (lastVersionDate == null || versions.get(versions.size()-1).getDate().getTime() > lastVersionDate.getTime()) {
+                            lastVersionDate = versions.get(versions.size()-1).getDate();
+                        }
+                    }
+                }
+            }
+
+            if(lastVersionDate != null) {
+                Parameters.getOrCreate(VERSION, outputParameters).setValue(lastVersionDate);
+            }
+
+        } catch (DataStoreException ex) {
+            throw new ProcessException(ex.getMessage(), this, ex);
+        } catch (VersioningException ex) {
+            throw new ProcessException(ex.getMessage(), this, ex);
+        }
     }
 
-    private void insert(final Name name, final FeatureStore source, final FeatureStore target, final boolean erase) throws DataStoreException{
+    private void insert(Name name, final Session sourceSS, final Session targetSS, Query query,
+                        final boolean erase, final boolean newVersion) throws DataStoreException{
 
-        final Session session = source.createSession(false);
-        final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name));
-        final FeatureType type = collection.getFeatureType();
+        final FeatureType type = sourceSS.getFeatureStore().getFeatureType(name);
 
-        final FeatureCollection wrap = new WrapFeatureCollection(collection) {
+        //Change * to featureType default geometry name
+        if (query != null && query.getFilter() != null) {
+            final Filter newFilter = (Filter) query.getFilter().accept(new BBOXFilterVisitor(), type);
+            final QueryBuilder builder = new QueryBuilder(query);
+            builder.setFilter(newFilter);
+            query = builder.buildQuery();
+        }
+        final FeatureCollection collection = sourceSS.getFeatureCollection(query);
 
-            long count = 0;
-            @Override
-            protected Feature modify(Feature original) throws FeatureStoreRuntimeException {
-                fireProgressing(name.getLocalPart()+":"+(count++),0, false);
-                return original;
-            }
-        };
-
-
-        if(target.getNames().contains(name)) {
+        if(targetSS.getFeatureStore().getNames().contains(name)) {
+            //ERASE
             if(erase) {
-                target.deleteFeatureType(name);
-                target.createFeatureType(name, type);
+                targetSS.getFeatureStore().deleteFeatureType(name);
+                targetSS.getFeatureStore().createFeatureType(name, type);
             }
         }else{
-            target.createFeatureType(name, type);
+            targetSS.getFeatureStore().createFeatureType(name, type);
         }
-        
+
         //get the created name, namespace might change
-        final Name tname = target.getFeatureType(type.getName().getLocalPart()).getName();
+        name = targetSS.getFeatureStore().getFeatureType(type.getName().getLocalPart()).getName();
 
-        final Hints hints = new Hints();
-        hints.put(HintsPending.UPDATE_ID_ON_INSERT, Boolean.FALSE);
-        target.addFeatures(tname, wrap, hints);
-
-    }
-
-    private void insert(final Query query, final FeatureStore source, final FeatureStore target, final boolean erase) throws DataStoreException{
-
-        final Name name = query.getTypeName();
-        final Session session = source.createSession(false);
-        final FeatureCollection collection = session.getFeatureCollection(query);
-        final FeatureType type = collection.getFeatureType();
-
-        if(target.getNames().contains(name)) {
-            if(erase) {
-                target.deleteFeatureType(name);
-                target.createFeatureType(name, type);
+        if (targetSS.getFeatureStore().getQueryCapabilities().handleVersioning()) {
+            try {
+                targetSS.getFeatureStore().getVersioning(name).startVersioning();
+            } catch (VersioningException ex) {
+                throw new DataStoreException(ex.getLocalizedMessage(), ex);
             }
-        }else{
-            target.createFeatureType(name, type);
         }
 
-        final Hints hints = new Hints();
-        hints.put(HintsPending.UPDATE_ID_ON_INSERT, Boolean.FALSE);
-        target.addFeatures(name, collection, hints);
+        //NEW VERSION (remove old features)
+        if (newVersion) {
+            targetSS.removeFeatures(name, QueryBuilder.all(name).getFilter());
+        }
+
+        //APPEND
+        targetSS.addFeatures(name, collection);
     }
 
+    /**
+     * Override BBox filters if property name equals to * to set name form
+     * default geometry name in given FeatureType.
+     */
+    private class BBOXFilterVisitor extends DuplicatingFilterVisitor {
+        @Override
+        public Object visit(PropertyName expression, Object extraData) {
+            if ("*".equals(expression.getPropertyName()) && extraData instanceof FeatureType) {
+                return new DefaultPropertyName(((FeatureType)extraData).getGeometryDescriptor().getType().getName().getLocalPart());
+            }
+            return super.visit(expression, extraData);
+        }
+
+    }
 }

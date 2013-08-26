@@ -2,8 +2,8 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2009 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -57,15 +56,12 @@ import javax.swing.SwingConstants;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.apache.sis.geometry.DirectPosition2D;
+import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.jdesktop.swingx.JXBusyLabel;
-import org.jdesktop.swingx.JXMultiSplitPane;
-import org.jdesktop.swingx.MultiSplitLayout;
 
-import org.opengis.display.canvas.CanvasEvent;
-import org.opengis.display.canvas.CanvasListener;
 import org.opengis.display.canvas.RenderingState;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -376,7 +372,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
             baseMapContainer.remove(verticalSplit);
             baseMapContainer.add(BorderLayout.CENTER, baseMapComponent);
             baseMapComponent.removeMouseMotionListener(listener);
-            this.map.getCanvas().removeCanvasListener(listener);
+            this.map.getCanvas().removePropertyChangeListener(listener);
         }
         
          this.map = map;
@@ -386,8 +382,8 @@ public class JCoordinateBar extends AbstractMapControlBar {
             baseMapContainer = map.getUIContainer();
             baseMapComponent = map.getComponent(0);
             baseMapComponent.addMouseMotionListener(listener);
-            this.map.getCanvas().addCanvasListener(listener);
-            map.getCanvas().addPropertyChangeListener(J2DCanvas.OBJECTIVE_CRS_PROPERTY, listener);
+            this.map.getCanvas().addPropertyChangeListener(listener);
+            map.getCanvas().addPropertyChangeListener(listener);
  
             baseMapContainer.remove(baseMapComponent);
  
@@ -420,7 +416,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
         return guiCombo.getStepSize();
     }
 
-    private class myListener extends MouseMotionAdapter implements PropertyChangeListener,CanvasListener{
+    private class myListener extends MouseMotionAdapter implements PropertyChangeListener{
 
         @Override
         public void mouseMoved(final MouseEvent e) {
@@ -457,19 +453,18 @@ public class JCoordinateBar extends AbstractMapControlBar {
 
         @Override
         public void propertyChange(final PropertyChangeEvent arg0) {
-            CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
-            guiCRS.setText(crs.getName().toString());
-        }
-
-        @Override
-        public void canvasChanged(final CanvasEvent event) {
-
-            if(RenderingState.ON_HOLD.equals(event.getNewRenderingstate())){
-                guiPainting.setBusy(false);
-            }else if(RenderingState.RENDERING.equals(event.getNewRenderingstate())){
-                guiPainting.setBusy(true);
-            }else{
-                guiPainting.setBusy(false);
+            if(J2DCanvas.OBJECTIVE_CRS_PROPERTY.equals(arg0.getPropertyName())){
+                CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
+                guiCRS.setText(crs.getName().toString());
+            }else if(AbstractCanvas.RENDERSTATE_KEY.equals(arg0.getPropertyName())){
+                final RenderingState state = (RenderingState) arg0.getNewValue();
+                if(RenderingState.ON_HOLD.equals(state)){
+                    guiPainting.setBusy(false);
+                }else if(RenderingState.RENDERING.equals(state)){
+                    guiPainting.setBusy(true);
+                }else{
+                    guiPainting.setBusy(false);
+                }
             }
         }
 

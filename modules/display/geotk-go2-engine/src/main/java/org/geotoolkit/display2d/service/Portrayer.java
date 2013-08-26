@@ -37,14 +37,13 @@ import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
-import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.*;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.display2d.container.DefaultContextContainer2D;
 import static org.geotoolkit.display2d.service.DefaultPortrayalService.*;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.XImageIO;
@@ -77,7 +76,7 @@ public final class Portrayer {
     private GridCoverageWriter coverageWriter = null;
 
     private final J2DCanvasBuffered canvas = new J2DCanvasBuffered(DefaultGeographicCRS.WGS84, new Dimension(1, 1));
-    private final ContextContainer2D container = new DefaultContextContainer2D(canvas, false);
+    private final ContextContainer2D container = new ContextContainer2D(canvas, false);
 
     public Portrayer(){
         canvas.setContainer(container);

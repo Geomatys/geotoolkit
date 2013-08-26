@@ -38,16 +38,23 @@ import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.gml.GMLUtilities;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
+import org.geotoolkit.gml.xml.v311.CurveType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeType;
+import org.geotoolkit.gml.xml.v311.LineStringType;
+import org.geotoolkit.gml.xml.v311.MultiCurveType;
+import org.geotoolkit.gml.xml.v311.MultiGeometryType;
+import org.geotoolkit.gml.xml.v311.MultiLineStringType;
+import org.geotoolkit.gml.xml.v311.MultiPointType;
+import org.geotoolkit.gml.xml.v311.MultiPolygonType;
 import org.geotoolkit.gml.xml.v311.ObjectFactory;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.PolygonType;
+import org.geotoolkit.gml.xml.v311.PolyhedralSurfaceType;
 import org.geotoolkit.ogc.xml.v110.AbstractIdType;
 import org.geotoolkit.ogc.xml.v110.AndType;
 import org.geotoolkit.ogc.xml.v110.BBOXType;
 import org.geotoolkit.ogc.xml.v110.BeyondType;
-import org.geotoolkit.ogc.xml.v110.BinaryComparisonOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryLogicOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryOperatorType;
 import org.geotoolkit.ogc.xml.v110.ComparisonOpsType;
@@ -225,7 +232,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GTtoSE110Transformer implements StyleVisitor{
+public class GTtoSE110Transformer implements StyleVisitor {
 
     private static final String GENERIC_ANY = "generic:any";
     private static final String GENERIC_POINT = "generic:point";
@@ -233,68 +240,66 @@ public class GTtoSE110Transformer implements StyleVisitor{
     private static final String GENERIC_POLYGON = "generic:polygon";
     private static final String GENERIC_TEXT = "generic:text";
     private static final String GENERIC_RASTER = "generic:raster";
-
     private static final String VERSION = "1.1.0";
-
     private final org.geotoolkit.sld.xml.v110.ObjectFactory sld_factory_v110;
     private final org.geotoolkit.se.xml.v110.ObjectFactory se_factory;
     private final org.geotoolkit.ogc.xml.v110.ObjectFactory ogc_factory;
     private final org.geotoolkit.gml.xml.v311.ObjectFactory gml_factory;
     private final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
-    public GTtoSE110Transformer(){
+    public GTtoSE110Transformer() {
         this.sld_factory_v110 = new org.geotoolkit.sld.xml.v110.ObjectFactory();
         this.se_factory = new org.geotoolkit.se.xml.v110.ObjectFactory();
         this.ogc_factory = new org.geotoolkit.ogc.xml.v110.ObjectFactory();
         this.gml_factory = new ObjectFactory();
     }
 
-    public JAXBElement<?> extract(final Expression exp){
+    public JAXBElement<?> extract(final Expression exp) {
         JAXBElement<?> jax = null;
 
-        if(exp instanceof Function){
+        if (exp instanceof Function) {
             final Function function = (Function) exp;
             final FunctionType ft = ogc_factory.createFunctionType();
             ft.setName(function.getName());
-            for(final Expression ex : function.getParameters()){
-                ft.getExpression().add( extract(ex) );
+            for (final Expression ex : function.getParameters()) {
+                ft.getExpression().add(extract(ex));
             }
             jax = ogc_factory.createFunction(ft);
-        }else if(exp instanceof Multiply){
-            final Multiply multiply = (Multiply)exp;
+        } else if (exp instanceof Multiply) {
+            final Multiply multiply = (Multiply) exp;
             final BinaryOperatorType bot = ogc_factory.createBinaryOperatorType();
-            bot.getExpression().add(  extract(multiply.getExpression1()) );
-            bot.getExpression().add(  extract(multiply.getExpression2()) );
+            bot.getExpression().add(extract(multiply.getExpression1()));
+            bot.getExpression().add(extract(multiply.getExpression2()));
             jax = ogc_factory.createMul(bot);
-        }else if(exp instanceof Literal){
+        } else if (exp instanceof Literal) {
             final LiteralType literal = ogc_factory.createLiteralType();
-            literal.setContent( ((Literal)exp).getValue().toString());
+            literal.setContent(((Literal) exp).getValue().toString());
             jax = ogc_factory.createLiteral(literal);
-        }else if(exp instanceof Add){
-            final Add add = (Add)exp;
+        } else if (exp instanceof Add) {
+            final Add add = (Add) exp;
             final BinaryOperatorType bot = ogc_factory.createBinaryOperatorType();
-            bot.getExpression().add(  extract(add.getExpression1()) );
-            bot.getExpression().add(  extract(add.getExpression2()) );
+            bot.getExpression().add(extract(add.getExpression1()));
+            bot.getExpression().add(extract(add.getExpression2()));
             jax = ogc_factory.createAdd(bot);
-        }else if(exp instanceof Divide){
-            final Divide divide = (Divide)exp;
+        } else if (exp instanceof Divide) {
+            final Divide divide = (Divide) exp;
             final BinaryOperatorType bot = ogc_factory.createBinaryOperatorType();
-            bot.getExpression().add(  extract(divide.getExpression1()) );
-            bot.getExpression().add(  extract(divide.getExpression2()) );
+            bot.getExpression().add(extract(divide.getExpression1()));
+            bot.getExpression().add(extract(divide.getExpression2()));
             jax = ogc_factory.createDiv(bot);
-        }else if(exp instanceof Subtract){
-            final Subtract substract = (Subtract)exp;
+        } else if (exp instanceof Subtract) {
+            final Subtract substract = (Subtract) exp;
             final BinaryOperatorType bot = ogc_factory.createBinaryOperatorType();
-            bot.getExpression().add(  extract(substract.getExpression1()) );
-            bot.getExpression().add(  extract(substract.getExpression2()) );
+            bot.getExpression().add(extract(substract.getExpression1()));
+            bot.getExpression().add(extract(substract.getExpression2()));
             jax = ogc_factory.createSub(bot);
-        }else if(exp instanceof PropertyName){
+        } else if (exp instanceof PropertyName) {
             final PropertyNameType literal = ogc_factory.createPropertyNameType();
-            literal.setContent( ((PropertyName)exp).getPropertyName() );
+            literal.setContent(((PropertyName) exp).getPropertyName());
             jax = ogc_factory.createPropertyName(literal);
-        }else if(exp instanceof NilExpression){
+        } else if (exp instanceof NilExpression) {
             //DO nothing on NILL expression
-        }else{
+        } else {
             throw new IllegalArgumentException("Unknowed expression element :" + exp);
         }
 
@@ -344,27 +349,27 @@ public class GTtoSE110Transformer implements StyleVisitor{
     /**
      * Transform an expression or float array in a scg parameter.
      */
-    public SvgParameterType visitSVG(final Object obj, final String value){
+    public SvgParameterType visitSVG(final Object obj, final String value) {
         SvgParameterType svg = se_factory.createSvgParameterType();
         svg.setName(value);
 
-        if(obj instanceof Expression){
+        if (obj instanceof Expression) {
             final Expression exp = (Expression) obj;
             final JAXBElement<?> ele = extract(exp);
-            if(ele == null){
+            if (ele == null) {
                 svg = null;
-            }else{
+            } else {
                 svg.getContent().add(ele);
             }
-        }else if(obj instanceof float[]){
+        } else if (obj instanceof float[]) {
             final float[] dashes = (float[]) obj;
             final StringBuilder sb = new StringBuilder();
-            for(final float f : dashes){
+            for (final float f : dashes) {
                 sb.append(f);
                 sb.append(' ');
             }
             svg.getContent().add(sb.toString().trim());
-        }else{
+        } else {
             throw new IllegalArgumentException("Unknowed CSS parameter jaxb structure :" + obj);
         }
 
@@ -374,10 +379,12 @@ public class GTtoSE110Transformer implements StyleVisitor{
     /**
      * Transform a geometrie name in a geometrytype.
      */
-    public GeometryType visitGeometryType(String str){
+    public GeometryType visitGeometryType(String str) {
         final GeometryType geo = se_factory.createGeometryType();
         final PropertyNameType value = ogc_factory.createPropertyNameType();
-        if(str == null)str= "";
+        if (str == null) {
+            str = "";
+        }
         value.setContent(str);
         geo.setPropertyName(value);
         return geo;
@@ -386,19 +393,20 @@ public class GTtoSE110Transformer implements StyleVisitor{
     /**
      * Transform a Feature name in a QName.
      */
-    public QName visitName(final Name name){
+    public QName visitName(final Name name) {
         return new QName(name.getNamespaceURI(), name.getLocalPart());
     }
 
-    public JAXBElement<?> visitFilter(final Filter filter){
+    public JAXBElement<?> visitFilter(final Filter filter) {
 
-        if(filter.equals(Filter.INCLUDE)){
+        if (filter.equals(Filter.INCLUDE)) {
             return null;
-        }if(filter.equals(Filter.EXCLUDE)){
+        }
+        if (filter.equals(Filter.EXCLUDE)) {
             return null;
         }
 
-        if(filter instanceof PropertyIsBetween){
+        if (filter instanceof PropertyIsBetween) {
             final PropertyIsBetween pib = (PropertyIsBetween) filter;
             final LowerBoundaryType lbt = ogc_factory.createLowerBoundaryType();
             lbt.setExpression(extract(pib.getLowerBoundary()));
@@ -406,104 +414,104 @@ public class GTtoSE110Transformer implements StyleVisitor{
             ubt.setExpression(extract(pib.getUpperBoundary()));
             final PropertyIsBetweenType bot = new PropertyIsBetweenType(extract(pib.getExpression()), lbt, ubt);
             return ogc_factory.createPropertyIsBetween(bot);
-        }else if(filter instanceof PropertyIsEqualTo){
+        } else if (filter instanceof PropertyIsEqualTo) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
             final PropertyIsEqualToType bot = ogc_factory.createPropertyIsEqualToType();
-            bot.getExpression().add( extract(pit.getExpression1()));
-            bot.getExpression().add( extract(pit.getExpression2()));
+            bot.getExpression().add(extract(pit.getExpression1()));
+            bot.getExpression().add(extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsEqualTo(bot);
-        }else if(filter instanceof PropertyIsGreaterThan){
+        } else if (filter instanceof PropertyIsGreaterThan) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
             final PropertyIsGreaterThanType bot = ogc_factory.createPropertyIsGreaterThanType();
-            bot.getExpression().add( extract(pit.getExpression1()));
-            bot.getExpression().add( extract(pit.getExpression2()));
+            bot.getExpression().add(extract(pit.getExpression1()));
+            bot.getExpression().add(extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsGreaterThan(bot);
-        }else if(filter instanceof PropertyIsGreaterThanOrEqualTo){
+        } else if (filter instanceof PropertyIsGreaterThanOrEqualTo) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
             final PropertyIsGreaterThanOrEqualToType bot = ogc_factory.createPropertyIsGreaterThanOrEqualToType();
-            bot.getExpression().add( extract(pit.getExpression1()));
-            bot.getExpression().add( extract(pit.getExpression2()));
+            bot.getExpression().add(extract(pit.getExpression1()));
+            bot.getExpression().add(extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsGreaterThanOrEqualTo(bot);
-        }else if(filter instanceof PropertyIsLessThan){
+        } else if (filter instanceof PropertyIsLessThan) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
             final PropertyIsLessThanType bot = ogc_factory.createPropertyIsLessThanType();
-            bot.getExpression().add( extract(pit.getExpression1()));
-            bot.getExpression().add( extract(pit.getExpression2()));
+            bot.getExpression().add(extract(pit.getExpression1()));
+            bot.getExpression().add(extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsLessThan(bot);
-        }else if(filter instanceof PropertyIsLessThanOrEqualTo){
+        } else if (filter instanceof PropertyIsLessThanOrEqualTo) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
             final PropertyIsLessThanOrEqualToType bot = ogc_factory.createPropertyIsLessThanOrEqualToType();
-            bot.getExpression().add( extract(pit.getExpression1()));
-            bot.getExpression().add( extract(pit.getExpression2()));
+            bot.getExpression().add(extract(pit.getExpression1()));
+            bot.getExpression().add(extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsLessThanOrEqualTo(bot);
-        }else if(filter instanceof PropertyIsLike){
+        } else if (filter instanceof PropertyIsLike) {
             final PropertyIsLike pis = (PropertyIsLike) filter;
             final PropertyIsLikeType bot = ogc_factory.createPropertyIsLikeType();
             bot.setEscapeChar(pis.getEscape());
             final LiteralType lt = ogc_factory.createLiteralType();
             lt.setContent(pis.getLiteral());
-            bot.setLiteral( lt.getStringValue() );
+            bot.setLiteral(lt.getStringValue());
             final PropertyNameType pnt = (PropertyNameType) extract(pis.getExpression()).getValue();
             bot.setPropertyName(pnt);
             bot.setSingleChar(pis.getSingleChar());
             bot.setWildCard(pis.getWildCard());
             return ogc_factory.createPropertyIsLike(bot);
-        }else if(filter instanceof PropertyIsNotEqualTo){
+        } else if (filter instanceof PropertyIsNotEqualTo) {
             final BinaryComparisonOperator pit = (BinaryComparisonOperator) filter;
             final PropertyIsNotEqualToType bot = ogc_factory.createPropertyIsNotEqualToType();
-            bot.getExpression().add( extract(pit.getExpression1()));
-            bot.getExpression().add( extract(pit.getExpression2()));
+            bot.getExpression().add(extract(pit.getExpression1()));
+            bot.getExpression().add(extract(pit.getExpression2()));
             return ogc_factory.createPropertyIsNotEqualTo(bot);
-        }else if(filter instanceof PropertyIsNull){
+        } else if (filter instanceof PropertyIsNull) {
             final PropertyIsNull pis = (PropertyIsNull) filter;
             final PropertyIsNullType bot = ogc_factory.createPropertyIsNullType();
             final Object obj = extract(pis.getExpression()).getValue();
             bot.setPropertyName((PropertyNameType) obj);
 
             return ogc_factory.createPropertyIsNull(bot);
-        }else if(filter instanceof And){
+        } else if (filter instanceof And) {
             final And and = (And) filter;
             final BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
-            for(final Filter f : and.getChildren()){
+            for (final Filter f : and.getChildren()) {
                 final JAXBElement<? extends LogicOpsType> ele = (JAXBElement<? extends LogicOpsType>) visitFilter(f);
-                if(ele != null){
+                if (ele != null) {
                     lot.getLogicOps().add(ele);
                 }
             }
 
             return ogc_factory.createAnd(new AndType(lot.getLogicOps().toArray()));
-        }else if(filter instanceof Or){
+        } else if (filter instanceof Or) {
             final Or or = (Or) filter;
             final BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
-            for(final Filter f : or.getChildren()){
+            for (final Filter f : or.getChildren()) {
                 final JAXBElement<? extends LogicOpsType> ele = (JAXBElement<? extends LogicOpsType>) visitFilter(f);
-                if(ele != null){
+                if (ele != null) {
                     lot.getLogicOps().add(ele);
                 }
             }
             return ogc_factory.createOr(new OrType(lot.getLogicOps().toArray()));
-        }else if(filter instanceof Not){
+        } else if (filter instanceof Not) {
             final Not not = (Not) filter;
             final UnaryLogicOpType lot = ogc_factory.createUnaryLogicOpType();
             final JAXBElement<?> sf = visitFilter(not.getFilter());
 
-            if (sf.getValue() instanceof ComparisonOpsType){
+            if (sf.getValue() instanceof ComparisonOpsType) {
                 lot.setComparisonOps((JAXBElement<? extends ComparisonOpsType>) sf);
                 return ogc_factory.createNot(new NotType(lot.getComparisonOps().getValue()));
             }
-            if(sf.getValue() instanceof LogicOpsType){
+            if (sf.getValue() instanceof LogicOpsType) {
                 lot.setLogicOps((JAXBElement<? extends LogicOpsType>) sf);
                 return ogc_factory.createNot(new NotType(lot.getLogicOps().getValue()));
             }
-            if(sf.getValue() instanceof SpatialOpsType){
+            if (sf.getValue() instanceof SpatialOpsType) {
                 lot.setSpatialOps((JAXBElement<? extends SpatialOpsType>) sf);
                 return ogc_factory.createNot(new NotType(lot.getSpatialOps().getValue()));
             }
             //should not happen
             throw new IllegalArgumentException("invalide filter element : " + sf);
-        }else if(filter instanceof FeatureId){
+        } else if (filter instanceof FeatureId) {
             throw new IllegalArgumentException("Not parsed yet : " + filter);
-        }else if(filter instanceof BBOX){
+        } else if (filter instanceof BBOX) {
             final BBOX bbox = (BBOX) filter;
 
             final Expression left = bbox.getExpression1();
@@ -516,11 +524,11 @@ public class GTtoSE110Transformer implements StyleVisitor{
             final double maxy;
             final String srs;
 
-            if(left instanceof PropertyName){
-                property = ((PropertyName)left).getPropertyName();
+            if (left instanceof PropertyName) {
+                property = ((PropertyName) left).getPropertyName();
 
-                final Object objGeom = ((Literal)right).getValue();
-                if(objGeom instanceof org.opengis.geometry.Envelope){
+                final Object objGeom = ((Literal) right).getValue();
+                if (objGeom instanceof org.opengis.geometry.Envelope) {
                     final org.opengis.geometry.Envelope env = (org.opengis.geometry.Envelope) objGeom;
                     minx = env.getMinimum(0);
                     maxx = env.getMaximum(0);
@@ -529,9 +537,9 @@ public class GTtoSE110Transformer implements StyleVisitor{
                     try {
                         srs = IdentifiedObjects.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
                     } catch (FactoryException ex) {
-                        throw new IllegalArgumentException("invalide bbox element : " + filter +" "+ ex.getMessage(), ex);
+                        throw new IllegalArgumentException("invalide bbox element : " + filter + " " + ex.getMessage(), ex);
                     }
-                }else if(objGeom instanceof Geometry){
+                } else if (objGeom instanceof Geometry) {
                     final Geometry geom = (Geometry) objGeom;
                     final Envelope env = geom.getEnvelopeInternal();
                     minx = env.getMinX();
@@ -539,15 +547,15 @@ public class GTtoSE110Transformer implements StyleVisitor{
                     miny = env.getMinY();
                     maxy = env.getMaxY();
                     srs = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
-                }else{
+                } else {
                     throw new IllegalArgumentException("invalide bbox element : " + filter);
                 }
 
-            }else if(right instanceof PropertyName){
-                property = ((PropertyName)right).getPropertyName();
+            } else if (right instanceof PropertyName) {
+                property = ((PropertyName) right).getPropertyName();
 
-                final Object objGeom = ((Literal)left).getValue();
-                if(objGeom instanceof org.opengis.geometry.Envelope){
+                final Object objGeom = ((Literal) left).getValue();
+                if (objGeom instanceof org.opengis.geometry.Envelope) {
                     final org.opengis.geometry.Envelope env = (org.opengis.geometry.Envelope) objGeom;
                     minx = env.getMinimum(0);
                     maxx = env.getMaximum(0);
@@ -556,9 +564,9 @@ public class GTtoSE110Transformer implements StyleVisitor{
                     try {
                         srs = IdentifiedObjects.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
                     } catch (FactoryException ex) {
-                        throw new IllegalArgumentException("invalide bbox element : " + filter +" "+ ex.getMessage(), ex);
+                        throw new IllegalArgumentException("invalide bbox element : " + filter + " " + ex.getMessage(), ex);
                     }
-                }else if(objGeom instanceof Geometry){
+                } else if (objGeom instanceof Geometry) {
                     final Geometry geom = (Geometry) objGeom;
                     final Envelope env = geom.getEnvelopeInternal();
                     minx = env.getMinX();
@@ -566,17 +574,17 @@ public class GTtoSE110Transformer implements StyleVisitor{
                     miny = env.getMinY();
                     maxy = env.getMaxY();
                     srs = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
-                }else{
+                } else {
                     throw new IllegalArgumentException("invalide bbox element : " + filter);
                 }
-            }else{
+            } else {
                 throw new IllegalArgumentException("invalide bbox element : " + filter);
             }
 
             final BBOXType bbtype = new BBOXType(property, minx, miny, maxx, maxy, srs);
 
             return ogc_factory.createBBOX(bbtype);
-        }else if(filter instanceof Id){
+        } else if (filter instanceof Id) {
             //todo OGC filter can not handle ID when we are inside another filter type
             //so here we make a small tric to change an id filter in a serie of propertyequal filter
             //this is not really legal but we dont have the choice here
@@ -584,43 +592,43 @@ public class GTtoSE110Transformer implements StyleVisitor{
             final PropertyName n = FF.property("@id");
             final List<Filter> lst = new ArrayList<Filter>();
 
-            for(Identifier ident : ((Id)filter).getIdentifiers()){
+            for (Identifier ident : ((Id) filter).getIdentifiers()) {
                 lst.add(FF.equals(n, FF.literal(ident.getID().toString())));
             }
 
-            if(lst.size() == 0){
+            if (lst.isEmpty()) {
                 return null;
-            }else if(lst.size() == 1){
+            } else if (lst.size() == 1) {
                 return visitFilter(lst.get(0));
-            }else{
+            } else {
                 return visitFilter(FF.and(lst));
             }
 
-        }else if(filter instanceof BinarySpatialOperator){
+        } else if (filter instanceof BinarySpatialOperator) {
             final BinarySpatialOperator spatialOp = (BinarySpatialOperator) filter;
 
             Expression exp1 = spatialOp.getExpression1();
             Expression exp2 = spatialOp.getExpression2();
 
-            if(!(exp1 instanceof PropertyName)){
+            if (!(exp1 instanceof PropertyName)) {
                 //flip order
                 final Expression ex = exp1;
                 exp1 = exp2;
                 exp2 = ex;
             }
 
-            if(!(exp1 instanceof PropertyName)){
-                throw new IllegalArgumentException("Filter can not be transformed in wml filter, " +
-                        "expression are not of the requiered type ");
+            if (!(exp1 instanceof PropertyName)) {
+                throw new IllegalArgumentException("Filter can not be transformed in wml filter, "
+                        + "expression are not of the requiered type ");
             }
 
             final JAXBElement<PropertyNameType> pnt = (JAXBElement<PropertyNameType>) extract(exp1);
             final JAXBElement<EnvelopeType> jaxEnv;
             final JAXBElement<? extends AbstractGeometryType> jaxGeom;
 
-            final Object geom = ((Literal)exp2).getValue();
+            final Object geom = ((Literal) exp2).getValue();
 
-            if(geom instanceof Geometry){
+            if (geom instanceof Geometry) {
                 final Geometry jts = (Geometry) geom;
                 final String srid = SRIDGenerator.toSRS(jts.getSRID(), SRIDGenerator.Version.V1);
                 CoordinateReferenceSystem crs;
@@ -631,32 +639,64 @@ public class GTtoSE110Transformer implements StyleVisitor{
                     crs = null;
                 }
                 final AbstractGeometryType gt = GMLUtilities.getGMLFromISO(JTSUtils.toISO(jts, crs));
-                // TODO complete gml type
+                // TODO use gml method to return any JAXBElement
                 if (gt instanceof PointType) {
                     jaxGeom = gml_factory.createPoint((PointType) gt);
+                } else if (gt instanceof CurveType) {
+                    jaxGeom = gml_factory.createCurve((CurveType) gt);
+                } else if (gt instanceof LineStringType) {
+                    jaxGeom = gml_factory.createLineString((LineStringType) gt);
                 } else if (gt instanceof PolygonType) {
                     jaxGeom = gml_factory.createPolygon((PolygonType) gt);
+                } else if (gt instanceof MultiPolygonType) {
+                    jaxGeom = gml_factory.createMultiPolygon((MultiPolygonType) gt);
+                } else if (gt instanceof MultiLineStringType) {
+                    jaxGeom = gml_factory.createMultiLineString((MultiLineStringType) gt);
+                } else if (gt instanceof MultiCurveType) {
+                    jaxGeom = gml_factory.createMultiLineString((MultiLineStringType) gt);
+                } else if (gt instanceof MultiPointType) {
+                    jaxGeom = gml_factory.createMultiLineString((MultiLineStringType) gt);
+                } else if (gt instanceof MultiGeometryType) {
+                    jaxGeom = gml_factory.createMultiGeometry((MultiGeometryType) gt);
+                } else if (gt instanceof PolyhedralSurfaceType) {
+                    jaxGeom = gml_factory.createPolyhedralSurface((PolyhedralSurfaceType) gt);
                 } else if (gt != null) {
                     throw new IllegalArgumentException("unexpected Geometry type:" + gt.getClass().getName());
                 } else {
                     jaxGeom = null;
                 }
                 jaxEnv = null;
-            }else if(geom instanceof org.opengis.geometry.Geometry){
+            } else if (geom instanceof org.opengis.geometry.Geometry) {
                 final AbstractGeometryType gt = GMLUtilities.getGMLFromISO((org.opengis.geometry.Geometry) geom);
-                // TODO complete gml type
+                // TODO use gml method to return any JAXBElement
                 if (gt instanceof PointType) {
                     jaxGeom = gml_factory.createPoint((PointType) gt);
+                } else if (gt instanceof CurveType) {
+                    jaxGeom = gml_factory.createCurve((CurveType) gt);
+                } else if (gt instanceof LineStringType) {
+                    jaxGeom = gml_factory.createLineString((LineStringType) gt);
                 } else if (gt instanceof PolygonType) {
                     jaxGeom = gml_factory.createPolygon((PolygonType) gt);
+                } else if (gt instanceof MultiPolygonType) {
+                    jaxGeom = gml_factory.createMultiPolygon((MultiPolygonType) gt);
+                } else if (gt instanceof MultiLineStringType) {
+                    jaxGeom = gml_factory.createMultiLineString((MultiLineStringType) gt);
+                } else if (gt instanceof MultiCurveType) {
+                    jaxGeom = gml_factory.createMultiLineString((MultiLineStringType) gt);
+                } else if (gt instanceof MultiPointType) {
+                    jaxGeom = gml_factory.createMultiLineString((MultiLineStringType) gt);
+                } else if (gt instanceof MultiGeometryType) {
+                    jaxGeom = gml_factory.createMultiGeometry((MultiGeometryType) gt);
+                } else if (gt instanceof PolyhedralSurfaceType) {
+                    jaxGeom = gml_factory.createPolyhedralSurface((PolyhedralSurfaceType) gt);
                 } else if (gt != null) {
                     throw new IllegalArgumentException("unexpected Geometry type:" + gt.getClass().getName());
                 } else {
                     jaxGeom = null;
                 }
                 jaxEnv = null;
-            }else if(geom instanceof org.opengis.geometry.Envelope){
-                final org.opengis.geometry.Envelope genv = (org.opengis.geometry.Envelope)geom;
+            } else if (geom instanceof org.opengis.geometry.Envelope) {
+                final org.opengis.geometry.Envelope genv = (org.opengis.geometry.Envelope) geom;
                 EnvelopeType ee = gml_factory.createEnvelopeType();
                 try {
                     ee.setSrsName(IdentifiedObjects.lookupIdentifier(genv.getCoordinateReferenceSystem(), true));
@@ -669,82 +709,82 @@ public class GTtoSE110Transformer implements StyleVisitor{
 
                 jaxGeom = null;
                 jaxEnv = gml_factory.createEnvelope(ee);
-            }else{
+            } else {
                 throw new IllegalArgumentException("Type is not geometric or envelope.");
             }
 
-            if(filter instanceof Beyond){
+            if (filter instanceof Beyond) {
                 final BeyondType jaxelement = ogc_factory.createBeyondType();
                 jaxelement.setAbstractGeometry(jaxGeom);
                 jaxelement.setPropertyName(pnt.getValue());
                 return ogc_factory.createBeyond(jaxelement);
-            }else if(filter instanceof Contains){
+            } else if (filter instanceof Contains) {
                 final ContainsType jaxelement = ogc_factory.createContainsType();
                 jaxelement.setAbstractGeometry(jaxGeom);
                 jaxelement.setEnvelope(jaxEnv);
                 jaxelement.setPropertyName(pnt);
                 return ogc_factory.createContains(jaxelement);
-            }else if(filter instanceof Crosses){
+            } else if (filter instanceof Crosses) {
                 final CrossesType jaxelement = ogc_factory.createCrossesType();
                 jaxelement.setAbstractGeometry(jaxGeom);
                 jaxelement.setEnvelope(jaxEnv);
                 jaxelement.setPropertyName(pnt);
                 return ogc_factory.createCrosses(jaxelement);
-            }else if(filter instanceof DWithin){
+            } else if (filter instanceof DWithin) {
                 final DWithinType jaxelement = ogc_factory.createDWithinType();
                 jaxelement.setAbstractGeometry(jaxGeom);
                 jaxelement.setPropertyName(pnt.getValue());
                 return ogc_factory.createDWithin(jaxelement);
-            }else if(filter instanceof Disjoint){
+            } else if (filter instanceof Disjoint) {
                 final DisjointType jaxelement = ogc_factory.createDisjointType();
                 jaxelement.setAbstractGeometry(jaxGeom);
                 jaxelement.setEnvelope(jaxEnv);
                 jaxelement.setPropertyName(pnt);
                 return ogc_factory.createDisjoint(jaxelement);
-            }else if(filter instanceof Equals){
+            } else if (filter instanceof Equals) {
                 final EqualsType jaxelement = ogc_factory.createEqualsType();
                 jaxelement.setAbstractGeometry(jaxGeom);
                 jaxelement.setEnvelope(jaxEnv);
                 jaxelement.setPropertyName(pnt);
                 return ogc_factory.createEquals(jaxelement);
-            }else if(filter instanceof Intersects){
+            } else if (filter instanceof Intersects) {
                 final IntersectsType jaxelement = ogc_factory.createIntersectsType();
                 jaxelement.setAbstractGeometry(jaxGeom);
                 jaxelement.setEnvelope(jaxEnv);
                 jaxelement.setPropertyName(pnt);
                 return ogc_factory.createIntersects(jaxelement);
-            }else if(filter instanceof Overlaps){
+            } else if (filter instanceof Overlaps) {
                 final OverlapsType jaxelement = new OverlapsType();
                 jaxelement.setAbstractGeometry(jaxGeom);
                 jaxelement.setEnvelope(jaxEnv);
                 jaxelement.setPropertyName(pnt);
                 return ogc_factory.createOverlaps(jaxelement);
-            }else if(filter instanceof Touches){
+            } else if (filter instanceof Touches) {
                 final TouchesType jaxelement = ogc_factory.createTouchesType();
                 jaxelement.setAbstractGeometry(jaxGeom);
                 jaxelement.setEnvelope(jaxEnv);
                 jaxelement.setPropertyName(pnt);
                 return ogc_factory.createTouches(jaxelement);
-            }else if(filter instanceof Within){
+            } else if (filter instanceof Within) {
                 final WithinType jaxelement = ogc_factory.createWithinType();
                 jaxelement.setAbstractGeometry(jaxGeom);
                 jaxelement.setEnvelope(jaxEnv);
                 jaxelement.setPropertyName(pnt);
                 return ogc_factory.createWithin(jaxelement);
-            }else{
-                throw new IllegalArgumentException("Unknowed filter element : " + filter +" class :" + filter.getClass());
+            } else {
+                throw new IllegalArgumentException("Unknowed filter element : " + filter + " class :" + filter.getClass());
             }
-        }else{
-            throw new IllegalArgumentException("Unknowed filter element : " + filter +" class :" + filter.getClass());
+        } else {
+            throw new IllegalArgumentException("Unknowed filter element : " + filter + " class :" + filter.getClass());
         }
 
     }
 
-    public List<JAXBElement<AbstractIdType>> visitFilter(final Id filter){
+    public List<JAXBElement<AbstractIdType>> visitFilter(final Id filter) {
 
         final List<JAXBElement<AbstractIdType>> lst = new ArrayList<JAXBElement<AbstractIdType>>();
 
-        for(Identifier ident : filter.getIdentifiers()){
+        for (Identifier ident : filter.getIdentifiers()) {
             final FeatureIdType fit = ogc_factory.createFeatureIdType();
             fit.setFid(ident.getID().toString());
             final JAXBElement jax = ogc_factory.createFeatureId(fit);
@@ -757,14 +797,14 @@ public class GTtoSE110Transformer implements StyleVisitor{
     public FilterType visit(final Filter filter) {
         final FilterType ft = ogc_factory.createFilterType();
 
-        if(filter instanceof Id){
-            ft.getId().addAll(visitFilter((Id)filter));
-        }else{
+        if (filter instanceof Id) {
+            ft.getId().addAll(visitFilter((Id) filter));
+        } else {
             final JAXBElement<?> sf = visitFilter(filter);
 
-            if(sf == null){
+            if (sf == null) {
                 return null;
-            }else if (sf.getValue() instanceof ComparisonOpsType) {
+            } else if (sf.getValue() instanceof ComparisonOpsType) {
                 ft.setComparisonOps((JAXBElement<? extends ComparisonOpsType>) sf);
             } else if (sf.getValue() instanceof LogicOpsType) {
                 ft.setLogicOps((JAXBElement<? extends LogicOpsType>) sf);
@@ -784,13 +824,15 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a Unit to the corresponding SLD string.
      */
     public String visitUOM(final Unit<Length> uom) {
-        if(uom == null) return null;
+        if (uom == null) {
+            return null;
+        }
 
-        if(uom.equals(SI.METRE)){
+        if (uom.equals(SI.METRE)) {
             return "http://www.opengeospatial.org/se/units/metre";
-        }else if(uom.equals(NonSI.FOOT) ){
+        } else if (uom.equals(NonSI.FOOT)) {
             return "http://www.opengeospatial.org/se/units/foot";
-        }else{
+        } else {
             return "http://www.opengeospatial.org/se/units/pixel";
         }
     }
@@ -805,122 +847,123 @@ public class GTtoSE110Transformer implements StyleVisitor{
         userStyle.setDescription(visit(style.getDescription(), null));
         userStyle.setIsDefault(style.isDefault());
 
-        for(final FeatureTypeStyle fts : style.featureTypeStyles()){
-            userStyle.getFeatureTypeStyleOrCoverageStyleOrOnlineResource().add(visit(fts,null));
+        for (final FeatureTypeStyle fts : style.featureTypeStyles()) {
+            userStyle.getFeatureTypeStyleOrCoverageStyleOrOnlineResource().add(visit(fts, null));
         }
 
         return userStyle;
     }
 
     /**
-     * Transform a GT FTS in Jaxb FeatureTypeStyle or CoveragaStyle or OnlineResource.
+     * Transform a GT FTS in Jaxb FeatureTypeStyle or CoveragaStyle or
+     * OnlineResource.
      */
     @Override
     public Object visit(final FeatureTypeStyle fts, final Object data) {
-        if(fts.getOnlineResource() != null){
+        if (fts.getOnlineResource() != null) {
             //we store only the online resource
             return visit(fts.getOnlineResource(), null);
         } else {
-            Object obj = null;
 
             //try to figure out if we have here a coverage FTS or not
             boolean isCoverage = false;
-            if(fts.semanticTypeIdentifiers().contains(SemanticType.RASTER)){
+            if (fts.semanticTypeIdentifiers().contains(SemanticType.RASTER)) {
                 isCoverage = true;
-            }else if(fts.semanticTypeIdentifiers().contains(SemanticType.ANY) || fts.semanticTypeIdentifiers().isEmpty()){
-                if( fts.getFeatureInstanceIDs() == null || fts.getFeatureInstanceIDs().getIdentifiers().isEmpty()){
+            } else if (fts.semanticTypeIdentifiers().contains(SemanticType.ANY) || fts.semanticTypeIdentifiers().isEmpty()) {
+                if (fts.getFeatureInstanceIDs() == null || fts.getFeatureInstanceIDs().getIdentifiers().isEmpty()) {
 
                     //try to find a coverage style
-                    ruleLoop :
-                    for(final Rule r : fts.rules()){
-                        for(final Symbolizer s : r.symbolizers()){
-                            if(s instanceof RasterSymbolizer){
-                               isCoverage = true;
-                               break ruleLoop;
+                    ruleLoop:
+                    for (final Rule r : fts.rules()) {
+                        for (final Symbolizer s : r.symbolizers()) {
+                            if (s instanceof RasterSymbolizer) {
+                                isCoverage = true;
+                                break ruleLoop;
                             }
                         }
                     }
-                }else{
+                } else {
                     isCoverage = false;
                 }
-            }else{
+            } else {
                 isCoverage = false;
             }
 
+            final Object obj;
             //create the sld FTS
-            if(isCoverage){
+            if (isCoverage) {
                 //coverage type
                 final CoverageStyleType cst = se_factory.createCoverageStyleType();
 
-                if(!fts.featureTypeNames().isEmpty()){
+                if (!fts.featureTypeNames().isEmpty()) {
                     cst.setCoverageName(fts.featureTypeNames().iterator().next().toString());
                 }
 
                 cst.setDescription(visit(fts.getDescription(), null));
                 cst.setName(fts.getName());
 
-                for(final SemanticType semantic : fts.semanticTypeIdentifiers()){
+                for (final SemanticType semantic : fts.semanticTypeIdentifiers()) {
 
-                    if(SemanticType.ANY.equals(semantic)){
+                    if (SemanticType.ANY.equals(semantic)) {
                         cst.getSemanticTypeIdentifier().add(GENERIC_ANY);
-                    }else if(SemanticType.POINT.equals(semantic)){
+                    } else if (SemanticType.POINT.equals(semantic)) {
                         cst.getSemanticTypeIdentifier().add(GENERIC_POINT);
-                    }else if(SemanticType.LINE.equals(semantic)){
+                    } else if (SemanticType.LINE.equals(semantic)) {
                         cst.getSemanticTypeIdentifier().add(GENERIC_LINE);
-                    }else if(SemanticType.POLYGON.equals(semantic)){
+                    } else if (SemanticType.POLYGON.equals(semantic)) {
                         cst.getSemanticTypeIdentifier().add(GENERIC_POLYGON);
-                    }else if(SemanticType.TEXT.equals(semantic)){
+                    } else if (SemanticType.TEXT.equals(semantic)) {
                         cst.getSemanticTypeIdentifier().add(GENERIC_TEXT);
-                    }else if(SemanticType.RASTER.equals(semantic)){
+                    } else if (SemanticType.RASTER.equals(semantic)) {
                         cst.getSemanticTypeIdentifier().add(GENERIC_RASTER);
-                    }else{
+                    } else {
                         cst.getSemanticTypeIdentifier().add(semantic.identifier());
                     }
 
                 }
 
-                for(final Rule rule : fts.rules()){
-                    cst.getRuleOrOnlineResource().add(visit(rule,null));
+                for (final Rule rule : fts.rules()) {
+                    cst.getRuleOrOnlineResource().add(visit(rule, null));
                 }
 
                 obj = cst;
-            }else{
+            } else {
                 //feature type
                 final FeatureTypeStyleType ftst = se_factory.createFeatureTypeStyleType();
 
-                if(!fts.featureTypeNames().isEmpty()){
+                if (!fts.featureTypeNames().isEmpty()) {
                     final Name name = fts.featureTypeNames().iterator().next();
                     final String pre = name.getNamespaceURI();
                     final String sep = name.getSeparator();
                     final String local = name.getLocalPart();
-                    ftst.setFeatureTypeName(new QName(pre+sep, local));
+                    ftst.setFeatureTypeName(new QName(pre + sep, local));
                 }
 
                 ftst.setDescription(visit(fts.getDescription(), null));
                 ftst.setName(fts.getName());
 
-                for(final SemanticType semantic : fts.semanticTypeIdentifiers()){
+                for (final SemanticType semantic : fts.semanticTypeIdentifiers()) {
 
-                    if(SemanticType.ANY.equals(semantic)){
+                    if (SemanticType.ANY.equals(semantic)) {
                         ftst.getSemanticTypeIdentifier().add(GENERIC_ANY);
-                    }else if(SemanticType.POINT.equals(semantic)){
+                    } else if (SemanticType.POINT.equals(semantic)) {
                         ftst.getSemanticTypeIdentifier().add(GENERIC_POINT);
-                    }else if(SemanticType.LINE.equals(semantic)){
+                    } else if (SemanticType.LINE.equals(semantic)) {
                         ftst.getSemanticTypeIdentifier().add(GENERIC_LINE);
-                    }else if(SemanticType.POLYGON.equals(semantic)){
+                    } else if (SemanticType.POLYGON.equals(semantic)) {
                         ftst.getSemanticTypeIdentifier().add(GENERIC_POLYGON);
-                    }else if(SemanticType.TEXT.equals(semantic)){
+                    } else if (SemanticType.TEXT.equals(semantic)) {
                         ftst.getSemanticTypeIdentifier().add(GENERIC_TEXT);
-                    }else if(SemanticType.RASTER.equals(semantic)){
+                    } else if (SemanticType.RASTER.equals(semantic)) {
                         ftst.getSemanticTypeIdentifier().add(GENERIC_RASTER);
-                    }else{
+                    } else {
                         ftst.getSemanticTypeIdentifier().add(semantic.identifier());
                     }
 
                 }
 
-                for(final Rule rule : fts.rules()){
-                    ftst.getRuleOrOnlineResource().add(visit(rule,null));
+                for (final Rule rule : fts.rules()) {
+                    ftst.getRuleOrOnlineResource().add(visit(rule, null));
                 }
 
                 obj = ftst;
@@ -935,43 +978,43 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     @Override
     public Object visit(final Rule rule, final Object data) {
-        if(rule.getOnlineResource() != null){
+        if (rule.getOnlineResource() != null) {
             //we store only the online resource
             return visit(rule.getOnlineResource(), null);
         }
 
         final RuleType rt = se_factory.createRuleType();
         rt.setName(rule.getName());
-        rt.setDescription(visit(rule.getDescription(),null));
+        rt.setDescription(visit(rule.getDescription(), null));
 
-        if(rule.isElseFilter()){
+        if (rule.isElseFilter()) {
             rt.setElseFilter(se_factory.createElseFilterType());
-        }else if(rule.getFilter() != null){
-            rt.setFilter( visit(rule.getFilter()) );
+        } else if (rule.getFilter() != null) {
+            rt.setFilter(visit(rule.getFilter()));
         }
 
-        if(rule.getLegend() != null){
-            rt.setLegendGraphic(visit(rule.getLegend(),null));
+        if (rule.getLegend() != null) {
+            rt.setLegendGraphic(visit(rule.getLegend(), null));
         }
 
         rt.setMaxScaleDenominator(rule.getMaxScaleDenominator());
         rt.setMinScaleDenominator(rule.getMinScaleDenominator());
 
-        for(final Symbolizer symbol : rule.symbolizers()){
-            if(symbol instanceof LineSymbolizer){
-                rt.getSymbolizer().add( visit((LineSymbolizer)symbol,null));
-            }else if(symbol instanceof PolygonSymbolizer){
-                rt.getSymbolizer().add( visit((PolygonSymbolizer)symbol,null));
-            }else if(symbol instanceof PointSymbolizer){
-                rt.getSymbolizer().add( visit((PointSymbolizer)symbol,null));
-            }else if(symbol instanceof RasterSymbolizer){
-                rt.getSymbolizer().add( visit((RasterSymbolizer)symbol,null));
-            }else if(symbol instanceof TextSymbolizer){
-                rt.getSymbolizer().add( visit((TextSymbolizer)symbol,null));
-            }else if(symbol instanceof PatternSymbolizer){
-                rt.getSymbolizer().add( visit((PatternSymbolizer)symbol,null));
-            }else if(symbol instanceof ExtensionSymbolizer){
-                ((List)rt.getSymbolizer()).add( visit((ExtensionSymbolizer)symbol,null));
+        for (final Symbolizer symbol : rule.symbolizers()) {
+            if (symbol instanceof LineSymbolizer) {
+                rt.getSymbolizer().add(visit((LineSymbolizer) symbol, null));
+            } else if (symbol instanceof PolygonSymbolizer) {
+                rt.getSymbolizer().add(visit((PolygonSymbolizer) symbol, null));
+            } else if (symbol instanceof PointSymbolizer) {
+                rt.getSymbolizer().add(visit((PointSymbolizer) symbol, null));
+            } else if (symbol instanceof RasterSymbolizer) {
+                rt.getSymbolizer().add(visit((RasterSymbolizer) symbol, null));
+            } else if (symbol instanceof TextSymbolizer) {
+                rt.getSymbolizer().add(visit((TextSymbolizer) symbol, null));
+            } else if (symbol instanceof PatternSymbolizer) {
+                rt.getSymbolizer().add(visit((PatternSymbolizer) symbol, null));
+            } else if (symbol instanceof ExtensionSymbolizer) {
+                ((List) rt.getSymbolizer()).add(visit((ExtensionSymbolizer) symbol, null));
             }
         }
 
@@ -984,13 +1027,13 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public JAXBElement<PointSymbolizerType> visit(final PointSymbolizer point, final Object data) {
         final PointSymbolizerType pst = se_factory.createPointSymbolizerType();
-        pst.setName( point.getName() );
-        pst.setDescription( visit(point.getDescription(),null) );
-        pst.setUom( visitUOM(point.getUnitOfMeasure()));
-        pst.setGeometry( visitGeometryType(point.getGeometryPropertyName() ) );
+        pst.setName(point.getName());
+        pst.setDescription(visit(point.getDescription(), null));
+        pst.setUom(visitUOM(point.getUnitOfMeasure()));
+        pst.setGeometry(visitGeometryType(point.getGeometryPropertyName()));
 
-        if(point.getGraphic() != null){
-            pst.setGraphic( visit(point.getGraphic(),null) );
+        if (point.getGraphic() != null) {
+            pst.setGraphic(visit(point.getGraphic(), null));
         }
         return se_factory.createPointSymbolizer(pst);
     }
@@ -1001,15 +1044,15 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public JAXBElement<LineSymbolizerType> visit(final LineSymbolizer line, final Object data) {
         final LineSymbolizerType lst = se_factory.createLineSymbolizerType();
-        lst.setName( line.getName() );
-        lst.setDescription( visit(line.getDescription(),null) );
-        lst.setUom( visitUOM(line.getUnitOfMeasure()));
-        lst.setGeometry( visitGeometryType(line.getGeometryPropertyName() ) );
+        lst.setName(line.getName());
+        lst.setDescription(visit(line.getDescription(), null));
+        lst.setUom(visitUOM(line.getUnitOfMeasure()));
+        lst.setGeometry(visitGeometryType(line.getGeometryPropertyName()));
 
-        if(line.getStroke() != null){
-            lst.setStroke( visit(line.getStroke(),null) );
+        if (line.getStroke() != null) {
+            lst.setStroke(visit(line.getStroke(), null));
         }
-        lst.setPerpendicularOffset( visitExpression(line.getPerpendicularOffset()) );
+        lst.setPerpendicularOffset(visitExpression(line.getPerpendicularOffset()));
         return se_factory.createLineSymbolizer(lst);
     }
 
@@ -1019,23 +1062,23 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public JAXBElement<PolygonSymbolizerType> visit(final PolygonSymbolizer polygon, final Object data) {
         final PolygonSymbolizerType pst = se_factory.createPolygonSymbolizerType();
-        pst.setName( polygon.getName() );
-        pst.setDescription( visit(polygon.getDescription(),null) );
-        pst.setUom( visitUOM(polygon.getUnitOfMeasure()));
-        pst.setGeometry( visitGeometryType(polygon.getGeometryPropertyName() ) );
+        pst.setName(polygon.getName());
+        pst.setDescription(visit(polygon.getDescription(), null));
+        pst.setUom(visitUOM(polygon.getUnitOfMeasure()));
+        pst.setGeometry(visitGeometryType(polygon.getGeometryPropertyName()));
 
-        if(polygon.getDisplacement() != null){
-            pst.setDisplacement( visit(polygon.getDisplacement(), null) );
+        if (polygon.getDisplacement() != null) {
+            pst.setDisplacement(visit(polygon.getDisplacement(), null));
         }
 
-        if(polygon.getFill() != null){
-            pst.setFill( visit(polygon.getFill(),null) );
+        if (polygon.getFill() != null) {
+            pst.setFill(visit(polygon.getFill(), null));
         }
 
-        pst.setPerpendicularOffset( visitExpression(polygon.getPerpendicularOffset()) );
+        pst.setPerpendicularOffset(visitExpression(polygon.getPerpendicularOffset()));
 
-        if(polygon.getStroke() != null){
-            pst.setStroke( visit(polygon.getStroke(),null) );
+        if (polygon.getStroke() != null) {
+            pst.setStroke(visit(polygon.getStroke(), null));
         }
 
         return se_factory.createPolygonSymbolizer(pst);
@@ -1047,27 +1090,27 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public JAXBElement<TextSymbolizerType> visit(final TextSymbolizer text, final Object data) {
         final TextSymbolizerType tst = se_factory.createTextSymbolizerType();
-        tst.setName( text.getName() );
-        tst.setDescription( visit(text.getDescription(),null) );
-        tst.setUom( visitUOM(text.getUnitOfMeasure()));
-        tst.setGeometry( visitGeometryType(text.getGeometryPropertyName() ) );
+        tst.setName(text.getName());
+        tst.setDescription(visit(text.getDescription(), null));
+        tst.setUom(visitUOM(text.getUnitOfMeasure()));
+        tst.setGeometry(visitGeometryType(text.getGeometryPropertyName()));
 
-        if(text.getHalo() != null){
-            tst.setHalo( visit(text.getHalo(), null) );
+        if (text.getHalo() != null) {
+            tst.setHalo(visit(text.getHalo(), null));
         }
 
-        if(text.getFont() != null){
-            tst.setFont( visit(text.getFont(),null) );
+        if (text.getFont() != null) {
+            tst.setFont(visit(text.getFont(), null));
         }
 
-        tst.setLabel( visitExpression(text.getLabel()) );
+        tst.setLabel(visitExpression(text.getLabel()));
 
-        if(text.getLabelPlacement() != null){
-            tst.setLabelPlacement( visit(text.getLabelPlacement(), null) );
+        if (text.getLabelPlacement() != null) {
+            tst.setLabelPlacement(visit(text.getLabelPlacement(), null));
         }
 
-        if(text.getFill() != null){
-            tst.setFill( visit(text.getFill(),null) );
+        if (text.getFill() != null) {
+            tst.setFill(visit(text.getFill(), null));
         }
 
         return se_factory.createTextSymbolizer(tst);
@@ -1079,44 +1122,44 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public JAXBElement<RasterSymbolizerType> visit(final RasterSymbolizer raster, final Object data) {
         final RasterSymbolizerType tst = se_factory.createRasterSymbolizerType();
-        tst.setName( raster.getName() );
-        tst.setDescription( visit(raster.getDescription(),null) );
-        tst.setUom( visitUOM(raster.getUnitOfMeasure()));
-        tst.setGeometry( visitGeometryType(raster.getGeometryPropertyName() ) );
+        tst.setName(raster.getName());
+        tst.setDescription(visit(raster.getDescription(), null));
+        tst.setUom(visitUOM(raster.getUnitOfMeasure()));
+        tst.setGeometry(visitGeometryType(raster.getGeometryPropertyName()));
 
-        if(raster.getChannelSelection() != null){
-            tst.setChannelSelection( visit(raster.getChannelSelection(),null) );
+        if (raster.getChannelSelection() != null) {
+            tst.setChannelSelection(visit(raster.getChannelSelection(), null));
         }
 
-        if(raster.getColorMap() != null){
-            tst.setColorMap( visit(raster.getColorMap(), null) );
+        if (raster.getColorMap() != null) {
+            tst.setColorMap(visit(raster.getColorMap(), null));
         }
 
-        if(raster.getContrastEnhancement() != null){
-            tst.setContrastEnhancement( visit(raster.getContrastEnhancement(), null) );
+        if (raster.getContrastEnhancement() != null) {
+            tst.setContrastEnhancement(visit(raster.getContrastEnhancement(), null));
         }
 
-        if(raster.getImageOutline() != null){
+        if (raster.getImageOutline() != null) {
             final ImageOutlineType iot = se_factory.createImageOutlineType();
-            if(raster.getImageOutline() instanceof LineSymbolizer){
+            if (raster.getImageOutline() instanceof LineSymbolizer) {
                 final LineSymbolizer ls = (LineSymbolizer) raster.getImageOutline();
-                iot.setLineSymbolizer( visit(ls, null).getValue() );
+                iot.setLineSymbolizer(visit(ls, null).getValue());
                 tst.setImageOutline(iot);
-            }else if(raster.getImageOutline() instanceof PolygonSymbolizer){
-                final PolygonSymbolizer ps = (PolygonSymbolizer)raster.getImageOutline();
-                iot.setPolygonSymbolizer( visit(ps,null).getValue() );
+            } else if (raster.getImageOutline() instanceof PolygonSymbolizer) {
+                final PolygonSymbolizer ps = (PolygonSymbolizer) raster.getImageOutline();
+                iot.setPolygonSymbolizer(visit(ps, null).getValue());
                 tst.setImageOutline(iot);
             }
         }
 
-        tst.setOpacity( visitExpression(raster.getOpacity()) );
+        tst.setOpacity(visitExpression(raster.getOpacity()));
 
-        if(raster.getOverlapBehavior() != null){
-            tst.setOverlapBehavior( visit(raster.getOverlapBehavior(), null) );
+        if (raster.getOverlapBehavior() != null) {
+            tst.setOverlapBehavior(visit(raster.getOverlapBehavior(), null));
         }
 
-        if(raster.getShadedRelief() != null){
-            tst.setShadedRelief( visit(raster.getShadedRelief(), null) );
+        if (raster.getShadedRelief() != null) {
+            tst.setShadedRelief(visit(raster.getShadedRelief(), null));
         }
 
         return se_factory.createRasterSymbolizer(tst);
@@ -1127,50 +1170,50 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     public JAXBElement<PatternSymbolizerType> visit(final PatternSymbolizer pattern, final Object data) {
         final PatternSymbolizerType tst = se_factory.createPatternSymbolizerType();
-        tst.setName( pattern.getName() );
-        tst.setDescription( visit(pattern.getDescription(),null) );
-        tst.setUom( visitUOM(pattern.getUnitOfMeasure()));
+        tst.setName(pattern.getName());
+        tst.setDescription(visit(pattern.getDescription(), null));
+        tst.setUom(visitUOM(pattern.getUnitOfMeasure()));
 
-        if(pattern.getChannel() != null){
-            tst.setChannel( visitExpression(pattern.getChannel()) );
+        if (pattern.getChannel() != null) {
+            tst.setChannel(visitExpression(pattern.getChannel()));
         }
 
-        if(ThreshholdsBelongTo.PRECEDING == pattern.getBelongTo()){
+        if (ThreshholdsBelongTo.PRECEDING == pattern.getBelongTo()) {
             tst.setThreshholdsBelongTo(ThreshholdsBelongToType.PRECEDING);
-        }else{
+        } else {
             tst.setThreshholdsBelongTo(ThreshholdsBelongToType.SUCCEEDING);
         }
 
-        Map<Expression,List<Symbolizer>> ranges = pattern.getRanges();
-        for(Map.Entry<Expression,List<Symbolizer>> entry : ranges.entrySet()){
+        Map<Expression, List<Symbolizer>> ranges = pattern.getRanges();
+        for (Map.Entry<Expression, List<Symbolizer>> entry : ranges.entrySet()) {
             tst.getRange().add(visitRange(entry.getKey(), entry.getValue()));
         }
 
         return se_factory.createPatternSymbolizer(tst);
     }
 
-    public JAXBElement<RangeType> visitRange(final Expression thredhold, final List<Symbolizer> symbols){
+    public JAXBElement<RangeType> visitRange(final Expression thredhold, final List<Symbolizer> symbols) {
         final RangeType type = se_factory.createRangeType();
 
-        if(thredhold != null){
+        if (thredhold != null) {
             type.setThreshold(visitExpression(thredhold));
         }
 
-        for(final Symbolizer symbol : symbols){
-            if(symbol instanceof LineSymbolizer){
-                type.getSymbolizer().add( visit((LineSymbolizer)symbol,null));
-            }else if(symbol instanceof PolygonSymbolizer){
-                type.getSymbolizer().add( visit((PolygonSymbolizer)symbol,null));
-            }else if(symbol instanceof PointSymbolizer){
-                type.getSymbolizer().add( visit((PointSymbolizer)symbol,null));
-            }else if(symbol instanceof RasterSymbolizer){
-                type.getSymbolizer().add( visit((RasterSymbolizer)symbol,null));
-            }else if(symbol instanceof TextSymbolizer){
-                type.getSymbolizer().add( visit((TextSymbolizer)symbol,null));
-            }else if(symbol instanceof PatternSymbolizer){
-                type.getSymbolizer().add( visit((PatternSymbolizer)symbol,null));
-            }else if(symbol instanceof ExtensionSymbolizer){
-                ((List)type.getSymbolizer()).add( visit((ExtensionSymbolizer)symbol,null));
+        for (final Symbolizer symbol : symbols) {
+            if (symbol instanceof LineSymbolizer) {
+                type.getSymbolizer().add(visit((LineSymbolizer) symbol, null));
+            } else if (symbol instanceof PolygonSymbolizer) {
+                type.getSymbolizer().add(visit((PolygonSymbolizer) symbol, null));
+            } else if (symbol instanceof PointSymbolizer) {
+                type.getSymbolizer().add(visit((PointSymbolizer) symbol, null));
+            } else if (symbol instanceof RasterSymbolizer) {
+                type.getSymbolizer().add(visit((RasterSymbolizer) symbol, null));
+            } else if (symbol instanceof TextSymbolizer) {
+                type.getSymbolizer().add(visit((TextSymbolizer) symbol, null));
+            } else if (symbol instanceof PatternSymbolizer) {
+                type.getSymbolizer().add(visit((PatternSymbolizer) symbol, null));
+            } else if (symbol instanceof ExtensionSymbolizer) {
+                ((List) type.getSymbolizer()).add(visit((ExtensionSymbolizer) symbol, null));
             }
         }
 
@@ -1178,7 +1221,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
     }
 
     @Override
-    public Object visit(final ExtensionSymbolizer ext, final Object data){
+    public Object visit(final ExtensionSymbolizer ext, final Object data) {
         //we expect the extension to be a valid jaxb element
         return ext;
     }
@@ -1189,9 +1232,13 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public DescriptionType visit(final Description description, final Object data) {
         final DescriptionType dt = se_factory.createDescriptionType();
-        if(description != null){
-            if(description.getTitle() != null)    dt.setTitle(description.getTitle().toString());
-            if(description.getAbstract() != null) dt.setAbstract(description.getAbstract().toString());
+        if (description != null) {
+            if (description.getTitle() != null) {
+                dt.setTitle(description.getTitle().toString());
+            }
+            if (description.getAbstract() != null) {
+                dt.setAbstract(description.getAbstract().toString());
+            }
         }
         return dt;
     }
@@ -1202,8 +1249,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public DisplacementType visit(final Displacement displacement, final Object data) {
         final DisplacementType disp = se_factory.createDisplacementType();
-        disp.setDisplacementX( visitExpression(displacement.getDisplacementX()) );
-        disp.setDisplacementY( visitExpression(displacement.getDisplacementY()) );
+        disp.setDisplacementX(visitExpression(displacement.getDisplacementX()));
+        disp.setDisplacementY(visitExpression(displacement.getDisplacementY()));
         return disp;
     }
 
@@ -1214,13 +1261,13 @@ public class GTtoSE110Transformer implements StyleVisitor{
     public FillType visit(final Fill fill, final Object data) {
         final FillType ft = se_factory.createFillType();
 
-        if(fill.getGraphicFill() != null){
-            ft.setGraphicFill( visit(fill.getGraphicFill(),null) );
+        if (fill.getGraphicFill() != null) {
+            ft.setGraphicFill(visit(fill.getGraphicFill(), null));
         }
 
         final List<SvgParameterType> svgs = ft.getSvgParameter();
-        svgs.add( visitSVG(fill.getColor(), SEJAXBStatics.FILL) );
-        svgs.add( visitSVG(fill.getOpacity(), SEJAXBStatics.FILL_OPACITY) );
+        svgs.add(visitSVG(fill.getColor(), SEJAXBStatics.FILL));
+        svgs.add(visitSVG(fill.getOpacity(), SEJAXBStatics.FILL_OPACITY));
 
         return ft;
     }
@@ -1233,13 +1280,13 @@ public class GTtoSE110Transformer implements StyleVisitor{
         final FontType ft = se_factory.createFontType();
 
         final List<SvgParameterType> svgs = ft.getSvgParameter();
-        for(final Expression exp : font.getFamily() ){
-            svgs.add( visitSVG(exp, SEJAXBStatics.FONT_FAMILY) );
+        for (final Expression exp : font.getFamily()) {
+            svgs.add(visitSVG(exp, SEJAXBStatics.FONT_FAMILY));
         }
 
-        svgs.add( visitSVG(font.getSize(), SEJAXBStatics.FONT_SIZE) );
-        svgs.add( visitSVG(font.getStyle(), SEJAXBStatics.FONT_STYLE) );
-        svgs.add( visitSVG(font.getWeight(), SEJAXBStatics.FONT_WEIGHT) );
+        svgs.add(visitSVG(font.getSize(), SEJAXBStatics.FONT_SIZE));
+        svgs.add(visitSVG(font.getStyle(), SEJAXBStatics.FONT_STYLE));
+        svgs.add(visitSVG(font.getWeight(), SEJAXBStatics.FONT_WEIGHT));
 
         return ft;
     }
@@ -1251,22 +1298,22 @@ public class GTtoSE110Transformer implements StyleVisitor{
     public StrokeType visit(final Stroke stroke, final Object data) {
         final StrokeType st = se_factory.createStrokeType();
 
-        if(stroke.getGraphicFill() != null){
-            st.setGraphicFill( visit(stroke.getGraphicFill(),null) );
-        }else if(stroke.getGraphicStroke() != null){
-            st.setGraphicStroke( visit(stroke.getGraphicStroke(),null) );
+        if (stroke.getGraphicFill() != null) {
+            st.setGraphicFill(visit(stroke.getGraphicFill(), null));
+        } else if (stroke.getGraphicStroke() != null) {
+            st.setGraphicStroke(visit(stroke.getGraphicStroke(), null));
         }
 
         final List<SvgParameterType> svgs = st.getSvgParameter();
-        svgs.add( visitSVG(stroke.getColor(), SEJAXBStatics.STROKE) );
-        if(stroke.getDashArray() != null){
-            svgs.add( visitSVG(stroke.getDashArray(), SEJAXBStatics.STROKE_DASHARRAY) );
+        svgs.add(visitSVG(stroke.getColor(), SEJAXBStatics.STROKE));
+        if (stroke.getDashArray() != null) {
+            svgs.add(visitSVG(stroke.getDashArray(), SEJAXBStatics.STROKE_DASHARRAY));
         }
-        svgs.add( visitSVG(stroke.getDashOffset(), SEJAXBStatics.STROKE_DASHOFFSET) );
-        svgs.add( visitSVG(stroke.getLineCap(), SEJAXBStatics.STROKE_LINECAP) );
-        svgs.add( visitSVG(stroke.getLineJoin(), SEJAXBStatics.STROKE_LINEJOIN) );
-        svgs.add( visitSVG(stroke.getOpacity(), SEJAXBStatics.STROKE_OPACITY) );
-        svgs.add( visitSVG(stroke.getWidth(), SEJAXBStatics.STROKE_WIDTH) );
+        svgs.add(visitSVG(stroke.getDashOffset(), SEJAXBStatics.STROKE_DASHOFFSET));
+        svgs.add(visitSVG(stroke.getLineCap(), SEJAXBStatics.STROKE_LINECAP));
+        svgs.add(visitSVG(stroke.getLineJoin(), SEJAXBStatics.STROKE_LINEJOIN));
+        svgs.add(visitSVG(stroke.getOpacity(), SEJAXBStatics.STROKE_OPACITY));
+        svgs.add(visitSVG(stroke.getWidth(), SEJAXBStatics.STROKE_WIDTH));
 
         return st;
     }
@@ -1277,24 +1324,24 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public GraphicType visit(final Graphic graphic, final Object data) {
         final GraphicType gt = se_factory.createGraphicType();
-        gt.setAnchorPoint( visit(graphic.getAnchorPoint(),null) );
-        for(final GraphicalSymbol gs : graphic.graphicalSymbols()){
-            if(gs instanceof Mark){
+        gt.setAnchorPoint(visit(graphic.getAnchorPoint(), null));
+        for (final GraphicalSymbol gs : graphic.graphicalSymbols()) {
+            if (gs instanceof Mark) {
                 final Mark mark = (Mark) gs;
-                gt.getExternalGraphicOrMark().add( visit(mark,null) );
-            }else if(gs instanceof ExternalMark){
+                gt.getExternalGraphicOrMark().add(visit(mark, null));
+            } else if (gs instanceof ExternalMark) {
                 final ExternalMark ext = (ExternalMark) gs;
-                gt.getExternalGraphicOrMark().add( visit(ext,null) );
-            }else if(gs instanceof ExternalGraphic){
+                gt.getExternalGraphicOrMark().add(visit(ext, null));
+            } else if (gs instanceof ExternalGraphic) {
                 final ExternalGraphic ext = (ExternalGraphic) gs;
-                gt.getExternalGraphicOrMark().add( visit(ext,null));
+                gt.getExternalGraphicOrMark().add(visit(ext, null));
             }
         }
 
-        gt.setDisplacement( visit(graphic.getDisplacement(),null) );
-        gt.setOpacity( visitExpression(graphic.getOpacity()) );
-        gt.setRotation( visitExpression(graphic.getRotation()));
-        gt.setSize( visitExpression(graphic.getSize()));
+        gt.setDisplacement(visit(graphic.getDisplacement(), null));
+        gt.setOpacity(visitExpression(graphic.getOpacity()));
+        gt.setRotation(visitExpression(graphic.getRotation()));
+        gt.setSize(visitExpression(graphic.getSize()));
         return gt;
     }
 
@@ -1304,7 +1351,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public GraphicFillType visit(final GraphicFill graphicFill, final Object data) {
         final GraphicFillType gft = se_factory.createGraphicFillType();
-        gft.setGraphic( visit((Graphic)graphicFill,null) );
+        gft.setGraphic(visit((Graphic) graphicFill, null));
         return gft;
     }
 
@@ -1314,27 +1361,27 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public GraphicStrokeType visit(final GraphicStroke graphicStroke, final Object data) {
         final GraphicStrokeType gst = se_factory.createGraphicStrokeType();
-        gst.setGraphic( visit((Graphic)graphicStroke,null) );
-        gst.setGap( visitExpression(graphicStroke.getGap()) );
-        gst.setInitialGap( visitExpression(graphicStroke.getInitialGap()) );
+        gst.setGraphic(visit((Graphic) graphicStroke, null));
+        gst.setGap(visitExpression(graphicStroke.getGap()));
+        gst.setInitialGap(visitExpression(graphicStroke.getInitialGap()));
         return gst;
     }
 
     @Override
     public MarkType visit(final Mark mark, final Object data) {
         final MarkType mt = se_factory.createMarkType();
-        mt.setFill( visit(mark.getFill(),null) );
-        mt.setStroke( visit(mark.getStroke(),null) );
+        mt.setFill(visit(mark.getFill(), null));
+        mt.setStroke(visit(mark.getStroke(), null));
 
-        if(mark.getExternalMark() != null){
-            mt.setOnlineResource( visit(mark.getExternalMark().getOnlineResource(),null) );
+        if (mark.getExternalMark() != null) {
+            mt.setOnlineResource(visit(mark.getExternalMark().getOnlineResource(), null));
             mt.setFormat(mark.getExternalMark().getFormat());
-            mt.setMarkIndex( new BigInteger( String.valueOf(mark.getExternalMark().getMarkIndex())) );
+            mt.setMarkIndex(new BigInteger(String.valueOf(mark.getExternalMark().getMarkIndex())));
 
             //TODO insert the inline icone
 //            mt.setInlineContent(mark.getExternalMark().getInlineContent());
 
-        }else{
+        } else {
             mt.setWellKnownName(mark.getWellKnownName().toString());
         }
 
@@ -1357,15 +1404,15 @@ public class GTtoSE110Transformer implements StyleVisitor{
         System.out.println(externalGraphic.getOnlineResource());
         System.out.println(visit(externalGraphic.getOnlineResource(), null));
 
-        if(externalGraphic.getInlineContent() != null){
+        if (externalGraphic.getInlineContent() != null) {
             //TODO insert inline image
         }
 
-        if(externalGraphic.getOnlineResource() != null){
-            egt.setOnlineResource(  visit(externalGraphic.getOnlineResource(), null) );
+        if (externalGraphic.getOnlineResource() != null) {
+            egt.setOnlineResource(visit(externalGraphic.getOnlineResource(), null));
         }
 
-        for(final ColorReplacement cr : externalGraphic.getColorReplacements()){
+        for (final ColorReplacement cr : externalGraphic.getColorReplacements()) {
             egt.getColorReplacement().add(visit(cr, data));
         }
 
@@ -1378,9 +1425,9 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public PointPlacementType visit(final PointPlacement pointPlacement, final Object data) {
         final PointPlacementType ppt = se_factory.createPointPlacementType();
-        ppt.setAnchorPoint( visit(pointPlacement.getAnchorPoint(), null) );
-        ppt.setDisplacement( visit(pointPlacement.getDisplacement(), null) );
-        ppt.setRotation( visitExpression(pointPlacement.getRotation()) );
+        ppt.setAnchorPoint(visit(pointPlacement.getAnchorPoint(), null));
+        ppt.setDisplacement(visit(pointPlacement.getDisplacement(), null));
+        ppt.setRotation(visitExpression(pointPlacement.getRotation()));
         return ppt;
     }
 
@@ -1390,8 +1437,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public AnchorPointType visit(final AnchorPoint anchorPoint, final Object data) {
         final AnchorPointType apt = se_factory.createAnchorPointType();
-        apt.setAnchorPointX( visitExpression(anchorPoint.getAnchorPointX()) );
-        apt.setAnchorPointY( visitExpression(anchorPoint.getAnchorPointY()) );
+        apt.setAnchorPointX(visitExpression(anchorPoint.getAnchorPointX()));
+        apt.setAnchorPointY(visitExpression(anchorPoint.getAnchorPointY()));
         return apt;
     }
 
@@ -1401,27 +1448,28 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public LinePlacementType visit(final LinePlacement linePlacement, final Object data) {
         final LinePlacementType lpt = se_factory.createLinePlacementType();
-        lpt.setGap( visitExpression(linePlacement.getGap()) );
-        lpt.setGeneralizeLine( linePlacement.isGeneralizeLine() );
-        lpt.setInitialGap( visitExpression(linePlacement.getInitialGap()) );
-        lpt.setIsAligned( linePlacement.IsAligned() );
-        lpt.setIsRepeated( linePlacement.isRepeated() );
-        lpt.setPerpendicularOffset( visitExpression(linePlacement.getPerpendicularOffset()) );
+        lpt.setGap(visitExpression(linePlacement.getGap()));
+        lpt.setGeneralizeLine(linePlacement.isGeneralizeLine());
+        lpt.setInitialGap(visitExpression(linePlacement.getInitialGap()));
+        lpt.setIsAligned(linePlacement.IsAligned());
+        lpt.setIsRepeated(linePlacement.isRepeated());
+        lpt.setPerpendicularOffset(visitExpression(linePlacement.getPerpendicularOffset()));
         return lpt;
     }
 
     /**
      * Transform a GT label placement in jaxb label placement.
+     *
      * @return
      */
     public LabelPlacementType visit(final LabelPlacement labelPlacement, final Object data) {
         final LabelPlacementType lpt = se_factory.createLabelPlacementType();
-        if(labelPlacement instanceof LinePlacement){
+        if (labelPlacement instanceof LinePlacement) {
             final LinePlacement lp = (LinePlacement) labelPlacement;
-            lpt.setLinePlacement( visit(lp, null) );
-        }else if(labelPlacement instanceof PointPlacement){
+            lpt.setLinePlacement(visit(lp, null));
+        } else if (labelPlacement instanceof PointPlacement) {
             final PointPlacement pp = (PointPlacement) labelPlacement;
-            lpt.setPointPlacement( visit(pp, null) );
+            lpt.setPointPlacement(visit(pp, null));
         }
         return lpt;
     }
@@ -1432,7 +1480,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public LegendGraphicType visit(final GraphicLegend graphicLegend, final Object data) {
         final LegendGraphicType lgt = se_factory.createLegendGraphicType();
-        lgt.setGraphic( visit((Graphic)graphicLegend,null) );
+        lgt.setGraphic(visit((Graphic) graphicLegend, null));
         return lgt;
     }
 
@@ -1451,8 +1499,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public HaloType visit(final Halo halo, final Object data) {
         final HaloType ht = se_factory.createHaloType();
-        ht.setFill( visit(halo.getFill(),null) );
-        ht.setRadius( visitExpression(halo.getRadius()) );
+        ht.setFill(visit(halo.getFill(), null));
+        ht.setRadius(visitExpression(halo.getRadius()));
         return ht;
     }
 
@@ -1462,67 +1510,67 @@ public class GTtoSE110Transformer implements StyleVisitor{
         final org.geotoolkit.se.xml.v110.ColorMapType cmt = se_factory.createColorMapType();
 
         final Function fct = colorMap.getFunction();
-        if(fct instanceof Categorize){
-            cmt.setCategorize(visit((Categorize)fct));
-        }else if(fct instanceof Interpolate){
-            cmt.setInterpolate(visit((Interpolate)fct));
-        } else if(fct instanceof Jenks) {
-            cmt.setJenks(visit((Jenks)fct));
+        if (fct instanceof Categorize) {
+            cmt.setCategorize(visit((Categorize) fct));
+        } else if (fct instanceof Interpolate) {
+            cmt.setInterpolate(visit((Interpolate) fct));
+        } else if (fct instanceof Jenks) {
+            cmt.setJenks(visit((Jenks) fct));
         }
 
         return cmt;
     }
 
-    public CategorizeType visit(final Categorize categorize){
+    public CategorizeType visit(final Categorize categorize) {
         final CategorizeType type = se_factory.createCategorizeType();
         type.setFallbackValue(categorize.getFallbackValue().getValue().toString());
         type.setLookupValue(visitExpression(categorize.getLookupValue()));
 
-        if(ThreshholdsBelongTo.PRECEDING == categorize.getBelongTo()){
+        if (ThreshholdsBelongTo.PRECEDING == categorize.getBelongTo()) {
             type.setThreshholdsBelongTo(ThreshholdsBelongToType.PRECEDING);
-        }else{
+        } else {
             type.setThreshholdsBelongTo(ThreshholdsBelongToType.SUCCEEDING);
         }
 
-        final Map<Expression,Expression> steps = categorize.getThresholds();
+        final Map<Expression, Expression> steps = categorize.getThresholds();
         final Iterator<Expression> ite = steps.keySet().iterator();
         type.setValue(visitExpression(ite.next()));
 
         final List<JAXBElement<ParameterValueType>> elements = type.getThresholdAndTValue();
         elements.clear();
-        while(ite.hasNext()){
+        while (ite.hasNext()) {
             final Expression key = ite.next();
             final Expression val = steps.get(key);
-            elements.add( se_factory.createDateValue(visitExpression(key)) );
-            elements.add( se_factory.createDateValue(visitExpression(val)) );
+            elements.add(se_factory.createDateValue(visitExpression(key)));
+            elements.add(se_factory.createDateValue(visitExpression(val)));
         }
 
         return type;
     }
 
-    public InterpolateType visit(final Interpolate interpolate){
+    public InterpolateType visit(final Interpolate interpolate) {
         final InterpolateType type = se_factory.createInterpolateType();
         type.setFallbackValue(interpolate.getFallbackValue().getValue().toString());
         type.setLookupValue(visitExpression(interpolate.getLookupValue()));
 
-        if(interpolate.getMethod() == Method.COLOR){
+        if (interpolate.getMethod() == Method.COLOR) {
             type.setMethod(MethodType.COLOR);
-        }else{
+        } else {
             type.setMethod(MethodType.NUMERIC);
         }
 
         final Mode mode = interpolate.getMode();
-        if(mode == Mode.COSINE){
+        if (mode == Mode.COSINE) {
             type.setMode(ModeType.COSINE);
-        }else if( mode == Mode.CUBIC){
+        } else if (mode == Mode.CUBIC) {
             type.setMode(ModeType.CUBIC);
-        }else{
+        } else {
             type.setMode(ModeType.LINEAR);
         }
 
         final List<InterpolationPointType> points = type.getInterpolationPoint();
         points.clear();
-        for(final InterpolationPoint ip : interpolate.getInterpolationPoints()){
+        for (final InterpolationPoint ip : interpolate.getInterpolationPoints()) {
             final InterpolationPointType point = se_factory.createInterpolationPointType();
             point.setData(ip.getData().doubleValue());
             point.setValue(visitExpression(ip.getValue()));
@@ -1531,8 +1579,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
 
         return type;
     }
-    
-    public JenksType visit(final Jenks jenks){
+
+    public JenksType visit(final Jenks jenks) {
         final JenksType type = se_factory.createJenksType();
         type.setClassNumber(Integer.valueOf(jenks.getClassNumber().getValue().toString()));
         type.setPalette(jenks.getPalette().getValue().toString());
@@ -1545,7 +1593,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
         final ColorReplacementType crt = se_factory.createColorReplacementType();
         final Function fct = colorReplacement.getRecoding();
 
-        if(fct instanceof RecolorFunction){
+        if (fct instanceof RecolorFunction) {
             final RecolorFunction rf = (RecolorFunction) fct;
             crt.setRecolor(visit(rf));
         }
@@ -1566,10 +1614,10 @@ public class GTtoSE110Transformer implements StyleVisitor{
         return crt;
     }
 
-    public RecolorType visit(final RecolorFunction fct){
+    public RecolorType visit(final RecolorFunction fct) {
         RecolorType rt = new RecolorType();
 
-        for(ColorItem item : fct.getColorItems()){
+        for (ColorItem item : fct.getColorItems()) {
             final ColorItemType cit = new ColorItemType();
             final Literal data = item.getSourceColor();
             final Literal value = item.getTargetColor();
@@ -1581,7 +1629,6 @@ public class GTtoSE110Transformer implements StyleVisitor{
         return rt;
     }
 
-
     /**
      * Transform a GT constrast enchancement in jaxb constrast enchancement
      */
@@ -1591,9 +1638,9 @@ public class GTtoSE110Transformer implements StyleVisitor{
         cet.setGammaValue(contrastEnhancement.getGammaValue().evaluate(null, Double.class));
 
         final ContrastMethod cm = contrastEnhancement.getMethod();
-        if(ContrastMethod.HISTOGRAM.equals(cm)){
+        if (ContrastMethod.HISTOGRAM.equals(cm)) {
             cet.setHistogram(se_factory.createHistogramType());
-        }else if(ContrastMethod.NORMALIZE.equals(cm)){
+        } else if (ContrastMethod.NORMALIZE.equals(cm)) {
             cet.setNormalize(se_factory.createNormalizeType());
         }
 
@@ -1607,14 +1654,14 @@ public class GTtoSE110Transformer implements StyleVisitor{
     public ChannelSelectionType visit(final ChannelSelection channelSelection, final Object data) {
         final ChannelSelectionType cst = se_factory.createChannelSelectionType();
 
-        if(channelSelection.getRGBChannels() != null){
+        if (channelSelection.getRGBChannels() != null) {
             SelectedChannelType[] scts = channelSelection.getRGBChannels();
-            cst.setRedChannel( visit(scts[0], null) );
-            cst.setGreenChannel( visit(scts[1], null) );
-            cst.setBlueChannel( visit(scts[2], null) );
+            cst.setRedChannel(visit(scts[0], null));
+            cst.setGreenChannel(visit(scts[1], null));
+            cst.setBlueChannel(visit(scts[2], null));
 
-        }else if(channelSelection.getGrayChannel() != null){
-            cst.setGrayChannel( visit(channelSelection.getGrayChannel(), null) );
+        } else if (channelSelection.getGrayChannel() != null) {
+            cst.setGrayChannel(visit(channelSelection.getGrayChannel(), null));
         }
 
         return cst;
@@ -1624,12 +1671,17 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * transform a GT overlap in xml string representation.
      */
     public String visit(final OverlapBehavior overlapBehavior, final Object data) {
-        switch(overlapBehavior){
-            case AVERAGE : return SEJAXBStatics.OVERLAP_AVERAGE;
-            case EARLIEST_ON_TOP : return SEJAXBStatics.OVERLAP_EARLIEST_ON_TOP;
-            case LATEST_ON_TOP : return SEJAXBStatics.OVERLAP_LATEST_ON_TOP;
-            case RANDOM : return SEJAXBStatics.OVERLAP_RANDOM;
-            default : return null;
+        switch (overlapBehavior) {
+            case AVERAGE:
+                return SEJAXBStatics.OVERLAP_AVERAGE;
+            case EARLIEST_ON_TOP:
+                return SEJAXBStatics.OVERLAP_EARLIEST_ON_TOP;
+            case LATEST_ON_TOP:
+                return SEJAXBStatics.OVERLAP_LATEST_ON_TOP;
+            case RANDOM:
+                return SEJAXBStatics.OVERLAP_RANDOM;
+            default:
+                return null;
         }
     }
 
@@ -1639,8 +1691,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public org.geotoolkit.se.xml.v110.SelectedChannelType visit(final SelectedChannelType selectChannelType, final Object data) {
         final org.geotoolkit.se.xml.v110.SelectedChannelType sct = se_factory.createSelectedChannelType();
-        sct.setContrastEnhancement( visit(selectChannelType.getContrastEnhancement(), null) );
-        sct.setSourceChannelName( selectChannelType.getChannelName() );
+        sct.setContrastEnhancement(visit(selectChannelType.getContrastEnhancement(), null));
+        sct.setSourceChannelName(selectChannelType.getChannelName());
         return sct;
     }
 
@@ -1654,5 +1706,4 @@ public class GTtoSE110Transformer implements StyleVisitor{
         srt.setReliefFactor(shadedRelief.getReliefFactor().evaluate(null, Double.class));
         return srt;
     }
-    
 }

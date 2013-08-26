@@ -224,7 +224,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 String namespaceProperty = nameA.getNamespaceURI();
 
                 if (a instanceof ComplexAttribute) {
-                    if (namespaceProperty != null) {
+                    if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
                         writer.writeStartElement(namespaceProperty, nameProperty);
                     } else {
                         writer.writeStartElement(nameProperty);
@@ -234,7 +234,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
                 } else if (valueA instanceof Collection && !(typeA instanceof GeometryType)) {
                     for (Object value : (Collection)valueA) {
-                        if (namespaceProperty != null) {
+                        if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
                             writer.writeStartElement(namespaceProperty, nameProperty);
                         } else {
                             writer.writeStartElement(nameProperty);
@@ -246,7 +246,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 } else if (valueA != null && valueA.getClass().isArray() && !(typeA instanceof GeometryType)) {
                     final int length = Array.getLength(valueA);
                     for (int i = 0; i < length; i++){
-                        if (namespaceProperty != null) {
+                        if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
                             writer.writeStartElement(namespaceProperty, nameProperty);
                         } else {
                             writer.writeStartElement(nameProperty);
@@ -272,7 +272,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 } else if (valueA instanceof Map && !(typeA instanceof GeometryType)) {
                     final Map<?,?> map = (Map)valueA;
                     for (Entry<?,?> entry : map.entrySet()) {
-                        if (namespaceProperty != null) {
+                        if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
                             writer.writeStartElement(namespaceProperty, nameProperty);
                         } else {
                             writer.writeStartElement(nameProperty);
@@ -293,7 +293,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                             namespaceProperty = gmlNamespace;
                             LOGGER.finer("the property name and description of a feature must have the GML namespace");
                         }
-                        if (namespaceProperty != null) {
+                        if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
                             writer.writeStartElement(namespaceProperty, nameProperty);
                         } else {
                             writer.writeStartElement(nameProperty);
@@ -308,7 +308,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 } else {
 
                     if (valueA != null) {
-                        if (namespaceProperty != null) {
+                        if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
                             writer.writeStartElement(namespaceProperty, nameProperty);
                         } else {
                             writer.writeStartElement(nameProperty);
