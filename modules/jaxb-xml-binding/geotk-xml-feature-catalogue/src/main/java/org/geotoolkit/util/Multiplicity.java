@@ -114,9 +114,9 @@ public class Multiplicity {
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder("[Multiplicity]:").append('\n');
+        StringBuilder s = new StringBuilder();
         for (MultiplicityRange m: getRange()) {
-            s.append(m).append('\n');
+            s.append(m).append(' ');
         }
         return s.toString();
     }

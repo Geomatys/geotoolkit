@@ -36,6 +36,10 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.sis.metadata.AbstractMetadata;
+import org.apache.sis.metadata.MetadataStandard;
+import org.apache.sis.metadata.iso.citation.Citations;
+import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.DefinitionSource;
 import org.opengis.feature.catalog.FeatureCatalogue;
 import org.opengis.feature.catalog.FeatureType;
@@ -81,7 +85,7 @@ import org.opengis.metadata.citation.ResponsibleParty;
     "definitionSource"
 })
 @XmlRootElement( name = "FC_FeatureCatalogue")
-public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
+public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCatalogue, Referenceable {
 
     @XmlTransient
     private static final Logger LOGGER = Logger.getLogger("featureCatalogueImpl");
@@ -160,6 +164,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
     /**
      * Return the identifier of the catalog
      */
+    @Override
     public String getId() {
         return this.id;
     }
@@ -168,6 +173,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
      * Gets the value of the name property.
      * 
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -184,6 +190,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
      * Gets the value of the scope property.
      * 
      */
+    @Override
     public List<String> getScope() {
         if (scope == null) {
             scope = new ArrayList<String>();
@@ -206,6 +213,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
     /**
      * Gets the value of the fieldOfApplication property.
      */
+    @Override
     public List<String> getFieldOfApplication() {
         if (fieldOfApplication == null) {
             fieldOfApplication = new ArrayList<String>();
@@ -228,6 +236,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
      * Gets the value of the versionNumber property.
      * 
     */
+    @Override
     public String getVersionNumber() {
         return versionNumber;
     }
@@ -244,6 +253,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
      * Gets the value of the versionDate property.
      * 
     */
+    @Override
     public Date getVersionDate() {
         return versionDate;
     }
@@ -261,6 +271,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
      * Gets the value of the producer property.
      * 
      */
+    @Override
     public ResponsibleParty getProducer() {
         return producer;
     }
@@ -275,6 +286,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
     /**
      * Gets the value of the functionalLanguage property.
      */
+    @Override
     public String getFunctionalLanguage() {
         return functionalLanguage;
     }
@@ -289,6 +301,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
     /**
      * Gets the value of the featureType property.
      */
+    @Override
     public List<FeatureType> getFeatureType() {
         if (featureType == null) {
             featureType = new ArrayList<FeatureType>();
@@ -312,6 +325,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
     /**
      * Gets the value of the definitionSource property.
      */
+    @Override
     public List<DefinitionSource> getDefinitionSource() {
         if (definitionSource == null) {
             definitionSource = new ArrayList<DefinitionSource>();
@@ -330,14 +344,17 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
         this.definitionSource = definitionSource;
     }
     
+    @Override
     public void setReference(final boolean isReference) {
         this.isReference = isReference;
     }
     
+    @Override
     public boolean isReference() {
         return isReference;
     }
     
+    @Override
     public FeatureCatalogueImpl getReference() {
         FeatureCatalogueImpl result = new FeatureCatalogueImpl(this);
         result.setReference(true);
@@ -372,7 +389,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
         return alreadySee;
     }
     
-    @Override
+    /*@Override
     public String toString() {
         StringBuilder s = new StringBuilder("[FeatureCatalogue]:").append('\n');
         s.append("id=").append(getId()).append('\n');
@@ -427,13 +444,14 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
             }
         }
         return s.toString();
-    }
+    }*/
+    
     
     /**
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
@@ -464,5 +482,10 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
 
     public void setId(final String id) {
         this.id = id;
+    }
+
+    @Override
+    public MetadataStandard getStandard() {
+        return new MetadataStandard(Citations.ISO, Package.getPackage("org.opengis.feature.catalog"));
     }
 }

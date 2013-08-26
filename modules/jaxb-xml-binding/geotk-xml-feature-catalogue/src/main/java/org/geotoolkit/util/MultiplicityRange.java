@@ -112,8 +112,9 @@ public class MultiplicityRange {
 
     @Override
     public String toString() {
-        return "[MultiplicityRange]: lower=" + lower + " upper=" + upper;
+        return "lower=" + lower + " upper=" + upper;
     }
+    
     public String toString(final String margin) {
         return margin + "[MultiplicityRange]: lower=" + lower + " upper=" + upper;
     }
