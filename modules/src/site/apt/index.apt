@@ -20,9 +20,6 @@ Geotoolkit.org modules
       * {{{./metadata/geotk-metadata/index.html}Metadata core}} -
         Metadata structures (ISO 19115) and their XML representation (ISO 19139)
 
-      * {{{./metadata/geotk-metadata-fra/index.html}Metadata France}} -
-        French extension of metadata (AFNOR)
-
    * {{{./referencing/index.html}Referencing}}
 
       * {{{./referencing/geotk-referencing/index.html}Referencing core}} -

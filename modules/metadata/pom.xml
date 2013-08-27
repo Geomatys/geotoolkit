@@ -29,8 +29,7 @@
   <description>
     Group of modules related to handling metadata. The "geotk-metadata" sub-module contains the core
     classes and an implementation of the ISO 19115 standard. The "geotk-metadata-sql" sub-module provides
-    services for metadata storage in a SQL database. The "geotk-metadata-fra" sub-module is a profile of
-    ISO 19115.
+    services for metadata storage in a SQL database.
   </description>
 
 
@@ -94,7 +93,6 @@
        =========================================================== -->
   <modules>
     <module>geotk-metadata</module>
-    <module>geotk-metadata-fra</module>
     <module>geotk-metadata-sql</module>
   </modules>
 </project>
