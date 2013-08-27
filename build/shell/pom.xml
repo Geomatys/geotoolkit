@@ -44,7 +44,6 @@
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-epsg</artifactId></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-epsg-javadb</artifactId></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-metadata</artifactId></dependency>
-        <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-metadata-fra</artifactId></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-metadata-sql</artifactId></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-nature</artifactId></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-openoffice</artifactId></dependency>

@@ -45,12 +45,12 @@ public class CSWClassesContext {
 
     static {
         FRA_CLASSES.addAll(Arrays.asList(
-                org.geotoolkit.metadata.fra.FRA_Constraints.class,
-                org.geotoolkit.metadata.fra.FRA_DataIdentification.class,
-                org.geotoolkit.metadata.fra.FRA_DirectReferenceSystem.class,
-                org.geotoolkit.metadata.fra.FRA_IndirectReferenceSystem.class,
-                org.geotoolkit.metadata.fra.FRA_LegalConstraints.class,
-                org.geotoolkit.metadata.fra.FRA_SecurityConstraints.class));
+                org.apache.sis.internal.profile.fra.Constraints.class,
+                org.apache.sis.internal.profile.fra.DataIdentification.class,
+                org.apache.sis.internal.profile.fra.DirectReferenceSystem.class,
+                org.apache.sis.internal.profile.fra.IndirectReferenceSystem.class,
+                org.apache.sis.internal.profile.fra.LegalConstraints.class,
+                org.apache.sis.internal.profile.fra.SecurityConstraints.class));
     }
 
     /**
