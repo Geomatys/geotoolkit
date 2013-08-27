@@ -81,7 +81,7 @@ public class ColorDefinitionCIE extends DAIField{
             (float)CLUM
         };
         colorValues = CIEXYZ.toRGB(colorValues);
-        color = new Color(colorValues[0],colorValues[1],colorValues[2],colorValues[3]);
+        color = new Color(colorValues[0],colorValues[1],colorValues[2],1f);
         hexa = (String)GO2Utilities.STYLE_FACTORY.literal(color).getValue();
     }
 

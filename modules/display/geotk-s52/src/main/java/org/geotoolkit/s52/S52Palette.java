@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.logging.Level;
 import org.apache.sis.io.TableAppender;
 import org.geotoolkit.s52.dai.ColorDefinitionCIE;
 
@@ -53,7 +54,12 @@ public class S52Palette {
     }
 
     public Color getColor(final String colorName) {
-        return colorMap.get(colorName).getColor();
+        final ColorDefinitionCIE cie = colorMap.get(colorName);
+        if(cie == null){
+            S52Context.LOGGER.log(Level.WARNING, "no color for name : "+colorName);
+            return new Color(0, 0, 0, 0);
+        }
+        return cie.getColor();
     }
 
     @Override

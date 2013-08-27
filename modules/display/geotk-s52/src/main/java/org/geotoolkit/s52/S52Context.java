@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.s52.dai.ColorDefinitionCIE;
 import org.geotoolkit.s52.dai.ColorTableIdentifier;
 import org.geotoolkit.s52.dai.DAIField;
@@ -36,6 +38,8 @@ import org.geotoolkit.s52.lookuptable.LookupTableReader;
  */
 public class S52Context {
 
+    public static final Logger LOGGER = Logging.getLogger(S52Context.class);
+
     /**
      * S-52 divides geometries in POINT,LINE,AREA types.
      */
@@ -49,6 +53,8 @@ public class S52Context {
     public static final URL LK_LINE              = S52Context.class.getResource("/org/geotoolkit/s52/lookuptable/LINES.txt");
     public static final URL LK_POINT_PAPER_CHART = S52Context.class.getResource("/org/geotoolkit/s52/lookuptable/PAPER CHART POINTS.txt");
     public static final URL LK_POINT_SIMPLIFIED  = S52Context.class.getResource("/org/geotoolkit/s52/lookuptable/SIMPLIFIED POINTS.txt");
+
+    public static final URL ICONS  = S52Context.class.getResource("/org/geotoolkit/s52/icons");
 
 
     public static final String TIME_DAY             = "DAY";

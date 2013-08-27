@@ -24,12 +24,15 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.logging.Level;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display2d.GO2Hints;
@@ -41,8 +44,18 @@ import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Context.GeoType;
+import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.lookuptable.LookupRecord;
 import org.geotoolkit.s52.lookuptable.LookupTable;
+import org.geotoolkit.s52.lookuptable.instruction.AlphanumericText;
+import org.geotoolkit.s52.lookuptable.instruction.Symbol;
+import org.geotoolkit.s52.lookuptable.instruction.ColorFill;
+import org.geotoolkit.s52.lookuptable.instruction.Instruction;
+import org.geotoolkit.s52.lookuptable.instruction.ComplexLine;
+import org.geotoolkit.s52.lookuptable.instruction.ConditionalSymbolProcedure;
+import org.geotoolkit.s52.lookuptable.instruction.NumericText;
+import org.geotoolkit.s52.lookuptable.instruction.PatternFill;
+import org.geotoolkit.s52.lookuptable.instruction.SimpleLine;
 import org.opengis.feature.Feature;
 import org.opengis.referencing.operation.TransformException;
 
@@ -68,7 +81,7 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
             try {
                 s52context.load(
                         new URL("file:/media/jsorel/terra/TRAVAIL/1_Specification/IHO/S-52/S-52_CD/PresLib_e3.4_2008/Digital_Files/Digital_PresLib/pslb03_4.dai"),
-                        new URL("file:/media/jsorel/terra/TRAVAIL/1_Specification/IHO/S-52/ICON_GEOMATYS/"),
+                        S52Context.ICONS,
                         S52Context.LK_AREA_BOUNDARY,
                         S52Context.LK_LINE,
                         S52Context.LK_POINT_SIMPLIFIED
@@ -100,7 +113,8 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
             //no geometry
             return;
         }
-        //get the appropriate lookup table
+        //get the appropriate informations
+        final S52Palette colorTable = context.getPalette();
         final LookupTable lookup = context.getLookupTable(type);
         final List<LookupRecord> records = lookup.getRecords(objClassCode);
 
@@ -110,29 +124,84 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
             return;
         }
 
-        LookupRecord record = getActiveRecord(records,feature);
+        //ensure we paint in display mode.
+        renderingContext.switchToDisplayCRS();
+
+        final LookupRecord record = getActiveRecord(records,feature);
+        final Instruction[] instructions = record.getInstruction();
 
         try{
-            if(geom instanceof Point || geom instanceof MultiPoint){
-                g2d.setColor(Color.RED);
-                geom = graphic.getGeometry(null).getDisplayGeometryJTS();
-                for(Coordinate coord : geom.getCoordinates()){
-                    g2d.fillRect((int)coord.x, (int)coord.y, 5, 5);
+            for(Instruction inst : instructions){
+
+                if(inst instanceof AlphanumericText){
+                    final AlphanumericText text = (AlphanumericText) inst;
+                    LOGGER.log(Level.INFO, "TODO support instruction : "+inst.getCode());
+
+                }else if(inst instanceof NumericText){
+                    final NumericText text = (NumericText) inst;
+                    LOGGER.log(Level.INFO, "TODO support instruction : "+inst.getCode());
+
+                }else if(inst instanceof ColorFill){
+                    final ColorFill cf = (ColorFill) inst;
+                    final Color color = colorTable.getColor(cf.color);
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, cf.getAlpha()));
+                    g2d.setColor(color);
+                    g2d.fill(graphic.getGeometry(null).getDisplayShape());
+
+                }else if(inst instanceof PatternFill){
+                    final PatternFill pf = (PatternFill) inst;
+                    LOGGER.log(Level.INFO, "TODO support instruction : "+inst.getCode());
+
+                }else if(inst instanceof SimpleLine){
+                    final SimpleLine sl = (SimpleLine) inst;
+                    final Stroke stroke = sl.getStroke();
+                    final Color color = colorTable.getColor(sl.color);
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+                    g2d.setColor(color);
+                    g2d.setStroke(stroke);
+                    g2d.draw(graphic.getGeometry(null).getDisplayShape());
+
+                }else if(inst instanceof ComplexLine){
+                    final ComplexLine cl = (ComplexLine) inst;
+                    LOGGER.log(Level.INFO, "TODO support instruction : "+inst.getCode());
+
+                }else if(inst instanceof Symbol){
+                    final Symbol symbol = (Symbol) inst;
+                    LOGGER.log(Level.INFO, "TODO support instruction : "+inst.getCode());
+
+                }else if(inst instanceof ConditionalSymbolProcedure){
+                    final ConditionalSymbolProcedure con = (ConditionalSymbolProcedure) inst;
+                    LOGGER.log(Level.INFO, "TODO support instruction : "+inst.getCode());
+
+                } else{
+                    throw new PortrayalException("Unexpected instruction : " + inst.getCode());
                 }
-
-            }else if(geom instanceof LineString || geom instanceof MultiLineString){
-                g2d.setColor(Color.BLUE);
-                final Shape shp = graphic.getGeometry(null).getDisplayShape();
-                g2d.draw(shp);
-            }else if(geom instanceof Polygon || geom instanceof MultiPolygon){
-                g2d.setColor(Color.GREEN);
-                final Shape shp = graphic.getGeometry(null).getDisplayShape();
-                g2d.draw(shp);
-
             }
         }catch(TransformException ex){
             ex.printStackTrace();
         }
+
+//        try{
+//            if(geom instanceof Point || geom instanceof MultiPoint){
+//                g2d.setColor(Color.RED);
+//                geom = graphic.getGeometry(null).getDisplayGeometryJTS();
+//                for(Coordinate coord : geom.getCoordinates()){
+//                    g2d.fillRect((int)coord.x, (int)coord.y, 5, 5);
+//                }
+//
+//            }else if(geom instanceof LineString || geom instanceof MultiLineString){
+//                g2d.setColor(Color.BLUE);
+//                final Shape shp = graphic.getGeometry(null).getDisplayShape();
+//                g2d.draw(shp);
+//            }else if(geom instanceof Polygon || geom instanceof MultiPolygon){
+//                g2d.setColor(Color.GREEN);
+//                final Shape shp = graphic.getGeometry(null).getDisplayShape();
+//                g2d.draw(shp);
+//
+//            }
+//        }catch(TransformException ex){
+//            ex.printStackTrace();
+//        }
     }
 
     /**

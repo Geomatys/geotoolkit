@@ -18,8 +18,21 @@ package org.geotoolkit.s52.lookuptable;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 import static org.geotoolkit.display2d.GO2Utilities.*;
+import org.geotoolkit.s52.S52Context;
+import org.geotoolkit.s52.lookuptable.instruction.AlphanumericText;
+import org.geotoolkit.s52.lookuptable.instruction.Symbol;
+import org.geotoolkit.s52.lookuptable.instruction.ColorFill;
+import org.geotoolkit.s52.lookuptable.instruction.Instruction;
+import org.geotoolkit.s52.lookuptable.instruction.ComplexLine;
+import org.geotoolkit.s52.lookuptable.instruction.ConditionalSymbolProcedure;
+import org.geotoolkit.s52.lookuptable.instruction.NumericText;
+import org.geotoolkit.s52.lookuptable.instruction.PatternFill;
+import org.geotoolkit.s52.lookuptable.instruction.SimpleLine;
 import org.opengis.filter.Filter;
 
 /**
@@ -27,6 +40,23 @@ import org.opengis.filter.Filter;
  * @author Johann Sorel (Geomatys)
  */
 public class LookupRecord {
+
+    private static final Map<String,Instruction> INSTS = new HashMap<>();
+    static {
+        final Instruction[] array = new Instruction[]{
+            new AlphanumericText(),
+            new SimpleLine(),
+            new ComplexLine(),
+            new ConditionalSymbolProcedure(),
+            new ColorFill(),
+            new NumericText(),
+            new PatternFill(),
+            new Symbol()
+        };
+        for(Instruction df : array){
+            INSTS.put(df.getCode(), df);
+        }
+    }
 
     public static enum Radar{
         O("O"),
@@ -78,9 +108,10 @@ public class LookupRecord {
      */
     public Integer viewingGroup;
 
-    //cache
+    // cache
     // filter build from attributeCombination
     private Filter filter;
+    private Instruction[] instruction;
 
     public Filter getFilter() {
         if(filter == null){
@@ -147,6 +178,35 @@ public class LookupRecord {
         return filter;
     }
 
+    public Instruction[] getInstruction() {
+        if(instruction == null){
+            if(symbolInstruction.isEmpty()){
+                instruction = new Instruction[0];
+            }else{
+                final String[] parts = symbolInstruction.split(";");
+                instruction = new Instruction[parts.length];
+                try{
+                    for(int i=0;i<parts.length;i++){
+                        final int index = parts[i].indexOf('(');
+                        final String code = parts[i].substring(0, index);
+                        Instruction inst = INSTS.get(code);
+                        if(inst != null){
+                            inst = inst.newInstance();
+                            inst.read(parts[i]);
+                            instruction[i] = inst;
+                        }else{
+                            System.out.println("Unknowned instruction "+ code);
+                        }
+                    }
+                }catch(IOException ex){
+                    S52Context.LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                    instruction = new Instruction[0];
+                }
+            }
+        }
+        return instruction;
+    }
+
     /**
      * Read record from given string.
      * @param str
@@ -159,7 +219,7 @@ public class LookupRecord {
 
         objectClass           = parts[0];
         attributeCombination = parts[1];
-        symbolInstruction     = parts[2];
+        symbolInstruction     = parts[2].trim();
         displayPriority       = (parts[3].isEmpty()) ? null : Integer.valueOf(parts[3]);
         radar                 = Radar.fromCode(parts[4]);
         imoDisplayCategory    = IMODisplayCategory.getOrCreate(parts[5]);
