@@ -16,8 +16,11 @@
  */
 package org.geotoolkit.s52.dai;
 
+import java.awt.Color;
+import java.awt.color.ColorSpace;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.geotoolkit.display2d.GO2Utilities;
 
 /**
  * Color Definition CIE.
@@ -26,6 +29,8 @@ import java.util.Map;
  * @author Johann Sorel (Geomatys)
  */
 public class ColorDefinitionCIE extends DAIField{
+
+    private static final ColorSpace CIEXYZ = ColorSpace.getInstance(ColorSpace.CS_CIEXYZ);
 
     /** A(5) : COLOUR (Color‑Token) */
     public String CTOK;
@@ -38,8 +43,46 @@ public class ColorDefinitionCIE extends DAIField{
     /** A(1/15) : Use of color (free text) */
     public String CUSE;
 
+    //cache values
+    private Color color;
+    private String hexa;
+
+
     public ColorDefinitionCIE() {
         super("CCIE");
+    }
+
+    public double getCHRX() {
+        return CHRX;
+    }
+
+    public String getTokenName(){
+        return CTOK;
+    }
+
+    public Color getColor(){
+        checkCache();
+        return color;
+    }
+
+    public String getColorHexa(){
+        checkCache();
+        return hexa;
+    }
+
+    /**
+     * Convert CIE color to Color and hexa.
+     */
+    private void checkCache(){
+        if(color!=null)return;
+        float[] colorValues = new float[]{
+            (float)CHRX,
+            (float)CHRY,
+            (float)CLUM
+        };
+        colorValues = CIEXYZ.toRGB(colorValues);
+        color = new Color(colorValues[0],colorValues[1],colorValues[2],colorValues[3]);
+        hexa = (String)GO2Utilities.STYLE_FACTORY.literal(color).getValue();
     }
 
     @Override

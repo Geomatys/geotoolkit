@@ -107,7 +107,7 @@ public class S52SVGIcon {
         for(int k=0,n=gradients.getLength();k<n;k++){
             final SVGOMLinearGradientElement lg = (SVGOMLinearGradientElement) gradients.item(k);
             final String colorId = lg.getId();
-            final String colorValue = palette.getColor(colorId);
+            final String colorValue = palette.getColorHexa(colorId);
             if(colorValue==null){
                 //stay with the default color
                 continue;

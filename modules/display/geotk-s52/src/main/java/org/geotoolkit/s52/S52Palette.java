@@ -16,21 +16,25 @@
  */
 package org.geotoolkit.s52;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import org.apache.sis.io.TableAppender;
+import org.geotoolkit.s52.dai.ColorDefinitionCIE;
 
 /**
  * Color palette for S-52 symbology.
+ *
+ * S-52 Annex A Part I p.25 (3.1 The Colour Coding Scheme)
  *
  * @author Johann Sorel (Geomatys)
  */
 public class S52Palette {
 
     private final String name;
-    private final Map<String,String> colorMap = new HashMap<>();
+    private final Map<String, ColorDefinitionCIE> colorMap = new HashMap<>();
 
     public S52Palette(final String name) {
         this.name = name;
@@ -40,12 +44,16 @@ public class S52Palette {
         return name;
     }
 
-    public void addColor(final String name, final String value) {
-        colorMap.put(name, value);
+    public void addColor(ColorDefinitionCIE ccie) {
+        colorMap.put(ccie.getTokenName(), ccie);
     }
 
-    public String getColor(final String colorName) {
-        return colorMap.get(colorName);
+    public String getColorHexa(final String colorName) {
+        return colorMap.get(colorName).getColorHexa();
+    }
+
+    public Color getColor(final String colorName) {
+        return colorMap.get(colorName).getColor();
     }
 
     @Override
@@ -56,11 +64,11 @@ public class S52Palette {
         writer.nextColumn();
         writer.append("color");
         writer.writeHorizontalSeparator();
-        for(Entry<String,String> entry : colorMap.entrySet()){
+        for(Entry<String,ColorDefinitionCIE> entry : colorMap.entrySet()){
             writer.nextLine();
             writer.append(entry.getKey());
             writer.nextColumn();
-            writer.append(entry.getValue());
+            writer.append(entry.getValue().getColorHexa());
         }
 
         writer.writeHorizontalSeparator();

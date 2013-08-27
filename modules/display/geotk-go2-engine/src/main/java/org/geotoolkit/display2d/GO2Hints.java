@@ -33,15 +33,15 @@ public final class GO2Hints extends Static {
 
     private GO2Hints(){}
 
-    private static class NamedKey extends Hints.Key{
+    public static class NamedKey extends Hints.Key{
 
         private final String name;
 
-        private NamedKey(final Class c){
+        public NamedKey(final Class c){
             this(c,null);
         }
 
-        private NamedKey(final Class c, final String name){
+        public NamedKey(final Class c, final String name){
             super(c);
             this.name = name;
         }
@@ -85,7 +85,7 @@ public final class GO2Hints extends Static {
      * default value is 500.
      */
     public static final Key KEY_MAX_TILES = new NamedKey(Integer.class, "GO2 - Max tiles per pyramid when rendering");
-    
+
     /**
      * Configure the go2 engine to use JTS or ISO geometries.
      * Default is ISO.
@@ -141,16 +141,16 @@ public final class GO2Hints extends Static {
      * Default value is false.
      */
     public static final Key KEY_PARALLAL_BUFFER = new NamedKey(Boolean.class, "GO2 - Parallal Buffer");
-        
+
     /**
      * When the raster symbolizer requieres an elevation model and the MapLayer
-     * does not define any then a rendering engine search for a default one in the 
+     * does not define any then a rendering engine search for a default one in the
      * Hints.
      *
      * Default value is null.
      */
     public static final Key KEY_ELEVATION_MODEL = new NamedKey(ElevationModel.class, "GO2 - Default Elevation Model");
-    
+
     /**
      * Used only by J2DCanvasVolatile.
      * BEHAVIOR_PROGRESSIVE : progressive repaint

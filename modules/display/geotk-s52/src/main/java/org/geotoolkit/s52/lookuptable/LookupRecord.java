@@ -17,6 +17,10 @@
 package org.geotoolkit.s52.lookuptable;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import static org.geotoolkit.display2d.GO2Utilities.*;
+import org.opengis.filter.Filter;
 
 /**
  *
@@ -50,7 +54,7 @@ public class LookupRecord {
     /**
      * attribute combination
      */
-    public String atttributeCombination;
+    public String attributeCombination;
     /**
      * symbolization instruction
      */
@@ -74,6 +78,75 @@ public class LookupRecord {
      */
     public Integer viewingGroup;
 
+    //cache
+    // filter build from attributeCombination
+    private Filter filter;
+
+    public Filter getFilter() {
+        if(filter == null){
+            String str = (attributeCombination==null) ? null : attributeCombination.trim();
+            // S-52 Annex A part I p.66  8.3.3.4
+            if(str == null || str.isEmpty()){
+                //all match
+                filter = Filter.INCLUDE;
+            }else{
+                final List<Filter> parts = new ArrayList<>();
+                try{
+                    while(!str.isEmpty()){
+                        final String attName = str.substring(0, 6);
+                        final char val = (str.length()>6) ? str.charAt(6) : 'A';
+                        if(val == '?'){
+                            //not a number, means value must be null
+                            parts.add(FILTER_FACTORY.isNull(FILTER_FACTORY.property(attName)));
+                            str = str.substring(7);
+                        }else if(Character.isDigit(val)){
+                            //fix value
+                            //find the value end
+                            int start = 6;
+                            int end = 6;
+                            boolean hasNextValue = false;
+                            do{
+                                for(int i=start,n=str.length();i<n;i++){
+                                    if(Character.isDigit(str.charAt(i))){
+                                        end = i;
+                                    }else{
+                                        break;
+                                    }
+                                }
+                                final int value = Integer.valueOf(str.substring(start, end+1));
+                                parts.add(FILTER_FACTORY.equals(FILTER_FACTORY.property(attName),FILTER_FACTORY.literal(value)));
+                                str = str.substring(end+1);
+
+                                //check for more values
+                                hasNextValue = str.startsWith(",");
+                                if(hasNextValue){
+                                    str = str.substring(1);
+                                    start = 0;
+                                    end = 0;
+                                }
+                            }while(hasNextValue);
+
+                        }else{
+                            //not a number, means value must not be null
+                            parts.add(FILTER_FACTORY.not(FILTER_FACTORY.isNull(FILTER_FACTORY.property(attName))));
+                            str = str.substring(6);
+                        }
+                    }
+                }catch(Exception ex){
+                    System.err.println(">>>>>>>"+str);
+                    ex.printStackTrace();
+                }
+
+                if(parts.size() == 1){
+                    filter = parts.get(0);
+                }else{
+                    filter = FILTER_FACTORY.and(parts);
+                }
+            }
+        }
+        return filter;
+    }
+
     /**
      * Read record from given string.
      * @param str
@@ -85,7 +158,7 @@ public class LookupRecord {
         parts[6] = parts[6].trim();
 
         objectClass           = parts[0];
-        atttributeCombination = parts[1];
+        attributeCombination = parts[1];
         symbolInstruction     = parts[2];
         displayPriority       = (parts[3].isEmpty()) ? null : Integer.valueOf(parts[3]);
         radar                 = Radar.fromCode(parts[4]);

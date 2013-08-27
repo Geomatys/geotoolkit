@@ -33,6 +33,23 @@ public class LookupTable {
         return records;
     }
 
+    /**
+     * Get records for given object class name.
+     *
+     * @param objClassName
+     * @return LookupRecord[]
+     */
+    public List<LookupRecord> getRecords(String objClassName){
+        final List<LookupRecord> match = new ArrayList<>();
+        for(int i=0,n=records.size();i<n;i++){
+            final LookupRecord rec = records.get(i);
+            if(rec.objectClass.equals(objClassName)){
+                match.add(rec);
+            }
+        }
+        return match;
+    }
+
     @Override
     public String toString() {
         final TableAppender writer = new TableAppender();
@@ -50,7 +67,7 @@ public class LookupTable {
         for(LookupRecord rec : records){
             writer.nextLine();
             writer.append(rec.objectClass);                                     writer.nextColumn();
-            writer.append(rec.atttributeCombination);                           writer.nextColumn();
+            writer.append(rec.attributeCombination);                           writer.nextColumn();
             writer.append(rec.symbolInstruction);                               writer.nextColumn();
             writer.append(rec.displayPriority==null?"":""+rec.displayPriority); writer.nextColumn();
             writer.append(""+rec.radar);                                        writer.nextColumn();
