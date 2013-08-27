@@ -103,7 +103,7 @@ abstract class StarRTree<E> extends AbstractTree<E> {
      */
     @Override
     public void insert(int identifier, double... coordinates) throws IllegalArgumentException, StoreIndexException {
-//        super.insert(object, coordinates);
+        
         try {
             eltCompteur++;
             Node root = getRoot();
@@ -273,7 +273,7 @@ abstract class StarRTree<E> extends AbstractTree<E> {
         assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
         final double[] canBound = candidate.getBoundary();
         final double[] candidateCentroid = getMedian(canBound);
-        final double distPermit = calculator.getDistancePoint(getLowerCorner(canBound), getUpperCorner(canBound)) / 1.666666666;
+        final double distPermit = calculator.getDistancePoint(getLowerCorner(canBound), getUpperCorner(canBound)) * (1/3.0);
         getElementAtMore33PerCent((Node)candidate, candidateCentroid, distPermit, listObjects, listCoords);
         assert candidate.checkInternal() : "getElementAtMore33PerCent : end candidate not conform";
     }
@@ -286,15 +286,14 @@ abstract class StarRTree<E> extends AbstractTree<E> {
      */
     private void getElementAtMore33PerCent(final Node candidate, double[] candidateCentroid, double distancePermit, LinkedList<Integer> listObjects, final LinkedList<double[]> listCoords) throws IOException {
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidateCentroid", candidateCentroid);
-        ArgumentChecks.ensureStrictlyPositive("getElementsAtMore33PerCent : distancePermit", distancePermit);
+        assert distancePermit >= 0 : "getElementsAtMore33PerCent : distancePermit. Current candidate : "+candidate;
         assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
-        if (candidate.isLeaf()) {
-            int sibl = candidate.getChildId();
-            while (sibl != 0) {
-                final Node data = treeAccess.readNode(sibl); // voir pour aameliorer algo descendre juska data
-                listObjects.add(-data.getChildId());
-                listCoords.add(data.getBoundary());
-                sibl = data.getSiblingId();
+        
+        if (candidate.isData()) {
+            final double[] dataBound = candidate.getBoundary();
+            if (calculator.getDistancePoint(candidateCentroid, getMedian(dataBound)) <= distancePermit) {
+                listObjects.add(-candidate.getChildId());
+                listCoords.add(dataBound);
             }
         } else {
             int sibl = candidate.getChildId();
@@ -303,8 +302,8 @@ abstract class StarRTree<E> extends AbstractTree<E> {
                 getElementAtMore33PerCent(child, candidateCentroid, distancePermit, listObjects, listCoords);
                 sibl = child.getSiblingId();
             }
+            assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
         }
-        assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
     }
     
     /**
