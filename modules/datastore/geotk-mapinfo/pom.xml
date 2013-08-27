@@ -17,7 +17,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-mapinfo</artifactId>
     <packaging>jar</packaging>
     <name>FeatureStore MapInfo</name>

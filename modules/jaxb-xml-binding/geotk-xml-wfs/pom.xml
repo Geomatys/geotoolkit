@@ -18,7 +18,6 @@
   <!--
     Module description.
   -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-wfs</artifactId>
   <packaging>jar</packaging>
   <name>Bindings OGC - WFS : Web Feature Service</name>

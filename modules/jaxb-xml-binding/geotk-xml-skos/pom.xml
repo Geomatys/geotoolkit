@@ -18,7 +18,6 @@
   <!--
     Module description.
   -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-skos</artifactId>
   <packaging>jar</packaging>
   <name>Bindings W3C - SKOS : Simple Knowledge Organization System</name>

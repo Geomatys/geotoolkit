@@ -18,7 +18,6 @@
   <!--
     Module description.
   -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-xsd</artifactId>
   <packaging>jar</packaging>
   <name>Bindings W3C - XSD : XML Schema Description</name>

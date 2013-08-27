@@ -22,7 +22,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-client-osm-tms</artifactId>
   <packaging>jar</packaging>
   <name>Java Client OSM TMS</name>

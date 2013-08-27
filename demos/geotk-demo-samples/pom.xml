@@ -10,7 +10,6 @@
         <version>4.x-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.geotoolkit.pending.demo</groupId>
     <artifactId>geotk-demo-samples</artifactId>
     <packaging>jar</packaging>
     <name>Demo : samples</name>

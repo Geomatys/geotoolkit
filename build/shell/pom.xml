@@ -10,7 +10,6 @@
         <version>4.x-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.geotoolkit.pending.project</groupId>
     <artifactId>shell</artifactId>
     <packaging>jar</packaging>
     <name>Shell packaging</name>

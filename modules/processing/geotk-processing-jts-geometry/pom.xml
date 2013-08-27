@@ -21,7 +21,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-processing-jts-geometry</artifactId>
     <packaging>jar</packaging>
     <name>Processing JTS Geometry</name>

@@ -22,7 +22,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-xml-se</artifactId>
     <packaging>jar</packaging>
     <name>Bindings OGC - SE : Symbology Encoding</name>

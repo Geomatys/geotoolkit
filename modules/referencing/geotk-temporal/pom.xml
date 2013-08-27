@@ -22,7 +22,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-temporal</artifactId>
   <packaging>jar</packaging>
   <name>Referencing temporal</name>

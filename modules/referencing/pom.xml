@@ -21,7 +21,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>referencing</artifactId>
   <packaging>pom</packaging>
   <name>Referencing</name>

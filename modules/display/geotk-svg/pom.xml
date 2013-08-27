@@ -22,7 +22,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-svg</artifactId>
   <packaging>jar</packaging>
   <name>Display SVG utils</name>

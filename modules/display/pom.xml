@@ -21,7 +21,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>display</artifactId>
   <packaging>pom</packaging>
   <name>Display</name>

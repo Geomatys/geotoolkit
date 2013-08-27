@@ -23,7 +23,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-widgets-swing-pending</artifactId>
   <packaging>jar</packaging>
   <name>Display swing widgets</name>

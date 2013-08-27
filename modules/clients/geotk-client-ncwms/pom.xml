@@ -22,7 +22,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-client-ncwms</artifactId>
   <packaging>jar</packaging>
   <name>Java Client ncWMS</name>

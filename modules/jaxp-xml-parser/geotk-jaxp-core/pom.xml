@@ -18,7 +18,6 @@
   <!--
     Module description.
   -->
-    <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-jaxp-core</artifactId>
     <packaging>jar</packaging>
     <name>JAXP Parser Core</name>

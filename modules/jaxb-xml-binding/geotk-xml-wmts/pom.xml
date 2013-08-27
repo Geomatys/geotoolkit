@@ -18,7 +18,6 @@
   <!--
     Module description.
   -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-wmts</artifactId>
   <packaging>jar</packaging>
   <name>Bindings OGC - WMTS : Web Map Tile Service</name>

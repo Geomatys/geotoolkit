@@ -21,7 +21,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-spatial-lucene</artifactId>
   <packaging>jar</packaging>
   <name>Index lucene spatial</name>

@@ -21,7 +21,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>jaxp-xml-parser</artifactId>
   <packaging>pom</packaging>
   <name>JAXP Parser</name>

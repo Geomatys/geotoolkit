@@ -17,7 +17,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-go2</artifactId>
     <packaging>jar</packaging>
     <name>Display engine GO2</name>

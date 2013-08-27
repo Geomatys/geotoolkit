@@ -18,7 +18,6 @@
   <!--
     Module description.
   -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-ebrim</artifactId>
   <packaging>jar</packaging>
   <name>Bindings OASIS - EBRIM : E-Business Registry Information Model</name>

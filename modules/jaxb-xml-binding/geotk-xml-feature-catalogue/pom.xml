@@ -18,7 +18,6 @@
   <!--
     Module description.
   -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-feature-catalogue</artifactId>
   <packaging>jar</packaging>
   <name>Bindings ISO - 19110 : Feature catalog</name>

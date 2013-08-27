@@ -17,7 +17,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-geojson</artifactId>
     <packaging>jar</packaging>
     <name>FeatureStore GeoJSON</name>

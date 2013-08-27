@@ -22,7 +22,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-client-wmsc</artifactId>
   <packaging>jar</packaging>
   <name>Java Client WMS-C</name>

@@ -18,7 +18,6 @@
     <!--
     Module description.
   -->
-    <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-jaxp-gml</artifactId>
     <packaging>jar</packaging>
     <name>JAXP Parser GML</name>

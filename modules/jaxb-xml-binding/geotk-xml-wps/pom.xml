@@ -18,7 +18,6 @@
   <!--
     Module description.
   -->
-    <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-xml-wps</artifactId>
     <packaging>jar</packaging>
     <name>Bindings OGC - WPS : Web Processing Service</name>

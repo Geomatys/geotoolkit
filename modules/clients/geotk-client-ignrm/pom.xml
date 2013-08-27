@@ -22,7 +22,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-client-ignrm</artifactId>
   <packaging>jar</packaging>
   <name>Java Client IGN RM</name>

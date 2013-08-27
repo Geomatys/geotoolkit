@@ -21,7 +21,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-mapfile</artifactId>
     <packaging>jar</packaging>
     <name>Interoperability - Mapfile</name>
