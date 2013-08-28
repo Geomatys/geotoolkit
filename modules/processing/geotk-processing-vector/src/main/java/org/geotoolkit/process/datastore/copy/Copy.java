@@ -184,7 +184,7 @@ public class Copy extends AbstractProcess {
     private void insert(Name name, final Session sourceSS, final Session targetSS, Query query,
                         final boolean erase, final boolean newVersion) throws DataStoreException{
 
-        final FeatureType type = sourceSS.getFeatureStore().getFeatureType(name);
+        FeatureType type = sourceSS.getFeatureStore().getFeatureType(name);
 
         //Change * to featureType default geometry name
         if (query != null && query.getFilter() != null) {
@@ -194,7 +194,10 @@ public class Copy extends AbstractProcess {
             query = builder.buildQuery();
         }
         final FeatureCollection collection = sourceSS.getFeatureCollection(query);
-
+        
+        //get the real FeatureType of collection (in case of reprojection, CRS is different).
+        type = collection.getFeatureType();
+        
         if(targetSS.getFeatureStore().getNames().contains(name)) {
             //ERASE
             if(erase) {
