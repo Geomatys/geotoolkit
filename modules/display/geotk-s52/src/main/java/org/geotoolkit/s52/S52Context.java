@@ -54,7 +54,7 @@ public class S52Context {
     public static final URL LK_POINT_PAPER_CHART = S52Context.class.getResource("/org/geotoolkit/s52/lookuptable/PAPER CHART POINTS.txt");
     public static final URL LK_POINT_SIMPLIFIED  = S52Context.class.getResource("/org/geotoolkit/s52/lookuptable/SIMPLIFIED POINTS.txt");
 
-    public static final URL ICONS  = S52Context.class.getResource("/org/geotoolkit/s52/icons");
+    public static final URL ICONS  = S52Context.class.getResource("/org/geotoolkit/s52/icons/");
 
 
     public static final String TIME_DAY             = "DAY";
@@ -134,6 +134,12 @@ public class S52Context {
 
     public LookupTable getPointLookupTable() {
         return pointLookupTable;
+    }
+
+    public S52SVGIcon getIcon(String name) throws IOException{
+        //TODO waiting for all symbols
+        final S52SVGIcon icon = new S52SVGIcon(iconPath.toString()+"BCNCAR01.svg");
+        return icon;
     }
 
     /**

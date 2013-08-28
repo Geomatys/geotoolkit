@@ -30,8 +30,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -45,24 +45,24 @@ import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Context.GeoType;
 import org.geotoolkit.s52.S52Palette;
+import org.geotoolkit.s52.S52SVGIcon;
 import org.geotoolkit.s52.lookuptable.LookupRecord;
 import org.geotoolkit.s52.lookuptable.LookupTable;
-import org.geotoolkit.s52.lookuptable.instruction.AlphanumericText;
 import org.geotoolkit.s52.lookuptable.instruction.Symbol;
 import org.geotoolkit.s52.lookuptable.instruction.ColorFill;
 import org.geotoolkit.s52.lookuptable.instruction.Instruction;
 import org.geotoolkit.s52.lookuptable.instruction.ComplexLine;
 import org.geotoolkit.s52.lookuptable.instruction.ConditionalSymbolProcedure;
-import org.geotoolkit.s52.lookuptable.instruction.NumericText;
 import org.geotoolkit.s52.lookuptable.instruction.PatternFill;
 import org.geotoolkit.s52.lookuptable.instruction.SimpleLine;
 import org.opengis.feature.Feature;
-import org.opengis.referencing.operation.TransformException;
-import static org.geotoolkit.s52.S52Utilities.*;
 import org.geotoolkit.s52.lookuptable.instruction.Text;
+import org.geotoolkit.util.Converters;
+import org.opengis.feature.Property;
 import org.opengis.filter.expression.Expression;
 
 /**
@@ -224,34 +224,46 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
 
                 }else if(inst instanceof Symbol){
                     final Symbol symbol = (Symbol) inst;
-                    LOGGER.log(Level.INFO, "TODO support instruction : {0}", inst.getCode());
-                    if(geom instanceof Point || geom instanceof MultiPoint){
-                        g2d.setColor(Color.RED);
-                        geom = graphic.getGeometry(null).getDisplayGeometryJTS();
-                        for(Coordinate coord : geom.getCoordinates()){
-                            g2d.fillRect((int)coord.x, (int)coord.y, 5, 5);
-                        }
+                    final Coordinate pivotPoint = getPivotPoint(graphic.getGeometry(null).getDisplayGeometryJTS());
+                    final S52SVGIcon icon = context.getIcon(symbol.symbolName).derivate(colorTable);
 
-                    }else if(geom instanceof LineString || geom instanceof MultiLineString){
-                        g2d.setColor(Color.BLUE);
-                        final Shape shp = graphic.getGeometry(null).getDisplayShape();
-                        g2d.draw(shp);
-                    }else if(geom instanceof Polygon || geom instanceof MultiPolygon){
-                        g2d.setColor(Color.GREEN);
-                        final Shape shp = graphic.getGeometry(null).getDisplayShape();
-                        g2d.draw(shp);
+                    //find rotation
+                    float rotation = 0f;
+                    if(symbol.rotation == null || symbol.rotation.isEmpty()){
+                        rotation = 0f;
+                    }else{
+                        try{
+                            rotation = (float)Math.toRadians(Integer.valueOf(symbol.rotation));
+                        }catch(NumberFormatException ex){
+                            //it's a field
+                            final Property prop = feature.getProperty(symbol.rotation);
+                            if(prop!=null){
+                                Float val = Converters.convert(prop.getValue(),Float.class);
+                                if(val!=null){
+                                    //combine with map rotation
+                                    rotation = -(float)XAffineTransform.getRotation(renderingContext.getObjectiveToDisplay());
+                                    rotation += Math.toRadians(val);
+                                }
+                            }
+                        }
 
                     }
 
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+                    icon.paint(g2d, new Point2D.Double(pivotPoint.x, pivotPoint.y), rotation);
+                    //for debugging, see the center
+                    //g2d.setColor(Color.red);
+                    //g2d.fillRect((int)backup.x-1, (int)backup.y-1, 2, 2);
+
                 }else if(inst instanceof ConditionalSymbolProcedure){
                     final ConditionalSymbolProcedure con = (ConditionalSymbolProcedure) inst;
-                    LOGGER.log(Level.INFO, "TODO support instruction : {0}", inst.getCode());
+                    //LOGGER.log(Level.INFO, "TODO support instruction : {0}", inst.getCode());
 
                 } else{
                     throw new PortrayalException("Unexpected instruction : " + inst.getCode());
                 }
             }
-        }catch(TransformException ex){
+        }catch(Exception ex){
             ex.printStackTrace();
         }
 
