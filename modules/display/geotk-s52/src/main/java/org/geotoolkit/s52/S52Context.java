@@ -28,8 +28,19 @@ import org.geotoolkit.s52.dai.ColorTableIdentifier;
 import org.geotoolkit.s52.dai.DAIField;
 import org.geotoolkit.s52.dai.DAIModuleRecord;
 import org.geotoolkit.s52.dai.DAIReader;
+import org.geotoolkit.s52.dai.LibraryIdentification;
+import org.geotoolkit.s52.dai.LinestyleIdentifier;
+import org.geotoolkit.s52.dai.LookupTableEntryIdentifier;
+import org.geotoolkit.s52.dai.PatternIdentifier;
+import org.geotoolkit.s52.dai.SymbolBitmap;
+import org.geotoolkit.s52.dai.SymbolColorReference;
+import org.geotoolkit.s52.dai.SymbolDefinition;
+import org.geotoolkit.s52.dai.SymbolExposition;
+import org.geotoolkit.s52.dai.SymbolIdentifier;
+import org.geotoolkit.s52.dai.SymbolVector;
 import org.geotoolkit.s52.lookuptable.LookupTable;
 import org.geotoolkit.s52.lookuptable.LookupTableReader;
+import org.geotoolkit.s52.render.SymbolStyle;
 
 /**
  * General S-52 rendering context informations.
@@ -71,6 +82,8 @@ public class S52Context {
     private LookupTable areaLookupTable = null;
     private LookupTable lineLookupTable = null;
     private LookupTable pointLookupTable = null;
+
+    private final Map<String,SymbolStyle> styles = new HashMap<>();
 
     // Mariner context configuration
     // S-52 Annex A Part I p.23
@@ -142,6 +155,10 @@ public class S52Context {
         return icon;
     }
 
+    public SymbolStyle getSyle(String name){
+        return styles.get(name);
+    }
+
     /**
      * Background color. palette NODTA color.
      * @return Color
@@ -190,6 +207,44 @@ public class S52Context {
                         palette.addColor((ColorDefinitionCIE)field);
                     }
                 }
+            }else if(idField instanceof LookupTableEntryIdentifier){
+                final LookupTableEntryIdentifier lei = (LookupTableEntryIdentifier) idField;
+                //TOD duplicates what is in the lookup files
+
+            }else if(idField instanceof LibraryIdentification){
+                //we don't need this one for rendering.
+                //contains metadatas only
+
+            }else if(idField instanceof LinestyleIdentifier){
+                //System.out.println("TODO LinestyleIdentifier");
+                final LinestyleIdentifier lsi = (LinestyleIdentifier) idField;
+
+            }else if(idField instanceof PatternIdentifier){
+                final PatternIdentifier style = (PatternIdentifier) idField;
+
+            }else if(idField instanceof SymbolIdentifier){
+                final SymbolStyle style = new SymbolStyle();
+                style.ident = (SymbolIdentifier) idField;
+
+                for(int i=1;i<size;i++){
+                    final DAIField field = record.getFields().get(i);
+                    if(field instanceof SymbolBitmap){
+                        style.bitmap = (SymbolBitmap) field;
+                    }else if(field instanceof SymbolColorReference){
+                        style.colors = (SymbolColorReference) field;
+                    }else if(field instanceof SymbolDefinition){
+                        style.definition = (SymbolDefinition) field;
+                    }else if(field instanceof SymbolExposition){
+                        style.explication = (SymbolExposition) field;
+                    }else if(field instanceof SymbolVector){
+                        style.vectors.add((SymbolVector) field);
+                    }else{
+                        throw new IOException("Unexpected field "+field);
+                    }
+                }
+                styles.put(style.definition.SYNM, style);
+            }else{
+                throw new IOException("Unexpected record \n"+record);
             }
 
         }
