@@ -48,6 +48,7 @@
       <replacefilter token="org.geotoolkit.metadata.iso"                            value="org.apache.sis.metadata.iso"/>
       <replacefilter token="org.geotoolkit.naming"                                  value="org.apache.sis.util.iso"/>
       <replacefilter token="org.geotoolkit.referencing.DefaultReferenceIdentifier"  value="org.apache.sis.metadata.iso.ImmutableIdentifier"/>
+      <replacefilter token="org.geotoolkit.referencing.NamedIdentifier"             value="org.apache.sis.referencing.NamedIdentifier"/>
       <replacefilter token="org.geotoolkit.storage.DataStoreException"              value="org.apache.sis.storage.DataStoreException"/>
       <replacefilter token="org.geotoolkit.util.AbstractInternationalString"        value="org.apache.sis.util.iso.AbstractInternationalString"/>
       <replacefilter token="org.geotoolkit.util.ArgumentChecks"                     value="org.apache.sis.util.ArgumentChecks"/>

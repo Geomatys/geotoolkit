@@ -73,6 +73,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 import static org.opengis.referencing.IdentifiedObject.REMARKS_KEY;
 import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
 import static org.geotoolkit.internal.referencing.CRSUtilities.getReferencingGroup;
+import org.apache.sis.internal.system.DefaultFactories;
 
 
 /**
@@ -342,7 +343,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
                 // -------------------------------------------------------------------
                 case 92902992: {
                     if (key.equals(ALIAS_KEY)) {
-                        alias = Types.toGenericNames(value, NamedIdentifier.getNameFactory());
+                        alias = Types.toGenericNames(value, DefaultFactories.NAMES);
                         continue nextKey;
                     }
                     break;
