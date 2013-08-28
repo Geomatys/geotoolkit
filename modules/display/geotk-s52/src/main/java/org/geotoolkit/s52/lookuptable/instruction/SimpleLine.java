@@ -19,10 +19,11 @@ package org.geotoolkit.s52.lookuptable.instruction;
 import java.awt.BasicStroke;
 import java.awt.Stroke;
 import java.io.IOException;
+import static org.geotoolkit.s52.S52Utilities.*;
 
 /**
  * S-52 Annex A part I 7.3.4 p.54
- * 
+ *
  * LS(PSTYLE,WIDTH,COLOUR)
  *
  * @author Johann Sorel (Geomatys)
@@ -65,10 +66,10 @@ public class SimpleLine extends Instruction{
     public Stroke getStroke() {
         if(style.equals(PStyle.DASH)){
             stroke = new BasicStroke(width, BasicStroke.JOIN_MITER, BasicStroke.JOIN_ROUND,
-                    5, new float[]{toPixel(3.6f),toPixel(1.8f)},0);
+                    5, new float[]{mmToPixel(3.6f),mmToPixel(1.8f)},0);
         }else if(style.equals(PStyle.DOTT)){
             stroke = new BasicStroke(width, BasicStroke.JOIN_MITER, BasicStroke.JOIN_ROUND,
-                    5, new float[]{toPixel(0.6f),toPixel(1.2f)},0);
+                    5, new float[]{mmToPixel(0.6f),mmToPixel(1.2f)},0);
         }else{
             stroke = new BasicStroke(width, BasicStroke.JOIN_MITER, BasicStroke.JOIN_ROUND);
         }
@@ -82,10 +83,6 @@ public class SimpleLine extends Instruction{
         style = PStyle.valueOf(parts[0]);
         width = Integer.valueOf(parts[1]);
         color = parts[2];
-    }
-
-    private static float toPixel(float size){
-        return size * 0.32f;
     }
 
 }

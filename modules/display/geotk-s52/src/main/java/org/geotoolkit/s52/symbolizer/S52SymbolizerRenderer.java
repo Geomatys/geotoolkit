@@ -24,8 +24,11 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.TopologyException;
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
@@ -58,6 +61,9 @@ import org.geotoolkit.s52.lookuptable.instruction.PatternFill;
 import org.geotoolkit.s52.lookuptable.instruction.SimpleLine;
 import org.opengis.feature.Feature;
 import org.opengis.referencing.operation.TransformException;
+import static org.geotoolkit.s52.S52Utilities.*;
+import org.geotoolkit.s52.lookuptable.instruction.Text;
+import org.opengis.filter.expression.Expression;
 
 /**
  *
@@ -133,13 +139,64 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
         try{
             for(Instruction inst : instructions){
 
-                if(inst instanceof AlphanumericText){
-                    final AlphanumericText text = (AlphanumericText) inst;
-                    LOGGER.log(Level.INFO, "TODO support instruction : "+inst.getCode());
+                if(inst instanceof Text){
 
-                }else if(inst instanceof NumericText){
-                    final NumericText text = (NumericText) inst;
-                    LOGGER.log(Level.INFO, "TODO support instruction : "+inst.getCode());
+                    if(s52context.isNoText()) continue;
+
+                    //this includ alphanumeric and numeric texts
+                    final Text text = (Text) inst;
+
+                    //get font and text metas
+                    final Font font = text.getFont();
+                    g2d.setFont(font);
+                    final Expression expStr = text.getText();
+                    final String str = expStr.evaluate(feature, null);
+                    FontMetrics fm = null;
+                    Integer fontHeight = null;
+
+                    //find and adjust pivot point
+                    final Coordinate pivotPoint = getPivotPoint(graphic.getGeometry(null).getDisplayGeometryJTS());
+                    if(text.xOffset != 0){
+                        if(fm==null) fm = g2d.getFontMetrics(font);
+                        if(fontHeight==null) fontHeight = fm.getAscent();
+                        pivotPoint.x += text.xOffset * fontHeight;
+                    }
+                    if(text.yOffset != 0){
+                        if(fm==null) fm = g2d.getFontMetrics(font);
+                        if(fontHeight==null) fontHeight = fm.getAscent();
+                        pivotPoint.y += text.yOffset * fontHeight;
+                    }
+
+                    //set color
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+                    final Color color = colorTable.getColor(text.color);
+                    g2d.setColor(color);
+
+
+                    if(text.horizontalAdjust != 3 || text.verticalAdjust != 1){
+                        //calculate horizontal and vertical adjustement
+                        if(fm==null) fm = g2d.getFontMetrics(font);
+
+                        if(text.horizontalAdjust==1){
+                            final int width = fm.stringWidth(str);
+                            pivotPoint.x -= width/2;
+                        }else if(text.horizontalAdjust==2){
+                            final int width = fm.stringWidth(str);
+                            pivotPoint.x -= width;
+                        }
+
+                        if(text.verticalAdjust==2){
+                        if(fontHeight==null) fontHeight = fm.getAscent();
+                            pivotPoint.y += fontHeight/2;
+                        }else if(text.verticalAdjust==3){
+                        if(fontHeight==null) fontHeight = fm.getAscent();
+                            pivotPoint.y += fontHeight;
+                        }
+                    }
+
+                    //TODO handle SPACE parameter
+
+                    g2d.drawString(str, (float)pivotPoint.x, (float)pivotPoint.y);
 
                 }else if(inst instanceof ColorFill){
                     final ColorFill cf = (ColorFill) inst;
@@ -150,7 +207,7 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
 
                 }else if(inst instanceof PatternFill){
                     final PatternFill pf = (PatternFill) inst;
-                    LOGGER.log(Level.INFO, "TODO support instruction : "+inst.getCode());
+                    LOGGER.log(Level.INFO, "TODO support instruction : {0}", inst.getCode());
 
                 }else if(inst instanceof SimpleLine){
                     final SimpleLine sl = (SimpleLine) inst;
@@ -163,15 +220,32 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
 
                 }else if(inst instanceof ComplexLine){
                     final ComplexLine cl = (ComplexLine) inst;
-                    LOGGER.log(Level.INFO, "TODO support instruction : "+inst.getCode());
+                    LOGGER.log(Level.INFO, "TODO support instruction : {0}", inst.getCode());
 
                 }else if(inst instanceof Symbol){
                     final Symbol symbol = (Symbol) inst;
-                    LOGGER.log(Level.INFO, "TODO support instruction : "+inst.getCode());
+                    LOGGER.log(Level.INFO, "TODO support instruction : {0}", inst.getCode());
+                    if(geom instanceof Point || geom instanceof MultiPoint){
+                        g2d.setColor(Color.RED);
+                        geom = graphic.getGeometry(null).getDisplayGeometryJTS();
+                        for(Coordinate coord : geom.getCoordinates()){
+                            g2d.fillRect((int)coord.x, (int)coord.y, 5, 5);
+                        }
+
+                    }else if(geom instanceof LineString || geom instanceof MultiLineString){
+                        g2d.setColor(Color.BLUE);
+                        final Shape shp = graphic.getGeometry(null).getDisplayShape();
+                        g2d.draw(shp);
+                    }else if(geom instanceof Polygon || geom instanceof MultiPolygon){
+                        g2d.setColor(Color.GREEN);
+                        final Shape shp = graphic.getGeometry(null).getDisplayShape();
+                        g2d.draw(shp);
+
+                    }
 
                 }else if(inst instanceof ConditionalSymbolProcedure){
                     final ConditionalSymbolProcedure con = (ConditionalSymbolProcedure) inst;
-                    LOGGER.log(Level.INFO, "TODO support instruction : "+inst.getCode());
+                    LOGGER.log(Level.INFO, "TODO support instruction : {0}", inst.getCode());
 
                 } else{
                     throw new PortrayalException("Unexpected instruction : " + inst.getCode());
@@ -181,27 +255,6 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
             ex.printStackTrace();
         }
 
-//        try{
-//            if(geom instanceof Point || geom instanceof MultiPoint){
-//                g2d.setColor(Color.RED);
-//                geom = graphic.getGeometry(null).getDisplayGeometryJTS();
-//                for(Coordinate coord : geom.getCoordinates()){
-//                    g2d.fillRect((int)coord.x, (int)coord.y, 5, 5);
-//                }
-//
-//            }else if(geom instanceof LineString || geom instanceof MultiLineString){
-//                g2d.setColor(Color.BLUE);
-//                final Shape shp = graphic.getGeometry(null).getDisplayShape();
-//                g2d.draw(shp);
-//            }else if(geom instanceof Polygon || geom instanceof MultiPolygon){
-//                g2d.setColor(Color.GREEN);
-//                final Shape shp = graphic.getGeometry(null).getDisplayShape();
-//                g2d.draw(shp);
-//
-//            }
-//        }catch(TransformException ex){
-//            ex.printStackTrace();
-//        }
     }
 
     /**
@@ -230,6 +283,34 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
         }
 
         return validRec;
+    }
+
+    private Coordinate getPivotPoint(Geometry geom){
+        try{
+            if(geom instanceof Point || geom instanceof MultiPoint){
+                return (Coordinate)geom.getCoordinate().clone();
+
+            }else if(geom instanceof LineString || geom instanceof MultiLineString){
+                //S-52 Annex A Part I p.47 7.1.1
+                // The pivot-point for text for a line is the centre of a single segment line.
+                // For a multi-segment-line the pivot-point is the mid-point of the run-length of the line.
+                return geom.getInteriorPoint().getCoordinate();
+
+            }else if(geom instanceof Polygon || geom instanceof MultiPolygon){
+                // The pivot-point for text for an area object is the centre of the area
+                return geom.getInteriorPoint().getCoordinate();
+
+            }else{
+                //some other kind of geometry, normaly not happening but might be possible
+                //if S-52 style is used on something else then S-57 datas.
+                return geom.getInteriorPoint().getCoordinate();
+            }
+        }catch(TopologyException ex){
+            renderingContext.getMonitor().exceptionOccured(ex, Level.INFO);
+            //JTS is sometimes unstable
+            //falback on centroid if we have problems.
+            return geom.getCentroid().getCoordinate();
+        }
     }
 
     @Override

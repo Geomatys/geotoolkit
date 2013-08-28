@@ -78,6 +78,14 @@ public class S52Context {
     // See also : 7.1.3.1 Text Groupings
     private boolean noText = false;
 
+    public void setNoText(boolean noText) {
+        this.noText = noText;
+    }
+
+    public boolean isNoText() {
+        return noText;
+    }
+
     /**
      * Change current palette. refer to a palette by name.
      * @param paletteName

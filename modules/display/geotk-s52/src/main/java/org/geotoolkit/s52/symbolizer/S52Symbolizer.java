@@ -16,9 +16,11 @@
  */
 package org.geotoolkit.s52.symbolizer;
 
+import java.util.Collections;
 import java.util.Map;
 import javax.measure.unit.NonSI;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.style.AbstractExtensionSymbolizer;
 import org.geotoolkit.style.DefaultDescription;
 import org.opengis.filter.expression.Expression;
@@ -31,11 +33,25 @@ public class S52Symbolizer extends AbstractExtensionSymbolizer{
 
     public static final String NAME = "S-52";
 
+    private static final Expression ALL = GO2Utilities.FILTER_FACTORY.property("*");
+
+    private final boolean differed;
+
     public S52Symbolizer() {
+        this(true);
+    }
+
+    /**
+     *
+     * @param differed indicate is layer is painted now or waits for other possible S-52 layers.
+     *                 default value is True.
+     */
+    public S52Symbolizer(boolean differed) {
         super(NonSI.PIXEL, "", "S-52",
                 new DefaultDescription(
                 new SimpleInternationalString(""),
                 new SimpleInternationalString("")));
+        this.differed = differed;
     }
 
     @Override
@@ -43,10 +59,13 @@ public class S52Symbolizer extends AbstractExtensionSymbolizer{
         return NAME;
     }
 
+    public boolean isDiffered() {
+        return differed;
+    }
+
     @Override
     public Map<String, Expression> getParameters() {
-        //add all properties here
-        return super.getParameters();
+        return Collections.singletonMap("prop", ALL);
     }
 
 }
