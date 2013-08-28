@@ -34,19 +34,20 @@ import org.opengis.feature.type.PropertyType;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @author Quentin Boileau (Geomatys)
  */
 public class UnitEditor extends PropertyValueEditor implements ActionListener {
 
     private final JComboBox component = new JComboBox();
+    private final static List<Unit> UNITS = new ArrayList<Unit>(SI.getInstance().getUnits());
+    static {
+        UNITS.addAll(NonSI.getInstance().getUnits());
+    }
 
     public UnitEditor() {
         super(new BorderLayout());
-
-        final List<Unit> units = new ArrayList<Unit>(SI.getInstance().getUnits());
-        units.addAll(NonSI.getInstance().getUnits());
-        
         component.addFocusListener(this);
-        component.setModel(new ListComboBoxModel(units));
+        component.setModel(new ListComboBoxModel(UNITS));
         component.setRenderer(new DefaultListCellRenderer(){
 
             @Override

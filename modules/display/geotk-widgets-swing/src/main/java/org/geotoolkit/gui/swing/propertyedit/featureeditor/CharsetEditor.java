@@ -29,17 +29,18 @@ import org.opengis.feature.type.PropertyType;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @author Quentin Boileau (Geomatys)
  */
 public class CharsetEditor extends PropertyValueEditor implements ActionListener {
 
     private final JComboBox component = new JComboBox();
+    private static final List<Charset> CHARSETS = new ArrayList<Charset>(Charset.availableCharsets().values());
 
     public CharsetEditor() {
         super(new BorderLayout());
         add(BorderLayout.NORTH, component);
 
-        final List<Charset> sets = new ArrayList<Charset>(Charset.availableCharsets().values());
-        component.setModel(new ListComboBoxModel(sets));
+        component.setModel(new ListComboBoxModel(CHARSETS));
         component.addActionListener(this);
         component.addFocusListener(this);
     }
