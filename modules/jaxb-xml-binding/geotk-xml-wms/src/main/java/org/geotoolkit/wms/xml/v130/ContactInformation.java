@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wms.xml.AbstractContactInformation;
 
 
 /**
@@ -58,7 +59,7 @@ import javax.xml.bind.annotation.XmlType;
     "contactElectronicMailAddress"
 })
 @XmlRootElement(name = "ContactInformation")
-public class ContactInformation {
+public class ContactInformation implements AbstractContactInformation {
 
     @XmlElement(name = "ContactPersonPrimary")
     private ContactPersonPrimary contactPersonPrimary;
