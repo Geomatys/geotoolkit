@@ -65,7 +65,10 @@ public final class WMSUtilities {
     private static final Logger LOGGER = Logging.getLogger(WMSUtilities.class);
 
     private static final SimpleDateFormat PERIOD_DATE_FORMAT = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
+    static {
+        PERIOD_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+    }
+    
     private WMSUtilities() {}
 
     /**
