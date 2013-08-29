@@ -23,20 +23,23 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import javax.measure.unit.Unit;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JToolTip;
 import javax.swing.SwingConstants;
 import org.geotoolkit.display.canvas.DefaultCanvasController2D;
+import org.geotoolkit.display2d.ext.text.J2DTextUtilities;
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -44,6 +47,7 @@ import org.geotoolkit.map.FeatureMapLayer.DimensionDef;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
@@ -90,20 +94,37 @@ public class JAdditionalAxisNavigator extends JPanel implements ContextListener{
     private final JPanel grid = new JPanel(new GridLayout(1, 0));
     private final JComboBox guiAxis = new JComboBox();
     private volatile JMap2D map = null;
+    
+    private final JButton addButton = new JButton(IconBundle.getIcon("16_add"));
 
     public JAdditionalAxisNavigator(){
         super(new BorderLayout());
 
-        final JButton but = new JButton(IconBundle.getIcon("16_add"));
-        but.setMargin(new Insets(0, 0, 0, 0));
-        but.addActionListener(new ActionListener() {
+        addButton.setMargin(new Insets(0, 0, 0, 0));
+        addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 addAxis();
+                addButton.setEnabled(false);
             }
         });
 
         guiAxis.setEditable(false);
+        guiAxis.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+
+                for (AxisDef tmp : axis) {
+                    if (CRS.equalsIgnoreMetadata(guiAxis.getSelectedItem(), tmp.nav.getCrs())) {
+                        addButton.setEnabled(false);
+                        return;
+                    }
+                }
+                addButton.setEnabled(true);
+            }
+        });
+
         updateModel();
 
         guiAxis.setRenderer(new DefaultListCellRenderer(){
@@ -150,44 +171,59 @@ public class JAdditionalAxisNavigator extends JPanel implements ContextListener{
 
         final JPanel addPan = new JPanel(new BorderLayout());
         addPan.add(BorderLayout.CENTER,guiAxis);
-        addPan.add(BorderLayout.EAST,but);
+        addPan.add(BorderLayout.EAST,addButton);
         add(BorderLayout.NORTH,addPan);
         add(BorderLayout.CENTER,grid);
     }
 
     private void updateModel() {
-        final Set<CoordinateReferenceSystem> values = new LinkedHashSet<CoordinateReferenceSystem>();
-        values.add( DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
+        final List<CoordinateReferenceSystem> values = new ArrayList<CoordinateReferenceSystem>();
+        values.add(DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
         if (map != null) {
-            final MapContext context = map.getContainer().getContext();
-            if (context != null) {
-                final List<MapLayer> layers = context.layers();
-                for (MapLayer mapLayer : layers) {
-                    final Envelope layerBounds = mapLayer.getBounds();
-                    if (layerBounds != null && layerBounds.getCoordinateReferenceSystem() != null) {
-                        final CoordinateReferenceSystem layerCRS = layerBounds.getCoordinateReferenceSystem();
+            getDimensions(map.getContainer().getContext(), values);
+        }
+        guiAxis.setModel(new ListComboBoxModel(values));
+    }
+    
+    private void getDimensions(final MapItem source, final List<CoordinateReferenceSystem> toFill) {
+        if (source == null) {
+            return;
+        }
+        if (source instanceof MapLayer) {
+            final MapLayer layer = (MapLayer) source;
+            final Envelope bounds = layer.getBounds();
+            if (bounds != null && bounds.getCoordinateReferenceSystem() != null) {
+                final CoordinateReferenceSystem layerCRS = bounds.getCoordinateReferenceSystem();
 
-                        final List<CoordinateReferenceSystem> parts = ReferencingUtilities.decompose(layerCRS);
-                        for(CoordinateReferenceSystem part : parts){
-                            if(part.getCoordinateSystem().getDimension() == 1
-                               && part.getCoordinateSystem().getAxis(0).getDirection() != AxisDirection.FUTURE){
-                                values.add(part);
+                final List<CoordinateReferenceSystem> parts = ReferencingUtilities.decompose(layerCRS);
+browseCRS:      for (CoordinateReferenceSystem part : parts) {
+                    if (part.getCoordinateSystem().getDimension() == 1
+                            && part.getCoordinateSystem().getAxis(0).getDirection() != AxisDirection.FUTURE) {
+                        // Check we haven't already got it
+                        for (CoordinateReferenceSystem inserted : toFill) {
+                            if (CRS.equalsApproximatively(inserted, part)) {
+                                continue browseCRS;
                             }
                         }
-                    }
-                    // Handle extra dimensions of feature map layer
-                    if (mapLayer instanceof FeatureMapLayer) {
-                        final FeatureMapLayer fml = (FeatureMapLayer)mapLayer;
-                        for (final DimensionDef extraDim : fml.getExtraDimensions()) {
-                            if (extraDim.getCrs() != null) {
-                                values.add(extraDim.getCrs());
-                            }
-                        }
+                        toFill.add(part);
                     }
                 }
             }
+            // Handle extra dimensions of feature map layer
+            if (layer instanceof FeatureMapLayer) {
+                final FeatureMapLayer fml = (FeatureMapLayer) layer;
+                for (final DimensionDef extraDim : fml.getExtraDimensions()) {
+                    if (extraDim.getCrs() != null) {
+                        toFill.add(extraDim.getCrs());
+                    }
+                }
+            }
+            
+        } else {
+            for (MapItem item : source.items()) {
+                getDimensions(item, toFill);
+            }
         }
-        guiAxis.setModel(new ListComboBoxModel(new ArrayList(values)));
     }
 
     public JMap2D getMap() {
@@ -216,6 +252,16 @@ public class JAdditionalAxisNavigator extends JPanel implements ContextListener{
 
         final AxisDef def = new AxisDef(axi);
         def.nav.setMap(map);
+        def.guiDel.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (def.nav.getCrs().equals(guiAxis.getSelectedItem())) {
+                    addButton.setEnabled(true);
+                }
+            }
+        });
+        
         axis.add(def);
         grid.add(def.pane);
         grid.revalidate();
@@ -247,6 +293,7 @@ public class JAdditionalAxisNavigator extends JPanel implements ContextListener{
 
     @Override
     public void itemChange(CollectionChangeEvent<MapItem> event) {
+        updateModel();
     }
 
     @Override

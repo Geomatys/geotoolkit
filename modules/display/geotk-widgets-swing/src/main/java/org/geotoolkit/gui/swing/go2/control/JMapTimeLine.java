@@ -39,19 +39,26 @@ import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.navigator.DateRenderer;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
+import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.map.ContextListener;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapItem;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.referencing.operation.TransformException;
 
 /**
  * Extension of a JTimeline displaying the temporal range
  * of the map envelope.
  *
- * @author Johann Sorel (Puzzle-GIS)
+ * @author Johann Sorel (Geomatys)
+ * @author Alexis Manin (Geomatys)
  * @module pending
  */
-public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
+public class JMapTimeLine extends JNavigator implements PropertyChangeListener, ContextListener {
 
     private static final Logger LOGGER = Logging.getLogger(JMapTimeLine.class);
 
@@ -60,6 +67,10 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
     private static final float LIMIT_WIDTH = 1.25f;
 
     private final JPopupMenu menu;
+    
+    /**
+     * A Jcomponent to configure animation mecanism on the current axis.
+     */
     private final JAnimationMenu animation = new JAnimationMenu() {
         @Override
         protected void update(JMap2D map, double step) {
@@ -84,12 +95,28 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
             }
         }
     };
-    private final JLayerBandMenu layers = new JLayerBandMenu(this);
+    
+    private JLayerBandMenu layers = null;
     
     private volatile JMap2D map = null;
 
-
+    /**
+     * A boolean to determine what mecanism must be used for layer activation.
+     * Two mecanisms are allowed : 
+     *  - If true, a menu will be added on right click, on which the user will 
+     *    be able to choose which layer to activate on the current line.
+     *  - If false, the choice mecanism will use directly the {@link MapLayer#isSelectable() }
+     *    property to determine if should be activated or not. The 
+     *    {@link MapLayer#isSelectable() } property can be changed via 
+     *    {@link org.geotoolkit.gui.swing.contexttree.JContextTree} component.
+     */
+    private final boolean useMenu;
+    
     public JMapTimeLine(){
+        this(true);
+    }
+    public JMapTimeLine(boolean useMenu){
+        this.useMenu = useMenu;
         setModelRenderer(new DateRenderer());
         getModel().setCRS(DefaultTemporalCRS.JAVA);
         long now = System.currentTimeMillis();
@@ -110,7 +137,10 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
 
         };
 
-        menu.add(layers);
+        if (useMenu) {
+            layers = new JLayerBandMenu(this);
+            menu.add(layers);
+        }
 
         menu.addSeparator();
         
@@ -296,10 +326,18 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
         }
         this.map = map;
         animation.setMap(map);
-        layers.setMap(map);
         
         if(map != null){
             this.map.getCanvas().addPropertyChangeListener(this);
+            if (useMenu) {
+                layers.setMap(map);
+            } else {
+                final MapContext context = this.map.getContainer().getContext();
+                if (context != null) {
+                    context.addContextListener(this);
+                    checkLayerBands(context, CollectionChangeEvent.ITEM_ADDED);
+                }
+            }
         }
         repaint();
     }
@@ -428,6 +466,9 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
     public void propertyChange(final PropertyChangeEvent evt) {
         if(evt.getPropertyName().equals(AbstractReferencedCanvas2D.ENVELOPE_PROPERTY)){
             repaint();
+            
+        } else if (evt.getSource() instanceof MapLayer && !useMenu) {
+            checkLayerBands((MapItem) evt.getSource(), CollectionChangeEvent.ITEM_CHANGED);
         }
     }
 
@@ -450,7 +491,6 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
         if(range[0] != null) start = getModel().getGraphicValueAt(range[0].getTime());
         if(range[1] != null) end = getModel().getGraphicValueAt(range[1].getTime());
 
-
         //apply change if there are some
         if(edit != null){
             if(selected == 0){
@@ -469,7 +509,6 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
             center = (start+end)/2;
         }
 
-
         final Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(SECOND);
         g2d.fillRect((int)start,0,(int)(end-start),getHeight());
@@ -482,5 +521,65 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
         g2d.setStroke(new BasicStroke(LIMIT_WIDTH*4));
         g2d.drawLine((int)center, 0, (int)center, getHeight());
     }
+
+    private void checkLayerBands(MapItem source, int checkType) {
+        if (source == null) {
+            return;
+}
+
+        if (source instanceof MapLayer) {
+            final MapLayer layer = (MapLayer) source;
+            // First, we check if we already get a listener on this object.
+            if (checkType == CollectionChangeEvent.ITEM_ADDED) {
+                final org.geotoolkit.map.ItemListener.Weak weak = new org.geotoolkit.map.ItemListener.Weak(this);
+                layer.removeItemListener(weak);
+                layer.addItemListener(weak);
+            }
+            boolean exist = false;
+            for (JNavigatorBand band : getBands()) {
+                if (band instanceof JLayerBand) {
+                    final JLayerBand lb = (JLayerBand) band;
+                    if (layer.equals(lb.getLayer())) {
+                        exist = true;
+                        if (checkType == CollectionChangeEvent.ITEM_REMOVED
+                                || !layer.isSelectable()) {
+                            getBands().remove(lb);
+                        }
+                        break;
+                    }
+                }
+            }
+            if (!exist && layer.isSelectable()) {
+                final JLayerBand band = new JLayerBand(layer, getModel());
+                if (!band.isEmpty()) {
+                    getBands().add(band);
+                }
+            }
+
+            // If an element have been added or removed, we'll parse item to find
+            // which layer to add or delete.
+        } else if (checkType != CollectionChangeEvent.ITEM_CHANGED) {
+            for (MapItem child : source.items()) {
+                checkLayerBands(child, checkType);
+            }
+        }
+    }
+    
+    /**
+     * If an item of the current {@link MapContext} changed, we'll check for the
+     * corresponding {@link JLayerBand} of this axis.
+     * @param event 
+     */
+    @Override
+    public void itemChange(CollectionChangeEvent<MapItem> event) {
+        if (!useMenu) {
+            for (MapItem item : event.getItems()) {
+                checkLayerBands(item, event.getType());
+            }
+        }
+    }
+
+    @Override
+    public void layerChange(CollectionChangeEvent<MapLayer> event) {}
 
 }

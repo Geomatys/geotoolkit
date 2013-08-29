@@ -75,8 +75,13 @@ public class DeleteItem extends AbstractTreePopupItem{
         boolean valid = uniqueAndType(selection,MapItem.class);
         if(valid){
             //check it's not the root mapcontext
-            final DefaultMutableTreeNode candidate = (DefaultMutableTreeNode) selection[0].getLastPathComponent();
-            valid = !(candidate.getUserObject() instanceof MapContext);
+            for (int nodeCount = 0 ; nodeCount < selection.length ; nodeCount++) {
+                final DefaultMutableTreeNode node = (DefaultMutableTreeNode) selection[nodeCount].getLastPathComponent();
+                if (node.isRoot()) {
+                    valid = false;
+                    break;
+                }
+            }
         }
 
         return valid;

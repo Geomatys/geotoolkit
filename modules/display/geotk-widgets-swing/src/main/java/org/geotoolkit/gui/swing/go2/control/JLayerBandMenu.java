@@ -27,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -114,14 +115,15 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
         if(context == null){
             return;
         }
-
-        final List<MapLayer> layers = context.layers();
-
+        
         removeAll();
+        final List<MapLayer> layers = new ArrayList<MapLayer>();
+        parseItem(context, layers);
+        
         for(final MapLayer layer : layers){
             add(new LayerPane(layer));
         }
-
+        
         if(event == null){
             return;
         }
@@ -179,8 +181,29 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
     }
 
     @Override
-    public void itemChange(CollectionChangeEvent<MapItem> event) {}
+    public void itemChange(CollectionChangeEvent<MapItem> event) {
+        final Collection<MapItem> items = event.getItems();
+        final List<MapLayer> layers = new ArrayList<MapLayer>();
+        for (MapItem item : items) {
+            parseItem(item, layers);
+        }
+        
+        final CollectionChangeEvent newEvent = new CollectionChangeEvent(
+                event.getSource(), layers, event.getType(), event.getRange(), event);
+        
+        layerChange(newEvent);
+    }
 
+    protected void parseItem (final MapItem source, final List<MapLayer> destination) {
+        if (source instanceof MapLayer) {
+            destination.add((MapLayer) source);
+        } else {
+            for (MapItem child : source.items()) {
+                parseItem(child, destination);
+            }
+        }
+    }
+    
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         final String propName = evt.getPropertyName();

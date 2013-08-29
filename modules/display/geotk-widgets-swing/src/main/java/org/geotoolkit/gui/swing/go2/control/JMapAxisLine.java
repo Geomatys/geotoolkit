@@ -20,7 +20,6 @@ package org.geotoolkit.gui.swing.go2.control;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.MouseInfo;
@@ -48,18 +47,24 @@ import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.navigator.DoubleRenderer;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
+import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.map.*;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
 
 /**
+ * A {@link JNavigator} to display a scroll bar. It allows the user to browse
+ * the axis of the {@link CoordinateReferenceSystem} given at built.
  *
  * @author Johann Sorel (Geomatys)
+ * @author Alexis Manin (Geomatys)
  * @module pending
  */
-public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
+ public class JMapAxisLine extends JNavigator implements PropertyChangeListener, ContextListener {
 
     private static final Logger LOGGER = Logging.getLogger(JMapAxisLine.class);
 
@@ -70,7 +75,15 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
     private final SpinnerNumberModel modelHaut;
     private final SpinnerNumberModel modelBas;
 
+    /**
+     * The popup menu to display at right click. Contains several options to 
+     * manage movements, animation, etc.
+     */
     private final JPopupMenu menu;
+    
+    /**
+     * A Jcomponent to configure animation mecanism on the current axis.
+     */
     private final JAnimationMenu animation = new JAnimationMenu() {
         @Override
         protected void update(JMap2D map, double step) {
@@ -91,6 +104,7 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
         }
     };
 
+    /** Scrolling mecanism. */
     private final ChangeListener spinnerListener = new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent ce) {
@@ -109,9 +123,11 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
             }
         };
 
-    private final JLayerBandMenu layers = new JLayerBandMenu(this);
+    private JLayerBandMenu layers = null;
 
     private volatile JMap2D map = null;
+    
+    /** The CRS containing the axis to browse. This CRS should have only one dimension. */
     private final CoordinateReferenceSystem crs;
 
     private final Comparator<CoordinateSystemAxis> axisIndexFinder = new Comparator<CoordinateSystemAxis>() {
@@ -123,9 +139,26 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
             return -1;
         }
     };
+    
+    /**
+     * A boolean to determine what mecanism must be used for layer activation.
+     * Two mecanisms are allowed : 
+     *  - If true, a menu will be added on right click, on which the user will 
+     *    be able to choose which layer to activate on the current line.
+     *  - If false, the choice mecanism will use directly the {@link MapLayer#isSelectable() }
+     *    property to determine if should be activated or not. The 
+     *    {@link MapLayer#isSelectable() } property can be changed via 
+     *    {@link org.geotoolkit.gui.swing.contexttree.JContextTree} component.
+     */
+    private final boolean useMenu;
 
     public JMapAxisLine(final CoordinateReferenceSystem crs){
+        this(crs, true);
+    }
+    
+    public JMapAxisLine(final CoordinateReferenceSystem crs, final boolean useMenu) {
         this.crs = crs;
+        this.useMenu = useMenu;
         animation.setSpeedFactor(10);
         setModelRenderer(new DoubleRenderer());
         getModel().setCRS(crs);
@@ -172,7 +205,10 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
 
         };
 
-        menu.add(layers);
+        if (useMenu) {
+            layers = new JLayerBandMenu(this);
+            menu.add(layers);
+        }
 
         menu.addSeparator();
 
@@ -351,16 +387,7 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
         menu.add(minPan);
         menu.add(maxPan);
 
-
         setComponentPopupMenu(menu);
-//        AreaBand band = new AreaBand();
-//        band.setComponentPopupMenu(menu);
-//        band.addMouseListener(this);
-//        band.addMouseMotionListener(this);
-//        band.addMouseWheelListener(this);
-//        band.addKeyListener(this);
-//
-//        getBands().add(band);
     }
 
     public CoordinateReferenceSystem getCrs() {
@@ -372,7 +399,7 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
     }
 
     /**
-     * Disable spinner the time to update there values, otherwise
+     * Disable spinner the time to update their values, otherwise
      * the listener will cause the canvas to be repainted.
      */
     private synchronized void updateSpiners(final double min, final double max){
@@ -397,10 +424,18 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
 
         this.map = map;
         animation.setMap(map);
-        layers.setMap(map);
 
         if(map != null){
             this.map.getCanvas().addPropertyChangeListener(this);
+            if (useMenu) {
+                layers.setMap(map);
+            } else {
+                final MapContext context = this.map.getContainer().getContext();
+                if (context != null) {
+                    context.addContextListener(this);
+                    checkLayerBands(context, CollectionChangeEvent.ITEM_ADDED);
+                }
+            }
         }
         repaint();
     }
@@ -500,7 +535,6 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
         }else{
             super.mouseDragged(e);
         }
-
     }
 
 
@@ -524,6 +558,9 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
 
             updateSpiners(range[0], range[1]);
             repaint();
+            
+        } else if (evt.getSource() instanceof MapLayer && !useMenu) {
+            checkLayerBands((MapItem) evt.getSource(), CollectionChangeEvent.ITEM_CHANGED);
         }
     }
 
@@ -568,7 +605,6 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
         if(range[0] != null) start = getModel().getGraphicValueAt(range[0]);
         if(range[1] != null) end = getModel().getGraphicValueAt(range[1]);
 
-
         //apply change if there are some
         if(edit != null){
             if(selected == 0){
@@ -593,7 +629,6 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
             center = (start+end)/2;
         }
 
-
         final Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(SECOND);
         g2d.fillRect(0,(int)start,getWidth(),(int)(end-start));
@@ -605,6 +640,72 @@ public class JMapAxisLine extends JNavigator implements PropertyChangeListener{
 
         g2d.setStroke(new BasicStroke(LIMIT_WIDTH*4));
         g2d.drawLine(0, (int)center, getWidth(), (int)center);
+    }
+
+    /**
+     * Browse the source MapItem to determine if some {@link JLayerBand} should
+     * be created or removed.
+     * @param source The mapItem on which an event occured.
+     * @param checkType The event type, as described in {@link CollectionChangeEvent}
+     */
+    private void checkLayerBands(MapItem source, int checkType) {
+        if (source == null) {
+            return;
+        }
+
+        if (source instanceof MapLayer) {
+            final MapLayer layer = (MapLayer) source;
+            // First, we check if we already get a listener on this object.
+            if (checkType == CollectionChangeEvent.ITEM_ADDED) {
+                final ItemListener.Weak weak = new ItemListener.Weak(this);
+                layer.removeItemListener(weak);
+                layer.addItemListener(weak);
+            }
+            boolean exist = false;
+            for (JNavigatorBand band : getBands()) {
+                if (band instanceof JLayerBand) {
+                    final JLayerBand lb = (JLayerBand) band;
+                    if (layer.equals(lb.getLayer())) {
+                        exist = true;
+                        if (checkType == CollectionChangeEvent.ITEM_REMOVED
+                                || !layer.isSelectable()) {
+                            getBands().remove(lb);
+                        }
+                        break;
+                    }
+                }
+            }
+            if (!exist && layer.isSelectable()) {
+                final JLayerBand band = new JLayerBand(layer, getModel());
+                if (!band.isEmpty()) {
+                    getBands().add(band);
+                }
+            }
+
+            // If an element have been added or removed, we'll parse item to find
+            // which layer to add or delete.
+        } else if (checkType != CollectionChangeEvent.ITEM_CHANGED) {
+            for (MapItem child : source.items()) {
+                checkLayerBands(child, checkType);
+            }
+        }
+    }
+
+    @Override
+    public void layerChange(CollectionChangeEvent<MapLayer> event) {}
+
+    /**
+     * If an item of the current {@link MapContext} changed, we'll check for the
+     * corresponding {@link JLayerBand} of this axis.
+     * @param event 
+     */
+    @Override
+    public void itemChange(CollectionChangeEvent<MapItem> event) {
+        if (!useMenu) {
+            for (MapItem item : event.getItems()) {
+                checkLayerBands(item, event.getType());
+            }
+        }
     }
 
 }
