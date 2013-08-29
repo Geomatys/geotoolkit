@@ -1,26 +1,26 @@
 
 package org.geotoolkit.pending.demo.tree;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.index.tree.basic.BasicRTree;
-import org.geotoolkit.index.tree.basic.SplitCase;
-import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.geotoolkit.index.tree.io.TreeReader;
-import org.geotoolkit.index.tree.io.TreeWriter;
-import org.geotoolkit.index.tree.star.StarRTree;
-import org.geotoolkit.pending.demo.Demos;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
-
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
+//import java.io.File;
+//import java.io.IOException;
+//import java.util.ArrayList;
+//import java.util.Collection;
+//import java.util.List;
+//
+//import org.apache.sis.geometry.GeneralEnvelope;
+//import org.geotoolkit.index.tree.Tree;
+//import org.geotoolkit.index.tree.basic.BasicRTree;
+//import org.geotoolkit.index.tree.basic.SplitCase;
+//import org.geotoolkit.index.tree.io.StoreIndexException;
+//import org.geotoolkit.index.tree.io.TreeReader;
+//import org.geotoolkit.index.tree.io.TreeWriter;
+//import org.geotoolkit.index.tree.star.StarRTree;
+//import org.geotoolkit.pending.demo.Demos;
+//import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+//
+//import org.opengis.geometry.Envelope;
+//import org.opengis.referencing.crs.CoordinateReferenceSystem;
+//import org.opengis.referencing.operation.TransformException;
 
 /**
  * R-tree uses.
@@ -34,9 +34,9 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class TreeDemo {
 
-    public static void main(String[] args) throws TransformException, IOException, ClassNotFoundException, StoreIndexException {
+    public static void main(String[] args) {
 //        Demos.init();
-//        
+//
 //        /**
 //         * Tree creation.
 //         */
