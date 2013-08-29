@@ -122,6 +122,7 @@
   <properties>
     <sis.version>0.4-jdk7-SNAPSHOT</sis.version>
     <geotoolkit.version>4.x-SNAPSHOT</geotoolkit.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <dependencyManagement>
@@ -460,7 +461,7 @@
           <target>1.7</target>       <!-- The -target argument for the Java compiler.   -->
           <debug>true</debug>        <!-- Whether to include debugging information.     -->
           <optimize>true</optimize>  <!-- Whether to optimize the compiled code.        -->
-          <encoding>UTF-8</encoding> <!-- The -encoding argument for the Java compiler. -->
+          <encoding>${project.build.sourceEncoding}</encoding> <!-- The -encoding argument for the Java compiler. -->
           <showWarnings>true</showWarnings>
           <showDeprecation>true</showDeprecation>
         </configuration>
