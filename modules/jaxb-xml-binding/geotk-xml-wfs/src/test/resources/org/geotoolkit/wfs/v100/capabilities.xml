@@ -71,4 +71,14 @@
             <LatLongBoundingBox minx="99038.3" miny="6.00684" maxx="1.24244" maxy="7.15024" />
         </FeatureType>
     </FeatureTypeList>
+    <ogc:Filter_Capabilities>
+       <ogc:Spatial_Capabilities>
+         <ogc:Spatial_Operators>
+          <ogc:BBOX/>
+         </ogc:Spatial_Operators>
+       </ogc:Spatial_Capabilities>
+       <ogc:Scalar_Capabilities>
+         <ogc:Logical_Operators/>
+       </ogc:Scalar_Capabilities>
+    </ogc:Filter_Capabilities>
 </WFS_Capabilities>
