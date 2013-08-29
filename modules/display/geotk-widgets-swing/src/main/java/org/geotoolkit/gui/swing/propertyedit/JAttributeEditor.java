@@ -30,6 +30,7 @@ import javax.swing.JTextField;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.ArrayEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.BooleanEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.CRSEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.CharacterEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.CharsetEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.ChoiceEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.DateEditor;
@@ -155,6 +156,7 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
         lst.add(new BooleanEditor());
         lst.add(new CRSEditor());
         lst.add(new CharsetEditor());
+        lst.add(new CharacterEditor());
         lst.add(new NumberEditor());
         lst.add(new StringEditor());
         lst.add(new InternationalStringEditor());
