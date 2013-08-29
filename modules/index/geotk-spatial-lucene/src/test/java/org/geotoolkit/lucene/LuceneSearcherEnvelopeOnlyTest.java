@@ -50,10 +50,8 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
-import org.geotoolkit.index.tree.io.TreeVisitor;
-import org.geotoolkit.index.tree.io.TreeWriter;
-import org.geotoolkit.index.tree.star.StarRTree;
+import org.geotoolkit.index.tree.TreeElementMapper;
+import org.geotoolkit.index.tree.star.FileStarRTree;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
@@ -61,7 +59,9 @@ import org.geotoolkit.lucene.index.AbstractIndexer;
 import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.geotoolkit.referencing.CRS;
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
+import static org.geotoolkit.lucene.LuceneSearcherTest.getresultsfromID;
 import org.geotoolkit.lucene.index.LuceneIndexSearcher;
+import org.geotoolkit.lucene.tree.LuceneFileTreeEltMapper;
 import org.geotoolkit.util.FileUtilities;
 
 import org.opengis.filter.FilterFactory2;
@@ -100,31 +100,28 @@ public class LuceneSearcherEnvelopeOnlyTest {
     private Tree rTree;
     private org.opengis.filter.Filter filter;
     private Geometry geom;
-
-
+    
     @Before
     public void setUpMethod() throws Exception {
 
         directory = new File("luceneSearcherEnvTest");
-        if (!directory.exists()) {
-            directory.mkdir();
+        subDirectory = new File(directory, "index-" + System.currentTimeMillis());
+        
+        if (!subDirectory.exists()) {
+            subDirectory.mkdirs();
         } else {
-            for (File f: directory.listFiles()) {
+            for (File f: subDirectory.listFiles()) {
                 f.delete();
             }
         }
-
-        subDirectory = new File(directory, "index-" + System.currentTimeMillis());
         
+        final File treeFile   = new File(subDirectory, "tree.bin");
+        final File mapperFile = new File(subDirectory, "mapper.bin");
         // the tree CRS (must be) cartesian
         treeCrs = CRS.decode("CRS:84");
-
-        //Create Calculator. Be careful to choice calculator adapted from crs---
-        //final Calculator calculator = DefaultCalculator.CALCULATOR_2D;
-
-
+        
         //creating tree (R-Tree)------------------------------------------------
-        rTree = new StarRTree(10, treeCrs);
+        rTree = new FileStarRTree<NamedEnvelope>(treeFile, 5, WGS84, new LuceneFileTreeEltMapper(WGS84, mapperFile));
 
         final Analyzer analyzer  = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
         IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_40, analyzer);
@@ -133,24 +130,18 @@ public class LuceneSearcherEnvelopeOnlyTest {
         fillTestData(writer, rTree);
         writer.commit();
         writer.close();
-
-        final File treeFile = new File(subDirectory, "tree.bin");
-        TreeWriter.write(rTree, treeFile);
+        
+        rTree.close();
+        rTree.getTreeElementMapper().close();
         
         searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true);
+        
+        rTree = new FileStarRTree<NamedEnvelope>(treeFile, new LuceneFileTreeEltMapper(mapperFile));
     }
 
     @After
     public void tearDownMethod() throws Exception {
         FileUtilities.deleteDirectory(directory);
-    }
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
     }
 
     /**
@@ -250,8 +241,10 @@ public class LuceneSearcherEnvelopeOnlyTest {
 
         //we perform a retree query
         List<Envelope> docs = new ArrayList<Envelope>();
-        final TreeVisitor treevisitor = new DefaultTreeVisitor((Collection)docs);
-        rTree.search(env, treevisitor);
+        final TreeElementMapper<NamedEnvelope> tem = rTree.getTreeElementMapper();
+        
+        int[] resultsID = rTree.searchID(env);
+        getresultsfromID(resultsID, tem, docs);
 
         int nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
@@ -283,7 +276,8 @@ public class LuceneSearcherEnvelopeOnlyTest {
 
         //we perform a retree query
         docs.clear();
-        rTree.search(env, treevisitor);
+        resultsID = rTree.searchID(env);
+        getresultsfromID(resultsID, tem, docs);
 
         nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS= 3395: nb Results: {0}", nbResults);
@@ -313,7 +307,8 @@ public class LuceneSearcherEnvelopeOnlyTest {
 
         //we perform a retree query
         docs.clear();
-        rTree.search(env, treevisitor);
+        resultsID = rTree.searchID(env);
+        getresultsfromID(resultsID, tem, docs);
 
         nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 2 CRS= 4326: nb Results: {0}", nbResults);
@@ -344,7 +339,8 @@ public class LuceneSearcherEnvelopeOnlyTest {
 
         //we perform a retree query
         docs.clear();
-        rTree.search(env, treevisitor);
+        resultsID = rTree.searchID(env);
+        getresultsfromID(resultsID, tem, docs);
 
         nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 3 CRS= 4326: nb Results: {0}", nbResults);
@@ -2174,8 +2170,8 @@ public class LuceneSearcherEnvelopeOnlyTest {
         final NamedEnvelope env = envelopes.get("box 2 projected");
         rTree.remove(env);
         
-        final File treeFile = new File(subDirectory, "tree.bin");
-        TreeWriter.write(rTree, treeFile);
+//        final File treeFile = new File(subDirectory, "tree.bin");
+//        TreeWriter.write(rTree, treeFile);
         
         searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true);
 
@@ -2216,10 +2212,10 @@ public class LuceneSearcherEnvelopeOnlyTest {
         LOGGER.log(Level.FINER, "QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 2); // 3);
+        assertEquals(nbResults,  3);   
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 2"));
-        // assertTrue(results.contains("box 2 projected")); DOES NOT WORK !!!
+        assertTrue(results.contains("box 2 projected")); 
     }
 
     private void fillTestData(final IndexWriter writer, final Tree rTree) throws Exception {

@@ -31,6 +31,7 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
 import java.util.logging.Logger;
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
@@ -53,10 +54,8 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
-import org.geotoolkit.index.tree.io.TreeVisitor;
-import org.geotoolkit.index.tree.io.TreeWriter;
-import org.geotoolkit.index.tree.star.StarRTree;
+import org.geotoolkit.index.tree.TreeElementMapper;
+import org.geotoolkit.index.tree.star.FileStarRTree;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
@@ -65,6 +64,7 @@ import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.geotoolkit.referencing.CRS;
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
 import org.geotoolkit.lucene.index.LuceneIndexSearcher;
+import org.geotoolkit.lucene.tree.LuceneFileTreeEltMapper;
 import org.geotoolkit.util.FileUtilities;
 
 import org.opengis.filter.FilterFactory2;
@@ -101,7 +101,7 @@ public class LuceneSearcherTest {
     private File subDirectory;
     private LuceneIndexSearcher searcher;    
     private CoordinateReferenceSystem treeCrs;
-    private Tree rTree;
+    private Tree<NamedEnvelope> rTree;
     private org.opengis.filter.Filter filter;
     private Geometry geom;
 
@@ -109,24 +109,23 @@ public class LuceneSearcherTest {
     public void setUpMethod() throws Exception {
 
         directory = new File("luceneSearcherTest");
-        if (!directory.exists()) {
-            directory.mkdir();
+        subDirectory = new File(directory, "index-" + System.currentTimeMillis());
+
+        if (!subDirectory.exists()) {
+            subDirectory.mkdirs();
         } else {
-            for (File f: directory.listFiles()) {
+            for (File f: subDirectory.listFiles()) {
                 f.delete();
             }
         }
         
-        subDirectory = new File(directory, "index-" + System.currentTimeMillis());
-
         // the tree CRS (must be) cartesian
         treeCrs = CRS.decode("CRS:84");
 
-        //Create Calculator. Be careful to choice calculator adapted from crs---
-        //final Calculator calculator = DefaultCalculator.CALCULATOR_2D;
-
+        final File treeFile = new File(subDirectory, "tree.bin");
+        final File mapperFile = new File(subDirectory, "mapper.bin");
         //creating tree (R-Tree)------------------------------------------------
-        rTree = new StarRTree(10, treeCrs);
+        rTree = new FileStarRTree<NamedEnvelope>(treeFile, 5, WGS84, new LuceneFileTreeEltMapper(WGS84, mapperFile));
 
         final Analyzer analyzer  = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
         IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_40, analyzer);
@@ -136,10 +135,11 @@ public class LuceneSearcherTest {
         writer.commit();
         writer.close();
         
-        final File treeFile = new File(subDirectory, "tree.bin");
-        TreeWriter.write(rTree, treeFile);
+        rTree.close();
+        rTree.getTreeElementMapper().close();
         
         searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), false);
+        rTree = new FileStarRTree<NamedEnvelope>(treeFile, new LuceneFileTreeEltMapper(mapperFile));
     }
 
     @After
@@ -264,9 +264,9 @@ public class LuceneSearcherTest {
 
         //we perform a retree query
         List<Envelope> docs = new ArrayList<Envelope>();
-        final TreeVisitor treeVisitor = new DefaultTreeVisitor((Collection)docs);
-        rTree.search(env, treeVisitor);
-
+        int[] resultID      = rTree.searchID(env);
+        final TreeElementMapper<NamedEnvelope> tem = rTree.getTreeElementMapper();
+        getresultsfromID(resultID, tem, docs);
         int nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
@@ -301,11 +301,11 @@ public class LuceneSearcherTest {
         // reproject to tree CRS
         env = (GeneralEnvelope) Envelopes.transform(env, treeCrs);
 
-
         //we perform a retree query
         docs.clear();
-        rTree.search(env, treeVisitor);
-
+        resultID = rTree.searchID(env);
+        getresultsfromID(resultID, tem, docs);
+        
         nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS= 3395: nb Results: {0}", nbResults);
 
@@ -341,7 +341,8 @@ public class LuceneSearcherTest {
 
         //we perform a retree query
         docs.clear();
-        rTree.search(env, treeVisitor);
+        resultID = rTree.searchID(env);
+        getresultsfromID(resultID, tem, docs);
 
         nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 2 CRS= 4326: nb Results: {0}", nbResults);
@@ -377,7 +378,8 @@ public class LuceneSearcherTest {
 
         //we perform a retree query
         docs.clear();
-        rTree.search(env, treeVisitor);
+        resultID = rTree.searchID(env);
+        getresultsfromID(resultID, tem, docs);
 
         nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 3 CRS= 4326: nb Results: {0}", nbResults);
@@ -916,8 +918,6 @@ public class LuceneSearcherTest {
         assertTrue(results.contains("line 1"));
         assertTrue(results.contains("line 1 projected"));
         assertTrue(results.contains("line 2"));
-
-
     }
 
      /**
@@ -2417,8 +2417,8 @@ public class LuceneSearcherTest {
         final NamedEnvelope env = envelopes.get("box 2 projected");
         rTree.remove(env);
         
-        final File treeFile = new File(subDirectory, "tree.bin");
-        TreeWriter.write(rTree, treeFile);
+//        final File treeFile = new File(subDirectory, "tree.bin");
+//        TreeWriter.write(rTree, treeFile);
 
         searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40), false);
 
@@ -2467,7 +2467,7 @@ public class LuceneSearcherTest {
         writer.commit();
         writer.close();
 
-        TreeWriter.write(rTree, treeFile);
+//        TreeWriter.write(rTree, treeFile);
 
         searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40), false);
 
@@ -2587,7 +2587,20 @@ public class LuceneSearcherTest {
         envelopes.put("line 2", addLine       (doc,             0,                  0,             0,               -15, srid4326, rTree));
         writer.addDocument(doc);
     }
-
+    
+    /**
+     * Get all {@link NamedEnvelope} from {@link TreeElementMapper} and tableID and add each of them in List. 
+     * 
+     * @param tableID treeIdentifier table results.
+     * @param tem contain stored {@link NamedEnvelope}.
+     * @param list which is filled by NamedEnvelope results.
+     */
+    static void getresultsfromID(final int[] tableID, final TreeElementMapper tem, final List list) throws IOException {
+        for (int id : tableID) {
+            list.add(tem.getObjectFromTreeIdentifier(id));
+        }
+    }
+    
     /**
      * Add a Line geometry to the specified Document.
      *
