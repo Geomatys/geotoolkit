@@ -18,7 +18,6 @@
   <!--
     Module description.
   -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-csw</artifactId>
   <packaging>jar</packaging>
   <name>Bindings OGC - CSW : Catalog Service for the Web</name>
@@ -104,8 +103,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-metadata-fra</artifactId>
+      <groupId>org.apache.sis.profiles</groupId>
+      <artifactId>sis-french-profile</artifactId>
+      <version>${sis.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>

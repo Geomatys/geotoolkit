@@ -21,7 +21,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>featurestore</artifactId>
   <packaging>pom</packaging>
   <name>FeatureStore</name>

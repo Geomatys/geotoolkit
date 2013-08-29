@@ -18,7 +18,6 @@ package org.geotoolkit.index.tree;
 
 import org.geotoolkit.internal.tree.TreeAccess;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -30,50 +29,44 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public interface Tree<E> {
 
     /**
-     * Find some {@code Entry} which intersect regionSearch parameter
-     * and add them into result {@code List} parameter.
-     *
+     * Find all {@code Integer} tree identifiers, from each stored datas which intersect {@code regionSearch} parameter.
+     * 
      * <blockquote><font size=-1>
-     * <strong>NOTE: if no result found, the list passed in parameter is unchanged.</strong>
+     * <strong>NOTE: if no result found, an empty table is return.</strong>
      * </font></blockquote>
-     *
-     * @param regionSearch Define the region to find Shape within tree.
-     * @param result List of Entr(y)(ies).
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
+     * 
+     * @param regionSearch Define area of search.
+     * @return integer table which contain all tree identifier from selected data.
+     * @throws StoreIndexException if pblem during search on stored file.
+     * @see AbstractTree#treeIdentifier
      */
     int[] searchID(final Envelope regionSearch) throws StoreIndexException;
     
     /**
-     * Find some {@code Entry} which intersect regionSearch parameter
-     * and add them into result {@code List} parameter.
-     *
-     * <blockquote><font size=-1>
-     * <strong>NOTE: if no result found, the list passed in parameter is unchanged.</strong>
-     * </font></blockquote>
-     *
-     * @param regionSearch Define the region to find Shape within tree.
-     * @param result List of Entr(y)(ies).
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
+     * Find all {@code Integer} tree identifiers, from each stored datas which 
+     * intersect {@code regionSearch} parameter and return an appropriate {@code Iterator} to travel them.
+     * 
+     * @param regionSearch Define area of search.
+     * @return Iterator on each tree identifier search results.
+     * @throws StoreIndexException if regionSearch own NaN coordinates value or during reading first result. 
      */
     TreeIdentifierIterator search(final Envelope regionSearch) throws StoreIndexException;
     
     /**
-     * Insert a {@code Entry} into Rtree.
+     * Insert an Object into Rtree.
      *
-     * @param Entry to insert into tree.
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
+     * @param object
+     * @throws StoreIndexException if problem during reading writing element on file. 
      */
     void insert(final E object) throws StoreIndexException;
-
+    
     /**
-     * Find a {@code Envelope} (entry) from Iterator into the tree and delete it.
-     *
-     * <blockquote><font size=-1>
-     * <strong>NOTE: comparison to remove entry is based from them references.</strong>
-     * </font></blockquote>
-     *
-     * @param Entry to delete.
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
+     * Find an object define by user and remove it from RTree. 
+     * 
+     * @param object which will be removed.
+     * @return true if object as been correctly remove else false.
+     * @throws StoreIndexException if impossible to found its treeIdentifier from TreeElementMapper object.
+     * @see TreeElementMapper#getTreeIdentifier(java.lang.Object) 
      */
     boolean remove(final E object) throws StoreIndexException;
 
@@ -129,13 +122,18 @@ public interface Tree<E> {
     double[] getExtent() throws StoreIndexException;
     
     /**
+     * Close all streams use to store RTree on hard drive.
      * 
-     * @throws StoreIndexException 
+     * <blockquote><font size=-1>
+     * <strong>NOTE: Method has no impact if RTree is not an FileRTree instance.</strong>
+     * </font></blockquote>
+     * 
+     * @throws StoreIndexException if problem during close stream.
      */
     void close() throws StoreIndexException;
     
     /**
-     * Create a node in accordance with this properties.
+     * Create a {@link Node} in accordance with RTree properties.
      *
      * @param tree pointer on Tree.
      * @param parent pointer on parent {@code Node}.

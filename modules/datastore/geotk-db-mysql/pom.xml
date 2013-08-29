@@ -15,7 +15,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-db-mysql</artifactId>
   <packaging>jar</packaging>
   <name>FeatureStore MySQL</name>

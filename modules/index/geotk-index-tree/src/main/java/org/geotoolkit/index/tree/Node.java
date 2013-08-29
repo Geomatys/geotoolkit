@@ -76,7 +76,7 @@ public class Node {
      * if Node is a data (see {@link Node#isData()) childID is the tree identifier of a data.<br/>
      * else childID is the identifier of the first children from Node chained list architecture.
      */
-    protected int childId;// < 0 si ce nest pas un FileNode
+    protected int childId;// < 0 if it is a data.
     
     /**
      * Number of children.

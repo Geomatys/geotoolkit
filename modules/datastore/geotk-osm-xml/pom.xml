@@ -21,7 +21,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-osm-xml</artifactId>
   <packaging>jar</packaging>
   <name>FeatureStore OSM XML</name>

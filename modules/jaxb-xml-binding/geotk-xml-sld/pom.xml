@@ -21,7 +21,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-xml-sld</artifactId>
     <packaging>jar</packaging>
     <name>Bindings OGC - SLD : Styled Layer Descriptor</name>

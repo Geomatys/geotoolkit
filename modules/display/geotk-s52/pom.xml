@@ -17,7 +17,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-s52</artifactId>
     <packaging>jar</packaging>
     <name>Display engine GO2 ECDIS/ENC S-52 extension</name>

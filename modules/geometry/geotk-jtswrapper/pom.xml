@@ -22,7 +22,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-jtswrapper</artifactId>
   <packaging>jar</packaging>
   <name>Geometry JTS wrapper</name>

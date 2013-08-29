@@ -22,7 +22,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-coverageio-store</artifactId>
     <packaging>jar</packaging>
     <name>Coverage Store</name>

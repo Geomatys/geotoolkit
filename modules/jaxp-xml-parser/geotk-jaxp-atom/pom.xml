@@ -18,7 +18,6 @@
     <!-- =========================================================== -->
     <!--     Module Description                                      -->
     <!-- =========================================================== -->
-    <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-jaxp-atom</artifactId>
     <packaging>jar</packaging>
     <name>JAXP Parser ATOM</name>

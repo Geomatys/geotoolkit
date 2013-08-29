@@ -17,7 +17,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-jasperreport</artifactId>
     <packaging>jar</packaging>
     <name>Display engine GO2 JasperReport extension</name>

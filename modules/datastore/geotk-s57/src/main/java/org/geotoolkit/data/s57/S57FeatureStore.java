@@ -221,7 +221,7 @@ public class S57FeatureStore extends AbstractFeatureStore{
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         final FeatureType ft = getFeatureType(query.getTypeName());
 
-        /** find the whished version */
+        /** find the wanted version */
         final Date vdate = query.getVersionDate();
         final String vlabel = query.getVersionLabel();
         final File file = getMainFileForTypeName(query.getTypeName());

@@ -8,7 +8,6 @@
     <version>4.x-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-index-tree</artifactId>
   <packaging>jar</packaging>
   <name>Index RTree</name>

@@ -19,6 +19,7 @@ package org.geotoolkit.s52;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.DocumentLoader;
@@ -107,7 +108,7 @@ public class S52SVGIcon {
         for(int k=0,n=gradients.getLength();k<n;k++){
             final SVGOMLinearGradientElement lg = (SVGOMLinearGradientElement) gradients.item(k);
             final String colorId = lg.getId();
-            final String colorValue = palette.getColor(colorId);
+            final String colorValue = palette.getColorHexa(colorId);
             if(colorValue==null){
                 //stay with the default color
                 continue;
@@ -138,15 +139,18 @@ public class S52SVGIcon {
         return pivotY;
     }
 
-    public void paint(final Graphics2D g, Point2D position, float rotation, float scale) {
-        final AffineTransform old = g.getTransform();
+    public void paint(final Graphics2D g, Point2D positionFinal, float rotation) {
+        float svgscale = 3.543f; //convert svg unit back to mm
+        svgscale /= 0.32f; //mm to pixel
+        final float scale =  1f / svgscale;
 
-        position.setLocation(position.getX()+pivotX, position.getY()+pivotY);
+        final AffineTransform old = g.getTransform();
         final AffineTransform trs = new AffineTransform();
-        trs.translate(position.getX(), position.getY());
+        trs.translate(positionFinal.getX(), positionFinal.getY());
         trs.scale(scale, scale);
         trs.rotate(rotation);
-        trs.translate(-position.getX(), -position.getY());
+        trs.translate(-pivotX, -pivotY);
+        g.setTransform(trs);
         node.paint(g);
         g.setTransform(old);
     }

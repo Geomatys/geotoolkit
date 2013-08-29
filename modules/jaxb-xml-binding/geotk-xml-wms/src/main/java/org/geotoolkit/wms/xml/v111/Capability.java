@@ -59,7 +59,7 @@ public class Capability implements AbstractCapability {
      /**
      * An empty constructor used by JAXB.
      */
-     Capability() {
+     public Capability() {
      }
 
     /**
@@ -79,6 +79,7 @@ public class Capability implements AbstractCapability {
         return request;
     }
 
+    @Override
     public void setRequest(final AbstractRequest request) {
         if (request instanceof Request) {
             this.request = (Request)request;
@@ -106,6 +107,7 @@ public class Capability implements AbstractCapability {
         return exception.getFormat();
     }
 
+    @Override
     public void setExceptionFormats(final List<String> formats) {
         if (formats != null) {
             this.exception = new Exception(formats.toArray(new String[formats.size()]));
@@ -157,7 +159,6 @@ public class Capability implements AbstractCapability {
         if (object instanceof Capability) {
             final Capability that = (Capability) object;
 
-            
             return Objects.equals(this.exception, that.exception) &&
                    Objects.equals(this.layer,     that.layer)     &&
                    Objects.equals(this.request,   that.request)   &&

@@ -21,7 +21,6 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-featurestore-core</artifactId>
   <packaging>jar</packaging>
   <name>FeatureStore Core</name>
