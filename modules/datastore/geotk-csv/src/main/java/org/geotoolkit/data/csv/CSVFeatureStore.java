@@ -416,6 +416,11 @@ public class CSVFeatureStore extends AbstractFeatureStore{
         return handleRemaining(fw, filter);
     }
 
+    @Override
+    public boolean isWritable(Name typeName) throws DataStoreException {
+        return true;
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     // FALLTHROUGHT OR NOT IMPLEMENTED /////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
