@@ -20,7 +20,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
@@ -56,6 +59,8 @@ import static org.geotoolkit.process.datastore.copy.CopyDescriptor.*;
  */
 public class Copy extends AbstractProcess {
 
+    private static Logger LOGGER = Logging.getLogger(Copy.class);
+
     /**
      * Default constructor
      */
@@ -71,14 +76,23 @@ public class Copy extends AbstractProcess {
 
         final FeatureStore sourceDS = value(SOURCE_STORE, inputParameters);
         final FeatureStore targetDS = value(TARGET_STORE, inputParameters);
+        Session targetSS = value(TARGET_SESSION, inputParameters);
         final Boolean eraseParam    = value(ERASE,        inputParameters);
         final Boolean newVersion    = value(NEW_VERSION,  inputParameters);
         // Type name can be removed, it's embedded in the query param.
         final String typenameParam  = value(TYPE_NAME,    inputParameters);
-        final Query queryParam      = value(QUERY,        inputParameters);
+        final Query queryParam      = value(QUERY, inputParameters);
 
+        final boolean doCommit = targetSS == null;
+        
         final Session sourceSS = sourceDS.createSession(false);
-        final Session targetSS = targetDS.createSession(true);
+        if (targetSS == null) {
+            if (targetDS != null) {
+                targetSS = targetDS.createSession(true);
+            } else {
+                throw new ProcessException("Input target_session or target_datastore missing.", this, null);
+            }
+        } 
 
         boolean reBuildQuery = false;
 
@@ -102,7 +116,7 @@ public class Copy extends AbstractProcess {
             }
         } else {
             //pick only the wanted names
-            names = new HashSet<Name>();
+            names = new HashSet<>();
             final List<String> wanted = UnmodifiableArrayList.wrap(queryName.split(","));
             for(String s : wanted) {
                 try{
@@ -137,16 +151,20 @@ public class Copy extends AbstractProcess {
         }
 
         try {
-            targetSS.commit();
-
-            //find last version
+            
             Date lastVersionDate = null;
-            for (Name n : names) {
-                if(targetSS.getFeatureStore().getQueryCapabilities().handleVersioning()) {
-                    final List<Version> versions = targetSS.getFeatureStore().getVersioning(n).list();
-                    if (!versions.isEmpty()) {
-                        if (lastVersionDate == null || versions.get(versions.size()-1).getDate().getTime() > lastVersionDate.getTime()) {
-                            lastVersionDate = versions.get(versions.size()-1).getDate();
+            if (doCommit) {
+                LOGGER.log(Level.INFO, "Commit all changes");
+                targetSS.commit();
+                
+                //find last version
+                for (Name n : names) {
+                    if(targetSS.getFeatureStore().getQueryCapabilities().handleVersioning()) {
+                        final List<Version> versions = targetSS.getFeatureStore().getVersioning(n).list();
+                        if (!versions.isEmpty()) {
+                            if (lastVersionDate == null || versions.get(versions.size()-1).getDate().getTime() > lastVersionDate.getTime()) {
+                                lastVersionDate = versions.get(versions.size()-1).getDate();
+                            }
                         }
                     }
                 }
@@ -203,6 +221,18 @@ public class Copy extends AbstractProcess {
             targetSS.removeFeatures(name, QueryBuilder.all(name).getFilter());
         }
 
+        //Logging
+        final StringBuilder logMsg = new StringBuilder("Insert ");
+        logMsg.append(collection.size()).append(" features ");
+        logMsg.append("in type ").append(name.getLocalPart());
+        logMsg.append(" [");
+        if (erase) {
+            logMsg.append("ERASE");
+            if (newVersion) logMsg.append(", NEWVERSION");
+        }
+        if (newVersion) logMsg.append("NEWVERSION");
+        logMsg.append("]");
+        LOGGER.log(Level.INFO, logMsg.toString());
         //APPEND
         targetSS.addFeatures(name, collection);
     }

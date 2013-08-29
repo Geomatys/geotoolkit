@@ -19,6 +19,7 @@ package org.geotoolkit.process.datastore.copy;
 import java.util.Date;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.session.Session;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.Process;
@@ -36,6 +37,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * <ul>
  *     <li>SOURCE_STORE "source_datastore"</li>
  *     <li>TARGET_STORE "target_datastore"</li>
+ *     <li>TARGET_SESSION "target_session"</li>
  *     <li>ERASE "erase" the data provider will be erased if true</li>
  *     <li>NEW_VERSION "new_version" the data provider will create a new version if true</li>
  *     <li>TYPE_NAME "type_name" feature type name to copy. Support a several type name separated by a comma.</li>
@@ -68,12 +70,19 @@ public final class CopyDescriptor extends VectorDescriptor {
             FeatureStore.class, null, true);
 
     /**
-     * Mandatory - Target datastore.
+     * Optional - Target datastore. 
      */
     public static final ParameterDescriptor<FeatureStore> TARGET_STORE =
             new DefaultParameterDescriptor("target_datastore", "The target datastore",
-            FeatureStore.class, null, true);
+            FeatureStore.class, null, false);
 
+    /**
+     * Optional - Target datastore.
+     */
+    public static final ParameterDescriptor<Session> TARGET_SESSION =
+            new DefaultParameterDescriptor("target_session", "The target session of a datastore",
+            Session.class, null, false);
+    
     /**
      * Mandatory - drop before insertion or not.
      */
@@ -109,7 +118,7 @@ public final class CopyDescriptor extends VectorDescriptor {
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{SOURCE_STORE, TARGET_STORE, ERASE, NEW_VERSION, TYPE_NAME, QUERY});
+            new GeneralParameterDescriptor[]{SOURCE_STORE, TARGET_STORE, TARGET_SESSION, ERASE, NEW_VERSION, TYPE_NAME, QUERY});
 
     /**
      * Optional - create version
