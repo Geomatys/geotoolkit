@@ -95,12 +95,16 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
             s52context = new S52Context();
             try {
                 s52context.load(
-                        new URL("file:/media/jsorel/terra/TRAVAIL/1_Specification/IHO/S-52/S-52_CD/PresLib_e3.4_2008/Digital_Files/Digital_PresLib/pslb03_4.dai"),
-                        S52Context.ICONS,
-                        S52Context.LK_AREA_BOUNDARY,
-                        S52Context.LK_LINE,
-                        S52Context.LK_POINT_SIMPLIFIED
+                        new URL("file:/media/jsorel/terra/TRAVAIL/1_Specification/IHO/S-52/S-52_CD/PresLib_e3.4_2008/Digital_Files/Digital_PresLib/pslb03_4.dai")
                         );
+
+//                s52context.load(
+//                        new URL("file:/media/jsorel/terra/TRAVAIL/1_Specification/IHO/S-52/S-52_CD/PresLib_e3.4_2008/Digital_Files/Digital_PresLib/pslb03_4.dai"),
+//                        S52Context.ICONS,
+//                        S52Context.LK_AREA_BOUNDARY,
+//                        S52Context.LK_LINE,
+//                        S52Context.LK_POINT_SIMPLIFIED
+//                        );
             } catch (IOException ex) {
                 throw new PortrayalException(ex);
             }

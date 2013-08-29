@@ -30,7 +30,7 @@ import java.net.URL;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class LookupTableReader {
+public class TxtLookupTableReader {
 
 
     private Object input;
@@ -38,7 +38,7 @@ public class LookupTableReader {
     private DataInput ds;
     private boolean closeOnDispose = false;
 
-    public LookupTableReader() {
+    public TxtLookupTableReader() {
     }
 
     /**
@@ -103,7 +103,7 @@ public class LookupTableReader {
             //skip comment lines
             if(line.isEmpty() || line.charAt(0) == '*') continue;
 
-            final LookupRecord record = new LookupRecord();
+            final TxtLookupRecord record = new TxtLookupRecord();
             record.read(line);
             table.getRecords().add(record);
         }

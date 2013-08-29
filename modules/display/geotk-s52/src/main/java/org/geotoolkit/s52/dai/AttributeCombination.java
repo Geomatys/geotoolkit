@@ -17,6 +17,7 @@
 package org.geotoolkit.s52.dai;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,11 +33,12 @@ import static org.geotoolkit.s52.dai.DAIField.DELIM_1F;
  */
 public class AttributeCombination extends DAIField{
 
-    /** *A(6) : 6 Character Attribute Code. */
-    public final List<String> ATTL = new ArrayList<>();
-    /** A(1/15) : Attribute Value; Shall be a valid value for the domain
-     * specified  by the attribute label in ATTL. */
-    public final List<String> ATTV = new ArrayList<>();
+    /** ATTL.
+     *  A(6) : 6 Character Attribute Code.
+     *  ATTV : A(1/15) : Attribute Value; Shall be a valid value for the domain
+     *         specified  by the attribute label in ATTL
+     */
+    public final Map<String,String> map = new HashMap<>();
 
     public AttributeCombination() {
         super("ATTC");
@@ -45,8 +47,7 @@ public class AttributeCombination extends DAIField{
     @Override
     public Map<String, Object> getSubFields() {
         final Map<String,Object> map = new LinkedHashMap<>();
-        map.put("ATTL", ATTL);
-        map.put("ATTV", ATTV);
+        map.putAll(map);
         return map;
     }
 
@@ -56,10 +57,8 @@ public class AttributeCombination extends DAIField{
         while(str.length()-offset[0] >= 6){
             String attl = readStringBySize(str, offset, 6);
             String attv = readStringByDelim(str, offset, DELIM_1F);
-            ATTL.add(attl);
-            ATTV.add(attv);
+            map.put(attl, attv);
         }
-
 
     }
 
