@@ -1,12 +1,12 @@
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
 import com.vividsolutions.jts.geom.*;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
@@ -30,7 +30,6 @@ public class MIFDefaultGeometryBuilder extends MIFGeometryBuilder{
     public static final Name NAME = new DefaultName("GEOMETRY");
     public static final Name GEOM_NAME = new DefaultName("GEOMETRY");
 
-    private CoordinateReferenceSystem collectionCRS = null;
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {
         throw new IllegalStateException("building geometry with name GEOMETRY should never happen for MIF MID !");
@@ -40,8 +39,6 @@ public class MIFDefaultGeometryBuilder extends MIFGeometryBuilder{
     public FeatureType buildType(CoordinateReferenceSystem crs, FeatureType parent) {
         AttributeType type = new DefaultAttributeType(NAME, Feature.class, false, false, null, null, null);
         AttributeDescriptor desc = new DefaultAttributeDescriptor(type, NAME, 1, 3, false, null);
-
-        collectionCRS = crs;
 
         return new DefaultSimpleFeatureType(NAME, Collections.singletonList(desc), null, false, null, parent, null);
     }
