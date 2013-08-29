@@ -50,6 +50,7 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.query.QueryUtilities;
@@ -421,7 +422,7 @@ public class CSVFeatureStore extends AbstractFeatureStore{
 
     @Override
     public QueryCapabilities getQueryCapabilities() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new DefaultQueryCapabilities(false, false);
     }
 
     @Override
