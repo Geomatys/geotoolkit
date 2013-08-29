@@ -25,7 +25,7 @@ import java.util.Map;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class PatternDefinition extends DAIField{
+public class PatternDefinition extends DAIField implements Definition {
 
     /** A(8) : name of the fill patern; */
     public String PANM;
@@ -54,6 +54,47 @@ public class PatternDefinition extends DAIField{
 
     public PatternDefinition() {
         super("PATD");
+    }
+
+    @Override
+    public String getName() {
+        return PANM;
+    }
+
+    @Override
+    public String getType() {
+        return PADF;
+    }
+
+
+    @Override
+    public int getBoxULX() {
+        return PBXC;
+    }
+
+    @Override
+    public int getBoxULY() {
+        return PBXR;
+    }
+
+    @Override
+    public int getBoxWidth() {
+        return PAHL;
+    }
+
+    @Override
+    public int getBoxHeight() {
+        return PAVL;
+    }
+
+    @Override
+    public int getPivotX() {
+        return PACL;
+    }
+
+    @Override
+    public int getPivotY() {
+        return PARW;
     }
 
     @Override

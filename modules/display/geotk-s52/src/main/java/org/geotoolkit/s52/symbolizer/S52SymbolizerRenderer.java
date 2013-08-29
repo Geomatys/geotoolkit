@@ -33,11 +33,15 @@ import java.awt.FontMetrics;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.TexturePaint;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -49,6 +53,8 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.display2d.style.j2d.DefaultPathWalker;
+import org.geotoolkit.display2d.style.j2d.PathWalker;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
@@ -57,6 +63,7 @@ import org.geotoolkit.s52.S52Context.GeoType;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.S52SVGIcon;
 import org.geotoolkit.s52.S52Utilities;
+import org.geotoolkit.s52.dai.PatternDefinition;
 import org.geotoolkit.s52.dai.SymbolVector;
 import org.geotoolkit.s52.lookuptable.LookupRecord;
 import org.geotoolkit.s52.lookuptable.LookupTable;
@@ -69,6 +76,7 @@ import org.geotoolkit.s52.lookuptable.instruction.PatternFill;
 import org.geotoolkit.s52.lookuptable.instruction.SimpleLine;
 import org.opengis.feature.Feature;
 import org.geotoolkit.s52.lookuptable.instruction.Text;
+import org.geotoolkit.s52.render.PatternSymbolStyle;
 import org.geotoolkit.s52.render.SymbolStyle;
 import org.geotoolkit.util.Converters;
 import org.opengis.feature.Property;
@@ -220,7 +228,49 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
 
                 }else if(inst instanceof PatternFill){
                     final PatternFill pf = (PatternFill) inst;
-                    //LOGGER.log(Level.INFO, "TODO support instruction : {0}", inst.getCode());
+                    final PatternSymbolStyle ss = (PatternSymbolStyle) context.getSyle(pf.patternName);
+                    final PatternDefinition pd = (PatternDefinition) ss.definition;
+
+                    //TODO handle size/distance correction
+                    final int maxdist = pd.PAMA;
+                    final int mindist = pd.PAMI; //used in constant scaling
+                    final String scaling = pd.PASP;
+                    final String placement = pd.PATP;
+
+                    final float spacing = SymbolStyle.SCALE*mindist;
+                    final Rectangle2D rect = ss.getBounds();
+                    final float px = ss.definition.getPivotX()*SymbolStyle.SCALE;
+                    final float py = ss.definition.getPivotY()*SymbolStyle.SCALE;
+
+                    final TexturePaint paint;
+                    if("LIN".equals(placement)){
+                        final Coordinate center = new Coordinate(px-rect.getX(), py-rect.getY());
+                        final BufferedImage img = new BufferedImage((int)(rect.getWidth()+spacing),
+                                                                    (int)(rect.getHeight()+spacing),
+                                                                    BufferedImage.TYPE_INT_ARGB);
+                        ss.render(img.createGraphics(), context, colorTable, center, 0f);
+                        paint = new TexturePaint(img, new Rectangle2D.Double(0, 0,
+                                rect.getWidth()+spacing, rect.getHeight()+spacing));
+                    }else if("STG".equals(placement)){
+                        final Coordinate center = new Coordinate(px-rect.getX(), py-rect.getY());
+                        final BufferedImage img = new BufferedImage((int)(rect.getWidth()*2+spacing*2),
+                                                                    (int)(rect.getHeight()*2+spacing*2),
+                                                                    BufferedImage.TYPE_INT_ARGB);
+                        //first symbol
+                        ss.render(img.createGraphics(), context, colorTable, center, 0f);
+                        //second symbol with displacement
+                        center.x += rect.getWidth() + spacing;
+                        center.y += rect.getHeight()+ spacing;
+                        ss.render(img.createGraphics(), context, colorTable, center, 0f);
+
+                        paint = new TexturePaint(img, new Rectangle2D.Double(0, 0,
+                                rect.getWidth()*2+spacing*2, rect.getHeight()*2+spacing*2));
+                    }else{
+                        throw new PortrayalException("Unexpected placement : "+placement);
+                    }
+
+                    g2d.setPaint(paint);
+                    g2d.fill(graphic.getGeometry(null).getDisplayShape());
 
                 }else if(inst instanceof SimpleLine){
                     final SimpleLine sl = (SimpleLine) inst;
@@ -233,7 +283,19 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
 
                 }else if(inst instanceof ComplexLine){
                     final ComplexLine cl = (ComplexLine) inst;
-                    //LOGGER.log(Level.INFO, "TODO support instruction : {0}", inst.getCode());
+                    final SymbolStyle ss = context.getSyle(cl.LINNAME);
+
+                    final PathIterator ite = graphic.getGeometry(null).getDisplayShape().getPathIterator(null);
+                    final PathWalker walker = new DefaultPathWalker(ite);
+                    final Point2D pt = new Point2D.Double();
+                    while(!walker.isFinished()){
+                        //TODO not correct
+                        walker.walk(1);
+                        walker.getPosition(pt);
+                        final float rotation = walker.getRotation();
+                        ss.render(g2d, context, colorTable, new Coordinate(pt.getX(),pt.getY()), rotation);
+                        walker.walk(9);
+                    }
 
                 }else if(inst instanceof Symbol){
                     final Symbol symbol = (Symbol) inst;
@@ -259,163 +321,15 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
                                 }
                             }
                         }
-
                     }
-
 
                     final SymbolStyle ss = context.getSyle(symbol.symbolName);
-                    if(ss.definition.SYDF.equals("R")){
-                        System.out.println(">>>>>>>>>>>>>>> RASTER");
-                    }else if(ss.definition.SYDF.equals("V")){
-                        final float boxwidth  = ss.definition.SBXC;
-                        final float boxheight = ss.definition.SBXR;
-                        final float pivotX    = ss.definition.SYCL;
-                        final float pivotY    = ss.definition.SYRW;
-                        //one unit = 0.01mm
-                        //adjust values back to pixel units
-                        final float scale = S52Utilities.mmToPixel(1) * 0.01f;
+                    ss.render(g2d, context, colorTable, center, rotation);
 
-                        final AffineTransform old = g2d.getTransform();
-                        final AffineTransform trs = new AffineTransform();
-                        trs.translate(center.x, center.y);
-                        trs.scale(scale, scale);
-                        trs.rotate(rotation);
-                        trs.translate(-pivotX, -pivotY);
-                        g2d.setTransform(trs);
-
-                        float alpha = 1f;
-                        float tx = 0f;
-                        float ty = 0f;
-
-                        boolean polygonMode = false;
-                        Path2D path = null;
-
-                        for(SymbolVector sv : ss.vectors){
-                            final String[] parts = sv.VECD.split(";");
-                            for(String part : parts){
-                                //S52 Annex A Part I p.34 (5)
-                                final String action = part.substring(0, 2);
-                                if("SP".equals(action)){
-                                    //color
-                                    final String colorCode = ""+part.charAt(2);
-                                    final Color color;
-                                    if(colorCode.equals("@")){
-                                        color = new Color(0, 0, 0, 0);
-                                    }else{
-                                        final String colorName = ss.colors.colors.get(colorCode);
-                                        color = colorTable.getColor(colorName);
-                                    }
-                                    g2d.setColor(color);
-
-                                }else if("ST".equals(action)){
-                                    //transparency
-                                    final char trans = part.charAt(2);
-                                    switch(trans){
-                                        case '0' : alpha = 1f; break;
-                                        case '1' : alpha = 0.25f; break;
-                                        case '2' : alpha = 0.50f; break;
-                                        case '3' : alpha = 0.75f; break;
-                                        default : alpha = 1f;
-                                    }
-
-                                }else if("SW".equals(action)){
-                                    //pen size
-                                    float size = Integer.valueOf(part.substring(2));
-                                    //one unit = 0.3mm
-                                    size = S52Utilities.mmToPixel(size*0.3f) * (1f/scale);
-                                    g2d.setStroke(new BasicStroke(size));
-
-                                }else if("PU".equals(action)){
-                                    //move pen , no draw
-                                    part = part.substring(2);
-                                    final int index = part.indexOf(',');
-                                    tx = Integer.valueOf(part.substring(0, index));
-                                    ty = Integer.valueOf(part.substring(index+1));
-                                    if(polygonMode){
-                                        path.moveTo(tx,ty);
-                                    }
-
-                                }else if("PD".equals(action)){
-                                    part = part.substring(2);
-                                    final String[] pts = part.split(",");
-                                    final Path2D line = (polygonMode) ? path : new Path2D.Float();
-                                    line.moveTo(tx, ty);
-                                    for(int k=0;k<pts.length;k+=2){
-                                        final float ex = Integer.valueOf(pts[k]);
-                                        final float ey = Integer.valueOf(pts[k+1]);
-                                        line.lineTo(ex,ey);
-                                        tx = ex;
-                                        ty = ey;
-                                    }
-                                    if(!polygonMode){
-                                        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-                                        g2d.draw(line);
-                                    }
-
-                                }else if("CI".equals(action)){
-                                    //circle
-                                    float size = Integer.valueOf(part.substring(2));
-                                    final Shape shp = new Ellipse2D.Float(tx-size, ty-size, size*2, size*2);
-                                    if(polygonMode){
-                                        path.append(shp, true);
-                                    }else{
-                                        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-                                        g2d.draw(shp);
-                                    }
-
-                                }else if("AA".equals(action)){
-                                    throw new IOException("Action not implemented yet : "+part);
-                                }else if("PM".equals(action)){
-                                    //polygon operations
-                                    final char trans = part.charAt(2);
-                                    switch(trans){
-                                        case '0' :
-                                            path = new Path2D.Float();
-                                            polygonMode = true;
-                                            break;
-                                        case '1' :
-                                            path.closePath();
-                                            break;
-                                        case '2' :
-                                            polygonMode = false;
-                                            break;
-                                        default : throw new IOException("unexpected action : "+part);
-                                    }
-
-                                }else if("EP".equals(action)){
-                                    //outline polygon
-                                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-                                    g2d.draw(path);
-
-                                }else if("FP".equals(action)){
-                                    //fill polygon
-                                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-                                    g2d.draw(path);
-
-                                }else if("SC".equals(action)){
-                                    final String name = part.substring(2, 9);
-                                    part = part.substring(9);
-                                    System.out.println("SC Action not implemented yet.");
-                                }else{
-                                    throw new IOException("unexpected action : "+part);
-                                }
-                            }
-                        }
-
-                        g2d.setTransform(old);
-                    }
-
-                    ////////////////////////////////////////////////////////////
-//                    final S52SVGIcon icon = context.getIcon(symbol.symbolName).derivate(colorTable);
-//                    icon.paint(g2d, new Point2D.Double(pivotPoint.x, pivotPoint.y), rotation);
-                    //for debugging, see the center
-//                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-//                    g2d.setColor(Color.red);
-//                    g2d.fillRect((int)center.x-1, (int)center.y-1, 2, 2);
-                    ////////////////////////////////////////////////////////////
 
                 }else if(inst instanceof ConditionalSymbolProcedure){
                     final ConditionalSymbolProcedure con = (ConditionalSymbolProcedure) inst;
+                    //con.procedureName
                     //LOGGER.log(Level.INFO, "TODO support instruction : {0}", inst.getCode());
 
                 } else{

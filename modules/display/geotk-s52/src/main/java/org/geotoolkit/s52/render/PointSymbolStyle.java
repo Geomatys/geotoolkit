@@ -16,26 +16,16 @@
  */
 package org.geotoolkit.s52.render;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.geotoolkit.s52.dai.LinestyleColorReference;
-import org.geotoolkit.s52.dai.LinestyleDefinition;
-import org.geotoolkit.s52.dai.LinestyleExposition;
-import org.geotoolkit.s52.dai.LinestyleVector;
+import org.geotoolkit.s52.dai.SymbolIdentifier;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class LineStyle {
+public class PointSymbolStyle extends SymbolStyle{
 
-    /** holds the color map */
-    public LinestyleColorReference colors;
-    /** style definition */
-    public LinestyleDefinition definition;
-    /** explication of the style */
-    public LinestyleExposition explication;
-    /** drawing commands */
-    public final List<LinestyleVector> vectors = new ArrayList<>();
+    /** identifier */
+    public SymbolIdentifier ident;
+
 
 }
