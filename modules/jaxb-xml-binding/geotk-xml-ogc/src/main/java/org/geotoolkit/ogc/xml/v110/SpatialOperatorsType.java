@@ -78,9 +78,9 @@ public class SpatialOperatorsType implements SpatialOperators {
      */
     @Override
     public Collection<SpatialOperator> getOperators() {
-        List<SpatialOperator> result =  new ArrayList<SpatialOperator>();
+        final List<SpatialOperator> result =  new ArrayList<>();
         if (spatialOperator == null) {
-            spatialOperator = new ArrayList<SpatialOperatorType>();
+            spatialOperator = new ArrayList<>();
             return result;
         } else {
             for (SpatialOperatorType c: spatialOperator) {

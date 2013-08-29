@@ -82,6 +82,7 @@ public class CodeType implements AbstractCodeType {
     /**
      * Gets the value of the value property.
      */
+    @Override
     public String getValue() {
         return value;
     }
@@ -89,6 +90,7 @@ public class CodeType implements AbstractCodeType {
     /**
      * Gets the value of the codeSpace property.
      */
+    @Override
     public String getCodeSpace() {
         return codeSpace;
     }

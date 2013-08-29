@@ -75,6 +75,38 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
     private List<String> accessConstraints;
 
     /**
+     * Empty constructor used by JAXB.
+     */
+    ServiceIdentification(){
+    }
+
+    /**
+     * Build a new Service identification (full version).
+     */
+    public ServiceIdentification(final List<LanguageStringType> title,  final List<LanguageStringType> _abstract,
+            final List<KeywordsType> keywords, final CodeType serviceType, final List<String> serviceTypeVersion, final List<String> profile,
+            final String fees, final List<String> accessConstraints){
+        super(title, _abstract, keywords);
+        this.accessConstraints  = accessConstraints;
+        this.fees               = fees;
+        this.profile            = profile;
+        this.serviceType        = serviceType;
+        this.serviceTypeVersion = serviceTypeVersion;
+    }
+
+    /**
+     * Build a new Service identification (light version).
+     */
+    public ServiceIdentification(final LanguageStringType title,  final LanguageStringType _abstract,
+            final KeywordsType keywords, final CodeType serviceType, final List<String> serviceTypeVersion, final String fees, final List<String> accessConstraints){
+        super(title, _abstract, keywords);
+        this.accessConstraints  = accessConstraints;
+        this.fees               = fees;
+        this.serviceType        = serviceType;
+        this.serviceTypeVersion = serviceTypeVersion;
+    }
+
+    /**
      * Gets the value of the serviceType property.
      * 
      * @return
@@ -106,7 +138,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
     @Override
     public List<String> getServiceTypeVersion() {
         if (serviceTypeVersion == null) {
-            serviceTypeVersion = new ArrayList<String>();
+            serviceTypeVersion = new ArrayList<>();
         }
         return this.serviceTypeVersion;
     }
@@ -118,7 +150,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
     @Override
     public List<String> getProfile() {
         if (profile == null) {
-            profile = new ArrayList<String>();
+            profile = new ArrayList<>();
         }
         return this.profile;
     }
@@ -167,7 +199,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
     @Override
     public List<String> getAccessConstraints() {
         if (accessConstraints == null) {
-            accessConstraints = new ArrayList<String>();
+            accessConstraints = new ArrayList<>();
         }
         return this.accessConstraints;
     }

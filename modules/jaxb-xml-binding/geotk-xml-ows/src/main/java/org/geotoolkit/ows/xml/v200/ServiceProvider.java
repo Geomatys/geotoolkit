@@ -62,6 +62,21 @@ public class ServiceProvider implements AbstractServiceProvider {
     @XmlElement(name = "ServiceContact", required = true)
     private ResponsiblePartySubsetType serviceContact;
 
+     /**
+     * Empty constructor used by JAXB.
+     */
+    ServiceProvider(){
+    }
+
+    /**
+     * Build a new Service provider.
+     */
+    public ServiceProvider(final String providerName, final OnlineResourceType providerSite, final ResponsiblePartySubsetType serviceContact){
+        this.providerName   = providerName;
+        this.providerSite   = providerSite;
+        this.serviceContact = serviceContact;
+    }
+    
     /**
      * Gets the value of the providerName property.
      * 

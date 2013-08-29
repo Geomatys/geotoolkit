@@ -64,6 +64,27 @@ public class CodeType implements AbstractCodeType {
     private String codeSpace;
 
     /**
+     * Empty constructor used by JAXB.
+     */
+    protected CodeType() {
+    }
+
+    /**
+     * Build a new code.
+     */
+    public CodeType(final String value, final String codespace) {
+        this.codeSpace = codespace;
+        this.value     = value;
+    }
+
+    /**
+     * Build a new code without codespace.
+     */
+    public CodeType(final String value) {
+        this.value     = value;
+    }
+    
+    /**
      * Gets the value of the value property.
      * 
      * @return

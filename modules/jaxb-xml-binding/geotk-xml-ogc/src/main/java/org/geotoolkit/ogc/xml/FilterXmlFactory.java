@@ -23,6 +23,10 @@ import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
 import org.opengis.filter.PropertyIsLessThan;
 import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.PropertyIsNotEqualTo;
+import org.opengis.filter.capability.GeometryOperand;
+import org.opengis.filter.capability.SpatialCapabilities;
+import org.opengis.filter.capability.SpatialOperator;
+import org.opengis.filter.capability.SpatialOperators;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.temporal.After;
 import org.opengis.filter.temporal.Before;
@@ -245,6 +249,40 @@ public class FilterXmlFactory {
             }
             final org.geotoolkit.ogc.xml.v100.PropertyNameType pName = new org.geotoolkit.ogc.xml.v100.PropertyNameType(propertyName);
             return new org.geotoolkit.ogc.xml.v100.PropertyIsGreaterThanOrEqualToType((org.geotoolkit.ogc.xml.v100.LiteralType)lit, pName);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static SpatialCapabilities buildSpatialCapabilities(final String currentVersion, final GeometryOperand[] geometryOperands, final SpatialOperators spatial) {
+        if ("1.1.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v110.SpatialCapabilitiesType(geometryOperands, spatial);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v100.SpatialCapabilitiesType(spatial);
+        } else if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v200.SpatialCapabilitiesType(geometryOperands, spatial);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static SpatialOperator buildSpatialOperator(final String currentVersion, final String name, final GeometryOperand[] geometryOperands) {
+        if ("1.1.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v110.SpatialOperatorType(name, geometryOperands);
+        } else if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v200.SpatialOperatorType(name, geometryOperands);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static SpatialOperators buildSpatialOperators(final String currentVersion, final SpatialOperator[] operators) {
+        if ("1.1.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v110.SpatialOperatorsType(operators);
+        } else if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v200.SpatialOperatorsType(operators);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v100.SpatialOperatorsType(operators);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }

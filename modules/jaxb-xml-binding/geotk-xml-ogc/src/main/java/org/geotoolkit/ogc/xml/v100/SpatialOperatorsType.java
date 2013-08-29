@@ -17,12 +17,16 @@
 package org.geotoolkit.ogc.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.capability.SpatialOperator;
+import org.opengis.filter.capability.SpatialOperators;
 
 
 /**
@@ -58,7 +62,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "Spatial_OperatorsType", propOrder = {
     "bboxOrEqualsOrDisjoint"
 })
-public class SpatialOperatorsType {
+public class SpatialOperatorsType implements SpatialOperators {
 
     @XmlElements({
         @XmlElement(name = "Intersect", type = Intersect.class),
@@ -74,6 +78,25 @@ public class SpatialOperatorsType {
         @XmlElement(name = "BBOX", type = BBOX.class)
     })
     protected List<Object> bboxOrEqualsOrDisjoint;
+
+     /**
+     * An empty constructor used by JAXB
+     */
+    public SpatialOperatorsType() {
+
+    }
+
+    /**
+     * Build a new comparison operators with the specified array of operator
+     *
+     * @param operators an array of comparison operator
+     */
+    public SpatialOperatorsType( SpatialOperator[] operators ) {
+        if ( operators == null ){
+            operators = new SpatialOperator[]{};
+        }
+        this.bboxOrEqualsOrDisjoint = new ArrayList(Arrays.asList(operators));
+    }
 
     /**
      * Gets the value of the bboxOrEqualsOrDisjoint property.
@@ -109,9 +132,38 @@ public class SpatialOperatorsType {
      */
     public List<Object> getBBOXOrEqualsOrDisjoint() {
         if (bboxOrEqualsOrDisjoint == null) {
-            bboxOrEqualsOrDisjoint = new ArrayList<Object>();
+            bboxOrEqualsOrDisjoint = new ArrayList<>();
         }
         return this.bboxOrEqualsOrDisjoint;
     }
 
+    /**
+     * Gets the value of the spatialOperator property.
+     */
+    @Override
+    public Collection<SpatialOperator> getOperators() {
+        List<SpatialOperator> result =  new ArrayList<>();
+        if (bboxOrEqualsOrDisjoint == null) {
+            bboxOrEqualsOrDisjoint = new ArrayList<>();
+            return result;
+        } else {
+            for (Object c: bboxOrEqualsOrDisjoint) {
+                result.add((SpatialOperator) c);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public SpatialOperator getOperator(final String name) {
+        if ( name == null || bboxOrEqualsOrDisjoint == null) {
+            return null;
+        }
+        for (Object operator : bboxOrEqualsOrDisjoint ) {
+            if ( name.equals(((SpatialOperator)operator).getName() ) ) {
+                return (SpatialOperator)operator;
+            }
+        }
+        return null;
+    }
 }

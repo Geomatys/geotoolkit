@@ -71,9 +71,9 @@ public class GeometryOperandsType {
         if (geometryOperands == null) {
             geometryOperands = new GeometryOperand[0];
         }
-        geometryOperand = new ArrayList<QName>();
+        geometryOperand = new ArrayList<>();
         for (GeometryOperand g: geometryOperands) {
-            geometryOperand.add(new QName(g.getNamespaceURI(), g.getLocalPart()));
+            geometryOperand.add(new QName("http://www.opengis.net/gml", g.getLocalPart()));
         }
     }
 
@@ -82,7 +82,7 @@ public class GeometryOperandsType {
      */
     public GeometryOperandsType(List<QName> geometryOperands) {
         if (geometryOperands == null) {
-            geometryOperands = new ArrayList<QName>();
+            geometryOperands = new ArrayList<>();
         }
         this.geometryOperand = geometryOperands;
     }
@@ -93,7 +93,7 @@ public class GeometryOperandsType {
      */
     public List<QName> getGeometryOperand() {
         if (geometryOperand == null) {
-            geometryOperand = new ArrayList<QName>();
+            geometryOperand = new ArrayList<>();
         }
         return Collections.unmodifiableList(geometryOperand);
     }

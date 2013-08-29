@@ -81,6 +81,7 @@ public class ServiceProvider implements AbstractServiceProvider {
     /**
      * Gets the value of the providerName property.
      */
+    @Override
     public String getProviderName() {
         return providerName;
     }
@@ -88,6 +89,7 @@ public class ServiceProvider implements AbstractServiceProvider {
     /**
      * Gets the value of the providerSite property.
      */
+    @Override
     public OnlineResourceType getProviderSite() {
         return providerSite;
     }
@@ -96,6 +98,7 @@ public class ServiceProvider implements AbstractServiceProvider {
      * Gets the value of the serviceContact property.
      * 
      */
+    @Override
     public ResponsiblePartySubsetType getServiceContact() {
         return serviceContact;
     }
