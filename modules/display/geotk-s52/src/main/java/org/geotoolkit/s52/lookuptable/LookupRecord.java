@@ -21,25 +21,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
-import static org.geotoolkit.display2d.GO2Utilities.*;
+import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.lookuptable.instruction.AlphanumericText;
-import org.geotoolkit.s52.lookuptable.instruction.Symbol;
 import org.geotoolkit.s52.lookuptable.instruction.ColorFill;
-import org.geotoolkit.s52.lookuptable.instruction.Instruction;
 import org.geotoolkit.s52.lookuptable.instruction.ComplexLine;
 import org.geotoolkit.s52.lookuptable.instruction.ConditionalSymbolProcedure;
+import org.geotoolkit.s52.lookuptable.instruction.Instruction;
 import org.geotoolkit.s52.lookuptable.instruction.NumericText;
 import org.geotoolkit.s52.lookuptable.instruction.PatternFill;
 import org.geotoolkit.s52.lookuptable.instruction.SimpleLine;
+import org.geotoolkit.s52.lookuptable.instruction.Symbol;
 import org.opengis.filter.Filter;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class LookupRecord {
+public abstract class LookupRecord {
 
     private static final Map<String,Instruction> INSTS = new HashMap<>();
     static {
@@ -77,36 +78,19 @@ public class LookupRecord {
         }
     }
 
-    /**
-     * code of the object class
-     */
-    public String objectClass;
-    /**
-     * attribute combination
-     */
-    public String attributeCombination;
-    /**
-     * symbolization instruction
-     */
-    public String symbolInstruction;
-    /**
-     * display priority.
-     * May be null.
-     */
-    public Integer displayPriority;
-    /**
-     * radar.
-     */
-    public Radar radar;
-    /**
-     * IMO display category
-     */
-    public IMODisplayCategory imoDisplayCategory;
-    /**
-     * viewing group (optional).
-     * May be null.
-     */
-    public Integer viewingGroup;
+    public abstract String getObjectClass();
+
+    public abstract Map<String,String> getAttributeCombinaison();
+
+    public abstract String getSymbolInstructions();
+
+    public abstract Integer getPriority();
+
+    public abstract IMODisplayCategory getDisplayCaegory();
+
+    public abstract Radar getRadar();
+
+    public abstract Integer getViewingGroup();
 
     // cache
     // filter build from attributeCombination
@@ -115,57 +99,48 @@ public class LookupRecord {
 
     public Filter getFilter() {
         if(filter == null){
-            String str = (attributeCombination==null) ? null : attributeCombination.trim();
+            final Map<String,String> map = getAttributeCombinaison();
             // S-52 Annex A part I p.66  8.3.3.4
-            if(str == null || str.isEmpty()){
+            if(map == null || map.isEmpty()){
                 //all match
                 filter = Filter.INCLUDE;
             }else{
                 final List<Filter> parts = new ArrayList<>();
-                try{
-                    while(!str.isEmpty()){
-                        final String attName = str.substring(0, 6);
-                        final char val = (str.length()>6) ? str.charAt(6) : 'A';
-                        if(val == '?'){
-                            //not a number, means value must be null
-                            parts.add(FILTER_FACTORY.isNull(FILTER_FACTORY.property(attName)));
-                            str = str.substring(7);
-                        }else if(Character.isDigit(val)){
-                            //fix value
-                            //find the value end
-                            int start = 6;
-                            int end = 6;
-                            boolean hasNextValue = false;
-                            do{
-                                for(int i=start,n=str.length();i<n;i++){
-                                    if(Character.isDigit(str.charAt(i))){
-                                        end = i;
-                                    }else{
-                                        break;
-                                    }
+                for(final Entry<String,String> entry : map.entrySet()){
+                    final String attName = entry.getKey();
+                    String str = entry.getValue();
+                    final char val = (str.length()>0) ? str.charAt(0) : 'A';
+                    if(val == '?'){
+                        //not a number, means value must be null
+                        parts.add(FILTER_FACTORY.isNull(FILTER_FACTORY.property(attName)));
+                    }else if(Character.isDigit(val)){
+                        int start = 0;
+                        int end = 0;
+                        boolean hasNextValue = false;
+                        do{
+                            for(int i=start,n=str.length();i<n;i++){
+                                if(Character.isDigit(str.charAt(i))){
+                                    end = i;
+                                }else{
+                                    break;
                                 }
-                                final int value = Integer.valueOf(str.substring(start, end+1));
-                                parts.add(FILTER_FACTORY.equals(FILTER_FACTORY.property(attName),FILTER_FACTORY.literal(value)));
-                                str = str.substring(end+1);
+                            }
+                            final int value = Integer.valueOf(str.substring(start, end+1));
+                            parts.add(FILTER_FACTORY.equals(FILTER_FACTORY.property(attName),FILTER_FACTORY.literal(value)));
+                            str = str.substring(end+1);
 
-                                //check for more values
-                                hasNextValue = str.startsWith(",");
-                                if(hasNextValue){
-                                    str = str.substring(1);
-                                    start = 0;
-                                    end = 0;
-                                }
-                            }while(hasNextValue);
-
-                        }else{
-                            //not a number, means value must not be null
-                            parts.add(FILTER_FACTORY.not(FILTER_FACTORY.isNull(FILTER_FACTORY.property(attName))));
-                            str = str.substring(6);
-                        }
+                            //check for more values
+                            hasNextValue = str.startsWith(",");
+                            if(hasNextValue){
+                                str = str.substring(1);
+                                start = 0;
+                                end = 0;
+                            }
+                        }while(hasNextValue);
+                    }else{
+                        //not a number, means value must not be null
+                        parts.add(FILTER_FACTORY.not(FILTER_FACTORY.isNull(FILTER_FACTORY.property(attName))));
                     }
-                }catch(Exception ex){
-                    System.err.println(">>>>>>>"+str);
-                    ex.printStackTrace();
                 }
 
                 if(parts.size() == 1){
@@ -179,6 +154,7 @@ public class LookupRecord {
     }
 
     public Instruction[] getInstruction() {
+        final String symbolInstruction = getSymbolInstructions();
         if(instruction == null){
             if(symbolInstruction.isEmpty()){
                 instruction = new Instruction[0];
@@ -206,45 +182,5 @@ public class LookupRecord {
         }
         return instruction;
     }
-
-    /**
-     * Read record from given string.
-     * @param str
-     */
-    public void read(final String str) throws IOException{
-        final String[] parts = split(str);
-        parts[3] = parts[3].trim();
-        parts[5] = parts[5].trim();
-        parts[6] = parts[6].trim();
-
-        objectClass           = parts[0];
-        attributeCombination = parts[1];
-        symbolInstruction     = parts[2].trim();
-        displayPriority       = (parts[3].isEmpty()) ? null : Integer.valueOf(parts[3]);
-        radar                 = Radar.fromCode(parts[4]);
-        imoDisplayCategory    = IMODisplayCategory.getOrCreate(parts[5]);
-        viewingGroup          = (parts[6].isEmpty()) ? null : Integer.valueOf(parts[6]);
-    }
-
-    private static String[] split(String str) throws IOException{
-        final String[] parts = new String[7];
-
-        int offset = 0;
-        int sep1 = 0;
-        int sep2 = 0;
-        for(int i=0;i<7;i++){
-            sep1 = str.indexOf('"',offset);
-            sep2 = str.indexOf('"',sep1+1);
-
-            parts[i] = str.substring(sep1+1, sep2);
-            if(i<6 && str.charAt(sep2+1)!= ','){
-                //ensure there is a comma separator
-                throw new IOException("missing ',' separator between fields");
-            }
-            offset = sep2+1;
-        }
-        return parts;
-    }
-
 
 }

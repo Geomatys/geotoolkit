@@ -226,4 +226,158 @@ public class WmsXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
+
+    public static AbstractKeywordList createKeyword(final String currentVersion, final List<String> keywords) {
+        if ("1.1.1".equals(currentVersion)) {
+            return new org.geotoolkit.wms.xml.v111.KeywordList(keywords.toArray(new String[keywords.size()]));
+        } else if ("1.3.0".equals(currentVersion)) {
+            return new org.geotoolkit.wms.xml.v130.KeywordList(keywords.toArray(new String[keywords.size()]));
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static AbstractContactAddress createContactAddress(final String currentVersion, final String addressType,
+            final String address, final String city, final String stateOrProvince, final String postCode, final String country) {
+        if ("1.1.1".equals(currentVersion)) {
+            return new org.geotoolkit.wms.xml.v111.ContactAddress(addressType, address, city, stateOrProvince, postCode, country);
+        } else if ("1.3.0".equals(currentVersion)) {
+            return new org.geotoolkit.wms.xml.v130.ContactAddress(addressType, address, city, stateOrProvince, postCode, country);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static AbstractContactPersonPrimary createContactPersonPrimary(final String currentVersion, final String contactPerson, final String contactOrganization) {
+        if ("1.1.1".equals(currentVersion)) {
+            return new org.geotoolkit.wms.xml.v111.ContactPersonPrimary(contactPerson, contactOrganization);
+        } else if ("1.3.0".equals(currentVersion)) {
+            return new org.geotoolkit.wms.xml.v130.ContactPersonPrimary(contactPerson, contactOrganization);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static AbstractContactInformation createContactInformation(final String currentVersion, final AbstractContactPersonPrimary contactPersonPrimary,
+            final String contactPosition, final AbstractContactAddress contactAddress, final String contactVoiceTelephone, final String contactFacsimileTelephone,
+            final String contactElectronicMailAddress) {
+        if ("1.1.1".equals(currentVersion)) {
+            if (contactAddress != null && !(contactAddress instanceof org.geotoolkit.wms.xml.v111.ContactAddress)) {
+                throw new IllegalArgumentException("unexpected object version for contactAddress");
+            }
+            if (contactPersonPrimary != null && !(contactAddress instanceof org.geotoolkit.wms.xml.v111.ContactPersonPrimary)) {
+                throw new IllegalArgumentException("unexpected object version for contactPersonPrimary");
+            }
+            return new org.geotoolkit.wms.xml.v111.ContactInformation((org.geotoolkit.wms.xml.v111.ContactPersonPrimary)contactPersonPrimary,
+                                                                      contactPosition,
+                                                                      (org.geotoolkit.wms.xml.v111.ContactAddress)contactAddress,
+                                                                      contactVoiceTelephone,
+                                                                      contactFacsimileTelephone,
+                                                                      contactElectronicMailAddress);
+        } else if ("1.3.0".equals(currentVersion)) {
+            if (contactAddress != null && !(contactAddress instanceof org.geotoolkit.wms.xml.v130.ContactAddress)) {
+                throw new IllegalArgumentException("unexpected object version for contactAddress");
+            }
+            if (contactPersonPrimary != null && !(contactPersonPrimary instanceof org.geotoolkit.wms.xml.v130.ContactPersonPrimary)) {
+                throw new IllegalArgumentException("unexpected object version for contactPersonPrimary");
+            }
+            return new org.geotoolkit.wms.xml.v130.ContactInformation((org.geotoolkit.wms.xml.v130.ContactPersonPrimary)contactPersonPrimary,
+                                                                      contactPosition,
+                                                                      (org.geotoolkit.wms.xml.v130.ContactAddress)contactAddress,
+                                                                      contactVoiceTelephone,
+                                                                      contactFacsimileTelephone,
+                                                                      contactElectronicMailAddress);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+
+    public static AbstractService createService(final String currentVersion, final String name, final String title, final String _abstract,
+            final AbstractKeywordList keywordList, final AbstractOnlineResource onlineResource,
+            final AbstractContactInformation contactInformation, final String fees, final String accessConstraint,
+            final int layerLimit, final int maxWidth, final int maxHeight) {
+        if ("1.1.1".equals(currentVersion)) {
+            if (keywordList != null && !(keywordList instanceof org.geotoolkit.wms.xml.v111.KeywordList)) {
+                throw new IllegalArgumentException("unexpected object version for keywordList");
+            }
+            if (onlineResource != null && !(onlineResource instanceof org.geotoolkit.wms.xml.v111.OnlineResource)) {
+                throw new IllegalArgumentException("unexpected object version for onlineResource");
+            }
+            if (contactInformation != null && !(contactInformation instanceof org.geotoolkit.wms.xml.v111.ContactInformation)) {
+                throw new IllegalArgumentException("unexpected object version for contactInformation");
+            }
+            return new org.geotoolkit.wms.xml.v111.Service(name,
+                                                           title,
+                                                           _abstract,
+                                                           (org.geotoolkit.wms.xml.v111.KeywordList)keywordList,
+                                                           (org.geotoolkit.wms.xml.v111.OnlineResource)onlineResource,
+                                                           (org.geotoolkit.wms.xml.v111.ContactInformation)contactInformation,
+                                                           fees,
+                                                           accessConstraint);
+        } else if ("1.3.0".equals(currentVersion)) {
+            if (keywordList != null && !(keywordList instanceof org.geotoolkit.wms.xml.v130.KeywordList)) {
+                throw new IllegalArgumentException("unexpected object version for keywordList");
+            }
+            if (onlineResource != null && !(onlineResource instanceof org.geotoolkit.wms.xml.v130.OnlineResource)) {
+                throw new IllegalArgumentException("unexpected object version for onlineResource");
+            }
+            if (contactInformation != null && !(contactInformation instanceof org.geotoolkit.wms.xml.v130.ContactInformation)) {
+                throw new IllegalArgumentException("unexpected object version for contactInformation");
+            }
+            return new org.geotoolkit.wms.xml.v130.Service(name,
+                                                           title,
+                                                           _abstract,
+                                                           (org.geotoolkit.wms.xml.v130.KeywordList)keywordList,
+                                                           (org.geotoolkit.wms.xml.v130.OnlineResource)onlineResource,
+                                                           (org.geotoolkit.wms.xml.v130.ContactInformation)contactInformation,
+                                                           fees,
+                                                           accessConstraint,
+                                                           layerLimit,
+                                                           maxWidth,
+                                                           maxHeight);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static AbstractCapability createCapability(final String currentVersion) {
+        if ("1.1.1".equals(currentVersion)) {
+            return new org.geotoolkit.wms.xml.v111.Capability();
+        } else if ("1.3.0".equals(currentVersion)) {
+            return new org.geotoolkit.wms.xml.v130.Capability();
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static AbstractWMSCapabilities createCapabilities(final String currentVersion, final AbstractService service,
+            final AbstractCapability capability, final String updateSequence) {
+        
+        if ("1.1.1".equals(currentVersion)) {
+            if (service != null && !(service instanceof org.geotoolkit.wms.xml.v111.Service)) {
+                throw new IllegalArgumentException("unexpected object version for service");
+            }
+            if (capability != null && !(capability instanceof org.geotoolkit.wms.xml.v111.Capability)) {
+                throw new IllegalArgumentException("unexpected object version for capability");
+            }
+            return new org.geotoolkit.wms.xml.v111.WMT_MS_Capabilities((org.geotoolkit.wms.xml.v111.Service)service,
+                                                                       (org.geotoolkit.wms.xml.v111.Capability)capability,
+                                                                       currentVersion,
+                                                                       updateSequence);
+        } else if ("1.3.0".equals(currentVersion)) {
+            if (service != null && !(service instanceof org.geotoolkit.wms.xml.v130.Service)) {
+                throw new IllegalArgumentException("unexpected object version for service");
+            }
+            if (capability != null && !(capability instanceof org.geotoolkit.wms.xml.v130.Capability)) {
+                throw new IllegalArgumentException("unexpected object version for capability");
+            }
+            return new org.geotoolkit.wms.xml.v130.WMSCapabilities((org.geotoolkit.wms.xml.v130.Service)service,
+                                                                   (org.geotoolkit.wms.xml.v130.Capability)capability,
+                                                                   currentVersion,
+                                                                   updateSequence);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
 }

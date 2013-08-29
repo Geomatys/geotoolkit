@@ -42,8 +42,8 @@ import org.apache.lucene.util.Version;
 import org.geotoolkit.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.index.tree.io.StoreIndexException;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.LuceneUtils;
@@ -134,11 +134,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             // must be set before reading tree
             setFileDirectory(currentIndexDirectory);
             create = false;
-            try {
                 readTree();
-            } catch (IOException ex) {
-                LOGGER.log(Level.WARNING, "IO exception while reading tree", ex);
-            }
         }
     }
 
@@ -199,10 +195,10 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             // writer.optimize(); no longer justified
             writer.close();
 
-            // we store the R-tree (only if there is results)
-            if (!toIndex.isEmpty()) {
-                writeTree();
-            }
+//            // we store the R-tree (only if there is results)
+//            if (!toIndex.isEmpty()) {
+//                writeTree();
+//            }
             
             // we store the numeric fields in a properties file int the index directory
             storeNumericFieldsFile();
@@ -250,10 +246,10 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             // writer.optimize(); no longer justified
             writer.close();
             
-            // we store the R-tree (obly if there is results)
-            if (!identifiers.isEmpty()) {
-                writeTree();
-            }
+//            // we store the R-tree (obly if there is results)
+//            if (!identifiers.isEmpty()) {
+//                writeTree();
+//            }
             
             // we store the numeric fields in a properties file int the index directory
             storeNumericFieldsFile();
@@ -303,7 +299,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             LOGGER.log(Level.FINER, "Metadata: {0} indexed", getIdentifier(meta));
             writer.close();
             
-            writeTree();
+//            writeTree();
 
         } catch (IndexingException ex) {
             LOGGER.log(Level.WARNING, "IndexingException " + ex.getMessage(), ex);
@@ -383,9 +379,10 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             // look for DOC ID for R-Tree removal
             if (rTree != null) {
                 final NamedEnvelope env = new NamedEnvelope(rTree.getCrs(), identifier);
-                if (rTree.remove(env)) {
-                     writeTree();
-                }
+                rTree.remove(env);
+//                if (rTree.remove(env)) {
+//                     writeTree();
+//                }
             }
 
             final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_40, analyzer);

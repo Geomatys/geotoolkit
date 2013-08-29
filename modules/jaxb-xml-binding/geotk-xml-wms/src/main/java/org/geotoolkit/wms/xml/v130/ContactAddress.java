@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wms.xml.AbstractContactAddress;
 
 
 /**
@@ -58,7 +59,7 @@ import javax.xml.bind.annotation.XmlType;
     "country"
 })
 @XmlRootElement(name = "ContactAddress")
-public class ContactAddress {
+public class ContactAddress implements AbstractContactAddress {
 
     @XmlElement(name = "AddressType", required = true)
     private String addressType;

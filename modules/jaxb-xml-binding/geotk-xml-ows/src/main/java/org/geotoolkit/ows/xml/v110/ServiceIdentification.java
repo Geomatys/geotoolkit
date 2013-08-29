@@ -100,10 +100,9 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
      * Build a new Service identification (light version).
      */
     public ServiceIdentification(final LanguageStringType title,  final LanguageStringType _abstract,
-            final KeywordsType keywords, final CodeType serviceType, final List<String> serviceTypeVersion, final String fees, final String accessConstraints){
+            final KeywordsType keywords, final CodeType serviceType, final List<String> serviceTypeVersion, final String fees, final List<String> accessConstraints){
         super(title, _abstract, keywords);
-        this.accessConstraints  = new ArrayList<String>();
-        this.accessConstraints.add(accessConstraints);
+        this.accessConstraints  = accessConstraints;
         this.fees               = fees;
         this.serviceType        = serviceType;
         this.serviceTypeVersion = serviceTypeVersion;
@@ -123,7 +122,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
     @Override
     public List<String> getServiceTypeVersion() {
         if (serviceTypeVersion == null) {
-            serviceTypeVersion = new ArrayList<String>();
+            serviceTypeVersion = new ArrayList<>();
         }
         return Collections.unmodifiableList(serviceTypeVersion);
     }
@@ -134,7 +133,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
     @Override
     public List<String> getProfile() {
         if (profile == null) {
-            profile = new ArrayList<String>();
+            profile = new ArrayList<>();
         }
         return Collections.unmodifiableList(profile);
     }
@@ -162,7 +161,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
     @Override
     public List<String> getAccessConstraints() {
         if (accessConstraints == null) {
-            accessConstraints = new ArrayList<String>();
+            accessConstraints = new ArrayList<>();
         }
         return Collections.unmodifiableList(accessConstraints);
     }

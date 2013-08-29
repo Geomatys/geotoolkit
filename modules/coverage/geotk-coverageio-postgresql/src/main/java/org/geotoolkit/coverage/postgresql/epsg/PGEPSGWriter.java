@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.sql.DataSource;
@@ -113,7 +114,7 @@ public class PGEPSGWriter implements EPSGWriter {
             return codeToID(code);
         }
         
-        //all requiered parameters
+        //all required parameters
         final Integer coord_ref_sys_code;
         final String coord_ref_sys_name = candidate.getName().getCode();
         final String coord_ref_sys_kind;
@@ -446,7 +447,7 @@ public class PGEPSGWriter implements EPSGWriter {
             
         }else if(candidate instanceof TemporalDatum){
             final TemporalDatum td = (TemporalDatum) candidate;
-            origin_description = TemporalUtilities.toISO8601Z(td.getOrigin(), null);
+            origin_description = TemporalUtilities.toISO8601Z(td.getOrigin(), TimeZone.getTimeZone("GMT+0"));
             datum_type = "temporal";
             ellipsoid_code = null;
             prime_meridian_code = null;

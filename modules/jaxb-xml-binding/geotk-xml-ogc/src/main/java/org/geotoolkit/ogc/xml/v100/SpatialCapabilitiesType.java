@@ -16,10 +16,14 @@
  */
 package org.geotoolkit.ogc.xml.v100;
 
+import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.capability.GeometryOperand;
+import org.opengis.filter.capability.SpatialCapabilities;
+import org.opengis.filter.capability.SpatialOperators;
 
 
 /**
@@ -45,11 +49,19 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "Spatial_CapabilitiesType", propOrder = {
     "spatialOperators"
 })
-public class SpatialCapabilitiesType {
+public class SpatialCapabilitiesType implements SpatialCapabilities {
 
     @XmlElement(name = "Spatial_Operators", required = true)
-    protected SpatialOperatorsType spatialOperators;
+    private SpatialOperatorsType spatialOperators;
 
+    public SpatialCapabilitiesType() {
+
+    }
+
+    public SpatialCapabilitiesType(final SpatialOperators spatialOperators) {
+        this.spatialOperators = (SpatialOperatorsType) spatialOperators;
+    }
+    
     /**
      * Gets the value of the spatialOperators property.
      * 
@@ -58,6 +70,7 @@ public class SpatialCapabilitiesType {
      *     {@link SpatialOperatorsType }
      *     
      */
+    @Override
     public SpatialOperatorsType getSpatialOperators() {
         return spatialOperators;
     }
@@ -72,6 +85,11 @@ public class SpatialCapabilitiesType {
      */
     public void setSpatialOperators(SpatialOperatorsType value) {
         this.spatialOperators = value;
+    }
+
+    @Override
+    public Collection<GeometryOperand> getGeometryOperands() {
+        return null;
     }
 
 }

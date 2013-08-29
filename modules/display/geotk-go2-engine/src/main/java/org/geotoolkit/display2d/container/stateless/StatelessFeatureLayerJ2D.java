@@ -147,7 +147,11 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         }
 
         //extract the used names
-        final Set<String> names = propertiesNames(validRules);
+        Set<String> names = propertiesNames(validRules);
+        if(names.contains("*")){
+            //we need all properties
+            names = null;
+        }
 
         final FeatureCollection<Feature> candidates;
         try {
@@ -415,53 +419,60 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             filter = FILTER_FACTORY.and(filter, dimFilter);
         }
 
-        final Set<String> attributs = styleRequieredAtts;
-        final Set<String> copy = new HashSet<String>(attributs);
-        if(geomAttName != null){
-            copy.add(geomAttName);
-        }
-        final String[] atts = copy.toArray(new String[copy.size()]);
-
-        //check that properties names does not hold sub properties values, if one is found
-        //then we reduce it to the first parent property.
-        for(int i=0; i<atts.length; i++){
-            String attName = atts[i];
-            int index = attName.indexOf('/');
-            if(index == 0){
-
-                //remove all xpath elements
-                attName = attName.substring(1); //remove first slash
-                final Pattern pattern = Pattern.compile("(\\{[^\\{\\}]*\\})|(\\[[^\\[\\]]*\\])|/{1}");
-                final Matcher matcher = pattern.matcher(attName);
-
-                final StringBuilder sb = new StringBuilder();
-                int position = 0;
-                while (matcher.find()) {
-                    final String match = matcher.group();
-                    sb.append(attName.substring(position, matcher.start()));
-                    position = matcher.end();
-
-                    if(match.charAt(0) == '/'){
-                        //we don't query precisely sub elements
-                        position = attName.length();
-                        break;
-                    }else if(match.charAt(0) == '{'){
-                        sb.append(match);
-                    }else if(match.charAt(0) == '['){
-                        //strip indexes or xpath searches
-                    }
-                }
-                sb.append(attName.substring(position));
-                atts[i] = sb.toString();
-
-            }
-        }
-
         final FeatureType expected;
-        try {
-            expected = FeatureTypeUtilities.createSubType(schema, atts);
-        } catch (SchemaException ex) {
-            throw new PortrayalException(ex);
+        final String[] atts;
+        if(styleRequieredAtts == null){
+            //all properties are requiered
+            expected = schema;
+            atts = null;
+        }else{
+            final Set<String> attributs = styleRequieredAtts;
+            final Set<String> copy = new HashSet<String>(attributs);
+            if(geomAttName != null){
+                copy.add(geomAttName);
+            }
+            atts = copy.toArray(new String[copy.size()]);
+
+            //check that properties names does not hold sub properties values, if one is found
+            //then we reduce it to the first parent property.
+            for(int i=0; i<atts.length; i++){
+                String attName = atts[i];
+                int index = attName.indexOf('/');
+                if(index == 0){
+
+                    //remove all xpath elements
+                    attName = attName.substring(1); //remove first slash
+                    final Pattern pattern = Pattern.compile("(\\{[^\\{\\}]*\\})|(\\[[^\\[\\]]*\\])|/{1}");
+                    final Matcher matcher = pattern.matcher(attName);
+
+                    final StringBuilder sb = new StringBuilder();
+                    int position = 0;
+                    while (matcher.find()) {
+                        final String match = matcher.group();
+                        sb.append(attName.substring(position, matcher.start()));
+                        position = matcher.end();
+
+                        if(match.charAt(0) == '/'){
+                            //we don't query precisely sub elements
+                            position = attName.length();
+                            break;
+                        }else if(match.charAt(0) == '{'){
+                            sb.append(match);
+                        }else if(match.charAt(0) == '['){
+                            //strip indexes or xpath searches
+                        }
+                    }
+                    sb.append(attName.substring(position));
+                    atts[i] = sb.toString();
+
+                }
+            }
+
+            try {
+                expected = FeatureTypeUtilities.createSubType(schema, atts);
+            } catch (SchemaException ex) {
+                throw new PortrayalException(ex);
+            }
         }
 
         //combine the filter with rule filters----------------------------------

@@ -50,7 +50,9 @@ public class S52Palette {
     }
 
     public String getColorHexa(final String colorName) {
-        return colorMap.get(colorName).getColorHexa();
+        final ColorDefinitionCIE ccie = colorMap.get(colorName);
+        if(ccie == null) return null;
+        return ccie.getColorHexa();
     }
 
     public Color getColor(final String colorName) {

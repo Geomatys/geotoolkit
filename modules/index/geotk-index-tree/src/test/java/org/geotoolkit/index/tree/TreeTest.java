@@ -18,13 +18,9 @@ package org.geotoolkit.index.tree;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.index.tree.hilbert.HilbertRTree;
-import org.geotoolkit.index.tree.io.TreeVisitor;
-import org.geotoolkit.index.tree.io.TreeVisitorResult;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -64,6 +60,22 @@ public abstract class TreeTest {
             }
             if (!shapequals) return false;
             shapequals = false;
+        }
+        return true;
+    }
+    
+    protected boolean compareID (final int[] tabA, final int[] tabB) {
+        if (tabA.length != tabB.length) return false;
+        if (tabA.length == 0 && tabB.length == 0) return true;
+        for (int intA : tabA) {
+            boolean found = false;
+            for (int intB : tabB) {
+                if (intA == intB) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) return false;
         }
         return true;
     }
@@ -109,9 +121,9 @@ public abstract class TreeTest {
     protected double[] getEnvelopeMin(final List<Envelope> list) {
         ArgumentChecks.ensureNonNull("compareList : listA", list);
         assert(!list.isEmpty()):"list to get envelope min should not be empty.";
-        final double[] ge = DefaultTreeUtils.getCoords(list.get(0));
+        final double[] ge = TreeUtilities.getCoords(list.get(0));
         for (int i = 1; i < list.size();i++) {
-            DefaultTreeUtils.add(ge, DefaultTreeUtils.getCoords(list.get(i)));
+            TreeUtilities.add(ge, TreeUtilities.getCoords(list.get(i)));
         }
         return ge;
     }
@@ -127,26 +139,11 @@ public abstract class TreeTest {
         assert(!list.isEmpty()):"list to get envelope min should not be empty.";
         final double[] ge = list.get(0).clone();
         for (int i = 1; i < list.size(); i++) {
-            DefaultTreeUtils.add(ge, list.get(i));
+            TreeUtilities.add(ge, list.get(i));
         }
         return ge;
     }
     
-    /**
-     * Find all entries number in a {@link Tree}.
-     * 
-     * @param tree where to looking for entries.
-     * @return all entries number in a {@link Tree}.
-     */
-    protected boolean checkTreeElts(Tree tree) throws IOException {
-        final int treeElement = tree.getElementsNumber();
-        if (tree instanceof HilbertRTree) {
-            return DefaultTreeUtils.countEltsInHilbertNode(tree.getRoot(), 0) == treeElement;
-        }
-        return DefaultTreeUtils.countElementsRecursively(tree.getRoot(), 0) == treeElement;
-    }
-    
-
     /**
      * Create a default adapted test entry({@code GeneralEnvelope}).
      *

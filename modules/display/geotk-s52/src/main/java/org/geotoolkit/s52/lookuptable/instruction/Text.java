@@ -16,7 +16,10 @@
  */
 package org.geotoolkit.s52.lookuptable.instruction;
 
+import java.awt.Font;
 import java.io.IOException;
+import static org.geotoolkit.s52.S52Utilities.*;
+import org.opengis.filter.expression.Expression;
 
 /**
  * S-52 Annex A Part I p.47  7.1.1
@@ -41,41 +44,65 @@ public abstract class Text extends Instruction{
      * (e.g. SBDARE, NATSUR) the  text equivalent of the listed attribute values should be written
      * sequentially separated by a space with no punctuation marks.
      */
-    public String text;
+    public String[] text;
 
     /**
      * "horizontal justification" parameter:
+     * <ul>
+     * <li>
      * '1' means CENTRE justified
      *    (i.e. pivot point is located at the centre of the overall length of text string)
+     * </li>
+     * <li>
      * '2' means RIGHT justified
      *    (i.e. pivot point is located at the right side of the last character of text string)
+     * </li>
+     * <li>
      * '3' means LEFT justified. This is the default value.
      *    (i.e. pivot point is located at the left side of the first character of text string)
+     * </li>
+     * </ul>
      */
     public int horizontalAdjust;
 
     /**
      * "vertical justification" parameter:
+     * <ul>
+     * <li>
      * '1' means BOTTOM justified. This is the default value.
      *     (i.e. the pivot point is located at the bottom line of the text string)
+     * </li>
+     * <li>
      * '2' means CENTRE justified
      *     (i.e. the pivot point is located at the centre line of the text string)
+     * </li>
+     * <li>
      * '3' means TOP justified
      *     (i.e. the pivot point is located at the top line of the text string)
+     * </li>
+     * </ul>
      */
     public int verticalAdjust;
 
     /**
      * "character spacing" parameter:
+     * <ul>
+     * <li>
      * '1' means FIT spacing
      *     (i.e. the text string should be expanded or condensed to fit between
      *      the first and the last position in a spatial object)
+     * </li>
+     * <li>
      * '2' means STANDARD spacing. This is the default value.
      *     (i.e. the standard spacing in accordance with the typeface given
      *      in CHARS should be used)
+     * </li>
+     * <li>
      * '3' means STANDARD spacing with word wrap
      *     (i.e. the standard spacing in accordance with the typeface given in
      *      CHARS should be used; text longer than 8 characters should be broken into separate lines)
+     * </li>
+     * </ul>
      */
     public int space;
 
@@ -93,8 +120,8 @@ public abstract class Text extends Instruction{
      * 6 means "bold"
      *
      * WIDTH
-     * "1" means upright i.e. non-italic, ENC $CHARS attributes using "2"
-     *     for width should be converted to "1".
+     * "1" means upright i.e. non-italic,
+     * ENC $CHARS attributes using "2" for width should be converted to "1".
      *
      * BODY SIZE
      * This given in pica points (1 point = 0.351 mm) that specify the height of
@@ -106,8 +133,9 @@ public abstract class Text extends Instruction{
     /**
      * Defines the X-offset of the pivot point given in units of BODY SIZE
      * (see CHARS parameter) relative to the location of the spatial object
-     * (0 is default if XOFFS is not given or undefined); positive x-offset
-     * extends to the right (the "units of BODYSIZE" means that if for example,
+     * (0 is default if XOFFS is not given or undefined);
+     * <br/>
+     * positive x-offset extends to the right (the "units of BODYSIZE" means that if for example,
      * the body size is 10 pica points each unit of offset is 10 (0.351) = 3.51 mm).
      */
     public int xOffset;
@@ -115,7 +143,9 @@ public abstract class Text extends Instruction{
     /**
      * Defines the y-offset of the pivot point given in units of BODY SIZE
      * (see CHARS parameter) relative to the location of the spatial object
-     * (0 is default if YOFFS is not given or undefined); positive y-offset extends downwards.
+     * (0 is default if YOFFS is not given or undefined);
+     * <br/>
+     * positive y-offset extends downwards.
      */
     public int yOffset;
 
@@ -132,14 +162,41 @@ public abstract class Text extends Instruction{
     @Override
     protected void readParameters(String str) throws IOException {
         final String[] parts = str.split(",");
-        text             = parts[0];
-        horizontalAdjust = Integer.valueOf(parts[1]);
-        verticalAdjust   = Integer.valueOf(parts[2]);
-        space            = Integer.valueOf(parts[3]);
-        chars            = parts[4].substring(1,parts[4].length()-2);
-        xOffset          = Integer.valueOf(parts[5]);
-        yOffset          = Integer.valueOf(parts[6]);
-        display          = parts[7];
+        text = new String[parts.length-8];
+        int i = 0;
+        for(;i<text.length;i++){
+            text[i] = parts[i];
+        }
+        horizontalAdjust = Integer.valueOf(parts[i+0]);
+        verticalAdjust   = Integer.valueOf(parts[i+1]);
+        space            = Integer.valueOf(parts[i+2]);
+        chars            = parts[i+3].substring(1,parts[i+3].length()-1);
+        xOffset          = Integer.valueOf(parts[i+4]);
+        yOffset          = Integer.valueOf(parts[i+5]);
+        color            = parts[i+6];
+        display          = parts[i+7];
     }
+
+    public Font getFont(){
+
+        int weight = Font.PLAIN;
+        switch(chars.charAt(1)){
+            case 4 : weight = Font.PLAIN; break; //TODO should be 'light' but we don't have that
+            case 5 : weight = Font.PLAIN; break;
+            case 6 : weight = Font.BOLD; break;
+        }
+
+        switch(chars.charAt(2)){
+            case 2 : weight |= Font.ITALIC; break;
+        }
+
+        float size = Integer.valueOf(chars.substring(3));
+        //convert size from pica to mm to pixel
+        size = picaToPixel(size);
+
+        return new Font("SansSerif", weight, Math.round(size));
+    }
+
+    public abstract Expression getText();
 
 }

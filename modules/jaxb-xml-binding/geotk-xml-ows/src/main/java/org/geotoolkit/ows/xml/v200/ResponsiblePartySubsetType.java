@@ -72,6 +72,23 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
     private CodeType role;
 
     /**
+     * Empty constructor used by JAXB.
+     */
+    ResponsiblePartySubsetType(){
+    }
+
+    /**
+     *Build a new Responsible party subset.
+     */
+    public ResponsiblePartySubsetType(final String individualName, final String positionName, final ContactType contactInfo,
+            final CodeType role){
+        this.contactInfo    = contactInfo;
+        this.individualName = individualName;
+        this.positionName   = positionName;
+        this.role           = role;
+    }
+    
+    /**
      * Gets the value of the individualName property.
      * 
      * @return
@@ -154,6 +171,7 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
      *     {@link CodeType }
      *     
      */
+    @Override
     public CodeType getRole() {
         return role;
     }

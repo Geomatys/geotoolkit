@@ -77,6 +77,41 @@ public class AddressType implements AbstractAddress{
     private List<String> electronicMailAddress;
 
     /**
+     * Empty constructor used by JAXB
+     */
+    AddressType(){
+
+    }
+
+    /**
+     * Build a new Adress.
+     */
+    public AddressType(final List<String> deliveryPoint, final String city, final String administrativeArea,
+            final String postalCode, final String country, final List<String> electronicMailAddress){
+        this.administrativeArea    = administrativeArea;
+        this.city                  = city;
+        this.country               = country;
+        this.deliveryPoint         = deliveryPoint;
+        this.electronicMailAddress = electronicMailAddress;
+        this.postalCode            = postalCode;
+    }
+
+    /**
+     * Build a simple new Adress.
+     */
+    public AddressType(final String deliveryPoint, final String city, final String administrativeArea,
+            final String postalCode, final String country, final String electronicMailAddress){
+        this.administrativeArea    = administrativeArea;
+        this.city                  = city;
+        this.country               = country;
+        this.deliveryPoint         = new ArrayList<>();
+        this.deliveryPoint.add(deliveryPoint);
+        this.electronicMailAddress = new ArrayList<>();
+        this.electronicMailAddress.add(electronicMailAddress);
+        this.postalCode            = postalCode;
+    }
+
+    /**
      * Gets the value of the deliveryPoint property.
      * 
      * 
@@ -84,7 +119,7 @@ public class AddressType implements AbstractAddress{
     @Override
     public List<String> getDeliveryPoint() {
         if (deliveryPoint == null) {
-            deliveryPoint = new ArrayList<String>();
+            deliveryPoint = new ArrayList<>();
         }
         return this.deliveryPoint;
     }
@@ -196,7 +231,7 @@ public class AddressType implements AbstractAddress{
     @Override
     public List<String> getElectronicMailAddress() {
         if (electronicMailAddress == null) {
-            electronicMailAddress = new ArrayList<String>();
+            electronicMailAddress = new ArrayList<>();
         }
         return this.electronicMailAddress;
     }

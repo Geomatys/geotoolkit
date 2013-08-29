@@ -16,158 +16,86 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.io.IOException;
-import java.util.Iterator;
-import org.geotoolkit.index.tree.calculator.Calculator;
-import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.geotoolkit.index.tree.io.TreeVisitor;
+import org.geotoolkit.internal.tree.TreeAccess;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Define a generic Tree.
  *
  * @author Rémi Maréchal       (Geomatys).
- * @author Johann Sorel        (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public interface Tree {
+public interface Tree<E> {
 
     /**
-     * Find some {@code Entry} which intersect regionSearch parameter
-     * and add them into result {@code List} parameter.
-     *
+     * Find all {@code Integer} tree identifiers, from each stored datas which intersect {@code regionSearch} parameter.
+     * 
      * <blockquote><font size=-1>
-     * <strong>NOTE: if no result found, the list passed in parameter is unchanged.</strong>
+     * <strong>NOTE: if no result found, an empty table is return.</strong>
      * </font></blockquote>
-     *
-     * @param regionSearch Define the region to find Shape within tree.
-     * @param result List of Entr(y)(ies).
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
+     * 
+     * @param regionSearch Define area of search.
+     * @return integer table which contain all tree identifier from selected data.
+     * @throws StoreIndexException if pblem during search on stored file.
+     * @see AbstractTree#treeIdentifier
      */
-    @Deprecated
-    void search(Envelope regionSearch, TreeVisitor visitor) throws IllegalArgumentException, StoreIndexException;
-
-    /**
-     * Insert a {@code Entry} into Rtree.
-     *
-     * @param Entry to insert into tree.
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
-     */
-    @Deprecated
-    void insert(Envelope entry) throws IllegalArgumentException, StoreIndexException;
-
-    /**
-     * Insert all {@code Entry} into Rtree.
-     *
-     * @param Iterator to insert into tree.
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
-     */
-    @Deprecated
-    void insertAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException, StoreIndexException;
-
-    /**
-     * Find a {@code Envelope} (entry) into the tree and delete it.
-     *
-     * @param Entry to delete.
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
-     */
-    @Deprecated
-    boolean delete(Envelope entry) throws IllegalArgumentException, StoreIndexException;
-
-    /**
-     * Find a {@code Envelope} (entry) into the tree and delete it.
-     *
-     * @param Iterator to delete.
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
-     */
-    @Deprecated
-    void deleteAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException, StoreIndexException;
-
-
-    /**Find a {@code Envelope} (entry) from Iterator into the tree and delete it.
-     *
-     * <blockquote><font size=-1>
-     * <strong>NOTE: comparison to remove entry is based from them references.</strong>
-     * </font></blockquote>
-     *
-     * @param Entry to delete.
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
-     */
-    @Deprecated
-    boolean remove(Envelope entry) throws IllegalArgumentException, StoreIndexException;
-
-
-    /**Find all {@code Envelope} (entry) from Iterator into the tree and delete it.
-     *
-     * <blockquote><font size=-1>
-     * <strong>NOTE: comparison to remove entry is based from them references.</strong>
-     * </font></blockquote>
-     *
-     * @param Entry to delete.
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
-     */
-    @Deprecated
-    void removeAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException, StoreIndexException;
+    int[] searchID(final Envelope regionSearch) throws StoreIndexException;
     
     /**
-     * Find some {@code Entry} which intersect regionSearch parameter
-     * and add them into result {@code List} parameter.
-     *
-     * <blockquote><font size=-1>
-     * <strong>NOTE: if no result found, the list passed in parameter is unchanged.</strong>
-     * </font></blockquote>
-     *
-     * @param regionSearch Define the region to find Shape within tree.
-     * @param result List of Entr(y)(ies).
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
+     * Find all {@code Integer} tree identifiers, from each stored datas which 
+     * intersect {@code regionSearch} parameter and return an appropriate {@code Iterator} to travel them.
+     * 
+     * @param regionSearch Define area of search.
+     * @return Iterator on each tree identifier search results.
+     * @throws StoreIndexException if regionSearch own NaN coordinates value or during reading first result. 
      */
-    void search(double[] regionSearch, TreeVisitor visitor) throws IllegalArgumentException, StoreIndexException;
+    TreeIdentifierIterator search(final Envelope regionSearch) throws StoreIndexException;
+    
+    /**
+     * Insert an Object into Rtree.
+     *
+     * @param object
+     * @throws StoreIndexException if problem during reading writing element on file. 
+     */
+    void insert(final E object) throws StoreIndexException;
+    
+    /**
+     * Find an object define by user and remove it from RTree. 
+     * 
+     * @param object which will be removed.
+     * @return true if object as been correctly remove else false.
+     * @throws StoreIndexException if impossible to found its treeIdentifier from TreeElementMapper object.
+     * @see TreeElementMapper#getTreeIdentifier(java.lang.Object) 
+     */
+    boolean remove(final E object) throws StoreIndexException;
 
     /**
-     * Insert a {@code Entry} into Rtree.
-     *
-     * @param Entry to insert into tree.
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
+     * Return {@link TreeElementMapper} use to store inserted data and their tree identifiers.
+     * 
+     * @return {@link TreeElementMapper} use to store inserted data and their tree identifiers.
      */
-    void insert(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException;
-
+    TreeElementMapper<E> getTreeElementMapper();
+    
     /**
-     * Find a {@code Envelope} (entry) into the tree and delete it.
-     *
-     * @param Entry to delete.
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
-     */
-    boolean delete(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException;
-
-    /**Find a {@code Envelope} (entry) from Iterator into the tree and delete it.
-     *
-     * <blockquote><font size=-1>
-     * <strong>NOTE: comparison to remove entry is based from them references.</strong>
-     * </font></blockquote>
-     *
-     * @param Entry to delete.
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
-     */
-    boolean remove(Object object, double... coordinates) throws IllegalArgumentException, StoreIndexException;
-
-    /**
-     * @return max number authorized by tree cells.
+     * @return maximum element number authorized by tree cells.
      */
     int getMaxElements();
 
     /**
-     * @return tree trunk.
+     * Return Tree trunk {@link Node}.<br/>
+     * May return {@code null} if Tree is empty.
+     * 
+     * @return Tree trunk.
      */
     Node getRoot();
-
+    
     /**
      * Affect a new root {@code Node}.
      *
      * @param root new root.
      */
-    void setRoot(Node root) throws StoreIndexException;
+    void setRoot(final Node root) throws StoreIndexException;
 
     /**
      * @return associate crs.
@@ -175,17 +103,7 @@ public interface Tree {
     CoordinateReferenceSystem getCrs();
 
     /**
-     * @return Calculator to effectuate Tree compute.
-     */
-    Calculator getCalculator();
-
-    /**
-     * @return NodeFactory to create adapted Tree Node.
-     */
-    NodeFactory getNodeFactory();
-
-    /**
-     * Clear tree (tree root Node becomme null).
+     * Clear tree (tree root Node become null).
      */
     void clear() throws StoreIndexException;
 
@@ -203,9 +121,19 @@ public interface Tree {
      */
     double[] getExtent() throws StoreIndexException;
     
+    /**
+     * Close all streams use to store RTree on hard drive.
+     * 
+     * <blockquote><font size=-1>
+     * <strong>NOTE: Method has no impact if RTree is not an FileRTree instance.</strong>
+     * </font></blockquote>
+     * 
+     * @throws StoreIndexException if problem during close stream.
+     */
     void close() throws StoreIndexException;
     
-    /**Create a node in accordance with this properties.
+    /**
+     * Create a {@link Node} in accordance with RTree properties.
      *
      * @param tree pointer on Tree.
      * @param parent pointer on parent {@code Node}.
@@ -214,5 +142,5 @@ public interface Tree {
      * @param coordinates lower upper bounding box coordinates table.
      * @return appropriate Node from tree.
      */
-    Node createNode(Tree tree, Node parent, Node[] children, Object[] objects, double[][] coordinates) throws IllegalArgumentException, IOException;
+    Node createNode(final TreeAccess tA, final double[] boundary, final byte properties, final int parentId, final int siblingId, final int childId);
 }

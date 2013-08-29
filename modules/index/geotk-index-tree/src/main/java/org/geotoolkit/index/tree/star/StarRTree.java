@@ -21,716 +21,380 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
-import org.geotoolkit.index.tree.*;
-import org.geotoolkit.index.tree.calculator.Calculator;
-import static org.geotoolkit.index.tree.io.TVR.*;
-import org.geotoolkit.index.tree.io.TreeVisitor;
-import org.geotoolkit.index.tree.io.TreeVisitorResult;
-import org.geotoolkit.index.tree.NodeFactory;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.geotoolkit.index.tree.io.StoreIndexException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
+import org.geotoolkit.index.tree.AbstractTree;
+import static org.geotoolkit.index.tree.TreeUtilities.*;
+import org.geotoolkit.index.tree.Node;
+import org.geotoolkit.internal.tree.TreeAccess;
+import org.geotoolkit.index.tree.StoreIndexException;
+import org.geotoolkit.index.tree.TreeElementMapper;
 
 /**
- * Create R*Tree.
- *
- * @author Rémi Maréchal (Geomatys)
- * @author Johann Sorel  (Geomatys).
+ * StarRTree (R* Tree) : tree implementation.<br/><br/>
+ * 
+ * It's a Tree implementation with a average duration insertion and search action.<br/>
+ * In the case of use, if we don't know there will be a lot of data insertion or update action forthcoming, 
+ * this implementation is by default recommended.<br/><br/>
+ * 
+ * Note : insertion action is more longer than BasicRTree, because in case of overfully Node, 
+ * a re-insertion of all data over 33% distance near Node centroid is effectuate.<br/>
+ * In some case this re-insertion action permit to avoid node splitting which is expensive resource in terms.
+ * 
+ * @author Remi Marechal (Geomatys).
  */
-public class StarRTree extends AbstractTree {
-
+abstract class StarRTree<E> extends AbstractTree<E> {
+    
     /**
-     * In accordance with R*Tree properties.
+     * In accordance with R* Tree properties.
      * To avoid unnecessary split permit to
      * reinsert some elements just one time.
      */
     boolean insertAgain = true;
-
+    
     /**
-     * Create a R*Tree using default node factory.
-     *
-     * @param nbMaxElement : max elements number within each tree Node.
-     * @param crs          : associate coordinate system.
-     * @param nodefactory  : made to create tree {@code Node}.
-     * @return R*Tree.
+     * List to store data which will be insert again. 
      */
-    public StarRTree(int nbMaxElement, CoordinateReferenceSystem crs) {
-        this(nbMaxElement, crs, DefaultNodeFactory.INSTANCE);
+    private final LinkedList<Integer> listIdentifier = new LinkedList<Integer>();
+    private final LinkedList<double[]> listCoords    = new LinkedList<double[]>(); 
+    
+    /**
+     * Boolean required to stop and travel up recursively insertion action to insert select data.
+     */
+    boolean travelUpBeforeInsertAgain = false;
+    
+    /**
+     * Create a R* Tree implementation.
+     * 
+     * @param treeAccess object in which all Tree information are stored.
+     * @param treeEltMap object in which data and tree identifier are stored.
+     * @throws StoreIndexException 
+     * @see TreeAccess
+     * @see TreeElementMapper
+     */
+    protected StarRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
+        super(treeAccess, treeAccess.getCRS(), treeEltMap);
+        ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);
+        ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);
+        super.setRoot(treeAccess.getRoot());
+        treeIdentifier = treeAccess.getTreeIdentifier();
+    }
+    
+    
+    /**
+     * Get statement from re-insert state.
+     *
+     * @return true if it's permit to re-insert else false.
+     */
+    private boolean getIA() {
+        return insertAgain;
     }
 
     /**
-     * Create a R*Tree.
-     *
-     * @param nbMaxElement : max elements number within each tree Node.
-     * @param crs          : associate coordinate system.
-     * @param nodefactory  : made to create tree {@code Node}.
-     * @return R*Tree.
+     * Affect statement to permit or not, re-insertion.
+     * 
+     * @param insertAgain
      */
-    @Deprecated
-    public StarRTree(int nbMaxElement, CoordinateReferenceSystem crs, NodeFactory nodefactory) {
-        super(nbMaxElement, crs, nodefactory);
+    private void setIA(boolean insertAgain) {
+        this.insertAgain = insertAgain;
     }
     
     /**
      * {@inheritDoc }.
      */
     @Override
-    public void search(double[] regionSearch, TreeVisitor visitor) throws StoreIndexException {
-        ArgumentChecks.ensureNonNull("search : region search", regionSearch);
-        ArgumentChecks.ensureNonNull("search : visitor", visitor);
-        final Node root = this.getRoot();
-        if (root != null && !root.isEmpty()) {
-            try {
-                nodeSearch(root, regionSearch, visitor);
-            } catch (IOException ex) {
-                throw new StoreIndexException(ex);
-            }
-        }
-    }
+    public void insert(int identifier, double... coordinates) throws IllegalArgumentException, StoreIndexException {
         
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void insert(Object object, double... coordinates) throws StoreIndexException {
-        super.insert(object, coordinates);
-        super.eltCompteur++;
-        final Node root       = getRoot();
-        try{
+        try {
+            eltCompteur++;
+            Node root = getRoot();
             if (root == null || root.isEmpty()) {
-                setRoot(createNode(this, null, null, new Object[]{object}, new double[][]{coordinates}));
+                root = createNode(treeAccess, null, IS_LEAF, 0, 0, 0);
+                root.addChild(createNode(treeAccess, coordinates, IS_DATA, 1, 0, -identifier));
+                setRoot(root);
             } else {
-                nodeInsert(root, object, coordinates);
+                travelUpBeforeInsertAgain = false;
+                final Node newRoot = nodeInsert(root, identifier, coordinates);
+                if (newRoot != null) {
+                    setRoot(newRoot);
+                    treeAccess.writeNode((Node)newRoot);
+                }
+                /**
+                 * Insert again. Property named Tree re-balancing. 
+                 */
+                if (travelUpBeforeInsertAgain) {
+                    travelUpBeforeInsertAgain = false;
+                    // insert again
+                    final int siz = listCoords.size();
+                    assert (siz == listIdentifier.size()) : "getElementAtMore33Percent : nodeInsert : lists should have same size.";
+                    setIA(false);
+                    final int nbrElt = getElementsNumber();
+                    final int treeIdent = treeIdentifier; // gere quand root == null
+                    for (int i = 0; i < siz; i++) {
+                        assert remove(listIdentifier.get(i), listCoords.get(i)) : "remove data should succeed during re-inserting event. "
+                                + "data identifier : "+listIdentifier.get(i)+" data boundary : "+Arrays.toString(listCoords.get(i));
+                    }
+                    for (int i = 0; i< siz; i++) {
+                        insert(listIdentifier.get(i), listCoords.get(i));
+                    }
+                    setIA(true);
+                    assert nbrElt == getElementsNumber() : "During Insert again element number within tree should not change.";
+                    treeIdentifier = treeIdent;
+                }
             }
         } catch (IOException ex) {
-            throw new StoreIndexException(ex);
+            throw new StoreIndexException(this.getClass().getName()+"Tree.insert(), impossible to add element.", ex);
         }
     }
-        
+    
     /**
      * {@inheritDoc }.
      */
     @Override
-    public boolean delete(Object object, double... coordinates) throws StoreIndexException {
-        ArgumentChecks.ensureNonNull("remove : object", object);
-        ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
-        final Node root = getRoot();
-        if (root != null) try {
-            return deleteNode(root, object, coordinates);
-        } catch (IOException ex) {
-            throw new StoreIndexException(ex);
+    protected Node nodeInsert(Node candidate, int identifier, double... coordinates) throws IOException {
+        assert candidate instanceof Node;
+        Node fileCandidate = (Node) candidate;
+        assert !fileCandidate.isData() : "nodeInsert : candidate should never be data type.";
+        /**
+         * During travel down recursively candidate parent may be modified.
+         * When travel up recursively if candidate should be modified, get
+         * new candidate object updated from sub-method.
+         */
+        Node subCandidateParent = null;
+        if (fileCandidate.isLeaf()) {
+            assert fileCandidate.checkInternal() : "nodeInsert : leaf before add.";
+            fileCandidate.addChild(createNode(treeAccess, coordinates, IS_DATA, fileCandidate.getNodeId(), 0, -((Integer)identifier)));
+            assert fileCandidate.checkInternal() : "nodeInsert : leaf after add.";
+        } else {
+            assert fileCandidate.checkInternal() : "nodeInsert : Node before insert.";
+            subCandidateParent = (Node)nodeInsert(chooseSubtree(fileCandidate, coordinates), identifier, coordinates);
+            add(fileCandidate.getBoundary(), coordinates);
         }
-        return false;
-    }
         
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public boolean remove(Object object, double... coordinates) throws StoreIndexException {
-        ArgumentChecks.ensureNonNull("remove : object", object);
-        ArgumentChecks.ensureNonNull("remove : coordinates", coordinates);
-        final Node root = getRoot();
-        if (root != null) try {
-            return removeNode(root, object, coordinates);
-        } catch (IOException ex) {
-            throw new StoreIndexException(ex);
+        /**
+         * Currently candidate was modified from precedently sub-Insert() call.
+         * Affect candidate object with new candidate from sub-Insert method.
+         */
+        if (subCandidateParent != null) {
+            fileCandidate = subCandidateParent;
         }
-        return false;
-    }
+        treeAccess.writeNode(fileCandidate); 
+        if (travelUpBeforeInsertAgain) return null;
+        assert fileCandidate.checkInternal() : "nodeInsert : after insert.";
+        
+        if (fileCandidate.getChildCount() > getMaxElements()) {
+            /******************************** 33 % *****************************/
+            if (getIA() && fileCandidate.isLeaf()) {
+                listIdentifier.clear();
+                listCoords.clear();
+                getElementAtMore33PerCent(candidate, listIdentifier, listCoords);
+                travelUpBeforeInsertAgain = true;
+                return null;
+            }
+            assert fileCandidate.checkInternal() : "nodeInsert : after insert again element a 33% distance.";
+            /*******************************************************************/
+            
+//            /*********************** Branch grafting **************************/
+//            if (fileCandidate.isLeaf() && fileCandidate.getParentId() != 0) {
+//                /**
+//                 * We search to, travel candidate sibling from candidate parent first child, to last child.
+//                 */
+//                final FileNode candidateParent = tAF.readNode(fileCandidate.getParentId());
+//                int sibl = candidateParent.getChildId();
+//                final double[] candidateBound = fileCandidate.getBoundary();
+//                while (sibl != 0) {
+//                    if (sibl != fileCandidate.getNodeId()) {
+//                        final FileNode cuSibling = tAF.readNode(sibl);
+//                        assert cuSibling.checkInternal() : "candidate sibling.";
+//                        if (intersects(candidateBound, cuSibling.getBoundary(), true
+//                         && cuSibling.getChildCount() > 1)) {
+//                            branchGrafting(fileCandidate, cuSibling);
+//                            assert cuSibling.checkInternal() : "candidate sibling after branch grafting.";
+//                            assert fileCandidate.checkInternal() : "candidate after branch grafting.";
+//                            if (fileCandidate.getChildCount() <= tree.getMaxElements()) return null;
+//                        }
+//                        sibl = cuSibling.getSiblingId();
+//                    } else {
+//                        sibl = fileCandidate.getSiblingId();
+//                    }
+//                }
+//            }
+//            assert fileCandidate.checkInternal() : "nodeInsert : after Branch grafting.";
+//            /******************************************************************/
+            
+            if (fileCandidate.getChildCount() > getMaxElements()) {
+                // split
+                final Node[] splitTable = splitNode(fileCandidate);
+                final Node split1 = (Node)splitTable[0];
+                final Node split2 = (Node)splitTable[1];
 
-    /**
-     * Find all {@code Envelope} which intersect regionSearch parameter in {@code Node}.
-     *
-     * @param candidate current Node
-     * @param regionSearch area of search.
-     * @param result {@code List} where is add search resulting.
-     */
-    private static TreeVisitorResult nodeSearch(final Node candidate, final double[] regionSearch, final TreeVisitor visitor) throws IOException {
-        final TreeVisitorResult tvr = visitor.filter(candidate);
-        if (isTerminate(tvr)) return tvr;
-        final double[] bound = candidate.getBoundary();
-        if(bound != null){
-            if(regionSearch == null) {
-                if(candidate.isLeaf()) {
-                    for(int i = 0; i < candidate.getObjectCount(); i++) {
-                        final Object obj = candidate.getObject(i);
-                        final TreeVisitorResult tvrTemp = visitor.visit(obj);
-                        if (isTerminate(tvrTemp)) return tvrTemp;
-                        if (isSkipSibling(tvrTemp)) break;
-                    }
+                final int candidateParentID = fileCandidate.getParentId();
+                if (candidateParentID == 0) { // on est sur le noeud root
+                    // on clear le candidate
+                    assert fileCandidate.getSiblingId() == 0 : "nodeInsert : split root : root should not have sibling.";
+                    fileCandidate.clear();
+                    fileCandidate.setProperties(IS_OTHER);
+                    fileCandidate.addChild(split1);
+                    fileCandidate.addChild(split2);     
+                    assert split1.checkInternal() : "nodeInsert : split1.";
+                    assert split2.checkInternal() : "nodeInsert : split2.";
+                    assert fileCandidate.checkInternal() : "nodeInsert : split root.";
                 } else {
-                    if (!isSkipSubTree(tvr)) {
-                        for (int i = 0, s = candidate.getChildCount(); i < s; i++) {
-                            final TreeVisitorResult tvrTemp = nodeSearch(candidate.getChild(i), null, visitor);
-                            if (isTerminate(tvrTemp)) return tvrTemp;
-                            if (isSkipSibling(tvrTemp)) break;
-                        }
-                    }
-
-                }
-            } else {
-                if(contains(regionSearch, bound, true)) {
-                    nodeSearch(candidate, null, visitor);
-                } else if (intersects(regionSearch, bound, true)) {
-                    if (candidate.isLeaf()) {
-                        for(int i = 0, s = candidate.getCoordsCount(); i < s; i++) {
-                            final double[] coords = candidate.getCoordinate(i);
-                            TreeVisitorResult tvrTemp = null;
-                            if (intersects(regionSearch, coords, true)) {
-                                tvrTemp = visitor.visit(candidate.getObject(i));
-                            }
-                            if(tvrTemp != null){
-                                if (isTerminate(tvrTemp)) return tvrTemp;
-                                if (isSkipSibling(tvrTemp)) break;
-                            }
-                        }
-                    }else{
-                        if(!isSkipSubTree(tvr)){
-                            for(int i = 0, s = candidate.getChildCount(); i < s; i++) {
-                                final TreeVisitorResult tvrTemp = nodeSearch(candidate.getChild(i), regionSearch, visitor);
-                                if (isTerminate(tvrTemp)) return tvrTemp;
-                                if (isSkipSibling(tvrTemp)) break;
-                            }
-                        }
-                    }
+                    final Node parent = treeAccess.readNode(candidateParentID);
+                    parent.removeChild(fileCandidate);
+                    parent.addChild(split1);
+                    parent.addChild(split2);
+                    assert split1.checkInternal() : "nodeInsert : split1.";
+                    assert split2.checkInternal() : "nodeInsert : split2.";
+                    assert parent.checkInternal() : "nodeInsert : split node.";
+                    /**
+                     * Candidate parent is modified, return it to re-affect appropriate parent object in up-Insert().
+                     */
+                    return parent;
                 }
             }
-            return tvr;
         }
-        return TreeVisitorResult.TERMINATE;
+        /**
+         * If last travel up (on Root Node) and currently candidate was changed,
+         * return currently Node else return null;
+         */
+        return (subCandidateParent != null && fileCandidate.getParentId() == 0) ? fileCandidate : null;
     }
-
-    /**Insert new {@code Entry} in branch and re-organize {@code Node} if it's necessary.
+    
+    /**
+     * Recover lesser 33% largest of {@code Node} candidate within it.
      *
-     * <blockquote><font size=-1>
-     * <strong>NOTE: insertion is in accordance with R*Tree properties.</strong>
-     * </font></blockquote>
-     *
-     * @param candidate where to insert entry.
-     * @param entry to add.
      * @throws IllegalArgumentException if {@code Node} candidate is null.
-     * @throws IllegalArgumentException if {@code Envelope} entry is null.
+     * @return all Entry within subNodes at more 33% largest of this {@code Node}.
      */
-    private static void nodeInsert(final Node candidate, final Object object, final double[] coordinate ) throws StoreIndexException, IOException {
-        assert candidate.checkInternal() : "nodeInsert : candidate not conform";
-        if (candidate.isLeaf()) {
-            candidate.addElement(object, coordinate);
-        }else{
-            nodeInsert(chooseSubTree(candidate, coordinate), object, coordinate);
-            candidate.setBound(null);
-        }
-        assert candidate.checkInternal() : "nodeInsert : after insert candidate not conform";
-        final StarRTree tree = (StarRTree) candidate.getTree();
-        final int maxElmts = tree.getMaxElements();
-        if (DefaultTreeUtils.countElements(candidate) > maxElmts && tree.getIA()) {
-            tree.setIA(false);
-            final LinkedList<Object> listObjects  = new LinkedList<Object>();
-            final LinkedList<double[]> listCoords = new LinkedList<double[]>();
-            getElementAtMore33PerCent(candidate, listObjects, listCoords);
-            final int siz = listCoords.size();
-            assert (siz == listObjects.size()) :"getElementAtMore33Percent : nodeInsert : lists should have same size.";
-            for (int i = 0; i< siz; i++) {
-                deleteNode(candidate, listObjects.get(i), listCoords.get(i));
-            }
-            for (int i = 0; i< siz; i++) {
-                tree.insert(listObjects.get(i), listCoords.get(i));
-            }
-            tree.setIA(true);
-        }
-        assert candidate.checkInternal() : "nodeInsert : after insert again candidate not conform";
-        if (!candidate.isLeaf()) {
-            if (candidate.getChild(0).isLeaf()) {
-                for (int i = 0, l1 = candidate.getChildCount() - 1; i < l1; i++) {
-                    for (int j = i + 1; j < l1 + 1; j++) {
-                        final Node nodeA = candidate.getChild(i);
-                        final Node nodeB = candidate.getChild(j);
-                        if(//new GeneralEnvelope(nodeA.getBoundary()).intersects(nodeB.getBoundary(), false)
-                                intersects(nodeA.getBoundary(), nodeB.getBoundary(), false)
-                                && nodeA.isLeaf() && nodeB.isLeaf()
-                                &&nodeA.getCoordsCount() > 1 && nodeB.getCoordsCount() > 1){
-                            branchGrafting(nodeA, nodeB);
-                        }
-                    }
-                }
-            }
-            for (int i = 0,len = candidate.getChildCount(); i < len; i++) {
-                if (DefaultTreeUtils.countElements(candidate.getChild(i)) > candidate.getTree().getMaxElements()) {
-                    final Node child = candidate.removeChild(i);
-                    final List<Node> l = nodeSplit(child);
-                    final Node l0 = l.get(0);
-                    final Node l1 = l.get(1);
-                    l0.setParent(candidate);
-                    l1.setParent(candidate);
-                    candidate.addChild(l0);
-                    candidate.addChild(l1);
-                }
-            }
-        }
-        assert candidate.checkInternal() : "nodeInsert : after split or branch grafting candidate not conform";
-        if (candidate.getParent() == null) {
-            if (DefaultTreeUtils.countElements(candidate) > candidate.getTree().getMaxElements()) {
-                List<Node> l = nodeSplit(candidate);
-                final Node l0 = l.get(0);
-                final Node l1 = l.get(1);
-                l0.setParent(candidate);
-                l1.setParent(candidate);
-                candidate.clear();
-                candidate.addChild(l0);
-                candidate.addChild(l1);
-            }
-        }
-        assert candidate.checkInternal() : "nodeInsert : at end candidate not conform";
+    private void getElementAtMore33PerCent(final Node candidate, LinkedList<Integer> listObjects, final LinkedList<double[]> listCoords) throws IOException {
+        ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidate", candidate);
+        ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : listObjects", listObjects);
+        ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : listCoords", listCoords);
+        assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
+        final double[] canBound = candidate.getBoundary();
+        final double[] candidateCentroid = getMedian(canBound);
+        final double distPermit = calculator.getDistancePoint(getLowerCorner(canBound), getUpperCorner(canBound)) * (1/3.0);
+        getElementAtMore33PerCent((Node)candidate, candidateCentroid, distPermit, listObjects, listCoords);
+        assert candidate.checkInternal() : "getElementAtMore33PerCent : end candidate not conform";
     }
     
     /**
-     * Find appropriate {@code Node} to insert {@code Envelope} entry.
-     * <blockquote><font size=-1>
-     * <strong>To define appropriate Node, R*Tree criterion are :
-     *      - require minimum area enlargement to cover {@code Envelope} entry.
-     *      - or put into Node with lesser elements number in case area equals.
-     * </strong>
-     * </font></blockquote>
+     * Recover lesser 33% largest of {@code Node} candidate within it.
      *
-     * @param parent Find in its children {@code Node}.
-     * @param entry {@code Envelope} to add.
-     * @throws IllegalArgumentException if {@code Node} listSubnode is empty.
-     * @return {@code Node} which will be appropriate to contain entry.
+     * @throws IllegalArgumentException if {@code Node} candidate is null.
+     * @return all Entry within subNodes at more 33% largest of this {@code Node}.
      */
-    private static Node chooseSubTree(final Node parent, final double[] coordinate) throws IOException {
-        assert parent.checkInternal() : "chooseSubTree : begin candidate not conform";
-        final Node[] childrenList = parent.getChildren();
-
-        if (childrenList == null) {
-            throw new IllegalArgumentException("impossible to find subtree from empty list");
-        }
-
-        final int size = parent.getChildCount();
-        if (size == 1) {
-            return childrenList[0];
-        }
-        final Calculator calc = parent.getTree().getCalculator();
-        if (childrenList[0].isLeaf()) {
-            final List<Node> listOverZero = new ArrayList<Node>();
-            double overlapsRef = -1;
-            int index = -1;
-            double overlapsTemp = 0;
-            for (int i = 0; i < size; i++) {
-                final double[] gnTemp = childrenList[i].getBoundary().clone();
-                add(gnTemp, coordinate);
-                for (int j = 0; j < size; j++) {
-                    if (i != j) {
-                        overlapsTemp += calc.getOverlaps(gnTemp, childrenList[j].getBoundary());
-                    }
-                }
-                if (overlapsTemp == 0) {
-                    listOverZero.add(childrenList[i]);
-                } else {
-                    if ((overlapsTemp < overlapsRef) || overlapsRef == -1) {
-                        overlapsRef = overlapsTemp;
-                        index = i;
-                    } else if (overlapsTemp == overlapsRef) {
-                        if (DefaultTreeUtils.countElements(childrenList[i]) < DefaultTreeUtils.countElements(childrenList[index])) {
-                            overlapsRef = overlapsTemp;
-                            index = i;
-                        }
-                    }
-                }
-                overlapsTemp = 0;
+    private void getElementAtMore33PerCent(final Node candidate, double[] candidateCentroid, double distancePermit, LinkedList<Integer> listObjects, final LinkedList<double[]> listCoords) throws IOException {
+        ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidateCentroid", candidateCentroid);
+        assert distancePermit >= 0 : "getElementsAtMore33PerCent : distancePermit. Current candidate : "+candidate;
+        assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
+        
+        if (candidate.isData()) {
+            final double[] dataBound = candidate.getBoundary();
+            if (calculator.getDistancePoint(candidateCentroid, getMedian(dataBound)) <= distancePermit) {
+                listObjects.add(-candidate.getChildId());
+                listCoords.add(dataBound);
             }
-            if (!listOverZero.isEmpty()) {
-                double areaRef = -1;
-                int indexZero = -1;
-                double areaTemp;
-                double[] entryBound ;
-                for (int i = 0, s = listOverZero.size(); i<s; i++) {
-                    entryBound = coordinate.clone();
-                    add(entryBound, listOverZero.get(i).getBoundary());
-                    areaTemp = calc.getEdge(entryBound);
-                    if (areaTemp < areaRef || areaRef == -1) {
-                        areaRef = areaTemp;
-                        indexZero = i;
-                    }
-                }
-                return listOverZero.get(indexZero);
+        } else {
+            int sibl = candidate.getChildId();
+            while (sibl != 0) {
+                final Node child = treeAccess.readNode(sibl);
+                getElementAtMore33PerCent(child, candidateCentroid, distancePermit, listObjects, listCoords);
+                sibl = child.getSiblingId();
             }
-            if (index == -1) {
-                throw new IllegalStateException("chooseSubTree : no subLeaf find");
-            }
-            return childrenList[index];
+            assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
         }
-
-        for (int i = 0; i < size; i++) {
-            final Node no = childrenList[i];
-            if (contains(no.getBoundary(), coordinate, true)) {
-                return no;
-            }
-        }
-
-        double enlargRef = -1;
-        int indexEnlarg = -1;
-        for(int i = 0; i < size; i++) {
-            final Node n3d = childrenList[i];
-            final double[] gEN = n3d.getBoundary().clone();
-            final double[] GE = gEN.clone();
-            add(GE, coordinate);
-            double enlargTemp = calc.getEnlargement(gEN, GE);
-            if (enlargTemp < enlargRef || enlargRef == -1) {
-                enlargRef   = enlargTemp;
-                indexEnlarg = i;
-            }
-        }
-        assert parent.checkInternal() : "chooseSubTree : end candidate not conform";
-        return childrenList[indexEnlarg];
     }
     
     /**
-     * Compute and define how to split {@code Node} candidate.
+     * Exchange some entry(ies) between two nodes in aim to find best form with lesser overlaps.
+     * Also branchGrafting will be able to avoid splitting node.
      *
-     * <blockquote><font size=-1>
-     * <strong>NOTE: To choose which {@code Node} couple, split algorithm sorts the entries (for tree leaf), or {@code Node} (for tree branch)
-     *               in accordance to their lower or upper boundaries on the selected dimension (see defineSplitAxis method) and examines all possible divisions.
-     *               Two {@code Node} resulting, is the final division which has the minimum overlaps between them.</strong>
-     * </font></blockquote>
-     *
-     * @return Two appropriate {@code Node} in List in accordance with R*Tree split properties.
+     * @param nodeA Node
+     * @param nodeB Node
+     * @throws IllegalArgumentException if nodeA or nodeB are null.
+     * @throws IllegalArgumentException if nodeA and nodeB have different "parent".
+     * @throws IllegalArgumentException if nodeA or nodeB are not tree leaf.
+     * @throws IllegalArgumentException if nodeA or nodeB, and their subnodes, don't contains some {@code Entry}.
      */
-    private static List<Node> nodeSplit(final Node candidate) throws IllegalArgumentException, IOException {
-        assert candidate.checkInternal() : "nodeSplit : begin candidate not conform";
-        final int splitIndex = defineSplitAxis(candidate);
-        final boolean isLeaf = candidate.isLeaf();
-        final Tree tree = candidate.getTree();
-        final Calculator calc = tree.getCalculator();
-        List eltList = new ArrayList();
-        List<Object> listObjects = null;
+    private void branchGrafting(final Node nodeA, final Node nodeB ) throws IllegalArgumentException, IOException {
+        if(!nodeA.isLeaf() || !nodeB.isLeaf()) throw new IllegalArgumentException("branchGrafting : not leaf");
+        assert nodeA.getParentId()== nodeB.getParentId(): "branchGrafting : NodeA and NodeB should have same parent.";
+        assert treeAccess.readNode(nodeA.getParentId()).checkInternal() : "branchGrafting : nodeA and B parent not conform.";
+        assert nodeA.checkInternal()                  : "branchGrafting : at begin candidate not conform";
+        assert nodeB.checkInternal()                  : "branchGrafting : at begin candidate not conform";
+        final int nodeACount = nodeA.getChildCount();
+        final int nodeBCount = nodeB.getChildCount();
+        final int size = nodeACount + nodeBCount;
         
-        if (isLeaf) {
-            listObjects = new ArrayList<Object>();
-            for (int i = 0, s = candidate.getCoordsCount(); i < s; i++) {
-                eltList.add(candidate.getCoordinate(i));
-                listObjects.add(candidate.getObject(i));
-            }
-        } else {
-            for (int i = 0, s = candidate.getChildCount(); i < s; i++) {
-                eltList.add(candidate.getChild(i));
+        final List<Node> listFN = new ArrayList<Node>(size);
+        final Node[] nodeAChildren = nodeA.getChildren();
+        final Node[] nodeBChildren = nodeB.getChildren();
+        
+        final double[] globalE = nodeAChildren[0].getBoundary().clone();
+        for (Node nod : nodeAChildren) {
+            add(globalE, nod.getBoundary());
+            listFN.add(nod);
+        }
+        for (Node nod : nodeBChildren) {
+            add(globalE, nod.getBoundary());
+            listFN.add(nod);
+        }
+        
+        if(listFN.isEmpty()) throw new IllegalArgumentException("branchGrafting : empty list");
+        final int maxEltsPermit = getMaxElements();
+        final int dim           = globalE.length >> 1;
+        double lengthDimRef     = -1;
+        int indexSplit          = -1;
+        //split along the longest span
+        for(int i = 0; i < dim; i++) {
+            double lengthDimTemp = getSpan(globalE, i);
+            if (lengthDimTemp > lengthDimRef) {
+                lengthDimRef = lengthDimTemp;
+                indexSplit   = i;
             }
         }
-        final int size = eltList.size();
-        final double size04 = size * 0.4;
-        final int demiSize = (int) ((size04 >= 1) ? size04 : 1);
-        final List splitListA = new ArrayList();
-        final List splitListB = new ArrayList();
-        double[] gESPLA, gESPLB;
-        double bulkTemp;
-        double bulkRef = -1;
-        int index = 0;
-        boolean lower_or_upper = true;
-        int cut2;
-        
-        List<Integer> cutList = new ArrayList<Integer>();
-        List<Boolean> luList  = new ArrayList<Boolean>();
-        List<double[]> gESPLAList = new ArrayList<double[]>();
-        List<double[]> gESPLBList = new ArrayList<double[]>();
-        
-        //compute with lower and after upper
-        for(int lu = 0; lu < 2; lu++) {
-            calc.sortList(splitIndex, (lu == 0), eltList, listObjects);
-            for(int cut = demiSize; cut <= size - demiSize; cut++) {
-                for(int i = 0; i < cut; i++) {
-                    splitListA.add(eltList.get(i));
-                }
-                for(int j = cut; j < size; j++) {
-                    splitListB.add(eltList.get(j));
-                }
-                cut2 = size - cut;
-                if (isLeaf) {
-                    gESPLA = ((double[]) splitListA.get(0)).clone();
-                    gESPLB = ((double[]) splitListB.get(0)).clone();
-                    for(int i = 1; i < cut; i++) {
-                        add(gESPLA, (double[])splitListA.get(i));
-                    }
-                    for(int i = 1; i < cut2; i++) {
-                        add(gESPLB, (double[])splitListB.get(i));
-                    }
-                } else {
-                    gESPLA = ((Node)splitListA.get(0)).getBoundary().clone();
-                    gESPLB = ((Node)splitListB.get(0)).getBoundary().clone();
-                    for (int i = 1; i < cut; i++) {
-                        add(gESPLA, ((Node)splitListA.get(i)).getBoundary());
-                    }
-                    for (int i = 1; i < cut2; i++) {
-                        add(gESPLB, ((Node)splitListB.get(i)).getBoundary());
-                    }
-                }
-                bulkTemp = calc.getOverlaps(gESPLA, gESPLB);
-                //get best index and lower are upper
-                if (bulkTemp < bulkRef || bulkRef == -1) {
-                    bulkRef = bulkTemp;
-                    index = cut;
-                    lower_or_upper = (lu == 0);
-                }else if (bulkTemp == 0) {
-                    cutList.add(cut);
-                    luList.add((lu == 0));
-                    gESPLAList.add(gESPLA);
-                    gESPLBList.add(gESPLB);
-                }
-                splitListA.clear();
-                splitListB.clear();
+        assert indexSplit != -1 : "BranchGrafting : indexSplit not find"+indexSplit;
+        calculator.sortList(indexSplit, true, listFN);
+        double[] envB, envA;
+        double overLapsRef = Double.POSITIVE_INFINITY;
+        int index = -1;
+        final int size04 = (int) Math.max(size * 0.4, 1);
+        for (int cut = size04; cut < size-size04; cut++) {
+            envA = listFN.get(0).getBoundary().clone();
+            for (int i = 1; i<cut; i++) {
+                add(envA, listFN.get(i).getBoundary());
+            }
+            envB = listFN.get(cut).getBoundary().clone();
+            for (int i = cut + 1; i < size; i++) {
+                add(envB, listFN.get(i).getBoundary());
+            }
+            double overLapsTemp = calculator.getOverlaps(envA, envB);
+            if (overLapsTemp < overLapsRef) {
+                overLapsRef = overLapsTemp;
+                index = cut;
             }
         }
         
-        if (!cutList.isEmpty()) {
-            final int s = cutList.size();
-            //paranoiac assert
-            assert (s                    == luList.size() 
-                    && gESPLAList.size() == gESPLBList.size() 
-                    && s                 == gESPLAList.size()) : "splitNode : couple lists haven't got same size";
-            double areaRef = -1;
-            double areaTemp;
-            for(int id = 0; id < s; id++) {
-                areaTemp = calc.getEdge(gESPLAList.get(id)) + calc.getEdge(gESPLBList.get(id));
-                if(areaTemp < areaRef || areaRef == -1) {
-                    areaRef = areaTemp;
-                    index = cutList.get(id);
-                    lower_or_upper = luList.get(id);
-                }
-            }
+        //index not wrong a split is better.
+        if (index > maxEltsPermit || (size-index) > maxEltsPermit) return;
+        
+        nodeA.clear();
+        nodeB.clear();
+        for (int i = 0; i < index; i++) {
+            final Node newChild = (Node)listFN.get(i);
+            newChild.setSiblingId(0);
+            nodeA.addChild(newChild);
         }
-        calc.sortList(splitIndex, lower_or_upper, eltList, listObjects);
-        Node[] nodeA = null, nodeB = null;
-        double[][] coordA = null, coordB = null;
-        Object[] objA = null, objB = null;
-        
-        if (isLeaf) {
-            coordA = new double[index][];
-            objA = new Object[index];
-            for(int i = 0; i < index; i++) {
-                coordA[i] = (double[]) eltList.get(i);
-                objA[i] = listObjects.get(i);
-            }
-            coordB = new double[size - index][];
-            objB = new Object[size - index];
-            int ib = 0;
-            for(int i = index; i < size; i++) {
-                coordB[ib] = (double[]) eltList.get(i);
-                objB[ib++] = listObjects.get(i);
-            }
-        } else {
-            nodeA = new Node[index];
-            for(int i = 0; i < index; i++) {
-                nodeA[i] = (Node) eltList.get(i);
-            }
-            nodeB = new Node[size - index];
-            int ib = 0;
-            for (int i = index; i < size; i++) {
-                nodeB[ib++] = (Node) eltList.get(i);
-            }
+        for (int i = index; i < size; i++) {
+            final Node newChild = (Node)listFN.get(i);
+            newChild.setSiblingId(0);
+            nodeB.addChild(newChild);
         }
-        
-        final int maxElts = tree.getMaxElements();
-        if (isLeaf) {
-            assert objA.length <= maxElts :"objA length should be lesser than max size permit by tree.";
-            assert objB.length <= maxElts :"objB length should be lesser than max size permit by tree.";
-            assert coordA.length <= maxElts :"coordA lengèth should be lesser than max size permit by tree.";
-            assert coordB.length <= maxElts :"coordB length should be lesser than max size permit by tree.";
-        } else {
-            assert nodeA.length <= maxElts :"nodeA length should be lesser than max size permit by tree.";
-            assert nodeB.length <= maxElts :"nodeB length should be lesser than max size permit by tree.";
-        }
-        
-        if(isLeaf) return UnmodifiableArrayList.wrap(new Node[] {tree.createNode(tree, null, null, objA, coordA), tree.createNode(tree, null, null, objB, coordB)});
-        final Node resultA = (Node) ((nodeA.length == 1) ? nodeA[0] : tree.createNode(tree, null, nodeA, null, null));
-        final Node resultB = (Node) ((nodeB.length == 1) ? nodeB[0] : tree.createNode(tree, null, nodeB, null, null));
-        return UnmodifiableArrayList.wrap(new Node[] {resultA, resultB});
-    }
-
-    /**Compute and define which axis to split {@code Node} candidate.
-     *
-     * <blockquote><font size=-1>
-     * <strong>NOTE: Define split axis method decides a split axis among all dimensions.
-     *               The chosen axis is the one with smallest overall perimeter or area (in function with dimension size).
-     *               It work by sorting all entry or {@code Node}, from their left boundary coordinates.
-     *               Then it considers every divisions of the sorted list that ensure each node is at least 40% full.
-     *               The algorithm compute perimeter or area of two result {@code Node} from every division.
-     *               A second pass repeat this process with respect their right boundary coordinates.
-     *               Finally the overall perimeter or area on one axis is the sum of all perimeter or area obtained from the two pass.</strong>
-     * </font></blockquote>
-     *
-     * @throws IllegalArgumentException if candidate is null.
-     * @return prefered ordinate index to split.
-     */
-    private static int defineSplitAxis(final Node candidate) throws IOException {
-        ArgumentChecks.ensureNonNull("candidate : ", candidate);
-        assert candidate.checkInternal() : "defineSplitAxis : begin candidate not conform";
-        
-        final boolean isLeaf = candidate.isLeaf();
-        List<double[]> eltList = new ArrayList<double[]>();
-        if (isLeaf) {
-            final int coordCount = candidate.getCoordsCount();
-            for (int i = 0; i < coordCount; i++) {
-                eltList.add(candidate.getCoordinate(i));
-            }
-        } else {
-            final int chCount = candidate.getChildCount();
-            for (int i = 0; i < chCount; i++) {
-                eltList.add(candidate.getChild(i).getBoundary());
-            }
-        }
-        
-        final AbstractTree tree = (AbstractTree)candidate.getTree();
-        final Calculator calc = tree.getCalculator();
-        final int size = eltList.size();
-        final double size04 = size * 0.4;
-        final int demiSize = (int) ((size04 >= 1)?size04:1);
-        final List splitListA = new ArrayList();
-        final List splitListB = new ArrayList();
-        double[] gESPLA, gESPLB;
-        double bulkTemp;
-        double bulkRef = Double.POSITIVE_INFINITY;
-        int index = 0;
-        final double[] globalEltsArea = getEnvelopeMin(eltList);
-        final int dim = globalEltsArea.length/2;//decal bit
-        
-        // if glogaleArea.span(currentDim) == 0 || if all elements have same span
-        // value as global area on current ordinate, impossible to split on this axis.
-        unappropriateOrdinate :
-        for (int indOrg = 0; indOrg < dim; indOrg++) {
-            final double globalSpan = getSpan(globalEltsArea, indOrg);
-            boolean isSameSpan = true;
-            //check if its possible to split on this currently ordinate.
-            for (double[] elt : eltList) {
-                if (!(Math.abs(getSpan(elt, indOrg) - globalSpan) <= 1E-9)) {
-                    isSameSpan = false;
-                    break;
-                }
-            }
-            if (globalSpan <= 1E-9 || isSameSpan) continue unappropriateOrdinate;
-            bulkTemp = 0;
-            for (int left_or_right = 0; left_or_right < 2; left_or_right++) {
-                if (left_or_right == 0) calc.sortList(indOrg, true, eltList, null);
-                else calc.sortList(indOrg, false, eltList, null);
-                for (int cut = demiSize, sdem = size - demiSize; cut <= sdem; cut++) {
-                    splitListA.clear();
-                    splitListB.clear();
-                    for (int i = 0; i < cut; i++)  splitListA.add(eltList.get(i));
-                    for (int j = cut; j < size; j++) splitListB.add(eltList.get(j));
-                    gESPLA     = getEnvelopeMin(splitListA);
-                    gESPLB     = getEnvelopeMin(splitListB);
-                    bulkTemp  += calc.getEdge(gESPLA);
-                    bulkTemp  += calc.getEdge(gESPLB);
-                }
-            }
-            if(bulkTemp < bulkRef) {
-                bulkRef = bulkTemp;
-                index = indOrg;
-            }
-        }
-        assert candidate.checkInternal() : "defineSplitAxis : end candidate not conform";
-        return index;
-    }
-
-    /**
-     * Travel {@code Tree}, find {@code Envelope} entry if it exist and delete it.
-     *
-     * <blockquote><font size=-1>
-     * <strong>NOTE: Moreover {@code Tree} is condensate after a deletion to stay conform about R-Tree properties.</strong>
-     * </font></blockquote>
-     *
-     * @param candidate {@code Node}  where to delete.
-     * @param entry {@code Envelope} to delete.
-     * @throws IllegalArgumentException if candidate or entry is null.
-     * @return true if entry is find and deleted else false.
-     */
-    private static boolean deleteNode(final Node candidate, final Object object, final double... coordinates) throws StoreIndexException, IOException {
-        ArgumentChecks.ensureNonNull("DeleteNode : Node candidate", candidate);
-        ArgumentChecks.ensureNonNull("DeleteNode : object", object);
-        ArgumentChecks.ensureNonNull("DeleteNode : coordinates", coordinates);
-        assert candidate.checkInternal() : "deleteNode : begin candidate not conform";
-        
-        if(intersects(candidate.getBoundary(), coordinates, true)) {
-            if(candidate.isLeaf()) {
-                boolean removed = false;
-                // paranoiac assert
-                final int sc = candidate.getCoordsCount();
-                assert (sc == candidate.getObjectCount()) :"deleteNode : coordinates and objects stored should have same size.";
-                for (int i = sc - 1; i >= 0; i--) {
-                    if (Arrays.equals(candidate.getCoordinate(i), coordinates)) { // faire un && logic
-                        if (candidate.getObject(i).equals(object)) {
-                            removed = true;
-                            candidate.removeCoordinate(i);
-                            candidate.removeObject(i);
-                            break;// found
-                        }
-                    }
-                }
-                
-                if (removed) {
-                    final AbstractTree tree = ((AbstractTree)candidate.getTree());
-                    tree.setElementsNumber(tree.getElementsNumber() - 1);
-                    trim(candidate);
-                    return true;
-                }
-            } else {
-                for(int i = candidate.getChildCount() - 1; i >= 0;i--) {
-                    final boolean removed = deleteNode(candidate.getChild(i), object, coordinates);
-                    if(removed) return true;
-                }
-            }
-            assert candidate.checkInternal() : "deleteNode : at end after trim candidate not conform";
-        }
-        return false;
-    }
-
-    /**
-     * Travel {@code Tree}, find {@code Entry} if it exist and delete it from reference.
-     *
-     * <blockquote><font size=-1>
-     * <strong>NOTE: Moreover {@code Tree} is condensate after a deletion to stay conform about R-Tree properties.</strong>
-     * </font></blockquote>
-     *
-     * @param candidate {@code Node}  where to delete.
-     * @param entry {@code Envelope} to delete.
-     * @throws IllegalArgumentException if candidate or entry is null.
-     * @return true if entry is find and deleted else false.
-     */
-    private static boolean removeNode(final Node candidate, final Object object, final double... coordinates) throws StoreIndexException, IOException{
-        ArgumentChecks.ensureNonNull("removeNode : Node candidate", candidate);
-        ArgumentChecks.ensureNonNull("removeNode : Node candidate", candidate);
-        assert candidate.checkInternal() : "removeNode : begin candidate not conform";
-        
-        if(intersects(candidate.getBoundary(), coordinates, true)){
-            if (candidate.isLeaf()) {
-                boolean removed = false;
-                final int sc = candidate.getCoordsCount();
-                assert (sc == candidate.getObjectCount()) :"removeNode : coordinates and objects stored should have same size.";
-                for (int i = sc - 1; i >= 0; i--) {
-                    if (Arrays.equals(candidate.getCoordinate(i), coordinates)) { // faire un && logic
-                        if (object == candidate.getObject(i)) {
-                            candidate.removeCoordinate(i);
-                            candidate.removeObject(i);
-                            removed = true;
-                            break; //found
-                        }
-                    }
-                }
-                
-                if(removed) {
-                    final AbstractTree tree = ((AbstractTree)candidate.getTree());
-                    tree.setElementsNumber(tree.getElementsNumber()-1);
-                    trim(candidate);
-                    return true;
-                }
-            } else {
-                for(int i = candidate.getChildCount() - 1; i >= 0;i--) {
-                    final boolean removed = removeNode(candidate.getChild(i), object, coordinates);
-                    if(removed) return true;
-                }
-            }
-        }
-        return false;
+        assert nodeA.getParentId()== nodeB.getParentId() : "branchGrafting : NodeA and NodeB should have same parent.";
+        assert treeAccess.readNode(nodeA.getParentId()).checkInternal()      : "branchGrafting : nodeA and B parent not conform.";
+        assert nodeA.checkInternal()                  : "branchGrafting : at end candidate not conform";
+        assert nodeB.checkInternal()                  : "branchGrafting : at end candidate not conform";
     }
 
     /**
@@ -741,244 +405,78 @@ public class StarRTree extends AbstractTree {
      * @param candidate {@code Node} to begin condense.
      * @throws IllegalArgumentException if candidate is null.
      */
-    private static void trim(final Node candidate) throws StoreIndexException, IOException {
+    @Override
+    protected void trim(final Node candidate) throws IllegalArgumentException, IOException, StoreIndexException {
         ArgumentChecks.ensureNonNull("trim : Node candidate", candidate);
-        
         List<double[]> reinsertListCoords = null;
-        List<Object> reinsertListObjects = null;
-        final AbstractTree tree = ((AbstractTree)candidate.getTree());
-        if (!candidate.isLeaf()) {
-            for(int i = candidate.getChildCount() - 1; i >= 0; i--) {
-                final Node currentChild = candidate.getChild(i);
+        List<Integer> reinsertListObjects = null;
+            double[] candiBound = null;
+        if (candidate.getChildId() != 0 && !candidate.isLeaf()) {
+            int sibl = candidate.getChildId();
+            while (sibl != 0) {
+                final Node currentChild = treeAccess.readNode(sibl);
                 // empty child
                 if (currentChild.isEmpty()) {
-                    candidate.removeChild(i);
-                } else { // check another conditions
-                    if (currentChild.isLeaf()) {
-                        // paranoiac assert
-                        final int countCoords = currentChild.getCoordsCount();
-                        assert (countCoords == currentChild.getObjectCount()) :"trim : candidate child should have coord and object with same length.";
-                        // stored elements number < max elements / 3
-                        if (countCoords <= tree.getMaxElements() / 3) {
-                            if (reinsertListCoords == null) {
-                                reinsertListCoords = new LinkedList<double[]>();
-                                reinsertListObjects = new LinkedList<Object>();
-                            }
-                            for (int ic = 0; ic < countCoords; ic++) {
-                                reinsertListCoords.add(currentChild.getCoordinate(ic));
-                                reinsertListObjects.add(currentChild.getObject(ic));
-                            }
-                            tree.setElementsNumber(tree.getElementsNumber()-countCoords);
-                            currentChild.clear();
-                            candidate.removeChild(i);
-                        }
+                    candidate.removeChild(currentChild);
+                } else if (currentChild.isLeaf() 
+                     && currentChild.getChildCount() <= getMaxElements() / 3) {// other condition
+                    if (reinsertListCoords == null) {
+                        reinsertListCoords  = new ArrayList<double[]>();
+                        reinsertListObjects = new ArrayList<Integer>();
+                    }
+                    int cuChildSibl = currentChild.getChildId();
+                    while (cuChildSibl != 0) {
+                        final Node currentData = treeAccess.readNode(cuChildSibl);
+                        reinsertListCoords.add(currentData.getBoundary());// risk de .clone a voir
+                        reinsertListObjects.add(-currentData.getChildId());
+                        cuChildSibl = currentData.getSiblingId();
+                        currentChild.removeChild(currentData);
+                        setElementsNumber(getElementsNumber()-1);
+                    }
+                    candidate.removeChild(currentChild);
+                } else {
+                    if (candiBound == null) {
+                        candiBound = currentChild.getBoundary().clone();
                     } else {
-                        // child have a single sub-child
-                        if (currentChild.getChildCount() == 1) {
-                            final Node reinsertNode = currentChild.removeChild(0);
-                            currentChild.clear();
-                            candidate.removeChild(i);
-                            reinsertNode.setParent(candidate);
-                            candidate.addChild(reinsertNode);
-                        }
+                        add(candiBound, currentChild.getBoundary());
+                    }
+                    // child own a single sub-child and its not a leaf.
+                    if (currentChild.getChildCount() == 1) {
+                        assert !currentChild.isLeaf() : "Trim : current child should not be leaf.";
+                        final Node cChild = treeAccess.readNode(currentChild.getChildId());
+                        assert Arrays.equals(currentChild.getBoundary(), cChild.getBoundary()) : "Node with only one element should have same boundary than its stored element.";
+                        candidate.removeChild(currentChild);
+                        candidate.addChild(cChild);
                     }
                 }
+                sibl = currentChild.getSiblingId();
             }
         }
-        if(candidate.getParent() != null) trim (candidate.getParent());
-        // re-insert after trim
+        if (candiBound != null) {
+            candidate.setBoundary(candiBound);
+             treeAccess.writeNode(candidate);
+            assert candidate.checkInternal() : "trim : candidate not conform";
+        }
+            
+        if (candidate.getParentId()!= 0) {
+            trim (treeAccess.readNode(candidate.getParentId()));
+        } else {
+            // generaly root have some changes.
+            if (candidate.isEmpty()) {
+                setRoot(null);
+            } else {
+                setRoot(candidate);
+            }
+        }
         if (reinsertListCoords != null) {
             assert (reinsertListObjects != null) : "trim : listObjects should not be null.";
             final int reSize = reinsertListCoords.size();
-            assert (reSize == reinsertListObjects.size()) :"reinsertLists should have same size";
+            assert (reSize == reinsertListObjects.size()) : "reinsertLists should have same size";
             for (int i = 0; i < reSize; i++) {
-                tree.insert(reinsertListObjects.get(i), reinsertListCoords.get(i));
+                insert(reinsertListObjects.get(i), reinsertListCoords.get(i));
             }
         } else {
             assert (reinsertListObjects == null) : "trim : listObjects should be null.";
         }
-    }
-
-    /**
-     * Exchange some entry(ies) between two nodes in aim to find best form with lesser overlaps.
-     * Also branchGrafting will be able to avoid splitting node.
-     *
-     * @param nodeA Node
-     * @param nodeB Node
-     * @throws IllegalArgumentException if nodeA or nodeB are not tree leaf.
-     * @throws IllegalArgumentException if nodeA or nodeB, and their sub-nodes, don't contains some {@code Envelope} entry(ies).
-     */
-    private static void branchGrafting(final Node nodeA, final Node nodeB ) throws IllegalArgumentException, IOException {
-        if(!nodeA.isLeaf() || !nodeB.isLeaf()) throw new IllegalArgumentException("branchGrafting : not leaf");
-        assert nodeA.getParent() == nodeB.getParent() : "branchGrafting : NodeA and NodeB should have same parent.";
-        assert nodeA.getParent().checkInternal()      : "branchGrafting : nodeA and B parent not conform.";
-        assert nodeA.checkInternal()                  : "branchGrafting : at begin candidate not conform";
-        assert nodeB.checkInternal()                  : "branchGrafting : at begin candidate not conform";
-        final int sa = nodeA.getCoordsCount();
-        final int sb = nodeB.getCoordsCount();
-        List<double[]> listCoords = new LinkedList<double[]>();
-        List<Object> listObject = new LinkedList<Object>();
-        
-        for (int i = 0; i < sa; i++) {
-            listCoords.add(nodeA.getCoordinate(i));
-            listObject.add(nodeA.getObject(i));
-        }
-        for (int i = 0; i < sb; i++) {
-            listCoords.add(nodeB.getCoordinate(i));
-            listObject.add(nodeB.getObject(i));
-        }
-        
-        //paranoiac assert
-        final int size = listCoords.size();
-        assert (size == listObject.size()) : "branch grafting : listcoords and listobjects should have same size.";
-        if (size == 0) throw new IllegalArgumentException("branchGrafting : empty list");
-        final AbstractTree tree = (AbstractTree)nodeA.getTree();
-        final int maxEltsPermit = tree.getMaxElements();
-        final Calculator calc = tree.getCalculator();
-        final double[] globalE = getEnvelopeMin(listCoords);
-        final int dim = globalE.length/2;//decal bit
-        double lengthDimRef = Double.NEGATIVE_INFINITY;
-        int indexSplit = -1;
-        for (int i = 0; i < dim; i++) {
-            double lengthDimTemp = getSpan(globalE, i);
-            if (lengthDimTemp > lengthDimRef) {
-                lengthDimRef = lengthDimTemp;
-                indexSplit = i;
-            }
-        }
-        assert indexSplit != -1 : "BranchGrafting : indexSplit not find"+ indexSplit;
-        calc.sortList(indexSplit, true, listCoords, listObject);
-        final double[] envA = listCoords.get(0);
-        final double[] envB = listCoords.get(0);
-        double overLapsRef = -1;
-        int index = -1;
-        final int size04 = (int)((size * 0.4 >= 1) ? size * 0.4 : 1);
-        for(int cut = size04, n = size - size04; cut < n; cut++) {
-            final double[] envAC = envA.clone();//system .arraycopy moin couteux
-            final double[] envBC = envB.clone();
-            for(int i = 1; i < cut; i++) {
-                add(envAC, listCoords.get(i));
-            }
-            for(int i = cut + 1; i < size; i++) {
-                add(envBC, listCoords.get(i));
-            }
-            double overLapsTemp = calc.getOverlaps(envAC, envBC);
-            if(overLapsTemp < overLapsRef || overLapsRef == -1){//Double.positiveinfinity
-                overLapsRef = overLapsTemp;
-                index = cut;
-            }
-        }
-        assert index != -1 : "branchGrafting : index cut out of bound";
-        //index not wrong a split is better.
-        if (index > maxEltsPermit || (size-index) > maxEltsPermit) return;
-        // clear nodes
-        nodeA.clear();
-        nodeB.clear();
-        
-        // fill node
-        for(int i = 0; i < index; i++) {
-            nodeA.addElement(listObject.get(i), listCoords.get(i));
-        }
-        for(int i = index; i < size; i++) {
-            nodeB.addElement(listObject.get(i), listCoords.get(i));
-        }
-        assert nodeA.getParent() == nodeB.getParent() : "branchGrafting : NodeA and NodeB should have same parent.";
-        assert nodeA.getParent().checkInternal()      : "branchGrafting : nodeA and B parent not conform.";
-        assert nodeA.checkInternal()                  : "branchGrafting : at end candidate not conform";
-        assert nodeB.checkInternal()                  : "branchGrafting : at end candidate not conform";
-    }
-
-    /**Get statement from re-insert state.
-     *
-     * @return true if it's permit to re-insert else false.
-     */
-    private boolean getIA() {
-        return insertAgain;
-    }
-
-    /**Affect statement to permit or not, re-insertion.
-     * @param insertAgain
-     */
-    private void setIA(boolean insertAgain) {
-        this.insertAgain = insertAgain;
-    }
-    
-    /**
-     * Recover lesser 33% largest of {@code Node} candidate within it.
-     *
-     * @throws IllegalArgumentException if {@code Node} candidate is null.
-     * @return all Entry within subNodes at more 33% largest of this {@code Node}.
-     */
-    private static void getElementAtMore33PerCent(final Node candidate, LinkedList<Object> listObjects, final LinkedList<double[]> listCoords) throws IOException {
-        ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidate", candidate);
-        ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : listObjects", listObjects);
-        ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : listCoords", listCoords);
-        assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
-        final double[] canBound = candidate.getBoundary();
-        final double[] candidateCentroid = getMedian(canBound);
-        final Calculator calc = candidate.getTree().getCalculator();
-        final double distPermit = calc.getDistancePoint(getLowerCorner(canBound), getUpperCorner(canBound)) / 1.666666666;
-        getElementAtMore33PerCent(candidate, candidateCentroid, distPermit, listObjects, listCoords);
-        assert candidate.checkInternal() : "getElementAtMore33PerCent : end candidate not conform";
-    }
-    
-    /**
-     * Recover lesser 33% largest of {@code Node} candidate within it.
-     *
-     * @throws IllegalArgumentException if {@code Node} candidate is null.
-     * @return all Entry within subNodes at more 33% largest of this {@code Node}.
-     */
-    private static void getElementAtMore33PerCent(final Node candidate, double[] candidateCentroid, double distancePermit, LinkedList<Object> listObjects, final LinkedList<double[]> listCoords) throws IOException {
-        ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidateCentroid", candidateCentroid);
-        ArgumentChecks.ensureStrictlyPositive("getElementsAtMore33PerCent : distancePermit", distancePermit);
-        assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
-        final Calculator calc = candidate.getTree().getCalculator();
-        if (candidate.isLeaf()) {
-            final int coordCount = candidate.getCoordsCount();
-            for (int i = 0; i < coordCount; i++) {
-                final double[] cuCoord = candidate.getCoordinate(i);
-                if (calc.getDistancePoint(candidateCentroid, getMedian(cuCoord)) >= distancePermit) {
-                    listObjects.add(candidate.getObject(i));
-                    listCoords.add(candidate.getCoordinate(i));
-                }
-            }
-        } else {
-            final int childCount = candidate.getChildCount();
-            for (int i = 0; i < childCount; i++) {
-                getElementAtMore33PerCent(candidate.getChild(i), candidateCentroid, distancePermit, listObjects, listCoords);
-            }
-        }
-        assert candidate.checkInternal() : "getElementAtMore33PerCent : begin candidate not conform";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Node createNode(Tree tree, Node parent, Node[] children, Object[] objects, double[][] coordinates) throws IOException {
-        if (coordinates != null && ((coordinates[0].length % 2) != 0)) 
-            throw new IllegalArgumentException("coordinate dimension is not correct");
-        
-        double[] bound = null;
-        if (children != null) {
-            assert (objects == null && coordinates == null) : "impossible to create node which contain Node and elements.";
-            bound = children[0].getBoundary().clone();
-            for (int i = 1, l = children.length; i < l; i++) {
-                add(bound, children[i].getBoundary());
-            }
-        } else if (objects != null && coordinates != null) {
-            assert (objects.length == coordinates.length) : "BasicRTree.createNode : object and coordinates tables should have same length.";
-            bound = coordinates[0].clone();
-            for (int i = 1, l = coordinates.length; i < l; i++) {
-                add(bound, coordinates[i]);
-            }
-        }
-        if (bound == null) return new DefaultNode(tree, parent, null, null, children, objects, coordinates);
-        final int dim = bound.length >> 1;
-        final double[] dp1Coords = new double[dim];
-        final double[] dp2Coords = new double[dim];
-        System.arraycopy(bound, 0, dp1Coords, 0, dim);
-        System.arraycopy(bound, dim, dp2Coords, 0, dim);
-        return new DefaultNode(tree, parent, dp1Coords, dp2Coords,children, objects, coordinates);
     }
 }

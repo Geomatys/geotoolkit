@@ -90,6 +90,7 @@ public class SpatialOperatorsType implements SpatialOperators {
     /**
      * Gets the value of the spatialOperator property.
      */
+    @Override
     public Collection<SpatialOperator> getOperators() {
         List<SpatialOperator> result =  new ArrayList<SpatialOperator>();
         if (spatialOperator == null) {
@@ -103,6 +104,7 @@ public class SpatialOperatorsType implements SpatialOperators {
         return result;
     }
     
+    @Override
     public SpatialOperator getOperator(final String name) {
         if ( name == null || spatialOperator == null) {
             return null;

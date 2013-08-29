@@ -48,6 +48,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
 import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
+import org.geotoolkit.gui.swing.navigator.NavigatorModel;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -86,36 +87,41 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class JLayerBand extends JNavigatorBand implements LayerListener{
+public class JLayerBand extends JNavigatorBand implements LayerListener {
 
     private static final Logger LOGGER = Logging.getLogger(JLayerBand.class);
-
     private final MapLayer layer;
     private Color color = RandomStyleBuilder.randomColor();
     private final float width = 2f;
     private final float circleSize = 8f;
-
     private boolean analyzed = false;
     private List<Range<Double>> ranges = new ArrayList<Range<Double>>();
     private List<Double> ponctuals = new ArrayList<Double>();
     private final ActionMenu popupmenu = new ActionMenu();
     private final passthrought listener = new passthrought();
-
     //used by the popup menu
     private Point mousePosition = null;
 
-    public JLayerBand(final MapLayer layer){
+    public JLayerBand(final MapLayer layer) {
+        this(layer, null);
+    }
+    
+    public JLayerBand (final MapLayer layer, NavigatorModel model) {
         ArgumentChecks.ensureNonNull("layer", layer);
         this.layer = layer;
         layer.addLayerListener(new Weak(this));
         setComponentPopupMenu(popupmenu);
         setMinimumSize(new Dimension(24, 24));
         setPreferredSize(new Dimension(24, 24));
+        
+        if (model != null) {
+            setModel(model);
+        }
     }
 
     @Override
     public JPopupMenu getComponentPopupMenu() {
-        if(popupmenu.buildElements()){
+        if (popupmenu.buildElements()) {
             //return this popup menu if it contains some elements only
             //otherwise return the parent popup
             return popupmenu;
@@ -136,62 +142,66 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
         repaint();
     }
 
-    private String getLayerName(){
+    private String getLayerName() {
         final Description desc = layer.getDescription();
-        if(desc != null){
+        if (desc != null) {
             final InternationalString title = desc.getTitle();
-            if(title != null){
+            if (title != null) {
                 return title.toString();
             }
         }
 
         final String name = layer.getName();
-        return (name == null)? "" : name;
+        return (name == null) ? "" : name;
     }
 
-    private void analyze(){
-        if(analyzed) return;
+    private void analyze() {
+        if (analyzed) {
+            return;
+        }
         ranges.clear();
         ponctuals.clear();
 
         final CoordinateReferenceSystem axis = getModel().getCRS();
 
-        if(layer instanceof CoverageMapLayer){
+        if (layer instanceof CoverageMapLayer) {
             final Envelope env = layer.getBounds();
-
+            if (env == null) {
+                return;
+            }
             Double min = null;
             Double max = null;
 
             final CoordinateReferenceSystem dataCRS = env.getCoordinateReferenceSystem();
             final List<CoordinateReferenceSystem> sourceParts = ReferencingUtilities.decompose(dataCRS);
 
-            for(CoordinateReferenceSystem sourcePart : sourceParts){
+            for (CoordinateReferenceSystem sourcePart : sourceParts) {
 
                 try {
                     final MathTransform trs = CRS.findMathTransform(sourcePart, axis, true);
                     final CoordinateSystemAxis sourceAxi = sourcePart.getCoordinateSystem().getAxis(0);
-                    if(sourceAxi instanceof DiscreteCoordinateSystemAxis){
+                    if (sourceAxi instanceof DiscreteCoordinateSystemAxis) {
                         final double[] incoord = new double[1];
                         final double[] outcoord = new double[1];
                         final DiscreteCoordinateSystemAxis dcsa = (DiscreteCoordinateSystemAxis) sourceAxi;
-                        for(int k=0;k<dcsa.length();k++){
+                        for (int k = 0; k < dcsa.length(); k++) {
                             final Comparable c = dcsa.getOrdinateAt(k);
                             final double d;
-                            if(c instanceof Number){
-                                incoord[0] = ((Number)c).doubleValue();
+                            if (c instanceof Number) {
+                                incoord[0] = ((Number) c).doubleValue();
                                 trs.transform(incoord, 0, outcoord, 0, 1);
                                 d = outcoord[0];
-                            }else if(c instanceof Date){
-                                d = ((Date)c).getTime();
-                            }else{
+                            } else if (c instanceof Date) {
+                                d = ((Date) c).getTime();
+                            } else {
                                 //not supported
                                 continue;
                             }
                             ponctuals.add(d);
-                            if(min == null || min>d){
+                            if (min == null || min > d) {
                                 min = d;
                             }
-                            if(max == null || max<d){
+                            if (max == null || max < d) {
                                 max = d;
                             }
                         }
@@ -275,18 +285,18 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
         analyzed = true;
     }
 
-    private static Double toValue(Object candidate){
-        if(candidate instanceof Date){
-            return (double)((Date)candidate).getTime();
-        }else if(candidate instanceof Number){
-            return ((Number)candidate).doubleValue();
+    private static Double toValue(Object candidate) {
+        if (candidate instanceof Date) {
+            return (double) ((Date) candidate).getTime();
+        } else if (candidate instanceof Number) {
+            return ((Number) candidate).doubleValue();
         }
         return Converters.convert(candidate, Double.class);
 
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g) {        
         super.paintComponent(g);
         analyze();
         final Graphics2D g2d = (Graphics2D) g;
@@ -294,32 +304,30 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         final int orientation = getNavigator().getOrientation();
-        final boolean horizontal = (orientation==SwingConstants.NORTH || orientation==SwingConstants.SOUTH);
+        final boolean horizontal = (orientation == SwingConstants.NORTH || orientation == SwingConstants.SOUTH);
 
-
-        final float extent =  horizontal ? getWidth() : getHeight();
-        final float centered = horizontal ? getHeight()/2 : getWidth()/2;
+        final float extent = horizontal ? getWidth() : getHeight();
+        final float centered = horizontal ? getHeight() / 2 : getWidth() / 2;
         Double startPos = null;
         Double endPos = null;
 
-        if(!horizontal){
+        if (!horizontal) {
             //we apply a transform on eveyrthing we paint
             g2d.translate(getWidth(), 0);
             g2d.rotate(Math.toRadians(90));
         }
 
-
         //draw range as a line
-        if(ranges != null){
+        if (ranges != null) {
             g2d.setColor(color);
             g2d.setStroke(new BasicStroke(width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            for(Range<Double> range : ranges){
+            for (Range<Double> range : ranges) {
                 double start = getModel().getGraphicValueAt(range.getMinValue());
                 double end = getModel().getGraphicValueAt(range.getMaxValue());
-                if(startPos == null || startPos>start){
+                if (startPos == null || startPos > start) {
                     startPos = start;
                 }
-                if(endPos==null || endPos<end){
+                if (endPos == null || endPos < end) {
                     endPos = end;
                 }
 
@@ -328,21 +336,20 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             }
         }
 
-
         //draw ponctual values as dots
-        if(ponctuals != null){
+        if (ponctuals != null) {
             g2d.setStroke(new BasicStroke(width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
-            for(final Double d : ponctuals){
+            for (final Double d : ponctuals) {
                 double pos = getModel().getGraphicValueAt(d);
-                if(startPos == null || pos < startPos){
+                if (startPos == null || pos < startPos) {
                     startPos = pos;
                 }
-                if(endPos == null || pos > endPos){
+                if (endPos == null || pos > endPos) {
                     endPos = pos;
                 }
 
-                final Shape circle = new java.awt.geom.Ellipse2D.Double(pos- circleSize/2, centered - circleSize/2, circleSize, circleSize);
+                final Shape circle = new java.awt.geom.Ellipse2D.Double(pos - circleSize / 2, centered - circleSize / 2, circleSize, circleSize);
 
                 g2d.setColor(Color.WHITE);
                 g2d.fill(circle);
@@ -352,13 +359,13 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
         }
 
         //name
-        if(startPos != null){
+        if (startPos != null) {
             String name = getLayerName();
-            if(startPos < 0){
+            if (startPos < 0) {
                 startPos = 0d;
                 name = " <  " + name;
             }
-            if(endPos > extent){
+            if (endPos > extent) {
                 name = name + "  > ";
             }
 
@@ -366,29 +373,29 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             final FontMetrics fm = g2d.getFontMetrics(f);
             final double strWidth = fm.getStringBounds(name, g2d).getWidth();
 
-            if(startPos+strWidth > extent){
+            if (startPos + strWidth > extent) {
                 startPos = extent - strWidth;
             }
 
             //draw halo
             final GlyphVector glyph = f.createGlyphVector(g2d.getFontRenderContext(), name);
-            final Shape shape = glyph.getOutline(startPos.floatValue(), centered-circleSize/2);
+            final Shape shape = glyph.getOutline(startPos.floatValue(), centered - circleSize / 2);
             g2d.setPaint(Color.WHITE);
-            g2d.setStroke(new BasicStroke(3,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+            g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             g2d.draw(shape);
 
             //draw text
             g2d.setColor(color);
             g2d.setFont(f);
-            g2d.drawString(name, startPos.floatValue(), centered-circleSize/2);
+            g2d.drawString(name, startPos.floatValue(), centered - circleSize / 2);
         }
 
     }
 
-
     // listen to later changes /////////////////////////////////////////////////
     @Override
-    public void styleChange(MapLayer source, EventObject event) {}
+    public void styleChange(MapLayer source, EventObject event) {
+    }
 
     @Override
     public void itemChange(CollectionChangeEvent<MapItem> event) {
@@ -400,10 +407,9 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
     }
 
     // Forward events to sub components ////////////////////////////////////////
+    private class passthrought extends SwingEventPassThrough {
 
-    private class passthrought extends SwingEventPassThrough{
-
-        private passthrought(){
+        private passthrought() {
             super(JLayerBand.this);
         }
 
@@ -430,72 +436,71 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             JLayerBand.this.mousePosition = e.getPoint();
             super.mouseMoved(e);
         }
-
     }
 
-    private class ActionMenu extends JPopupMenu{
+    private class ActionMenu extends JPopupMenu {
 
         @Override
         public void setVisible(boolean visible) {
             super.setVisible(visible);
             removeAll();
 
-            if(visible){
+            if (visible) {
                 buildElements();
             }
 
         }
 
-        public boolean buildElements(){
+        public boolean buildElements() {
             ActionMenu.this.removeAll();
 
             //check if we intersect some data at this position
             requestFocus();
             final Point pt = mousePosition;
-            if(pt == null){
+            if (pt == null) {
                 return false;
             }
 
             final int orientation = getNavigator().getOrientation();
-            final boolean horizontal = (orientation==SwingConstants.NORTH || orientation==SwingConstants.SOUTH);
+            final boolean horizontal = (orientation == SwingConstants.NORTH || orientation == SwingConstants.SOUTH);
 
 
-            final float extent =  horizontal ? JLayerBand.this.getWidth() : JLayerBand.this.getHeight();
-            final float centered = horizontal ? JLayerBand.this.getHeight()/2 : JLayerBand.this.getWidth()/2;
+            final float extent = horizontal ? JLayerBand.this.getWidth() : JLayerBand.this.getHeight();
+            final float centered = horizontal ? JLayerBand.this.getHeight() / 2 : JLayerBand.this.getWidth() / 2;
 
             final AffineTransform trs = new AffineTransform();
-            if(!horizontal){
+            if (!horizontal) {
                 //we apply a transform on everything
                 trs.translate(JLayerBand.this.getWidth(), 0);
                 trs.rotate(Math.toRadians(90));
             }
 
-            for(final Double pc : ponctuals){
+            for (final Double pc : ponctuals) {
                 double pos = getModel().getGraphicValueAt(pc);
 
-                if(pos < 0 || pos > extent){
+                if (pos < 0 || pos > extent) {
                     continue;
                 }
 
-                Shape circle = new java.awt.geom.Ellipse2D.Double(pos- circleSize/2, centered - circleSize/2, circleSize, circleSize);
+                Shape circle = new java.awt.geom.Ellipse2D.Double(pos - circleSize / 2, centered - circleSize / 2, circleSize, circleSize);
                 circle = trs.createTransformedShape(circle);
                 Rectangle rect = circle.getBounds();
                 //expend the rectengle for the line width, normaly width/2 should be used
                 //but we want to be a bit more tolerant
-                rect.x      -= width;
-                rect.y      -= width;
-                rect.height += width*2;
-                rect.width  += width*2;
+                rect.x -= width;
+                rect.y -= width;
+                rect.height += width * 2;
+                rect.width += width * 2;
 
-                if(rect.contains(pt)){
+                if (rect.contains(pt)) {
                     ActionMenu.this.add(new AbstractAction(MessageBundle.getString("movetoposition")) {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             JNavigator navi = JLayerBand.this.getNavigator();
-                            if(navi instanceof JMapTimeLine){
-                                ((JMapTimeLine)navi).moveTo(new Date(pc.longValue()));
-                            }else if(navi instanceof JMapAxisLine){
-                                ((JMapAxisLine)navi).moveTo(pc);
+                            if (navi instanceof JMapTimeLine) {
+                                ((JMapTimeLine) navi).moveTo(new Date(pc.longValue()));
+                            } else if (navi instanceof JMapAxisLine) {
+                                ((JMapAxisLine) navi).moveTo(pc);
                             }
                         }
                     });
@@ -506,7 +511,13 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             ActionMenu.this.revalidate();
             return getComponentCount() > 0;
         }
-
     }
-
+    
+    public boolean isEmpty() {
+        if (getModel() != null) {
+            analyze();
+            return (ranges.isEmpty() && ponctuals.isEmpty());
+            
+        } else return false;
+    }
 }

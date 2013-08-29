@@ -141,6 +141,8 @@ public class J2DCanvasSwing extends J2DCanvas{
 
         final DefaultRenderingContext2D context = prepareContext(context2D, output,null);
 
+        System.out.println(context.getCanvasObjectiveBounds());
+        
         //paint background if there is one.
         if(painter != null){
             painter.paint(context2D);

@@ -43,7 +43,7 @@ public class LookupTable {
         final List<LookupRecord> match = new ArrayList<>();
         for(int i=0,n=records.size();i<n;i++){
             final LookupRecord rec = records.get(i);
-            if(rec.objectClass.equals(objClassName)){
+            if(rec.getObjectClass().equals(objClassName)){
                 match.add(rec);
             }
         }
@@ -66,13 +66,13 @@ public class LookupTable {
 
         for(LookupRecord rec : records){
             writer.nextLine();
-            writer.append(rec.objectClass);                                     writer.nextColumn();
-            writer.append(rec.attributeCombination);                           writer.nextColumn();
-            writer.append(rec.symbolInstruction);                               writer.nextColumn();
-            writer.append(rec.displayPriority==null?"":""+rec.displayPriority); writer.nextColumn();
-            writer.append(""+rec.radar);                                        writer.nextColumn();
-            writer.append(""+rec.imoDisplayCategory);                           writer.nextColumn();
-            writer.append(rec.viewingGroup==null ? "":""+rec.viewingGroup);     writer.nextColumn();
+            writer.append(rec.getObjectClass());                                      writer.nextColumn();
+            writer.append(rec.getAttributeCombinaison().toString());                  writer.nextColumn();
+            writer.append(rec.getSymbolInstructions());                               writer.nextColumn();
+            writer.append(rec.getPriority()==null?"":""+rec.getPriority());           writer.nextColumn();
+            writer.append(""+rec.getRadar());                                         writer.nextColumn();
+            writer.append(""+rec.getDisplayCaegory());                                writer.nextColumn();
+            writer.append(rec.getViewingGroup()==null ? "":""+rec.getViewingGroup()); writer.nextColumn();
         }
         writer.writeHorizontalSeparator();
         return writer.toString();

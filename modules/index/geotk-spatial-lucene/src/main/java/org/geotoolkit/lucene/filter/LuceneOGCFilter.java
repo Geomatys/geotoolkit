@@ -36,12 +36,11 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.SpatialFilterType;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
-import org.geotoolkit.index.tree.io.TreeVisitor;
-import org.geotoolkit.index.tree.io.TreeX;
 import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.index.tree.io.StoreIndexException;
+import org.geotoolkit.index.tree.StoreIndexException;
+import org.geotoolkit.index.tree.TreeElementMapper;
+import org.geotoolkit.index.tree.TreeX;
 
 import static org.geotoolkit.lucene.LuceneUtils.*;
         
@@ -112,7 +111,6 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
         boolean reverse = false;
         boolean distanceFilter = false;
         final List<Envelope> results = new ArrayList<Envelope>();
-        final TreeVisitor treeVisitor = new DefaultTreeVisitor((Collection)results);
         if (tree != null) {
             /*
              * For distance buffer filter no envelope only mode
@@ -125,7 +123,12 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
                     try {
                         final Literal lit = (Literal) sp.getExpression2();
                         final GeneralEnvelope bound = getExtendedReprojectedEnvelope(lit.getValue(), tree.getCrs(), sp.getDistanceUnits(), sp.getDistance());
-                        tree.search(bound, treeVisitor);
+                        final int[] resultID = tree.searchID(bound);
+                        results.clear();
+                        TreeElementMapper<NamedEnvelope> tem = tree.getTreeElementMapper();
+                        for (int id : resultID) {
+                            results.add(tem.getObjectFromTreeIdentifier(id));
+                        }
                         treeSearch = true;
                     } catch (FactoryException ex) {
                         throw new IOException(ex);
@@ -151,11 +154,21 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
                             if (filterType == SpatialFilterType.DISJOINT) {
                                 reverse = true;
                             }
-                            tree.search(boundFilter, treeVisitor);
-                            treeSearch = true;
+                            final int[] resultID = tree.searchID(boundFilter);
+                            final TreeElementMapper<NamedEnvelope> tem = tree.getTreeElementMapper();
+                            results.clear();
+                            for (int id : resultID) {
+                                results.add(tem.getObjectFromTreeIdentifier(id));
+                            }
+                            treeSearch   = true;
                             envelopeOnly = false;
                         } else {
-                            TreeX.search(tree, boundFilter, filterType, treeVisitor);
+                            final int[] resultID = TreeX.search(tree, boundFilter, filterType);
+                            final TreeElementMapper<NamedEnvelope> tem = tree.getTreeElementMapper();
+                            results.clear();
+                            for (int id : resultID) {
+                                results.add(tem.getObjectFromTreeIdentifier(id));
+                            }
                             treeSearch = true;
                         }
                     } catch (StoreIndexException ex) {

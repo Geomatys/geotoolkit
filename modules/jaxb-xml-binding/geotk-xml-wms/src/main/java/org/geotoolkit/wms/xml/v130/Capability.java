@@ -77,7 +77,7 @@ public class Capability implements AbstractCapability {
      /**
      * An empty constructor used by JAXB.
      */
-     Capability() {
+     public Capability() {
      }
 
     /**
@@ -89,7 +89,7 @@ public class Capability implements AbstractCapability {
         this.exception = exception;
         this.layer     = layer;
         if (extendedCapabilities != null && extendedCapabilities.length != 0) {
-            this.extendedCapabilities = new ArrayList<JAXBElement<?>>();
+            this.extendedCapabilities = new ArrayList<>();
             for (final JAXBElement<?> element : extendedCapabilities) {
                 this.extendedCapabilities.add(element);
             }
@@ -103,6 +103,7 @@ public class Capability implements AbstractCapability {
         return request;
     }
 
+    @Override
     public void setRequest(final AbstractRequest request) {
         if (request instanceof Request) {
             this.request = (Request)request;
@@ -134,6 +135,7 @@ public class Capability implements AbstractCapability {
         this.exception = exception;
     }
 
+    @Override
     public void setExceptionFormats(final List<String> formats) {
         if (formats != null) {
             this.exception = new Exception(formats.toArray(new String[formats.size()]));

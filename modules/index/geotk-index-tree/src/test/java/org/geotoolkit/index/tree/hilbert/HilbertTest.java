@@ -15,104 +15,98 @@
  *    Lesser General Public License for more details.
  */
 package org.geotoolkit.index.tree.hilbert;
-import java.util.BitSet;
-import java.util.Iterator;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import org.geotoolkit.index.tree.AbstractTreeTest;
+import org.geotoolkit.index.tree.Node;
+import org.geotoolkit.index.tree.StoreIndexException;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import static org.geotoolkit.index.tree.TreeUtilities.add;
 
-/**Test Hilbert curve creation in dimension n at order 9 if it is possible.
+/**
+ * Class to override some methods appropriate to HilbertRTree use. 
  *
- * <blockquote><font size=-1>
- * <strong>NOTE: test is possible if dimension*order &lt; 30.({@code int} size limit value).</strong>
- * </font></blockquote>
- *
- * @author Rémi Marechal(Geomatys).
+ * @author Remi Marechal (Geomatys)
  */
-public abstract class HilbertTest {
-
-    final boolean brid = true;
-    final int dimension;
-    BitSet validPath;
-    Iterator<int[]> hilbertIterator;
-    public HilbertTest(final int dimension) {
-        this.dimension = dimension;
+abstract class HilbertTest extends AbstractTreeTest {
+    
+    /**
+     * Create a generic {@link HilbertRTree} test suite with {@link CoordinateReferenceSystem} define by user.
+     * 
+     * @param crs
+     */
+    protected HilbertTest(final CoordinateReferenceSystem crs) {
+        super(crs);
     }
-
-    @Test
-    public void order1Test(){
-        orderNTest(1);
-    }
-
-    @Test
-    public void order2Test(){
-        orderNTest(2);
-    }
-
-    @Test
-    public void order3Test(){
-        orderNTest(3);
-    }
-
-    @Test
-    public void order4Test(){
-        orderNTest(4);
-    }
-
-    @Test
-    public void order5Test(){
-        orderNTest(5);
-    }
-
-    @Test
-    public void order6Test(){
-        orderNTest(6);
-    }
-
-    @Test
-    public void order7Test(){
-        orderNTest(7);
-    }
-
-    @Test
-    public void order8Test(){
-        orderNTest(8);
-    }
-
-    @Test
-    public void order9Test(){
-        orderNTest(9);
+    
+    /**
+     * Create a generic {@link HilbertRTree} test suite.
+     * 
+     * @param tree HilbertRTree which will be test.
+     */
+    protected HilbertTest(final HilbertRTree tree) {
+        super(tree);
     }
 
     /**
-     * Compute Hilbert curve and fill validPath table box.
-     *
-     * @param order Hilbert curve order.
+     * {@inheritDoc }.
      */
-    private void orderNTest(final int order) {
-        int valMax = (brid) ? 24 : 30;
-        if (dimension*order > valMax) return;
-        hilbertIterator = new HilbertIterator(order, dimension);
-        validPath = new BitSet(2<<dimension*order-1);
-        int length = 2 << order-1;
-        while (hilbertIterator.hasNext()) {
-            int[] coords = hilbertIterator.next();
-            int val = coords[0];
-            assert (coords[0] < 2E9) : ("coordinate more longer");
-            for (int j=1; j<dimension; j++) {
-                assert (coords[j]<2E9) : ("coordinate more longer");
-                val += coords[j]*length;
+    @Override
+    protected void checkNode(Node node, List<double[]> listRef) throws StoreIndexException, IOException {
+        final double[] nodeBoundary = node.getBoundary();
+        double[] subNodeBound = null;
+        if (node.isLeaf()) {
+            int cellSibl = node.getChildId();
+            while (cellSibl != 0) {
+                final HilbertNode currentCell = (HilbertNode) tAF.readNode(cellSibl);
+                assertTrue(currentCell.isCell());
+                if (!currentCell.isEmpty()) {
+                    final double[] currentCellBound = currentCell.getBoundary();
+                    double[] subDataBound = null;
+                    int dataSibl = currentCell.getChildId();
+                    while (dataSibl != 0) {
+                        final HilbertNode currentData = (HilbertNode) tAF.readNode(dataSibl);
+                        if (subDataBound == null) {
+                            subDataBound = currentData.getBoundary().clone();
+                        } else {
+                            subDataBound = add(subDataBound, currentData.getBoundary());
+                        }
+                        final int currentValue = - currentData.getChildId();
+                        final int listId = currentValue -1;
+                        assertTrue("bad ID = "+(currentValue)
+                                +" expected : "+Arrays.toString(listRef.get(listId))
+                                +" found : "+Arrays.toString(currentData.getBoundary()), Arrays.equals(currentData.getBoundary(), listRef.get(listId)));
+                        dataSibl = currentData.getSiblingId();
+                    }
+                    assertTrue("boundary Cell should have a boundary equals from its data boundary sum : "
+                            + "cell boundary = "+Arrays.toString(currentCellBound)
+                            +" data boundary sum = "+Arrays.toString(subDataBound), Arrays.equals(currentCellBound, subDataBound));
+                    if (subNodeBound == null) {
+                        subNodeBound = currentCellBound.clone();
+                    } else {
+                        subNodeBound = add(subNodeBound, currentCellBound);
+                    }
+                }
+                cellSibl = currentCell.getSiblingId();
             }
-            validPath.set(val, true);
+        } else {
+            int sibl = node.getChildId();
+            while (sibl != 0) {
+                final Node currentChild = tAF.readNode(sibl);
+                if (subNodeBound == null) {
+                    subNodeBound = currentChild.getBoundary().clone();
+                } else {
+                    subNodeBound = add(subNodeBound, currentChild.getBoundary());
+                }
+                checkNode(currentChild, listRef);
+                sibl = currentChild.getSiblingId();
+            }
         }
-        validPath();
-    }
-
-    /**
-     * Verify all bitset table box.
-     */
-    private void validPath() {
-        for(int j = 0, l=validPath.length(); j<l; j++) {
-            assertTrue (validPath.get(j));
-        }
+        assertTrue("HilbertNode should have a boundary equals from its sub-Nodes boundary sum : "
+                +" HilbertNode boundary = "+Arrays.toString(nodeBoundary)
+                +"sub-nodes sum = "+Arrays.toString(subNodeBound), Arrays.equals(nodeBoundary, subNodeBound));
     }
 }

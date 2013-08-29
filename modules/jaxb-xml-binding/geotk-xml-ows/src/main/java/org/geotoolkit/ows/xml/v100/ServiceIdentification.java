@@ -94,8 +94,10 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
     public ServiceIdentification(final String title, final String _abstract,
             final KeywordsType keywords, final CodeType serviceType, final List<String> serviceTypeVersion, final String fees, final String accessConstraints){
         super(title, _abstract, keywords);
-        this.accessConstraints  = new ArrayList<String>();
-        this.accessConstraints.add(accessConstraints);
+        this.accessConstraints  = new ArrayList<>();
+        if (accessConstraints != null) {
+            this.accessConstraints.add(accessConstraints);
+        }
         this.fees               = fees;
         this.serviceType        = serviceType;
         this.serviceTypeVersion = serviceTypeVersion;
@@ -115,7 +117,7 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
     @Override
     public List<String> getServiceTypeVersion() {
         if (serviceTypeVersion == null) {
-            serviceTypeVersion = new ArrayList<String>();
+            serviceTypeVersion = new ArrayList<>();
         }
         return this.serviceTypeVersion;
     }
@@ -137,14 +139,14 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
     @Override
     public List<String> getAccessConstraints() {
         if (accessConstraints == null) {
-            accessConstraints = new ArrayList<String>();
+            accessConstraints = new ArrayList<>();
         }
         return this.accessConstraints;
     }
     
     @Override
     public List<String> getProfile() {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
     
     @Override

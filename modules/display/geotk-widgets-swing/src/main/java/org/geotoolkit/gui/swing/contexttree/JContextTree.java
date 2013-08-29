@@ -277,6 +277,21 @@ public class JContextTree extends JScrollPane {
             return "";
         }
     }
+    
+    private static String label(final MapItem item) {
+        String label = "";
+        
+        final Description desc = item.getDescription();
+        if (desc != null && desc.getTitle() != null) {
+            label = desc.getTitle().toString().replace("{}", "");
+        } 
+        
+        if (label.isEmpty() && item.getName() != null) {
+            label = item.getName();
+        }
+        
+        return label;
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     //private classes //////////////////////////////////////////////////////////
@@ -389,10 +404,10 @@ public class JContextTree extends JScrollPane {
                 this.selectCheck.setSelected(layer.isSelectable());
                 panel.add(selectCheck);
                 if(edition){
-                    this.field.setText(label(layer.getDescription()));
+                    this.field.setText(label(layer));
                     panel.add(field);
                 }else{
-                    this.label.setText(label(layer.getDescription())+" ");
+                    this.label.setText(label(layer)+" ");
                     panel.add(label);
                 }
 
@@ -416,10 +431,10 @@ public class JContextTree extends JScrollPane {
                 panel.add(visibleCheck);
 
                 if(edition){
-                    this.field.setText(label(item.getDescription()));
+                    this.field.setText(label(item));
                     panel.add(field);
                 }else{
-                    this.label.setText(label(item.getDescription())+" ");
+                    this.label.setText(label(item)+" ");
                     panel.add(label);
                 }
 
@@ -533,7 +548,7 @@ public class JContextTree extends JScrollPane {
             final TreePath path = tree.getSelectionPath();
             final DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 
-            if (node != null && (node.getUserObject() instanceof MapItem && !(node.getUserObject() instanceof MapContext))) {
+            if (node != null && (node.getUserObject() instanceof MapItem && !node.isRoot())) {
                 return new MapItemTransferable(path);
             }
 

@@ -74,17 +74,18 @@ public abstract class MIFGeometryBuilder {
         FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         // As parent's attributes are not shared, we must copy them to the new feature type.
-        builder.copy(parent);
-        builder.setSuperType(parent);
+        if(parent != null) {
+            builder.copy(parent);
+            builder.setSuperType(parent);
+            for(AttributeDescriptor desc : getAttributes()) {
+                if(parent.getDescriptor(desc.getName()) == null) {
+                    builder.add(desc);
+                }
+            }
+        }
 
         builder.setName(getName());
         builder.add(getName(), getGeometryBinding(), crs);
-
-        for(AttributeDescriptor desc : getAttributes()) {
-            if(parent.getDescriptor(desc.getName()) == null) {
-                builder.add(desc);
-            }
-        }
 
         return builder.buildFeatureType();
     }
@@ -104,19 +105,22 @@ public abstract class MIFGeometryBuilder {
         if(geometry.getDefaultGeometryProperty() == null) {
             throw new DataStoreException("Input feature does not contain any geometry.");
         } else {
-            final Class geomCls = geometry.getDefaultGeometryProperty().getType().getBinding();
+            final Object valueObj = geometry.getDefaultGeometryProperty().getValue();
             boolean geomMatch = false;
-            for(Class possibleBinding : getPossibleBindings()) {
-                if (geomCls.equals(possibleBinding)) {
-                    geomMatch = true;
-                    break;
+            Class geomCls = null;
+            if(valueObj !=null){
+                geomCls = valueObj.getClass();
+                for(Class possibleBinding : getPossibleBindings()) {
+                    if (geomCls.equals(possibleBinding)) {
+                        geomMatch = true;
+                        break;
+                    }
                 }
             }
             if(!geomMatch) {
                 throw new DataStoreException("Input feature does not contain the right geometry type.\nExpected : "
                         +getGeometryBinding()+"\nFound : "+geomCls);
             }
-
         }
         return new String();
     }

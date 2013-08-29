@@ -25,7 +25,7 @@ import java.util.Map;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class SymbolDefinition extends DAIField{
+public class SymbolDefinition extends DAIField implements Definition{
 
     /** A(8) : name of the symbol; */
     public String SYNM;
@@ -58,6 +58,46 @@ public class SymbolDefinition extends DAIField{
 
     public SymbolDefinition() {
         super("SYMD");
+    }
+
+    @Override
+    public String getName() {
+        return SYNM;
+    }
+
+    @Override
+    public String getType() {
+        return SYDF;
+    }
+
+    @Override
+    public int getBoxULX() {
+        return SBXC;
+    }
+
+    @Override
+    public int getBoxULY() {
+        return SBXR;
+    }
+
+    @Override
+    public int getBoxWidth() {
+        return SYHL;
+    }
+
+    @Override
+    public int getBoxHeight() {
+        return SYVL;
+    }
+
+    @Override
+    public int getPivotX() {
+        return SYCL;
+    }
+
+    @Override
+    public int getPivotY() {
+        return SYRW;
     }
 
     @Override

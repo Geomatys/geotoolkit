@@ -73,6 +73,31 @@ public class ContactType implements AbstractContact {
     private String contactInstructions;
 
     /**
+     * Empty constructor used by JAXB.
+     */
+    ContactType() {
+    }
+
+    /**
+     * Build a new Contact.
+     */
+    public ContactType(final TelephoneType phone, final AddressType address, final OnlineResourceType onlineResource,
+            final String hoursOfService, final String contactInstructions) {
+        this.address             = address;
+        this.contactInstructions = contactInstructions;
+        this.hoursOfService      = hoursOfService;
+        this.onlineResource      = onlineResource;
+        this.phone               = phone;
+    }
+
+    public ContactType(final String phone, final String fax, final String email,
+            final String address, final String city, final String state,
+            final String zipCode, final String country) {
+        this.address             = new AddressType(address, city, state, zipCode, country, email);
+        this.phone               = new TelephoneType(phone, fax);
+    }
+    
+    /**
      * Gets the value of the phone property.
      * 
      * @return

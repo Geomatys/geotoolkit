@@ -117,9 +117,10 @@ public final class MIFUtils {
         ROUNDRECT(new MIFRectangleBuilder()),
         ELLIPSE(new MIFEllipseBuilder()),
         MULTIPOINT(new MIFMultiPointBuilder()),
-        COLLECTION(new MIFCollectionBuilder());
+        COLLECTION(new MIFCollectionBuilder()),
+        GEOMETRY(new MIFDefaultGeometryBuilder());
 
-        private final MIFGeometryBuilder binding;
+        public final MIFGeometryBuilder binding;
         private GeometryType(MIFGeometryBuilder Binder) {
             binding = Binder;
         }
@@ -200,6 +201,8 @@ public final class MIFUtils {
                 type = GeometryType.RECTANGLE;
             } else if(GeometryCollection.class.isAssignableFrom(sourceClass)) {
                 type = GeometryType.COLLECTION;
+            } else if (Geometry.class.isAssignableFrom(sourceClass)) {
+                type = GeometryType.GEOMETRY;
             }
         }
 

@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.logging.Level;
@@ -65,7 +66,10 @@ public final class WMSUtilities {
     private static final Logger LOGGER = Logging.getLogger(WMSUtilities.class);
 
     private static final SimpleDateFormat PERIOD_DATE_FORMAT = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
+    static {
+        PERIOD_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+    }
+    
     private WMSUtilities() {}
 
     /**

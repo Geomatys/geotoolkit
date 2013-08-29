@@ -25,7 +25,7 @@ import java.util.Map;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class LinestyleDefinition extends DAIField{
+public class LinestyleDefinition extends DAIField implements Definition {
 
     /** A(8) : name of the linestyle; */
     public String LINM;
@@ -54,6 +54,46 @@ public class LinestyleDefinition extends DAIField{
 
     public LinestyleDefinition() {
         super("LIND");
+    }
+
+    @Override
+    public String getName() {
+        return LINM;
+    }
+
+    @Override
+    public String getType() {
+        return "V";
+    }
+
+    @Override
+    public int getBoxULX() {
+        return LBXC;
+    }
+
+    @Override
+    public int getBoxULY() {
+        return LBXR;
+    }
+
+    @Override
+    public int getBoxWidth() {
+        return LIHL;
+    }
+
+    @Override
+    public int getBoxHeight() {
+        return LIVL;
+    }
+
+    @Override
+    public int getPivotX() {
+        return LICL;
+    }
+
+    @Override
+    public int getPivotY() {
+        return LIRW;
     }
 
     @Override

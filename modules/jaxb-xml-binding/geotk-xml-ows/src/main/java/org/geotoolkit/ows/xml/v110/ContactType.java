@@ -88,10 +88,18 @@ public class ContactType implements AbstractContact {
         this.onlineResource      = onlineResource;
         this.phone               = phone;
     }
+
+    public ContactType(final String phone, final String fax, final String email,
+            final String address, final String city, final String state,
+            final String zipCode, final String country) {
+        this.address             = new AddressType(address, city, state, zipCode, country, email);
+        this.phone               = new TelephoneType(phone, fax);
+    }
     
     /**
      * Gets the value of the phone property.
      */
+    @Override
     public TelephoneType getPhone() {
         return phone;
     }
@@ -99,6 +107,7 @@ public class ContactType implements AbstractContact {
     /**
      * Gets the value of the address property.
      */
+    @Override
     public AddressType getAddress() {
         return address;
     }
@@ -106,6 +115,7 @@ public class ContactType implements AbstractContact {
    /**
     * Gets the value of the onlineResource property.
     */
+    @Override
     public OnlineResourceType getOnlineResource() {
         return onlineResource;
     }
@@ -113,6 +123,7 @@ public class ContactType implements AbstractContact {
     /**
      * Gets the value of the hoursOfService property.
      */
+    @Override
     public String getHoursOfService() {
         return hoursOfService;
     }
@@ -120,6 +131,7 @@ public class ContactType implements AbstractContact {
     /**
      * Gets the value of the contactInstructions property.
      */
+    @Override
     public String getContactInstructions() {
         return contactInstructions;
     }

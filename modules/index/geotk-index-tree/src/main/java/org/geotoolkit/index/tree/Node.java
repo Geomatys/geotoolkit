@@ -15,332 +15,578 @@
  *    Lesser General Public License for more details.
  */
 package org.geotoolkit.index.tree;
-
+import org.geotoolkit.internal.tree.TreeAccess;
 import java.io.IOException;
+import static org.geotoolkit.index.tree.TreeUtilities.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.sis.util.ArraysExt;
+import org.apache.sis.util.Classes;
+import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.internal.tree.TreeAccessFile;
+import org.geotoolkit.internal.tree.TreeAccessMemory;
+
 /**
- * Create "generic" Node.
+ * Default implementation Node use in Tree.<br/><br/>
+ * 
+ * In Tree, Node architecture is organize like a chained list.<br/><br/>
+ * 
+ * &nbsp;N1 (root)<br/>
+ * &nbsp;&nbsp;/-&gt;N2---------------------------&gt;N3----------------------------&gt;N4<br/>
+ * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/--&gt;N5--&gt;N6--&gt;N7&nbsp;&nbsp;
+ * &nbsp;&nbsp;&nbsp;/--&gt;N8--&gt;N9--&gt;N10&nbsp;&nbsp;&nbsp;&nbsp;
+ * &nbsp;/--&gt;N11--&gt;N12--&gt;N13<br/><br/>
+ * 
+ * Note : Neither Node has an identifier equal to 0.<br/>
+ * zero is reserved to significate end of chained list or no parent like tree root Node.
  *
- * @author Johann Sorel (Geomatys)
+ * @author Martin Desruisseaux (Geomatys).
+ * @author Remi Marechal (Geomatys).
  */
-public abstract class Node {
-
-    public static final String PROP_ISLEAF = "isleaf";
-    public static final String PROP_HILBERT_ORDER = "hilbertOrder";
-    public static final String PROP_HILBERT_TABLE = "tabHV";
-    public static final String PROP_HILBERT_VALUE = "hilbertValue";
-            
-    protected Node parent;
-    protected final Tree tree;
+public class Node {
     
-    public Node(Tree tree) {
-//        ArgumentChecks.ensureNonNull("tree", tree);
-        this.tree = tree;
+    /**
+     * Single Node identifier.
+     */
+    protected final int nodeId;
+    
+    /**
+     * Node boundary.
+     */
+    protected double[] boundary;
+    
+    /**
+     * Identifier of parent Node.<br/>
+     * If Node have no parent like tree trunk (see {@link AbstractTree#root) the value is 0.
+     */
+    protected int parentId;
+    
+    /**
+     * Identifier of sibling Node.<br/>
+     * Note : all sibling Node have same parent identifiers.<br/>
+     * When it s the last sibling Node of the current chained list Tree level the value is zero. 
+     */
+    protected int siblingId;
+    
+    /**
+     * There are 2 cases : <br/>
+     * if Node is a data (see {@link Node#isData()) childID is the tree identifier of a data.<br/>
+     * else childID is the identifier of the first children from Node chained list architecture.
+     */
+    protected int childId;// < 0 if it is a data.
+    
+    /**
+     * Number of children.
+     */
+    protected int childCount;
+    
+    /**
+     * Object which store Node attributs on a file define by user (see {@link TreeAccessFile}) 
+     * or in memory (see{@link TreeAccessMemory).
+     */
+    protected TreeAccess tAF;
+    
+    /**
+     * {@code Byte} which use to test some properties.<br/>
+     * first bit is at 1 if Node is a leaf.(see {@link TreeUtilities#IS_LEAF).<br/>
+     * second bit is at 2 if Node is a data.(see {@link TreeUtilities#IS_DATA).<br/>
+     * third bit is at 1 if Node is a cell.(see {@link TreeUtilities#IS_CELL).<br/>
+     * fourth bit is at 1 if Node is other.(see {@link TreeUtilities#IS_OTHER).
+     */
+    protected byte properties;
+
+    /**
+     * Create a Node adapted for standard Tree implementation.
+     * 
+     * @param tAF Object which store Node attributs.
+     * @param nodeId invariable single integer Node identifier.
+     * @param boundary double table which represent boundary Node coordinates.
+     * @param properties define type of Node. see ({@link Node#properties}).
+     * @param parentId identifier of parent Node Tree architecture.
+     * @param siblingId identifier of sibling Node.
+     * @param childId if Node is a data it is the identifier of the data which is 
+     * store in this tree (see {@link Node#childId}) else it is the first child of this Node. 
+     * @see TreeAccess
+     */
+    public Node(final TreeAccess tAF, final int nodeId, final double[] boundary, final byte properties, final int parentId, final int siblingId, final int childId) {
+        this.tAF        = tAF;
+        this.nodeId     = nodeId;
+        this.boundary   = boundary;
+        this.parentId   = parentId;
+        this.siblingId  = siblingId;
+        this.childId    = childId;
+        this.childCount = (childId != 0) ? 1 : 0;
+        this.properties = properties;
     }
 
     /**
-     * @param key
-     * @return user property for given key
+     * Return invariable single Node identifier.
+     * 
+     * @return invariable single Node identifier.
+     * @see Node#nodeId.
      */
-    public abstract Object getUserProperty(final String key);
-
-    /**Add user property with key access.
-     *
-     * @param key
-     * @param value Object will be stocked.
-     */
-    public abstract void setUserProperty(final String key, final Object value);
-
-    /**
-     * Affect a {@code Node} boundary.
-     */
-    public abstract void setBound(double[] bound);
-
-    /**<blockquote><font size=-1>
-     * <strong>NOTE: Null value can be return.</strong>
-     * </font></blockquote>
-     *
-     * @return {@code Node} boundary without re-computing sub-node boundary.
-     */
-    public abstract double[] getBound();
-    
-    /**
-     * Initialize Node just like after creating.
-     */
-    public abstract void clear();
-
-    /**Affect a new {@code Node} parent.
-     *
-     * @param parent {@code Node} parent pointer.
-     */
-    public void setParent(Node parent){
-        this.parent = parent;
+    public int getNodeId() {
+        return nodeId;
     }
     
-    /////////// Node ////////////////
-    
-    /**
-     * Return children number within this Node.
+     /**
+     * Return invariable single Node identifier from its parent Node.
      * 
-     * @return children number within this Node.
+     * @return invariable single Node identifier from its parent Node.
+     * @see Node#parentId.
      */
-    public abstract int getChildCount();
+    public int getParentId() {
+        return parentId;
+    }
     
     /**
-     * Add a sub-node (node child) in this Node.
+     * Affect a new parent identifier.
      * 
-     * @param node will be added.
+     * @param parentId identifier of new parent.
      */
-    public abstract void addChild(Node node) throws IOException;
-    
+    public void setParentId(final int parentId) {
+        this.parentId = parentId;
+    }
+
     /**
-     * Add some of sug-node.
+     * Return invariable single Node identifier of its sibling Node.
      * 
-     * @param nodes sub-node table.
+     * @return invariable single Node identifier from its sibling Node.
+     * @see Node#siblingId.
      */
-    public abstract void addChildren(Node[] nodes) throws IOException;
+    public int getSiblingId() {
+        return siblingId;
+    }
     
     /**
-     * Return sub-node (child) at index i.
+     * Affect a new sibling identifier.
      * 
-     * @param i index of sub-node asked.
-     * @return sub-node (child) at index i.
+     * @param siblingId identifier of new sibling.
      */
-    public abstract Node getChild(int i);
-    
+    public void setSiblingId(final int siblingId) {
+        this.siblingId = siblingId;
+    }
+
     /**
-     * Return all sub-nodes within this Node.
+     * Return invariable single Node identifier of its first children or data tree identifier value.
      * 
-     * @return all sub-nodes within this Node. 
+     * @return invariable single Node identifier of its first children or data tree identifier value.
+     * @see Node#childId.
      */
-    public abstract Node[] getChildren() throws IOException;
-    
+    public int getChildId() {
+        return childId;
+    }
+
     /**
-     * Remove sub-node from this Node at i index.
+     * Affect a new child identifier.
      * 
-     * @param i index of sub-node which will be remove.
-     * @return sub-node which just be remove.
+     * @param childId identifier of new child.
      */
-    public abstract Node removeChild(int i);
+    public void setChildId(final int childId) {
+        this.childId = childId;
+    }
     
     /**
-     * Remove all sub-node from this Node.
+     * Return {@code Byte} which contains type of Node.
      * 
-     * @return removed sub-Node table from this Node.
+     * @return {@code Byte} which contains type of Node.
+     * @see Node#properties
      */
-    public abstract Node[] removeChildren();
-    
-    
-    /////////// Elements ///////////////
-    
+    public byte getProperties() {
+        return properties;
+    }
+
     /**
-     * Return element number within this Node.
+     * Affect a new type on this Node.
      * 
-     * @return element number within this Node.
+     * @param properties newest type.
      */
-    public abstract int getObjectCount();
+    public void setProperties(final byte properties) {
+        this.properties = properties;
+    }
     
     /**
-     * Return Object at index i within this Node.
+     * Return boundary of this Node.
      * 
-     * @param i index of object which will be returned.
-     * @return Object at index i within this Node. 
+     * @return boundary of this Node.
      */
-    public abstract Object getObject(int i);
-    
+    public double[] getBoundary() {
+        return boundary;
+    }
+
     /**
-     * Return all Objects within this Node.
+     * Affect a new boundary on this Node.
      * 
-     * @return all Objects within this Node. 
+     * @param boundary newest boundary.
      */
-    public abstract Object[] getObjects();
-    
+    public void setBoundary(final double[] boundary) {
+        this.boundary = boundary;
+    }
+
     /**
-     * Add element which is composed by an Object with its boundary double table coordinates.
+     * Return TreeAccess pointer.
      * 
-     * @param object object which will be stored.
-     * @param coordinate object coordinates.
+     * @return TreeAccess pointer.
+     * @see TreeAccess
      */
-    public abstract void addElement(Object object, double... coordinate) throws IOException;//set element et stock
+    public TreeAccess getTreeAccess() {
+        return tAF;
+    }
     
     /**
-     * Add some of element in this Node.
-     * 
-     * @param objects some of objects which will be added.
-     * @param coordinates some of respective object coordinates.
-     * @throws IllegalArgumentException if objects and coordinates table haven't got same length.
-     */
-    public abstract void addElements(Object[] objects, double[][] coordinates) throws IOException;
-    
-    /**
-     * Remove and return object at index i in this Node.
-     * 
-     * @param i index of object which will be remove.
-     * @return object at index i in this Node.
-     */
-    public abstract Object removeObject(int i);
-    
-    /**
-     * Return and remove all Objects stored in this Node.
-     * 
-     * @return all Objects stored in this Node.
-     */
-    public abstract Object[] removeObjects();
-    
-    
-    ///////////// Coordinates ////////////
-    
-    /**
-     * <p>Return coordinate number stored in this Node.<br/>
-     * Normaly equals to {@link #getObjectCount() }.</p>
-     * 
-     * @return coordinate number stored in this Node.
-     */
-    public abstract int getCoordsCount();
-    
-    /**
-     * Return coordinate object at i index.
-     * 
-     * @param i index of coordinates which will be asked.
-     * @return coordinate object at i index.
-     */
-    public abstract double[] getCoordinate(int i);
-    
-    /**
-     * Return all coordinates within this Node.
-     * 
-     * @return all coordinates within this Node. 
-     */
-    public abstract double[][] getCoordinates();
-    
-    /**
-     * Return and remove coordinate at i index within this Node.
-     * 
-     * @param i index of coordinate which will be removed.
-     * @return coordinate at i index within this Node.
-     */
-    public abstract double[] removeCoordinate(int i);
-    
-    /**
-     * Return and remove all coordinates within this Node.
-     * 
-     * @return all coordinates within this Node.
-     */
-    public abstract double[][] removeCoordinates();
-    
-    /**
-     * Return {@code true} if Node is consistent from some of rules.<br/>
-     * Moreover this method is only call in a {@code assert} commande.
-     * 
-     * @return {@code true} if Node is consistent from some of rules.
-     */
-    public abstract boolean checkInternal() throws IOException;
-    
-    /**
-     * A leaf is a {@code Node} at extremity of {@code Tree} which contains only entries.
+     * A leaf is a {@code Node} which contains only some data Node.
      *
      * @return true if it is a leaf else false (branch).
+     * @see Node#properties
      */
-    public boolean isLeaf() throws IOException {
-        final Object userPropIsLeaf = getUserProperty(PROP_ISLEAF);
-        if (userPropIsLeaf != null) {
-            return (Boolean)userPropIsLeaf;
-        }
-        return getChildren() == null;
+    public boolean isLeaf() {
+        return (properties &  IS_LEAF) !=  0;
+    }
+    
+    /**
+     * A leaf is a {@code Node} at extremity of {@code Tree} 
+     * which contains a single data tree identifier.
+     *
+     * @return true if it is a leaf else false (branch).
+     * @see Node#properties
+     */
+    public boolean isData() {
+        return (properties &  IS_DATA) !=  0;
     }
 
     /**
-     * @return true if {@code Node} contains nothing else false.
+     * Return true if Node don't contains children else false.
+     * 
+     * @return true if Node don't contains children else false.
      */
     public boolean isEmpty() {
-        final Object userPropIsLeaf = getUserProperty(PROP_ISLEAF);
-        if(userPropIsLeaf != null && ((Boolean)userPropIsLeaf)){
-            for(int i = 0, s = getChildCount(); i < s; i++) {
-                if(!getChild(i).isEmpty()){
-                    return false;
-                }
+        return childCount == 0;
+    }
+    
+    /**
+     * Add some children Node.
+     * 
+     * @param nodes children Node which will be added.
+     * @throws IOException if problem during Node writing from {@link TreeAccessFile}.
+     * @see TreeAccessFile#writeNode(org.geotoolkit.index.tree.Node) 
+     */
+    public void addChildren(final Node[] nodes) throws IOException {
+        for(Node fnod : nodes) {
+            // all elements should be distinct.
+            fnod.setSiblingId(0);
+            // connect child at other children (its sibling).
+            childCount++;
+            final int nextSibling = getChildId();
+            setChildId(fnod.getNodeId());
+            fnod.setParentId(getNodeId());
+            fnod.setSiblingId(nextSibling);
+            if (boundary == null) {
+                boundary = fnod.getBoundary().clone();
+            } else {
+                add(boundary, fnod.getBoundary());
             }
-            return true;
+            tAF.writeNode(fnod);
         }
-        return (getChildCount() == 0 && getObjectCount() == 0);
+        tAF.writeNode(this);
     }
 
     /**
-     * @return true if node elements number equals or overflow max elements
-     *         number autorized by {@code Tree} else false.
+     * Return all children from this Node.<br/><br/>
+     * 
+     * Note : if is leaf all children returned are data type else other type.
+     * 
+     * @return all children from this Node.
+     * @throws IOException if problem during Node reading from {@link TreeAccessFile}. 
+     * @see TreeAccessFile#readNode(int) 
+     */
+    public Node[] getChildren() throws IOException {
+        final Node[] children = new Node[childCount];
+        int sibl = getChildId();
+        int id = 0;
+        while (sibl != 0) {
+            final Node cuN = tAF.readNode(sibl);
+            children[id++] = cuN;
+            sibl = cuN.getSiblingId();
+        }
+        assert id == childCount : "FileNode : getChildren : childCound and child number doesn't match.";
+        return children;
+    }
+
+    /**
+     * Remove specified child Node.<br/><br/>
+     * 
+     * Return true if child Node was found and should be removed else false.
+     * 
+     * @param node Node which will be removed.
+     * @return true if child Node was found and should be removed else false.
+     * @throws IOException if problem during Node writing from {@link TreeAccessFile}.
+     * @see TreeAccessFile#writeNode(org.geotoolkit.index.tree.Node) 
+     */
+    public boolean removeChild(final Node node) throws IOException {
+        boolean found = false;
+        if (childCount == 1) {
+            if (node.getNodeId() == getChildId()) {
+                childCount--;
+                setChildId(0);
+                tAF.writeNode(this);
+                found = true;
+            }
+        } else {
+            
+            if (getChildId() == node.getNodeId()) {
+                setChildId(node.getSiblingId());
+                childCount--;
+                final Node[] children = getChildren();
+                boundary = children[0].getBoundary().clone();
+                for (int i = 1, l = children.length; i < l; i++) {
+                    add(boundary, children[i].getBoundary());
+                }
+                tAF.writeNode(this);
+                found = true;
+            } else {
+                // connect sibling with its next sibling.
+                Node precChild = tAF.readNode(getChildId());
+                boundary = precChild.getBoundary().clone();
+                int sibl = precChild.getSiblingId();
+                
+                while (sibl != 0) {
+                    if (sibl == node.getNodeId()) {
+                        sibl = node.getSiblingId();
+                        found = true;
+                        // accrocher les voisins
+                        precChild.setSiblingId(sibl);
+                        tAF.writeNode(precChild);
+                    } else {
+                        precChild = tAF.readNode(sibl);
+                        sibl = precChild.getSiblingId();
+                        add(boundary, precChild.getBoundary());
+                    }
+                }
+                if (found) {
+                    childCount--;
+                    tAF.writeNode(this);
+                }
+            }
+        }
+        if (found) tAF.removeNode(node);
+        return found;
+    }
+    
+    /**
+     * Remove specified data.<br/><br/>
+     * 
+     * Return true if data was found and should be removed else false.
+     * 
+     * @param identifier tree identifier.
+     * @param coordinates data boundary
+     * @return true if data was found and should be removed else false.
+     * @throws IOException if problem during Node writing from {@link TreeAccessFile}.
+     * @see TreeAccessFile#writeNode(org.geotoolkit.index.tree.Node) 
+     */
+    public boolean removeData(final int identifier, final double ...coordinates) throws IOException {
+        if (!((properties & 5) != 0))// test isleaf or iscell
+            throw new IllegalStateException("You should not call removeData() method on a no leaf or cell Node.");
+        if (isEmpty()) return false;
+        final Node[] children = getChildren();
+        final int l = children.length;
+        assert childCount == l;
+        int index = -1;
+        for (int i = 0; i < l; i++) {
+            final Node currentData = children[i];
+            if (identifier == -currentData.getChildId()
+               && Arrays.equals(currentData.getBoundary(), coordinates)) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) return false;
+        childCount--;
+        tAF.removeNode(children[index]);
+        if (index == 0) {
+            if (l == 1) {
+                setChildId(0);
+                boundary = null;
+            } else {
+                setChildId(children[1].getNodeId());
+                boundary = children[1].getBoundary().clone();
+                for (int i = 2; i < l; i++) {
+                    add(boundary, children[i].getBoundary());
+                }
+            }
+        } else {
+            children[index-1].setSiblingId(children[index].getSiblingId());
+            tAF.writeNode(children[index-1]);
+            boundary = children[0].getBoundary().clone();
+            for (int i = 1; i < l; i++) {
+                if (i != index) add(boundary, children[i].getBoundary());
+            }
+        }
+        tAF.writeNode(this);
+        return true;
+    }
+    
+    /**
+     * Initialize Node.
+     */
+    public void clear() {
+        boundary   = null;
+        childId    = 0;
+        childCount = 0;
+    }
+
+    /**
+     * Return children number.
+     * 
+     * @return children number.
+     */
+    public int getChildCount() {
+        return childCount;
+    }
+    
+    /**
+     * Affect a new children number value.
+     * 
+     * @param value new children number value.
+     * @see TreeAccessFile#readNode(int) 
+     */
+    public void setChildCount(final int value) {
+        childCount = value;
+    }
+
+    /**
+     * Add a new child in this Node.<br/><br/>
+     * 
+     * Added child own a sibling id equal to last child Node identifier.
+     * 
+     * @param node added child.
+     * @throws IOException if problem during Node writing from {@link TreeAccessFile}.
+     * @see TreeAccessFile#writeNode(org.geotoolkit.index.tree.Node) 
+     */
+    public void addChild(final Node node) throws IOException {
+        final double[] nodeBoundary = node.getBoundary();
+        assert node.getSiblingId() == 0 : "future added element should be distinct from others.";
+        // connect child at other children (its sibling).
+        childCount++;
+        final int nextSibling = getChildId();
+        setChildId(node.getNodeId());
+        node.setParentId(getNodeId());
+        node.setSiblingId(nextSibling);
+        if (nodeBoundary != null) {
+            if (boundary == null || ArraysExt.hasNaN(boundary)) {
+                boundary = nodeBoundary.clone();
+            } else {
+                add(boundary, nodeBoundary);
+            }
+        }
+        tAF.writeNode(this);
+        tAF.writeNode(node);
+    }
+    
+    /**
+     * Verify some internal Node properties.<br/><br/>
+     * 
+     * Return false if a Node properties doesn't match with an expected results else true.
+     * 
+     * @return false if a Node properties doesn't match with an expected results else true.
+     * @throws IOException if problem during Node reading from {@link TreeAccessFile}. 
+     * @see TreeAccessFile#readNode(int) 
+     */
+    public boolean checkInternal() throws IOException {
+        if (isEmpty()) return true;
+        if (getChildId() < 0) {
+            if (!isData()) {
+                throw new IllegalStateException("with childID < 0 isData() should return true.");
+            }
+            if (getChildCount() != 1) {
+                throw new IllegalStateException("in data childcount always equals to 1.");
+            }
+        } else {
+            int verifChildCount = 0;
+            double[] boundTemp = null;
+            int sibl = getChildId();
+            while (sibl != 0) {
+                final Node cuChild = tAF.readNode(sibl);
+                if (cuChild.getParentId() != getNodeId()) {
+                    throw new IllegalStateException("Child sibling should have parent ID equals to this.nodeID.");
+                }
+                if (boundTemp == null) {
+                    boundTemp = cuChild.getBoundary().clone();
+                } else {
+                    add(boundTemp, cuChild.getBoundary());
+                }
+                verifChildCount++;
+                sibl = cuChild.getSiblingId();
+            }
+            if (isData()) {
+                throw new IllegalStateException("with childID > 0 isData() should return false.");
+            }
+            if (verifChildCount != childCount) {
+                throw new IllegalStateException("sibling number and child count should have same value.");
+            }
+            if (!Arrays.equals(getBoundary(), boundTemp)) {
+                throw new IllegalStateException("children boundary adding should be same as this.boundary."+Arrays.toString(boundTemp)+"   "+Arrays.toString(getBoundary()));
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Return true if children number is higher than maximum elements permit 
+     * per Node else false.
+     * 
+     * @return true if children number is higher than maximum elements permit per Node else false.
+     * @throws IOException if problem during reading Node in {@link TreeAccessFile}.
+     * But exception only return from {@link HilbertNode} sub-implementation.
+     * @see HilbertNode#isFull() 
      */
     public boolean isFull() throws IOException {
-        final Object userPropIsLeaf = getUserProperty(PROP_ISLEAF);
-        if (Boolean.TRUE.equals(userPropIsLeaf)) {
-            for(int i = 0, s = getChildCount(); i < s; i++){
-                if(!getChild(i).isFull()){
-                    return false;
-                }
-            }
-            return true;
-        }
-        return (getChildCount() + getObjectCount()) >= getTree().getMaxElements();
+        return getChildCount() >= tAF.getMaxElementPerCells();
     }
     
     /**
-     * @return {@code Node} parent pointer.
+     * {@inheritDoc}.
      */
-    public Node getParent(){
-        return parent;
+    @Override
+    public String toString() {
+        final List toString;
+        try {
+            if (!isData()) {
+                toString = Arrays.asList(this.getChildren());
+                String strparent =  (getParentId() == 0) ? "null" : (""+getParentId());
+                return Trees.toString(Classes.getShortClassName(this)+" parent : "+strparent+" : ID : "+getNodeId()
+                    + " leaf : "+isLeaf()+" sibling : "+getSiblingId()+" child "+getChildId()+" children number : "+getChildCount()+Arrays.toString(getBoundary()), toString);
+            } else {
+                return Classes.getShortClassName(this)+"Data : parent : "+getParentId()+" ID : "+getNodeId()+" sibling : "+getSiblingId()+" value : "+(-getChildId())+" bound : "+Arrays.toString(getBoundary());
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     /**
-     * @return {@code Tree} pointer.
+     * {@inheritDoc }.
      */
-    public Tree getTree(){
-        return tree;
-    }
-
-    /**
-     * <blockquote><font size=-1>
-     * <strong>NOTE: if boundary is null, method re-compute all subnode boundary.</strong>
-     * </font></blockquote>
-     * @return boundary.
-     */
-    public double[] getBoundary() throws IOException {
-        double[] env = getBound();
-        if (env != null) {
-            return env;
-        }
-        env = calculateBounds();
-        if (env != null) {
-            for (double val : env) {
-                if (Double.isNaN(val)) {
-                    throw new IllegalStateException("getboundary : boundary from sub-node should not contain NAN values.");
-                }
-            }
-            setBound(env);
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof Node)) return false;
+        final Node objNode = (Node) obj;
+        boolean boundBool;
+        final double[] boundThis = getBoundary();
+        final double[] objBound = objNode.getBoundary();
+        if (boundThis == null || ArraysExt.allEquals(boundThis, Double.NaN)) {
+            boundBool = (objBound == null || ArraysExt.allEquals(objBound, Double.NaN));
         } else {
-            throw new IllegalStateException("get boundary : boundary from sub - node should not be null.");
+            boundBool = Arrays.equals(objBound, boundThis);
         }
-        return env;
-    }
-    
-    /**
-     * Compute {@code Node} boundary from stocked sub-node or entries .
-     */
-    protected double[] calculateBounds() throws IOException {
-        double[] boundary = null;    
-        final int s;
-        if (isLeaf()) {
-            s = getCoordsCount();
-            if (s == 0) throw new IllegalStateException("impossible to compute boundary from empty Leaf.");
-            boundary = getCoordinate(0).clone();
-            for(int i = 1; i < s; i++) {
-                DefaultTreeUtils.add(boundary, getCoordinate(i));
-            }
-        } else {
-            s = getChildCount();
-            if (s == 0) throw new IllegalStateException("impossible to compute boundary from empty Node.");
-            boundary = getChild(0).getBoundary().clone();
-            for(int i = 1; i < s; i++) {
-                DefaultTreeUtils.add(boundary, getChild(i).getBoundary());
-            }
-        }
-        return boundary;
+        return objNode.getNodeId() == getNodeId() 
+                && boundBool
+                && objNode.getParentId() == getParentId() 
+                && objNode.getSiblingId() == getSiblingId()
+                && objNode.getChildId() == getChildId()
+                && objNode.getChildCount() == getChildCount();
     }
 }

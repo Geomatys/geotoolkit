@@ -88,6 +88,7 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
     /**
      * Gets the value of the individualName property.
      */
+    @Override
     public String getIndividualName() {
         return individualName;
     }
@@ -96,6 +97,7 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
      * Gets the value of the positionName property.
      * 
      */
+    @Override
     public String getPositionName() {
         return positionName;
     }
@@ -104,6 +106,7 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
      * Gets the value of the contactInfo property.
      * 
      */
+    @Override
     public ContactType getContactInfo() {
         return contactInfo;
     }
@@ -112,6 +115,7 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
      * Gets the value of the role property.
      * 
      */
+    @Override
     public CodeType getRole() {
         return role;
     }
