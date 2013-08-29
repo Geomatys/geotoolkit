@@ -26,18 +26,12 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.TopologyException;
 import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.TexturePaint;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -61,10 +55,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Context.GeoType;
 import org.geotoolkit.s52.S52Palette;
-import org.geotoolkit.s52.S52SVGIcon;
-import org.geotoolkit.s52.S52Utilities;
 import org.geotoolkit.s52.dai.PatternDefinition;
-import org.geotoolkit.s52.dai.SymbolVector;
 import org.geotoolkit.s52.lookuptable.LookupRecord;
 import org.geotoolkit.s52.lookuptable.LookupTable;
 import org.geotoolkit.s52.lookuptable.instruction.Symbol;
@@ -329,9 +320,9 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
 
                 }else if(inst instanceof ConditionalSymbolProcedure){
                     final ConditionalSymbolProcedure con = (ConditionalSymbolProcedure) inst;
-                    //con.procedureName
-                    //LOGGER.log(Level.INFO, "TODO support instruction : {0}", inst.getCode());
-
+                    LOGGER.log(Level.INFO, "TODO support instruction : {0} "+con.procedureName, inst.getCode());
+                    final SymbolStyle ss = context.getSyle(con.procedureName);
+                    System.out.println(">>>>>>> "+ ss);
                 } else{
                     throw new PortrayalException("Unexpected instruction : " + inst.getCode());
                 }

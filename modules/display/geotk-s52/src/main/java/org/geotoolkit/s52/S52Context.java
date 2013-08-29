@@ -105,15 +105,26 @@ public class S52Context {
 
     private final Map<String,SymbolStyle> styles = new HashMap<>();
 
-    // Mariner context configuration
+    // Mariner context configuration ///////////////////////////////////////////
     // S-52 Annex A Part I p.23
     private String paletteName = TIME_NIGHT;
-    // See also : 7.1.3.1 Text Groupings
-    private boolean noText = false;
     //selected lookups
     private String arealk = LKN_AREA_SYMBOLIZED;
     private String linelk = LKN_LINE;
-    private String pointlk = LKN_POINT_PAPER;
+    private String pointlk = LKN_POINT_SIMPLIFIED;
+    // See also : 7.1.3.1 Text Groupings
+    private boolean noText = false;
+    // S-52 Annex A Part I p.137
+    private float safetyDepth = 0f; //meters
+    private float shallowContour = 0f; //meters
+    private float safetyContour = 0f; //meters
+    private float deepContour = 0f; // meters
+    private boolean twoShades = false;
+    private boolean shallowPattern = false;
+    private boolean shipsOutline = false;
+    private float distanceTags = 0f; //nm
+    private float timeTags = 0f; //min
+    private boolean fullSectors = false;
 
     public void setNoText(boolean noText) {
         this.noText = noText;
