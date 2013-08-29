@@ -501,7 +501,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             Filter f = guiCQL.getFilter();
             final QueryBuilder qb = new QueryBuilder(layer.getCollection().getFeatureType().getName());
             qb.setFilter(f);
-            if(guiVersions.getSelectedItem()!=null){
+            if(guiVersions.getSelectedItem()!=null && !(guiVersions.getSelectedItem() instanceof String)){
                 final Date d = ((Version)guiVersions.getSelectedItem()).getDate();
                 qb.setVersionDate(d);
             }
