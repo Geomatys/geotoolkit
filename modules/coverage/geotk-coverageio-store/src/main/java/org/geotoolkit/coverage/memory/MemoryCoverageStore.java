@@ -58,7 +58,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
     /**
      * Dummy parameter descriptor group.
      */
-    private static final ParameterDescriptorGroup desc = new DefaultParameterDescriptorGroup("Dummy", AbstractCoverageStoreFactory.NAMESPACE);
+    private static final ParameterDescriptorGroup desc = new DefaultParameterDescriptorGroup("Unamed", AbstractCoverageStoreFactory.NAMESPACE);
 
     private final Map<Name, CoverageReference> layers = new HashMap<Name, CoverageReference>();
 

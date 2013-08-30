@@ -35,12 +35,12 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 public class MPCoverageStore extends AbstractCoverageStore {
 
     private final Map<Name, CoverageReference> layers = new HashMap<Name, CoverageReference>();
-    
+
     /**
      * Dummy parameter descriptor group.
      */
-    private static final ParameterDescriptorGroup DESC = new DefaultParameterDescriptorGroup("", AbstractCoverageStoreFactory.NAMESPACE);
-    
+    private static final ParameterDescriptorGroup DESC = new DefaultParameterDescriptorGroup("Unamed", AbstractCoverageStoreFactory.NAMESPACE);
+
     public MPCoverageStore(){
         super(DESC.createValue());
     }
@@ -51,7 +51,7 @@ public class MPCoverageStore extends AbstractCoverageStore {
         layers.put(name, mpcref);
         return mpcref;
     }
-    
+
     @Override
     public CoverageStoreFactory getFactory() {
         return null;
@@ -70,5 +70,5 @@ public class MPCoverageStore extends AbstractCoverageStore {
     @Override
     public void dispose() {
     }
-    
+
 }
