@@ -58,10 +58,10 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
     /**
      * Dummy parameter descriptor group.
      */
-    private static final ParameterDescriptorGroup desc = new DefaultParameterDescriptorGroup("", AbstractCoverageStoreFactory.NAMESPACE);
+    private static final ParameterDescriptorGroup desc = new DefaultParameterDescriptorGroup("Dummy", AbstractCoverageStoreFactory.NAMESPACE);
 
     private final Map<Name, CoverageReference> layers = new HashMap<Name, CoverageReference>();
-    
+
 
     public MemoryCoverageStore() {
         super(desc.createValue());
@@ -128,7 +128,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
 
         private final Name name;
         private GridCoverage2D coverage;
-        
+
         public MemoryCoverageReference(Name name) {
             super(null, 0);
             this.name = name;
@@ -144,7 +144,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
         public Name getName() {
             return name;
         }
-        
+
         @Override
         public MemoryCoverageStore getStore() {
             return MemoryCoverageStore.this;
@@ -159,7 +159,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
         public GridCoverageReader createReader() throws DataStoreException {
             return new MemoryCoverageReader(this);
         }
-        
+
     }
 
     private static class MemoryCoverageReader extends GridCoverageReader {
@@ -169,7 +169,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
         public MemoryCoverageReader(MemoryCoverageReference ref){
             this.ref = ref;
         }
-                
+
         @Override
         public GeneralGridGeometry getGridGeometry(final int i) throws CoverageStoreException, CancellationException {
             return (GeneralGridGeometry) ref.coverage.getGridGeometry();
@@ -199,16 +199,16 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
     private static class MemoryCoverageWriter extends GridCoverageWriter{
 
         private final MemoryCoverageReference ref;
-        
+
         public MemoryCoverageWriter(MemoryCoverageReference ref){
             this.ref = ref;
         }
-        
+
         @Override
         public void write(GridCoverage coverage, GridCoverageWriteParam param) throws CoverageStoreException, CancellationException {
             ref.setCoverage((GridCoverage2D)coverage);
         }
-        
+
     }
-    
+
 }
