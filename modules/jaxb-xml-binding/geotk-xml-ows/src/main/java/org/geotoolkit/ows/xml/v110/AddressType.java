@@ -105,9 +105,9 @@ public class AddressType implements AbstractAddress {
         this.administrativeArea    = administrativeArea;
         this.city                  = city;
         this.country               = country;
-        this.deliveryPoint         = new ArrayList<String>();
+        this.deliveryPoint         = new ArrayList<>();
         this.deliveryPoint.add(deliveryPoint);
-        this.electronicMailAddress = new ArrayList<String>();
+        this.electronicMailAddress = new ArrayList<>();
         this.electronicMailAddress.add(electronicMailAddress);
         this.postalCode            = postalCode;
     }
@@ -116,9 +116,10 @@ public class AddressType implements AbstractAddress {
      * Gets the value of the deliveryPoint property.
      * 
      */
+    @Override
     public List<String> getDeliveryPoint() {
         if (deliveryPoint == null) {
-            deliveryPoint = new ArrayList<String>();
+            deliveryPoint = new ArrayList<>();
         }
         return this.deliveryPoint;
     }
@@ -127,6 +128,7 @@ public class AddressType implements AbstractAddress {
      * Gets the value of the city property.
      * 
      */
+    @Override
     public String getCity() {
         return city;
     }
@@ -134,6 +136,7 @@ public class AddressType implements AbstractAddress {
     /**
      * Gets the value of the administrativeArea property.
      */
+    @Override
     public String getAdministrativeArea() {
         return administrativeArea;
     }
@@ -142,6 +145,7 @@ public class AddressType implements AbstractAddress {
      * Gets the value of the postalCode property.
      * 
      */
+    @Override
     public String getPostalCode() {
         return postalCode;
     }
@@ -149,6 +153,7 @@ public class AddressType implements AbstractAddress {
     /**
      * Gets the value of the country property.
      */
+    @Override
     public String getCountry() {
         return country;
     }
@@ -156,9 +161,10 @@ public class AddressType implements AbstractAddress {
     /**
      * Gets the value of the electronicMailAddress property.
      */
+    @Override
     public List<String> getElectronicMailAddress() {
         if (electronicMailAddress == null) {
-            electronicMailAddress = new ArrayList<String>();
+            electronicMailAddress = new ArrayList<>();
         }
         return this.electronicMailAddress;
     }

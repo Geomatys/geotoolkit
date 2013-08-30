@@ -80,18 +80,19 @@ public class TelephoneType implements AbstractTelephone {
      * Build a single new telephone object.
      */
     public TelephoneType(final String voice, final String facsimile){
-        this.facsimile = new ArrayList<String>();
+        this.facsimile = new ArrayList<>();
         this.facsimile.add(facsimile);
-        this.voice     = new ArrayList<String>();
+        this.voice     = new ArrayList<>();
         this.voice.add(voice);
     }
     
     /**
      * Gets the value of the voice property.
      */
+    @Override
     public List<String> getVoice() {
         if (voice == null) {
-            voice = new ArrayList<String>();
+            voice = new ArrayList<>();
         }
         return Collections.unmodifiableList(voice);
     }
@@ -100,9 +101,10 @@ public class TelephoneType implements AbstractTelephone {
      * Gets the value of the facsimile property.
      * 
      */
+    @Override
     public List<String> getFacsimile() {
         if (facsimile == null) {
-            facsimile = new ArrayList<String>();
+            facsimile = new ArrayList<>();
         }
         return Collections.unmodifiableList(facsimile);
     }

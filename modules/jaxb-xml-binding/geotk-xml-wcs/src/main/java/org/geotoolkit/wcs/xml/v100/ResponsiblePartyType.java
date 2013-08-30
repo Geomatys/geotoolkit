@@ -26,6 +26,9 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractCodeType;
+import org.geotoolkit.ows.xml.AbstractContact;
+import org.geotoolkit.ows.xml.AbstractResponsiblePartySubset;
 
 
 /**
@@ -65,7 +68,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ResponsiblePartyType", propOrder = {
     "content"
 })
-public class ResponsiblePartyType {
+public class ResponsiblePartyType  implements AbstractResponsiblePartySubset  {
 
     @XmlElementRefs({
         @XmlElementRef(name = "positionName",     namespace = "http://www.opengis.net/wcs", type = JAXBElement.class),
@@ -89,7 +92,7 @@ public class ResponsiblePartyType {
      * Build a new Responsible Party
      */
     public ResponsiblePartyType(final String individualName, final String positionName, final String organisationName, final ContactType contactInfo) {
-         content = new ArrayList<JAXBElement<?>>();
+         content = new ArrayList<>();
          content.add(factory.createResponsiblePartyTypeIndividualName(individualName));
          content.add(factory.createResponsiblePartyTypePositionName(positionName));
          content.add(factory.createResponsiblePartyTypeOrganisationName(organisationName));
@@ -101,9 +104,50 @@ public class ResponsiblePartyType {
      */
     public List<JAXBElement<?>> getContent() {
         if (content == null) {
-            content = new ArrayList<JAXBElement<?>>();
+            content = new ArrayList<>();
         }
         return Collections.unmodifiableList(content);
+    }
+
+    @Override
+    public String getIndividualName() {
+        if (content != null) {
+            for (JAXBElement jb : content) {
+                if ("individualName".equals(jb.getName().getLocalPart())) {
+                    return (String) jb.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String getPositionName() {
+        if (content != null) {
+            for (JAXBElement jb : content) {
+                if ("positionName".equals(jb.getName().getLocalPart())) {
+                    return (String) jb.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public ContactType getContactInfo() {
+        if (content != null) {
+            for (JAXBElement jb : content) {
+                if ("contactInfo".equals(jb.getName().getLocalPart())) {
+                    return (ContactType) jb.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public AbstractCodeType getRole() {
+        return null;
     }
 
 }

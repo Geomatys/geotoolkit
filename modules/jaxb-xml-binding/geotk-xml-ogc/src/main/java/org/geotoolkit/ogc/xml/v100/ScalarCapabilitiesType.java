@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.capability.ScalarCapabilities;
 
 
 /**
@@ -50,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "Scalar_CapabilitiesType", propOrder = {
     "logicalOperatorsOrComparisonOperatorsOrArithmeticOperators"
 })
-public class ScalarCapabilitiesType {
+public class ScalarCapabilitiesType implements ScalarCapabilities {
 
     @XmlElements({
         @XmlElement(name = "Arithmetic_Operators", type = ArithmeticOperatorsType.class),
@@ -62,20 +63,6 @@ public class ScalarCapabilitiesType {
     /**
      * Gets the value of the logicalOperatorsOrComparisonOperatorsOrArithmeticOperators property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the logicalOperatorsOrComparisonOperatorsOrArithmeticOperators property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getLogicalOperatorsOrComparisonOperatorsOrArithmeticOperators().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ArithmeticOperatorsType }
      * {@link ComparisonOperatorsType }
@@ -85,9 +72,39 @@ public class ScalarCapabilitiesType {
      */
     public List<Object> getLogicalOperatorsOrComparisonOperatorsOrArithmeticOperators() {
         if (logicalOperatorsOrComparisonOperatorsOrArithmeticOperators == null) {
-            logicalOperatorsOrComparisonOperatorsOrArithmeticOperators = new ArrayList<Object>();
+            logicalOperatorsOrComparisonOperatorsOrArithmeticOperators = new ArrayList<>();
         }
         return this.logicalOperatorsOrComparisonOperatorsOrArithmeticOperators;
+    }
+
+    @Override
+    public boolean hasLogicalOperators() {
+        for (Object o : logicalOperatorsOrComparisonOperatorsOrArithmeticOperators) {
+            if (o instanceof LogicalOperators) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public ComparisonOperatorsType getComparisonOperators() {
+        for (Object o : logicalOperatorsOrComparisonOperatorsOrArithmeticOperators) {
+            if (o instanceof ComparisonOperatorsType) {
+                return (ComparisonOperatorsType) o;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public ArithmeticOperatorsType getArithmeticOperators() {
+        for (Object o : logicalOperatorsOrComparisonOperatorsOrArithmeticOperators) {
+            if (o instanceof ArithmeticOperatorsType) {
+                return (ArithmeticOperatorsType) o;
+            }
+        }
+        return null;
     }
 
 }

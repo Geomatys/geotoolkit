@@ -107,6 +107,7 @@ public class ScalarCapabilitiesType implements ScalarCapabilities{
      *     {@link ComparisonOperatorsType }
      *     
      */
+    @Override
     public ComparisonOperatorsType getComparisonOperators() {
         return comparisonOperators;
     }
@@ -126,10 +127,12 @@ public class ScalarCapabilitiesType implements ScalarCapabilities{
     /**
      * Gets the value of the arithmeticOperators property.
      */
+    @Override
     public ArithmeticOperators getArithmeticOperators() {
         return null;
     }
     
+    @Override
     public boolean hasLogicalOperators() {
         return logicalOperators != null;
     }

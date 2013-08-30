@@ -19,6 +19,7 @@ package org.geotoolkit.wcs.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractContact;
 
 
 /**
@@ -51,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
     "address",
     "onlineResource"
 })
-public class ContactType {
+public class ContactType implements AbstractContact {
 
     private TelephoneType phone;
     private AddressType address;
@@ -72,10 +73,18 @@ public class ContactType {
          this.phone          = phone;
          this.onlineResource = onlineResource;
      }
+
+     public ContactType(final String phone, final String fax, final String email,
+            final String address, final String city, final String state,
+            final String zipCode, final String country) {
+        this.address             = new AddressType(address, city, state, zipCode, country, email);
+        this.phone               = new TelephoneType(phone, fax);
+    }
     
     /**
      * Gets the value of the phone property.
      */
+    @Override
     public TelephoneType getPhone() {
         return phone;
     }
@@ -83,6 +92,7 @@ public class ContactType {
     /**
      * Gets the value of the address property.
      */
+    @Override
     public AddressType getAddress() {
         return address;
     }
@@ -90,7 +100,18 @@ public class ContactType {
     /**
      * Gets the value of the onlineResource property.
      */
+    @Override
     public OnlineResourceType getOnlineResource() {
         return onlineResource;
+    }
+
+    @Override
+    public String getHoursOfService() {
+        return null;
+    }
+
+    @Override
+    public String getContactInstructions() {
+        return null;
     }
 }

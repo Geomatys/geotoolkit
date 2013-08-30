@@ -16,11 +16,14 @@
  */
 package org.geotoolkit.ogc.xml.v100;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.opengis.filter.capability.FunctionName;
 
 
 /**
@@ -44,7 +47,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "Function_NameType", propOrder = {
     "value"
 })
-public class FunctionNameType {
+public class FunctionNameType implements FunctionName {
 
     @XmlValue
     private String value;
@@ -97,6 +100,26 @@ public class FunctionNameType {
      */
     public void setNArgs(String value) {
         this.nArgs = value;
+    }
+
+    @Override
+    public int getArgumentCount() {
+        if (nArgs != null) {
+            try {
+                return Integer.parseInt(nArgs);
+            } catch (NumberFormatException ex) {}
+        }
+        return 0;
+    }
+
+    @Override
+    public List<String> getArgumentNames() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public String getName() {
+        return value;
     }
 
 }

@@ -24,10 +24,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
-import org.opengis.filter.capability.IdCapabilities;
-import org.opengis.filter.capability.ScalarCapabilities;
-import org.opengis.filter.capability.SpatialCapabilities;
 
 
 /**
@@ -93,18 +89,20 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
     /**
      * Build a new filter capabilities (light version)
      */
-    public FilterCapabilities(final ScalarCapabilities scalar, final SpatialCapabilities spatial, final IdCapabilities id, final ConformanceType conformance) {
-        this.spatialCapabilities = (SpatialCapabilitiesType) spatial;
-        this.idCapabilities      = (IdCapabilitiesType)      id;
-        this.scalarCapabilities  = (ScalarCapabilitiesType)  scalar;
+    public FilterCapabilities(final ScalarCapabilitiesType scalar, final SpatialCapabilitiesType spatial, final IdCapabilitiesType id, final ConformanceType conformance) {
+        this.spatialCapabilities = spatial;
+        this.idCapabilities      = id;
+        this.scalarCapabilities  = scalar;
         this.conformance = conformance;
     }
     
-    public FilterCapabilities(final ScalarCapabilities scalar, final SpatialCapabilities spatial, final TemporalCapabilitiesType temporal, final ConformanceType conformance) {
-        this.spatialCapabilities  = (SpatialCapabilitiesType) spatial;
+    public FilterCapabilities(final ScalarCapabilitiesType scalar, final SpatialCapabilitiesType spatial, final TemporalCapabilitiesType temporal,
+            final IdCapabilitiesType id, final ConformanceType conformance) {
+        this.spatialCapabilities  = spatial;
         this.temporalCapabilities = temporal;
-        this.scalarCapabilities   = (ScalarCapabilitiesType)  scalar;
+        this.scalarCapabilities   = scalar;
         this.conformance = conformance;
+        this.idCapabilities = id;
     }
 
     /**

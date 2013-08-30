@@ -118,7 +118,7 @@ public class UnNamedDomainType {
                 this.meaning         = new DomainMetadataType(that.meaning);
             }
             if (that.metadata != null) {
-                this.metadata        = new ArrayList<MetadataType>();
+                this.metadata        = new ArrayList<>();
                 for (MetadataType m : that.metadata) {
                     this.metadata.add(new MetadataType(m));
                 }
@@ -271,7 +271,7 @@ public class UnNamedDomainType {
      */
     public List<MetadataType> getMetadata() {
         if (metadata == null) {
-            metadata = new ArrayList<MetadataType>();
+            metadata = new ArrayList<>();
         }
         return metadata;
     }

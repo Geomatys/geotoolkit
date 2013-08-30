@@ -17,7 +17,6 @@
 package org.geotoolkit.ogc.xml.v110;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -92,7 +91,7 @@ public class FunctionType extends ExpressionType implements Function {
      * Build a new Function  TODO
      */
      public FunctionType(final String name, final Expression... expression) {
-         this.expression = new ArrayList<JAXBElement<?>>();
+         this.expression = new ArrayList<>();
          StringBuilder report = new StringBuilder();
          for (Expression e:expression)  {
              report.append(e.getClass().getSimpleName()); 
@@ -104,7 +103,7 @@ public class FunctionType extends ExpressionType implements Function {
      * Build a new Function  TODO
      */
      public FunctionType(final Functions functions) {
-         this.expression = new ArrayList<JAXBElement<?>>();
+         this.expression = new ArrayList<>();
          
          throw new UnsupportedOperationException("Operation Not supported yet");
      }
@@ -114,7 +113,7 @@ public class FunctionType extends ExpressionType implements Function {
             this.name = that.name;
             
             if (that.expression != null) {
-                this.expression = new ArrayList<JAXBElement<?>>();
+                this.expression = new ArrayList<>();
                 for (JAXBElement<?> jb : that.expression) {
                     final Object exp = jb.getValue();
                     if (exp instanceof PropertyNameType) {
@@ -138,7 +137,7 @@ public class FunctionType extends ExpressionType implements Function {
      */
     public List<JAXBElement<?>> getExpression() {
         if (expression == null) {
-            expression = new ArrayList<JAXBElement<?>>();
+            expression = new ArrayList<>();
         }
         return expression;
     }

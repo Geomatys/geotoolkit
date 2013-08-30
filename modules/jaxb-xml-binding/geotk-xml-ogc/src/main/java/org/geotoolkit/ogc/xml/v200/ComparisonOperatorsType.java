@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.ComparisonOperators;
 import org.opengis.filter.capability.Operator;
 
@@ -72,8 +71,8 @@ public class ComparisonOperatorsType implements ComparisonOperators {
      * 
      * @param operators an array of comparison operator
      */
-    public ComparisonOperatorsType( Operator[] operators ) {
-        if ( operators == null ){
+    public ComparisonOperatorsType(Operator[] operators) {
+        if (operators == null){
             operators = new Operator[]{};
         }
         this.comparisonOperator = new ArrayList(Arrays.asList(operators));
@@ -85,7 +84,7 @@ public class ComparisonOperatorsType implements ComparisonOperators {
      */
     public List<ComparisonOperatorType> getComparisonOperator() {
         if (comparisonOperator == null) {
-            comparisonOperator = new ArrayList<ComparisonOperatorType>();
+            comparisonOperator = new ArrayList<>();
         }
         return this.comparisonOperator;
     }
@@ -94,10 +93,11 @@ public class ComparisonOperatorsType implements ComparisonOperators {
      * Gets the value of the comparisonOperator property.
      * 
      */
+    @Override
     public Collection<Operator> getOperators() {
-        List<Operator> result =  new ArrayList<Operator>();
+        List<Operator> result =  new ArrayList<>();
         if (comparisonOperator == null) {
-            comparisonOperator = new ArrayList<ComparisonOperatorType>();
+            comparisonOperator = new ArrayList<>();
             return result;
         } else {
             for (ComparisonOperatorType c: comparisonOperator) {
@@ -110,6 +110,7 @@ public class ComparisonOperatorsType implements ComparisonOperators {
     /**
      * @return Operator with the provided name, or null if not supported
      */
+    @Override
     public Operator getOperator(final String name) {
         if ( name == null || comparisonOperator == null) {
             return null;

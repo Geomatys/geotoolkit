@@ -16,10 +16,15 @@
  */
 package org.geotoolkit.ogc.xml.v100;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.capability.FunctionName;
+import org.opengis.filter.capability.Functions;
 
 
 /**
@@ -45,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "FunctionsType", propOrder = {
     "functionNames"
 })
-public class FunctionsType {
+public class FunctionsType implements Functions {
 
     @XmlElement(name = "Function_Names", required = true)
     private FunctionNamesType functionNames;
@@ -58,7 +63,7 @@ public class FunctionsType {
      *     {@link FunctionNamesType }
      *     
      */
-    public FunctionNamesType getFunctionNames() {
+    public FunctionNamesType getNames() {
         return functionNames;
     }
 
@@ -72,6 +77,28 @@ public class FunctionsType {
      */
     public void setFunctionNames(FunctionNamesType value) {
         this.functionNames = value;
+    }
+
+    @Override
+    public Collection<FunctionName> getFunctionNames() {
+        final List<FunctionName> result = new ArrayList<>();
+        if (functionNames != null) {
+            for (FunctionName fn : functionNames.getFunctionName()) {
+                result.add(fn);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public FunctionName getFunctionName(String name) {
+        if (functionNames != null) {
+            for (FunctionName fn : functionNames.getFunctionName()) {
+                if (fn.getName().equals(name))
+                return fn;
+            }
+        }
+        return null;
     }
 
 }

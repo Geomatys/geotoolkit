@@ -781,4 +781,40 @@ public class WFSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
+
+    public static AbstractDomain buildDomain(final String currentVersion, final String name, final List<String> allowedValues) {
+        if ("2.0.0".equals(currentVersion)) {
+            return OWSXmlFactory.buildDomain("1.1.0", name, allowedValues);
+        } else if ("1.1.0".equals(currentVersion)) {
+            return OWSXmlFactory.buildDomain("1.0.0", name, allowedValues);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return OWSXmlFactory.buildDomain("1.0.0", name, allowedValues);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static AbstractDomain buildDomainNoValues(final String currentVersion, final String name, final String values) {
+        if ("2.0.0".equals(currentVersion)) {
+            return OWSXmlFactory.buildDomainNoValues("1.1.0", name, values);
+        } else if ("1.1.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("Novalues not supported in v110");
+        } else if ("1.0.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("Novalues not supported in v100");
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static AbstractDCP buildDCP(final String currentVersion, final String getURL, final String postURL) {
+        if ("2.0.0".equals(currentVersion)) {
+            return OWSXmlFactory.buildDCP("1.1.0", getURL, postURL);
+        } else if ("1.1.0".equals(currentVersion)) {
+            return OWSXmlFactory.buildDCP("1.0.0", getURL, postURL);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return OWSXmlFactory.buildDCP("1.0.0", getURL, postURL);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
 }

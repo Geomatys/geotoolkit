@@ -90,6 +90,7 @@ public class ScalarCapabilitiesType implements ScalarCapabilities {
     /**
      * Gets the value of the comparisonOperators property.
      */
+    @Override
     public ComparisonOperatorsType getComparisonOperators() {
         return comparisonOperators;
     }
@@ -97,10 +98,12 @@ public class ScalarCapabilitiesType implements ScalarCapabilities {
     /**
      * Gets the value of the arithmeticOperators property.
      */
+    @Override
     public ArithmeticOperatorsType getArithmeticOperators() {
         return arithmeticOperators;
     }
 
+    @Override
     public boolean hasLogicalOperators() {
         return logicalOperators != null;
     }

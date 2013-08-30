@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.capability.ArithmeticOperators;
 
 
 /**
@@ -49,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "Arithmetic_OperatorsType", propOrder = {
     "simpleArithmeticOrFunctions"
 })
-public class ArithmeticOperatorsType {
+public class ArithmeticOperatorsType implements ArithmeticOperators {
 
     @XmlElements({
         @XmlElement(name = "Simple_Arithmetic", type = SimpleArithmetic.class),
@@ -61,19 +62,6 @@ public class ArithmeticOperatorsType {
      * Gets the value of the simpleArithmeticOrFunctions property.
      * 
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the simpleArithmeticOrFunctions property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSimpleArithmeticOrFunctions().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link SimpleArithmetic }
      * {@link FunctionsType }
@@ -82,9 +70,29 @@ public class ArithmeticOperatorsType {
      */
     public List<Object> getSimpleArithmeticOrFunctions() {
         if (simpleArithmeticOrFunctions == null) {
-            simpleArithmeticOrFunctions = new ArrayList<Object>();
+            simpleArithmeticOrFunctions = new ArrayList<>();
         }
         return this.simpleArithmeticOrFunctions;
+    }
+
+    @Override
+    public boolean hasSimpleArithmetic() {
+        for (Object o : simpleArithmeticOrFunctions) {
+            if (o instanceof SimpleArithmetic) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public FunctionsType getFunctions() {
+        for (Object o : simpleArithmeticOrFunctions) {
+            if (o instanceof FunctionsType) {
+                return (FunctionsType) o;
+            }
+        }
+        return null;
     }
 
 }

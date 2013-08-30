@@ -17,12 +17,16 @@
 package org.geotoolkit.ogc.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.capability.ComparisonOperators;
+import org.opengis.filter.capability.Operator;
 
 
 /**
@@ -51,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "Comparison_OperatorsType", propOrder = {
     "simpleComparisonsOrLikeOrBetween"
 })
-public class ComparisonOperatorsType {
+public class ComparisonOperatorsType implements ComparisonOperators {
 
     @XmlElements({
         @XmlElement(name = "NullCheck", type = NullCheck.class),
@@ -61,23 +65,20 @@ public class ComparisonOperatorsType {
     })
     private List<Object> simpleComparisonsOrLikeOrBetween;
 
+    public ComparisonOperatorsType() {
+
+    }
+
+    public ComparisonOperatorsType(Operator[] operators) {
+        if (operators == null){
+            operators = new Operator[]{};
+        }
+        this.simpleComparisonsOrLikeOrBetween = new ArrayList(Arrays.asList(operators));
+    }
+
     /**
      * Gets the value of the simpleComparisonsOrLikeOrBetween property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the simpleComparisonsOrLikeOrBetween property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSimpleComparisonsOrLikeOrBetween().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link NullCheck }
      * {@link SimpleComparisons }
@@ -88,9 +89,30 @@ public class ComparisonOperatorsType {
      */
     public List<Object> getSimpleComparisonsOrLikeOrBetween() {
         if (simpleComparisonsOrLikeOrBetween == null) {
-            simpleComparisonsOrLikeOrBetween = new ArrayList<Object>();
+            simpleComparisonsOrLikeOrBetween = new ArrayList<>();
         }
         return this.simpleComparisonsOrLikeOrBetween;
+    }
+
+    @Override
+    public Collection<Operator> getOperators() {
+        final List<Operator> result = new ArrayList<>();
+        for (Object o : simpleComparisonsOrLikeOrBetween) {
+            if (o instanceof Operator) {
+                result.add((Operator) o);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Operator getOperator(String name) {
+        for (Object o : simpleComparisonsOrLikeOrBetween) {
+            if (o instanceof Operator && ((Operator)o).getName().equals(name)) {
+                return (Operator) o;
+            }
+        }
+        return null;
     }
 
 }

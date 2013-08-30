@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractAddress;
 
 
 /**
@@ -60,7 +61,7 @@ import javax.xml.bind.annotation.XmlType;
     "country",
     "electronicMailAddress"
 })
-public class AddressType {
+public class AddressType implements AbstractAddress {
 
     private List<String> deliveryPoint;
     private String city;
@@ -97,9 +98,9 @@ public class AddressType {
         this.administrativeArea    = administrativeArea;
         this.city                  = city;
         this.country               = country;
-        this.deliveryPoint         = new ArrayList<String>();
+        this.deliveryPoint         = new ArrayList<>();
         this.deliveryPoint.add(deliveryPoint);
-        this.electronicMailAddress = new ArrayList<String>();
+        this.electronicMailAddress = new ArrayList<>();
         this.electronicMailAddress.add(electronicMailAddress);
         this.postalCode            = postalCode;
     }
@@ -108,9 +109,10 @@ public class AddressType {
      * Gets the value of the deliveryPoint property.
      * (unmodifiable)
      */
+    @Override
     public List<String> getDeliveryPoint() {
         if (deliveryPoint == null) {
-            deliveryPoint = new ArrayList<String>();
+            deliveryPoint = new ArrayList<>();
         }
         return Collections.unmodifiableList(deliveryPoint);
     }
@@ -118,6 +120,7 @@ public class AddressType {
     /**
      * Gets the value of the city property.
      */
+    @Override
     public String getCity() {
         return city;
     }
@@ -125,6 +128,7 @@ public class AddressType {
     /**
      * Gets the value of the administrativeArea property.
      */
+    @Override
     public String getAdministrativeArea() {
         return administrativeArea;
     }
@@ -132,6 +136,7 @@ public class AddressType {
     /**
      * Gets the value of the postalCode property.
      */
+    @Override
     public String getPostalCode() {
         return postalCode;
     }
@@ -139,6 +144,7 @@ public class AddressType {
     /**
      * Gets the value of the country property.
      */
+    @Override
     public String getCountry() {
         return country;
     }
@@ -147,9 +153,10 @@ public class AddressType {
      * Gets the value of the electronicMailAddress property.
      * (unmodifiable)
      */
+    @Override
     public List<String> getElectronicMailAddress() {
         if (electronicMailAddress == null) {
-            electronicMailAddress = new ArrayList<String>();
+            electronicMailAddress = new ArrayList<>();
         }
         return Collections.unmodifiableList(electronicMailAddress);
     }

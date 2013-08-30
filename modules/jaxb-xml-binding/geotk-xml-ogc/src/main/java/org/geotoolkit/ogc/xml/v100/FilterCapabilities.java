@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.capability.IdCapabilities;
+import org.opengis.filter.capability.TemporalCapabilities;
 
 
 /**
@@ -49,12 +51,21 @@ import javax.xml.bind.annotation.XmlType;
     "scalarCapabilities"
 })
 @XmlRootElement(name = "Filter_Capabilities")
-public class FilterCapabilities {
+public class FilterCapabilities implements org.opengis.filter.capability.FilterCapabilities {
 
     @XmlElement(name = "Spatial_Capabilities", required = true)
     private SpatialCapabilitiesType spatialCapabilities;
     @XmlElement(name = "Scalar_Capabilities", required = true)
     private ScalarCapabilitiesType scalarCapabilities;
+
+    public FilterCapabilities() {
+
+    }
+
+    public FilterCapabilities(final SpatialCapabilitiesType spatialCapabilities, final ScalarCapabilitiesType scalarCapabilities) {
+        this.scalarCapabilities = scalarCapabilities;
+        this.spatialCapabilities = spatialCapabilities;
+    }
 
     /**
      * Gets the value of the spatialCapabilities property.
@@ -64,6 +75,7 @@ public class FilterCapabilities {
      *     {@link SpatialCapabilitiesType }
      *     
      */
+    @Override
     public SpatialCapabilitiesType getSpatialCapabilities() {
         return spatialCapabilities;
     }
@@ -88,6 +100,7 @@ public class FilterCapabilities {
      *     {@link ScalarCapabilitiesType }
      *     
      */
+    @Override
     public ScalarCapabilitiesType getScalarCapabilities() {
         return scalarCapabilities;
     }
@@ -102,6 +115,21 @@ public class FilterCapabilities {
      */
     public void setScalarCapabilities(ScalarCapabilitiesType value) {
         this.scalarCapabilities = value;
+    }
+
+    @Override
+    public TemporalCapabilities getTemporalCapabilities() {
+        return null;
+    }
+
+    @Override
+    public IdCapabilities getIdCapabilities() {
+        return null;
+    }
+
+    @Override
+    public String getVersion() {
+        return "1.0.0";
     }
 
 }

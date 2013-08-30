@@ -98,6 +98,17 @@ public class UnNamedDomainType {
     UnNamedDomainType() {
         
     }
+
+    public UnNamedDomainType(final List<String> allowedvalues) {
+        if (allowedvalues != null) {
+            this.allowedValues = new AllowedValues(allowedvalues);
+        }
+    }
+
+    public UnNamedDomainType(final NoValues nv, final ValueType defaultvalue) {
+        this.noValues     = nv;
+        this.defaultValue = defaultvalue;
+    }
     
     public UnNamedDomainType(final UnNamedDomainType that) {
         if (that != null) {
@@ -118,7 +129,7 @@ public class UnNamedDomainType {
             }
             if (that.metadata != null) {
                 final ObjectFactory factory = new ObjectFactory();
-                this.metadata        = new ArrayList<JAXBElement<? extends MetadataType> >();
+                this.metadata        = new ArrayList<>();
                 for (JAXBElement<? extends MetadataType>  jb : that.metadata) {
                     
                     this.metadata.add(factory.createMetadata(new MetadataType(jb.getValue())));
@@ -380,16 +391,16 @@ public class UnNamedDomainType {
      */
     public List<JAXBElement<? extends MetadataType>> getRealMetadata() {
         if (metadata == null) {
-            metadata = new ArrayList<JAXBElement<? extends MetadataType>>();
+            metadata = new ArrayList<>();
         }
         return this.metadata;
     }
     
     public List<MetadataType> getMetadata() {
         if (metadata == null) {
-            metadata = new ArrayList<JAXBElement<? extends MetadataType>>();
+            metadata = new ArrayList<>();
         }
-        final List<MetadataType> result = new ArrayList<MetadataType>();
+        final List<MetadataType> result = new ArrayList<>();
         for (JAXBElement<? extends MetadataType> jb : metadata) {
             result.add(jb.getValue());
         }

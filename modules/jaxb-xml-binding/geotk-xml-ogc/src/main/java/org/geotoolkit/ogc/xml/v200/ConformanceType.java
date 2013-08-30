@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.Conformance;
 import org.geotoolkit.ows.xml.v110.DomainType;
 
 
@@ -50,7 +51,7 @@ import org.geotoolkit.ows.xml.v110.DomainType;
 @XmlType(name = "ConformanceType", propOrder = {
     "constraint"
 })
-public class ConformanceType {
+public class ConformanceType implements Conformance {
 
     @XmlElement(name = "Constraint", required = true)
     private List<DomainType> constraint;
@@ -72,7 +73,7 @@ public class ConformanceType {
      */
     public List<DomainType> getConstraint() {
         if (constraint == null) {
-            constraint = new ArrayList<DomainType>();
+            constraint = new ArrayList<>();
         }
         return this.constraint;
     }

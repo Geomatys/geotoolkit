@@ -17,16 +17,25 @@
 
 package org.geotoolkit.ogc.xml;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.geotoolkit.ows.xml.AbstractDomain;
 import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.PropertyIsGreaterThan;
 import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
 import org.opengis.filter.PropertyIsLessThan;
 import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.PropertyIsNotEqualTo;
+import org.opengis.filter.capability.ComparisonOperators;
+import org.opengis.filter.capability.FilterCapabilities;
 import org.opengis.filter.capability.GeometryOperand;
+import org.opengis.filter.capability.IdCapabilities;
+import org.opengis.filter.capability.Operator;
+import org.opengis.filter.capability.ScalarCapabilities;
 import org.opengis.filter.capability.SpatialCapabilities;
 import org.opengis.filter.capability.SpatialOperator;
 import org.opengis.filter.capability.SpatialOperators;
+import org.opengis.filter.capability.TemporalCapabilities;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.temporal.After;
 import org.opengis.filter.temporal.Before;
@@ -231,20 +240,20 @@ public class FilterXmlFactory {
     
     public static PropertyIsGreaterThanOrEqualTo buildPropertyIsGreaterThanOrEqualTo(final String currentVersion, final String propertyName, final Literal lit, final boolean matchCase) {
         if ("2.0.0".equals(currentVersion)) {
-            if (!(lit instanceof org.geotoolkit.ogc.xml.v200.LiteralType)) {
+            if (lit != null && !(lit instanceof org.geotoolkit.ogc.xml.v200.LiteralType)) {
                 throw new IllegalArgumentException("unexpected element version for literal.");
             }
             return new org.geotoolkit.ogc.xml.v200.PropertyIsGreaterThanOrEqualToType((org.geotoolkit.ogc.xml.v200.LiteralType)lit,
                                                                          propertyName, matchCase);
         } else if ("1.1.0".equals(currentVersion)) {
-            if (!(lit instanceof org.geotoolkit.ogc.xml.v110.LiteralType)) {
+            if (lit != null && !(lit instanceof org.geotoolkit.ogc.xml.v110.LiteralType)) {
                 throw new IllegalArgumentException("unexpected element version for literal.");
             }
             final org.geotoolkit.ogc.xml.v110.PropertyNameType pName = new org.geotoolkit.ogc.xml.v110.PropertyNameType(propertyName);
             return new org.geotoolkit.ogc.xml.v110.PropertyIsGreaterThanOrEqualToType((org.geotoolkit.ogc.xml.v110.LiteralType)lit,
                                                                          pName, matchCase);
         } else if ("1.0.0".equals(currentVersion)) {
-            if (!(lit instanceof org.geotoolkit.ogc.xml.v100.LiteralType)) {
+            if (lit != null && !(lit instanceof org.geotoolkit.ogc.xml.v100.LiteralType)) {
                 throw new IllegalArgumentException("unexpected element version for literal.");
             }
             final org.geotoolkit.ogc.xml.v100.PropertyNameType pName = new org.geotoolkit.ogc.xml.v100.PropertyNameType(propertyName);
@@ -283,6 +292,90 @@ public class FilterXmlFactory {
             return new org.geotoolkit.ogc.xml.v200.SpatialOperatorsType(operators);
         } else if ("1.0.0".equals(currentVersion)) {
             return new org.geotoolkit.ogc.xml.v100.SpatialOperatorsType(operators);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static ComparisonOperators buildComparisonOperators(final String currentVersion, final Operator[] operators) {
+        if ("1.1.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v110.ComparisonOperatorsType(operators);
+        } else if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v200.ComparisonOperatorsType(operators);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ogc.xml.v100.ComparisonOperatorsType(operators);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static FilterCapabilities buildFilterCapabilities(final String currentVersion, final ScalarCapabilities sc, final SpatialCapabilities spa,
+            final IdCapabilities id, final TemporalCapabilities temp, final Conformance conf) {
+        if ("1.1.0".equals(currentVersion)) {
+            if (sc != null && !(sc instanceof org.geotoolkit.ogc.xml.v110.ScalarCapabilitiesType)) {
+                throw new IllegalArgumentException("unexpected element version for sc.");
+            }
+            if (spa != null && !(spa instanceof org.geotoolkit.ogc.xml.v110.SpatialCapabilitiesType)) {
+                throw new IllegalArgumentException("unexpected element version for spa.");
+            }
+            if (id != null && !(id instanceof org.geotoolkit.ogc.xml.v110.IdCapabilitiesType)) {
+                throw new IllegalArgumentException("unexpected element version for id.");
+            }
+            if (temp != null && !(temp instanceof org.geotoolkit.ogc.xml.v110.TemporalCapabilitiesType)) {
+                throw new IllegalArgumentException("unexpected element version for temp.");
+            }
+            return new org.geotoolkit.ogc.xml.v110.FilterCapabilities((org.geotoolkit.ogc.xml.v110.ScalarCapabilitiesType)sc,
+                                                                      (org.geotoolkit.ogc.xml.v110.SpatialCapabilitiesType)spa,
+                                                                      (org.geotoolkit.ogc.xml.v110.IdCapabilitiesType)id,
+                                                                      (org.geotoolkit.ogc.xml.v110.TemporalCapabilitiesType)temp);
+        } else if ("1.0.0".equals(currentVersion)) {
+            if (sc != null && !(sc instanceof org.geotoolkit.ogc.xml.v100.ScalarCapabilitiesType)) {
+                throw new IllegalArgumentException("unexpected element version for sc.");
+            }
+            if (spa != null && !(spa instanceof org.geotoolkit.ogc.xml.v100.SpatialCapabilitiesType)) {
+                throw new IllegalArgumentException("unexpected element version for spa.");
+            }
+            return new org.geotoolkit.ogc.xml.v100.FilterCapabilities((org.geotoolkit.ogc.xml.v100.SpatialCapabilitiesType)spa,
+                                                                      (org.geotoolkit.ogc.xml.v100.ScalarCapabilitiesType)sc);
+        } else if ("2.0.0".equals(currentVersion)) {
+            if (sc != null && !(sc instanceof org.geotoolkit.ogc.xml.v200.ScalarCapabilitiesType)) {
+                throw new IllegalArgumentException("unexpected element version for sc.");
+            }
+            if (spa != null && !(spa instanceof org.geotoolkit.ogc.xml.v200.SpatialCapabilitiesType)) {
+                throw new IllegalArgumentException("unexpected element version for spa.");
+            }
+            if (id != null && !(id instanceof org.geotoolkit.ogc.xml.v200.IdCapabilitiesType)) {
+                throw new IllegalArgumentException("unexpected element version for id.");
+            }
+            if (temp != null && !(temp instanceof org.geotoolkit.ogc.xml.v200.TemporalCapabilitiesType)) {
+                throw new IllegalArgumentException("unexpected element version for temp.");
+            }
+            if (conf != null && !(conf instanceof org.geotoolkit.ogc.xml.v200.ConformanceType)) {
+                throw new IllegalArgumentException("unexpected element version for conf.");
+            }
+            return new org.geotoolkit.ogc.xml.v200.FilterCapabilities((org.geotoolkit.ogc.xml.v200.ScalarCapabilitiesType)sc,
+                                                                      (org.geotoolkit.ogc.xml.v200.SpatialCapabilitiesType)spa,
+                                                                      (org.geotoolkit.ogc.xml.v200.TemporalCapabilitiesType)temp,
+                                                                      (org.geotoolkit.ogc.xml.v200.IdCapabilitiesType)id,
+                                                                      (org.geotoolkit.ogc.xml.v200.ConformanceType)conf);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static Conformance buildConformance(final String currentVersion, final List<AbstractDomain> constraints) {
+        if ("2.0.0".equals(currentVersion)) {
+            final List<org.geotoolkit.ows.xml.v110.DomainType> const200 = new ArrayList<>();
+            if (constraints != null) {
+                for (AbstractDomain d : constraints) {
+                     if (d instanceof org.geotoolkit.ows.xml.v110.DomainType) {
+                         const200.add((org.geotoolkit.ows.xml.v110.DomainType)d);
+                     } else {
+                         throw new IllegalArgumentException("unexpected version for domain");
+                     }
+                }
+            }
+            return new org.geotoolkit.ogc.xml.v200.ConformanceType(const200);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }

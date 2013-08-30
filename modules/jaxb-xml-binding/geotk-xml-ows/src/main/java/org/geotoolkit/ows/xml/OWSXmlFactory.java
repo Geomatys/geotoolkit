@@ -63,6 +63,73 @@ public class OWSXmlFactory {
         }
     }
 
+    public static AbstractDomain buildDomain(final String currentVersion, final String name, final List<String> value) {
+        if ("1.1.0".equals(currentVersion)) {
+            return new org.geotoolkit.ows.xml.v110.DomainType(name, value);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ows.xml.v100.DomainType(name, value);
+        } else if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ows.xml.v200.DomainType(name, value);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static AbstractDomain buildDomainNoValues(final String currentVersion, final String name, final String value) {
+        if ("1.1.0".equals(currentVersion)) {
+           return  new org.geotoolkit.ows.xml.v110.DomainType(name,
+                                                              new org.geotoolkit.ows.xml.v110.NoValues(),
+                                                              new org.geotoolkit.ows.xml.v110.ValueType(value));
+        } else if ("1.0.0".equals(currentVersion)) {
+           throw new IllegalArgumentException("No values not available for 1.0.0 version");
+        } else if ("2.0.0".equals(currentVersion)) {
+           return  new org.geotoolkit.ows.xml.v200.DomainType(name,
+                                                              new org.geotoolkit.ows.xml.v200.NoValues(),
+                                                              new org.geotoolkit.ows.xml.v200.ValueType(value));
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static AbstractDCP buildDCP(final String currentVersion, final String getURL, final String postURL) {
+        if ("1.1.0".equals(currentVersion)) {
+            org.geotoolkit.ows.xml.v110.RequestMethodType getReq = null;
+            if (getURL != null) {
+                getReq = new org.geotoolkit.ows.xml.v110.RequestMethodType(getURL);
+            }
+            org.geotoolkit.ows.xml.v110.RequestMethodType postReq = null;
+            if (postURL != null) {
+                postReq = new org.geotoolkit.ows.xml.v110.RequestMethodType(postURL);
+            }
+            final org.geotoolkit.ows.xml.v110.HTTP http = new org.geotoolkit.ows.xml.v110.HTTP(getReq, postReq);
+            return new org.geotoolkit.ows.xml.v110.DCP(http);
+        } else if ("1.0.0".equals(currentVersion)) {
+            org.geotoolkit.ows.xml.v100.RequestMethodType getReq = null;
+            if (getURL != null) {
+                getReq = new org.geotoolkit.ows.xml.v100.RequestMethodType(getURL);
+            }
+            org.geotoolkit.ows.xml.v100.RequestMethodType postReq = null;
+            if (postURL != null) {
+                postReq = new org.geotoolkit.ows.xml.v100.RequestMethodType(postURL);
+            }
+            final org.geotoolkit.ows.xml.v100.HTTP http = new org.geotoolkit.ows.xml.v100.HTTP(getReq, postReq);
+            return new org.geotoolkit.ows.xml.v100.DCP(http);
+        } else if ("2.0.0".equals(currentVersion)) {
+            org.geotoolkit.ows.xml.v200.RequestMethodType getReq = null;
+            if (getURL != null) {
+                getReq = new org.geotoolkit.ows.xml.v200.RequestMethodType(getURL);
+            }
+            org.geotoolkit.ows.xml.v200.RequestMethodType postReq = null;
+            if (postURL != null) {
+                postReq = new org.geotoolkit.ows.xml.v200.RequestMethodType(postURL);
+            }
+            final org.geotoolkit.ows.xml.v200.HTTP http = new org.geotoolkit.ows.xml.v200.HTTP(getReq, postReq);
+            return new org.geotoolkit.ows.xml.v200.DCP(http);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
     public static AbstractOperation buildOperation(final String currentVersion, final List<AbstractDCP> dcps,
             final List<AbstractDomain> parameters, final List<AbstractDomain> constraints, final String name) {
         if ("1.1.0".equals(currentVersion)) {

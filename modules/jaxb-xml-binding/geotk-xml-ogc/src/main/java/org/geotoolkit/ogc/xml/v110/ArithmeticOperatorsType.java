@@ -87,10 +87,12 @@ public class ArithmeticOperatorsType implements ArithmeticOperators {
     /**
      * Gets the value of the simpleArithmetic.
      */
+    @Override
     public Functions getFunctions() {
         throw new UnsupportedOperationException("Operation Not supported yet");
     }
 
+    @Override
     public boolean hasSimpleArithmetic() {
         return simpleArithmetic != null;
     }

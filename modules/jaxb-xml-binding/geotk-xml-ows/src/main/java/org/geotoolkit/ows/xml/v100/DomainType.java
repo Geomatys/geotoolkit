@@ -86,16 +86,17 @@ public class DomainType implements AbstractDomain {
             this.name         = that.name;
             this.defaultValue = that.defaultValue;
             if (that.value != null) {
-                this.value = new ArrayList<String>(that.value);
+                this.value = new ArrayList<>(that.value);
             }
             if (that.metadata != null) {
-                this.metadata = new ArrayList<MetadataType>();
+                this.metadata = new ArrayList<>();
                 for (MetadataType m : that.metadata) {
                     this.metadata.add(new MetadataType(m));
                 }
             }
         }
     }
+
     /**
      * Build a new Domain with the specified list of values.
      */
@@ -110,7 +111,7 @@ public class DomainType implements AbstractDomain {
     public DomainType(final String name, final String value) {
         this.name  = name;
         if (value != null) {
-            this.value = new ArrayList<String>();
+            this.value = new ArrayList<>();
             this.value.add(value);
         }
     }
@@ -129,7 +130,7 @@ public class DomainType implements AbstractDomain {
     @Override
     public List<String> getValue() {
         if (value == null) {
-            value = new ArrayList<String>();
+            value = new ArrayList<>();
         }
         return value;
     }
@@ -148,7 +149,7 @@ public class DomainType implements AbstractDomain {
     @Override
     public List<MetadataType> getMetadata() {
         if (metadata == null) {
-            metadata = new ArrayList<MetadataType>();
+            metadata = new ArrayList<>();
         }
         return Collections.unmodifiableList(metadata);
     }

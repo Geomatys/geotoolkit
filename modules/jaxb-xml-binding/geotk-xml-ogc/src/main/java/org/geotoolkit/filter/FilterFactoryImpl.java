@@ -94,6 +94,7 @@ import org.geotoolkit.ogc.xml.v110.UpperBoundaryType;
 import org.geotoolkit.ogc.xml.v110.WithinType;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.ogc.xml.FilterXmlFactory;
 
 // Types dependencies
 import org.opengis.feature.type.Name;
@@ -198,7 +199,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
 
     @Override
     public And and(final Filter f, final Filter g) {
-        final List<Filter> filterList = new ArrayList<Filter>();
+        final List<Filter> filterList = new ArrayList<>();
         boolean factorized = false;
         // factorize OR filter
         if (g instanceof And) {
@@ -228,7 +229,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
 
     @Override
     public Or or(final Filter f, final Filter g) {
-        final List<Filter> filterList = new ArrayList<Filter>();
+        final List<Filter> filterList = new ArrayList<>();
         boolean factorized = false;
         // factorize OR filter
         if (g instanceof Or) {
@@ -972,7 +973,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     public FilterCapabilities capabilities(final String version, final ScalarCapabilities scalar, final SpatialCapabilities spatial, final IdCapabilities id) {
-        return new org.geotoolkit.ogc.xml.v110.FilterCapabilities(scalar, spatial, id);
+        return FilterXmlFactory.buildFilterCapabilities(version, scalar, spatial, id, null, null);
     }
 
     @Override
@@ -1214,6 +1215,6 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     public FilterCapabilities capabilities(final String string, final ScalarCapabilities sc, final SpatialCapabilities sc1, final TemporalCapabilities tc, final IdCapabilities ic) {
-        return new org.geotoolkit.ogc.xml.v110.FilterCapabilities(sc, sc1, ic, tc);
+        return FilterXmlFactory.buildFilterCapabilities("1.1.0", sc, sc1, ic, tc, null);
     }
 }

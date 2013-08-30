@@ -22,10 +22,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.opengis.filter.capability.IdCapabilities;
-import org.opengis.filter.capability.ScalarCapabilities;
-import org.opengis.filter.capability.SpatialCapabilities;
-import org.opengis.filter.capability.TemporalCapabilities;
 
 
 /**
@@ -88,21 +84,20 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
     /**
      * Build a new filter capabilities (light version)
      */
-    public FilterCapabilities(final ScalarCapabilities scalar, final SpatialCapabilities spatial, final IdCapabilities id) {
-        this.spatialCapabilities = (SpatialCapabilitiesType) spatial;
-        this.idCapabilities      = (IdCapabilitiesType)      id;
-        this.scalarCapabilities  = (ScalarCapabilitiesType)  scalar;
+    public FilterCapabilities(final ScalarCapabilitiesType scalar, final SpatialCapabilitiesType spatial, final IdCapabilitiesType id) {
+        this.spatialCapabilities = spatial;
+        this.idCapabilities      = id;
+        this.scalarCapabilities  = scalar;
 
     }
 
     /**
      * Build a new filter capabilities (light version)
      */
-    public FilterCapabilities(final ScalarCapabilities scalar, final SpatialCapabilities spatial, final IdCapabilities id, final TemporalCapabilities temporal) {
-        this.spatialCapabilities = (SpatialCapabilitiesType) spatial;
-        this.idCapabilities      = (IdCapabilitiesType)      id;
-        this.scalarCapabilities  = (ScalarCapabilitiesType)  scalar;
-        this.temporalCapabilities = (TemporalCapabilitiesType) temporal;
+    public FilterCapabilities(final ScalarCapabilitiesType scalar, final SpatialCapabilitiesType spatial, final IdCapabilitiesType id, final TemporalCapabilitiesType temporal) {
+        this.spatialCapabilities  = spatial;
+        this.idCapabilities       = id;
+        this.scalarCapabilities   = scalar;
     }
 
 

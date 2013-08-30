@@ -77,10 +77,11 @@ public class ComparisonOperatorsType implements ComparisonOperators {
      * Gets the value of the comparisonOperator property.
      * 
      */
+    @Override
     public Collection<Operator> getOperators() {
-        List<Operator> result =  new ArrayList<Operator>();
+        List<Operator> result =  new ArrayList<>();
         if (comparisonOperator == null) {
-            comparisonOperator = new ArrayList<ComparisonOperatorType>();
+            comparisonOperator = new ArrayList<>();
             return result;
         } else {
             for (ComparisonOperatorType c: comparisonOperator) {
@@ -93,6 +94,7 @@ public class ComparisonOperatorsType implements ComparisonOperators {
     /**
      * @return Operator with the provided name, or null if not supported
      */
+    @Override
     public Operator getOperator(final String name) {
         if ( name == null || comparisonOperator == null) {
             return null;
