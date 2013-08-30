@@ -17,6 +17,12 @@
 package org.geotoolkit.s52.lookuptable.instruction;
 
 import java.io.IOException;
+import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.ProjectedObject;
+import org.geotoolkit.s52.S52Context;
+import org.geotoolkit.s52.S52Palette;
+import org.geotoolkit.s52.procedure.Procedure;
 
 /**
  * S-52 Annex A Part I p.63  7.5.2
@@ -41,6 +47,17 @@ public class ConditionalSymbolProcedure extends Instruction{
     @Override
     protected void readParameters(String str) throws IOException {
         procedureName = str;
+    }
+
+    @Override
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geoType) throws PortrayalException {
+
+        final Procedure proc = context.getProcedure(procedureName);
+        if(proc == null){
+            System.out.println("TODO unknowned procedure : "+procedureName);
+        }else{
+            proc.render(ctx, context, colorTable, graphic, geoType);
+        }
     }
 
 }

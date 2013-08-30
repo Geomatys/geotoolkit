@@ -16,10 +16,11 @@
  */
 package org.geotoolkit.s52.procedure;
 
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
-import org.opengis.feature.Feature;
 
 
 /**
@@ -38,6 +39,7 @@ public abstract class Procedure {
         return name;
     }
 
-    public abstract void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, Feature feature);
+    public abstract void render(RenderingContext2D ctx, S52Context context,
+            S52Palette colorTable, ProjectedObject feature, S52Context.GeoType geotype) throws PortrayalException;
 
 }

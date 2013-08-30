@@ -16,10 +16,23 @@
  */
 package org.geotoolkit.s52.lookuptable.instruction;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 import java.io.IOException;
+import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.ProjectedObject;
+import org.geotoolkit.s52.S52Context;
+import org.geotoolkit.s52.S52Palette;
 import static org.geotoolkit.s52.S52Utilities.*;
+import static org.geotoolkit.s52.lookuptable.instruction.Instruction.getPivotPoint;
+import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * S-52 Annex A Part I p.47  7.1.1
@@ -198,5 +211,73 @@ public abstract class Text extends Instruction{
     }
 
     public abstract Expression getText();
+
+
+    @Override
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geoType) throws PortrayalException {
+        if(context.isNoText()) return;
+
+        final Graphics2D g2d = ctx.getGraphics();
+        final Feature feature = (Feature) graphic.getCandidate();
+
+        //this includ alphanumeric and numeric texts
+
+        //get font and text metas
+        final Font font = this.getFont();
+        g2d.setFont(font);
+        final Expression expStr = this.getText();
+        final String str = expStr.evaluate(feature, null);
+        FontMetrics fm = null;
+        Integer fontHeight = null;
+
+        //find and adjust pivot point
+        final Coordinate pivotPoint;
+        try {
+            pivotPoint = getPivotPoint(graphic.getGeometry(null).getDisplayGeometryJTS());
+        } catch (TransformException ex) {
+            throw new PortrayalException(ex);
+        }
+        if(this.xOffset != 0){
+            if(fm==null) fm = g2d.getFontMetrics(font);
+            if(fontHeight==null) fontHeight = fm.getAscent();
+            pivotPoint.x += this.xOffset * fontHeight;
+        }
+        if(this.yOffset != 0){
+            if(fm==null) fm = g2d.getFontMetrics(font);
+            if(fontHeight==null) fontHeight = fm.getAscent();
+            pivotPoint.y += this.yOffset * fontHeight;
+        }
+
+        //set color
+        g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
+        final Color color = colorTable.getColor(this.color);
+        g2d.setColor(color);
+
+
+        if(this.horizontalAdjust != 3 || this.verticalAdjust != 1){
+            //calculate horizontal and vertical adjustement
+            if(fm==null) fm = g2d.getFontMetrics(font);
+
+            if(this.horizontalAdjust==1){
+                final int width = fm.stringWidth(str);
+                pivotPoint.x -= width/2;
+            }else if(this.horizontalAdjust==2){
+                final int width = fm.stringWidth(str);
+                pivotPoint.x -= width;
+            }
+
+            if(this.verticalAdjust==2){
+            if(fontHeight==null) fontHeight = fm.getAscent();
+                pivotPoint.y += fontHeight/2;
+            }else if(this.verticalAdjust==3){
+            if(fontHeight==null) fontHeight = fm.getAscent();
+                pivotPoint.y += fontHeight;
+            }
+        }
+
+        //TODO handle SPACE parameter
+
+        g2d.drawString(str, (float)pivotPoint.x, (float)pivotPoint.y);
+    }
 
 }

@@ -27,9 +27,9 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.S52Utilities;
@@ -37,7 +37,6 @@ import org.geotoolkit.s52.dai.Bitmap;
 import org.geotoolkit.s52.dai.ColorReference;
 import org.geotoolkit.s52.dai.Definition;
 import org.geotoolkit.s52.dai.Exposition;
-import org.geotoolkit.s52.dai.SymbolIdentifier;
 import org.geotoolkit.s52.dai.Vector;
 
 /**
@@ -68,7 +67,7 @@ public class SymbolStyle {
     }
 
     public void render(final Graphics2D g2d, S52Context context, S52Palette colorTable,
-            Coordinate center, float rotation) throws IOException{
+            Coordinate center, float rotation) throws PortrayalException{
 
         if(definition.getType().equals("R")){
             renderRaster(g2d, context, colorTable, center, rotation);
@@ -78,12 +77,12 @@ public class SymbolStyle {
     }
 
     private void renderRaster(final Graphics2D g2d, S52Context context, S52Palette colorTable,
-            Coordinate center, float rotation) throws IOException{
+            Coordinate center, float rotation) throws PortrayalException{
         System.out.println(">>>>>>>>>>>>>>> RASTER");
     }
 
     private void renderVector(final Graphics2D g2d, S52Context context, S52Palette colorTable,
-            Coordinate center, float rotation) throws IOException{
+            Coordinate center, float rotation) throws PortrayalException{
         final float pivotX    = definition.getPivotX();
         final float pivotY    = definition.getPivotY();
         //one unit = 0.01mm
@@ -185,7 +184,7 @@ public class SymbolStyle {
                     }
 
                 }else if("AA".equals(action)){
-                    throw new IOException("Action not implemented yet : "+part);
+                    throw new PortrayalException("Action not implemented yet : "+part);
                 }else if("PM".equals(action)){
                     //polygon operations
                     final char trans = part.charAt(2);
@@ -200,7 +199,7 @@ public class SymbolStyle {
                         case '2' :
                             polygonMode = false;
                             break;
-                        default : throw new IOException("unexpected action : "+part);
+                        default : throw new PortrayalException("unexpected action : "+part);
                     }
 
                 }else if("EP".equals(action)){
@@ -226,15 +225,15 @@ public class SymbolStyle {
                         ssr = 0;
                     }else if(part.equals("1")){
                         //direction of the pen
-                        float angle = angle(ltx, lty, tx, ty);
+                        float angle = S52Utilities.angle(ltx, lty, tx, ty);
                         ssr = rotation + angle;
 
                     }else if(part.equals("2")){
                         //90° rotation from edge
-                        float angle = angle(ltx, lty, tx, ty);
+                        float angle = S52Utilities.angle(ltx, lty, tx, ty);
                         ssr = rotation + angle + (float)Math.PI/2;
                     }else{
-                        throw new IOException("unexpected rotation value : "+part);
+                        throw new PortrayalException("unexpected rotation value : "+part);
                     }
 
                     final Point2D pt = new Point2D.Float(tx, ty);
@@ -244,18 +243,12 @@ public class SymbolStyle {
                     g2d.setTransform(trs);
 
                 }else{
-                    throw new IOException("unexpected action : "+part);
+                    throw new PortrayalException("unexpected action : "+part);
                 }
             }
         }
 
         g2d.setTransform(old);
-    }
-
-    private static float angle(final float x1, final float y1, final float x2, final float y2) {
-        float dx = x1 - x2;
-        float dy = y1 - y2;
-        return (float) Math.atan2(dy, dx);
     }
 
 }

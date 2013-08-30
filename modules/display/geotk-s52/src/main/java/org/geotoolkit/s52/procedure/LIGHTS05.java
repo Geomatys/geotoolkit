@@ -17,9 +17,9 @@
 package org.geotoolkit.s52.procedure;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
-import org.opengis.feature.Feature;
 
 /**
  *
@@ -32,8 +32,8 @@ public class LIGHTS05 extends Procedure{
     }
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, Feature feature) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject feature, S52Context.GeoType geotype) {
+        System.out.println("Procedure "+getName()+" not implemented yet");
     }
 
 }

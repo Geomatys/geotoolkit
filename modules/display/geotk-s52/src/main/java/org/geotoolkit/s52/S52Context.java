@@ -54,6 +54,35 @@ import org.geotoolkit.s52.dai.SymbolIdentifier;
 import org.geotoolkit.s52.dai.SymbolVector;
 import org.geotoolkit.s52.lookuptable.LookupTable;
 import org.geotoolkit.s52.lookuptable.TxtLookupTableReader;
+import org.geotoolkit.s52.procedure.CLRLIN01;
+import org.geotoolkit.s52.procedure.DATCVR02;
+import org.geotoolkit.s52.procedure.DEPARE02;
+import org.geotoolkit.s52.procedure.DEPCNT03;
+import org.geotoolkit.s52.procedure.DEPVAL02;
+import org.geotoolkit.s52.procedure.LEGLIN03;
+import org.geotoolkit.s52.procedure.LIGHTS05;
+import org.geotoolkit.s52.procedure.LITDSN01;
+import org.geotoolkit.s52.procedure.OBSTRN06;
+import org.geotoolkit.s52.procedure.OWNSHP02;
+import org.geotoolkit.s52.procedure.PASTRK01;
+import org.geotoolkit.s52.procedure.Procedure;
+import org.geotoolkit.s52.procedure.QUALIN01;
+import org.geotoolkit.s52.procedure.QUAPNT02;
+import org.geotoolkit.s52.procedure.QUAPOS01;
+import org.geotoolkit.s52.procedure.RESARE03;
+import org.geotoolkit.s52.procedure.RESCSP02;
+import org.geotoolkit.s52.procedure.RESTRN01;
+import org.geotoolkit.s52.procedure.SAFCON01;
+import org.geotoolkit.s52.procedure.SEABED01;
+import org.geotoolkit.s52.procedure.SLCONS03;
+import org.geotoolkit.s52.procedure.SNDFRM03;
+import org.geotoolkit.s52.procedure.SOUNDG02;
+import org.geotoolkit.s52.procedure.SYMINSnn;
+import org.geotoolkit.s52.procedure.TOPMAR01;
+import org.geotoolkit.s52.procedure.UDWHAZ04;
+import org.geotoolkit.s52.procedure.VESSEL02;
+import org.geotoolkit.s52.procedure.VRMEBL02;
+import org.geotoolkit.s52.procedure.WRECKS04;
 import org.geotoolkit.s52.render.LineSymbolStyle;
 import org.geotoolkit.s52.render.PatternSymbolStyle;
 import org.geotoolkit.s52.render.PointSymbolStyle;
@@ -96,6 +125,43 @@ public class S52Context {
     public static final String TIME_DAY_BLACKBACK   = "DAY_BLACKBACK";
     public static final String TIME_DUSK            = "DUSK";
     public static final String TIME_NIGHT           = "NIGHT";
+
+    private static final Map<String,Procedure> PROCEDURES = new HashMap<>();
+    static {
+        final Procedure[] array = new Procedure[]{
+            new CLRLIN01(),
+            new DATCVR02(),
+            new DEPARE02(),
+            new DEPCNT03(),
+            new DEPVAL02(),
+            new LEGLIN03(),
+            new LIGHTS05(),
+            new LITDSN01(),
+            new OBSTRN06(),
+            new OWNSHP02(),
+            new PASTRK01(),
+            new QUALIN01(),
+            new QUAPNT02(),
+            new QUAPOS01(),
+            new RESARE03(),
+            new RESCSP02(),
+            new RESTRN01(),
+            new SAFCON01(),
+            new SEABED01(),
+            new SLCONS03(),
+            new SNDFRM03(),
+            new SOUNDG02(),
+            new SYMINSnn(),
+            new TOPMAR01(),
+            new UDWHAZ04(),
+            new VESSEL02(),
+            new VRMEBL02(),
+            new WRECKS04()
+        };
+        for(Procedure p : array){
+            PROCEDURES.put(p.getName(), p);
+        }
+    }
 
     private final Map<String,S52Palette> palettes = new HashMap<>();
     private final Map<String,S52SVGIcon> icons = new HashMap<>();
@@ -192,6 +258,10 @@ public class S52Context {
 
     public SymbolStyle getSyle(String name){
         return styles.get(name);
+    }
+
+    public Procedure getProcedure(String name){
+        return PROCEDURES.get(name);
     }
 
     /**

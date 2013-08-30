@@ -16,7 +16,18 @@
  */
 package org.geotoolkit.s52.lookuptable.instruction;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.ProjectedObject;
+import org.geotoolkit.s52.S52Context;
+import org.geotoolkit.s52.S52Palette;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * S-52 Annex A Part I p.61  7.4.7
@@ -61,6 +72,19 @@ public class ColorFill extends Instruction{
             transparency = Integer.valueOf(parts[1]);
         }else{
             transparency = 0;
+        }
+    }
+
+    @Override
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geoType) throws PortrayalException{
+        final Graphics2D g2d = ctx.getGraphics();
+        final Color color = colorTable.getColor(this.color);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getAlpha()));
+        g2d.setColor(color);
+        try {
+            g2d.fill(graphic.getGeometry(null).getDisplayShape());
+        } catch (TransformException ex) {
+            throw new PortrayalException(ex);
         }
     }
 
