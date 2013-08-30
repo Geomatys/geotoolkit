@@ -28,6 +28,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * on hard drive at specified emplacement define by user. 
  *
  * @author Rémi Marechal (Geomatys).
+ * @see StarRTree
  */
 public class FileStarRTree<E> extends StarRTree<E> {
     
@@ -46,8 +47,8 @@ public class FileStarRTree<E> extends StarRTree<E> {
      * @param maxElements maximum children value permit per Node.
      * @param crs Tree {@link CoordinateReferenceSystem}.
      * @param treeEltMap object which store tree identifier and data.
-     * @throws StoreIndexException
-     * @throws IOException 
+     * @throws StoreIndexException 
+     * @throws IOException if problem during head file writing.
      * @see StarRTree
      * @see TreeElementMapper
      */

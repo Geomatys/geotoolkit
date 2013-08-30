@@ -38,11 +38,14 @@ public final class TreeX {
     
     /**
      * Effectuate different logics operations on tree.
-     *
-     * @param tree 
+     * 
+     * @param tree
      * @param areaSearch area of search.
      * @param logicFilter different logic operation.
+     * @return integer table which contain all tree identifier from data which match with search criterion. (area and logic filter)
+     * @throws StoreIndexException if problem during search action.
      * @see SpatialFilterType
+     * @see Tree#searchID(org.opengis.geometry.Envelope) 
      */
     public static int[] search(final Tree tree, final Envelope regionSearch, final SpatialFilterType logicFilter) throws StoreIndexException {
         ArgumentChecks.ensureNonNull("TreeX search : tree", tree);

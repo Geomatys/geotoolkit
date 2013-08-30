@@ -24,6 +24,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  * {@link StarRTree} implementation which store all Nodes in memory.
  *
+ * @see StarRTree
  * @author Remi Marechal (Geomatys).
  */
 public class MemoryStarRTree<E> extends StarRTree<E> {
@@ -31,9 +32,9 @@ public class MemoryStarRTree<E> extends StarRTree<E> {
     /**
      * Create a new {@link StarRTree} implementation which store Tree architecture in memory.
      * 
-     * @param maxElements
-     * @param crs
-     * @param treeEltMap
+     * @param maxElements maximum element number store in each {@link Node}.
+     * @param crs Tree CoordinateReferenceSystem.
+     * @param treeEltMap mapper which store tree identifiers and stored elements.
      * @throws StoreIndexException in this tree implementation exception never occur.
      * @see TreeElementMapper
      */

@@ -63,7 +63,7 @@ abstract class HilbertRTree<E> extends AbstractTree<E> {
     
     /**
      * {@inheritDoc }.<br/><br/>
-     * Note : in this implementation, a fully leaf Node is split before overflowing 
+     * Note : in this implementation, a fully leaf Node is split before be overflowed 
      * whereas in other tree implementation Node is overflow and after splitted.  
      */
     @Override
@@ -219,7 +219,7 @@ abstract class HilbertRTree<E> extends AbstractTree<E> {
                     
         /**
          * If last travel up (on Root Node) and currently candidate was changed,
-         * return currently Node else return null;
+         * return currently Node else return null.
          */
         return (subCandidateParent != null && fileCandidate.getParentId() == 0) ? fileCandidate : null;
     }
@@ -245,31 +245,6 @@ abstract class HilbertRTree<E> extends AbstractTree<E> {
                 // empty child
                 if (currentChild.isEmpty()) {
                     candidate.removeChild(currentChild);
-//                } else if (currentChild.isLeaf() 
-//                     && ((FileHilbertNode)currentChild).getDataCount() <= getMaxElements() / 3) {// other condition
-//                    if (reinsertListCoords == null) {
-//                        reinsertListCoords  = new ArrayList<double[]>();
-//                        reinsertListObjects = new ArrayList<Object>();
-//                    }
-//                    int cuCellSibl = currentChild.getChildId();
-//                    while (cuCellSibl != 0) {
-//                        final FileNode currentCell = treeAccess.readNode(cuCellSibl);
-//                        int cuDataSibl = currentCell.getChildId();
-//                        while (cuDataSibl != 0) {
-//                            final FileNode currentData = treeAccess.readNode(cuDataSibl);
-//                            reinsertListCoords.add(currentData.getBoundary());// risk de .clone a voir
-//                            reinsertListObjects.add(-currentData.getChildId());
-//                            setElementsNumber(getElementsNumber()-1);
-//                            cuDataSibl = currentData.getSiblingId();
-//                            currentChild.removeChild(currentData);
-//                        }
-////                            reinsertListCoords.add(currentCell.getBoundary());// risk de .clone a voir
-////                            reinsertListObjects.add(-currentCell.getChildId());
-//                        cuCellSibl = currentCell.getSiblingId();
-////                        currentChild.removeChild(currentCell);
-////                        setElementsNumber(getElementsNumber()-1);
-//                    }
-//                    candidate.removeChild(currentChild);
                 } else {
                     if (candiBound == null) {
                         candiBound = currentChild.getBoundary().clone();

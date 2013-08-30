@@ -166,7 +166,7 @@ abstract class BasicRTree<E> extends AbstractTree<E> {
         }
         /**
          * If last travel up (on Root Node) and currently candidate was changed,
-         * return currently Node else return null;
+         * return currently Node else return null.
          */
         return (subCandidateParent != null && fileCandidate.getParentId() == 0) ? fileCandidate : null;
     }

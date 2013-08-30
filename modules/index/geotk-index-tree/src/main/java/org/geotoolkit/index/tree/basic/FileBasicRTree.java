@@ -28,6 +28,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * on hard drive at specified emplacement define by user. 
  * 
  * @author Remi Marechal(Geomatys).
+ * @see BasicRTree
  */
 public final class FileBasicRTree<E> extends BasicRTree<E> {
 
@@ -47,8 +48,8 @@ public final class FileBasicRTree<E> extends BasicRTree<E> {
      * @param crs Tree {@link CoordinateReferenceSystem}.
      * @param choice split made choice.
      * @param treeEltMap object which store tree identifier and data.
-     * @throws StoreIndexException
-     * @throws IOException 
+     * @throws StoreIndexException if problem during root Node affectation.
+     * @throws IOException if problem during file head writing.
      * @see BasicRTree
      * @see SplitCase
      * @see TreeElementMapper
@@ -70,8 +71,8 @@ public final class FileBasicRTree<E> extends BasicRTree<E> {
      * @param choice split made choice.
      * @param treeEltMap object which store tree identifier and data.
      * @param byteBufferLength length in Byte unit of the buffer which read and write all Tree Node on hard disk by {@link TreeAccess} object.
-     * @throws StoreIndexException
-     * @throws IOException 
+     * @throws StoreIndexException if problem during root Node affectation.
+     * @throws IOException if problem during file head writing.
      * @see BasicRTree
      * @see SplitCase
      * @see TreeElementMapper

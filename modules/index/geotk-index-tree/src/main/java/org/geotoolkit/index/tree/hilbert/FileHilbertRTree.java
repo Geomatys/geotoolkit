@@ -45,8 +45,8 @@ public final class FileHilbertRTree<E> extends HilbertRTree<E> {
      * @param hilbertOrder maximum hilbert order value permit for each tree leaf.
      * @param crs Tree {@link CoordinateReferenceSystem}.
      * @param treeEltMap object which store tree identifier and data.
-     * @throws StoreIndexException
-     * @throws IOException 
+     * @throws StoreIndexException if problem during root Node affectation.
+     * @throws IOException if problem during file head writing.
      * @see HilbertRTree
      * @see TreeElementMapper
      */
@@ -67,8 +67,8 @@ public final class FileHilbertRTree<E> extends HilbertRTree<E> {
      * @param crs Tree {@link CoordinateReferenceSystem}.
      * @param treeEltMap object which store tree identifier and data.
      * @param byteBufferLength length in Byte unit of the buffer which read and write all Tree Node on hard disk by TreeAccess object.
-     * @throws StoreIndexException
-     * @throws IOException 
+     * @throws StoreIndexException if problem during root Node affectation.
+     * @throws IOException if problem during file head writing.
      * @see HilbertRTree
      * @see TreeElementMapper
      */
