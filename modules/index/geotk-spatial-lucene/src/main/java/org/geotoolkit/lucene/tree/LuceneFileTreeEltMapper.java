@@ -67,6 +67,11 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
     private final int beginPosition;
     
     /**
+     * Byte file position, just after last stored {@link NamedEnvelope#id}. 
+     */
+    private int idMapCurrentPosition;
+    
+    /**
      * Create a new Tree Mapper adapted to Lucene Tree use case.
      * 
      * @param crs 
@@ -79,6 +84,8 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
         idMapInOutStream = new RandomAccessFile(idMapOutPut, "rw");
         
         // prepare to store mapIndex during close() call.
+        idMapInOutStream.writeInt(-1);
+        // prepare to store idMapCurrentPosition during close() call.
         idMapInOutStream.writeInt(0);
         
         // write crs
@@ -94,6 +101,7 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
         this.dim           = crs.getCoordinateSystem().getDimension();
         this.crs           = crs;
         this.mapIndex      = 0;
+        this.idMapCurrentPosition = beginPosition;
     }
     
     /**
@@ -108,6 +116,7 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
         final File idMapOutPut = new File(mapperInput.getParent(), ID_MAP_NAME);
         idMapInOutStream = new RandomAccessFile(idMapOutPut, "rw");
         this.mapIndex    = idMapInOutStream.readInt();
+        this.idMapCurrentPosition = idMapInOutStream.readInt();
         if (mapIndex == 0) 
             throw new IllegalStateException("You should call close method before.");
         // read CRS
@@ -127,7 +136,9 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
     @Override
     protected void writeObject(final NamedEnvelope Object) throws IOException {
         final String neID = Object.getId();
+        idMapInOutStream.getChannel().position(idMapCurrentPosition);
         idMapInOutStream.writeUTF(neID);
+        idMapCurrentPosition = (int) idMapInOutStream.getChannel().position();
         byteBuffer.putInt(mapIndex);
         for (int d = 0; d < dim; d++) {
             byteBuffer.putDouble(Object.getLower(d));
@@ -167,7 +178,7 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
      */
     @Override
     protected boolean areEquals(final NamedEnvelope objectA, final NamedEnvelope objectB) {
-        return objectA.equals(objectB, 1E-9, true);
+         return (objectA.equals(objectB, 1E-9, true) && objectA.getId().equals(objectB.getId()));
     }
 
     /**
@@ -186,6 +197,7 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
         super.clear(); 
         mapIndex = 0;
         idMapInOutStream.getChannel().position(beginPosition);
+        idMapCurrentPosition = beginPosition;
     }
 
     /**
@@ -195,7 +207,8 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
     public void close() throws IOException {
         super.close(); 
         idMapInOutStream.getChannel().position(0);
-        idMapInOutStream.write(mapIndex);
+        idMapInOutStream.writeInt(mapIndex);
+        idMapInOutStream.writeInt(idMapCurrentPosition);
         idMapInOutStream.close();
     }
 }

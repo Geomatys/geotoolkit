@@ -2138,7 +2138,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
      */
     @Test
     public void QueryAndSpatialFilterAfterRemoveTest() throws Exception {
-
+        
         org.opengis.filter.Filter bboxFilter = FF.bbox(GEOMETRY_PROPERTY, -20, -20, 20, 20, "CRS:84");
         SpatialQuery bboxQuery = new SpatialQuery(wrap(bboxFilter));
         
@@ -2169,12 +2169,9 @@ public class LuceneSearcherEnvelopeOnlyTest {
         //remove from Rtree
         final NamedEnvelope env = envelopes.get("box 2 projected");
         rTree.remove(env);
-        
-//        final File treeFile = new File(subDirectory, "tree.bin");
-//        TreeWriter.write(rTree, treeFile);
-        
+                
         searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true);
-
+        
         //we perform a lucene query
         results = searcher.doSearch(bboxQuery);
 
@@ -2202,9 +2199,9 @@ public class LuceneSearcherEnvelopeOnlyTest {
 
         writer.commit();
         writer.close();
-
+        
         searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true);
-
+        
          //we perform a lucene query
         results = searcher.doSearch(bboxQuery);
 
