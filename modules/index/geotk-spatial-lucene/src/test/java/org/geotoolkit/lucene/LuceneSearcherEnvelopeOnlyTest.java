@@ -92,7 +92,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         }
     }
     
-    private Map<String, NamedEnvelope> envelopes = new HashMap<String, NamedEnvelope>();
+    private Map<String, NamedEnvelope> envelopes = new HashMap<>();
     private File directory;
     private File subDirectory;
     private LuceneIndexSearcher searcher;
@@ -121,7 +121,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         treeCrs = CRS.decode("CRS:84");
         
         //creating tree (R-Tree)------------------------------------------------
-        rTree = new FileStarRTree<NamedEnvelope>(treeFile, 5, WGS84, new LuceneFileTreeEltMapper(WGS84, mapperFile));
+        rTree = new FileStarRTree<>(treeFile, 5, WGS84, new LuceneFileTreeEltMapper(WGS84, mapperFile));
 
         final Analyzer analyzer  = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
         IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_40, analyzer);
@@ -131,12 +131,9 @@ public class LuceneSearcherEnvelopeOnlyTest {
         writer.commit();
         writer.close();
         
-        rTree.close();
-        rTree.getTreeElementMapper().close();
+        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true, rTree);
         
-        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true);
-        
-        rTree = new FileStarRTree<NamedEnvelope>(treeFile, new LuceneFileTreeEltMapper(mapperFile));
+        //rTree = new FileStarRTree<NamedEnvelope>(treeFile, new LuceneFileTreeEltMapper(mapperFile));
     }
 
     @After
@@ -240,7 +237,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         env = (GeneralEnvelope) Envelopes.transform(env, treeCrs);
 
         //we perform a retree query
-        List<Envelope> docs = new ArrayList<Envelope>();
+        List<Envelope> docs = new ArrayList<>();
         final TreeElementMapper<NamedEnvelope> tem = rTree.getTreeElementMapper();
         
         int[] resultsID = rTree.searchID(env);
@@ -249,7 +246,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         int nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             NamedEnvelope doc = (NamedEnvelope) docs.get(i);
             String id =  doc.getId();
@@ -282,7 +279,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS= 3395: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             NamedEnvelope doc = (NamedEnvelope) docs.get(i);
             String name =  doc.getId();
@@ -313,7 +310,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 2 CRS= 4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             NamedEnvelope doc = (NamedEnvelope) docs.get(i);
             String name =  doc.getId();
@@ -345,7 +342,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 3 CRS= 4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             NamedEnvelope doc = (NamedEnvelope) docs.get(i);
             String name =  doc.getId();
@@ -1243,7 +1240,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         SpatialQuery spatialQuery1 = new SpatialQuery(wrap(filter1));
         SpatialQuery spatialQuery2 = new SpatialQuery(wrap(filter2));
 
-        List<Filter> filters  = new ArrayList<Filter>();
+        List<Filter> filters  = new ArrayList<>();
         filters.add(spatialQuery1.getSpatialFilter());
         filters.add(spatialQuery2.getSpatialFilter());
         int filterType[]  = {SerialChainFilter.OR, SerialChainFilter.OR};
@@ -1293,7 +1290,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
-        List<Filter> filters3     = new ArrayList<Filter>();
+        List<Filter> filters3     = new ArrayList<>();
         filters3.add(spatialQuery.getSpatialFilter());
         int filterType3[]         = {SerialChainFilter.NOT};
         serialFilter              = new SerialChainFilter(filters3, filterType3);
@@ -1323,7 +1320,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         bbox2.setCoordinateReferenceSystem(WGS84);
         org.opengis.filter.Filter bfilter = FF.bbox(GEOMETRY_PROPERTY, -12,-17,15,50,"CRS:84");
         SpatialQuery bboxQuery = new SpatialQuery(wrap(bfilter));
-        List<Filter> filters4  = new ArrayList<Filter>();
+        List<Filter> filters4  = new ArrayList<>();
         filters4.add(spatialQuery.getSpatialFilter());
         filters4.add(bboxQuery.getSpatialFilter());
         int filterType4[]         = {SerialChainFilter.AND, SerialChainFilter.AND};
@@ -2087,7 +2084,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         Set<String> hits2 = searcher.doSearch(bboxQuery);
 
 
-        results = new HashSet<String>();
+        results = new HashSet<>();
         results.addAll(hits1);
         results.addAll(hits2);
         
@@ -2120,7 +2117,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         hits1 = searcher.doSearch(query1);
         hits2 = searcher.doSearch(query2);
 
-        results      = new HashSet<String>();
+        results      = new HashSet<>();
         results.addAll(hits1);
         results.addAll(hits2);
         
@@ -2169,8 +2166,12 @@ public class LuceneSearcherEnvelopeOnlyTest {
         //remove from Rtree
         final NamedEnvelope env = envelopes.get("box 2 projected");
         rTree.remove(env);
-                
-        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true);
+
+        rTree.close();
+        rTree.getTreeElementMapper().close();
+
+        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true, null);
+        rTree = searcher.getRtree();
         
         //we perform a lucene query
         results = searcher.doSearch(bboxQuery);
@@ -2199,8 +2200,12 @@ public class LuceneSearcherEnvelopeOnlyTest {
 
         writer.commit();
         writer.close();
-        
-        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true);
+
+        rTree.close();
+        rTree.getTreeElementMapper().close();
+
+        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true, null);
+        rTree = searcher.getRtree();
         
          //we perform a lucene query
         results = searcher.doSearch(bboxQuery);

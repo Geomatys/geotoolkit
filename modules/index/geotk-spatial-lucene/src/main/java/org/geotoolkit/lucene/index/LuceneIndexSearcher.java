@@ -41,11 +41,13 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Version;
+import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.LuceneUtils;
 import org.geotoolkit.lucene.SearchingException;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
+import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.geotoolkit.util.FileUtilities;
 
 
@@ -70,7 +72,7 @@ public class LuceneIndexSearcher extends IndexLucene {
     /**
      * A map of cached request
      */
-    private final Map<SpatialQuery, Set<String>> cachedQueries = new ConcurrentHashMap<SpatialQuery, Set<String>>();
+    private final Map<SpatialQuery, Set<String>> cachedQueries = new ConcurrentHashMap<>();
 
     /**
      * The maximum size of the map of queries.
@@ -85,7 +87,7 @@ public class LuceneIndexSearcher extends IndexLucene {
     /**
      * A Map of DocID -> metadata ID .
      */
-    private final Map<Integer, String> identifiers = new HashMap<Integer, String>();
+    private final Map<Integer, String> identifiers = new HashMap<>();
     
     /**
      * A list of numeric fields names.
@@ -97,6 +99,30 @@ public class LuceneIndexSearcher extends IndexLucene {
      * if set, no JTS filter will be applied on geometry search (only R-tree search)
      */
     private final boolean envelopeOnly;
+
+    /**
+     * Build a new index searcher.
+     *
+     * @param configDir The configuration directory where to build the index directory.
+     * @param serviceID the "ID" of the service (allow multiple index in the same directory). The value "" is allowed.
+     *
+     * @throws IndexingException
+     */
+    public LuceneIndexSearcher(final File configDir, final String serviceID) throws IndexingException {
+        this(configDir, serviceID, null, false, null);
+    }
+
+    /**
+     * Build a new index searcher.
+     *
+     * @param configDir The configuration directory where to build the index directory.
+     * @param serviceID the "ID" of the service (allow multiple index in the same directory). The value "" is allowed.
+     *
+     * @throws IndexingException
+     */
+    public LuceneIndexSearcher(final File configDir, final String serviceID, final Tree<NamedEnvelope> rTree) throws IndexingException {
+        this(configDir, serviceID, null, false, rTree);
+    }
     
     /**
      * Build a new index searcher.
@@ -106,7 +132,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      * @param analyzer  A lucene Analyzer (Default is ClassicAnalyzer)
      */
     public LuceneIndexSearcher(final File configDir, final String serviceID, final Analyzer analyzer) throws IndexingException {
-        this(configDir, serviceID, analyzer, false);
+        this(configDir, serviceID, analyzer, false, null);
     }
     
     /**
@@ -117,7 +143,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      * @param analyzer  A lucene Analyzer (Default is ClassicAnalyzer)
      * @param envelopeOnly A flag indicating if all the geometry indexed are envelope.
      */
-    public LuceneIndexSearcher(final File configDir, final String serviceID, final Analyzer analyzer, final boolean envelopeOnly) throws IndexingException {
+    public LuceneIndexSearcher(final File configDir, final String serviceID, final Analyzer analyzer, final boolean envelopeOnly, final Tree<NamedEnvelope> rTree) throws IndexingException {
         super(analyzer);
         this.envelopeOnly = envelopeOnly;
         if (envelopeOnly) {
@@ -145,7 +171,7 @@ public class LuceneIndexSearcher extends IndexLucene {
             if (currentIndexDirectory != null && currentIndexDirectory.exists()) {
                 setFileDirectory(currentIndexDirectory);
                 try {
-                    this.numericFields          = new HashMap<String, Character>();
+                    this.numericFields          = new HashMap<>();
                     final File numericFieldFile = new File(currentIndexDirectory, "numericFields.properties");
                     final Properties prop       = FileUtilities.getPropertiesFromFile(numericFieldFile);
                     for (String fieldName : prop.stringPropertyNames()) {
@@ -159,7 +185,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 throw new IndexingException("The index searcher can't find a index directory.");
             }
             isCacheEnabled        = true;
-            initSearcher();
+            initSearcher(rTree);
             initIdentifiersList();
 
         } catch (CorruptIndexException ex) {
@@ -171,23 +197,15 @@ public class LuceneIndexSearcher extends IndexLucene {
     }
 
     /**
-     * Build a new index searcher.
-     *
-     * @param configDir The configuration directory where to build the index directory.
-     * @param serviceID the "ID" of the service (allow multiple index in the same directory). The value "" is allowed.
-     * 
-     * @throws IndexingException
-     */
-    public LuceneIndexSearcher(final File configDir, final String serviceID) throws IndexingException {
-        this(configDir, serviceID, null);
-    }
-
-    /**
      * initialize the IndexSearcher of this index.
      */
-    private void initSearcher() throws CorruptIndexException, IOException {
+    private void initSearcher(final Tree<NamedEnvelope> rTree) throws CorruptIndexException, IOException {
         final File indexDirectory = getFileDirectory();
-        readTree();
+        if (rTree != null) {
+            this.rTree = rTree;
+        } else {
+            readTree();
+        }
         final IndexReader reader  = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(indexDirectory));
         searcher                  = new IndexSearcher(reader);
         LOGGER.log(Level.INFO, "Creating new Index Searcher with index directory:{0}", indexDirectory.getPath());
@@ -198,7 +216,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      * Fill the list of identifiers ordered by doc ID
      */
     private void initIdentifiersList() throws IOException {
-        final Map<Integer, String> temp = new HashMap<Integer, String>();
+        final Map<Integer, String> temp = new HashMap<>();
         final long nbDoc = searcher.collectionStatistics("id").maxDoc();
         for (int i = 0; i < nbDoc; i++) {
             final String metadataID = getMatchingID(searcher.doc(i));
@@ -216,7 +234,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      */
     public void refresh() throws IndexingException {
         try {
-            initSearcher();
+            initSearcher(rTree);
             initIdentifiersList();
             cachedQueries.clear();
             LOGGER.log(logLevel, "refreshing index searcher");
@@ -252,7 +270,7 @@ public class LuceneIndexSearcher extends IndexLucene {
     public String identifierQuery(final String id) throws SearchingException {
         try {
             final TermQuery query = new TermQuery(new Term(getIdentifierSearchField(), id));
-            final Set<String> results = new LinkedHashSet<String>();
+            final Set<String> results = new LinkedHashSet<>();
             final int maxRecords = (int)searcher.collectionStatistics("id").maxDoc();
             if (maxRecords == 0) {
                 LOGGER.warning("There is no document in the index");
@@ -260,7 +278,7 @@ public class LuceneIndexSearcher extends IndexLucene {
             }
             final TopDocs hits = searcher.search(query, maxRecords);
             for (ScoreDoc doc : hits.scoreDocs) {
-                final Set<String> fieldsToLoad = new HashSet<String>();
+                final Set<String> fieldsToLoad = new HashSet<>();
                 fieldsToLoad.add("id");
                 results.add(searcher.document(doc.doc, fieldsToLoad).get("id"));
             }
@@ -310,7 +328,7 @@ public class LuceneIndexSearcher extends IndexLucene {
     public Set<String> doSearch(final SpatialQuery spatialQuery) throws SearchingException {
         try {
             final long start = System.currentTimeMillis();
-            final Set<String> results = new LinkedHashSet<String>();
+            final Set<String> results = new LinkedHashSet<>();
             spatialQuery.applyRtreeOnFilter(rTree, envelopeOnly);
 
             //we look for a cached Query
@@ -412,7 +430,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 } else {
                     hits1 = searcher.search(query, filter, maxRecords);
                 }
-                final Set<String> unWanteds = new LinkedHashSet<String>();
+                final Set<String> unWanteds = new LinkedHashSet<>();
                 for (ScoreDoc doc : hits1.scoreDocs) {
                     addToResult(unWanteds, doc.doc);
                 }
@@ -444,7 +462,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 for (SpatialQuery sub : spatialQuery.getSubQueries()) {
                     final Set<String> subResults = doSearch(sub);
                     if (operator == SerialChainFilter.AND) {
-                        final Set<String> toRemove   = new HashSet<String>();
+                        final Set<String> toRemove   = new HashSet<>();
                         for (String r : results) {
                             if (!subResults.contains(r)) {
                                 toRemove.add(r);

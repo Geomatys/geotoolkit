@@ -178,7 +178,7 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
      */
     @Override
     protected boolean areEquals(final NamedEnvelope objectA, final NamedEnvelope objectB) {
-         return (objectA.equals(objectB, 1E-9, true) && objectA.getId().equals(objectB.getId()));
+         return objectA.getId().equals(objectB.getId());
     }
 
     /**

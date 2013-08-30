@@ -56,7 +56,7 @@ public class SpatialQuery {
     /**
      * A list of sub-queries with have to be executed separely.
      */
-    private final List<SpatialQuery> subQueries = new ArrayList<SpatialQuery>();
+    private final List<SpatialQuery> subQueries = new ArrayList<>();
     
     /**
      * An lucene Sort object allowing to sort the results

@@ -380,9 +380,6 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             if (rTree != null) {
                 final NamedEnvelope env = new NamedEnvelope(rTree.getCrs(), identifier);
                 rTree.remove(env);
-//                if (rTree.remove(env)) {
-//                     writeTree();
-//                }
             }
 
             final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_40, analyzer);

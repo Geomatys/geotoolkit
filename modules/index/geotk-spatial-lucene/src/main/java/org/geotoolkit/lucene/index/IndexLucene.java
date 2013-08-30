@@ -30,14 +30,12 @@ import org.apache.lucene.util.Version;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.FileUtilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.star.FileStarRTree;
 import org.geotoolkit.lucene.tree.LuceneFileTreeEltMapper;
 import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
@@ -89,7 +87,6 @@ public abstract class IndexLucene {
     */
     public IndexLucene() {
         analyzer = new ClassicAnalyzer(Version.LUCENE_40, new CharArraySet(Version.LUCENE_40, new HashSet<String>(), true));
-        this.rTree = buildNewTree();
     }
 
     /**
@@ -102,7 +99,6 @@ public abstract class IndexLucene {
         } else {
             this.analyzer = analyzer;
         }
-        this.rTree = buildNewTree();
     }
 
     /**
@@ -144,6 +140,10 @@ public abstract class IndexLucene {
         this.logLevel = logLevel;
     }
 
+    public Tree<NamedEnvelope> getRtree() {
+        return rTree;
+    }
+
     protected void resetTree() {
         rTree = buildNewTree();
     }
@@ -170,29 +170,14 @@ public abstract class IndexLucene {
         if (treeFile.exists()) {
             
             try {
-                rTree = new FileStarRTree<NamedEnvelope>(treeFile, new LuceneFileTreeEltMapper(mapperFile));//ecrire crs dans constructeur
-            } catch (ClassNotFoundException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
-            } catch (IllegalArgumentException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
-            } catch (StoreIndexException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
+                rTree = new FileStarRTree<>(treeFile, new LuceneFileTreeEltMapper(mapperFile));//ecrire crs dans constructeur
+            } catch (ClassNotFoundException | IllegalArgumentException | StoreIndexException | IOException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             }
         } else {
-            LOGGER.warning("Unable to find a tree file you need to re-index your data");
+            rTree = buildNewTree();
         }
     }
-
-//    protected void writeTree() throws IOException {
-//        final File treeFile = new File(getFileDirectory(), "tree.bin");
-//        if (rTree.getElementsNumber() > 0) {
-//            TreeWriter.write(rTree, treeFile);
-//        } else if (treeFile.exists()) {
-//            treeFile.delete();
-//        }
-//    }
 
     /**
      * Free all the resources.
