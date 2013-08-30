@@ -99,7 +99,7 @@ public final class XCollections extends Static {
      */
     @SafeVarargs
     public static <E> Set<E> immutableSet(final E... array) {
-        return CollectionsExt.immutableSet(array);
+        return CollectionsExt.immutableSet(false, array);
     }
 
     /**
