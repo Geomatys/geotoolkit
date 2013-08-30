@@ -60,7 +60,7 @@ set $NAD27_Idaho    = PROJCS["NAD27 / Idaho Central",$NAD27,PROJECTION["Transver
 set $NAD83_Idaho    = PROJCS["NAD83 / Idaho Central",$NAD83,PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",41.6666666666666],PARAMETER["central_meridian",-114],PARAMETER["scale_factor",0.999947368],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["X",EAST],AXIS["Y",NORTH],AUTHORITY["EPSG","26969"]]
 
 // Engineering CRS.
-set $Paper = LOCAL_CS["Paper",LOCAL_DATUM["Paper",10000],UNIT["Meter",1],AXIS["",OTHER],AXIS["",OTHER],AXIS["",OTHER]]
+set $Paper = LOCAL_CS["Paper",LOCAL_DATUM["Paper",10000],UNIT["Meter",1],AXIS["Right",OTHER],AXIS["Down",OTHER],AXIS["Z",OTHER]]
 
 // Vertical CRS.
 set $Vmslh      = VERT_CS["mean sea level height",VERT_DATUM["Mean Sea Level",2005,AUTHORITY["EPSG","5100"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Z",UP],AUTHORITY["EPSG","5714"]]
