@@ -74,7 +74,7 @@ public class J2DCanvasTest {
          assertTrue(elev == null);
 
          CoordinateReferenceSystem crs = new DefaultCompoundCRS(
-               "",
+               "WGS84-4D",
                DefaultGeographicCRS.WGS84,
                DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT,
                DefaultTemporalCRS.JAVA);
@@ -105,7 +105,7 @@ public class J2DCanvasTest {
      public void testCreationWith4Denvelope() throws PortrayalException{
 
          CoordinateReferenceSystem crs = new DefaultCompoundCRS(
-               "",
+               "WGS84-4D",
                DefaultGeographicCRS.WGS84,
                DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT,
                DefaultTemporalCRS.JAVA);
@@ -131,9 +131,9 @@ public class J2DCanvasTest {
          env.setRange(0, -180, +180);
          env.setRange(1, -90, +90);
          canvas.getController().setVisibleArea(env);
-         
+
          final AffineTransform2D objtoDisp = canvas.getObjectiveToDisplay();
          assertEquals(new AffineTransform2D(1, 0, 0, -1, 180, 90), objtoDisp);
      }
-         
+
 }
