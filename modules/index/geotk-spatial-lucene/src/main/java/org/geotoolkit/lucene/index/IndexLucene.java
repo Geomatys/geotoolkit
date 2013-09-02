@@ -187,5 +187,12 @@ public abstract class IndexLucene {
             analyzer.close();
             closed = true;
         }
+        if (rTree != null) {
+            try {
+                rTree.close();
+            } catch (StoreIndexException ex) {
+                LOGGER.log(Level.WARNING, null, ex);
+            }
+        }
     }
 }
