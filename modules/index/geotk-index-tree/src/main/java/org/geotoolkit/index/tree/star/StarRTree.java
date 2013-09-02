@@ -130,8 +130,10 @@ abstract class StarRTree<E> extends AbstractTree<E> {
                     final int nbrElt = getElementsNumber();
                     final int treeIdent = treeIdentifier; // gere quand root == null
                     for (int i = 0; i < siz; i++) {
-                        assert remove(listIdentifier.get(i), listCoords.get(i)) : "remove data should succeed during re-inserting event. "
-                                + "data identifier : "+listIdentifier.get(i)+" data boundary : "+Arrays.toString(listCoords.get(i));
+                        if (!remove(listIdentifier.get(i), listCoords.get(i))) {
+                            throw new AssertionError( "remove data should succeed during re-inserting event. "
+                                + "data identifier : "+listIdentifier.get(i)+" data boundary : "+Arrays.toString(listCoords.get(i)));
+                        }
                     }
                     for (int i = 0; i< siz; i++) {
                         insert(listIdentifier.get(i), listCoords.get(i));
@@ -187,8 +189,10 @@ abstract class StarRTree<E> extends AbstractTree<E> {
                 listIdentifier.clear();
                 listCoords.clear();
                 getElementAtMore33PerCent(candidate, listIdentifier, listCoords);
-                travelUpBeforeInsertAgain = true;
-                return null;
+                if( !listIdentifier.isEmpty()) {
+                    travelUpBeforeInsertAgain = true;
+                    return null;
+                }
             }
             assert fileCandidate.checkInternal() : "nodeInsert : after insert again element a 33% distance.";
             /*******************************************************************/
@@ -291,7 +295,7 @@ abstract class StarRTree<E> extends AbstractTree<E> {
         
         if (candidate.isData()) {
             final double[] dataBound = candidate.getBoundary();
-            if (calculator.getDistancePoint(candidateCentroid, getMedian(dataBound)) <= distancePermit) {
+            if (calculator.getDistancePoint(candidateCentroid, getMedian(dataBound)) > distancePermit) {
                 listObjects.add(-candidate.getChildId());
                 listCoords.add(dataBound);
             }
