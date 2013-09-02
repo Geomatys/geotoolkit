@@ -32,6 +32,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.iso8211.DataRecord;
 import org.geotoolkit.data.iso8211.Field;
+import org.geotoolkit.data.s57.annexe.S57TypeBank;
 import org.geotoolkit.data.s57.model.DataSetIdentification;
 import org.geotoolkit.data.s57.model.DataSetParameter;
 import org.geotoolkit.data.s57.model.FeatureRecord;
@@ -45,6 +46,7 @@ import org.geotoolkit.util.Converters;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -59,7 +61,10 @@ public class S57FeatureReader implements FeatureReader{
     //searched type
     private final FeatureType type;
     private final Map<Integer,PropertyDescriptor> properties;
-    private final int s57TypeCode;
+    /**
+     * May be null if type is the global S-57 type.
+     */
+    private final Integer s57TypeCode;
     //S-57 metadata/description records
     private DataSetIdentification datasetIdentification;
     private DataSetParameter datasetParameter;
@@ -71,7 +76,7 @@ public class S57FeatureReader implements FeatureReader{
 
     private Feature feature;
 
-    public S57FeatureReader(S57FeatureStore store,FeatureType type, int s57typeCode, S57Reader mreader,
+    public S57FeatureReader(S57FeatureStore store,FeatureType type, Integer s57typeCode, S57Reader mreader,
             DataSetIdentification datasetIdentification,DataSetParameter datasetParameter) throws DataStoreException {
         this.store = store;
         this.type = type;
@@ -85,21 +90,23 @@ public class S57FeatureReader implements FeatureReader{
 
         properties = TypeBanks.getAllProperties();
 
-        mreader.setPredicate(new S57Reader.Predicate() {
-            @Override
-            public boolean match(DataRecord record) {
-                final Field root = record.getRootField();
-                final Field firstField = root.getFields().get(0);
-                final String tag = firstField.getType().getTag();
-                if(FeatureRecord.FRID.equals(tag)){
-                    Long obj = (Long) firstField.getSubField(FeatureRecord.FRID_OBJL).getValue();
-                    return s57TypeCode == obj;
-                }else if(VectorRecord.VRID.equals(tag)){
-                    return true;
+        if(s57typeCode!=null){
+            mreader.setPredicate(new S57Reader.Predicate() {
+                @Override
+                public boolean match(DataRecord record) {
+                    final Field root = record.getRootField();
+                    final Field firstField = root.getFields().get(0);
+                    final String tag = firstField.getType().getTag();
+                    if(FeatureRecord.FRID.equals(tag)){
+                        Long obj = (Long) firstField.getSubField(FeatureRecord.FRID_OBJL).getValue();
+                        return s57TypeCode.longValue() == obj;
+                    }else if(VectorRecord.VRID.equals(tag)){
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
+        }
 
     }
 
@@ -141,23 +148,31 @@ public class S57FeatureReader implements FeatureReader{
                 }else if(modelObj instanceof FeatureRecord){
                     final FeatureRecord rec = (FeatureRecord) modelObj;
                     //only the given type
-                    if(rec.code != s57TypeCode) continue;
+                    if(s57TypeCode!=null && rec.code != s57TypeCode) continue;
                     feature = toFeature(rec);
                 }
             }
-        }catch(IOException ex){
+        }catch(IOException | DataStoreException ex){
             throw new FeatureStoreRuntimeException(ex.getMessage(), ex);
         }
 
     }
 
-    private Feature toFeature(final FeatureRecord record){
+    private Feature toFeature(final FeatureRecord record) throws DataStoreException{
+
+        final FeatureType currentType;
+        if(type.isAbstract()){
+            //search appropriate S-57 type from code
+            currentType = TypeBanks.getFeatureType(record.code,datasetParameter.buildCoordinateReferenceSystem());
+        }else{
+            currentType = type;
+        }
 
         //we must not append the version in the id, otherwise we can't find older versions
         //final String id = record.identifier.agency.ascii+"."+String.valueOf(record.id)+".v"+record.version;
         final String id = record.identifier.agency.ascii+"."+String.valueOf(record.id);
-        final Feature f =  FeatureUtilities.defaultFeature(type, id);
-        final S57VersionedFeature versionned = new S57VersionedFeature(store, type.getName(), f.getIdentifier());
+        final Feature f =  FeatureUtilities.defaultFeature(currentType, id);
+        final S57VersionedFeature versionned = new S57VersionedFeature(store, currentType.getName(), f.getIdentifier());
         f.getUserData().put(FeatureUtilities.ATT_VERSIONING, versionned);
 
         //read attributes
@@ -188,7 +203,7 @@ public class S57FeatureReader implements FeatureReader{
         }
 
         if(geometry != null){
-            JTS.setCRS(geometry, type.getCoordinateReferenceSystem());
+            JTS.setCRS(geometry, currentType.getCoordinateReferenceSystem());
             f.getProperty("spatial").setValue(geometry);
         }
 

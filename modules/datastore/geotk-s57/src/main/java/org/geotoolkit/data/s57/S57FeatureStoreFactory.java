@@ -55,13 +55,21 @@ public class S57FeatureStoreFactory extends AbstractFeatureStoreFactory {
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
     public static final ParameterDescriptor<URL> URLP = AbstractFileFeatureStoreFactory.URLP;
-    
+
+    /**
+     * Aggregate S-57 types.
+     */
+    public static final ParameterDescriptor<Boolean> AGGREGATE = createDescriptor("aggregateTypes",
+                    new ResourceInternationalString("org/geotoolkit/s57/bundle","paramAggregateAlias"),
+                    new ResourceInternationalString("org/geotoolkit/s57/bundle","paramAggregateRemarks"),
+                    Boolean.class,null,true,null,null,null,true);
+
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("S57Parameters",
-                IDENTIFIER,URLP,NAMESPACE);
+                IDENTIFIER,URLP,AGGREGATE,NAMESPACE);
 
     @Override
     public Identification getIdentification() {
@@ -93,5 +101,5 @@ public class S57FeatureStoreFactory extends AbstractFeatureStoreFactory {
     public FeatureStore create(final ParameterValueGroup params) throws DataStoreException {
         return open(params);
     }
-    
+
 }

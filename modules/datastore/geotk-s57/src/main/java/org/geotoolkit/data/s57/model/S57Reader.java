@@ -25,7 +25,7 @@ import org.apache.sis.util.logging.Logging;
 
 /**
  * REader returning S-57 objects for each field.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public abstract class S57Reader {
@@ -36,23 +36,23 @@ public abstract class S57Reader {
     public static interface Predicate{
         public boolean match(DataRecord record);
     }
-    
+
     static final Logger LOGGER = Logging.getLogger(S57Reader.class);
-    
+
     //used to pass lexical levels to other records.
     protected DataSetIdentification dsid;
     protected S57Object record;
-    
+
     //used to filter records
     protected Predicate predicate;
-    
+
     public S57Reader() {
     }
 
     public final void setDsid(DataSetIdentification dsid) {
         this.dsid = dsid;
     }
-    
+
     public final void setPredicate(Predicate predicate) {
         this.predicate = predicate;
     }
@@ -60,36 +60,36 @@ public abstract class S57Reader {
     public final Predicate getPredicate() {
         return predicate;
     }
-    
+
     public abstract void setInput(Object input) throws IOException;
-    
+
     public final boolean hasNext() throws IOException{
         findNext();
         return record != null;
     }
-    
+
     public final S57Object next() throws IOException{
         findNext();
         S57Object r = record;
         record = null;
         return r;
     }
-    
+
     protected abstract void findNext() throws IOException;
-    
+
     /**
      * Transform the given ISO8211 object in an S-57 object.
      * @param rec DataRecord
      * @return S57Object, may return null of ag is unknowned.
      */
     protected final S57Object toS57Object(final DataRecord rec) throws IOException{
-                
+
         final Field root = rec.getRootField();
         final Field firstField = root.getFields().get(0);
         final String tag = firstField.getType().getTag();
 
         final S57Object record;
-        
+
         //convert to an S-57 object
         if(CatalogDirectory.CATD.equals(tag)){
             record = new CatalogDirectory();
@@ -122,11 +122,11 @@ public abstract class S57Reader {
             record.natfLexicalLevel = dsid.information.natfLexicalLevel;
         }
         record.read(firstField);
-        
+
         return record;
     }
-    
+
     public void dispose() throws IOException{
     }
-    
+
 }

@@ -17,6 +17,8 @@
 package org.geotoolkit.data.s57.model;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.data.iso8211.DataRecord;
 import org.geotoolkit.data.iso8211.ISO8211Reader;
 
@@ -61,7 +63,15 @@ public class S57FileReader extends S57Reader {
     @Override
     public void dispose() throws IOException{
         if(isoReader!= null){
-            isoReader.dispose();
+            try {
+                isoReader.close();
+            } catch (Exception ex) {
+               if(ex instanceof IOException){
+                   throw (IOException)ex;
+               }else{
+                   throw new IOException(ex);
+               }
+            }
         }
     }
 

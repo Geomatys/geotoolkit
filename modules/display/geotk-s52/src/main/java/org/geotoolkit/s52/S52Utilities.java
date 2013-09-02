@@ -71,7 +71,7 @@ public final class S52Utilities extends Static{
     public static String getObjClass(Feature feature){
         String objClassCode = feature.getType().getName().getLocalPart();
         final int sep = objClassCode.indexOf('_');
-        if(sep >= 0){
+        if(sep >= 0 && (objClassCode.length()-sep-1 == 6)) {
             objClassCode = objClassCode.substring(sep+1);
         }
         return objClassCode;

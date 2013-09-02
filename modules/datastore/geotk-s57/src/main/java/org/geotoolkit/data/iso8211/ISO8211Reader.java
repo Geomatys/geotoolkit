@@ -28,11 +28,11 @@ import org.geotoolkit.io.LEDataInputStream;
 
 /**
  * ISO8211 Reader.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
-public class ISO8211Reader {
-    
+public class ISO8211Reader implements AutoCloseable{
+
     private Object input;
     private InputStream stream;
     private DataInput ds;
@@ -49,7 +49,7 @@ public class ISO8211Reader {
         closeOnDispose = false;
         ddr = null;
     }
-    
+
     public void setInput(Object input) {
         reset();
         this.input = input;
@@ -58,10 +58,10 @@ public class ISO8211Reader {
     public Object getInput() {
         return input;
     }
-    
+
     private DataInput getDataInput() throws IOException{
         if(ds!=null) return ds;
-        
+
         if(input instanceof File){
             stream = new FileInputStream((File)input);
             closeOnDispose = true;
@@ -76,7 +76,7 @@ public class ISO8211Reader {
         }
         final BufferedInputStream bufferStream = new BufferedInputStream(stream);
         stream = bufferStream;
-        
+
         ds = new LEDataInputStream(stream);
         return ds;
     }
@@ -89,42 +89,42 @@ public class ISO8211Reader {
         readHeader(ds);
         return ddr;
     }
-        
+
     public boolean hasNext() throws IOException{
         findNext();
         return record != null;
     }
-    
+
     public DataRecord next() throws IOException{
         findNext();
         DataRecord r = record;
         record = null;
         return r;
-        
+
     }
-    
+
     private void findNext() throws IOException {
         if(record != null){
             //already found
             return;
         }
-        
+
         final DataInput ds = getDataInput();
-        
+
         //read the header
         if(ddr == null){
             readHeader(ds);
         }
-        
+
         record = readRecord(ds);
     }
-    
+
     private void readHeader(final DataInput ds) throws IOException {
         ddr = new DataRecord();
         ddr.readDescription(ds);
         ddr.readFieldDescriptions(ds);
     }
-    
+
     private DataRecord readRecord(final DataInput ds) throws IOException{
         final DataRecord dr = new DataRecord(ddr);
         try{
@@ -137,10 +137,11 @@ public class ISO8211Reader {
         return dr;
     }
     
-    public void dispose() throws IOException{
+    @Override
+    public void close() throws Exception {
         if(closeOnDispose){
             stream.close();
         }
     }
-    
+
 }

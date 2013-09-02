@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.s57;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ public final class S57Constants {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setAbstract(true);
         ftb.setName("S57");
+        ftb.add("spatial", Geometry.class, null);
         ABSTRACT_S57FEATURETYPE = ftb.buildFeatureType();
     }
 

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.aml;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -131,6 +132,7 @@ public final class AMLTypeBank implements TypeBank{
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setSuperType(S57Constants.ABSTRACT_S57FEATURETYPE);
+        ftb.add("spatial", Geometry.class, crs);
         ftb.setName(type.Feature_Type_Acronym);
 
         for(AMLFeatureCatalog entry : catalogs){
