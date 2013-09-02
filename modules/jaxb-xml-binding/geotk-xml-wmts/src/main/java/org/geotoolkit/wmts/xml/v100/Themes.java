@@ -50,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
     "theme"
 })
 @XmlRootElement(name = "Themes")
-public class Themes {
+public class Themes implements org.geotoolkit.wmts.xml.Themes {
 
     @XmlElement(name = "Theme")
     private List<Theme> theme;
@@ -61,7 +61,7 @@ public class Themes {
      */
     public List<Theme> getTheme() {
         if (theme == null) {
-            theme = new ArrayList<Theme>();
+            theme = new ArrayList<>();
         }
         return this.theme;
     }

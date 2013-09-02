@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.ContentsBaseType;
 import org.geotoolkit.ows.xml.v110.DatasetDescriptionSummaryBaseType;
+import org.geotoolkit.wmts.xml.Contents;
 
 
 /**
@@ -50,7 +51,7 @@ import org.geotoolkit.ows.xml.v110.DatasetDescriptionSummaryBaseType;
 @XmlType(name = "ContentsType", propOrder = {
     "tileMatrixSet"
 })
-public class ContentsType extends ContentsBaseType {
+public class ContentsType extends ContentsBaseType implements Contents {
 
     @XmlElement(name = "TileMatrixSet")
     private List<TileMatrixSet> tileMatrixSet;
@@ -74,7 +75,7 @@ public class ContentsType extends ContentsBaseType {
      */
     public List<TileMatrixSet> getTileMatrixSet() {
         if (tileMatrixSet == null) {
-            tileMatrixSet = new ArrayList<TileMatrixSet>();
+            tileMatrixSet = new ArrayList<>();
         }
         return this.tileMatrixSet;
     }
@@ -104,7 +105,7 @@ public class ContentsType extends ContentsBaseType {
     }
 
     public List<LayerType> getLayers() {
-        final List<LayerType> layers = new ArrayList<LayerType>();
+        final List<LayerType> layers = new ArrayList<>();
         for (JAXBElement<? extends DatasetDescriptionSummaryBaseType> elem : getDatasetDescriptionSummary()) {
             final Object candidate = elem.getValue();
             if (candidate instanceof LayerType) {
@@ -116,7 +117,7 @@ public class ContentsType extends ContentsBaseType {
 
     public final void setLayers(final List<LayerType> layers) {
         final ObjectFactory factory = new ObjectFactory();
-        this.datasetDescriptionSummary = new ArrayList<JAXBElement<? extends DatasetDescriptionSummaryBaseType>>(layers.size());
+        this.datasetDescriptionSummary = new ArrayList<>(layers.size());
         for (LayerType elem : layers) {
             this.datasetDescriptionSummary.add(factory.createLayer(elem));
         }
