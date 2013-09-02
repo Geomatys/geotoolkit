@@ -85,12 +85,31 @@ public class RangeType implements Range {
                 this.minimumValue = new ValueType(that.getMinimumValue());
             }
             if (that.getRangeClosure() != null && !that.getRangeClosure().isEmpty()) {
-                this.rangeClosure = new ArrayList<String>(that.getRangeClosure());
+                this.rangeClosure = new ArrayList<>(that.getRangeClosure());
             }
             if (that.getSpacing() != null) {
                 this.spacing      = new ValueType(that.getSpacing());
             }
         }
+    }
+
+    /**
+     * Build a new full Range.
+     */
+    public RangeType(final ValueType minimumValue, final ValueType maximumValue, final ValueType spacing,
+            final List<String> rangeClosure){
+        this.maximumValue = maximumValue;
+        this.minimumValue = minimumValue;
+        this.rangeClosure = rangeClosure;
+        this.spacing      = spacing;
+    }
+
+    /**
+     * Build a new light Range.
+     */
+    public RangeType(final String minimumValue, final String maximumValue){
+        this.maximumValue = new ValueType(maximumValue);
+        this.minimumValue = new ValueType(minimumValue);
     }
     
     /**
@@ -178,7 +197,7 @@ public class RangeType implements Range {
     @Override
     public List<String> getRangeClosure() {
         if (rangeClosure == null) {
-            rangeClosure = new ArrayList<String>();
+            rangeClosure = new ArrayList<>();
         }
         return this.rangeClosure;
     }

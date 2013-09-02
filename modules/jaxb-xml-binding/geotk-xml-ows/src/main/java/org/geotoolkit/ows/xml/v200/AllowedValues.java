@@ -69,7 +69,7 @@ public class AllowedValues {
      */
     public AllowedValues(final Collection<String> values){
         
-        this.valueOrRange = new ArrayList<Object>();
+        this.valueOrRange = new ArrayList<>();
         for (String value: values){
             valueOrRange.add(new ValueType(value));
         }
@@ -77,7 +77,7 @@ public class AllowedValues {
     
     public AllowedValues(final AllowedValues that){
         if (that != null && that.valueOrRange != null) {
-            this.valueOrRange = new ArrayList<Object>();
+            this.valueOrRange = new ArrayList<>();
             for (Object obj : that.valueOrRange) {
                 if (obj instanceof RangeType) {
                     this.valueOrRange.add(new RangeType((RangeType)obj));
@@ -96,7 +96,7 @@ public class AllowedValues {
      */
     public AllowedValues(final RangeType range){
         
-        valueOrRange = new ArrayList<Object>();
+        valueOrRange = new ArrayList<>();
         valueOrRange.add(range);
     }
     
@@ -106,13 +106,13 @@ public class AllowedValues {
      */
     public List<Object> getValueOrRange() {
         if (valueOrRange == null) {
-            valueOrRange = new ArrayList<Object>();
+            valueOrRange = new ArrayList<>();
         }
         return this.valueOrRange;
     }
 
     public List<String> getStringValues() {
-        final List<String> values = new ArrayList<String>();
+        final List<String> values = new ArrayList<>();
         if (valueOrRange != null) {
             for (Object o : valueOrRange) {
                 if (o instanceof ValueType) {

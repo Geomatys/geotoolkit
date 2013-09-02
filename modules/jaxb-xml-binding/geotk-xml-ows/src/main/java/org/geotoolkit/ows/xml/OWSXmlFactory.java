@@ -75,6 +75,30 @@ public class OWSXmlFactory {
         }
     }
 
+    public static AbstractDomain buildDomainAnyValue(final String currentVersion, final String name) {
+        if ("1.1.0".equals(currentVersion)) {
+            return new org.geotoolkit.ows.xml.v110.DomainType(name, new org.geotoolkit.ows.xml.v110.AnyValue());
+        } else if ("1.0.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("AnyValue is not available for v100 version.");
+        } else if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ows.xml.v200.DomainType(name, new org.geotoolkit.ows.xml.v200.AnyValue());
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static AbstractDomain buildDomainRange(final String currentVersion, final String name, final String lower, final String upper) {
+        if ("1.1.0".equals(currentVersion)) {
+            return new org.geotoolkit.ows.xml.v110.DomainType(name, new org.geotoolkit.ows.xml.v110.AllowedValues(new org.geotoolkit.ows.xml.v110.RangeType(lower, upper)));
+        } else if ("1.0.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("AnyValue is not available for v100 version.");
+        } else if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ows.xml.v200.DomainType(name, new org.geotoolkit.ows.xml.v200.AllowedValues(new org.geotoolkit.ows.xml.v200.RangeType(lower, upper)));
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
     public static AbstractDomain buildDomainNoValues(final String currentVersion, final String name, final String value) {
         if ("1.1.0".equals(currentVersion)) {
            return  new org.geotoolkit.ows.xml.v110.DomainType(name,

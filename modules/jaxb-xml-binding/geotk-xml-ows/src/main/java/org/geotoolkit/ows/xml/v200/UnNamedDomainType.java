@@ -149,6 +149,18 @@ public class UnNamedDomainType {
             }
         }
     }
+
+    public UnNamedDomainType(final AnyValue anyValue) {
+        if (anyValue == null) {
+            this.anyValue = new AnyValue();
+        } else {
+            this.anyValue = anyValue;
+        }
+    }
+
+    public UnNamedDomainType(final AllowedValues value) {
+        this.allowedValues = value;
+    }
     
     /**
      * Gets the value of the allowedValues property.
