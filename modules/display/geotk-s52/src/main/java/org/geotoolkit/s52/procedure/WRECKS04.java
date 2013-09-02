@@ -45,25 +45,27 @@ public class WRECKS04 extends Procedure{
         final Graphics2D g2d = ctx.getGraphics();
         final Feature feature = (Feature) graphic.getCandidate();
 
-
+        //used at multiple places
         final Number valsou = (Number) feature.getProperty("VALSOU").getValue();
+        final String catwrk = (String) feature.getProperty("CATWRK").getValue();
+        final String watlev = (String) feature.getProperty("WATLEV").getValue();
+
         double depthValue;
         //TODO handle viewgroup somehow.
         int viewingGroup;
-        SymbolStyle[] usedSymbols = null;
+        SymbolStyle[] isolateSymbols = null;
 
         if(valsou != null){
             depthValue = valsou.doubleValue();
             viewingGroup = 34051;
 
             final SNDFRM03 sndfrm03 = new SNDFRM03();
-            usedSymbols = sndfrm03.render(ctx, context, colorTable, graphic, depthValue);
+            isolateSymbols = sndfrm03.render(ctx, context, colorTable, graphic, depthValue);
 
         }else{
             double leastDepth = Double.NaN;
             double seabedDepth = Double.NaN;
             final String expsou = (String) feature.getProperty("EXPSOU").getValue();
-            final String watlev = (String) feature.getProperty("WATLEV").getValue();
 
             final DEPVAL02 depval02 = new DEPVAL02();
             double[] vals = depval02.render(ctx, context, colorTable, graphic, expsou, watlev);
@@ -71,7 +73,6 @@ public class WRECKS04 extends Procedure{
             seabedDepth = vals[1];
 
             if(Double.isNaN(leastDepth)){
-                final String catwrk = (String) feature.getProperty("CATWRK").getValue();
                 if(catwrk != null){
                     if("1".equals(catwrk)){
                         depthValue = 20.1;
@@ -107,22 +108,59 @@ public class WRECKS04 extends Procedure{
         final boolean displayLowAccuracy = quapnt02.eval(ctx, context, colorTable, graphic);
 
         if(geotype == S52Context.GeoType.POINT){
+            final Coordinate center;
+            try {
+                center = graphic.getGeometry(null).getDisplayGeometryJTS().getCoordinate();
+            } catch (TransformException ex) {
+                throw new PortrayalException(ex);
+            }
+
             if(displayIsolateDanger){
-                if(usedSymbols!=null){
-                    final Coordinate center;
-                    try {
-                        center = graphic.getGeometry(null).getDisplayGeometryJTS().getCoordinate();
-                    } catch (TransformException ex) {
-                        throw new PortrayalException(ex);
-                    }
-                    for(SymbolStyle ss : usedSymbols){
+                if(isolateSymbols!=null){
+                    for(SymbolStyle ss : isolateSymbols){
                         ss.render(g2d, context, colorTable, center, 0f);
                     }
                 }
-
             }else{
                 //continuation A
-                System.out.println("Procedure "+getName()+" not implemented yet");
+                if(valsou != null){
+                    final SymbolStyle danger;
+                    if(valsou.doubleValue() <= 20){
+                        danger = context.getSyle("DANGER01");
+                    }else{
+                        danger = context.getSyle("DANGER02");
+                    }
+                    danger.render(g2d, context, colorTable, center, 0f);
+                    //TODO symbol low accuracy ?
+                    for(SymbolStyle ss : isolateSymbols){
+                        ss.render(g2d, context, colorTable, center, 0f);
+                    }
+
+                }else{
+                    final SymbolStyle wreck;
+                    if("1".equals(catwrk) && "3".equals(watlev)){
+                        wreck = context.getSyle("WRECK04");
+                    }else if("2".equals(catwrk) && "3".equals(watlev)){
+                        wreck = context.getSyle("WRECK05");
+                    }else if("4".equals(catwrk)){
+                        wreck = context.getSyle("WRECK01");
+                    }else if("5".equals(catwrk)){
+                        wreck = context.getSyle("WRECK01");
+                    }else if("1".equals(watlev)){
+                        wreck = context.getSyle("WRECK01");
+                    }else if("2".equals(watlev)){
+                        wreck = context.getSyle("WRECK01");
+                    }else if("5".equals(watlev)){
+                        wreck = context.getSyle("WRECK01");
+                    }else if("4".equals(watlev)){
+                        wreck = context.getSyle("WRECK01");
+                    }else{
+                        wreck = context.getSyle("WRECK05");
+                    }
+
+                    wreck.render(g2d, context, colorTable, center, 0f);
+                    //TODO symbol low accuracy ?
+                }
             }
         }else{
             //continuation B

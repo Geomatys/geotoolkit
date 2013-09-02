@@ -190,7 +190,8 @@ public class S52Context {
     private boolean shipsOutline = false;
     private float distanceTags = 0f; //nm
     private float timeTags = 0f; //min
-    private boolean fullSectors = false;
+    private boolean fullSectors = true;
+    private boolean lightDescription = false;
 
     public void setNoText(boolean noText) {
         this.noText = noText;
@@ -249,6 +250,96 @@ public class S52Context {
     public LookupTable getPointLookupTable() {
         return lookups.get(pointlk);
     }
+
+    public float getSafetyDepth() {
+        return safetyDepth;
+    }
+
+    public void setSafetyDepth(float safetyDepth) {
+        this.safetyDepth = safetyDepth;
+    }
+
+    public float getShallowContour() {
+        return shallowContour;
+    }
+
+    public void setShallowContour(float shallowContour) {
+        this.shallowContour = shallowContour;
+    }
+
+    public float getSafetyContour() {
+        return safetyContour;
+    }
+
+    public void setSafetyContour(float safetyContour) {
+        this.safetyContour = safetyContour;
+    }
+
+    public float getDeepContour() {
+        return deepContour;
+    }
+
+    public void setDeepContour(float deepContour) {
+        this.deepContour = deepContour;
+    }
+
+    public boolean isTwoShades() {
+        return twoShades;
+    }
+
+    public void setTwoShades(boolean twoShades) {
+        this.twoShades = twoShades;
+    }
+
+    public boolean isShallowPattern() {
+        return shallowPattern;
+    }
+
+    public void setShallowPattern(boolean shallowPattern) {
+        this.shallowPattern = shallowPattern;
+    }
+
+    public boolean isShipsOutline() {
+        return shipsOutline;
+    }
+
+    public void setShipsOutline(boolean shipsOutline) {
+        this.shipsOutline = shipsOutline;
+    }
+
+    public float getDistanceTags() {
+        return distanceTags;
+    }
+
+    public void setDistanceTags(float distanceTags) {
+        this.distanceTags = distanceTags;
+    }
+
+    public float getTimeTags() {
+        return timeTags;
+    }
+
+    public void setTimeTags(float timeTags) {
+        this.timeTags = timeTags;
+    }
+
+    public boolean isFullSectors() {
+        return fullSectors;
+    }
+
+    public void setFullSectors(boolean fullSectors) {
+        this.fullSectors = fullSectors;
+    }
+
+    public boolean isLightDescription() {
+        return lightDescription;
+    }
+
+    public void setLightDescription(boolean lightDescription) {
+        this.lightDescription = lightDescription;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
 
     public S52SVGIcon getIcon(String name) throws IOException{
         //TODO waiting for all symbols

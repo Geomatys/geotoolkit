@@ -58,6 +58,8 @@ public class ComplexLine extends Instruction{
 
     @Override
     public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geoType) throws PortrayalException {
+        System.out.println("TODO Complex line");
+        if(true)return;
         final Graphics2D g2d = ctx.getGraphics();
         final SymbolStyle ss = context.getSyle(LINNAME);
 

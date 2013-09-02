@@ -47,7 +47,22 @@ public class SimpleLine extends Instruction{
         /** dashed line : dash 3.6mm , space 1.8mm */
         DASH,
         /** dot line : dash 0.6mm , space 1.2mm */
-        DOTT
+        DOTT;
+
+        public Stroke createStroke(float width){
+            final Stroke stroke;
+             if(PStyle.this.equals(PStyle.DASH)){
+                stroke = new BasicStroke(width, BasicStroke.JOIN_MITER, BasicStroke.JOIN_ROUND,
+                        5, new float[]{mmToPixel(3.6f),mmToPixel(1.8f)},0);
+            }else if(PStyle.this.equals(PStyle.DOTT)){
+                stroke = new BasicStroke(width, BasicStroke.JOIN_MITER, BasicStroke.JOIN_ROUND,
+                        5, new float[]{mmToPixel(0.6f),mmToPixel(1.2f)},0);
+            }else{
+                stroke = new BasicStroke(width, BasicStroke.JOIN_MITER, BasicStroke.JOIN_ROUND);
+            }
+            return stroke;
+        }
+
     }
 
     public PStyle style;
@@ -75,16 +90,9 @@ public class SimpleLine extends Instruction{
      * @return Stroke
      */
     public Stroke getStroke() {
-        if(style.equals(PStyle.DASH)){
-            stroke = new BasicStroke(width, BasicStroke.JOIN_MITER, BasicStroke.JOIN_ROUND,
-                    5, new float[]{mmToPixel(3.6f),mmToPixel(1.8f)},0);
-        }else if(style.equals(PStyle.DOTT)){
-            stroke = new BasicStroke(width, BasicStroke.JOIN_MITER, BasicStroke.JOIN_ROUND,
-                    5, new float[]{mmToPixel(0.6f),mmToPixel(1.2f)},0);
-        }else{
-            stroke = new BasicStroke(width, BasicStroke.JOIN_MITER, BasicStroke.JOIN_ROUND);
+        if(stroke==null){
+            stroke = style.createStroke(width);
         }
-
         return stroke;
     }
 

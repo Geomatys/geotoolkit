@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.s52;
 
+import javax.measure.converter.UnitConverter;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.SI;
 import org.geotoolkit.lang.Static;
 import org.opengis.feature.Feature;
 
@@ -24,6 +27,8 @@ import org.opengis.feature.Feature;
  * @author Johann Sorel (Geomatys)
  */
 public final class S52Utilities extends Static{
+
+    public static final UnitConverter NAUTIC_MILES_TO_METERS = NonSI.NAUTICAL_MILE.getConverterTo(SI.METRE);
 
     /**
      * Convert pica to mm
