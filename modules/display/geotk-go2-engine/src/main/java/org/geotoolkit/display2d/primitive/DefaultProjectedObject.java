@@ -61,6 +61,10 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
         this.candidate = candidate;
     }
 
+    public StatelessContextParams getParameters() {
+        return params;
+    }
+
     public void setCandidate(final T candidate) {
         //we dont test if it is the same object or not, even
         //if it's the same object, it might have change so we clear the cache anyway.
@@ -79,7 +83,7 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
             geom.clearObjectiveCache();
         }
     }
-    
+
     public void clearDisplayCache(){
         for(DefaultProjectedGeometry geom : geometries.values()){
             geom.clearDisplayCache();
@@ -94,16 +98,16 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
         if(proj == null){
             proj = new DefaultProjectedGeometry(params);
             geometries.put(name, proj);
-        }        
-        
+        }
+
         //check that the geometry is set
         if(!proj.isSet()){
             proj.setDataGeometry(GO2Utilities.getGeometry(candidate, name),null);
         }
-        
+
         return proj;
     }
-    
+
     /**
      * Returns the geometry is objective crs.
      * @param name
@@ -127,7 +131,7 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
         }catch(FactoryException ex){
             params.context.getMonitor().exceptionOccured(ex, Level.FINE);
         }
-        
+
         //if we don't know the crs, we will assume it's the objective crs already
         if(crs != null){
             //reproject in objective crs if needed

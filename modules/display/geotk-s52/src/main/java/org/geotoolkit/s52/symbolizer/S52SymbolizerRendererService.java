@@ -56,7 +56,7 @@ public class S52SymbolizerRendererService extends AbstractSymbolizerRendererServ
 
     @Override
     public boolean isGroupSymbolizer() {
-        return false;
+        return true;
     }
 
 }
