@@ -29,6 +29,7 @@ import org.geotoolkit.ows.xml.v110.CapabilitiesBaseType;
 import org.geotoolkit.ows.xml.v110.OperationsMetadata;
 import org.geotoolkit.ows.xml.v110.ServiceIdentification;
 import org.geotoolkit.ows.xml.v110.ServiceProvider;
+import org.geotoolkit.wps.xml.WPSCapabilities;
 import org.geotoolkit.wps.xml.WPSResponse;
 
 
@@ -63,7 +64,7 @@ import org.geotoolkit.wps.xml.WPSResponse;
     "wsdl"
 })
 @XmlRootElement(name = "Capabilities")
-public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSResponse {
+public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSCapabilities, WPSResponse {
 
     @XmlElement(name = "ProcessOfferings", required = true)
     private ProcessOfferings processOfferings;

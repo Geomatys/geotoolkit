@@ -50,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
     "process"
 })
 @XmlRootElement(name = "ProcessOfferings")
-public class ProcessOfferings {
+public class ProcessOfferings implements org.geotoolkit.wps.xml.ProcessOfferings {
 
     @XmlElement(name = "Process", required = true)
     protected List<ProcessBriefType> process;
@@ -58,20 +58,6 @@ public class ProcessOfferings {
     /**
      * Gets the value of the process property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the process property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getProcess().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ProcessBriefType }
      * 
@@ -79,7 +65,7 @@ public class ProcessOfferings {
      */
     public List<ProcessBriefType> getProcess() {
         if (process == null) {
-            process = new ArrayList<ProcessBriefType>();
+            process = new ArrayList<>();
         }
         return this.process;
     }
