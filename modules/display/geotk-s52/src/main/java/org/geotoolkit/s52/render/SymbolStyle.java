@@ -18,8 +18,6 @@ package org.geotoolkit.s52.render;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -30,6 +28,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.S52Utilities;
@@ -58,12 +57,18 @@ public class SymbolStyle {
     /** bitmap style */
     public Bitmap bitmap;
 
+    //caches
+    private Rectangle2D bounds;
+
     public Rectangle2D getBounds(){
-        final float minX = Math.min(definition.getBoxULX(),definition.getPivotX()) * SCALE;
-        final float maxX = Math.max(definition.getBoxULX()+definition.getBoxWidth(),definition.getPivotX()) * SCALE;
-        final float minY = Math.min(definition.getBoxULY(),definition.getPivotY()) * SCALE;
-        final float maxY = Math.max(definition.getBoxULY()+definition.getBoxHeight(),definition.getPivotY()) * SCALE;
-        return new Rectangle2D.Float(minX, minY, maxX-minX, maxY-minY);
+        if(bounds==null){
+            final float minX = Math.min(definition.getBoxULX(),definition.getPivotX()) * SCALE;
+            final float maxX = Math.max(definition.getBoxULX()+definition.getBoxWidth(),definition.getPivotX()) * SCALE;
+            final float minY = Math.min(definition.getBoxULY(),definition.getPivotY()) * SCALE;
+            final float maxY = Math.max(definition.getBoxULY()+definition.getBoxHeight(),definition.getPivotY()) * SCALE;
+            bounds = new Rectangle2D.Float(minX, minY, maxX-minX, maxY-minY);
+        }
+        return bounds;
     }
 
     public void render(final Graphics2D g2d, S52Context context, S52Palette colorTable,
@@ -92,7 +97,7 @@ public class SymbolStyle {
         final AffineTransform old = g2d.getTransform();
         final AffineTransform trs = new AffineTransform();
         trs.translate(center.x, center.y);
-        trs.scale(scale, scale);
+        trs.scale(SCALE, SCALE);
         trs.rotate(rotation);
         trs.translate(-pivotX, -pivotY);
         g2d.setTransform(trs);
@@ -107,88 +112,51 @@ public class SymbolStyle {
         Path2D path = null;
 
         for(Vector sv : vectors){
-            final String[] parts = sv.VECD.split(";");
-            for(String part : parts){
-                //S52 Annex A Part I p.34 (5)
-                final String action = part.substring(0, 2);
-                if("SP".equals(action)){
-                    //color
-                    final String colorCode = ""+part.charAt(2);
-                    final Color color;
-                    if(colorCode.equals("@")){
-                        color = new Color(0, 0, 0, 0);
-                    }else{
-                        final String colorName = colors.colors.get(colorCode);
-                        color = colorTable.getColor(colorName);
-                    }
-                    g2d.setColor(color);
-
-                }else if("ST".equals(action)){
-                    //transparency
-                    final char trans = part.charAt(2);
-                    switch(trans){
-                        case '0' : alpha = 1f; break;
-                        case '1' : alpha = 0.25f; break;
-                        case '2' : alpha = 0.50f; break;
-                        case '3' : alpha = 0.75f; break;
-                        default : alpha = 1f;
-                    }
-
-                }else if("SW".equals(action)){
-                    //pen size
-                    float size = Integer.valueOf(part.substring(2));
-                    //one unit = 0.3mm
-                    size = S52Utilities.mmToPixel(size*0.3f) * (1f/scale);
-                    g2d.setStroke(new BasicStroke(size));
-
-                }else if("PU".equals(action)){
-                    //move pen , no draw
-                    part = part.substring(2);
-                    final int index = part.indexOf(',');
-                    ltx = tx;
-                    lty = ty;
-                    tx = Integer.valueOf(part.substring(0, index));
-                    ty = Integer.valueOf(part.substring(index+1));
+            final Vector.RenderStep[] steps = sv.getSteps();
+            for(int i=0;i<steps.length;i++){
+                final Vector.RenderStep step = steps[i];
+                if(step instanceof Vector.ColorStep){
+                    g2d.setColor(((Vector.ColorStep)step).getColor(colors.colors, colorTable));
+                }else if(step instanceof Vector.TransparencyStep){
+                    alpha = ((Vector.TransparencyStep)step).alpha;
+                }else if(step instanceof Vector.PenSizeStep){
+                    g2d.setStroke(((Vector.PenSizeStep)step).stroke);
+                }else if(step instanceof Vector.PenMoveStep){
+                    final Vector.PenMoveStep st = (Vector.PenMoveStep) step;
+                    ltx = tx; tx = st.tx;
+                    lty = ty; ty = st.ty;
                     if(polygonMode){
                         path.moveTo(tx,ty);
                     }
-
-                }else if("PD".equals(action)){
-                    part = part.substring(2);
-                    final String[] pts = part.split(",");
+                }else if(step instanceof Vector.PenLineStep){
+                    final Vector.PenLineStep st = (Vector.PenLineStep) step;
                     final Path2D line = (polygonMode) ? path : new Path2D.Float();
                     line.moveTo(tx, ty);
-                    for(int k=0;k<pts.length;k+=2){
-                        final float ex = Integer.valueOf(pts[k]);
-                        final float ey = Integer.valueOf(pts[k+1]);
-                        line.lineTo(ex,ey);
+                    for(int k=0;k<st.tx.length;k++){
+                        line.lineTo(st.tx[k],st.ty[k]);
                         ltx = tx;
                         lty = ty;
-                        tx = ex;
-                        ty = ey;
+                        tx = st.tx[k];
+                        ty = st.ty[k];
                     }
                     if(!polygonMode){
-                        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+                        g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
                         g2d.draw(line);
                     }
-
-                }else if("CI".equals(action)){
-                    //circle
-                    float size = Integer.valueOf(part.substring(2));
-                    final Shape shp = new Ellipse2D.Float(tx-size, ty-size, size*2, size*2);
+                }else if(step instanceof Vector.PenCircleStep){
+                    final Vector.PenCircleStep st = (Vector.PenCircleStep) step;
+                    final Shape shp = new Ellipse2D.Float(tx-st.radius, ty-st.radius, st.radius*2, st.radius*2);
                     if(polygonMode){
                         path.append(shp, true);
                     }else{
-                        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+                        g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
                         g2d.draw(shp);
                     }
-
-                }else if("AA".equals(action)){
-                    throw new PortrayalException("Action not implemented yet : "+part);
-                }else if("PM".equals(action)){
-                    //polygon operations
-                    final char trans = part.charAt(2);
-                    switch(trans){
+                }else if(step instanceof Vector.PenArcStep){
+                    throw new PortrayalException("Action Pen Arc not implemented yet.");
+                }else if(step instanceof Vector.PolygonStep){
+                    final Vector.PolygonStep st = (Vector.PolygonStep) step;
+                    switch(st.op){
                         case '0' :
                             path = new Path2D.Float();
                             polygonMode = true;
@@ -199,41 +167,40 @@ public class SymbolStyle {
                         case '2' :
                             polygonMode = false;
                             break;
-                        default : throw new PortrayalException("unexpected action : "+part);
+                        default : throw new PortrayalException("unexpected polygon action : "+st.op);
                     }
 
-                }else if("EP".equals(action)){
-                    //outline polygon
-                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+                }else if(step instanceof Vector.PolygonOutlineStep){
+                    final Vector.PolygonOutlineStep st = (Vector.PolygonOutlineStep) step;
+                    g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
                     g2d.draw(path);
 
-                }else if("FP".equals(action)){
-                    //fill polygon
+                }else if(step instanceof Vector.PolygonFillStep){
+                    final Vector.PolygonFillStep st = (Vector.PolygonFillStep) step;
                     g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
                     g2d.draw(path);
 
-                }else if("SC".equals(action)){
-                    final String name = part.substring(2, 10);
-                    part = part.substring(11);
-                    final SymbolStyle ss = context.getSyle(name);
+                }else if(step instanceof Vector.SymbolStep){
+                    final Vector.SymbolStep st = (Vector.SymbolStep) step;
+                    final SymbolStyle ss = context.getSyle(st.name);
 
                     //rotation type
                     //S-52 Annex A part I p.36
                     final float ssr;
-                    if(part.equals("0")){
+                    if(st.rotation == 0){
                         //symbol upright
                         ssr = 0;
-                    }else if(part.equals("1")){
+                    }else if(st.rotation == 1){
                         //direction of the pen
                         float angle = S52Utilities.angle(ltx, lty, tx, ty);
                         ssr = rotation + angle;
 
-                    }else if(part.equals("2")){
+                    }else if(st.rotation == 2){
                         //90° rotation from edge
                         float angle = S52Utilities.angle(ltx, lty, tx, ty);
                         ssr = rotation + angle + (float)Math.PI/2;
                     }else{
-                        throw new PortrayalException("unexpected rotation value : "+part);
+                        throw new PortrayalException("unexpected rotation value : "+st.rotation);
                     }
 
                     final Point2D pt = new Point2D.Float(tx, ty);
@@ -243,9 +210,10 @@ public class SymbolStyle {
                     g2d.setTransform(trs);
 
                 }else{
-                    throw new PortrayalException("unexpected action : "+part);
+                    throw new PortrayalException("unexpected render step : "+step);
                 }
             }
+
         }
 
         g2d.setTransform(old);

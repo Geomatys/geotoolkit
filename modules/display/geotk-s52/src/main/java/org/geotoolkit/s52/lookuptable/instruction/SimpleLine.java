@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
@@ -109,7 +110,7 @@ public class SimpleLine extends Instruction{
         final Graphics2D g2d = ctx.getGraphics();
         final Stroke stroke = getStroke();
         final Color color = colorTable.getColor(this.color);
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+        g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
         g2d.setColor(color);
         g2d.setStroke(stroke);
         try {

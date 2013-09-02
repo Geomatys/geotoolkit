@@ -82,7 +82,11 @@ public class PatternFill extends Instruction{
 
         final Graphics2D g2d = ctx.getGraphics();
 
-        final PatternSymbolStyle ss = (PatternSymbolStyle) context.getSyle(patternName);
+        SymbolStyle sst = context.getSyle(patternName);
+        if(!(sst instanceof PatternSymbolStyle)){
+            return;
+        }
+        final PatternSymbolStyle ss = (PatternSymbolStyle) sst;
         final PatternDefinition pd = (PatternDefinition) ss.definition;
 
         //TODO handle size/distance correction
@@ -96,6 +100,11 @@ public class PatternFill extends Instruction{
         final float px = ss.definition.getPivotX()*SymbolStyle.SCALE;
         final float py = ss.definition.getPivotY()*SymbolStyle.SCALE;
 
+        //use a fixed pattern start position, to avoid pattern 'moving' when dragging map
+        final double[] xy = new double[]{0,0};
+        ctx.getObjectiveToDisplay().transform(xy, 0, xy, 0, 1);
+
+
         final TexturePaint paint;
         if("LIN".equals(placement)){
             final Coordinate center = new Coordinate(px-rect.getX(), py-rect.getY());
@@ -103,7 +112,7 @@ public class PatternFill extends Instruction{
                                                         (int)(rect.getHeight()+spacing),
                                                         BufferedImage.TYPE_INT_ARGB);
             ss.render(img.createGraphics(), context, colorTable, center, 0f);
-            paint = new TexturePaint(img, new Rectangle2D.Double(0, 0,
+            paint = new TexturePaint(img, new Rectangle2D.Double(xy[0], xy[1],
                     rect.getWidth()+spacing, rect.getHeight()+spacing));
         }else if("STG".equals(placement)){
             final Coordinate center = new Coordinate(px-rect.getX(), py-rect.getY());
@@ -117,7 +126,7 @@ public class PatternFill extends Instruction{
             center.y += rect.getHeight()+ spacing;
             ss.render(img.createGraphics(), context, colorTable, center, 0f);
 
-            paint = new TexturePaint(img, new Rectangle2D.Double(0, 0,
+            paint = new TexturePaint(img, new Rectangle2D.Double(xy[0], xy[1],
                     rect.getWidth()*2+spacing*2, rect.getHeight()*2+spacing*2));
         }else{
             throw new PortrayalException("Unexpected placement : "+placement);
