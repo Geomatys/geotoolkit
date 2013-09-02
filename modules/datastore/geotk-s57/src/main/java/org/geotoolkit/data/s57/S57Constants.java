@@ -22,18 +22,28 @@ import java.util.List;
 import org.geotoolkit.data.iso8211.SubFieldDescription;
 import org.opengis.util.CodeList;
 import static org.geotoolkit.data.iso8211.FieldValueType.*;
+import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.opengis.feature.type.FeatureType;
 
 /**
  * S-57 constants.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class S57Constants {
 
+    public static final FeatureType ABSTRACT_S57FEATURETYPE;
+    static {
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setAbstract(true);
+        ftb.setName("S57");
+        ABSTRACT_S57FEATURETYPE = ftb.buildFeatureType();
+    }
+
     private S57Constants() {}
-    
+
     public static abstract class S57CodeList<T extends CodeList<T>> extends CodeList<T>{
-        
+
         private final Class<T> clazz;
         public final String ascii;
         public final int binary;
@@ -41,20 +51,20 @@ public final class S57Constants {
         protected S57CodeList(final Class<T> clazz,final String ascii, List allValues) {
             this(clazz,ascii,-1, allValues);
         }
-        
+
         protected S57CodeList(final Class<T> clazz, final int binary, List allValues) {
             this(clazz,String.valueOf(binary),binary, allValues);
         }
-        
+
         protected S57CodeList(final Class<T> clazz,final String ascii, final int binary, List allValues) {
             super(ascii,allValues);
             this.clazz = clazz;
             this.ascii = ascii;
             this.binary = binary;
         }
-            
+
         static S57CodeList valueOf(final List<? extends S57CodeList> lst, final Object code) {
-            
+
             final String ascii;
             final int binary;
             if(code instanceof Number){
@@ -70,9 +80,9 @@ public final class S57Constants {
             }else{
                 throw new IllegalArgumentException("Expected a String or Number object, received : "+code);
             }
-            
+
             throw new IllegalArgumentException("Unknwoned type : "+ code);
-            
+
 //            try {
 //                final Constructor construct = c.getDeclaredConstructor(String.class,int.class);
 //                return (S57CodeList) construct.newInstance(ascii,binary);
@@ -88,9 +98,9 @@ public final class S57Constants {
 //                throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
 //            }
         }
-                
-    } 
-    
+
+    }
+
     /**
      * 2.2.1
      */
@@ -172,7 +182,7 @@ public final class S57Constants {
         public RecordType[] family() {
             return values();
         }
-        
+
         public static RecordType valueOf(Object code) {
             return (RecordType) valueOf(VALUES, code);
         }
@@ -211,7 +221,7 @@ public final class S57Constants {
         public Unit[] family() {
             return values();
         }
-        
+
         public static Unit valueOf(Object code) {
             return (Unit) valueOf(VALUES, code);
         }
@@ -232,96 +242,96 @@ public final class S57Constants {
          * geographical position are known).
          * The data indicated above must be encoded in “Data Set Projection” [DSPR] and “Data Set Registration Control” [DSRC] fields.
          * Up to 4 parameters can be specified in the “Data Set Projection” field.
-         * 
+         *
          * Albert equal area ALA {1} :
-         * - Central meridian 
+         * - Central meridian
          * - Std. parallel nearer to equator
-         * - Std. parallel farther from equator 
+         * - Std. parallel farther from equator
          * - Parallel of origin
          */
         public static final Projection ALBERT_EQUAL_AREA = new Projection("ALA",1);
         /**
          * Azimuthal equal area {2} :
-         * - Longitude of tangency 
-         * - Latitude of tangency 
+         * - Longitude of tangency
+         * - Latitude of tangency
          */
         public static final Projection AZIMUTHAL_EQUAL_AREA = new Projection("AZA",2);
         /**
          * Azimuthal equal distance {3} :
-         * - Longitude of tangency 
-         * - Latitude of tangency 
+         * - Longitude of tangency
+         * - Latitude of tangency
          */
         public static final Projection AZIMUTHAL_EQUAL_DISTANCE = new Projection("AZD",3);
         /**
          * Gnonomic {4} :
-         * - Longitude of tangency 
-         * - Latitude of tangency 
+         * - Longitude of tangency
+         * - Latitude of tangency
          */
         public static final Projection GNONOMIC = new Projection("GNO",4);
         /**
          * Hotline oblique Mercator (rectified skew orthomorphic) {5} :
-         * - Longitude of projection origin 
-         * - Latitude of projection origin 
-         * - Azimuth of skew X-axis at projection origin 
+         * - Longitude of projection origin
+         * - Latitude of projection origin
+         * - Azimuth of skew X-axis at projection origin
          * - Scale factor at projection origin
          */
         public static final Projection HOTINE_OBLIQUE_MERCATOR = new Projection("HOM",5);
         /**
          * Lambert conformal conic {6} :
-         * - Central meridian 
-         * - Std. parallel nearer to equator 
-         * - Std. parallel farther from equator 
+         * - Central meridian
+         * - Std. parallel nearer to equator
+         * - Std. parallel farther from equator
          * - Parallel of origin
          */
         public static final Projection LAMBER_CONFORMAL_CONIC = new Projection("LCC",6);
         /**
          * Lambert equal area {7} :
-         * - Central meridian 
+         * - Central meridian
          */
         public static final Projection LAMBERT_EQUAL_AREA = new Projection("LEA",7);
         /**
          * Mercator {8} :
-         * - Central meridian 
-         * - Latitude of true scale 
-         * - Parallel of origin 
+         * - Central meridian
+         * - Latitude of true scale
+         * - Parallel of origin
          */
         public static final Projection MERCATOR = new Projection("MER",8);
         /**
          * Oblique Mercator {9} :
-         * - Longitude of reference point on great circle 
-         * - Latitude reference point of great circle 
-         * - Azimuth of great circle at ref. point 
+         * - Longitude of reference point on great circle
+         * - Latitude reference point of great circle
+         * - Azimuth of great circle at ref. point
          */
         public static final Projection OBLIQUE_MERCATOR = new Projection("OME",9);
         /**
          * Orthographic {10} :
-         * - Longitude of tangency 
-         * - Latitude of tangency 
+         * - Longitude of tangency
+         * - Latitude of tangency
          */
         public static final Projection ORTHOGRAPHIC = new Projection("ORT",10);
         /**
          * Polar stereo graphic {11} :
-         * - Central meridian 
-         * - Latitude of true scale 
+         * - Central meridian
+         * - Latitude of true scale
          */
         public static final Projection POLAR_STEREO_GRAPHIC = new Projection("PST",11);
         /**
          * Azimuthal equal area {12} :
-         * - Central meridian 
+         * - Central meridian
          */
         public static final Projection POLYCONIC = new Projection("POL",12);
         /**
          * Transverse Mercator {13} :
-         * - Central meridian 
+         * - Central meridian
          * - Central scale factor
          * - Parallel of origin
          */
         public static final Projection TRANSVERSE_MERCATOR = new Projection("TME",13);
         /**
          * Oblique stereographic {14} :
-         * - Longitude of origin 
-         * - Latitude of origin 
-         * - Scale factor at origin 
+         * - Longitude of origin
+         * - Latitude of origin
+         * - Scale factor at origin
          */
         public static final Projection OBLIQUE_STEREOGRAPHIC = new Projection("OST",14);
 
@@ -339,22 +349,22 @@ public final class S57Constants {
         public Projection[] family() {
             return values();
         }
-        
+
         public static Projection valueOf(Object code) {
             return (Projection) valueOf(VALUES, code);
         }
     }
-        
+
     /**
      * Feature record identifier field (4.2).
-     * The “Object Geometric Primitive” [PRIM] subfield is used to specify the geometric primitive of the encoded object. 
+     * The “Object Geometric Primitive” [PRIM] subfield is used to specify the geometric primitive of the encoded object.
      */
     public static final class Primitive extends S57CodeList<Primitive> {
         public static final String NAME = "PRIM";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
         static final List<Primitive> VALUES = new ArrayList<Primitive>();
-        //---------------        
+        //---------------
         /** Point */
         public static final Primitive PRIMITIVE_POINT = new Primitive("P",1);
         /** Line */
@@ -378,12 +388,12 @@ public final class S57Constants {
         public Primitive[] family() {
             return values();
         }
-        
+
         public static Primitive valueOf(Object code) {
             return (Primitive) valueOf(VALUES, code);
         }
     }
-        
+
     /** Usage indicator */
     public static final class Usage extends S57CodeList<Usage> {
         public static final String NAME = "USAG";
@@ -414,12 +424,12 @@ public final class S57Constants {
         public Usage[] family() {
             return values();
         }
-        
+
         public static Usage valueOf(Object code) {
             return (Usage) valueOf(VALUES, code);
         }
     }
-    
+
     /** Orientation */
     public static final class Orientation extends S57CodeList<Orientation> {
         public static final String NAME = "ORNT";
@@ -448,12 +458,12 @@ public final class S57Constants {
         public Orientation[] family() {
             return values();
         }
-        
+
         public static Orientation valueOf(Object code) {
             return (Orientation) valueOf(VALUES, code);
         }
     }
-    
+
     /** Mask */
     public static final class Mask extends S57CodeList<Mask> {
         public static final String NAME = "MASK";
@@ -482,12 +492,12 @@ public final class S57Constants {
         public Mask[] family() {
             return values();
         }
-        
+
         public static Mask valueOf(Object code) {
             return (Mask) valueOf(VALUES, code);
         }
     }
-        
+
     /** Topology indicator */
     public static final class Topology extends S57CodeList<Topology> {
         public static final String NAME = "TOPI";
@@ -517,12 +527,12 @@ public final class S57Constants {
         public Topology[] family() {
             return values();
         }
-        
+
         public static Topology valueOf(Object code) {
             return (Topology) valueOf(VALUES, code);
         }
     }
-        
+
     /** Arc type */
     public static final class ArcType extends S57CodeList<ArcType> {
         public static final String NAME = "ATYP";
@@ -551,12 +561,12 @@ public final class S57Constants {
         public ArcType[] family() {
             return values();
         }
-        
+
         public static ArcType valueOf(Object code) {
             return (ArcType) valueOf(VALUES, code);
         }
     }
-    
+
     /** Arc construction surface */
     public static final class ConstructionSurface extends S57CodeList<ConstructionSurface> {
         public static final String NAME = "SURF";
@@ -583,12 +593,12 @@ public final class S57Constants {
         public ConstructionSurface[] family() {
             return values();
         }
-        
+
         public static ConstructionSurface valueOf(Object code) {
             return (ConstructionSurface) valueOf(VALUES, code);
         }
     }
-    
+
     /**
      * 7.3.11 Exchange purpose
      */
@@ -616,7 +626,7 @@ public final class S57Constants {
         public ExchangePurpose[] family() {
             return values();
         }
-        
+
         public static ExchangePurpose valueOf(Object code) {
             return (ExchangePurpose) valueOf(VALUES, code);
         }
@@ -652,7 +662,7 @@ public final class S57Constants {
         public IntendedUsage[] family() {
             return values();
         }
-        
+
         public static IntendedUsage valueOf(Object code) {
             return (IntendedUsage) valueOf(VALUES, code);
         }
@@ -684,7 +694,7 @@ public final class S57Constants {
         public ProductSpecification[] family() {
             return values();
         }
-        
+
         public static ProductSpecification valueOf(Object code) {
             return (ProductSpecification) valueOf(VALUES, code);
         }
@@ -717,7 +727,7 @@ public final class S57Constants {
         public ApplicationProfile[] family() {
             return values();
         }
-        
+
         public static ApplicationProfile valueOf(Object code) {
             return (ApplicationProfile) valueOf(VALUES, code);
         }
@@ -770,7 +780,7 @@ public final class S57Constants {
         public DataStructure[] family() {
             return values();
         }
-        
+
         public static DataStructure valueOf(Object code) {
             return (DataStructure) valueOf(VALUES, code);
         }
@@ -804,7 +814,7 @@ public final class S57Constants {
 
         private final Charset charset;
         private final char deleteValue;
-        
+
         LexicalLevel(final String ascii, final int binary, Charset cs, char deleteValue) {
             super(LexicalLevel.class, ascii, binary, VALUES);
             this.charset = cs;
@@ -826,7 +836,7 @@ public final class S57Constants {
         public char getDeleteValue() {
             return deleteValue;
         }
-        
+
         public static LexicalLevel[] values() {
             synchronized (VALUES) {
                 return VALUES.toArray(new LexicalLevel[VALUES.size()]);
@@ -837,14 +847,14 @@ public final class S57Constants {
         public LexicalLevel[] family() {
             return values();
         }
-        
+
         public static LexicalLevel valueOf(Object code) {
             return (LexicalLevel) valueOf(VALUES, code);
         }
     }
 
-    /** 
-     * The “Relationship indicator” [RIND] subfield is used to indicate the nature of the relationship. 
+    /**
+     * The “Relationship indicator” [RIND] subfield is used to indicate the nature of the relationship.
      */
     public static final class RelationShip extends S57CodeList<RelationShip> {
 
@@ -870,12 +880,12 @@ public final class S57Constants {
         public RelationShip[] family() {
             return values();
         }
-        
+
         public static RelationShip valueOf(Object code) {
             return (RelationShip) valueOf(VALUES, code);
         }
     }
-        
+
     /** Update instruction */
     public static final class UpdateInstruction extends S57CodeList<UpdateInstruction> {
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
@@ -903,12 +913,12 @@ public final class S57Constants {
         public UpdateInstruction[] family() {
             return values();
         }
-        
+
         public static UpdateInstruction valueOf(Object code) {
             return (UpdateInstruction) valueOf(VALUES, code);
         }
     }
-    
+
     /** AttributeSet */
     public static final class AttributeSet extends S57CodeList<AttributeSet> {
         public static final String NAME = "ASET";
@@ -916,14 +926,14 @@ public final class S57Constants {
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
         static final List<AttributeSet> VALUES = new ArrayList<AttributeSet>();
         //---------------
-        /** Atribute set A : Attributes in this subset define the individual 
+        /** Atribute set A : Attributes in this subset define the individual
          * characteristics of an object; */
         public static final AttributeSet SET_A = new AttributeSet("A", 1);
-        /** Atribute set B : Attributes in this subset provide information 
-         * relevant to the use of the data, e.g. for presentation or for 
+        /** Atribute set B : Attributes in this subset provide information
+         * relevant to the use of the data, e.g. for presentation or for
          * an information system; */
         public static final AttributeSet SET_B = new AttributeSet("B", 2);
-        /** Atribute set C : Attributes in this subset provide administrative 
+        /** Atribute set C : Attributes in this subset provide administrative
          * information about the object and the data describing it; */
         public static final AttributeSet SET_C = new AttributeSet("C", 3);
 
@@ -941,12 +951,12 @@ public final class S57Constants {
         public AttributeSet[] family() {
             return values();
         }
-        
+
         public static AttributeSet valueOf(Object code) {
             return (AttributeSet) valueOf(VALUES, code);
         }
     }
-    
+
     /** Reference type */
     public static final class ReferenceType extends S57CodeList<ReferenceType> {
         public static final String NAME = "RFTP";
@@ -973,12 +983,12 @@ public final class S57Constants {
         public ReferenceType[] family() {
             return values();
         }
-        
+
         public static ReferenceType valueOf(Object code) {
             return (ReferenceType) valueOf(VALUES, code);
         }
     }
-    
+
     /** Range or value */
     public static final class RangeOrValue extends S57CodeList<RangeOrValue> {
         public static final String NAME = "RAVA";
@@ -1007,12 +1017,12 @@ public final class S57Constants {
         public RangeOrValue[] family() {
             return values();
         }
-        
+
         public static RangeOrValue valueOf(Object code) {
             return (RangeOrValue) valueOf(VALUES, code);
         }
     }
-    
+
     /** Attibute domain */
     public static final class AttributeDomain extends S57CodeList<AttributeDomain> {
         public static final String NAME = "ATDO";
@@ -1047,12 +1057,12 @@ public final class S57Constants {
         public AttributeDomain[] family() {
             return values();
         }
-        
+
         public static AttributeDomain valueOf(Object code) {
             return (AttributeDomain) valueOf(VALUES, code);
         }
     }
-    
+
     /** Object type */
     public static final class ObjectType extends S57CodeList<ObjectType> {
         public static final String NAME = "OATY";
@@ -1089,12 +1099,12 @@ public final class S57Constants {
         public ObjectType[] family() {
             return values();
         }
-        
+
         public static ObjectType valueOf(Object code) {
             return (ObjectType) valueOf(VALUES, code);
         }
     }
-    
+
     /** Object or Attribute */
     public static final class ObjectOrAttribute extends S57CodeList<ObjectOrAttribute> {
         public static final String NAME = "OORA";
@@ -1121,12 +1131,12 @@ public final class S57Constants {
         public ObjectOrAttribute[] family() {
             return values();
         }
-        
+
         public static ObjectOrAttribute valueOf(Object code) {
             return (ObjectOrAttribute) valueOf(VALUES, code);
         }
     }
-    
+
     /** ASCII or BINARY Implementation */
     public static final class Implementation extends S57CodeList<Implementation> {
         public static final String NAME = "IMPL";
@@ -1153,10 +1163,10 @@ public final class S57Constants {
         public Implementation[] family() {
             return values();
         }
-        
+
         public static Implementation valueOf(Object code) {
             return (Implementation) valueOf(VALUES, code);
         }
     }
-    
+
 }

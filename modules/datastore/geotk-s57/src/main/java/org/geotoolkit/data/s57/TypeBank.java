@@ -32,6 +32,8 @@ public interface TypeBank {
 
     Set<String> getFeatureTypeNames();
 
+    Set<String> getPropertyTypeNames();
+
     int getFeatureTypeCode(String name) throws DataStoreException;
 
     String getFeatureTypeName(int code) throws DataStoreException;

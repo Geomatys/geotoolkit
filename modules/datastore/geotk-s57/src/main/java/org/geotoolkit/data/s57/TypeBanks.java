@@ -16,7 +16,10 @@
  */
 package org.geotoolkit.data.s57;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -25,6 +28,7 @@ import org.geotoolkit.internal.LazySet;
 import org.geotoolkit.lang.Static;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -32,11 +36,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  */
 public final class TypeBanks extends Static {
-/**
+
+    /**
      * The service loader. This loader and its iterator are not synchronized;
      * when doing an iteration, the iterator must be used inside synchronized blocks.
      */
     private static final ServiceLoader<TypeBank> loader = ServiceLoader.load(TypeBank.class);
+
+    private static Map<Integer,PropertyDescriptor> ALL_PROPERTIES;
 
     private TypeBanks(){}
 
@@ -247,6 +254,24 @@ public final class TypeBanks extends Static {
         return type;
     }
 
+    public static synchronized Map<Integer,PropertyDescriptor> getAllProperties() throws DataStoreException{
+        if(ALL_PROPERTIES==null){
+            final Map<Integer,PropertyDescriptor> temp = new HashMap<>();
+            for(TypeBank bank : getBanks()){
+                for(String name : bank.getPropertyTypeNames()){
+                    final AttributeDescriptor desc = bank.getAttributeDescriptor(name);
+                    final Integer code = (Integer) desc.getUserData().get(S57FeatureStore.S57TYPECODE);
+                    if(code == null){
+                        throw new DataStoreException("Property S-57 code has not been set on attribute : "+desc);
+                    }
+                    temp.put(code, desc);
+                }
+            }
+            ALL_PROPERTIES = Collections.unmodifiableMap(temp);
+        }
+
+        return ALL_PROPERTIES;
+    }
 
     /**
      * Scans for factory plug-ins on the application class path. This method is needed because the

@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.iso8211.DataRecord;
@@ -57,7 +58,7 @@ public class S57FeatureReader implements FeatureReader{
 
     //searched type
     private final FeatureType type;
-    private final Map<Integer,PropertyDescriptor> properties = new HashMap<>();
+    private final Map<Integer,PropertyDescriptor> properties;
     private final int s57TypeCode;
     //S-57 metadata/description records
     private DataSetIdentification datasetIdentification;
@@ -71,7 +72,7 @@ public class S57FeatureReader implements FeatureReader{
     private Feature feature;
 
     public S57FeatureReader(S57FeatureStore store,FeatureType type, int s57typeCode, S57Reader mreader,
-            DataSetIdentification datasetIdentification,DataSetParameter datasetParameter) {
+            DataSetIdentification datasetIdentification,DataSetParameter datasetParameter) throws DataStoreException {
         this.store = store;
         this.type = type;
         this.s57TypeCode = s57typeCode;
@@ -82,10 +83,7 @@ public class S57FeatureReader implements FeatureReader{
         this.soundingFactor = datasetParameter.soundingFactor;
         this.mreader.setDsid(datasetIdentification);
 
-        for(PropertyDescriptor desc :type.getDescriptors()){
-            Integer code = (Integer) desc.getUserData().get(S57FeatureStore.S57TYPECODE);
-            properties.put(code, desc);
-        }
+        properties = TypeBanks.getAllProperties();
 
         mreader.setPredicate(new S57Reader.Predicate() {
             @Override

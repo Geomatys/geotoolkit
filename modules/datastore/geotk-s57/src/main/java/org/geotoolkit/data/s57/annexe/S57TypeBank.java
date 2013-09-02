@@ -34,6 +34,7 @@ import org.geotoolkit.data.s57.S57FeatureStore;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.data.s57.S57Constants;
 import org.geotoolkit.data.s57.TypeBank;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
@@ -110,6 +111,11 @@ public class S57TypeBank implements TypeBank{
     }
 
     @Override
+    public Set<String> getPropertyTypeNames(){
+        return PT_ACC_KEY.keySet();
+    }
+
+    @Override
     public int getFeatureTypeCode(String name) throws DataStoreException{
         name = name.toUpperCase();
         String key = FT_ACC_KEY.get(name);
@@ -164,11 +170,12 @@ public class S57TypeBank implements TypeBank{
         sft.fromFormattedString(values);
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setSuperType(S57Constants.ABSTRACT_S57FEATURETYPE);
         ftb.setName(sft.acronym);
         //add a geometry type
         ftb.add("spatial", Geometry.class, crs);
 
-        final List<String> allAtts = new ArrayList<String>();
+        final List<String> allAtts = new ArrayList<>();
         allAtts.addAll(sft.attA);
         allAtts.addAll(sft.attB);
         allAtts.addAll(sft.attC);
@@ -197,7 +204,7 @@ public class S57TypeBank implements TypeBank{
         return getAttributeDescriptorByKey(key);
     }
 
-    public AttributeDescriptor getAttributeDescriptorByKey(final String propertyKey){
+    public AttributeDescriptor getAttributeDescriptorByKey(final String propertyKey) throws DataStoreException{
         final Entry<Integer,String> entry = splitKey(propertyKey);
 
         final String pvalues = PROPERTY_TYPES.getProperty(propertyKey);
@@ -226,7 +233,7 @@ public class S57TypeBank implements TypeBank{
             // free text
             binding = String.class;
         }else{
-            throw new RuntimeException("unknowned property type : "+pt.type);
+            throw new DataStoreException("unknowned property type : "+pt);
         }
 
         final AttributeTypeBuilder atb = new AttributeTypeBuilder();

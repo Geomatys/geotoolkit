@@ -76,7 +76,7 @@ public class MarinerPropertyType {
         type.acronym = "catnot";
         type.code = 8196;
         type.fullName = "Category of mariners' note";
-        type.type = "";
+        type.type = "E";
         type.expecteds.add("0=undefined");
         type.expecteds.add("1=information");
         type.expecteds.add("2=caution");

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,8 +28,12 @@ import java.util.Map;
 import java.util.Set;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.s57.S57Constants;
+import org.geotoolkit.data.s57.S57FeatureStore;
 import org.geotoolkit.data.s57.TypeBank;
 import org.geotoolkit.data.s57.TypeBanks;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.util.FileUtilities;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
@@ -90,6 +95,11 @@ public final class AMLTypeBank implements TypeBank{
     }
 
     @Override
+    public Set<String> getPropertyTypeNames(){
+        return getAttributeByAccMap().keySet();
+    }
+
+    @Override
     public FeatureType getFeatureType(final String name, final CoordinateReferenceSystem crs) throws DataStoreException{
         final List<AMLFeatureType> types = getAMLObjects(AMLFeatureType.class);
         for(AMLFeatureType type : types){
@@ -120,22 +130,16 @@ public final class AMLTypeBank implements TypeBank{
         }
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setSuperType(S57Constants.ABSTRACT_S57FEATURETYPE);
         ftb.setName(type.Feature_Type_Acronym);
 
         for(AMLFeatureCatalog entry : catalogs){
             if(entry.Feature_Type_Code != type.Feature_Type_Code) continue;
 
-            //find the attribute, seearch S-57 definition first
-            AttributeDescriptor attDesc = null;
-            try{
-                attDesc = TypeBanks.getAttributeDescriptor(entry.Attribute_Code);
-            }catch(DataStoreException ds){
+            //find the attribute
+            final AttributeDescriptor attDesc = TypeBanks.getAttributeDescriptor(entry.Attribute_Code);
 
-            }
-            final AMLAttribute att = attIndex.get(entry.Attribute_Code);
-            if(att == null) throw new DataStoreException("Attribute not found for code "+entry.Attribute_Code);
-
-            ftb.add(att.Attribute_Acronym, Object.class);
+            ftb.add(attDesc);
         }
 
         return ftb.buildFeatureType();
@@ -155,8 +159,40 @@ public final class AMLTypeBank implements TypeBank{
         return getAttributeDescriptonFromElement(att);
     }
 
-    public AttributeDescriptor getAttributeDescriptonFromElement(final AMLAttribute propertyKey) throws DataStoreException{
-        throw new DataStoreException("No yet implemented");
+    public AttributeDescriptor getAttributeDescriptonFromElement(final AMLAttribute aml) throws DataStoreException{
+
+        final Class binding;
+        if("String".equals(aml.Attribute_Type)){
+            binding = String.class;
+        }else if("Coded String".equals(aml.Attribute_Type)){
+            binding = String.class;
+        }else if("Enumeration".equals(aml.Attribute_Type)){
+            binding = String.class;
+        }else if("List".equals(aml.Attribute_Type)){
+            binding = String.class;
+        }else if("Integer".equals(aml.Attribute_Type)){
+            binding = Integer.class;
+        }else if("Real".equals(aml.Attribute_Type)){
+            binding = Double.class;
+        }else if("Date".equals(aml.Attribute_Type)){
+            binding = Date.class;
+        }else{
+            throw new DataStoreException("Unexpected attribute type : "+aml.Attribute_Type);
+        }
+
+        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+        atb.setName(aml.Attribute_Acronym);
+        atb.setBinding(binding);
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        adb.setName(aml.Attribute_Acronym);
+        adb.setMinOccurs(1);
+        adb.setMaxOccurs(1);
+        adb.setNillable(true);
+        adb.setType(atb.buildType());
+
+        final AttributeDescriptor attDesc = adb.buildDescriptor();
+        attDesc.getUserData().put(S57FeatureStore.S57TYPECODE, aml.Attribute_Code);
+        return attDesc;
     }
 
     /**
