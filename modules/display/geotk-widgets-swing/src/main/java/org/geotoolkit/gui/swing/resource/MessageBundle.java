@@ -48,6 +48,22 @@ public class MessageBundle {
         }
     }
 
+    public static String getString(final String key, Object obj1){
+        return getString(key, new Object[]{obj1});
+    }
+
+    public static String getString(final String key, final Object[] objects){
+        String text = getString(key);
+        String pattern;
+        for (int i = 0; i < objects.length; i++) {
+            pattern = "{"+i+"}";
+            if (text.contains(pattern)) {
+                text = text.replace(pattern, objects[i].toString());
+            }
+        }
+        return text;
+    }
+
     public static InternationalString getI18NString(final String key){
         try{
             String text =  BUNDLE.getString(key);
