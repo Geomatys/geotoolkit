@@ -60,7 +60,7 @@ public final class IconBuilder {
     
     public static BufferedImage createImage(String text, ImageIcon icon, Color textColor, Font font, Color bgColor){
 
-        final int border = 5;
+        final int border = 0;
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = img.createGraphics();
 
