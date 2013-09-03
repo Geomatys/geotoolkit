@@ -84,6 +84,15 @@ public class ExtendedCapabilitiesType {
     @XmlElement(name="currentLanguage", namespace="http://inspira.europa.eu/networkservice/view/1.0")
     private String currentLanguage;
 
+    public ExtendedCapabilitiesType() {
+
+    }
+
+    public ExtendedCapabilitiesType(final ScopeCode resourceType, final ServiceType spatialDataService) {
+        this.resourceType = resourceType;
+        this.spatialDataService = spatialDataService;
+    }
+
     /**
      * @return the resourcelocator
      */

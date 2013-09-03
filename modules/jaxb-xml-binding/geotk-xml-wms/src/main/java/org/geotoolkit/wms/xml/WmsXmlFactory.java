@@ -19,6 +19,7 @@ package org.geotoolkit.wms.xml;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.JAXBElement;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
 /**
@@ -341,11 +342,11 @@ public class WmsXmlFactory {
         }
     }
 
-    public static AbstractCapability createCapability(final String currentVersion) {
+    public static AbstractCapability createCapability(final String currentVersion, final JAXBElement<?> extendedCapabilities) {
         if ("1.1.1".equals(currentVersion)) {
             return new org.geotoolkit.wms.xml.v111.Capability();
         } else if ("1.3.0".equals(currentVersion)) {
-            return new org.geotoolkit.wms.xml.v130.Capability();
+            return new org.geotoolkit.wms.xml.v130.Capability(extendedCapabilities);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }

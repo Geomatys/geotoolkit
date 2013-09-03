@@ -80,6 +80,16 @@ public class Capability implements AbstractCapability {
      public Capability() {
      }
 
+     /**
+     * An empty constructor used by JAXB.
+     */
+     public Capability(final JAXBElement<?> extendedCapabilities) {
+         if (extendedCapabilities != null) {
+            this.extendedCapabilities = new ArrayList<>();
+            this.extendedCapabilities.add(extendedCapabilities);
+        }
+     }
+
     /**
      * Build a new capability object.
      */

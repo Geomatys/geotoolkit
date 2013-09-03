@@ -43,7 +43,7 @@ public class VendorSpecificCapabilities {
      */
     public List<TileSet> getTileSet() {
         if (tileSet == null) {
-            tileSet = new ArrayList<TileSet>();
+            tileSet = new ArrayList<>();
         }
         return this.tileSet;
     }
