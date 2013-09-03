@@ -95,6 +95,12 @@ public interface CoverageStore {
     CoverageReference create(Name name) throws DataStoreException;
 
     /**
+     * Check coverage type define in {@link CoverageType}
+     * @return a {@link CoverageType}
+     */
+    CoverageType getType();
+    
+    /**
      * Delete an existing coverage reference.
      *
      * @param name

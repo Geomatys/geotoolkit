@@ -21,11 +21,13 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.geotoolkit.client.AbstractCoverageServer;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.coverage.CoverageType;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
@@ -119,4 +121,9 @@ public class StaticGoogleMapsServer extends AbstractCoverageServer implements Co
     public void delete(Name name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
+    
+	@Override
+	public CoverageType getType() {
+		return CoverageType.PYRAMID;
+	}
 }

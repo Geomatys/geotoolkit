@@ -23,11 +23,13 @@ import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.geotoolkit.client.AbstractCoverageServer;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.coverage.CoverageType;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
@@ -392,4 +394,9 @@ public class WebMapServer extends AbstractCoverageServer implements CoverageStor
           .append("version: ").append(getVersion()).append("]");
         return sb.toString();
     }
+    
+	@Override
+	public CoverageType getType() {
+		return CoverageType.GRID;
+	}
 }

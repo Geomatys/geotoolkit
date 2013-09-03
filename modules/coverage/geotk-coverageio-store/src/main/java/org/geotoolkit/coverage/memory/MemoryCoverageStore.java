@@ -23,12 +23,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
+
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverageStore;
 import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.coverage.CoverageStoreFactory;
+import org.geotoolkit.coverage.CoverageType;
 import org.geotoolkit.coverage.DefaultCoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -210,5 +212,10 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
         }
 
     }
+    
+	@Override
+	public CoverageType getType() {
+		return CoverageType.GRID;
+	}
 
 }

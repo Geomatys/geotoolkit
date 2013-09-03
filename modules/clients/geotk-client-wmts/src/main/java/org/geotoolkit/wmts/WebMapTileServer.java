@@ -24,11 +24,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.geotoolkit.client.AbstractCoverageServer;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.coverage.CoverageType;
+import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
@@ -256,4 +259,10 @@ public class WebMapTileServer extends AbstractCoverageServer implements Coverage
     public void delete(Name name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
+
+	@Override
+	public CoverageType getType() {
+		return CoverageType.PYRAMID;
+	}
+    
 }

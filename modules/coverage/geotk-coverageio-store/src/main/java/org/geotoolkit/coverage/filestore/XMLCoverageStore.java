@@ -23,11 +23,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+
 import javax.xml.bind.JAXBException;
+
 import org.geotoolkit.coverage.AbstractCoverageStore;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
+import org.geotoolkit.coverage.CoverageType;
 import org.geotoolkit.feature.DefaultName;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.feature.type.Name;
@@ -116,4 +119,8 @@ public class XMLCoverageStore extends AbstractCoverageStore{
         return ref;
     }
     
+	@Override
+	public CoverageType getType() {
+		return CoverageType.PYRAMID;
+	}
 }

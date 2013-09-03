@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.sql;
 import java.awt.Image;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverageReference;
 import org.geotoolkit.coverage.CoverageReference;
@@ -27,6 +28,7 @@ import org.geotoolkit.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.CoverageStoreManagementEvent;
+import org.geotoolkit.coverage.CoverageType;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.feature.DefaultName;
@@ -229,5 +231,10 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
         }
 
     }
+    
+	@Override
+	public CoverageType getType() {
+		return CoverageType.GRID;
+	}
 
 }

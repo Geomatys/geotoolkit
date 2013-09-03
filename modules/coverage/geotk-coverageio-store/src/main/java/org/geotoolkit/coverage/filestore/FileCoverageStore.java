@@ -26,16 +26,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
+
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverageStore;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
+import org.geotoolkit.coverage.CoverageType;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.XImageIO;
@@ -229,5 +232,8 @@ public class FileCoverageStore extends AbstractCoverageStore{
         return XImageIO.getWriterByFormatName(readerSpi.getFormatNames()[0], candidate, null);
     }
     
-    
+	@Override
+	public CoverageType getType() {
+		return CoverageType.GRID;
+	}
 }

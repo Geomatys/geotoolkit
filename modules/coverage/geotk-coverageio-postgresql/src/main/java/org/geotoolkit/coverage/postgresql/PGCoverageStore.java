@@ -26,13 +26,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.sql.DataSource;
+
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverageStore;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
+import org.geotoolkit.coverage.CoverageType;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
@@ -378,4 +381,8 @@ public class PGCoverageStore extends AbstractCoverageStore{
         super.finalize();
     }
 
+	@Override
+	public CoverageType getType() {
+		return CoverageType.PYRAMID;
+	}
 }
