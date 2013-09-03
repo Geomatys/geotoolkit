@@ -265,7 +265,7 @@ public class WmsXmlFactory {
             if (contactAddress != null && !(contactAddress instanceof org.geotoolkit.wms.xml.v111.ContactAddress)) {
                 throw new IllegalArgumentException("unexpected object version for contactAddress");
             }
-            if (contactPersonPrimary != null && !(contactAddress instanceof org.geotoolkit.wms.xml.v111.ContactPersonPrimary)) {
+            if (contactPersonPrimary != null && !(contactPersonPrimary instanceof org.geotoolkit.wms.xml.v111.ContactPersonPrimary)) {
                 throw new IllegalArgumentException("unexpected object version for contactPersonPrimary");
             }
             return new org.geotoolkit.wms.xml.v111.ContactInformation((org.geotoolkit.wms.xml.v111.ContactPersonPrimary)contactPersonPrimary,
