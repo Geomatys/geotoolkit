@@ -25,7 +25,7 @@ import org.opengis.util.InternationalString;
 
 /**
  * File filter enumeration.
- *  
+ *
  * @author Johann Sorel
  * @module pending
  */
@@ -54,6 +54,7 @@ public enum FileFormat {
     TIFF("filter_tiff", "tif", "tiff"),
     VISUALDEM("filter_vdem", "dem"),
     WEBMAPCONTEXT("filter_wmc", "wmc"),
+    S57("filter_s57", "000"),
     WORLD_IMAGE("filter_world_image", "jpg", "jpeg", "bmp", "png");
     private final InternationalString desc;
     private final String[] ends;
@@ -84,7 +85,7 @@ public enum FileFormat {
 
         if (ff == null) {
             ff = new SimpleFileFilter(this);
-            ref = new WeakReference<FileFilter>(ff);
+            ref = new WeakReference<>(ff);
         }
 
         return ff;
