@@ -700,12 +700,12 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         }
 
         /**
-         * Returns the datum, which is assumed the {@linkplain DefaultGeodeticDatum#SPHERE sphere}.
+         * Returns the datum, which is assumed the {@linkplain DefaultGeodeticDatum#WGS84 WGS84}.
          * This datum must be the same than the datum of the CRS returned by {@link #getBaseCRS()}.
          */
         @Override
         public GeodeticDatum getDatum() {
-            return DefaultGeodeticDatum.SPHERE;
+            return DefaultGeodeticDatum.WGS84;
         }
 
         /**
