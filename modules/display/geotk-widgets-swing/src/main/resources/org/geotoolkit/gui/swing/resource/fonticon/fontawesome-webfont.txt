@@ -1,0 +1,6 @@
+Name : FontAwesome
+Style : Regular
+Type : police Truetype
+Version : 3.1.0 2013
+Licence : SIL Open Font License 1.1
+Website : http://fortawesome.github.io/Font-Awesome/icons/
