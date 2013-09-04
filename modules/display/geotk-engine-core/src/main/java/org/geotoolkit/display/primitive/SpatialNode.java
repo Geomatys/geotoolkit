@@ -30,8 +30,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * 
- * 
+ *
+ *
  * @author Johann Sorel (Geomatys)
  */
 public abstract class SpatialNode extends SceneNode{
@@ -43,7 +43,7 @@ public abstract class SpatialNode extends SceneNode{
     public SpatialNode(Canvas canvas, boolean allowChildren) {
         super(canvas, allowChildren);
     }
-    
+
     /**
      * Returns an envelope that completely encloses the graphic. Note that there is no guarantee
      * that the returned envelope is the smallest bounding box that encloses the graphic, only
@@ -61,14 +61,14 @@ public abstract class SpatialNode extends SceneNode{
         if(graphicEnv == null){
             return true;
         }
-                
+
         final CoordinateReferenceSystem graphicCRS = graphicEnv.getCoordinateReferenceSystem();
         final CoordinateReferenceSystem candidateCRS = candidateEnvelope.getCoordinateReferenceSystem();
-        
-        
+
+
         if(CRS.equalsIgnoreMetadata(graphicCRS, candidateCRS)){
-            final GeneralEnvelope genv = new GeneralEnvelope(graphicCRS);
-            return genv.intersects(candidateEnvelope, true);            
+            final GeneralEnvelope genv = new GeneralEnvelope(graphicEnv);
+            return genv.intersects(candidateEnvelope, true);
         }else{
             try {
                 final GeneralEnvelope genv = new GeneralEnvelope(CRS.transform(graphicEnv, candidateCRS));
@@ -80,13 +80,13 @@ public abstract class SpatialNode extends SceneNode{
             }
         }
     }
-    
+
     /**
      * Use to grab an ReferencedGraphic at some position.
-     * 
+     *
      * @param point : point in display crs
      * @return ReferencedGraphic, can be this object or a child object
      */
     public abstract List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics);
-    
+
 }
