@@ -108,8 +108,8 @@ abstract class StarRTree<E> extends AbstractTree<E> {
             eltCompteur++;
             Node root = getRoot();
             if (root == null || root.isEmpty()) {
-                root = createNode(treeAccess, null, IS_LEAF, 0, 0, 0);
-                root.addChild(createNode(treeAccess, coordinates, IS_DATA, 1, 0, -identifier));
+                root = createNode(null, IS_LEAF, 0, 0, 0);
+                root.addChild(createNode(coordinates, IS_DATA, 1, 0, -identifier));
                 setRoot(root);
             } else {
                 travelUpBeforeInsertAgain = false;
@@ -164,7 +164,7 @@ abstract class StarRTree<E> extends AbstractTree<E> {
         Node subCandidateParent = null;
         if (fileCandidate.isLeaf()) {
             assert fileCandidate.checkInternal() : "nodeInsert : leaf before add.";
-            fileCandidate.addChild(createNode(treeAccess, coordinates, IS_DATA, fileCandidate.getNodeId(), 0, -((Integer)identifier)));
+            fileCandidate.addChild(createNode(coordinates, IS_DATA, fileCandidate.getNodeId(), 0, -((Integer)identifier)));
             assert fileCandidate.checkInternal() : "nodeInsert : leaf after add.";
         } else {
             assert fileCandidate.checkInternal() : "nodeInsert : Node before insert.";

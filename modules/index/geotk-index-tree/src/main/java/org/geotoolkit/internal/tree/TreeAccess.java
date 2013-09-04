@@ -296,6 +296,12 @@ public abstract class TreeAccess {
     public abstract void close() throws IOException;
     
     /**
+     * Return true if {@link TreeAccess} has already been closed else false.
+     * 
+     * @return true if {@link TreeAccess} has already been closed else false.
+     */
+    public abstract boolean isClose();
+    /**
      * Create a {@link Node} adapted to {@link AbstractBasicRTree} and {@link AbstractStarRTree} Implementations.
      * 
      * @param boundary Node boundary.

@@ -87,7 +87,7 @@ abstract class BasicRTree<E> extends AbstractTree<E> {
         Node subCandidateParent = null;
         if (fileCandidate.isLeaf()) {
             assert fileCandidate.checkInternal() : "nodeInsert : leaf before add.";
-            fileCandidate.addChild(createNode(treeAccess, coordinates, IS_DATA, fileCandidate.getNodeId(), 0, -identifier));
+            fileCandidate.addChild(createNode(coordinates, IS_DATA, fileCandidate.getNodeId(), 0, -identifier));
             assert fileCandidate.checkInternal() : "nodeInsert : leaf after add.";
         } else {
             assert fileCandidate.checkInternal() : "nodeInsert : Node before insert.";
@@ -314,14 +314,14 @@ abstract class BasicRTree<E> extends AbstractTree<E> {
             result1 = result1Children[0];
             ((Node)result1).setSiblingId(0);
         } else {
-            result1 = createNode(treeAccess, null, candidateProperties, 0, 0, 0);
+            result1 = createNode(null, candidateProperties, 0, 0, 0);
             result1.addChildren(result1Children);
         }
         if (!isLeaf && r2ChCount == 1) {
             result2 = result2Children[0];
             ((Node)result2).setSiblingId(0);
         } else {
-            result2 = createNode(treeAccess, null, candidateProperties, 0, 0, 0);
+            result2 = createNode(null, candidateProperties, 0, 0, 0);
             result2.addChildren(result2Children);
         }
         // check result

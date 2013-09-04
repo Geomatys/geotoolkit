@@ -137,7 +137,7 @@ abstract class HilbertRTree<E> extends AbstractTree<E> {
                 }
             } else {
                 assert candidate.checkInternal() : "insertNode : leaf not full just before insert candidate not conform.";
-                fileCandidate.addChild(createNode(treeAccess, coordinates, IS_DATA, fileCandidate.getNodeId(), 0, -identifier));
+                fileCandidate.addChild(createNode(coordinates, IS_DATA, fileCandidate.getNodeId(), 0, -identifier));
                 assert candidate.checkInternal() : "insertNode : leaf not full just after insert candidate not conform.";
             }
         } else {

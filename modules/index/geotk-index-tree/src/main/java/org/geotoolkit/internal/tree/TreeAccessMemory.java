@@ -29,8 +29,20 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class TreeAccessMemory extends TreeAccess {
 
+    /**
+     * {@link TreeAccessMemory#tabNode} current length.
+     */
     private int tabNodeLength;
+    
+    /**
+     * Table which contains current stored {@link Node} from {@link Tree}.
+     */
     private Node[] tabNode;
+    
+    /**
+     * {@code true} if {@link TreeAccessMemory#close() } has already been called.
+     */
+    private boolean isClose;
 
     public TreeAccessMemory(final int maxElements, final SplitCase splitMade, final CoordinateReferenceSystem crs) {
         super();
@@ -40,6 +52,7 @@ public class TreeAccessMemory extends TreeAccess {
         tabNode         = new Node[tabNodeLength];
         root            = null;
         this.splitMade  = splitMade;
+        this.isClose    = false;
     }
     
     public TreeAccessMemory(final int maxElements, final CoordinateReferenceSystem crs) {
@@ -122,7 +135,15 @@ public class TreeAccessMemory extends TreeAccess {
      * @throws IOException 
      */
     @Override
-    public void close() throws IOException {
-        // nothing
+    public synchronized void close() throws IOException {
+        isClose = true;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public synchronized boolean isClose() {
+        return this.isClose;
     }
 }

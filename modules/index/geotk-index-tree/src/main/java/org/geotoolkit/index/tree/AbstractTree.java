@@ -24,7 +24,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
 import static org.geotoolkit.index.tree.TreeUtilities.*;
 import org.geotoolkit.internal.tree.TreeAccess;
-import org.geotoolkit.path.iterator.HilbertIterator;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -157,8 +156,8 @@ public abstract class AbstractTree<E> implements Tree<E> {
             eltCompteur++;
             Node root = getRoot();
             if (root == null || root.isEmpty()) {
-                root = createNode(treeAccess, null, IS_LEAF, 0, 0, 0);
-                root.addChild(createNode(treeAccess, coordinates, IS_DATA, 1, 0, -identifier));
+                root = createNode(null, IS_LEAF, 0, 0, 0);
+                root.addChild(createNode(coordinates, IS_DATA, 1, 0, -identifier));
                 setRoot(root);
             } else {
                 final Node newRoot = nodeInsert(root, identifier, coordinates);
@@ -334,7 +333,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
             result1 = children[0];
             ((Node)result1).setSiblingId(0);
         } else {
-            result1 = createNode(treeAccess, null, candidateProperties, 0, 0, 0);
+            result1 = createNode(null, candidateProperties, 0, 0, 0);
             System.arraycopy(children, 0, result1Children, 0, index);
             result1.addChildren(result1Children);
         }
@@ -342,7 +341,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
             result2 = children[size-1];
             ((Node)result2).setSiblingId(0);
         } else {
-            result2 = createNode(treeAccess, null, candidateProperties, 0, 0, 0);
+            result2 = createNode(null, candidateProperties, 0, 0, 0);
             System.arraycopy(children, index, result2Children, 0, lengthResult2);
             result2.addChildren(result2Children);
         }
@@ -601,6 +600,14 @@ public abstract class AbstractTree<E> implements Tree<E> {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean isClose() {
+        return treeAccess.isClose();
+    }
+    
     TreeAccess getTreeAccess() {
         return treeAccess;
     }    
@@ -625,10 +632,16 @@ public abstract class AbstractTree<E> implements Tree<E> {
     }
     
     /**
-     * {@inheritDoc}
+     * Create a {@link Node} in accordance with RTree properties.
+     *
+     * @param tree pointer on Tree.
+     * @param parent pointer on parent {@code Node}.
+     * @param children sub {@code Node}.
+     * @param entries entries {@code List} to add in this node.
+     * @param coordinates lower upper bounding box coordinates table.
+     * @return appropriate Node from tree.
      */
-    @Override
-    public Node createNode(final TreeAccess tA, final double[] boundary, final byte properties, final int parentId, final int siblingId, final int childId) throws IllegalArgumentException {
-        return tA.createNode(boundary, properties, parentId, siblingId, childId);
+    protected Node createNode(final double[] boundary, final byte properties, final int parentId, final int siblingId, final int childId) throws IllegalArgumentException {
+        return treeAccess.createNode(boundary, properties, parentId, siblingId, childId);
     }
 }

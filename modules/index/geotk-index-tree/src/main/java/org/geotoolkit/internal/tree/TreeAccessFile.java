@@ -514,4 +514,13 @@ public class TreeAccessFile extends TreeAccess {
         //close
         inOutChannel.close();
      }
+
+    /**
+     * {@inheritDoc }
+     * In this {@link TreeAccess} implementation, return {@link FileChannel} opening/close condition. 
+     */
+    @Override
+    public boolean isClose() {
+        return !inOutChannel.isOpen();
+    }
 }

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.index.tree;
 
-import org.geotoolkit.internal.tree.TreeAccess;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -131,16 +130,11 @@ public interface Tree<E> {
      * @throws StoreIndexException if problem during close stream.
      */
     void close() throws StoreIndexException;
-    
+   
     /**
-     * Create a {@link Node} in accordance with RTree properties.
-     *
-     * @param tree pointer on Tree.
-     * @param parent pointer on parent {@code Node}.
-     * @param children sub {@code Node}.
-     * @param entries entries {@code List} to add in this node.
-     * @param coordinates lower upper bounding box coordinates table.
-     * @return appropriate Node from tree.
+     * Return true if {@link Tree} has already been closed else false.
+     * 
+     * @return true if {@link Tree} has already been closed else false.
      */
-    Node createNode(final TreeAccess tA, final double[] boundary, final byte properties, final int parentId, final int siblingId, final int childId);
+    boolean isClose();
 }
