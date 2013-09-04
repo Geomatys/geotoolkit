@@ -406,7 +406,7 @@ public class TreeAccessFile extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-    public Node readNode(final int indexNode) throws IOException {
+    public synchronized Node readNode(final int indexNode) throws IOException {
         adjustBuffer(indexNode);
         final double[] boundary = new double[boundLength];
         for (int i = 0; i < boundLength; i++) {
@@ -426,7 +426,7 @@ public class TreeAccessFile extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-    public void writeNode(final Node candidate) throws IOException {
+    public synchronized void writeNode(final Node candidate) throws IOException {
         final int indexNode    = candidate.getNodeId();
         adjustBuffer(indexNode);
         writeBufferLimit = Math.max(writeBufferLimit, byteBuffer.limit());
@@ -474,7 +474,7 @@ public class TreeAccessFile extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-    public void removeNode(final Node candidate) {
+    public synchronized void removeNode(final Node candidate) {
         recycleID.add(candidate.getNodeId());
     }
     
@@ -482,7 +482,7 @@ public class TreeAccessFile extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-    public void rewind() throws IOException {
+    public synchronized void rewind() throws IOException {
         super.rewind();
         byteBuffer.position(0);
         byteBuffer.limit(writeBufferLimit);
@@ -499,7 +499,7 @@ public class TreeAccessFile extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-     public void close() throws IOException {
+     public synchronized void close() throws IOException {
         byteBuffer.position(0);
         byteBuffer.limit(writeBufferLimit);
         int writtenByte = 0;

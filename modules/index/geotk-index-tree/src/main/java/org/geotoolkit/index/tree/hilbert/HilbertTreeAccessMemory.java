@@ -45,7 +45,7 @@ final class HilbertTreeAccessMemory extends TreeAccessMemory {
      * {@inheritDoc }.
      */
     @Override
-    public Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
+    public synchronized Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
         final int currentID = (recycleID.isEmpty()) ? nodeId++ : recycleID.remove(0);
             return new HilbertNode(this, currentID, boundary, properties, parentId, siblingId, childId);
     }

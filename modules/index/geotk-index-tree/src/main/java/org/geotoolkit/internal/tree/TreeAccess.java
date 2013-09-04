@@ -21,6 +21,8 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.geotoolkit.index.tree.AbstractTree;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.StoreIndexException;
@@ -141,7 +143,7 @@ public abstract class TreeAccess {
      * @return integer table which contain all value stored in Tree which intersect region search.
      * @throws IOException if read or write Exception in {@link TreeAccessFile} implementation.
      */
-    public int[] search(int nodeID, double[] regionSearch) throws IOException {
+    public synchronized int[] search(int nodeID, double[] regionSearch) throws IOException {
         currentLength     = 100;
         tabSearch         = new int[currentLength];
         currentPosition   = 0;
@@ -217,7 +219,7 @@ public abstract class TreeAccess {
      * @param treeIdentifier 
      * @see AbstractTree#close() 
      */
-    public void setTreeIdentifier(final int treeIdentifier) {
+    public synchronized void setTreeIdentifier(final int treeIdentifier) {
         this.treeIdentifier = treeIdentifier;
     }
 
@@ -236,7 +238,7 @@ public abstract class TreeAccess {
      * @param eltNumber new element number value.
      * @see AbstractTree#close() 
      */
-    public void setEltNumber(int eltNumber) {
+    public synchronized void setEltNumber(int eltNumber) {
         this.eltNumber = eltNumber;
     }
 
@@ -279,7 +281,7 @@ public abstract class TreeAccess {
      * @see TreeAccessFile#rewind() 
      * @see TreeAccessMemory#rewind() 
      */
-    public void rewind() throws IOException {
+    public synchronized void rewind() throws IOException {
         nodeId = 1;
         recycleID.clear();
     }
@@ -306,7 +308,7 @@ public abstract class TreeAccess {
      * @see HilbertTreeAccessFile#createNode(double[], byte, int, int, int) 
      * @see HilbertNode#HilbertNode(org.geotoolkit.index.tree.access.TreeAccess, int, double[], byte, int, int, int) 
      */
-    public Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
+    public synchronized Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
         final int currentID = (recycleID.isEmpty()) ? nodeId++ : recycleID.remove(0);
         return new Node(this, currentID, boundary, properties, parentId, siblingId, childId);
     }

@@ -50,7 +50,7 @@ public class TreeAccessMemory extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-    protected void internalSearch(int nodeID) throws IOException{ //algorithm a ameliorer
+    protected void internalSearch(int nodeID) throws IOException {
         final Node candidate = readNode(nodeID);
         if (!candidate.isEmpty() && intersects(regionSearch, candidate.getBoundary(), true)) {
             if (candidate.isData()) {
@@ -76,7 +76,7 @@ public class TreeAccessMemory extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-    public Node readNode(int indexNode) throws IOException {
+    public synchronized Node readNode(int indexNode) throws IOException {
         return tabNode[indexNode-1];
     }
 
@@ -84,7 +84,7 @@ public class TreeAccessMemory extends TreeAccess {
      * {@inheritDoc }
      */
     @Override
-    public void writeNode(Node candidate) throws IOException {
+    public synchronized void writeNode(Node candidate) throws IOException {
         final int candidateID = candidate.getNodeId();
         if (candidateID > tabNodeLength) {
             final Node[] tfn = tabNode;
@@ -99,7 +99,7 @@ public class TreeAccessMemory extends TreeAccess {
      * {@inheritDoc }
      */
     @Override
-    public void removeNode(Node candidate) {
+    public synchronized void removeNode(Node candidate) {
         final int candID = candidate.getNodeId();
         recycleID.add(candID);
         tabNode[candID-1] = null;
@@ -111,7 +111,7 @@ public class TreeAccessMemory extends TreeAccess {
      * @throws IOException no exception in this implementation.
      */
     @Override
-    public void rewind() throws IOException {
+    public synchronized void rewind() throws IOException {
         super.rewind();
         tabNodeLength = 100;
         tabNode = new Node[tabNodeLength];

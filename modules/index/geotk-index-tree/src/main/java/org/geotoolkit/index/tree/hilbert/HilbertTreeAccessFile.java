@@ -147,7 +147,7 @@ final class HilbertTreeAccessFile extends TreeAccessFile {
      * {@inheritDoc }.
      */
     @Override
-    public Node readNode(final int indexNode) throws IOException {
+    public synchronized Node readNode(final int indexNode) throws IOException {
         adjustBuffer(indexNode);
         final double[] boundary = new double[boundLength];
         for (int i = 0; i < boundLength; i++) {
@@ -171,7 +171,7 @@ final class HilbertTreeAccessFile extends TreeAccessFile {
      * {@inheritDoc }.
      */
     @Override
-    public void writeNode(final Node candidate) throws IOException {
+    public synchronized void writeNode(final Node candidate) throws IOException {
         final int indexNode    = candidate.getNodeId();
         adjustBuffer(indexNode);
         writeBufferLimit = Math.max(writeBufferLimit, byteBuffer.limit());
@@ -193,7 +193,7 @@ final class HilbertTreeAccessFile extends TreeAccessFile {
      * {@inheritDoc }.
      */
     @Override
-     public Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
+     public synchronized Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
          final int currentID = (!recycleID.isEmpty()) ? recycleID.remove(0) : nodeId++;
             return new HilbertNode(this, currentID, (boundary == null) ? nanBound : boundary, properties, parentId, siblingId, childId);
      }

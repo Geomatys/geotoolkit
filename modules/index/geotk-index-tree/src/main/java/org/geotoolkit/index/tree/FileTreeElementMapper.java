@@ -250,7 +250,7 @@ public abstract class FileTreeElementMapper<E> implements TreeElementMapper<E> {
      * {@inheritDoc }.
      */
     @Override
-    public int getTreeIdentifier(E object) throws IOException {
+    public synchronized int getTreeIdentifier(E object) throws IOException {
         int treeIdentifier = 1;
         for (int currentPos = beginPosition; currentPos < maxPosition; currentPos += objSize) {
             adjustBuffer(treeIdentifier);                           
@@ -266,7 +266,7 @@ public abstract class FileTreeElementMapper<E> implements TreeElementMapper<E> {
      * {@inheritDoc }.
      */
     @Override
-    public void setTreeIdentifier(E object, int treeIdentifier) throws IOException {
+    public synchronized void setTreeIdentifier(E object, int treeIdentifier) throws IOException {
         adjustBuffer(treeIdentifier);
         writeObject(object);
         maxPosition += objSize;
@@ -277,7 +277,7 @@ public abstract class FileTreeElementMapper<E> implements TreeElementMapper<E> {
      * {@inheritDoc }.
      */
     @Override
-    public E getObjectFromTreeIdentifier(int treeIdentifier) throws IOException {
+    public synchronized E getObjectFromTreeIdentifier(int treeIdentifier) throws IOException {
         adjustBuffer(treeIdentifier);
         return readObject();
     }
@@ -286,7 +286,7 @@ public abstract class FileTreeElementMapper<E> implements TreeElementMapper<E> {
      * Put all attributs like just after constructor.
      */
     @Override
-    public void clear() throws IOException {
+    public synchronized void clear() throws IOException {
         byteBuffer.position(0);
         byteBuffer.limit(writeBufferLimit);
         int writtenByte = 0;
@@ -304,7 +304,7 @@ public abstract class FileTreeElementMapper<E> implements TreeElementMapper<E> {
      * @throws IOException 
      */
     @Override
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
         byteBuffer.position(0);
         byteBuffer.limit(writeBufferLimit);
         int writtenByte = 0;
