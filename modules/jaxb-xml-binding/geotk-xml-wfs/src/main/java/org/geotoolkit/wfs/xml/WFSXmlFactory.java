@@ -743,6 +743,18 @@ public class WFSXmlFactory {
         }
     }
 
+    public static AbstractOnlineResourceType buildOnlineResource(final String currentVersion, final String url) {
+        if ("2.0.0".equals(currentVersion)) {
+            return OWSXmlFactory.buildOnlineResource("1.1.0", url);
+        } else if ("1.1.0".equals(currentVersion)) {
+            return OWSXmlFactory.buildOnlineResource("1.0.0", url);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return OWSXmlFactory.buildOnlineResource("1.0.0", url);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
     public static AbstractResponsiblePartySubset buildResponsiblePartySubset(final String currentVersion, final String individualName, final String positionName,
             final AbstractContact contact, final String role) {
         if ("2.0.0".equals(currentVersion)) {

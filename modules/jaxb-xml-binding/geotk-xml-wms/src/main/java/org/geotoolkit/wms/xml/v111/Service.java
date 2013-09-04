@@ -90,6 +90,7 @@ public class Service implements AbstractService {
      * Gets the value of the name property.
      * 
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -97,6 +98,7 @@ public class Service implements AbstractService {
     /**
      * Gets the value of the title property.
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -105,6 +107,7 @@ public class Service implements AbstractService {
      * Gets the value of the abstract property.
      * 
      */
+    @Override
     public String getAbstract() {
         return _abstract;
     }
@@ -119,6 +122,7 @@ public class Service implements AbstractService {
     /**
      * Gets the value of the onlineResource property.
      */
+    @Override
     public OnlineResource getOnlineResource() {
         return onlineResource;
     }

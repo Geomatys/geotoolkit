@@ -26,16 +26,27 @@ import org.geotoolkit.inspire.xml.MultiLingualCapabilities;
  */
 public class OWSXmlFactory {
     
-    
-    public static AcceptVersions buildAcceptVersion(final String currentVersion, final List<String> acceptVersion) {
+    public static AbstractOnlineResourceType buildOnlineResource(final String currentVersion, final String url) {
         if ("1.1.0".equals(currentVersion)) {
-            return new org.geotoolkit.ows.xml.v110.AcceptVersionsType(acceptVersion);
+            return new org.geotoolkit.ows.xml.v110.OnlineResourceType(url);
         } else if ("1.0.0".equals(currentVersion)) {
-            return new org.geotoolkit.ows.xml.v100.AcceptVersionsType(acceptVersion);
+            return new org.geotoolkit.ows.xml.v100.OnlineResourceType(url);
         } else if ("2.0.0".equals(currentVersion)) {
-            return new org.geotoolkit.ows.xml.v200.AcceptVersionsType(acceptVersion);
+            return new org.geotoolkit.ows.xml.v200.OnlineResourceType(url);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static AcceptVersions buildAcceptVersion(final String currentVersion, final List<String> acceptVersion) {
+        if ("1.1.0".equals(currentVersion)) {
+                return new org.geotoolkit.ows.xml.v110.AcceptVersionsType(acceptVersion);
+        } else if ("1.0.0".equals(currentVersion)) {
+                return new org.geotoolkit.ows.xml.v100.AcceptVersionsType(acceptVersion);
+        } else if ("2.0.0".equals(currentVersion)) {
+                return new org.geotoolkit.ows.xml.v200.AcceptVersionsType(acceptVersion);
+        } else {
+                throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
     
@@ -305,7 +316,12 @@ public class OWSXmlFactory {
             if (contact != null && !(contact instanceof org.geotoolkit.ows.xml.v110.ContactType)) {
                 throw new IllegalArgumentException("unexpected object version for contact element");
             }
-            final org.geotoolkit.ows.xml.v110.CodeType r = new org.geotoolkit.ows.xml.v110.CodeType(role);
+            final org.geotoolkit.ows.xml.v110.CodeType r;
+            if (role != null) {
+                r = new org.geotoolkit.ows.xml.v110.CodeType(role);
+            } else {
+                r = null;
+            }
             return new org.geotoolkit.ows.xml.v110.ResponsiblePartySubsetType(individualName, positionName, 
                                                                               (org.geotoolkit.ows.xml.v110.ContactType)contact,
                                                                               r);
@@ -313,7 +329,12 @@ public class OWSXmlFactory {
             if (contact != null && !(contact instanceof org.geotoolkit.ows.xml.v100.ContactType)) {
                 throw new IllegalArgumentException("unexpected object version for contact element");
             }
-            final org.geotoolkit.ows.xml.v100.CodeType r = new org.geotoolkit.ows.xml.v100.CodeType(role);
+            final org.geotoolkit.ows.xml.v100.CodeType r;
+            if (role != null) {
+                r = new org.geotoolkit.ows.xml.v100.CodeType(role);
+            } else {
+                r = null;
+            }
             return new org.geotoolkit.ows.xml.v100.ResponsiblePartySubsetType(individualName, positionName,
                                                                               (org.geotoolkit.ows.xml.v100.ContactType)contact,
                                                                               r);
@@ -321,7 +342,12 @@ public class OWSXmlFactory {
             if (contact != null && !(contact instanceof org.geotoolkit.ows.xml.v200.ContactType)) {
                 throw new IllegalArgumentException("unexpected object version for contact element");
             }
-            final org.geotoolkit.ows.xml.v200.CodeType r = new org.geotoolkit.ows.xml.v200.CodeType(role);
+            final org.geotoolkit.ows.xml.v200.CodeType r;
+            if (role != null) {
+                r = new org.geotoolkit.ows.xml.v200.CodeType(role);
+            } else {
+                r = null;
+            }
             return new org.geotoolkit.ows.xml.v200.ResponsiblePartySubsetType(individualName, positionName,
                                                                               (org.geotoolkit.ows.xml.v200.ContactType)contact,
                                                                               r);

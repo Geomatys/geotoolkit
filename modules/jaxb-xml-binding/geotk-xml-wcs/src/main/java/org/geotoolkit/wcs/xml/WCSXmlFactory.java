@@ -241,7 +241,19 @@ public class WCSXmlFactory {
         }
     }
 
-     public static AbstractServiceProvider buildServiceProvider(final String currentVersion, final String providerName,
+    public static AbstractOnlineResourceType buildOnlineResource(final String currentVersion, final String url) {
+        if ("2.0.0".equals(currentVersion)) {
+            return OWSXmlFactory.buildOnlineResource("2.0.0", url);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return null;
+        } else if ("1.1.1".equals(currentVersion)) {
+            return OWSXmlFactory.buildOnlineResource("1.1.0", url);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static AbstractServiceProvider buildServiceProvider(final String currentVersion, final String providerName,
             final AbstractOnlineResourceType providerSite, final AbstractResponsiblePartySubset serviceContact) {
         if ("2.0.0".equals(currentVersion)) {
             return OWSXmlFactory.buildServiceProvider("2.0.0", providerName, providerSite, serviceContact);
