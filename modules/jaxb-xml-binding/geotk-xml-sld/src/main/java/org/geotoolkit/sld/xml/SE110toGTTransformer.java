@@ -173,7 +173,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     private static final String UOM_METRE = "http://www.opengeospatial.org/se/units/metre";
     private static final String UOM_FOOT = "http://www.opengeospatial.org/se/units/foot";
     private static final String UOM_PIXEL = "http://www.opengeospatial.org/se/units/pixel";
-    
+
     protected final MutableStyleFactory styleFactory;
     protected final StyleXmlIO xmlUtilities = new StyleXmlIO();
 
@@ -219,15 +219,15 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     }
 
     public Object visitSVG(final SvgParameterType svg) {
-        
-//        JAXBElementFunctionType> 
-//        String 
-//        JAXBElementExpressionType> 
-//        JAXBElementLiteralType> 
-//        JAXBElementBinaryOperatorType> 
-//        JAXBElementBinaryOperatorType> 
-//        JAXBElementBinaryOperatorType> 
-//        JAXBElementPropertyNameType> 
+
+//        JAXBElementFunctionType>
+//        String
+//        JAXBElementExpressionType>
+//        JAXBElementLiteralType>
+//        JAXBElementBinaryOperatorType>
+//        JAXBElementBinaryOperatorType>
+//        JAXBElementBinaryOperatorType>
+//        JAXBElementPropertyNameType>
 //        JAXBElementBinaryOperatorType>
 
         if(SEJAXBStatics.STROKE_DASHARRAY.equalsIgnoreCase(svg.getName()) ){
@@ -281,7 +281,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
 
     public Unit<Length> visitUOM(final String uom) {
         if(uom == null) return NonSI.PIXEL;
-        
+
         if(UOM_METRE.equalsIgnoreCase(uom)){
             return SI.METRE;
         }else if(UOM_FOOT.equalsIgnoreCase(uom)){
@@ -290,8 +290,8 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             return NonSI.PIXEL;
         }else{
             return NonSI.PIXEL;
-        }        
-        
+        }
+
     }
 
     /**
@@ -349,7 +349,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
                  throw new IllegalArgumentException("Not supported yet : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
             }
         }
-        
+
 
         throw new IllegalArgumentException("Unknowed expression element" + jax);
     }
@@ -447,18 +447,18 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             fts.setName(cst.getName());
             fts.setDescription( visitDescription(cst.getDescription()));
             fts.semanticTypeIdentifiers().addAll( visitSemantics(cst.getSemanticTypeIdentifier()));
-            
+
             if(cst.getCoverageName() != null){
                 fts.featureTypeNames().add(new DefaultName(cst.getCoverageName()));
             }
-            
+
             if(cst.getRuleOrOnlineResource() == null || cst.getRuleOrOnlineResource().isEmpty()){
             }else{
                 for(Object objRule : cst.getRuleOrOnlineResource()){
                     fts.rules().add(visitRule(objRule) );
                 }
             }
-            
+
             return fts;
         }else if(obj instanceof FeatureTypeStyleType){
             final MutableFeatureTypeStyle fts = styleFactory.featureTypeStyle();
@@ -467,11 +467,11 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             fts.setName(ftst.getName());
             fts.setDescription( visitDescription(ftst.getDescription()));
             fts.semanticTypeIdentifiers().addAll( visitSemantics(ftst.getSemanticTypeIdentifier()));
-            
+
             if(ftst.getFeatureTypeName() != null){
                 fts.featureTypeNames().add(new DefaultName(ftst.getFeatureTypeName()));
             }
-            
+
             if(ftst.getRuleOrOnlineResource() == null || ftst.getRuleOrOnlineResource().isEmpty()){
             }else{
                 for(final Object objRule : ftst.getRuleOrOnlineResource()){
@@ -529,7 +529,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         }
         return null;
     }
-    
+
     /**
      * Trasnform SLD v1.1 rule in GT Rule.
      */
@@ -545,11 +545,11 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         }
         return null;
     }
-    
+
     /**
      * Trasnform SLD v1.1 rule in GT Rule.
      */
-    public MutableRule visitRule(final org.geotoolkit.se.xml.v110.RuleType rt) 
+    public MutableRule visitRule(final org.geotoolkit.se.xml.v110.RuleType rt)
             throws FactoryException {
 
         final MutableRule rule = styleFactory.rule();
@@ -561,11 +561,11 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         rule.setLegendGraphic(visitLegend(rt.getLegendGraphic()));
         rule.setMaxScaleDenominator((rt.getMaxScaleDenominator() == null) ? Double.MAX_VALUE : rt.getMaxScaleDenominator());
         rule.setMinScaleDenominator((rt.getMinScaleDenominator() == null) ? 0 : rt.getMinScaleDenominator());
-        
+
         if(rt.getSymbolizer() == null || rt.getSymbolizer().isEmpty()){
-            
+
         }else{
-            
+
             for(final JAXBElement<?> jax : rt.getSymbolizer()) {
                 final Object st = jax.getValue();
 
@@ -577,7 +577,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
                     rule.symbolizers().add((Symbolizer)st);
                 }
 
-                
+
             }
 
         }
@@ -702,8 +702,6 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         final String name = rst.getName();
         final Description desc = visitDescription(rst.getDescription());
 
-        if(selection == null) return null;
-        
         return styleFactory.rasterSymbolizer(name,geom,desc,uom,opacity, selection, overlap, colorMap, enchance, relief, outline);
     }
 
@@ -724,7 +722,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         final Description desc = visitDescription(tst.getDescription());
 
         if(label == null) return null;
-        
+
         return styleFactory.textSymbolizer(name,geom,desc,uom,label, font, placement, halo, fill);
     }
 
@@ -858,7 +856,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         }else{
             return styleFactory.stroke(color, opacity, width, join, cap, dashes, offset);
         }
-        
+
     }
 
     /**
@@ -870,7 +868,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         final GraphicFill fill = visit(fl.getGraphicFill());
         Expression color = Expression.NIL;
         Expression opacity = Expression.NIL;
-        
+
         final List<SvgParameterType> params = fl.getSvgParameter();
         for(final SvgParameterType svg : params){
             if(SEJAXBStatics.FILL.equalsIgnoreCase(svg.getName())){
@@ -888,10 +886,10 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      */
     public Displacement visit(final DisplacementType displacement) {
         if(displacement == null) return null;
-        
+
         final Expression x = visitExpression(displacement.getDisplacementX());
         final Expression y = visitExpression(displacement.getDisplacementY());
-        
+
         return styleFactory.displacement(x, y);
     }
 
@@ -917,7 +915,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      */
     public ChannelSelection visit(final ChannelSelectionType channelSelection) {
         if(channelSelection == null) return null;
-        
+
         if(channelSelection.getGrayChannel() != null){
             final SelectedChannelType sct = visit(channelSelection.getGrayChannel());
             return styleFactory.channelSelection(sct);
@@ -927,7 +925,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
                     visit(channelSelection.getGreenChannel()),
                     visit(channelSelection.getBlueChannel()));
         }
-        
+
     }
 
     /**
@@ -935,7 +933,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      */
     public ColorMap visit(final ColorMapType colorMap) {
         if(colorMap == null) return null;
-        
+
         Function function = null;
         if (colorMap.getCategorize() != null) {
             function = visit(colorMap.getCategorize());
@@ -944,7 +942,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         } else if (colorMap.getJenks() != null) {
              function = visit(colorMap.getJenks());
         }
-        
+
         return styleFactory.colorMap(function);
     }
 
@@ -953,16 +951,16 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      */
     public ContrastEnhancement visit(final ContrastEnhancementType contrastEnhancement) {
         if(contrastEnhancement == null) return null;
-        
+
         final Expression gamma = filterFactory.literal(contrastEnhancement.getGammaValue());
         ContrastMethod type = ContrastMethod.NONE;
-        
+
         if(contrastEnhancement.getHistogram() != null){
             type = ContrastMethod.HISTOGRAM;
         }else if(contrastEnhancement.getNormalize() != null){
             type = ContrastMethod.NORMALIZE;
         }
-        
+
         return styleFactory.contrastEnhancement(gamma,type);
     }
 
@@ -971,13 +969,13 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      */
     public Symbolizer visit(final ImageOutlineType imageOutline) {
         if(imageOutline == null) return null;
-        
+
         if(imageOutline.getLineSymbolizer() != null){
             return visit(imageOutline.getLineSymbolizer());
         }else if(imageOutline.getPolygonSymbolizer() != null){
             return visit(imageOutline.getPolygonSymbolizer());
         }
-        
+
         return null;
     }
 
@@ -986,10 +984,10 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      */
     public ShadedRelief visit(final ShadedReliefType shadedRelief) {
         if(shadedRelief == null) return null;
-        
+
         final boolean bright = shadedRelief.isBrightnessOnly();
         final Expression relief = filterFactory.literal(shadedRelief.getReliefFactor());
-        
+
         return styleFactory.shadedRelief(relief,bright);
     }
 
@@ -998,12 +996,12 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      */
     public Font visit(final FontType font) {
         if(font == null) return null;
-        
+
         final List<Expression> family = new ArrayList<Expression>();
         Expression style = Expression.NIL;
         Expression weight = Expression.NIL;
         Expression size = Expression.NIL;
-        
+
         final List<SvgParameterType> params = font.getSvgParameter();
         for(final SvgParameterType svg : params){
             if(SEJAXBStatics.FONT_FAMILY.equalsIgnoreCase(svg.getName())){
@@ -1016,7 +1014,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
                 size = (Expression)visitSVG(svg);
             }
         }
-        
+
         return styleFactory.font(family, style, weight, size);
     }
 
@@ -1025,10 +1023,10 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      */
     public Halo visit(final HaloType halo) {
         if(halo == null) return null;
-        
+
         final Fill fill = visit(halo.getFill());
         final Expression radius = visitExpression(halo.getRadius());
-        
+
         return styleFactory.halo(fill, radius);
     }
 
@@ -1037,7 +1035,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      */
     public LabelPlacement visit(final LabelPlacementType labelPlacement) {
         if(labelPlacement == null) return null;
-        
+
         if(labelPlacement.getLinePlacement() != null){
             return visit(labelPlacement.getLinePlacement());
         }else if(labelPlacement.getPointPlacement() != null){
@@ -1045,7 +1043,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         }else{
             return null;
         }
-        
+
     }
 
     /**
@@ -1053,28 +1051,28 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      */
     public AnchorPoint visit(final AnchorPointType anchorPoint) {
         if(anchorPoint == null) return null;
-        
+
         final Expression x = visitExpression(anchorPoint.getAnchorPointX());
         final Expression y = visitExpression(anchorPoint.getAnchorPointY());
-        
+
         return styleFactory.anchorPoint(x, y);
     }
 
     public Mark visit(final MarkType markType) {
         if(markType == null) return null;
-        
+
         final Expression wkn = filterFactory.literal(markType.getWellKnownName());
         final ExternalMark external = null;
 //        ExternalMark = visit(markType.get)
         final Fill fill = visit(markType.getFill());
         final Stroke stroke = visit(markType.getStroke());
-        
+
         return styleFactory.mark(wkn, fill, stroke);
     }
 
     public ExternalGraphic visit(final ExternalGraphicType externalGraphicType) {
         if(externalGraphicType == null) return null;
-                
+
         final OnlineResource resource = visitOnlineResource(externalGraphicType.getOnlineResource());
         final Icon icon = null;
         final String format = externalGraphicType.getFormat();
@@ -1105,7 +1103,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
 
         }
 
-        
+
         if (resource != null){
             return styleFactory.externalGraphic(resource, format, replaces);
         } else if (icon != null){
@@ -1113,8 +1111,8 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         } else {
             return null;
         }
-        
-        
+
+
     }
 
     /**
@@ -1129,7 +1127,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         if(graphic != null){
             return styleFactory.graphicFill(graphic);
         }
-        
+
         return null;
     }
 
@@ -1145,43 +1143,43 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         if(graphic != null){
             final Expression gap = visitExpression(graphicStroke.getGap());
             final Expression initialGap = visitExpression(graphicStroke.getInitialGap());
-            
+
             return styleFactory.graphicStroke(graphic,gap,initialGap);
         }
-        
+
         return null;
     }
-        
+
     /**
      * Transform a SLD v1.1 selected channel in GT selected channel.
      */
     public SelectedChannelType visit(final org.geotoolkit.se.xml.v110.SelectedChannelType channel) {
         if(channel == null) return null;
-        
+
         final String name = channel.getSourceChannelName();
         final ContrastEnhancement enchance = (channel.getContrastEnhancement() == null) ?
             StyleConstants.DEFAULT_CONTRAST_ENHANCEMENT : visit(channel.getContrastEnhancement());
-        
+
         return styleFactory.selectedChannelType(name, enchance);
     }
-    
+
     /**
      *  Transform a SLD v1.1 categorize function in GT categorize function.
      */
     public Categorize visit(final CategorizeType categorize) {
         if(categorize == null) return null;
-        
+
         final Literal fallback = filterFactory.literal(categorize.getFallbackValue());
         final Expression lookup = visitExpression(categorize.getLookupValue());
         final Expression value = visitExpression(categorize.getValue());
-        
+
         final ThreshholdsBelongTo belongs;
         if(ThreshholdsBelongToType.PRECEDING.equals(categorize.getThreshholdsBelongTo()) ){
             belongs = ThreshholdsBelongTo.PRECEDING;
         }else {
             belongs = ThreshholdsBelongTo.SUCCEEDING;
         }
-        
+
         final Map<Expression,Expression> values = new HashMap<Expression,Expression>();
         values.put(StyleConstants.CATEGORIZE_LESS_INFINITY, value);
         final List<JAXBElement<ParameterValueType>> elements = categorize.getThresholdAndTValue();
@@ -1191,7 +1189,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             values.put(key, val);
             i+=2;
         }
-        
+
         return styleFactory.categorizeFunction(lookup,values,belongs,fallback);
     }
 
@@ -1200,17 +1198,17 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      */
     public Interpolate visit(final InterpolateType interpolate) {
         if(interpolate == null) return null;
-        
+
         final Literal fallback = filterFactory.literal(interpolate.getFallbackValue());
         final Expression lookup = visitExpression(interpolate.getLookupValue());
-        
+
         final Method method;
         if(MethodType.COLOR.equals(interpolate.getMethod()) ){
             method = Method.COLOR;
         }else{
             method = Method.NUMERIC;
         }
-        
+
         final Mode mode;
         if(ModeType.COSINE.equals(interpolate.getMode()) ){
             mode = Mode.COSINE;
@@ -1219,7 +1217,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         }else {
             mode = Mode.LINEAR;
         }
-        
+
         final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();
         for(final InterpolationPointType ip : interpolate.getInterpolationPoint()){
             values.add(
@@ -1229,20 +1227,20 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
                     )
             );
         }
-        
+
         return styleFactory.interpolateFunction(lookup,values,method,mode,fallback);
     }
-    
+
     /**
      *  Transform a SLD v1.1 jenks function in GT jenks function.
      */
     public Jenks visit(final JenksType jenks) {
         if(jenks == null) return null;
-        
+
         final Literal fallback = filterFactory.literal(jenks.getFallbackValue());
         final Literal classNumber = filterFactory.literal(jenks.getClassNumber());
         final Literal palette = filterFactory.literal(jenks.getPalette());
-        
+
         return styleFactory.jenksFunction(classNumber, palette, fallback);
     }
 
@@ -1251,7 +1249,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      */
     public LinePlacement visit(final LinePlacementType linePlacement) {
         if(linePlacement == null) return null;
-        
+
         final Expression offset = visitExpression(linePlacement.getPerpendicularOffset());
         final Expression initial = visitExpression(linePlacement.getInitialGap());
         final Expression gap = visitExpression(linePlacement.getGap());
@@ -1261,7 +1259,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         if(repeated == null) repeated = Boolean.FALSE;
         if(aligned == null) aligned = Boolean.FALSE;
         if(generalize == null) generalize = Boolean.FALSE;
-        
+
         return styleFactory.linePlacement(offset, initial, gap, repeated, aligned, generalize);
     }
 
@@ -1270,11 +1268,11 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      */
     public PointPlacement visit(final PointPlacementType pointPlacement) {
         if(pointPlacement == null) return null;
-        
+
         final AnchorPoint anchor = visit(pointPlacement.getAnchorPoint());
         final Displacement disp = visit(pointPlacement.getDisplacement());
         final Expression rotation = visitExpression(pointPlacement.getRotation());
-        
+
         return styleFactory.pointPlacement(anchor, disp, rotation);
     }
 
