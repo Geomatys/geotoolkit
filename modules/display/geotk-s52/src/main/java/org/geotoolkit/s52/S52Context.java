@@ -53,7 +53,6 @@ import org.geotoolkit.s52.dai.SymbolExposition;
 import org.geotoolkit.s52.dai.SymbolIdentifier;
 import org.geotoolkit.s52.dai.SymbolVector;
 import org.geotoolkit.s52.lookuptable.LookupTable;
-import org.geotoolkit.s52.lookuptable.TxtLookupTableReader;
 import org.geotoolkit.s52.procedure.CLRLIN01;
 import org.geotoolkit.s52.procedure.DATCVR02;
 import org.geotoolkit.s52.procedure.DEPARE02;
@@ -96,6 +95,7 @@ import org.geotoolkit.s52.render.SymbolStyle;
 public class S52Context {
 
     public static final Logger LOGGER = Logging.getLogger(S52Context.class);
+    private static URL DEFAULT_DAI = null;
 
     /**
      * S-52 divides geometries in POINT,LINE,AREA types.
@@ -103,15 +103,6 @@ public class S52Context {
     public static enum GeoType{
         POINT,LINE,AREA
     };
-
-    /** Default lookup table for areas with plain boundaries */
-    public static final URL LK_AREA_PLAIN        = S52Context.class.getResource("/org/geotoolkit/s52/lookuptable/AREAS WITH PLAIN BOUNDARIES.txt");
-    public static final URL LK_AREA_BOUNDARY     = S52Context.class.getResource("/org/geotoolkit/s52/lookuptable/AREAS WITH SYMBOLIZED BOUNDARIES.txt");
-    public static final URL LK_LINE              = S52Context.class.getResource("/org/geotoolkit/s52/lookuptable/LINES.txt");
-    public static final URL LK_POINT_PAPER_CHART = S52Context.class.getResource("/org/geotoolkit/s52/lookuptable/PAPER CHART POINTS.txt");
-    public static final URL LK_POINT_SIMPLIFIED  = S52Context.class.getResource("/org/geotoolkit/s52/lookuptable/SIMPLIFIED POINTS.txt");
-
-    public static final URL ICONS  = S52Context.class.getResource("/org/geotoolkit/s52/icons/");
 
     public static final String LKN_AREA_PLAIN       = "PLAIN_BOUNDARIES";
     public static final String LKN_AREA_SYMBOLIZED  = "SYMBOLIZED_BOUNDARIES";
@@ -173,7 +164,7 @@ public class S52Context {
 
     // Mariner context configuration ///////////////////////////////////////////
     // S-52 Annex A Part I p.23
-    private String paletteName = TIME_NIGHT;
+    private String paletteName = TIME_DAY;
     //selected lookups
     private String arealk = LKN_AREA_SYMBOLIZED;
     private String linelk = LKN_LINE;
@@ -500,98 +491,12 @@ public class S52Context {
         daiReader.dispose();
     }
 
-//    /**
-//     *
-//     * @param daiPath DAI file contains color palettes
-//     * @param iconPath Folder containing S-52 icons
-//     * @param lookupFiles lookup files for rendering instructions
-//     * @throws IOException
-//     */
-//    public synchronized void load(URL daiPath, URL iconPath, URL areaLookupTablePath,
-//            URL lineLookupTablePath, URL pointLookupTablePath) throws IOException{
-//        //clear caches
-//        palettes.clear();
-//        icons.clear();
-//        lookups.clear();
-//        palette = null;
-//        this.iconPath = iconPath;
-//
-//        //read DAI file
-//        final DAIReader daiReader = new DAIReader();
-//        daiReader.setInput(daiPath);
-//        while(daiReader.hasNext()){
-//            final DAIModuleRecord record = daiReader.next();
-//            //rebuild color palette
-//            final int size = record.getFields().size();
-//            final DAIField idField = record.getFields().get(0);
-//            if(idField instanceof ColorTableIdentifier){
-//                final ColorTableIdentifier cti = (ColorTableIdentifier) idField;
-//                final S52Palette palette = new S52Palette(cti.CTUS);
-//                palettes.put(palette.getName(), palette);
-//
-//                for(int i=1;i<size;i++){
-//                    final DAIField field = record.getFields().get(i);
-//                    if(field instanceof ColorDefinitionCIE){
-//                        palette.addColor((ColorDefinitionCIE)field);
-//                    }
-//                }
-//            }else if(idField instanceof LookupTableEntryIdentifier){
-//                final LookupTableEntryIdentifier lei = (LookupTableEntryIdentifier) idField;
-//                //TOD duplicates what is in the lookup files
-//
-//
-//            }else if(idField instanceof LibraryIdentification){
-//                //we don't need this one for rendering.
-//                //contains metadatas only
-//
-//            }else if(idField instanceof LinestyleIdentifier){
-//                //System.out.println("TODO LinestyleIdentifier");
-//                final LinestyleIdentifier lsi = (LinestyleIdentifier) idField;
-//
-//            }else if(idField instanceof PatternIdentifier){
-//                final PatternIdentifier style = (PatternIdentifier) idField;
-//
-//            }else if(idField instanceof SymbolIdentifier){
-//                final SymbolStyle style = new SymbolStyle();
-//                style.ident = (SymbolIdentifier) idField;
-//
-//                for(int i=1;i<size;i++){
-//                    final DAIField field = record.getFields().get(i);
-//                    if(field instanceof SymbolBitmap){
-//                        style.bitmap = (SymbolBitmap) field;
-//                    }else if(field instanceof SymbolColorReference){
-//                        style.colors = (SymbolColorReference) field;
-//                    }else if(field instanceof SymbolDefinition){
-//                        style.definition = (SymbolDefinition) field;
-//                    }else if(field instanceof SymbolExposition){
-//                        style.explication = (SymbolExposition) field;
-//                    }else if(field instanceof SymbolVector){
-//                        style.vectors.add((SymbolVector) field);
-//                    }else{
-//                        throw new IOException("Unexpected field "+field);
-//                    }
-//                }
-//                styles.put(style.definition.SYNM, style);
-//            }else{
-//                throw new IOException("Unexpected record \n"+record);
-//            }
-//
-//        }
-//        daiReader.dispose();
-//
-//        //read lookup tables for instructions
-//        lookups.put(LKN_AREA_PLAIN, readTable(areaLookupTablePath));
-//        lookups.put(LKN_LINE, readTable(lineLookupTablePath));
-//        lookups.put(LKN_POINT_PAPER, readTable(pointLookupTablePath));
-//    }
+    public synchronized static void setDefaultDAI(URL url){
+        DEFAULT_DAI = url;
+    }
 
-    private static LookupTable readTable(URL lkFile) throws IOException{
-        final TxtLookupTableReader lkReader = new TxtLookupTableReader();
-        lkReader.reset();
-        lkReader.setInput(lkFile);
-        final LookupTable table = lkReader.read();
-        lkReader.dispose();
-        return table;
+    public synchronized static URL getDefaultDAI() {
+        return DEFAULT_DAI;
     }
 
 }

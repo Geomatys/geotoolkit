@@ -89,9 +89,11 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
         if(s52context==null){
             s52context = new S52Context();
             try {
-                s52context.load(
-                        new URL("file:/media/jsorel/terra/TRAVAIL/1_Specification/IHO/S-52/S-52_CD/PresLib_e3.4_2008/Digital_Files/Digital_PresLib/pslb03_4.dai")
-                        );
+                final URL dai = S52Context.getDefaultDAI();
+                if(dai == null){
+                    throw new PortrayalException("S52 DAI file has not been configured with S52Context.setDefaultDAI(URL).");
+                }
+                s52context.load(dai);
             } catch (IOException ex) {
                 throw new PortrayalException(ex);
             }
