@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.TreeElementMapper;
+import org.geotoolkit.internal.tree.TreeUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -29,11 +30,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Remi Marechal (Geomatys).
  */
 public final class FileHilbertRTree<E> extends HilbertRTree<E> {
-    /**
-     * Number to identify tree file.
-     */
-    private final static int HILBERT_NUMBER    = 69669745;
-    private final static double VERSION_NUMBER = 0.1;
 
     /**
      * Create a new {@link HilbertRTree} implementation which store Tree architecture on hard drive.<br/><br/>
@@ -52,7 +48,7 @@ public final class FileHilbertRTree<E> extends HilbertRTree<E> {
      */
     public FileHilbertRTree(final File outPut, final int maxElements, final int hilbertOrder, 
             final CoordinateReferenceSystem crs, final TreeElementMapper<E> treeEltMap) throws StoreIndexException, IOException {
-        super(new HilbertTreeAccessFile(outPut, HILBERT_NUMBER, VERSION_NUMBER, maxElements, hilbertOrder, crs), treeEltMap);
+        super(new HilbertTreeAccessFile(outPut, TreeUtilities.HILBERT_NUMBER, TreeUtilities.VERSION_NUMBER, maxElements, hilbertOrder, crs), treeEltMap);
     }
     
     /**
@@ -74,7 +70,7 @@ public final class FileHilbertRTree<E> extends HilbertRTree<E> {
      */
     public FileHilbertRTree(final File outPut, final int maxElements, final int hilbertOrder, final int bytebufferLength,
             final CoordinateReferenceSystem crs, final TreeElementMapper<E> treeEltMap) throws StoreIndexException, IOException {
-        super(new HilbertTreeAccessFile(outPut, HILBERT_NUMBER, VERSION_NUMBER, maxElements, hilbertOrder, crs, bytebufferLength), treeEltMap);
+        super(new HilbertTreeAccessFile(outPut, TreeUtilities.HILBERT_NUMBER, TreeUtilities.VERSION_NUMBER, maxElements, hilbertOrder, crs, bytebufferLength), treeEltMap);
     }
     
     /**
@@ -91,7 +87,7 @@ public final class FileHilbertRTree<E> extends HilbertRTree<E> {
      * @see TreeElementMapper
      */
     public FileHilbertRTree(final File input, final TreeElementMapper<E> treeEltMap) throws StoreIndexException, IOException, ClassNotFoundException {
-        super(new HilbertTreeAccessFile(input, HILBERT_NUMBER, VERSION_NUMBER), treeEltMap);
+        super(new HilbertTreeAccessFile(input, TreeUtilities.HILBERT_NUMBER, TreeUtilities.VERSION_NUMBER), treeEltMap);
     }
     
     /**
@@ -110,6 +106,6 @@ public final class FileHilbertRTree<E> extends HilbertRTree<E> {
      * @see TreeElementMapper
      */
     public FileHilbertRTree(final File input, final TreeElementMapper<E> treeEltMap, final int bytebufferLength) throws StoreIndexException, IOException, ClassNotFoundException {
-        super(new HilbertTreeAccessFile(input, HILBERT_NUMBER, VERSION_NUMBER, bytebufferLength), treeEltMap);
+        super(new HilbertTreeAccessFile(input, TreeUtilities.HILBERT_NUMBER, TreeUtilities.VERSION_NUMBER, bytebufferLength), treeEltMap);
     }
 }

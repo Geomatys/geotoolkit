@@ -17,7 +17,7 @@
 package org.geotoolkit.index.tree;
 import org.geotoolkit.internal.tree.TreeAccess;
 import java.io.IOException;
-import static org.geotoolkit.index.tree.TreeUtilities.*;
+import static org.geotoolkit.internal.tree.TreeUtilities.*;
 
 import java.util.Arrays;
 import java.util.List;

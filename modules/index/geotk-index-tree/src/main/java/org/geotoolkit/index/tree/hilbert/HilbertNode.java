@@ -26,7 +26,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.gui.swing.tree.Trees;
-import static org.geotoolkit.index.tree.TreeUtilities.*;
+import static org.geotoolkit.internal.tree.TreeUtilities.*;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.internal.tree.TreeAccess;
 import org.geotoolkit.path.iterator.HilbertIterator;

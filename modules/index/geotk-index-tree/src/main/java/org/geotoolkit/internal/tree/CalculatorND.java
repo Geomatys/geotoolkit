@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.internal.tree;
 
-import static org.geotoolkit.index.tree.TreeUtilities.*;
+import static org.geotoolkit.internal.tree.TreeUtilities.*;
 
 /**
  * {@link Calculator} defined to compute multi-dimensionnal geometric operations.

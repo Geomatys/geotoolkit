@@ -23,7 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.index.tree.AbstractTree;
-import static org.geotoolkit.index.tree.TreeUtilities.*;
+import static org.geotoolkit.internal.tree.TreeUtilities.*;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.internal.tree.TreeAccess;
 import org.geotoolkit.index.tree.StoreIndexException;

@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.geotoolkit.internal.tree.TreeAccessFile;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.TreeElementMapper;
+import org.geotoolkit.internal.tree.TreeUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -31,12 +32,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @see StarRTree
  */
 public class FileStarRTree<E> extends StarRTree<E> {
-    
-    /**
-     * Number to identify tree file.
-     */
-    private final static int STAR_NUMBER       = 23107209;
-    private final static double VERSION_NUMBER = 0.1;
     
     /**
      * Create a new {@link StarRTree} implementation which store Tree architecture on hard drive.<br/><br/>
@@ -53,7 +48,7 @@ public class FileStarRTree<E> extends StarRTree<E> {
      * @see TreeElementMapper
      */
     public FileStarRTree(final File outPut, final int maxElements, final CoordinateReferenceSystem crs, final TreeElementMapper<E> treeEltMap) throws StoreIndexException, IOException {
-        super(new TreeAccessFile(outPut, STAR_NUMBER, VERSION_NUMBER, maxElements, crs), treeEltMap);
+        super(new TreeAccessFile(outPut, TreeUtilities.STAR_NUMBER, TreeUtilities.VERSION_NUMBER, maxElements, crs), treeEltMap);
     }
     
     /**
@@ -73,7 +68,7 @@ public class FileStarRTree<E> extends StarRTree<E> {
      * @see TreeElementMapper
      */
     public FileStarRTree(final File outPut, final int maxElements, final CoordinateReferenceSystem crs, final TreeElementMapper<E> treeEltMap, final int byteBufferLength) throws StoreIndexException, IOException {
-        super(new TreeAccessFile(outPut, STAR_NUMBER, VERSION_NUMBER, maxElements, crs), treeEltMap);
+        super(new TreeAccessFile(outPut, TreeUtilities.STAR_NUMBER, TreeUtilities.VERSION_NUMBER, maxElements, crs), treeEltMap);
     }
     
     /**
@@ -90,7 +85,7 @@ public class FileStarRTree<E> extends StarRTree<E> {
      * @see TreeElementMapper
      */
     public FileStarRTree(final File input, final TreeElementMapper<E> treeEltMap) throws IOException, StoreIndexException, ClassNotFoundException {
-        super(new TreeAccessFile(input, STAR_NUMBER, VERSION_NUMBER), treeEltMap);
+        super(new TreeAccessFile(input, TreeUtilities.STAR_NUMBER, TreeUtilities.VERSION_NUMBER), treeEltMap);
     }
     
     /**
@@ -109,6 +104,6 @@ public class FileStarRTree<E> extends StarRTree<E> {
      * @see TreeElementMapper
      */
     public FileStarRTree(final File input, final TreeElementMapper<E> treeEltMap, final int byteBufferLength) throws IOException, StoreIndexException, ClassNotFoundException {
-        super(new TreeAccessFile(input, STAR_NUMBER, VERSION_NUMBER), treeEltMap);
+        super(new TreeAccessFile(input, TreeUtilities.STAR_NUMBER, TreeUtilities.VERSION_NUMBER), treeEltMap);
     } 
 }

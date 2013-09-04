@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.internal.tree.TreeAccess;
-import static org.geotoolkit.index.tree.TreeUtilities.*;
+import static org.geotoolkit.internal.tree.TreeUtilities.*;
 
 /**
  * An Iterator which travel all search result one by one, from Tree architecture stored in a {@link TreeAccess } object.

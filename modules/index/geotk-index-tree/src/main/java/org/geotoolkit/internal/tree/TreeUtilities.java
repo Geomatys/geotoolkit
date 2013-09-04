@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree;
+package org.geotoolkit.internal.tree;
 
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.ArgumentChecks;
@@ -51,6 +51,14 @@ public class TreeUtilities {
      * which mean Node with no particularity properties.
      */
     public final static byte IS_OTHER = 8;
+    
+    /**
+     * Numbers to identify tree type in file.
+     */
+    public final static int BASIC_NUMBER      = 188047901;
+    public final static int HILBERT_NUMBER    = 69669745;
+    public final static int STAR_NUMBER       = 23107209;
+    public final static double VERSION_NUMBER = 0.1;
     
     private TreeUtilities() {
     }

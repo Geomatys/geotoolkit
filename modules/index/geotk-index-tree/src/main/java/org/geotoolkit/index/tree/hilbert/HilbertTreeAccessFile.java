@@ -19,7 +19,7 @@ package org.geotoolkit.index.tree.hilbert;
 import java.io.File;
 import java.io.IOException;
 import org.apache.sis.util.ArraysExt;
-import static org.geotoolkit.index.tree.TreeUtilities.intersects;
+import static org.geotoolkit.internal.tree.TreeUtilities.intersects;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.internal.tree.TreeAccessFile;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

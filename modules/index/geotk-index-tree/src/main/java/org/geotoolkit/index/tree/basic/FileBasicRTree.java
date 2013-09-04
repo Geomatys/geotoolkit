@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.geotoolkit.internal.tree.TreeAccessFile;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.TreeElementMapper;
+import org.geotoolkit.internal.tree.TreeUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -31,12 +32,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @see BasicRTree
  */
 public final class FileBasicRTree<E> extends BasicRTree<E> {
-
-    /**
-     * Number to identify tree in file.
-     */
-    private final static int BASIC_NUMBER      = 188047901;
-    private final static double VERSION_NUMBER = 0.1;
 
     /**
      * Create a new {@link BasicRTree} implementation which store Tree architecture on hard drive.<br/><br/>
@@ -56,7 +51,7 @@ public final class FileBasicRTree<E> extends BasicRTree<E> {
      */
     public FileBasicRTree(final File outPut, final int maxElements, final CoordinateReferenceSystem crs,
             final SplitCase choice, final TreeElementMapper<E> treeEltMap) throws StoreIndexException, IOException {
-        super(new TreeAccessFile(outPut, BASIC_NUMBER, VERSION_NUMBER, maxElements, choice, crs), treeEltMap);
+        super(new TreeAccessFile(outPut, TreeUtilities.BASIC_NUMBER, TreeUtilities.VERSION_NUMBER, maxElements, choice, crs), treeEltMap);
     }
     
     /**
@@ -79,7 +74,7 @@ public final class FileBasicRTree<E> extends BasicRTree<E> {
      */
     public FileBasicRTree(final File outPut, final int maxElements, final CoordinateReferenceSystem crs, 
             final SplitCase choice, final TreeElementMapper<E> treeEltMap, final int byteBufferLength) throws StoreIndexException, IOException {
-        super(new TreeAccessFile(outPut, BASIC_NUMBER, VERSION_NUMBER, maxElements, choice, crs, byteBufferLength), treeEltMap);
+        super(new TreeAccessFile(outPut, TreeUtilities.BASIC_NUMBER, TreeUtilities.VERSION_NUMBER, maxElements, choice, crs, byteBufferLength), treeEltMap);
     }
     
     /**
@@ -98,7 +93,7 @@ public final class FileBasicRTree<E> extends BasicRTree<E> {
      * @see TreeElementMapper
      */
     public FileBasicRTree(final File input, final TreeElementMapper<E> treeEltMap) throws IOException, StoreIndexException, ClassNotFoundException {
-        super(new TreeAccessFile(input, BASIC_NUMBER, VERSION_NUMBER), treeEltMap);
+        super(new TreeAccessFile(input, TreeUtilities.BASIC_NUMBER, TreeUtilities.VERSION_NUMBER), treeEltMap);
     } 
     
     /**
@@ -120,6 +115,6 @@ public final class FileBasicRTree<E> extends BasicRTree<E> {
      */
     public FileBasicRTree(final File input, final TreeElementMapper<E> treeEltMap, 
             final int byteBufferLength) throws IOException, StoreIndexException, ClassNotFoundException {
-        super(new TreeAccessFile(input, BASIC_NUMBER, VERSION_NUMBER), treeEltMap);
+        super(new TreeAccessFile(input, TreeUtilities.BASIC_NUMBER, TreeUtilities.VERSION_NUMBER), treeEltMap);
     } 
 }

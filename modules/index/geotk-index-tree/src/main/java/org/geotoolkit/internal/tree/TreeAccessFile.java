@@ -29,7 +29,7 @@ import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.StoreIndexException;
-import static org.geotoolkit.index.tree.TreeUtilities.intersects;
+import static org.geotoolkit.internal.tree.TreeUtilities.intersects;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -147,8 +147,27 @@ public class TreeAccessFile extends TreeAccess {
         /*****************************  read head ******************************/
         // read magicNumber
         final int mgNumber = inOutStream.readInt();
-        if (magicNumber != mgNumber)
-            throw new IllegalArgumentException("tree type identifier should match. expected identifier : "+magicNumber+". Found : "+mgNumber);
+        if (magicNumber != mgNumber) {
+            final String createTreeType;
+            final String redTreeType;
+            switch (magicNumber) {
+                case TreeUtilities.BASIC_NUMBER   : createTreeType = " BasicRTree ";break;
+                case TreeUtilities.STAR_NUMBER    : createTreeType = " StarRTree ";break;
+                case TreeUtilities.HILBERT_NUMBER : createTreeType = " hilbertRTree ";break;
+                default : throw new IllegalArgumentException("the specified tree type is not knowed.");
+            };
+            switch (mgNumber) {
+                case TreeUtilities.BASIC_NUMBER   : redTreeType = " BasicRTree ";break;
+                case TreeUtilities.STAR_NUMBER    : redTreeType = " StarRTree ";break;
+                case TreeUtilities.HILBERT_NUMBER : redTreeType = " hilbertRTree ";break;
+                default : throw new IllegalArgumentException("the red tree type from file is not knowed.");
+            };
+            final String messageError = "You try to create a "+createTreeType
+                    +"RTree from a file which has been filled by a "+redTreeType
+                    +"RTree implementation.";
+            throw new IllegalArgumentException(messageError);
+        }
+            
         
         // read ByteOrder
         final boolean fbool = inOutStream.readBoolean();
@@ -167,7 +186,7 @@ public class TreeAccessFile extends TreeAccess {
         // read nodeID
         nodeId = inOutStream.readInt();
         if (nodeId == 0)
-            throw new IllegalStateException("User shouldn't invoked tree.close() methode after insertion. You should build again RTree.");
+            throw new IllegalStateException("User isn't invoked tree.close() method after insertions. You should build again RTree.");
         treeIdentifier = inOutStream.readInt();
         // read element number within tree
         eltNumber = inOutStream.readInt();

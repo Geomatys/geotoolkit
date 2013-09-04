@@ -24,7 +24,7 @@ import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.StoreIndexException;
 import static org.junit.Assert.assertTrue;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import static org.geotoolkit.index.tree.TreeUtilities.add;
+import static org.geotoolkit.internal.tree.TreeUtilities.add;
 
 /**
  * Class to override some methods appropriate to HilbertRTree use. 

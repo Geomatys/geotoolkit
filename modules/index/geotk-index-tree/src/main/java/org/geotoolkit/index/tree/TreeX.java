@@ -22,7 +22,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.filter.SpatialFilterType;
 import static org.geotoolkit.filter.SpatialFilterType.*;
-import static org.geotoolkit.index.tree.TreeUtilities.*;
+import static org.geotoolkit.internal.tree.TreeUtilities.*;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.Envelope;
 

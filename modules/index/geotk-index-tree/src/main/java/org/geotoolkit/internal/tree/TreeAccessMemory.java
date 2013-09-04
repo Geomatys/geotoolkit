@@ -18,7 +18,7 @@ package org.geotoolkit.internal.tree;
 
 import java.io.IOException;
 import org.geotoolkit.index.tree.Node;
-import static org.geotoolkit.index.tree.TreeUtilities.intersects;
+import static org.geotoolkit.internal.tree.TreeUtilities.intersects;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
