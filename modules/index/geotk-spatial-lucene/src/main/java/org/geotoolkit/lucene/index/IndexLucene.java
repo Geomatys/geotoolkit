@@ -145,6 +145,9 @@ public abstract class IndexLucene {
     }
 
     protected void resetTree() {
+        if (rTree != null) {
+            closeTree();
+        }
         rTree = buildNewTree();
     }
 
@@ -185,8 +188,12 @@ public abstract class IndexLucene {
     public void destroy() {
         if (analyzer != null && !closed) {
             analyzer.close();
+            closeTree();
             closed = true;
         }
+    }
+
+    private void closeTree() {
         if (rTree != null) {
             try {
                 rTree.close();
