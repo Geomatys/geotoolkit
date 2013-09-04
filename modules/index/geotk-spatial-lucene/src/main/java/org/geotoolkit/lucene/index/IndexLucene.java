@@ -190,7 +190,10 @@ public abstract class IndexLucene {
         if (rTree != null) {
             try {
                 rTree.close();
-            } catch (StoreIndexException ex) {
+                if (rTree.getTreeElementMapper() != null) {
+                    rTree.getTreeElementMapper().close();
+                }
+            } catch (StoreIndexException | IOException ex) {
                 LOGGER.log(Level.WARNING, null, ex);
             }
         }
