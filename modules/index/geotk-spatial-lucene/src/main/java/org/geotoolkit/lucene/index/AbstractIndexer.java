@@ -24,7 +24,6 @@ import java.util.logging.Level;
 
 // JTS dependencies
 import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
 // Apache Lucene dependencies
 import org.apache.lucene.analysis.Analyzer;
@@ -39,9 +38,6 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.Version;
 
 // Geotoolkit dependencies
-import org.geotoolkit.geometry.Envelopes;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.IndexingException;
@@ -50,7 +46,6 @@ import org.geotoolkit.lucene.filter.LuceneOGCFilter;
 import static org.geotoolkit.lucene.index.IndexLucene.LOGGER;
 import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.geotoolkit.lucene.tree.RtreeManager;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.FileUtilities;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 
@@ -68,7 +63,6 @@ import org.opengis.util.FactoryException;
  */
 public abstract class AbstractIndexer<E> extends IndexLucene {
 
-    protected static final GeometryFactory GF = new GeometryFactory();
     protected static final String CORRUPTED_SINGLE_MSG = "CorruptIndexException while indexing document: ";
     protected static final String CORRUPTED_MULTI_MSG  = "CorruptIndexException while indexing document: ";
     protected static final String LOCK_SINGLE_MSG      = "LockObtainException while indexing document: ";
@@ -289,8 +283,6 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             writer.addDocument(createDocument(meta, docId));
             LOGGER.log(Level.FINER, "Metadata: {0} indexed", getIdentifier(meta));
             writer.close();
-            
-//            writeTree();
 
         } catch (IndexingException ex) {
             LOGGER.log(Level.WARNING, "IndexingException " + ex.getMessage(), ex);
@@ -398,40 +390,6 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     protected abstract Document createDocument(E object, int docId) throws IndexingException;
 
     /**
-     * Return a JTS polygon from bounding box coordinate.
-     * 
-     * @param minx minimal X coordinate.
-     * @param maxx maximal X coordinate.
-     * @param miny minimal Y coordinate.
-     * @param maxy maximal Y coordinate.
-     * @param srid coordinate spatial reference identifier.
-     */
-    private Polygon getPolygon(final double minx, final double maxx, final double miny, final double maxy, final int srid){
-        final Coordinate[] crds = new Coordinate[]{
-        new Coordinate(0, 0),
-        new Coordinate(0, 0),
-        new Coordinate(0, 0),
-        new Coordinate(0, 0),
-        new Coordinate(0, 0)};
-
-        final CoordinateSequence pts = new CoordinateArraySequence(crds);
-        final LinearRing rg          = new LinearRing(pts, GF);
-        final Polygon poly           = new Polygon(rg, new LinearRing[0],GF);
-        crds[0].x = minx;
-        crds[0].y = miny;
-        crds[1].x = minx;
-        crds[1].y = maxy;
-        crds[2].x = maxx;
-        crds[2].y = maxy;
-        crds[3].x = maxx;
-        crds[3].y = miny;
-        crds[4].x = minx;
-        crds[4].y = miny;
-        poly.setSRID(srid);
-        return poly;
-    }
-
-    /**
      * Add a geometric field with on ore more boundingBox object in the specified lucene document.
      *
      * @param doc The lucene document currently building.
@@ -447,7 +405,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             if (Double.isNaN(minx.get(i)) || Double.isNaN(maxx.get(i)) || Double.isNaN(miny.get(i)) || Double.isNaN(maxy.get(i))) {
                 LOGGER.info("skip NaN envelope");
             } else {
-                polygonList.add(getPolygon(minx.get(i), maxx.get(i), miny.get(i), maxy.get(i),srid));
+                polygonList.add(LuceneUtils.getPolygon(minx.get(i), maxx.get(i), miny.get(i), maxy.get(i),srid));
             }
         }
         final Polygon[] polygons = polygonList.toArray(new Polygon[polygonList.size()]);
@@ -455,7 +413,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         if (polygons.length == 1) {
             geom = polygons[0];
         } else if (polygons.length > 1 ){
-            geom = GF.createGeometryCollection(polygons);
+            geom = LuceneUtils.GF.createGeometryCollection(polygons);
             geom.setSRID(srid);
         } else {
             return;
@@ -472,25 +430,13 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         NamedEnvelope namedBound = null;
         try {
             final String id = doc.get("id");
-            namedBound      = getNamedEnvelope(id, geom, crs);
+            namedBound      = LuceneUtils.getNamedEnvelope(id, geom, crs);
             rTree.insert(namedBound);
         } catch (TransformException | FactoryException | MismatchedReferenceSystemException | StoreIndexException ex) {
             LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
         }
         doc.add(new StoredField(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(geom)));
         return namedBound;
-    }
-    
-    public static NamedEnvelope getNamedEnvelope(final String id, final Geometry geom, final CoordinateReferenceSystem crs) throws FactoryException, TransformException {
-        final Envelope jtsBound = geom.getEnvelopeInternal();
-        final String epsgCode = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
-        final CoordinateReferenceSystem geomCRS = CRS.decode(epsgCode);
-        final GeneralEnvelope bound = new GeneralEnvelope(geomCRS);
-        bound.setRange(0, jtsBound.getMinX(), jtsBound.getMaxX());
-        bound.setRange(1, jtsBound.getMinY(), jtsBound.getMaxY());
-
-        // reproject to specified CRS
-        return new NamedEnvelope(Envelopes.transform(bound, crs), id);
     }
     
     /**

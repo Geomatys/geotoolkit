@@ -16,8 +16,14 @@
  */
 package org.geotoolkit.lucene;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -35,11 +41,10 @@ import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.opengis.filter.Filter;
 import org.opengis.filter.spatial.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.ProjectedCRS;
-import org.opengis.referencing.operation.CylindricalProjection;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -48,7 +53,10 @@ import org.opengis.util.FactoryException;
  * @author Guilhem Legal
  */
 public class LuceneUtils {
+
     private static final Logger LOGGER = Logging.getLogger(LuceneUtils.class);
+
+    public static final GeometryFactory GF = new GeometryFactory();
     
     public static Directory getAppropriateDirectory(final File indexDirectory) throws IOException {
         
@@ -186,5 +194,50 @@ public class LuceneUtils {
         }
         throw new IllegalArgumentException("unexpected filter type:" + filter);
     }
-    
+
+    public static NamedEnvelope getNamedEnvelope(final String id, final Geometry geom, final CoordinateReferenceSystem crs) throws FactoryException, TransformException {
+        final com.vividsolutions.jts.geom.Envelope jtsBound = geom.getEnvelopeInternal();
+        final String epsgCode = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
+        final CoordinateReferenceSystem geomCRS = CRS.decode(epsgCode);
+        final GeneralEnvelope bound = new GeneralEnvelope(geomCRS);
+        bound.setRange(0, jtsBound.getMinX(), jtsBound.getMaxX());
+        bound.setRange(1, jtsBound.getMinY(), jtsBound.getMaxY());
+
+        // reproject to specified CRS
+        return new NamedEnvelope(Envelopes.transform(bound, crs), id);
+    }
+
+    /**
+     * Return a JTS polygon from bounding box coordinate.
+     *
+     * @param minx minimal X coordinate.
+     * @param maxx maximal X coordinate.
+     * @param miny minimal Y coordinate.
+     * @param maxy maximal Y coordinate.
+     * @param srid coordinate spatial reference identifier.
+     */
+    public static Polygon getPolygon(final double minx, final double maxx, final double miny, final double maxy, final int srid){
+        final Coordinate[] crds = new Coordinate[]{
+        new Coordinate(0, 0),
+        new Coordinate(0, 0),
+        new Coordinate(0, 0),
+        new Coordinate(0, 0),
+        new Coordinate(0, 0)};
+
+        final CoordinateSequence pts = new CoordinateArraySequence(crds);
+        final LinearRing rg          = new LinearRing(pts, GF);
+        final Polygon poly           = new Polygon(rg, new LinearRing[0],GF);
+        crds[0].x = minx;
+        crds[0].y = miny;
+        crds[1].x = minx;
+        crds[1].y = maxy;
+        crds[2].x = maxx;
+        crds[2].y = maxy;
+        crds[3].x = maxx;
+        crds[3].y = miny;
+        crds[4].x = minx;
+        crds[4].y = miny;
+        poly.setSRID(srid);
+        return poly;
+    }
 }

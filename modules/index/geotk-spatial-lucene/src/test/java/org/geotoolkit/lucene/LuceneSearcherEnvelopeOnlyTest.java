@@ -20,12 +20,8 @@ import java.util.*;
 import java.util.logging.Level;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
 import java.util.logging.Logger;
 import java.io.File;
@@ -43,7 +39,6 @@ import org.geotoolkit.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
-import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeElementMapper;
 import org.geotoolkit.io.wkb.WKBUtils;
@@ -59,7 +54,6 @@ import org.geotoolkit.util.FileUtilities;
 
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
 import static org.geotoolkit.lucene.LuceneSearcherTest.getresultsfromID;
-import org.geotoolkit.lucene.tree.RtreeManager;
 
 import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -95,7 +89,6 @@ public class LuceneSearcherEnvelopeOnlyTest {
     private File directory;
     private LuceneIndexSearcher searcher;
     private CoordinateReferenceSystem treeCrs;
-    private Tree rTree;
     private org.opengis.filter.Filter filter;
     private Geometry geom;
     
@@ -115,9 +108,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         final DocumentIndexer indexer = new DocumentIndexer(directory, fillTestData(), analyzer);
         indexer.createIndex();
 
-        rTree = indexer.getRtree();
-        
-        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true, rTree);
+        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true);
         
     }
 
@@ -216,6 +207,8 @@ public class LuceneSearcherEnvelopeOnlyTest {
      */
     @Test
     public void rTreeBBOXTest() throws Exception {
+        final Tree rTree = searcher.getRtree();
+        
         /*
          * first bbox
          */
@@ -2146,12 +2139,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         DocumentIndexer indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.removeDocument("box 2 projected");
 
-        //remove from Rtree
-        NamedEnvelope env = envelopes.get("box 2 projected");
-        rTree.remove(env);
-
-        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true, rTree);
-        rTree = searcher.getRtree();
+        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true);
         
         //we perform a lucene query
         results = searcher.doSearch(bboxQuery);
@@ -2171,15 +2159,15 @@ public class LuceneSearcherEnvelopeOnlyTest {
         Document doc = new Document();
         doc.add(new StringField("id", "box 2 projected", Field.Store.YES));
         doc.add(new StringField("docid", 66 + "", Field.Store.YES));
-        env = addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395);
+        doc.add(new StringField("metafile", "doc", Field.Store.YES));
+        NamedEnvelope env = addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395);
         envelopes.put("box 2 projected", env); // attention !! reprojeté
         
         indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.indexDocument(new DocumentEnvelope(doc, env));
 
 
-        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true, rTree);
-        rTree = searcher.getRtree();
+        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true);
         
          //we perform a lucene query
         results = searcher.doSearch(bboxQuery);
@@ -2203,6 +2191,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         Document doc = new Document();
         doc.add(new StringField("id", "box 1", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        doc.add(new StringField("metafile", "doc", Field.Store.YES));
         NamedEnvelope env = addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326);
         envelopes.put("box 1", env);
         docs.add(new DocumentEnvelope(doc, env));
@@ -2210,6 +2199,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         doc = new Document();
         doc.add(new StringField("id", "box 2", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        doc.add(new StringField("metafile", "doc", Field.Store.YES));
         env = addBoundingBox(doc,             5,                 10,            10,                15, srid4326);
         envelopes.put("box 2", env);
         docs.add(new DocumentEnvelope(doc, env));
@@ -2217,6 +2207,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         doc = new Document();
         doc.add(new StringField("id", "box 2 projected", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        doc.add(new StringField("metafile", "doc", Field.Store.YES));
         env = addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395);
         envelopes.put("box 2 projected", env); // attention !! reprojeté
         docs.add(new DocumentEnvelope(doc, env));
@@ -2224,6 +2215,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         doc = new Document();
         doc.add(new StringField("id", "box 3", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        doc.add(new StringField("metafile", "doc", Field.Store.YES));
         env = addBoundingBox(doc,            30,                 50,             0,                15, srid4326);
         envelopes.put("box 3", env);
         docs.add(new DocumentEnvelope(doc, env));
@@ -2231,6 +2223,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         doc = new Document();
         doc.add(new StringField("id", "box 4", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        doc.add(new StringField("metafile", "doc", Field.Store.YES));
         env = addBoundingBox(doc,           -30,                -15,             0,                10, srid4326);
         envelopes.put("box 4", env);
         docs.add(new DocumentEnvelope(doc, env));
@@ -2238,6 +2231,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         doc = new Document();
         doc.add(new StringField("id", "box 5", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        doc.add(new StringField("metafile", "doc", Field.Store.YES));
         env = addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326);
         envelopes.put("box 5", env);
         docs.add(new DocumentEnvelope(doc, env));
@@ -2257,48 +2251,11 @@ public class LuceneSearcherEnvelopeOnlyTest {
      */
     private NamedEnvelope addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) throws FactoryException, TransformException {
 
-        final Coordinate[] crds = new Coordinate[]{
-        new Coordinate(0, 0),
-        new Coordinate(0, 0),
-        new Coordinate(0, 0),
-        new Coordinate(0, 0),
-        new Coordinate(0, 0)};
-
-        final CoordinateSequence pts = new CoordinateArraySequence(crds);
-        final LinearRing rg          = new LinearRing(pts, GF);
-        final Polygon poly           = new Polygon(rg, new LinearRing[0],GF);
-        crds[0].x = minx;
-        crds[0].y = miny;
-        crds[1].x = minx;
-        crds[1].y = maxy;
-        crds[2].x = maxx;
-        crds[2].y = maxy;
-        crds[3].x = maxx;
-        crds[3].y = miny;
-        crds[4].x = minx;
-        crds[4].y = miny;
-        poly.setSRID(srid);
-
-        // add a default meta field to make searching all documents easy
-        doc.add(new StringField("metafile", "doc", Field.Store.YES));
-        
+        final Geometry poly = LuceneUtils.getPolygon(minx, maxx, miny, maxy, srid);
         final String id = doc.get("id");
-        NamedEnvelope namedBound = getNamedEnvelope(id, poly);
+        final NamedEnvelope namedBound = LuceneUtils.getNamedEnvelope(id, poly, treeCrs);
         
         doc.add(new StoredField(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(poly)));
         return namedBound;
     }
-
-    public NamedEnvelope getNamedEnvelope(final String id, final Geometry geom) throws FactoryException, TransformException {
-        final com.vividsolutions.jts.geom.Envelope jtsBound = geom.getEnvelopeInternal();
-        final String epsgCode = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
-        final CoordinateReferenceSystem geomCRS = CRS.decode(epsgCode);
-        final GeneralEnvelope bound = new GeneralEnvelope(geomCRS);
-        bound.setRange(0, jtsBound.getMinX(), jtsBound.getMaxX());
-        bound.setRange(1, jtsBound.getMinY(), jtsBound.getMaxY());
-
-        // reproject to specified CRS
-        return new NamedEnvelope(Envelopes.transform(bound, treeCrs), id);
-    }
-
 }

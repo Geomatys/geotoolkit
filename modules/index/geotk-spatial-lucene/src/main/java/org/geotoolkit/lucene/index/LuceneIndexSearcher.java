@@ -41,13 +41,11 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Version;
-import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.LuceneUtils;
 import org.geotoolkit.lucene.SearchingException;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
-import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.geotoolkit.lucene.tree.RtreeManager;
 import org.geotoolkit.util.FileUtilities;
 
@@ -110,21 +108,9 @@ public class LuceneIndexSearcher extends IndexLucene {
      * @throws IndexingException
      */
     public LuceneIndexSearcher(final File configDir, final String serviceID) throws IndexingException {
-        this(configDir, serviceID, null, false, null);
+        this(configDir, serviceID, null, false);
     }
 
-    /**
-     * Build a new index searcher.
-     *
-     * @param configDir The configuration directory where to build the index directory.
-     * @param serviceID the "ID" of the service (allow multiple index in the same directory). The value "" is allowed.
-     *
-     * @throws IndexingException
-     */
-    public LuceneIndexSearcher(final File configDir, final String serviceID, final Tree<NamedEnvelope> rTree) throws IndexingException {
-        this(configDir, serviceID, null, false, rTree);
-    }
-    
     /**
      * Build a new index searcher.
      *
@@ -133,7 +119,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      * @param analyzer  A lucene Analyzer (Default is ClassicAnalyzer)
      */
     public LuceneIndexSearcher(final File configDir, final String serviceID, final Analyzer analyzer) throws IndexingException {
-        this(configDir, serviceID, analyzer, false, null);
+        this(configDir, serviceID, analyzer, false);
     }
     
     /**
@@ -144,7 +130,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      * @param analyzer  A lucene Analyzer (Default is ClassicAnalyzer)
      * @param envelopeOnly A flag indicating if all the geometry indexed are envelope.
      */
-    public LuceneIndexSearcher(final File configDir, final String serviceID, final Analyzer analyzer, final boolean envelopeOnly, final Tree<NamedEnvelope> rTree) throws IndexingException {
+    public LuceneIndexSearcher(final File configDir, final String serviceID, final Analyzer analyzer, final boolean envelopeOnly) throws IndexingException {
         super(analyzer);
         this.envelopeOnly = envelopeOnly;
         if (envelopeOnly) {
@@ -186,7 +172,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 throw new IndexingException("The index searcher can't find a index directory.");
             }
             isCacheEnabled        = true;
-            initSearcher(rTree);
+            initSearcher();
             initIdentifiersList();
 
         } catch (CorruptIndexException ex) {
@@ -200,13 +186,9 @@ public class LuceneIndexSearcher extends IndexLucene {
     /**
      * initialize the IndexSearcher of this index.
      */
-    private void initSearcher(final Tree<NamedEnvelope> rTree) throws CorruptIndexException, IOException {
+    private void initSearcher() throws CorruptIndexException, IOException {
         final File indexDirectory = getFileDirectory();
-        if (rTree != null) {
-            this.rTree = rTree;
-        } else {
-            RtreeManager.get(indexDirectory);
-        }
+        this.rTree = RtreeManager.get(indexDirectory);
         final IndexReader reader  = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(indexDirectory));
         searcher                  = new IndexSearcher(reader);
         LOGGER.log(Level.INFO, "Creating new Index Searcher with index directory:{0}", indexDirectory.getPath());
@@ -235,7 +217,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      */
     public void refresh() throws IndexingException {
         try {
-            initSearcher(rTree);
+            initSearcher();
             initIdentifiersList();
             cachedQueries.clear();
             LOGGER.log(logLevel, "refreshing index searcher");

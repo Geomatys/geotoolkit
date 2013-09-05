@@ -65,12 +65,12 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
     public static final Term GEOMETRY_FIELD            = new Term(GEOMETRY_FIELD_NAME);
     public static final Term META_FIELD                = new Term("metafile", "doc");
 
-    private static final Set<String> GEOMETRY_FIELDS = new HashSet<String>(1);
+    private static final Set<String> GEOMETRY_FIELDS = new HashSet<>(1);
     static {
         GEOMETRY_FIELDS.add(GEOMETRY_FIELD_NAME);
     }
 
-    private static final Set<String> ID_FIELDS = new HashSet<String>(1);
+    private static final Set<String> ID_FIELDS = new HashSet<>(1);
     static {
         ID_FIELDS.add(IDENTIFIER_FIELD_NAME);
     }
@@ -106,11 +106,11 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
     @Override
     public DocIdSet getDocIdSet(final AtomicReaderContext ctx, final Bits b) throws IOException {
 
-        final Set<String> treeMatching = new HashSet<String>();
+        final Set<String> treeMatching = new HashSet<>();
         boolean treeSearch = false;
         boolean reverse = false;
         boolean distanceFilter = false;
-        final List<Envelope> results = new ArrayList<Envelope>();
+        final List<Envelope> results = new ArrayList<>();
         if (tree != null) {
             /*
              * For distance buffer filter no envelope only mode

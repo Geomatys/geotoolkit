@@ -19,12 +19,8 @@ package org.geotoolkit.lucene;
 import java.util.logging.Level;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +56,7 @@ import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.referencing.CRS;
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
+import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.geotoolkit.util.FileUtilities;
 
 import org.opengis.filter.FilterFactory2;
@@ -67,6 +64,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * A Test classes testing the different spatial filters.
@@ -2667,6 +2666,7 @@ public class LuceneEnvelopeOnlyTest {
         Document docu = new Document();
         docu.add(new StringField("id", "box 2 projected", Field.Store.YES));
         docu.add(new StringField("docid",  66 + "", Field.Store.YES));
+        docu.add(new StringField("metafile", "doc",   Field.Store.YES));
         addBoundingBox(docu,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395); // attention !! reprojeté
 
         indexer = new DocumentIndexer(directory, null, analyzer);
@@ -2697,7 +2697,7 @@ public class LuceneEnvelopeOnlyTest {
         assertTrue(results.contains("box 2 projected"));
     }
 
-    private static List<DocumentEnvelope> fillTestData() throws Exception {
+    private List<DocumentEnvelope> fillTestData() throws Exception {
 
         final List<DocumentEnvelope> docs = new ArrayList<>();
         final int srid4326 = SRIDGenerator.toSRID(WGS84, Version.V1);
@@ -2706,36 +2706,42 @@ public class LuceneEnvelopeOnlyTest {
         Document doc = new Document();
         doc.add(new StringField("id", "box 1", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        doc.add(new StringField("metafile", "doc",   Field.Store.YES));
         addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326);
         docs.add(new DocumentEnvelope(doc, null));
 
         doc = new Document();
         doc.add(new StringField("id", "box 2", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        doc.add(new StringField("metafile", "doc",   Field.Store.YES));
         addBoundingBox(doc,             5,                 10,            10,                15, srid4326);
         docs.add(new DocumentEnvelope(doc, null));
 
         doc = new Document();
         doc.add(new StringField("id", "box 2 projected", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        doc.add(new StringField("metafile", "doc",   Field.Store.YES));
         addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395); // attention !! reprojeté
         docs.add(new DocumentEnvelope(doc, null));
 
         doc = new Document();
         doc.add(new StringField("id", "box 3", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        doc.add(new StringField("metafile", "doc",   Field.Store.YES));
         addBoundingBox(doc,            30,                 50,             0,                15, srid4326);
         docs.add(new DocumentEnvelope(doc, null));
 
         doc = new Document();
         doc.add(new StringField("id", "box 4", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        doc.add(new StringField("metafile", "doc",   Field.Store.YES));
         addBoundingBox(doc,           -30,                -15,             0,                10, srid4326);
         docs.add(new DocumentEnvelope(doc, null));
 
         doc = new Document();
         doc.add(new StringField("id", "box 5", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        doc.add(new StringField("metafile", "doc",   Field.Store.YES));
         addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326);
         docs.add(new DocumentEnvelope(doc, null));
 
@@ -2752,34 +2758,13 @@ public class LuceneEnvelopeOnlyTest {
      * @param maxy the maximum Y coordinate of the bounding box.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static void addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) {
+    private NamedEnvelope addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) throws FactoryException, TransformException {
 
-        final Coordinate[] crds = new Coordinate[]{
-        new Coordinate(0, 0),
-        new Coordinate(0, 0),
-        new Coordinate(0, 0),
-        new Coordinate(0, 0),
-        new Coordinate(0, 0)};
-
-        final CoordinateSequence pts = new CoordinateArraySequence(crds);
-        final LinearRing rg          = new LinearRing(pts, GF);
-        final Polygon poly           = new Polygon(rg, new LinearRing[0],GF);
-        crds[0].x = minx;
-        crds[0].y = miny;
-        crds[1].x = minx;
-        crds[1].y = maxy;
-        crds[2].x = maxx;
-        crds[2].y = maxy;
-        crds[3].x = maxx;
-        crds[3].y = miny;
-        crds[4].x = minx;
-        crds[4].y = miny;
-        poly.setSRID(srid);
+        final Geometry poly = LuceneUtils.getPolygon(minx, maxx, miny, maxy, srid);
+        final String id = doc.get("id");
+        final NamedEnvelope namedBound = LuceneUtils.getNamedEnvelope(id, poly, WGS84);
 
         doc.add(new StoredField(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(poly)));
-
-        // add a default meta field to make searching all documents easy
-        doc.add(new StringField("metafile", "doc", Field.Store.YES));
+        return namedBound;
     }
-
 }

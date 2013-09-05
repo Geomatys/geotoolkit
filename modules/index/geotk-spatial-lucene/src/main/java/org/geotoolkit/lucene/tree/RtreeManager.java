@@ -41,14 +41,15 @@ public class RtreeManager {
     private static final Logger LOGGER = Logging.getLogger(RtreeManager.class);
 
     public static void close(final Tree rTree) throws StoreIndexException, IOException {
-        rTree.close();
-        if (rTree.getTreeElementMapper() != null) {
-            rTree.getTreeElementMapper().close();
+        if (!rTree.isClosed()) {
+            rTree.close();
+            if (rTree.getTreeElementMapper() != null) {
+                rTree.getTreeElementMapper().close();
+            }
         }
     }
 
     public static Tree<NamedEnvelope> get(final File directory) {
-        LOGGER.info("GET TREE FOR:" + directory);
         Tree<NamedEnvelope> tree = CACHED_TREES.get(directory);
         if (tree == null || tree.isClosed()) {
             final File treeFile   = new File(directory, "tree.bin");
