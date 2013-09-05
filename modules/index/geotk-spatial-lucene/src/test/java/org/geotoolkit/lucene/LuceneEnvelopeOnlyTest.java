@@ -35,11 +35,10 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Filter;
@@ -48,27 +47,26 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.SimpleFSDirectory;
 
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
+import org.geotoolkit.io.wkb.WKBUtils;
+import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
+import org.geotoolkit.lucene.filter.LuceneOGCFilter;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
-import org.geotoolkit.lucene.index.AbstractIndexer;
 import org.geotoolkit.referencing.CRS;
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.util.FileUtilities;
 
 import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.util.FactoryException;
 
 /**
  * A Test classes testing the different spatial filters.
@@ -101,24 +99,15 @@ public class LuceneEnvelopeOnlyTest {
     public void setUpMethod() throws Exception {
 
         directory = new File("luceneTest");
-        if (!directory.exists()) {
-            directory.mkdir();
-        } else {
-            for (File f: directory.listFiles()) {
-                f.delete();
-            }
-        }
+        FileUtilities.deleteDirectory(directory);
 
         //creating tree (R-Tree)------------------------------------------------
         final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
-        final IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_40, analyzer);
-        final Directory FSDirectory = new SimpleFSDirectory(directory);
-        final IndexWriter writer = new IndexWriter(FSDirectory, config);
-        fillTestData(writer);
-        writer.commit();
-        writer.close();
-
-        //IndexReader reader = new TreeIndexReaderWrapper(IndexReader.open(FSDirectory),rTree, true);
+        final DocumentIndexer indexer = new DocumentIndexer(directory, fillTestData(), analyzer);
+        indexer.createIndex();
+        indexer.destroy();
+        
+        final Directory FSDirectory  = LuceneUtils.getAppropriateDirectory(directory.listFiles()[0]);
         final IndexReader reader = DirectoryReader.open(FSDirectory);
         searcher = new IndexSearcher(reader);
         //create a term query to search against all documents
@@ -128,12 +117,7 @@ public class LuceneEnvelopeOnlyTest {
     @After
     public void tearDownMethod() throws Exception {
         directory = new File("luceneTest");
-        if (directory.exists()) {
-            for (File f : directory.listFiles()) {
-                f.delete();
-            }
-            directory.delete();
-        }
+        FileUtilities.deleteDirectory(directory);
     }
 
     /**
@@ -154,7 +138,7 @@ public class LuceneEnvelopeOnlyTest {
         int nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -183,7 +167,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS= 3395: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -209,7 +193,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BBOX:BBOX 2 CRS= 4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -236,7 +220,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BBOX:BBOX 3 CRS= 4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -271,7 +255,7 @@ public class LuceneEnvelopeOnlyTest {
         int nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "INTER:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -301,7 +285,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "INTER:BBOX 1 CRS= 3395: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -334,7 +318,7 @@ public class LuceneEnvelopeOnlyTest {
 
 
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -365,7 +349,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "INTER:Line 1 CRS=3395: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -395,7 +379,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "INTER:Line 2 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -424,7 +408,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "INTER:Line 2 CRS=3395: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -459,7 +443,7 @@ public class LuceneEnvelopeOnlyTest {
         int nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "EQ:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -489,7 +473,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "EQ:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -515,7 +499,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "EQ:Point 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -549,7 +533,7 @@ public class LuceneEnvelopeOnlyTest {
         int nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CT:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -578,7 +562,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CT:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -604,7 +588,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CT:Point 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -630,7 +614,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CT:Point 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -659,7 +643,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CT:Line 2 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -692,7 +676,7 @@ public class LuceneEnvelopeOnlyTest {
         int nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DJ:Point 1 CRS=4326: nb Results: {0}", nbResults);
 
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -724,7 +708,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DJ:Point 2 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -759,7 +743,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DJ:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -792,7 +776,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DJ:Line 2 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -824,7 +808,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DJ:BBox 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -855,7 +839,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DJ:BBox 2 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -894,7 +878,7 @@ public class LuceneEnvelopeOnlyTest {
         int nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:Point 1 CRS=4326: nb Results: {0}", nbResults);
 
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -920,7 +904,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:Point 2 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -947,7 +931,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:Point 3 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -975,7 +959,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:Point 4 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1002,7 +986,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:Point 5 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1032,7 +1016,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1061,7 +1045,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:Line 2 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1092,7 +1076,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:Line 2 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1121,7 +1105,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO:BBox 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1157,7 +1141,7 @@ public class LuceneEnvelopeOnlyTest {
         int nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "WT:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1186,7 +1170,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "WT:BBOX 2 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1217,7 +1201,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "WT:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1255,7 +1239,7 @@ public class LuceneEnvelopeOnlyTest {
         int nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CR:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1286,7 +1270,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CR:Line 2 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1316,7 +1300,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CR:Line 2 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1344,7 +1328,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CR:Point 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1374,7 +1358,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CR:Point 2 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1404,7 +1388,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "CR:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1436,7 +1420,7 @@ public class LuceneEnvelopeOnlyTest {
         SpatialQuery spatialQuery1 = new SpatialQuery(wrap(filter1));
         SpatialQuery spatialQuery2 = new SpatialQuery(wrap(filter2));
 
-        List<Filter> filters  = new ArrayList<Filter>();
+        List<Filter> filters  = new ArrayList<>();
         filters.add(spatialQuery1.getSpatialFilter());
         filters.add(spatialQuery2.getSpatialFilter());
         int filterType[]  = {SerialChainFilter.OR};
@@ -1450,7 +1434,7 @@ public class LuceneEnvelopeOnlyTest {
         int nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO || BBOX: BBox 1 CRS=4326: nb Results: {0}", nbResults);
 
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1479,7 +1463,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "TO && BBOX: BBox 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1501,7 +1485,7 @@ public class LuceneEnvelopeOnlyTest {
         geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
-        List<Filter> filters3     = new ArrayList<Filter>();
+        List<Filter> filters3     = new ArrayList<>();
         filters3.add(spatialQuery.getSpatialFilter());
         int filterType3[]         = {SerialChainFilter.NOT};
         serialFilter              = new SerialChainFilter(filters3, filterType3);
@@ -1512,7 +1496,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "NOT INTER:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1538,7 +1522,7 @@ public class LuceneEnvelopeOnlyTest {
         bbox2.setCoordinateReferenceSystem(WGS84);
         org.opengis.filter.Filter bfilter = FF.bbox(GEOMETRY_PROPERTY, -12,-17,15,50,"CRS:84");
         SpatialQuery bboxQuery = new SpatialQuery(wrap(bfilter));
-        List<Filter> filters4  = new ArrayList<Filter>();
+        List<Filter> filters4  = new ArrayList<>();
         filters4.add(spatialQuery.getSpatialFilter());
         filters4.add(bboxQuery.getSpatialFilter());
         int filterType4[]         = {SerialChainFilter.AND};
@@ -1550,7 +1534,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "NOT INTER:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1576,7 +1560,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "NOT INTER:Line 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1611,7 +1595,7 @@ public class LuceneEnvelopeOnlyTest {
         int nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 5km CRS=4326: nb Results: {0}", nbResults);
 
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1637,7 +1621,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 1500km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1665,7 +1649,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 1500000m CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1693,7 +1677,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 2000km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1722,7 +1706,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 4000km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1752,7 +1736,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 5000km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1783,7 +1767,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Point 1 dist: 6000km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1816,7 +1800,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:BBOX 1 dist: 5km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1843,7 +1827,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:BBOX 1 dist: 1500km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1870,7 +1854,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:BBOX 1 dist: 3000km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1905,7 +1889,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Line 1 dist: 5km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1930,7 +1914,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Line 1 dist: 4000km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1959,7 +1943,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Line 1 dist: 5000km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -1992,7 +1976,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "DW:Line 1 dist: 6000km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2032,7 +2016,7 @@ public class LuceneEnvelopeOnlyTest {
         int nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Point 1 CRS=4326: nb Results: {0}", nbResults);
 
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2064,7 +2048,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 1500km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2095,7 +2079,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 1500000m CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2126,7 +2110,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 2000km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2155,7 +2139,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 4000km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2183,7 +2167,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 5000km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2210,7 +2194,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Point 1 dist: 6000km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2237,7 +2221,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:BBOX 1 dist: 5km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2264,7 +2248,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:BBOX 1 dist: 1500km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2290,7 +2274,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:BBOX 1 dist: 3000km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2319,7 +2303,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Line 1 dist: 5km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2348,7 +2332,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "BY:Line 1 dist: 4000km CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2378,7 +2362,7 @@ public class LuceneEnvelopeOnlyTest {
 //        nbResults = docs.totalHits;
 //        logger.finer("BY:Line 1 dist: 5000km CRS=4326: nb Results: " + nbResults);
 //
-//        results = new ArrayList<String>();
+//        results = new ArrayList<>();
 //        for (int i = 0; i < nbResults; i++) {
 //            Document doc = searcher.doc(docs.scoreDocs[i].doc);
 //            String name =  doc.get("id");
@@ -2408,7 +2392,7 @@ public class LuceneEnvelopeOnlyTest {
 //        nbResults = docs.totalHits;
 //        logger.finer("BY:Line 1 dist: 6000km CRS=4326: nb Results: " + nbResults);
 //
-//        results = new ArrayList<String>();
+//        results = new ArrayList<>();
 //        for (int i = 0; i < nbResults; i++) {
 //            Document doc = searcher.doc(docs.scoreDocs[i].doc);
 //            String name =  doc.get("id");
@@ -2444,7 +2428,7 @@ public class LuceneEnvelopeOnlyTest {
         int nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "OL:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2472,7 +2456,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "OL:BBOX 2 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2510,7 +2494,7 @@ public class LuceneEnvelopeOnlyTest {
         int nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2538,7 +2522,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "QnS: title like point* AND BBOX 1: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2562,7 +2546,7 @@ public class LuceneEnvelopeOnlyTest {
         TopDocs hits2 = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
 
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         StringBuilder resultString = new StringBuilder();
         for (int i = 0; i < hits1.totalHits; i++) {
 
@@ -2609,7 +2593,7 @@ public class LuceneEnvelopeOnlyTest {
         hits1 = searcher.search(query1, bboxQuery.getSpatialFilter(), 15);
         hits2 = searcher.search(query2, interQuery.getSpatialFilter(), 15);
 
-        results      = new ArrayList<String>();
+        results      = new ArrayList<>();
         resultString = new StringBuilder();
         for (int i = 0; i < hits1.totalHits; i++) {
             String name = searcher.doc(hits1.scoreDocs[i].doc).get("id");
@@ -2641,17 +2625,11 @@ public class LuceneEnvelopeOnlyTest {
 
         // we remove a document
         final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
-        IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_40, analyzer);
-        Directory FSDirectory = new SimpleFSDirectory(directory);
-        IndexWriter writer = new IndexWriter(FSDirectory, config);
+        DocumentIndexer indexer = new DocumentIndexer(directory, null, analyzer);
+        indexer.removeDocument("box 2 projected");
+        indexer.destroy();
 
-        Query query = new TermQuery(new Term("id", "box 2 projected"));
-        writer.deleteDocuments(query);
-        writer.commit();
-        writer.close();
-
-        //IndexReader reader = new TreeIndexReaderWrapper(IndexReader.open(FSDirectory),rTree, false);
-        IndexReader reader = DirectoryReader.open(FSDirectory);
+        IndexReader reader = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(directory.listFiles()[0]));
         searcher = new IndexSearcher(reader);
 
         /*
@@ -2670,7 +2648,7 @@ public class LuceneEnvelopeOnlyTest {
         int nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2685,23 +2663,16 @@ public class LuceneEnvelopeOnlyTest {
 
 
         // re-add the document
-
-        config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_40, analyzer);
-        FSDirectory = new SimpleFSDirectory(directory);
-        writer = new IndexWriter(FSDirectory, config);
-
         final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
         Document docu = new Document();
         docu.add(new StringField("id", "box 2 projected", Field.Store.YES));
-        docu.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        docu.add(new StringField("docid",  66 + "", Field.Store.YES));
         addBoundingBox(docu,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395); // attention !! reprojeté
-        writer.addDocument(docu);
 
-        writer.commit();
-        writer.close();
+        indexer = new DocumentIndexer(directory, null, analyzer);
+        indexer.indexDocument(new DocumentEnvelope(docu, null));
 
-        //reader = new TreeIndexReaderWrapper(IndexReader.open(FSDirectory),rTree, false);
-        reader = DirectoryReader.open(FSDirectory);
+        reader = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(directory.listFiles()[0]));
         searcher = new IndexSearcher(reader);
 
 
@@ -2711,7 +2682,7 @@ public class LuceneEnvelopeOnlyTest {
         nbResults = docs.totalHits;
         LOGGER.log(Level.FINER, "QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
             String name =  doc.get("id");
@@ -2726,47 +2697,49 @@ public class LuceneEnvelopeOnlyTest {
         assertTrue(results.contains("box 2 projected"));
     }
 
-    private static void fillTestData(final IndexWriter writer) throws Exception {
+    private static List<DocumentEnvelope> fillTestData() throws Exception {
 
+        final List<DocumentEnvelope> docs = new ArrayList<>();
         final int srid4326 = SRIDGenerator.toSRID(WGS84, Version.V1);
         final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
 
         Document doc = new Document();
         doc.add(new StringField("id", "box 1", Field.Store.YES));
-        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
         addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326);
-        writer.addDocument(doc);
+        docs.add(new DocumentEnvelope(doc, null));
 
         doc = new Document();
         doc.add(new StringField("id", "box 2", Field.Store.YES));
-        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
         addBoundingBox(doc,             5,                 10,            10,                15, srid4326);
-        writer.addDocument(doc);
+        docs.add(new DocumentEnvelope(doc, null));
 
         doc = new Document();
         doc.add(new StringField("id", "box 2 projected", Field.Store.YES));
-        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
         addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395); // attention !! reprojeté
-        writer.addDocument(doc);
+        docs.add(new DocumentEnvelope(doc, null));
 
         doc = new Document();
         doc.add(new StringField("id", "box 3", Field.Store.YES));
-        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
         addBoundingBox(doc,            30,                 50,             0,                15, srid4326);
-        writer.addDocument(doc);
+        docs.add(new DocumentEnvelope(doc, null));
 
         doc = new Document();
         doc.add(new StringField("id", "box 4", Field.Store.YES));
-        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
         addBoundingBox(doc,           -30,                -15,             0,                10, srid4326);
-        writer.addDocument(doc);
+        docs.add(new DocumentEnvelope(doc, null));
 
         doc = new Document();
         doc.add(new StringField("id", "box 5", Field.Store.YES));
-        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
+        doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
         addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326);
-        writer.addDocument(doc);
+        docs.add(new DocumentEnvelope(doc, null));
 
+        return docs;
     }
 
     /**
@@ -2803,7 +2776,7 @@ public class LuceneEnvelopeOnlyTest {
         crds[4].y = miny;
         poly.setSRID(srid);
 
-        AbstractIndexer.addGeometry(doc, poly, null);
+        doc.add(new StoredField(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(poly)));
 
         // add a default meta field to make searching all documents easy
         doc.add(new StringField("metafile", "doc", Field.Store.YES));

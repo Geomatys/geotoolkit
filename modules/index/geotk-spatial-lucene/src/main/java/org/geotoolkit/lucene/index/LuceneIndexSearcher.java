@@ -48,6 +48,7 @@ import org.geotoolkit.lucene.SearchingException;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.lucene.tree.NamedEnvelope;
+import org.geotoolkit.lucene.tree.RtreeManager;
 import org.geotoolkit.util.FileUtilities;
 
 
@@ -204,7 +205,7 @@ public class LuceneIndexSearcher extends IndexLucene {
         if (rTree != null) {
             this.rTree = rTree;
         } else {
-            readTree();
+            RtreeManager.get(indexDirectory);
         }
         final IndexReader reader  = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(indexDirectory));
         searcher                  = new IndexSearcher(reader);

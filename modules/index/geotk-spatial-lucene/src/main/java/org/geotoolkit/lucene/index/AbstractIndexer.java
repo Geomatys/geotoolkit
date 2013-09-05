@@ -43,12 +43,13 @@ import org.geotoolkit.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.LuceneUtils;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
+import static org.geotoolkit.lucene.index.IndexLucene.LOGGER;
 import org.geotoolkit.lucene.tree.NamedEnvelope;
+import org.geotoolkit.lucene.tree.RtreeManager;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.FileUtilities;
 import org.opengis.geometry.MismatchedReferenceSystemException;
@@ -87,12 +88,12 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     /**
      * A list of services id
      */
-    protected static final List<String> indexationToStop = new ArrayList<String>();
+    protected static final List<String> indexationToStop = new ArrayList<>();
 
     /**
      * Map of fieldName / Number type.
      */
-    private final Map<String, String> numericFields = new HashMap<String, String>();
+    private final Map<String, String> numericFields = new HashMap<>();
     
     /**
      * Build a new Indexer witch create an index in the specified directory,
@@ -134,7 +135,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             // must be set before reading tree
             setFileDirectory(currentIndexDirectory);
             create = false;
-                readTree();
+            rTree = RtreeManager.get(currentIndexDirectory);
         }
     }
 
@@ -181,7 +182,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             final IndexWriter writer     = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
             final String serviceID       = getServiceID();
             
-            resetTree();
+            rTree = RtreeManager.resetTree(getFileDirectory(), rTree);
             nbEntries = toIndex.size();
             for (E entry : toIndex) {
                 if (!stopIndexing && !indexationToStop.contains(serviceID)) {
@@ -195,15 +196,10 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             // writer.optimize(); no longer justified
             writer.close();
 
-//            // we store the R-tree (only if there is results)
-//            if (!toIndex.isEmpty()) {
-//                writeTree();
-//            }
-            
             // we store the numeric fields in a properties file int the index directory
             storeNumericFieldsFile();
             
-        } catch (IOException ex) {
+        } catch (IOException | StoreIndexException ex) {
             LOGGER.log(Level.WARNING, IO_SINGLE_MSG, ex);
         }
         LOGGER.log(logLevel, "Index creation process in " + (System.currentTimeMillis() - time) + " ms\n" +
@@ -225,7 +221,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             final IndexWriter writer       = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
             final String serviceID         = getServiceID();
             final Collection<String> identifiers = getAllIdentifiers();
-            resetTree();
+            rTree = RtreeManager.resetTree(getFileDirectory(), rTree);
             
             LOGGER.log(logLevel, "{0} entry to read.", identifiers.size());
             for (String identifier : identifiers) {
@@ -246,15 +242,10 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             // writer.optimize(); no longer justified
             writer.close();
             
-//            // we store the R-tree (obly if there is results)
-//            if (!identifiers.isEmpty()) {
-//                writeTree();
-//            }
-            
             // we store the numeric fields in a properties file int the index directory
             storeNumericFieldsFile();
 
-        } catch (IOException ex) {
+        } catch (IOException | StoreIndexException ex) {
             LOGGER.log(Level.SEVERE,IO_SINGLE_MSG + "{0}", ex.getMessage());
             throw new IndexingException("IOException while indexing documents:" + ex.getMessage(), ex);
         }
@@ -377,11 +368,9 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             LOGGER.log(logLevel, "Term query:{0}", query);
 
             // look for DOC ID for R-Tree removal
-            if (rTree != null) {
-                final NamedEnvelope env = new NamedEnvelope(rTree.getCrs(), identifier);
-                rTree.remove(env);
-            }
-
+            final NamedEnvelope env = new NamedEnvelope(getTreeCrs(), identifier);
+            rTree.remove(env);
+            
             final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_40, analyzer);
             final IndexWriter writer       = new IndexWriter(dir, config);
             writer.deleteDocuments(query);
@@ -453,7 +442,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param srid coordinate spatial reference identifier.
      */
     protected void addBoundingBox(final Document doc, final List<Double> minx, final List<Double> maxx, final List<Double> miny, final List<Double> maxy, final int srid) {
-        final List<Polygon> polygonList = new ArrayList<Polygon>();
+        final List<Polygon> polygonList = new ArrayList<>();
         for (int i = 0; i < minx.size(); i++) {
             if (Double.isNaN(minx.get(i)) || Double.isNaN(maxx.get(i)) || Double.isNaN(miny.get(i)) || Double.isNaN(maxy.get(i))) {
                 LOGGER.info("skip NaN envelope");
@@ -471,7 +460,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         } else {
             return;
         }
-        addGeometry(doc, geom, rTree);
+        addGeometry(doc, geom, getTreeCrs());
     }
 
     /**
@@ -479,22 +468,14 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param doc The lucene document currently building.
      * @param geom A JTS geometry
      */
-    public static NamedEnvelope addGeometry(final Document doc, final Geometry geom, final Tree rTree) {
+    public NamedEnvelope addGeometry(final Document doc, final Geometry geom, final CoordinateReferenceSystem crs) {
         NamedEnvelope namedBound = null;
-        if (rTree != null) {
-            try {
-                final String id = doc.get("id");
-                namedBound      = getNamedEnvelope(id, geom, rTree.getCrs());
-                rTree.insert(namedBound);
-            } catch (TransformException ex) {
-                LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
-            } catch (FactoryException ex) {
-                LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
-            } catch (MismatchedReferenceSystemException ex) {
-                LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
-            } catch (StoreIndexException ex) {
-                LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
-            }
+        try {
+            final String id = doc.get("id");
+            namedBound      = getNamedEnvelope(id, geom, crs);
+            rTree.insert(namedBound);
+        } catch (TransformException | FactoryException | MismatchedReferenceSystemException | StoreIndexException ex) {
+            LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
         }
         doc.add(new StoredField(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(geom)));
         return namedBound;

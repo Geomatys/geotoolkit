@@ -117,7 +117,7 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
         idMapInOutStream = new RandomAccessFile(idMapOutPut, "rw");
         this.mapIndex    = idMapInOutStream.readInt();
         this.idMapCurrentPosition = idMapInOutStream.readInt();
-        if (mapIndex == 0) 
+        if (mapIndex == -1)
             throw new IllegalStateException("You should call close method before.");
         // read CRS
         final int byteTabLength           = idMapInOutStream.readInt();
@@ -171,6 +171,15 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
             resultEnvelope.setRange(d, lower, upper);
         }
         return resultEnvelope;
+    }
+
+    @Override
+    public synchronized int getTreeIdentifier(NamedEnvelope object) throws IOException {
+        try {
+            return super.getTreeIdentifier(object);
+        } catch (IllegalStateException ex) {
+            return -1;
+        }
     }
 
     /**

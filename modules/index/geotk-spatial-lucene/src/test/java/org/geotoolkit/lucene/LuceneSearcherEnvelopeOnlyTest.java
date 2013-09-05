@@ -34,39 +34,38 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Filter;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.SimpleFSDirectory;
 
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
+import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeElementMapper;
-import org.geotoolkit.index.tree.star.FileStarRTree;
+import org.geotoolkit.io.wkb.WKBUtils;
+import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
-import org.geotoolkit.lucene.index.AbstractIndexer;
 import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.lucene.filter.LuceneOGCFilter;
+import org.geotoolkit.lucene.index.LuceneIndexSearcher;
+import org.geotoolkit.util.FileUtilities;
+
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
 import static org.geotoolkit.lucene.LuceneSearcherTest.getresultsfromID;
-import org.geotoolkit.lucene.index.LuceneIndexSearcher;
-import org.geotoolkit.lucene.tree.LuceneFileTreeEltMapper;
-import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.lucene.tree.RtreeManager;
 
 import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -94,7 +93,6 @@ public class LuceneSearcherEnvelopeOnlyTest {
     
     private Map<String, NamedEnvelope> envelopes = new HashMap<>();
     private File directory;
-    private File subDirectory;
     private LuceneIndexSearcher searcher;
     private CoordinateReferenceSystem treeCrs;
     private Tree rTree;
@@ -105,40 +103,31 @@ public class LuceneSearcherEnvelopeOnlyTest {
     public void setUpMethod() throws Exception {
 
         directory = new File("luceneSearcherEnvTest");
-        subDirectory = new File(directory, "index-" + System.currentTimeMillis());
+        FileUtilities.deleteDirectory(directory);
+        directory.mkdir();
         
-        if (!subDirectory.exists()) {
-            subDirectory.mkdirs();
-        } else {
-            for (File f: subDirectory.listFiles()) {
-                f.delete();
-            }
-        }
-        
-        final File treeFile   = new File(subDirectory, "tree.bin");
-        final File mapperFile = new File(subDirectory, "mapper.bin");
         // the tree CRS (must be) cartesian
         treeCrs = CRS.decode("CRS:84");
         
         //creating tree (R-Tree)------------------------------------------------
-        rTree = new FileStarRTree<>(treeFile, 5, WGS84, new LuceneFileTreeEltMapper(WGS84, mapperFile));
 
         final Analyzer analyzer  = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
-        IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_40, analyzer);
-        Directory FSDirectory    = new SimpleFSDirectory(subDirectory);
-        final IndexWriter writer = new IndexWriter(FSDirectory, config);
-        fillTestData(writer, rTree);
-        writer.commit();
-        writer.close();
+        final DocumentIndexer indexer = new DocumentIndexer(directory, fillTestData(), analyzer);
+        indexer.createIndex();
+
+        rTree = indexer.getRtree();
         
         searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true, rTree);
         
-        //rTree = new FileStarRTree<NamedEnvelope>(treeFile, new LuceneFileTreeEltMapper(mapperFile));
     }
 
     @After
     public void tearDownMethod() throws Exception {
-        FileUtilities.deleteDirectory(directory);
+        try {
+            searcher.destroy();
+        } finally {
+            FileUtilities.deleteDirectory(directory);
+        }
     }
 
     /**
@@ -2154,23 +2143,14 @@ public class LuceneSearcherEnvelopeOnlyTest {
          * we remove a document
          */ 
         final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
-        IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_40, analyzer);
-        Directory FSDirectory = new SimpleFSDirectory(subDirectory);
-        IndexWriter writer = new IndexWriter(FSDirectory, config);
-
-        Query query = new TermQuery(new Term("id", "box 2 projected"));
-        writer.deleteDocuments(query);
-        writer.commit();
-        writer.close();
+        DocumentIndexer indexer = new DocumentIndexer(directory, null, analyzer);
+        indexer.removeDocument("box 2 projected");
 
         //remove from Rtree
-        final NamedEnvelope env = envelopes.get("box 2 projected");
+        NamedEnvelope env = envelopes.get("box 2 projected");
         rTree.remove(env);
 
-        rTree.close();
-        rTree.getTreeElementMapper().close();
-
-        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true, null);
+        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true, rTree);
         rTree = searcher.getRtree();
         
         //we perform a lucene query
@@ -2187,24 +2167,18 @@ public class LuceneSearcherEnvelopeOnlyTest {
 
         // re-add the document
         
-        config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_40, analyzer);
-        FSDirectory = new SimpleFSDirectory(subDirectory);
-        writer = new IndexWriter(FSDirectory, config);
-
         final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
         Document doc = new Document();
         doc.add(new StringField("id", "box 2 projected", Field.Store.YES));
-        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        envelopes.put("box 2 projected", addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395, rTree)); // attention !! reprojeté
-        writer.addDocument(doc);
+        doc.add(new StringField("docid", 66 + "", Field.Store.YES));
+        env = addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395);
+        envelopes.put("box 2 projected", env); // attention !! reprojeté
+        
+        indexer = new DocumentIndexer(directory, null, analyzer);
+        indexer.indexDocument(new DocumentEnvelope(doc, env));
 
-        writer.commit();
-        writer.close();
 
-        rTree.close();
-        rTree.getTreeElementMapper().close();
-
-        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true, null);
+        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true, rTree);
         rTree = searcher.getRtree();
         
          //we perform a lucene query
@@ -2220,47 +2194,55 @@ public class LuceneSearcherEnvelopeOnlyTest {
         assertTrue(results.contains("box 2 projected")); 
     }
 
-    private void fillTestData(final IndexWriter writer, final Tree rTree) throws Exception {
+    private List<DocumentEnvelope> fillTestData() throws Exception {
 
+        final List<DocumentEnvelope> docs = new ArrayList<>();
         final int srid4326 = SRIDGenerator.toSRID(WGS84, Version.V1);
         final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
 
         Document doc = new Document();
         doc.add(new StringField("id", "box 1", Field.Store.YES));
-        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        envelopes.put("box 1", addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326, rTree));
-        writer.addDocument(doc);
+        doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        NamedEnvelope env = addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326);
+        envelopes.put("box 1", env);
+        docs.add(new DocumentEnvelope(doc, env));
 
         doc = new Document();
         doc.add(new StringField("id", "box 2", Field.Store.YES));
-        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        envelopes.put("box 2", addBoundingBox(doc,             5,                 10,            10,                15, srid4326, rTree));
-        writer.addDocument(doc);
+        doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        env = addBoundingBox(doc,             5,                 10,            10,                15, srid4326);
+        envelopes.put("box 2", env);
+        docs.add(new DocumentEnvelope(doc, env));
 
         doc = new Document();
         doc.add(new StringField("id", "box 2 projected", Field.Store.YES));
-        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        envelopes.put("box 2 projected", addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395, rTree)); // attention !! reprojeté
-        writer.addDocument(doc);
+        doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        env = addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395);
+        envelopes.put("box 2 projected", env); // attention !! reprojeté
+        docs.add(new DocumentEnvelope(doc, env));
 
         doc = new Document();
         doc.add(new StringField("id", "box 3", Field.Store.YES));
-        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        envelopes.put("box 3", addBoundingBox(doc,            30,                 50,             0,                15, srid4326, rTree));
-        writer.addDocument(doc);
+        doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        env = addBoundingBox(doc,            30,                 50,             0,                15, srid4326);
+        envelopes.put("box 3", env);
+        docs.add(new DocumentEnvelope(doc, env));
 
         doc = new Document();
         doc.add(new StringField("id", "box 4", Field.Store.YES));
-        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        envelopes.put("box 4", addBoundingBox(doc,           -30,                -15,             0,                10, srid4326, rTree));
-        writer.addDocument(doc);
+        doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        env = addBoundingBox(doc,           -30,                -15,             0,                10, srid4326);
+        envelopes.put("box 4", env);
+        docs.add(new DocumentEnvelope(doc, env));
 
         doc = new Document();
         doc.add(new StringField("id", "box 5", Field.Store.YES));
-        doc.add(new StringField("docid", writer.maxDoc() + "", Field.Store.YES));
-        envelopes.put("box 5", addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326, rTree));
-        writer.addDocument(doc);
+        doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
+        env = addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326);
+        envelopes.put("box 5", env);
+        docs.add(new DocumentEnvelope(doc, env));
 
+        return docs;
     }
 
     /**
@@ -2273,7 +2255,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
      * @param maxy the maximum Y coordinate of the bounding box.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static NamedEnvelope addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid, final Tree rTree) {
+    private NamedEnvelope addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) throws FactoryException, TransformException {
 
         final Coordinate[] crds = new Coordinate[]{
         new Coordinate(0, 0),
@@ -2299,7 +2281,24 @@ public class LuceneSearcherEnvelopeOnlyTest {
 
         // add a default meta field to make searching all documents easy
         doc.add(new StringField("metafile", "doc", Field.Store.YES));
-        return AbstractIndexer.addGeometry(doc, poly, rTree);
+        
+        final String id = doc.get("id");
+        NamedEnvelope namedBound = getNamedEnvelope(id, poly);
+        
+        doc.add(new StoredField(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(poly)));
+        return namedBound;
+    }
+
+    public NamedEnvelope getNamedEnvelope(final String id, final Geometry geom) throws FactoryException, TransformException {
+        final com.vividsolutions.jts.geom.Envelope jtsBound = geom.getEnvelopeInternal();
+        final String epsgCode = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
+        final CoordinateReferenceSystem geomCRS = CRS.decode(epsgCode);
+        final GeneralEnvelope bound = new GeneralEnvelope(geomCRS);
+        bound.setRange(0, jtsBound.getMinX(), jtsBound.getMaxX());
+        bound.setRange(1, jtsBound.getMinY(), jtsBound.getMaxY());
+
+        // reproject to specified CRS
+        return new NamedEnvelope(Envelopes.transform(bound, treeCrs), id);
     }
 
 }
