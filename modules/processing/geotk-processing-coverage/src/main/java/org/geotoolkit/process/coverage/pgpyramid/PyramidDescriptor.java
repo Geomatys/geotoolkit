@@ -40,69 +40,69 @@ import org.opengis.parameter.ParameterValueGroup;
 public class PyramidDescriptor extends AbstractProcessDescriptor{
 
     public static final String NAME = "coveragepyramid";
-    
-                                    /*INPUT*/                                   
+
+                                    /*INPUT*/
     /**************************************************************************/
     /**
      * Input coverage which will be resample.
      */
     public static final ParameterDescriptor<GridCoverage> IN_COVERAGE =
-            new DefaultParameterDescriptor<GridCoverage>("coverage",
+            new DefaultParameterDescriptor<>("coverage",
             "Coverage which will be tile.", GridCoverage.class, null, true);
-    
+
     /**
      * Coverage store within pyramid will be store.
      */
     public static final ParameterDescriptor<CoverageStore> IN_COVERAGESTORE =
-            new DefaultParameterDescriptor<CoverageStore>("in_coverage_store",
+            new DefaultParameterDescriptor<>("in_coverage_store",
             "Coverage store within tiled coverage is stored.", CoverageStore.class, null, true);
-    
+
     /**
      * Tile size of pyramid mosaic.
      */
     public static final ParameterDescriptor<Dimension> IN_TILE_SIZE =
-            new DefaultParameterDescriptor<Dimension>("tile_size",
+            new DefaultParameterDescriptor<>("tile_size",
             "Tile size of mosaic.", Dimension.class, null, false);
-    
+
     /**
      * Pixel interpolation type used during resampling.
      */
     public static final ParameterDescriptor<InterpolationCase> IN_INTERPOLATIONCASE =
-            new DefaultParameterDescriptor<InterpolationCase>("interpolation_type",
+            new DefaultParameterDescriptor<>("interpolation_type",
             "Tile size of mosaic.", InterpolationCase.class, null, true);
-    
+
     /**
      * Pyramid name in database.
      */
     public static final ParameterDescriptor<String> IN_PYRAMID_NAME =
-            new DefaultParameterDescriptor<String>("pyramid_name",
+            new DefaultParameterDescriptor<>("pyramid_name",
             "Tile size of mosaic.", String.class, null, true);
-    
+
     /**
-     * Pixel scal associate at each geographic envelope.
+     * Pixel scale associate at each geographic envelope.
      */
     public static final ParameterDescriptor<Map> IN_RES_PER_ENVELOPE =
-            new DefaultParameterDescriptor<Map>("resolution_per_envelope",
+            new DefaultParameterDescriptor<>("resolution_per_envelope",
             "Define different resample scales for each envelope.", Map.class, null, true);
-    
+
     /**
      * Double table value used during interpolation if pixel coordinates are out of source image boundary.
      */
     public static final ParameterDescriptor<double[]> IN_FILLVALUES =
-            new DefaultParameterDescriptor<double[]>("fillvalue",
+            new DefaultParameterDescriptor<>("fillvalue",
             "Contains value use when pixel transformation is out of source image boundary during resampling.", double[].class, null, false);
     /**************************************************************************/
-    
+
                                       /*OUTPUT*/
     /**************************************************************************/
     /**
-     * FeatureStore where pyrami is stored.
+     * FeatureStore where pyramid is stored.
      */
     public static final ParameterDescriptor<CoverageStore> OUT_COVERAGESTORE =
-            new DefaultParameterDescriptor<CoverageStore>("out_coverage_store",
+            new DefaultParameterDescriptor<>("out_coverage_store",
             "Coverage store within tiled coverage is stored.", CoverageStore.class, null, true);
     /**************************************************************************/
-    
+
                                       /*GROUP*/
     /**************************************************************************/
     //Input group
@@ -113,16 +113,16 @@ public class PyramidDescriptor extends AbstractProcessDescriptor{
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"OutputParameters", OUT_COVERAGESTORE);
     /**************************************************************************/
-    
+
     public static final ProcessDescriptor INSTANCE = new PyramidDescriptor();
-    
+
     private PyramidDescriptor(){
         super(NAME, CoverageProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Create a pyramid/mosaic from the given"
                 + "coverage. Created tiles are stored in the given Coverage store."),
                 INPUT_DESC, OUTPUT_DESC);
     }
-    
+
     @Override
     public Process createProcess(ParameterValueGroup input) {
         return new PyramidProcess(input);

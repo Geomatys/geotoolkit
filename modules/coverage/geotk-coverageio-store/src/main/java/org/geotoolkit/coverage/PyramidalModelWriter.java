@@ -62,9 +62,9 @@ import org.opengis.referencing.operation.TransformException;
  * @author Rémi Maréchal (Geomatys)
  */
 public class PyramidalModelWriter extends GridCoverageWriter {
-    
+
     private final CoverageReference reference;
-    
+
     /**
      * Build a writer on an existing {@linkplain CoverageReference coverage reference}.
      *
@@ -81,23 +81,23 @@ public class PyramidalModelWriter extends GridCoverageWriter {
     }
 
     /**
-     * Write a {@linkplain GridCoverage grid coverage} into the coverage store pointed by the
-     * {@link CoverageReference coverage reference}.
-     *
-     * @param coverage {@link GridCoverage} to write.
-     * @param param Writing parameters for the given coverage. Should not be {@code null}, and
-     *              should contain a valid envelope.
-     * @throws CoverageStoreException if something goes wrong during writing.
-     * @throws CancellationException never thrown in this implementation.
+     * {@inheritedoc}
      */
     @Override
     public void write(GridCoverage coverage, final GridCoverageWriteParam param) throws CoverageStoreException, CancellationException {
-        ArgumentChecks.ensureNonNull("param", param);
         if (coverage == null) {
             return;
         }
         //geographic area where pixel values changes.
-        Envelope requestedEnvelope = param.getEnvelope();
+        Envelope requestedEnvelope = null;
+        if(param != null){
+            requestedEnvelope = param.getEnvelope();
+        }
+
+        if(requestedEnvelope == null){
+            requestedEnvelope = coverage.getEnvelope();
+        }
+
         ArgumentChecks.ensureNonNull("requestedEnvelope", requestedEnvelope);
         final CoordinateReferenceSystem crsCoverage2D;
         final CoordinateReferenceSystem envelopeCrs;
@@ -133,11 +133,11 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         } catch (NoninvertibleTransformException ex) {
             throw new CoverageStoreException(ex);
         }
-        
+
         //to fill value table : see resample.
-        final int nbBand        = image.getSampleModel().getNumBands();        
+        final int nbBand        = image.getSampleModel().getNumBands();
         final PyramidalCoverageReference pm = (PyramidalCoverageReference)reference;
-        
+
         final BlockingQueue<Runnable> tileQueue;
         try {
             tileQueue = new ByTileQueue(pm, requestedEnvelope, crsCoverage2D, image, nbBand, srcCRSToGrid);
@@ -145,9 +145,9 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             throw new CoverageStoreException(ex);
         }
         final ThreadPoolExecutor service = new ThreadPoolExecutor(
-                Runtime.getRuntime().availableProcessors(), 
-                Runtime.getRuntime().availableProcessors(), 
-                1, TimeUnit.MINUTES, tileQueue);        
+                Runtime.getRuntime().availableProcessors(),
+                Runtime.getRuntime().availableProcessors(),
+                1, TimeUnit.MINUTES, tileQueue);
         service.prestartAllCoreThreads();
         service.shutdown();
         while(true){
@@ -160,7 +160,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             }
         }
     }
-    
+
     private static class ByTileQueue extends AbstractQueue<Runnable> implements BlockingQueue<Runnable> {
 
         private final PyramidalCoverageReference model;
@@ -170,7 +170,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         private final MathTransform srcCRSToGrid;
         private final int nbBand;
         private volatile boolean finished = false;
-        
+
         //iteration state informations
         private final Iterator<Pyramid> pyramidsIte;
         private Iterator<GridMosaic> mosaics;
@@ -180,7 +180,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         private CoordinateReferenceSystem destCrs2D;
         private MathTransform crsDestToCrsCoverage;
         private Envelope pyramidEnvelope;
-        
+
         //mosaic infos
         private double res;
         private double mosULX;
@@ -195,8 +195,8 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         private int idmaxy;
         private int idx = -1;
         private int idy = -1;
-        
-        private ByTileQueue(PyramidalCoverageReference model, Envelope requestedEnvelope, 
+
+        private ByTileQueue(PyramidalCoverageReference model, Envelope requestedEnvelope,
                 CoordinateReferenceSystem crsCoverage2D, RenderedImage sourceImage, int nbBand, MathTransform srcCRSToGrid) throws DataStoreException{
             this.model = model;
             this.requestedEnvelope = requestedEnvelope;
@@ -206,7 +206,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             this.srcCRSToGrid = srcCRSToGrid;
             pyramidsIte = model.getPyramidSet().getPyramids().iterator();
         }
-        
+
         @Override
         public Iterator<Runnable> iterator() {
             throw new UnsupportedOperationException("Not supported.");
@@ -271,7 +271,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         }
 
         private boolean calculateMosaicRange(final GridMosaic mosaic, Envelope pyramidEnvelope){
-            
+
             res = mosaic.getScale();
             final DirectPosition moUpperLeft = mosaic.getUpperLeftCorner();
 
@@ -291,7 +291,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             mosAreaX       = (int) Math.round(Math.abs((mosULX - intersection.getMinimum(minOrdinate))) /res);
             mosAreaY       = (int) Math.round(Math.abs((mosULY - intersection.getMaximum(minOrdinate+1))) /res);
             final int mosAreaWidth   = (int)((intersection.getSpan(minOrdinate) / res));
-            
+
             final int mosAreaHeight  = (int)((intersection.getSpan(minOrdinate+1) / res));
             mosAreaMaxX    = mosAreaX + mosAreaWidth;
             mosAreaMaxY    = mosAreaY + mosAreaHeight;
@@ -306,13 +306,13 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             idminy         = mosAreaY / tileHeight;
             idmaxx         = (mosAreaMaxX + tileWidth-1) / tileWidth;
             idmaxy         = (mosAreaMaxY + tileHeight - 1) / tileHeight;
-            
+
             return true;
         }
-        
+
         @Override
         public synchronized Runnable poll() {
-            
+
             //find next tile to build
             loop:
             while(true){
@@ -320,7 +320,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                     if(pyramidsIte.hasNext()){
                         currentPyramid = pyramidsIte.next();
                         mosaics = currentPyramid.getMosaics().iterator();
-                        
+
                         //define CRS and mathTransform from current pyramid to source coverage.
                         try {
                             destCrs2D = CRSUtilities.getCRS2D(currentPyramid.getCoordinateReferenceSystem());
@@ -330,9 +330,9 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
-                        
+
                         crsDestToSrcGrid = MathTransforms.concatenate(crsDestToCrsCoverage, srcCRSToGrid);
-                        
+
                     }else{
                         //we have finish
                         finished = true;
@@ -353,13 +353,13 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                         continue;
                     }
                 }
-                
+
                 if(idx==-1){
                     calculateMosaicRange(currentMosaic, pyramidEnvelope);
                     idx = idminx-1;
                     idy = idminy;
                 }
-                
+
                 while(true){
                     idx++;
                     if(idx>=idmaxx){
@@ -373,19 +373,19 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                     }
                     break;
                 }
-                
-                return new TileUpdater(model, currentMosaic, 
-                        idx, idy, 
-                        mosAreaX, mosAreaY, 
-                        mosAreaMaxX, mosAreaMaxY, 
-                        mosULX, mosULY, 
-                        crsDestToSrcGrid, 
+
+                return new TileUpdater(model, currentMosaic,
+                        idx, idy,
+                        mosAreaX, mosAreaY,
+                        mosAreaMaxX, mosAreaMaxY,
+                        mosULX, mosULY,
+                        crsDestToSrcGrid,
                         sourceImage, nbBand, res);
             }
         }
-        
+
     }
-    
+
     private static class TileUpdater implements Runnable{
 
         private final PyramidalCoverageReference pm;
@@ -404,12 +404,12 @@ public class PyramidalModelWriter extends GridCoverageWriter {
         private final double res;
         private final MathTransform crsDestToSrcGrid;
         private final RenderedImage baseImage;
-        
+
         private final int tileWidth;
         private final int tileHeight;
 
-        public TileUpdater(PyramidalCoverageReference pm, GridMosaic mosaic, int idx, int idy, 
-                int mosAreaX, int mosAreaY, int mosAreaMaxX, int mosAreaMaxY, 
+        public TileUpdater(PyramidalCoverageReference pm, GridMosaic mosaic, int idx, int idy,
+                int mosAreaX, int mosAreaY, int mosAreaMaxX, int mosAreaMaxY,
                 double mosULX, double mosULY, MathTransform crsDestToSrcGrid,
                 RenderedImage image, int nbBand, double res) {
             this.pm = pm;
@@ -431,13 +431,13 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             this.tileHeight = mosaic.getTileSize().height;
             this.baseImage = image;
         }
-        
-        
-        
+
+
+
         @Override
         public void run() {
             final BufferedImage currentlyTile;
-            
+
             if(!mosaic.isMissing(idx, idy)){
                 try {
                     currentlyTile = mosaic.getTile(idx, idy, null).getImageReader().read(0);
@@ -470,7 +470,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             final int tmaxy  = Math.min(mosAreaMaxY, minidy + tileHeight);
             final Rectangle tileAreaWork = new Rectangle();
             tileAreaWork.setBounds(tminx - minidx, tminy - minidy, tmaxx - tminx, tmaxy - tminy);
-            
+
             try {
                 final Resample resample = new Resample(destImgToCrsCoverage, currentlyTile, tileAreaWork, interpolation, new double[nbBand]);
                 resample.fillImage();
@@ -479,7 +479,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                 throw new RuntimeException(ex);
             }
         }
-        
+
     }
-    
+
 }
