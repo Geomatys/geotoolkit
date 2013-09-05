@@ -78,6 +78,7 @@ public class TreeDemo {
             
             private int currentSize      = 100;
             private Envelope[] envelopes = new Envelope[currentSize];
+            private boolean isClose = false;
             
             /**
              * {@inheritDoc }
@@ -138,7 +139,16 @@ public class TreeDemo {
              */
             @Override
             public void close() throws IOException {
-                // do nothing no stream to close.
+                // no stream to close.
+                isClose = true;
+            }
+
+            /**
+             * {@inheritDoc }
+             */
+            @Override
+            public boolean isClosed() {
+                return isClose;
             }
         };
         
