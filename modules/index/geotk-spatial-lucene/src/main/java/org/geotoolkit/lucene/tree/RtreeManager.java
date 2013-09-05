@@ -41,10 +41,12 @@ public class RtreeManager {
     private static final Logger LOGGER = Logging.getLogger(RtreeManager.class);
 
     public static void close(final Tree rTree) throws StoreIndexException, IOException {
-        if (!rTree.isClosed()) {
-            rTree.close();
-            if (rTree.getTreeElementMapper() != null) {
-                rTree.getTreeElementMapper().close();
+        if (rTree != null) {
+            if (!rTree.isClosed()) {
+                rTree.close();
+                if (rTree.getTreeElementMapper() != null) {
+                    rTree.getTreeElementMapper().close();
+                }
             }
         }
     }
