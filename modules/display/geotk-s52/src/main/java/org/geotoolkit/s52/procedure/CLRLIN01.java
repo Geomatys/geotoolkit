@@ -18,9 +18,17 @@ package org.geotoolkit.s52.procedure;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.text.NumberFormat;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
+import org.geotoolkit.display2d.style.j2d.TextStroke;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
@@ -37,6 +45,14 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class CLRLIN01 extends Procedure{
 
+    private static final SimpleLine LINE = new SimpleLine();
+    static {
+        LINE.color = "NINFO";
+        LINE.width = 1;
+        LINE.style = SimpleLine.PStyle.SOLD;
+    }
+    private static final Font FONT = new Font("Sans-serif", Font.PLAIN, 10);
+
     public CLRLIN01() {
         super("CLRLINO1");
     }
@@ -46,16 +62,14 @@ public class CLRLIN01 extends Procedure{
         final Feature feature = (Feature) graphic.getCandidate();
 
         //render a simple line
-        final SimpleLine sl = new SimpleLine();
-        sl.color = "NINFO";
-        sl.width = 1;
-        sl.style = SimpleLine.PStyle.SOLD;
-        sl.render(ctx, context, colorTable, graphic, null);
+        LINE.render(ctx, context, colorTable, graphic, null);
 
         //find the bearing
         final Geometry geom;
+        final Shape shp;
         try {
             geom = graphic.getGeometry(null).getDisplayGeometryJTS();
+            shp = graphic.getGeometry(null).getDisplayShape();
         } catch (TransformException ex) {
             throw new PortrayalException(ex);
         }
@@ -71,9 +85,27 @@ public class CLRLIN01 extends Procedure{
 
         //draw the text
         final Object value = feature.getProperty("catclr").getValue();
-        if(value == null) return;
+        if(value != null){
+            String text = "";
+            if("1".equals(value)){
+                text += "NMT ";
+            }else{
+                text += "NLT ";
+            }
+            text += NumberFormat.getNumberInstance().format(Math.toDegrees(angle));
 
-        System.out.println("TODO draw text");
+            ctx.switchToDisplayCRS();
+            final TextStroke stroke = new TextStroke(text, FONT, false, 0, 0, 0,ctx.getCanvasDisplayBounds());
+            final Shape shape = stroke.createStrokedShape(shp);
+
+            //paint text
+            final Graphics2D g2d = ctx.getGraphics();
+            g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
+            g2d.setStroke(new BasicStroke(0));
+            g2d.setColor(colorTable.getColor("CHBLK"));
+            g2d.fill(shape);
+        }
+
     }
 
 }

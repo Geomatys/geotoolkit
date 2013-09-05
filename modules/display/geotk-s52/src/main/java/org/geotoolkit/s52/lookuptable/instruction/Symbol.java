@@ -20,8 +20,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
@@ -41,9 +39,6 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class Symbol extends Instruction{
 
-    public Symbol() {
-        super("SY");
-    }
 
     /**
      * The symbol name is an 8 letter‑code that is composed of a class code
@@ -61,6 +56,16 @@ public class Symbol extends Instruction{
      *      in degrees clockwise from 0 to 360. The default value is 0 degrees."
      */
     public String rotation;
+
+    public Symbol() {
+        super("SY");
+    }
+
+    public Symbol(String symbolName,String rotation) {
+        this();
+        this.symbolName = symbolName;
+        this.rotation = rotation;
+    }
 
     @Override
     protected void readParameters(String str) throws IOException {

@@ -19,6 +19,7 @@ package org.geotoolkit.s52.lookuptable;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.io.TableAppender;
+import org.opengis.feature.Feature;
 
 /**
  * S-52 lookup table.
@@ -48,6 +49,34 @@ public class LookupTable {
             }
         }
         return match;
+    }
+
+    /**
+     * Find the lookup record which apply to this feature.
+     * @param records
+     * @param feature
+     * @return
+     */
+    public static LookupRecord getActiveRecord(List<LookupRecord> records, Feature feature){
+        final int size = records.size();
+        // 0 is the fail safe record (p.66 8.3.3.3)
+        LookupRecord validRec = records.get(0);
+        if(size == 1){
+            // Annex A part I p.65 8.3.3.2
+            // If only a single line is found, field 2 of that line shall be empty
+            // and the object is always shown with the same symbology.
+            return records.get(0);
+        }
+
+        for(int i=1;i<size;i++){
+            //filter on fields
+            final LookupRecord rec = records.get(i);
+            if(rec.getFilter().evaluate(feature)){
+                return rec;
+            }
+        }
+
+        return validRec;
     }
 
     @Override

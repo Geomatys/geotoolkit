@@ -51,6 +51,11 @@ public class ComplexLine extends Instruction{
         super("LC");
     }
 
+    public ComplexLine(String LINNAME) {
+        this();
+        this.LINNAME = LINNAME;
+    }
+
     @Override
     protected void readParameters(String str) throws IOException {
         LINNAME = str.trim();

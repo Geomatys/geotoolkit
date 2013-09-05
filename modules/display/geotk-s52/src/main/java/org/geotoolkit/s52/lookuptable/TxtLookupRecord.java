@@ -57,6 +57,15 @@ public class TxtLookupRecord extends LookupRecord{
      */
     public Integer viewingGroup;
 
+    public TxtLookupRecord() {
+    }
+
+    public TxtLookupRecord(String objectClass, String attributeCombination, String symbolInstruction) {
+        this.objectClass = objectClass;
+        this.attributeCombination = attributeCombination;
+        this.symbolInstruction = symbolInstruction;
+    }
+
     @Override
     public String getObjectClass() {
         return objectClass;

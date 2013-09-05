@@ -132,7 +132,7 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
         //ensure we paint in display mode.
         renderingContext.switchToDisplayCRS();
 
-        final LookupRecord record = getActiveRecord(records,feature);
+        final LookupRecord record = LookupTable.getActiveRecord(records,feature);
         final Instruction[] instructions = record.getInstruction();
 
         try{
@@ -185,7 +185,7 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
                 continue;
             }
 
-            element.record = getActiveRecord(records,feature);
+            element.record = LookupTable.getActiveRecord(records,feature);
             element.priority = element.record.getPriority();
             elements.add(element);
         }
@@ -204,33 +204,7 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
 
     }
 
-    /**
-     * Find the lookup record which apply to this feature.
-     * @param records
-     * @param feature
-     * @return
-     */
-    private LookupRecord getActiveRecord(List<LookupRecord> records, Feature feature){
-        final int size = records.size();
-        // 0 is the fail safe record (p.66 8.3.3.3)
-        LookupRecord validRec = records.get(0);
-        if(size == 1){
-            // Annex A part I p.65 8.3.3.2
-            // If only a single line is found, field 2 of that line shall be empty
-            // and the object is always shown with the same symbology.
-            return records.get(0);
-        }
 
-        for(int i=1;i<size;i++){
-            //filter on fields
-            final LookupRecord rec = records.get(i);
-            if(rec.getFilter().evaluate(feature)){
-                return rec;
-            }
-        }
-
-        return validRec;
-    }
 
     @Override
     public boolean hit(ProjectedObject graphic, SearchAreaJ2D mask, VisitFilter filter) {
