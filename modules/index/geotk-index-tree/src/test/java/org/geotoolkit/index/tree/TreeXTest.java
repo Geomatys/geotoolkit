@@ -222,12 +222,17 @@ class TreeXElementMapperTest implements TreeElementMapper<Envelope> {
 
     private final List<Envelope> lData;
     private final List<Integer> lID;
+    private boolean isClosed;
 
     public TreeXElementMapperTest() {
-        this.lData = new ArrayList<Envelope>();
-        this.lID = new ArrayList<Integer>();
+        this.lData    = new ArrayList<Envelope>();
+        this.lID      = new ArrayList<Integer>();
+        this.isClosed = false;
     }
     
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int getTreeIdentifier(Envelope object) {
         for (int i = 0, s = lData.size(); i < s; i++) {
@@ -238,17 +243,26 @@ class TreeXElementMapperTest implements TreeElementMapper<Envelope> {
         throw new IllegalStateException("impossible to found treeIdentifier.");
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Envelope getEnvelope(Envelope object) {
         return object;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setTreeIdentifier(Envelope object, int treeIdentifier) {
         lData.add(object);
         lID.add(treeIdentifier);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Envelope getObjectFromTreeIdentifier(int treeIdentifier) {
         for (int i = 0, l = lID.size(); i < l; i++) {
@@ -259,14 +273,29 @@ class TreeXElementMapperTest implements TreeElementMapper<Envelope> {
         throw new IllegalStateException("impossible to found Data.");
     }    
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void clear() {
         lData.clear();
         lID.clear();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void close() throws IOException {
         // do nothing
+        isClosed = true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean isClosed() {
+        return isClosed;
     }
 }

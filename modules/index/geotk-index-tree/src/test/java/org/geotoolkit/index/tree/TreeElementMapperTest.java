@@ -34,11 +34,13 @@ public class TreeElementMapperTest implements TreeElementMapper<double[]> {
     private final CoordinateReferenceSystem crs;
     private final List<double[]> lData;
     private final List<Integer> lID;
+    private boolean isClosed;
 
     public TreeElementMapperTest(CoordinateReferenceSystem crs) {
-        this.crs   = crs;
-        this.lData = new ArrayList<double[]>();
-        this.lID   = new ArrayList<Integer>();
+        this.crs      = crs;
+        this.lData    = new ArrayList<double[]>();
+        this.lID      = new ArrayList<Integer>();
+        this.isClosed = false;
     }
     
     /**
@@ -100,6 +102,14 @@ public class TreeElementMapperTest implements TreeElementMapper<double[]> {
      */
     @Override
     public void close() throws IOException {
-        // do nothing
+        isClosed = true;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public boolean isClosed() {
+        return isClosed;
     }
 }

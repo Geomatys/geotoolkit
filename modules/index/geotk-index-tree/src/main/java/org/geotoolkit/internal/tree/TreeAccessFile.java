@@ -186,7 +186,7 @@ public class TreeAccessFile extends TreeAccess {
         // read nodeID
         nodeId = inOutStream.readInt();
         if (nodeId == 0)
-            throw new IllegalStateException("User isn't invoked tree.close() method after insertions. You should build again RTree.");
+            throw new IllegalStateException("User has not been invoked tree.close() method after insertions. You should build again RTree.");
         treeIdentifier = inOutStream.readInt();
         // read element number within tree
         eltNumber = inOutStream.readInt();

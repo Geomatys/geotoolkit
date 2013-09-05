@@ -136,5 +136,5 @@ public interface Tree<E> {
      * 
      * @return true if {@link Tree} has already been closed else false.
      */
-    boolean isClose();
+    boolean isClosed();
 }

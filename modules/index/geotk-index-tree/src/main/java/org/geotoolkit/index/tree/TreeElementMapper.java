@@ -69,4 +69,11 @@ public interface TreeElementMapper<E> {
      * Close write and read stream if exist.
      */
     public void close() throws IOException;
+    
+    /**
+     * Return true if {@link TreeElementMapper} has already been closed else false.
+     * 
+     * @return true if {@link TreeElementMapper} has already been closed else false.
+     */
+    public boolean isClosed();
 }

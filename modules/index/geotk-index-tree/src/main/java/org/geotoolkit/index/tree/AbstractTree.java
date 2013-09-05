@@ -605,7 +605,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
      * {@inheritDoc }
      */
     @Override
-    public boolean isClose() {
+    public boolean isClosed() {
         return treeAccess.isClose();
     }
     

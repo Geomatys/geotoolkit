@@ -362,7 +362,7 @@ public abstract class AbstractTreeTest extends TreeTest {
         assertTrue("comparison between tabSearch from iterator not equals with tabSearch", compareID(tabSearch, tabIterSearch));
         assertTrue(compareLists(lData, Arrays.asList(getResult(tabSearch))));
     }
-    
+        
     /**
      * Return result given by {@link TreeElementMapper} from tree identifier table given in parameter.
      * 

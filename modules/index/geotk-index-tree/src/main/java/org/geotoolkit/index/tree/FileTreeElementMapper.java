@@ -193,7 +193,7 @@ public abstract class FileTreeElementMapper<E> implements TreeElementMapper<E> {
         
         // load buffer
         inOutChannel.read(byteBuffer, currentBufferPosition);
-    }
+      }
     
     /**
      * Write object in output stream already positioned.
@@ -318,5 +318,13 @@ public abstract class FileTreeElementMapper<E> implements TreeElementMapper<E> {
         inOutStream.writeInt(maxPosition);
         inOutChannel.close();
         inOutStream.close();
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public synchronized boolean isClosed() {
+        return !inOutChannel.isOpen();
     }
 }

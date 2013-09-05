@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.geotoolkit.index.tree.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Create a generic HilbertRTree Test suite where Tree is store on hard drive.<br/>
@@ -49,6 +50,8 @@ abstract class ReadeableHilbertRTreeTest extends HilbertTest {
         insert();
         tree.close();
         tEM.close();
+        assertTrue(tree.isClosed());
+        assertTrue(tEM.isClosed());
         
         tEM = new FileTreeElementMapperTest(treeMapperFile, crs);
         tree = new FileHilbertRTree(inOutFile, tEM);

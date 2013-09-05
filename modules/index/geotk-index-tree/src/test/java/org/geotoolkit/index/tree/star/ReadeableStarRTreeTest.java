@@ -22,6 +22,7 @@ import org.geotoolkit.index.tree.AbstractTreeTest;
 import org.geotoolkit.index.tree.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Create a generic StarRTree Test suite where Tree is store on hard drive.<br/>
@@ -53,6 +54,8 @@ abstract class ReadeableStarRTreeTest extends AbstractTreeTest {
         insert();
         tree.close();
         tEM.close();
+        assertTrue(tree.isClosed());
+        assertTrue(tEM.isClosed());
         
         // open Tree from already filled files.
         tEM  = new FileTreeElementMapperTest(treeMapperFile, crs);
