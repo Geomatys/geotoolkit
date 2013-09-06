@@ -60,8 +60,18 @@ public class FormatExpression extends AbstractFunction {
             //concatenate value with a space
             final StringBuilder sb = new StringBuilder();
             for(int i=0;i<values.length;i++){
+                if(values[i]==null) continue;
                 if(i>0) sb.append(' ');
-                sb.append(values[i]);
+                if(values[i] instanceof String[]){
+                    final String[] strs = (String[]) values[i];
+                    for(int k=0;k<strs.length;k++){
+                        if(k>0) sb.append(',');
+                        sb.append(strs[k]);
+                    }
+                }else{
+                    sb.append(values[i]);
+                }
+
             }
             return sb.toString();
         }else{
