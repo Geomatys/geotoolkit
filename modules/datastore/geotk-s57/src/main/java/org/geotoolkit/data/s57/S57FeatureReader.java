@@ -32,7 +32,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.iso8211.DataRecord;
 import org.geotoolkit.data.iso8211.Field;
-import org.geotoolkit.data.s57.annexe.S57TypeBank;
+import org.geotoolkit.data.s57.model.BaseAttribute;
 import org.geotoolkit.data.s57.model.DataSetIdentification;
 import org.geotoolkit.data.s57.model.DataSetParameter;
 import org.geotoolkit.data.s57.model.FeatureRecord;
@@ -44,9 +44,9 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.util.Converters;
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -178,13 +178,11 @@ public class S57FeatureReader implements FeatureReader{
         //read attributes
         for(FeatureRecord.Attribute att : record.attributes){
             final PropertyDescriptor desc = properties.get(att.code);
-            final Object val = Converters.convert(att.value, desc.getType().getBinding());
-            f.getProperty(desc.getName().getLocalPart()).setValue(val);
+            readAttribute(att, desc, f.getProperty(desc.getName().getLocalPart()));
         }
         for(FeatureRecord.NationalAttribute att : record.nattributes){
             final PropertyDescriptor desc = properties.get(att.code);
-            final Object val = Converters.convert(att.value, desc.getType().getBinding());
-            f.getProperty(desc.getName().getLocalPart()).setValue(val);
+            readAttribute(att, desc, f.getProperty(desc.getName().getLocalPart()));
         }
 
         //rebuild geometry
@@ -208,6 +206,18 @@ public class S57FeatureReader implements FeatureReader{
         }
 
         return f;
+    }
+
+    private static void readAttribute(BaseAttribute att, PropertyDescriptor desc, Property prop){
+        final Class binding = desc.getType().getBinding();
+        if(binding.isArray()){
+            //enumeration list type
+            final String[] val = att.value.split(",");
+            prop.setValue(val);
+        }else{
+            final Object val = Converters.convert(att.value, binding);
+            prop.setValue(val);
+        }
     }
 
     private Geometry rebuildSpaghetti(final FeatureRecord record){

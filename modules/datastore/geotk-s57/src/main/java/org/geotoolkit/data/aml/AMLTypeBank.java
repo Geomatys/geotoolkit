@@ -171,7 +171,7 @@ public final class AMLTypeBank implements TypeBank{
         }else if("Enumeration".equals(aml.Attribute_Type)){
             binding = String.class;
         }else if("List".equals(aml.Attribute_Type)){
-            binding = String.class;
+            binding = String[].class;
         }else if("Integer".equals(aml.Attribute_Type)){
             binding = Integer.class;
         }else if("Real".equals(aml.Attribute_Type)){

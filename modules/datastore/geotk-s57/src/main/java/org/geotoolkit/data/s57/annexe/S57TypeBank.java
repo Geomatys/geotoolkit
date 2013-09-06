@@ -219,7 +219,7 @@ public class S57TypeBank implements TypeBank{
             binding = String.class;
         }else if("L".equalsIgnoreCase(pt.type)){
             //enumaration list
-            binding = String.class;
+            binding = String[].class;
         }else if("F".equalsIgnoreCase(pt.type)){
             //float
             binding = Double.class;
