@@ -75,7 +75,11 @@ public class RtreeManager {
         try {
             final CoordinateReferenceSystem crs = CRS.decode("CRS:84");
             //creating tree (R-Tree)------------------------------------------------
-            return new FileStarRTree(new File(directory, "tree.bin"), 5, crs, new LuceneFileTreeEltMapper(crs, new File(directory, "mapper.bin")));
+            final File treeFile   = new File(directory, "tree.bin");
+            final File mapperFile = new File(directory, "mapper.bin");
+            treeFile.createNewFile();
+            mapperFile.createNewFile();
+            return new FileStarRTree(treeFile, 5, crs, new LuceneFileTreeEltMapper(crs, mapperFile));
 
         } catch (FactoryException ex) {
             LOGGER.log(Level.WARNING, "Unable to get the CRS:84 CRS", ex);

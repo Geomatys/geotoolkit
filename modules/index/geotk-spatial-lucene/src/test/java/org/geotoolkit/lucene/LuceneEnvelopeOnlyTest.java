@@ -88,7 +88,7 @@ public class LuceneEnvelopeOnlyTest {
         }
     }
 
-    private File directory;
+    private final File directory = new File("luceneEnvolopeOnlyTest");
     private IndexSearcher searcher;
     private Query simpleQuery;
     private org.opengis.filter.Filter filter;
@@ -97,8 +97,8 @@ public class LuceneEnvelopeOnlyTest {
     @Before
     public void setUpMethod() throws Exception {
 
-        directory = new File("luceneTest");
         FileUtilities.deleteDirectory(directory);
+        directory.mkdir();
 
         //creating tree (R-Tree)------------------------------------------------
         final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
@@ -115,7 +115,6 @@ public class LuceneEnvelopeOnlyTest {
 
     @After
     public void tearDownMethod() throws Exception {
-        directory = new File("luceneTest");
         FileUtilities.deleteDirectory(directory);
     }
 

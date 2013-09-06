@@ -121,6 +121,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
         if (currentIndexDirectory == null) {
             currentIndexDirectory = new File(configDirectory, serviceID + "index-" + System.currentTimeMillis());
+            currentIndexDirectory.mkdir();
             create = true;
             setFileDirectory(currentIndexDirectory);
         } else {
@@ -129,8 +130,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             // must be set before reading tree
             setFileDirectory(currentIndexDirectory);
             create = false;
-            rTree = RtreeManager.get(currentIndexDirectory);
         }
+        rTree = RtreeManager.get(currentIndexDirectory);
     }
 
     /**
@@ -176,7 +177,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             final IndexWriter writer     = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
             final String serviceID       = getServiceID();
             
-            rTree = RtreeManager.resetTree(getFileDirectory(), rTree);
+            resetTree();
             nbEntries = toIndex.size();
             for (E entry : toIndex) {
                 if (!stopIndexing && !indexationToStop.contains(serviceID)) {
@@ -215,8 +216,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             final IndexWriter writer       = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
             final String serviceID         = getServiceID();
             final Collection<String> identifiers = getAllIdentifiers();
-            rTree = RtreeManager.resetTree(getFileDirectory(), rTree);
-            
+
+            resetTree();
             LOGGER.log(logLevel, "{0} entry to read.", identifiers.size());
             for (String identifier : identifiers) {
                 if (!stopIndexing && !indexationToStop.contains(serviceID)) {
@@ -400,15 +401,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param srid coordinate spatial reference identifier.
      */
     protected void addBoundingBox(final Document doc, final List<Double> minx, final List<Double> maxx, final List<Double> miny, final List<Double> maxy, final int srid) {
-        final List<Polygon> polygonList = new ArrayList<>();
-        for (int i = 0; i < minx.size(); i++) {
-            if (Double.isNaN(minx.get(i)) || Double.isNaN(maxx.get(i)) || Double.isNaN(miny.get(i)) || Double.isNaN(maxy.get(i))) {
-                LOGGER.info("skip NaN envelope");
-            } else {
-                polygonList.add(LuceneUtils.getPolygon(minx.get(i), maxx.get(i), miny.get(i), maxy.get(i),srid));
-            }
-        }
-        final Polygon[] polygons = polygonList.toArray(new Polygon[polygonList.size()]);
+        final Polygon[] polygons = LuceneUtils.getPolygons(minx, maxx, miny, maxy, srid);
         Geometry geom;
         if (polygons.length == 1) {
             geom = polygons[0];

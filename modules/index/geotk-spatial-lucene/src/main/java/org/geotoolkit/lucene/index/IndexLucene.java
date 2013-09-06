@@ -137,10 +137,6 @@ public abstract class IndexLucene {
         this.logLevel = logLevel;
     }
 
-    public Tree<NamedEnvelope> getRtree() {
-        return rTree;
-    }
-
     public CoordinateReferenceSystem getTreeCrs() {
         return rTree.getCrs();
     }
@@ -154,6 +150,10 @@ public abstract class IndexLucene {
             closeTree();
             closed = true;
         }
+    }
+
+    protected void resetTree() throws StoreIndexException, IOException {
+        rTree = RtreeManager.resetTree(getFileDirectory(), rTree);
     }
 
     private void closeTree() {

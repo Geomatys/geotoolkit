@@ -89,7 +89,7 @@ public class LuceneTest {
         }
     }
 
-    private File directory;
+    private final File directory = new File("luceneTest");
     private IndexSearcher searcher;
     private Query         simpleQuery;
     private org.opengis.filter.Filter filter;
@@ -99,12 +99,11 @@ public class LuceneTest {
 
     @Before
     public void setUpMethod() throws Exception {
-
-        directory = new File("luceneTest");
         if (directory.exists()) {
             FileUtilities.deleteDirectory(directory);
         }
-
+        directory.mkdir();
+        
         final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
         final DocumentIndexer indexer = new DocumentIndexer(directory, fillTestData(), analyzer);
         indexer.createIndex();
@@ -118,7 +117,6 @@ public class LuceneTest {
 
     @After
     public void tearDownMethod() throws Exception {
-        directory = new File("luceneTest");
         FileUtilities.deleteDirectory(directory);
     }
 

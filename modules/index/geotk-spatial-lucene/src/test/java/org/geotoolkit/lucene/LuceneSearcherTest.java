@@ -55,6 +55,7 @@ import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.geotoolkit.referencing.CRS;
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
 import org.geotoolkit.lucene.index.LuceneIndexSearcher;
+import org.geotoolkit.lucene.tree.RtreeManager;
 import org.geotoolkit.util.FileUtilities;
 
 import org.opengis.filter.FilterFactory2;
@@ -87,7 +88,7 @@ public class LuceneSearcherTest {
     }
 
     private Map<String, NamedEnvelope> envelopes = new HashMap<>();
-    private File directory;
+    private File directory = new File("luceneSearcherTest");
     private LuceneIndexSearcher searcher;    
     private CoordinateReferenceSystem treeCrs;
     private org.opengis.filter.Filter filter;
@@ -95,8 +96,6 @@ public class LuceneSearcherTest {
 
     @Before
     public void setUpMethod() throws Exception {
-        directory = new File("luceneSearcherTest");
-
         if (directory.exists()) {
             FileUtilities.deleteDirectory(directory);
         }
@@ -226,7 +225,7 @@ public class LuceneSearcherTest {
      */
     @Test
     public void rTreeBBOXTest() throws Exception {
-        Tree rTree = searcher.getRtree();
+        Tree rTree = RtreeManager.get(searcher.getFileDirectory());
         /*
          * first bbox
          */
