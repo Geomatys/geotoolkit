@@ -20,6 +20,8 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
+import org.geotoolkit.s52.lookuptable.instruction.Symbol;
+import org.opengis.feature.Feature;
 
 /**
  *
@@ -36,9 +38,39 @@ public class QUAPNT02 extends Procedure{
         System.out.println("Procedure "+getName()+" not implemented yet");
     }
 
-    public boolean eval(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic) {
-        System.out.println("Procedure "+getName()+" not implemented yet");
-        return true;
+    /**
+     * returns
+     * [0] boolean : flag indicating whether or not to display the low accuracy symbol.
+     * [1] Symbol : selected symbol
+     *
+     * @param ctx
+     * @param context
+     * @param colorTable
+     * @param graphic
+     * @return
+     */
+    public Object[] eval(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic) {
+        final Feature feature = (Feature) graphic.getCandidate();
+        boolean accurate = true;
+        Symbol symbol = null;
+
+        if(context.isLowAccuracySymbols()){
+            //TODO for each spatial component
+            final Object value = (feature.getProperty("QUAPOS")==null) ? null : feature.getProperty("QUAPOS").getValue();
+            if(value != null){
+                int val = Integer.valueOf(value.toString());
+                if(val > 1 && val < 10){
+                    accurate = false;
+                    //TODO break spatial loop
+                }
+            }
+        }
+
+        if(!accurate){
+            symbol = new Symbol("LOWACC01", null);
+        }
+
+        return new Object[]{!accurate,symbol};
     }
 
 }

@@ -86,6 +86,13 @@ public class SimpleLine extends Instruction{
         super("LS");
     }
 
+    public SimpleLine(PStyle style, int width, String color) {
+        this();
+        this.style = style;
+        this.width = width;
+        this.color = color;
+    }
+
     /**
      * Java2D stroke object that match this line style.
      * @return Stroke

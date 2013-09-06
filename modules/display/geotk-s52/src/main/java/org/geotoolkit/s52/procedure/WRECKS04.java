@@ -25,6 +25,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
+import org.geotoolkit.s52.lookuptable.instruction.Symbol;
 import org.geotoolkit.s52.render.SymbolStyle;
 import org.opengis.feature.Feature;
 import org.opengis.referencing.operation.TransformException;
@@ -105,7 +106,9 @@ public class WRECKS04 extends Procedure{
         final boolean displayIsolateDanger = udwhaz04.render(ctx, context, colorTable, graphic, depthValue);
 
         final QUAPNT02 quapnt02 = new QUAPNT02();
-        final boolean displayLowAccuracy = quapnt02.eval(ctx, context, colorTable, graphic);
+        final Object[] res = quapnt02.eval(ctx, context, colorTable, graphic);
+        final boolean displayLowAccuracy = (Boolean)res[0];
+        final Symbol lowAccuracy = (Symbol) res[1];
 
         if(geotype == S52Context.GeoType.POINT){
             final Coordinate center;
@@ -131,7 +134,7 @@ public class WRECKS04 extends Procedure{
                         danger = context.getSyle("DANGER02");
                     }
                     danger.render(g2d, context, colorTable, center, 0f);
-                    //TODO symbol low accuracy ?
+                    if(displayLowAccuracy) lowAccuracy.render(ctx, context, colorTable, graphic, geotype);
                     for(SymbolStyle ss : isolateSymbols){
                         ss.render(g2d, context, colorTable, center, 0f);
                     }
@@ -159,7 +162,7 @@ public class WRECKS04 extends Procedure{
                     }
 
                     wreck.render(g2d, context, colorTable, center, 0f);
-                    //TODO symbol low accuracy ?
+                    if(displayLowAccuracy) lowAccuracy.render(ctx, context, colorTable, graphic, geotype);
                 }
             }
         }else{

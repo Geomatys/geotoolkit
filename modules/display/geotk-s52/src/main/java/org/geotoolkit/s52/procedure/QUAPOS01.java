@@ -16,10 +16,12 @@
  */
 package org.geotoolkit.s52.procedure;
 
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
+import org.geotoolkit.s52.lookuptable.instruction.Symbol;
 
 /**
  *
@@ -32,8 +34,22 @@ public class QUAPOS01 extends Procedure{
     }
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geotype) {
-        System.out.println("Procedure "+getName()+" not implemented yet");
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geotype) throws PortrayalException {
+
+        if(geotype == S52Context.GeoType.LINE){
+            final Procedure proc = context.getProcedure("QUALIN01");
+            proc.render(ctx, context, colorTable, graphic, geotype);
+        }else{
+            final QUAPNT02 proc = (QUAPNT02) context.getProcedure("QUAPNT02");
+            final Object[] res = proc.eval(ctx, context, colorTable, graphic);
+            final boolean flag = (Boolean)res[0];
+            final Symbol ss = (Symbol) res[1];
+
+            if(flag){
+                ss.render(ctx, context, colorTable, graphic, geotype);
+            }
+        }
+
     }
 
 }

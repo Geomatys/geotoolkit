@@ -176,6 +176,7 @@ public class S52Context {
     private float shallowContour = 0f; //meters
     private float safetyContour = 0f; //meters
     private float deepContour = 0f; // meters
+    private boolean lowAccuracySymbols = false;
     private boolean twoShades = false;
     private boolean shallowPattern = false;
     private boolean shipsOutline = false;
@@ -330,6 +331,14 @@ public class S52Context {
         this.lightDescription = lightDescription;
     }
 
+    public boolean isLowAccuracySymbols() {
+        return lowAccuracySymbols;
+    }
+
+    public void setLowAccuracySymbols(boolean lowAccuracySymbols) {
+        this.lowAccuracySymbols = lowAccuracySymbols;
+    }
+    
     ////////////////////////////////////////////////////////////////////////////
 
     public S52SVGIcon getIcon(String name) throws IOException{
