@@ -19,6 +19,7 @@ package org.geotoolkit.s52;
 import javax.measure.converter.UnitConverter;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.lang.Static;
 import org.opengis.feature.Feature;
 
@@ -75,6 +76,19 @@ public final class S52Utilities extends Static{
             objClassCode = objClassCode.substring(sep+1);
         }
         return objClassCode;
+    }
+
+    /**
+     *
+     * @param array
+     * @param values
+     * @return true if one or more value is in the array
+     */
+    public static boolean containsAny(Object[] array, Object ... values){
+        for(Object value : values){
+            if(ArraysExt.contains(array, value)) return true;
+        }
+        return false;
     }
 
 }

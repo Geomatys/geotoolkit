@@ -36,6 +36,7 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import org.apache.sis.geometry.DirectPosition2D;
+import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -75,7 +76,7 @@ public class LIGHTS05 extends Procedure{
         final Feature feature = (Feature) graphic.getCandidate();
 
         Number valnmr = (Number) feature.getProperty("VALNMR").getValue();
-        String catlit = (String) feature.getProperty("CATLIT").getValue();
+        String[] catlit = (String[]) feature.getProperty("CATLIT").getValue();
         Number orient = (Number) feature.getProperty("ORIENT").getValue();
 
         final Coordinate displayCenter;
@@ -93,15 +94,15 @@ public class LIGHTS05 extends Procedure{
 
         if(catlit != null){
 
-            if("8".equals(catlit) || "11".equals(catlit)){
+            if(ArraysExt.contains(catlit, "8") || ArraysExt.contains(catlit, "11")){
                 final SymbolStyle ss = context.getSyle("LIGHTS82");
                 ss.render(g2d, context, colorTable, displayCenter, 0f);
                 return; //finished
-            }else if("9".equals(catlit)){
+            }else if(ArraysExt.contains(catlit, "9")){
                 final SymbolStyle ss = context.getSyle("LIGHTS81");
                 ss.render(g2d, context, colorTable, displayCenter, 0f);
                 return; //finished
-            }else if("1".equals(catlit) || "16".equals(catlit)){
+            }else if(ArraysExt.contains(catlit, "1") || ArraysExt.contains(catlit, "16")){
                 if(orient != null){
                     //draw a line using orient value with the length VALNMR
                     try{
@@ -128,11 +129,11 @@ public class LIGHTS05 extends Procedure{
         }
 
         //continuation A
-        String colour = (String) feature.getProperty("COLOUR").getValue();
-        if(colour == null){
-            colour = "13";
+        String[] colour = (String[]) feature.getProperty("COLOUR").getValue();
+        if(colour == null || colour.length==0){
+            colour = new String[]{"13"};
         }
-        final List<String> colors = Arrays.asList(colour.split(","));
+        final List<String> colors = Arrays.asList(colour);
 
         Number sector1 = (Number) feature.getProperty("SECTR1").getValue();
         Number sector2 = (Number) feature.getProperty("SECTR2").getValue();
@@ -201,7 +202,7 @@ public class LIGHTS05 extends Procedure{
                 final Number height = (Number) feature.getProperty("HEIGHT").getValue();
                 final String status = (String) feature.getProperty("STATUS").getValue();
 
-                final LITDSN01 litdsn01 = new LITDSN01();
+                final LITDSN01 litdsn01 = (LITDSN01) context.getProcedure("LITDSN01");
                 final String litdsn = litdsn01.render(ctx, context, colorTable, graphic, geotype,
                         catlit, litchr, siggrp,colour,sigper,height,valnmr,status);
 

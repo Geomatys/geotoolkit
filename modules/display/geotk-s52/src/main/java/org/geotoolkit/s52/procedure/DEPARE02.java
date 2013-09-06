@@ -69,10 +69,10 @@ public class DEPARE02 extends Procedure{
             sl.width = 1;
             sl.render(ctx, context, colorTable, graphic, null);
 
-            final String restrn = (String) feature.getProperty("RESTRN").getValue();
+            final String[] restrn = (String[]) feature.getProperty("RESTRN").getValue();
             if(restrn != null){
                 final RESCSP02 rescsp02 = new RESCSP02();
-                rescsp02.render(ctx, context, colorTable, graphic,restrn);
+                rescsp02.render(ctx, context, colorTable, graphic, geotype, restrn);
             }
         }
 

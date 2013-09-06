@@ -18,8 +18,6 @@ package org.geotoolkit.s52.procedure;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Graphics2D;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
