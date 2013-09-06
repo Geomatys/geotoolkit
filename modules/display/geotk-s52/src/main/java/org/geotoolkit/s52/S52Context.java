@@ -172,12 +172,12 @@ public class S52Context {
     // See also : 7.1.3.1 Text Groupings
     private boolean noText = false;
     // S-52 Annex A Part I p.137
-    private float safetyDepth = 0f; //meters
-    private float shallowContour = 0f; //meters
-    private float safetyContour = 0f; //meters
-    private float deepContour = 0f; // meters
+    private float safetyDepth = 100f; //meters
+    private float shallowContour = 200f; //meters
+    private float safetyContour = 1000f; //meters
+    private float deepContour = 20000f; // meters
     private boolean lowAccuracySymbols = false;
-    private boolean twoShades = false;
+    private boolean twoShades = true;
     private boolean shallowPattern = false;
     private boolean shipsOutline = false;
     private float distanceTags = 0f; //nm
@@ -338,7 +338,7 @@ public class S52Context {
     public void setLowAccuracySymbols(boolean lowAccuracySymbols) {
         this.lowAccuracySymbols = lowAccuracySymbols;
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
 
     public S52SVGIcon getIcon(String name) throws IOException{

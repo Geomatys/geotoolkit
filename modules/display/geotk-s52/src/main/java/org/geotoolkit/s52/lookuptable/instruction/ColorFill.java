@@ -36,9 +36,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class ColorFill extends Instruction{
 
-    public ColorFill() {
-        super("AC");
-    }
+
 
     /**
      * Color token as described in section 4 and 13.
@@ -54,6 +52,15 @@ public class ColorFill extends Instruction{
      * if it is not included, the command defaults to opaque fill.
      */
     public int transparency;
+
+    public ColorFill() {
+        super("AC");
+    }
+
+    public ColorFill(String color) {
+        this();
+        this.color = color;
+    }
 
     public float getAlpha(){
         switch(transparency){

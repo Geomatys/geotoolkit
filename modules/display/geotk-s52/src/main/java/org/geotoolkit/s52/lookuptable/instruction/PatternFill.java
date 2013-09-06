@@ -43,10 +43,6 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class PatternFill extends Instruction{
 
-    public PatternFill() {
-        super("AP");
-    }
-
     /**
      * The pattern symbol name is an 8 letter‑code which is composed
      * of a class code (6 letters) and a serial number (2 letters).
@@ -66,6 +62,15 @@ public class PatternFill extends Instruction{
      */
     public String rotation;
 
+    public PatternFill() {
+        super("AP");
+    }
+
+    public PatternFill(String patternName) {
+        this();
+        this.patternName = patternName;
+    }
+    
     @Override
     protected void readParameters(String str) throws IOException {
         final String[] parts = str.split(",");

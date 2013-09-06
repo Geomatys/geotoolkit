@@ -55,7 +55,7 @@ public class DEPARE02 extends Procedure{
         }
 
         final SEABED01 seabed = new SEABED01();
-        seabed.render(ctx, context, colorTable, graphic,drval1.doubleValue(),drval2.doubleValue());
+        seabed.render(ctx, context, colorTable, graphic, geotype, drval1.doubleValue(),drval2.doubleValue());
 
         final String objClassCode = S52Utilities.getObjClass(feature);
         if("DRGARE".equals(objClassCode)){
