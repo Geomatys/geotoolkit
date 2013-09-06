@@ -180,10 +180,13 @@ public class S52Context {
     private boolean twoShades = true;
     private boolean shallowPattern = false;
     private boolean shipsOutline = false;
+    private boolean contourLabels = true; //viewing group 33022
     private float distanceTags = 0f; //nm
     private float timeTags = 0f; //min
     private boolean fullSectors = true;
     private boolean lightDescription = false;
+    //used by procedure SOUNDG02
+    private float analyzedDepth = 0f;
 
     public void setNoText(boolean noText) {
         this.noText = noText;
@@ -337,6 +340,22 @@ public class S52Context {
 
     public void setLowAccuracySymbols(boolean lowAccuracySymbols) {
         this.lowAccuracySymbols = lowAccuracySymbols;
+    }
+
+    public boolean isContourLabels() {
+        return contourLabels;
+    }
+
+    public void setContourLabels(boolean contourLabels) {
+        this.contourLabels = contourLabels;
+    }
+
+    public float getAnalyzedDepth() {
+        return analyzedDepth;
+    }
+
+    public void setAnalyzedDepth(float analyzedDepth) {
+        this.analyzedDepth = analyzedDepth;
     }
 
     ////////////////////////////////////////////////////////////////////////////

@@ -20,6 +20,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
+import org.geotoolkit.s52.lookuptable.instruction.Symbol;
 
 /**
  *
@@ -34,6 +35,11 @@ public class SAFCON01 extends Procedure{
     @Override
     public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geotype) {
         System.out.println("Procedure "+getName()+" not implemented yet");
+    }
+
+    public Symbol[] eval(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geotype, double valdco){
+        System.out.println("Procedure "+getName()+" not implemented yet");
+        return new Symbol[0];
     }
 
 }
