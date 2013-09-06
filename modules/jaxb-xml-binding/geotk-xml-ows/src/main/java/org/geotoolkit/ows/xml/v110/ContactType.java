@@ -91,9 +91,12 @@ public class ContactType implements AbstractContact {
 
     public ContactType(final String phone, final String fax, final String email,
             final String address, final String city, final String state,
-            final String zipCode, final String country) {
+            final String zipCode, final String country, final String hoursOfService,
+            final String contactInstructions) {
         this.address             = new AddressType(address, city, state, zipCode, country, email);
         this.phone               = new TelephoneType(phone, fax);
+        this.hoursOfService      = hoursOfService;
+        this.contactInstructions = contactInstructions;
     }
     
     /**

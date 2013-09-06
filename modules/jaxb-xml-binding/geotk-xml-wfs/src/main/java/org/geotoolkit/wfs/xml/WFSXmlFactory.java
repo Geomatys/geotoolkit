@@ -731,13 +731,13 @@ public class WFSXmlFactory {
 
     public static AbstractContact buildContact(final String currentVersion, final String phone, final String fax, final String email,
             final String address, final String city, final String state,
-            final String zipCode, final String country) {
+            final String zipCode, final String country, final String hoursOfService, final String contactInstructions) {
         if ("2.0.0".equals(currentVersion)) {
-            return OWSXmlFactory.buildContact("1.1.0", phone, fax, email, address, city, state, zipCode, country);
+            return OWSXmlFactory.buildContact("1.1.0", phone, fax, email, address, city, state, zipCode, country, hoursOfService, contactInstructions);
         } else if ("1.1.0".equals(currentVersion)) {
-            return OWSXmlFactory.buildContact("1.0.0", phone, fax, email, address, city, state, zipCode, country);
+            return OWSXmlFactory.buildContact("1.0.0", phone, fax, email, address, city, state, zipCode, country, hoursOfService, contactInstructions);
         } else if ("1.0.0".equals(currentVersion)) {
-            return OWSXmlFactory.buildContact("1.0.0", phone, fax, email, address, city, state, zipCode, country);
+            return OWSXmlFactory.buildContact("1.0.0", phone, fax, email, address, city, state, zipCode, country, hoursOfService, contactInstructions);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }

@@ -279,9 +279,7 @@ public class OWSXmlFactory {
         } else if ("1.0.0".equals(currentVersion)) {
             final List<org.geotoolkit.ows.xml.v100.KeywordsType> kw = new ArrayList<>();
             if (keywords != null) {
-                for (String k : keywords) {
-                    kw.add(new org.geotoolkit.ows.xml.v100.KeywordsType(k));
-                }
+                kw.add(new org.geotoolkit.ows.xml.v100.KeywordsType(keywords, null));
             }
             final org.geotoolkit.ows.xml.v100.CodeType st = new org.geotoolkit.ows.xml.v100.CodeType(serviceType);
             return new org.geotoolkit.ows.xml.v100.ServiceIdentification(title, _abstract, kw, st, serviceVersion, fees, accessConstraint);
@@ -298,13 +296,13 @@ public class OWSXmlFactory {
 
     public static AbstractContact buildContact(final String currentVersion, final String phone, final String fax, final String email,
             final String address, final String city, final String state,
-            final String zipCode, final String country) {
+            final String zipCode, final String country, final String hoursOfService, final String contactInstructions) {
         if ("1.1.0".equals(currentVersion)) {
-            return new org.geotoolkit.ows.xml.v110.ContactType(phone, fax, email, address, city, state, zipCode, country);
+            return new org.geotoolkit.ows.xml.v110.ContactType(phone, fax, email, address, city, state, zipCode, country, hoursOfService, contactInstructions);
         } else if ("1.0.0".equals(currentVersion)) {
-            return new org.geotoolkit.ows.xml.v100.ContactType(phone, fax, email, address, city, state, zipCode, country);
+            return new org.geotoolkit.ows.xml.v100.ContactType(phone, fax, email, address, city, state, zipCode, country, hoursOfService, contactInstructions);
         } else if ("2.0.0".equals(currentVersion)) {
-            return new org.geotoolkit.ows.xml.v200.ContactType(phone, fax, email, address, city, state, zipCode, country);
+            return new org.geotoolkit.ows.xml.v200.ContactType(phone, fax, email, address, city, state, zipCode, country, hoursOfService, contactInstructions);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
