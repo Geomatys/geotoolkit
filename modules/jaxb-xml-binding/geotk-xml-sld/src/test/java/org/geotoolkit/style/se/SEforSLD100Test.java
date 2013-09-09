@@ -290,7 +290,7 @@ public class SEforSLD100Test extends TestCase{
         assertNull(rule.getLegend());
         assertNotNull(rule.getFilter());
 
-        assertEquals(rule.symbolizers().size(), 3);
+        assertEquals(rule.symbolizers().size(), 4);
 
 
         //Write test
@@ -305,7 +305,7 @@ public class SEforSLD100Test extends TestCase{
 
         assertNull(pvt.getLegendGraphic());
 
-        assertEquals(pvt.getSymbolizer().size(), 3);
+        assertEquals(pvt.getSymbolizer().size(), 4);
 
         MARSHALLER.marshal(pvt, TEST_FILE_SE_RULE);
 
