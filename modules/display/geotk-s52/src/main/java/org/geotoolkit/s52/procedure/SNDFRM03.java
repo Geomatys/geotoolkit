@@ -20,7 +20,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
-import org.geotoolkit.s52.render.SymbolStyle;
+import org.geotoolkit.s52.lookuptable.instruction.Symbol;
 
 /**
  *
@@ -37,7 +37,7 @@ public class SNDFRM03 extends Procedure{
         System.out.println("Procedure "+getName()+" not implemented yet");
     }
 
-    public SymbolStyle[] render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, double depthVal) {
+    public Symbol[] render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, double depthVal) {
         System.out.println("Procedure "+getName()+" not implemented yet");
         return null;
     }

@@ -36,9 +36,18 @@ public class UDWHAZ04 extends Procedure{
         System.out.println("Procedure "+getName()+" not implemented yet");
     }
 
-    public boolean render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, double depthValue) {
+    /**
+     * 
+     * @param ctx
+     * @param context
+     * @param colorTable
+     * @param graphic
+     * @param depthValue
+     * @return
+     */
+    public Object[] render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, double depthValue) {
         System.out.println("Procedure "+getName()+" not implemented yet");
-        return true;
+        return new Object[]{false,null};
     }
 
 }

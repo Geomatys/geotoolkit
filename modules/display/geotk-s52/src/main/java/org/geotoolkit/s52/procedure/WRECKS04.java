@@ -35,6 +35,12 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class WRECKS04 extends Procedure{
 
+    private static final Symbol SY_DANGER01 = new Symbol("DANGER01", null);
+    private static final Symbol SY_DANGER02 = new Symbol("DANGER02", null);
+    private static final Symbol SY_WRECK01  = new Symbol("WRECK01", null);
+    private static final Symbol SY_WRECK04  = new Symbol("WRECK04", null);
+    private static final Symbol SY_WRECK05  = new Symbol("WRECK05", null);
+
     public WRECKS04() {
         super("WRECKS04");
     }
@@ -52,7 +58,7 @@ public class WRECKS04 extends Procedure{
         double depthValue;
         //TODO handle viewgroup somehow.
         int viewingGroup;
-        SymbolStyle[] isolateSymbols = null;
+        Symbol[] isolateSymbols = null;
 
         if(valsou != null){
             depthValue = valsou.doubleValue();
@@ -101,7 +107,10 @@ public class WRECKS04 extends Procedure{
         }
 
         final UDWHAZ04 udwhaz04 = new UDWHAZ04();
-        final boolean displayIsolateDanger = udwhaz04.render(ctx, context, colorTable, graphic, depthValue);
+        final Object[] udwhaz04Res = udwhaz04.render(ctx, context, colorTable, graphic, depthValue);
+        final boolean renderIsolatedDanger = (Boolean)udwhaz04Res[0];
+        final Symbol dangerSymbol = (Symbol) udwhaz04Res[1];
+
 
         final QUAPNT02 quapnt02 = new QUAPNT02();
         final Object[] res = quapnt02.eval(ctx, context, colorTable, graphic);
@@ -116,51 +125,56 @@ public class WRECKS04 extends Procedure{
                 throw new PortrayalException(ex);
             }
 
-            if(displayIsolateDanger){
+            if(renderIsolatedDanger){
+                dangerSymbol.render(ctx, context, colorTable, graphic, geotype);
                 if(isolateSymbols!=null){
-                    for(SymbolStyle ss : isolateSymbols){
-                        ss.render(g2d, context, colorTable, center, 0f);
+                    for(Symbol ss : isolateSymbols){
+                        ss.render(ctx, context, colorTable, graphic, geotype);
                     }
                 }
             }else{
                 //continuation A
                 if(valsou != null){
-                    final SymbolStyle danger;
+                    final Symbol danger;
                     if(valsou.doubleValue() <= 20){
-                        danger = context.getSyle("DANGER01");
+                        danger = SY_DANGER01;
                     }else{
-                        danger = context.getSyle("DANGER02");
+                        danger = SY_DANGER02;
                     }
-                    danger.render(g2d, context, colorTable, center, 0f);
+                    danger.render(ctx, context, colorTable, graphic, geotype);
                     if(displayLowAccuracy) lowAccuracy.render(ctx, context, colorTable, graphic, geotype);
-                    for(SymbolStyle ss : isolateSymbols){
-                        ss.render(g2d, context, colorTable, center, 0f);
+                    if(isolateSymbols!=null){
+                        for(Symbol ss : isolateSymbols){
+                            ss.render(ctx, context, colorTable, graphic, geotype);
+                        }
                     }
 
                 }else{
-                    final SymbolStyle wreck;
+                    final Symbol wreck;
                     if("1".equals(catwrk) && "3".equals(watlev)){
-                        wreck = context.getSyle("WRECK04");
+                        wreck = SY_WRECK04;
                     }else if("2".equals(catwrk) && "3".equals(watlev)){
-                        wreck = context.getSyle("WRECK05");
+                        wreck = SY_WRECK05;
                     }else if("4".equals(catwrk)){
-                        wreck = context.getSyle("WRECK01");
+                        wreck = SY_WRECK01;
                     }else if("5".equals(catwrk)){
-                        wreck = context.getSyle("WRECK01");
+                        wreck = SY_WRECK01;
                     }else if("1".equals(watlev)){
-                        wreck = context.getSyle("WRECK01");
+                        wreck = SY_WRECK01;
                     }else if("2".equals(watlev)){
-                        wreck = context.getSyle("WRECK01");
+                        wreck = SY_WRECK01;
                     }else if("5".equals(watlev)){
-                        wreck = context.getSyle("WRECK01");
+                        wreck = SY_WRECK01;
                     }else if("4".equals(watlev)){
-                        wreck = context.getSyle("WRECK01");
+                        wreck = SY_WRECK01;
                     }else{
-                        wreck = context.getSyle("WRECK05");
+                        wreck = SY_WRECK05;
                     }
 
-                    wreck.render(g2d, context, colorTable, center, 0f);
-                    if(displayLowAccuracy) lowAccuracy.render(ctx, context, colorTable, graphic, geotype);
+                    wreck.render(ctx, context, colorTable, graphic, geotype);
+                    if(displayLowAccuracy && lowAccuracy != null){
+                        lowAccuracy.render(ctx, context, colorTable, graphic, geotype);
+                    }
                 }
             }
         }else{

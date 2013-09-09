@@ -107,11 +107,17 @@ public abstract class Vector extends DAIField{
                 part = part.substring(2);
                 final PenLineStep step = new PenLineStep();
                 final String[] pts = part.split(",");
-                step.tx = new int[pts.length/2];
-                step.ty = new int[pts.length/2];
-                for(int k=0,l=0;k<pts.length;k+=2,l++){
-                    step.tx[l] = Integer.valueOf(pts[k]);
-                    step.ty[l] = Integer.valueOf(pts[k+1]);
+                if(pts.length==1){
+                    //this should be draw as a 'point'.
+                    step.tx = new int[0];
+                    step.ty = new int[0];
+                }else{
+                    step.tx = new int[pts.length/2];
+                    step.ty = new int[pts.length/2];
+                    for(int k=0,l=0;k<pts.length;k+=2,l++){
+                        step.tx[l] = Integer.valueOf(pts[k]);
+                        step.ty[l] = Integer.valueOf(pts[k+1]);
+                    }
                 }
                 steps[i] = step;
 
@@ -145,7 +151,7 @@ public abstract class Vector extends DAIField{
                 step.name = part.substring(2, 10);
                 part = part.substring(11);
                 step.rotation = Integer.valueOf(part);
-
+                steps[i] = step;
             }else{
                 throw new PortrayalException("unexpected action : "+part);
             }
