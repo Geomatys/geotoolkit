@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.s52.procedure;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
@@ -23,6 +25,7 @@ import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.lookuptable.instruction.Symbol;
 
 /**
+ * S-52 Annex A Part I p.139 (12.2.1)
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -37,9 +40,64 @@ public class SAFCON01 extends Procedure{
         System.out.println("Procedure "+getName()+" not implemented yet");
     }
 
-    public Symbol[] eval(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geotype, double valdco){
-        System.out.println("Procedure "+getName()+" not implemented yet");
-        return new Symbol[0];
+    public Symbol[] eval(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            ProjectedObject graphic, S52Context.GeoType geotype, double depthval){
+        final List<Symbol> symbols = new ArrayList<>();
+
+        String symbolprefix = "SAFCON";
+
+        if(depthval < 0 || depthval > 99999){
+            //coutour symbol can not be determined
+            return new Symbol[0];
+        }
+
+        final long leadingDigits = (long)depthval;
+        final double fractionDigits = depthval - leadingDigits;
+        final char firstDigit = Long.toString(leadingDigits).charAt(0);
+        if(depthval < 10 && fractionDigits != 0){
+            final long fl = (long)fractionDigits*10;
+            symbols.add(new Symbol(symbolprefix+"0"+firstDigit, null));
+            symbols.add(new Symbol(symbolprefix+"6"+fl, null));
+        }else if(depthval < 10){
+            symbols.add(new Symbol(symbolprefix+"0"+firstDigit, null));
+        }else if(depthval < 32 && fractionDigits != 0){
+            final char secondDigit = Long.toString(leadingDigits).charAt(1);
+            final long fl = (long)fractionDigits*10;
+            symbols.add(new Symbol(symbolprefix+"2"+firstDigit, null));
+            symbols.add(new Symbol(symbolprefix+"1"+secondDigit, null));
+            symbols.add(new Symbol(symbolprefix+"5"+fl, null));
+        }else if(depthval < 100){
+            final char secondDigit = Long.toString(leadingDigits).charAt(1);
+            symbols.add(new Symbol(symbolprefix+"2"+firstDigit, null));
+            symbols.add(new Symbol(symbolprefix+"1"+secondDigit, null));
+        }else if(depthval < 1000){
+            final char secondDigit = Long.toString(leadingDigits).charAt(1);
+            final char thirdDigit = Long.toString(leadingDigits).charAt(2);
+            //warning : 80 symbols not present in default dai file.
+            symbols.add(new Symbol(symbolprefix+"8"+firstDigit, null));
+            symbols.add(new Symbol(symbolprefix+"0"+secondDigit, null));
+            symbols.add(new Symbol(symbolprefix+"9"+thirdDigit, null));
+        }else if(depthval < 10000){
+            final char secondDigit = Long.toString(leadingDigits).charAt(1);
+            final char thirdDigit = Long.toString(leadingDigits).charAt(2);
+            final char fourthDigit = Long.toString(leadingDigits).charAt(3);
+            symbols.add(new Symbol(symbolprefix+"3"+firstDigit, null));
+            symbols.add(new Symbol(symbolprefix+"2"+secondDigit, null));
+            symbols.add(new Symbol(symbolprefix+"1"+thirdDigit, null));
+            symbols.add(new Symbol(symbolprefix+"7"+fourthDigit, null));
+        }else if(depthval < 100000){
+            final char secondDigit = Long.toString(leadingDigits).charAt(1);
+            final char thirdDigit = Long.toString(leadingDigits).charAt(2);
+            final char fourthDigit = Long.toString(leadingDigits).charAt(3);
+            final char fifthDigit = Long.toString(leadingDigits).charAt(4);
+            symbols.add(new Symbol(symbolprefix+"4"+firstDigit, null));
+            symbols.add(new Symbol(symbolprefix+"3"+secondDigit, null));
+            symbols.add(new Symbol(symbolprefix+"2"+thirdDigit, null));
+            symbols.add(new Symbol(symbolprefix+"1"+fourthDigit, null));
+            symbols.add(new Symbol(symbolprefix+"7"+fifthDigit, null));
+        }
+
+        return symbols.toArray(new Symbol[symbols.size()]);
     }
 
 }

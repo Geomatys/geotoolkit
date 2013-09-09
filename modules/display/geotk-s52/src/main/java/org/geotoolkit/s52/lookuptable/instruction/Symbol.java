@@ -20,7 +20,10 @@ import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.io.IOException;
+import java.util.logging.Level;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
@@ -113,6 +116,10 @@ public class Symbol extends Instruction{
         }
 
         final SymbolStyle ss = context.getSyle(this.symbolName);
+        if(ss == null){
+            ctx.getMonitor().exceptionOccured(new PortrayalException("No symbol for name : "+this.symbolName), Level.FINE);
+            return;
+        }
         ss.render(g2d, context, colorTable, center, rotation);
     }
 

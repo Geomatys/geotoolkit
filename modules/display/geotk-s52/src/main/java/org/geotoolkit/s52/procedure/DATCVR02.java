@@ -22,6 +22,7 @@ import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 
 /**
+ * S-52 Annex A Part I p.141 (12.2.2)
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -34,6 +35,7 @@ public class DATCVR02 extends Procedure{
     @Override
     public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geotype) {
         System.out.println("Procedure "+getName()+" not implemented yet");
+        //TODO this is a general presentation procedure, not called by any function.
     }
 
 }
