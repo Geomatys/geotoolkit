@@ -85,6 +85,10 @@
       <groupId>java3d</groupId>
       <artifactId>vecmath</artifactId>
     </dependency>
+    <dependency>
+      <groupId>javax.media</groupId>
+      <artifactId>jai_core</artifactId>
+    </dependency>
   </dependencies>
 
 
