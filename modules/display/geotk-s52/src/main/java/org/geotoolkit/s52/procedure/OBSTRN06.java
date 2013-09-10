@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.s52.procedure;
 
+import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.S52Utilities;
@@ -27,7 +27,7 @@ import org.geotoolkit.s52.lookuptable.instruction.ComplexLine;
 import org.geotoolkit.s52.lookuptable.instruction.PatternFill;
 import org.geotoolkit.s52.lookuptable.instruction.SimpleLine;
 import org.geotoolkit.s52.lookuptable.instruction.Symbol;
-import org.geotoolkit.s52.render.SymbolStyle;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 import org.opengis.feature.Feature;
 
 /**
@@ -65,13 +65,12 @@ public class OBSTRN06 extends Procedure{
 
     @Override
     public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
-            ProjectedObject graphic, S52Context.GeoType geotype) throws PortrayalException {
+            List<S52Graphic> all, S52Graphic graphic) throws PortrayalException {
 
-        final Feature feature = (Feature) graphic.getCandidate();
-        final Number valsou = (Number) feature.getProperty("VALSOU").getValue();
-        final String watlev = (String) feature.getProperty("WATLEV").getValue();
-        final String expsou = (String) feature.getProperty("EXPSOU").getValue();
-        final String catobs = (String) ((feature.getProperty("CATOBS")==null) ? null : feature.getProperty("CATOBS").getValue());
+        final Number valsou = (Number) graphic.feature.getProperty("VALSOU").getValue();
+        final String watlev = (String) graphic.feature.getProperty("WATLEV").getValue();
+        final String expsou = (String) graphic.feature.getProperty("EXPSOU").getValue();
+        final String catobs = (String) ((graphic.feature.getProperty("CATOBS")==null) ? null : graphic.feature.getProperty("CATOBS").getValue());
 
         double depthval;
         int viewinggroup;
@@ -81,11 +80,11 @@ public class OBSTRN06 extends Procedure{
             depthval = valsou.doubleValue();
             viewinggroup = 34051;
             final SNDFRM03 sndfrm03 = (SNDFRM03) context.getProcedure("SNDFRM03");
-            soundingSymbols = sndfrm03.render(ctx, context, colorTable, graphic, depthval);
+            soundingSymbols = sndfrm03.render(ctx, context, colorTable, all, graphic, depthval);
         }else{
             double leastdepth = Double.NaN;
             final DEPVAL02 depval02 = (DEPVAL02) context.getProcedure("DEPVAL02");
-            final double[] res = depval02.render(ctx, context, colorTable, graphic, watlev, expsou);
+            final double[] res = depval02.render(ctx, context, colorTable, all, graphic, watlev, expsou);
             leastdepth = res[0];
 
             if(Double.isNaN(leastdepth)){
@@ -108,21 +107,21 @@ public class OBSTRN06 extends Procedure{
         }
 
         final UDWHAZ04 udwhaz04 = (UDWHAZ04) context.getProcedure("UDWHAZ04");
-        final Object[] udwhaz04Res = udwhaz04.render(ctx, context, colorTable, graphic, depthval);
+        final Object[] udwhaz04Res = udwhaz04.render(ctx, context, colorTable, all, graphic, depthval);
         final boolean renderIsolatedDanger = (Boolean)udwhaz04Res[0];
         final Symbol dangerSymbol = (Symbol) udwhaz04Res[1];
 
-        if(geotype == S52Context.GeoType.POINT){
+        if(graphic.geoType == S52Context.GeoType.POINT){
             //Continuation A
             final QUAPNT02 quapnt02 = (QUAPNT02) context.getProcedure("QUAPNT02");
-            final Object[] quapnt02Res = quapnt02.eval(ctx, context, colorTable, graphic);
+            final Object[] quapnt02Res = quapnt02.eval(ctx, context, colorTable, all, graphic);
             final boolean showLowAccuracy = (Boolean)quapnt02Res[0];
             final Symbol lowAccSymbol = (Symbol) quapnt02Res[1];
 
             if(renderIsolatedDanger){
-                dangerSymbol.render(ctx, context, colorTable, graphic, geotype);
+                dangerSymbol.render(ctx, context, colorTable, all, graphic);
                 if(showLowAccuracy){
-                    lowAccSymbol.render(ctx, context, colorTable, graphic, geotype);
+                    lowAccSymbol.render(ctx, context, colorTable, all, graphic);
                 }
                 return; //finished
             }
@@ -131,7 +130,7 @@ public class OBSTRN06 extends Procedure{
             Symbol selection;
             if(valsou != null){
                 if(valsou.doubleValue() <= 20){
-                    final String objClass = S52Utilities.getObjClass(feature);
+                    final String objClass = S52Utilities.getObjClass(graphic.feature);
                     if("UWTROC".equals(objClass)){
                         if("3".equals(watlev)){
                             selection = SY_DANGER01;
@@ -173,7 +172,7 @@ public class OBSTRN06 extends Procedure{
                     sounding = true;
                 }
             }else{
-                final String objClass = S52Utilities.getObjClass(feature);
+                final String objClass = S52Utilities.getObjClass(graphic.feature);
                 if("UWTROC".equals(objClass)){
                     if("3".equals(watlev)){
                         selection = SY_UWTROC03;
@@ -199,120 +198,120 @@ public class OBSTRN06 extends Procedure{
                 }
             }
 
-            selection.render(ctx, context, colorTable, graphic, geotype);
+            selection.render(ctx, context, colorTable, all, graphic);
             if(sounding && soundingSymbols!=null){
                 for(Symbol ss : soundingSymbols){
-                    ss.render(ctx, context, colorTable, graphic, geotype);
+                    ss.render(ctx, context, colorTable, all, graphic);
                 }
             }
             if(showLowAccuracy){
-                lowAccSymbol.render(ctx, context, colorTable, graphic, geotype);
+                lowAccSymbol.render(ctx, context, colorTable, all, graphic);
             }
 
 
-        }else if(geotype == S52Context.GeoType.LINE){
+        }else if(graphic.geoType == S52Context.GeoType.LINE){
             //Continuation B
 
             //TODO for each spatial
             spatialloop:
             if(true){
-                final Object quapos = (feature.getProperty("QUAPOS")==null) ? null : feature.getProperty("QUAPOS").getValue();
+                final Object quapos = (graphic.feature.getProperty("QUAPOS")==null) ? null : graphic.feature.getProperty("QUAPOS").getValue();
                 if(quapos!=null){
                     final int val = Integer.valueOf(quapos.toString());
                     if(val > 1 && val < 10){
                         //position is inaccurate
-                        LC_LOWACC.render(ctx, context, colorTable, graphic, geotype);
+                        LC_LOWACC.render(ctx, context, colorTable, all, graphic);
                         //continue spatial loop
                         break spatialloop;
                     }
                 }
 
                 if(renderIsolatedDanger){
-                    LS_DOTT_CHBLK.render(ctx, context, colorTable, graphic, geotype);
+                    LS_DOTT_CHBLK.render(ctx, context, colorTable, all, graphic);
                     //continue spatial loop
                     break spatialloop;
                 }else if(valsou != null){
                     if(valsou.doubleValue() <= 20){
-                        LS_DOTT_CHBLK.render(ctx, context, colorTable, graphic, geotype);
+                        LS_DOTT_CHBLK.render(ctx, context, colorTable, all, graphic);
                     }else{
-                        LS_DASH_CHBLK.render(ctx, context, colorTable, graphic, geotype);
+                        LS_DASH_CHBLK.render(ctx, context, colorTable, all, graphic);
                     }
                 }else{
-                    LS_DOTT_CHBLK.render(ctx, context, colorTable, graphic, geotype);
+                    LS_DOTT_CHBLK.render(ctx, context, colorTable, all, graphic);
                 }
             } //end of spatial loop
 
             if(renderIsolatedDanger){
-                dangerSymbol.render(ctx, context, colorTable, graphic, geotype);
+                dangerSymbol.render(ctx, context, colorTable, all, graphic);
             }else{
                 if(valsou!=null){
                     if(soundingSymbols!=null){
                         for(Symbol ss : soundingSymbols){
-                            ss.render(ctx, context, colorTable, graphic, geotype);
+                            ss.render(ctx, context, colorTable, all, graphic);
                         }
                     }
                 }
             }
 
-        }else if(geotype == S52Context.GeoType.AREA){
+        }else if(graphic.geoType == S52Context.GeoType.AREA){
             //Continuation C
 
             final QUAPNT02 quapnt02 = (QUAPNT02) context.getProcedure("QUAPNT02");
-            final Object[] quapnt02Res = quapnt02.eval(ctx, context, colorTable, graphic);
+            final Object[] quapnt02Res = quapnt02.eval(ctx, context, colorTable, all, graphic);
             final boolean showLowAccuracy = (Boolean)quapnt02Res[0];
             final Symbol lowAccSymbol = (Symbol) quapnt02Res[1];
 
             if(renderIsolatedDanger){
-                CF_DEPVS.render(ctx, context, colorTable, graphic, geotype);
-                PF_FOULAR01.render(ctx, context, colorTable, graphic, geotype);
-                LS_DOTT_CHBLK.render(ctx, context, colorTable, graphic, geotype);
-                dangerSymbol.render(ctx, context, colorTable, graphic, geotype);
+                CF_DEPVS.render(ctx, context, colorTable, all, graphic);
+                PF_FOULAR01.render(ctx, context, colorTable, all, graphic);
+                LS_DOTT_CHBLK.render(ctx, context, colorTable, all, graphic);
+                dangerSymbol.render(ctx, context, colorTable, all, graphic);
 
                 if(showLowAccuracy){
-                    lowAccSymbol.render(ctx, context, colorTable, graphic, geotype);
+                    lowAccSymbol.render(ctx, context, colorTable, all, graphic);
                 }
                 return; //finished
             }
 
             if(valsou != null){
                 if(valsou.doubleValue() <= 20){
-                    LS_DOTT_CHBLK.render(ctx, context, colorTable, graphic, geotype);
+                    LS_DOTT_CHBLK.render(ctx, context, colorTable, all, graphic);
                 }else{
-                    LS_DASH_CHGRD.render(ctx, context, colorTable, graphic, geotype);
+                    LS_DASH_CHGRD.render(ctx, context, colorTable, all, graphic);
                 }
                 if(soundingSymbols!=null){
                     for(Symbol ss : soundingSymbols){
-                        ss.render(ctx, context, colorTable, graphic, geotype);
+                        ss.render(ctx, context, colorTable, all, graphic);
                     }
                 }
 
             }else{
                 if("6".equals("CATOBS")){
-                    PF_FOULAR01.render(ctx, context, colorTable, graphic, geotype);
-                    LS_DOTT_CHBLK.render(ctx, context, colorTable, graphic, geotype);
+                    PF_FOULAR01.render(ctx, context, colorTable, all, graphic);
+                    LS_DOTT_CHBLK.render(ctx, context, colorTable, all, graphic);
                 }else if("1".equals("WATLEV")){
-                    CF_CHBRN.render(ctx, context, colorTable, graphic, geotype);
-                    LS_SOLD_CSTLN.render(ctx, context, colorTable, graphic, geotype);
+                    CF_CHBRN.render(ctx, context, colorTable, all, graphic);
+                    LS_SOLD_CSTLN.render(ctx, context, colorTable, all, graphic);
                 }else if("2".equals("WATLEV")){
-                    CF_CHBRN.render(ctx, context, colorTable, graphic, geotype);
-                    LS_SOLD_CSTLN.render(ctx, context, colorTable, graphic, geotype);
+                    CF_CHBRN.render(ctx, context, colorTable, all, graphic);
+                    LS_SOLD_CSTLN.render(ctx, context, colorTable, all, graphic);
                 }else if("4".equals("WATLEV")){
-                    CF_DEPIT.render(ctx, context, colorTable, graphic, geotype);
-                    LS_DASH_CSTLN.render(ctx, context, colorTable, graphic, geotype);
+                    CF_DEPIT.render(ctx, context, colorTable, all, graphic);
+                    LS_DASH_CSTLN.render(ctx, context, colorTable, all, graphic);
                 }else if("5".equals("WATLEV")){
-                    CF_DEPVS.render(ctx, context, colorTable, graphic, geotype);
-                    LS_DOTT_CHBLK.render(ctx, context, colorTable, graphic, geotype);
+                    CF_DEPVS.render(ctx, context, colorTable, all, graphic);
+                    LS_DOTT_CHBLK.render(ctx, context, colorTable, all, graphic);
                 }else if("3".equals("WATLEV")){
-                    CF_DEPVS.render(ctx, context, colorTable, graphic, geotype);
-                    LS_DOTT_CHBLK.render(ctx, context, colorTable, graphic, geotype);
+                    CF_DEPVS.render(ctx, context, colorTable, all, graphic);
+                    LS_DOTT_CHBLK.render(ctx, context, colorTable, all, graphic);
                 }else{
-                    CF_DEPVS.render(ctx, context, colorTable, graphic, geotype);
-                    LS_DOTT_CHBLK.render(ctx, context, colorTable, graphic, geotype);
+                    CF_DEPVS.render(ctx, context, colorTable, all, graphic);
+                    LS_DOTT_CHBLK.render(ctx, context, colorTable, all, graphic);
                 }
             }
 
             if(showLowAccuracy){
-                lowAccSymbol.render(ctx, context, colorTable, graphic, geotype);
+                lowAccSymbol.render(ctx, context, colorTable, all, graphic);
             }
         }
 

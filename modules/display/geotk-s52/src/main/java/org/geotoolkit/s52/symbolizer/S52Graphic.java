@@ -14,29 +14,28 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.s52.procedure;
+package org.geotoolkit.s52.symbolizer;
 
-import java.util.List;
-import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
-import org.geotoolkit.s52.S52Palette;
-import org.geotoolkit.s52.symbolizer.S52Graphic;
+import org.geotoolkit.s52.lookuptable.LookupRecord;
+import org.opengis.feature.Feature;
 
 /**
- *
- * @author Johann Sorel (Geomatys)
+ * Description of an S-52 element to render.
  */
-public class LEGLIN03 extends Procedure{
-
-    public LEGLIN03() {
-        super("LEGLIN03");
-    }
+public final class S52Graphic implements Comparable<S52Graphic> {
+    
+    public int priority;
+    public ProjectedObject graphic;
+    public Feature feature;
+    public int viewingGroup;
+    public LookupRecord record;
+    public S52Context.GeoType geoType;
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
-            List<S52Graphic> all, S52Graphic graphic) throws PortrayalException {
-        System.out.println("Procedure "+getName()+" not implemented yet");
+    public int compareTo(S52Graphic other) {
+        return priority - other.priority;
     }
 
 }

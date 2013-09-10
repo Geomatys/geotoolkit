@@ -20,18 +20,16 @@ import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display2d.GO2Hints;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.render.SymbolStyle;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 import org.geotoolkit.util.Converters;
-import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.referencing.operation.TransformException;
 
@@ -82,13 +80,13 @@ public class Symbol extends Instruction{
     }
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geoType) throws PortrayalException {
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic s52graphic) throws PortrayalException {
         final Graphics2D g2d = ctx.getGraphics();
-        final Feature feature = (Feature) graphic.getCandidate();
 
         final Coordinate center;
         try {
-            center = getPivotPoint(graphic.getGeometry(null).getDisplayGeometryJTS());
+            center = getPivotPoint(s52graphic.graphic.getGeometry(null).getDisplayGeometryJTS());
         } catch (TransformException ex) {
             throw new PortrayalException(ex);
         }
@@ -103,7 +101,7 @@ public class Symbol extends Instruction{
                 rotation = (float)Math.toRadians(Integer.valueOf(this.rotation));
             }catch(NumberFormatException ex){
                 //it's a field
-                final Property prop = feature.getProperty(this.rotation);
+                final Property prop = s52graphic.feature.getProperty(this.rotation);
                 if(prop!=null){
                     Float val = Converters.convert(prop.getValue(),Float.class);
                     if(val!=null){

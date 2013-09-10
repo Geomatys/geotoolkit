@@ -22,6 +22,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.io.IOException;
+import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -30,6 +31,7 @@ import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import static org.geotoolkit.s52.S52Utilities.*;
 import static org.geotoolkit.s52.lookuptable.instruction.Instruction.getPivotPoint;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.operation.TransformException;
@@ -214,11 +216,12 @@ public abstract class Text extends Instruction{
 
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geoType) throws PortrayalException {
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic s52graphic) throws PortrayalException {
         if(context.isNoText()) return;
 
         final Graphics2D g2d = ctx.getGraphics();
-        final Feature feature = (Feature) graphic.getCandidate();
+        final Feature feature = s52graphic.feature;
 
         //this includ alphanumeric and numeric texts
 
@@ -233,7 +236,7 @@ public abstract class Text extends Instruction{
         //find and adjust pivot point
         final Coordinate pivotPoint;
         try {
-            pivotPoint = getPivotPoint(graphic.getGeometry(null).getDisplayGeometryJTS());
+            pivotPoint = getPivotPoint(s52graphic.graphic.getGeometry(null).getDisplayGeometryJTS());
         } catch (TransformException ex) {
             throw new PortrayalException(ex);
         }

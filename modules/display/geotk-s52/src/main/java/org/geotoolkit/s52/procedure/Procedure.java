@@ -16,11 +16,12 @@
  */
 package org.geotoolkit.s52.procedure;
 
+import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 
 
 /**
@@ -40,6 +41,6 @@ public abstract class Procedure {
     }
 
     public abstract void render(RenderingContext2D ctx, S52Context context,
-            S52Palette colorTable, ProjectedObject feature, S52Context.GeoType geotype) throws PortrayalException;
+            S52Palette colorTable, List<S52Graphic> all, S52Graphic element) throws PortrayalException;
 
 }

@@ -17,14 +17,13 @@
 package org.geotoolkit.s52.procedure;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import java.awt.Graphics2D;
+import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.lookuptable.instruction.Symbol;
-import org.geotoolkit.s52.render.SymbolStyle;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 import org.opengis.feature.Feature;
 import org.opengis.referencing.operation.TransformException;
 
@@ -46,9 +45,9 @@ public class WRECKS04 extends Procedure{
     }
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geotype) throws PortrayalException {
-        final Graphics2D g2d = ctx.getGraphics();
-        final Feature feature = (Feature) graphic.getCandidate();
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic graphic) throws PortrayalException {
+        final Feature feature = graphic.feature;
 
         //used at multiple places
         final Number valsou = (Number) feature.getProperty("VALSOU").getValue();
@@ -65,7 +64,7 @@ public class WRECKS04 extends Procedure{
             viewingGroup = 34051;
 
             final SNDFRM03 sndfrm03 = new SNDFRM03();
-            isolateSymbols = sndfrm03.render(ctx, context, colorTable, graphic, depthValue);
+            isolateSymbols = sndfrm03.render(ctx, context, colorTable, all, graphic, depthValue);
 
         }else{
             double leastDepth = Double.NaN;
@@ -73,7 +72,7 @@ public class WRECKS04 extends Procedure{
             final String expsou = (String) feature.getProperty("EXPSOU").getValue();
 
             final DEPVAL02 depval02 = new DEPVAL02();
-            double[] vals = depval02.render(ctx, context, colorTable, graphic, expsou, watlev);
+            double[] vals = depval02.render(ctx, context, colorTable, all, graphic, expsou, watlev);
             leastDepth = vals[0];
             seabedDepth = vals[1];
 
@@ -107,29 +106,29 @@ public class WRECKS04 extends Procedure{
         }
 
         final UDWHAZ04 udwhaz04 = new UDWHAZ04();
-        final Object[] udwhaz04Res = udwhaz04.render(ctx, context, colorTable, graphic, depthValue);
+        final Object[] udwhaz04Res = udwhaz04.render(ctx, context, colorTable, all, graphic, depthValue);
         final boolean renderIsolatedDanger = (Boolean)udwhaz04Res[0];
         final Symbol dangerSymbol = (Symbol) udwhaz04Res[1];
 
 
         final QUAPNT02 quapnt02 = new QUAPNT02();
-        final Object[] res = quapnt02.eval(ctx, context, colorTable, graphic);
+        final Object[] res = quapnt02.eval(ctx, context, colorTable, all, graphic);
         final boolean displayLowAccuracy = (Boolean)res[0];
         final Symbol lowAccuracy = (Symbol) res[1];
 
-        if(geotype == S52Context.GeoType.POINT){
+        if(graphic.geoType == S52Context.GeoType.POINT){
             final Coordinate center;
             try {
-                center = graphic.getGeometry(null).getDisplayGeometryJTS().getCoordinate();
+                center = graphic.graphic.getGeometry(null).getDisplayGeometryJTS().getCoordinate();
             } catch (TransformException ex) {
                 throw new PortrayalException(ex);
             }
 
             if(renderIsolatedDanger){
-                dangerSymbol.render(ctx, context, colorTable, graphic, geotype);
+                dangerSymbol.render(ctx, context, colorTable, all, graphic);
                 if(isolateSymbols!=null){
                     for(Symbol ss : isolateSymbols){
-                        ss.render(ctx, context, colorTable, graphic, geotype);
+                        ss.render(ctx, context, colorTable, all, graphic);
                     }
                 }
             }else{
@@ -141,11 +140,11 @@ public class WRECKS04 extends Procedure{
                     }else{
                         danger = SY_DANGER02;
                     }
-                    danger.render(ctx, context, colorTable, graphic, geotype);
-                    if(displayLowAccuracy) lowAccuracy.render(ctx, context, colorTable, graphic, geotype);
+                    danger.render(ctx, context, colorTable, all, graphic);
+                    if(displayLowAccuracy) lowAccuracy.render(ctx, context, colorTable, all, graphic);
                     if(isolateSymbols!=null){
                         for(Symbol ss : isolateSymbols){
-                            ss.render(ctx, context, colorTable, graphic, geotype);
+                            ss.render(ctx, context, colorTable, all, graphic);
                         }
                     }
 
@@ -171,9 +170,9 @@ public class WRECKS04 extends Procedure{
                         wreck = SY_WRECK05;
                     }
 
-                    wreck.render(ctx, context, colorTable, graphic, geotype);
+                    wreck.render(ctx, context, colorTable, all, graphic);
                     if(displayLowAccuracy && lowAccuracy != null){
-                        lowAccuracy.render(ctx, context, colorTable, graphic, geotype);
+                        lowAccuracy.render(ctx, context, colorTable, all, graphic);
                     }
                 }
             }

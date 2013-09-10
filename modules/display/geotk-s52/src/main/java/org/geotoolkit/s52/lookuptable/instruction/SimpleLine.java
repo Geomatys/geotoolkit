@@ -16,21 +16,19 @@
  */
 package org.geotoolkit.s52.lookuptable.instruction;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import static org.geotoolkit.s52.S52Utilities.*;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -113,7 +111,8 @@ public class SimpleLine extends Instruction{
     }
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geoType) throws PortrayalException {
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic s52graphic) throws PortrayalException {
         final Graphics2D g2d = ctx.getGraphics();
         final Stroke stroke = getStroke();
         final Color color = colorTable.getColor(this.color);
@@ -121,7 +120,7 @@ public class SimpleLine extends Instruction{
         g2d.setColor(color);
         g2d.setStroke(stroke);
         try {
-            g2d.draw(graphic.getGeometry(null).getDisplayShape());
+            g2d.draw(s52graphic.graphic.getGeometry(null).getDisplayShape());
         } catch (TransformException ex) {
             throw new PortrayalException(ex);
         }

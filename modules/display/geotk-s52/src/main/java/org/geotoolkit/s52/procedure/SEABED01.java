@@ -16,13 +16,14 @@
  */
 package org.geotoolkit.s52.procedure;
 
+import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.lookuptable.instruction.ColorFill;
 import org.geotoolkit.s52.lookuptable.instruction.PatternFill;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 
 /**
  * S-52 Annex A Part I p.201 (12.2.20)
@@ -38,12 +39,13 @@ public class SEABED01 extends Procedure{
     }
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geotype) {
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic graphic) throws PortrayalException {
         System.out.println("Procedure "+getName()+" not implemented yet");
     }
 
     public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
-            ProjectedObject feature, S52Context.GeoType geotype, double drval1, double drval2) throws PortrayalException {
+            List<S52Graphic> all, S52Graphic graphic, double drval1, double drval2) throws PortrayalException {
 
         final boolean twocolorshades = context.isTwoShades();
         final double safetyContour = context.getSafetyContour();
@@ -81,11 +83,11 @@ public class SEABED01 extends Procedure{
 
         //draw fill
         final ColorFill cf = new ColorFill(color);
-        cf.render(ctx, context, colorTable, feature, geotype);
+        cf.render(ctx, context, colorTable, all, graphic);
 
         if(shallow && context.isShallowPattern()){
             //draw pattern
-            SHALLOW_PATTERN.render(ctx, context, colorTable, feature, geotype);
+            SHALLOW_PATTERN.render(ctx, context, colorTable, all, graphic);
         }
 
     }

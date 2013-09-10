@@ -17,16 +17,15 @@
 package org.geotoolkit.s52.procedure;
 
 import java.awt.Graphics2D;
+import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.S52Utilities;
 import org.geotoolkit.s52.lookuptable.instruction.PatternFill;
 import org.geotoolkit.s52.lookuptable.instruction.SimpleLine;
-import org.geotoolkit.s52.render.SymbolStyle;
-import org.opengis.feature.Feature;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 
 /**
  * S-52 Annex A Part I p.146 (12.2.3)
@@ -40,12 +39,12 @@ public class DEPARE02 extends Procedure{
     }
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geotype) throws PortrayalException {
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic s52graphic) throws PortrayalException {
         final Graphics2D g2d = ctx.getGraphics();
-        final Feature feature = (Feature) graphic.getCandidate();
 
-        Number drval1 = (Number) feature.getProperty("DRVAL1").getValue();
-        Number drval2 = (Number) feature.getProperty("DRVAL2").getValue();
+        Number drval1 = (Number) s52graphic.feature.getProperty("DRVAL1").getValue();
+        Number drval2 = (Number) s52graphic.feature.getProperty("DRVAL2").getValue();
 
         if(drval1 == null){
             drval1 = -1;
@@ -55,24 +54,24 @@ public class DEPARE02 extends Procedure{
         }
 
         final SEABED01 seabed = new SEABED01();
-        seabed.render(ctx, context, colorTable, graphic, geotype, drval1.doubleValue(),drval2.doubleValue());
+        seabed.render(ctx, context, colorTable, all, s52graphic, drval1.doubleValue(),drval2.doubleValue());
 
-        final String objClassCode = S52Utilities.getObjClass(feature);
+        final String objClassCode = S52Utilities.getObjClass(s52graphic.feature);
         if("DRGARE".equals(objClassCode)){
             final PatternFill pf = new PatternFill();
             pf.patternName = "DRGARE01";
             pf.rotation = "0";
-            pf.render(ctx, context, colorTable, graphic, null);
+            pf.render(ctx, context, colorTable, all, s52graphic);
             final SimpleLine sl = new SimpleLine();
             sl.color = "CHGRF";
             sl.style = SimpleLine.PStyle.DASH;
             sl.width = 1;
-            sl.render(ctx, context, colorTable, graphic, null);
+            sl.render(ctx, context, colorTable, all, s52graphic);
 
-            final String[] restrn = (String[]) feature.getProperty("RESTRN").getValue();
+            final String[] restrn = (String[]) s52graphic.feature.getProperty("RESTRN").getValue();
             if(restrn != null){
                 final RESCSP02 rescsp02 = new RESCSP02();
-                rescsp02.render(ctx, context, colorTable, graphic, geotype, restrn);
+                rescsp02.render(ctx, context, colorTable, all, s52graphic, restrn);
             }
         }
 

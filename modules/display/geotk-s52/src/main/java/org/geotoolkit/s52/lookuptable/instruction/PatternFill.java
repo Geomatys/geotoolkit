@@ -22,16 +22,15 @@ import java.awt.TexturePaint;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.dai.PatternDefinition;
 import org.geotoolkit.s52.render.PatternSymbolStyle;
 import org.geotoolkit.s52.render.SymbolStyle;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -70,7 +69,7 @@ public class PatternFill extends Instruction{
         this();
         this.patternName = patternName;
     }
-    
+
     @Override
     protected void readParameters(String str) throws IOException {
         final String[] parts = str.split(",");
@@ -83,7 +82,8 @@ public class PatternFill extends Instruction{
     }
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geoType) throws PortrayalException {
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic s52graphic) throws PortrayalException {
 
         final Graphics2D g2d = ctx.getGraphics();
 
@@ -139,7 +139,7 @@ public class PatternFill extends Instruction{
 
         g2d.setPaint(paint);
         try {
-            g2d.fill(graphic.getGeometry(null).getDisplayShape());
+            g2d.fill(s52graphic.graphic.getGeometry(null).getDisplayShape());
         } catch (TransformException ex) {
             throw new PortrayalException(ex);
         }

@@ -16,15 +16,14 @@
  */
 package org.geotoolkit.s52.procedure;
 
-import java.awt.Graphics2D;
+import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.lookuptable.instruction.SimpleLine;
 import org.geotoolkit.s52.lookuptable.instruction.Symbol;
-import org.opengis.feature.Feature;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 
 /**
  * S-52 Annex A Part I p.152 (12.2.4)
@@ -42,34 +41,33 @@ public class DEPCNT03 extends Procedure{
     }
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geotype) throws PortrayalException {
-        final Graphics2D g2d = ctx.getGraphics();
-        final Feature feature = (Feature) graphic.getCandidate();
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic s52graphic) throws PortrayalException {
 
         //TODO for each spatial component
-        final Object value = (feature.getProperty("QUAPOS")==null) ? null : feature.getProperty("QUAPOS").getValue();
+        final Object value = (s52graphic.feature.getProperty("QUAPOS")==null) ? null : s52graphic.feature.getProperty("QUAPOS").getValue();
 
         if(value != null){
             final int val = Integer.valueOf(value.toString());
             if(val > 1 && val < 10){
-                SET.render(ctx, context, colorTable, graphic, geotype);
+                SET.render(ctx, context, colorTable, all, s52graphic);
             }else{
-                NOSET.render(ctx, context, colorTable, graphic, geotype);
+                NOSET.render(ctx, context, colorTable, all, s52graphic);
             }
         }else{
-            NOSET.render(ctx, context, colorTable, graphic, geotype);
+            NOSET.render(ctx, context, colorTable, all, s52graphic);
         }
 
         if(context.isContourLabels()){
-            Double valdco = (Double) ((feature.getProperty("VALDCO")==null) ? 0.0 : feature.getProperty("VALDCO").getValue());
+            Double valdco = (Double) ((s52graphic.feature.getProperty("VALDCO")==null) ? 0.0 : s52graphic.feature.getProperty("VALDCO").getValue());
             if(valdco == null){
                 valdco = 0.0d;
             }
 
             final SAFCON01 safcon01 = (SAFCON01) context.getProcedure("SAFCON01");
-            final Symbol[] symbols = safcon01.eval(ctx, context, colorTable, graphic, geotype, valdco);
+            final Symbol[] symbols = safcon01.eval(ctx, context, colorTable, all, s52graphic, valdco);
             for(Symbol s : symbols){
-                s.render(ctx, context, colorTable, graphic, geotype);
+                s.render(ctx, context, colorTable, all, s52graphic);
             }
         }
 

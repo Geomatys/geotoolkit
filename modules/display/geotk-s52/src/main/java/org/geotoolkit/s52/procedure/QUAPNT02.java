@@ -16,12 +16,13 @@
  */
 package org.geotoolkit.s52.procedure;
 
+import java.util.List;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.lookuptable.instruction.Symbol;
-import org.opengis.feature.Feature;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 
 /**
  *
@@ -34,7 +35,8 @@ public class QUAPNT02 extends Procedure{
     }
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geotype) {
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic graphic) throws PortrayalException {
         System.out.println("Procedure "+getName()+" not implemented yet");
     }
 
@@ -49,14 +51,14 @@ public class QUAPNT02 extends Procedure{
      * @param graphic
      * @return
      */
-    public Object[] eval(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic) {
-        final Feature feature = (Feature) graphic.getCandidate();
+    public Object[] eval(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic graphic) throws PortrayalException {
         boolean accurate = true;
         Symbol symbol = null;
 
         if(context.isLowAccuracySymbols()){
             //TODO for each spatial component
-            final Object value = (feature.getProperty("QUAPOS")==null) ? null : feature.getProperty("QUAPOS").getValue();
+            final Object value = (graphic.feature.getProperty("QUAPOS")==null) ? null : graphic.feature.getProperty("QUAPOS").getValue();
             if(value != null){
                 int val = Integer.valueOf(value.toString());
                 if(val > 1 && val < 10){

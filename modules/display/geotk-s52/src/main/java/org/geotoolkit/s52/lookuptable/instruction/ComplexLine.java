@@ -21,16 +21,15 @@ import java.awt.Graphics2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.style.j2d.DefaultPathWalker;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.render.SymbolStyle;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -62,7 +61,8 @@ public class ComplexLine extends Instruction{
     }
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geoType) throws PortrayalException {
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic s52graphic) throws PortrayalException {
         System.out.println("TODO Complex line");
         if(true)return;
         final Graphics2D g2d = ctx.getGraphics();
@@ -70,7 +70,7 @@ public class ComplexLine extends Instruction{
 
         final PathIterator ite;
         try {
-            ite = graphic.getGeometry(null).getDisplayShape().getPathIterator(null);
+            ite = s52graphic.graphic.getGeometry(null).getDisplayShape().getPathIterator(null);
         } catch (TransformException ex) {
             throw new PortrayalException(ex);
         }

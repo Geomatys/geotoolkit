@@ -19,15 +19,14 @@ package org.geotoolkit.s52.procedure;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.text.NumberFormat;
+import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.style.j2d.TextStroke;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.s52.S52Context;
@@ -35,7 +34,7 @@ import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.S52Utilities;
 import org.geotoolkit.s52.lookuptable.instruction.SimpleLine;
 import org.geotoolkit.s52.render.SymbolStyle;
-import org.opengis.feature.Feature;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -58,18 +57,18 @@ public class CLRLIN01 extends Procedure{
     }
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geotype) throws PortrayalException {
-        final Feature feature = (Feature) graphic.getCandidate();
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic s52graphic) throws PortrayalException {
 
         //render a simple line
-        LINE.render(ctx, context, colorTable, graphic, null);
+        LINE.render(ctx, context, colorTable, all, s52graphic);
 
         //find the bearing
         final Geometry geom;
         final Shape shp;
         try {
-            geom = graphic.getGeometry(null).getDisplayGeometryJTS();
-            shp = graphic.getGeometry(null).getDisplayShape();
+            geom = s52graphic.graphic.getGeometry(null).getDisplayGeometryJTS();
+            shp = s52graphic.graphic.getGeometry(null).getDisplayShape();
         } catch (TransformException ex) {
             throw new PortrayalException(ex);
         }
@@ -84,7 +83,7 @@ public class CLRLIN01 extends Procedure{
         ss.render(null, context, colorTable, (Coordinate)coords[coords.length-1].clone(), angle+mapRotation);
 
         //draw the text
-        final Object value = feature.getProperty("catclr").getValue();
+        final Object value = s52graphic.feature.getProperty("catclr").getValue();
         if(value != null){
             String text = "";
             if("1".equals(value)){

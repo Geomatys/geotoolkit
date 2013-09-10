@@ -16,10 +16,12 @@
  */
 package org.geotoolkit.s52.procedure;
 
+import java.util.List;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 
 /**
  *
@@ -32,12 +34,13 @@ public class UDWHAZ04 extends Procedure{
     }
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geotype) {
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic graphic) throws PortrayalException {
         System.out.println("Procedure "+getName()+" not implemented yet");
     }
 
     /**
-     * 
+     *
      * @param ctx
      * @param context
      * @param colorTable
@@ -45,7 +48,18 @@ public class UDWHAZ04 extends Procedure{
      * @param depthValue
      * @return
      */
-    public Object[] render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, double depthValue) {
+    public Object[] render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic graphic, double depthValue) {
+
+        final double safetyContour = context.getSafetyContour();
+        boolean danger = false;
+
+        if(depthValue <= safetyContour){
+            //TODO loop on objects
+        }else{
+            return new Object[]{false,null};
+        }
+
         System.out.println("Procedure "+getName()+" not implemented yet");
         return new Object[]{false,null};
     }

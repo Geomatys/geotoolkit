@@ -16,13 +16,14 @@
  */
 package org.geotoolkit.s52.procedure;
 
+import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.S52Utilities;
 import org.geotoolkit.s52.lookuptable.instruction.Symbol;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 
 /**
  * S-52 Annex A Part I p.189 (12.2.17)
@@ -54,11 +55,13 @@ public class RESCSP02 extends Procedure{
     }
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geotype) {
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic graphic) throws PortrayalException {
         System.out.println("Procedure "+getName()+" can not be used directly.");
     }
 
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geotype, String[] restrn) throws PortrayalException {
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic graphic, String[] restrn) throws PortrayalException {
         System.out.println("Procedure "+getName()+" not implemented yet");
 
         final Symbol symbol;
@@ -107,7 +110,7 @@ public class RESCSP02 extends Procedure{
             symbol = SY_RSRDEF51;
 
         }
-        symbol.render(ctx, context, colorTable, graphic, geotype);
+        symbol.render(ctx, context, colorTable, all, graphic);
 
     }
 

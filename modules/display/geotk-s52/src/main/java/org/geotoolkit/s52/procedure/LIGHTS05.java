@@ -19,8 +19,6 @@ package org.geotoolkit.s52.procedure;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Stroke;
@@ -29,19 +27,13 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.measure.converter.UnitConverter;
-import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.GeodeticCalculator;
@@ -52,9 +44,8 @@ import org.geotoolkit.s52.S52Utilities;
 import org.geotoolkit.s52.lookuptable.instruction.AlphanumericText;
 import org.geotoolkit.s52.lookuptable.instruction.NumericText;
 import org.geotoolkit.s52.lookuptable.instruction.SimpleLine;
-import org.geotoolkit.s52.render.PointSymbolStyle;
 import org.geotoolkit.s52.render.SymbolStyle;
-import org.opengis.feature.Feature;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -71,19 +62,19 @@ public class LIGHTS05 extends Procedure{
     }
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geotype) throws PortrayalException {
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic graphic) throws PortrayalException {
         final Graphics2D g2d = ctx.getGraphics();
-        final Feature feature = (Feature) graphic.getCandidate();
 
-        Number valnmr = (Number) feature.getProperty("VALNMR").getValue();
-        String[] catlit = (String[]) feature.getProperty("CATLIT").getValue();
-        Number orient = (Number) feature.getProperty("ORIENT").getValue();
+        Number valnmr = (Number) graphic.feature.getProperty("VALNMR").getValue();
+        String[] catlit = (String[]) graphic.feature.getProperty("CATLIT").getValue();
+        Number orient = (Number) graphic.feature.getProperty("ORIENT").getValue();
 
         final Coordinate displayCenter;
         final Coordinate objectiveCenter;
         try {
-            displayCenter = graphic.getGeometry(null).getDisplayGeometryJTS().getCoordinate();
-            objectiveCenter = graphic.getGeometry(null).getObjectiveGeometryJTS().getCentroid().getCoordinate();
+            displayCenter = graphic.graphic.getGeometry(null).getDisplayGeometryJTS().getCoordinate();
+            objectiveCenter = graphic.graphic.getGeometry(null).getObjectiveGeometryJTS().getCentroid().getCoordinate();
         } catch (TransformException ex) {
             throw new PortrayalException(ex);
         }
@@ -129,14 +120,14 @@ public class LIGHTS05 extends Procedure{
         }
 
         //continuation A
-        String[] colour = (String[]) feature.getProperty("COLOUR").getValue();
+        String[] colour = (String[]) graphic.feature.getProperty("COLOUR").getValue();
         if(colour == null || colour.length==0){
             colour = new String[]{"13"};
         }
         final List<String> colors = Arrays.asList(colour);
 
-        Number sector1 = (Number) feature.getProperty("SECTR1").getValue();
-        Number sector2 = (Number) feature.getProperty("SECTR2").getValue();
+        Number sector1 = (Number) graphic.feature.getProperty("SECTR1").getValue();
+        Number sector2 = (Number) graphic.feature.getProperty("SECTR2").getValue();
         if(sector1 == null || sector2 == null){
             //TODO find other lights at same position
             final boolean lightAtSamePosition = false;
@@ -179,7 +170,7 @@ public class LIGHTS05 extends Procedure{
                     } catch (IOException ex) {
                         throw new PortrayalException(ex);
                     }
-                    text.render(ctx, context, colorTable, graphic, geotype);
+                    text.render(ctx, context, colorTable, all, graphic);
 
                 }else{
                     final SymbolStyle rs = context.getSyle("QUESMRK1");
@@ -196,14 +187,14 @@ public class LIGHTS05 extends Procedure{
 
             if(context.isLightDescription()){
 
-                final String litchr = (String) feature.getProperty("LITCHR").getValue();
-                final String siggrp = (String) feature.getProperty("SIGGRP").getValue();
-                final Number sigper = (Number) feature.getProperty("SIGPER").getValue();
-                final Number height = (Number) feature.getProperty("HEIGHT").getValue();
-                final String status = (String) feature.getProperty("STATUS").getValue();
+                final String litchr = (String) graphic.feature.getProperty("LITCHR").getValue();
+                final String siggrp = (String) graphic.feature.getProperty("SIGGRP").getValue();
+                final Number sigper = (Number) graphic.feature.getProperty("SIGPER").getValue();
+                final Number height = (Number) graphic.feature.getProperty("HEIGHT").getValue();
+                final String status = (String) graphic.feature.getProperty("STATUS").getValue();
 
                 final LITDSN01 litdsn01 = (LITDSN01) context.getProcedure("LITDSN01");
-                final String litdsn = litdsn01.render(ctx, context, colorTable, graphic, geotype,
+                final String litdsn = litdsn01.render(ctx, context, colorTable, all, graphic,
                         catlit, litchr, siggrp,colour,sigper,height,valnmr,status);
 
                 final AlphanumericText text = new AlphanumericText();
@@ -213,7 +204,7 @@ public class LIGHTS05 extends Procedure{
                     } catch (IOException ex) {
                         throw new PortrayalException(ex);
                     }
-                    text.render(ctx, context, colorTable, graphic, geotype);
+                    text.render(ctx, context, colorTable, all, graphic);
                 }else{
                     try {
                         text.read("TX('"+litdsn+"',3,2,3,'15110',2,0,CHBLK,23)");
@@ -221,7 +212,7 @@ public class LIGHTS05 extends Procedure{
                         throw new PortrayalException(ex);
                     }
                 }
-                text.render(ctx, context, colorTable, graphic, geotype);
+                text.render(ctx, context, colorTable, all, graphic);
             }
             return; //finished
         }
@@ -256,14 +247,14 @@ public class LIGHTS05 extends Procedure{
             ss.render(g2d, context, colorTable, displayCenter, 135f);
 
             if(context.isLightDescription()){
-                final String litchr = (String) feature.getProperty("LITCHR").getValue();
-                final String siggrp = (String) feature.getProperty("SIGGRP").getValue();
-                final Number sigper = (Number) feature.getProperty("SIGPER").getValue();
-                final Number height = (Number) feature.getProperty("HEIGHT").getValue();
-                final String status = (String) feature.getProperty("STATUS").getValue();
+                final String litchr = (String) graphic.feature.getProperty("LITCHR").getValue();
+                final String siggrp = (String) graphic.feature.getProperty("SIGGRP").getValue();
+                final Number sigper = (Number) graphic.feature.getProperty("SIGPER").getValue();
+                final Number height = (Number) graphic.feature.getProperty("HEIGHT").getValue();
+                final String status = (String) graphic.feature.getProperty("STATUS").getValue();
 
                 final LITDSN01 litdsn01 = new LITDSN01();
-                final String litdsn = litdsn01.render(ctx, context, colorTable, graphic, geotype,
+                final String litdsn = litdsn01.render(ctx, context, colorTable, all, graphic,
                         catlit, litchr, siggrp,colour,sigper,height,valnmr,status);
 
                 final AlphanumericText text = new AlphanumericText();
@@ -272,7 +263,7 @@ public class LIGHTS05 extends Procedure{
                 } catch (IOException ex) {
                     throw new PortrayalException(ex);
                 }
-                text.render(ctx, context, colorTable, graphic, geotype);
+                text.render(ctx, context, colorTable, all, graphic);
             }
             return; //finished
         }else{

@@ -26,11 +26,13 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.TopologyException;
 import java.io.IOException;
+import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 
 /**
  * S-52 rendering instruction.
@@ -84,7 +86,7 @@ public abstract class Instruction {
         }
     }
 
-    public abstract void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geoType) throws PortrayalException;
+    public abstract void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, List<S52Graphic> all, S52Graphic s52graphic) throws PortrayalException;
 
     protected static Coordinate getPivotPoint(Geometry geom){
         try{

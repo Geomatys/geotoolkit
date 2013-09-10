@@ -33,17 +33,14 @@ import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display2d.GO2Hints;
-import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.DefaultProjectedFeature;
-import org.geotoolkit.display2d.primitive.DefaultGraphicFeatureJ2D;
 import org.geotoolkit.display2d.primitive.DefaultProjectedObject;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Context.GeoType;
 import org.geotoolkit.s52.S52Palette;
@@ -59,25 +56,11 @@ import org.opengis.feature.Feature;
  */
 public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedSymbolizer>{
 
-    private final class Element implements Comparable<Element>{
-
-        int priority;
-        ProjectedObject graphic;
-        LookupRecord record;
-        GeoType geoType;
-
-        @Override
-        public int compareTo(Element other) {
-            return priority - other.priority;
-        }
-
-    }
-
     public static final RenderingHints.Key KEY = new GO2Hints.NamedKey(S52Context.class,"context");
 
     private S52Context s52context = null;
 
-    private final List<Element> elements = new ArrayList<>();
+    private final List<S52Graphic> elements = new ArrayList<>();
 
     public S52SymbolizerRenderer(SymbolizerRendererService service, S52CachedSymbolizer symbol, RenderingContext2D context) {
         super(service, symbol, context);
@@ -104,45 +87,7 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
 
     @Override
     public void portray(ProjectedObject graphic) throws PortrayalException {
-        final Feature feature = (Feature) graphic.getCandidate();
-        graphic = new DefaultGraphicFeatureJ2D((J2DCanvas)graphic.getCanvas(), (FeatureMapLayer)graphic.getLayer(), feature);
-
-        //Follow schema Annex A Part I p.68
-        final String objClassCode = S52Utilities.getObjClass(feature);
-        Geometry geom = (Geometry) feature.getDefaultGeometryProperty().getValue();
-        final S52Context context = getS52Context();
-
-        //find geometry category
-        final GeoType geoType = getType(geom);
-        if(geoType==null){
-            //no geometry
-            return;
-        }
-        //get the appropriate informations
-        final S52Palette colorTable = context.getPalette();
-        final LookupTable lookup = context.getLookupTable(geoType);
-        final List<LookupRecord> records = lookup.getRecords(objClassCode);
-
-        if(records.isEmpty()){
-            //TODO show the QUESTMRK SYMBOL for appropriate geometry type
-            System.out.println("No S-52 symbol for type : " +objClassCode);
-            return;
-        }
-
-        //ensure we paint in display mode.
-        renderingContext.switchToDisplayCRS();
-
-        final LookupRecord record = LookupTable.getActiveRecord(records,feature);
-        final Instruction[] instructions = record.getInstruction();
-
-        try{
-            for(Instruction inst : instructions){
-                inst.render(renderingContext, context, colorTable, graphic, geoType);
-            }
-        }catch(Exception ex){
-            ex.printStackTrace();
-        }
-
+        portray(Collections.singleton(graphic).iterator());
     }
 
     @Override
@@ -157,17 +102,17 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
             if(monitor.stopRequested()) return;
 
             //create the cache for future rendering
-            final Element element = new Element();
+            final S52Graphic element = new S52Graphic();
             element.graphic = graphics.next();
-            final Feature feature = (Feature) element.graphic.getCandidate();
+            element.feature = (Feature) element.graphic.getCandidate();
             //copy and cache the graphic
             final DefaultProjectedFeature dpf = new DefaultProjectedFeature(
-                    ((DefaultProjectedObject)element.graphic).getParameters(),feature);
+                    ((DefaultProjectedObject)element.graphic).getParameters(),element.feature);
             element.graphic = dpf;
 
             //Follow schema Annex A Part I p.68
-            final String objClassCode = S52Utilities.getObjClass(feature);
-            Geometry geom = (Geometry) feature.getDefaultGeometryProperty().getValue();
+            final String objClassCode = S52Utilities.getObjClass(element.feature);
+            Geometry geom = (Geometry) element.feature.getDefaultGeometryProperty().getValue();
 
             //find geometry category
             element.geoType = getType(geom);
@@ -185,7 +130,7 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
                 continue;
             }
 
-            element.record = LookupTable.getActiveRecord(records,feature);
+            element.record = LookupTable.getActiveRecord(records,element.feature);
             element.priority = element.record.getPriority();
             elements.add(element);
         }
@@ -195,10 +140,10 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
 
 
         //render elements
-        for(Element element : elements){
+        for(S52Graphic element : elements){
             final Instruction[] instructions = element.record.getInstruction();
             for(Instruction inst : instructions){
-                inst.render(renderingContext, context, colorTable, element.graphic, element.geoType);
+                inst.render(renderingContext, context, colorTable, elements, element);
             }
         }
 

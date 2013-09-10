@@ -16,15 +16,15 @@
  */
 package org.geotoolkit.s52.procedure;
 
+import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.S52Utilities;
 import org.geotoolkit.s52.lookuptable.instruction.ComplexLine;
 import org.geotoolkit.s52.lookuptable.instruction.SimpleLine;
-import org.opengis.feature.Feature;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 
 /**
  *
@@ -41,37 +41,37 @@ public class QUALIN01 extends Procedure{
     }
 
     @Override
-    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable, ProjectedObject graphic, S52Context.GeoType geotype) throws PortrayalException {
-        final Feature feature = (Feature) graphic.getCandidate();
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            List<S52Graphic> all, S52Graphic graphic) throws PortrayalException {
 
         //TODO for each spatial component
-        final Object value = (feature.getProperty("QUAPOS")==null) ? null : feature.getProperty("QUAPOS").getValue();
+        final Object value = (graphic.feature.getProperty("QUAPOS")==null) ? null : graphic.feature.getProperty("QUAPOS").getValue();
 
         if(value != null){
             int val = Integer.valueOf(value.toString());
             if(val > 1 && val < 10){
-                LOWACC21.render(ctx, context, colorTable, graphic, geotype);
+                LOWACC21.render(ctx, context, colorTable, all, graphic);
                 //TODO continue loop
                 return;
             }
         }
 
-        final String type = S52Utilities.getObjClass(feature);
+        final String type = S52Utilities.getObjClass(graphic.feature);
         if("COALNE".equals(type)){
-            final Object conrad = feature.getProperty("CONRAD").getValue();
+            final Object conrad = graphic.feature.getProperty("CONRAD").getValue();
             if(conrad != null){
                 if("1".equals(conrad)){
-                    LOWACC.render(ctx, context, colorTable, graphic, geotype);
-                    SIMPLE.render(ctx, context, colorTable, graphic, geotype);
+                    LOWACC.render(ctx, context, colorTable, all, graphic);
+                    SIMPLE.render(ctx, context, colorTable, all, graphic);
                 }else{
-                    SIMPLE.render(ctx, context, colorTable, graphic, geotype);
+                    SIMPLE.render(ctx, context, colorTable, all, graphic);
                 }
             }else{
-                SIMPLE.render(ctx, context, colorTable, graphic, geotype);
+                SIMPLE.render(ctx, context, colorTable, all, graphic);
             }
 
         }else if("LNDARE".equals(type)){
-            SIMPLE.render(ctx, context, colorTable, graphic, geotype);
+            SIMPLE.render(ctx, context, colorTable, all, graphic);
         }else{
             throw new PortrayalException("Unexpected object class for this procedure(QUALIN01) : "+type);
         }
