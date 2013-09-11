@@ -122,6 +122,7 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
 
         //render elements
         for(S52Graphic element : elements){
+            if(monitor.stopRequested()) return;
             final Instruction[] instructions = element.record.getInstruction();
             for(Instruction inst : instructions){
                 inst.render(renderingContext, context, colorTable, elements, element);

@@ -211,6 +211,7 @@ public final class AMLTypeBank implements TypeBank{
 
             final String[] lines = str.split("\n");
             for(String line : lines){
+                if(line.startsWith("#")) continue;
                 types.add((T)constructor.newInstance((Object)split(line)));
             }
         } catch (IOException ex) {
