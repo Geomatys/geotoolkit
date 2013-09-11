@@ -187,6 +187,7 @@ public class S52Context {
     private float timeTags = 0f; //min
     private boolean fullSectors = true;
     private boolean lightDescription = false;
+    private boolean isolatedDangerInShallowWater = true;
     //used by procedure SOUNDG02
     private float analyzedDepth = 0f;
 
@@ -410,6 +411,14 @@ public class S52Context {
 
     public void setAnalyzedDepth(float analyzedDepth) {
         this.analyzedDepth = analyzedDepth;
+    }
+
+    public void setIsolatedDangerInShallowWater(boolean isolatedDangerInShallowWater) {
+        this.isolatedDangerInShallowWater = isolatedDangerInShallowWater;
+    }
+
+    public boolean isIsolatedDangerInShallowWater() {
+        return isolatedDangerInShallowWater;
     }
 
     ////////////////////////////////////////////////////////////////////////////

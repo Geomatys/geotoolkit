@@ -25,13 +25,16 @@ import org.opengis.feature.Feature;
  * Description of an S-52 element to render.
  */
 public final class S52Graphic implements Comparable<S52Graphic> {
-    
+
     public int priority;
     public ProjectedObject graphic;
     public Feature feature;
     public int viewingGroup;
     public LookupRecord record;
     public S52Context.GeoType geoType;
+    public float minscale;
+    public LookupRecord.Radar radarflag;
+    public String category;
 
     @Override
     public int compareTo(S52Graphic other) {
