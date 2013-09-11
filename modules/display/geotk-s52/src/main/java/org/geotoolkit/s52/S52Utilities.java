@@ -111,6 +111,7 @@ public final class S52Utilities extends Static{
      * @return true if one or more value is in the array
      */
     public static boolean containsAny(Object[] array, Object ... values){
+        if(array==null) return false;
         for(Object value : values){
             if(ArraysExt.contains(array, value)) return true;
         }

@@ -41,7 +41,7 @@ public class LITDSN01 extends Procedure{
 
     public String render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
             List<S52Graphic> all, S52Graphic graphic, String[] catlit, String litchr,
-            String siggrp, String[] colour, Number sigper,Number height, Number valnmr, String status){
+            String siggrp, String[] colour, Number sigper,Number height, Number valnmr, String[] status){
         System.out.println("Procedure "+getName()+" not implemented yet");
         return "<TODO>";
     }

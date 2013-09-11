@@ -191,7 +191,7 @@ public class LIGHTS05 extends Procedure{
                 final String siggrp = (String) graphic.feature.getProperty("SIGGRP").getValue();
                 final Number sigper = (Number) graphic.feature.getProperty("SIGPER").getValue();
                 final Number height = (Number) graphic.feature.getProperty("HEIGHT").getValue();
-                final String status = (String) graphic.feature.getProperty("STATUS").getValue();
+                final String[] status = (String[]) graphic.feature.getProperty("STATUS").getValue();
 
                 final LITDSN01 litdsn01 = (LITDSN01) context.getProcedure("LITDSN01");
                 final String litdsn = litdsn01.render(ctx, context, colorTable, all, graphic,
@@ -251,7 +251,7 @@ public class LIGHTS05 extends Procedure{
                 final String siggrp = (String) graphic.feature.getProperty("SIGGRP").getValue();
                 final Number sigper = (Number) graphic.feature.getProperty("SIGPER").getValue();
                 final Number height = (Number) graphic.feature.getProperty("HEIGHT").getValue();
-                final String status = (String) graphic.feature.getProperty("STATUS").getValue();
+                final String[] status = (String[]) graphic.feature.getProperty("STATUS").getValue();
 
                 final LITDSN01 litdsn01 = new LITDSN01();
                 final String litdsn = litdsn01.render(ctx, context, colorTable, all, graphic,
