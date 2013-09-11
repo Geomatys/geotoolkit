@@ -23,16 +23,12 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import java.awt.RenderingHints;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
-import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.DefaultProjectedFeature;
 import org.geotoolkit.display2d.primitive.DefaultProjectedObject;
@@ -56,8 +52,6 @@ import org.opengis.feature.Feature;
  */
 public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedSymbolizer>{
 
-    public static final RenderingHints.Key KEY = new GO2Hints.NamedKey(S52Context.class,"context");
-
     private S52Context s52context = null;
 
     private final List<S52Graphic> elements = new ArrayList<>();
@@ -68,20 +62,7 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
 
     private S52Context getS52Context() throws PortrayalException{
         if(s52context != null) return s52context;
-        s52context = (S52Context) renderingContext.getCanvas().getRenderingHint(KEY);
-        if(s52context==null){
-            s52context = new S52Context();
-            try {
-                final URL dai = S52Context.getDefaultDAI();
-                if(dai == null){
-                    throw new PortrayalException("S52 DAI file has not been configured with S52Context.setDefaultDAI(URL).");
-                }
-                s52context.load(dai);
-            } catch (IOException ex) {
-                throw new PortrayalException(ex);
-            }
-            renderingContext.getCanvas().setRenderingHint(KEY, s52context);
-        }
+        s52context = S52Utilities.getS52Context(renderingContext.getCanvas());
         return s52context;
     }
 

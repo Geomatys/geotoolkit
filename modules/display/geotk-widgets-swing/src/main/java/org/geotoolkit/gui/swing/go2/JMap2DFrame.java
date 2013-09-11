@@ -85,6 +85,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.gui.swing.go2.control.JMarinerBar;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -94,35 +95,35 @@ import org.opengis.geometry.Envelope;
  * @module pending
  */
 public class JMap2DFrame extends javax.swing.JFrame {
-    
+
     private final JMap2D guiMap;
     private final JContextTree guiContextTree;
     private final JChainEditor guiChainEditor;
-    
+
     protected JMap2DFrame(final MapContext context, Hints hints) {
         this(context,false,hints);
     }
-    
+
     protected JMap2DFrame(final MapContext context, boolean statefull, Hints hints) {
-        initComponents();        
+        initComponents();
 
         guiContextTree = (JContextTree) jScrollPane1;
         guiContextTree.setContext(context);
         initTree(guiContextTree);
-                        
+
         guiMap = new JMap2D(statefull);
         guiMap.getContainer().setContext(context);
         guiMap.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_GENERALIZE, GO2Hints.GENERALIZE_ON);
         guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_BEHAVIOR_MODE, GO2Hints.BEHAVIOR_PROGRESSIVE);
-               
+
         guiChainEditor = new JChainEditor(true);
         panETL.add(BorderLayout.CENTER, guiChainEditor);
-        
+
         if(hints != null){
             guiMap.getCanvas().setRenderingHints(hints);
         }
-        
+
         guiMap.getCanvas().getController().setAutoRepaint(true);
 
         for(TreePopupItem item : guiContextTree.controls()){
@@ -145,14 +146,15 @@ public class JMap2DFrame extends javax.swing.JFrame {
         }
 
         guiMap.addDecoration(new JClassicNavigationDecoration(JClassicNavigationDecoration.THEME.CLASSIC));
-        
+
         panGeneral.add(BorderLayout.CENTER, guiMap);
-        
+
         guiNavBar.setMap(guiMap);
         guiInfoBar.setMap(guiMap);
         guiCoordBar.setMap(guiMap);
         guiConfigBar.setMap(guiMap);
         guiSelectionBar.setMap(guiMap);
+        guiMarinerBar.setMap(guiMap);
         guiEditBar.setMap(guiMap);
 
         guiMap.getCanvas().getController().setAutoRepaint(true);
@@ -198,13 +200,13 @@ public class JMap2DFrame extends javax.swing.JFrame {
         lstproperty.add(styles);
 
         property.setPropertyPanels(lstproperty);
-        
+
         tree.controls().add(property);
         tree.controls().add(new ContextPropertyItem());
 
         tree.revalidate();
     }
-        
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -228,6 +230,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiSelectionBar = new JSelectionBar();
         jSeparator3 = new Separator();
         guiEditBar = new JEditionBar();
+        guiMarinerBar = new JMarinerBar();
         guiConfigBar = new JConfigBar();
         guiCoordBar = new JCoordinateBar();
         panETL = new JPanel();
@@ -301,6 +304,12 @@ public class JMap2DFrame extends javax.swing.JFrame {
         gridBagConstraints.weightx = 1.0;
         jPanel1.add(guiEditBar, gridBagConstraints);
 
+        guiMarinerBar.setFloatable(false);
+        guiMarinerBar.setRollover(true);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        jPanel1.add(guiMarinerBar, gridBagConstraints);
+
         guiConfigBar.setFloatable(false);
         guiConfigBar.setRollover(true);
         gridBagConstraints = new GridBagConstraints();
@@ -372,7 +381,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
 private void jMenuItem1ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
     System.exit(0);
 }//GEN-LAST:event_jMenuItem1ActionPerformed
-                 
+
 
 private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
 
@@ -393,7 +402,7 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
                     stream = ImageIO.createImageOutputStream(output1);
                     output1 = stream;
                 }
-                
+
                 ImageWriteParam iwp = writer.getDefaultWriteParam();
                 iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
                 iwp.setCompressionQuality(0);
@@ -401,7 +410,7 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
                 writer.setOutput(output0);
                 writer.write(null,iimage,iwp);
                 writer.dispose();
-                
+
                 iwp = writer.getDefaultWriteParam();
                 iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
                 iwp.setCompressionQuality(1);
@@ -409,8 +418,8 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
                 writer.setOutput(output1);
                 writer.write(null,iimage,iwp);
                 writer.dispose();
-                
-                
+
+
                 if (output0 != null) {
                     ((ImageOutputStream)output0).close();
                     ((ImageOutputStream)output1).close();
@@ -422,51 +431,51 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
     }catch(Exception rx){
         rx.printStackTrace();
     }
-        
-    
+
+
 }//GEN-LAST:event_jButton3ActionPerformed
 
 private void openCoverageStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openCoverageStoreChooser
         try {
             final List<MapLayer> layers = JCoverageStoreChooser.showLayerDialog(null);
-            
+
             for(MapLayer layer : layers){
-                if(layer == null) continue;                    
-                guiContextTree.getContext().layers().add(layer);                    
-            }   
-            
+                if(layer == null) continue;
+                guiContextTree.getContext().layers().add(layer);
+            }
+
         } catch (DataStoreException ex) {
             Logger.getLogger(JMap2DFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-    
-        
+
+
 }//GEN-LAST:event_openCoverageStoreChooser
 
 private void openFeatureStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openFeatureStoreChooser
 
         try {
             final List<MapLayer> layers = JFeatureStoreChooser.showLayerDialog(null);
-            
+
             for(MapLayer layer : layers){
-                if(layer == null) continue;                    
-                guiContextTree.getContext().layers().add(layer);                    
+                if(layer == null) continue;
+                guiContextTree.getContext().layers().add(layer);
             }
-            
+
         } catch (DataStoreException ex) {
             Logger.getLogger(JMap2DFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-    
+
 }//GEN-LAST:event_openFeatureStoreChooser
 
 private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerChooser
 
     try {
         final List<MapLayer> layers = JServerChooser.showLayerDialog(null);
-            
+
         for(MapLayer layer : layers){
-            if(layer == null) continue;                    
-            guiContextTree.getContext().layers().add(layer);                    
-        } 
+            if(layer == null) continue;
+            guiContextTree.getContext().layers().add(layer);
+        }
 
     } catch (DataStoreException ex) {
         Logger.getLogger(JMap2DFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -482,15 +491,15 @@ private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerCho
         }
         return false;
     }
-    
+
     public static void show(final MapContext context){
         show(context,null);
     }
-    
+
     public static void show(final MapContext context, final Hints hints){
         show(context,false,null);
     }
-    
+
     public static void show(MapContext context, final boolean statefull, final Hints hints){
         if(context == null) context = MapBuilder.createContext();
         final MapContext mc = context;
@@ -508,6 +517,7 @@ private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerCho
     private JCoordinateBar guiCoordBar;
     private JEditionBar guiEditBar;
     private JInformationBar guiInfoBar;
+    private JMarinerBar guiMarinerBar;
     private JNavigationBar guiNavBar;
     private JSelectionBar guiSelectionBar;
     private JButton jButton3;

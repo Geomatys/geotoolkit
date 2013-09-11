@@ -16,10 +16,16 @@
  */
 package org.geotoolkit.s52;
 
+import java.awt.RenderingHints;
+import java.io.IOException;
+import java.net.URL;
 import javax.measure.converter.UnitConverter;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import org.apache.sis.util.ArraysExt;
+import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display.canvas.Canvas;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.lang.Static;
 import org.opengis.feature.Feature;
 
@@ -29,7 +35,27 @@ import org.opengis.feature.Feature;
  */
 public final class S52Utilities extends Static{
 
+    private static final RenderingHints.Key CONTEXT_KEY = new GO2Hints.NamedKey(S52Context.class,"context");
+
     public static final UnitConverter NAUTIC_MILES_TO_METERS = NonSI.NAUTICAL_MILE.getConverterTo(SI.METRE);
+
+    public static S52Context getS52Context(Canvas canvas) throws PortrayalException{
+        S52Context s52context = (S52Context) canvas.getRenderingHint(CONTEXT_KEY);
+        if(s52context==null){
+            s52context = new S52Context();
+            try {
+                final URL dai = S52Context.getDefaultDAI();
+                if(dai == null){
+                    throw new PortrayalException("S52 DAI file has not been configured with S52Context.setDefaultDAI(URL).");
+                }
+                s52context.load(dai);
+            } catch (IOException ex) {
+                throw new PortrayalException(ex);
+            }
+            canvas.setRenderingHint(CONTEXT_KEY, s52context);
+        }
+        return s52context;
+    }
 
     /**
      * Convert pica to mm

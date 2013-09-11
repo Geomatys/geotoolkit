@@ -19,7 +19,9 @@ package org.geotoolkit.s52;
 import java.awt.Color;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.apache.sis.util.logging.Logging;
@@ -188,6 +190,34 @@ public class S52Context {
     //used by procedure SOUNDG02
     private float analyzedDepth = 0f;
 
+    // DAI informations ////////////////////////////////////////////////////////
+
+    public List<String> getAvailablePalettes(){
+        return new ArrayList<>(palettes.keySet());
+    }
+
+    public List<String> getAvailablePointTables(){
+        final List<String> values = new ArrayList<>();
+        values.add(LKN_POINT_PAPER);
+        values.add(LKN_POINT_SIMPLIFIED);
+        return values;
+    }
+
+    public List<String> getAvailableLineTables(){
+        final List<String> values = new ArrayList<>();
+        values.add(LKN_LINE);
+        return values;
+    }
+
+    public List<String> getAvailableAreaTables(){
+        final List<String> values = new ArrayList<>();
+        values.add(LKN_AREA_PLAIN);
+        values.add(LKN_AREA_SYMBOLIZED);
+        return values;
+    }
+
+    // MARINER CONFIGURATION ///////////////////////////////////////////////////
+
     public void setNoText(boolean noText) {
         this.noText = noText;
     }
@@ -223,6 +253,30 @@ public class S52Context {
             palette = palettes.get(paletteName);
         }
         return palette;
+    }
+
+    public void setActivePointTable(String pointlk) {
+        this.pointlk = pointlk;
+    }
+
+    public String getActivePointTable() {
+        return pointlk;
+    }
+
+    public void setActiveLineTable(String linelk) {
+        this.linelk = linelk;
+    }
+
+    public String getActiveLineTable() {
+        return linelk;
+    }
+
+    public void setActiveAreaTable(String arealk) {
+        this.arealk = arealk;
+    }
+
+    public String getActiveAreaTable() {
+        return arealk;
     }
 
     public LookupTable getLookupTable(GeoType type) {
