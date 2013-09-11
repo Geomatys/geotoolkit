@@ -144,7 +144,7 @@ public class UDWHAZ04 extends Procedure{
 
     }
 
-    private static boolean intersects(S52Graphic one, S52Graphic two){
+    public static boolean intersects(S52Graphic one, S52Graphic two){
         final Geometry geom1 = (Geometry) one.feature.getDefaultGeometryProperty().getValue();
         final Geometry geom2 = (Geometry) two.feature.getDefaultGeometryProperty().getValue();
         return geom1.intersects(geom2);
