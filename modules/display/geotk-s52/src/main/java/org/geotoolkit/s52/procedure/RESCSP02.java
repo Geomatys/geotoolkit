@@ -62,7 +62,6 @@ public class RESCSP02 extends Procedure{
 
     public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
             List<S52Graphic> all, S52Graphic graphic, String[] restrn) throws PortrayalException {
-        System.out.println("Procedure "+getName()+" not implemented yet");
 
         final Symbol symbol;
         if(S52Utilities.containsAny(restrn, "7","8","14")){

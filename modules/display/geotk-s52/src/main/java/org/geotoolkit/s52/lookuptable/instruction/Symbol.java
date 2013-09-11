@@ -17,6 +17,7 @@
 package org.geotoolkit.s52.lookuptable.instruction;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.io.IOException;
@@ -84,14 +85,6 @@ public class Symbol extends Instruction{
             List<S52Graphic> all, S52Graphic s52graphic) throws PortrayalException {
         final Graphics2D g2d = ctx.getGraphics();
 
-        final Coordinate center;
-        try {
-            center = getPivotPoint(s52graphic.graphic.getGeometry(null).getDisplayGeometryJTS());
-        } catch (TransformException ex) {
-            throw new PortrayalException(ex);
-        }
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-
         //find rotation
         float rotation = 0f;
         if(this.rotation == null || this.rotation.isEmpty()){
@@ -112,6 +105,25 @@ public class Symbol extends Instruction{
                 }
             }
         }
+
+        final Geometry displayGeometryJTS;
+        try {
+            displayGeometryJTS = s52graphic.graphic.getGeometry(null).getDisplayGeometryJTS();
+        } catch (TransformException ex) {
+            throw new PortrayalException(ex);
+        }
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+
+        renderGeometry(ctx, context, colorTable, displayGeometryJTS, rotation);
+    }
+
+    public void renderGeometry(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            Geometry displayGeomJTS, float rotation) throws PortrayalException {
+
+        final Graphics2D g2d = ctx.getGraphics();
+
+        final Coordinate center = getPivotPoint(displayGeomJTS);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
         final SymbolStyle ss = context.getSyle(this.symbolName);
         if(ss == null){

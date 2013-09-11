@@ -31,41 +31,41 @@ import org.geotoolkit.io.LEDataInputStream;
 
 /**
  * S-57 Vector/Spatial record.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class VectorRecord extends S57Object {
-        
+
     //7.7.1.1 Vector record identifier field structure
     public static final String VRID = "VRID";
-    public static final String VRID_RCNM = "RCNM"; 
-    public static final String VRID_RCID = "RCID";     
+    public static final String VRID_RCNM = "RCNM";
+    public static final String VRID_RCID = "RCID";
     /** record version */
-    public static final String VRID_RVER = "RVER"; 
+    public static final String VRID_RVER = "RVER";
     /** record update instruction */
-    public static final String VRID_RUIN = "RUIN"; 
-    
+    public static final String VRID_RUIN = "RUIN";
+
     /** RVER */
     public int version;
     /** RUIN */
     public UpdateInstruction updateInstruction;
     /** ATTV */
-    public final List<Attribute> attributes = new ArrayList<Attribute>();
+    public final List<Attribute> attributes = new ArrayList<>();
     /** VRPC */
     public RecordPointerControl recordPointerControl;
     /** VRPT */
-    public final List<RecordPointer> records = new ArrayList<RecordPointer>();
+    public final List<RecordPointer> records = new ArrayList<>();
     /** SGCC */
     public CoordinateControl coordinateControl;
     /** SG2D/SG3D */
-    public final List<Coordinate2D> coords = new ArrayList<Coordinate2D>();
+    public final List<Coordinate2D> coords = new ArrayList<>();
     /** ARCC */
     public List<Arc> arcs;
-    
+
     /**
      * Shortcut to access edge begin node.
      * May return null if vector is not an edge.
-     * @return 
+     * @return
      */
     public RecordPointer getEdgeBeginNode(){
         for(RecordPointer rp : records){
@@ -75,11 +75,11 @@ public class VectorRecord extends S57Object {
         }
         return null;
     }
-    
+
     /**
      * Shortcut to access edge begin node.
      * May return null if vector is not an edge.
-     * @return 
+     * @return
      */
     public RecordPointer getEdgeEndNode(){
         for(RecordPointer rp : records){
@@ -89,13 +89,13 @@ public class VectorRecord extends S57Object {
         }
         return null;
     }
-    
+
     /**
      * If vector is an edge/nodes, return it's coordinates.
      * @return Coordinate
      */
     public List<Coordinate> getCoordinates(double coordFactor,double soundingFactor){
-        final List<Coordinate> coords = new ArrayList<Coordinate>(this.coords.size());
+        final List<Coordinate> coords = new ArrayList<>(this.coords.size());
         for(Coordinate2D c : this.coords){
             if(c.is3D){
                 coords.add(new Coordinate(c.x/coordFactor, c.y/coordFactor, c.z/soundingFactor));
@@ -105,7 +105,7 @@ public class VectorRecord extends S57Object {
         }
         return coords;
     }
-    
+
     /**
      * If vector is a node, return it's coordinate.
      * @return Coordinate
@@ -114,13 +114,13 @@ public class VectorRecord extends S57Object {
         final Coordinate2D c = coords.get(0);
         return new Coordinate(c.x/coordFactor, c.y/coordFactor);
     }
-        
+
     public static class Attribute extends BaseAttribute {
         //7.7.1.2 Vector record attribute field structure
-        public static final String VRID_ATTV = "ATTV"; 
-        public static final String VRID_ATTV_ATTL = "ATTL"; 
+        public static final String VRID_ATTV = "ATTV";
+        public static final String VRID_ATTV_ATTL = "ATTL";
         public static final String VRID_ATTV_ATVL = "ATVL";
-        
+
         @Override
         protected String getKeyTag() {
             return VRID_ATTV_ATTL;
@@ -130,16 +130,16 @@ public class VectorRecord extends S57Object {
         protected String getValueTag() {
             return VRID_ATTV_ATVL;
         }
-        
+
     }
-    
+
     public static class RecordPointerControl extends BaseControl {
         //7.7.1.3 Vector record pointer control field structure
-        public static final String VRID_VRPC = "VRPC"; 
-        public static final String VRID_VRPC_VPUI = "VPUI"; 
+        public static final String VRID_VRPC = "VRPC";
+        public static final String VRID_VRPC_VPUI = "VPUI";
         public static final String VRID_VRPC_VPIX = "VPIX";
         public static final String VRID_VRPC_NVPT = "NVPT";
-        
+
         @Override
         protected String getUpdateTag() {
             return VRID_VRPC_VPUI;
@@ -155,36 +155,36 @@ public class VectorRecord extends S57Object {
             return VRID_VRPC_NVPT;
         }
     }
-    
+
     public static class RecordPointer extends Pointer {
         //7.7.1.4 Vector record pointer field structure
-        public static final String VRID_VRPT = "VRPT"; 
+        public static final String VRID_VRPT = "VRPT";
         /** NAME is composed of */
-        public static final String VRID_VRPT_NAME = "NAME"; 
-        public static final String VRID_VRPT_ORNT = "ORNT"; 
-        public static final String VRID_VRPT_USAG = "USAG"; 
-        public static final String VRID_VRPT_TOPI = "TOPI"; 
-        public static final String VRID_VRPT_MASK = "MASK"; 
-        
+        public static final String VRID_VRPT_NAME = "NAME";
+        public static final String VRID_VRPT_ORNT = "ORNT";
+        public static final String VRID_VRPT_USAG = "USAG";
+        public static final String VRID_VRPT_TOPI = "TOPI";
+        public static final String VRID_VRPT_MASK = "MASK";
+
         //informations
         public Orientation orientation;
         public Usage usage;
         public Topology topology;
         public Mask mask;
-        
+
         public RecordPointer() {
         }
-        
+
         public RecordPointer(long id, S57Constants.RecordType type) {
             this.refid = id;
             this.type = type;
         }
-        
+
         @Override
         public void read(Field isofield) throws IOException {
             read(isofield.getSubFields());
         }
-        
+
         public void read(List<SubField> subFields) throws IOException {
             for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
@@ -205,21 +205,21 @@ public class VectorRecord extends S57Object {
                 else if(VRID_VRPT_MASK.equals(tag)) mask = Mask.valueOf(value);
             }
         }
-        
+
         @Override
         public String toString() {
             return "RP:"+type+","+refid+","+orientation+","+usage+","+topology+","+mask;
         }
-        
+
     }
-    
+
     public static class CoordinateControl extends BaseControl {
         //7.7.1.5 Coordinate control field structure
-        public static final String VRID_SGCC = "SGCC"; 
-        public static final String VRID_SGCC_CCUI = "CCUI"; 
-        public static final String VRID_SGCC_CCIX = "CCIX"; 
-        public static final String VRID_SGCC_CCNC = "CCNC"; 
-        
+        public static final String VRID_SGCC = "SGCC";
+        public static final String VRID_SGCC_CCUI = "CCUI";
+        public static final String VRID_SGCC_CCIX = "CCIX";
+        public static final String VRID_SGCC_CCNC = "CCNC";
+
         @Override
         protected String getUpdateTag() {
             return VRID_SGCC_CCUI;
@@ -234,17 +234,17 @@ public class VectorRecord extends S57Object {
         protected String getNumberTag() {
             return VRID_SGCC_CCNC;
         }
-         
+
     }
-    
+
     public static class Coordinate2D extends S57Object {
         //7.7.1.6 2-D Coordinate field structure
-        public static final String VRID_SG2D = "SG2D"; 
-        public static final String VRID_SGXD_YCOO = "YCOO"; 
-        public static final String VRID_SGXD_XCOO = "XCOO";        
+        public static final String VRID_SG2D = "SG2D";
+        public static final String VRID_SGXD_YCOO = "YCOO";
+        public static final String VRID_SGXD_XCOO = "XCOO";
         //7.7.1.7 3-D Coordinate field structure
         public static final String VRID_SG3D = "SG3D";
-        /** 
+        /**
         * In the binary implementation, 3-D sounding values are encoded as integers. In order to convert
         * floating-point 3-D (sounding) values to integers (and vice-versa) a multiplication factor is used. The factor
         * is defined by the encoder and held in the “3-D (sounding) Multiplication Factor” [SOMF] subfield. The
@@ -252,7 +252,7 @@ public class VectorRecord extends S57Object {
         * The conversion algorithm is defined in clause 2.6.
         */
         public static final String VRID_SG3D_VE3D = "VE3D";
-        
+
         private final boolean is3D;
         public double x;
         public double y;
@@ -266,7 +266,7 @@ public class VectorRecord extends S57Object {
         public void read(Field isofield) throws IOException {
             read(isofield.getSubFields());
         }
-        
+
         public void read(List<SubField> subFields) throws IOException {
             for(SubField sf : subFields){
                 final String tag = sf.getType().getTag();
@@ -281,9 +281,9 @@ public class VectorRecord extends S57Object {
         public String toString() {
             return "Coord["+x+"  "+y+"  "+z+"]";
         }
-        
+
     }
-        
+
     public static class Arc extends S57Object {
         //7.7.1.8 Arc/Curve definition field structure
         public static final String VRID_ARCC = "ARCC";
@@ -292,13 +292,13 @@ public class VectorRecord extends S57Object {
         public static final String VRID_ARCC_ORDR = "ORDR";
         public static final String VRID_ARCC_RESO = "RESO";
         public static final String VRID_ARCC_FPMF = "FPMF";
-        
+
         public ArcType type;
         public ConstructionSurface surface;
         public int order;
         public double resolution;
         public int factor;
-        
+
         @Override
         public void read(Field isofield) throws IOException {
             for(SubField sf : isofield.getSubFields()){
@@ -311,7 +311,7 @@ public class VectorRecord extends S57Object {
                 else if (VRID_ARCC_FPMF.equals(tag)) factor = toInteger(value);
             }
         }
-        
+
         public static class Arc2D extends S57Object {
             //7.7.1.9 Arc coordinates field structure
             public static final String VRID_ARCC_AR2D = "AR2D";
@@ -340,9 +340,9 @@ public class VectorRecord extends S57Object {
             public static final String VRID_ARCC_CT2D_YCOO = "YCOO";
             public static final String VRID_ARCC_CT2D_XCOO = "XCOO";
         }
-        
+
     }
-    
+
     @Override
     public void read(Field isofield) throws IOException {
         for(SubField sf : isofield.getSubFields()){
@@ -401,5 +401,5 @@ public class VectorRecord extends S57Object {
             }
         }
     }
-        
+
 }
