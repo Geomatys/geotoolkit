@@ -85,7 +85,7 @@ public class CswXMLBindingTest {
 
     private static final Logger LOGGER = Logging.getLogger(CswXMLBindingTest.class);
 
-    private MarshallerPool pool;
+    private final MarshallerPool pool = CSWMarshallerPool.getInstance();
 
      /**
      * A JAXB factory to csw object version 2.0.2
@@ -104,7 +104,6 @@ public class CswXMLBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = CSWMarshallerPool.getInstance();
 
     }
 
@@ -238,23 +237,10 @@ public class CswXMLBindingTest {
 
         RecordType expResult = new RecordType(id, title, type, subject, format, modified, date, Abstract, bbox, creator, distributor, null, spatial, references);
 
-        LOGGER.finer("DATE " + expResult.getDate() + " - " + result.getDate());
         assertEquals(expResult.getDate(), result.getDate());
-
-        LOGGER.finer("ABSTRACT " +expResult.getAbstract() + " - " + result.getAbstract());
         assertEquals(expResult.getAbstract(), result.getAbstract());
-
-        LOGGER.finer("SPATIAL " +expResult.getSpatial() + " - " + result.getSpatial());
         assertEquals(expResult.getSpatial(), result.getSpatial());
-
-        LOGGER.finer("BBOXES " +expResult.getBoundingBox() + " - " + result.getBoundingBox());
         assertEquals(expResult.getBoundingBox().get(0).getValue(), result.getBoundingBox().get(0).getValue());
-
-
-        LOGGER.finer("RESULT: " + result.toString());
-        LOGGER.finer("");
-        LOGGER.finer("EXPRESULT: " + expResult.toString());
-        LOGGER.finer("-----------------------------------------------------------");
         assertEquals(expResult, result);
 
 
@@ -1041,7 +1027,6 @@ public class CswXMLBindingTest {
         "    </csw:Constraint>\n" +
         "  </csw:Query>\n" ;
         //"</csw:GetRecords>\n";
-        LOGGER.finer("RESULT:\n" + result);
 
         //we remove the 2 first line because the xlmns are not always in the same order.
         expResult = expResult.substring(expResult.indexOf('\n') + 1);
@@ -1051,8 +1036,6 @@ public class CswXMLBindingTest {
         result = result.substring(result.indexOf('\n') + 1);
         result = result.replaceAll("</csw:GetRecords>", "");
 
-        LOGGER.finer("RESULT:\n" + result);
-        LOGGER.finer("EXPRESULT:\n" + expResult);
         XMLComparator comparator = new XMLComparator(expResult, result);
         comparator.compare();
 
@@ -1092,7 +1075,6 @@ public class CswXMLBindingTest {
         "    </cat:Constraint>\n" +
         "  </cat:Query>\n";
         //"</cat:GetRecords>\n";
-        LOGGER.finer("RESULT:\n" + result);
 
         //we remove the 2 first line because the xlmns are not always in the same order.
         expResult = expResult.substring(expResult.indexOf('\n') + 1);
@@ -1101,9 +1083,6 @@ public class CswXMLBindingTest {
         result = result.substring(result.indexOf('\n') + 1);
         result = result.substring(result.indexOf('\n') + 1);
         result = result.replaceAll("</cat:GetRecords>", "");
-
-        LOGGER.finer("RESULT:\n" + result);
-        LOGGER.finer("EXPRESULT:\n" + expResult);
 
         comparator = new XMLComparator(expResult, result);
         comparator.compare();
@@ -1225,7 +1204,7 @@ public class CswXMLBindingTest {
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
         SimpleLiteral type       = new SimpleLiteral("clearinghouse");
 
-        List<SimpleLiteral> subject = new ArrayList<SimpleLiteral>();
+        List<SimpleLiteral> subject = new ArrayList<>();
         subject.add(new SimpleLiteral("oceans elevation NASA/JPL/JASON-1"));
         subject.add(new SimpleLiteral("oceans elevation 2"));
 
@@ -1234,7 +1213,7 @@ public class CswXMLBindingTest {
         SimpleLiteral references = new SimpleLiteral("http://keel.esri.com/output/TOOLKIT_Browse_Metadata_P7540_T8020_D1098.xml");
         SimpleLiteral spatial    = new SimpleLiteral("northlimit=65.9999999720603; eastlimit=180; southlimit=-66.0000000558794; westlimit=-180;");
 
-        List<BoundingBoxType> bbox = new ArrayList<BoundingBoxType>();
+        List<BoundingBoxType> bbox = new ArrayList<>();
         bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
 
         RecordType record = new RecordType(id, title, type, subject, null, modified, null, Abstract, bbox, null, null, null, spatial, references);

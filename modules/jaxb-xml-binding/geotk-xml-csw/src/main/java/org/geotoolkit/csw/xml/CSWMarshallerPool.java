@@ -17,6 +17,7 @@
 
 package org.geotoolkit.csw.xml;
 
+import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.xml.AnchoredMarshallerPool;
 import org.apache.sis.xml.MarshallerPool;
@@ -39,9 +40,27 @@ public final class CSWMarshallerPool {
         }
     }
 
+    private static final MarshallerPool instanceCswOnly;
+    static {
+        try {
+            instanceCswOnly = new AnchoredMarshallerPool(createJAXBContext(CSWClassesContext.getCSWClasses()));
+        } catch (JAXBException ex) {
+            throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
+        }
+    }
+
     private CSWMarshallerPool() {}
 
     public static MarshallerPool getInstance() {
         return instance;
     }
+    
+    public static MarshallerPool getInstanceCswOnly() {
+        return instanceCswOnly;
+    }
+
+    public static Binder getBinderCswOnly() throws JAXBException {
+        return createJAXBContext(CSWClassesContext.getCSWClasses()).createBinder();
+    }
+
 }

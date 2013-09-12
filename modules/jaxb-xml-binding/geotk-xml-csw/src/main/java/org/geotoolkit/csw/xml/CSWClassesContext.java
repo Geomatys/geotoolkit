@@ -41,7 +41,7 @@ public class CSWClassesContext {
     /**
      * List of classes for the french profile of metadata.
      */
-    public static final List<Class> FRA_CLASSES = new ArrayList<Class>();
+    public static final List<Class> FRA_CLASSES = new ArrayList<>();
 
     static {
         FRA_CLASSES.addAll(Arrays.asList(
@@ -57,7 +57,7 @@ public class CSWClassesContext {
      * Return the list of all the marshallable classes.
      */
     public static List<Class> getAllClassesList() {
-        final List<Class> classeList = new ArrayList<Class>();
+        final List<Class> classeList = new ArrayList<>();
 
         //ISO 19115 class
         classeList.add(DefaultMetadata.class);
@@ -110,7 +110,7 @@ public class CSWClassesContext {
 
 
 
-        final List<String> extraClasses = new ArrayList<String>();
+        final List<String> extraClasses = new ArrayList<>();
         final Iterator<CSWClassesFactory> ite = ServiceRegistry.lookupProviders(CSWClassesFactory.class);
         while (ite.hasNext()) {
             final CSWClassesFactory currentFactory = ite.next();
@@ -128,11 +128,37 @@ public class CSWClassesContext {
         return classeList;
     }
 
+    public static List<Class> getCSWClassesList() {
+        final List<Class> classeList = new ArrayList<>();
+
+        //CSW 2.0.2 classes
+        classeList.addAll(Arrays.asList(org.geotoolkit.csw.xml.v202.ObjectFactory.class,
+                                        ExceptionReport.class,
+                                        org.geotoolkit.ows.xml.v110.ExceptionReport.class, // TODO remove
+                                        org.geotoolkit.dublincore.xml.v2.terms.ObjectFactory.class));
+
+        //CSW 2.0.0 classes
+        classeList.addAll(Arrays.asList(org.geotoolkit.csw.xml.v200.ObjectFactory.class,
+                                        org.geotoolkit.dublincore.xml.v1.terms.ObjectFactory.class));
+
+        // GML base factory
+        classeList.add(org.apache.sis.internal.jaxb.geometry.ObjectFactory.class);
+        return classeList;
+    }
+
     /**
      * Returns the marshallable classes in an array.
      */
     public static Class[] getAllClasses() {
-        List<Class> classes =getAllClassesList();
+        final List<Class> classes = getAllClassesList();
+        return classes.toArray(new Class[classes.size()]);
+    }
+
+    /**
+     * Returns the marshallable classes in an array.
+     */
+    public static Class[] getCSWClasses() {
+        final List<Class> classes = getCSWClassesList();
         return classes.toArray(new Class[classes.size()]);
     }
 
