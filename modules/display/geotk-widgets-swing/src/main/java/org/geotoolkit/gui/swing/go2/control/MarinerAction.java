@@ -17,9 +17,12 @@
 package org.geotoolkit.gui.swing.go2.control;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.gui.swing.go2.JMap2D;
@@ -29,6 +32,7 @@ import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.style.s52.JS52MarinerPane;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Utilities;
+import org.geotoolkit.s52.lookuptable.instruction.PatternFill;
 
 /**
  *
@@ -59,16 +63,39 @@ public class MarinerAction extends AbstractMapAction {
                     pane.apply();
                     map.getCanvas().getController().repaint();
                     //change the map background
-                    final Color color = context.getPalette().getColor("NODTA");
-                    if(color!=null){
-                        final BackgroundPainter deco = new SolidColorPainter(color);
-                        map.getCanvas().setBackgroundPainter(deco);
-                    }
+                    //S-52 Annex A part I p.143 (12.2.2)
+                    map.getCanvas().setBackgroundPainter(new S52Background());
                 }
             }catch(PortrayalException ex){
                 ex.printStackTrace();
             }
         }
+    }
+
+    private static class S52Background implements BackgroundPainter{
+
+        @Override
+        public void paint(RenderingContext2D rc) {
+            try{
+                final Graphics2D g = rc.getGraphics();
+                final S52Context context = S52Utilities.getS52Context(rc.getCanvas());
+                final Color color = context.getPalette().getColor("NODTA");
+                final Rectangle rect = rc.getCanvasDisplayBounds();
+                g.setPaint(color);
+                g.fillRect(rect.x, rect.y, rect.width, rect.height);
+                final PatternFill pf = new PatternFill("NODATA03");
+                pf.render(rc, context, context.getPalette(), rect);
+
+            }catch(PortrayalException ex){
+                ex.printStackTrace();
+            }
+        }
+
+        @Override
+        public boolean isOpaque() {
+            return true;
+        }
+
     }
 
 }

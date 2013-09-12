@@ -18,6 +18,7 @@ package org.geotoolkit.s52.lookuptable.instruction;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.TexturePaint;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -85,6 +86,17 @@ public class PatternFill extends Instruction{
     public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
             List<S52Graphic> all, S52Graphic s52graphic) throws PortrayalException {
 
+        try {
+            Shape shp = s52graphic.graphic.getGeometry(null).getDisplayShape();
+            render(ctx, context, colorTable, shp);
+        } catch (TransformException ex) {
+            throw new PortrayalException(ex);
+        }
+    }
+
+    public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
+            Shape displayShape) throws PortrayalException {
+
         final Graphics2D g2d = ctx.getGraphics();
 
         SymbolStyle sst = context.getSyle(patternName);
@@ -138,12 +150,9 @@ public class PatternFill extends Instruction{
         }
 
         g2d.setPaint(paint);
-        try {
-            g2d.fill(s52graphic.graphic.getGeometry(null).getDisplayShape());
-        } catch (TransformException ex) {
-            throw new PortrayalException(ex);
-        }
+        g2d.fill(displayShape);
 
     }
+
 
 }

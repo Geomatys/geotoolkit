@@ -38,8 +38,9 @@ public class DATCVR02 extends Procedure{
     @Override
     public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
             List<S52Graphic> all, S52Graphic graphic) throws PortrayalException {
-        System.out.println("Procedure "+getName()+" not implemented yet");
+        //System.out.println("Procedure "+getName()+" not implemented yet");
         //TODO this is a general presentation procedure, not called by any function.
+        //partialy handled in Swing module JMarinerBar
     }
 
 }
