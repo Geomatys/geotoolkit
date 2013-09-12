@@ -78,7 +78,7 @@ import org.geotoolkit.s52.procedure.SEABED01;
 import org.geotoolkit.s52.procedure.SLCONS03;
 import org.geotoolkit.s52.procedure.SNDFRM03;
 import org.geotoolkit.s52.procedure.SOUNDG02;
-import org.geotoolkit.s52.procedure.SYMINSnn;
+import org.geotoolkit.s52.procedure.SYMINS01;
 import org.geotoolkit.s52.procedure.TOPMAR01;
 import org.geotoolkit.s52.procedure.UDWHAZ04;
 import org.geotoolkit.s52.procedure.VESSEL02;
@@ -144,7 +144,7 @@ public class S52Context {
             new SLCONS03(),
             new SNDFRM03(),
             new SOUNDG02(),
-            new SYMINSnn(),
+            new SYMINS01(),
             new TOPMAR01(),
             new UDWHAZ04(),
             new VESSEL02(),
