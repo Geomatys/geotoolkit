@@ -20,7 +20,6 @@ package org.geotoolkit.referencing.crs;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.io.wkt.Convention;
 import org.geotoolkit.referencing.datum.DatumTest;
-import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.referencing.cs.CoordinateSystemTest;
 
 import static org.geotoolkit.test.Commons.decodeQuotes;
@@ -45,7 +44,7 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
  *
  * @since 2.2
  */
-@DependsOn({IdentifiedObjectTest.class, DatumTest.class, CoordinateSystemTest.class})
+@DependsOn({/*IdentifiedObjectTest.class,*/ DatumTest.class, CoordinateSystemTest.class})
 public final strictfp class CoordinateReferenceSystemTest extends ReferencingTestBase {
     /**
      * Validates constants.

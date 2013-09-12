@@ -24,7 +24,6 @@ import org.opengis.util.InternationalString;
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.internal.referencing.AxisDirections;
 
 import org.junit.*;
@@ -44,7 +43,7 @@ import static org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis.*;
  *
  * @since 2.2
  */
-@DependsOn({IdentifiedObjectTest.class, DirectionAlongMeridianTest.class})
+@DependsOn({/*IdentifiedObjectTest.class,*/ DirectionAlongMeridianTest.class})
 public final strictfp class CoordinateSystemAxisTest extends ReferencingTestBase {
     /**
      * For floating point number comparisons.

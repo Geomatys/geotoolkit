@@ -32,7 +32,6 @@ import org.opengis.referencing.datum.VerticalDatumType;
 import org.junit.*;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
-import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
 import static org.geotoolkit.referencing.Assert.*;
@@ -50,7 +49,7 @@ import static org.geotoolkit.referencing.datum.DefaultTemporalDatum.*;
  *
  * @since 2.2
  */
-@DependsOn({IdentifiedObjectTest.class, TemporalDatumTest.class})
+@DependsOn({/*IdentifiedObjectTest.class,*/ TemporalDatumTest.class})
 public final strictfp class DatumTest extends ReferencingTestBase {
     /**
      * Validates constant definitions.

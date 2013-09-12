@@ -42,7 +42,7 @@ public final strictfp class ListIteratorTest extends ListIteratorTestCase<Intege
         }
         data         = list;
         iterator     = list.listIterator();
-        random       = createRandomNumberGenerator("compareToArrayList");
+        random       = createRandomNumberGenerator();
         testForward  = true;
         testBackward = true;
         testRemove   = true;

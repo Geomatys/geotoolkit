@@ -18,8 +18,6 @@
 package org.geotoolkit.referencing.operation.matrix;
 
 import java.awt.Shape;
-import java.awt.geom.Area;
-import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
@@ -29,6 +27,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.resources.Errors;
 import org.opengis.referencing.operation.MathTransform2D; // For Javadoc
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
 import static java.lang.Math.*;
 
@@ -418,6 +417,7 @@ public class XAffineTransform extends AffineTransform {
      *
      * @since 2.3.1
      */
+    // LGPL
     public static boolean isIdentity(final AffineTransform tr, double tolerance) {
         if (tr.isIdentity()) {
             return true;
@@ -453,52 +453,12 @@ public class XAffineTransform extends AffineTransform {
      * @see #createTransformedShape
      *
      * @since 2.5
+     *
+     * @deprecated Moved to Apache SIS {@link AffineTransforms2D}.
      */
+    @Deprecated
     public static Shape transform(final AffineTransform transform, Shape shape, boolean overwrite) {
-        final int type = transform.getType();
-        if (type == TYPE_IDENTITY) {
-            return shape;
-        }
-        // If there is only scale, flip, quadrant rotation or translation,
-        // then we can optimize the transformation of rectangular shapes.
-        if ((type & (TYPE_GENERAL_ROTATION | TYPE_GENERAL_TRANSFORM)) == 0) {
-            // For a Rectangle input, the output should be a rectangle as well.
-            if (shape instanceof Rectangle2D) {
-                final Rectangle2D rect = (Rectangle2D) shape;
-                return transform(transform, rect, overwrite ? rect : null);
-            }
-            // For other rectangular shapes, we restrict to cases without
-            // rotation or flip because we don't know if the shape is symmetric.
-            if ((type & (TYPE_FLIP | TYPE_MASK_ROTATION)) == 0) {
-                if (shape instanceof RectangularShape) {
-                    RectangularShape rect = (RectangularShape) shape;
-                    if (!overwrite) {
-                        rect = (RectangularShape) rect.clone();
-                    }
-                    final Rectangle2D frame = rect.getFrame();
-                    rect.setFrame(transform(transform, frame, frame));
-                    return rect;
-                }
-            }
-        }
-        if (shape instanceof Path2D) {
-            final Path2D path = (Path2D) shape;
-            if (overwrite) {
-                path.transform(transform);
-            } else {
-                shape = path.createTransformedShape(transform);
-            }
-        } else if (shape instanceof Area) {
-            final Area area = (Area) shape;
-            if (overwrite) {
-                area.transform(transform);
-            } else {
-                shape = area.createTransformedArea(transform);
-            }
-        } else {
-            shape = new Path2D.Double(shape, transform);
-        }
-        return shape;
+        return AffineTransforms2D.transform(transform, shape, overwrite);
     }
 
     /**
@@ -524,30 +484,15 @@ public class XAffineTransform extends AffineTransform {
      * @return The direct transform of the {@code bounds} rectangle.
      *
      * @see org.geotoolkit.referencing.CRS#transform(MathTransform2D, Rectangle2D, Rectangle2D)
+     *
+     * @deprecated Moved to Apache SIS {@link AffineTransforms2D}.
      */
+    @Deprecated
     public static Rectangle2D transform(final AffineTransform transform,
                                         final Rectangle2D     bounds,
                                         final Rectangle2D     dest)
     {
-        double xmin = Double.POSITIVE_INFINITY;
-        double ymin = Double.POSITIVE_INFINITY;
-        double xmax = Double.NEGATIVE_INFINITY;
-        double ymax = Double.NEGATIVE_INFINITY;
-        final Point2D.Double point = new Point2D.Double();
-        for (int i=0; i<4; i++) {
-            point.x = (i & 1) == 0 ? bounds.getMinX() : bounds.getMaxX();
-            point.y = (i & 2) == 0 ? bounds.getMinY() : bounds.getMaxY();
-            transform.transform(point, point);
-            if (point.x < xmin) xmin = point.x;
-            if (point.x > xmax) xmax = point.x;
-            if (point.y < ymin) ymin = point.y;
-            if (point.y > ymax) ymax = point.y;
-        }
-        if (dest != null) {
-            dest.setRect(xmin, ymin, xmax-xmin, ymax-ymin);
-            return dest;
-        }
-        return new Rectangle2D.Double(xmin, ymin, xmax-xmin, ymax-ymin);
+        return AffineTransforms2D.transform(transform, bounds, dest);
     }
 
     /**
@@ -565,31 +510,16 @@ public class XAffineTransform extends AffineTransform {
      *
      * @return The inverse transform of the {@code bounds} rectangle.
      * @throws NoninvertibleTransformException if the affine transform can't be inverted.
+     *
+     * @deprecated Moved to Apache SIS {@link AffineTransforms2D}.
      */
+    @Deprecated
     public static Rectangle2D inverseTransform(final AffineTransform transform,
                                                final Rectangle2D     bounds,
                                                final Rectangle2D     dest)
             throws NoninvertibleTransformException
     {
-        double xmin = Double.POSITIVE_INFINITY;
-        double ymin = Double.POSITIVE_INFINITY;
-        double xmax = Double.NEGATIVE_INFINITY;
-        double ymax = Double.NEGATIVE_INFINITY;
-        final Point2D.Double point = new Point2D.Double();
-        for (int i=0; i<4; i++) {
-            point.x = (i&1)==0 ? bounds.getMinX() : bounds.getMaxX();
-            point.y = (i&2)==0 ? bounds.getMinY() : bounds.getMaxY();
-            transform.inverseTransform(point, point);
-            if (point.x < xmin) xmin = point.x;
-            if (point.x > xmax) xmax = point.x;
-            if (point.y < ymin) ymin = point.y;
-            if (point.y > ymax) ymax = point.y;
-        }
-        if (dest != null) {
-            dest.setRect(xmin, ymin, xmax-xmin, ymax-ymin);
-            return dest;
-        }
-        return new Rectangle2D.Double(xmin, ymin, xmax-xmin, ymax-ymin);
+        return AffineTransforms2D.inverseTransform(transform, bounds, dest);
     }
 
     /**
@@ -603,29 +533,16 @@ public class XAffineTransform extends AffineTransform {
      *
      * @return The inverse transform of the {@code source} point.
      * @throws NoninvertibleTransformException if the affine transform can't be inverted.
+     *
+     * @deprecated Moved to Apache SIS {@link AffineTransforms2D}.
      */
+    @Deprecated
     public static Point2D inverseDeltaTransform(final AffineTransform transform,
                                                 final Point2D         source,
                                                 final Point2D         dest)
             throws NoninvertibleTransformException
     {
-        final double m00 = transform.getScaleX();
-        final double m11 = transform.getScaleY();
-        final double m01 = transform.getShearX();
-        final double m10 = transform.getShearY();
-        final double det = m00*m11 - m01*m10;
-        if (!(abs(det) > Double.MIN_VALUE)) {
-            return transform.createInverse().deltaTransform(source, dest);
-        }
-        final double x0 = source.getX();
-        final double y0 = source.getY();
-        final double x = (x0*m11 - y0*m01) / det;
-        final double y = (y0*m00 - x0*m10) / det;
-        if (dest != null) {
-            dest.setLocation(x, y);
-            return dest;
-        }
-        return new Point2D.Double(x, y);
+        return AffineTransforms2D.inverseDeltaTransform(transform, source, dest);
     }
 
     /**
@@ -638,19 +555,12 @@ public class XAffineTransform extends AffineTransform {
      *
      * @param tr The affine transform to inspect.
      * @return {@code true} if the given transform seems to swap axis order.
+     *
+     * @deprecated Moved to Apache SIS {@link AffineTransforms2D}.
      */
+    @Deprecated
     public static int getSwapXY(final AffineTransform tr) {
-        final int flip = getFlip(tr);
-        if (flip != 0) {
-            final double scaleX = getScaleX0(tr);
-            final double scaleY = getScaleY0(tr) * flip;
-            final double y = abs(tr.getShearY()/scaleY - tr.getShearX()/scaleX);
-            final double x = abs(tr.getScaleY()/scaleY + tr.getScaleX()/scaleX);
-            if (x > y) return +1;
-            if (x < y) return -1;
-            // At this point, we may have (x == y) or some NaN value.
-        }
-        return 0;
+        return AffineTransforms2D.getSwapXY(tr);
     }
 
     /**
@@ -663,16 +573,12 @@ public class XAffineTransform extends AffineTransform {
      * @param  tr The affine transform to inspect.
      * @return An estimation of the rotation angle in radians, or {@link Double#NaN NaN}
      *         if the angle can not be estimated.
+     *
+     * @deprecated Moved to Apache SIS {@link AffineTransforms2D}.
      */
+    @Deprecated
     public static double getRotation(final AffineTransform tr) {
-        final int flip = getFlip(tr);
-        if (flip != 0) {
-            final double scaleX = getScaleX0(tr);
-            final double scaleY = getScaleY0(tr) * flip;
-            return atan2(tr.getShearY()/scaleY - tr.getShearX()/scaleX,
-                         tr.getScaleY()/scaleY + tr.getScaleX()/scaleX);
-        }
-        return Double.NaN;
+        return AffineTransforms2D.getRotation(tr);
     }
 
     /**
@@ -705,15 +611,12 @@ public class XAffineTransform extends AffineTransform {
      *
      * @param tr The affine transform to inspect.
      * @return -1 if an axis has been flipped, +1 if no flipping, or 0 if unknown.
+     *
+     * @deprecated Moved to Apache SIS {@link AffineTransforms2D}.
      */
+    @Deprecated
     public static int getFlip(final AffineTransform tr) {
-        final int scaleX = MathFunctions.sgn(tr.getScaleX());
-        final int scaleY = MathFunctions.sgn(tr.getScaleY());
-        final int shearX = MathFunctions.sgn(tr.getShearX());
-        final int shearY = MathFunctions.sgn(tr.getShearY());
-        if (scaleX ==  scaleY && shearX == -shearY) return +1;
-        if (scaleX == -scaleY && shearX ==  shearY) return -1;
-        return 0;
+        return AffineTransforms2D.getFlip(tr);
     }
 
     /**
@@ -724,13 +627,12 @@ public class XAffineTransform extends AffineTransform {
      *
      * @param tr The affine transform to inspect.
      * @return The magnitude of scale factor <var>x</var>.
+     *
+     * @deprecated Moved to Apache SIS {@link AffineTransforms2D}.
      */
+    @Deprecated
     public static double getScaleX0(final AffineTransform tr) {
-        final double scale = tr.getScaleX();
-        final double shear = tr.getShearX();
-        if (shear == 0) return abs(scale);  // Optimization for a very common case.
-        if (scale == 0) return abs(shear);  // Not as common as above, but still common enough.
-        return hypot(scale, shear);
+        return AffineTransforms2D.getScaleX0(tr);
     }
 
     /**
@@ -741,13 +643,12 @@ public class XAffineTransform extends AffineTransform {
      *
      * @param tr The affine transform to inspect.
      * @return The magnitude of scale factor <var>y</var>.
+     *
+     * @deprecated Moved to Apache SIS {@link AffineTransforms2D}.
      */
+    @Deprecated
     public static double getScaleY0(final AffineTransform tr) {
-        final double scale = tr.getScaleY();
-        final double shear = tr.getShearY();
-        if (shear == 0) return abs(scale);  // Optimization for a very common case.
-        if (scale == 0) return abs(shear);  // Not as common as above, but still common enough.
-        return hypot(scale, shear);
+        return AffineTransforms2D.getScaleY0(tr);
     }
 
     /**
@@ -796,6 +697,7 @@ public class XAffineTransform extends AffineTransform {
      *
      * @since 3.14 (derived from 2.3.1)
      */
+    // LGPL (only the 'tolerance' argument actually)
     public static void roundIfAlmostInteger(final AffineTransform tr, final double tolerance) {
         double r;
         final double m00, m01, m10, m11;
