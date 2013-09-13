@@ -20,6 +20,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Graphics2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.List;
 import org.geotoolkit.display.PortrayalException;
@@ -64,9 +65,11 @@ public class ComplexLine extends Instruction{
     public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
             List<S52Graphic> all, S52Graphic s52graphic) throws PortrayalException {
         System.out.println("TODO Complex line");
-        if(true)return;
+        //if(true)return;
         final Graphics2D g2d = ctx.getGraphics();
         final SymbolStyle ss = context.getSyle(LINNAME);
+        final Rectangle2D rect = ss.getBounds();
+        final float width = (float) rect.getWidth();
 
         final PathIterator ite;
         try {
@@ -77,12 +80,10 @@ public class ComplexLine extends Instruction{
         final PathWalker walker = new DefaultPathWalker(ite);
         final Point2D pt = new Point2D.Double();
         while(!walker.isFinished()){
-            //TODO not correct
-            walker.walk(1);
             walker.getPosition(pt);
             final float rotation = walker.getRotation();
             ss.render(g2d, context, colorTable, new Coordinate(pt.getX(),pt.getY()), rotation);
-            walker.walk(9);
+            walker.walk(width);
         }
     }
 
