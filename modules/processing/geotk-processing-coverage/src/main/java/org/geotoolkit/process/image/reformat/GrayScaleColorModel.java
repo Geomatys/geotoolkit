@@ -31,8 +31,8 @@ public final class GrayScaleColorModel {
 
     private GrayScaleColorModel(){}
     
-    public static ColorModel create(int dataType, int band, double min, double max){
-        final ColorSpace colors = new ScaledColorSpace(band, 0, min, max);
+    public static ColorModel create(int dataType, int nbBand, int visibleBand, double min, double max){
+        final ColorSpace colors = new ScaledColorSpace(nbBand, visibleBand, min, max);
         final ColorModel cm = new ComponentColorModel(colors, false, false, Transparency.OPAQUE, dataType);
         return cm;
     }

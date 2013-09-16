@@ -111,7 +111,7 @@ public class BandCombineProcess extends AbstractProcess {
         
         if(cm == null){
             //create a fallback grayscale colormodel which will always work
-            cm = GrayScaleColorModel.create(sampleType, nbtotalbands, 0, 1);
+            cm = GrayScaleColorModel.create(sampleType, nbtotalbands,0, 0, 1);
         }
         
         final BufferedImage resultImage = new BufferedImage(cm, raster, false, new Hashtable<Object, Object>());

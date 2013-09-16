@@ -80,7 +80,7 @@ public class BandCombineProcess extends AbstractProcess {
         GridGeometry gridGeometry = ((GridCoverage2D)inputCoverage[0]).getGridGeometry();
         final ColorModel graycm = GrayScaleColorModel.create(
                 resultImage.getSampleModel().getDataType(),
-                resultImage.getSampleModel().getNumBands(),
+                resultImage.getSampleModel().getNumBands(),0,
                 gridSample.getMinimumValue(), gridSample.getMaximumValue());
         resultImage = new BufferedImage(graycm, resultImage.getRaster(), false, new Hashtable<Object, Object>());
         
