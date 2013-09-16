@@ -121,10 +121,6 @@ public class SosXMLBindingTest {
      */
     public static class ExtendedDOMComparator extends XMLComparator {
 
-        public ExtendedDOMComparator(final Node expected, final Node actual) {
-            super(expected, actual);
-        }
-
         public ExtendedDOMComparator(final Object expected, final Object actual) throws IOException, ParserConfigurationException, SAXException {
             super(expected, actual);
         }

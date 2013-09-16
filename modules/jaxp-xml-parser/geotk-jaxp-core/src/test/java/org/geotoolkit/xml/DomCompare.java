@@ -21,7 +21,6 @@ package org.geotoolkit.xml;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.sis.test.XMLComparator;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 
@@ -29,25 +28,23 @@ import org.xml.sax.SAXException;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ *
+ * @deprecated Replaced by {@link org.apache.sis.test.Assert#assertXmlEquals(Object, Object, String[])}.
  */
+@Deprecated
 public class DomCompare {
 
     /**
      * convenient method to test xml comparison by ignoring irrevelant details
      * like formating, different attribute order, comments ...
-     *  
+     *
      * @param expected : the expected structure (File,Stream,Document)
      * @param result : the obtained result (File,Stream,Document)
      */
     public static void compare(final Object expected, final Object result)
-            throws ParserConfigurationException, SAXException, IOException{
+            throws ParserConfigurationException, SAXException, IOException
+    {
         final XMLComparator comparator = new XMLComparator(expected, result);
         comparator.compare();
     }
-
-    public static void compareNode(final Node expected, final Node result){
-        final XMLComparator comparator = new XMLComparator(expected, result);
-        comparator.compare();
-    }
-
 }
