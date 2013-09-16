@@ -1,131 +1,69 @@
-package org.geotoolkit.image.relief;
-
-
-import com.sun.media.imageioimpl.plugins.clib.CLibImageReader;
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.ComponentSampleModel;
-import java.awt.image.PixelInterleavedSampleModel;
-import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
-import java.awt.image.WritableRenderedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.media.jai.ComponentSampleModelJAI;
-import org.geotoolkit.image.interpolation.Interpolation;
-import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.image.interpolation.Resample;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.image.relief.ReliefShadow;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.opengis.referencing.operation.NoninvertibleTransformException;
-import org.opengis.referencing.operation.TransformException;
-import sun.awt.image.WritableRasterNative;
-import static org.junit.Assert.assertTrue;
-
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 
+package org.geotoolkit.image.relief;
+
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.junit.Test;
+import static org.junit.Assert.assertTrue;
+
 /**
+ * Test suite for {@link ReliefShadow} class.
  *
- * @author rmarechal
+ * @author Rémi Marechal (Geomatys).
  */
 public class ReliefShadowTest {
 
+    /**
+     * Source image.
+     */
     private final BufferedImage sourceImage;
+    
+    /**
+     * Source image iterator.
+     */
     private final PixelIterator srcIter;
-//    
+    
+    /**
+     * source Digital Elevation Model.
+     */
     private final BufferedImage mnt;
+    
+    /**
+     * source Digital Elevation Model iterator.
+     */
     private final PixelIterator mntIter;
     
     public ReliefShadowTest() {
         sourceImage = new BufferedImage(5, 5, BufferedImage.TYPE_BYTE_GRAY);
-        srcIter = PixelIteratorFactory.createDefaultWriteableIterator(sourceImage, sourceImage);
-        
-        mnt = new BufferedImage(5, 5, BufferedImage.TYPE_BYTE_GRAY);
-        mntIter = PixelIteratorFactory.createDefaultWriteableIterator(mnt, mnt);
-//        source
-        
-    }
-    
-    @Test
-    public void shadowTest() throws IOException, NoninvertibleTransformException, TransformException {
-        
-        final File bluePath = new File("/home/rmarechal/Documents/image/world-mnt/bluemarble.tiff");
-        ImageReader blueReader = null;
-        Iterator<ImageReader> blueIT = ImageIO.getImageReaders(ImageIO.createImageInputStream(bluePath));
-        
-        while (blueIT.hasNext()) {
-            blueReader = blueIT.next();
-        }
-        blueReader.setInput(ImageIO.createImageInputStream(bluePath), true, false);
-        
-        final BufferedImage blueMarble = blueReader.read(0);
-        
-        final File mntPath = new File("/home/rmarechal/Documents/image/world-mnt/marblemnt.tif");
-        ImageReader mntReader = null;
-        Iterator<ImageReader> mntIT = ImageIO.getImageReaders(ImageIO.createImageInputStream(mntPath));
-        
-        while (mntIT.hasNext()) {
-            mntReader = mntIT.next();
-        }
-        mntReader.setInput(ImageIO.createImageInputStream(mntPath), true, false);
-        
-        final RenderedImage mnt = mntReader.read(0);
-        
-//        final double m00 = mnt.getWidth() / (double)blueMarble.getWidth();
-//        final double m11 = mnt.getHeight() / (double)blueMarble.getHeight();
-//        WritableRenderedImage dest = new BufferedImage(blueMarble.getWidth()>>1, blueMarble.getHeight()>>1, blueMarble.getSampleModel().getDataType());
-        
-//        WritableRenderedImage dest = new BufferedImage(blueMarble.getColorModel(), Raster.createWritableRaster(new PixelInterleavedSampleModel(2, 2160, 1080, 1, 2160, new int[]{0}), new Point(0, 0)), true, null);
-        
-//        SampleModel samp = new ComponentSampleModel(blueMarble.getType(), blueMarble.getWidth()>>1, blueMarble.getHeight()>>1, blueMarble.getSampleModel().getDataType(), scanlineStride, bandOffsets)
-//        new PixelInterleavedSampleModel(2, 2160, 1080, 1, 2160, new int[]{0});
-        ///////// resample
-//        AffineTransform2D aff2d = new AffineTransform2D(2, 0, 0, 2, 0, 0);
-//        Interpolation interpol =  Interpolation.create(PixelIteratorFactory.createRowMajorIterator(blueMarble), InterpolationCase.BICUBIC, 2);
-//        
-//        
-//        Resample resamp = new Resample(aff2d, dest, interpol, new double[]{0});
-//        resamp.fillImage();
-        final double scaleZ = 40000000.0 / blueMarble.getWidth();
-        ReliefShadow rs = new ReliefShadow(45, 2, 0.4);
-        RenderedImage dest = rs.getRelief(blueMarble, mnt, scaleZ/2);
-        ImageIO.write(dest, "tiff", new File("/home/rmarechal/Documents/image/world-mnt/blueShadowMarble.tiff"));
-        
-    }
-    
-    @Ignore
-    @Test
-    public void oneCenterPikeTest() throws IOException {
-        initTest(0,2,1,2,2,1);
-        ReliefShadow rf = new ReliefShadow(90, 22.5,0);
-        RenderedImage dest = rf.getRelief(sourceImage, mnt, 1);
-        PixelIterator destIter = PixelIteratorFactory.createRowMajorIterator(dest);
-        while (destIter.next()) {
-            System.out.println("("+destIter.getX()+", "+destIter.getY()+") : "+destIter.getSample());
-        }
-        ImageIO.write(mnt, "tiff", new File("/home/rmarechal/Documents/image/test/mnt.tiff"));
-        ImageIO.write(dest, "tiff", new File("/home/rmarechal/Documents/image/test/shadow.tiff"));
+        srcIter     = PixelIteratorFactory.createDefaultWriteableIterator(sourceImage, sourceImage);
+        mnt     = new BufferedImage(5, 5, BufferedImage.TYPE_BYTE_GRAY);
+        mntIter = PixelIteratorFactory.createDefaultWriteableIterator(mnt, mnt);        
     }
     
     @Test
     public void angle0Test() {
         initTest(2,2,128);
         
-        final ReliefShadow rf = new ReliefShadow(0, 45, 0);
-        final RenderedImage result = rf.getRelief(sourceImage, mnt, 1);
+        final ReliefShadow rf         = new ReliefShadow(0, 45, 0);
+        final RenderedImage result    = rf.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResult = PixelIteratorFactory.createRowMajorIterator(result);
         
         for (int y = 0; y<5; y++) {
@@ -158,8 +96,8 @@ public class ReliefShadowTest {
     public void angle45Test() {
         initTest(2,2,128);
         
-        final ReliefShadow rf = new ReliefShadow(45, 45, 0);
-        final RenderedImage result = rf.getRelief(sourceImage, mnt, 1);
+        final ReliefShadow rf         = new ReliefShadow(45, 45, 0);
+        final RenderedImage result    = rf.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResult = PixelIteratorFactory.createRowMajorIterator(result);
         
         for (int y = 0; y<5; y++) {
@@ -311,8 +249,8 @@ public class ReliefShadowTest {
             }
         }
         
-        final ReliefShadow rfInvert               = new ReliefShadow(-135, 45, 0);
-        final RenderedImage resultInvert          = rfInvert.getRelief(sourceImage, mnt, 1);
+        final ReliefShadow rfInvert         = new ReliefShadow(-135, 45, 0);
+        final RenderedImage resultInvert    = rfInvert.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResultinvert = PixelIteratorFactory.createRowMajorIterator(resultInvert);
         pixResult.rewind();
         while (pixResultinvert.next()) {
@@ -328,8 +266,8 @@ public class ReliefShadowTest {
     public void angle270Test() {
         initTest(2,2,128);
         
-        final ReliefShadow rf = new ReliefShadow(270, 45, 0);
-        final RenderedImage result = rf.getRelief(sourceImage, mnt, 1);
+        final ReliefShadow rf         = new ReliefShadow(270, 45, 0);
+        final RenderedImage result    = rf.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResult = PixelIteratorFactory.createRowMajorIterator(result);
         
         for (int y = 0; y < 5; y++) {
@@ -353,7 +291,8 @@ public class ReliefShadowTest {
             pixResult.next();
             final int resultValue       = pixResult.getSample();
             final int resultInvertValue = pixResultinvert.getSample();
-            final String message = "at ("+pixResult.getX()+", "+pixResult.getY()+") position, expected value : "+resultValue+" found : "+resultInvertValue;
+            final String message        = "at ("+pixResult.getX()+", "+pixResult.getY()
+                    +") position, expected value : "+resultValue+" found : "+resultInvertValue;
             assertTrue(message, resultValue == resultInvertValue);
         }
     }
@@ -362,8 +301,8 @@ public class ReliefShadowTest {
     public void angle315Test() {
         initTest(2,2,128);
         
-        final ReliefShadow rf = new ReliefShadow(315, 45, 0);
-        final RenderedImage result = rf.getRelief(sourceImage, mnt, 1);
+        final ReliefShadow rf         = new ReliefShadow(315, 45, 0);
+        final RenderedImage result    = rf.getRelief(sourceImage, mnt, 1);
         final PixelIterator pixResult = PixelIteratorFactory.createRowMajorIterator(result);
         
         for (int y = 0; y < 5; y++) {
@@ -396,8 +335,8 @@ public class ReliefShadowTest {
     public void altitudeTest() {
         initTest(2, 2, 2);
         
-        ReliefShadow rf = new ReliefShadow(45, 45, 0);
-        RenderedImage result = rf.getRelief(sourceImage, mnt, 1);
+        ReliefShadow rf         = new ReliefShadow(45, 45, 0);
+        RenderedImage result    = rf.getRelief(sourceImage, mnt, 1);
         PixelIterator pixResult = PixelIteratorFactory.createRowMajorIterator(result);
         
         for (int y = 0; y < 5; y++) {
@@ -414,8 +353,8 @@ public class ReliefShadowTest {
         }
         
         initTest(2, 2, 3);
-        rf = new ReliefShadow(45, 45, 0);
-        result = rf.getRelief(sourceImage, mnt, 1);
+        rf        = new ReliefShadow(45, 45, 0);
+        result    = rf.getRelief(sourceImage, mnt, 1);
         pixResult = PixelIteratorFactory.createRowMajorIterator(result);
         
         for (int y = 0; y < 5; y++) {
@@ -432,8 +371,8 @@ public class ReliefShadowTest {
         }
         
         initTest(2, 2, 2);
-        rf = new ReliefShadow(45, 22.5, 0);
-        result = rf.getRelief(sourceImage, mnt, 1);
+        rf        = new ReliefShadow(45, 22.5, 0);
+        result    = rf.getRelief(sourceImage, mnt, 1);
         pixResult = PixelIteratorFactory.createRowMajorIterator(result);
         
         for (int y = 0; y < 5; y++) {
@@ -454,8 +393,8 @@ public class ReliefShadowTest {
     public void twoPikesTest() {
         initTest(0, 2, 1, 2, 2, 1);
         
-        ReliefShadow rf = new ReliefShadow(90, 22.5, 0);
-        RenderedImage result = rf.getRelief(sourceImage, mnt, 1);
+        ReliefShadow rf         = new ReliefShadow(90, 22.5, 0);
+        RenderedImage result    = rf.getRelief(sourceImage, mnt, 1);
         PixelIterator pixResult = PixelIteratorFactory.createRowMajorIterator(result);
         
         for (int y = 0; y < 5; y++) {
@@ -472,6 +411,11 @@ public class ReliefShadowTest {
         }
     }
     
+    /**
+     * Create two appropriates images to this test suite.
+     * 
+     * @param coordinates pikes coordinates in DEM. 
+     */
     private void initTest(int ...coordinates) {
         // fill src images with white color
         srcIter.rewind();
