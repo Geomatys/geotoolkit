@@ -96,6 +96,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
     /**
      * Gets the value of the requestId property.
      */
+    @Override
     public String getRequestId() {
         return requestId;
     }
@@ -103,6 +104,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
     /**
      * Gets the value of the searchStatus property.
      */
+    @Override
     public RequestStatusType getSearchStatus() {
         return searchStatus;
     }
@@ -110,6 +112,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
     /**
      * Gets the value of the searchResults property.
      */
+    @Override
     public SearchResultsType getSearchResults() {
         return searchResults;
     }
@@ -117,14 +120,17 @@ public class GetRecordsResponseType implements GetRecordsResponse {
     /**
      * Gets the value of the version property.
      */
+    @Override
     public String getVersion() {
         return version;
     }
     
+    @Override
     public void setRequestId(final String value) {
         this.requestId = value;
     }
 
+    @Override
     public void setVersion(final String value) {
         this.version = value;
     }
