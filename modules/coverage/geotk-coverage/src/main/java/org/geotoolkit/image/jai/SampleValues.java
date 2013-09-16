@@ -22,7 +22,7 @@ import java.awt.image.Raster;
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
 
-import org.apache.sis.util.ArraysExt;
+import org.apache.sis.internal.util.Numerics;
 
 
 /**
@@ -153,7 +153,7 @@ abstract class SampleValues {
 
         /** Creates a new instance initialized to the given value. */
         Float(final double[] samples) {
-            this.samples = ArraysExt.copyAsFloats(samples);
+            this.samples = Numerics.copyAsFloats(samples);
         }
 
         /** {@inheritDoc} */
@@ -202,7 +202,7 @@ abstract class SampleValues {
 
         /** Creates a new instance initialized to the given value. */
         Integer(final double[] samples) {
-            this.samples = ArraysExt.copyAsInts(samples);
+            this.samples = Numerics.copyAsInts(samples);
         }
 
         /** {@inheritDoc} */
