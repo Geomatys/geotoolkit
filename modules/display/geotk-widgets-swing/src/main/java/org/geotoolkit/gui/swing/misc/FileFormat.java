@@ -55,7 +55,9 @@ public enum FileFormat {
     VISUALDEM("filter_vdem", "dem"),
     WEBMAPCONTEXT("filter_wmc", "wmc"),
     S57("filter_s57", "000"),
-    WORLD_IMAGE("filter_world_image", "jpg", "jpeg", "bmp", "png");
+    WORLD_IMAGE("filter_world_image", "jpg", "jpeg", "bmp", "png"),
+    NETCDF_GRIB("filter_netcdfgrib", "nc", "ncml", "cdf", "grib","grib1","grib2","grb","grb1","grb2","grd");
+
     private final InternationalString desc;
     private final String[] ends;
     private WeakReference<FileFilter> ref;
