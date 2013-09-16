@@ -49,14 +49,5 @@ import org.geotoolkit.csw.xml.AbstractRecord;
     BriefRecordType.class
 })
 public abstract class AbstractRecordType implements AbstractRecord {
-    
-    @XmlTransient
-    protected static org.geotoolkit.ows.xml.v100.ObjectFactory owsFactory = new org.geotoolkit.ows.xml.v100.ObjectFactory();
-    
-    @XmlTransient
-    protected static org.geotoolkit.dublincore.xml.v2.elements.ObjectFactory dublinFactory = new org.geotoolkit.dublincore.xml.v2.elements.ObjectFactory();
-    
-    @XmlTransient
-    protected static org.geotoolkit.dublincore.xml.v2.terms.ObjectFactory dublinTermFactory = new org.geotoolkit.dublincore.xml.v2.terms.ObjectFactory();
 
 }

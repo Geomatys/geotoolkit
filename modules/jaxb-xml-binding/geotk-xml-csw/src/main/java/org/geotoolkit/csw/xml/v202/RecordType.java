@@ -101,8 +101,9 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
         
         super(identifier, title,type, subject, format, modified, date, _abstract, creator, distributor, language, spatial, references);
         
-        this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
+        this.boundingBox = new ArrayList<>();
         if (bboxes != null) {
+            final org.geotoolkit.ows.xml.v100.ObjectFactory owsFactory = new org.geotoolkit.ows.xml.v100.ObjectFactory();
             for (BoundingBoxType bbox: bboxes) {
                 if (bbox instanceof WGS84BoundingBoxType) {
                     this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
@@ -135,7 +136,8 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
         super(identifier, title,type, subject, formats, modified, date, _abstract, creator, distributor, language, spatial, references, null);
 
         if (bboxes != null) {
-            this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
+            final org.geotoolkit.ows.xml.v100.ObjectFactory owsFactory = new org.geotoolkit.ows.xml.v100.ObjectFactory();
+            this.boundingBox = new ArrayList<>();
             for (BoundingBoxType bbox: bboxes) {
                 if (bbox instanceof WGS84BoundingBoxType) {
                     this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
@@ -152,7 +154,7 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
      */
     public List<EmptyType> getAnyText() {
         if (anyText == null) {
-            anyText = new ArrayList<EmptyType>();
+            anyText = new ArrayList<>();
         }
         return Collections.unmodifiableList(anyText);
     }
@@ -163,15 +165,16 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
     @Override
     public List<JAXBElement<? extends BoundingBoxType>> getBoundingBox() {
         if (boundingBox == null) {
-            boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
+            boundingBox = new ArrayList<>();
         }
         return boundingBox;
     }
     
     public void setBoundingBox(final BoundingBoxType bbox) {
         if (boundingBox == null) {
-            this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
+            this.boundingBox = new ArrayList<>();
         }
+        final org.geotoolkit.ows.xml.v100.ObjectFactory owsFactory = new org.geotoolkit.ows.xml.v100.ObjectFactory();
         if (bbox instanceof WGS84BoundingBoxType) {
             this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
         } else {
@@ -181,9 +184,10 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
 
     public void setSimpleBoundingBox(final List<BoundingBoxType> bbox) {
         if (boundingBox == null) {
-            this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
+            this.boundingBox = new ArrayList<>();
         }
         if (bbox != null) {
+            final org.geotoolkit.ows.xml.v100.ObjectFactory owsFactory = new org.geotoolkit.ows.xml.v100.ObjectFactory();
             for (BoundingBoxType b : bbox) {
                 if (b instanceof WGS84BoundingBoxType) {
                     this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)b));
@@ -223,8 +227,9 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
      * 
      * @return
      */
+    @Override
     public SummaryRecordType toSummary() {
-        List<BoundingBoxType> bboxes = new ArrayList<BoundingBoxType>();
+        List<BoundingBoxType> bboxes = new ArrayList<>();
         for (JAXBElement<? extends BoundingBoxType> bb: getBoundingBox()) {
                 bboxes.add(bb.getValue());
         }
@@ -236,8 +241,9 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
      * 
      * @return
      */
+    @Override
     public BriefRecordType toBrief() {
-        List<BoundingBoxType> bboxes = new ArrayList<BoundingBoxType>();
+        List<BoundingBoxType> bboxes = new ArrayList<>();
         for (JAXBElement<? extends BoundingBoxType> bb: getBoundingBox()) {
                 bboxes.add(bb.getValue());
         }
@@ -258,7 +264,7 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
             boolean bbox = this.getBoundingBox().size() == that.getBoundingBox().size();
             
             //we verify that the two list contains the same object
-            List<BoundingBoxType> obj = new ArrayList<BoundingBoxType>();
+            List<BoundingBoxType> obj = new ArrayList<>();
             for (JAXBElement<? extends BoundingBoxType> jb: boundingBox) {
                 obj.add(jb.getValue());
             }
