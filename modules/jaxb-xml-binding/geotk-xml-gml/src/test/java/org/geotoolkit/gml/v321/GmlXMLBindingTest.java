@@ -34,7 +34,6 @@ import org.geotoolkit.gml.xml.v321.LineStringSegmentType;
 import org.geotoolkit.gml.xml.v321.ObjectFactory;
 import org.geotoolkit.gml.xml.v321.TimePeriodType;
 import org.geotoolkit.gml.xml.v321.TimePositionType;
-import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.xml.MarshallerPool;
 
 //Junit dependencies
@@ -97,13 +96,11 @@ public class GmlXMLBindingTest {
         String result = sw.toString();
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = StringUtilities.removeXmlns(result);
 
-        String expResult = "<ns3:Envelope srsName=\"urn:ogc:def:crs:EPSG:6.8:4283\" >" + '\n' +
-                           "    <ns3:lowerCorner>-30.711 134.196</ns3:lowerCorner>" + '\n' +
-                           "    <ns3:upperCorner>-30.702 134.205</ns3:upperCorner>" + '\n' +
-                           "</ns3:Envelope>" + '\n' ;
+        String expResult = "<gml:Envelope xmlns:gml=\"http://www.opengis.net/gml/3.2\" srsName=\"urn:ogc:def:crs:EPSG:6.8:4283\" >" + '\n' +
+                           "    <gml:lowerCorner>-30.711 134.196</gml:lowerCorner>" + '\n' +
+                           "    <gml:upperCorner>-30.702 134.205</gml:upperCorner>" + '\n' +
+                           "</gml:Envelope>" + '\n' ;
         XMLComparator comparator = new XMLComparator(expResult, result){
             @Override
             protected strictfp void compareNames(Node expected, Node actual) {
@@ -113,6 +110,7 @@ public class GmlXMLBindingTest {
                 assertEquals(exArray[exArray.length-1], acArray[acArray.length-1]);
             }
         };
+        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
 
         Duration d1 = javax.xml.datatype.DatatypeFactory.newInstance().newDuration("P2D");
@@ -139,12 +137,10 @@ public class GmlXMLBindingTest {
         result = sw.toString();
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = StringUtilities.removeXmlns(result);
 
-        expResult = "<ns3:LineStringSegment >" + '\n' +
-                    "    <ns3:posList>1.0 1.1 1.2</ns3:posList>" + '\n' +
-                    "</ns3:LineStringSegment>" + '\n' ;
+        expResult = "<gml:LineStringSegment xmlns:gml=\"http://www.opengis.net/gml/3.2\">" + '\n' +
+                    "    <gml:posList>1.0 1.1 1.2</gml:posList>" + '\n' +
+                    "</gml:LineStringSegment>" + '\n' ;
         comparator = new XMLComparator(expResult, result){
             @Override
             protected strictfp void compareNames(Node expected, Node actual) {
@@ -154,6 +150,7 @@ public class GmlXMLBindingTest {
                 assertEquals(exArray[exArray.length-1], acArray[acArray.length-1]);
             }
         };
+        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
 
         ls = new LineStringSegmentType();
@@ -168,13 +165,11 @@ public class GmlXMLBindingTest {
         result = sw.toString();
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = StringUtilities.removeXmlns(result);
 
-        expResult = "<ns3:LineStringSegment >" + '\n' +
-                    "    <ns3:pos>1.1 1.2</ns3:pos>" + '\n' +
-                    "    <ns3:pos>2.3 48.1</ns3:pos>" + '\n' +
-                    "</ns3:LineStringSegment>" + '\n' ;
+        expResult = "<gml:LineStringSegment xmlns:gml=\"http://www.opengis.net/gml/3.2\">" + '\n' +
+                    "    <gml:pos>1.1 1.2</gml:pos>" + '\n' +
+                    "    <gml:pos>2.3 48.1</gml:pos>" + '\n' +
+                    "</gml:LineStringSegment>" + '\n' ;
         comparator = new XMLComparator(expResult, result){
             @Override
             protected strictfp void compareNames(Node expected, Node actual) {
@@ -184,6 +179,7 @@ public class GmlXMLBindingTest {
                 assertEquals(exArray[exArray.length-1], acArray[acArray.length-1]);
             }
         };
+        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
 
     }

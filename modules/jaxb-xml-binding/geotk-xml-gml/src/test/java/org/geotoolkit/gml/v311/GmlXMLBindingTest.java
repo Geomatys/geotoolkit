@@ -24,7 +24,6 @@ import javax.xml.datatype.Duration;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import org.apache.sis.test.XMLComparator;
 
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.gml.xml.v311.DirectPositionListType;
@@ -38,8 +37,10 @@ import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.xml.MarshallerPool;
 
 //Junit dependencies
+import org.apache.sis.xml.Namespaces;
 import org.junit.*;
-import static org.junit.Assert.*;
+
+import static org.apache.sis.test.Assert.*;
 
 /**
  *
@@ -96,15 +97,14 @@ public class GmlXMLBindingTest {
         String result = sw.toString();
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = StringUtilities.removeXmlns(result);
 
-        String expResult = "<gml:Envelope srsName=\"urn:ogc:def:crs:EPSG:6.8:4283\" gml:id=\"bound-1\" >" + '\n' +
+        String expResult = "<gml:Envelope xmlns:gml=\"" + Namespaces.GML + '"' +
+                           " srsName=\"urn:ogc:def:crs:EPSG:6.8:4283\" gml:id=\"bound-1\" >" + '\n' +
                            "  <gml:lowerCorner>-30.711 134.196</gml:lowerCorner>" + '\n' +
                            "  <gml:upperCorner>-30.702 134.205</gml:upperCorner>" + '\n' +
                            "</gml:Envelope>" + '\n' ;
-        final XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.compare();
+
+        assertXmlEquals(expResult, result, "xmlns:*");
 
         Duration d1 = javax.xml.datatype.DatatypeFactory.newInstance().newDuration("P2D");
 
@@ -130,13 +130,11 @@ public class GmlXMLBindingTest {
         result = sw.toString();
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = StringUtilities.removeXmlns(result);
 
-        expResult = "<gml:LineStringSegment >" + '\n' +
+        expResult = "<gml:LineStringSegment xmlns:gml=\"" + Namespaces.GML + "\">\n" +
                     "  <gml:posList>1.0 1.1 1.2</gml:posList>" + '\n' +
                     "</gml:LineStringSegment>" + '\n' ;
-        assertEquals(expResult, result);
+        assertXmlEquals(expResult, result, "xmlns:*");
 
         ls = new LineStringSegmentType();
         DirectPositionType pos1 = new DirectPositionType(Arrays.asList(1.1, 1.2));
@@ -150,14 +148,12 @@ public class GmlXMLBindingTest {
         result = sw.toString();
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = StringUtilities.removeXmlns(result);
 
-        expResult = "<gml:LineStringSegment >" + '\n' +
+        expResult = "<gml:LineStringSegment xmlns:gml=\"" + Namespaces.GML + "\">\n" +
                     "  <gml:pos>1.1 1.2</gml:pos>" + '\n' +
                     "  <gml:pos>2.3 48.1</gml:pos>" + '\n' +
                     "</gml:LineStringSegment>" + '\n' ;
-        assertEquals(expResult, result);
+        assertXmlEquals(expResult, result, "xmlns:*");
 
     }
 

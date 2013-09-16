@@ -445,7 +445,10 @@ public final class StringUtilities {
      * Remove all the XML namespace declaration.
      * @param xml
      * @return
+     *
+     * @deprecated XML namespaces should not be ignored.
      */
+    @Deprecated
     public static String removeXmlns(final String xml) {
         String s = xml;
         s = s.replaceAll("xmlns=\"[^\"]*\" ", "");
