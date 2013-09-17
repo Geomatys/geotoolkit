@@ -18,7 +18,6 @@ package org.geotoolkit.process.coverage.bandcombine;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.util.Hashtable;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -30,8 +29,8 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.process.coverage.bandcombine.BandCombineDescriptor.*;
-import org.geotoolkit.process.image.reformat.GrayScaleColorModel;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridGeometry;
@@ -59,8 +58,8 @@ public class BandCombineProcess extends AbstractProcess {
             Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(inputCoverage[0]);
             return;
         }
-        
-        
+
+
         // CALL IMAGE BAND COMBINE /////////////////////////////////////////////
         final RenderedImage[] images = new RenderedImage[inputCoverage.length];
         for(int i=0;i<inputCoverage.length;i++){
@@ -71,28 +70,28 @@ public class BandCombineProcess extends AbstractProcess {
         params.parameter("images").setValue(images);
         final Process process = imageCombineDesc.createProcess(params);
         BufferedImage resultImage = (BufferedImage)process.call().parameter("result").getValue();
-        
-        
+
+
         // BUILD A BETTER COLOR MODEL //////////////////////////////////////////
         //TODO try to reuse java colormodel if possible
         //extract grayscale min/max from sample dimension
         SampleDimension gridSample = inputCoverage[0].getSampleDimension(0);
         GridGeometry gridGeometry = ((GridCoverage2D)inputCoverage[0]).getGridGeometry();
-        final ColorModel graycm = GrayScaleColorModel.create(
+        final ColorModel graycm = BufferedImageUtilities.createGrayScaleColorModel(
                 resultImage.getSampleModel().getDataType(),
                 resultImage.getSampleModel().getNumBands(),0,
                 gridSample.getMinimumValue(), gridSample.getMaximumValue());
         resultImage = new BufferedImage(graycm, resultImage.getRaster(), false, new Hashtable<Object, Object>());
-        
-        
+
+
         // REBUILD COVERAGE ////////////////////////////////////////////////////
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(resultImage);
         gcb.setGridGeometry(gridGeometry);
         final GridCoverage2D resultCoverage = gcb.getGridCoverage2D();
-        
-        
+
+
         Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(resultCoverage);
     }
-    
+
 }

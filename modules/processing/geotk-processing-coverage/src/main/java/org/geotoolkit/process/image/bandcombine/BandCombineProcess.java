@@ -32,8 +32,8 @@ import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.process.image.bandcombine.BandCombineDescriptor.*;
 import static org.geotoolkit.process.image.reformat.ReformatProcess.createRaster;
-import org.geotoolkit.process.image.reformat.GrayScaleColorModel;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.util.BufferedImageUtilities;
 
 /**
  *
@@ -57,7 +57,7 @@ public class BandCombineProcess extends AbstractProcess {
             Parameters.getOrCreate(OUT_IMAGE, outputParameters).setValue(inputImages[0]);
             return;
         }
-        
+
         //check and extract informations, all images should have the same size and sample type.
         int sampleType = -1;
         int nbtotalbands = 0;
@@ -66,7 +66,7 @@ public class BandCombineProcess extends AbstractProcess {
         Point upperLeft = null;
         final PixelIterator[] readItes = new PixelIterator[inputImages.length];
         final int[] nbBands = new int[inputImages.length];
-        
+
         for(int i=0;i<inputImages.length;i++){
             final RenderedImage image = inputImages[i];
             final SampleModel sm = image.getSampleModel();
@@ -89,14 +89,14 @@ public class BandCombineProcess extends AbstractProcess {
             nbBands[i] = sm.getNumBands();
             nbtotalbands += sm.getNumBands();
         }
-        
+
         final WritableRaster raster;
         try{
             raster = createRaster(sampleType, width, height, nbtotalbands, upperLeft);
         }catch(IllegalArgumentException ex){
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-        
+
         //try to reuse a java color model for better performances
         ColorModel cm = null;
         if(sampleType == DataBuffer.TYPE_BYTE){
@@ -108,15 +108,15 @@ public class BandCombineProcess extends AbstractProcess {
                 //TODO
             }
         }
-        
+
         if(cm == null){
             //create a fallback grayscale colormodel which will always work
-            cm = GrayScaleColorModel.create(sampleType, nbtotalbands,0, 0, 1);
+            cm = BufferedImageUtilities.createGrayScaleColorModel(sampleType,nbtotalbands,0,0,10);
         }
-        
+
         final BufferedImage resultImage = new BufferedImage(cm, raster, false, new Hashtable<Object, Object>());
-        
-        //copy datas        
+
+        //copy datas
         final PixelIterator writeIte = PixelIteratorFactory.createDefaultWriteableIterator(raster, raster);
         final double[] pixel = new double[nbtotalbands];
         while(writeIte.next()){
@@ -131,7 +131,7 @@ public class BandCombineProcess extends AbstractProcess {
                     pixel[++tband] = readItes[i].getSampleDouble();
                 }
             }
-            
+
             //write pixel
             tband = 0;
             writeIte.setSampleDouble(pixel[tband]);
@@ -140,8 +140,8 @@ public class BandCombineProcess extends AbstractProcess {
                 writeIte.setSampleDouble(pixel[tband]);
             }
         }
-        
+
         Parameters.getOrCreate(OUT_IMAGE, outputParameters).setValue(resultImage);
     }
-    
+
 }

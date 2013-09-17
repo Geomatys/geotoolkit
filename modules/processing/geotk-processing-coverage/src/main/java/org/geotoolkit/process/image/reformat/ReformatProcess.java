@@ -36,6 +36,7 @@ import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.process.image.reformat.ReformatDescriptor.*;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.util.BufferedImageUtilities;
 
 /**
  *
@@ -54,13 +55,13 @@ public class ReformatProcess extends AbstractProcess {
         final RenderedImage inputImage = (RenderedImage) Parameters.getOrCreate(IN_IMAGE, inputParameters).getValue();
         final int inputType = (Integer) Parameters.getOrCreate(IN_DATATYPE, inputParameters).getValue();
         final SampleModel inputSampleModel = inputImage.getSampleModel();
-        
+
         //check type, if same return the original coverage
         if(inputSampleModel.getDataType() == inputType){
             Parameters.getOrCreate(OUT_IMAGE, outputParameters).setValue(inputImage);
             return;
         }
-        
+
         //create the output image
         final int width = inputImage.getWidth();
         final int height = inputImage.getHeight();
@@ -72,19 +73,19 @@ public class ReformatProcess extends AbstractProcess {
         }catch(IllegalArgumentException ex){
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-        
+
         //TODO try to reuse java colormodel if possible
         //create a temporary fallback colormodel which will always work
         //extract grayscale min/max from sample dimension
-        final ColorModel graycm = GrayScaleColorModel.create(inputType,nbBand,0,0,1);
-        
-        
+        final ColorModel graycm = BufferedImageUtilities.createGrayScaleColorModel(inputType,nbBand,0,0,10);
+
+
         final BufferedImage resultImage = new BufferedImage(graycm, raster, false, new Hashtable<Object, Object>());
-        
+
         //copy datas
         final PixelIterator readIte = PixelIteratorFactory.createDefaultIterator(inputImage);
         final PixelIterator writeIte = PixelIteratorFactory.createDefaultWriteableIterator(raster, raster);
-        
+
         int band = 0;
         while (readIte.next() && writeIte.next()) {
             band = 0;
@@ -95,10 +96,10 @@ public class ReformatProcess extends AbstractProcess {
                 writeIte.setSampleDouble(readIte.getSampleDouble());
             }
         }
-        
+
         Parameters.getOrCreate(OUT_IMAGE, outputParameters).setValue(resultImage);
     }
-    
+
     public static WritableRaster createRaster(int inputType, int width, int height, int nbBand, Point upperLeft) throws IllegalArgumentException{
         final WritableRaster raster;
         if(nbBand == 1){
@@ -115,7 +116,7 @@ public class ReformatProcess extends AbstractProcess {
                 //TODO create our own raster factory to avoid JAI
                 raster = RasterFactory.createBandedRaster(buffer, width, height, width, zero, zero, upperLeft);
             }
-            
+
         }else{
             if(inputType == DataBuffer.TYPE_BYTE || inputType == DataBuffer.TYPE_USHORT){
                 raster = WritableRaster.createInterleavedRaster(inputType, width, height, nbBand, upperLeft);
@@ -137,5 +138,5 @@ public class ReformatProcess extends AbstractProcess {
         }
         return raster;
     }
-    
+
 }

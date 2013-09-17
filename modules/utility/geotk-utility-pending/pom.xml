@@ -98,6 +98,10 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-coverage</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-referencing</artifactId>
     </dependency>
     <!-- for AnchoredMarshallerPool remove ? -->

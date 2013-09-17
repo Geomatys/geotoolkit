@@ -19,6 +19,7 @@ package org.geotoolkit.coverage;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.util.AbstractQueue;
 import java.util.Collection;
@@ -46,6 +47,7 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -451,7 +453,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                 }else if(nbBand==4){
                     currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_ARGB);
                 }else{
-                    throw new RuntimeException("Can not create this type of tile");
+                    currentlyTile = BufferedImageUtilities.createImage(tileWidth, tileHeight, nbBand, DataBuffer.TYPE_DOUBLE);
                 }
             }
 

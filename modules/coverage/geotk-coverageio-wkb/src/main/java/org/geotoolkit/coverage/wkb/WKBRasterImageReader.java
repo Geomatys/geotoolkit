@@ -86,7 +86,7 @@ public class WKBRasterImageReader extends ImageReader{
             return reader.read(new InputStreamAdapter((ImageInputStream)input));
         }else{
             InputStream stream = IOUtilities.open(input);
-            final BufferedImage image = reader.read((InputStream)input);
+            final BufferedImage image = reader.read(stream);
             stream.close();
             return image;
         }
