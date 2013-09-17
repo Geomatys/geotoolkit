@@ -28,23 +28,22 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.FeatureCollectionType;
 import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
-import org.geotoolkit.gml.xml.v311.PointPropertyType;
 import org.geotoolkit.gml.xml.v311.PointType;
 
 //Junit dependencies
 import org.geotoolkit.sampling.xml.v100.ObjectFactory;
 import org.geotoolkit.sampling.xml.v100.SamplingPointType;
-import org.geotoolkit.util.StringUtilities;
 import javax.xml.bind.JAXBContext;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
-import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
+
+import static org.apache.sis.test.Assert.*;
+
 
 /**
  *
@@ -97,10 +96,11 @@ public class SamplingXMLBindingTest {
         String result = sw.toString();
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = StringUtilities.removeXmlns(result);
 
-        String expResult = "<sampling:SamplingPoint gml:id=\"samplingID-007\" >" + '\n' +
+        String expResult = "<sampling:SamplingPoint gml:id=\"samplingID-007\"" +
+                                    " xmlns:sampling=\"http://www.opengis.net/sampling/1.0\"" +
+                                    " xmlns:xlink=\"http://www.w3.org/1999/xlink\"" +
+                                    " xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
                            "    <gml:description>a sampling Test</gml:description>" + '\n' +
                            "    <gml:name>urn:sampling:test:007</gml:name>" + '\n' +
                            "    <gml:boundedBy>" + '\n' +
@@ -113,8 +113,7 @@ public class SamplingXMLBindingTest {
                            "        </gml:Point>" + '\n' +
                            "    </sampling:position>" + '\n' +
                            "</sampling:SamplingPoint>" + '\n' ;
-        XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.compare();
+        assertXmlEquals(expResult, result, "xmlns:*");
 
         final ObjectFactory facto = new ObjectFactory();
         FeatureCollectionType collection = new FeatureCollectionType();
@@ -128,10 +127,11 @@ public class SamplingXMLBindingTest {
         result = sw.toString();
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = StringUtilities.removeXmlns(result);
 
-        expResult =        "<gml:FeatureCollection >" + '\n' +
+        expResult =        "<gml:FeatureCollection" +
+                                    " xmlns:sampling=\"http://www.opengis.net/sampling/1.0\"" +
+                                    " xmlns:xlink=\"http://www.w3.org/1999/xlink\"" +
+                                    " xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
                            "    <gml:featureMember>" + '\n' +
                            "        <sampling:SamplingPoint gml:id=\"samplingID-007\">" + '\n' +
                            "            <gml:description>a sampling Test</gml:description>" + '\n' +
@@ -148,8 +148,7 @@ public class SamplingXMLBindingTest {
                            "        </sampling:SamplingPoint>" + '\n' +
                            "    </gml:featureMember>" + '\n' +
                            "</gml:FeatureCollection>" + '\n' ;
-        comparator = new XMLComparator(expResult, result);
-        comparator.compare();
+        assertXmlEquals(expResult, result, "xmlns:*");
     }
 
     /**

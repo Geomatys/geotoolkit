@@ -17,7 +17,6 @@
 package org.geotoolkit.observation;
 
 import java.io.IOException;
-import org.geotoolkit.observation.xml.v100.ProcessType;
 import org.geotoolkit.observation.xml.v100.ObservationType;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -29,10 +28,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
-import org.geotoolkit.gml.xml.v311.PointPropertyType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.gml.xml.v311.UnitOfMeasureEntry;
@@ -49,12 +46,12 @@ import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
 import org.geotoolkit.swe.xml.v101.Text;
 import org.geotoolkit.swe.xml.v101.TextBlockType;
-import org.geotoolkit.util.StringUtilities;
 import javax.xml.bind.JAXBContext;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
-import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
+
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -120,10 +117,13 @@ public class ObservationXMLBindingTest {
         String result = sw.toString();
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = StringUtilities.removeXmlns(result);
 
-        String expResult = "<om:Observation >" + '\n' +
+        String expResult = "<om:Observation xmlns:sampling=\"http://www.opengis.net/sampling/1.0\"" +
+                                          " xmlns:om=\"http://www.opengis.net/om/1.0\"" +
+                                          " xmlns:xlink=\"http://www.w3.org/1999/xlink\"" +
+                                          " xmlns:gml=\"http://www.opengis.net/gml\"" +
+                                          " xmlns:swe=\"http://www.opengis.net/swe/1.0.1\"" +
+                                          " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + '\n' +
                            "    <gml:name>urn:Observation-007</gml:name>" + '\n' +
                            "    <om:samplingTime>" + '\n' +
                            "        <gml:TimePeriod gml:id=\"t1\">" + '\n' +
@@ -175,8 +175,7 @@ public class ObservationXMLBindingTest {
                            "        </swe:DataArray>" + '\n' +
                            "    </om:result>" + '\n' +
                            "</om:Observation>\n";
-        XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.compare();
+        assertXmlEquals(expResult, result, "xmlns:*");
 
 
         UnitOfMeasureEntry uom  = new UnitOfMeasureEntry("m", "meters", "distance", null);
@@ -189,10 +188,13 @@ public class ObservationXMLBindingTest {
         result = sw.toString();
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = StringUtilities.removeXmlns(result);
 
-        expResult =        "<om:Measurement >" + '\n' +
+        expResult =        "<om:Measurement xmlns:sampling=\"http://www.opengis.net/sampling/1.0\"" +
+                                          " xmlns:om=\"http://www.opengis.net/om/1.0\"" +
+                                          " xmlns:xlink=\"http://www.w3.org/1999/xlink\"" +
+                                          " xmlns:gml=\"http://www.opengis.net/gml\"" +
+                                          " xmlns:swe=\"http://www.opengis.net/swe/1.0.1\"" +
+                                          " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + '\n' +
                            "    <gml:name>urn:Observation-007</gml:name>" + '\n' +
                            "    <om:samplingTime>" + '\n' +
                            "        <gml:TimePeriod gml:id=\"t1\">" + '\n' +
@@ -230,8 +232,7 @@ public class ObservationXMLBindingTest {
                            "        <om:value>7.0</om:value>" + '\n' +
                            "    </om:result>" + '\n' +
                            "</om:Measurement>\n";
-        comparator = new XMLComparator(expResult, result);
-        comparator.compare();
+        assertXmlEquals(expResult, result, "xmlns:*");
 
 
         ObservationCollectionType collection = new ObservationCollectionType();

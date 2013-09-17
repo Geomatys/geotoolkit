@@ -23,15 +23,16 @@ import java.io.StringWriter;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.XMLComparator;
 
 //Junit dependencies
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.wcs.xml.v100.OutputType;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
-import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
+
+import static org.apache.sis.test.Assert.*;
+
 
 /**
  *
@@ -80,18 +81,10 @@ public class WcsXMLBindingTest {
         marshaller.marshal(getCoverage, sw);
 
         String result = sw.toString();
-        //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = result.replace(" xmlns:gml=\"http://www.opengis.net/gml\"", "");
-        result = result.replace(" xmlns:xlink=\"http://www.w3.org/1999/xlink\"", "");
-        result = result.replace(" xmlns:ows=\"http://www.opengis.net/ows/1.1\"", "");
-        result = result.replace(" xmlns:ns5=\"http://www.opengis.net/wcs/1.1.1\"", "");
-        result = result.replace(" xmlns:wcs=\"http://www.opengis.net/wcs\"", "");
-        result = result.replace(" xmlns:ogc=\"http://www.opengis.net/ogc\"", "");
 
-
-        String expResult = "<ns5:GetCoverage version=\"1.1.1\" service=\"WCS\">" + '\n'
+        String expResult = "<ns5:GetCoverage version=\"1.1.1\" service=\"WCS\"" +
+                                    " xmlns:ns5=\"http://www.opengis.net/wcs/1.1.1\"" +
+                                    " xmlns:ows=\"http://www.opengis.net/ows/1.1\">" + '\n'
                          + "    <ows:Identifier>source1</ows:Identifier>" + '\n'
                          + "    <ns5:RangeSubset>" + '\n'
                          + "        <ns5:FieldSubset>" + '\n'
@@ -101,8 +94,7 @@ public class WcsXMLBindingTest {
                          + "    </ns5:RangeSubset>" + '\n'
                          + "    <ns5:Output store=\"false\" format=\"EPSG:4326\"/>" + '\n'
                          + "</ns5:GetCoverage>" + '\n';
-        final XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.compare();
+        assertXmlEquals(expResult, result, "xmlns:*");
 
     }
 
@@ -120,18 +112,9 @@ public class WcsXMLBindingTest {
         marshaller.marshal(getCoverage, sw);
 
         String result = sw.toString();
-        //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = result.replace(" xmlns:gml=\"http://www.opengis.net/gml\"", "");
-        result = result.replace(" xmlns:xlink=\"http://www.w3.org/1999/xlink\"", "");
-        result = result.replace(" xmlns:ows=\"http://www.opengis.net/ows/1.1\"", "");
-        result = result.replace(" xmlns:ns5=\"http://www.opengis.net/wcs/1.1.1\"", "");
-        result = result.replace(" xmlns:wcs=\"http://www.opengis.net/wcs\"", "");
-        result = result.replace(" xmlns:ogc=\"http://www.opengis.net/ogc\"", "");
 
-
-        String expResult = "<wcs:GetCoverage version=\"1.0.0\" service=\"WCS\">" + '\n' +
+        String expResult = "<wcs:GetCoverage version=\"1.0.0\" service=\"WCS\" " +
+                                    "xmlns:wcs=\"http://www.opengis.net/wcs\">" + '\n' +
                            "    <wcs:sourceCoverage>source1</wcs:sourceCoverage>" + '\n' +
                            "    <wcs:interpolationMethod>nearest neighbor</wcs:interpolationMethod>" + '\n' +
                            "    <wcs:output>" + '\n' +
@@ -139,8 +122,6 @@ public class WcsXMLBindingTest {
                            "        <wcs:format>image/png</wcs:format>" + '\n' +
                            "    </wcs:output>" + '\n' +
                            "</wcs:GetCoverage>" + '\n' ;
-        final XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.compare();
-
+        assertXmlEquals(expResult, result, "xmlns:*");
     }
 }

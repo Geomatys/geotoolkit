@@ -31,7 +31,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.XMLComparator;
 
 // Geotoolkit dependencies
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
@@ -46,14 +45,14 @@ import org.geotoolkit.ogc.xml.v110.SortPropertyType;
 import org.geotoolkit.ogc.xml.v200.BBOXType;
 import org.geotoolkit.ogc.xml.v200.ContainsType;
 import org.geotoolkit.ogc.xml.v200.TimeAfterType;
-import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 
 //Junit dependencies
 import org.junit.*;
-import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
+
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -116,12 +115,10 @@ public class FilterXMLBindingTest {
         marshaller.marshal(filter, sw);
 
         String result = sw.toString();
-        //we remove the xmlmns
-        result = StringUtilities.removeXmlns(result);
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"     + '\n' +
-        "<ogc:Filter >"                                                      + '\n' +
+        "<ogc:Filter xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
         "    <ogc:Overlaps>"                                                + '\n' +
         "        <ogc:PropertyName>boundingBox</ogc:PropertyName>"          + '\n' +
         "        <gml:Envelope srsName=\"EPSG:4326\" gml:id=\"env-id\">"    + '\n' +
@@ -133,8 +130,7 @@ public class FilterXMLBindingTest {
 
         LOGGER.log(Level.FINER, "result: {0}", result);
         LOGGER.log(Level.FINER, "expected: {0}", expResult);
-        final XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.compare();
+        assertXmlEquals(expResult, result, "xmlns:*");
 
 
 

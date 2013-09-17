@@ -27,18 +27,18 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.v100.Execute100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.Execute;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.opengis.util.FactoryException;
 import org.xml.sax.SAXException;
+
+import static org.apache.sis.test.Assert.*;
+
 
 /**
  * Testing class for GetCapabilities requests of WPS client, in version 1.0.0.
@@ -87,12 +87,11 @@ public class ExecuteTest {
             final Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
             marshaller.marshal(request, stringWriter);
 
-            String result = StringUtilities.removeXmlns(stringWriter.toString());
+            String result = stringWriter.toString();
             String expected = expectedRequest();
-            final XMLComparator comparator = new XMLComparator(expected, result);
-            comparator.compare();
+            assertXmlEquals(expected, result, "xmlns:*");
 
-             WPSMarshallerPool.getInstance().recycle(marshaller);
+            WPSMarshallerPool.getInstance().recycle(marshaller);
         } catch (FactoryException ex) {
             fail(ex.getLocalizedMessage());
         } catch (NonconvertibleObjectException ex) {

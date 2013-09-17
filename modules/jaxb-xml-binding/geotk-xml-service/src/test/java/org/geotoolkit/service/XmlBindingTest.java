@@ -27,12 +27,11 @@ import org.apache.sis.metadata.iso.DefaultMetadata;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import org.apache.sis.test.XMLComparator;
 import org.apache.sis.util.iso.DefaultNameFactory;
 import org.apache.sis.xml.MarshallerPool;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.apache.sis.test.Assert.*;
 /**
  *
  * @author guilhem
@@ -151,7 +150,7 @@ public class XmlBindingTest {
         marshaller.marshal(servIdent, sw);
 
         String expResult =
-        "<srv:SV_ServiceIdentification >" + '\n' +
+        "<srv:SV_ServiceIdentification xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:srv=\"http://www.isotc211.org/2005/srv\">" + '\n' +
         "    <srv:serviceType>" + '\n' +
         "        <gco:LocalName>test service Type</gco:LocalName>" + '\n' +
         "    </srv:serviceType>" + '\n' +
@@ -180,24 +179,7 @@ public class XmlBindingTest {
         String result = sw.toString();
          //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = removeXmlns(result);
 
-        final XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.compare();
-    }
-
-    /**
-     * Remove all the XML namespace declaration.
-     * @param xml
-     * @return
-     */
-    public static String removeXmlns(final String xml) {
-        String s = xml;
-        s = s.replaceAll("xmlns=\"[^\"]*\" ", "");
-        s = s.replaceAll("xmlns=\"[^\"]*\"", "");
-        s = s.replaceAll("xmlns:[^=]*=\"[^\"]*\" ", "");
-        s = s.replaceAll("xmlns:[^=]*=\"[^\"]*\"", "");
-        return s;
+        assertXmlEquals(expResult, result, "xmlns:*");
     }
 }

@@ -29,14 +29,12 @@ import java.net.URI;
 import org.opengis.util.NameFactory;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import org.opengis.metadata.citation.Citation;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.XMLComparator;
 import org.apache.sis.util.iso.DefaultInternationalString;
 
 import org.geotoolkit.inspire.xml.vs.ExtendedCapabilitiesType;
@@ -55,7 +53,6 @@ import org.apache.sis.util.iso.DefaultNameFactory;
 import org.geotoolkit.service.ServiceTypeImpl;
 import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.wms.xml.v111.BoundingBox;
 import org.geotoolkit.wms.xml.v130.Capability;
 import org.geotoolkit.wmsc.xml.v111.TileSet;
@@ -71,10 +68,11 @@ import org.opengis.metadata.maintenance.ScopeCode;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.temporal.Period;
 import javax.xml.bind.JAXBContext;
-import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 
 import static org.apache.sis.test.TestUtilities.getSingleton;
+
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -236,11 +234,8 @@ public class WmsXmlBindingTest {
 
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = StringUtilities.removeXmlns(result);
 
-        final XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.compare();
+        assertXmlEquals(expResult, result, "xmlns:*");
 
     }
 
@@ -306,12 +301,15 @@ public class WmsXmlBindingTest {
 
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = StringUtilities.removeXmlns(result);
 
 
         String expResult =
-        "<wms:Capability >" + '\n' +
+        "<wms:Capability xmlns:wms=\"http://www.opengis.net/wms\""
+                + " xmlns:gmd=\"http://www.isotc211.org/2005/gmd\""
+                + " xmlns:gco=\"http://www.isotc211.org/2005/gco\""
+                + " xmlns:srv=\"http://www.isotc211.org/2005/srv\""
+                + " xmlns:inspire_vs=\"http://inspira.europa.eu/networkservice/view/1.0\""
+                + " xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
         "    <inspire_vs:ExtendedCapabilities>" + '\n' +
         "        <inspire_vs:Resourcelocator>" + '\n' +
         "            <gmd:linkage>" + '\n' +
@@ -441,8 +439,7 @@ public class WmsXmlBindingTest {
 
 //      org.apache.sis.internal.jaxb.gml.GMLAdapter.IDs.removeUUID(period);
 
-        final XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.compare();
+        assertXmlEquals(expResult, result, "xmlns:*");
 
     }
 

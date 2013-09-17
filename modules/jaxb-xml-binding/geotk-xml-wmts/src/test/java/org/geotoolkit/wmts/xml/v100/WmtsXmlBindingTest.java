@@ -18,12 +18,9 @@ package org.geotoolkit.wmts.xml.v100;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.math.BigInteger;
-import java.util.Collections;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import org.apache.sis.test.XMLComparator;
 
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.PointType;
@@ -32,7 +29,8 @@ import org.geotoolkit.wmts.xml.WMTSMarshallerPool;
 
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
-import static org.junit.Assert.*;
+
+import static org.apache.sis.test.Assert.*;
 
 /**
  *
@@ -122,17 +120,9 @@ public class WmtsXmlBindingTest {
 
         //System.out.println("RESULT:" + result);
 
-        //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = result.replace(" xmlns:ows=\"http://www.opengis.net/ows/1.1\"", "");
-        result = result.replace(" xmlns:gml=\"http://www.opengis.net/gml\"", "");
-        result = result.replace(" xmlns=\"http://www.opengis.net/wmts/1.0\"", "");
-        result = result.replace(" xmlns:xlink=\"http://www.w3.org/1999/xlink\"", "");
-
 
         String expResult =
-                     "<TileMatrix>" + '\n' +
+                     "<TileMatrix xmlns=\"http://www.opengis.net/wmts/1.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\">" + '\n' +
                      "    <ows:Identifier>16d</ows:Identifier>" + '\n' +
                      "    <ScaleDenominator>55218.001386</ScaleDenominator>" + '\n' +
                      "    <TileWidth>256</TileWidth>" + '\n' +
@@ -141,8 +131,6 @@ public class WmtsXmlBindingTest {
                      "    <MatrixHeight>3</MatrixHeight>" + '\n' +
                      "</TileMatrix>" + '\n';
 
-        XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.compare();
-
+        assertXmlEquals(expResult, result, "xmlns:*");
     }
 }

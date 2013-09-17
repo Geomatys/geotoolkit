@@ -28,7 +28,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 
-import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.xml.MarshallerPool;
 
 //Junit dependencies
@@ -88,10 +87,8 @@ public class SosXMLBindingTest {
         String result = sw.toString();
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = StringUtilities.removeXmlns(result);
 
-        String expResult = "<sos:InsertObservationResponse >\n" +
+        String expResult = "<sos:InsertObservationResponse xmlns:sos=\"http://www.opengis.net/sos/2.0\">\n" +
                            "  <sos:observation>new-id</sos:observation>\n" +
                            "</sos:InsertObservationResponse>\n" ;
         final ExtendedDOMComparator comparator = new ExtendedDOMComparator(expResult, result);
@@ -123,6 +120,7 @@ public class SosXMLBindingTest {
 
         public ExtendedDOMComparator(final Object expected, final Object actual) throws IOException, ParserConfigurationException, SAXException {
             super(expected, actual);
+            ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         }
 
         /**

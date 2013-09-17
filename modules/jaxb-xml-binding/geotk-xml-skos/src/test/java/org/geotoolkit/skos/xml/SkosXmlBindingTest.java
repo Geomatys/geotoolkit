@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.skos.xml;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -27,13 +26,13 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import org.apache.sis.test.XMLComparator;
 
 //Junit dependencies
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
-import static org.junit.Assert.*;
+
+import static org.apache.sis.test.Assert.*;
 
 /**
  *
@@ -84,8 +83,6 @@ public class SkosXmlBindingTest {
         marshaller.marshal(rdf, sw);
 
         String result = sw.toString();
-        //we remove the xmlmns
-        result = removeXmlns(result);
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                                            + '\n' +
@@ -111,8 +108,7 @@ public class SkosXmlBindingTest {
 
         LOGGER.finer("result" + result);
         LOGGER.finer("expected" + expResult);
-        final XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.compare();
+        assertXmlEquals(expResult, result, "xmlns:*");
 
     }
 
@@ -131,8 +127,6 @@ public class SkosXmlBindingTest {
         marshaller.marshal(rdf, sw);
 
         String result = sw.toString();
-        //we remove the xmlmns
-        result = removeXmlns(result);
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                                            + '\n' +
@@ -160,8 +154,7 @@ public class SkosXmlBindingTest {
 
         LOGGER.finer("result" + result);
         LOGGER.finer("expected" + expResult);
-        final XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.compare();
+        assertXmlEquals(expResult, result, "xmlns:*");
 
     }
 
@@ -214,20 +207,5 @@ public class SkosXmlBindingTest {
 
         assertEquals(expResult.getConcept(), result.getConcept());
         assertEquals(expResult, result);
-    }
-
-    private String removeXmlns(final String xml) {
-
-        String s = xml;
-        s = s.replaceAll("xmlns=\"[^\"]*\" ", "");
-
-        s = s.replaceAll("xmlns=\"[^\"]*\"", "");
-
-        s = s.replaceAll("xmlns:[^=]*=\"[^\"]*\" ", "");
-
-        s = s.replaceAll("xmlns:[^=]*=\"[^\"]*\"", "");
-
-
-        return s;
     }
 }

@@ -21,7 +21,6 @@ import java.io.IOException;
 import org.geotoolkit.ows.xml.v110.ExceptionReport;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 // JAXB dependencies
@@ -29,7 +28,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.XMLComparator;
 
 // Geotoolkit dependencies
 import org.apache.sis.util.logging.Logging;
@@ -37,8 +35,9 @@ import org.apache.sis.xml.MarshallerPool;
 
 //Junit dependencies
 import org.junit.*;
-import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
+
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -96,20 +95,15 @@ public class OWSXmlBindingTest {
         marshaller.marshal(report, sw);
 
         String result = sw.toString();
-        //we remove the xmlmns
-        result = result.replace(" xmlns:ows=\"http://www.opengis.net/ows\"", "");
-        result = result.replace(" xmlns:ns2=\"http://www.opengis.net/ows/1.1\"", "");
-        result = result.replace(" xmlns:ogc=\"http://www.opengis.net/ogc\"", "");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"           + '\n' +
-        "<ns2:ExceptionReport version=\"1.1.0\">"                                 + '\n' +
+        "<ns2:ExceptionReport version=\"1.1.0\" xmlns:ns2=\"http://www.opengis.net/ows/1.1\">" + '\n' +
         "    <ns2:Exception locator=\"parameter1\" exceptionCode=\"InvalidCRS\">" + '\n' +
         "        <ns2:ExceptionText>some error</ns2:ExceptionText>"               + '\n' +
         "    </ns2:Exception>"                                                    + '\n' +
         "</ns2:ExceptionReport>"                                                  + '\n';
-        final XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.compare();
+        assertXmlEquals(expResult, result, "xmlns:*");
 
     }
 

@@ -28,7 +28,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.swe.xml.v101.AnyScalarPropertyType;
 import org.geotoolkit.swe.xml.v101.DataArrayType;
 import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
@@ -44,8 +43,10 @@ import org.geotoolkit.util.StringUtilities;
 import javax.xml.bind.JAXBContext;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
-import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
+
+import static org.apache.sis.test.Assert.*;
+
 
 /**
  *
@@ -120,10 +121,10 @@ public class SweXMLBindingTest {
 
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
-        //we remove the xmlmns
-        result = StringUtilities.removeXmlns(result);
 
-        expResult = "<swe:DataArray gml:id=\"array-id-1\" >" + '\n' +
+        expResult = "<swe:DataArray gml:id=\"array-id-1\"" +
+                        " xmlns:gml=\"http://www.opengis.net/gml\"" +
+                        " xmlns:swe=\"http://www.opengis.net/swe/1.0.1\">" + '\n' +
                     "    <swe:elementCount>" + '\n' +
                     "        <swe:Count>" + '\n' +
                     "            <swe:value>0</swe:value>" + '\n' +
@@ -143,8 +144,7 @@ public class SweXMLBindingTest {
                     "    </swe:encoding>" + '\n' +
                     "</swe:DataArray>" + '\n';
 
-        final XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.compare();
+        assertXmlEquals(expResult, result, "xmlns:*");
 
 
         ObjectFactory factory = new ObjectFactory();

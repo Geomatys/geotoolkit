@@ -25,15 +25,14 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.ows.xml.v110.CodeType;
-import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.wps.v100.DescribeProcess100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.DescribeProcess;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
+
+import static org.apache.sis.test.Assert.*;
 
 
 /**
@@ -97,7 +96,7 @@ public class DescribeProcessTest {
             final Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
             marshaller.marshal(request,stringWriter);
 
-            String result = StringUtilities.removeXmlns(stringWriter.toString());
+            String result = stringWriter.toString();
             final String expectedMarshalledRequest =
                     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                     + "<wps:DescribeProcess version=\"1.0.0\" service=\"WPS\" >\n"
@@ -105,8 +104,7 @@ public class DescribeProcessTest {
                     + "    <ows:Identifier>identifier2</ows:Identifier>\n"
                     + "    <ows:Identifier>identifier3</ows:Identifier>\n"
                     + "</wps:DescribeProcess>\n";
-            final XMLComparator comparator = new XMLComparator(expectedMarshalledRequest, result);
-            comparator.compare();
+            assertXmlEquals(expectedMarshalledRequest, result, "xmlns:*");
             WPSMarshallerPool.getInstance().recycle(marshaller);
         } catch (JAXBException ex) {
             fail(ex.getLocalizedMessage());

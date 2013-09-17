@@ -624,14 +624,14 @@ public class SmlXMLBindingTest {
 
         String expResult = out.toString();
 
-        expResult = expResult.substring(expResult.indexOf("<sml:member>")).replaceAll("</sml:SensorML>", "");
-        result    = result.substring(result.indexOf("<sml:member")).replaceAll("</sml:SensorML>", "");
         final XMLComparator comparator = new XMLComparator(expResult, result){
             @Override
             protected strictfp void compareAttributeNode(Attr expected, Node actual) {
                 super.compareAttributeNode(expected, actual);
             }
         };
+        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
+        comparator.ignoredAttributes.add("http://www.w3.org/2001/XMLSchema-instance:schemaLocation");
         comparator.compare();
 
         SensorMLMarshallerPool.getInstance().recycle(m);
