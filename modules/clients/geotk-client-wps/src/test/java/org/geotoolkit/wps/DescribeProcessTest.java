@@ -99,7 +99,9 @@ public class DescribeProcessTest {
             String result = stringWriter.toString();
             final String expectedMarshalledRequest =
                     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                    + "<wps:DescribeProcess version=\"1.0.0\" service=\"WPS\" >\n"
+                    + "<wps:DescribeProcess version=\"1.0.0\" service=\"WPS\""
+                    + " xmlns:wps=\"http://www.opengis.net/wps/1.0.0\""
+                    + " xmlns:ows=\"http://www.opengis.net/ows/1.1\">\n"
                     + "    <ows:Identifier>identifier1</ows:Identifier>\n"
                     + "    <ows:Identifier>identifier2</ows:Identifier>\n"
                     + "    <ows:Identifier>identifier3</ows:Identifier>\n"

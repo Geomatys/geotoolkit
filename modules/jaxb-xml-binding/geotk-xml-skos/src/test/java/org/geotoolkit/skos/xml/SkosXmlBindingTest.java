@@ -86,7 +86,7 @@ public class SkosXmlBindingTest {
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                                            + '\n' +
-        "<rdf:RDF >"                                                                                                               + '\n' +
+        "<rdf:RDF xmlns:skos=\"http://www.w3.org/2004/02/skos/core#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">"  + '\n' +
         "    <skos:Concept rdf:about=\"http://www.geomatys.com/test/bonjour\">"                                                    + '\n' +
         "        <skos:prefLabel>bonjour</skos:prefLabel>"                                                                         + '\n' +
         "        <skos:altLabel>salut</skos:altLabel>"                                                                             + '\n' +
@@ -130,24 +130,24 @@ public class SkosXmlBindingTest {
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                                            + '\n' +
-        "<rdf:RDF >"                                                                                                               + '\n' +
+        "<rdf:RDF xmlns:skos=\"http://www.w3.org/2004/02/skos/core#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">"  + '\n' +
         "    <skos:Concept rdf:about=\"http://www.geomatys.com/test/bonjour\">"                                                    + '\n' +
-        "        <skos:prefLabel xml:lang=\"fr\">bonjour</skos:prefLabel>"                                                                         + '\n' +
-        "        <skos:altLabel xml:lang=\"fr\">salut</skos:altLabel>"                                                                             + '\n' +
-        "        <skos:definition xml:lang=\"fr\">Un terme de politesse pour saluer son interlocuteur.</skos:definition>"                          + '\n' +
+        "        <skos:prefLabel xml:lang=\"fr\">bonjour</skos:prefLabel>"                                                         + '\n' +
+        "        <skos:altLabel xml:lang=\"fr\">salut</skos:altLabel>"                                                             + '\n' +
+        "        <skos:definition xml:lang=\"fr\">Un terme de politesse pour saluer son interlocuteur.</skos:definition>"          + '\n' +
         "    </skos:Concept>"                                                                                                      + '\n' +
         "    <skos:Concept rdf:about=\"http://www.geomatys.com/test/pluie\">"                                                      + '\n' +
-        "        <skos:prefLabel xml:lang=\"fr\">pluie</skos:prefLabel>"                                                                           + '\n' +
-        "        <skos:prefLabel xml:lang=\"en\">rain</skos:prefLabel>"                                                                           + '\n' +
-        "        <skos:altLabel xml:lang=\"fr\">averse</skos:altLabel>"                                                                            + '\n' +
-        "        <skos:altLabel xml:lang=\"fr\">précipitation</skos:altLabel>"                                                                     + '\n' +
-        "        <skos:definition xml:lang=\"fr\">Un evenement meteorologique qui fais tomber de l'eau sur la terre.</skos:definition>"            + '\n' +
-        "        <skos:definition xml:lang=\"en\">water falling from sky</skos:definition>"            + '\n' +
+        "        <skos:prefLabel xml:lang=\"fr\">pluie</skos:prefLabel>"                                                           + '\n' +
+        "        <skos:prefLabel xml:lang=\"en\">rain</skos:prefLabel>"                                                            + '\n' +
+        "        <skos:altLabel xml:lang=\"fr\">averse</skos:altLabel>"                                                            + '\n' +
+        "        <skos:altLabel xml:lang=\"fr\">précipitation</skos:altLabel>"                                                     + '\n' +
+        "        <skos:definition xml:lang=\"fr\">Un evenement meteorologique qui fais tomber de l'eau sur la terre.</skos:definition>" + '\n' +
+        "        <skos:definition xml:lang=\"en\">water falling from sky</skos:definition>"                                        + '\n' +
         "    </skos:Concept>"                                                                                                      + '\n' +
         "    <skos:Concept rdf:about=\"http://www.geomatys.com/test/livre\">"                                                      + '\n' +
-        "        <skos:prefLabel xml:lang=\"fr\">livre</skos:prefLabel>"                                                                           + '\n' +
-        "        <skos:altLabel xml:lang=\"fr\">bouquin</skos:altLabel>"                                                                           + '\n' +
-        "        <skos:altLabel xml:lang=\"fr\">ouvrage</skos:altLabel>"                                                                           + '\n' +
+        "        <skos:prefLabel xml:lang=\"fr\">livre</skos:prefLabel>"                                                           + '\n' +
+        "        <skos:altLabel xml:lang=\"fr\">bouquin</skos:altLabel>"                                                           + '\n' +
+        "        <skos:altLabel xml:lang=\"fr\">ouvrage</skos:altLabel>"                                                           + '\n' +
         "        <skos:definition xml:lang=\"fr\">Une reliure de papier avec des chose plus ou moins interesante ecrite dessus.</skos:definition>" + '\n' +
         "    </skos:Concept>"                                                                                                      + '\n' +
         "</rdf:RDF>"                                                                                                               + '\n';
@@ -168,7 +168,7 @@ public class SkosXmlBindingTest {
 
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                                            + '\n' +
-        "<rdf:RDF xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:skos=\"http://www.w3.org/2004/02/skos/core#\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">"                                                                                                               + '\n' +
+        "<rdf:RDF xmlns:skos=\"http://www.w3.org/2004/02/skos/core#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">"  + '\n' +
         "    <skos:Concept rdf:about=\"http://www.geomatys.com/test/bonjour\">"                                                    + '\n' +
         "        <skos:prefLabel>bonjour</skos:prefLabel>"                                                                         + '\n' +
         "        <skos:altLabel>salut</skos:altLabel>"                                                                             + '\n' +

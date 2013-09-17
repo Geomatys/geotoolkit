@@ -104,7 +104,11 @@ public class ExecuteTest {
     private static String expectedRequest() {
 
         String str = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                +"<wps:Execute version=\"1.0.0\" service=\"WPS\" >\n"
+                +"<wps:Execute version=\"1.0.0\" service=\"WPS\""
+                + " xmlns:wps=\"http://www.opengis.net/wps/1.0.0\""
+                + " xmlns:ows=\"http://www.opengis.net/ows/1.1\""
+                + " xmlns:xlink=\"http://www.w3.org/1999/xlink\""
+                + " xmlns:gml=\"http://www.opengis.net/gml\">\n"
                 +"    <ows:Identifier>identifier</ows:Identifier>\n"
                 +"    <wps:DataInputs>\n"
                 +"        <wps:Input>\n"
