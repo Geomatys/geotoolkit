@@ -88,13 +88,15 @@ public class WKBRasterImageReader extends ImageReader{
             super();
             names           = new String[] {"PostGISWKBraster"};
             MIMETypes       = new String[] {"image/x-pgraster"};
-            pluginClassName = "org.geotoolkit.coverage.postgresql.WKBRasterImageReader";
+            pluginClassName = "org.geotoolkit.coverage.wkb.WKBRasterImageReader";
             vendorName      = "Geotoolkit.org";
             version         = Utilities.VERSION.toString();
-            writerSpiNames  = new String[] {};
-            inputTypes = new Class[0];
+            writerSpiNames  = new String[] {"PostGISWKBraster"};
+            inputTypes      = new Class[0];
             inputTypes      = ArraysExt.append(inputTypes, InputStream.class);
             inputTypes      = ArraysExt.append(inputTypes, byte[].class);
+            suffixes        = new String[0];
+            suffixes        = ArraysExt.append(suffixes, "wkb");
         }
 
         @Override
