@@ -31,7 +31,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.geotoolkit.csw.xml.ElementSetType;
 import org.geotoolkit.csw.xml.SearchResults;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -176,7 +175,7 @@ public class SearchResultsType implements SearchResults {
         this.nextRecord              = nextRecord;
         this.any                     = records;
         
-        abstractRecord = new ArrayList<JAXBElement<? extends AbstractRecordType>>(); 
+        abstractRecord = new ArrayList<>(); 
         for (int i = 0; i < dcrecords.size(); i++) {
             
             AbstractRecordType record = dcrecords.get(i);
@@ -204,7 +203,7 @@ public class SearchResultsType implements SearchResults {
      */
     public List<JAXBElement<? extends AbstractRecordType>> getJbAbstractRecord() {
         if (abstractRecord == null) {
-            abstractRecord = new ArrayList<JAXBElement<? extends AbstractRecordType>>();
+            abstractRecord = new ArrayList<>();
         }
         return abstractRecord;
     }
@@ -213,11 +212,12 @@ public class SearchResultsType implements SearchResults {
      * Gets the value of the abstractRecord property.
      *
      */
+    @Override
     public List<? extends AbstractRecordType> getAbstractRecord() {
         if (abstractRecord == null) {
-            abstractRecord = new ArrayList<JAXBElement<? extends AbstractRecordType>>();
+            abstractRecord = new ArrayList<>();
         }
-        final List<AbstractRecordType> result = new ArrayList<AbstractRecordType>();
+        final List<AbstractRecordType> result = new ArrayList<>();
         for (JAXBElement<? extends AbstractRecordType> record : abstractRecord) {
             result.add(record.getValue());
         }
@@ -228,9 +228,10 @@ public class SearchResultsType implements SearchResults {
      * Gets the value of the any property.
      * (unModifiable)
      */
+    @Override
     public List<Object> getAny() {
         if (any == null) {
-            any = new ArrayList<Object>();
+            any = new ArrayList<>();
         }
         return any;
     }
@@ -238,6 +239,7 @@ public class SearchResultsType implements SearchResults {
     /**
      * Gets the value of the resultSetId property.
      */
+    @Override
     public String getResultSetId() {
         return resultSetId;
     }
@@ -245,6 +247,7 @@ public class SearchResultsType implements SearchResults {
     /**
      * Gets the value of the elementSet property.
      */
+    @Override
     public ElementSetType getElementSet() {
         return elementSet;
     }
@@ -252,6 +255,7 @@ public class SearchResultsType implements SearchResults {
     /**
      * Gets the value of the recordSchema property.
      */
+    @Override
     public String getRecordSchema() {
         return recordSchema;
     }
@@ -259,6 +263,7 @@ public class SearchResultsType implements SearchResults {
     /**
      * Gets the value of the numberOfRecordsMatched property.
      */
+    @Override
     public int getNumberOfRecordsMatched() {
         return numberOfRecordsMatched;
     }
@@ -266,6 +271,7 @@ public class SearchResultsType implements SearchResults {
     /**
      * Gets the value of the numberOfRecordsReturned property.
      */
+    @Override
     public int getNumberOfRecordsReturned() {
         return numberOfRecordsReturned;
     }
@@ -273,38 +279,45 @@ public class SearchResultsType implements SearchResults {
     /**
      * Gets the value of the nextRecord property.
      */
+    @Override
     public int getNextRecord() {
         return nextRecord;
     }
-
     
     /**
      * Gets the value of the expires property.
      */
+    @Override
     public XMLGregorianCalendar getExpires() {
         return expires;
     }
     
+    @Override
     public void setResultSetId(final String value) {
         this.resultSetId = value;
     }
 
+    @Override
     public void setRecordSchema(final String value) {
         this.recordSchema = value;
     }
 
+    @Override
     public void setNumberOfRecordsMatched(final int value) {
         this.numberOfRecordsMatched = value;
     }
 
+    @Override
     public void setNumberOfRecordsReturned(final int value) {
         this.numberOfRecordsReturned = value;
     }
 
+    @Override
     public void setNextRecord(final int value) {
         this.nextRecord = value;
     }
 
+    @Override
     public void setExpires(final XMLGregorianCalendar value) {
         this.expires = value;
     }

@@ -63,4 +63,7 @@ public final class CSWMarshallerPool {
         return createJAXBContext(CSWClassesContext.getCSWClasses()).createBinder();
     }
 
+    public static Binder getBinder() throws JAXBException {
+        return createJAXBContext(CSWClassesContext.getAllClasses()).createBinder();
+    }
 }

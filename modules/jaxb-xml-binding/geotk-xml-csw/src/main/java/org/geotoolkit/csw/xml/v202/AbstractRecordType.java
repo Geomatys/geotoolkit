@@ -19,7 +19,6 @@ package org.geotoolkit.csw.xml.v202;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.AbstractRecord;
 
@@ -49,14 +48,5 @@ import org.geotoolkit.csw.xml.AbstractRecord;
     BriefRecordType.class
 })
 public abstract class AbstractRecordType implements AbstractRecord {
-    
-    @XmlTransient
-    protected static org.geotoolkit.ows.xml.v100.ObjectFactory owsFactory = new org.geotoolkit.ows.xml.v100.ObjectFactory();
-    
-    @XmlTransient
-    protected static org.geotoolkit.dublincore.xml.v2.elements.ObjectFactory dublinFactory = new org.geotoolkit.dublincore.xml.v2.elements.ObjectFactory();
-    
-    @XmlTransient
-    protected static org.geotoolkit.dublincore.xml.v2.terms.ObjectFactory dublinTermFactory = new org.geotoolkit.dublincore.xml.v2.terms.ObjectFactory();
 
 }
