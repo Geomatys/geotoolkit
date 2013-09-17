@@ -42,7 +42,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Coverage Store which rely on standard java readers and writers.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -58,35 +58,35 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     /**
      * Mandatory - the folder path
      */
     public static final ParameterDescriptor<URL> PATH =
-            new DefaultParameterDescriptor<URL>("path","folder path",URL.class,null,true);
-    
+            new DefaultParameterDescriptor<>("path","folder path",URL.class,null,true);
+
     /**
      * Mandatory - the image reader type.
-     * Use AUTO if type should be detected automaticaly.
+     * Use AUTO if type should be detected automatically.
      */
     public static final ParameterDescriptor<String> TYPE;
     static{
         final String code = "type";
         final CharSequence remarks = "Reader type";
-        final Map<String,Object> params = new HashMap<String, Object>();
+        final Map<String,Object> params = new HashMap<>();
         params.put(DefaultParameterDescriptor.NAME_KEY, code);
         params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
-        final LinkedList<String> validValues = new LinkedList<String>(getReaderTypeList());
+        final LinkedList<String> validValues = new LinkedList<>(getReaderTypeList());
         validValues.add("AUTO");
         Collections.sort(validValues);
-        
-        TYPE = new DefaultParameterDescriptor<String>(params, String.class, 
-                validValues.toArray(new String[validValues.size()]), 
+
+        TYPE = new DefaultParameterDescriptor<>(params, String.class,
+                validValues.toArray(new String[validValues.size()]),
                 "AUTO", null, null, null, true);
     }
-    
+
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("FileCoverageStoreParameters",
                 IDENTIFIER,PATH,TYPE,NAMESPACE);
@@ -95,7 +95,7 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
     @Override
     public CharSequence getDescription() {
         return new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageFileDescription");
@@ -105,7 +105,7 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
     public CharSequence getDisplayName() {
         return new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageFileTitle");
     }
-    
+
 
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
@@ -128,40 +128,38 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
     public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
         return open(params);
     }
- 
+
     /**
      * List all available formats.
      */
-    private static LinkedList<String> getReaderTypeList(){
+    static LinkedList<String> getReaderTypeList(){
 
         final IIORegistry registry = IIORegistry.getDefaultInstance();
         final Iterator<? extends ImageReaderSpi> it = registry.getServiceProviders(ImageReaderSpi.class, true);
-        final LinkedList<String> formatsDone = new LinkedList<String>();
+        final LinkedList<String> formatsDone = new LinkedList<>();
 
         skip:
         while (it.hasNext()) {
             final ImageReaderSpi spi = it.next();
 
             String temp = null;
-            
-            String longFormat = null;
             for (String format : spi.getFormatNames()) {
                 if(temp == null){
                     temp = format;
                     continue;
                 }
-                
+
                 // Remember the longuest format string. If two of them
                 // have the same length, favor the one in upper case.
                 temp = longest(temp, format);
             }
-            
+
             if(temp != null && !formatsDone.contains(temp)) formatsDone.add(temp);
-            
+
         }
         return formatsDone;
     }
-    
+
     /**
      * Selects the longest format string. If two of them
      * have the same length, favor the one in upper case.
@@ -179,5 +177,5 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
         }
         return candidate;
     }
-    
+
 }

@@ -17,7 +17,6 @@
 package org.geotoolkit.coverage.filestore;
 
 import java.awt.Dimension;
-import java.awt.geom.Point2D;
 import java.io.File;
 import java.util.*;
 import java.util.logging.Level;
@@ -43,18 +42,18 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLPyramid implements Pyramid{
- 
+
     @XmlElement(name="id")
     String id;
     @XmlElement(name="crs")
     String crs;
     @XmlElement(name="Mosaic")
     List<XMLMosaic> mosaics;
-    
+
     @XmlTransient
     private XMLPyramidSet set;
     @XmlTransient
-    private final SortedMap<Double,XMLMosaic> sorted = new TreeMap<Double, XMLMosaic>(new Comparator<Double>() {
+    private final SortedMap<Double,XMLMosaic> sorted = new TreeMap<>(new Comparator<Double>() {
 
         @Override
         public int compare(Double o1, Double o2) {
@@ -62,8 +61,8 @@ public class XMLPyramid implements Pyramid{
         }
     });
     @XmlTransient
-    private CoordinateReferenceSystem crsobj; 
-    
+    private CoordinateReferenceSystem crsobj;
+
     void initialize(XMLPyramidSet set) {
         this.set = set;
         for(XMLMosaic mosaic : mosaics()){
@@ -71,10 +70,10 @@ public class XMLPyramid implements Pyramid{
             mosaic.initialize(this);
         }
     }
-    
+
     public List<XMLMosaic> mosaics() {
         if(mosaics == null){
-            mosaics = new ArrayList<XMLMosaic>();
+            mosaics = new ArrayList<>();
         }
         return mosaics;
     }
@@ -83,7 +82,7 @@ public class XMLPyramid implements Pyramid{
     public String getId() {
         return id;
     }
-    
+
     public File getFolder(){
         return new File(getPyramidSet().getFolder(),getId());
     }
@@ -98,7 +97,7 @@ public class XMLPyramid implements Pyramid{
         if(crsobj != null){
             return crsobj;
         }
-        
+
         try {
             if(crs.startsWith("EPSG")){
                 crsobj = CRS.decode(crs);
@@ -135,24 +134,24 @@ public class XMLPyramid implements Pyramid{
         throw new ArrayIndexOutOfBoundsException(index);
     }
 
-    
+
     @Override
     public List<GridMosaic> getMosaics() {
         return new ArrayList<GridMosaic>(sorted.values());
     }
-    
+
     @Override
     public String toString(){
         return Trees.toString(
                 Classes.getShortClassName(this)
-                +" "+IdentifiedObjects.getIdentifier(getCoordinateReferenceSystem()) 
-                +" "+getId(), 
+                +" "+IdentifiedObjects.getIdentifier(getCoordinateReferenceSystem())
+                +" "+getId(),
                 mosaics());
     }
-    
+
     /**
      * Return the mosaic with the given id
-     * 
+     *
      * @param mosaicId
      * @return
      * @throws DataStoreException if no mosaic have this id
@@ -165,15 +164,15 @@ public class XMLPyramid implements Pyramid{
         }
         throw new DataStoreException("No mosaic for ID : " + mosaicId);
     }
-    
+
     /**
      * Create and register a new mosaic in this pyramid
-     * 
+     *
      * @param gridSize
      * @param tilePixelSize
      * @param upperleft
      * @param pixelscale
-     * @return 
+     * @return
      */
     XMLMosaic createMosaic(Dimension gridSize, Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) {
         final XMLMosaic mosaic = new XMLMosaic();

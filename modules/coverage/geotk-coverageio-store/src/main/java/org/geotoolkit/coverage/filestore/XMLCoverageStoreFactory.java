@@ -19,6 +19,9 @@ package org.geotoolkit.coverage.filestore;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
@@ -36,7 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Coverage store relying on an xml file.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -52,24 +55,44 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory{
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     /**
      * Mandatory - the folder path
      */
     public static final ParameterDescriptor<URL> PATH =
-            new DefaultParameterDescriptor<URL>("path","folder path",URL.class,null,true);
+            new DefaultParameterDescriptor<>("path","folder path",URL.class,null,true);
+
+    /**
+     * Mandatory - the image reader type.
+     * Use AUTO if type should be detected automaticaly.
+     */
+    public static final ParameterDescriptor<String> TYPE;
+    static{
+        final String code = "type";
+        final CharSequence remarks = "Reader type";
+        final Map<String,Object> params = new HashMap<>();
+        params.put(DefaultParameterDescriptor.NAME_KEY, code);
+        params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
+        final LinkedList<String> validValues = new LinkedList<>(FileCoverageStoreFactory.getReaderTypeList());
+        validValues.add("AUTO");
+        Collections.sort(validValues);
+
+        TYPE = new DefaultParameterDescriptor<>(params, String.class,
+                validValues.toArray(new String[validValues.size()]),
+                "AUTO", null, null, null, true);
+    }
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("XMLCoverageStoreParameters",
-                IDENTIFIER,PATH,NAMESPACE);
+                IDENTIFIER,PATH,TYPE,NAMESPACE);
 
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
     @Override
     public CharSequence getDescription() {
         return new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageXMLDescription");
@@ -101,5 +124,5 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory{
     public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
         return open(params);
     }
-    
+
 }

@@ -46,12 +46,15 @@ public class XMLCoverageStore extends AbstractCoverageStore{
 
     private final File root;
     private final URL rootPath;
-    private final Map<Name,XMLCoverageReference> names = new HashMap<Name, XMLCoverageReference>();
-    
+    private String format;
+    private final Map<Name,XMLCoverageReference> names = new HashMap<>();
+
     XMLCoverageStore(ParameterValueGroup params) throws URISyntaxException{
         super(params);
         rootPath = (URL) params.parameter(XMLCoverageStoreFactory.PATH.getName().getCode()).getValue();
         root = new File(rootPath.toURI());
+        format = (String) params.parameter(FileCoverageStoreFactory.TYPE.getName().getCode()).getValue();
+        if(format.equals("AUTO")) format = "PNG";
         explore();
     }
 
@@ -59,16 +62,16 @@ public class XMLCoverageStore extends AbstractCoverageStore{
     public CoverageStoreFactory getFactory() {
         return CoverageStoreFinder.getFactoryById(XMLCoverageStoreFactory.NAME);
     }
-    
+
     /**
-     * Search all xml files in the folder which define a pyramide model.
+     * Search all xml files in the folder which define a pyramid model.
      */
     private void explore(){
-        
+
         if(!root.exists()){
             root.mkdirs();
         }
-        
+
         final File[] childs = root.listFiles();
         if(childs != null){
             for(File f : childs){
@@ -88,7 +91,7 @@ public class XMLCoverageStore extends AbstractCoverageStore{
             }
         }
     }
-    
+
     @Override
     public Set<Name> getNames() throws DataStoreException {
         return names.keySet();
@@ -110,15 +113,15 @@ public class XMLCoverageStore extends AbstractCoverageStore{
         if(names.containsKey(name)){
             throw new DataStoreException("Name already used in store : " + name.getLocalPart());
         }
-        
-        final XMLPyramidSet set = new XMLPyramidSet();
+
+        final XMLPyramidSet set = new XMLPyramidSet(format);
         set.initialize(new File(root, name.getLocalPart()+".xml"));
         final XMLCoverageReference ref = new XMLCoverageReference(this,name,set);
         names.put(name, ref);
         ref.save();
         return ref;
     }
-    
+
 	@Override
 	public CoverageType getType() {
 		return CoverageType.PYRAMID;

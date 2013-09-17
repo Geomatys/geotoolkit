@@ -62,8 +62,8 @@ public class XMLPyramidSet extends AbstractPyramidSet{
 
     @XmlElement(name="Pyramid")
     private List<XMLPyramid> pyramids;
-    @XmlElement(name="MimeType")
-    private String mimeType;
+    @XmlElement(name="FormatName")
+    private String formatName;
 
     @XmlTransient
     private String id;
@@ -72,12 +72,8 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     @XmlTransient
     private ImageReaderSpi spi;
 
-    public XMLPyramidSet(){
-        this("image/png");
-    }
-
-    public XMLPyramidSet(String mimeType){
-        this.mimeType = mimeType;
+    public XMLPyramidSet(String formatName){
+        this.formatName = formatName;
     }
 
     void initialize(File mainFile){
@@ -94,10 +90,14 @@ public class XMLPyramidSet extends AbstractPyramidSet{
         }
     }
 
+    public String getFormatName() {
+        return formatName;
+    }
+
     public ImageReaderSpi getReaderSpi() throws DataStoreException{
         if(spi == null){
             try {
-                final ImageReader reader = XImageIO.getReaderByMIMEType(mimeType, null, Boolean.TRUE, Boolean.TRUE);
+                final ImageReader reader = XImageIO.getReaderByFormatName(formatName, null, Boolean.TRUE, Boolean.TRUE);
                 spi = reader.getOriginatingProvider();
                 reader.dispose();
             } catch (IOException ex) {
@@ -109,7 +109,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
 
     public List<XMLPyramid> pyramids() {
         if(pyramids == null){
-            pyramids = new ArrayList<XMLPyramid>();
+            pyramids = new ArrayList<>();
         }
         return pyramids;
     }
@@ -134,7 +134,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     }
 
     public String getMimeType() {
-        return mimeType;
+        return formatName;
     }
 
     @Override
