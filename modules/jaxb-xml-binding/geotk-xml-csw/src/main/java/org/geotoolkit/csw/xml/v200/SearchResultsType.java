@@ -18,12 +18,10 @@ package org.geotoolkit.csw.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -78,13 +76,10 @@ import org.geotoolkit.csw.xml.SearchResults;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SearchResultsType", propOrder = {
-    "abstractRecord",
     "any"
 })
 public class SearchResultsType implements SearchResults {
 
-    @XmlElementRef(name = "AbstractRecord", namespace = "http://www.opengis.net/cat/csw", type = JAXBElement.class)
-    private List<JAXBElement<? extends AbstractRecordType>> abstractRecord;
     @XmlAnyElement(lax = true)
     private List<Object> any;
     
@@ -135,69 +130,22 @@ public class SearchResultsType implements SearchResults {
      * 
      */
     public SearchResultsType(final String resultSetId, final ElementSetType elementSet, final int numberOfResultMatched,
-            final List<AbstractRecordType> dcrecords, final List<Object> records, final Integer numberOfRecordsReturned, final int nextRecord) {
+            final List<Object> records, final Integer numberOfRecordsReturned, final int nextRecord) {
         this.resultSetId             = resultSetId;
         this.elementSet              = elementSet;
         this.numberOfRecordsMatched  = numberOfResultMatched;
         this.numberOfRecordsReturned = numberOfRecordsReturned;
         this.nextRecord              = nextRecord;
         this.any                     = records;
-
-        if (dcrecords != null) {
-            abstractRecord = new ArrayList<JAXBElement<? extends AbstractRecordType>>(); 
-            for (int i = 0; i < dcrecords.size(); i++) {
-
-                AbstractRecordType record = dcrecords.get(i);
-
-                if (record == null) {continue;}
-
-                if (record instanceof BriefRecordType) {
-                    abstractRecord.add(factory.createBriefRecord((BriefRecordType)record));
-                } else if (record instanceof RecordType) {
-                    abstractRecord.add(factory.createRecord((RecordType)record));
-                } else if (record instanceof SummaryRecordType) {
-                    abstractRecord.add(factory.createSummaryRecord((SummaryRecordType)record));
-                } else if (record instanceof DCMIRecordType) {
-                    abstractRecord.add(factory.createDCMIRecord((DCMIRecordType)record));
-                } else {
-                    throw new IllegalArgumentException(" unknow AbstractRecord subType:" + record.getClass().getSimpleName());
-                }
-            }
-        }
-    }
-    
-    /**
-     * Gets the value of the abstractRecord property.
-     * 
-     */
-    public List<JAXBElement<? extends AbstractRecordType>> getJbAbstractRecord() {
-        if (abstractRecord == null) {
-            abstractRecord = new ArrayList<JAXBElement<? extends AbstractRecordType>>();
-        }
-        return this.abstractRecord;
-    }
-
-    /**
-     * Gets the value of the abstractRecord property.
-     *
-     */
-    public List<? extends AbstractRecordType> getAbstractRecord() {
-        if (abstractRecord == null) {
-            abstractRecord = new ArrayList<JAXBElement<? extends AbstractRecordType>>();
-        }
-        final List<AbstractRecordType> result = new ArrayList<AbstractRecordType>();
-        for (JAXBElement<? extends AbstractRecordType> record : abstractRecord) {
-            result.add(record.getValue());
-        }
-        return result;
     }
     
     /**
      * Gets the value of the any property.
      */
+    @Override
     public List<Object> getAny() {
         if (any == null) {
-            any = new ArrayList<Object>();
+            any = new ArrayList<>();
         }
         return any;
     }
@@ -206,6 +154,7 @@ public class SearchResultsType implements SearchResults {
      * Gets the value of the resultSetId property.
      * 
      */
+    @Override
     public String getResultSetId() {
         return resultSetId;
     }
@@ -214,6 +163,7 @@ public class SearchResultsType implements SearchResults {
      * Sets the value of the resultSetId property.
      * 
     */
+    @Override
     public void setResultSetId(final String value) {
         this.resultSetId = value;
     }
@@ -222,6 +172,7 @@ public class SearchResultsType implements SearchResults {
      * Gets the value of the elementSet property.
      * 
      */
+    @Override
     public ElementSetType getElementSet() {
         return elementSet;
     }
@@ -238,6 +189,7 @@ public class SearchResultsType implements SearchResults {
      * Gets the value of the recordSchema property.
      * 
      */
+    @Override
     public String getRecordSchema() {
         return recordSchema;
     }
@@ -246,6 +198,7 @@ public class SearchResultsType implements SearchResults {
      * Sets the value of the recordSchema property.
      * 
      */
+    @Override
     public void setRecordSchema(final String value) {
         this.recordSchema = value;
     }
@@ -254,6 +207,7 @@ public class SearchResultsType implements SearchResults {
      * Gets the value of the numberOfRecordsMatched property.
      * 
      */
+    @Override
     public int getNumberOfRecordsMatched() {
         return numberOfRecordsMatched;
     }
@@ -262,6 +216,7 @@ public class SearchResultsType implements SearchResults {
      * Sets the value of the numberOfRecordsMatched property.
      * 
      */
+    @Override
     public void setNumberOfRecordsMatched(final int value) {
         this.numberOfRecordsMatched = value;
     }
@@ -270,6 +225,7 @@ public class SearchResultsType implements SearchResults {
      * Gets the value of the numberOfRecordsReturned property.
      * 
      */
+    @Override
     public int getNumberOfRecordsReturned() {
         return numberOfRecordsReturned;
     }
@@ -278,6 +234,7 @@ public class SearchResultsType implements SearchResults {
      * Sets the value of the numberOfRecordsReturned property.
      * 
      */
+    @Override
     public void setNumberOfRecordsReturned(final int value) {
         this.numberOfRecordsReturned = value;
     }
@@ -286,6 +243,7 @@ public class SearchResultsType implements SearchResults {
      * Gets the value of the nextRecord property.
      * 
      */
+    @Override
     public int getNextRecord() {
         return nextRecord;
     }
@@ -294,6 +252,7 @@ public class SearchResultsType implements SearchResults {
      * Sets the value of the nextRecord property.
      * 
      */
+    @Override
     public void setNextRecord(final int value) {
         this.nextRecord = value;
     }
@@ -302,6 +261,7 @@ public class SearchResultsType implements SearchResults {
      * Gets the value of the expires property.
      * 
      */
+    @Override
     public XMLGregorianCalendar getExpires() {
         return expires;
     }
@@ -310,6 +270,7 @@ public class SearchResultsType implements SearchResults {
      * Sets the value of the expires property.
      * 
      */
+    @Override
     public void setExpires(final XMLGregorianCalendar value) {
         this.expires = value;
     }
@@ -331,12 +292,8 @@ public class SearchResultsType implements SearchResults {
             s.append("expires at: ").append(expires);
         }
         
-        if (abstractRecord != null && !abstractRecord.isEmpty()) {
-            s.append("nb CSW records: ").append(abstractRecord.size());
-            
-        }
         if (any != null && !any.isEmpty()) {
-            s.append("nb Other records: ").append(any.size());
+            s.append("nb records: ").append(any.size());
         }
         return s.toString();
     }

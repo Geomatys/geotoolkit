@@ -19,12 +19,10 @@ package org.geotoolkit.csw.xml.v202;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -82,13 +80,10 @@ import org.geotoolkit.csw.xml.SearchResults;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SearchResultsType", propOrder = {
-    "abstractRecord",
     "any"
 })
 public class SearchResultsType implements SearchResults {
 
-    @XmlElementRef(name = "AbstractRecord", namespace = "http://www.opengis.net/cat/csw/2.0.2", type = JAXBElement.class)
-    private List<JAXBElement<? extends AbstractRecordType>> abstractRecord;
     @XmlAnyElement(lax = true)
     private List<Object> any;
     
@@ -167,63 +162,15 @@ public class SearchResultsType implements SearchResults {
      * 
      */
     public SearchResultsType(final String resultSetId, final ElementSetType elementSet, final int numberOfResultMatched,
-            final List<AbstractRecordType> dcrecords, final List<Object> records, final Integer numberOfRecordsReturned, final int nextRecord) {
+            final List<Object> records, final Integer numberOfRecordsReturned, final int nextRecord) {
         this.resultSetId             = resultSetId;
         this.elementSet              = elementSet;
         this.numberOfRecordsMatched  = numberOfResultMatched;
         this.numberOfRecordsReturned = numberOfRecordsReturned;
         this.nextRecord              = nextRecord;
         this.any                     = records;
-        
-        abstractRecord = new ArrayList<>(); 
-        for (int i = 0; i < dcrecords.size(); i++) {
-            
-            AbstractRecordType record = dcrecords.get(i);
-            
-            if (record == null) {continue;}
-            
-            if (record instanceof BriefRecordType) {
-                abstractRecord.add(factory.createBriefRecord((BriefRecordType)record));
-            } else if (record instanceof RecordType) {
-                abstractRecord.add(factory.createRecord((RecordType)record));
-            } else if (record instanceof SummaryRecordType) {
-                abstractRecord.add(factory.createSummaryRecord((SummaryRecordType)record));
-            } else if (record instanceof DCMIRecordType) {
-                abstractRecord.add(factory.createDCMIRecord((DCMIRecordType)record));
-            } else {
-                throw new IllegalArgumentException(" unknow AbstractRecord subType:" + record.getClass().getSimpleName());
-            }
-        }
-        
     }
     
-    /**
-     * Gets the value of the abstractRecord property.
-     * (unModifiable)
-     */
-    public List<JAXBElement<? extends AbstractRecordType>> getJbAbstractRecord() {
-        if (abstractRecord == null) {
-            abstractRecord = new ArrayList<>();
-        }
-        return abstractRecord;
-    }
-
-    /**
-     * Gets the value of the abstractRecord property.
-     *
-     */
-    @Override
-    public List<? extends AbstractRecordType> getAbstractRecord() {
-        if (abstractRecord == null) {
-            abstractRecord = new ArrayList<>();
-        }
-        final List<AbstractRecordType> result = new ArrayList<>();
-        for (JAXBElement<? extends AbstractRecordType> record : abstractRecord) {
-            result.add(record.getValue());
-        }
-        return result;
-    }
-
     /**
      * Gets the value of the any property.
      * (unModifiable)
@@ -339,12 +286,8 @@ public class SearchResultsType implements SearchResults {
             s.append("expires at: ").append(expires);
         }
         
-        if (abstractRecord != null && !abstractRecord.isEmpty()) {
-            s.append("nb CSW records: ").append(abstractRecord.size());
-            
-        }
         if (any != null && !any.isEmpty()) {
-            s.append("nb Other records: ").append(any.size());
+            s.append("nb records: ").append(any.size());
         }
         return s.toString();
     }
@@ -355,26 +298,8 @@ public class SearchResultsType implements SearchResults {
             return true;
         }
         if (object instanceof SearchResultsType) {
-            SearchResultsType that  = (SearchResultsType) object;
-            boolean abstractRecordB = false;
-            if (this.abstractRecord != null && that.abstractRecord != null) {
-                if (this.abstractRecord.size() == that.abstractRecord.size()) {
-                    abstractRecordB = true;
-                    for (int i = 0; i < this.abstractRecord.size(); i++) {
-                        if (!this.abstractRecord.get(i).getValue().equals(that.abstractRecord.get(i).getValue())) {
-                            abstractRecordB = false;
-                            break;
-                        }
-                    }
-                }
-            
-            } else if (this.abstractRecord == null && that.abstractRecord == null) {
-                abstractRecordB = true;
-            }
-
-            
-            return abstractRecordB                                                              &&
-                   Objects.equals(this.any,                     that.any)                     &&
+            final SearchResultsType that  = (SearchResultsType) object;
+            return Objects.equals(this.any,                     that.any)                     &&
                    Objects.equals(this.elementSet,              that.elementSet)              &&
                    Objects.equals(this.expires,                 that.expires)                 &&
                    Objects.equals(this.nextRecord,              that.nextRecord)              &&
@@ -389,7 +314,6 @@ public class SearchResultsType implements SearchResults {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 53 * hash + (this.abstractRecord != null ? this.abstractRecord.hashCode() : 0);
         hash = 53 * hash + (this.any != null ? this.any.hashCode() : 0);
         hash = 53 * hash + (this.resultSetId != null ? this.resultSetId.hashCode() : 0);
         hash = 53 * hash + this.elementSet.hashCode();

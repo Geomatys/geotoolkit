@@ -214,8 +214,7 @@ public class CswXMLBindingTest {
 
         StringReader sr = new StringReader(xml);
 
-        JAXBElement<?> jb = (JAXBElement<?>) unmarshaller.unmarshal(sr);
-        RecordType result = (RecordType) jb.getValue();
+        RecordType result = (RecordType) unmarshaller.unmarshal(sr);
 
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
@@ -279,8 +278,7 @@ public class CswXMLBindingTest {
 
         sr = new StringReader(xml);
 
-        jb = (JAXBElement) unmarshaller.unmarshal(sr);
-        org.geotoolkit.csw.xml.v200.RecordType result2 = (org.geotoolkit.csw.xml.v200.RecordType) jb.getValue();
+        org.geotoolkit.csw.xml.v200.RecordType result2 = (org.geotoolkit.csw.xml.v200.RecordType) unmarshaller.unmarshal(sr);
 
         LOGGER.log(Level.FINER, "result:{0}", result2.toString());
 
@@ -317,8 +315,7 @@ public class CswXMLBindingTest {
 
         sr = new StringReader(xml);
 
-        jb = (JAXBElement) unmarshaller.unmarshal(sr);
-        result2 = (org.geotoolkit.csw.xml.v200.RecordType) jb.getValue();
+        result2 = (org.geotoolkit.csw.xml.v200.RecordType) unmarshaller.unmarshal(sr);
 
         LOGGER.log(Level.FINER, "result:{0}", result2.toString());
         pool.recycle(unmarshaller);
@@ -498,8 +495,7 @@ public class CswXMLBindingTest {
         "</csw:SummaryRecord>\n";
 
         StringReader sr = new StringReader(xml);
-        JAXBElement<SummaryRecordType> jb = (JAXBElement<SummaryRecordType>) unmarshaller.unmarshal(sr);
-        SummaryRecordType result = jb.getValue();
+        SummaryRecordType result = (SummaryRecordType) unmarshaller.unmarshal(sr);
 
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
@@ -556,8 +552,7 @@ public class CswXMLBindingTest {
         "</csw:SummaryRecord>\n";
 
         sr = new StringReader(xml);
-        jb = (JAXBElement) unmarshaller.unmarshal(sr);
-        result = jb.getValue();
+        result = (SummaryRecordType) unmarshaller.unmarshal(sr);
 
 
         List<SimpleLiteral> ids    = new ArrayList<>();
@@ -720,8 +715,7 @@ public class CswXMLBindingTest {
         "</csw:BriefRecord>\n";
 
         StringReader sr = new StringReader(xml);
-        JAXBElement<BriefRecordType> jb = (JAXBElement<BriefRecordType>) unmarshaller.unmarshal(sr);
-        BriefRecordType result = jb.getValue();
+        BriefRecordType result = (BriefRecordType) unmarshaller.unmarshal(sr);
 
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
@@ -756,8 +750,7 @@ public class CswXMLBindingTest {
         "</csw:BriefRecord>\n";
 
         sr = new StringReader(xml);
-        jb = (JAXBElement<BriefRecordType>) unmarshaller.unmarshal(sr);
-        result = jb.getValue();
+        result = (BriefRecordType) unmarshaller.unmarshal(sr);
 
         List<SimpleLiteral> identifiers = new ArrayList<>();
         identifiers.add(new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}"));
@@ -812,11 +805,11 @@ public class CswXMLBindingTest {
         BriefRecordType briefRecord = new BriefRecordType(id, title, type, bbox);
         SummaryRecordType sumRecord = new SummaryRecordType(id, title, type, bbox, subject, null, modified, Abstract);
 
-        List<AbstractRecordType> records = new ArrayList<>();
+        List<Object> records = new ArrayList<>();
         records.add(record);
         records.add(briefRecord);
         records.add(sumRecord);
-        GetRecordByIdResponse response = new GetRecordByIdResponseType(records, null);
+        GetRecordByIdResponse response = new GetRecordByIdResponseType(records);
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(response, sw);
@@ -918,7 +911,7 @@ public class CswXMLBindingTest {
         records.add(briefRecord);
         records.add(sumRecord);
 
-        GetRecordByIdResponse expResult = new GetRecordByIdResponseType(records, null);
+        GetRecordByIdResponse expResult = new GetRecordByIdResponseType(records);
 
 
         String xml =
@@ -966,14 +959,14 @@ public class CswXMLBindingTest {
 
         GetRecordByIdResponse result = ((JAXBElement<GetRecordByIdResponse>) unmarshaller.unmarshal(new StringReader(xml))).getValue();
 
-        assertTrue(result.getAbstractRecord() instanceof List);
-        List<? extends AbstractRecordType> resultList = (List<? extends AbstractRecordType>) result.getAbstractRecord();
-        List<? extends AbstractRecordType> expResultList = (List<? extends AbstractRecordType>) expResult.getAbstractRecord();
+        assertTrue(result.getAny()instanceof List);
+        List<Object> resultList = result.getAny();
+        List<Object> expResultList = expResult.getAny();
         assertEquals(resultList.get(0), expResultList.get(0));
         assertEquals(resultList.get(1), expResultList.get(1));
         assertEquals(resultList.get(2), expResultList.get(2));
         assertEquals(resultList, expResultList);
-        assertEquals(expResult.getAbstractRecord(), result.getAbstractRecord());
+        assertEquals(expResult.getAny(), result.getAny());
         assertEquals(expResult, result);
 
         pool.recycle(unmarshaller);
@@ -1011,12 +1004,12 @@ public class CswXMLBindingTest {
         BriefRecordType briefRecord = new BriefRecordType(id, title, type, bbox);
         SummaryRecordType sumRecord = new SummaryRecordType(id, title, type, bbox, subject, null, modified, Abstract);
 
-        List<AbstractRecordType> records = new ArrayList<>();
+        List<Object> records = new ArrayList<>();
         records.add(record);
         records.add(briefRecord);
         records.add(sumRecord);
 
-        final SearchResultsType sr = new SearchResultsType("set", ElementSetType.BRIEF, 1, records, null, 1, 0);
+        final SearchResultsType sr = new SearchResultsType("set", ElementSetType.BRIEF, 1, records, 1, 0);
         GetRecordsResponse response = new GetRecordsResponseType("rid", 100000, "v1.2", sr);
 
         StringWriter sw = new StringWriter();
@@ -1118,12 +1111,12 @@ public class CswXMLBindingTest {
         BriefRecordType briefRecord = new BriefRecordType(id, title, type, bbox);
         SummaryRecordType sumRecord = new SummaryRecordType(id, title, type, bbox, subject, null, modified, Abstract);
 
-        List<AbstractRecordType> records = new ArrayList<>();
+        List<Object> records = new ArrayList<>();
         records.add(record);
         records.add(briefRecord);
         records.add(sumRecord);
 
-        final SearchResultsType sr = new SearchResultsType("set", ElementSetType.BRIEF, 1, records, null, 1, 0);
+        final SearchResultsType sr = new SearchResultsType("set", ElementSetType.BRIEF, 1, records, 1, 0);
         GetRecordsResponse expResult = new GetRecordsResponseType("rid", 100000, "v1.2", sr);
 
 
@@ -1176,14 +1169,14 @@ public class CswXMLBindingTest {
 
         GetRecordsResponse result = ((JAXBElement<GetRecordsResponse>) unmarshaller.unmarshal(new StringReader(xml))).getValue();
 
-        assertTrue(result.getSearchResults().getAbstractRecord() instanceof List);
-        List<? extends AbstractRecordType> resultList = (List<? extends AbstractRecordType>) result.getSearchResults().getAbstractRecord();
-        List<? extends AbstractRecordType> expResultList = (List<? extends AbstractRecordType>) expResult.getSearchResults().getAbstractRecord();
+        assertTrue(result.getSearchResults().getAny() instanceof List);
+        List<Object> resultList = result.getSearchResults().getAny();
+        List<Object> expResultList = expResult.getSearchResults().getAny();
         assertEquals(resultList.get(0), expResultList.get(0));
         assertEquals(resultList.get(1), expResultList.get(1));
         assertEquals(resultList.get(2), expResultList.get(2));
         assertEquals(resultList, expResultList);
-        assertEquals(expResult.getSearchResults().getAbstractRecord(), result.getSearchResults().getAbstractRecord());
+        assertEquals(expResult.getSearchResults().getAny(), result.getSearchResults().getAny());
         assertEquals(expResult.getSearchStatus(), result.getSearchStatus());
         assertEquals(expResult, result);
 

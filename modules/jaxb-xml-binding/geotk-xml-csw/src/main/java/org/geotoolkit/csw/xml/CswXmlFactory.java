@@ -96,7 +96,7 @@ public class CswXmlFactory {
     public static SortBy createSortBy(final String version, final Map<String, SortOrder> sortRules) {
         if ("2.0.2".equals(version)) {
             if (sortRules != null && !sortRules.isEmpty()) {
-                final List<org.geotoolkit.ogc.xml.v110.SortPropertyType> rules = new ArrayList<org.geotoolkit.ogc.xml.v110.SortPropertyType>();
+                final List<org.geotoolkit.ogc.xml.v110.SortPropertyType> rules = new ArrayList<>();
                 final Set<Entry<String, SortOrder>> entries = sortRules.entrySet();
                 for (final Entry<String, SortOrder> entry : entries) {
                     rules.add(new org.geotoolkit.ogc.xml.v110.SortPropertyType(entry.getKey(), entry.getValue()));
@@ -265,62 +265,25 @@ public class CswXmlFactory {
         }
     }
     
-    public static GetRecordByIdResponse createGetRecordByIdResponse(final String version, final List<AbstractRecord> dcRecords, final List<Object> any) {
+    public static GetRecordByIdResponse createGetRecordByIdResponse(final String version, final List<Object> any) {
         if ("2.0.2".equals(version)) {
-            final List<org.geotoolkit.csw.xml.v202.AbstractRecordType> components202 = new ArrayList<org.geotoolkit.csw.xml.v202.AbstractRecordType>();
-            if (dcRecords != null) {
-                for (AbstractRecord sc : dcRecords) {
-                    if (sc instanceof org.geotoolkit.csw.xml.v202.AbstractRecordType) {
-                        components202.add((org.geotoolkit.csw.xml.v202.AbstractRecordType)sc);
-                    } else {
-                        throw new IllegalArgumentException("bad version of dcRecord.");
-                    }
-                }
-            }
-            
-            return new org.geotoolkit.csw.xml.v202.GetRecordByIdResponseType(components202, any);
+            return new org.geotoolkit.csw.xml.v202.GetRecordByIdResponseType(any);
         } else if ("2.0.0".equals(version)) {
-            org.geotoolkit.csw.xml.v200.AbstractRecordType component200 = null;
-            if (dcRecords != null && !dcRecords.isEmpty()) {
-                if (dcRecords.get(0) instanceof org.geotoolkit.csw.xml.v200.AbstractRecordType) {
-                    component200 = (org.geotoolkit.csw.xml.v200.AbstractRecordType) dcRecords.get(0);
-                } else {
-                    throw new IllegalArgumentException("bad version of dcRecord.");
-                }
-            }
-            return new org.geotoolkit.csw.xml.v200.GetRecordByIdResponseType(component200, any);
+            return new org.geotoolkit.csw.xml.v200.GetRecordByIdResponseType(any);
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
         }
     }
     
     public static SearchResults createSearchResults(final String version, final String resultSetId, final ElementSetType elementSet, final int numberOfResultMatched,
-            final List<? extends AbstractRecord> dcrecords, final List<Object> records, final Integer numberOfRecordsReturned, final int nextRecord) {
+            final List<Object> records, final Integer numberOfRecordsReturned, final int nextRecord) {
         
         if ("2.0.2".equals(version)) {
-            final List<org.geotoolkit.csw.xml.v202.AbstractRecordType> dcRecords200 = new ArrayList<org.geotoolkit.csw.xml.v202.AbstractRecordType>();
-            if (dcrecords != null) {
-                for (AbstractRecord dcRecord : dcrecords) {
-                    if (dcRecord instanceof org.geotoolkit.csw.xml.v202.AbstractRecordType) {
-                        dcRecords200.add((org.geotoolkit.csw.xml.v202.AbstractRecordType)dcRecord);
-                    } else {
-                        throw new IllegalArgumentException("bad version of dublin core record.");
-                    }
-                }
-            }
-            return new org.geotoolkit.csw.xml.v202.SearchResultsType(resultSetId, elementSet, numberOfResultMatched, dcRecords200, records, numberOfRecordsReturned, nextRecord);
+            
+            return new org.geotoolkit.csw.xml.v202.SearchResultsType(resultSetId, elementSet, numberOfResultMatched, records, numberOfRecordsReturned, nextRecord);
         } else if ("2.0.0".equals(version)) {
-            final List<org.geotoolkit.csw.xml.v200.AbstractRecordType> dcRecords200 = new ArrayList<org.geotoolkit.csw.xml.v200.AbstractRecordType>();
-            if (dcrecords != null) {
-                for (AbstractRecord dcRecord : dcrecords) {
-                    if (dcRecord instanceof org.geotoolkit.csw.xml.v200.AbstractRecordType) {
-                        dcRecords200.add((org.geotoolkit.csw.xml.v200.AbstractRecordType)dcRecord);
-                    } else {
-                        throw new IllegalArgumentException("bad version of dublin core record.");
-                    }
-                }
-            }
-            return new org.geotoolkit.csw.xml.v200.SearchResultsType(resultSetId, elementSet, numberOfResultMatched, dcRecords200, records, numberOfRecordsReturned, nextRecord);
+            
+            return new org.geotoolkit.csw.xml.v200.SearchResultsType(resultSetId, elementSet, numberOfResultMatched, records, numberOfRecordsReturned, nextRecord);
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
         }
@@ -451,7 +414,7 @@ public class CswXmlFactory {
     
     public static DescribeRecordResponse createDescribeRecordResponse(final String version, final List<SchemaComponent> components) {
         if ("2.0.2".equals(version)) {
-            final List<org.geotoolkit.csw.xml.v202.SchemaComponentType> components202 = new ArrayList<org.geotoolkit.csw.xml.v202.SchemaComponentType>();
+            final List<org.geotoolkit.csw.xml.v202.SchemaComponentType> components202 = new ArrayList<>();
             if (components != null) {
                 for (SchemaComponent sc : components) {
                     if (sc instanceof org.geotoolkit.csw.xml.v202.SchemaComponentType) {
@@ -463,7 +426,7 @@ public class CswXmlFactory {
             }
             return new org.geotoolkit.csw.xml.v202.DescribeRecordResponseType(components202);
         } else if ("2.0.0".equals(version)){
-            final List<org.geotoolkit.csw.xml.v200.SchemaComponentType> components200 = new ArrayList<org.geotoolkit.csw.xml.v200.SchemaComponentType>();
+            final List<org.geotoolkit.csw.xml.v200.SchemaComponentType> components200 = new ArrayList<>();
             if (components != null) {
                 for (SchemaComponent sc : components) {
                     if (sc instanceof org.geotoolkit.csw.xml.v200.SchemaComponentType) {
@@ -506,17 +469,16 @@ public class CswXmlFactory {
     public static Transaction createTransaction(final String version, final String service, final Insert... inserts) {
         if ("2.0.2".equals(version)) {
             final org.geotoolkit.csw.xml.v202.InsertType[] insert202 = new org.geotoolkit.csw.xml.v202.InsertType[inserts.length];
-            if (inserts != null) {
-                int i = 0;
-                for (Insert sc : inserts) {
-                    if (sc instanceof org.geotoolkit.csw.xml.v202.InsertType) {
-                        insert202[i] = (org.geotoolkit.csw.xml.v202.InsertType)sc;
-                    } else {
-                        throw new IllegalArgumentException("bad version of insertResult.");
-                    }
-                    i++;
+            int i = 0;
+            for (Insert sc : inserts) {
+                if (sc instanceof org.geotoolkit.csw.xml.v202.InsertType) {
+                    insert202[i] = (org.geotoolkit.csw.xml.v202.InsertType)sc;
+                } else {
+                    throw new IllegalArgumentException("bad version of insertResult.");
                 }
+                i++;
             }
+            
             return new org.geotoolkit.csw.xml.v202.TransactionType(service, version, insert202);
         } else if ("2.0.0".equals(version)){
             // dont exist ???????
@@ -565,7 +527,7 @@ public class CswXmlFactory {
             if (summary != null && !(summary instanceof org.geotoolkit.csw.xml.v202.TransactionSummaryType)) {
                 throw new IllegalArgumentException("bad version of transactionSummary.");
             }
-            final List<org.geotoolkit.csw.xml.v202.InsertResultType> insert202 = new ArrayList<org.geotoolkit.csw.xml.v202.InsertResultType>();
+            final List<org.geotoolkit.csw.xml.v202.InsertResultType> insert202 = new ArrayList<>();
             if (inserts != null) {
                 for (InsertResult sc : inserts) {
                     if (sc instanceof org.geotoolkit.csw.xml.v202.InsertResultType) {

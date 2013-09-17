@@ -26,12 +26,6 @@ import java.util.List;
 public interface GetRecordByIdResponse extends CSWResponse {
     
     /**
-     * Gets the value of the abstractRecord property. The returned type can be List<JAXBElement<? extends AbstractRecordType>> or JAXBElement<? extends AbstractRecordType>.
-     * (unmodifiable) 
-     */
-    public Object getAbstractRecord();
-
-    /**
      * Gets the value of the any property.
      * (unmodifiable)
      */

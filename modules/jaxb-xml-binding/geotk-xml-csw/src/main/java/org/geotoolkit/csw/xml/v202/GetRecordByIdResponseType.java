@@ -23,7 +23,6 @@ import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.GetRecordByIdResponse;
@@ -56,14 +55,11 @@ import org.geotoolkit.csw.xml.GetRecordByIdResponse;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetRecordByIdResponseType", propOrder = {
-    "abstractRecord",
     "any"
 })
 @XmlRootElement(name = "GetRecordByIdResponse")
 public class GetRecordByIdResponseType implements GetRecordByIdResponse {
 
-    @XmlElementRef(name = "AbstractRecord", namespace = "http://www.opengis.net/cat/csw/2.0.2", type = AbstractRecordType.class)
-    private List<? extends AbstractRecordType> abstractRecord;
     @XmlAnyElement(lax = true)
     private List<? extends Object> any;
 
@@ -77,26 +73,8 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
      * Build a new response to a getRecordById request.
      * one of the two list mustn't be null
      */
-    public GetRecordByIdResponseType(final List<? extends AbstractRecordType> abstractRecords, final List<? extends Object> others) {
-        if (abstractRecords != null && others != null) {
-            if (abstractRecords.size() > 0 && others.size() > 0) {
-                throw new IllegalArgumentException("only one of abstractRecords or others must be fill");
-            }
-        }
-        this.abstractRecord = abstractRecords;
+    public GetRecordByIdResponseType(final List<? extends Object> others) {
         this.any = others;
-    }
-
-    /**
-     * Gets the value of the abstractRecord property.
-     * (unmodifiable) 
-     */
-    @Override
-    public List<? extends AbstractRecordType> getAbstractRecord() {
-        if (abstractRecord == null) {
-            abstractRecord = new ArrayList<AbstractRecordType>();
-        }
-        return Collections.unmodifiableList(abstractRecord);
     }
 
     /**
@@ -106,24 +84,17 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
     @Override
     public List<Object> getAny() {
         if (any == null) {
-            any = new ArrayList<Object>();
+            any = new ArrayList<>();
         }
         return Collections.unmodifiableList(any);
     }
 
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder();
-        if (abstractRecord != null && !abstractRecord.isEmpty()) {
-            s.append("records:").append('\n');
-            for (Object ar : abstractRecord) {
-                s.append(ar.toString()).append('\n');
-            }
-        }
-
+        final StringBuilder s = new StringBuilder();
 
         if (any != null && !any.isEmpty()) {
-            s.append("anys:").append('\n');
+            s.append("records:").append('\n');
             for (Object obj : any) {
                 s.append(obj.toString()).append('\n');
             }
@@ -139,8 +110,7 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
         }
         if (object instanceof GetRecordByIdResponseType) {
             final GetRecordByIdResponseType that = (GetRecordByIdResponseType) object;
-            return Objects.equals(this.abstractRecord, that.abstractRecord) &&
-                   Objects.equals(this.any,            that.any);
+            return Objects.equals(this.any,            that.any);
         }
         return false;
 
@@ -149,7 +119,6 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 97 * hash + (this.abstractRecord != null ? this.abstractRecord.hashCode() : 0);
         hash = 97 * hash + (this.any != null ? this.any.hashCode() : 0);
         return hash;
     }

@@ -19,11 +19,9 @@ package org.geotoolkit.csw.xml.v200;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.GetRecordByIdResponse;
 
@@ -54,13 +52,10 @@ import org.geotoolkit.csw.xml.GetRecordByIdResponse;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetRecordByIdResponseType", propOrder = {
-    "abstractRecord",
     "any"
 })
 public class GetRecordByIdResponseType implements GetRecordByIdResponse {
 
-    @XmlElementRef(name = "AbstractRecord", namespace = "http://www.opengis.net/cat/csw", type = JAXBElement.class)
-    private JAXBElement<? extends AbstractRecordType> abstractRecord;
     @XmlAnyElement(lax = true)
     private List<? extends Object> any;
 
@@ -74,37 +69,10 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
      * Build a new response to a getRecordById request.
      * one of the two list mustn't be null
      */
-    public GetRecordByIdResponseType(final AbstractRecordType abstractRecord, final List<? extends Object> others) {
-        final ObjectFactory factory = new ObjectFactory();
-        if (abstractRecord instanceof RecordType) {
-            this.abstractRecord = factory.createRecord((RecordType)abstractRecord);
-        } else if (abstractRecord instanceof SummaryRecordType) {
-            this.abstractRecord = factory.createSummaryRecord((SummaryRecordType)abstractRecord);
-        } else if (abstractRecord instanceof BriefRecordType) {
-            this.abstractRecord = factory.createBriefRecord((BriefRecordType)abstractRecord);
-        } else if (abstractRecord instanceof DCMIRecordType) {
-            this.abstractRecord = factory.createDCMIRecord((DCMIRecordType)abstractRecord);
-        }
+    public GetRecordByIdResponseType(final List<? extends Object> others) {
         this.any = others;
     }
     
-    /**
-     * Gets the value of the abstractRecord property.
-     * 
-     */
-    @Override
-    public JAXBElement<? extends AbstractRecordType> getAbstractRecord() {
-        return abstractRecord;
-    }
-
-    /**
-     * Sets the value of the abstractRecord property.
-     * 
-     */
-    public void setAbstractRecord(final JAXBElement<? extends AbstractRecordType> value) {
-        this.abstractRecord = ((JAXBElement<? extends AbstractRecordType> ) value);
-    }
-
     /**
      * Gets the value of the any property.
      * (unmodifiable)
@@ -112,7 +80,7 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
     @Override
     public List<Object> getAny() {
         if (any == null) {
-            any = new ArrayList<Object>();
+            any = new ArrayList<>();
         }
         return Collections.unmodifiableList(any);
     }

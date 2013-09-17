@@ -17,7 +17,6 @@
 package org.geotoolkit.csw.xml;
 
 import java.util.List;
-import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
@@ -27,12 +26,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * @module pending
  */
 public interface SearchResults {
-
-    /**
-     * Gets the value of the abstractRecord property.
-     * 
-     */
-    public List<? extends AbstractRecord> getAbstractRecord();
 
     /**
      * Gets the value of the any property.
