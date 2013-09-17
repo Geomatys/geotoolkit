@@ -271,8 +271,8 @@ public class XMLMosaic implements GridMosaic{
         ImageWriter writer = null;
         try {
             out = ImageIO.createImageOutputStream(f);
-            writer = XImageIO.getWriterByMIMEType(
-                    getPyramid().getPyramidSet().getMimeType(), out, image);
+            writer = XImageIO.getWriterByFormatName(
+                    getPyramid().getPyramidSet().getFormatName(), out, image);
             writer.setOutput(out);
             writer.write(image);
             writer.dispose();

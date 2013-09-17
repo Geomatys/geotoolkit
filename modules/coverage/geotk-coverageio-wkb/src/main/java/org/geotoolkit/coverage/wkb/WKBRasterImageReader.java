@@ -17,8 +17,12 @@
 package org.geotoolkit.coverage.wkb;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Locale;
 import org.geotoolkit.util.Utilities;
@@ -27,8 +31,10 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.util.Version;
 import org.apache.sis.util.ArraysExt;
+import org.geotoolkit.internal.io.IOUtilities;
 
 /**
  * Draft java api image reader for WKB, used in postGIS 2 but can be used elsewhere.
@@ -76,10 +82,14 @@ public class WKBRasterImageReader extends ImageReader{
         final WKBRasterReader reader = new WKBRasterReader();
         if(input instanceof byte[]){
             return reader.read((byte[])input);
-        }else if(input instanceof InputStream){
-            return reader.read((InputStream)input);
+        }else if(input instanceof ImageInputStream){
+            return reader.read(new InputStreamAdapter((ImageInputStream)input));
+        }else{
+            InputStream stream = IOUtilities.open(input);
+            final BufferedImage image = reader.read((InputStream)input);
+            stream.close();
+            return image;
         }
-        throw new IOException("Unsupported input : "+input);
     }
 
     public static class Spi extends ImageReaderSpi {
@@ -94,6 +104,11 @@ public class WKBRasterImageReader extends ImageReader{
             writerSpiNames  = new String[] {"PostGISWKBraster"};
             inputTypes      = new Class[0];
             inputTypes      = ArraysExt.append(inputTypes, InputStream.class);
+            inputTypes      = ArraysExt.append(inputTypes, ImageInputStream.class);
+            inputTypes      = ArraysExt.append(inputTypes, File.class);
+            inputTypes      = ArraysExt.append(inputTypes, URL.class);
+            inputTypes      = ArraysExt.append(inputTypes, URI.class);
+            inputTypes      = ArraysExt.append(inputTypes, Path.class);
             inputTypes      = ArraysExt.append(inputTypes, byte[].class);
             suffixes        = new String[0];
             suffixes        = ArraysExt.append(suffixes, "wkb");
@@ -120,6 +135,103 @@ public class WKBRasterImageReader extends ImageReader{
             return "Postgis WKB Raster reader.";
         }
 
+    }
+
+    final class InputStreamAdapter extends InputStream {
+
+        /**
+         * The wrapped image input stream.
+         */
+        private final ImageInputStream input;
+
+        /**
+         * Constructs a new input stream.
+         */
+        public InputStreamAdapter(final ImageInputStream input) {
+            this.input = input;
+        }
+
+        /**
+         * Reads the next byte of data from the input stream.
+         *
+         * @throws IOException if an I/O error occurs.
+         */
+        @Override
+        public int read() throws IOException {
+            return input.read();
+        }
+
+        /**
+         * Reads some number of bytes from the input stream.
+         *
+         * @throws IOException if an I/O error occurs.
+         */
+        @Override
+        public int read(final byte[] b) throws IOException {
+            return input.read(b);
+        }
+
+        /**
+         * Reads up to {@code len} bytes of data from the input stream.
+         *
+         * @throws IOException if an I/O error occurs.
+         */
+        @Override
+        public int read(final byte[] b, final int off, final int len) throws IOException {
+            return input.read(b, off, len);
+        }
+
+        /**
+         * Skips over and discards {@code n} bytes of data from this input
+         * stream.
+         *
+         * @throws IOException if an I/O error occurs.
+         */
+        @Override
+        public long skip(final long n) throws IOException {
+            return input.skipBytes(n);
+        }
+
+        /**
+         * Returns always {@code true}.
+         *
+         * @throws IOException if an I/O error occurs.
+         */
+        @Override
+        public boolean markSupported() {
+            return true;
+        }
+
+        /**
+         * Marks the current position in this input stream.
+         *
+         * @throws IOException if an I/O error occurs.
+         */
+        @Override
+        public void mark(final int readlimit) {
+            input.mark();
+        }
+
+        /**
+         * Repositions this stream to the position at the time the {@code mark}
+         * method was last called.
+         *
+         * @throws IOException if an I/O error occurs.
+         */
+        @Override
+        public void reset() throws IOException {
+            input.reset();
+        }
+
+        /**
+         * Closes this input stream.
+         *
+         * @throws IOException if an I/O error occurs.
+         */
+        @Override
+        public void close() throws IOException {
+            input.close();
+        }
     }
 
 }

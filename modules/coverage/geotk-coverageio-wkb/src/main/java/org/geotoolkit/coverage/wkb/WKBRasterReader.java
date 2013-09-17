@@ -28,6 +28,7 @@ import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import javax.imageio.stream.ImageInputStream;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.RasterFactory;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -43,17 +44,17 @@ import org.opengis.util.FactoryException;
 
 /**
  * WKB Raster Reader, used in postGIS 2 but can be used elsewhere.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class WKBRasterReader {
-    
+
     private AffineTransform2D gridToCRS = null;
     private int srid = 0;
-    
+
     public WKBRasterReader(){
     }
-    
+
     /**
      * Reset values before new read call.
      */
@@ -61,7 +62,7 @@ public class WKBRasterReader {
         gridToCRS = null;
         srid = 0;
     }
-    
+
     /**
      * Get the Grid to CRS transform, can be called after read only.
      * @return AffineTransform2D
@@ -69,7 +70,7 @@ public class WKBRasterReader {
     public AffineTransform2D getGridToCRS() {
         return gridToCRS;
     }
-    
+
     /**
      * Get the postgis srid, can be called after read only.
      * @return int, postgid srid
@@ -77,28 +78,28 @@ public class WKBRasterReader {
     public int getSRID(){
         return srid;
     }
-    
+
     /**
      * Parse given byte[] and rebuild a GridCoverage2D.
-     * 
+     *
      * @param data
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
-    public GridCoverage2D readCoverage(byte[] data, CRSAuthorityFactory authorityFactory) 
+    public GridCoverage2D readCoverage(byte[] data, CRSAuthorityFactory authorityFactory)
             throws IOException, NoSuchAuthorityCodeException, FactoryException{
         final InputStream stream = new ByteArrayInputStream(data);
         return readCoverage(stream,authorityFactory);
     }
-    
+
     /**
      * Parse given InputStream and rebuild a GridCoverage2D.
-     * 
+     *
      * @param stream
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
-    public GridCoverage2D readCoverage(final InputStream stream, CRSAuthorityFactory authorityFactory) 
+    public GridCoverage2D readCoverage(final InputStream stream, CRSAuthorityFactory authorityFactory)
             throws IOException, NoSuchAuthorityCodeException, FactoryException{
         final BufferedImage image = read(stream);
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
@@ -107,33 +108,33 @@ public class WKBRasterReader {
             gcb.setCoordinateReferenceSystem(authorityFactory.createCoordinateReferenceSystem(epsgCode));
         }else{
             gcb.setCoordinateReferenceSystem(CRS.decode(epsgCode));
-        }        
+        }
         gcb.setGridToCRS((MathTransform)getGridToCRS());
         gcb.setRenderedImage(image);
         return gcb.getGridCoverage2D();
     }
-    
+
     /**
      * Parse given byte[] and rebuild RenderedImage.
-     * 
+     *
      * @param data
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     public BufferedImage read(byte[] data) throws IOException{
         final InputStream stream = new ByteArrayInputStream(data);
         return read(stream);
     }
-    
+
     /**
      * Parse given InputStream and rebuild RenderedImage.
-     * 
+     *
      * @param stream
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     public BufferedImage read(final InputStream stream) throws IOException{
-                
+
         final DataInput ds;
         final boolean littleEndian = stream.read() == 1;
         if(littleEndian){
@@ -143,7 +144,7 @@ public class WKBRasterReader {
             //little endian
             ds = new DataInputStream(stream);
         }
-        
+
         final int version = ds.readUnsignedShort();
         final int nbBand = ds.readUnsignedShort();
         //grid to crs
@@ -154,29 +155,29 @@ public class WKBRasterReader {
         final double skewX = ds.readDouble();
         final double skewY = ds.readDouble();
         gridToCRS = new AffineTransform2D(scaleX, skewY, skewX, scaleY, ipX, ipY);
-        
-        
+
+
         srid = ds.readInt();
         final int width = ds.readUnsignedShort();
         final int height = ds.readUnsignedShort();
-        
+
         if(nbBand == 0){
             //possible for empty raster
             return null;
         }
-        
+
         final WKBRasterBand[] bands = new WKBRasterBand[nbBand];
-        
+
         for(int i=0;i<nbBand;i++){
             final WKBRasterBand band = new WKBRasterBand();
-            
+
             final byte b = ds.readByte();
             band.setPixelType(b & BANDTYPE_PIXTYPE_MASK);
             band.setOffDatabase( (b & BANDTYPE_FLAG_OFFDB) != 0);
             band.setHasNodata( (b & BANDTYPE_FLAG_HASNODATA) != 0);
             band.setIsNodata( (b & BANDTYPE_FLAG_ISNODATA) != 0);
             band.setReserved( (b & BANDTYPE_FLAG_RESERVED3) != 0);
-            
+
             /* read nodata value */
             switch (band.getPixelType()) {
                 case PT_1BB:
@@ -209,7 +210,7 @@ public class WKBRasterReader {
                 default:
                     throw new IOException("unknowned pixel type : "+band.getPixelType());
             }
-            
+
             if(band.isOffDatabase()){
                 throw new IOException("can not access data which are off database");
             }else{
@@ -232,13 +233,13 @@ public class WKBRasterReader {
                 }
                 band.setDatas(datas);
             }
-            
+
             bands[i] = band;
         }
-        
+
         //we expect all bands to have the same type
         final int dataBufferType = bands[0].getDataBufferType();
-        
+
         //rebuild raster
         final WritableRaster raster;
         if(dataBufferType == DataBuffer.TYPE_BYTE){
@@ -264,8 +265,8 @@ public class WKBRasterReader {
             final DataBuffer db = new DataBufferByte(dataArray, dataArray[0].length);
             final int scanlineStride = width;
             raster = RasterFactory.createBandedRaster(
-                    db, width, height, scanlineStride, bankIndices, bankOffsets, new Point(0,0));       
-            
+                    db, width, height, scanlineStride, bankIndices, bankOffsets, new Point(0,0));
+
         }else{
             raster = RasterFactory.createBandedRaster(dataBufferType,width,height,nbBand,new Point(0,0));
             for(int i=0;i<bands.length;i++){
@@ -296,13 +297,13 @@ public class WKBRasterReader {
                 }
             }
         }
-                
-        
+
+
         //rebuild image
         final SampleModel sm = raster.getSampleModel();
-        final ColorModel cm = PlanarImage.getDefaultColorModel(sm.getDataType(), raster.getNumBands());        
+        final ColorModel cm = PlanarImage.getDefaultColorModel(sm.getDataType(), raster.getNumBands());
         return new BufferedImage(cm, raster, false, null);
     }
-    
-    
+
+
 }

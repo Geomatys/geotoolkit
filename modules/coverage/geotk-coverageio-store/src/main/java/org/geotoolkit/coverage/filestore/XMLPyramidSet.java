@@ -72,6 +72,9 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     @XmlTransient
     private ImageReaderSpi spi;
 
+    public XMLPyramidSet() {
+    }
+
     public XMLPyramidSet(String formatName){
         this.formatName = formatName;
     }
@@ -131,10 +134,6 @@ public class XMLPyramidSet extends AbstractPyramidSet{
      */
     public File getFolder(){
         return new File(mainfile.getParentFile(),getId());
-    }
-
-    public String getMimeType() {
-        return formatName;
     }
 
     @Override

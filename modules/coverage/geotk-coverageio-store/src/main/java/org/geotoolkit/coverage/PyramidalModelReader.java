@@ -84,7 +84,7 @@ public class PyramidalModelReader extends GridCoverageReader{
         this.coverageFinder = CoverageFinderFactory.createDefaultCoverageFinder();
 //        this.coverageFinder = CoverageFinderFactory.createStrictlyCoverageFinder();
     }
-    
+
     public PyramidalModelReader(CoverageFinder coverageFinder) {
         this.coverageFinder = coverageFinder;
     }
@@ -314,7 +314,7 @@ public class PyramidalModelReader extends GridCoverageReader{
         } catch (FactoryException ex) {
             throw new CoverageStoreException(ex.getMessage(),ex);
         }
-        
+
         if(mosaic == null){
             //no reliable mosaic
             throw new CoverageStoreException("No mosaic defined.");
@@ -360,7 +360,7 @@ public class PyramidalModelReader extends GridCoverageReader{
 
 
         //tiles to render, coordinate in grid -> image offset
-        final Collection<Point> candidates = new ArrayList<Point>();
+        final Collection<Point> candidates = new ArrayList<>();
 
         for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){
             for(int tileRow=(int)tileMinRow; tileRow<tileMaxRow; tileRow++){
@@ -452,18 +452,18 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         //build the coverage ---------------------------------------------------
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName(ref.getName().getLocalPart());        
+        gcb.setName(ref.getName().getLocalPart());
         final List<GridSampleDimension> dimensions = getSampleDimensions(ref.getImageIndex());
         if (dimensions != null) {
             gcb.setSampleDimensions(dimensions.toArray(new GridSampleDimension[dimensions.size()]));
         }
-        
+
         final MathTransform gtc = AbstractGridMosaic.getTileGridToCRS(mosaic, new Point((int)tileMinCol,(int)tileMinRow));
         final GridEnvelope2D ge = new GridEnvelope2D(0, 0, image.getWidth(), image.getHeight());
         final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, pyramidCRS2D, null);
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);
-        
+
         return gcb.build();
     }
 
