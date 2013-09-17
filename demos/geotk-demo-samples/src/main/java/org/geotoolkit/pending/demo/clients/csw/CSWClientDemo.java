@@ -81,7 +81,7 @@ public class CSWClientDemo {
         response = ((JAXBElement<GetRecordsResponseType>) um.unmarshal(is)).getValue();
 
         // print the first result (Dublin core)
-        AbstractRecord record = response.getSearchResults().getAbstractRecord().get(0);
+        AbstractRecord record = (AbstractRecord) response.getSearchResults().getAny().get(0);
         System.out.println(record);
 
 
