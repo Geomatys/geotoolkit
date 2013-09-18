@@ -27,7 +27,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.geotoolkit.gui.swing.contexttree.AbstractTreePopupItem;
-import org.geotoolkit.gui.swing.propertyedit.JPropertyDialog;
+import org.geotoolkit.gui.swing.propertyedit.JPropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JAdvancedStylePanel;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -73,7 +73,7 @@ public class LayerStyleItem extends AbstractTreePopupItem {
                 stylePanel.parse(styleRef.get());
 
 
-                JPropertyDialog.showDialog(lst, null, false);
+                JPropertyPane.showDialog(lst, null, false);
 
             }
         });

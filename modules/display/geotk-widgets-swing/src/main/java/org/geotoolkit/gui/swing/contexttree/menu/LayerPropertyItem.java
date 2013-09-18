@@ -27,7 +27,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.geotoolkit.gui.swing.contexttree.AbstractTreePopupItem;
-import org.geotoolkit.gui.swing.propertyedit.JPropertyDialog;
+import org.geotoolkit.gui.swing.propertyedit.JPropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.LayerCRSPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.LayerFilterPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.LayerGeneralPanel;
@@ -80,7 +80,7 @@ public class LayerPropertyItem extends AbstractTreePopupItem {
                 if(layer == null) return;
 
 
-                JPropertyDialog.showDialog(lst, layer, false);
+                JPropertyPane.showDialog(lst, layer, false);
 
             }
         });

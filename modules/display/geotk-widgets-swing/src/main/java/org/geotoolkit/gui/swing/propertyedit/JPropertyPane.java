@@ -51,46 +51,47 @@ import org.opengis.style.Symbolizer;
 
 /**
  * Property panel
- * 
+ *
  * @author Johann Sorel
  * @module pending
  */
-public class JPropertyDialog extends JDialog{
-        
-    private JButton apply = new JButton(MessageBundle.getString("property_apply"));
-    private JButton revert = new JButton(MessageBundle.getString("property_revert"));
-    private JButton close = new JButton(MessageBundle.getString("property_close"));
-    
-    private JTabbedPane tabs = new JTabbedPane();    
-    private PropertyPane activePanel = null;    
-    private ArrayList<PropertyPane> panels = new ArrayList<PropertyPane>();
-    
-    /** Creates a new instance of ASDialog */
-    private JPropertyDialog(final boolean modal,final boolean app, final boolean rev, final boolean clo) {
-        super();
-        setModal(modal);
-        setTitle(MessageBundle.getString("property_properties"));
-        
-        JToolBar bas = new JToolBar();
+public class JPropertyPane extends JPanel{
+
+    private final JButton apply = new JButton(MessageBundle.getString("property_apply"));
+    private final JButton revert = new JButton(MessageBundle.getString("property_revert"));
+    private final JButton close = new JButton(MessageBundle.getString("property_close"));
+
+    private final JTabbedPane tabs = new JTabbedPane();
+    private final ArrayList<PropertyPane> panels = new ArrayList<>();
+    private final JToolBar bas = new JToolBar();
+    private PropertyPane activePanel = null;
+
+    public JPropertyPane(final boolean app, final boolean rev) {
+        this(app,rev,false,null);
+    }
+
+    public JPropertyPane(final boolean app, final boolean rev, final boolean clo, final JDialog dialog) {
+        super(new BorderLayout());
+
         bas.setFloatable(false);
         bas.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        
+
         if(app)bas.add(apply);
         if(rev)bas.add(revert);
         if(clo)bas.add(close);
-        
+
         apply.setIcon(IconBundle.getIcon("16_apply"));
         revert.setIcon(IconBundle.getIcon("16_reload"));
         close.setIcon(IconBundle.getIcon("16_close"));
-        
-        
+
+
         tabs.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 activePanel = (PropertyPane)tabs.getSelectedComponent();
             }
         });
-        
+
         apply.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -99,7 +100,7 @@ public class JPropertyDialog extends JDialog{
                 }
             }
         });
-        
+
         revert.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -108,54 +109,59 @@ public class JPropertyDialog extends JDialog{
                 }
             }
         });
-        
+
         close.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dispose();
+                dialog.dispose();
             }
         });
-        
-        setLayout( new BorderLayout());
-        add(BorderLayout.SOUTH,bas);
-        
-    }
-    
-    public void addEditPanel(final PropertyPane pan){
-        panels.add(pan);        
-        tabs.addTab(pan.getTitle(),pan.getIcon(),pan.getComponent(),pan.getToolTip());        
-    }
-    
 
-    @Override
-    public void setVisible(final boolean b) {
-        if(b){
-            if(panels.size()>1){
-                add(BorderLayout.CENTER,tabs);
-            }else if(panels.size() == 1){
-                final JComponent comp = (JComponent)panels.get(0);
-                add(BorderLayout.CENTER,comp);
-                activePanel = (PropertyPane) comp;
-            }
-        }      
-        super.setVisible(b);
+        add(BorderLayout.SOUTH,bas);
     }
-    
+
+    public void addEditPanel(final PropertyPane pan){
+        panels.add(pan);
+        tabs.addTab(pan.getTitle(),pan.getIcon(),pan.getComponent(),pan.getToolTip());
+
+        removeAll();
+        if(panels.size()>1){
+            add(BorderLayout.CENTER,tabs);
+        }else if(panels.size() == 1){
+            final JComponent comp = (JComponent)panels.get(0);
+            add(BorderLayout.CENTER,comp);
+            activePanel = (PropertyPane) comp;
+        }
+        add(BorderLayout.SOUTH,bas);
+        revalidate();
+        repaint();
+    }
+
+    public void addApplyListener(ActionListener listener){
+        apply.addActionListener(listener);
+    }
+
     public static void showDialog(final List<PropertyPane> lst, final Object target){
         showDialog(lst,target, true);
     }
 
     public static void showDialog(final List<PropertyPane> lst, final Object target, final boolean modal){
-        JPropertyDialog dia = new JPropertyDialog(modal,true,true,true);
 
-        for(PropertyPane pro : lst){
-            pro.setTarget(target);
-            dia.addEditPanel(pro);
-        }
-
+        final JDialog dia = new JDialog();
+        dia.setModal(modal);
+        dia.setTitle(MessageBundle.getString("property_properties"));
         dia.setAlwaysOnTop(true);
         dia.setSize(700,500);
         dia.setLocationRelativeTo(null);
+
+        final JPropertyPane pane = new JPropertyPane(true,true,true,dia);
+        dia.setContentPane(pane);
+
+        for(PropertyPane pro : lst){
+            pro.setTarget(target);
+            pane.addEditPanel(pro);
+        }
+
         dia.setVisible(true);
     }
 
@@ -220,14 +226,16 @@ public class JPropertyDialog extends JDialog{
             container.add(BorderLayout.NORTH,box);
         }
 
-        final JPropertyDialog dia = new JPropertyDialog(true,false,false,true);
-        dia.setContentPane(container);
+        final JDialog dia = new JDialog();
+        dia.setModal(true);
+        dia.setTitle(MessageBundle.getString("property_properties"));
+        dia.setAlwaysOnTop(true);
         dia.setSize(700,500);
         dia.setLocationRelativeTo(null);
+        dia.setContentPane(container);
         dia.setVisible(true);
 
         return pane.getSymbolizer();
     }
 
-    
 }

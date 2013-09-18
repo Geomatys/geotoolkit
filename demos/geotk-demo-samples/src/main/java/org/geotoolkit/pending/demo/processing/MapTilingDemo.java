@@ -36,29 +36,29 @@ public class MapTilingDemo {
 
     public static void main(String[] args) throws Throwable {
         Demos.init();
-        
+
         //reset values, only allow pure java readers
         for(String jn : ImageIO.getReaderFormatNames()){
             if(jn.toLowerCase().contains("png")){
                 Registry.setNativeCodecAllowed(jn, ImageReaderSpi.class, false);
             }
         }
-        
+
         //reset values, only allow pure java writers
         for(String jn : ImageIO.getWriterFormatNames()){
             if(jn.toLowerCase().contains("png")){
                 Registry.setNativeCodecAllowed(jn, ImageWriterSpi.class, false);
             }
         }
-        
-        
-        
+
+
+
         //create a map context
         final MapContext context = openData();
 
 
         //get the description of the process we want
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "mapcontextpyramid");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("engine2d", "mapcontextpyramid");
         System.out.println(desc.getInputDescriptor());
 
         //create a coverage store where the pyramid wil be stored
@@ -81,7 +81,7 @@ public class MapTilingDemo {
         for(int i=1;i<nbscale;i++){
             scales[i] = scales[i-1] /2;
         }
-        
+
 
         input.parameter("context").setValue(context);
         input.parameter("extent").setValue(env);
@@ -89,49 +89,49 @@ public class MapTilingDemo {
         input.parameter("scales").setValue(scales);
         input.parameter("container").setValue(ref);
         final org.geotoolkit.process.Process p = desc.createProcess(input);
-        
+
         //use a small predefined dialog
         final ProgressWindow pw = new ProgressWindow(null);
         p.addListener(pw);
-        
+
         //get the result
         final ParameterValueGroup result = p.call();
 
 //        //display the tiled image
 //        context.layers().clear();
-//        for(final Name n : store.getNames()){            
+//        for(final Name n : store.getNames()){
 //            final CoverageReference covref = store.getCoverageReference(n);
 //            final MapLayer layer = MapBuilder.createCoverageLayer(
-//                    covref, 
-//                    new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), 
+//                    covref,
+//                    new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER),
 //                    n.getLocalPart());
-//            
+//
 //            //display the generated pyramid
 //            final PyramidalModel model = (PyramidalModel) covref;
 //            System.out.println(model.getPyramidSet());
-//            
+//
 //            layer.setDescription(SF.description(n.getLocalPart(), n.getLocalPart()));
 //            context.layers().add(layer);
 //        }
-//        
+//
 //        JMap2DFrame.show(context);
 
     }
-    
+
     private static MapContext openData() throws DataStoreException, MalformedURLException {
-        
+
         final ParameterValueGroup params = FileCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         params.parameter(FileCoverageStoreFactory.PATH.getName().getCode()).setValue(new URL("file:/home/jsorel/temp/bluemarble/bluemarble"));
-        
+
         final CoverageStore store = CoverageStoreFinder.open(params);
-        
+
         final MapContext context = MapBuilder.createContext();
-        
+
         for(Name n : store.getNames()){
             final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.getCoverageReference(n), RandomStyleBuilder.createDefaultRasterStyle(), "n");
             context.layers().add(layer);
         }
-        
+
         return context;
     }
 }

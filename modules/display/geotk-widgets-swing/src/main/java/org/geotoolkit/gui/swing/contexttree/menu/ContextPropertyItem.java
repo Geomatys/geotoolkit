@@ -28,7 +28,7 @@ import javax.swing.tree.TreePath;
 import org.geotoolkit.gui.swing.contexttree.AbstractTreePopupItem;
 import org.geotoolkit.gui.swing.propertyedit.ContextCRSPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.ContextGeneralPanel;
-import org.geotoolkit.gui.swing.propertyedit.JPropertyDialog;
+import org.geotoolkit.gui.swing.propertyedit.JPropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapContext;
@@ -63,7 +63,7 @@ public class ContextPropertyItem extends AbstractTreePopupItem{
                 ArrayList<PropertyPane> lst = new ArrayList<PropertyPane>();
                 lst.add(new ContextGeneralPanel());
                 lst.add(new ContextCRSPropertyPanel());
-                JPropertyDialog.showDialog(lst, context);
+                JPropertyPane.showDialog(lst, context);
             }
         }
         );

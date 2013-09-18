@@ -63,7 +63,7 @@ import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
-import org.geotoolkit.gui.swing.propertyedit.JPropertyDialog;
+import org.geotoolkit.gui.swing.propertyedit.JPropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -449,7 +449,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     }//GEN-LAST:event_guiGenerateActionPerformed
 
     private void guiModelActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiModelActionPerformed
-        analyze.setTemplate(JPropertyDialog.showSymbolizerDialog(analyze.getTemplate(), true, layer));
+        analyze.setTemplate(JPropertyPane.showSymbolizerDialog(analyze.getTemplate(), true, layer));
         updateModelGlyph();
     }//GEN-LAST:event_guiModelActionPerformed
 
@@ -812,7 +812,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if(value != null){
-                        Symbolizer symbol = JPropertyDialog.showSymbolizerDialog(value.symbolizers().get(0), layer);
+                        Symbolizer symbol = JPropertyPane.showSymbolizerDialog(value.symbolizers().get(0), layer);
                         value.symbolizers().clear();
                         value.symbolizers().add(symbol);
                         guiTable.revalidate();
