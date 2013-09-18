@@ -133,7 +133,7 @@ public final class ServicesForMetadata extends ReferencingServices implements Ch
                     operation = factory.createOperation(crs, standardCRS);
                 } catch (FactoryException exception) {
                     throw new TransformPathNotFoundException(Errors.format(
-                            Errors.Keys.CANT_TRANSFORM_ENVELOPE, exception));
+                            Errors.Keys.CANT_TRANSFORM_ENVELOPE), exception);
                 }
                 envelope = Envelopes.transform(operation, envelope);
             }
