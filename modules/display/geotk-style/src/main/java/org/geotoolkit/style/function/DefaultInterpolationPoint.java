@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.style.function;
 
+import java.util.Objects;
 import org.opengis.filter.expression.Expression;
 
 import static org.apache.sis.util.ArgumentChecks.*;
@@ -29,13 +30,13 @@ public class DefaultInterpolationPoint implements InterpolationPoint{
 
     private final Expression value;
     private final Number data;
-    
+
     public DefaultInterpolationPoint(final Number data, final Expression value){
         ensureNonNull("value", value);
         this.value = value;
         this.data = data;
     }
-    
+
     @Override
     public Expression getValue() {
         return value;
@@ -45,5 +46,38 @@ public class DefaultInterpolationPoint implements InterpolationPoint{
     public Number getData() {
         return data;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.value);
+        hash = 97 * hash + Objects.hashCode(this.data);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultInterpolationPoint other = (DefaultInterpolationPoint) obj;
+        if (!Objects.equals(this.value, other.value)) {
+            return false;
+        }
+        if (!Objects.equals(this.data, other.data)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "InterpolationPoint "+data+" = "+value;
+    }
+
+
 
 }
