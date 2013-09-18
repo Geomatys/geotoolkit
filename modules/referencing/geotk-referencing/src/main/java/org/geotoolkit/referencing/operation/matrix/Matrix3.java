@@ -36,7 +36,10 @@ import org.apache.sis.util.ComparisonMode;
  *
  * @since 2.2
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.referencing.operation.matrix.Matrix3}.
  */
+@Deprecated
 public class Matrix3 extends Matrix3d implements XMatrix {
     /**
      * Serial number for inter-operability with different versions.

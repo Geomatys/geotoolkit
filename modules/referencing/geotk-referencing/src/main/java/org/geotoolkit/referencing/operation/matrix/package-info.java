@@ -17,15 +17,10 @@
  */
 
 /**
- * {@linkplain org.opengis.referencing.operation.Matrix} implementations on top of the
- * {@link javax.vecmath} package. Matrix of arbitrary size are supported, but the most
- * common ones are those that are used for <cite>affine transforms</cite>. In the two
- * dimensional case, the matrix for an affine transform is:
- * <p>
- * <center><img src="doc-files/AffineTransform.png"></center>
+ * Utilities related to {@linkplain org.opengis.referencing.operation.Matrix}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.16
+ * @version 4.00
  *
  * @since 2.2
  * @module

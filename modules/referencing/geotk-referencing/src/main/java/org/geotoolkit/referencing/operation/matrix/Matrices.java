@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.matrix;
 
-import java.util.Objects;
 import java.awt.geom.AffineTransform;
 import javax.vecmath.MismatchedSizeException;
 import javax.vecmath.SingularMatrixException;
@@ -28,13 +27,10 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.lang.Static;
 import org.apache.sis.math.MathFunctions;
-import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
-
-import static org.geotoolkit.internal.InternalUtilities.COMPARISON_THRESHOLD;
 
 
 /**
@@ -44,7 +40,7 @@ import static org.geotoolkit.internal.InternalUtilities.COMPARISON_THRESHOLD;
  * time, it may be more efficient to invoke directly the constructor of the appropriate class instead.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.21
+ * @version 4.00
  *
  * @since 3.20 (derived from 2.2)
  * @module
@@ -61,7 +57,10 @@ public class Matrices extends Static {
      *
      * @param size For an affine transform, this is the number of source and target dimensions + 1.
      * @return An identity matrix of the given size.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices#createIdentity(int)}.
      */
+    @Deprecated
     public static XMatrix create(final int size) {
         switch (size) {
             case 1: return new Matrix1();
@@ -79,7 +78,10 @@ public class Matrices extends Static {
      * @param numRow For an affine transform, this is the number of {@linkplain MathTransform#getTargetDimensions target dimensions} + 1.
      * @param numCol For an affine transform, this is the number of {@linkplain MathTransform#getSourceDimensions source dimensions} + 1.
      * @return An identity matrix of the given size.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices#createDiagonal(int, int)}.
      */
+    @Deprecated
     public static XMatrix create(final int numRow, final int numCol) {
         if (numRow == numCol) {
             return create(numRow);
@@ -98,7 +100,10 @@ public class Matrices extends Static {
      * @param  numCol   Number of columns.
      * @param  elements Elements of the matrix. Column indices vary fastest.
      * @return A matrix initialized to the given elements.
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices#create(int, int, double[])}.
      */
+    @Deprecated
     public static XMatrix create(final int numRow, final int numCol, final double[] elements) {
         if (numRow * numCol != elements.length) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
@@ -124,7 +129,10 @@ public class Matrices extends Static {
      *         is lower than 0 or not smaller than {@code sourceDim}.
      *
      * @see org.geotoolkit.referencing.operation.MathTransforms#dimensionFilter(int, int[])
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices#createDimensionFilter(int, int[])}.
      */
+    @Deprecated
     public static XMatrix createDimensionFilter(final int sourceDim, final int[] toKeep)
             throws IndexOutOfBoundsException
     {
@@ -145,7 +153,10 @@ public class Matrices extends Static {
      * @return A copy of the given matrix.
      *
      * @since 3.20 (derived from 2.2)
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices#copy(Matrix)}.
      */
+    @Deprecated
     public static XMatrix copy(final Matrix matrix) {
         final int size = matrix.getNumRow();
         if (size == matrix.getNumCol()) {
@@ -196,7 +207,10 @@ public class Matrices extends Static {
      *         or a copy of the given matrix otherwise.
      *
      * @since 3.16 (derived from 3.00)
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices#castOrCopy(Matrix)}.
      */
+    @Deprecated
     public static XMatrix toXMatrix(final Matrix matrix) {
         if (matrix == null || matrix instanceof XMatrix) {
             return (XMatrix) matrix;
@@ -225,7 +239,10 @@ public class Matrices extends Static {
      *         or a copy of the given matrix otherwise.
      *
      * @since 3.16 (derived from 3.00)
+     *
+     * @deprecated No replacement.
      */
+    @Deprecated
     public static XMatrix toOptimalMatrix(final Matrix matrix) {
         if (matrix != null) {
             final int size = matrix.getNumRow();
@@ -252,7 +269,10 @@ public class Matrices extends Static {
      *         or a copy of the given matrix otherwise.
      *
      * @since 3.16 (derived from 3.00)
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices#castOrCopy(Matrix)}.
      */
+    @Deprecated
     public static GeneralMatrix toGeneralMatrix(final Matrix matrix) {
         if (matrix == null || matrix instanceof GeneralMatrix) {
             return (GeneralMatrix) matrix;
@@ -274,7 +294,10 @@ public class Matrices extends Static {
      * @see GeneralMatrix#toAffineTransform2D()
      *
      * @since 3.20 (derived from 3.00)
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.operation.matrix.AffineTransforms2D#castOrCopy(Matrix)}.
      */
+    @Deprecated
     public static AffineTransform toAffineTransform(final Matrix matrix) throws IllegalArgumentException {
         if (matrix == null || matrix instanceof AffineTransform) {
             return (AffineTransform) matrix;
@@ -330,7 +353,11 @@ public class Matrices extends Static {
      * @see XMatrix#isAffine()
      *
      * @since 3.20 (derived from 3.17)
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices#isAffine(Matrix)},
+     *             at the difference that SIS requires the matrix to be square.
      */
+    @Deprecated
     public static boolean isAffine(final Matrix matrix) {
         if (matrix instanceof AffineTransform) {
             return true;
@@ -371,7 +398,10 @@ public class Matrices extends Static {
      *         argument itself if no resizing was needed.
      *
      * @since 3.20 (derived from 3.16)
+     *
+     * @deprecated Replace by Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices#createPassThrough(int, Matrix, int)}.
      */
+    @Deprecated
     public static Matrix resizeAffine(Matrix matrix, final int sourceDimension, final int targetDimension) {
         final int oldSrcDim = matrix.getNumCol() - 1;
         final int oldTgtDim = matrix.getNumRow() - 1;
@@ -407,7 +437,11 @@ public class Matrices extends Static {
      *                  in units of the source coordinate system.
      *
      * @since 3.16
+     *
+     * @deprecated No replacement, since experience has shown that this operation causes more problems
+     *             than solutions.
      */
+    @Deprecated
     public static void reverseAxisDirection(final Matrix matrix, final int dimension, final double span) {
         final int numRows = matrix.getNumRow();
         final int lastCol = matrix.getNumCol() - 1;
@@ -429,7 +463,10 @@ public class Matrices extends Static {
      * @param  matrix1 The first matrix to multiply. May be overwritten by the result.
      * @param  matrix2 The second matrix to multiply. May be overwritten by the result.
      * @return The product of the two matrix. May be one of the above objects.
+     *
+     * @deprecated Replace by Apache SIS {@link org.apache.sis.referencing.operation.matrix.MatrixSIS#multiply(Matrix)}.
      */
+    @Deprecated
     public static Matrix multiply(final Matrix matrix1, final Matrix matrix2) {
         final int numRow = matrix1.getNumRow();
         final int numCol = matrix2.getNumCol();
@@ -700,7 +737,11 @@ search:     for (int j=numRow; --j>=0;) {
      * @param tolerance The relative tolerance threshold.
      *
      * @since 3.21
+     *
+     * @deprecated No replacement, since experience has shown that this operation causes more problems
+     *             than solutions.
      */
+    @Deprecated
     public static void filterRoundingErrors(final XMatrix matrix, final int scale, double tolerance) {
         ArgumentChecks.ensureStrictlyPositive("scale", scale);
         ArgumentChecks.ensureStrictlyPositive("tolerance", tolerance);
@@ -749,39 +790,12 @@ search:     for (int j=numRow; --j>=0;) {
      * @see XMatrix#equals(Matrix, double)
      *
      * @since 3.20 (derived from 2.2)
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices}.
      */
+    @Deprecated
     public static boolean equals(final Matrix m1, final Matrix m2, final double epsilon, final boolean relative) {
-        if (m1 != m2) {
-            if (m1 == null || m2 == null) {
-                return false;
-            }
-            final int numRow = m1.getNumRow();
-            if (numRow != m2.getNumRow()) {
-                return false;
-            }
-            final int numCol = m1.getNumCol();
-            if (numCol != m2.getNumCol()) {
-                return false;
-            }
-            for (int j=0; j<numRow; j++) {
-                for (int i=0; i<numCol; i++) {
-                    final double v1 = m1.getElement(j, i);
-                    final double v2 = m2.getElement(j, i);
-                    double tolerance = epsilon;
-                    if (relative) {
-                        tolerance *= Math.max(Math.abs(v1), Math.abs(v2));
-                    }
-                    if (!(Math.abs(v1 - v2) <= tolerance)) {
-                        if (Utilities.equals(v1, v2)) {
-                            // Special case for NaN and infinite values.
-                            continue;
-                        }
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
+        return org.apache.sis.referencing.operation.matrix.Matrices.equals(m1, m2, epsilon, relative);
     }
 
     /**
@@ -809,15 +823,11 @@ search:     for (int j=numRow; --j>=0;) {
      * @see XMatrix#equals(Object, ComparisonMode)
      *
      * @since 3.20 (derived from 3.18)
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices}.
      */
+    @Deprecated
     public static boolean equals(final Matrix m1, final Matrix m2, final ComparisonMode mode) {
-        switch (mode) {
-            case STRICT:          return Objects.equals(m1, m2);
-            case BY_CONTRACT:     // Fall through
-            case IGNORE_METADATA: return equals(m1, m2, 0, false);
-            case DEBUG:           // Fall through
-            case APPROXIMATIVE:   return equals(m1, m2, COMPARISON_THRESHOLD, true);
-            default: throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_ENUM_1, mode));
-        }
+        return org.apache.sis.referencing.operation.matrix.Matrices.equals(m1, m2, mode);
     }
 }

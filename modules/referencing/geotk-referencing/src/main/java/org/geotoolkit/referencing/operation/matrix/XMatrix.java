@@ -42,7 +42,10 @@ import org.apache.sis.util.LenientComparable;
  *
  * @since 2.2
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.referencing.operation.matrix.MatrixSIS}.
  */
+@Deprecated
 public interface XMatrix extends Matrix, LenientComparable, Cloneable {
     /**
      * Sets all the values in this matrix to zero.

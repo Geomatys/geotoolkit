@@ -91,48 +91,6 @@ public final strictfp class MatricesTest {
     }
 
     /**
-     * Tests {@link Matrices#resizeAffine}.
-     *
-     * @since 3.20 (derived from 3.16)
-     */
-    @Test
-    public void testResizeAffine() {
-        final Matrix matrix = Matrices.create(3, 3, new double[] {
-            2, 0, 8,
-            0, 4, 5,
-            0, 0, 1
-        });
-        final double[] expected = {
-            2, 0, 0, 8,
-            0, 4, 0, 5,
-            0, 0, 1, 0,
-            0, 0, 0, 1
-        };
-        final Matrix m3 = Matrices.resizeAffine(matrix, 3, 3);
-        assertMatrixEquals(expected, 4, 4, m3);
-    }
-
-    /**
-     * Tests the {@link XMatrix#normalizeColumns()} method on all matrix implementations
-     * provided in this package.
-     *
-     * @since 3.20
-     */
-    @Test
-    public void testNormalizeColumns() {
-        final Random generator = new Random(628527304);
-        for (int numRow=1; numRow<=5; numRow++) {
-            for (int numCol=1; numCol<=5; numCol++) {
-                final GeneralMatrix reference = randomMatrix(numRow, numCol, generator, false);
-                final XMatrix specialized = Matrices.copy(reference);
-                reference.normalizeColumns();
-                specialized.normalizeColumns();
-                assertTrue(specialized.equals(reference, STRICT));
-            }
-        }
-    }
-
-    /**
      * Tests matrix multiplication on all matrix implementations provided in this package.
      */
     @Test

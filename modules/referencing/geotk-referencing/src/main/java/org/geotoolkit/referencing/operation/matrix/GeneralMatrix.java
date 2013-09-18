@@ -61,7 +61,10 @@ import org.geotoolkit.internal.referencing.AxisDirections;
  *
  * @since 1.2
  * @module
+ *
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.referencing.operation.matrix.Matrices#createDiagonal(int, int)}.
  */
+@Deprecated
 public class GeneralMatrix extends GMatrix implements XMatrix {
     /**
      * Serial number for inter-operability with different versions.

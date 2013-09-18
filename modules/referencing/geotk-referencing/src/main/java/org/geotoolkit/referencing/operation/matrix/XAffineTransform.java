@@ -24,7 +24,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.RectangularShape;
 import java.awt.geom.NoninvertibleTransformException;
 
-import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.resources.Errors;
 import org.opengis.referencing.operation.MathTransform2D; // For Javadoc
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
@@ -44,7 +43,7 @@ import static java.lang.Math.*;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 4.00
  *
  * @since 1.2
  * @module
