@@ -174,6 +174,20 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
     }
 
     /**
+     * Build a new Time periodwith a duration.
+     */
+    public TimePeriodType(final Period period){
+        if (period != null) {
+            if (period.getBeginning() != null && period.getBeginning().getPosition() != null) {
+                this.beginPosition = new TimePositionType(period.getBeginning().getPosition());
+            }
+            if (period.getEnding()!= null && period.getEnding().getPosition() != null) {
+                this.endPosition = new TimePositionType(period.getEnding().getPosition());
+            }
+        }
+    }
+
+    /**
      * Gets the value of the beginPosition property.
      * 
      * @return
@@ -339,6 +353,13 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         return null;
     }
 
+    public void setBeginning(final Instant instant) {
+        if (instant != null && instant.getPosition() != null) {
+            this.beginPosition = new TimePositionType(instant.getPosition());
+        }
+    }
+
+
     @Override
     public Instant getEnding() {
         if (end != null) {
@@ -347,6 +368,12 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
             return new TimeInstantType(endPosition);
         }
         return null;
+    }
+
+    public void setEnding(final Instant instant) {
+        if (instant != null && instant.getPosition() != null) {
+            this.endPosition = new TimePositionType(instant.getPosition());
+        }
     }
     
     public long getTime() {
@@ -372,7 +399,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         }
         return e - b;
     }
-    
+
     /**
      * Gets the value of the duration property.
      * 

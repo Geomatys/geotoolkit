@@ -144,18 +144,22 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
     }
 
     public final void setValue(final Date value) {
-        final Calendar c = Calendar.getInstance();
-        c.setTime(value);
-        if (c.get(Calendar.HOUR) == 0 && c.get(Calendar.MINUTE) == 0 && c.get(Calendar.SECOND) == 0) {
-            final DateFormat df = FORMATTERS.get(2);
-            synchronized (df) {
-                this.value = df.format(value);
+        if (value != null) {
+            final Calendar c = Calendar.getInstance();
+            c.setTime(value);
+            if (c.get(Calendar.HOUR) == 0 && c.get(Calendar.MINUTE) == 0 && c.get(Calendar.SECOND) == 0) {
+                final DateFormat df = FORMATTERS.get(2);
+                synchronized (df) {
+                    this.value = df.format(value);
+                }
+            } else {
+                final DateFormat df = FORMATTERS.get(0);
+                synchronized (df) {
+                    this.value = df.format(value);
+                }
             }
         } else {
-            final DateFormat df = FORMATTERS.get(0);
-            synchronized (df) {
-                this.value = df.format(value);
-            }
+            this.value = null;
         }
     }
 

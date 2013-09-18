@@ -45,6 +45,7 @@ public abstract class AbstractTimePosition implements Position {
         FORMATTERS.add(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
         FORMATTERS.add(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
         FORMATTERS.add(new SimpleDateFormat("yyyy-MM-dd"));
+        FORMATTERS.add(new SimpleDateFormat("yyyy"));
     }
 
     @Override
