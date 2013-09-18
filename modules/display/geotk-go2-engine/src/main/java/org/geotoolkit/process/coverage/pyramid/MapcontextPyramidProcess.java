@@ -56,7 +56,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
 
     private volatile long progress = 0;
     private long total = 0;
-        
+
     MapcontextPyramidProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
@@ -71,7 +71,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
         final double[] scales = value(IN_SCALES, inputParameters);
         Integer nbpainter = value(IN_NBPAINTER, inputParameters);
         final PyramidalCoverageReference container = value(IN_CONTAINER, inputParameters);
-        
+
         if(nbpainter == null){
             nbpainter = Runtime.getRuntime().availableProcessors();
         }
@@ -87,9 +87,9 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
         for(double scale : scales){
             final double gridWidth  = envelope.getSpan(0) / (scale*tileSize.width);
             final double gridHeight = envelope.getSpan(1) / (scale*tileSize.height);
-            total += (int)gridWidth*gridHeight;
+            total += Math.ceil(gridWidth) * Math.ceil(gridHeight);
         }
-        
+
         final CanvasDef canvasDef = new CanvasDef(new Dimension(1, 1), null);
         final ViewDef viewDef = new ViewDef(envelope);
         final SceneDef sceneDef = new SceneDef(context,hints);
@@ -120,7 +120,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                 upperleft.setOrdinate(0, envelope.getMinimum(0));
                 upperleft.setOrdinate(1, envelope.getMaximum(1));
                 Dimension tileDim = tileSize;
-                Dimension gridSize = new Dimension( (int)(gridWidth+0.5), (int)(gridHeight+0.5));
+                Dimension gridSize = new Dimension( (int)(Math.ceil(gridWidth)), (int)(Math.ceil(gridHeight)));
 
                 //check if we already have a mosaic at this scale
                 GridMosaic mosaic = null;
@@ -141,7 +141,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                     mosaic = container.createMosaic(pyramid.getId(),
                         gridSize, tileDim, upperleft, scale);
                 }
-                
+
                 final ProgressiveImage image = new ProgressiveImage(
                         canvasDef, sceneDef, viewDef,
                         mosaic.getGridSize(), mosaic.getTileSize(), scale,nbpainter);
@@ -153,8 +153,8 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                     }
                 });
 
-                container.writeTiles(pyramid.getId(), mosaic.getId(), image, true);  
-                
+                container.writeTiles(pyramid.getId(), mosaic.getId(), image, true);
+
                 getOrCreate(OUT_CONTAINER, outputParameters).setValue(container);
             }
 
@@ -164,7 +164,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
     }
-    
+
     private void progress(){
         fireProgressing(progress+"/"+total, (float)((double)progress/(double)total)*100f, false);
     }
