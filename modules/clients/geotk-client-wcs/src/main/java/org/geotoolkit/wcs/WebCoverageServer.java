@@ -16,18 +16,12 @@
  */
 package org.geotoolkit.wcs;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.xml.bind.Unmarshaller;
-
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.client.AbstractServer;
 import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wcs.v100.DescribeCoverage100;
 import org.geotoolkit.wcs.v100.GetCapabilities100;
 import org.geotoolkit.wcs.v100.GetCoverage100;
@@ -35,6 +29,12 @@ import org.geotoolkit.wcs.xml.WCSMarshallerPool;
 import org.geotoolkit.wcs.xml.WCSVersion;
 import org.geotoolkit.wcs.xml.v100.WCSCapabilitiesType;
 import org.opengis.parameter.ParameterValueGroup;
+
+import javax.xml.bind.Unmarshaller;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -56,7 +56,7 @@ public class WebCoverageServer extends AbstractServer {
     public WebCoverageServer(final URL serverURL, final ClientSecurity security, final String version) {
         super(create(WCSServerFactory.PARAMETERS, serverURL, security));
         if (version.equals("1.0.0")) {
-            Parameters.getOrCreate(WCSServerFactory.VERSION, parameters).setValue(WCSVersion.v100);
+            Parameters.getOrCreate(WCSServerFactory.VERSION, parameters).setValue(version);
         } else {
             throw new IllegalArgumentException("unkonwed version : " + version);
         }
@@ -67,7 +67,7 @@ public class WebCoverageServer extends AbstractServer {
         if(version == null){
             throw new IllegalArgumentException("unkonwed version : " + version);
         }
-        Parameters.getOrCreate(WCSServerFactory.VERSION, parameters).setValue(version);
+        Parameters.getOrCreate(WCSServerFactory.VERSION, parameters).setValue(version.getCode());
     }
 
     public WebCoverageServer(final ParameterValueGroup params) {
