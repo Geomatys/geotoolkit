@@ -42,14 +42,14 @@ import org.geotoolkit.coverage.CoverageType;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Coverage Store which rely on standard java readers and writers.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -60,7 +60,7 @@ public class FileCoverageStore extends AbstractCoverageStore{
     private final String format;
     private final URL rootPath;
     private final Map<Name,FileCoverageReference> names = new HashMap<Name, FileCoverageReference>();
-    
+
     FileCoverageStore(ParameterValueGroup params) throws URISyntaxException{
         super(params);
         rootPath = (URL) params.parameter(FileCoverageStoreFactory.PATH.getName().getCode()).getValue();
@@ -73,11 +73,11 @@ public class FileCoverageStore extends AbstractCoverageStore{
     public CoverageStoreFactory getFactory() {
         return CoverageStoreFinder.getFactoryById(FileCoverageStoreFactory.NAME);
     }
-    
+
     /**
      * Visit all files and directories contained in the directory specified.
      *
-     * @param file 
+     * @param file
      */
     private void visit(final File file) {
 
@@ -111,26 +111,26 @@ public class FileCoverageStore extends AbstractCoverageStore{
             final int idx = fullName.lastIndexOf('.');
             final String filename = fullName.substring(0, idx);
             final String nmsp = getDefaultNamespace();
-                        
+
             final int nbImage = reader.getNumImages(true);
-            
+
             if(reader instanceof NamedImageStore){
                 //try to find a proper name for each image
                 final NamedImageStore nis = (NamedImageStore) reader;
-                
+
                 final List<String> imageNames = nis.getImageNames();
                 for(int i=0,n=imageNames.size();i<n;i++){
                     final String in = imageNames.get(i);
                     final Name name = new DefaultName(nmsp,filename+"."+in);
                     final FileCoverageReference previous = names.put(
-                            name, 
+                            name,
                             new FileCoverageReference(this,name,candidate,i));
 
                     if(previous != null){
                         getLogger().log(Level.WARNING, "Several files with name : "+name+" exist in folder :" + root.getPath());
                     }
                 }
-            
+
             }else{
                 for(int i=0;i<nbImage;i++){
                     final Name name;
@@ -142,7 +142,7 @@ public class FileCoverageStore extends AbstractCoverageStore{
                     }
 
                     final FileCoverageReference previous = names.put(
-                            name, 
+                            name,
                             new FileCoverageReference(this,name,candidate,i));
 
                     if(previous != null){
@@ -169,7 +169,7 @@ public class FileCoverageStore extends AbstractCoverageStore{
 
         }
     }
-    
+
     @Override
     public Set<Name> getNames() throws DataStoreException {
         return names.keySet();
@@ -184,11 +184,11 @@ public class FileCoverageStore extends AbstractCoverageStore{
     @Override
     public void dispose() {
     }
-    
+
     /**
      * Create a reader for the given file.
      * Detect automaticaly the spi if type is set to 'AUTO'.
-     * 
+     *
      * @param candidate
      * @return ImageReader, never null
      * @throws IOException if fail to create a reader.
@@ -204,7 +204,7 @@ public class FileCoverageStore extends AbstractCoverageStore{
         }else{
             final ImageReaderSpi spi = XImageIO.getReaderSpiByFormatName(format);
             reader = spi.createReaderInstance();
-            
+
             if(spi.canDecodeInput(candidate)){
                 reader.setInput(candidate);
             }else{
@@ -212,14 +212,14 @@ public class FileCoverageStore extends AbstractCoverageStore{
                 reader.setInput(data);
             }
         }
-        
+
         return reader;
     }
-    
+
     /**
      * Create a writer for the given file.
      * Detect automaticaly the spi if type is set to 'AUTO'.
-     * 
+     *
      * @param candidate
      * @return ImageWriter, never null
      * @throws IOException if fail to create a writer.
@@ -230,10 +230,10 @@ public class FileCoverageStore extends AbstractCoverageStore{
         if(writerSpiNames == null || writerSpiNames.length == 0){
             throw new IOException("No writer for this format.");
         }
-        
+
         return XImageIO.getWriterByFormatName(readerSpi.getFormatNames()[0], candidate, null);
     }
-    
+
 	@Override
 	public CoverageType getType() {
 		return CoverageType.GRID;

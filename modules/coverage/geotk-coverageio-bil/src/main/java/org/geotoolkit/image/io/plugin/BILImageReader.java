@@ -36,7 +36,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.metadata.bil.HDRAccessor;
 
 /**
- * Reader for the <cite>BIL</cite> format. 
+ * Reader for the <cite>BIL</cite> format.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -48,16 +48,16 @@ public class BILImageReader extends WorldFileImageReader {
     }
 
     @Override
-    protected Object createInput(final String readerID) throws IOException {        
-        
+    protected Object createInput(final String readerID) throws IOException {
+
         if(!"main".equals(readerID)){
             return super.createInput(readerID);
         }
-        
+
         final ImageInputStream iis = (ImageInputStream) super.createInput(readerID);
-                
+
         final Object hdrfile = IOUtilities.changeExtension(input, "hdr");
-        final Map<String,String> parameters = HDRAccessor.read(hdrfile);        
+        final Map<String,String> parameters = HDRAccessor.read(hdrfile);
 
         final int[] off = new int[]{0};
         final int w = Integer.valueOf(parameters.get(HDRAccessor.NCOLS));
@@ -65,9 +65,9 @@ public class BILImageReader extends WorldFileImageReader {
         final int nbbit = Integer.valueOf(parameters.get(HDRAccessor.NBITS));
         final boolean signed = parameters.get(HDRAccessor.PIXELTYPE).contains("SIGNED");
         final boolean littleEndian = "I".equalsIgnoreCase(parameters.get(HDRAccessor.BYTEORDER));
-        
+
         iis.setByteOrder((littleEndian)?ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
-        
+
         final int transferType;
         if(nbbit <= 8){
             transferType = DataBuffer.TYPE_BYTE;
@@ -77,22 +77,22 @@ public class BILImageReader extends WorldFileImageReader {
         }else{
             throw new IOException("Unsupported number of bits : " + nbbit);
         }
-        
+
         final SampleModel sm = new ComponentSampleModel(transferType, w, h, 1, w, off);
         final long[] offsets = new long[]{0};
         final Dimension[] dimension = new Dimension[]{new Dimension(w, h)};
         final RawImageInputStream input = new RawImageInputStream(iis, sm, offsets, dimension);
         return input;
     }
-    
+
     public static class Spi extends WorldFileImageReader.Spi {
-        
+
         public Spi() throws IllegalArgumentException {
             super(Formats.getReaderByFormatName("RAW", Spi.class));
             this.suffixes = new String[]{"BIL","bil"};
             this.names = new String[]{"BIL","bil"};
         }
-        
+
         @Override
         public ImageReader createReaderInstance(final Object extension) throws IOException {
             return new BILImageReader(this);
@@ -101,26 +101,26 @@ public class BILImageReader extends WorldFileImageReader {
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {
             //check if file has extension .bil and .hdr file is present
-            
-            final String extension = IOUtilities.extension(source);
+
+            final String extension = org.apache.sis.internal.storage.IOUtilities.extension(source);
             if(!"bil".equalsIgnoreCase(extension)){
                 return false;
             }
-            
+
             final Object hdrpath = IOUtilities.changeExtension(source, "hdr");
             final Object hdrfile = IOUtilities.tryToFile(hdrpath);
             if(hdrfile instanceof File){
                 final File f = (File) hdrfile;
                 return f.exists();
             }
-            
+
             return false;
         }
-        
+
         public static void registerDefaults(IIORegistry registry) {
             if (registry == null) {
                 registry = IIORegistry.getDefaultInstance();
-            }            
+            }
             final Spi provider = new Spi();
             registry.registerServiceProvider(provider, ImageReaderSpi.class);
             registry.setOrdering(ImageReaderSpi.class, provider, provider.main);
@@ -136,7 +136,7 @@ public class BILImageReader extends WorldFileImageReader {
                 registry.deregisterServiceProvider(provider, ImageReaderSpi.class);
             }
         }
-        
+
     }
-    
+
 }
