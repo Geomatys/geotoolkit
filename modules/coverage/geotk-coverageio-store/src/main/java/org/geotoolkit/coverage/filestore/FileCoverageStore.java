@@ -157,10 +157,12 @@ public class FileCoverageStore extends AbstractCoverageStore{
             LOGGER.log(Level.WARNING, "Error for file {0} : {1}", new Object[]{candidate.getName(), ex.getMessage()});
         } finally {
             try {
-                reader.dispose();
-                if (reader.getInput() instanceof ImageInputStream) {
-                    ((ImageInputStream) reader.getInput()).close();
-                }
+            	if(reader != null) {
+                	reader.dispose();
+                	if (reader.getInput() instanceof ImageInputStream) {
+                    	((ImageInputStream) reader.getInput()).close();
+                	}
+            	}
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "A coverage reader can't be closed.", e);
             }
