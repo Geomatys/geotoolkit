@@ -517,7 +517,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                 categories[0] = new Category("data", Color.BLACK, NumberRange.create(min, true, max, true));
                 if (pNoData != null && pNoData.length > 0) {
                     for (int i = 0; i < pNoData.length; i++) {
-                        categories[i] = new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA) + String.valueOf(i), new Color(0,0,0,0), pNoData[i]);
+                        categories[i+1] = new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA) + String.valueOf(i), new Color(0,0,0,0), pNoData[i]);
                     }
                 } else {
                     categories[1] = new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), Double.NaN);
@@ -573,6 +573,19 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                     final String unit = dim.getUnits() != null ? dim.getUnits().toString() : "";
                     double min = Double.isInfinite(dim.getMinimumValue()) ? minDimValues[i] : dim.getMinimumValue();
                     double max = Double.isInfinite(dim.getMaximumValue()) ? maxDimValues[i] : dim.getMaximumValue();
+
+                    /*
+                     * Hack to find real min/max based on categories
+                     */
+                    final List<Category> categories = dim.getCategories();
+                    for (Category category : categories) {
+                        if (description.equals(category.getName().toString())) {
+                            //hack if category has same name as sampleDimension this is a data category
+                            min = category.getRange().getMinDouble();
+                            max = category.getRange().getMaxDouble();
+                        }
+                    }
+
                     min = fixCloseToZero(min);
                     max = fixCloseToZero(max);
 
