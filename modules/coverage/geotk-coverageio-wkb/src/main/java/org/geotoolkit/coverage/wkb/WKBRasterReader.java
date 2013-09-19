@@ -17,8 +17,11 @@
 package org.geotoolkit.coverage.wkb;
 
 import java.awt.Point;
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.SampleModel;
@@ -34,6 +37,7 @@ import javax.media.jai.RasterFactory;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import static org.geotoolkit.coverage.wkb.WKBRasterConstants.*;
+import org.geotoolkit.internal.image.ScaledColorSpace;
 import org.geotoolkit.io.LEDataInputStream;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
@@ -243,6 +247,9 @@ public class WKBRasterReader {
 
         //rebuild raster
         final WritableRaster raster;
+        double min = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
+        
         if(dataBufferType == DataBuffer.TYPE_BYTE){
             //more efficient but only works for byte type bands
             //check all band have the same sample model and rebuild data buffer
@@ -262,6 +269,9 @@ public class WKBRasterReader {
                 bankOffsets[i] = 0;
             }
 
+            min = -100.0;
+            max = 100.0;
+            
             //rebuild data buffer
             final DataBuffer db = new DataBufferByte(dataArray, dataArray[0].length);
             final int scanlineStride = width;
@@ -277,19 +287,34 @@ public class WKBRasterReader {
                     for(int x=0;x<width;x++){
                         switch (dataBufferType) {
                             case DataBuffer.TYPE_SHORT:
-                                raster.setSample(x, y, i, dds.readShort());
+                                short d1 = dds.readShort();
+                                raster.setSample(x, y, i, d1);
+                                min = Math.min(min, (double)d1);
+                                max = Math.max(max, (double)d1);
                                 break;
                             case DataBuffer.TYPE_USHORT:
-                                raster.setSample(x, y, i, dds.readUnsignedShort());
+                                int d2 = dds.readUnsignedShort();
+                                raster.setSample(x, y, i, d2);
+                                min = Math.min(min, (double)d2);
+                                max = Math.max(max, (double)d2);
                                 break;
                             case DataBuffer.TYPE_INT:
-                                raster.setSample(x, y, i, dds.readInt());
+                                int d3 = dds.readInt();
+                                raster.setSample(x, y, i, d3);
+                                min = Math.min(min, (double)d3);
+                                max = Math.max(max, (double)d3);
                                 break;
                             case DataBuffer.TYPE_FLOAT:
-                                raster.setSample(x, y, i, dds.readFloat());
+                                float d4 = dds.readFloat();
+                                raster.setSample(x, y, i, d4);
+                                min = Math.min(min, (double)d4);
+                                max = Math.max(max, (double)d4);
                                 break;
                             case DataBuffer.TYPE_DOUBLE:
-                                raster.setSample(x, y, i, dds.readDouble());
+                                double d5 = dds.readDouble();
+                                raster.setSample(x, y, i, d5);
+                                min = Math.min(min, d5);
+                                max = Math.max(max, d5);
                                 break;
                             default:
                                 throw new IllegalArgumentException("unknowned data buffer type : " + dataBufferType);
@@ -299,17 +324,22 @@ public class WKBRasterReader {
             }
         }
 
-
         //rebuild image
         final SampleModel sm = raster.getSampleModel();
         ColorModel cm = PlanarImage.getDefaultColorModel(sm.getDataType(), raster.getNumBands());
         if(cm==null){
             //fallback
-            cm = BufferedImageUtilities.createGrayScaleColorModel(sm.getDataType(), sm.getNumBands(), 0, 0, 1);
+            cm = createGrayScaleColorModel(sm.getDataType(), raster.getNumBands(), 0, min, max);
         }
 
         return new BufferedImage(cm, raster, false, null);
     }
 
+
+    private static ColorModel createGrayScaleColorModel(int dataType, int nbBand, int visibleBand, double min, double max) {
+        final ColorSpace colors = new ScaledColorSpace(nbBand, visibleBand, min, max);
+        final ColorModel cm = new ComponentColorModel(colors, false, false, Transparency.OPAQUE, dataType);
+        return cm;
+    }
 
 }
