@@ -400,7 +400,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                                     final Object argument;
                                     if (IOUtilities.canProcessAsPath(input)) {
                                         messageKey = Errors.Keys.CANT_READ_FILE_1;
-                                        argument = IOUtilities.name(input);
+                                        argument = org.apache.sis.internal.storage.IOUtilities.filename(input);
                                     } else {
                                         messageKey = Errors.Keys.UNKNOWN_TYPE_1;
                                         argument = input.getClass();
@@ -464,7 +464,8 @@ public class ImageCoverageReader extends GridCoverageReader {
     protected boolean canReuseImageReader(final ImageReaderSpi provider, final Object input) throws IOException {
         if (IOUtilities.canProcessAsPath(input)) {
             final String[] suffixes = provider.getFileSuffixes();
-            return (suffixes != null) && ArraysExt.containsIgnoreCase(suffixes, IOUtilities.extension(input));
+            return (suffixes != null) && ArraysExt.containsIgnoreCase(suffixes,
+                    org.apache.sis.internal.storage.IOUtilities.extension(input));
         } else {
             return provider.canDecodeInput(input);
         }

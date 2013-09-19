@@ -430,7 +430,7 @@ public final class NewGridCoverageReference {
          */
         String imageFormat = Formats.getDisplayName(ImageReaderAdapter.Spi.unwrap(spi));
         if (imageFormat == null) {
-            imageFormat = IOUtilities.extension(inputFile);
+            imageFormat = org.apache.sis.internal.storage.IOUtilities.extension(inputFile);
         }
         if (imageFormat.isEmpty()) {
             throw new IOException(Errors.format(Errors.Keys.UNDEFINED_FORMAT));

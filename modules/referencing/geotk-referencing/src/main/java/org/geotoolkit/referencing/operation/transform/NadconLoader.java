@@ -187,7 +187,7 @@ abstract class NadconLoader extends GridLoader {
     private static boolean isBinary(final Object path, final String text, final String binary)
             throws IOException
     {
-        final String ext = extension(path);
+        final String ext = org.apache.sis.internal.storage.IOUtilities.extension(path);
         if (ext.equalsIgnoreCase(binary)) {
             return true;
         } else if (ext.equalsIgnoreCase(text)) {

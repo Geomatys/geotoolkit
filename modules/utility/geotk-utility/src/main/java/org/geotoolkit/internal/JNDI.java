@@ -35,7 +35,10 @@ import org.apache.sis.util.logging.Logging;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Will not be ported to Apache SIS.
  */
+@Deprecated
 public final class JNDI extends Static {
     /**
      * The initial context. Will be created only when first needed.

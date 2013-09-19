@@ -25,7 +25,7 @@ import static java.lang.Character.*;
  * Utility methods working on {@link String} or {@link CharSequence} instances.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
+ * @version 4.00
  *
  * @see org.apache.sis.util.CharSequences
  *

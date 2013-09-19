@@ -28,7 +28,6 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.metadata.spatial.PixelOrientation;

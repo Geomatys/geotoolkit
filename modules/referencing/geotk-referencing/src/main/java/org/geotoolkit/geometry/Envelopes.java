@@ -41,7 +41,6 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.AbstractEnvelope;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.internal.referencing.DirectPositionView;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display.shape.ShapeUtilities;

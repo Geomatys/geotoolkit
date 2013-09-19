@@ -33,7 +33,7 @@ import org.apache.sis.util.Version;
  * {@linkplain java.io.Serializable} classes can use {@code (int) serialVersionUID} for example.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
+ * @version 4.00
  *
  * @since 1.2
  * @module

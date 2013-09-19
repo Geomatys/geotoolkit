@@ -161,7 +161,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
     final String getInputName() {
         final Object input = this.input;
         if (IOUtilities.canProcessAsPath(input)) {
-            return IOUtilities.name(input);
+            return org.apache.sis.internal.storage.IOUtilities.filename(input);
         } else {
             return Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED);
         }

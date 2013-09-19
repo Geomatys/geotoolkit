@@ -130,7 +130,7 @@ public class Matrices extends Static {
      *
      * @see org.geotoolkit.referencing.operation.MathTransforms#dimensionFilter(int, int[])
      *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices#createDimensionFilter(int, int[])}.
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.referencing.operation.matrix.Matrices#createDimensionSelect(int, int[])}.
      */
     @Deprecated
     public static XMatrix createDimensionFilter(final int sourceDim, final int[] toKeep)

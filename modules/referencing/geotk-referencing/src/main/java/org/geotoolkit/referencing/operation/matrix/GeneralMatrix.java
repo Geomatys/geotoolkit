@@ -42,7 +42,7 @@ import org.apache.sis.math.Statistics;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.io.LineFormat;
-import org.geotoolkit.internal.referencing.AxisDirections;
+import org.apache.sis.internal.referencing.AxisDirections;
 
 
 /**

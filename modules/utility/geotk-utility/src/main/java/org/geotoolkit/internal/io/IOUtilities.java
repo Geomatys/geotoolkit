@@ -38,7 +38,7 @@ import org.geotoolkit.io.ContentFormatException;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.20
+ * @version 4.00
  *
  * @since 3.00
  * @module
@@ -133,26 +133,6 @@ public final class IOUtilities extends Static {
     }
 
     /**
-     * Parses the following path as a {@link Path} if possible, or a {@link URL} otherwise.
-     *
-     * @param  path The path to parse.
-     * @return The path as a {@link Path} if possible, or a {@link URL} otherwise.
-     * @throws IOException If the given path is not a file and can't be parsed as a URL.
-     *
-     * @since 3.20 (derived from 3.00)
-     *
-     * @deprecated No replacement.
-     */
-    @Deprecated
-    public static Object toPathOrURL(final String path) throws IOException {
-        Object value = org.apache.sis.internal.storage.IOUtilities.toFileOrURL(path, null);
-        if (value instanceof File) {
-            value = ((File) value).toPath();
-        }
-        return value;
-    }
-
-    /**
      * Tries to convert the given path to a {@link File} object if possible, or returns
      * the path unchanged otherwise. Conversion attempts are performed for paths of class
      * {@link CharSequence}, {@link URL}, {@link URI} or {@link Path}.
@@ -212,7 +192,10 @@ public final class IOUtilities extends Static {
      */
     public static Object tryToPath(Object path) throws IOException {
         if (path instanceof CharSequence) {
-            path = toPathOrURL(path.toString());
+            path = org.apache.sis.internal.storage.IOUtilities.toFileOrURL(path.toString(), null);
+            if (path instanceof File) {
+                path = ((File) path).toPath();
+            }
         } else if (path instanceof URL) {
             final URL url = (URL) path;
             if (url.getProtocol().equalsIgnoreCase("file")) {
@@ -251,36 +234,6 @@ public final class IOUtilities extends Static {
     public static boolean canProcessAsPath(final Object path) {
         return (path instanceof CharSequence) || (path instanceof File) ||
                 (path instanceof URL) || (path instanceof URI) || (path instanceof Path);
-    }
-
-    /**
-     * Returns the filename from a {@link String}, {@link File}, {@link URL}, {@link URI}
-     * or {@link Path}.
-     *
-     * @param  path The path as a {@link String}, {@link File}, {@link URL}, {@link URI} or {@link Path}.
-     * @return The filename in the given path.
-     *
-     * @since 3.07
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#filename(String)}.
-     */
-    @Deprecated
-    public static String name(final Object path) {
-        return org.apache.sis.internal.storage.IOUtilities.filename(path);
-    }
-
-    /**
-     * Returns the filename extension from a {@link String}, {@link File}, {@link URL},
-     * {@link URI} or {@link Path}. If no extension is found, returns an empty string.
-     *
-     * @param  path The path as a {@link String}, {@link File}, {@link URL}, {@link URI} or {@link Path}.
-     * @return The filename extension in the given path, or an empty string if none.
-     *
-     * @deprecated Moved to Apache SIS as {@link org.apache.sis.internal.storage.IOUtilities#extension(String)}.
-     */
-    @Deprecated
-    public static String extension(final Object path) {
-        return org.apache.sis.internal.storage.IOUtilities.extension(path);
     }
 
     /**

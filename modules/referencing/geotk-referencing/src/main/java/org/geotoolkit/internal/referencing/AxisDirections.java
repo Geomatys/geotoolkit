@@ -17,16 +17,10 @@
  */
 package org.geotoolkit.internal.referencing;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Objects;
-
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 
 import org.geotoolkit.lang.Static;
-
-import static org.opengis.referencing.cs.AxisDirection.*;
 
 
 /**
@@ -38,42 +32,14 @@ import static org.opengis.referencing.cs.AxisDirection.*;
  * @since 3.13
  * @module
  *
- * @todo Consider moving to a public package.
+ * @deprecated Moved to {@link org.apache.sis.internal.referencing.AxisDirections}.
  */
+@Deprecated
 public final class AxisDirections extends Static {
     /**
      * Do not allow instantiation of this class.
      */
     private AxisDirections() {
-    }
-
-    /**
-     * For each direction, the opposite direction.
-     */
-    private static final Map<AxisDirection,AxisDirection> opposites = new HashMap<>(35);
-    static {
-        opposites.put(OTHER, OTHER);
-        final AxisDirection[] dir = {
-            NORTH,            SOUTH,
-            NORTH_NORTH_EAST, SOUTH_SOUTH_WEST,
-            NORTH_EAST,       SOUTH_WEST,
-            EAST_NORTH_EAST,  WEST_SOUTH_WEST,
-            EAST,             WEST,
-            EAST_SOUTH_EAST,  WEST_NORTH_WEST,
-            SOUTH_EAST,       NORTH_WEST,
-            SOUTH_SOUTH_EAST, NORTH_NORTH_WEST,
-            UP,               DOWN,
-            FUTURE,           PAST,
-            COLUMN_POSITIVE,  COLUMN_NEGATIVE,
-            ROW_POSITIVE,     ROW_NEGATIVE,
-            DISPLAY_RIGHT,    DISPLAY_LEFT,
-            DISPLAY_DOWN,     DISPLAY_UP // y values increase toward down.
-        };
-        for (int i=0; i<dir.length; i++) {
-            if (opposites.put(dir[i], dir[i ^ 1]) != null) {
-                throw new AssertionError(i);
-            }
-        }
     }
 
     /**
@@ -116,15 +82,7 @@ public final class AxisDirections extends Static {
      * @return The direction from the above table.
      */
     public static AxisDirection absolute(final AxisDirection dir) {
-        if (dir != null) {
-            final AxisDirection opposite = opposite(dir);
-            if (opposite != null) {
-                if (opposite.ordinal() < dir.ordinal()) {
-                    return opposite;
-                }
-            }
-        }
-        return dir;
+        return org.apache.sis.internal.referencing.AxisDirections.absolute(dir);
     }
 
     /**
@@ -139,7 +97,7 @@ public final class AxisDirections extends Static {
      * @return The opposite direction, or {@code null} if none or unknown.
      */
     public static AxisDirection opposite(final AxisDirection dir) {
-        return opposites.get(dir);
+        return org.apache.sis.internal.referencing.AxisDirections.opposite(dir);
     }
 
     /**
@@ -153,7 +111,7 @@ public final class AxisDirections extends Static {
      * @since 3.14
      */
     public static boolean isOpposite(final AxisDirection dir) {
-        return Objects.equals(dir, opposite(absolute(dir)));
+        return org.apache.sis.internal.referencing.AxisDirections.isOpposite(dir);
     }
 
     /**
@@ -169,20 +127,6 @@ public final class AxisDirections extends Static {
      * @since 3.20
      */
     public static int indexOf(final CoordinateSystem cs, final AxisDirection direction) {
-        int fallback = -1;
-        if (cs != null) {
-            final AxisDirection opposite = opposite(direction);
-            final int dimension = cs.getDimension();
-            for (int i=0; i<dimension; i++) {
-                final AxisDirection d = cs.getAxis(i).getDirection();
-                if (direction.equals(d)) {
-                    return i;
-                }
-                if (fallback < 0 && opposite != null && opposite.equals(d)) {
-                    fallback = i;
-                }
-            }
-        }
-        return fallback;
+        return org.apache.sis.internal.referencing.AxisDirections.indexOf(cs, direction);
     }
 }
