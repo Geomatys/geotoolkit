@@ -1541,8 +1541,8 @@ public class GTtoSE110Transformer implements StyleVisitor {
         while (ite.hasNext()) {
             final Expression key = ite.next();
             final Expression val = steps.get(key);
-            elements.add(se_factory.createDateValue(visitExpression(key)));
-            elements.add(se_factory.createDateValue(visitExpression(val)));
+            elements.add(se_factory.createThreshold(visitExpression(key)));
+            elements.add(se_factory.createTValue(visitExpression(val)));
         }
 
         return type;
