@@ -93,6 +93,7 @@ import org.geotoolkit.util.ColorCellRenderer;
 import org.geotoolkit.util.Converters;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
 
@@ -181,6 +182,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         guiPalette.setRenderer(new PaletteCellRenderer());
         guiPalette.setSelectedIndex(0);
         guiTable.setShowGrid(false, false);
+        parse(null);
     }
 
     private void parse(){
@@ -208,6 +210,10 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             }
         }
 
+        parse(rs);
+    }
+
+    private void parse(RasterSymbolizer rs){
         //find channel
         if(rs!=null){
             final ChannelSelection selection = rs.getChannelSelection();
@@ -224,43 +230,59 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             }
         }
 
+        model = null;
 
-        guiInterpolate.setSelected(true);
-        if(rs != null && rs.getColorMap() != null){
+        if(rs != null){
             guiName.setText(rs.getName());
             guiDesc.setText(rs.getDescription()== null ? "" : ((rs.getDescription().getTitle()==null) ? "" : rs.getDescription().getTitle().toString()));
-            final Function fct = rs.getColorMap().getFunction();
-            if(fct instanceof Interpolate){
-                guiInterpolate.setSelected(true);
-                final List<InterpolationPoint> points = ((Interpolate)fct).getInterpolationPoints();
 
-                model = new InterpolateColorModel(points);
-                guiTable.setModel(model);
-                guiTable.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer());
-                guiTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JTextField()));
-                guiTable.getColumnModel().getColumn(1).setCellRenderer(new ColorCellRenderer());
-                guiTable.getColumnModel().getColumn(1).setCellEditor(new ColorCellEditor());
-                guiTable.getColumnModel().getColumn(2).setCellRenderer(new DeleteRenderer());
-                guiTable.getColumnModel().getColumn(2).setCellEditor(new DeleteEditor());
-                guiTable.getColumnExt(2).setMaxWidth(20);
-
-            }else if(fct instanceof Categorize){
-                guiInterpolate.setSelected(false);
-                final Map<Expression,Expression> th = ((Categorize)fct).getThresholds();
-
-                model = new CategorizeColorModel(th);
-                guiTable.setModel(model);
-                guiTable.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer());
-                guiTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JTextField()));
-                guiTable.getColumnModel().getColumn(1).setCellRenderer(new ColorCellRenderer());
-                guiTable.getColumnModel().getColumn(1).setCellEditor(new ColorCellEditor());
-                guiTable.getColumnModel().getColumn(2).setCellRenderer(new DefaultTableCellRenderer());
-                guiTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(new JTextField()));
-                guiTable.getColumnModel().getColumn(3).setCellRenderer(new DeleteRenderer());
-                guiTable.getColumnModel().getColumn(3).setCellEditor(new DeleteEditor());
-                guiTable.getColumnExt(3).setMaxWidth(20);
+            if(rs.getColorMap()!=null && rs.getColorMap().getFunction()!=null){
+                final Function fct = rs.getColorMap().getFunction();
+                if(fct instanceof Interpolate){
+                    final List<InterpolationPoint> points = ((Interpolate)fct).getInterpolationPoints();
+                    model = new InterpolateColorModel(points);
+                }else if(fct instanceof Categorize){
+                    final Map<Expression,Expression> th = ((Categorize)fct).getThresholds();
+                    model = new CategorizeColorModel(th);
+                }else{
+                    throw new IllegalArgumentException("Unknowned colormap function : "+fct);
+                }
+            }else{
+                //create an empty interpolate colormodel
+                model = new InterpolateColorModel(Collections.EMPTY_LIST);
             }
+        }else{
+            //create an empty interpolate colormodel
+            model = new InterpolateColorModel(Collections.EMPTY_LIST);
         }
+
+        postParse();
+    }
+
+    private void postParse(){
+        guiTable.setModel(model);
+        if(model instanceof InterpolateColorModel){
+            guiInterpolate.setSelected(true);
+            guiTable.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer());
+            guiTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JTextField()));
+            guiTable.getColumnModel().getColumn(1).setCellRenderer(new ColorCellRenderer());
+            guiTable.getColumnModel().getColumn(1).setCellEditor(new ColorCellEditor());
+            guiTable.getColumnModel().getColumn(2).setCellRenderer(new DeleteRenderer());
+            guiTable.getColumnModel().getColumn(2).setCellEditor(new DeleteEditor());
+            guiTable.getColumnExt(2).setMaxWidth(20);
+        }else if(model instanceof CategorizeColorModel){
+            guiInterpolate.setSelected(false);
+            guiTable.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer());
+            guiTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JTextField()));
+            guiTable.getColumnModel().getColumn(1).setCellRenderer(new ColorCellRenderer());
+            guiTable.getColumnModel().getColumn(1).setCellEditor(new ColorCellEditor());
+            guiTable.getColumnModel().getColumn(2).setCellRenderer(new DefaultTableCellRenderer());
+            guiTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(new JTextField()));
+            guiTable.getColumnModel().getColumn(3).setCellRenderer(new DeleteRenderer());
+            guiTable.getColumnModel().getColumn(3).setCellEditor(new DeleteEditor());
+            guiTable.getColumnExt(3).setMaxWidth(20);
+        }
+
 
         if(layer instanceof CoverageMapLayer){
             guiLblPalette.setVisible(true);
@@ -283,8 +305,8 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
         revalidate();
         repaint();
-
     }
+
 
 
     /** This method is called from within the constructor to
@@ -349,6 +371,11 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         guiBand.setModel(new SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
 
         guiInterpolate.setText(MessageBundle.getString("style.rastercolormappane.interpolate")); // NOI18N
+        guiInterpolate.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiInterpolateActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText(MessageBundle.getString("name")); // NOI18N
 
@@ -369,7 +396,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                                 .addComponent(guiInvert)
                                 .addPreferredGap(ComponentPlacement.RELATED)
                                 .addComponent(guiInterpolate)
-                                .addGap(0, 71, Short.MAX_VALUE))
+                                .addGap(0, 146, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(guiLblPalette)
                                 .addPreferredGap(ComponentPlacement.RELATED)
@@ -438,6 +465,50 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                     .addComponent(guiRemoveAll)))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void guiInterpolateActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiInterpolateActionPerformed
+
+        if(guiInterpolate.isSelected()){
+            if(model instanceof InterpolateColorModel){
+                //nothing to do
+            }else if(model == null){
+                model = new InterpolateColorModel(Collections.EMPTY_LIST);
+                postParse();
+            }else{
+                //we need to convert from categorize thredholds to interpolation points.
+                final List<InterpolationPoint> points = new ArrayList<>();
+                final List<Entry<Expression, Expression>> ths = ((CategorizeColorModel)model).ths;
+                for(int i=1,n=ths.size();i<n;i++){
+                    final Entry<Expression, Expression> entry = ths.get(i);
+                    points.add(SF.interpolationPoint(entry.getKey().evaluate(n, Number.class), entry.getValue()));
+                }
+                model = new InterpolateColorModel(points);
+                postParse();
+            }
+        }else{
+            if(model instanceof CategorizeColorModel){
+                //nothing to do
+            }else if(model == null){
+                final Map<Expression, Expression> values = new HashMap<>();
+                values.put(StyleConstants.CATEGORIZE_LESS_INFINITY, SF.literal(new Color(0f,0f,0f,0f)));
+                values.put(new DefaultLiteral<Number>(0), SF.literal(new Color(0f,0f,0f,0f)));
+                model = new CategorizeColorModel(values);
+                postParse();
+            }else{
+                //we need to convert from interpolate to categorize
+                final Map<Expression, Expression> values = new HashMap<>();
+                values.put( StyleConstants.CATEGORIZE_LESS_INFINITY, SF.literal(new Color(0f,0f,0f,0f)));
+                final List<InterpolationPoint> points = ((InterpolateColorModel)model).points;
+                for(InterpolationPoint pt : points){
+                    values.put(new DefaultLiteral(pt.getData()), pt.getValue());
+                }
+                model = new CategorizeColorModel(values);
+                postParse();
+            }
+        }
+
+    }//GEN-LAST:event_guiInterpolateActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton guiAddOne;
     private JSpinner guiBand;
@@ -609,7 +680,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         final Expression lookup = DEFAULT_CATEGORIZE_LOOKUP;
         final Literal fallback = DEFAULT_FALLBACK;
 
-        final Function function = model.createFunction();
+        final Function function = ((ColorMapModel)guiTable.getModel()).createFunction();
 
         final ChannelSelection selection = SF.channelSelection(
                 SF.selectedChannelType(String.valueOf(guiBand.getValue()),DEFAULT_CONTRAST_ENHANCEMENT));
@@ -869,6 +940,11 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         };
 
         private final List<Entry<Expression,Expression>> ths = new ArrayList<>();
+
+        public CategorizeColorModel(List<Entry<Expression,Expression>> map) {
+            ths.addAll(map);
+            Collections.sort(ths,COMP);
+        }
 
         public CategorizeColorModel(Map<Expression,Expression> map) {
             ths.addAll(map.entrySet());
