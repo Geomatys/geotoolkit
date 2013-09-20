@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.TransactionSummary;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -156,9 +155,9 @@ public class TransactionSummaryType implements TransactionSummary {
         if (requestId != null) {
             s.append("requestId: ").append(requestId).append('\n');
         }
-        s.append("totalDeleted").append(totalDeleted).append('\n');
-        s.append("totalInserted").append(totalInserted).append('\n');
-        s.append("totalUpdated").append(totalUpdated).append('\n');
+        s.append("totalDeleted=").append(totalDeleted).append('\n');
+        s.append("totalInserted=").append(totalInserted).append('\n');
+        s.append("totalUpdated=").append(totalUpdated).append('\n');
         return s.toString();
     }
 

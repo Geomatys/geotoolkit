@@ -23,10 +23,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.RecordProperty;
 
-// xerces dependencies
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
 /**
  * <p>Java class for RecordPropertyType complex type.
  * 
@@ -82,33 +78,7 @@ public class RecordPropertyType implements RecordProperty{
      */
     @Override
     public Object getValue() {
-        if (value instanceof Element) {
-            value = getXMLFromElement((Element)value);
-        }
         return value;
-    }
-
-    private  String getXMLFromElement(final Element elt) {
-        StringBuilder s = new StringBuilder();
-        Node node = elt.getFirstChild();
-        s.append(getXMLFromNode(node)).toString();
-        return s.toString();
-    }
-
-    private  StringBuilder getXMLFromNode(final Node node) {
-        StringBuilder temp = new StringBuilder();
-        if (!node.getNodeName().equals("#text")){
-            throw new IllegalArgumentException("You must specify the data type of the Value.\n" +
-                                               "If you still have this message, this means that the JAXBContext does not know this data type");
-        }
-        if (node.hasChildNodes()) {
-            throw new IllegalArgumentException("You must specify the data type of the Value.\n" +
-                                               "If you still have this message, this means that the JAXBContext does not know this data type");
-        } else {
-            temp.append(node.getTextContent());
-        }
-        
-        return temp;
     }
 
     /**

@@ -102,7 +102,7 @@ public class TransactionResponseType implements TransactionResponse {
      */
     public List<InsertResultType> getInsertResult() {
         if (insertResult == null) {
-            insertResult = new ArrayList<InsertResultType>();
+            insertResult = new ArrayList<>();
         }
         return Collections.unmodifiableList(insertResult);
     }
@@ -154,7 +154,7 @@ public class TransactionResponseType implements TransactionResponse {
             s.append("transactionSummary: ").append(transactionSummary).append('\n');
         }
         if (version != null) {
-            s.append("version:").append(version).append('n');
+            s.append("version:").append(version).append('\n');
         }
         return s.toString();
     }

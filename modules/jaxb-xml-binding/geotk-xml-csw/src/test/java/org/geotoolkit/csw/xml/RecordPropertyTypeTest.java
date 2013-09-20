@@ -29,6 +29,8 @@ import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 
 /**
  *
@@ -91,7 +93,9 @@ public class RecordPropertyTypeTest {
 
         RecordPropertyType property = update.getRecordProperty().get(0);
 
-        assertEquals("Jane", property.getValue());
+        assertTrue(property.getValue() instanceof Node);
+        final Node nValue = (Node) property.getValue();
+        assertEquals("Jane", nValue.getTextContent());
 
         xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
@@ -99,7 +103,7 @@ public class RecordPropertyTypeTest {
         "    <csw:Update>"                                                                           + '\n' +
         "        <csw:RecordProperty>"                                                               + '\n' +
         "            <csw:Name>/csw:Record/dc:contributor</csw:Name>"                                + '\n' +
-        "            <csw:Value xsi:type=\"xs:string\">Jane</csw:Value>"                                                    + '\n' +
+        "            <csw:Value xsi:type=\"xs:string\">Jane</csw:Value>"                             + '\n' +
         "        </csw:RecordProperty>"                                                              + '\n' +
         "        <csw:Constraint version=\"1.1.0\">"                                                 + '\n' +
         "            <csw:CqlText>identifier='{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}'</csw:CqlText>" + '\n' +
@@ -167,14 +171,7 @@ public class RecordPropertyTypeTest {
 
         RecordPropertyType property = update.getRecordProperty().get(0);
 
-        boolean launched = false;
-        try {
-            property.getValue();
-        } catch (IllegalArgumentException ex) {
-            launched = true;
-        }
-
-        assertTrue(launched);
+        assertTrue(property.getValue() instanceof Node);
 
         xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +

@@ -132,7 +132,7 @@ public class CSWClassesContext {
         final List<Class> classeList = new ArrayList<>();
 
         //CSW 2.0.2 classes
-        classeList.addAll(Arrays.asList(org.geotoolkit.csw.xml.v202.ObjectFactory.class,
+        classeList.addAll(Arrays.asList(org.geotoolkit.csw.xml.v202.LimitedObjectFactory.class,
                                         ExceptionReport.class,
                                         org.geotoolkit.ows.xml.v110.ExceptionReport.class, // TODO remove
                                         org.geotoolkit.dublincore.xml.v2.terms.ObjectFactory.class));

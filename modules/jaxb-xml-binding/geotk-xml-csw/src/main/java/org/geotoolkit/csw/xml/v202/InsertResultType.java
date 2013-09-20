@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.InsertResult;
@@ -61,18 +61,35 @@ import org.geotoolkit.csw.xml.InsertResult;
 })
 public class InsertResultType implements InsertResult {
 
-    @XmlElement(name = "BriefRecord", required = true)
-    private List<BriefRecordType> briefRecord;
+    @XmlAnyElement(lax = true)
+    private List<Object> briefRecord;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     private String handleRef;
 
+    public InsertResultType() {
+
+    }
+
+    /**
+     * build a new Inserted result record view.
+     * briefRecord partameter is set to Object for JAXBContext purpose but it must be a BriefRecordType List
+     * (or Node List containing brief records) in order to pass XML validation
+     *
+     * @param briefRecord must be a BriefRecordTypeList
+     * @param handleRef
+     */
+    public InsertResultType(final List<Object> briefRecord, final String handleRef) {
+        this.briefRecord = briefRecord;
+        this.handleRef   = handleRef;
+    }
+
     /**
      * Gets the value of the briefRecord property.
      */
-    public List<BriefRecordType> getBriefRecord() {
+    public List<Object> getBriefRecord() {
         if (briefRecord == null) {
-            briefRecord = new ArrayList<BriefRecordType>();
+            briefRecord = new ArrayList<>();
         }
         return briefRecord;
     }
@@ -121,7 +138,7 @@ public class InsertResultType implements InsertResult {
 
         if (briefRecord != null) {
             s.append(briefRecord.size()).append(" briefRecord: ").append('\n');
-            for (BriefRecordType ins : briefRecord) {
+            for (Object ins : briefRecord) {
                 s.append(ins).append('\n');
             }
         }

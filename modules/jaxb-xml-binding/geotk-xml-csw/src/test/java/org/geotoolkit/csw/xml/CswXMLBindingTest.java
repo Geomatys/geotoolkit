@@ -19,24 +19,23 @@ package org.geotoolkit.csw.xml;
 // J2SE dependencies
 import java.io.IOException;
 import java.util.logging.Level;
-import org.geotoolkit.util.StringUtilities;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
+import org.xml.sax.SAXException;
 
 // JAXB dependencies
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-
-// Constellation dependencies
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.test.XMLComparator;
+
+// GeotoolKit dependencies
 import org.geotoolkit.csw.xml.v202.AbstractRecordType;
 import org.geotoolkit.csw.xml.v202.BriefRecordType;
 import org.geotoolkit.csw.xml.v202.Capabilities;
@@ -64,18 +63,22 @@ import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.ows.xml.v100.BoundingBoxType;
 import org.geotoolkit.ows.xml.v100.OperationsMetadata;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
+import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.csw.xml.v202.GetRecordsResponseType;
+import org.geotoolkit.csw.xml.v202.InsertResultType;
+import org.geotoolkit.csw.xml.v202.SearchResultsType;
+import org.geotoolkit.csw.xml.v202.TransactionResponseType;
+import org.geotoolkit.csw.xml.v202.TransactionSummaryType;
 
-// GeotoolKit dependencies
+// SIS dependencies
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.csw.xml.v202.GetRecordsResponseType;
-import org.geotoolkit.csw.xml.v202.SearchResultsType;
+import org.apache.sis.test.XMLComparator;
 
 //Junit dependencies
 import org.junit.*;
 import static org.junit.Assert.*;
-import org.xml.sax.SAXException;
 
 /**
  * A Test suite verifying that the Record are correctly marshalled/unmarshalled
@@ -1595,7 +1598,7 @@ public class CswXMLBindingTest {
 
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<csw:Capabilities version=\"2.0.2\"  xmlns:ows=\"http://www.opengis.net/ows\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\">\n" +
+        "<csw:Capabilities version=\"2.0.2\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\">\n" +
         " <ows:OperationsMetadata>\n" +
         "   <ows:ExtendedCapabilities>\n" +
         "     <ins:MultiLingualCapabilities xmlns:ins=\"http://www.inspire.org\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n" +
@@ -1684,5 +1687,116 @@ public class CswXMLBindingTest {
         assertEquals(expResult, result);
 
         pool.recycle(marshaller);
+    }
+
+
+    @Test
+    public void transactionResponseMarshalingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
+
+        Marshaller marshaller = pool.acquireMarshaller();
+
+        SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
+        SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
+        SimpleLiteral type       = new SimpleLiteral("clearinghouse");
+
+        List<BoundingBoxType> bbox = new ArrayList<>();
+        bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
+
+        Object record = new BriefRecordType(id, title, type, bbox);
+
+        final List<InsertResultType> inserteds = new ArrayList<>();
+        inserteds.add(new InsertResultType(Arrays.asList(record), null));
+
+        TransactionSummaryType summ = new TransactionSummaryType(2, 0, 1, "rid");
+        TransactionResponseType request = new TransactionResponseType(summ, inserteds, "2.0.2");
+
+
+         String expResult =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+        "<csw:TransactionResponse version=\"2.0.2\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:ows=\"http://www.opengis.net/ows\">\n" +
+        "  <csw:TransactionSummary requestId=\"rid\">\n" +
+        "    <csw:totalInserted>2</csw:totalInserted>\n" +
+        "    <csw:totalUpdated>0</csw:totalUpdated>\n" +
+        "    <csw:totalDeleted>1</csw:totalDeleted>\n" +
+        "  </csw:TransactionSummary>\n" +
+        "  <csw:InsertResult>\n" +
+        "    <csw:BriefRecord>\n" +
+        "      <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "      <dc:title>(JASON-1)</dc:title>\n" +
+        "      <dc:type>clearinghouse</dc:type>\n" +
+        "      <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "        <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "        <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "      </ows:WGS84BoundingBox>\n" +
+        "    </csw:BriefRecord>\n" +
+        "  </csw:InsertResult>\n" +
+        "</csw:TransactionResponse>\n";
+
+        StringWriter sw = new StringWriter();
+        marshaller.marshal(request, sw);
+
+        String result = sw.toString();
+
+        XMLComparator comparator = new XMLComparator(expResult, result);
+        comparator.ignoredAttributes.add("xmlns:*");
+        comparator.compare();
+
+        pool.recycle(marshaller);
+    }
+
+    /**
+     * Test simple Record Marshalling.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void transactionResponseUnmarshalingTest() throws JAXBException {
+
+        Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+
+
+        String xml =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+        "<csw:TransactionResponse version=\"2.0.2\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:ows=\"http://www.opengis.net/ows\">\n" +
+        "  <csw:TransactionSummary requestId=\"rid\">\n" +
+        "    <csw:totalInserted>2</csw:totalInserted>\n" +
+        "    <csw:totalUpdated>0</csw:totalUpdated>\n" +
+        "    <csw:totalDeleted>1</csw:totalDeleted>\n" +
+        "  </csw:TransactionSummary>\n" +
+        "  <csw:InsertResult>\n" +
+        "    <csw:BriefRecord>\n" +
+        "      <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>\n" +
+        "      <dc:title>(JASON-1)</dc:title>\n" +
+        "      <dc:type>clearinghouse</dc:type>\n" +
+        "      <ows:WGS84BoundingBox dimensions=\"2\">\n" +
+        "        <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>\n" +
+        "        <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>\n" +
+        "      </ows:WGS84BoundingBox>\n" +
+        "    </csw:BriefRecord>\n" +
+        "  </csw:InsertResult>\n" +
+        "</csw:TransactionResponse>\n";
+
+        TransactionResponseType result = ((JAXBElement<TransactionResponseType>) unmarshaller.unmarshal(new StringReader(xml))).getValue();
+
+        SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
+        SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
+        SimpleLiteral type       = new SimpleLiteral("clearinghouse");
+
+        List<BoundingBoxType> bbox = new ArrayList<>();
+        bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
+
+        Object record = new BriefRecordType(id, title, type, bbox);
+
+        final List<InsertResultType> inserteds = new ArrayList<>();
+        inserteds.add(new InsertResultType(Arrays.asList(record), null));
+
+        TransactionSummaryType summ = new TransactionSummaryType(2, 0, 1, "rid");
+        TransactionResponseType expResult = new TransactionResponseType(summ, inserteds, "2.0.2");
+
+        assertEquals(expResult.getTransactionSummary(), result.getTransactionSummary());
+        assertEquals(expResult.getInsertResult(), result.getInsertResult());
+        assertEquals(expResult, result);
+
+        pool.recycle(unmarshaller);
     }
 }
