@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -58,7 +60,9 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableModel;
 import org.geotoolkit.coverage.CoverageReference;
 
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -165,7 +169,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
-    private final ColorMapModel model = new ColorMapModel();
+    private ColorMapModel model = new InterpolateColorModel(Collections.EMPTY_LIST);
     private MapLayer layer = null;
     //keep track of where the symbolizer was to avoid rewriting the complete style
     private MutableRule parentRule = null;
@@ -173,22 +177,10 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
     public JRasterColorMapStylePanel() {
         initComponents();
-        guiTable.setModel(model);
-
         guiPalette.setModel(new ListComboBoxModel(PALETTES));
         guiPalette.setRenderer(new PaletteCellRenderer());
         guiPalette.setSelectedIndex(0);
-
-        guiTable.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer());
-        guiTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JTextField()));
-        guiTable.getColumnModel().getColumn(1).setCellRenderer(new ColorCellRenderer());
-        guiTable.getColumnModel().getColumn(1).setCellEditor(new ColorCellEditor());
-        guiTable.getColumnModel().getColumn(2).setCellRenderer(new DeleteRenderer());
-        guiTable.getColumnModel().getColumn(2).setCellEditor(new DeleteEditor());
-
         guiTable.setShowGrid(false, false);
-
-        guiTable.getColumnExt(2).setMaxWidth(20);
     }
 
     private void parse(){
@@ -216,38 +208,6 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             }
         }
 
-        guiInterpolate.setSelected(true);
-        List<InterpolationPoint> points = null;
-        if(rs != null && rs.getColorMap() != null){
-            guiName.setText(rs.getName());
-            guiDesc.setText(rs.getDescription()== null ? "" : ((rs.getDescription().getTitle()==null) ? "" : rs.getDescription().getTitle().toString()));
-            final Function fct = rs.getColorMap().getFunction();
-            if(fct instanceof Interpolate){
-                guiInterpolate.setSelected(true);
-                points = ((Interpolate)fct).getInterpolationPoints();
-            }else if(fct instanceof Categorize){
-                guiInterpolate.setSelected(false);
-                final Map<Expression,Expression> th = ((Categorize)fct).getThresholds();
-                if(th!=null){
-                    points = new ArrayList<>();
-                    final Iterator<Entry<Expression,Expression>> ite = th.entrySet().iterator();
-                    int i=0;
-                    Entry<Expression,Expression> previous = null;
-                    while(ite.hasNext()){
-                        final Entry<Expression,Expression> entry = ite.next();
-                        if(i!=0){
-                            final Number data = entry.getKey().evaluate(null, Number.class);
-                            final InterpolationPoint ip = SF.interpolationPoint(data, previous.getValue());
-                            points.add(ip);
-                        }
-                        previous = entry;
-                        i++;
-                    }
-                }
-            }
-        }
-
-
         //find channel
         if(rs!=null){
             final ChannelSelection selection = rs.getChannelSelection();
@@ -258,15 +218,48 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                     try{
                         guiBand.setValue(Integer.valueOf(sct.getChannelName()));
                     }catch(Exception ex){ //nullpointer or numberformat exception
-                        LOGGER.log(Level.INFO, "chanel name is not a number : "+sct.getChannelName());
+                        LOGGER.log(Level.INFO, "chanel name is not a number : {0}", sct.getChannelName());
                     }
                 }
             }
         }
 
-        model.points.clear();
-        if(points != null){
-            model.points.addAll(points);
+
+        guiInterpolate.setSelected(true);
+        if(rs != null && rs.getColorMap() != null){
+            guiName.setText(rs.getName());
+            guiDesc.setText(rs.getDescription()== null ? "" : ((rs.getDescription().getTitle()==null) ? "" : rs.getDescription().getTitle().toString()));
+            final Function fct = rs.getColorMap().getFunction();
+            if(fct instanceof Interpolate){
+                guiInterpolate.setSelected(true);
+                final List<InterpolationPoint> points = ((Interpolate)fct).getInterpolationPoints();
+
+                model = new InterpolateColorModel(points);
+                guiTable.setModel(model);
+                guiTable.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer());
+                guiTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JTextField()));
+                guiTable.getColumnModel().getColumn(1).setCellRenderer(new ColorCellRenderer());
+                guiTable.getColumnModel().getColumn(1).setCellEditor(new ColorCellEditor());
+                guiTable.getColumnModel().getColumn(2).setCellRenderer(new DeleteRenderer());
+                guiTable.getColumnModel().getColumn(2).setCellEditor(new DeleteEditor());
+                guiTable.getColumnExt(2).setMaxWidth(20);
+
+            }else if(fct instanceof Categorize){
+                guiInterpolate.setSelected(false);
+                final Map<Expression,Expression> th = ((Categorize)fct).getThresholds();
+
+                model = new CategorizeColorModel(th);
+                guiTable.setModel(model);
+                guiTable.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer());
+                guiTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JTextField()));
+                guiTable.getColumnModel().getColumn(1).setCellRenderer(new ColorCellRenderer());
+                guiTable.getColumnModel().getColumn(1).setCellEditor(new ColorCellEditor());
+                guiTable.getColumnModel().getColumn(2).setCellRenderer(new DefaultTableCellRenderer());
+                guiTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(new JTextField()));
+                guiTable.getColumnModel().getColumn(3).setCellRenderer(new DeleteRenderer());
+                guiTable.getColumnModel().getColumn(3).setCellEditor(new DeleteEditor());
+                guiTable.getColumnExt(3).setMaxWidth(20);
+            }
         }
 
         if(layer instanceof CoverageMapLayer){
@@ -291,7 +284,6 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         revalidate();
         repaint();
 
-        model.fireTableDataChanged();
     }
 
 
@@ -467,13 +459,12 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
     // End of variables declaration//GEN-END:variables
 
     private void guiAddOneActionPerformed(final ActionEvent evt) {
-        final InterpolationPoint pt = SF.interpolationPoint(Float.NaN, SF.literal(Color.BLACK));
-        model.points.add(pt);
+        model.addValue(Float.NaN, Color.BLACK);
         model.fireTableDataChanged();
     }
 
     private void guiRemoveAllActionPerformed(final ActionEvent evt) {
-        model.points.clear();
+        model.removeAll();
         model.fireTableDataChanged();
     }
 
@@ -483,11 +474,11 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             return;
         }
 
-        model.points.clear();
+        model.removeAll();
 
         //add the NaN if specified
-        if(guiNaN.isSelected()){
-            model.points.add(SF.interpolationPoint(Float.NaN, SF.literal(new Color(0, 0, 0, 0))));
+        if(guiNaN.isSelected() && guiInterpolate.isSelected()){
+            model.addValue(Float.NaN, new Color(0, 0, 0, 0));
         }
 
         boolean mustInterpolation = true;
@@ -518,10 +509,10 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         }
 
         if(guiInvert.isSelected()){
-            final List<Entry<Double, Color>> inverted = new ArrayList<Entry<Double, Color>>();
+            final List<Entry<Double, Color>> inverted = new ArrayList<>();
             for(int i=0,n=steps.size();i<n;i++){
                 final double k = steps.get(i).getKey();
-                inverted.add(new SimpleImmutableEntry<Double, Color>(
+                inverted.add(new SimpleImmutableEntry<>(
                         k, steps.get(n-1-i).getValue()));
             }
             steps = inverted;
@@ -550,9 +541,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                             } else {
                                 for(int s=0,l=steps.size();s<l;s++){
                                     final Entry<Double, Color> step = steps.get(s);
-                                    model.points.add(SF.interpolationPoint(
-                                            min + (step.getKey()*(max-min)),
-                                            SF.literal(step.getValue())));
+                                    model.addValue(min + (step.getKey()*(max-min)), step.getValue());
                                 }
                             }
                         }
@@ -562,8 +551,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                 }else{
                     for(int s=0,l=steps.size();s<l;s++){
                         final Entry<Double, Color> step = steps.get(s);
-                        model.points.add(SF.interpolationPoint(
-                                step.getKey(), SF.literal(step.getValue())));
+                        model.addValue(step.getKey(), step.getValue());
                     }
                 }
 
@@ -621,23 +609,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         final Expression lookup = DEFAULT_CATEGORIZE_LOOKUP;
         final Literal fallback = DEFAULT_FALLBACK;
 
-        final Function function;
-        if(guiInterpolate.isSelected()){
-            function = SF.interpolateFunction(
-                    lookup, new ArrayList<>(model.points), Method.COLOR, Mode.LINEAR, fallback);
-        }else{
-            final List<InterpolationPoint> points = model.points;
-            final Map<Expression,Expression> values = new HashMap<>();
-            for(int i=0,n=points.size();i<n;i++){
-                if(i==0){
-                    values.put(StyleConstants.CATEGORIZE_LESS_INFINITY, points.get(i).getValue());
-                }else{
-                    values.put(FF.literal(points.get(i-1).getData()), points.get(i).getValue());
-                }
-            }
-
-            function = SF.categorizeFunction(lookup, values, ThreshholdsBelongTo.PRECEDING, fallback);
-        }
+        final Function function = model.createFunction();
 
         final ChannelSelection selection = SF.channelSelection(
                 SF.selectedChannelType(String.valueOf(guiBand.getValue()),DEFAULT_CONTRAST_ENHANCEMENT));
@@ -710,9 +682,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
         for(int s=0,l=steps.size();s<l;s++){
             final Entry<Double, Color> step = steps.get(s);
-            model.points.add(SF.interpolationPoint(
-                    min + (step.getKey()*(max-min)),
-                    SF.literal(step.getValue())));
+            model.addValue(min + (step.getKey()*(max-min)), step.getValue());
         }
     }
 
@@ -722,7 +692,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         @Override
         public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            DeleteRenderer.this.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_REMOVE, 16, Color.BLACK));
+            DeleteRenderer.this.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, Color.BLACK));
             return DeleteRenderer.this;
         }
 
@@ -741,7 +711,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    model.points.remove(row);
+                    model.remove(row);
                     fireEditingCanceled();
                     model.fireTableDataChanged();
                 }
@@ -762,9 +732,33 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
     }
 
-    private class ColorMapModel extends AbstractTableModel{
+    private abstract class ColorMapModel extends AbstractTableModel{
+
+        public abstract void addValue(Number value, Color color);
+
+        public abstract void remove(int row);
+
+        public abstract void removeAll();
+
+        public abstract Function createFunction();
+
+    }
+
+    private class InterpolateColorModel extends ColorMapModel{
+
+        final Comparator<InterpolationPoint> COMP = new Comparator<InterpolationPoint>() {
+            @Override
+            public int compare(InterpolationPoint o1, InterpolationPoint o2) {
+                return (int)Math.signum( (o1.getData().doubleValue() - o2.getData().doubleValue()));
+            }
+        };
 
         private final List<InterpolationPoint> points = new ArrayList<>();
+
+        public InterpolateColorModel(List<InterpolationPoint> points) {
+            this.points.addAll(points);
+            Collections.sort(this.points,COMP);
+        }
 
         @Override
         public int getRowCount() {
@@ -797,8 +791,8 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         @Override
         public String getColumnName(final int columnIndex) {
             switch(columnIndex){
-                case 0: return "value";
-                case 1: return "color";
+                case 0: return MessageBundle.getString("style.rastersymbolizer.value");
+                case 1: return MessageBundle.getString("style.rastersymbolizer.color");
             }
             return "";
         }
@@ -825,8 +819,191 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             }
 
             points.set(rowIndex, pt);
+            Collections.sort(points,COMP);
+            fireTableDataChanged();
+        }
+
+        @Override
+        public void addValue(Number value, Color color) {
+            final InterpolationPoint pt = SF.interpolationPoint(Float.NaN, SF.literal(Color.BLACK));
+            points.add(pt);
+            Collections.sort(points,COMP);
+            fireTableDataChanged();
+        }
+
+        @Override
+        public void removeAll() {
+            points.clear();
+            fireTableDataChanged();
+        }
+
+        @Override
+        public void remove(int row) {
+            points.remove(row);
+            fireTableDataChanged();
+        }
+
+        @Override
+        public Function createFunction() {
+            final Expression lookup = DEFAULT_CATEGORIZE_LOOKUP;
+            final Literal fallback = DEFAULT_FALLBACK;
+
+            return SF.interpolateFunction(lookup, new ArrayList<>(points),
+                    Method.COLOR, Mode.LINEAR, fallback);
         }
 
     }
+
+    private class CategorizeColorModel extends ColorMapModel{
+
+        final Comparator<Entry<Expression,Expression>> COMP = new Comparator<Entry<Expression, Expression>>() {
+
+            @Override
+            public int compare(Entry<Expression, Expression> o1, Entry<Expression, Expression> o2) {
+                final Double d0 = o1.getKey().evaluate(null, Double.class);
+                final Double d1 = o2.getKey().evaluate(null, Double.class);
+                if(d0==null) return -1;
+                if(d1==null) return +1;
+                return d0.compareTo(d1);
+            }
+        };
+
+        private final List<Entry<Expression,Expression>> ths = new ArrayList<>();
+
+        public CategorizeColorModel(Map<Expression,Expression> map) {
+            ths.addAll(map.entrySet());
+            Collections.sort(ths,COMP);
+        }
+
+        @Override
+        public int getRowCount() {
+            return ths.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 4;
+        }
+
+        @Override
+        public boolean isCellEditable(final int rowIndex, final int columnIndex) {
+            if(columnIndex==3){
+                //first and last (infinite) rows can not be removed
+                return rowIndex > 0 && rowIndex < ths.size()-1;
+            }else if(columnIndex==2){
+                //a copy of the next threholds value, can not be removed
+                return false;
+            }else if(columnIndex==1){
+                //color column
+                return true;
+            }else{
+                //first column
+                return rowIndex>0;
+            }
+        }
+
+        @Override
+        public Object getValueAt(final int rowIndex, final int columnIndex) {
+            if(columnIndex==2){
+                //return next column value if any
+                if(rowIndex<ths.size()-1){
+                    return getValueAt(rowIndex+1, 0);
+                }else{
+                    //last line +infinity
+                    return Double.POSITIVE_INFINITY;
+                }
+            }else if(columnIndex==3){
+                //delete column
+                return "";
+            }else if(columnIndex==1){
+                //color column
+                final Entry<Expression, Expression> entry = ths.get(rowIndex);
+                return entry.getValue().evaluate(null, Color.class);
+            }else{
+                //thresdhold value
+                final Entry<Expression, Expression> entry = ths.get(rowIndex);
+                Number n = entry.getKey().evaluate(null, Number.class);
+                if(n==null) n = Double.NEGATIVE_INFINITY;
+                return n;
+            }
+        }
+
+        @Override
+        public String getColumnName(final int columnIndex) {
+            switch(columnIndex){
+                case 0: return MessageBundle.getString("style.rastersymbolizer.lower");
+                case 1: return MessageBundle.getString("style.rastersymbolizer.color");
+                case 2: return MessageBundle.getString("style.rastersymbolizer.upper");
+            }
+            return "";
+        }
+
+        @Override
+        public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex) {
+            Entry<Expression,Expression> th = ths.get(rowIndex);
+            switch(columnIndex){
+                case 0:
+                    Number n = Converters.convert(aValue, Number.class);
+                    if(n == null){
+                        n = Float.NaN;
+                    }
+                    th = new AbstractMap.SimpleEntry<>((Expression)FF.literal(n),th.getValue());
+                    break;
+                case 1:
+                    Color c = (Color) aValue;
+                    if(c == null){
+                        c = new Color(0, 0, 0, 0);
+                    }
+                    th = new AbstractMap.SimpleEntry<>(th.getKey(),(Expression)SF.literal(c));
+                    break;
+            }
+
+            ths.set(rowIndex, th);
+            Collections.sort(ths,COMP);
+            fireTableDataChanged();
+        }
+
+        @Override
+        public void addValue(Number value, Color color) {
+            Entry<Expression,Expression> th = new AbstractMap.SimpleEntry<>(
+                    (Expression)FF.literal(value),(Expression)SF.literal(color));
+            ths.add(th);
+            Collections.sort(ths,COMP);
+            fireTableDataChanged();
+        }
+
+        @Override
+        public void removeAll() {
+            ths.clear();
+            Entry<Expression,Expression> th1 = new AbstractMap.SimpleEntry<>(
+                    (Expression)StyleConstants.CATEGORIZE_LESS_INFINITY,(Expression)SF.literal(new Color(0f,0f,0f,0f)));
+            Entry<Expression,Expression> th2 = new AbstractMap.SimpleEntry<>(
+                    (Expression)FF.literal(0d),(Expression)SF.literal(new Color(0f,0f,0f,0f)));
+            ths.add(th1);
+            ths.add(th2);
+            fireTableDataChanged();
+        }
+
+        @Override
+        public void remove(int row) {
+            ths.remove(row);
+            fireTableDataChanged();
+        }
+
+        @Override
+        public Function createFunction() {
+            final Expression lookup = DEFAULT_CATEGORIZE_LOOKUP;
+            final Literal fallback = DEFAULT_FALLBACK;
+
+            final Map<Expression,Expression> map = new HashMap<>();
+            for(Entry<Expression,Expression> exp : ths){
+                map.put(exp.getKey(), exp.getValue());
+            }
+
+            return SF.categorizeFunction(lookup, map, ThreshholdsBelongTo.PRECEDING, fallback);
+        }
+
+    }
+
 
 }
