@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ogc.xml;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -43,6 +44,7 @@ import org.geotoolkit.ogc.xml.v110.SortByType;
 import org.geotoolkit.ogc.xml.v110.SortPropertyType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.util.Converters;
 
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
@@ -510,14 +512,23 @@ public class OGC110toGTTransformer {
         final List<Object> content = type.getContent();
 
         for(Object obj : content){
-            if(obj != null && !obj.toString().trim().isEmpty()){
-                //try to convert it to a number
-                try{
-                    obj = Double.valueOf(obj.toString().trim());
-                }catch(NumberFormatException ex){
-                }
+            if(obj != null){
+                final String str = obj.toString().trim();
+                if(!str.isEmpty()){
+                    if(str.charAt(0) == '#'){
+                        //try to convert it to a color
+                        Color c = Converters.convert(str, Color.class);
+                        if(c!=null) obj = c;
+                    }else{
+                        //try to convert it to a number
+                        try{
+                            obj = Double.valueOf(str);
+                        }catch(NumberFormatException ex){
+                        }
+                    }
 
-                return filterFactory.literal(obj);
+                    return filterFactory.literal(obj);
+                }
             }
         }
         return filterFactory.literal("");

@@ -50,6 +50,7 @@ import org.opengis.filter.expression.Literal;
 
 import static org.geotoolkit.style.StyleConstants.*;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.util.Converters;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
@@ -76,15 +77,16 @@ import static org.opengis.filter.expression.Expression.*;
  * @module pending
  */
 public class DefaultCategorize extends AbstractExpression implements Categorize {
-    
-    private final Comparator<Expression> comparator = new Comparator<Expression>() {
+
+    private static final Object NEG_INF = StyleConstants.CATEGORIZE_LESS_INFINITY.getValue();
+    private static final Comparator<Expression> COMPARATOR = new Comparator<Expression>() {
 
         @Override
         public int compare(Expression exp1, Expression exp2) {
-            if(exp1.equals(StyleConstants.CATEGORIZE_LESS_INFINITY)){
+            if(exp1 instanceof Literal && ((Literal)exp1).getValue().equals(NEG_INF)){
                 //categorize less is always first
                 return -1;
-            }else if(exp2.equals(StyleConstants.CATEGORIZE_LESS_INFINITY)){
+            }else if(exp2 instanceof Literal && ((Literal)exp2).getValue().equals(NEG_INF)){
                 //categorize less is always first
                 return +1;
             }else{
@@ -102,13 +104,13 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
             }
         }
     };
-    
+
     private final Expression lookup;
-    private final TreeMap<Expression,Expression> values = new TreeMap<Expression, Expression>(comparator);
+    private final TreeMap<Expression,Expression> values = new TreeMap<>(COMPARATOR);
     private final ThreshholdsBelongTo belongTo;
     private final Literal fallback;
-    
-    
+
+
     /**
      * Make the instance of FunctionName available in
      * a consistent spot.
@@ -144,16 +146,16 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
     };
 
     public DefaultCategorize(final Expression ... expressions){
-                
+
         lookup = expressions[0];
         this.values.put(CATEGORIZE_LESS_INFINITY, expressions[1]);
-        
+
         if(expressions.length%2 == 0){
             for(int i=2;i<expressions.length;i+=2){
                 this.values.put(expressions[i], expressions[i+1]);
             }
             this.belongTo = ThreshholdsBelongTo.SUCCEEDING;
-            
+
         }else{
             for(int i=2;i<expressions.length-1;i+=2){
                 this.values.put(expressions[i], expressions[i+1]);
@@ -161,15 +163,15 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
             final ThreshholdsBelongTo to = ThreshholdsBelongTo.parse(expressions[expressions.length-1].evaluate(null, String.class));
             this.belongTo = (to==null) ? ThreshholdsBelongTo.SUCCEEDING : to;
         }
-        
+
         this.fallback = DEFAULT_FALLBACK;
-        
+
         if(this.values.keySet().iterator().next() != CATEGORIZE_LESS_INFINITY){
             throw new  IllegalArgumentException("Values must hold at least one key : CATEGORIZE_LESS_INFINITY");
         }
-        
+
     }
-    
+
     /**
      *
      * @param LookUpValue
@@ -177,24 +179,24 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
      * @param belongs
      * @param fallback
      */
-    public DefaultCategorize(final Expression LookUpValue, final Map<Expression,Expression> values, 
+    public DefaultCategorize(final Expression LookUpValue, final Map<Expression,Expression> values,
             final ThreshholdsBelongTo belongs, final Literal fallback){
-                
+
         if(values == null || values.isEmpty()){
             throw new IllegalArgumentException("Values can't be empty");
         }
-        
+
         this.lookup = (LookUpValue == null || LookUpValue == NIL) ?  DEFAULT_CATEGORIZE_LOOKUP : LookUpValue;
         this.values.putAll(values);
         this.belongTo = (belongs == null) ? ThreshholdsBelongTo.SUCCEEDING :belongs;
         this.fallback = (fallback == null) ? DEFAULT_FALLBACK : fallback;
-        
+
         if(this.values.keySet().iterator().next() != CATEGORIZE_LESS_INFINITY){
             throw new  IllegalArgumentException("Values must hold at least one key : CATEGORIZE_LESS_INFINITY");
         }
-        
+
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -202,7 +204,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
     public Expression getLookupValue(){
         return lookup;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -210,7 +212,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
     public Map<Expression,Expression> getThresholds() {
         return Collections.unmodifiableMap(values);
     }
-        
+
     /**
      * {@inheritDoc }
      */
@@ -218,7 +220,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
     public ThreshholdsBelongTo getBelongTo(){
         return belongTo;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -270,17 +272,17 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         final Object candidate;
         final Double value;
         if(object instanceof Feature){
-            
+
             final Feature f = (Feature)object;
             candidate = f;
             value = lookup.evaluate(f,Double.class);
-            final Expression exp = new DefaultLiteral<Double>(value);
+            final Expression exp = new DefaultLiteral<>(value);
 
-            final boolean b = this.belongTo == belongTo.SUCCEEDING;
+            final boolean b = this.belongTo == ThreshholdsBelongTo.SUCCEEDING;
 
             final Expression closest = values.headMap(exp,!b).lastEntry().getValue();
             return closest.evaluate(f,c);
-            
+
         } else if (object instanceof RenderedImage) {
             return evaluateImage((RenderedImage) object);
         }else if(object instanceof Number){
@@ -291,10 +293,10 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         }else{
             return null;
         }
-        
-        final Expression exp = new DefaultLiteral<Double>(value);
 
-        final boolean b = this.belongTo == belongTo.SUCCEEDING;
+        final Expression exp = new DefaultLiteral<>(value);
+
+        final boolean b = this.belongTo == ThreshholdsBelongTo.SUCCEEDING;
 
         final Expression closest = values.headMap(exp,!b).lastEntry().getValue();
         return closest.evaluate(candidate,c);
@@ -376,16 +378,16 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         final ImageLayout layout = new ImageLayout().setColorModel(model);
         return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
     }
-    
+
     /**
-     * 
+     *
      * @param ARGB array of <code>int</code>
      * @return an array of <code>int</code>
      */
     private int[] transformColormap(final int[] ARGB) {
-        
+
         final Map<Expression,Expression> categorizes = getThresholds();
-        final List<Expression> keys = new ArrayList<Expression>(categorizes.keySet());
+        final List<Expression> keys = new ArrayList<>(categorizes.keySet());
         final double[] SE_VALUES = new double[keys.size()];
         final int[] SE_ARGB = new int[keys.size()];
 
@@ -426,8 +428,8 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
         }
         return ARGB;
     }
-    
-    
+
+
     /**
      * {@inheritDoc }
      */
@@ -435,5 +437,5 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
     public Literal getFallbackValue() {
         return fallback;
     }
-    
+
 }

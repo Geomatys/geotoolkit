@@ -17,6 +17,7 @@
 package org.geotoolkit.style.ogc;
 
 import com.vividsolutions.jts.geom.Polygon;
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -24,6 +25,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import junit.framework.TestCase;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -116,6 +119,7 @@ public class OGCforSLD110Test extends TestCase{
     private static File FILE_EXP_DIV = null;
     private static File FILE_EXP_PROPERTYNAME = null;
     private static File FILE_EXP_LITERAL = null;
+    private static File FILE_EXP_LITERAL_COLOR = null;
     private static File FILE_EXP_FUNCTION = null;
 
     private static File TEST_FILE_EXP_ADD = null;
@@ -124,6 +128,7 @@ public class OGCforSLD110Test extends TestCase{
     private static File TEST_FILE_EXP_DIV = null;
     private static File TEST_FILE_EXP_PROPERTYNAME = null;
     private static File TEST_FILE_EXP_LITERAL = null;
+    private static File TEST_FILE_EXP_LITERAL_COLOR = null;
     private static File TEST_FILE_EXP_FUNCTION = null;
 
     private static File FILE_FIL_COMP_ISBETWEEN = null;
@@ -198,6 +203,7 @@ public class OGCforSLD110Test extends TestCase{
             FILE_EXP_DIV = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Expression_Div.xml").toURI() );
             FILE_EXP_PROPERTYNAME = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Expression_PropertyName.xml").toURI() );
             FILE_EXP_LITERAL = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Expression_Literal.xml").toURI() );
+            FILE_EXP_LITERAL_COLOR = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Expression_LiteralColor.xml").toURI() );
             FILE_EXP_FUNCTION = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Expression_Function.xml").toURI() );
 
             FILE_FIL_COMP_ISBETWEEN = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Comparison_PropertyIsBetween.xml").toURI() );
@@ -268,6 +274,7 @@ public class OGCforSLD110Test extends TestCase{
             TEST_FILE_EXP_DIV = File.createTempFile("test_exp_div_v110", ".xml");
             TEST_FILE_EXP_PROPERTYNAME = File.createTempFile("test_exp_propertyname_v110", ".xml");
             TEST_FILE_EXP_LITERAL = File.createTempFile("test_exp_literal_v110", ".xml");
+            TEST_FILE_EXP_LITERAL_COLOR = File.createTempFile("test_exp_literal_v110", ".xml");
             TEST_FILE_EXP_FUNCTION = File.createTempFile("test_exp_function_v110", ".xml");
 
             TEST_FILE_FIL_COMP_ISBETWEEN = File.createTempFile("test_fil_comp_isbetween_v110", ".xml");
@@ -306,6 +313,7 @@ public class OGCforSLD110Test extends TestCase{
             TEST_FILE_EXP_DIV.deleteOnExit();
             TEST_FILE_EXP_PROPERTYNAME.deleteOnExit();
             TEST_FILE_EXP_LITERAL.deleteOnExit();
+            TEST_FILE_EXP_LITERAL_COLOR.deleteOnExit();
             TEST_FILE_EXP_FUNCTION.deleteOnExit();
 
             TEST_FILE_FIL_COMP_ISBETWEEN.deleteOnExit();
@@ -453,6 +461,37 @@ public class OGCforSLD110Test extends TestCase{
         assertEquals(Float.valueOf(str), valueF);
 
         MARSHALLER.marshal(jax, TEST_FILE_EXP_LITERAL);
+        POOL.recycle(MARSHALLER);
+        POOL.recycle(UNMARSHALLER);
+    }
+
+    @Test
+    public void testExpLiteralColor() throws JAXBException{
+        final Unmarshaller UNMARSHALLER = POOL.acquireUnmarshaller();
+        final Marshaller MARSHALLER     = POOL.acquireMarshaller();
+
+        //Read test
+        Object obj = UNMARSHALLER.unmarshal(FILE_EXP_LITERAL_COLOR);
+        assertNotNull(obj);
+
+        JAXBElement<LiteralType> jax = (JAXBElement<LiteralType>) obj;
+        Literal exp = (Literal) TRANSFORMER_GT.visitExpression(jax);
+        assertNotNull(exp);
+
+        Object value = exp.getValue();
+        assertEquals(new Color(255, 0, 255), value);
+
+        //Write test
+        ParameterValueType pvt = TRANSFORMER_OGC.visitExpression(exp);
+        assertNotNull(pvt);
+
+        jax = (JAXBElement<LiteralType>) pvt.getContent().get(0);
+        assertNotNull(jax);
+
+        String str = jax.getValue().getContent().get(0).toString().trim();
+        assertEquals("#FF00FF", str);
+
+        MARSHALLER.marshal(jax, TEST_FILE_EXP_LITERAL_COLOR);
         POOL.recycle(MARSHALLER);
         POOL.recycle(UNMARSHALLER);
     }

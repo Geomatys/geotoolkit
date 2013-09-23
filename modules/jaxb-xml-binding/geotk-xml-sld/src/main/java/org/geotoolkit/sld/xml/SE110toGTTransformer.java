@@ -1180,7 +1180,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             belongs = ThreshholdsBelongTo.SUCCEEDING;
         }
 
-        final Map<Expression,Expression> values = new HashMap<Expression,Expression>();
+        final Map<Expression,Expression> values = new HashMap<>();
         values.put(StyleConstants.CATEGORIZE_LESS_INFINITY, value);
         final List<JAXBElement<ParameterValueType>> elements = categorize.getThresholdAndTValue();
         for(int i=0, n=elements.size(); i<n;){

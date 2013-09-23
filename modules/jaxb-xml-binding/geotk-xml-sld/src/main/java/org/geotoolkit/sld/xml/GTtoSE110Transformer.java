@@ -18,11 +18,13 @@ package org.geotoolkit.sld.xml;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import java.awt.Color;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.quantity.Length;
@@ -135,6 +137,7 @@ import org.geotoolkit.se.xml.vext.JenksType;
 import org.geotoolkit.se.xml.vext.PatternSymbolizerType;
 import org.geotoolkit.se.xml.vext.RangeType;
 import org.geotoolkit.se.xml.vext.RecolorType;
+import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.ColorItem;
 import org.geotoolkit.style.function.Interpolate;
@@ -144,6 +147,7 @@ import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.RecolorFunction;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
+import org.geotoolkit.util.Converters;
 
 import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
@@ -273,7 +277,11 @@ public class GTtoSE110Transformer implements StyleVisitor {
             jax = ogc_factory.createMul(bot);
         } else if (exp instanceof Literal) {
             final LiteralType literal = ogc_factory.createLiteralType();
-            literal.setContent(((Literal) exp).getValue().toString());
+            Object value = ((Literal) exp).getValue();
+            if(value instanceof Color){
+                value = colorToString((Color)value);
+            }
+            literal.setContent(value.toString());
             jax = ogc_factory.createLiteral(literal);
         } else if (exp instanceof Add) {
             final Add add = (Add) exp;
@@ -328,6 +336,26 @@ public class GTtoSE110Transformer implements StyleVisitor {
 
 
         return jax;
+    }
+
+    private static String colorToString(Color color){
+        String redCode = Integer.toHexString(color.getRed());
+        String greenCode = Integer.toHexString(color.getGreen());
+        String blueCode = Integer.toHexString(color.getBlue());
+        if (redCode.length() == 1)      redCode = "0" + redCode;
+        if (greenCode.length() == 1)    greenCode = "0" + greenCode;
+        if (blueCode.length() == 1)     blueCode = "0" + blueCode;
+
+        final String colorCode;
+        int alpha = color.getAlpha();
+        if(alpha != 255){
+            String alphaCode = Integer.toHexString(alpha);
+            if (alphaCode.length() == 1) alphaCode = "0" + alphaCode;
+            colorCode = "#" + alphaCode + redCode + greenCode + blueCode;
+        }else{
+            colorCode = "#" + redCode + greenCode + blueCode;
+        }
+        return colorCode.toUpperCase();
     }
 
     /**
@@ -1533,16 +1561,21 @@ public class GTtoSE110Transformer implements StyleVisitor {
         }
 
         final Map<Expression, Expression> steps = categorize.getThresholds();
-        final Iterator<Expression> ite = steps.keySet().iterator();
-        type.setValue(visitExpression(ite.next()));
 
         final List<JAXBElement<ParameterValueType>> elements = type.getThresholdAndTValue();
         elements.clear();
-        while (ite.hasNext()) {
-            final Expression key = ite.next();
-            final Expression val = steps.get(key);
-            elements.add(se_factory.createThreshold(visitExpression(key)));
-            elements.add(se_factory.createTValue(visitExpression(val)));
+        int i=0;
+        for(Entry<Expression,Expression> entry : steps.entrySet()){
+            final Expression key = entry.getKey();
+            final Expression val = entry.getValue();
+            if(i==0){
+                //first element is for -infinity
+                type.setValue(visitExpression(val));
+            }else{
+                elements.add(se_factory.createThreshold(visitExpression(key)));
+                elements.add(se_factory.createTValue(visitExpression(val)));
+            }
+            i++;
         }
 
         return type;
