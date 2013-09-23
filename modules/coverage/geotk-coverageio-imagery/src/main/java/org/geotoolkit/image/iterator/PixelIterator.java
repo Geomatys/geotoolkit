@@ -153,7 +153,7 @@ public abstract class PixelIterator {
         }
         this.rasterNumBand = raster.getNumBands();
         this.fixedNumBand = this.rasterNumBand;
-        if(areaIterateMinX > areaIterateMaxX || areaIterateMinY > areaIterateMaxY)
+        if(areaIterateMinX >= areaIterateMaxX || areaIterateMinY >= areaIterateMaxY)
             throw new IllegalArgumentException("invalid subArea coordinate no intersection between it and raster"+raster+subArea);
         this.band = -1;
         tX = tY  = 0;
@@ -198,7 +198,7 @@ public abstract class PixelIterator {
         }
 
         //intersection test
-        if (areaIterateMinX > areaIterateMaxX || areaIterateMinY > areaIterateMaxY)
+        if (areaIterateMinX >= areaIterateMaxX || areaIterateMinY >= areaIterateMaxY)
             throw new IllegalArgumentException("invalid subArea coordinate no intersection between it and RenderedImage"+renderedImage+subArea);
 
         //tiles attributs
