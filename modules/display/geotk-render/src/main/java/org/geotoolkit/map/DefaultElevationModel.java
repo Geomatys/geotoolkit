@@ -32,23 +32,16 @@ final class DefaultElevationModel implements ElevationModel{
 
 
     private final GridCoverageReader coverage;
-    private final Expression offset;
-    private final Expression scale;
+    private final double scale;
+    private final double azimuth;
+    private final double altitude;
 
 
-    DefaultElevationModel(final GridCoverageReader coverage, final Expression offset, final Expression scale){
+    DefaultElevationModel(final GridCoverageReader coverage, final double scale, final double azimuth, final double altitude){
         this.coverage = coverage;
-        this.offset = offset;
         this.scale = scale;
-    }
-
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public double getModelHeight(final DirectPosition position, final Unit<Length> lenght) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.azimuth = scale;
+        this.altitude = scale;
     }
 
     /**
@@ -63,16 +56,23 @@ final class DefaultElevationModel implements ElevationModel{
      * {@inheritDoc }
      */
     @Override
-    public Expression getBaseOffset() {
-        return offset;
+    public double getAmplitudeScale() {
+        return scale;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public Expression getBaseScale() {
-        return scale;
+    public double getAzimuth() {
+        return azimuth;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public double getAltitude() {
+        return altitude;
+    }
 }

@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -60,10 +60,27 @@ import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
 import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.math.Statistics;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridEnvelope2D;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.geometry.Envelopes;
+import org.geotoolkit.image.interpolation.Interpolation;
+import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.image.interpolation.Resample;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.image.jai.FloodFill;
+import org.geotoolkit.image.relief.ReliefShadow;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
+import org.geotoolkit.map.ElevationModel;
+import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.process.image.statistics.ImageStatisticsDescriptor;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.style.StyleConstants;
@@ -82,9 +99,13 @@ import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
 import org.opengis.style.ContrastEnhancement;
@@ -92,6 +113,7 @@ import org.opengis.style.ContrastMethod;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.SelectedChannelType;
 import org.opengis.style.ShadedRelief;
+import org.opengis.util.FactoryException;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -197,13 +219,15 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             //we must switch to objectiveCRS for grid coverage
             renderingContext.switchToObjectiveCRS();
 
-            RenderedImage img = applyStyle(dataCoverage, symbol.getSource(), hints, isReprojected);
+            
+            RenderedImage img = applyStyle(dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), symbol.getSource(), hints, isReprojected);
+//            ImageIO.write(img, "tiff", new File("/home/rmarechal/Documents/image/geo2.tiff"));
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-            if(trs2D instanceof AffineTransform){
+            if (trs2D instanceof AffineTransform) {
                 g2d.setComposite(symbol.getJ2DComposite());
-                try{
+                try {
                     g2d.drawRenderedImage(img, (AffineTransform)trs2D);
-                }catch(Exception ex){
+                } catch (Exception ex) {
 
                     if(ex instanceof ArrayIndexOutOfBoundsException){
                         //we can recover when it's an inapropriate componentcolormodel
@@ -251,41 +275,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
             }else{
                 throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass() );
-            }
-
-            //draw the relief shading ----------------------------------------------
-            final ShadedRelief relief = symbol.getSource().getShadedRelief();
-            if(relief != null && elevationCoverage != null){
-                elevationCoverage = elevationCoverage.view(ViewType.GEOPHYSICS);
-                final MathTransform2D eleTrs2D = elevationCoverage.getGridGeometry().getGridToCRS2D();
-                if(eleTrs2D instanceof AffineTransform){
-                    RenderedImage shadowImage = elevationCoverage.getRenderedImage();
-                    shadowImage = shadowed(shadowImage);
-
-                    if(shadowImage.getColorModel() != null && shadowImage.getSampleModel() != null){
-                        //TODO should check this differently, dont know how yet.
-    //                    System.out.println("shadow seems valid");
-    //                    System.out.println("shadow color model : " +shadowImage.getColorModel());
-    //                    System.out.println("shadow sample model : " +shadowImage.getSampleModel());
-    //                    System.out.println("transform :" + eleTrs2D);
-
-                        final Number n = relief.getReliefFactor().evaluate(null,Number.class);
-                        if(n != null){
-                            float factor = n.floatValue();
-                            if(factor>1) factor = 1;
-                            if(factor<0) factor = 0;
-                            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, factor));
-                        }else{
-                            g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
-                        }
-
-                        g2d.drawRenderedImage(shadowImage, (AffineTransform)eleTrs2D);
-                    }
-
-                }else{
-                    throw new PortrayalException("Could not render elevation model, GridToCRS is a not an AffineTransform, found a " + eleTrs2D.getClass() );
-                }
-
             }
 
             //draw the border if there is one---------------------------------------
@@ -391,7 +380,113 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         return values;
     }
 
+    /**
+     * Return a Digital Elevation Model from source {@link ElevationModel} parameter in function of coverage parameter properties.
+     *  
+     * @param coverage 
+     * @param dem
+     * @return a Digital Elevation Model from source {@link ElevationModel} parameter in function of coverage parameter properties.
+     * @throws FactoryException
+     * @throws TransformException 
+     */
+    public static GridCoverage2D getDEMCoverage(final GridCoverage2D coverage, final ElevationModel elevationModel) throws FactoryException, TransformException, CoverageStoreException {
+        
+        // coverage attributs
+        final GridGeometry2D covGridGeom       = coverage.getGridGeometry();
+        final GridEnvelope2D covExtend         = covGridGeom.getExtent2D();
+        final CoordinateReferenceSystem covCRS = coverage.getCoordinateReferenceSystem2D();
+        final Envelope2D covEnv2d              = coverage.getEnvelope2D();
+        final double[] covResolution           = coverage.getGridGeometry().getResolution();
+        
+        final GridCoverageReader elevationReader = elevationModel.getCoverageReader();
+        final GeneralGridGeometry elevGridGeom   = elevationReader.getGridGeometry(0);
+        if (!(elevGridGeom instanceof GridGeometry2D)) {
+            throw new IllegalArgumentException("the Digital Elevation Model should be instance of gridcoverage2D."+elevGridGeom);
+        }
+        final GridGeometry2D elevGridGeom2D    = (GridGeometry2D) elevGridGeom;
+        
+        final CoordinateReferenceSystem demCRS = elevGridGeom2D.getCoordinateReferenceSystem2D();
+        
+        final MathTransform demCRSToCov        = CRS.findMathTransform(demCRS, covCRS); // dem -> cov
+        
+        if (elevGridGeom2D.getEnvelope2D().equals(coverage.getEnvelope2D())
+         && covExtend.equals(elevGridGeom2D.getExtent2D())) return (GridCoverage2D) elevationReader.read(0, null);
+        
+        final GeneralEnvelope readParamEnv = Envelopes.transform(demCRSToCov.inverse(), covEnv2d);
+        
+        final GridCoverageReadParam gcrp = new GridCoverageReadParam();
+        gcrp.setCoordinateReferenceSystem(demCRS);
+        gcrp.setEnvelope(readParamEnv);
+        
+        final GridCoverage2D dem = (GridCoverage2D) elevationReader.read(0, gcrp);
+        return getDEMCoverage(coverage, dem);
+        
+    }
 
+    /**
+     * Return a Digital Elevation Model from source DEM parameter in function of coverage parameter properties.
+     *  
+     * @param coverage 
+     * @param dem
+     * @return a Digital Elevation Model from source DEM parameter in function of coverage parameter properties.
+     * @throws FactoryException
+     * @throws TransformException 
+     */
+    public static GridCoverage2D getDEMCoverage(final GridCoverage2D coverage, final GridCoverage2D dem) throws FactoryException, TransformException {
+        
+        // coverage attributs
+        final GridGeometry2D covGridGeom       = coverage.getGridGeometry();
+        final GridEnvelope2D covExtend         = covGridGeom.getExtent2D();
+        final GridGeometry2D demGridGeom       = dem.getGridGeometry();
+        
+        //CRS
+        final CoordinateReferenceSystem covCRS = coverage.getCoordinateReferenceSystem2D();
+        final CoordinateReferenceSystem demCRS = demGridGeom.getCoordinateReferenceSystem2D();
+        
+        final MathTransform demCRSToCov = CRS.findMathTransform(demCRS, covCRS); // dem -> cov
+        
+        final GeneralEnvelope demDestEnv = Envelopes.transform(demCRSToCov, dem.getEnvelope2D());
+        // coverage envelope
+        final Envelope2D covEnv = coverage.getEnvelope2D();
+        
+        /**
+         * if the 2 coverage don't represent the same area we can't compute shadow on coverage.
+         */
+        if (!demDestEnv.intersects(covEnv, true)) {
+            return null;
+        }
+        // get intersection to affect relief on shared area.
+        GeneralEnvelope intersec = new GeneralEnvelope(demDestEnv);
+        intersec.intersect(covEnv);
+        
+        final RenderedImage demImage = dem.getRenderedImage();
+        
+        // output mnt creation
+        final BufferedImage destMNT = new BufferedImage(demImage.getColorModel(), demImage.getColorModel().createCompatibleWritableRaster(covExtend.width, covExtend.height), true, null);
+        
+        intersec = Envelopes.transform(covGridGeom.getGridToCRS(PixelInCell.CELL_CORNER).inverse(), intersec);
+        
+        final Rectangle areaIterate = new Rectangle((int) intersec.getMinimum(0), (int) intersec.getMinimum(1), (int) intersec.getSpan(0), (int) intersec.getSpan(1));
+        
+        // dem source to dem dest
+        final MathTransform sourcetodest = MathTransforms.concatenate(dem.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER), 
+                                                                      demCRSToCov, 
+                                                                      covGridGeom.getGridToCRS(PixelInCell.CELL_CENTER).inverse());
+        
+        
+        final PixelIterator srcPix   = PixelIteratorFactory.createRowMajorIterator(demImage);
+        final Interpolation interpol = Interpolation.create(srcPix, InterpolationCase.BICUBIC, 2);
+        final Resample resampl       = new Resample(sourcetodest.inverse(), destMNT, areaIterate, interpol, new double[interpol.getNumBands()]);
+        resampl.fillImage();
+        
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setCoordinateReferenceSystem(covCRS);
+        gcb.setRenderedImage(destMNT);
+        gcb.setEnvelope(covEnv);
+        return gcb.getGridCoverage2D();
+    }
+
+    
     ////////////////////////////////////////////////////////////////////////////
     // Renderedmage JAI image operations ///////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -406,8 +501,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @return
      * @throws PortrayalException
      */
-    public static RenderedImage applyStyle(GridCoverage2D coverage, final RasterSymbolizer styleElement,
-                final RenderingHints hints, boolean isReprojected) throws PortrayalException {
+    public static RenderedImage applyStyle(GridCoverage2D coverage, GridCoverage2D elevationCoverage, final ElevationModel elevationModel, final RasterSymbolizer styleElement,
+                final RenderingHints hints, boolean isReprojected) throws PortrayalException, ProcessException, FactoryException, TransformException {
 
         //band select ----------------------------------------------------------
         //works as a JAI operation
@@ -464,10 +559,71 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         }
 
         //shaded relief---------------------------------------------------------
-        //handle by the J2DGraphicUtilities
+        if (elevationCoverage != null) {
+            final ShadedRelief shadedRel = styleElement.getShadedRelief();
+            // azimuth angle
+            final double azimuth = elevationModel.getAzimuth();
+            
+            /*
+             * Sometimes Y axis coverage representation is positive in south direction (or other).
+             * In this fact, azimuth is not exprimate in North direction.
+             * Next computes adapt azimuth angle in function of gridToCrs.
+             */
+            // unitary azimuth vector in PI / 2 - azimuth direction
+            final GridGeometry2D gg2d = elevationCoverage.getGridGeometry();
+            final Envelope2D env = elevationCoverage.getGridGeometry().getEnvelope2D();
+            final double[] uniVect = new double[4];
+            uniVect[0] = env.getMedian(gg2d.axisDimensionX);
+            uniVect[1] = env.getMedian(gg2d.axisDimensionY);
+            final double crsAlpha = Math.PI/2 - (azimuth * Math.PI / 180);
+            uniVect[2] = uniVect[0] + Math.cos(crsAlpha);
+            uniVect[3] = uniVect[1] + Math.sin(crsAlpha);
+            final MathTransform2D crsToGrid = elevationCoverage.getGridGeometry().getGridToCRS2D().inverse();
+            
+            // angle vector projection
+            final double[] resultVect = new double[4];
+            crsToGrid.transform(uniVect, 0, resultVect, 0, 2);
+            double u = resultVect[2] - resultVect[0];
+            double v = resultVect[3] - resultVect[1];
+            final double magn = Math.hypot(u, v);
+            u /= magn;
+            v /= magn;
+            
+            // angle (azimuth) exprimate in image space
+            final double gridAzim = ((Math.PI / 2) - Math.atan(v / u)) * 180 / Math.PI;
+            
+            // altitude angle
+            final double altitude = elevationModel.getAltitude();
+            
+            // relief factor
+            final double relfactor = shadedRel.getReliefFactor().evaluate(null, Double.class) / 100.0;
+            
+            final boolean isBrightness = shadedRel.isBrightnessOnly();
+            final double brightness = (isBrightness) ? 1.0 + relfactor : 1;
+            
+            final double altiScale = elevationModel.getAmplitudeScale() / 100.0;
+            // ReliefShadow creating
+            final ReliefShadow rfs = new ReliefShadow(gridAzim, altitude, relfactor);
+            final GridCoverage2D mntCoverage = getDEMCoverage(coverage, elevationCoverage);
+            final RenderedImage mnt = mntCoverage.getRenderedImage();
+            // mnt should be null if current elevation coverage doesn't concord with coverage.
+            if (mnt != null) {
+                if (mnt.getSampleModel().getNumBands() > 1) {
+                    throw new IllegalStateException("The Digital Elevation Model should have only one band. band number found : "+mnt.getSampleModel().getNumBands());
+                }
+                final ProcessDescriptor statsDescriptor = ImageStatisticsDescriptor.INSTANCE;
+                final ParameterValueGroup statsInput    = statsDescriptor.getInputDescriptor().createValue();
+                statsInput.parameter(ImageStatisticsDescriptor.INPUT_IMAGE_PARAM_NAME).setValue(mnt);
+                org.geotoolkit.process.Process statProcess = statsDescriptor.createProcess(statsInput);
+                final Statistics[] stats = (Statistics[]) statProcess.call().parameter(ImageStatisticsDescriptor.OUTPUT_STATS_PARAM_NAME).getValue();
+                final double elevationAmplitude = stats[0].span();
+                image = rfs.getRelief(image, mnt, elevationAmplitude * altiScale);
+            } 
+        }
+            
 
         //contrast enhancement -------------------------------------------------
-        if(image == null){
+        if (image == null) {
             image = coverage.getRenderedImage();
             if(isReprojected){
                 //remove potential black borders

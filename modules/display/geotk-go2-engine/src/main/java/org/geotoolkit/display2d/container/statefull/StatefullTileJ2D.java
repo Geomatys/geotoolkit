@@ -49,6 +49,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.map.ElevationModel;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -178,7 +179,11 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
                     for(final CachedRule rule : rules){
                         for(final CachedSymbolizer symbol : rule.symbolizers()){
                             if(symbol.getSource() instanceof RasterSymbolizer){
-                                ri = DefaultRasterSymbolizerRenderer.applyStyle(coverage, (RasterSymbolizer)symbol.getSource(), getHints(false), false);
+                                // todo appeler method getElevationmodel le coverage a deja ete reprojeté
+                                final CoverageMapLayer layer = (CoverageMapLayer) getUserObject();
+                                final ElevationModel elevMod = layer.getElevationModel();
+                                final GridCoverage2D dem = DefaultRasterSymbolizerRenderer.getDEMCoverage(coverage, elevMod);
+                                ri = DefaultRasterSymbolizerRenderer.applyStyle(coverage, dem, elevMod, (RasterSymbolizer)symbol.getSource(), getHints(false), false);
                                 break;
                             }
                         }
@@ -233,10 +238,10 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
         
         final boolean needReproject = !CRS.equalsIgnoreMetadata(tileCRS,objCRS2D);
         
-        if(needReproject){
+        if (needReproject) {
             //will be reprojected, we must check that image has alpha support
             //otherwise we will have black borders after reprojection
-            if(!image.getColorModel().hasAlpha()){
+            if (!image.getColorModel().hasAlpha()) {
                 final BufferedImage buffer = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
                 buffer.createGraphics().drawRenderedImage(image, new AffineTransform());
                 image = buffer;
@@ -252,7 +257,7 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
         gcb.setRenderedImage(image);        
         GridCoverage2D coverage = (GridCoverage2D) gcb.build();
         
-        if(needReproject){
+        if (needReproject) {
             try {
                 coverage = GO2Utilities.resample(coverage.view(ViewType.NATIVE),objCRS2D);
             } catch (ProcessException ex) {

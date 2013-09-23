@@ -16,11 +16,7 @@
  */
 package org.geotoolkit.map;
 
-import javax.measure.quantity.Length;
-import javax.measure.unit.Unit;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.opengis.filter.expression.Expression;
-import org.opengis.geometry.DirectPosition;
 
 /**
  * An elevation model holds a map (may not necessarly be a grid coverage) of elevation values.
@@ -31,12 +27,33 @@ import org.opengis.geometry.DirectPosition;
  */
 public interface ElevationModel {
 
-    Expression getBaseOffset();
+    /**
+     * Return angle in degrees between Origin to North axis and light source.<br/>
+     * Moreother angle is defined positive in clockwise.
+     * 
+     * @return angle between Origin to North axis and light source. 
+     */
+    double getAzimuth();
     
-    Expression getBaseScale();
+    /**
+     * Return angle in degrees between Digital Elevation Model ground and light source.
+     * 
+     * @return angle in degrees between Digital Elevation Model ground and light source.
+     */
+    double getAltitude();
+    
+    /**
+     * Return coefficient (or factor) in per cent to controle shadow length spread 
+     * in function of maximum DEM amplitude value.
+     * 
+     * @return coefficient (or factor) in per cent to controle shadow length spread.
+     */
+    double getAmplitudeScale();
 
-    double getModelHeight(DirectPosition position, Unit<Length> lenght);
-
+    /**
+     * Return adapted reader to read Digital Elevation Model.
+     * 
+     * @return adapted reader to read Digital Elevation Model.
+     */
     GridCoverageReader getCoverageReader();
-    
 }

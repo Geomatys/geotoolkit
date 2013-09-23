@@ -200,7 +200,7 @@ public final class MapBuilder {
      */
     public static ElevationModel createElevationModel(final GridCoverageReader grid){
         FilterFactory FF = FactoryFinder.getFilterFactory(null);
-        return new DefaultElevationModel(grid, FF.literal(0),FF.literal(1));
+        return createElevationModel(grid, 55, 135, 2);
     }
 
     /**
@@ -211,8 +211,8 @@ public final class MapBuilder {
      * @param scale : a multiplication factor to use on the coverage values
      * @return ElevationModel
      */
-    public static ElevationModel createElevationModel(final GridCoverageReader grid, final Expression offset, final Expression scale){
-        return new DefaultElevationModel(grid, offset,scale);
+    public static ElevationModel createElevationModel(final GridCoverageReader grid, final double altitudeScale, final double azimuthAngle, final double altitudeAngle){
+        return new DefaultElevationModel(grid, altitudeScale, azimuthAngle, altitudeAngle);
     }
 
 }
