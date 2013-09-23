@@ -17,11 +17,24 @@
 package org.geotoolkit.csw.xml.v202;
 
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.geotoolkit.csw.xml.CSWMarshallerPool;
+import org.geotoolkit.csw.xml.CswNodeComparator;
 import org.geotoolkit.csw.xml.RecordProperty;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * <p>Java class for RecordPropertyType complex type.
@@ -53,7 +66,7 @@ public class RecordPropertyType implements RecordProperty{
 
     @XmlElement(name = "Name", required = true)
     private String name;
-    @XmlElement(name = "Value")
+    @XmlAnyElement(lax = true)
     private Object value;
 
     public RecordPropertyType() {
@@ -62,7 +75,45 @@ public class RecordPropertyType implements RecordProperty{
 
     public RecordPropertyType(final String name, final Object value) {
         this.name  = name;
-        this.value = value;
+        if (value instanceof String) {
+            this.value = buildStringNode((String)value);
+        } else {
+            this.value = buildNode(value);
+        }
+    }
+
+    private Node buildStringNode(final String s) {
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+            Element e = doc.createElementNS("http://www.opengis.net/cat/csw/2.0.2", "Value");
+            e.setPrefix("csw");
+            e.setTextContent(s);
+            return e;
+        } catch (ParserConfigurationException ex) {
+            Logger.getLogger(RecordPropertyType.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    private Node buildNode(final Object o) {
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+            Element e = doc.createElementNS("http://www.opengis.net/cat/csw/2.0.2", "Value");
+            e.setPrefix("csw");
+            Marshaller m = CSWMarshallerPool.getInstance().acquireMarshaller();
+            m.marshal(o, e);
+            CSWMarshallerPool.getInstance().recycle(m);
+            return e;
+        } catch (ParserConfigurationException | JAXBException ex) {
+            Logger.getLogger(RecordPropertyType.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     /**
@@ -78,6 +129,10 @@ public class RecordPropertyType implements RecordProperty{
      */
     @Override
     public Object getValue() {
+        // remove the "csw:Value" node
+        if (value instanceof Node) {
+            return ((Node)value).getFirstChild();
+        }
         return value;
     }
 
@@ -91,8 +146,16 @@ public class RecordPropertyType implements RecordProperty{
         }
         if (object instanceof RecordPropertyType) {
             final RecordPropertyType that = (RecordPropertyType) object;
+            boolean valueEq;
+            if (this.value instanceof Node && that.value instanceof Node) {
+                CswNodeComparator comparator = new CswNodeComparator((Node)this.value, (Node)that.value);
+                comparator.ignoredAttributes.add("xmlns:*");
+                valueEq = comparator.compare();
+            } else {
+                valueEq = Objects.equals(this.value, that.value);
+            }
             return Objects.equals(this.name,  that.name) &&
-                   Objects.equals(this.value, that.value);
+                   valueEq;
         }
         return false;
     }

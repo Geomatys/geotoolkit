@@ -122,7 +122,9 @@ public class RecordPropertyTypeTest {
 
         property = update.getRecordProperty().get(0);
 
-        assertEquals("Jane", property.getValue());
+        assertTrue(property.getValue() instanceof Node);
+        final Node text = (Node) property.getValue();
+        assertEquals("Jane", text.getTextContent());
     }
 
     @Test
@@ -179,7 +181,8 @@ public class RecordPropertyTypeTest {
         "    <csw:Update>"                                                                           + '\n' +
         "        <csw:RecordProperty>"                                                               + '\n' +
         "            <csw:Name>/csw:Record/dc:contributor</csw:Name>"                                + '\n' +
-        "            <csw:Value xsi:type=\"gmd:EX_GeographicBoundingBox_Type\" >"                    + '\n' +
+        "            <csw:Value>"                                                                    + '\n' +
+        "                <gmd:EX_GeographicBoundingBox>"                                             + '\n' +
         "                    <gmd:extentTypeCode>"                                                   + '\n' +
         "                        <gco:Boolean>true</gco:Boolean>"                                    + '\n' +
         "                    </gmd:extentTypeCode>"                                                  + '\n' +
@@ -195,6 +198,7 @@ public class RecordPropertyTypeTest {
         "                    <gmd:northBoundLatitude>"                                               + '\n' +
         "                         <gco:Decimal>36.6</gco:Decimal>"                                   + '\n' +
         "                    </gmd:northBoundLatitude>"                                              + '\n' +
+        "                </gmd:EX_GeographicBoundingBox>"                                            + '\n' +
         "            </csw:Value>"                                                                   + '\n' +
         "        </csw:RecordProperty>"                                                              + '\n' +
         "        <csw:Constraint version=\"1.1.0\">"                                                 + '\n' +
@@ -214,11 +218,14 @@ public class RecordPropertyTypeTest {
 
         property = update.getRecordProperty().get(0);
 
-        assertTrue(property.getValue() instanceof DefaultGeographicBoundingBox);
+        assertTrue(property.getValue() instanceof Node);
+
+        final Object obj = unmarshaller.unmarshal((Node) property.getValue());
+        assertTrue("unexpected type:" + property.getValue().getClass(), obj instanceof DefaultGeographicBoundingBox);
 
         DefaultGeographicBoundingBox expResult = new DefaultGeographicBoundingBox(1.1667, 1.1667, 36.6, 36.6);
 
-        assertEquals(expResult, property.getValue());
+        assertEquals(expResult, obj);
 
     }
 }
