@@ -497,7 +497,7 @@ private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerCho
     }
 
     public static void show(final MapContext context, final Hints hints){
-        show(context,false,null);
+        show(context,false,hints);
     }
 
     public static void show(MapContext context, final boolean statefull, final Hints hints){
