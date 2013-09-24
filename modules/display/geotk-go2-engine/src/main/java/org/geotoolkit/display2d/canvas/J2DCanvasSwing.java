@@ -52,8 +52,8 @@ public class J2DCanvasSwing extends J2DCanvas{
     }
 
     public J2DCanvasSwing(final CoordinateReferenceSystem crs, final Hints hints){
-        super(crs,hints); 
-        
+        super(crs,hints);
+
         component.addComponentListener(new ComponentListener() {
 
             @Override
@@ -71,7 +71,7 @@ public class J2DCanvasSwing extends J2DCanvas{
                         }
                         controller.wishedEnvelope = null;
                     }
-                }                
+                }
             }
 
             @Override
@@ -86,19 +86,19 @@ public class J2DCanvasSwing extends J2DCanvas{
             public void componentHidden(ComponentEvent e) {
             }
         });
-        
+
     }
-    
-    
+
+
     @Override
     public CanvasController2D getController() {
         return controller;
     }
-    
+
     public JComponent getComponent(){
         return component;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -115,7 +115,7 @@ public class J2DCanvasSwing extends J2DCanvas{
     private void paint(final Graphics2D output, final Shape displayArea){
         //finish any previous painting
         getMonitor().stopRendering();
-        
+
         final Dimension dim = component.getSize();
 
         monitor.renderingStarted();
@@ -141,8 +141,6 @@ public class J2DCanvasSwing extends J2DCanvas{
 
         final DefaultRenderingContext2D context = prepareContext(context2D, output,null);
 
-        System.out.println(context.getCanvasObjectiveBounds());
-        
         //paint background if there is one.
         if(painter != null){
             painter.paint(context2D);
@@ -169,10 +167,10 @@ public class J2DCanvasSwing extends J2DCanvas{
             final Shape displayArea = new Rectangle(getSize());
             J2DCanvasSwing.this.paint(output, displayArea);
         }
-    
+
     }
-    
-    
+
+
     /**
      * Stores the requested visible area if the canvas size is still unknown.
      */
@@ -195,5 +193,5 @@ public class J2DCanvasSwing extends J2DCanvas{
         }
 
     }
-    
+
 }

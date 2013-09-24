@@ -115,7 +115,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
                     outStore.delete(name);
                 }
                 final CoverageReference outRef = outStore.create(name);
-                
+
                 if(inRef instanceof PyramidalCoverageReference && outRef instanceof PyramidalCoverageReference){
                     savePMtoPM((PyramidalCoverageReference)inRef, (PyramidalCoverageReference)outRef);
                 }else if(outRef instanceof PyramidalCoverageReference){
@@ -136,14 +136,14 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
     /**
      * If both source and target are pyramid model, we can copy each tiles.
      */
-    private void savePMtoPM(final PyramidalCoverageReference inPM, final PyramidalCoverageReference outPM) throws DataStoreException{   
+    private void savePMtoPM(final PyramidalCoverageReference inPM, final PyramidalCoverageReference outPM) throws DataStoreException{
         final PyramidSet inPS = inPM.getPyramidSet();
-        
+
         final List<GridSampleDimension> sampleDimensions = inPM.getSampleDimensions(0);
         if(sampleDimensions != null){
             outPM.createSampleDimension(sampleDimensions, null);
         }
-        
+
         //count total number of tiles
         long nb = 0;
         for(final Pyramid inPY : inPS.getPyramids()){
@@ -152,7 +152,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
             }
         }
         final long total = nb;
-        
+
         final int processors = Runtime.getRuntime().availableProcessors();
         final ExecutorService es = Executors.newFixedThreadPool(processors);
         try{
@@ -165,8 +165,8 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
                 //copy mosaics
                 for(final GridMosaic inGM : inPY.getMosaics()){
                     final Dimension gridDimension = inGM.getGridSize();
-                    final GridMosaic outGM = outPM.createMosaic(outPY.getId(), 
-                            gridDimension, inGM.getTileSize(), 
+                    final GridMosaic outGM = outPM.createMosaic(outPY.getId(),
+                            gridDimension, inGM.getTileSize(),
                             inGM.getUpperLeftCorner(), inGM.getScale());
 
 
@@ -288,7 +288,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
             es.shutdown();
         }
     }
-    
+
     /**
      * Save a {@linkplain CoverageReference coverage} into a {@linkplain CoverageStore coverage store}.
      *
@@ -303,7 +303,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
             throws DataStoreException, TransformException, ProcessException {
 
         if(reduce == null) reduce = Boolean.TRUE;
-        
+
         final GridCoverageReader reader = inRef.createReader();
         final int imageIndex = inRef.getImageIndex();
         final GeneralGridGeometry globalGeom = reader.getGridGeometry(imageIndex);
@@ -316,24 +316,24 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
             fireWarningOccurred("Image "+name+" does not have a CoordinateReferenceSystem, insertion is skipped.", 0, null);
             return;
         }
-        
+
         //create sampleDimensions bands
         //TODO remove analyse when CoverageImageReader getSampleDimensions will be fix with min/max values.
         final Map<String, Object> analyse = StatisticOp.analyze(reader, imageIndex);
         final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(imageIndex);
         outPM.createSampleDimension(sampleDimensions, analyse);
-        
+
         final Pyramid pyramid = outPM.createPyramid(crs);
 
         // Stores additional coordinate system axes, to know how many pyramids should be created
-        final List<List<Comparable>> possibilities = new ArrayList<List<Comparable>>();
+        final List<List<Comparable>> possibilities = new ArrayList<>();
 
         final int nbdim = cs.getDimension();
         for (int i = 2; i < nbdim; i++) {
             final CoordinateSystemAxis axis = cs.getAxis(i);
             if (axis instanceof DiscreteCoordinateSystemAxis) {
                 final DiscreteCoordinateSystemAxis daxis = (DiscreteCoordinateSystemAxis) axis;
-                final List<Comparable> values = new ArrayList<Comparable>();
+                final List<Comparable> values = new ArrayList<>();
                 possibilities.add(values);
                 final int nbval = daxis.length();
                 for (int k = 0; k < nbval; k++) {
@@ -357,7 +357,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
                 ce = ite.next();
             } while (ce != null);
         }
-        
+
     }
 
     /**
@@ -406,9 +406,9 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
             }catch(ProcessException ex){
                 throw new ProcessException(ex.getMessage(), this, ex);
             }
-            
+
         }
-        
+
         final GridGeometry2D gridgeom = coverage.getGridGeometry();
         //we know it's an affine transform since we straighten the coverage
         final AffineTransform2D gridToCRS = (AffineTransform2D) gridgeom.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
@@ -424,7 +424,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         //envelope seems to lost its additional 2D+ values
         for (int i = 2, n = env.getDimension(); i < n; i++) {
             upperleft.setOrdinate(i, env.getMedian(i));
-        } 
+        }
         final GridMosaic mosaic = pm.createMosaic(pyramid.getId(), gridSize, TileSize, upperleft, scale);
         pm.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, img);
     }

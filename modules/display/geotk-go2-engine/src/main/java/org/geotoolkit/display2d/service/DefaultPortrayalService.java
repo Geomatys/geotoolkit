@@ -520,10 +520,8 @@ public final class DefaultPortrayalService implements PortrayalService{
             if(mime.contains("jpeg") || mime.contains("jpg")){
                 if(image.getColorModel().hasAlpha()){
                     final int nbBands = image.getSampleModel().getNumBands();
-                    System.out.println("hasalpha");
                     if(nbBands > 3){
                         //we can remove the fourth band assuming it is the alpha
-                        System.out.println("remove alpha band");
                         coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{0,1,2});
                     }
                 }

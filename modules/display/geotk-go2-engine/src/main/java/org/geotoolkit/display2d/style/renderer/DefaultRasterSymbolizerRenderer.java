@@ -219,7 +219,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             //we must switch to objectiveCRS for grid coverage
             renderingContext.switchToObjectiveCRS();
 
-            
+
             RenderedImage img = applyStyle(dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), symbol.getSource(), hints, isReprojected);
 //            ImageIO.write(img, "tiff", new File("/home/rmarechal/Documents/image/geo2.tiff"));
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
@@ -382,73 +382,75 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
     /**
      * Return a Digital Elevation Model from source {@link ElevationModel} parameter in function of coverage parameter properties.
-     *  
-     * @param coverage 
+     *
+     * @param coverage
      * @param dem
      * @return a Digital Elevation Model from source {@link ElevationModel} parameter in function of coverage parameter properties.
      * @throws FactoryException
-     * @throws TransformException 
+     * @throws TransformException
      */
     public static GridCoverage2D getDEMCoverage(final GridCoverage2D coverage, final ElevationModel elevationModel) throws FactoryException, TransformException, CoverageStoreException {
-        
+
+        if(elevationModel==null) return null;
+
         // coverage attributs
         final GridGeometry2D covGridGeom       = coverage.getGridGeometry();
         final GridEnvelope2D covExtend         = covGridGeom.getExtent2D();
         final CoordinateReferenceSystem covCRS = coverage.getCoordinateReferenceSystem2D();
         final Envelope2D covEnv2d              = coverage.getEnvelope2D();
         final double[] covResolution           = coverage.getGridGeometry().getResolution();
-        
+
         final GridCoverageReader elevationReader = elevationModel.getCoverageReader();
         final GeneralGridGeometry elevGridGeom   = elevationReader.getGridGeometry(0);
         if (!(elevGridGeom instanceof GridGeometry2D)) {
             throw new IllegalArgumentException("the Digital Elevation Model should be instance of gridcoverage2D."+elevGridGeom);
         }
         final GridGeometry2D elevGridGeom2D    = (GridGeometry2D) elevGridGeom;
-        
+
         final CoordinateReferenceSystem demCRS = elevGridGeom2D.getCoordinateReferenceSystem2D();
-        
+
         final MathTransform demCRSToCov        = CRS.findMathTransform(demCRS, covCRS); // dem -> cov
-        
+
         if (elevGridGeom2D.getEnvelope2D().equals(coverage.getEnvelope2D())
          && covExtend.equals(elevGridGeom2D.getExtent2D())) return (GridCoverage2D) elevationReader.read(0, null);
-        
+
         final GeneralEnvelope readParamEnv = Envelopes.transform(demCRSToCov.inverse(), covEnv2d);
-        
+
         final GridCoverageReadParam gcrp = new GridCoverageReadParam();
         gcrp.setCoordinateReferenceSystem(demCRS);
         gcrp.setEnvelope(readParamEnv);
-        
+
         final GridCoverage2D dem = (GridCoverage2D) elevationReader.read(0, gcrp);
         return getDEMCoverage(coverage, dem);
-        
+
     }
 
     /**
      * Return a Digital Elevation Model from source DEM parameter in function of coverage parameter properties.
-     *  
-     * @param coverage 
+     *
+     * @param coverage
      * @param dem
      * @return a Digital Elevation Model from source DEM parameter in function of coverage parameter properties.
      * @throws FactoryException
-     * @throws TransformException 
+     * @throws TransformException
      */
     public static GridCoverage2D getDEMCoverage(final GridCoverage2D coverage, final GridCoverage2D dem) throws FactoryException, TransformException {
-        
+
         // coverage attributs
         final GridGeometry2D covGridGeom       = coverage.getGridGeometry();
         final GridEnvelope2D covExtend         = covGridGeom.getExtent2D();
         final GridGeometry2D demGridGeom       = dem.getGridGeometry();
-        
+
         //CRS
         final CoordinateReferenceSystem covCRS = coverage.getCoordinateReferenceSystem2D();
         final CoordinateReferenceSystem demCRS = demGridGeom.getCoordinateReferenceSystem2D();
-        
+
         final MathTransform demCRSToCov = CRS.findMathTransform(demCRS, covCRS); // dem -> cov
-        
+
         final GeneralEnvelope demDestEnv = Envelopes.transform(demCRSToCov, dem.getEnvelope2D());
         // coverage envelope
         final Envelope2D covEnv = coverage.getEnvelope2D();
-        
+
         /**
          * if the 2 coverage don't represent the same area we can't compute shadow on coverage.
          */
@@ -458,27 +460,27 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         // get intersection to affect relief on shared area.
         GeneralEnvelope intersec = new GeneralEnvelope(demDestEnv);
         intersec.intersect(covEnv);
-        
+
         final RenderedImage demImage = dem.getRenderedImage();
-        
+
         // output mnt creation
         final BufferedImage destMNT = new BufferedImage(demImage.getColorModel(), demImage.getColorModel().createCompatibleWritableRaster(covExtend.width, covExtend.height), true, null);
-        
+
         intersec = Envelopes.transform(covGridGeom.getGridToCRS(PixelInCell.CELL_CORNER).inverse(), intersec);
-        
+
         final Rectangle areaIterate = new Rectangle((int) intersec.getMinimum(0), (int) intersec.getMinimum(1), (int) intersec.getSpan(0), (int) intersec.getSpan(1));
-        
+
         // dem source to dem dest
-        final MathTransform sourcetodest = MathTransforms.concatenate(dem.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER), 
-                                                                      demCRSToCov, 
+        final MathTransform sourcetodest = MathTransforms.concatenate(dem.getGridGeometry().getGridToCRS(PixelInCell.CELL_CENTER),
+                                                                      demCRSToCov,
                                                                       covGridGeom.getGridToCRS(PixelInCell.CELL_CENTER).inverse());
-        
-        
+
+
         final PixelIterator srcPix   = PixelIteratorFactory.createRowMajorIterator(demImage);
         final Interpolation interpol = Interpolation.create(srcPix, InterpolationCase.BICUBIC, 2);
         final Resample resampl       = new Resample(sourcetodest.inverse(), destMNT, areaIterate, interpol, new double[interpol.getNumBands()]);
         resampl.fillImage();
-        
+
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setCoordinateReferenceSystem(covCRS);
         gcb.setRenderedImage(destMNT);
@@ -486,7 +488,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         return gcb.getGridCoverage2D();
     }
 
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // Renderedmage JAI image operations ///////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -563,7 +565,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final ShadedRelief shadedRel = styleElement.getShadedRelief();
             // azimuth angle
             final double azimuth = elevationModel.getAzimuth();
-            
+
             /*
              * Sometimes Y axis coverage representation is positive in south direction (or other).
              * In this fact, azimuth is not exprimate in North direction.
@@ -579,7 +581,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             uniVect[2] = uniVect[0] + Math.cos(crsAlpha);
             uniVect[3] = uniVect[1] + Math.sin(crsAlpha);
             final MathTransform2D crsToGrid = elevationCoverage.getGridGeometry().getGridToCRS2D().inverse();
-            
+
             // angle vector projection
             final double[] resultVect = new double[4];
             crsToGrid.transform(uniVect, 0, resultVect, 0, 2);
@@ -588,19 +590,19 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final double magn = Math.hypot(u, v);
             u /= magn;
             v /= magn;
-            
+
             // angle (azimuth) exprimate in image space
             final double gridAzim = ((Math.PI / 2) - Math.atan(v / u)) * 180 / Math.PI;
-            
+
             // altitude angle
             final double altitude = elevationModel.getAltitude();
-            
+
             // relief factor
             final double relfactor = shadedRel.getReliefFactor().evaluate(null, Double.class) / 100.0;
-            
+
             final boolean isBrightness = shadedRel.isBrightnessOnly();
             final double brightness = (isBrightness) ? 1.0 + relfactor : 1;
-            
+
             final double altiScale = elevationModel.getAmplitudeScale() / 100.0;
             // ReliefShadow creating
             final ReliefShadow rfs = new ReliefShadow(gridAzim, altitude, relfactor);
@@ -618,9 +620,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 final Statistics[] stats = (Statistics[]) statProcess.call().parameter(ImageStatisticsDescriptor.OUTPUT_STATS_PARAM_NAME).getValue();
                 final double elevationAmplitude = stats[0].span();
                 image = rfs.getRelief(image, mnt, elevationAmplitude * altiScale);
-            } 
+            }
         }
-            
+
 
         //contrast enhancement -------------------------------------------------
         if (image == null) {
