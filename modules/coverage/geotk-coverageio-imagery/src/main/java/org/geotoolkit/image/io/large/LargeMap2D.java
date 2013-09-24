@@ -344,7 +344,7 @@ class LargeMap2D {
             if (stack.isEmpty())
                 throw new IllegalImageDimensionException("raster too large");
 
-            final Point tileCorner = stack.getFirst();
+            final Point tileCorner = stack.pollFirst();
             final HashMap<Integer, LargeRaster> row = map.get(tileCorner.y);
             if (row != null) {
                 final LargeRaster lr = row.remove(tileCorner.x);

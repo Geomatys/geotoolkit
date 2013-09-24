@@ -308,11 +308,12 @@ class LargeArray {
      */
     private void checkArray() throws IOException {
         while (remainingCapacity < 0) {
-            final int toRemove = stack.getFirst();
+            final int toRemove = stack.pollFirst();
             final LargeRaster raster = array[toRemove];
             remainingCapacity   += raster.getWeight();
             //quad tree
             writeRaster((WritableRaster)raster.getRaster(), raster.getGridX(), raster.getGridY());
+            array[toRemove] = null;
         }
     }
     
