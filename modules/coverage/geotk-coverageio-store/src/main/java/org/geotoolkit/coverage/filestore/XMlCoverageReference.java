@@ -18,16 +18,19 @@ package org.geotoolkit.coverage.filestore;
 
 import java.awt.Dimension;
 import java.awt.image.RenderedImage;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.measure.unit.SI;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractPyramidalModel;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.Pyramid;
+import org.opengis.coverage.SampleDimensionType;
 
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
@@ -69,7 +72,7 @@ public class XMLCoverageReference extends AbstractPyramidalModel {
     public void deletePyramid(String pyramidId) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
-    
+
     @Override
     public GridMosaic createMosaic(String pyramidId, Dimension gridSize,
     Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
@@ -84,7 +87,7 @@ public class XMLCoverageReference extends AbstractPyramidalModel {
     public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
-    
+
     @Override
     public void writeTile(String pyramidId, String mosaicId, int col, int row, RenderedImage image) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
@@ -123,14 +126,37 @@ public class XMLCoverageReference extends AbstractPyramidalModel {
 
     @Override
     public List<GridSampleDimension> getSampleDimensions(int index) throws DataStoreException {
-        return null;
+        final List<XMLSampleDimension> xmlDimensions = getPyramidSet().getSampleDimensions();
+        if(xmlDimensions.isEmpty()) return null;
+
+        final List<GridSampleDimension> dimensions = new ArrayList<>();
+        int i=0;
+        for(XMLSampleDimension xsd : xmlDimensions){
+            GridSampleDimension gsd = new GridSampleDimension(""+i,xsd.getSampleType(),
+                    null, null, null, null, -100d, 100d, 1, 1, SI.METRE);
+            dimensions.add(gsd);
+            i++;
+        }
+
+        return dimensions;
     }
 
     @Override
     public void createSampleDimension(List<GridSampleDimension> dimensions, final Map<String, Object> analyse) throws DataStoreException {
-        throw new DataStoreException("Writing not supported.");
+        if(dimensions==null) return;
+        final List<XMLSampleDimension> xmlDimensions = getPyramidSet().getSampleDimensions();
+        xmlDimensions.clear();
+        for(GridSampleDimension dimension : dimensions){
+            final SampleDimensionType sdt = dimension.getSampleDimensionType();
+            final XMLSampleDimension dim = new XMLSampleDimension();
+            dim.setSampleType(sdt);
+            xmlDimensions.add(dim);
+        }
+        try {
+            set.write();
+        } catch (JAXBException ex) {
+            throw new DataStoreException(ex);
+        }
     }
-
-    
 
 }

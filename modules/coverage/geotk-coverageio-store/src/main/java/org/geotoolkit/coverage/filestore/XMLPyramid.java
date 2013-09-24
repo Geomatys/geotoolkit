@@ -57,7 +57,7 @@ public class XMLPyramid implements Pyramid{
 
         @Override
         public int compare(Double o1, Double o2) {
-            return o2.compareTo(o1);
+            return o1.compareTo(o2);
         }
     });
     @XmlTransient

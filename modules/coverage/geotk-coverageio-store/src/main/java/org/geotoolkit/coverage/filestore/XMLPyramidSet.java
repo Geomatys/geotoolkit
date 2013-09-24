@@ -64,6 +64,8 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     private List<XMLPyramid> pyramids;
     @XmlElement(name="FormatName")
     private String formatName;
+    @XmlElement(name="SampleDimension")
+    private List<XMLSampleDimension> sampleDimensions;
 
     @XmlTransient
     private String id;
@@ -115,6 +117,13 @@ public class XMLPyramidSet extends AbstractPyramidSet{
             pyramids = new ArrayList<>();
         }
         return pyramids;
+    }
+
+    public List<XMLSampleDimension> getSampleDimensions() {
+        if(sampleDimensions==null){
+            sampleDimensions = new ArrayList<>();
+        }
+        return sampleDimensions;
     }
 
     @Override
