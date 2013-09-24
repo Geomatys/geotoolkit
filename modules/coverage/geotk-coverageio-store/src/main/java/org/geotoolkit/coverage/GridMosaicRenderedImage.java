@@ -16,18 +16,17 @@
  */
 package org.geotoolkit.coverage;
 
-import org.geotoolkit.image.io.large.LargeCache;
 import org.apache.sis.util.logging.Logging;
 
 import javax.imageio.ImageReader;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.collection.Cache;
 
 /**
  * Implementation of RenderedImage using GridMosaic.
@@ -40,13 +39,11 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     private static final Logger LOGGER = Logging.getLogger(GridMosaicRenderedImage.class);
 
-    private final LargeCache tilecache;
+    private final Cache<Point,Raster> tileCache = new Cache<>(10, 12, true);
 
     private final GridMosaic mosaic;
-    private final boolean emptyMosaic;
     private RenderedImage firstTileImage = null;
-    private Point firstTilePosition = null;
-    private DataBuffer nanBuffer = null;
+    private DataBuffer emptyBuffer = null;
 
     private int width;
     private int height;
@@ -56,9 +53,11 @@ public class GridMosaicRenderedImage implements RenderedImage {
     private int tileHeight;
 
     public GridMosaicRenderedImage(final GridMosaic mosaic) {
+        if(mosaic.getGridSize().width == 0 || mosaic.getGridSize().height == 0){
+            throw new IllegalArgumentException("Mosaic grid can not be empty.");
+        }
+
         this.mosaic = mosaic;
-        this.tilecache = LargeCache.getInstance(64000000); //tile cache with default size
-        this.emptyMosaic = (mosaic.getGridSize().equals(new Dimension(0,0)));
         this.nbXTiles = mosaic.getGridSize().width;
         this.nbYTiles = mosaic.getGridSize().height;
         this.tileWidth = mosaic.getTileSize().width;
@@ -66,46 +65,39 @@ public class GridMosaicRenderedImage implements RenderedImage {
         this.width = nbXTiles * tileWidth;
         this.height = nbYTiles * tileHeight;
 
+        try {
+            //search the first non missing tile of the Mosaic
+            TileReference tile = null;
 
-        if (!emptyMosaic) {
-            try {
-                //search the first non missing tile of the Mosaic
-                TileReference tile = null;
-
-                exitLoop :
-                if (tile == null) {
-                    for (int y=0; y<nbYTiles; y++){
-                        for (int x=0; x<nbXTiles; x++){
-                            if (mosaic.isMissing(x,y)) {
-                                continue;
-                            } else {
-                                tile = mosaic.getTile(x,y, null);
-                                firstTilePosition = new Point(x,y);
-                                break exitLoop;
-                            }
+            exitLoop :
+            if (tile == null) {
+                for (int y=0; y<nbYTiles; y++){
+                    for (int x=0; x<nbXTiles; x++){
+                        if (mosaic.isMissing(x,y)) {
+                            continue;
+                        } else {
+                            tile = mosaic.getTile(x,y, null);
+                            break exitLoop;
                         }
                     }
                 }
-
-                if (tile != null) {
-                    if (tile.getInput() instanceof RenderedImage) {
-                        firstTileImage = (RenderedImage)tile.getInput();
-                    } else {
-                        final ImageReader reader = tile.getImageReader();
-                        firstTileImage = reader.read(0);
-                        reader.dispose();
-                    }
-
-                    final int bufferSize = tileWidth * tileHeight * firstTileImage.getSampleModel().getNumBands();
-                    final float[] buffArray = new float[bufferSize];
-                    Arrays.fill(buffArray, Float.NaN);
-                    nanBuffer = new DataBufferFloat(bufferSize);
-                }
-            } catch (IOException e) {
-                throw new IllegalArgumentException("First tile can't be read.", e);
-            } catch (DataStoreException e) {
-                throw new IllegalArgumentException("Input mosaic doesn't have any tile.", e);
             }
+
+            if (tile != null) {
+                if (tile.getInput() instanceof RenderedImage) {
+                    firstTileImage = (RenderedImage)tile.getInput();
+                } else {
+                    final ImageReader reader = tile.getImageReader();
+                    firstTileImage = reader.read(0);
+                    reader.dispose();
+                }
+
+                emptyBuffer = firstTileImage.getSampleModel().createDataBuffer();
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException("First tile can't be read.", e);
+        } catch (DataStoreException e) {
+            throw new IllegalArgumentException("Input mosaic doesn't have any tile.", e);
         }
     }
 
@@ -207,43 +199,40 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
         Raster raster;
         try {
-            raster = this.tilecache.getTile(this, tileX, tileY);
+            raster = this.tileCache.get(new Point(tileX, tileY));
         } catch (IllegalArgumentException ex) {
             raster = null;
         }
 
         if (raster == null) {
             try {
-                DataBuffer buffer = nanBuffer;
+                DataBuffer buffer = null;
 
-                //optimization return the first non missing tile data if requested
-                if (firstTilePosition != null && firstTilePosition.equals(new Point(tileX,tileY))) {
-                    buffer = firstTileImage.getData().getDataBuffer();
-                } else {
-
-                    if (!mosaic.isMissing(tileX,tileY)) {
-                        final TileReference tile = mosaic.getTile(tileX,tileY, null);
-                        if (tile != null) {
-                            if (tile.getInput() instanceof RenderedImage) {
-                                buffer = ((RenderedImage)tile.getInput()).getData().getDataBuffer();
-                            } else {
-                                final ImageReader reader = tile.getImageReader();
-                                buffer = reader.read(0).getData().getDataBuffer();
-                                reader.dispose();
-                            }
+                if (!mosaic.isMissing(tileX,tileY)) {
+                    final TileReference tile = mosaic.getTile(tileX,tileY, null);
+                    if (tile != null) {
+                        if (tile.getInput() instanceof RenderedImage) {
+                            buffer = ((RenderedImage)tile.getInput()).getData().getDataBuffer();
+                        } else {
+                            final ImageReader reader = tile.getImageReader();
+                            buffer = reader.read(0).getData().getDataBuffer();
+                            reader.dispose();
                         }
                     }
+                }
+
+                if(buffer==null){
+                    //create an empty buffer
+                    buffer = emptyBuffer;
                 }
 
                 //create a raster from tile image with tile position offset.
                 LOGGER.log(Level.FINE, "Request tile {0}:{1} ", new Object[]{tileX,tileY});
                 final Point offset = new Point(tileX*tileWidth, tileY*tileHeight);
                 raster = Raster.createWritableRaster(getSampleModel(), buffer , offset);
-                this.tilecache.add(this, tileX, tileY, raster);
+                this.tileCache.put(new Point(tileX, tileY), raster);
 
-            } catch (DataStoreException e) {
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
-            } catch (IOException e) {
+            } catch ( DataStoreException | IOException e) {
                 LOGGER.log(Level.WARNING, e.getMessage(), e);
             }
         }
