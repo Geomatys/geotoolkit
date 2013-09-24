@@ -24,6 +24,7 @@ import java.awt.image.RenderedImage;
 import java.util.AbstractQueue;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -47,6 +48,7 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.coverage.filestore.XMLSampleDimension;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;
@@ -447,14 +449,21 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                     throw new RuntimeException(ex);
                 }
             }else{
-                //todo not exact
-                if(nbBand==3){
-                    currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_RGB);
-                }else if(nbBand==4){
-                    currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_ARGB);
-                }else{
-                    currentlyTile = BufferedImageUtilities.createImage(tileWidth, tileHeight, nbBand, DataBuffer.TYPE_DOUBLE);
+                try {
+                    //todo not exact
+                    final List<GridSampleDimension> dims = pm.getSampleDimensions(0);
+                    if(nbBand==3){
+                        currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_RGB);
+                    }else if(nbBand==4){
+                        currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_ARGB);
+                    }else{
+                        currentlyTile = BufferedImageUtilities.createImage(tileWidth, tileHeight, dims.size(),
+                                XMLSampleDimension.getDataType(dims.get(0).getSampleDimensionType()));
+                    }
+                } catch (DataStoreException ex) {
+                    throw new RuntimeException(ex);
                 }
+
             }
 
             // define tile translation from bufferedImage min pixel position to mosaic pixel position.
@@ -472,6 +481,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             final int tmaxy  = Math.min(mosAreaMaxY, minidy + tileHeight);
             final Rectangle tileAreaWork = new Rectangle();
             tileAreaWork.setBounds(tminx - minidx, tminy - minidy, tmaxx - tminx, tmaxy - tminy);
+            if(tminx==tmaxx || tminy==tmaxy) return;
 
             try {
                 final Resample resample = new Resample(destImgToCrsCoverage, currentlyTile, tileAreaWork, interpolation, new double[nbBand]);
