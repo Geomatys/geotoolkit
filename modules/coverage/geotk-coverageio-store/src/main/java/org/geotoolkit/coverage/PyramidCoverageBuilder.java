@@ -36,6 +36,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.feature.type.Name;
@@ -49,52 +50,52 @@ import org.opengis.util.FactoryException;
 /**
  * <p>Resampling, re-project, tile cut and insert in given datastore, image from
  * {@link GridCoverage} or {@link GridCoverageReader}.<br/><br/>
- * 
+ *
  * Use example : <br/><br/>
  * We own a {@link GridCoverage} or {@link GridCoverageReader} and a {@link CoverageStore}.<br/>
  * {@code final GridCoverage myGridCoverage;}<br/>
  * {@code final CoverageStore myCoverageStore;}<br/><br/>
- * We want project our {@link GridCoverage} in 2 others {@link CoordinateReferenceSystem} 
+ * We want project our {@link GridCoverage} in 2 others {@link CoordinateReferenceSystem}
  * and insert results in our database with differents scale levels.<br/><br/>
- * 
+ *
  * In first time we build {@link PGCoverageBuilder} object and define interpolation properties use during resampling.<br/>
- * 
+ *
  * {@code final PGCoverageBuilder pgcb = new PGCoverageBuilder(new Dimension(200, 200), InterpolationCase.BICUBIC, 2);}.<br/><br/>
  * See {@link PGCoverageBuilder#PGCoverageBuilder(java.awt.Dimension, org.geotoolkit.image.interpolation.InterpolationCase, int) }<br/><br/>
- * 
+ *
  * We choose {@link CoordinateReferenceSystem}.<br/>
  * {@code final CoordinateReferenceSystem crs4326 = CRS.decode("EPSG:4326");}<br/>
  * {@code final CoordinateReferenceSystem crs2163 = CRS.decode(";EPSG:2163");}<br/>
  * See <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
  * for more {@link CoordinateReferenceSystem}.<br/><br/>
- * 
+ *
  * We define work area with appropriate {@link Envelope}.<br/>
  * {@code final GeneralEnvelope envCRS4326 = new GeneralEnvelope(crs4326);}<br/>
  * {@code envCRS4326.setEnvelope(xmin, ymin,} &#133; {@code , xmax, ymax);}<br/>
  * {@code final GeneralEnvelope envCRS2163 = new GeneralEnvelope(crs2163);}<br/>
  * {@code envCRS2163.setEnvelope(xmin, ymin,} &#133; {@code , xmax, ymax);}<br/>
  * See {@link CoordinateReferenceSystem#getDomainOfValidity()} for appropriate ordinates values.<br/><br/>
- * 
+ *
  * We define appropriate scale level from envelope size.<br/>
  * {@code final double[] scaleLvlCRS4329 = new double[]{val0, val1, ... , valn};}<br/>
  * {@code final double[] scaleLvlCRS2163 = new double[]{val0, val1, ... , valn};}<br/>
  * Note : output stored image size : <br/>
  * output image width  = {@link Envelope#getSpan(0) } / {val0, &#133; , valn}.<br/>
  * output image height = {@link Envelope#getSpan(1) } / {val0, &#133; , valn}.<br/><br/>
- * 
+ *
  * We associate work area ({@link Envelope}) with theirs scale levels.<br/>
  * {@code final HashMap&lt;Envelope, double[]&gt; resolution_Per_Envelope  = new HashMap&lt;Envelope, double[]&gt;();}<br/>
  * {@code resolution_Per_Envelope.put(envCRS4326, scaleLvlCRS4329);}<br/>
  * {@code resolution_Per_Envelope.put(envCRS2163, scaleLvlCRS2163);}<br/><br/>
- * 
+ *
  * We define pyramid name.<br/>
  * {@code final Name name = new DefaultName("myName");}<br/><br/>
  * and table in case when pixel transformation is out of source image boundary.<br/>
  * {@code final double[] fillValue = new double[]{1, 2, 3}};//for example.<br/><br/>
- * 
+ *
  * In last time, call create method.<br/>
  * {@code pgcb.create(myGridCoverage, myCoverageStore, name, resolution_Per_Envelope, fillValue);}</p>
- * 
+ *
  * @author Rémi Marechal (Geomatys).
  */
 public class PyramidCoverageBuilder {
@@ -118,7 +119,7 @@ public class PyramidCoverageBuilder {
      * Tile height.
      */
     private final int tileHeight;
-    
+
     /**
      * Interpolation properties.
      */
@@ -127,13 +128,13 @@ public class PyramidCoverageBuilder {
 
     /**
      * <p>Define tile size and interpolation properties use during resampling operation.<br/><br/>
-     * 
+     *
      * Note : if lanczos interpolation doesn't choose lanczosWindow parameter has no impact.</p>
-     * 
+     *
      * @param tileSize size of tile from mosaic if null a default tile size of 256x256 is choosen.
      * @param interpolation pixel operation use during resampling operation.
      * @param lanczosWindow only use about Lanczos interpolation.
-     * @see Resample#fillImage() 
+     * @see Resample#fillImage()
      * @see LanczosInterpolation#LanczosInterpolation(org.geotoolkit.image.iterator.PixelIterator, int)
      * @see InterpolationCase
      */
@@ -152,14 +153,14 @@ public class PyramidCoverageBuilder {
 
    /**
     * <p>Effectuate resampling, re-projection, tile cutting and insertion in datastore on {@link GridCoverage} from {@link GridCoverageReader}.<br/><br/>
-    * 
+    *
     * Note : <br/>
-    * {@link GridGeometry} from {@link GridCoverage} must be instance of {@link GridGeometry2D} 
+    * {@link GridGeometry} from {@link GridCoverage} must be instance of {@link GridGeometry2D}
     * else a {@link IllegalArgumentException} will be thrown.<br/>
     * fillValue parameter must have same lenght than pixel size from image within coverage.
     * If fill value is {@code null} a table of zero value with appropriate lenght is use.
     * </p>
-    * 
+    *
     * @param reader {@link GridCoverageReader} which contain {@link GridCoverage} will be stored.
     * @param coverageStore {@link CoverageStore} where operation on {@link GridCoverage} are stored.
     * @param coverageName name given to the set of operations results, performed on the coverage in the datastore.
@@ -169,17 +170,18 @@ public class PyramidCoverageBuilder {
     * @throws TransformException if problems during resampling operation.
     * @throws FactoryException if impossible to find {@code MathTransform} between two {@link CoordinateReferenceSystem}.
     */
-    public void create(GridCoverageReader reader, CoverageStore coverageStore, Name coverageName, 
+    public void create(GridCoverageReader reader, CoverageStore coverageStore, Name coverageName,
             Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue)
             throws DataStoreException, TransformException, FactoryException  {
-        
+
         final GridCoverageReadParam rp = new GridCoverageReadParam();
 
         //one coverageReference for each reader.
-        final CoverageReference cv = coverageStore.create(coverageName);
+        final CoverageReference cv = getOrCreateCRef(coverageStore,coverageName);
+
         if (!(cv instanceof PyramidalCoverageReference)) throw new IllegalArgumentException("CoverageStore parameter not instance of PyramidalModel");
         final PyramidalCoverageReference pm    = (PyramidalCoverageReference) cv;
-        
+
         for (Envelope outEnv : resolution_Per_Envelope.keySet()) {
             final CoordinateReferenceSystem crs = outEnv.getCoordinateReferenceSystem();
             final int minOrdi0 = CoverageUtilities.getMinOrdinate(crs);
@@ -188,64 +190,64 @@ public class PyramidCoverageBuilder {
             final DirectPosition upperLeft = new GeneralDirectPosition(crs);
             upperLeft.setOrdinate(minOrdi0, outEnv.getMinimum(minOrdi0));
             upperLeft.setOrdinate(minOrdi1, outEnv.getMaximum(minOrdi1));
-            
+
             //one pyramid for each CoordinateReferenceSystem.
-            final Pyramid pyram         = pm.createPyramid(crs);
+            final Pyramid pyram         = getOrCreatePyramid(pm, crs);
             final CombineIterator itEnv = new CombineIterator(new GeneralEnvelope(outEnv));
             while (itEnv.hasNext()) {
                 final Envelope envDest = itEnv.next();
                 //set upperLeft ordinate
                 for (int d = 0; d < outDim; d++) {
-                    if (d != minOrdi0 && d != minOrdi1) 
+                    if (d != minOrdi0 && d != minOrdi1)
                         upperLeft.setOrdinate(d, envDest.getMedian(d));
                 }
                 rp.clear();
                 rp.setEnvelope(envDest);
                 final GridCoverage gridCoverage = reader.read(0, rp);
                 final GridGeometry gg           = gridCoverage.getGridGeometry();
-                if (!(gg instanceof GridGeometry2D)) 
+                if (!(gg instanceof GridGeometry2D))
                     throw new IllegalArgumentException("GridGeometry not instance of GridGeometry2D");
                 final GridCoverage2D gridCoverage2D = (GridCoverage2D) gridCoverage;
-                
+
                 resample(pm, pyram.getId(), gridCoverage2D, resolution_Per_Envelope.get(outEnv), upperLeft, envDest, minOrdi0, minOrdi1, fillValue);
             }
         }
     }
-    
+
     /**
-     * Create and insert pyramid from {@code GridCoverage2D} source, 
+     * Create and insert pyramid from {@code GridCoverage2D} source,
      * in specified {@code PyramidalModel} at specified pyramidID.
-     * 
+     *
      * @param pm {@code PyramidalModel} in which insert pyramid tiles.
      * @param pyramidID ID in which pyramid is inserted.
      * @param gridCoverage2D source data of pyramid which will be inserted.
      * @param scaleLevel scale values table for each pyramid level. Table length represent pyramid level number.
      * @param upperLeft geographic upper left corner of pyramid will be inserted.
-     * @param envDest envelope which represent ulti-dimensional slice of origine coverage envelope. 
+     * @param envDest envelope which represent ulti-dimensional slice of origine coverage envelope.
      * @param widthAxis index of X direction from multi-dimensional coverage envelope.
      * @param heightAxis index of Y direction from multi-dimensional coverage envelope.
-     * @param fillValue contains value use when pixel transformation is out of source image boundary. 
+     * @param fillValue contains value use when pixel transformation is out of source image boundary.
      * Can be {@code null}. If {@code null} a default table value filled by zero value,
-     * with lenght equal to source coverage image band number is created. 
-     * 
-     * @throws NoninvertibleTransformException 
+     * with lenght equal to source coverage image band number is created.
+     *
+     * @throws NoninvertibleTransformException
      * @throws FactoryException
      * @throws TransformException
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
-    private void resample (PyramidalCoverageReference pm, String pyramidID, GridCoverage2D gridCoverage2D, double[] scaleLevel, 
-            DirectPosition upperLeft, Envelope envDest, int widthAxis, int heightAxis, double[] fillValue) 
+    private void resample (PyramidalCoverageReference pm, String pyramidID, GridCoverage2D gridCoverage2D, double[] scaleLevel,
+            DirectPosition upperLeft, Envelope envDest, int widthAxis, int heightAxis, double[] fillValue)
             throws NoninvertibleTransformException, FactoryException, TransformException, DataStoreException {
-        
+
         final GridGeometry2D gg2d   = gridCoverage2D.getGridGeometry();
         final RenderedImage baseImg = gridCoverage2D.getRenderedImage();
         // work on pixels coordinates.
         final MathTransform2D coverageCRS_to_grid = gg2d.getGridToCRS2D(PixelOrientation.CENTER).inverse();
         final double envWidth       = envDest.getSpan(widthAxis);
         final double envHeight      = envDest.getSpan(heightAxis);
-        final ColorModel cm         = baseImg.getColorModel();
-        final double[] fill         = (fillValue == null) ? new double[cm.getNumComponents()] : fillValue;
-        final int dataType          = cm.getColorSpace().getType();
+        final int nbBand            = baseImg.getSampleModel().getNumBands();
+        final double[] fill         = (fillValue == null) ? new double[nbBand] : fillValue;
+        final int dataType          = baseImg.getSampleModel().getDataType();
         final double min0           = envDest.getMinimum(widthAxis);
         final double max1           = envDest.getMaximum(heightAxis);
         //MathTransform2D
@@ -275,10 +277,10 @@ public class PyramidCoverageBuilder {
                     final int destMinY  = cTY * tileHeight;
                     final int cuTWidth  = Math.min(destMinX + tileWidth, imgWidth)   - destMinX;
                     final int cuTHeight = Math.min(destMinY + tileHeight, imgHeight) - destMinY;
-                    final WritableRenderedImage destImg = new BufferedImage(cuTWidth, cuTHeight, dataType);
+                    final WritableRenderedImage destImg = BufferedImageUtilities.createImage(cuTWidth, cuTHeight, nbBand, dataType);
 
                     //dest grid --> dest envelope coordinate --> base envelope --> base grid
-                    //concatene : dest grid_to_crs, dest_crs_to_coverageCRS, coverageCRS_to_grid coverage 
+                    //concatene : dest grid_to_crs, dest_crs_to_coverageCRS, coverageCRS_to_grid coverage
                     final MathTransform2D gridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0 + sx * (destMinX + 0.5), max1 - sy * (destMinY + 0.5)).inverse();
                     final MathTransform mt                = MathTransforms.concatenate(destCrs_to_covGrid, gridDest_to_crs);
 
@@ -289,12 +291,12 @@ public class PyramidCoverageBuilder {
             }
         }
     }
-    
+
    /**
     * <p>Effectuate resampling, re-projection, tile cutting and insertion in datastore on {@link GridCoverage}.<br/><br/>
-    * 
+    *
     * Note : <br/>
-    * {@link GridGeometry} from {@link GridCoverage} must be instance of {@link GridGeometry2D} 
+    * {@link GridGeometry} from {@link GridCoverage} must be instance of {@link GridGeometry2D}
     * else a {@link IllegalArgumentException} will be thrown.<br/>
     * fillValue parameter must have same lenght than pixel size from image within coverage.
     * If fill value is {@code null} a table of zero value with appropriate lenght is use.
@@ -309,13 +311,13 @@ public class PyramidCoverageBuilder {
     * @throws FactoryException if impossible to find {@code MathTransform} between two {@link CoordinateReferenceSystem}.
     */
     public void create(GridCoverage gridCoverage, CoverageStore coverageStore, Name coverageName,
-            Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue) 
+            Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue)
             throws DataStoreException, TransformException, FactoryException {
 
         final GridGeometry gg = gridCoverage.getGridGeometry();
         if (!(gg instanceof GridGeometry2D)) throw new IllegalArgumentException("GridGeometry not instance of GridGeometry2D");
 
-        final CoverageReference cv  = coverageStore.create(coverageName);
+        final CoverageReference cv  = getOrCreateCRef(coverageStore,coverageName);
         if (!(cv instanceof PyramidalCoverageReference)) throw new IllegalArgumentException("CoverageStore parameter not instance of PyramidalModel");
         final PyramidalCoverageReference pm     = (PyramidalCoverageReference) cv;
 
@@ -332,8 +334,39 @@ public class PyramidCoverageBuilder {
             upperLeft.setOrdinate(minOrdi0, envDest.getMinimum(minOrdi0));
             upperLeft.setOrdinate(minOrdi1, envDest.getMaximum(minOrdi1));
             //one pyramid for each CoordinateReferenceSystem.
-            final Pyramid pyram                 = pm.createPyramid(crs);
+            final Pyramid pyram                 = getOrCreatePyramid(pm, crs);
             resample(pm, pyram.getId(), ((GridCoverage2D)gridCoverage), resolution_Per_Envelope.get(envDest), upperLeft, envDest, minOrdi0, minOrdi1, fill);
         }
     }
+
+    private CoverageReference getOrCreateCRef(CoverageStore coverageStore, Name coverageName) throws DataStoreException{
+        CoverageReference cv = null;
+        for(Name n : coverageStore.getNames()){
+            if(n.getLocalPart().equals(coverageName.getLocalPart())){
+                cv = coverageStore.getCoverageReference(n);
+            }
+        }
+        if(cv == null){
+            cv = coverageStore.create(coverageName);
+        }
+        return cv;
+    }
+
+    private Pyramid getOrCreatePyramid(PyramidalCoverageReference pm, CoordinateReferenceSystem crs) throws DataStoreException{
+        Pyramid pyramid = null;
+        for(Pyramid p : pm.getPyramidSet().getPyramids()){
+            if(CRS.equalsIgnoreMetadata(p.getCoordinateReferenceSystem(),crs)){
+                pyramid = p;
+                break;
+            }
+        }
+
+        if(pyramid == null){
+            pyramid = pm.createPyramid(crs);
+        }
+
+        return pyramid;
+    }
+
+
 }
