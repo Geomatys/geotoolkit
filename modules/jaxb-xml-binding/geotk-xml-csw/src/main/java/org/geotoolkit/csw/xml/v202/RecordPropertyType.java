@@ -77,6 +77,8 @@ public class RecordPropertyType implements RecordProperty{
         this.name  = name;
         if (value instanceof String) {
             this.value = buildStringNode((String)value);
+        } else if (value instanceof Node) {
+            this.value = addValueNode((Node)value);
         } else {
             this.value = buildNode(value);
         }
@@ -111,6 +113,23 @@ public class RecordPropertyType implements RecordProperty{
             CSWMarshallerPool.getInstance().recycle(m);
             return e;
         } catch (ParserConfigurationException | JAXBException ex) {
+            Logger.getLogger(RecordPropertyType.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    private Node addValueNode(final Node o) {
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+            Element e = doc.createElementNS("http://www.opengis.net/cat/csw/2.0.2", "Value");
+            e.setPrefix("csw");
+            final Node clone = e.getOwnerDocument().importNode(o, true);
+            e.appendChild(clone);
+            return e;
+        } catch (ParserConfigurationException ex) {
             Logger.getLogger(RecordPropertyType.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
