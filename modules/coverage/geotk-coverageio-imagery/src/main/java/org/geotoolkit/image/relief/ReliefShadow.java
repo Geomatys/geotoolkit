@@ -16,7 +16,11 @@
  */
 package org.geotoolkit.image.relief;
 
+import java.awt.AlphaComposite;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
 import org.apache.sis.util.ArgumentChecks;
@@ -33,7 +37,7 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
  */
 public final class ReliefShadow {
     
-    private static double PI = Math.PI;
+    private static final double PI = Math.PI;
     
     /**
      * Table which contain (X, Y) or (Y, X) couple pixel ordinate position in source image.
@@ -53,6 +57,11 @@ public final class ReliefShadow {
      * Coefficient to attenuate pixel values. 
      */
     private final double shadowDimming;
+    
+    /**
+     * Coefficient to increase pixel values. 
+     */
+    private final double brightness;
     
     /**
      * {@link PixelIterator} which travel on source image.
@@ -156,6 +165,16 @@ public final class ReliefShadow {
     private double pasz;
     
     /**
+     * {@link ColorModel} from source image.
+     */
+    private ColorModel sourceColorModel;
+    
+    /**
+     * {@link ColorModel} from destination image.
+     */
+    private ColorModel destColorModel;
+    
+    /**
      * Create an object to apply shadow on some {@link RenderedImage}.<br/><br/>
      * 
      * Note : if a pixel is defined as a shadow the destination pixel values are <br/> 
@@ -167,10 +186,32 @@ public final class ReliefShadow {
      * @throws IllegalArgumentException if shadow dimming is out from [0; 1] interval.
      */
     public ReliefShadow(final double lightSRCAzimuth, final double lightSRCAltitude, final double shadowDimming) {
+        this(lightSRCAzimuth, lightSRCAltitude, 1, shadowDimming);
+    }
+    
+    /**
+     * Create an object to apply shadow on some {@link RenderedImage}.<br/><br/>
+     * 
+     * Note : if a pixel is defined as a shadow the destination pixel values are <br/> 
+     * sampleValue * shadowDimming for each bands with shadowDimming attribut € [0; 1].<br/>
+     * Same if a pixel is defined as sunny the destination pixel values are <br/> 
+     * sampleValue * brightness for each bands with shadowDimming attribut € [0; 1].
+     * 
+     * @param lightSRCAzimuth Light angle in degree from {@link RenderedImage} Y axe.
+     * @param lightSRCAltitude Light angle in degree of the light from the ground.
+     * @param brightness increase coefficient apply on each band on each pixel which are define as sunny.
+     * @param shadowDimming dimming coefficient apply on each band on each pixel which are define as a shadow.
+     * @throws IllegalArgumentException if shadow dimming is out from [0; 1] interval.
+     */
+    public ReliefShadow(final double lightSRCAzimuth, final double lightSRCAltitude, final double brightness, final double shadowDimming) {
+        if (brightness < 1) {
+            throw new IllegalArgumentException("brightness should superior or equal to 1. value found : "+brightness);
+        }
         if (shadowDimming > 1 || shadowDimming < 0) {
             throw new IllegalArgumentException("shadowDimming should belong in [0; 1] interval. value found : "+shadowDimming);
         }
         this.shadowDimming = shadowDimming;
+        this.brightness    = brightness;
         alpha    = (PI/2) - ((lightSRCAzimuth % 360) * PI / 180);// on enleve les n 2kPI
         cosAlpha = Math.cos(alpha);
         sinAlpha = Math.sin(alpha);
@@ -240,15 +281,18 @@ public final class ReliefShadow {
         this.maxX = minX + imgWidth;
         this.minY = imgSource.getMinY();
         this.maxY = minY + imgHeight;
+        this.sourceColorModel = imgSource.getColorModel();
         
+        final Raster srcRaster = imgSource.getData();
         // define step altitude, when iterator travel up along v axis. 
-        pasz      = pash * scaleZ;
-        
-        final WritableRenderedImage imgDest = new BufferedImage(imgSource.getColorModel(), imgSource.getColorModel().createCompatibleWritableRaster(imgWidth, imgHeight), false, null);
+        pasz = pash * scaleZ;
+        final BufferedImage imgDest = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_ARGB);
+        this.destColorModel = imgDest.getColorModel();
+//        final WritableRenderedImage imgDest = new BufferedImage(imgSource.getColorModel(), imgSource.getColorModel().createCompatibleWritableRaster(imgWidth, imgHeight), false, null);
         //        imgDest = new WritableLargeRenderedImage(imgWidth, imgHeight, imgSource.getColorModel());
         
-        srcIter            = PixelIteratorFactory.createRowMajorIterator(imgSource);
-        final int numBand  = srcIter.getNumBands();
+//        srcIter            = PixelIteratorFactory.createRowMajorIterator(imgSource);
+//        final int numBand  = srcIter.getNumBands();
         mntIter            = PixelIteratorFactory.createRowMajorIterator(dem);
         destIter           = PixelIteratorFactory.createRowMajorWriteableIterator(imgDest, imgDest);
         
@@ -295,22 +339,34 @@ public final class ReliefShadow {
         while (iterBeginY >= minY && iterBeginY < maxY) {
             int x = iterBeginX;
             while (x >= minX && x < maxX) {
-                srcIter.moveTo(x, iterBeginY, 0);
+//                srcIter.moveTo(x, iterBeginY, 0);
                 destIter.moveTo(x, iterBeginY, 0);
+                final Object pix = srcRaster.getDataElements(x, iterBeginY, null);
+                // alpha transparency
+                final int  alphaTrans = sourceColorModel.getAlpha(pix);
+                // blue
+                final int blue = sourceColorModel.getBlue(pix);
+                // red
+                final int red = sourceColorModel.getRed(pix);
+                // green
+                final int green = sourceColorModel.getGreen(pix);
                 if (destIter.getSample() == 1) {
                     // already define as a shadow
-                    for (int b = 0; b < numBand; b++) {
-                        destIter.setSampleDouble(srcIter.getSampleDouble() * shadowDimming);
-                        srcIter.next();
-                        destIter.next();
-                    }
+                    // set alpha transparency
+                    int color = ((int)(alphaTrans)            << 24)
+                              | ((int)(red   * shadowDimming) << 16)
+                              | ((int)(green * shadowDimming) << 8)
+                              | ((int)(blue  * shadowDimming));
+                    imgDest.setRGB(x, iterBeginY, color);
                 } else {
                     // current pixel is a pikes.
-                    for (int b = 0; b < numBand; b++) {
-                        destIter.setSampleDouble(srcIter.getSampleDouble());
-                        srcIter.next();
-                        destIter.next();
-                    }
+                    // already define as a shadow
+                    // set alpha transparency
+                    int color = ((int)(alphaTrans )                       << 24)
+                              | (Math.min(255, (int)(red   * brightness)) << 16)
+                              | (Math.min(255, (int)(green * brightness)) << 8)
+                              | (Math.min(255, (int)(blue  * brightness)));
+                    imgDest.setRGB(x, iterBeginY, color);
                     mntIter.moveTo(x, iterBeginY, 0);
                     final double z  = mntIter.getSampleDouble();
                     TABV[ordinateX] = x;

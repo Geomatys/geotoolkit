@@ -598,14 +598,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final double altitude = elevationModel.getAltitude();
 
             // relief factor
-            final double relfactor = shadedRel.getReliefFactor().evaluate(null, Double.class) / 100.0;
+            final double relfactor = 1 - shadedRel.getReliefFactor().evaluate(null, Double.class) / 100.0;
 
             final boolean isBrightness = shadedRel.isBrightnessOnly();
-            final double brightness = (isBrightness) ? 1.0 + relfactor : 1;
+            final double brightness = (isBrightness) ? 2.0 - relfactor : 1;
 
             final double altiScale = elevationModel.getAmplitudeScale() / 100.0;
             // ReliefShadow creating
-            final ReliefShadow rfs = new ReliefShadow(gridAzim, altitude, relfactor);
+            final ReliefShadow rfs = new ReliefShadow(gridAzim, altitude, brightness, relfactor);
             final GridCoverage2D mntCoverage = getDEMCoverage(coverage, elevationCoverage);
             final RenderedImage mnt = mntCoverage.getRenderedImage();
             // mnt should be null if current elevation coverage doesn't concord with coverage.
