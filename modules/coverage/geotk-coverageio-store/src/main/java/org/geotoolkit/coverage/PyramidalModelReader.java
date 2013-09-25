@@ -131,7 +131,7 @@ public class PyramidalModelReader extends GridCoverageReader{
             //we use the first pyramid as default
             final Pyramid pyramid = set.getPyramids().iterator().next();
 
-            final List<GridMosaic> mosaics = new ArrayList<GridMosaic>(pyramid.getMosaics());
+            final List<GridMosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
             Collections.sort(mosaics, CoverageFinder.SCALE_COMPARATOR);
 
             if(mosaics.isEmpty()){
@@ -142,14 +142,14 @@ public class PyramidalModelReader extends GridCoverageReader{
                 final CoordinateSystem cs = crs.getCoordinateSystem();
                 final int nbdim = cs.getDimension();
 
-                //use the last mosaic informations
-                final GridMosaic mosaic = mosaics.get(mosaics.size()-1);
+                //use the first mosaic informations, most accurate
+                final GridMosaic mosaic = mosaics.get(0);
                 final Dimension gridSize = mosaic.getGridSize();
                 final Dimension tileSize = mosaic.getTileSize();
 
                 //we expect no rotation
                 final AffineTransform2D gridToCRS2D = AbstractGridMosaic.getTileGridToCRS(mosaic, new Point(0, 0));
-                final List<double[]> axisValues = new ArrayList<double[]>();
+                final List<double[]> axisValues = new ArrayList<>();
                 for(int i=2;i<nbdim;i++){
                     final CoordinateSystemAxis axis = cs.getAxis(i);
                     if(axis instanceof DiscreteCoordinateSystemAxis){
