@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.BitSet;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -54,6 +55,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.XImageIO;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
@@ -115,7 +117,14 @@ public class XMLMosaic implements GridMosaic{
         }
 
         //create an empty tile
-        emptyTile = new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
+        final List<XMLSampleDimension> dims = pyramid.getPyramidSet().getSampleDimensions();
+        if(dims!=null){
+            emptyTile = BufferedImageUtilities.createImage(tileWidth, tileHeight, dims.size(), dims.get(0).getDataType());
+        }else{
+            emptyTile = new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
+        }
+
+
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             ImageIO.write(emptyTile, pyramid.getPyramidSet().getFormatName(), out);
@@ -229,10 +238,13 @@ public class XMLMosaic implements GridMosaic{
 
         final TileReference tile;
         if(isEmpty(col, row)){
-            tile = new DefaultTileReference(getPyramid().getPyramidSet().getReaderSpi(),
-                    new ByteArrayInputStream(emptyTileEncoded), 0, new Point(col, row));
+            try {
+                tile = new DefaultTileReference(getPyramid().getPyramidSet().getReaderSpi(),
+                        ImageIO.createImageInputStream(new ByteArrayInputStream(emptyTileEncoded)), 0, new Point(col, row));
+            } catch (IOException ex) {
+                throw new DataStoreException(ex);
+            }
         }else{
-            final ImageReaderSpi spi;
             tile = new DefaultTileReference(getPyramid().getPyramidSet().getReaderSpi(),
                     getTileFile(col, row), 0, new Point(col, row));
         }
