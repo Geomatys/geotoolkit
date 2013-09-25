@@ -257,14 +257,15 @@ public class PyramidCoverageBuilder {
         //one mosaic for each level scale
         for (double pixelScal : scaleLevel) {
             //output image size
-            final int imgWidth  = (int) ((envWidth+pixelScal-1)  / pixelScal);
-            final int imgHeight = (int) ((envHeight+pixelScal-1) / pixelScal);
-            final double sx     = envWidth  / ((double)imgWidth);
-            final double sy     = envHeight / ((double)imgHeight);
+
+            final double imgWidth  = envWidth / pixelScal; // (int) ((envWidth+pixelScal-1)  / pixelScal);
+            final double imgHeight = envHeight / pixelScal; //(int) ((envHeight+pixelScal-1) / pixelScal);
+            final double sx     = envWidth  / imgWidth;
+            final double sy     = envHeight / imgHeight;
 
             //mosaic size
-            final int nbrTileX  = (imgWidth  + tileWidth  - 1) / tileWidth;
-            final int nbrTileY  = (imgHeight + tileHeight - 1) / tileHeight;
+            final int nbrTileX  = (int)Math.ceil(imgWidth/tileWidth); // ((int)Math.ceil(imgWidth)  + tileWidth  - 1) / tileWidth;
+            final int nbrTileY  = (int)Math.ceil(imgHeight/tileHeight); //((int)Math.ceil(imgHeight) + tileHeight - 1) / tileHeight;
 
             final GridMosaic mosaic = pm.createMosaic(pyramidID, new Dimension(nbrTileX, nbrTileY), tileSize, upperLeft, pixelScal);
             final String mosaicId   = mosaic.getId();
@@ -275,9 +276,7 @@ public class PyramidCoverageBuilder {
                 for (int cTX = 0; cTX < nbrTileX; cTX++) {
                     final int destMinX  = cTX * tileWidth;
                     final int destMinY  = cTY * tileHeight;
-                    final int cuTWidth  = Math.min(destMinX + tileWidth, imgWidth)   - destMinX;
-                    final int cuTHeight = Math.min(destMinY + tileHeight, imgHeight) - destMinY;
-                    final WritableRenderedImage destImg = BufferedImageUtilities.createImage(cuTWidth, cuTHeight, nbBand, dataType);
+                    final WritableRenderedImage destImg = BufferedImageUtilities.createImage(tileWidth, tileHeight, nbBand, dataType);
 
                     //dest grid --> dest envelope coordinate --> base envelope --> base grid
                     //concatene : dest grid_to_crs, dest_crs_to_coverageCRS, coverageCRS_to_grid coverage
