@@ -36,7 +36,9 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.coverage.grid.GridCoverage;
@@ -45,6 +47,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
@@ -127,17 +130,47 @@ public class PyramidCoverageBuilder {
      */
     private final InterpolationCase interpolationCase;
     private final int lanczosWindow;
-    
+
     /**
      * Global number of tiles which will be generate.
-     * @see PyramidCoverageBuilder#initListener(java.util.Map, org.geotoolkit.process.ProcessListener) 
+     * @see PyramidCoverageBuilder#initListener(java.util.Map, org.geotoolkit.process.ProcessListener)
      */
     private int globalTileNumber;
-    
+
     /**
      * The current nth tile.
      */
     private int niemeTile;
+
+    /**
+     * Used for events.
+     */
+    private final org.geotoolkit.process.Process fakeProcess = new org.geotoolkit.process.Process() {
+        @Override
+        public ProcessDescriptor getDescriptor() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+        @Override
+        public ParameterValueGroup getInput() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+        @Override
+        public ParameterValueGroup call() throws ProcessException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+        @Override
+        public void addListener(ProcessListener listener) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+        @Override
+        public void removeListener(ProcessListener listener) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+        @Override
+        public ProcessListener[] getListeners() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+    };
 
     /**
      * <p>Define tile size and interpolation properties use during resampling operation.<br/><br/>
@@ -163,7 +196,7 @@ public class PyramidCoverageBuilder {
         this.interpolationCase = interpolation;
         this.lanczosWindow     = lanczosWindow;
     }
-    
+
     /**
      * <p>Effectuate resampling, re-projection, tile cutting and insertion in datastore on {@link GridCoverage}.<br/><br/>
      *
@@ -187,7 +220,7 @@ public class PyramidCoverageBuilder {
             throws DataStoreException, TransformException, FactoryException {
         create(gridCoverage, coverageStore, coverageName, resolution_Per_Envelope, fillValue, null);
     }
-    
+
     /**
      * <p>Effectuate resampling, re-projection, tile cutting and insertion in datastore on {@link GridCoverage}.<br/><br/>
      *
@@ -216,18 +249,18 @@ public class PyramidCoverageBuilder {
         ArgumentChecks.ensureNonNull("resolution_Per_Envelope", resolution_Per_Envelope);
 
         if (processListener != null) initListener(resolution_Per_Envelope, processListener);
-        
+
         final GridGeometry gg = gridCoverage.getGridGeometry();
         if (!(gg instanceof GridGeometry2D)) {
             final IllegalArgumentException ex = new IllegalArgumentException("GridGeometry not instance of GridGeometry2D");
-            if (processListener != null) processListener.failed(new ProcessEvent(null, "", 0, ex));
+            if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
             throw ex;
         }
 
         final CoverageReference cv  = getOrCreateCRef(coverageStore,coverageName);
         if (!(cv instanceof PyramidalCoverageReference)) {
             final IllegalArgumentException ex = new IllegalArgumentException("GridGeometry not instance of GridGeometry2D");
-            if (processListener != null) processListener.failed(new ProcessEvent(null, "", 0, ex));
+            if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
             throw ex;
         }
         final PyramidalCoverageReference pm     = (PyramidalCoverageReference) cv;
@@ -248,7 +281,7 @@ public class PyramidCoverageBuilder {
             final Pyramid pyram                 = getOrCreatePyramid(pm, crs);
             resample(pm, pyram.getId(), ((GridCoverage2D)gridCoverage), resolution_Per_Envelope.get(envDest), upperLeft, envDest, minOrdi0, minOrdi1, fill, processListener);
         }
-        if (processListener != null)  processListener.completed(new ProcessEvent(null, "Pyramid coverage builder successfully submitted.", 100));
+        if (processListener != null)  processListener.completed(new ProcessEvent(fakeProcess, "Pyramid coverage builder successfully submitted.", 100));
     }
 
     /**
@@ -275,7 +308,7 @@ public class PyramidCoverageBuilder {
             throws DataStoreException, TransformException, FactoryException  {
         create(reader, coverageStore, coverageName, resolution_Per_Envelope, fillValue, null);
     }
-    
+
     /**
      * <p>Effectuate resampling, re-projection, tile cutting and insertion in datastore on {@link GridCoverage} from {@link GridCoverageReader}.<br/><br/>
      *
@@ -304,7 +337,7 @@ public class PyramidCoverageBuilder {
         ArgumentChecks.ensureNonNull("coverageName"           , coverageName);
         ArgumentChecks.ensureNonNull("resolution_Per_Envelope", resolution_Per_Envelope);
         if (processListener != null) initListener(resolution_Per_Envelope, processListener);
-        
+
         final GridCoverageReadParam rp = new GridCoverageReadParam();
 
         //one coverageReference for each reader.
@@ -312,7 +345,7 @@ public class PyramidCoverageBuilder {
 
         if (!(cv instanceof PyramidalCoverageReference)) {
             final IllegalArgumentException ex = new IllegalArgumentException("CoverageStore parameter should be instance of PyramidalModel."+coverageStore.toString());
-            if (processListener != null) processListener.failed(new ProcessEvent(null, "", 0, ex));
+            if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
             throw ex;
         }
         final PyramidalCoverageReference pm = (PyramidalCoverageReference) cv;
@@ -342,16 +375,16 @@ public class PyramidCoverageBuilder {
                 final GridGeometry gg           = gridCoverage.getGridGeometry();
                 if (!(gg instanceof GridGeometry2D)) {
                     final IllegalArgumentException ex = new IllegalArgumentException("GridGeometry should be instance of GridGeometry2D");
-                    if (processListener != null) processListener.failed(new ProcessEvent(null, "", 0, ex));
+                    if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
                     throw ex;
                 }
-                    
+
                 final GridCoverage2D gridCoverage2D = (GridCoverage2D) gridCoverage;
 
                 resample(pm, pyram.getId(), gridCoverage2D, resolution_Per_Envelope.get(outEnv), upperLeft, envDest, minOrdi0, minOrdi1, fillValue, processListener);
             }
         }
-        if (processListener != null)  processListener.completed(new ProcessEvent(null, "Pyramid coverage builder successfully submitted.", 100));
+        if (processListener != null)  processListener.completed(new ProcessEvent(fakeProcess, "Pyramid coverage builder successfully submitted.", 100));
     }
 
     /**
@@ -398,14 +431,14 @@ public class PyramidCoverageBuilder {
         for (double pixelScal : scaleLevel) {
             //output image size
 
-            final double imgWidth  = envWidth / pixelScal; 
-            final double imgHeight = envHeight / pixelScal; 
+            final double imgWidth  = envWidth / pixelScal;
+            final double imgHeight = envHeight / pixelScal;
             final double sx     = envWidth  / imgWidth;
             final double sy     = envHeight / imgHeight;
 
             //mosaic size
-            final int nbrTileX  = (int)Math.ceil(imgWidth/tileWidth); 
-            final int nbrTileY  = (int)Math.ceil(imgHeight/tileHeight); 
+            final int nbrTileX  = (int)Math.ceil(imgWidth/tileWidth);
+            final int nbrTileY  = (int)Math.ceil(imgHeight/tileHeight);
 
             final GridMosaic mosaic = pm.createMosaic(pyramidID, new Dimension(nbrTileX, nbrTileY), tileSize, upperLeft, pixelScal);
             final String mosaicId   = mosaic.getId();
@@ -417,11 +450,11 @@ public class PyramidCoverageBuilder {
                     final int destMinX  = cTX * tileWidth;
                     final int destMinY  = cTY * tileHeight;
                     final WritableRenderedImage destImg = BufferedImageUtilities.createImage(tileWidth, tileHeight, nbBand, dataType);
-                    
+
                     if (processListener != null) {
-                        processListener.progressing(new ProcessEvent(null, (++niemeTile)+"/"+globalTileNumber, (niemeTile * 100 / globalTileNumber)));
+                        processListener.progressing(new ProcessEvent(fakeProcess, (++niemeTile)+"/"+globalTileNumber, (niemeTile * 100 / globalTileNumber)));
                     }
-                    
+
                     //dest grid --> dest envelope coordinate --> base envelope --> base grid
                     //concatene : dest grid_to_crs, dest_crs_to_coverageCRS, coverageCRS_to_grid coverage
                     final MathTransform2D gridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0 + sx * (destMinX + 0.5), max1 - sy * (destMinY + 0.5)).inverse();
@@ -434,12 +467,12 @@ public class PyramidCoverageBuilder {
             }
         }
     }
-    
+
     /**
      * Initialize attribut to {@link ProcessListener} use.
-     * 
-     * @param resolution_Per_Envelope reprojection and resampling attibuts. 
-     * @param processListener 
+     *
+     * @param resolution_Per_Envelope reprojection and resampling attibuts.
+     * @param processListener
      */
     private void initListener(Map<Envelope, double[]> resolution_Per_Envelope, ProcessListener processListener) {
         assert resolution_Per_Envelope != null : "resolution_Per_Envelope should not be null";
@@ -460,17 +493,17 @@ public class PyramidCoverageBuilder {
                     }
                 }
             }
-            processListener.started(new ProcessEvent(null, "0/"+globalTileNumber, 0));
+            processListener.started(new ProcessEvent(fakeProcess, "0/"+globalTileNumber, 0));
     }
 
     /**
      * Search and return a {@link CoverageReference} in a {@link CoverageStore} from its {@link Name}.<br/>
      * If it doesn't exist a {@link CoverageReference} is created, added in {@link CoverageStore} parameter and returned.
-     * 
+     *
      * @param coverageStore
      * @param coverageName
      * @return a {@link CoverageReference} in a {@link CoverageStore} from its {@link Name}.
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     private CoverageReference getOrCreateCRef(CoverageStore coverageStore, Name coverageName) throws DataStoreException {
         CoverageReference cv = null;
@@ -488,11 +521,11 @@ public class PyramidCoverageBuilder {
     /**
      * Search and return a {@link Pyramid} in a {@link PyramidalCoverageReference} from its {@link CoordinateReferenceSystem} properties.<br/>
      * If it doesn't exist a {@link Pyramid} is created, added in {@link PyramidalCoverageReference} parameter and returned.
-     * 
+     *
      * @param pm
      * @param crs
      * @return a {@link Pyramid} in a {@link PyramidalCoverageReference} from its {@link CoordinateReferenceSystem} properties.
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     private Pyramid getOrCreatePyramid(final PyramidalCoverageReference pm, final CoordinateReferenceSystem crs) throws DataStoreException {
         Pyramid pyramid = null;
