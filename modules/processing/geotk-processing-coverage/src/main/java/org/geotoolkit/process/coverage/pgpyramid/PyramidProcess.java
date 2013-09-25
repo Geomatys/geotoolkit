@@ -27,6 +27,8 @@ import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.process.coverage.pgpyramid.PyramidDescriptor.*;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.process.ProcessEvent;
+import org.geotoolkit.process.ProcessListener;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
@@ -38,12 +40,15 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Remi Marechal (Geomatys).
  */
-public class PyramidProcess extends AbstractProcess {
+public class PyramidProcess extends AbstractProcess implements ProcessListener {
 
     PyramidProcess(final ParameterValueGroup input) {
         super(INSTANCE, input);
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     protected void execute() throws ProcessException {
 
@@ -67,10 +72,58 @@ public class PyramidProcess extends AbstractProcess {
 
         final PyramidCoverageBuilder pgcb = new PyramidCoverageBuilder(tilesize, interpolationcase, 2);
         try {
-            pgcb.create(coverage, coverageStore, new DefaultName(pyramid_name), resolution_per_envelope, fillvalue);
+            pgcb.create(coverage, coverageStore, new DefaultName(pyramid_name), resolution_per_envelope, fillvalue, this);
             getOrCreate(OUT_COVERAGESTORE, outputParameters).setValue(coverageStore);
         } catch (Exception ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void started(ProcessEvent event) {
+        // do nothing volontary
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void progressing(ProcessEvent event) {
+        fireProgressing(event.getTask(), event.getProgress(), false);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void paused(ProcessEvent event) {
+        fireProcessPaused(event.getTask(), event.getProgress());
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void resumed(ProcessEvent event) {
+        fireProcessResumed(event.getTask(), event.getProgress());
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void completed(ProcessEvent event) {
+        // do nothing volontary
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void failed(ProcessEvent event) {
+        fireProcessFailed(event.getTask(), event.getException());
     }
 }
