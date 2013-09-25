@@ -43,7 +43,7 @@ public class DefaultPathWalker implements PathWalker{
 
         //get the first segment
         boolean first = true;
-        while (!pathIterator.isDone() && first) {
+        while (first && !pathIterator.isDone()) {
             final int type = pathIterator.currentSegment(currentPoint);
             switch (type) {
                 case PathIterator.SEG_MOVETO:
