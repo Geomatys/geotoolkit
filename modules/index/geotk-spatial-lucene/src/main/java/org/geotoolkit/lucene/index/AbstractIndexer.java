@@ -72,7 +72,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     /**
      * A flag use in child constructor.
      */
-    protected boolean create;
+    private boolean needCreation;
 
     /**
      * A flag to stop the indexation going on
@@ -122,14 +122,14 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         if (currentIndexDirectory == null) {
             currentIndexDirectory = new File(configDirectory, serviceID + "index-" + System.currentTimeMillis());
             currentIndexDirectory.mkdir();
-            create = true;
+            needCreation = true;
             setFileDirectory(currentIndexDirectory);
         } else {
             LOGGER.log(logLevel, "Index already created.");
             deleteOldIndexDir(configDirectory, serviceID, currentIndexDirectory.getName());
             // must be set before reading tree
             setFileDirectory(currentIndexDirectory);
-            create = false;
+            needCreation = false;
         }
         rTree = RtreeManager.get(currentIndexDirectory);
     }
@@ -143,6 +143,10 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public AbstractIndexer(final String serviceID, final File configDirectory) {
         this(serviceID, configDirectory, null);
+    }
+
+    public boolean needCreation() {
+        return needCreation;
     }
 
     /**
