@@ -174,10 +174,10 @@ public class S52Context {
     // See also : 7.1.3.1 Text Groupings
     private boolean noText = false;
     // S-52 Annex A Part I p.137
-    private float safetyDepth = 100f; //meters
-    private float shallowContour = 200f; //meters
-    private float safetyContour = 1000f; //meters
-    private float deepContour = 20000f; // meters
+    private float safetyDepth = 1f; //meters
+    private float shallowContour = 5f; //meters
+    private float safetyContour = 1f; //meters
+    private float deepContour = 10f; // meters
     private boolean lowAccuracySymbols = false;
     private boolean twoShades = true;
     private boolean shallowPattern = false;

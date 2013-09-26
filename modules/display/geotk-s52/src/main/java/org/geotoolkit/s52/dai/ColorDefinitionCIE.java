@@ -71,18 +71,33 @@ public class ColorDefinitionCIE extends DAIField{
     }
 
     /**
-     * Convert CIE color to Color and hexa.
+     * Convert CIE XYL color to Color and hexa.
      */
     private void checkCache(){
         if(color!=null)return;
+
+        //convert CIE X,Y,L to CIE X,Y,Z
+        // S-52 Appendix 2 (S-52_App.2_e4.3).doc
+        // p.83
+        double Y = CLUM;
+        double X = (CHRX/CHRY) * Y;
+        double Z = (1.0-CHRX-CHRY)/CHRY * Y;
+
         float[] colorValues = new float[]{
-            (float)CHRX,
-            (float)CHRY,
-            (float)CLUM
+            (float)X,
+            (float)Y,
+            (float)Z
         };
+
+        // divide by 100 for java color space
+        colorValues[0] /= 100.0;
+        colorValues[1] /= 100.0;
+        colorValues[2] /= 100.0;
+
         colorValues = CIEXYZ.toRGB(colorValues);
         color = new Color(colorValues[0],colorValues[1],colorValues[2],1f);
         hexa = (String)GO2Utilities.STYLE_FACTORY.literal(color).getValue();
+
     }
 
     @Override
