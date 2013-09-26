@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.filestore;
 
 import java.awt.image.DataBuffer;
+import javax.measure.unit.Unit;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -31,12 +32,40 @@ import org.opengis.coverage.SampleDimensionType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLSampleDimension {
 
-    @XmlElement(name="Min")
+    @XmlElement(name="name")
+    public String name;
+    @XmlElement(name="unit")
+    public String unit;
+    @XmlElement(name="min")
     public Double min;
-    @XmlElement(name="Max")
+    @XmlElement(name="max")
     public Double max;
-    @XmlElement(name="Type")
+    @XmlElement(name="offset")
+    public Double offset;
+    @XmlElement(name="scale")
+    public Double scale;
+    @XmlElement(name="type")
     public String type;
+
+    public void setUnit(Unit unit){
+        if(unit==null){
+            this.unit = null;
+        }else{
+            this.unit = unit.toString();
+        }
+    }
+
+    public Unit getUnit(){
+        if(this.unit==null || unit.isEmpty()){
+            return Unit.ONE;
+        }else{
+            try{
+                return Unit.valueOf(unit);
+            }catch(Exception ex){
+                return null;
+            }
+        }
+    }
 
     public void setSampleType(SampleDimensionType sdt){
         type = sdt.identifier();
