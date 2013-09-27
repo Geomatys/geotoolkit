@@ -82,12 +82,7 @@ public final class DecimateJTSLineIterator extends JTSGeometryIterator<LineStrin
      */
     @Override
     public boolean isDone() {
-        if(done){
-            reset();
-            return true;
-        }else{
-            return false;
-        }
+        return done;
     }
 
     /**
@@ -151,5 +146,5 @@ public final class DecimateJTSLineIterator extends JTSGeometryIterator<LineStrin
             return SEG_LINETO;
         }
     }
-	
+
 }

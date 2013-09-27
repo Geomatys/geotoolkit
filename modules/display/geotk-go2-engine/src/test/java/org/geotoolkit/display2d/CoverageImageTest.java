@@ -68,27 +68,27 @@ import org.opengis.util.FactoryException;
  * @author Remi Marechal (Geomatys).
  */
 public class CoverageImageTest {
-    
+
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
     private static final double EPSILON = 1E-9;
-    
+
     final CanvasDef cdef = new CanvasDef();
     final ViewDef vdef   = new ViewDef();
     final SceneDef sdef  = new SceneDef();
     final Dimension outputImgDim  = new Dimension();
-    
+
     int proportionalityCoefficient;
     Envelope resEnv;
     Hints hints;
     int srcWidth;
     int srcHeight;
-    
+
     /**
-     * Create an appropriate test image. 
-     * 
-     * @param width output image width. 
+     * Create an appropriate test image.
+     *
+     * @param width output image width.
      * @param height output image height.
-     * @return an appropriate test image. 
+     * @return an appropriate test image.
      */
     private BufferedImage createImage(int width, int height) {
         final BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -96,12 +96,12 @@ public class CoverageImageTest {
         g2d.setColor(Color.red);
         g2d.fillRect(0, 0, width, height);
         return img;
-    } 
-    
+    }
+
     /**
      * Create and return a {@link GridCoverage2D} from image, {@link CoordinateReferenceSystem}
      * and double table values which represent geographic envelope in {@link CoordinateReferenceSystem} units.
-     * 
+     *
      * @param image coverage image.
      * @param crs coverage {@link CoordinateReferenceSystem}
      * @param ordinates coverage envelope ordinate values.(xmin, ymin, ... xmax, ymax ...)
@@ -115,10 +115,10 @@ public class CoverageImageTest {
         gcb.setEnvelope(ordinates);
         return gcb.getGridCoverage2D();
     }
-    
+
     /**
      * Compare {@link RenderedImage} from expected {@link RenderedImage} and a proportionality coefficient.
-     * 
+     *
      * @param sourceImage tested Image.
      * @param resultImage expected image.
      * @param proportionalityCoefficient resample coefficient.
@@ -148,83 +148,83 @@ public class CoverageImageTest {
             if (++b == numband) b = 0;
         }
     }
-    
+
     /**
-     * Compute and compare result image from {@link MapContext} build with {@link CoverageMapLayer}, 
+     * Compute and compare result image from {@link MapContext} build with {@link CoverageMapLayer},
      * and sourceImage.
-     * 
+     *
      * @param sourceImage expected image will be tested.
      * @param cml {@link CoverageMapLayer} use to build {@link MapContext}.
-     * @throws PortrayalException 
+     * @throws PortrayalException
      */
     private void testImageLayer(RenderedImage sourceImage, CoverageMapLayer cml) throws PortrayalException{
         //create a mapcontext
-        final MapContext context  = MapBuilder.createContext();   
+        final MapContext context  = MapBuilder.createContext();
         context.layers().add(cml);
-        
+
         outputImgDim.setSize(proportionalityCoefficient * srcWidth, proportionalityCoefficient * srcHeight);
-        
+
         hints = new Hints(GO2Hints.KEY_COLOR_MODEL, sourceImage.getColorModel());
-        
+
         cdef.setDimension(outputImgDim);
         sdef.setContext(context);
         sdef.setHints(hints);
         vdef.setEnvelope(resEnv);
-        
+
         final BufferedImage imgResult = DefaultPortrayalService.portray(cdef, sdef, vdef);
         checkImage(sourceImage, imgResult, proportionalityCoefficient);
     }
-    
+
     /**
      * <p>Test between output image from renderer and source image within pyramidal model.<br/>
      * Note : PyramidalModel use for this test is a "MemoryCoverageStore" which store all raster in memory.</p>
-     * 
+     *
      * @throws PortrayalException
      * @throws DataStoreException
      * @throws TransformException
-     * @throws FactoryException 
+     * @throws FactoryException
      */
     @Test
     public void pyramidtest() throws PortrayalException, DataStoreException, TransformException, FactoryException {
-        
+
         ImageIO.scanForPlugins();
         Setup.initialize(null);
-        
+
         final File input = new File("src/test/resources/org/geotoolkit/display2d/clouds.jpg");
         final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
-        
+
         final MPCoverageStore mpCovStore = new MPCoverageStore();
         final PyramidCoverageBuilder pcb = new PyramidCoverageBuilder(new Dimension(25, 25), InterpolationCase.NEIGHBOR, 2);
         final double[] fillValue = new double[3];
-        
+
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
         env.setEnvelope(-180, -90, 180, 90);
         final double[] scales = new double[]{1.40625, 2.8125};
-        final Map<Envelope, double[]> map = new HashMap<Envelope, double[]>();
+        final Map<Envelope, double[]> map = new HashMap<>();
         map.put(env, scales);
         final Name name = new DefaultName("memory_store_test");
         pcb.create(reader, mpCovStore, name, map, fillValue);
-        
+
         final GridCoverage2D gridcov = (GridCoverage2D) reader.read(0, null);
-        
+
         final RenderedImage img = gridcov.getRenderedImage();
         srcWidth  = img.getWidth();
         srcHeight = img.getHeight();
-        
+
         //Envelope result
         resEnv = gridcov.getEnvelope();
         proportionalityCoefficient = 2;
         final CoverageMapLayer cl = MapBuilder.createCoverageLayer(mpCovStore.getCoverageReference(name), SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "raster");
         testImageLayer(img, cl);
-        
+
         proportionalityCoefficient = 1;
         testImageLayer(img, cl);
     }
-    
+
     /**
      * Test between output image from renderer and source image within {@link GridCoverage2D}.
-     * 
-     * @throws PortrayalException 
+     *
+     * @throws PortrayalException
      */
     @Test
     public void coverage2DTest() throws PortrayalException {
@@ -232,9 +232,9 @@ public class CoverageImageTest {
         final CoordinateReferenceSystem crs = DefaultEngineeringCRS.CARTESIAN_2D;
         final double[] envelope = new double[]{-180, -90, 180, 90};
         final GridCoverage2D gc2D = createCoverage(img, crs, envelope);
-             
+
         final CoverageMapLayer cl = MapBuilder.createCoverageLayer(gc2D, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "raster");
-        
+
         //Envelope result
         GeneralEnvelope resuEnv = new GeneralEnvelope(crs);
         resuEnv.setEnvelope(envelope);
@@ -242,39 +242,39 @@ public class CoverageImageTest {
         proportionalityCoefficient = 2;
         srcWidth = 180;
         srcHeight = 90;
-        
+
         testImageLayer(img, cl);
     }
-    
+
     /**
      * Test between output image from renderer and source image within {@link GridCoverageReader}.
-     * 
+     *
      * @throws PortrayalException
      * @throws CoverageStoreException
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void coverageReaderTest() throws PortrayalException, CoverageStoreException, IOException {
-        
+
         ImageIO.scanForPlugins();
         Setup.initialize(null);
-        
+
         final File input = new File("src/test/resources/org/geotoolkit/display2d/clouds.jpg");
         final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
-        
+
         final BufferedImage img = ImageIO.read(input);
         final GridCoverage2D gridcov = (GridCoverage2D) reader.read(0, null);
-        
+
         proportionalityCoefficient = 2;
-        
+
         final CoverageMapLayer cl = MapBuilder.createCoverageLayer(reader, 0, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "raster");
-        
+
         //Envelope result
         resEnv = gridcov.getEnvelope();
-        
+
         srcWidth  = img.getWidth();
         srcHeight = img.getHeight();
-        
+
         testImageLayer(img, cl);
     }
 }

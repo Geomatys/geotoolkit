@@ -128,7 +128,7 @@ public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
         }
     }
 
-    
+
     /**
      * {@inheritDoc }
      */
@@ -142,12 +142,7 @@ public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
      */
     @Override
     public boolean isDone() {
-        if(done){
-            reset();
-            return true;
-        }else{
-            return false;
-        }
+        return done;
     }
 
     /**
@@ -168,5 +163,5 @@ public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
             currentCoord++;
         }
     }
-    
+
 }

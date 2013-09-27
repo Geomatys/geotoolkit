@@ -36,7 +36,7 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
     private int nbGeom = 0;
     private int currentGeom = -1;
     private boolean done = false;
-    
+
     //sub geometry state
     private CoordinateSequence currentSequence = null;
     private int currentCoord = -1;
@@ -104,11 +104,7 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
      */
     @Override
     public boolean isDone() {
-        if(done){
-            reset();
-            return true;
-        }
-        return false;
+        return done;
     }
 
     /**
@@ -139,7 +135,7 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
         } else {
             coords[0] = currentSequence.getX(currentCoord);
             coords[1] = currentSequence.getY(currentCoord);
-            transform.transform(coords, 0, coords, 0, 1);            
+            transform.transform(coords, 0, coords, 0, 1);
             return SEG_LINETO;
         }
     }
@@ -164,5 +160,5 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
         }
     }
 
-	
+
 }

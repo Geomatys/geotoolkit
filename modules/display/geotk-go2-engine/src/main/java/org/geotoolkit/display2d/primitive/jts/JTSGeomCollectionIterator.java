@@ -112,7 +112,7 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
         }else{
             currentIterator = JTSEmptyIterator.INSTANCE;
         }
-            
+
     }
 
     @Override
@@ -152,12 +152,7 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
      */
     @Override
     public boolean isDone() {
-        if(done){
-            reset();
-            return true;
-        }else{
-            return false;
-        }
+        return done;
     }
 
     /**
@@ -176,5 +171,5 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
             }
         }
     }
-    
+
 }

@@ -81,12 +81,7 @@ public final class JTSLineIterator extends JTSGeometryIterator<LineString> {
      */
     @Override
     public boolean isDone() {
-        if(done){
-            reset();
-            return true;
-        }else{
-            return false;
-        }
+        return done;
     }
 
     /**
@@ -117,7 +112,7 @@ public final class JTSLineIterator extends JTSGeometryIterator<LineString> {
         } else {
             coords[0] = coordinates.getX(currentCoord);
             coords[1] = coordinates.getY(currentCoord);
-            transform.transform(coords, 0, coords, 0, 1);            
+            transform.transform(coords, 0, coords, 0, 1);
             return SEG_LINETO;
         }
     }
@@ -142,5 +137,5 @@ public final class JTSLineIterator extends JTSGeometryIterator<LineString> {
         }
     }
 
-	
+
 }

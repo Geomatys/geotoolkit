@@ -27,9 +27,9 @@ import java.awt.geom.AffineTransform;
  * @since 2.9
  */
 public final class JTSPointIterator extends JTSGeometryIterator<Point> {
-        
+
     private boolean done = false;
-    
+
     /**
      * Creates a new PointIterator object.
      *
@@ -61,12 +61,7 @@ public final class JTSPointIterator extends JTSGeometryIterator<Point> {
      */
     @Override
     public boolean isDone() {
-        if(done){
-            done = false;
-            return true;
-        }else{
-            return done;
-        }
+        return done;
     }
 
     /**
