@@ -412,6 +412,16 @@ public class JS52MarinerPane extends javax.swing.JPanel {
         tabs.add("Palettes", palettePane);
         tabs.add("Symbol styles", stylePane);
 
+        for(String name : context.getAvailablePointTables()){
+            tabs.add(name,new JS52LookupTablePane(context, context.getLookupTable(name)));
+        }
+        for(String name : context.getAvailableLineTables()){
+            tabs.add(name,new JS52LookupTablePane(context, context.getLookupTable(name)));
+        }
+        for(String name : context.getAvailableAreaTables()){
+            tabs.add(name,new JS52LookupTablePane(context, context.getLookupTable(name)));
+        }
+
         JOptionDialog.show(this, tabs, JOptionPane.OK_OPTION);
 
 

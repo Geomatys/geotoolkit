@@ -80,6 +80,14 @@ public class DefaultPathWalker implements PathWalker{
         return finished; //|| (pathIterator.isDone() && remaining <= 0);
     }
 
+    /**
+     * Get the remaining distance until the current line segment end.
+     * @return float
+     */
+    public float getSegmentLengthRemaining(){
+        return remaining;
+    }
+
     @Override
     public void walk(float distance) {
 

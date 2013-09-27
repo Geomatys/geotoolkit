@@ -21,7 +21,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics2D;
+import java.awt.GridBagLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.TreeSet;
@@ -109,6 +111,16 @@ public class JS52SymbolPane extends JPanel{
 
     private class StyleCellRenderer extends DefaultTableCellRenderer{
 
+        private final JPanel pane = new JPanel(new GridBagLayout());
+
+        public StyleCellRenderer() {
+            pane.setBackground(Color.WHITE);
+            pane.removeAll();
+            pane.add(this);
+        }
+
+
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             final JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -116,22 +128,22 @@ public class JS52SymbolPane extends JPanel{
 
             if(value instanceof SymbolStyle){
                 lbl.setBackground(Color.WHITE);
+                lbl.setVerticalTextPosition(JLabel.BOTTOM);
+                lbl.setHorizontalTextPosition(JLabel.CENTER);
                 final SymbolStyle ss = (SymbolStyle) value;
 
-                final BufferedImage image = new BufferedImage(80,80, BufferedImage.TYPE_INT_ARGB);
-                final Graphics2D g = image.createGraphics();
-                final Coordinate coord = new Coordinate(40,40);
                 try {
-                    ss.render(g, context, context.getPalette(), coord, 0);
+                    final BufferedImage image = ss.asImage(context,2);
+                    lbl.setIcon(new ImageIcon(image));
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
+                    lbl.setIcon(null);
                 }
 
-                lbl.setIcon(new ImageIcon(image));
-                lbl.setText("   ");
+                lbl.setText("");
             }
 
-            return lbl;
+            return pane;
         }
 
     }

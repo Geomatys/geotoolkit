@@ -16,18 +16,17 @@
  */
 package org.geotoolkit.s52.dai;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.S52Utilities;
 import org.geotoolkit.s52.render.SymbolStyle;
@@ -48,12 +47,110 @@ public abstract class Vector extends DAIField{
 
     //cache
     private RenderStep[] steps;
+    private Rectangle2D bounds;
 
     protected Vector(String code) {
         super(code);
     }
 
-    public synchronized RenderStep[] getSteps() throws PortrayalException{
+    /**
+     * Calculate the bounds of this vector.
+     *
+     * @param context
+     * @return
+     * @throws PortrayalException
+     */
+    public Rectangle2D getBounds(S52Context context) throws IllegalArgumentException{
+        if(bounds==null){
+            Rectangle2D rect = null;
+
+            float ltx = 0f;
+            float lty = 0f;
+            float tx = 0f;
+            float ty = 0f;
+
+            final Vector.RenderStep[] steps = getSteps();
+            for(int i=0;i<steps.length;i++){
+                final Vector.RenderStep step = steps[i];
+                if(step instanceof Vector.PenMoveStep){
+                    final Vector.PenMoveStep st = (Vector.PenMoveStep) step;
+                    ltx = tx; tx = st.tx;
+                    lty = ty; ty = st.ty;
+                    rect = expand(rect, st.tx, st.ty, 0);
+                }else if(step instanceof Vector.PenLineStep){
+                    final Vector.PenLineStep st = (Vector.PenLineStep) step;
+                    for(int k=0;k<st.tx.length;k++){
+                        rect = expand(rect, st.tx[k],st.ty[k], 0);
+                        ltx = tx;
+                        lty = ty;
+                        tx = st.tx[k];
+                        ty = st.ty[k];
+                    }
+                }else if(step instanceof Vector.PenCircleStep){
+                    final Vector.PenCircleStep st = (Vector.PenCircleStep) step;
+                    final Shape shp = new Ellipse2D.Float(tx-st.radius, ty-st.radius, st.radius*2, st.radius*2);
+                    rect = expand(rect, tx,ty, st.radius);
+                }else if(step instanceof Vector.PenArcStep){
+                    throw new IllegalArgumentException("Action Pen Arc not implemented yet.");
+                }else if(step instanceof Vector.SymbolStep){
+                    final Vector.SymbolStep st = (Vector.SymbolStep) step;
+                    final SymbolStyle ss = context.getSyle(st.name);
+
+                    //rotation type
+                    //S-52 Annex A part I p.36
+                    final float ssr;
+                    if(st.rotation == 0){
+                        //symbol upright
+                        ssr = 0;
+                    }else if(st.rotation == 1){
+                        //direction of the pen
+                        float angle = S52Utilities.angle(ltx, lty, tx, ty);
+                        ssr = angle;
+
+                    }else if(st.rotation == 2){
+                        //90° rotation from edge
+                        float angle = S52Utilities.angle(ltx, lty, tx, ty);
+                        ssr = angle + (float)Math.PI/2;
+                    }else{
+                        throw new IllegalArgumentException("unexpected rotation value : "+st.rotation);
+                    }
+
+                    Rectangle2D subRect = ss.getBounds();
+                    final AffineTransform trs = new AffineTransform();
+                    trs.rotate(ssr);
+                    subRect = trs.createTransformedShape(rect).getBounds2D();
+
+                    rect = expand(rect, subRect.getMinX(),subRect.getMinY(), 0);
+                    rect = expand(rect, subRect.getMaxX(),subRect.getMaxY(), 0);
+
+                }
+            }
+
+            bounds = rect;
+        }
+        return bounds;
+    }
+
+    private Rectangle2D expand(Rectangle2D rect, double x, double y, float radius){
+        if(rect == null){
+            if(radius==0){
+                rect = new Rectangle2D.Double(x, y, 0, 0);
+            }else{
+                rect = new Rectangle2D.Double(x-radius, y-radius, radius*2, radius*2);
+            }
+        }else{
+            if(radius==0){
+                rect.add(x, y);
+            }else{
+                rect.add(x-radius, y-radius);
+                rect.add(x+radius, y+radius);
+            }
+        }
+        return rect;
+    }
+
+
+    public synchronized RenderStep[] getSteps() throws IllegalArgumentException{
         if(steps != null) return steps;
 
         final String[] parts = VECD.split(";");
@@ -128,7 +225,7 @@ public abstract class Vector extends DAIField{
                 steps[i] = step;
 
             }else if("AA".equals(action)){
-                throw new PortrayalException("Action not implemented yet : "+part);
+                throw new IllegalArgumentException("Action not implemented yet : "+part);
             }else if("PM".equals(action)){
                 //polygon operations
                 final PolygonStep step = new PolygonStep();
@@ -153,7 +250,7 @@ public abstract class Vector extends DAIField{
                 step.rotation = Integer.valueOf(part);
                 steps[i] = step;
             }else{
-                throw new PortrayalException("unexpected action : "+part);
+                throw new IllegalArgumentException("unexpected action : "+part);
             }
         }
 

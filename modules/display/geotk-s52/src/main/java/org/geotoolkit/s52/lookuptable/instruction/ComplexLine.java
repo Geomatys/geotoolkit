@@ -64,12 +64,11 @@ public class ComplexLine extends Instruction{
     @Override
     public void render(RenderingContext2D ctx, S52Context context, S52Palette colorTable,
             List<S52Graphic> all, S52Graphic s52graphic) throws PortrayalException {
-        System.out.println("TODO Complex line");
         //if(true)return;
         final Graphics2D g2d = ctx.getGraphics();
         final SymbolStyle ss = context.getSyle(LINNAME);
         final Rectangle2D rect = ss.getBounds();
-        final float width = (float) rect.getWidth();
+        final float symbolwidth = (float) rect.getWidth();
 
         final PathIterator ite;
         try {
@@ -77,13 +76,22 @@ public class ComplexLine extends Instruction{
         } catch (TransformException ex) {
             throw new PortrayalException(ex);
         }
-        final PathWalker walker = new DefaultPathWalker(ite);
+        final DefaultPathWalker walker = new DefaultPathWalker(ite);
+//        ss.render(g2d, context, colorTable, walker);
+
         final Point2D pt = new Point2D.Double();
+        walker.walk(0f);
         while(!walker.isFinished()){
-            walker.getPosition(pt);
-            final float rotation = walker.getRotation();
-            ss.render(g2d, context, colorTable, new Coordinate(pt.getX(),pt.getY()), rotation);
-            walker.walk(width);
+
+            if(walker.getSegmentLengthRemaining() < symbolwidth){
+                //walk just enough th get on the next segment
+                walker.walk(Math.nextUp(walker.getSegmentLengthRemaining()));
+            }else{
+                walker.getPosition(pt);
+                final float rotation = walker.getRotation() + (float)Math.PI;
+                ss.render(g2d, context, colorTable, new Coordinate(pt.getX(),pt.getY()), rotation);
+                walker.walk(symbolwidth);
+            }
         }
     }
 

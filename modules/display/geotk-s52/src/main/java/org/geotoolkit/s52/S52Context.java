@@ -310,6 +310,10 @@ public class S52Context {
         return lookups.get(pointlk);
     }
 
+    public LookupTable getLookupTable(String name) {
+        return lookups.get(name);
+    }
+
     public float getSafetyDepth() {
         return safetyDepth;
     }
