@@ -256,6 +256,14 @@ public class S52Context {
         return palette;
     }
 
+    /**
+     * Get palette by name.
+     * @return S52Palette
+     */
+    public synchronized S52Palette getPalette(String paletteName) {
+        return palettes.get(paletteName);
+    }
+
     public void setActivePointTable(String pointlk) {
         this.pointlk = pointlk;
     }

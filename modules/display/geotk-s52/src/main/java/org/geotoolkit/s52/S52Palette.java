@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import org.apache.sis.io.TableAppender;
 import org.geotoolkit.s52.dai.ColorDefinitionCIE;
@@ -45,8 +46,16 @@ public class S52Palette {
         return name;
     }
 
+    public Set<String> getColorNames(){
+        return colorMap.keySet();
+    }
+
     public void addColor(ColorDefinitionCIE ccie) {
         colorMap.put(ccie.getTokenName(), ccie);
+    }
+
+    public ColorDefinitionCIE getColorDef(final String colorName){
+        return colorMap.get(colorName);
     }
 
     public String getColorHexa(final String colorName) {
