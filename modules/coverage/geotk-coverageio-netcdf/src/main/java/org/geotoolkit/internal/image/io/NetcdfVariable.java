@@ -75,7 +75,8 @@ public final class NetcdfVariable {
     public static final String
             VALID_MIN     = "valid_min",
             VALID_MAX     = "valid_max",
-            VALID_RANGE   = "valid_range";
+            VALID_RANGE   = "valid_range", // expected "reasonable" range for variable.
+            ACTUAL_RANGE  = "actual_range";// actual data range for variable.
 
     /**
      * The data type to accept in images. Used for automatic detection of which variables
@@ -198,6 +199,7 @@ public final class NetcdfVariable {
         double minimum = Double.NaN;
         double maximum = Double.NaN;
         Attribute attribute = variable.findAttributeIgnoreCase(VALID_RANGE);
+        if (attribute == null) attribute = variable.findAttributeIgnoreCase(ACTUAL_RANGE);
         if (attribute != null) {
             widestType = widest(attribute.getDataType(), widestType);
             Number value = attribute.getNumericValue(0);
