@@ -17,7 +17,9 @@
 package org.geotoolkit.csw.xml.v202;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -121,9 +123,20 @@ public class UpdateType implements Update {
     @Override
     public List<RecordPropertyType> getRecordProperty() {
         if (recordProperty == null) {
-            recordProperty = new ArrayList<RecordPropertyType>();
+            recordProperty = new ArrayList<>();
         }
         return recordProperty;
+    }
+
+    @Override
+    public Map<String, Object> getRecordPropertyMap() {
+        final Map<String, Object> result = new HashMap<>();
+        if (recordProperty != null) {
+            for (RecordPropertyType rp : recordProperty) {
+                result.put(rp.getName(), rp.getValue());
+            }
+        }
+        return result;
     }
 
     public void setRecordProperty(final List<RecordPropertyType> recordProperty) {

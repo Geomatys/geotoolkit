@@ -17,6 +17,7 @@
 package org.geotoolkit.csw.xml;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -31,4 +32,7 @@ public interface Update {
     Object getAny();
     
     List<? extends RecordProperty> getRecordProperty();
+
+    Map<String, Object> getRecordPropertyMap();
+    
 }
