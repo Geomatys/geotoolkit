@@ -21,6 +21,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
@@ -29,6 +30,7 @@ import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.style.s52.JS52MarinerPane;
+import org.geotoolkit.gui.swing.style.s52.JS52ViewingGroupPane;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Utilities;
 import org.geotoolkit.s52.lookuptable.instruction.PatternFill;
@@ -56,10 +58,14 @@ public class MarinerAction extends AbstractMapAction {
         if (map != null ) {
             try{
                 final S52Context context = S52Utilities.getS52Context(map.getCanvas());
-                final JS52MarinerPane pane = new JS52MarinerPane(context);
-                final int result = JOptionDialog.show(null, pane, JOptionPane.OK_CANCEL_OPTION);
+                final JS52MarinerPane basepane = new JS52MarinerPane(context);
+                final JS52ViewingGroupPane viewpane = new JS52ViewingGroupPane(context);
+                final JTabbedPane tabs = new JTabbedPane();
+                tabs.add("General",basepane);
+                tabs.add("Viewing groups",viewpane);
+                final int result = JOptionDialog.show(null, tabs, JOptionPane.OK_CANCEL_OPTION);
                 if(result == JOptionPane.OK_OPTION){
-                    pane.apply();
+                    basepane.apply();
                     map.getCanvas().getController().repaint();
                     //change the map background
                     //S-52 Annex A part I p.143 (12.2.2)
