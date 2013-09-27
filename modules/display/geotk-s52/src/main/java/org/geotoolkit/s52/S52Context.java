@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.s52.dai.AttributeCombination;
@@ -435,6 +436,10 @@ public class S52Context {
         //TODO waiting for all symbols
         final S52SVGIcon icon = new S52SVGIcon(iconPath.toString()+"BCNCAR01.svg");
         return icon;
+    }
+
+    public Set<String> getAvailableStyles(){
+        return styles.keySet();
     }
 
     public SymbolStyle getSyle(String name){

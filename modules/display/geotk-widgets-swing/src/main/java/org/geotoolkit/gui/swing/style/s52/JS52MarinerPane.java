@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.LayoutStyle;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
@@ -403,9 +404,15 @@ public class JS52MarinerPane extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void guiDetailsActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiDetailsActionPerformed
-        
+
         final JS52PalettePane palettePane = new JS52PalettePane(context);
-        JOptionDialog.show(this, palettePane, JOptionPane.OK_OPTION);
+        final JS52SymbolPane stylePane = new JS52SymbolPane(context);
+
+        final JTabbedPane tabs = new JTabbedPane();
+        tabs.add("Palettes", palettePane);
+        tabs.add("Symbol styles", stylePane);
+
+        JOptionDialog.show(this, tabs, JOptionPane.OK_OPTION);
 
 
     }//GEN-LAST:event_guiDetailsActionPerformed
