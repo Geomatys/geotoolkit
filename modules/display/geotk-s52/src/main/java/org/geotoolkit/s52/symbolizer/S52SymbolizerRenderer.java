@@ -41,6 +41,7 @@ import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Context.GeoType;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.S52Utilities;
+import org.geotoolkit.s52.lookuptable.IMODisplayCategory;
 import org.geotoolkit.s52.lookuptable.LookupRecord;
 import org.geotoolkit.s52.lookuptable.LookupTable;
 import org.geotoolkit.s52.lookuptable.instruction.Instruction;
@@ -93,7 +94,13 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
 
             //Follow schema Annex A Part I p.68
             final String objClassCode = S52Utilities.getObjClass(element.feature);
-            Geometry geom = (Geometry) element.feature.getDefaultGeometryProperty().getValue();
+
+            //filter rendering, exclude classes which are marked as hidden
+            if(context.getHiddenClasses().contains(objClassCode)){
+                continue;
+            }
+
+            final Geometry geom = (Geometry) element.feature.getDefaultGeometryProperty().getValue();
 
             //find geometry category
             element.geoType = getType(geom);
@@ -112,6 +119,24 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
             }
 
             element.record = LookupTable.getActiveRecord(records,element.feature);
+
+            //filter rendering, exclude elemens which are not in the current context category
+            final IMODisplayCategory category = element.record.getDisplayCategory();
+            if(   category.equals(IMODisplayCategory.DISPLAYBASE)
+               || category.equals(IMODisplayCategory.STANDARD)
+               || category.equals(IMODisplayCategory.OTHER)
+               || category.equals(IMODisplayCategory.NULL)){
+                if(category.getPriority() > s52context.getDisplayChartCategory().getPriority()){
+                    continue;
+                }
+            }else if(category.equals(IMODisplayCategory.MARINERS_DISPLAYBASE)
+               || category.equals(IMODisplayCategory.MARINERS_STANDARD)
+               || category.equals(IMODisplayCategory.MARINERS_OTHER)){
+                if(category.getPriority() > s52context.getDisplayMarinerCategory().getPriority()){
+                    continue;
+                }
+            }
+
             element.priority = element.record.getPriority();
             elements.add(element);
         }

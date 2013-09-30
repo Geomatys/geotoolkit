@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,6 +56,7 @@ import org.geotoolkit.s52.dai.SymbolDefinition;
 import org.geotoolkit.s52.dai.SymbolExposition;
 import org.geotoolkit.s52.dai.SymbolIdentifier;
 import org.geotoolkit.s52.dai.SymbolVector;
+import org.geotoolkit.s52.lookuptable.IMODisplayCategory;
 import org.geotoolkit.s52.lookuptable.LookupTable;
 import org.geotoolkit.s52.procedure.CLRLIN01;
 import org.geotoolkit.s52.procedure.DATCVR02;
@@ -165,6 +167,11 @@ public class S52Context {
 
     private final Map<String,SymbolStyle> styles = new HashMap<>();
 
+    //filtering informations ///////////////////////////////////////////////////
+    private IMODisplayCategory displayChartCategory = IMODisplayCategory.STANDARD;
+    private IMODisplayCategory displayMarinerCategory = IMODisplayCategory.MARINERS_STANDARD;
+    private final Set<String> hiddenClasses = new HashSet<>();
+
     // Mariner context configuration ///////////////////////////////////////////
     // S-52 Annex A Part I p.23
     private String paletteName = TIME_DAY;
@@ -216,6 +223,28 @@ public class S52Context {
         values.add(LKN_AREA_PLAIN);
         values.add(LKN_AREA_SYMBOLIZED);
         return values;
+    }
+
+    // GLOBAL FILTER ///////////////////////////////////////////////////////////
+
+    public IMODisplayCategory getDisplayChartCategory() {
+        return displayChartCategory;
+    }
+
+    public void setDisplayChartCategory(IMODisplayCategory displayChartCategory) {
+        this.displayChartCategory = displayChartCategory;
+    }
+
+    public IMODisplayCategory getDisplayMarinerCategory() {
+        return displayMarinerCategory;
+    }
+
+    public void setDisplayMarinerCategory(IMODisplayCategory displayMarinerCategory) {
+        this.displayMarinerCategory = displayMarinerCategory;
+    }
+
+    public Set<String> getHiddenClasses() {
+        return hiddenClasses;
     }
 
     // MARINER CONFIGURATION ///////////////////////////////////////////////////

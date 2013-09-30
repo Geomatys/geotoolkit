@@ -78,6 +78,7 @@ public class MarinerAction extends AbstractMapAction {
                 final int result = JOptionDialog.show(null, tabs, JOptionPane.OK_CANCEL_OPTION);
                 if(result == JOptionPane.OK_OPTION){
                     basepane.apply();
+                    viewpane.apply();
                     map.getCanvas().getController().repaint();
                     //change the map background
                     //S-52 Annex A part I p.143 (12.2.2)

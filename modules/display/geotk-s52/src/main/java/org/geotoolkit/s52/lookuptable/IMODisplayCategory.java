@@ -29,16 +29,23 @@ public class IMODisplayCategory extends CodeList<IMODisplayCategory>{
 
         private static final List<IMODisplayCategory> VALUES = new ArrayList<>();
 
-        public static final IMODisplayCategory STANDARD             = new IMODisplayCategory("STANDARD");
-        public static final IMODisplayCategory OTHER                = new IMODisplayCategory("OTHER");
-        public static final IMODisplayCategory DISPLAYBASE          = new IMODisplayCategory("DISPLAYBASE");
-        public static final IMODisplayCategory MARINERS_STANDARD    = new IMODisplayCategory("MARINERS STANDARD");
-        public static final IMODisplayCategory MARINERS_OTHER       = new IMODisplayCategory("MARINERS OTHER");
-        public static final IMODisplayCategory MARINERS_DISPLAYBASE = new IMODisplayCategory("MARINERS DISPLAYBASE");
-        public static final IMODisplayCategory NULL                 = new IMODisplayCategory("");
+        public static final IMODisplayCategory DISPLAYBASE          = new IMODisplayCategory("DISPLAYBASE",0);
+        public static final IMODisplayCategory NULL                 = new IMODisplayCategory("",0);
+        public static final IMODisplayCategory STANDARD             = new IMODisplayCategory("STANDARD",1);
+        public static final IMODisplayCategory OTHER                = new IMODisplayCategory("OTHER",2);
+        public static final IMODisplayCategory MARINERS_DISPLAYBASE = new IMODisplayCategory("MARINERS DISPLAYBASE",0);
+        public static final IMODisplayCategory MARINERS_STANDARD    = new IMODisplayCategory("MARINERS STANDARD",1);
+        public static final IMODisplayCategory MARINERS_OTHER       = new IMODisplayCategory("MARINERS OTHER",2);
 
-        private IMODisplayCategory(final String name) {
+        private final int priority;
+
+        private IMODisplayCategory(final String name, int priority) {
             super(name, VALUES);
+            this.priority = priority;
+        }
+
+        public int getPriority() {
+            return priority;
         }
 
         public static IMODisplayCategory getOrCreate(final String code){

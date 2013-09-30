@@ -62,6 +62,11 @@ public final class AMLTypeBank implements TypeBank{
 
     public AMLTypeBank(){}
 
+    @Override
+    public String getSpecification() {
+        return "S-57 : Military (AML)";
+    }
+
     private synchronized static Map<Integer,AMLAttribute> getAttributeByCodeMap(){
         getAttributeByAccMap();
         return PT_CODE_KEY;

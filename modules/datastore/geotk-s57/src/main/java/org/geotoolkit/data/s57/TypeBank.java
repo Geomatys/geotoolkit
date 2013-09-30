@@ -30,6 +30,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public interface TypeBank {
 
+    /**
+     * Name of this bank.
+     * Each bank defines symbols for a type of objects class.
+     * @return String
+     */
+    String getSpecification();
+
     Set<String> getFeatureTypeNames();
 
     Set<String> getPropertyTypeNames();

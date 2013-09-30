@@ -118,6 +118,27 @@ public final class TypeBanks extends Static {
         return getBanks(null);
     }
 
+    /**
+     * Find in which specification this type is defined.
+     * @param name
+     * @return
+     * @throws DataStoreException
+     */
+    public static String getFeatureTypeSpecification(final String name) throws DataStoreException{
+        String spec = null;
+        final Iterator<TypeBank> ite = getBanks().iterator();
+        while(ite.hasNext() && spec == null){
+            final TypeBank bank = ite.next();
+            try{
+                bank.getFeatureTypeCode(name);
+                spec = bank.getSpecification();
+            }catch(DataStoreException ex){
+                //normal
+            }
+        }
+        return spec;
+    }
+
     public static int getFeatureTypeCode(final String name) throws DataStoreException{
         int code = -1;
         final Iterator<TypeBank> ite = getBanks().iterator();

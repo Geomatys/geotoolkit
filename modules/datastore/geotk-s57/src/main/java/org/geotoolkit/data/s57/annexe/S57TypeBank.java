@@ -63,6 +63,11 @@ public class S57TypeBank implements TypeBank{
              S57TypeBank.class.getResource("/org/geotoolkit/s57/S57PropertyType.properties"));
     }
 
+    @Override
+    public String getSpecification() {
+        return "S-57 : Base";
+    }
+
     public S57TypeBank(URL featureTypeFile, URL propertyTypeFile) {
         InputStream stream = null;
         try {

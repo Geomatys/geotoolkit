@@ -30,5 +30,9 @@ public class MarinerTypeBank extends S57TypeBank{
               MarinerTypeBank.class.getResource("/org/geotoolkit/mariner/MarinerPropertyType.properties"));
     }
 
+    @Override
+    public String getSpecification() {
+        return "S-57 : Mariner";
+    }
 
 }
