@@ -17,26 +17,19 @@
 package org.geotoolkit.gui.swing.style.s52;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
 import javax.swing.LayoutStyle;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
-import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.s52.S52Context;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
-import org.openide.util.NbBundle;
 
 /**
  * S52 Mariner information editor.
@@ -150,7 +143,6 @@ public class JS52MarinerPane extends javax.swing.JPanel {
         guiDeepContour = new JSpinner();
         guiDistanceTag = new JSpinner();
         guiTimeTag = new JSpinner();
-        guiDetails = new JButton();
 
         jPanel1.setBorder(BorderFactory.createEtchedBorder());
 
@@ -364,13 +356,6 @@ public class JS52MarinerPane extends javax.swing.JPanel {
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        guiDetails.setText(MessageBundle.getString("s52.detail")); // NOI18N
-        guiDetails.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                guiDetailsActionPerformed(evt);
-            }
-        });
-
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -378,10 +363,7 @@ public class JS52MarinerPane extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(guiDetails))
+                    .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
@@ -392,9 +374,7 @@ public class JS52MarinerPane extends javax.swing.JPanel {
             layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(guiDetails))
+                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -403,35 +383,10 @@ public class JS52MarinerPane extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void guiDetailsActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiDetailsActionPerformed
-
-        final JS52PalettePane palettePane = new JS52PalettePane(context);
-        final JS52SymbolPane stylePane = new JS52SymbolPane(context);
-
-        final JTabbedPane tabs = new JTabbedPane();
-        tabs.add("Palettes", palettePane);
-        tabs.add("Symbol styles", stylePane);
-
-        for(String name : context.getAvailablePointTables()){
-            tabs.add(name,new JS52LookupTablePane(context, context.getLookupTable(name)));
-        }
-        for(String name : context.getAvailableLineTables()){
-            tabs.add(name,new JS52LookupTablePane(context, context.getLookupTable(name)));
-        }
-        for(String name : context.getAvailableAreaTables()){
-            tabs.add(name,new JS52LookupTablePane(context, context.getLookupTable(name)));
-        }
-
-        JOptionDialog.show(this, tabs, JOptionPane.OK_OPTION);
-
-
-    }//GEN-LAST:event_guiDetailsActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JComboBox guiAreaTable;
     private JCheckBox guiContourLabels;
     private JSpinner guiDeepContour;
-    private JButton guiDetails;
     private JSpinner guiDistanceTag;
     private JCheckBox guiFullSectors;
     private JCheckBox guiLightDescription;

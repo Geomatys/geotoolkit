@@ -16,15 +16,11 @@
  */
 package org.geotoolkit.gui.swing.style.s52;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.TreeSet;
 import javax.swing.ImageIcon;
@@ -34,11 +30,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.render.SymbolStyle;
 import org.jdesktop.swingx.JXTable;
-import org.openide.util.Exceptions;
 
 /**
  *
@@ -60,6 +55,10 @@ public class JS52SymbolPane extends JPanel{
         final JXTable table = new JXTable(paletteModel);
         table.getColumn(1).setCellRenderer(new StyleCellRenderer());
         table.setRowHeight(60);
+        table.getColumn(0).setPreferredWidth(100);
+        table.getColumn(0).setMaxWidth(100);
+        table.getColumn(1).setPreferredWidth(100);
+        table.getColumn(1).setMaxWidth(100);
 
         add(BorderLayout.CENTER, new JScrollPane(table));
         setPreferredSize(new Dimension(400, 400));
@@ -77,11 +76,11 @@ public class JS52SymbolPane extends JPanel{
         @Override
         public String getColumnName(int column) {
             if(column==0){
-                return "code";
+                return MessageBundle.getString("s52.code");
             }else if(column==1){
-                return "preview";
+                return MessageBundle.getString("s52.preview");
             }else{
-                return "desc";
+                return MessageBundle.getString("s52.description");
             }
         }
 

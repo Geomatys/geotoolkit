@@ -17,14 +17,26 @@
 package org.geotoolkit.gui.swing.style.s52;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.lookuptable.LookupRecord;
 import org.geotoolkit.s52.lookuptable.LookupTable;
 import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
 /**
  *
@@ -33,35 +45,91 @@ import org.jdesktop.swingx.JXTable;
 public class JS52LookupTablePane extends JPanel{
 
     private final S52Context context;
-    private final LookupTable lk;
+    private final JXTable table = new JXTable();
 
+    /**
+     * Display a combo box on top of the panel to select lookup table.
+     * @param context
+     */
+    public JS52LookupTablePane(final S52Context context) {
+        setLayout(new BorderLayout());
+        this.context = context;
+
+        final List<LookupTable> tables = new ArrayList<>();
+        for(String name : context.getAvailablePointTables()){
+            tables.add(context.getLookupTable(name));
+        }
+        for(String name : context.getAvailableLineTables()){
+            tables.add(context.getLookupTable(name));
+        }
+        for(String name : context.getAvailableAreaTables()){
+            tables.add(context.getLookupTable(name));
+        }
+        final JComboBox cb = new JComboBox();
+        cb.setModel(new ListComboBoxModel(tables));
+        cb.setRenderer(new DefaultListCellRenderer(){
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if(value instanceof LookupTable){
+                    lbl.setText( ((LookupTable)value).getName());
+                }
+                return lbl;
+            }
+        });
+        cb.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                final LookupTable lk = (LookupTable) cb.getSelectedItem();
+                if(lk==null){
+                    table.setModel(new DefaultTableModel());
+                }else{
+                    table.setModel(new LookupTableModel(lk));
+                }
+            }
+        });
+        if(!tables.isEmpty()){
+            cb.setSelectedIndex(0);
+            table.setModel(new LookupTableModel(tables.get(0)));
+        }
+
+        add(BorderLayout.NORTH, cb);
+        add(BorderLayout.CENTER, new JScrollPane(table));
+        setPreferredSize(new Dimension(400, 400));
+    }
+
+    /**
+     * Display a single lookup table.
+     *
+     * @param context
+     * @param lk
+     */
     public JS52LookupTablePane(final S52Context context, final LookupTable lk) {
         setLayout(new BorderLayout());
         this.context = context;
-        this.lk = lk;
-
-        final LookupTableModel paletteModel = new LookupTableModel();
-
-        final JXTable table = new JXTable(paletteModel);
+        table.setModel(new LookupTableModel(lk));
 
         add(BorderLayout.CENTER, new JScrollPane(table));
         setPreferredSize(new Dimension(400, 400));
     }
 
 
-    private class LookupTableModel extends AbstractTableModel{
+    private static class LookupTableModel extends AbstractTableModel{
 
-        public LookupTableModel() {
+        private final LookupTable lk;
+
+
+        public LookupTableModel(LookupTable lk) {
+            this.lk = lk;
         }
 
         @Override
         public String getColumnName(int column) {
             switch(column){
-                case 0 : return "class";
-                case 1 : return "priority";
-                case 2 : return "radar";
-                case 3 : return "category";
-                case 4 : return "view group";
+                case 0 : return MessageBundle.getString("s52.class");
+                case 1 : return MessageBundle.getString("s52.priority");
+                case 2 : return MessageBundle.getString("s52.radar");
+                case 3 : return MessageBundle.getString("s52.category");
             }
             return "";
         }
@@ -73,7 +141,7 @@ public class JS52LookupTablePane extends JPanel{
 
         @Override
         public int getColumnCount() {
-            return 5;
+            return 4;
         }
 
         @Override
@@ -84,8 +152,7 @@ public class JS52LookupTablePane extends JPanel{
                 case 0 : return rec.getObjectClass();
                 case 1 : return rec.getPriority();
                 case 2 : return rec.getRadar();
-                case 3 : return rec.getDisplayCaegory();
-                case 4 : return rec.getViewingGroup();
+                case 3 : return rec.getDisplayCategory();
             }
             return "";
         }

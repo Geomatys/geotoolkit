@@ -29,7 +29,11 @@ import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.style.s52.JS52LookupTablePane;
 import org.geotoolkit.gui.swing.style.s52.JS52MarinerPane;
+import org.geotoolkit.gui.swing.style.s52.JS52PalettePane;
+import org.geotoolkit.gui.swing.style.s52.JS52SymbolPane;
 import org.geotoolkit.gui.swing.style.s52.JS52ViewingGroupPane;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Utilities;
@@ -60,9 +64,17 @@ public class MarinerAction extends AbstractMapAction {
                 final S52Context context = S52Utilities.getS52Context(map.getCanvas());
                 final JS52MarinerPane basepane = new JS52MarinerPane(context);
                 final JS52ViewingGroupPane viewpane = new JS52ViewingGroupPane(context);
+                final JS52PalettePane palettePane = new JS52PalettePane(context);
+                final JS52SymbolPane stylePane = new JS52SymbolPane(context);
+                final JS52LookupTablePane lookupsPane = new JS52LookupTablePane(context);
                 final JTabbedPane tabs = new JTabbedPane();
-                tabs.add("General",basepane);
-                tabs.add("Viewing groups",viewpane);
+                tabs.add(MessageBundle.getString("s52.global"),basepane);
+                tabs.add(MessageBundle.getString("s52.filter"),viewpane);
+                tabs.add(MessageBundle.getString("s52.palettes"), palettePane);
+                tabs.add(MessageBundle.getString("s52.symbols"), stylePane);
+                tabs.add(MessageBundle.getString("s52.rules"), lookupsPane);
+
+
                 final int result = JOptionDialog.show(null, tabs, JOptionPane.OK_CANCEL_OPTION);
                 if(result == JOptionPane.OK_OPTION){
                     basepane.apply();

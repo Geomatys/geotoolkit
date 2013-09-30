@@ -95,7 +95,7 @@ public class TxtLookupTableReader {
     public LookupTable read() throws IOException {
 
         final DataInput ds = getDataInput();
-        final LookupTable table = new LookupTable();
+        final LookupTable table = new LookupTable("unnamed");
 
         //read all records
         for(String line=ds.readLine(); line!=null; line=ds.readLine()){

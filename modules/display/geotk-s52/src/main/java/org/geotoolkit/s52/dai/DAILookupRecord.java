@@ -53,7 +53,7 @@ public class DAILookupRecord extends LookupRecord{
     }
 
     @Override
-    public IMODisplayCategory getDisplayCaegory() {
+    public IMODisplayCategory getDisplayCategory() {
         return IMODisplayCategory.getOrCreate(category.DSCN);
     }
 

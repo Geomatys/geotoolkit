@@ -144,7 +144,7 @@ public class TxtLookupRecord extends LookupRecord{
     }
 
     @Override
-    public IMODisplayCategory getDisplayCaegory() {
+    public IMODisplayCategory getDisplayCategory() {
         return imoDisplayCategory;
     }
 

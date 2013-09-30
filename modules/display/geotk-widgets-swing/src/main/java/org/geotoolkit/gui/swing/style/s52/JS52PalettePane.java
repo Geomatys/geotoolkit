@@ -29,6 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import org.jdesktop.swingx.JXTable;
@@ -78,9 +79,9 @@ public class JS52PalettePane extends JPanel{
         @Override
         public String getColumnName(int column) {
             if(column==0){
-                return "code";
+                return MessageBundle.getString("s52.code");
             }else if(column== (1+paletteNames.length)){
-                return "desc";
+                return MessageBundle.getString("s52.description");
             }else{
                 return paletteNames[column-1];
             }

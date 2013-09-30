@@ -28,7 +28,16 @@ import org.opengis.feature.Feature;
  */
 public class LookupTable {
 
+    private final String name;
     private final List<LookupRecord> records = new ArrayList<>();
+
+    public LookupTable(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 
     public List<LookupRecord> getRecords() {
         return records;
@@ -100,7 +109,7 @@ public class LookupTable {
             writer.append(rec.getSymbolInstructions());                               writer.nextColumn();
             writer.append(rec.getPriority()==null?"":""+rec.getPriority());           writer.nextColumn();
             writer.append(""+rec.getRadar());                                         writer.nextColumn();
-            writer.append(""+rec.getDisplayCaegory());                                writer.nextColumn();
+            writer.append(""+rec.getDisplayCategory());                                writer.nextColumn();
             writer.append(rec.getViewingGroup()==null ? "":""+rec.getViewingGroup()); writer.nextColumn();
         }
         writer.writeHorizontalSeparator();

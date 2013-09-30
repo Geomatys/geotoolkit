@@ -519,7 +519,7 @@ public class S52Context {
 
                 LookupTable table = lookups.get(rec.identifier.TNAM);
                 if(table == null){
-                    table = new LookupTable();
+                    table = new LookupTable(rec.identifier.TNAM);
                     lookups.put(rec.identifier.TNAM, table);
                 }
                 table.getRecords().add(rec);

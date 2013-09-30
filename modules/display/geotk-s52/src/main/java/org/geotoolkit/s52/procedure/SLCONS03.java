@@ -37,7 +37,7 @@ public class SLCONS03 extends Procedure{
 
     private static final Symbol POINT_INST = new Symbol("LOWACC01",null);
     private static final ComplexLine LINE_INST = new ComplexLine("LOWACC21");
-    private static final LookupTable LOOKUPTABLE = new LookupTable();
+    private static final LookupTable LOOKUPTABLE = new LookupTable("internal");
     static {
         LOOKUPTABLE.getRecords().add(new TxtLookupRecord("SLCONS","",        "LS(SOLD,2,CSTLN)"));
         LOOKUPTABLE.getRecords().add(new TxtLookupRecord("SLCONS","CONDTN1", "LS(DASH,1,CSTLN)"));

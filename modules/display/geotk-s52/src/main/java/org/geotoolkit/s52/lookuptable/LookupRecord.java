@@ -86,7 +86,7 @@ public abstract class LookupRecord {
 
     public abstract Integer getPriority();
 
-    public abstract IMODisplayCategory getDisplayCaegory();
+    public abstract IMODisplayCategory getDisplayCategory();
 
     public abstract Radar getRadar();
 
