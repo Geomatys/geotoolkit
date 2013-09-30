@@ -43,6 +43,7 @@ public final class TypeBanks extends Static {
      */
     private static final ServiceLoader<TypeBank> loader = ServiceLoader.load(TypeBank.class);
 
+    private static Map<Integer,String> ALL_TYPES;
     private static Map<Integer,PropertyDescriptor> ALL_PROPERTIES;
 
     private TypeBanks(){}
@@ -252,6 +253,21 @@ public final class TypeBanks extends Static {
             throw new DataStoreException("Code : "+code+" do not exist");
         }
         return type;
+    }
+
+    public static synchronized Map<Integer,String> getAllFeatureTypes() throws DataStoreException {
+        if(ALL_TYPES==null){
+            final Map<Integer,String> temp = new HashMap<>();
+            for(TypeBank bank : getBanks()){
+                for(String name : bank.getFeatureTypeNames()){
+                    final int code = bank.getFeatureTypeCode(name);
+                    temp.put(code, name);
+                }
+            }
+            ALL_TYPES = Collections.unmodifiableMap(temp);
+        }
+
+        return ALL_TYPES;
     }
 
     public static synchronized Map<Integer,PropertyDescriptor> getAllProperties() throws DataStoreException{

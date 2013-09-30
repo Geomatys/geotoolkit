@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.data.s57.S57Constants;
 import org.geotoolkit.data.s57.S57FeatureStore;
 import org.geotoolkit.data.s57.TypeBank;
@@ -134,6 +135,7 @@ public final class AMLTypeBank implements TypeBank{
         ftb.setSuperType(S57Constants.ABSTRACT_S57FEATURETYPE);
         ftb.add("spatial", Geometry.class, crs);
         ftb.setName(type.Feature_Type_Acronym);
+        ftb.setDescription(new SimpleInternationalString(type.Feature_Type_Name+".  "+type.Feature_Type_Definition));
 
         for(AMLFeatureCatalog entry : catalogs){
             if(entry.Feature_Type_Code != type.Feature_Type_Code) continue;

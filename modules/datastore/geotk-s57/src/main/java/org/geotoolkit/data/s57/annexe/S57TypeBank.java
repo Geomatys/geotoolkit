@@ -34,8 +34,10 @@ import org.geotoolkit.data.s57.S57FeatureStore;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.data.s57.S57Constants;
 import org.geotoolkit.data.s57.TypeBank;
+import org.geotoolkit.data.s57.TypeBanks;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -117,7 +119,6 @@ public class S57TypeBank implements TypeBank{
 
     @Override
     public int getFeatureTypeCode(String name) throws DataStoreException{
-        name = name.toUpperCase();
         String key = FT_ACC_KEY.get(name);
         if(key == null) throw new DataStoreException("No feature type for name : "+ name);
         return splitKey(key).getKey();
@@ -132,7 +133,6 @@ public class S57TypeBank implements TypeBank{
 
     @Override
     public int getPropertyTypeCode(String name) throws DataStoreException{
-        name = name.toUpperCase();
         String key = PT_ACC_KEY.get(name);
         if(key == null) throw new DataStoreException("No property type for name : "+ name);
         return splitKey(key).getKey();
@@ -172,6 +172,7 @@ public class S57TypeBank implements TypeBank{
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setSuperType(S57Constants.ABSTRACT_S57FEATURETYPE);
         ftb.setName(sft.acronym);
+        ftb.setDescription(new SimpleInternationalString(sft.fullName+".  "+sft.description));
         //add a geometry type
         ftb.add("spatial", Geometry.class, crs);
 
@@ -181,7 +182,7 @@ public class S57TypeBank implements TypeBank{
         allAtts.addAll(sft.attC);
 
         for(String att : allAtts){
-            final AttributeDescriptor attDesc = getAttributeDescriptor(att);
+            final AttributeDescriptor attDesc = TypeBanks.getAttributeDescriptor(att);
             ftb.add(attDesc);
         }
 

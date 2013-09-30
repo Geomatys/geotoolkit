@@ -97,9 +97,10 @@ public class S57FeatureType implements Serializable {
     }
 
     public void fromFormattedString(String str) {
+        if(str.endsWith(";")) str = str.substring(0,str.length()-1);
         final String[] parts = str.split(";", -1);
         if (parts.length != 7 && parts.length != 8) {
-            throw new IllegalArgumentException("more divisions then expected :" + parts.length);
+            throw new IllegalArgumentException("more divisions then expected :" + parts.length +" = "+str);
         }
         int i = 0;
         this.fullName = parts[i++];
