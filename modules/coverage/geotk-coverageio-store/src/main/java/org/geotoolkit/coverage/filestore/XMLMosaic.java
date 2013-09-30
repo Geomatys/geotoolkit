@@ -118,7 +118,7 @@ public class XMLMosaic implements GridMosaic{
 
         //create an empty tile
         final List<XMLSampleDimension> dims = pyramid.getPyramidSet().getSampleDimensions();
-        if(dims!=null){
+        if(dims!=null && !dims.isEmpty()){
             emptyTile = BufferedImageUtilities.createImage(tileWidth, tileHeight, dims.size(), dims.get(0).getDataType());
         }else{
             emptyTile = new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
