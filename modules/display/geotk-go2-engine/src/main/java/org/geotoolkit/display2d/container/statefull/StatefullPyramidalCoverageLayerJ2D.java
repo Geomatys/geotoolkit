@@ -52,36 +52,36 @@ import org.opengis.util.FactoryException;
 
 /**
  * Graphic for pyramidal coverage layers.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<CoverageMapLayer> implements CoverageStoreListener{
-    
+
     protected CoverageStoreListener.Weak weakStoreListener = new CoverageStoreListener.Weak(this);
-    
+
     private final PyramidalCoverageReference model;
     private final double tolerance;
     private final CoverageFinder coverageFinder;
     private final Map<Point3d,StatefullTileJ2D> gtiles = new TreeMap<>(new Comparator<Point3d>() {
         @Override
-        public int compare(Point3d c1, Point3d c2) {            
-            final double zdiff = c2.z - c1.z; //we want lower res tiles to be painted first  
-            
+        public int compare(Point3d c1, Point3d c2) {
+            final double zdiff = c2.z - c1.z; //we want lower res tiles to be painted first
+
             if(zdiff > 0) return +1;
             else if(zdiff < 0) return -1;
-            else{  
-                final double ydiff = c1.y - c2.y;       
+            else{
+                final double ydiff = c1.y - c2.y;
                 if(ydiff > 0) return +1;
                 else if(ydiff < 0) return -1;
-                else{ 
+                else{
                     final double xdiff = c1.x - c2.x;
                     if(xdiff > 0) return +1;
                     else if(xdiff < 0) return -1;
                     else return 0; //same point
                 }
             }
-            
+
         }
     });
 
@@ -92,7 +92,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         tolerance = 0.1; // in % , TODO use a flag to allow change value
         weakStoreListener.registerSource(layer.getCoverageReference());
     }
-    
+
     public StatefullPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer, CoverageFinder coverageFinder) {
         super(canvas, layer, true);
         this.coverageFinder = coverageFinder;
@@ -100,16 +100,16 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         tolerance = 0.1; // in % , TODO use a flag to allow change value
         weakStoreListener.registerSource(layer.getCoverageReference());
     }
-    
+
     /**
      * {@inheritDoc }
-     * @param context2D 
+     * @param context2D
      */
     @Override
     public void paint(RenderingContext2D context2D) {
-                
+
         if(!item.isVisible()) return;
-        
+
         final Name coverageName = item.getCoverageName();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 context2D.getSEScale(), coverageName,null);
@@ -122,8 +122,8 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
 
         final CanvasMonitor monitor = context2D.getMonitor();
 
-        final Envelope canvasEnv2D = context2D.getCanvasObjectiveBounds2D();  
-        final Envelope canvasEnv = context2D.getCanvasObjectiveBounds2D();   
+        final Envelope canvasEnv2D = context2D.getCanvasObjectiveBounds2D();
+        final Envelope canvasEnv = context2D.getCanvasObjectiveBounds2D();
         final PyramidSet pyramidSet;
         try {
             pyramidSet = model.getPyramidSet();
@@ -131,7 +131,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
             monitor.exceptionOccured(ex, Level.WARNING);
             return;
         }
-        
+
         Pyramid pyramid = null;
         try {
             pyramid = coverageFinder.findPyramid(pyramidSet, canvasEnv.getCoordinateReferenceSystem());
@@ -139,13 +139,13 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
             monitor.exceptionOccured(ex, Level.WARNING);
             return;
         }
-                
+
         if(pyramid == null){
             //no reliable pyramid
             return;
         }
-        
-        final CoordinateReferenceSystem pyramidCRS = pyramid.getCoordinateReferenceSystem();        
+
+        final CoordinateReferenceSystem pyramidCRS = pyramid.getCoordinateReferenceSystem();
         final CoordinateReferenceSystem pyramidCRS2D;
         GeneralEnvelope wantedEnv2D;
         GeneralEnvelope wantedEnv;
@@ -157,7 +157,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
             monitor.exceptionOccured(ex, Level.WARNING);
             return;
         }
-        
+
 
         //ensure we don't go out of the crs envelope
         final Envelope maxExt = CRS.getEnvelope(pyramidCRS);
@@ -170,7 +170,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
             wantedEnv.setRange(0, wantedEnv2D.getMinimum(0), wantedEnv2D.getMaximum(0));
             wantedEnv.setRange(1, wantedEnv2D.getMinimum(1), wantedEnv2D.getMaximum(1));
         }
-        
+
         //the wanted image resolution
         final double wantedResolution;
         try {
@@ -191,15 +191,15 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
             //no reliable mosaic
             return;
         }
-        
-        
+
+
         //we definitly do not want some NaN values
         if(Double.isNaN(wantedEnv.getMinimum(0))){ wantedEnv.setRange(0, Double.NEGATIVE_INFINITY, wantedEnv.getMaximum(0));  }
         if(Double.isNaN(wantedEnv.getMaximum(0))){ wantedEnv.setRange(0, wantedEnv.getMinimum(0), Double.POSITIVE_INFINITY);  }
         if(Double.isNaN(wantedEnv.getMinimum(1))){ wantedEnv.setRange(1, Double.NEGATIVE_INFINITY, wantedEnv.getMaximum(1));  }
         if(Double.isNaN(wantedEnv.getMaximum(1))){ wantedEnv.setRange(1, wantedEnv.getMinimum(1), Double.POSITIVE_INFINITY);  }
-        
-        
+
+
         final DirectPosition ul = mosaic.getUpperLeftCorner();
         final double tileMatrixMinX = ul.getOrdinate(0);
         final double tileMatrixMaxY = ul.getOrdinate(1);
@@ -228,7 +228,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         if(tileMaxCol > gridWidth) tileMaxCol = gridWidth;
         if(tileMinRow < 0) tileMinRow = 0;
         if(tileMaxRow > gridHeight) tileMaxRow = gridHeight;
-                
+
         //don't render layer if it requieres more then 100 queries
         Integer maxTiles = (Integer)context2D.getRenderingHints().get(GO2Hints.KEY_MAX_TILES);
         if(maxTiles==null) maxTiles = 500;
@@ -236,17 +236,17 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
             LOGGER.log(Level.INFO, "Too much tiles requiered to render layer at this scale.");
             return;
         }
-        
-        //tiles to render         
+
+        //tiles to render
         final Set<Point3d> ttiles = new HashSet<>();
-        
-        for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){   
+
+        for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){
             for(int tileRow=(int)tileMinRow; tileRow<tileMaxRow; tileRow++){
                 if(mosaic.isMissing(tileCol, tileRow)){
                     //tile not available
                     continue;
                 }
-                
+
                 ttiles.add(new Point3d(tileCol, tileRow, scale));
             }
         }
@@ -258,10 +258,10 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
             if(ttiles.contains(st.getCoordinate())){
                 continue loop;
             }
-            
+
             //avoids loading the tile if it's already in the update queue
             st.setObsoleted(true);
-            
+
             if(st.isLoaded()){
                 final Point3d[] coords = getReplacements(pyramid, st.getCoordinate(), mosaic,
                         tileMinCol,tileMaxCol,tileMinRow,tileMaxRow);
@@ -275,29 +275,29 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
                     }
                 }
             }
-            
+
             toRemove.add(st.getCoordinate());
         }
         for(Point3d pt : toRemove){
             gtiles.remove(pt);
         }
-        
+
         for(Point3d c : ttiles){
             if(!gtiles.containsKey(c)){
                 gtiles.put(c,new StatefullTileJ2D(mosaic, c, getCanvas(), item, rules));
             }
         }
-        
+
         //paint sub tiles ------------------------------------------------------
         for(final StatefullTileJ2D gt : gtiles.values()){
             gt.paint(context2D);
-        }        
+        }
     }
 
     @Override
     protected synchronized void update() {
     }
-    
+
     @Override
     public void structureChanged(CoverageStoreManagementEvent event) {
     }
@@ -308,20 +308,20 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         gtiles.clear();
         getCanvas().getController().repaint();
     }
-    
+
     private Point3d[] getReplacements(Pyramid pyramid, Point3d coord, final GridMosaic mosaicUpdate,
             double qtileMinCol, double qtileMaxCol, double qtileMinRow, double qtileMaxRow){
         double[] tscales = pyramid.getScales();
-        
-        final int indexBase = Arrays.binarySearch(tscales, coord.z);        
-        final GridMosaic mosaicBase = pyramid.getMosaics(indexBase).iterator().next();        
-        final Envelope env = mosaicBase.getEnvelope((int)coord.y, (int)coord.x);
-        
+
+        final int indexBase = Arrays.binarySearch(tscales, coord.z);
+        final GridMosaic mosaicBase = pyramid.getMosaics(indexBase).iterator().next();
+        final Envelope env = mosaicBase.getEnvelope((int)coord.x, (int)coord.y);
+
         double bBoxMinX = env.getMinimum(0);
         double bBoxMinY = env.getMinimum(1);
         double bBoxMaxX = env.getMaximum(0);
         double bBoxMaxY = env.getMaximum(1);
-        
+
         final DirectPosition ul = mosaicUpdate.getUpperLeftCorner();
         final double tileMatrixMinX = ul.getOrdinate(0);
         final double tileMatrixMaxY = ul.getOrdinate(1);
@@ -332,7 +332,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         final double tileSpanY = scale * tileSize.height;
         final int gridWidth = gridSize.width;
         final int gridHeight = gridSize.height;
-        
+
         final double epsilon = 1e-6;
         double tileMinCol = Math.floor( (bBoxMinX - tileMatrixMinX) / tileSpanX + epsilon);
         double tileMaxCol = Math.floor( (bBoxMaxX - tileMatrixMinX) / tileSpanX - epsilon)+1;
@@ -348,15 +348,15 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
         if(tileMaxCol > gridWidth) tileMaxCol = gridWidth;
         if(tileMinRow < 0) tileMinRow = 0;
         if(tileMaxRow > gridHeight) tileMaxRow = gridHeight;
-                
-        //tiles to render         
+
+        //tiles to render
         final Set<Point3d> ttiles = new HashSet<>();
-        
+
         if( ((tileMaxCol-tileMinCol)*(tileMaxRow-tileMinRow)) > 100){
-            
+
         }
-        
-        for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){   
+
+        for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){
             for(int tileRow=(int)tileMinRow; tileRow<tileMaxRow; tileRow++){
                 if(mosaicUpdate.isMissing(tileCol, tileRow)){
                     //tile not available
@@ -365,7 +365,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
                 ttiles.add(new Point3d(tileCol, tileRow, scale));
             }
         }
-        
+
         return ttiles.toArray(new Point3d[0]);
     }
 }

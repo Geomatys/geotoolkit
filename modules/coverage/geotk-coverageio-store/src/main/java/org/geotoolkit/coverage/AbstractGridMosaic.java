@@ -98,7 +98,7 @@ public abstract class AbstractGridMosaic implements GridMosaic{
     }
 
     @Override
-    public Envelope getEnvelope(final int row, final int col) {
+    public Envelope getEnvelope(final int col, final int row) {
         final GeneralDirectPosition ul = new GeneralDirectPosition(getUpperLeftCorner());
         final double minX = ul.getOrdinate(0);
         final double maxY = ul.getOrdinate(1);
