@@ -259,7 +259,7 @@ public class PyramidCoverageBuilder {
 
         final CoverageReference cv  = getOrCreateCRef(coverageStore,coverageName);
         if (!(cv instanceof PyramidalCoverageReference)) {
-            final IllegalArgumentException ex = new IllegalArgumentException("GridGeometry not instance of GridGeometry2D");
+            final IllegalArgumentException ex = new IllegalArgumentException("CoverageReference not instance of PyramidalCoverageReference");
             if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
             throw ex;
         }
