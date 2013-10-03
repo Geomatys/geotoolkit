@@ -26,6 +26,7 @@ import org.geotoolkit.resources.Errors;
  * Simple mathematical functions in addition to the ones provided in {@link Math}.
  *
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
+ * @author Thomas Rouby (Geomatys)
  * @version 3.20
  *
  * @since 1.0
@@ -105,5 +106,109 @@ public final class XMath extends Static {
             value = -value;
         }
         return value;
+    }
+
+    /**
+     * Truncate a value val between min value and max value
+     * @param val the value to truncate
+     * @param min the minimum value
+     * @param max the maximum value
+     * @return val truncate between min and max
+     */
+    public static int clamp(int val, int min, int max){
+        return Math.min(Math.max(val, min), max);
+    }
+
+    /**
+     * Truncate each value of an array between min value and max value
+     * @param val the array of value to truncate
+     * @param min the minimum value
+     * @param max the maximum value
+     * @return val truncate between min and max
+     */
+    public static int[] clamp(int[] val, int min, int max){
+        final int[] ret = new int[val.length];
+        for (int i=0; i<val.length; i++) {
+            ret[i] = clamp(val[i], min, max);
+        }
+        return ret;
+    }
+
+    /**
+     * Truncate a value val between min value and max value
+     * @param val the value to truncate
+     * @param min the minimum value
+     * @param max the maximum value
+     * @return val truncate between min and max
+     */
+    public static long clamp(long val, long min, long max){
+        return Math.min(Math.max(val, min), max);
+    }
+
+    /**
+     * Truncate each value of an array between min value and max value
+     * @param val the array of value to truncate
+     * @param min the minimum value
+     * @param max the maximum value
+     * @return val truncate between min and max
+     */
+    public static long[] clamp(long[] val, long min, long max){
+        final long[] ret = new long[val.length];
+        for (int i=0; i<val.length; i++){
+            ret[i] = clamp(val[i], min, max);
+        }
+        return ret;
+    }
+
+    /**
+     * Truncate a value val between min value and max value
+     * @param val the value to truncate
+     * @param min the minimum value
+     * @param max the maximum value
+     * @return val truncate between min and max
+     */
+    public static float clamp(float val, float min, float max){
+        return Math.min(Math.max(val, min), max);
+    }
+
+    /**
+     * Truncate each value of an array between min value and max value
+     * @param val the array of value to truncate
+     * @param min the minimum value
+     * @param max the maximum value
+     * @return val truncate between min and max
+     */
+    public static float[] clamp(float[] val, float min, float max){
+        final float[] ret = new float[val.length];
+        for (int i=0; i<val.length; i++){
+            ret[i] = clamp(val[i], min, max);
+        }
+        return ret;
+    }
+
+    /**
+     * Truncate a value val between min value and max value
+     * @param val the value to truncate
+     * @param min the minimum value
+     * @param max the maximum value
+     * @return val truncate between min and max
+     */
+    public static double clamp(double val, double min, double max){
+        return Math.min(Math.max(val, min), max);
+    }
+
+    /**
+     * Truncate each value of an array between min value and max value
+     * @param val the array of value to truncate
+     * @param min the minimum value
+     * @param max the maximum value
+     * @return val truncate between min and max
+     */
+    public static double[] clamp(double[] val, double min, double max){
+        final double[] ret = new double[val.length];
+        for (int i=0; i<val.length; i++){
+            ret[i] = clamp(val[i], min, max);
+        }
+        return ret;
     }
 }
