@@ -117,17 +117,15 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
     public SummaryRecordType(SimpleLiteral identifier, SimpleLiteral title, final SimpleLiteral type, final List<BoundingBoxType> bboxes,
             final List<SimpleLiteral> subject, final SimpleLiteral format, final SimpleLiteral modified, final SimpleLiteral _abstract){
         
-        this.identifier = new ArrayList<>();
-        if (identifier == null) {
-            identifier = new SimpleLiteral();
+        if (identifier != null) {
+            this.identifier = new ArrayList<>();
+            this.identifier.add(identifier);
         }
-        this.identifier.add(identifier);
         
-        this.title = new ArrayList<>();
-        if (title == null) {
-            title = new SimpleLiteral();
+        if (title != null) {
+            this.title = new ArrayList<>();
+            this.title.add(title);
         }
-        this.title.add(title);
         
         this.type = type;
         
@@ -149,13 +147,13 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
             this.format.add(format);
         }
         
-        this.modified = new ArrayList<>();
         if (modified != null) {
+            this.modified = new ArrayList<>();
             this.modified.add(modified);
         }
         
-        this._abstract = new ArrayList<>();
         if (_abstract != null) {
+            this._abstract = new ArrayList<>();
             this._abstract.add(_abstract);
         }
     }
@@ -166,17 +164,15 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
     public SummaryRecordType(SimpleLiteral identifier, SimpleLiteral title, final SimpleLiteral type, final List<BoundingBoxType> bboxes,
             final List<SimpleLiteral> subject, final List<SimpleLiteral> formats, final SimpleLiteral modified, final List<SimpleLiteral> _abstract){
         
-        this.identifier = new ArrayList<>();
-        if (identifier == null) {
-            identifier = new SimpleLiteral();
+        if (identifier != null) {
+            this.identifier = new ArrayList<>();
+            this.identifier.add(identifier);
         }
-        this.identifier.add(identifier);
         
-        this.title = new ArrayList<>();
-        if (title == null) {
-            title = new SimpleLiteral();
+        if (title != null) {
+            this.title = new ArrayList<>();
+            this.title.add(title);
         }
-        this.title.add(title);
         
         this.type = type;
         
@@ -195,11 +191,10 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         
         this.format = formats;
         
-        this.modified = new ArrayList<>();
         if (modified != null) {
+            this.modified = new ArrayList<>();
             this.modified.add(modified);
         }
-        
         this._abstract = _abstract;
     }
 
@@ -217,8 +212,8 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         this.subject = subject;
         this.format = format;
 
-        this.boundingBox = new ArrayList<>();
         if (bboxes != null) {
+            this.boundingBox = new ArrayList<>();
             final org.geotoolkit.ows.xml.v100.ObjectFactory owsFactory = new org.geotoolkit.ows.xml.v100.ObjectFactory();
             for (BoundingBoxType bbox: bboxes) {
                 if (bbox instanceof WGS84BoundingBoxType) {

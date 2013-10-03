@@ -96,20 +96,20 @@ public class BriefRecordType extends AbstractRecordType {
      */
     public BriefRecordType(SimpleLiteral identifier, SimpleLiteral title, final SimpleLiteral type, final List<BoundingBoxType> bboxes) {
         
-        this.identifier = new ArrayList<>();
-        if (identifier == null)
-            identifier = new SimpleLiteral();
-        this.identifier.add(identifier);
+        if (identifier != null) {
+            this.identifier = new ArrayList<>();
+            this.identifier.add(identifier);
+        }
         
-        this.title = new ArrayList<>();
-        if (title == null)
-            title = new SimpleLiteral();
-        this.title.add(title);
+        if (title != null) {
+            this.title = new ArrayList<>();
+            this.title.add(title);
+        }
         
         this.type = type;
         
-        this.boundingBox = new ArrayList<>();
         if (bboxes != null) {
+            this.boundingBox = new ArrayList<>();
             final org.geotoolkit.ows.xml.v100.ObjectFactory owsFactory = new org.geotoolkit.ows.xml.v100.ObjectFactory();
             for (BoundingBoxType bbox: bboxes) {
                 if (bbox instanceof WGS84BoundingBoxType) {
@@ -135,8 +135,8 @@ public class BriefRecordType extends AbstractRecordType {
         this.title      = title;
         this.type       = type;
 
-        this.boundingBox = new ArrayList<>();
         if (bboxes != null) {
+            this.boundingBox = new ArrayList<>();
             final org.geotoolkit.ows.xml.v100.ObjectFactory owsFactory = new org.geotoolkit.ows.xml.v100.ObjectFactory();
             for (BoundingBoxType bbox: bboxes) {
                 if (bbox instanceof WGS84BoundingBoxType) {
