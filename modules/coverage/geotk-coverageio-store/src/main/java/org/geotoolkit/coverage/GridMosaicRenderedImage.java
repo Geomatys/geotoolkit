@@ -27,11 +27,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.Cache;
+import org.geotoolkit.math.XMath;
 
 /**
  * Implementation of RenderedImage using GridMosaic.
  * With this a GridMosaic can be see as a RenderedImage.
  *
+ * @author Thomas Rouby (Geomatys)
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
@@ -44,6 +46,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
     private final GridMosaic mosaic;
     private RenderedImage firstTileImage = null;
     private DataBuffer emptyBuffer = null;
+    private SampleModel sampleModel = null;
 
     private int width;
     private int height;
@@ -127,11 +130,11 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     @Override
     public SampleModel getSampleModel() {
-        if (firstTileImage != null) {
-            return firstTileImage.getSampleModel();
+        if (sampleModel == null && firstTileImage != null) {
+            sampleModel = this.getColorModel().createCompatibleSampleModel(this.width, this.height);
         }
 
-        return null;
+        return sampleModel;
     }
 
     @Override
@@ -242,12 +245,106 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     @Override
     public Raster getData() {
-        return null;
+        Raster rasterOut = this.getColorModel().createCompatibleWritableRaster(this.width, this.height);
+
+        // Clear dataBuffer to 0 value for all bank
+        for (int s=0; s<rasterOut.getDataBuffer().getSize(); s++){
+            for (int b=0; b<rasterOut.getDataBuffer().getNumBanks(); b++){
+                rasterOut.getDataBuffer().setElem(b, s, 0);
+            }
+        }
+
+        try {
+
+            for (int y=0; y<this.nbYTiles; y++){
+                for (int x=0; x<this.nbXTiles; x++){
+                    if (!mosaic.isMissing(x, y)){
+                        final TileReference tile = mosaic.getTile(x,y,null);
+                        final RenderedImage sourceImg;
+
+                        if (tile.getInput() instanceof RenderedImage) {
+                            sourceImg = (RenderedImage) tile.getInput();
+                        } else {
+                            sourceImg = tile.getImageReader().read(tile.getImageIndex());
+                        }
+
+                        final Raster rasterIn = sourceImg.getData();
+
+                        rasterOut.getSampleModel().setDataElements(x*tileWidth, y*tileHeight, tileWidth, tileHeight,
+                                rasterIn.getSampleModel().getDataElements(0, 0, tileWidth, tileHeight, null, rasterIn.getDataBuffer()),
+                                rasterOut.getDataBuffer());
+
+                    }
+                }
+            }
+
+        } catch (Exception ex) {
+            LOGGER.log(Level.WARNING, "", ex);
+        }
+        return rasterOut;
     }
 
     @Override
     public Raster getData(Rectangle rect) {
-        return null;
+        Raster rasterOut = this.getColorModel().createCompatibleWritableRaster(rect.width, rect.height);
+
+        // Clear dataBuffer to 0 value for all bank
+        for (int s=0; s<rasterOut.getDataBuffer().getSize(); s++){
+            for (int b=0; b<rasterOut.getDataBuffer().getNumBanks(); b++){
+                rasterOut.getDataBuffer().setElem(b, s, 0);
+            }
+        }
+
+        try {
+            final Point upperLeftPosition = this.getPositionOf(rect.x, rect.y);
+            final Point lowerRightPosition = this.getPositionOf(rect.x+rect.width, rect.y+rect.height);
+
+            for (int y=Math.max(upperLeftPosition.y,0); y<Math.min(lowerRightPosition.y+1,this.nbYTiles); y++){
+                for (int x=Math.max(upperLeftPosition.x,0); x<Math.min(lowerRightPosition.x+1, this.nbXTiles); x++){
+                    if (!mosaic.isMissing(x, y)){
+                        final TileReference tile = mosaic.getTile(x, y, null);
+                        final Rectangle tileRect = new Rectangle(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+
+                        final int minX, maxX, minY, maxY;
+                        minX = XMath.clamp(rect.x, tileRect.x, tileRect.x + tileRect.width);
+                        maxX = XMath.clamp(rect.x+rect.width, tileRect.x, tileRect.x+tileRect.width);
+                        minY = XMath.clamp(rect.y,            tileRect.y, tileRect.y+tileRect.height);
+                        maxY = XMath.clamp(rect.y+rect.height,tileRect.y, tileRect.y+tileRect.height);
+
+                        final Rectangle rectIn = new Rectangle(minX, minY, maxX-minX, maxY-minY);
+                        rectIn.translate(-tileRect.x, -tileRect.y);
+                        final Rectangle rectOut = new Rectangle(minX, minY, maxX-minX, maxY-minY);
+                        rectOut.translate(-rect.x, -rect.y);
+
+                        final RenderedImage sourceImg;
+                        if (tile.getInput() instanceof RenderedImage) {
+                            sourceImg = (RenderedImage) tile.getInput();
+                        } else {
+                            sourceImg = tile.getImageReader().read(tile.getImageIndex());
+                        }
+
+                        final Raster rasterIn = sourceImg.getData();
+
+                        rasterOut.getSampleModel().setDataElements(rectOut.x, rectOut.y, rectOut.width, rectOut.height,
+                                rasterIn.getSampleModel().getDataElements(rectIn.x, rectIn.y, rectIn.width, rectIn.height, null, rasterIn.getDataBuffer()),
+                                rasterOut.getDataBuffer());
+
+                    }
+                }
+            }
+
+        } catch (Exception ex) {
+            LOGGER.log(Level.WARNING, "", ex);
+        }
+        return rasterOut;
+    }
+
+    private Point getPositionOf(int x, int y){
+
+        final int posX = (int)(Math.floor(x/tileWidth));
+        final int posY = (int)(Math.floor(y/tileHeight));
+
+        return new Point(posX, posY);
     }
 
     @Override
