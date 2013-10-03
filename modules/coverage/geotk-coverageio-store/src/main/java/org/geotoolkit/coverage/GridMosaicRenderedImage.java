@@ -232,7 +232,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
                 //create a raster from tile image with tile position offset.
                 LOGGER.log(Level.FINE, "Request tile {0}:{1} ", new Object[]{tileX,tileY});
                 final Point offset = new Point(tileX*tileWidth, tileY*tileHeight);
-                raster = Raster.createWritableRaster(getSampleModel(), buffer , offset);
+                raster = Raster.createWritableRaster(firstTileImage.getSampleModel(), buffer , offset);
                 this.tileCache.put(new Point(tileX, tileY), raster);
 
             } catch ( DataStoreException | IOException e) {
