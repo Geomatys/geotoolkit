@@ -305,23 +305,26 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         this.title      = title;
         this.type       = type;
         if (format != null) {
-            this.format     = Arrays.asList(format);
+            this.format = new ArrayList<>();
+            this.format.add(format);
         }
-        this.date       = date;
-        
+        this.date      = date;
         this.dcElement = new ArrayList<>();
         
         this.subject     = subjects;
         if (creator != null) {
-            this.creator     = Arrays.asList(creator);
+            this.creator = new ArrayList<>();
+            this.creator.add(creator);
         }
         if (publisher != null) {
-            this.publisher = Arrays.asList(publisher);
+            this.publisher = new ArrayList<>();
+            this.publisher.add(publisher);
         }
         this.language    = language;
         this.modified    = modified;
         if (_abstract != null) {
-            this._abstract   = Arrays.asList(_abstract);
+            this._abstract = new ArrayList<>();
+            this._abstract.add(_abstract);
         }
         this.spatial     = spatial;
         this.references  = references;
