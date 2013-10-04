@@ -29,9 +29,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.MathTransforms;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -170,7 +168,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     @Override
     public int getNumYTiles() {
-        return  nbXTiles;
+        return  nbYTiles;
     }
 
     @Override
