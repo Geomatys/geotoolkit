@@ -28,6 +28,12 @@ import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.math.XMath;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.MathTransforms;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * Implementation of RenderedImage using GridMosaic.
@@ -337,6 +343,25 @@ public class GridMosaicRenderedImage implements RenderedImage {
             LOGGER.log(Level.WARNING, "", ex);
         }
         return rasterOut;
+    }
+
+    public Raster getData(Envelope env) throws FactoryException, TransformException {
+        final Envelope envMosaic = this.mosaic.getEnvelope();
+        final Envelope envOut;
+        if (!CRS.equalsApproximatively(env.getCoordinateReferenceSystem(), envMosaic.getCoordinateReferenceSystem())){
+            envOut = CRS.transform(env, envMosaic.getCoordinateReferenceSystem());
+        } else {
+            envOut = env;
+        }
+
+        Rectangle rect = new Rectangle(
+                (int)((envOut.getMinimum(0)-envMosaic.getMinimum(0))/envMosaic.getSpan(0)*this.getWidth()),
+                (int)((envMosaic.getMaximum(1)-envOut.getMaximum(1))/envMosaic.getSpan(1)*this.getHeight()),
+                (int)(envOut.getSpan(0)/envMosaic.getSpan(0)*this.getWidth()),
+                (int)(envOut.getSpan(1)/envMosaic.getSpan(1)*this.getHeight())
+        );
+
+        return this.getData(rect);
     }
 
     private Point getPositionOf(int x, int y){
