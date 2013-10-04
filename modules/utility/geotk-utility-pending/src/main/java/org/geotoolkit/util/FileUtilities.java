@@ -16,20 +16,7 @@
  */
 package org.geotoolkit.util;
 
-import java.io.FileNotFoundException;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -1107,5 +1094,63 @@ public final class FileUtilities extends Static {
             fileName = fileName.substring(fileName.lastIndexOf(File.separator) + 1, fileName.length());
         }
         return fileName;
+    }
+
+    /**
+     * Return a recursive list of files under given directory.
+     * @param directory start directory. If directory is a File and not a directory,
+     *                  file list will be returned with only given directory.
+     * @return a list of all files recursively from start directory File. Or only directory file if
+     * given directory File is empty or not a directory.
+     */
+    public static List<File> scanDirectory(File directory) {
+        return scanDirectory(directory, null);
+    }
+
+    /**
+     * Return a recursive list of files under given directory.
+     * @param directory start directory. If directory is a File and not a directory,
+     *                  and is accepted by filter, file list will be returned with only given directory.
+     * @param filter FileFilter
+     * @return a list of all files recursively from start directory File. Or only directory file if
+     * given directory File is empty or not a directory.
+     */
+    public static List<File> scanDirectory(File directory, FileFilter filter) {
+        final List<File> files = new ArrayList<File>();
+
+        if (directory != null) {
+            if (directory.isDirectory()) {
+                scanDirectory(directory, files, filter);
+            } else {
+                if (filter == null || (filter.accept(directory))) {
+                    files.add(directory);
+                }
+            }
+        }
+        return files;
+    }
+
+    /**
+     * Recursive implementation of scanDirectory() method.
+     * @param root
+     * @param files
+     * @param filter FileFilter
+     */
+    private static void scanDirectory(File root, List<File> files, FileFilter filter) {
+        if (root != null) {
+            if (filter == null || (filter.accept(root))) {
+                files.add(root);
+            }
+
+            for (File child : root.listFiles()) {
+                if (child.isDirectory()) {
+                    scanDirectory(child, files, filter);
+                } else {
+                    if (filter == null || (filter.accept(child))) {
+                        files.add(child);
+                    }
+                }
+            }
+        }
     }
 }
