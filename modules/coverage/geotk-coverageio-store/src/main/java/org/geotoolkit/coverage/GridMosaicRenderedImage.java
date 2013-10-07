@@ -22,14 +22,25 @@ import javax.imageio.ImageReader;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.Cache;
+import org.geotoolkit.image.interpolation.Interpolation;
+import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.image.interpolation.Resample;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.referencing.CRS;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -45,32 +56,41 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     private static final Logger LOGGER = Logging.getLogger(GridMosaicRenderedImage.class);
 
+    /**
+     * A tile cache
+     */
     private final Cache<Point,Raster> tileCache = new Cache<>(10, 12, true);
 
+    /**
+     * The original mosaic to read
+     */
     private final GridMosaic mosaic;
+
+    /**
+     * The first tile read as an image to initialize RenderedImage parameter
+     */
     private RenderedImage firstTileImage = null;
+
+    /**
+     * The empty buffer use for missing tile
+     */
     private DataBuffer emptyBuffer = null;
+
+    /**
+     * The sample model of the mosaic rendered image
+     */
     private SampleModel sampleModel = null;
 
-    private int width;
-    private int height;
-    private int nbXTiles;
-    private int nbYTiles;
-    private int tileWidth;
-    private int tileHeight;
-
-    public GridMosaicRenderedImage(final GridMosaic mosaic) {
+    /**
+     * Constructor
+     * @param mosaic the mosaic to read as a rendered image
+     */
+    public GridMosaicRenderedImage(final GridMosaic mosaic){
         if(mosaic.getGridSize().width == 0 || mosaic.getGridSize().height == 0){
             throw new IllegalArgumentException("Mosaic grid can not be empty.");
         }
 
         this.mosaic = mosaic;
-        this.nbXTiles = mosaic.getGridSize().width;
-        this.nbYTiles = mosaic.getGridSize().height;
-        this.tileWidth = mosaic.getTileSize().width;
-        this.tileHeight = mosaic.getTileSize().height;
-        this.width = nbXTiles * tileWidth;
-        this.height = nbYTiles * tileHeight;
 
         try {
             //search the first non missing tile of the Mosaic
@@ -78,8 +98,9 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
             exitLoop :
             if (tile == null) {
-                for (int y=0; y<nbYTiles; y++){
-                    for (int x=0; x<nbXTiles; x++){
+                final Dimension gridSize = this.mosaic.getGridSize();
+                for (int y=0; y<gridSize.height; y++){
+                    for (int x=0; x<gridSize.width; x++){
                         if (mosaic.isMissing(x,y)) {
                             continue;
                         } else {
@@ -106,6 +127,14 @@ public class GridMosaicRenderedImage implements RenderedImage {
         } catch (DataStoreException e) {
             throw new IllegalArgumentException("Input mosaic doesn't have any tile.", e);
         }
+    }
+
+    /**
+     * Return intern GridMosaic
+     * @return GridMosaic
+     */
+    public GridMosaic getGridMosaic(){
+        return this.mosaic;
     }
 
     @Override
@@ -135,7 +164,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
     @Override
     public SampleModel getSampleModel() {
         if (sampleModel == null && firstTileImage != null) {
-            sampleModel = this.getColorModel().createCompatibleSampleModel(this.width, this.height);
+            sampleModel = this.getColorModel().createCompatibleSampleModel(this.getWidth(), this.getHeight());
         }
 
         return sampleModel;
@@ -143,12 +172,12 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     @Override
     public int getWidth() {
-        return width;
+        return this.mosaic.getGridSize().width * this.mosaic.getTileSize().width;
     }
 
     @Override
     public int getHeight() {
-        return height;
+        return this.mosaic.getGridSize().height * this.mosaic.getTileSize().height;
     }
 
     @Override
@@ -163,12 +192,12 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     @Override
     public int getNumXTiles() {
-        return  nbXTiles;
+        return  this.mosaic.getGridSize().width;
     }
 
     @Override
     public int getNumYTiles() {
-        return  nbYTiles;
+        return  this.mosaic.getGridSize().height;
     }
 
     @Override
@@ -183,12 +212,12 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     @Override
     public int getTileWidth() {
-        return tileWidth;
+        return this.mosaic.getTileSize().width;
     }
 
     @Override
     public int getTileHeight() {
-        return tileHeight;
+        return this.mosaic.getTileSize().width;
     }
 
     @Override
@@ -235,8 +264,8 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
                 //create a raster from tile image with tile position offset.
                 LOGGER.log(Level.FINE, "Request tile {0}:{1} ", new Object[]{tileX,tileY});
-                final Point offset = new Point(tileX*tileWidth, tileY*tileHeight);
-                raster = Raster.createWritableRaster(firstTileImage.getSampleModel(), buffer , offset);
+                final Point offset = new Point(tileX*this.getTileWidth(), tileY*this.getTileHeight());
+                raster = Raster.createWritableRaster(this.getColorModel().createCompatibleSampleModel(this.getTileWidth(), this.getTileHeight()), buffer , offset);
                 this.tileCache.put(new Point(tileX, tileY), raster);
 
             } catch ( DataStoreException | IOException e) {
@@ -249,7 +278,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     @Override
     public Raster getData() {
-        Raster rasterOut = this.getColorModel().createCompatibleWritableRaster(this.width, this.height);
+        Raster rasterOut = this.getColorModel().createCompatibleWritableRaster(this.getWidth(), this.getHeight());
 
         // Clear dataBuffer to 0 value for all bank
         for (int s=0; s<rasterOut.getDataBuffer().getSize(); s++){
@@ -260,8 +289,8 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
         try {
 
-            for (int y=0; y<this.nbYTiles; y++){
-                for (int x=0; x<this.nbXTiles; x++){
+            for (int y=0; y<this.getNumYTiles(); y++){
+                for (int x=0; x<this.getNumYTiles(); x++){
                     if (!mosaic.isMissing(x, y)){
                         final TileReference tile = mosaic.getTile(x,y,null);
                         final RenderedImage sourceImg;
@@ -274,8 +303,8 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
                         final Raster rasterIn = sourceImg.getData();
 
-                        rasterOut.getSampleModel().setDataElements(x*tileWidth, y*tileHeight, tileWidth, tileHeight,
-                                rasterIn.getSampleModel().getDataElements(0, 0, tileWidth, tileHeight, null, rasterIn.getDataBuffer()),
+                        rasterOut.getSampleModel().setDataElements(x*this.getTileWidth(), y*this.getTileHeight(), this.getTileWidth(), this.getTileHeight(),
+                                rasterIn.getSampleModel().getDataElements(0, 0, this.getTileWidth(), this.getTileHeight(), null, rasterIn.getDataBuffer()),
                                 rasterOut.getDataBuffer());
 
                     }
@@ -303,11 +332,11 @@ public class GridMosaicRenderedImage implements RenderedImage {
             final Point upperLeftPosition = this.getPositionOf(rect.x, rect.y);
             final Point lowerRightPosition = this.getPositionOf(rect.x+rect.width, rect.y+rect.height);
 
-            for (int y=Math.max(upperLeftPosition.y,0); y<Math.min(lowerRightPosition.y+1,this.nbYTiles); y++){
-                for (int x=Math.max(upperLeftPosition.x,0); x<Math.min(lowerRightPosition.x+1, this.nbXTiles); x++){
+            for (int y=Math.max(upperLeftPosition.y,0); y<Math.min(lowerRightPosition.y+1,this.getNumYTiles()); y++){
+                for (int x=Math.max(upperLeftPosition.x,0); x<Math.min(lowerRightPosition.x+1, this.getNumXTiles()); x++){
                     if (!mosaic.isMissing(x, y)){
                         final TileReference tile = mosaic.getTile(x, y, null);
-                        final Rectangle tileRect = new Rectangle(x*tileWidth, y*tileHeight, tileWidth, tileHeight);
+                        final Rectangle tileRect = new Rectangle(x*this.getTileWidth(), y*this.getTileHeight(), this.getTileWidth(), this.getTileHeight());
 
                         final int minX, maxX, minY, maxY;
                         minX = XMath.clamp(rect.x, tileRect.x, tileRect.x + tileRect.width);
@@ -343,29 +372,17 @@ public class GridMosaicRenderedImage implements RenderedImage {
         return rasterOut;
     }
 
-    public Raster getData(Envelope env) throws FactoryException, TransformException {
-        final Envelope envMosaic = this.mosaic.getEnvelope();
-        final Envelope envOut;
-        if (!CRS.equalsApproximatively(env.getCoordinateReferenceSystem(), envMosaic.getCoordinateReferenceSystem())){
-            envOut = CRS.transform(env, envMosaic.getCoordinateReferenceSystem());
-        } else {
-            envOut = env;
-        }
-
-        Rectangle rect = new Rectangle(
-                (int)((envOut.getMinimum(0)-envMosaic.getMinimum(0))/envMosaic.getSpan(0)*this.getWidth()),
-                (int)((envMosaic.getMaximum(1)-envOut.getMaximum(1))/envMosaic.getSpan(1)*this.getHeight()),
-                (int)(envOut.getSpan(0)/envMosaic.getSpan(0)*this.getWidth()),
-                (int)(envOut.getSpan(1)/envMosaic.getSpan(1)*this.getHeight())
-        );
-
-        return this.getData(rect);
-    }
-
+    /**
+     * Get the tile column and row position for a pixel.
+     * Return value can be out of the gridSize
+     * @param x
+     * @param y
+     * @return
+     */
     private Point getPositionOf(int x, int y){
 
-        final int posX = (int)(Math.floor(x/tileWidth));
-        final int posY = (int)(Math.floor(y/tileHeight));
+        final int posX = (int)(Math.floor(x/this.getTileWidth()));
+        final int posY = (int)(Math.floor(y/this.getTileHeight()));
 
         return new Point(posX, posY);
     }
