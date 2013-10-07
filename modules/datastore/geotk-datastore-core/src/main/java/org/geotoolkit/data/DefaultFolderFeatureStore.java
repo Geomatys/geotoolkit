@@ -56,6 +56,24 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class DefaultFolderFeatureStore extends AbstractFeatureStore{
 
+    /**
+     * Listen to changes in sub stores and propage them.
+     */
+    private final FeatureStoreListener subListener = new FeatureStoreListener() {
+
+        @Override
+        public void structureChanged(FeatureStoreManagementEvent event) {
+            event = event.copy(DefaultFolderFeatureStore.this);
+            sendStructureEvent(event);
+        }
+
+        @Override
+        public void contentChanged(FeatureStoreContentEvent event) {
+            event = event.copy(DefaultFolderFeatureStore.this);
+            sendContentEvent(event);
+        }
+    };
+
     private final ParameterValueGroup folderParameters;
     private final AbstractFolderFeatureStoreFactory folderFactory;
     private final FileFeatureStoreFactory singleFileFactory;
@@ -152,6 +170,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore{
             if(singleFileFactory.canProcess(params)){
                 try {
                     final FeatureStore fileDS = singleFileFactory.open(params);
+                    fileDS.addStorageListener(subListener);
                     stores.put(fileDS.getNames().iterator().next(), fileDS);
                 } catch (DataStoreException ex) {
                     getLogger().log(Level.WARNING, ex.getLocalizedMessage(),ex);
@@ -188,6 +207,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore{
         }
 
         final FeatureStore store = singleFileFactory.create(params);
+        store.addStorageListener(subListener);
         store.createFeatureType(typeName, featureType);
         stores.put(typeName, store);
     }

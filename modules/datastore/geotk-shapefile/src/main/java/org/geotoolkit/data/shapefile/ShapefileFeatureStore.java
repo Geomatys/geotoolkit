@@ -41,6 +41,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -91,6 +92,8 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
+import org.geotoolkit.factory.FactoryFinder;
+import org.opengis.filter.Id;
 
 /**
  *
@@ -134,7 +137,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore{
             throws DataStoreException,MalformedURLException {
         this(url, namespace, false, DEFAULT_STRING_CHARSET);
     }
-    
+
     /**
      * This sets the datastore's namespace during construction (so the schema -
      * FeatureType - will have the correct value) You can call this with
@@ -149,23 +152,23 @@ public class ShapefileFeatureStore extends AbstractFeatureStore{
             Charset dbfCharset) throws MalformedURLException, DataStoreException {
         this(toParameter(url, namespace, useMemoryMapped, dbfCharset));
     }
-    
+
     public ShapefileFeatureStore(final ParameterValueGroup params) throws MalformedURLException, DataStoreException {
         super(params);
-        
+
         final URL url = (URL) params.parameter(
                 ShapefileFeatureStoreFactory.URLP.getName().toString()).getValue();
         final Boolean useMemoryMapped = (Boolean) params.parameter(
                 ShapefileFeatureStoreFactory.MEMORY_MAPPED.getName().toString()).getValue();
         Charset dbfCharset = (Charset) params.parameter(
                 ShapefileFeatureStoreFactory.DBFCHARSET.getName().toString()).getValue();
-                
+
         shpFiles = new ShpFiles(url);
 
         if(dbfCharset == null){
             dbfCharset = DEFAULT_STRING_CHARSET;
         }
-        
+
         if (!shpFiles.isLocal() || !shpFiles.exists(SHP)) {
             this.useMemoryMappedBuffer = false;
         } else {
@@ -174,14 +177,14 @@ public class ShapefileFeatureStore extends AbstractFeatureStore{
 
         this.dbfCharset = dbfCharset;
     }
-    
-    private static ParameterValueGroup toParameter(final URL url, final String namespace, 
+
+    private static ParameterValueGroup toParameter(final URL url, final String namespace,
             final boolean useMemoryMapped, Charset dbfCharset){
         final ParameterValueGroup params = ShapefileFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         Parameters.getOrCreate(ShapefileFeatureStoreFactory.URLP, params).setValue(url);
         Parameters.getOrCreate(ShapefileFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
         Parameters.getOrCreate(ShapefileFeatureStoreFactory.MEMORY_MAPPED, params).setValue(useMemoryMapped);
-        Parameters.getOrCreate(ShapefileFeatureStoreFactory.DBFCHARSET, params).setValue(dbfCharset);        
+        Parameters.getOrCreate(ShapefileFeatureStoreFactory.DBFCHARSET, params).setValue(dbfCharset);
         return params;
     }
 
@@ -329,7 +332,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore{
             try {
                 final SimpleFeatureType newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(
                         schema, propertyNames);
-               
+
                 final ShapefileAttributeReader attReader = getAttributesReader(false,read3D,resample);
                 final FeatureIDReader idReader = new DefaultFeatureIDReader(typeName);
                 FeatureReader reader = ShapefileFeatureReader.create(attReader, idReader, newSchema, hints);
@@ -375,7 +378,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore{
             }
         }
 
-       
+
     }
 
     /**
@@ -435,7 +438,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore{
 
         //delete the files
         shpFiles.delete();
-        
+
         final AccessManager locker = shpFiles.createLocker();
 
         //update schema and name
@@ -454,7 +457,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore{
             geomType = null;
             shapeType = ShapeType.NULL;
         }
-        
+
         if(shapeType == ShapeType.UNDEFINED){
             throw new DataStoreException("Cannot create a shapefile whose geometry type is "+ geomType);
         }
@@ -562,7 +565,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore{
 
         //read all attributes///////////////////////////////////////////////////
         final AccessManager locker = shpFiles.createLocker();
-        
+
         final ShapefileReader shp;
         final DbaseFileReader dbf;
         try {
@@ -599,7 +602,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore{
             //get the descriptor from shp
             geomDescriptor = shp.getHeader().createDescriptor(namespace, crs);
             attributes.add(geomDescriptor);
-            
+
             //get dbf attributes if exist
             if (dbf != null) {
                 final DbaseFileHeader header = dbf.getHeader();
@@ -609,7 +612,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore{
             //we have finish readring what we want, dispose everything
             locker.disposeReaderAndWriters();
         }
-        
+
         //create the feature type //////////////////////////////////////////////
         final Class<?> geomBinding = geomDescriptor.getType().getBinding();
 
@@ -643,7 +646,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore{
      * @param readDbf - if true, the dbf fill will be opened and read
      * @throws IOException
      */
-    protected ShapefileAttributeReader getAttributesReader(final boolean readDbf, 
+    protected ShapefileAttributeReader getAttributesReader(final boolean readDbf,
             final boolean read3D, final double[] resample) throws DataStoreException {
 
         final AccessManager locker = shpFiles.createLocker();
@@ -658,24 +661,27 @@ public class ShapefileFeatureStore extends AbstractFeatureStore{
             descs = new PropertyDescriptor[]{schema.getGeometryDescriptor()};
         }
         try {
-            return new ShapefileAttributeReader(locker, descs, read3D, 
+            return new ShapefileAttributeReader(locker, descs, read3D,
                     useMemoryMappedBuffer,resample, readDbf, dbfCharset,null);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
     }
-        
+
     ////////////////////////////////////////////////////////////////////////////
     //Fallback on iterative reader and writer //////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
-        return handleAddWithFeatureWriter(groupName, newFeatures, hints);
+        final List<FeatureId> ids = handleAddWithFeatureWriter(groupName, newFeatures, hints);
+        final Id id = FactoryFinder.getFilterFactory(null).id(new HashSet<>(ids));
+        fireFeaturesAdded(groupName, id);
+        return ids;
     }
 
     /**
@@ -698,7 +704,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore{
 	public void refreshMetaModel() {
 		name = null;
 		schema = null;
-		
+
 	}
 
 }
