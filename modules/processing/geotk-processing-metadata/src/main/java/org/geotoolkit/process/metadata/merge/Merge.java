@@ -16,34 +16,42 @@
  */
 package org.geotoolkit.process.metadata.merge;
 
-import java.util.Map;
-import org.apache.sis.metadata.iso.DefaultMetadata;
-import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.metadata.KeyNamePolicy;
+import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.metadata.ValueExistencePolicy;
+import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.process.metadata.merge.MergeDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.geotoolkit.parameter.Parameters.getOrCreate;
+import static org.geotoolkit.process.metadata.merge.MergeDescriptor.FIRST_IN;
+import static org.geotoolkit.process.metadata.merge.MergeDescriptor.INSTANCE;
+import static org.geotoolkit.process.metadata.merge.MergeDescriptor.RESULT_OUT;
+import static org.geotoolkit.process.metadata.merge.MergeDescriptor.SECOND_IN;
 
 
 /**
  * Merge two metadata objects.
  *
  * @author Johann Sorel (Geomatys)
+ * @author Benjamin Garcia (Geomatys)
  * @module pending
  */
 public class Merge extends AbstractProcess {
 
     public Merge(final ParameterValueGroup input) {
-        super(INSTANCE,input);
+        super(INSTANCE, input);
     }
 
     /**
-     *  {@inheritDoc }
+     * {@inheritDoc }
      */
     @Override
     protected void execute() throws ProcessException {
@@ -55,13 +63,59 @@ public class Merge extends AbstractProcess {
 
         final DefaultMetadata merged = new DefaultMetadata(first);
         final MetadataStandard standard = merged.getStandard();
-        final Map<String, Object> source = standard.asValueMap(second, KeyNamePolicy.JAVABEANS_PROPERTY, ValueExistencePolicy.NON_EMPTY);
-        final Map<String, Object> target = standard.asValueMap(merged, KeyNamePolicy.JAVABEANS_PROPERTY, ValueExistencePolicy.ALL);
-        target.putAll(source);
+        merge(standard, second, merged);
 
         getOrCreate(RESULT_OUT, outputParameters).setValue(merged);
 
         fireProcessCompleted("Merge done.");
     }
 
+    /**
+     * Merger recursively metadata.
+     * @param standard {@link MetadataStandard} object used to find Metadata tree object.
+     * @param sourceMetadata a metadata object which need to be insert on the other metadata.
+     * @param targetMetadata a metadata object which receive merged metadata
+     */
+    private void merge(final MetadataStandard standard, final Object sourceMetadata, final Object targetMetadata) {
+        //transfomr metadatas to maps
+        final Map<String, Object> source = standard.asValueMap(sourceMetadata, KeyNamePolicy.JAVABEANS_PROPERTY, ValueExistencePolicy.NON_EMPTY);
+        final Map<String, Object> target = standard.asValueMap(targetMetadata, KeyNamePolicy.JAVABEANS_PROPERTY, ValueExistencePolicy.ALL);
+
+        //Iterate on sources to found object which need to be merged
+        for (final Map.Entry<String, Object> entry : source.entrySet()) {
+            //
+            final String propertyName = entry.getKey();
+            final Object sourceValue = entry.getValue();
+            final Object targetValue = target.get(propertyName);
+
+            //directly put if value is null on targer (they don't need merge)
+            if (targetValue == null) {
+                target.put(propertyName, sourceValue);
+            } else {
+                //if it's metadata object (DefaultMetadata, Extent, ...)
+                if (standard.isMetadata(targetValue.getClass())) {
+                    merge(standard, sourceValue, targetValue);
+                } else {
+                    //targetValue is a Collection
+                    if(targetValue instanceof Collection){
+                        Collection targetList = ((Collection) targetValue);
+                        Collection sourceList = ((Collection) sourceValue);
+                        //recursively merge
+                        if (targetList.size() > 0) {
+                            for (Object mergeElement : targetList) {
+                                for (Object sourceElement : sourceList) {
+                                    if (mergeElement.getClass().equals(sourceElement.getClass()) && standard.isMetadata(mergeElement.getClass())) {
+                                        merge(standard, sourceElement, mergeElement);
+                                    }
+                                }
+                            }
+                        } else {
+                            //list is empty on target : we add all other collection without merge
+                            ((Collection) targetValue).addAll((Collection) sourceValue);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

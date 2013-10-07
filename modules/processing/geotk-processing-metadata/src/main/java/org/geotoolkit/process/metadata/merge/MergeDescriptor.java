@@ -55,19 +55,21 @@ public final class MergeDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - first metadata
      */
+    public static final String FIRST_IN_NAME = "first";
     public static final ParameterDescriptor<Metadata> FIRST_IN =
-            new DefaultParameterDescriptor("first", "First metadata file", 
+            new DefaultParameterDescriptor(FIRST_IN_NAME, "First metadata file",
             Metadata.class, null, true);
-    
+
     /**
      * Mandatory - second metadata
      */
+    public static final String SECOND_IN_NAME = "second";
     public static final ParameterDescriptor<Metadata> SECOND_IN =
-            new DefaultParameterDescriptor("second", "Second metadata file", 
+            new DefaultParameterDescriptor(SECOND_IN_NAME, "Second metadata file",
             Metadata.class, null, true);
-            
-    /** 
-     * Input Parameters 
+
+    /**
+     * Input Parameters
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
@@ -76,8 +78,9 @@ public final class MergeDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - merged metadata
      */
+    public static final String RESULT_OUT_NAME = "result";
     public static final ParameterDescriptor<Metadata> RESULT_OUT =
-            new DefaultParameterDescriptor("result", "Merged metadata", 
+            new DefaultParameterDescriptor(RESULT_OUT_NAME, "Merged metadata",
             Metadata.class, null, true);
     
     /** 

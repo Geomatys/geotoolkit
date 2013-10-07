@@ -16,59 +16,52 @@
  */
 package org.geotoolkit.process.merge;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Date;
+import junit.framework.Assert;
 import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.geotoolkit.csw.xml.CSWMarshallerPool;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.process.Process;
+import org.geotoolkit.process.metadata.MetadataProcessingRegistry;
+import org.geotoolkit.process.metadata.merge.MergeDescriptor;
 import org.junit.Test;
-import org.opengis.metadata.Metadata;
-import org.opengis.metadata.identification.CharacterSet;
 import org.opengis.parameter.ParameterValueGroup;
-import static org.junit.Assert.*;
 import org.opengis.util.NoSuchIdentifierException;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+
 /**
- * Metadata Process test.
- * 
+ * Metadata merge process test.
+ *
  * @author Johann Sorel (Geomatys)
+ * @author Benjamin Garcia (Geomatys)
  */
 public class MetadataProcessTest {
-    
+
     @Test
-    public void mergeTest() throws NoSuchIdentifierException, ProcessException, URISyntaxException, IOException{
-        
-        final long now = System.currentTimeMillis();
-        
-        final DefaultMetadata metadata1 = new DefaultMetadata();
-        metadata1.setCharacterSet(CharacterSet.US_ASCII);
-        final DefaultMetadata metadata2 = new DefaultMetadata();
-        metadata2.setDateStamp(new Date(now));
-        
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("metadata", "merge");
-        assertNotNull(desc);
-                
-        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
-        input.parameter("first").setValue(metadata1);
-        input.parameter("second").setValue(metadata2);
-                
-        final Process process = desc.createProcess(input);
-        assertNotNull(process);
-        final ParameterValueGroup result = process.call();
-        assertNotNull(result);
-        
-        Object obj = result.parameter("result").getValue();
-        assertNotNull(obj);
-        assertTrue(obj instanceof Metadata);
-        
-        final Metadata merged = (Metadata) obj;
-        
-        assertEquals(CharacterSet.US_ASCII, merged.getCharacterSet());
-        assertEquals(new Date(now), merged.getDateStamp());
+    public void mergeTest() throws NoSuchIdentifierException, ProcessException, URISyntaxException, IOException, JAXBException {
+        final Unmarshaller xmlReader = CSWMarshallerPool.getInstance().acquireUnmarshaller();
+        final InputStream templateFile = MetadataProcessTest.class.getResourceAsStream("/template.xml");
+        final DefaultMetadata templateMetadata = (DefaultMetadata) xmlReader.unmarshal(templateFile);
+        final InputStream dataFile = MetadataProcessTest.class.getResourceAsStream("/data.xml");
+        final DefaultMetadata dataMetadata = (DefaultMetadata) xmlReader.unmarshal(dataFile);
+        final InputStream finalFile = MetadataProcessTest.class.getResourceAsStream("/final.xml");
+        final DefaultMetadata finalMetadata = (DefaultMetadata) xmlReader.unmarshal(finalFile);
+
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(MetadataProcessingRegistry.NAME, MergeDescriptor.NAME);
+        final ParameterValueGroup inputs = desc.getInputDescriptor().createValue();
+        inputs.parameter(MergeDescriptor.FIRST_IN_NAME).setValue(dataMetadata);
+        inputs.parameter(MergeDescriptor.SECOND_IN_NAME).setValue(templateMetadata);
+        final org.geotoolkit.process.Process mergeProcess = desc.createProcess(inputs);
+        ParameterValueGroup pvg = mergeProcess.call();
+        final DefaultMetadata resultMetadata = (DefaultMetadata) pvg.parameter(MergeDescriptor.RESULT_OUT_NAME).getValue();
+
+        Assert.assertNotNull(resultMetadata);
+        Assert.assertEquals(resultMetadata, finalMetadata);
     }
-    
+
 }
