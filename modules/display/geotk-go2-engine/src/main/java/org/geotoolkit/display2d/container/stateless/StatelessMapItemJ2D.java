@@ -82,9 +82,19 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
             itemGraphics.put(child, gj2d);
             getChildren().add(gj2d);
         }
-        
+
         //listen to mapitem changes
         weakListener.registerSource(item);
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        item.setVisible(visible);
+    }
+
+    @Override
+    public boolean isVisible() {
+        return item.isVisible();
     }
 
     @Override
@@ -106,7 +116,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
         }
         return null;
     }
-    
+
     @Override
     public void dispose() {
         super.dispose();
@@ -137,7 +147,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
             }else{
                 //normal coverage
                 g2d = new StatelessCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)child);
-            }            
+            }
         }else if(child instanceof MapLayer){
             g2d = new StatelessMapLayerJ2D(getCanvas(), (MapLayer)child, false);
         }else{
@@ -148,7 +158,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
     }
 
     @Override
-    public void paint(final RenderingContext2D renderingContext) {        
+    public void paint(final RenderingContext2D renderingContext) {
         //do not render children
     }
 
@@ -188,10 +198,10 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
                 itemGraphics.put(child, gj2d);
                 index++;
             }
-            
+
             //TODO should call a repaint only on this graphic
             getCanvas().getController().repaint();
-            
+
         }else if(CollectionChangeEvent.ITEM_REMOVED == type){
             for(final MapItem child : event.getItems()){
                 //remove the graphic
@@ -201,7 +211,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
                     gra.dispose();
                 }
             }
-            
+
             //TODO should call a repaint only on this graphic
             getCanvas().getController().repaint();
         }

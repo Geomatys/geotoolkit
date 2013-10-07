@@ -22,7 +22,7 @@ import org.geotoolkit.display.primitive.SceneNode;
 
 /**
  * Loops on all scene node, adding them in a list preserving the tree order.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public final class FlattenVisitor implements SceneVisitor{
@@ -31,14 +31,14 @@ public final class FlattenVisitor implements SceneVisitor{
     public static final FlattenVisitor ONLY_VISIBLE = new FlattenVisitor(true);
 
     private final boolean onlyVisible;
-    
+
     private FlattenVisitor(boolean onlyVisible) {
         this.onlyVisible = onlyVisible;
     }
-    
+
     @Override
     public List visit(SceneNode node, Object extraData) {
-        
+
         final List lst;
         if(extraData instanceof List){
             lst = (List)extraData;
@@ -46,8 +46,14 @@ public final class FlattenVisitor implements SceneVisitor{
             lst = new ArrayList();
             extraData = lst;
         }
-        if(!(onlyVisible && !node.isVisible())){
-        
+        if(onlyVisible){
+            if(node.isVisible()){
+                lst.add(node);
+                for(SceneNode c : node.getChildren()){
+                    c.accept(this, extraData);
+                }
+            }
+        }else{
             lst.add(node);
             for(SceneNode c : node.getChildren()){
                 c.accept(this, extraData);
@@ -55,5 +61,5 @@ public final class FlattenVisitor implements SceneVisitor{
         }
         return lst;
     }
-    
+
 }
