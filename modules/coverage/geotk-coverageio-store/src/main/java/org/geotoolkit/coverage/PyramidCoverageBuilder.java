@@ -449,7 +449,7 @@ public class PyramidCoverageBuilder {
                 for (int cTX = 0; cTX < nbrTileX; cTX++) {
                     final int destMinX  = cTX * tileWidth;
                     final int destMinY  = cTY * tileHeight;
-                    final WritableRenderedImage destImg = BufferedImageUtilities.createImage(tileWidth, tileHeight, nbBand, dataType);
+                    final WritableRenderedImage destImg = BufferedImageUtilities.createImage(tileWidth, tileHeight, baseImg);
 
                     if (processListener != null) {
                         processListener.progressing(new ProcessEvent(fakeProcess, (++niemeTile)+"/"+globalTileNumber, (niemeTile * 100 / globalTileNumber)));

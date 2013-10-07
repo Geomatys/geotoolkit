@@ -32,11 +32,11 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
  *
- * @author rmarechal
+ * @author remi marechal (Geomatys)
  */
 public class MPCoverageStore extends AbstractCoverageStore {
 
-    private final Map<Name, CoverageReference> layers = new HashMap<Name, CoverageReference>();
+    private final Map<Name, CoverageReference> layers = new HashMap<>();
 
     /**
      * Dummy parameter descriptor group.
@@ -72,9 +72,10 @@ public class MPCoverageStore extends AbstractCoverageStore {
     @Override
     public void dispose() {
     }
-    
-	@Override
-	public CoverageType getType() {
-		return CoverageType.PYRAMID;
-	}
+
+    @Override
+    public CoverageType getType() {
+        return CoverageType.PYRAMID;
+    }
+
 }

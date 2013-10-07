@@ -26,6 +26,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferDouble;
 import java.awt.image.DataBufferFloat;
 import java.awt.image.DataBufferShort;
+import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.Hashtable;
 import javax.media.jai.RasterFactory;
@@ -37,6 +38,22 @@ import org.geotoolkit.internal.image.ScaledColorSpace;
  * @author Johann Sorel (Geomatys)
  */
 public class BufferedImageUtilities extends Static {
+
+    /**
+     * Create a new image of the same type with a different size.
+     *
+     * @param width
+     * @param height
+     * @param reference
+     * @return
+     * @throws IllegalArgumentException
+     */
+    public static BufferedImage createImage(final int width, final int height, RenderedImage reference) throws IllegalArgumentException{
+        final WritableRaster raster = reference.getTile(0, 0).createCompatibleWritableRaster(width, height);
+        final ColorModel cm = reference.getColorModel();
+        final BufferedImage resultImage = new BufferedImage(cm,raster,cm.isAlphaPremultiplied(),new Hashtable<>());
+        return resultImage;
+    }
 
     public static BufferedImage createImage(final int width, final int height, final int nbBand, final int dataType) throws IllegalArgumentException{
         final Point upperLeft = new Point(0,0);
