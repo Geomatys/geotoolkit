@@ -215,10 +215,26 @@ public class EditionHelper {
 
     private final JMap2D map;
     private final FeatureMapLayer editedLayer;
+    private boolean showAtributeditor;
 
+    /**
+     *
+     * @param map
+     * @param editedLayer
+     * @param showAtributeditor display the feature attribute editor after creation.
+     */
     EditionHelper(final JMap2D map, final FeatureMapLayer editedLayer) {
         this.map = map;
         this.editedLayer = editedLayer;
+        this.showAtributeditor = true;
+    }
+
+    public boolean isShowAtributeditor() {
+        return showAtributeditor;
+    }
+
+    public void setShowAtributeditor(boolean showAtributeditor) {
+        this.showAtributeditor = showAtributeditor;
     }
 
     /**
@@ -279,16 +295,16 @@ public class EditionHelper {
 
             //we filter ourself since we want the filter to occure after the reprojection
             editgeoms = GenericFilterFeatureIterator.wrap(editgeoms, flt);
-                        
+
             fi = editgeoms.iterator();
             if (fi.hasNext()) {
                 Feature sf = fi.next();
-                
-                //get the original, in it's data crs                
+
+                //get the original, in it's data crs
                 flt = FF.id(Collections.singleton(sf.getIdentifier()));
                 sf = null;
                 fi.close();
-                
+
                 qb.reset();
                 qb.setTypeName(editedLayer.getCollection().getFeatureType().getName());
                 qb.setFilter(flt);
@@ -297,7 +313,7 @@ public class EditionHelper {
                 if (fi.hasNext()){
                     sf = fi.next();
                 }
-                
+
                 return sf;
             }
         }catch(Exception ex){
@@ -307,7 +323,7 @@ public class EditionHelper {
                 fi.close();
             }
         }
-        
+
         return candidate;
     }
 
@@ -323,7 +339,7 @@ public class EditionHelper {
     }
 
     public void grabGeometryNode(final int mx, final int my,final EditionGeometry edited) {
-        
+
         try{
             //transform our mouse in a geometry
             final Geometry mouseGeo = mousePositionToGeometry(mx, my);
@@ -372,7 +388,7 @@ public class EditionHelper {
                 }else{
                     throw new IllegalArgumentException("Was expecting a Point, LineString or Polygon, but was : " + subgeo.getClass());
                 }
-                
+
                 break;
             }
 
@@ -527,26 +543,26 @@ public class EditionHelper {
     private static boolean isOnLine(final Polygon candidate, final Point center, final LineString line){
         final Envelope env = line.getEnvelopeInternal();
         final Coordinate coord = center.getCoordinate();
-        
+
         if(env.contains(coord)){
             //get the nearest point on the line to avoid deformations
             final Coordinate[] cnds = DistanceOp.nearestPoints(line, center);
-            coord.setCoordinate(cnds[0]);            
+            coord.setCoordinate(cnds[0]);
             return true;
         }else{
-            //make a more accurate test, envelope might have a width or hight 
+            //make a more accurate test, envelope might have a width or hight
             //of zero which will return false on intersection wit the point
             final Polygon buffer = (Polygon) line.buffer(candidate.getEnvelopeInternal().getWidth()/2, 10, BufferParameters.CAP_FLAT);
             if(buffer.contains(center)){
                 //get the nearest point on the line to avoid deformations
                 final Coordinate[] cnds = DistanceOp.nearestPoints(line, center);
-                coord.setCoordinate(cnds[0]);            
+                coord.setCoordinate(cnds[0]);
                 return true;
             }else{
                 return false;
             }
         }
-        
+
     }
 
     public Geometry insertNode(final GeometryCollection geo, final int mx, final int my) {
@@ -788,30 +804,30 @@ public class EditionHelper {
         return geo;
     }
 
-    
+
     public Geometry deleteHole(final Geometry geo, final int mx, final int my) {
         if(!(geo instanceof Polygon || geo instanceof MultiPolygon)){
             //this method only works on polygon or multipolygon
             return geo;
         }
-        
+
         try{
             //transform our mouse in a geometry
             final Geometry mouseGeo = mousePositionToGeometry(mx, my);
 
             final List<Polygon> subGeometries = new ArrayList<Polygon>();
             final List<LinearRing> holes = new ArrayList<LinearRing>();
-            
+
             for (int i=0,n=geo.getNumGeometries(); i<n; i++) {
                 //subgeo is a Polygon
                 subGeometries.add((Polygon) geo.getGeometryN(i));
             }
-                        
+
             for (int i=0,n=subGeometries.size();i<n;i++) {
                 final Polygon subgeo = subGeometries.get(i);
-                
+
                 //find the hole to remove
-                int toRemove = -1;                
+                int toRemove = -1;
                 holes.clear();
                 for(int j=0,k=subgeo.getNumInteriorRing(); j<k; j++){
                     final LinearRing ring = (LinearRing) subgeo.getInteriorRingN(j);
@@ -820,17 +836,17 @@ public class EditionHelper {
                         toRemove = j;
                     }
                 }
-                 
+
                 if(toRemove != -1){
                     //remove this ring and return geometry
                     holes.remove(toRemove);
 
                     if(geo instanceof Polygon){
-                        return GEOMETRY_FACTORY.createPolygon((LinearRing)subgeo.getExteriorRing(), 
+                        return GEOMETRY_FACTORY.createPolygon((LinearRing)subgeo.getExteriorRing(),
                                 holes.toArray(new LinearRing[holes.size()]));
                     }else if(geo instanceof MultiPolygon){
                         //modify the subgeometry
-                        final Polygon poly = GEOMETRY_FACTORY.createPolygon((LinearRing)subgeo.getExteriorRing(), 
+                        final Polygon poly = GEOMETRY_FACTORY.createPolygon((LinearRing)subgeo.getExteriorRing(),
                                 holes.toArray(new LinearRing[holes.size()]));
                         subGeometries.set(i, poly);
                         //recreate the multipolygon
@@ -841,7 +857,7 @@ public class EditionHelper {
                     }
 
                 }
-                
+
             }
         }catch(final Exception ex){
             LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
@@ -850,7 +866,7 @@ public class EditionHelper {
         //nothing to remove return original geometry
         return geo;
     }
-    
+
 
     public Geometry toObjectiveCRS(final Feature sf){
         final Object obj = sf.getDefaultGeometryProperty().getValue();
@@ -860,7 +876,7 @@ public class EditionHelper {
         }
         return null;
     }
-    
+
     public Geometry toObjectiveCRS(Geometry geom){
         try{
             final MathTransform trs = CRS.findMathTransform(
@@ -875,7 +891,7 @@ public class EditionHelper {
         }
         return null;
     }
-    
+
 
     /**
      *
@@ -897,10 +913,10 @@ public class EditionHelper {
         return f;
     }
 
-    
+
     //manipulating the feature source, transaction -----------------------------
 
-    public void sourceAddGeometry(Geometry geom) {
+    public Feature sourceAddGeometry(Geometry geom) {
 
         if (editedLayer != null) {
 
@@ -915,7 +931,9 @@ public class EditionHelper {
             }
 
             feature.getDefaultGeometryProperty().setValue(geom);
-            JFeatureOutLine.show(feature);
+            if(showAtributeditor){
+                JFeatureOutLine.show(feature);
+            }
 
             if(editedLayer.getCollection().isWritable()){
                 try {
@@ -926,7 +944,11 @@ public class EditionHelper {
             }
 
             map.getCanvas().getController().repaint();
+
+            return feature;
         }
+
+        return null;
 
     }
 
@@ -936,7 +958,7 @@ public class EditionHelper {
             //nothing to do
             return;
         }
-        
+
         final String ID = feature.getIdentifier().getID();
 
         ensureNonNull("geometry", geo);
@@ -952,13 +974,13 @@ public class EditionHelper {
             try {
                 final Geometry geom;
                 if(reprojectToDataCRS){
-                    geom = JTS.transform(geo, 
+                    geom = JTS.transform(geo,
                             CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
                     JTS.setCRS(geom, dataCrs);
                 }else{
                     geom = geo;
                 }
-                
+
                 editedLayer.getCollection().update(filter, geomAttribut,geom);
             } catch (final Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
@@ -969,7 +991,7 @@ public class EditionHelper {
         }
 
     }
-    
+
     public void sourceRemoveFeature(final Feature feature){
         sourceRemoveFeature(feature.getIdentifier().getID());
     }

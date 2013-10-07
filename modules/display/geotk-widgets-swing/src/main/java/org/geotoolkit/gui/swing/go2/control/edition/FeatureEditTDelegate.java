@@ -46,12 +46,12 @@ import org.opengis.feature.Property;
 
 /**
  * Feature attribut and geometry tool delegate.
- * 
+ *
  * @author Johann Sorel
  * @module pending
  */
 public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
-    
+
     private final FeatureMapLayer originalLayer;
     private Feature feature = null;
 
@@ -65,24 +65,24 @@ public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
         feature = null;
         decoration.setGeometries(null);
     }
-        
+
     private void setCurrentFeature(final Feature feature){
         this.feature = feature;
-        if(feature != null){            
+        if(feature != null){
             final Geometry geom = (Geometry) feature.getDefaultGeometryProperty().getValue();
             decoration.setGeometries(Collections.singleton(helper.toObjectiveCRS(geom)));
-            
-            final JSplitPane split = new JSplitPane();            
+
+            final JSplitPane split = new JSplitPane();
             final JFeatureOutLine fe = new JFeatureOutLine();
             fe.setEdited(feature);
-            final JPanel editPane = new JPanel(new BorderLayout());            
+            final JPanel editPane = new JPanel(new BorderLayout());
             final JMap2D map = new JMap2D();
-            
+
             final MapContext context = MapBuilder.createContext();
             final FeatureCollection col = FeatureStoreUtilities.collection(feature);
             final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col, RandomStyleBuilder.createDefaultVectorStyle(col.getFeatureType()));
             context.layers().add(layer);
-            
+
             //zoom on this single feature
             map.setPreferredSize(new Dimension(350, 350));
             map.getContainer().setContext(context);
@@ -92,7 +92,7 @@ public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
-            
+
             //activate a node edition tool
             GeometryNodeTool t = new GeometryNodeTool();
             if(t.canHandle(layer)){
@@ -100,18 +100,18 @@ public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
                 final EditionHandler handler = new EditionHandler(map,delegate);
                 map.setHandler(handler);
             }
-            
+
             editPane.add(BorderLayout.CENTER, map);
-            split.setLeftComponent(new JScrollPane(fe));          
+            split.setLeftComponent(new JScrollPane(fe));
             split.setRightComponent(editPane);
-            
+
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
                     final String save = MessageBundle.getString("save");
                     final String cancel = MessageBundle.getString("cancel");
                     final String delete = MessageBundle.getString("delete");
-                    
+
                     final Object res = JOptionDialog.show(null,split,new String[]{delete,cancel,save});
                     if(save == res){
                         final Feature geofeature = layer.getCollection().iterator().next();
@@ -120,7 +120,7 @@ public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
                                 feature.getProperty(p.getName()).setValue(p.getValue());
                             }
                         }
-                        
+
                         try {
                             originalLayer.getCollection().update(feature);
                         } catch (DataStoreException ex) {
@@ -136,7 +136,7 @@ public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
                     reset();
                 }
             });
-            
+
         }
     }
 

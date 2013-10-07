@@ -38,6 +38,10 @@ public class AbstractFeatureEditionDelegate extends AbstractEditionDelegate{
         decoration.setMap2D(map);
     }
 
+    public EditionHelper getHelper() {
+        return helper;
+    }
+
     @Override
     public MapDecoration getDecoration() {
         final MapDecoration moveDeco = super.getDecoration();
