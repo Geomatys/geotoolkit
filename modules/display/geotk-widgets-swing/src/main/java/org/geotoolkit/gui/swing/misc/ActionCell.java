@@ -63,7 +63,10 @@ public class ActionCell {
             if(!isSelected && fg != null){
                 lbl.setForeground(fg);
             }
-            
+
+            final String tooltip = getToolTipText(value);
+            lbl.setToolTipText(tooltip);
+
             return lbl;
         }
         
@@ -82,7 +85,11 @@ public class ActionCell {
         public Color getForegroundColor(Object value){
             return null;
         }
-        
+
+        public String getToolTipText(Object value) {
+            return null;
+        }
+
     }
     
     public static abstract class Editor extends AbstractCellEditor implements TableCellEditor, ActionListener{
