@@ -38,6 +38,7 @@ import org.geotoolkit.process.coverage.reformat.ReformatDescriptor;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
 import org.geotoolkit.process.coverage.tiling.TilingDescriptor;
+import org.geotoolkit.process.coverage.volume.ComputeVolumeDescriptor;
 import org.geotoolkit.process.image.statistics.ImageStatisticsDescriptor;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -79,7 +80,8 @@ public class CoverageProcessingRegistry extends AbstractProcessingRegistry{
               ReformatDescriptor.INSTANCE,
               MergeDescriptor.INSTANCE,
               PyramidDescriptor.INSTANCE,
-              ImageStatisticsDescriptor.INSTANCE);
+              ImageStatisticsDescriptor.INSTANCE,
+                ComputeVolumeDescriptor.INSTANCE);
     }
 
     @Override
