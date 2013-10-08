@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.image.interpolation;
 
+import java.awt.Rectangle;
 import org.geotoolkit.image.iterator.PixelIterator;
 
 /**
@@ -27,7 +28,8 @@ import org.geotoolkit.image.iterator.PixelIterator;
  * @author Rémi Marechal (Geomatys).
  */
 public class NeighborInterpolation extends Interpolation {
-
+    final int maxxId;
+    final int maxyId;
     /**
      * Create a NeighBor Interpolator.
      *
@@ -35,6 +37,9 @@ public class NeighborInterpolation extends Interpolation {
      */
     public NeighborInterpolation(PixelIterator pixelIterator) {
         super(pixelIterator, 0);
+        Rectangle rect = pixelIterator.getBoundary(false);
+        maxxId = rect.x + rect.width  - 1;
+        maxyId = rect.y + rect.height - 1;
     }
 
     /**
@@ -47,7 +52,7 @@ public class NeighborInterpolation extends Interpolation {
     @Override
     public double interpolate(double x, double y, int bands) {
         checkInterpolate(x, y);
-        pixelIterator.moveTo((int) (x + Math.copySign(0.5, x)), (int) (y + Math.copySign(0.5, y)), bands);
+        pixelIterator.moveTo((int) Math.min(maxxId, (x + Math.copySign(0.5, x))), (int) Math.min(maxyId, (y + Math.copySign(0.5, y))), bands);
         return pixelIterator.getSampleDouble();
     }
 }
