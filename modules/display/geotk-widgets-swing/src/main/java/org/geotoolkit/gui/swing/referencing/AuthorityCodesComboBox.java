@@ -208,6 +208,20 @@ public class AuthorityCodesComboBox extends WindowCreator {
     public AuthorityCodesComboBox(final AuthorityFactory factory,
             final Class<? extends CoordinateReferenceSystem>... types)
     {
+        this(factory,"00000000",types);
+    }
+
+    /**
+     * Creates a chooser for objects of the given types backed by the specified authority factory.
+     *
+     * @param  factory The authority factory responsible for creating objects from a list of codes.
+     * @param  types The types of CRS object to includes in the list.
+     * @param  codePrototype An average String prototype used in code cell renderer
+     */
+    @SafeVarargs
+    public AuthorityCodesComboBox(final AuthorityFactory factory, final String codePrototype,
+            final Class<? extends CoordinateReferenceSystem>... types)
+    {
         this.factory = factory;
         final Locale locale = getLocale();
         final Vocabulary resources = Vocabulary.getResources(locale);
@@ -226,7 +240,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
         @SuppressWarnings("unchecked")
         final ListCellRenderer<Object> renderer = (ListCellRenderer) codeComboBox.getRenderer();
         if (renderer instanceof JLabel) { // This is the case of typical Swing implementations.
-            codeComboBox.setRenderer(new AuthorityCodeRenderer(renderer));
+            codeComboBox.setRenderer(new AuthorityCodeRenderer(renderer,codePrototype));
         }
         codeComboBox.setPrototypeDisplayValue(new AuthorityCode());
         Dimension size = codeComboBox.getPreferredSize();

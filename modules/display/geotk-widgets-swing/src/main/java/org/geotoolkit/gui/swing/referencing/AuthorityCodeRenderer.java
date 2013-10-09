@@ -72,10 +72,10 @@ final class AuthorityCodeRenderer extends JPanel implements ListCellRenderer<Aut
      *
      * @param original The original renderer.
      */
-    AuthorityCodeRenderer(final ListCellRenderer<Object> renderer) {
+    AuthorityCodeRenderer(final ListCellRenderer<Object> renderer, final String prototype) {
         super(new BorderLayout());
         this.renderer = renderer;
-        code = new JLabel("00000000", JLabel.TRAILING);
+        code = new JLabel(prototype, JLabel.TRAILING);
         code.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 15));
         code.setPreferredSize(code.getPreferredSize()); // Freeze the size.
         code.setForeground(Color.GRAY);
