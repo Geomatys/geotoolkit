@@ -20,30 +20,21 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-import java.awt.Rectangle;
-import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
-import java.util.concurrent.CancellationException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.measure.converter.ConversionException;
 import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
 import javax.measure.unit.BaseUnit;
 import javax.measure.unit.SI;
 import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.measure.Units;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -55,18 +46,12 @@ import static org.geotoolkit.process.coverage.volume.ComputeVolumeDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
@@ -79,7 +64,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class ComputeVolumeProcess extends AbstractProcess {
     /**
-     * Default measure unit use to compute volume.
+     * Default measure unit use to compute volume (Meter).
      */
     private final static BaseUnit<Length> METER = SI.METRE;
     
@@ -113,7 +98,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
         }
         
         try {
-           
+            
             /*
              * geomCRS attribut should be null, we looking for find another way to define geometry CoordinateReferenceSystem.
              * It may be already stipulate in JTS geometry. 
@@ -137,37 +122,11 @@ public class ComputeVolumeProcess extends AbstractProcess {
             // next read only interest area.
             final Envelope envGeom = jtsGeom.getEnvelopeInternal();
             final Envelope2D envGeom2D = new Envelope2D(geomCRS, envGeom.getMinX(), envGeom.getMinY(), envGeom.getWidth(), envGeom.getHeight());
-//            // check if read param envelop is a 4x4 pixels size in minimum to interpol values.
-//            final MathTransform readerCrsToGrid = covGridGeom.getGridToCRS(PixelInCell.CELL_CORNER).inverse();
-//            
-//            final MathTransform geomCRSToCovGrid = MathTransforms.concatenate(geomCRSToCov, readerCrsToGrid);
-//            
-//            final Envelope2D envGeom2D;
-//            // geom envelope in grid space
-//            Envelope readGridEnv = JTS.transform(envGeom, geomCRSToCovGrid);
-//            if (readGridEnv.getWidth() < 4 || readGridEnv.getHeight() < 4) {
-//                // impossible to interpolate value from area with width or height lower than 4 pixels.
-//                final GridEnvelope extend = covGridGeom.getExtent();
-//                
-//                // intersect with coverage extend.
-//                final int minGridX = (int) Math.max(readGridEnv.getMinX() - 4, extend.getLow(0));
-//                final int minGridY = (int) Math.max(readGridEnv.getMinY() - 4, extend.getLow(1));
-//                final int maxGridX = (int) Math.min(minGridX + readGridEnv.getWidth() + 8, (extend.getHigh(0) + 1));// +1 because gethight() method return inclusive upper index. 
-//                final int maxGridY = (int) Math.min(minGridY + readGridEnv.getHeight() + 8, extend.getHigh(1) + 1);
-//                final Envelope2D rGE = new Envelope2D(null, minGridX, minGridY, 
-//                                                      maxGridX - minGridX, maxGridY - minGridY);
-//                
-//                final GeneralEnvelope ge = Envelopes.transform(geomCRSToCovGrid.inverse(), rGE);
-//                envGeom2D = new Envelope2D(geomCRS, ge.getLower(0), ge.getLower(1), ge.getSpan(0), ge.getSpan(1));
-//            } else {
-////                envGeom2D = JTS.getEnvelope2D(envGeom, geomCRS);
-//                envGeom2D = new Envelope2D(geomCRS, envGeom.getMinX(), envGeom.getMinY(), envGeom.getWidth(), envGeom.getHeight());
-//            }
-            
-            
+
             final GridCoverageReadParam gcrp = new GridCoverageReadParam();
             gcrp.setEnvelope(envGeom2D, geomCRS);
             /*******************************************/
+            
             final GridCoverage2D dem      = (GridCoverage2D) gcReader.read(bandIndex, gcrp);
             final GridSampleDimension gsd = dem.getSampleDimension(bandIndex);
             
@@ -178,7 +137,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             
             final GridGeometry2D gg2d = dem.getGridGeometry();
             
-            final InterpolationCase interpolationChoice;
+            InterpolationCase interpolationChoice;
             // adapt interpolation in function of grid extend
             final GridEnvelope2D gridEnv2D = gg2d.getExtent2D();
             final int gWidth               = gridEnv2D.getSpan(0);
@@ -196,43 +155,30 @@ public class ComputeVolumeProcess extends AbstractProcess {
                 interpolationChoice = InterpolationCase.BICUBIC;
             }
             
-            final MathTransform gridToCrs = gg2d.getGridToCRS(PixelInCell.CELL_CORNER);
-            final CoordinateSystem destCS = covCrs.getCoordinateSystem();
-            final int destDim             = destCS.getDimension();
-            final RenderedImage mnt       = dem.getRenderedImage();
+            final MathTransform gridToCrs  = gg2d.getGridToCRS(PixelInCell.CELL_CORNER);
+            final CoordinateSystem destCS  = covCrs.getCoordinateSystem();
+            final RenderedImage mnt        = dem.getRenderedImage();
             
-//            // debug
-//            interpolationChoice = InterpolationCase.NEIGHBOR;
-            
-            final Interpolation interpol  = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(mnt), interpolationChoice, 0);
+            final Interpolation interpol   = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(mnt), interpolationChoice, 0);
             
             final MathTransform gridToGeom = MathTransforms.concatenate(gridToCrs, covToGeomCRS);
-            
-            // axis unity study
-            final UnitConverter[] unitConverters = new UnitConverter[destDim + 1];
-            for (int d = 0; d < destDim; d++) {
-                final CoordinateSystemAxis csA = destCS.getAxis(d);
-                unitConverters[d]              = csA.getUnit().getConverterToAny(METER);
-            }
-            // add converter from sample dimension unit.
-            unitConverters[destDim] = gsd.getUnits().getConverterToAny(METER);
-
-            // step pixel area calculator
             final StepPixelAreaCalculator stePixCalculator;
             
             if (covCrs instanceof GeographicCRS) {
-                // we project point in a crs which we know system axis to compute exhaustively orthodromic distance.
-                // we could cast datum in geodeticDatum because in geographicCRS the datum is only GeodeticDatum type.
-                final CoordinateReferenceSystem knowCRS = new DefaultGeographicCRS((GeodeticDatum) CRS.getDatum(covCrs), DefaultEllipsoidalCS.GEODETIC_2D);
-                final MathTransform gridToKnowCRS       = MathTransforms.concatenate(gridToCrs.inverse(), CRS.findMathTransform(covCrs, knowCRS));
-                final GeodeticCalculator geoCalc        = new GeodeticCalculator(knowCRS);
-                stePixCalculator                        = new GeographicStepPixelAreaCalculator(PIXELSTEP, unitConverters, geoCalc, gridToKnowCRS);
-                
+                stePixCalculator = new GeographicStepPixelAreaCalculator(PIXELSTEP, covCrs, gridToCrs);
             } else {
                 if (destCS instanceof CartesianCS) {
                     
                     // resolution
                     final double[] resolution = gg2d.getResolution();
+                    
+                    final int dimDestCS                  = destCS.getDimension();
+                    final int destDim                    = destCS.getDimension();
+                    final UnitConverter[] unitConverters = new UnitConverter[dimDestCS];
+                    for (int d = 0; d < destDim; d++) {
+                        final CoordinateSystemAxis csA   = destCS.getAxis(d);
+                        unitConverters[d]                = csA.getUnit().getConverterToAny(METER);
+                    }
                     
                     // pixel step computing in m²
                     stePixCalculator          = new CartesianStepPixelAreaCalculator(PIXELSTEP, unitConverters, resolution);
@@ -258,6 +204,8 @@ public class ComputeVolumeProcess extends AbstractProcess {
             final double[] geomPoint = new double[2];
             
             double volume = 0;
+            
+            final UnitConverter hconverter = gsd.getUnits().getConverterToAny(METER);
 
             while (pixPoint[1] < maxy) {
                 pixPoint[0] = debx;
@@ -276,7 +224,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
                         //projet h in geophysic value
                         h = zmt.transform(h);
                         //convert in meter
-                        h = unitConverters[destDim].convert(h);
+                        h = hconverter.convert(h);
                         // en une instruction et ou
                         if (positiveSens) {
                             
@@ -314,25 +262,19 @@ public class ComputeVolumeProcess extends AbstractProcess {
         /**
          * Pixel fraction.
          */
-        protected final double pixelStep; 
+        protected final double pixelWidth; 
         
-        /**
-         * Table witch contain unity converter for each {@link CoordinateSystemAxis} from destination {@link CoordinateReferenceSystem}. 
-         */
-        protected final UnitConverter[] unitConverters;
-        
-        protected StepPixelAreaCalculator(final double pixelStep, final UnitConverter[] unitConverters) {
-            this.pixelStep      = pixelStep;
-            this.unitConverters = unitConverters;
+        protected StepPixelAreaCalculator(final double pixelWidth) {
+            this.pixelWidth      = pixelWidth;
         }
         
         /**
          * Compute area of pixel step in meters² from its grid position.
          * 
-         * @param position position in grid space.
+         * @param pixelPosition position in grid space.
          * @return area in m².
          */
-        protected abstract double computeStepPixelArea(final double ...position) throws TransformException;
+        protected abstract double computeStepPixelArea(final double ...pixelPosition) throws TransformException;
     }
     
     /**
@@ -349,13 +291,13 @@ public class ComputeVolumeProcess extends AbstractProcess {
         /**
          * Create a calculator to cartesian space.
          * 
-         * @param pixelStep pixel fraction value which is the deplacement in x and y grid axis direction.
+         * @param pixelWidth pixel fraction value which is the deplacement in x and y grid axis direction.
          * @param unitConverters table of {@link UnitConverter} for each axis from CRS.
          * @param resolution resolution from {@link GridGeometry2D#getResolution() }.
          */
-        CartesianStepPixelAreaCalculator(final double pixelStep, final UnitConverter[] unitConverters, final double[] resolution) {
-            super(pixelStep, unitConverters);
-            stepPixelArea = unitConverters[0].convert(resolution[0] * pixelStep) * unitConverters[1].convert(resolution[1] * pixelStep);
+        CartesianStepPixelAreaCalculator(final double pixelWidth, final UnitConverter[] unitConverters, final double[] resolution) {
+            super(pixelWidth);
+            stepPixelArea = unitConverters[0].convert(resolution[0] * pixelWidth) * unitConverters[1].convert(resolution[1] * pixelWidth);
             assert stepPixelArea > 0 : "pixel area should be positive.";
         }
 
@@ -365,7 +307,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
          * because all pixel step have same area. 
          */
         @Override
-        protected double computeStepPixelArea(double ...position) {
+        protected double computeStepPixelArea(double ...pixelPosition) {
             return stepPixelArea;
         }        
     }
@@ -397,56 +339,60 @@ public class ComputeVolumeProcess extends AbstractProcess {
          */
         private final MathTransform gridToCrs;
         
+        /**
+         * {@link UnitConverter} to convert unit from ellipsoid system axis.
+         */
+        private final UnitConverter ellConverter;
+        
         
         /**
          * Create a calculator to cartesian space.
          * 
-         * @param pixelStep pixel fraction value which is the deplacement in x and y grid axis direction.
+         * @param pixelWidth pixel fraction value which is the deplacement in x and y grid axis direction.
          * @param unitConverters table of {@link UnitConverter} for each axis from CRS.
          * @param resolution resolution from {@link GridGeometry2D#getResolution() }.
          */
-        GeographicStepPixelAreaCalculator(final double pixelStep, final UnitConverter[] unitConverters, final GeodeticCalculator geodeticCalculator, final MathTransform gridToCrs) {
-            super(pixelStep, unitConverters);
+        GeographicStepPixelAreaCalculator(final double pixelWidth, final CoordinateReferenceSystem crs, final MathTransform gridToCrs) throws ConversionException {
+            super(pixelWidth);
             this.gridToCrs       = gridToCrs;
             this.lowGridPosition = new double[2];
             this.upGridPosition  = new double[2];
             this.lowCRSPosition  = new double[2];
             this.upCRSPosition   = new double[2];
-            this.geoCalc         = geodeticCalculator;
+            this.geoCalc         = new GeodeticCalculator(crs);
+            ellConverter         = geoCalc.getEllipsoid().getAxisUnit().getConverterToAny(METER);
         }
 
         /**
          * {@inheritDoc }.
-         * In this implementation position parameter has no impact on area computing 
-         * because of cartesian space and all pixel step have same area. 
          */
         @Override
-        protected double computeStepPixelArea(double ...position) throws TransformException {
+        protected double computeStepPixelArea(double ...pixelPosition) throws TransformException {
             // compute on grid x axis
-            lowGridPosition[0] = position[0] - pixelStep;
-            lowGridPosition[1] = position[1];
-            upGridPosition[0]  = position[0] + pixelStep;
-            upGridPosition[1]  = position[1];
-            gridToCrs.transform(lowGridPosition, 0, lowCRSPosition, 0, 2);
-            gridToCrs.transform(upGridPosition, 0, upCRSPosition, 0, 2);
+            lowGridPosition[0] = pixelPosition[0] - pixelWidth / 2;
+            lowGridPosition[1] = pixelPosition[1];
+            upGridPosition[0]  = pixelPosition[0] + pixelWidth / 2;
+            upGridPosition[1]  = pixelPosition[1];
+            gridToCrs.transform(lowGridPosition, 0, lowCRSPosition, 0, 1);
+            gridToCrs.transform(upGridPosition, 0, upCRSPosition, 0, 1);
             
             // compute distance on grid x projected axis
             geoCalc.setStartingGeographicPoint(lowCRSPosition[0], lowCRSPosition[1]);
             geoCalc.setDestinationGeographicPoint(upCRSPosition[0], upCRSPosition[1]);
-            final double distX = unitConverters[0].convert(geoCalc.getOrthodromicDistance());
+            final double distX = ellConverter.convert(geoCalc.getOrthodromicDistance());
             
             // compute on y grid axis
-            lowGridPosition[0] = position[0];
-            lowGridPosition[1] = position[1] - pixelStep;
-            upGridPosition[0]  = position[0];
-            upGridPosition[1]  = position[1] + pixelStep;
-            gridToCrs.transform(lowGridPosition, 0, lowCRSPosition, 0, 2);
-            gridToCrs.transform(upGridPosition, 0, upCRSPosition, 0, 2);
+            lowGridPosition[0] = pixelPosition[0];
+            lowGridPosition[1] = pixelPosition[1] - pixelWidth / 2;
+            upGridPosition[0]  = pixelPosition[0];
+            upGridPosition[1]  = pixelPosition[1] + pixelWidth / 2;
+            gridToCrs.transform(lowGridPosition, 0, lowCRSPosition, 0, 1);
+            gridToCrs.transform(upGridPosition, 0, upCRSPosition, 0, 1);
             
             // compute distance on grid y projected axis
             geoCalc.setStartingGeographicPoint(lowCRSPosition[0], lowCRSPosition[1]);
             geoCalc.setDestinationGeographicPoint(upCRSPosition[0], upCRSPosition[1]);
-            final double distY = unitConverters[1].convert(geoCalc.getOrthodromicDistance());
+            final double distY = ellConverter.convert(geoCalc.getOrthodromicDistance());
             return distX * distY;
         }        
     }
