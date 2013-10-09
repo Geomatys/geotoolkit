@@ -19,6 +19,7 @@ package org.geotoolkit.internal.swing.table;
 
 import java.awt.Component;
 import java.awt.event.MouseEvent;
+import java.text.Format;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.EventObject;
@@ -63,6 +64,16 @@ public class NumberEditor extends AbstractCellEditor implements TableCellEditor 
         } else {
             editorComponent = new FormattedTextField(NumberFormat.getNumberInstance(locale));
         }
+        editorComponent.setBorder(null);
+    }
+
+    /**
+     * Creates a new editor using a specific format.
+     *
+     * @param format {@link Format} used in the FormattedTextField.
+     */
+    public NumberEditor(Format format) {
+        editorComponent = new FormattedTextField(format);
         editorComponent.setBorder(null);
     }
 
