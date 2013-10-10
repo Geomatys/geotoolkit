@@ -38,8 +38,7 @@ import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.scalebar.DefaultScaleBarTemplate;
 import org.geotoolkit.display2d.ext.scalebar.J2DScaleBarUtilities;
 import org.geotoolkit.display2d.ext.scalebar.ScaleBarTemplate;
-
-import org.opengis.display.canvas.Canvas;
+import org.geotoolkit.report.graphic.map.CanvasRenderer;
 
 /**
  * Jasper Report renderer used to render scale bar graphic.
@@ -56,9 +55,9 @@ public class ScaleBarRenderer implements JRRenderable{
                             3,true,false, new Font("Serial", Font.PLAIN, 8),true,SI.METRE);
 
     private final String id = System.currentTimeMillis() + "-" + Math.random();
-    private Canvas canvas = null;
+    private CanvasRenderer canvas = null;
 
-    public void setCanvas(final Canvas canvas){
+    public void setCanvas(final CanvasRenderer canvas){
         this.canvas = canvas;
     }
 

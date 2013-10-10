@@ -26,6 +26,7 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.report.JRFieldRenderer;
 import org.geotoolkit.report.graphic.EmptyRenderable;
+import org.geotoolkit.report.graphic.map.CanvasRenderer;
 import org.geotoolkit.report.graphic.map.MapDef;
 import org.opengis.display.canvas.Canvas;
 
@@ -85,7 +86,7 @@ public class ScaleBarFieldRenderer implements JRFieldRenderer{
             final Property mapProp = feature.getProperty(prop.getDescriptor().getUserData().get(MAP_ATTRIBUTE).toString());
             if(mapProp != null && mapProp.getValue() instanceof MapDef){
                 final MapDef md = (MapDef) mapProp.getValue();
-                renderable.setCanvas((Canvas)md.getDelegate());
+                renderable.setCanvas((CanvasRenderer)md.getDelegate());
             }
 
             sb.setDelegate(renderable);
