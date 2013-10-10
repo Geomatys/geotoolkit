@@ -108,18 +108,18 @@ public class GeometryFromWKTDelegate extends AbstractFeatureEditionDelegate {
             wktPanel.addPropertyChangeListener(DialogDecoration.this);
             
             frame = new JInternalFrame("WKT");
-            frame.setContentPane(wktPanel);      
+            frame.setContentPane(wktPanel);
             frame.setResizable(true);
-            frame.setClosable(false);
+            frame.setClosable(true);
             frame.setIconifiable(false);
             frame.pack();
             frame.setVisible(true);
-            
+
             desktop = new JLayeredPane();
             desktop.setOpaque(false);
             desktop.add(frame);
-            
-            add(BorderLayout.CENTER,desktop);            
+
+            add(BorderLayout.CENTER,desktop);
         }
 
         @Override

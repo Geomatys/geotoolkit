@@ -111,7 +111,7 @@ public class GeometryFromClipboardDelegate extends AbstractFeatureEditionDelegat
             frame = new JInternalFrame("Clipboard");
             frame.setContentPane(clipboardPanel);      
             frame.setResizable(true);
-            frame.setClosable(false);
+            frame.setClosable(true);
             frame.setIconifiable(false);
             frame.pack();
             frame.setVisible(true);

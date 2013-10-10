@@ -111,7 +111,7 @@ public class GeometrySimplificationDelegate extends AbstractFeatureEditionDelega
             frame = new JInternalFrame(MessageBundle.getString("simplification"));
             frame.setContentPane(simplifyPanel);      
             frame.setResizable(true);
-            frame.setClosable(false);
+            frame.setClosable(true);
             frame.setIconifiable(false);
             frame.pack();
             frame.setVisible(true);
