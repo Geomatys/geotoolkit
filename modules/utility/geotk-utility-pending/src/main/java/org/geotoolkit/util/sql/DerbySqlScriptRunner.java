@@ -94,7 +94,6 @@ public class DerbySqlScriptRunner extends ScriptRunner {
                 && !query.startsWith("SET default_tablespace")
                 && !query.startsWith("SET default_with_oids")
                 && !query.startsWith("CREATE INDEX")
-                && !query.startsWith("CREATE SEQUENCE")
                 && !query.startsWith("SELECT pg_catalog.setval")
                 && !"".equals(query)) {
             try {
