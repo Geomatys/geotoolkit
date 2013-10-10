@@ -32,21 +32,38 @@ import org.opengis.feature.Feature;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 
-import static java.awt.event.MouseEvent.*;
-
 /**
  * Geometry moving tool.
  * 
- * @author Johann Sorel
+ * @author Johann Sorel (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  * @module pending
  */
 public class GeometryMoveDelegate extends AbstractFeatureEditionDelegate {
+
+    /**
+     * Constant bind to {@link MouseEvent#BUTTON1} to more readable code
+     */
+    private static final int LEFT   = MouseEvent.BUTTON1;
+
+    /**
+     * Constant bind to {@link MouseEvent#BUTTON2} to more readable code
+     */
+    private static final int MIDDLE = MouseEvent.BUTTON2;
+
+    /**
+     * Constant bind to {@link MouseEvent#BUTTON3} to more readable code
+     */
+    private static final int RIGHT  = MouseEvent.BUTTON3;
 
     private Feature feature = null;
     private Geometry geometry = null;
     private final List<Geometry> subGeometries =  new ArrayList<Geometry>();
     private boolean draggingAll = false;
 
+    private int pressed = -1;
+    private int lastX = 0;
+    private int lastY = 0;
 
     public GeometryMoveDelegate(final JMap2D map, final FeatureMapLayer candidate) {
         super(map,candidate);
@@ -58,6 +75,9 @@ public class GeometryMoveDelegate extends AbstractFeatureEditionDelegate {
         subGeometries.clear();
         draggingAll = false;
         decoration.setGeometries(null);
+        pressed = -1;
+        lastX = 0;
+        lastY = 0;
     }
     
     private void setCurrentFeature(final Feature feature){
@@ -72,70 +92,46 @@ public class GeometryMoveDelegate extends AbstractFeatureEditionDelegate {
 
     @Override
     public void mouseClicked(final MouseEvent e) {
-
-        final int button = e.getButton();
-
-        if(button == MouseEvent.BUTTON1){
-            if(geometry == null){
-                setCurrentFeature(helper.grabFeature(e.getX(), e.getY(), false));
-            }
-        }else if(button == MouseEvent.BUTTON3){
-            if(draggingAll){
-                helper.sourceModifyFeature(feature, geometry, true);
-            }
-            reset();
-        }
+        super.mouseClicked(e);
     }
-
-    int pressed = -1;
-    int lastX = 0;
-    int lastY = 0;
 
     @Override
     public void mousePressed(final MouseEvent e) {
         pressed = e.getButton();
         lastX = e.getX();
         lastY = e.getY();
-        
-        if(this.geometry != null && e.getButton()==BUTTON1){
-            try {
-                //start dragging mode
-                final Geometry mouseGeo = helper.mousePositionToGeometry(e.getX(), e.getY());
-                if(mouseGeo.intersects(geometry)){
-                    draggingAll = true;
-                }
-            } catch (NoninvertibleTransformException ex) {
-                Logger.getLogger(MultiPolygonCreationDelegate.class.getName()).log(Level.WARNING, null, ex);
+
+        if (pressed == LEFT) {
+
+            //find feature where mouse clicked
+            if(geometry == null){
+                setCurrentFeature(helper.grabFeature(e.getX(), e.getY(), false));
             }
-            return;
+
+            if(this.geometry != null){
+                try {
+                    //start dragging mode
+                    final Geometry mouseGeo = helper.mousePositionToGeometry(e.getX(), e.getY());
+                    if(mouseGeo.intersects(geometry)){
+                        draggingAll = true;
+                    }
+                } catch (NoninvertibleTransformException ex) {
+                    Logger.getLogger(MultiPolygonCreationDelegate.class.getName()).log(Level.WARNING, null, ex);
+                }
+                return;
+            }
         }
         super.mousePressed(e);
     }
 
     @Override
-    public void mouseReleased(final MouseEvent e) {
-
-        if(draggingAll && pressed==BUTTON1){
-            int currentX = e.getX();
-            int currentY = e.getY();
-
-            helper.moveGeometry(geometry, currentX-lastX, currentY-lastY);
-            decoration.setGeometries(Collections.singleton(geometry));
-
-            lastX = currentX;
-            lastY = currentY;
-            return;
-        }
-        super.mouseReleased(e);
-    }
-
-    @Override
     public void mouseDragged(final MouseEvent e) {
 
-        if(draggingAll && pressed==BUTTON1){
+        if(draggingAll && pressed == LEFT){
             int currentX = e.getX();
             int currentY = e.getY();
 
+            //update geometry/feature position
             helper.moveGeometry(geometry, currentX-lastX, currentY-lastY);
             decoration.setGeometries(Collections.singleton(geometry));
 
@@ -144,6 +140,25 @@ public class GeometryMoveDelegate extends AbstractFeatureEditionDelegate {
             return;
         }
         super.mouseDragged(e);
+    }
+
+    @Override
+    public void mouseReleased(final MouseEvent e) {
+
+        if(draggingAll && pressed == LEFT){
+            int currentX = e.getX();
+            int currentY = e.getY();
+
+            //last position update
+            helper.moveGeometry(geometry, currentX-lastX, currentY-lastY);
+            decoration.setGeometries(Collections.singleton(geometry));
+
+            //save
+            helper.sourceModifyFeature(feature, geometry, true);
+            reset();
+            return;
+        }
+        super.mouseReleased(e);
     }
 
     @Override
