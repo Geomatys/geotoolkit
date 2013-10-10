@@ -48,6 +48,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.openide.awt.DropDownButtonFactory;
 
+
 /**
  * 
  * @author Johann Sorel (Puzzle-GIS)
@@ -62,6 +63,9 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
     private final JEditionToolComboBox guiTools = new JEditionToolComboBox();
     private final JLayerComboBox guiLayers = new JLayerComboBox();
 
+    private final JPopupMenu menu = new JPopupMenu();
+    private final JButton active = new JButton(MessageBundle.getString("ok"));
+
     /**
      * Creates a new instance of JMap2DControlBar
      */
@@ -71,11 +75,9 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
 
     /**
      * Creates a new instance of JMap2DControlBar
-     * @param pane : related Map2D or null
+     * @param map : related Map2D or null
      */
     public JEditionBar(final JMap2D map) {
-
-        final JPopupMenu menu = new JPopupMenu();
 
         guiTools.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         guiLayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -83,7 +85,6 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
         final JPanel pane = new JPanel(new GridBagLayout());
         final JLabel lbl1 = new JLabel(MessageBundle.getString("layers"));
         final JLabel lbl2 = new JLabel(MessageBundle.getString("editTool"));
-        final JMenuItem active = new JMenuItem(MessageBundle.getString("ok"));
         final JScrollPane pane1 = new JScrollPane(guiLayers);
         final JScrollPane pane2 = new JScrollPane(guiTools);
         pane1.setPreferredSize(new Dimension(280, 140));
@@ -97,23 +98,23 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
         cst.gridx = 1;
         cst.gridy = y++;
         cst.weighty = 0;
-        pane.add(lbl1,cst);
+        pane.add(lbl1,cst); // layer label
         cst.gridy = y++;
         cst.weighty = 1;
-        pane.add(pane1,cst);
+        pane.add(pane1,cst);// layers list
         cst.gridy = y++;
         cst.weighty = 0;
-        pane.add(lbl2,cst);
+        pane.add(lbl2,cst); // tools label
         cst.gridy = y++;
         cst.weighty = 1;
-        pane.add(pane2,cst);
+        pane.add(pane2,cst); // tools list
         cst.gridy = y++;
         cst.gridx = 1;
         cst.weighty = 1;
         cst.weightx = 0;
 
         menu.add(pane);
-        menu.add(active);
+        menu.add(active);// ok button
 
         guiEdit = DropDownButtonFactory.createDropDownButton(IconBundle.getIcon("16_edit_geom"), menu);
         guiEdit.setToolTipText(MessageBundle.getString("map_edit"));
@@ -152,6 +153,11 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
     @Override
     public void actionPerformed(final ActionEvent e) {
         updateHandler(true);
+
+        //hide dropdown
+        if (e.getSource() == active) {
+            menu.setVisible(false);
+        }
     }
 
     /**
