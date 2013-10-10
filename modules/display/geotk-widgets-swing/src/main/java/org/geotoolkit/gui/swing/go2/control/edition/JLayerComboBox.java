@@ -102,7 +102,11 @@ public class JLayerComboBox extends JList implements ContextListener{
         final List<Object> objects = new ArrayList<Object>();
 
         if(context != null){
-            objects.addAll(context.layers());
+            for (MapLayer mapLayer : context.layers()) {
+                if (mapLayer.isVisible() || mapLayer.isSelectable()) {
+                    objects.add(mapLayer);
+                }
+            }
         }
 
         setModel(new ListComboBoxModel(objects));
@@ -117,16 +121,12 @@ public class JLayerComboBox extends JList implements ContextListener{
 
     @Override
     public void layerChange(CollectionChangeEvent<MapLayer> event) {
-        if(event.getType() != CollectionChangeEvent.ITEM_CHANGED){
-            reloadModel();
-        }
+        reloadModel();
     }
 
     @Override
     public void itemChange(CollectionChangeEvent<MapItem> event) {
-        if(event.getType() != CollectionChangeEvent.ITEM_CHANGED){
-            reloadModel();
-        }
+        reloadModel();
     }
 
     @Override
