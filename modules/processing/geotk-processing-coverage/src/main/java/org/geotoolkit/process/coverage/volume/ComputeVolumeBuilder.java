@@ -1,10 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009 - 2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.process.coverage.volume;
-
-//final GridCoverageReader gcReader       = value(IN_GRIDCOVERAGE_READER , inputParameters);
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.util.ArgumentChecks;
@@ -13,12 +23,6 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-//        final Geometry jtsGeom                  = value(IN_JTSGEOMETRY         , inputParameters);
-//        final CoordinateReferenceSystem geomCRS = value(IN_GEOMETRY_CRS        , inputParameters);
-//        final int bandIndex                     = value(IN_INDEX_BAND          , inputParameters);
-//        final double zCeiling                   = value(IN_ALTITUDE_CEILING    , inputParameters);
-
 
 /**
  * <p>
@@ -69,14 +73,54 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class ComputeVolumeBuilder {
     
+    /**
+     * {@link GridCoverageReader} to get {@link GridCoverage} which contain Digital Elevation Model.
+     */
     private GridCoverageReader gcReader;
+    
+    /**
+     * {@link Geometry geometry} which represente area where volume is computed.
+     */
     private Geometry jtsGeom;
+    
+    /**
+     * {@link Geometry } Altitude.<br/>
+     * Default value is 0.
+     */
     private double groundAltitude = 0;
+    
+    /**
+     * Maximal altitude value.<br/>
+     * Volume is computed between ground formed by geometry at minimum ceiling value and its value.<br/>
+     * Moreover {@link ComputeVolumeBuilder#groundAltitude geometry altitude} may be superior than this value to compute lock volume for example.
+     */
     private double zCeiling;
+    
+    /**
+     * In some case {@link Geometry} has no {@link CoordinateReferenceSystem} defined 
+     * then we suppose {@link Geometry} is define in same CRS than {@link GridCoverage} 
+     * from {@link ComputeVolumeBuilder#gcReader gridCoverageReader}.<br/>
+     * Default value is {@code null}, means geometry and coverage (DEM) are in the same space.
+     */
     private CoordinateReferenceSystem geomCRS = null;
+    
+    /**
+     * Band index where we compute volume from {@link ComputeVolumeBuilder#gcReader GridCoverageReader}.<br/>
+     * Default value is 0.
+     */
     private int bandIndex = 0;
 
-    public ComputeVolumeBuilder(GridCoverageReader gcReader, Geometry jtsGeom, double zCeiling) {
+    /**
+     * Create a builder to compute volume.
+     * 
+     * @param gcReader {@link GridCoverageReader} which permit to get DEM which contain elevation values to compute volume.
+     * @param jtsGeom {@link Geometry} which represente area on DEM where compute volume.
+     * @param zCeiling Maximal altitude value.
+     * @see ComputeVolumeBuilder#gcReader.
+     * @see ComputeVolumeBuilder#jtsGeom.
+     * @see ComputeVolumeBuilder#zCeiling
+     */
+    public ComputeVolumeBuilder(final GridCoverageReader gcReader, final Geometry jtsGeom, final double zCeiling) {
         ArgumentChecks.ensureNonNull("geometry", jtsGeom);
         ArgumentChecks.ensureNonNull("GridcoverageReader", gcReader);
         this.gcReader = gcReader;
@@ -84,32 +128,77 @@ public class ComputeVolumeBuilder {
         this.zCeiling = zCeiling;
     }
     
+    /**
+     * Set an another {@link GridCoverageReader} to avoid to create another {@link ComputeVolumeBuilder} object.
+     * 
+     * @param reader {@link GridCoverageReader} which permit to get DEM which contain elevation values to compute volume.
+     * @see ComputeVolumeBuilder#gcReader.
+     */
     public void setAnotherReader(final GridCoverageReader reader) {
         ArgumentChecks.ensureNonNull("GridcoverageReader", reader);
         this.gcReader = reader;
     }
     
+    /**
+     * Set an another {@link Geometry} to avoid to create another {@link ComputeVolumeBuilder} object.
+     * 
+     * @param geometry {@link Geometry} which represente area on DEM where compute volume.
+     * @see ComputeVolumeBuilder#jtsGeom.
+     */
     public void setAnotherArea(final Geometry geometry) {
         ArgumentChecks.ensureNonNull("geometry", geometry);
         this.jtsGeom = geometry;
     }
     
-    public void setGeometryAltitude(final double geometryAltitude) {
-        this.groundAltitude = geometryAltitude;
-    }
-    
+    /**
+     * Set an another altitudeCeiling value to avoid to create another {@link ComputeVolumeBuilder} object.
+     * 
+     * @param altitudeCeiling Maximal altitude value.
+     * @see ComputeVolumeBuilder#groundAltitude.
+     * @see ComputeVolumeBuilder#zCeiling.
+     */
     public void setAnotherCeiling(final double altitudeCeiling) {
         this.zCeiling = altitudeCeiling;
     }
     
+    /**
+     * Set geometryAltitude value.<br/>
+     * Volume is computed between ground formed by geometry at this value and {@link ComputeVolumeBuilder#zCeiling Maximum altitude} value.
+     * 
+     * @param geometryAltitude Maximal altitude value.
+     * @see ComputeVolumeBuilder#groundAltitude.
+     * @see ComputeVolumeBuilder#zCeiling.
+     */
+    public void setGeometryAltitude(final double geometryAltitude) {
+        this.groundAltitude = geometryAltitude;
+    }
+    
+    /**
+     * {@link Geometry} {@link CoordinateReferenceSystem}.
+     * 
+     * @param crs geometry space.
+     * @see ComputeVolumeBuilder#geomCRS.
+     */
     public void setGeometryCRS(final CoordinateReferenceSystem crs) {
         this.geomCRS = crs;
     }
     
+    /**
+     * DEM band index which will be study to compute volume.
+     * 
+     * @param bandIndex Digital Elevation Model band.
+     * @see ComputeVolumeBuilder#bandIndex.
+     */
     public void setStudyBandIndex(final int bandIndex) {
         this.bandIndex = bandIndex;
     }
     
+    /**
+     * Return volume from {@link ComputeVolumeProcess process} computed from all previously setted attributs. 
+     * 
+     * @return volume from {@link ComputeVolumeProcess process} computed from all previously setted attributs.
+     * @throws ProcessException 
+     */
     public double getVolume() throws ProcessException {
         final ProcessDescriptor volumeDescriptor = ComputeVolumeDescriptor.INSTANCE;
         final ParameterValueGroup volumeInput    = volumeDescriptor.getInputDescriptor().createValue();

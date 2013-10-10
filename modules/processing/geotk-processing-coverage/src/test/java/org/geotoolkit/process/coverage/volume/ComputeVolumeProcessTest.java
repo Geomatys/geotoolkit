@@ -1,6 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009 - 2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.process.coverage.volume;
 
@@ -14,9 +26,6 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
 import java.util.List;
 import java.util.concurrent.CancellationException;
-import javax.measure.converter.UnitConverter;
-import javax.measure.quantity.Length;
-import javax.measure.unit.BaseUnit;
 import javax.measure.unit.SI;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.Category;
@@ -32,7 +41,6 @@ import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.GeodeticCalculator;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
@@ -43,34 +51,14 @@ import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.datum.PixelInCell;
 
 /**
+ * Test {@link ComputeVolumeProcess process} to compute volume from DEM.
  *
  * @author Remi Marechal (Geomatys).
  */
 public strictfp class ComputeVolumeProcessTest {
-    
-    /**
-     * {@link CoordinateReferenceSystem} to test compute volume process with data from {@link GeographicCRS}.
-     */
-    private static CoordinateReferenceSystem GEO_CRS;
-    /**
-     * {@link CoordinateReferenceSystem} to test compute volume process with data from {@link DefaultEngineeringCRS} with cartesian {@link CoordinateSystem}.
-     */
-    private static CoordinateReferenceSystem CARTESIAN_CRS = DefaultEngineeringCRS.CARTESIAN_2D;
-    
-    /**
-     * {@link GeodeticCalculator} to verify result from process.<br/>
-     * Only use during greographic test.
-     */
-    private static GeodeticCalculator TEST_GEODETIC_CALCULATOR;
-    
-    /**
-     * {@link UnitConverter} to convert unit from {@link Ellipsoid} axis uits to meter.
-     */
-    private static UnitConverter ELLIPS_TO_METER; 
     
     /**
      * Test tolerance.
@@ -78,19 +66,24 @@ public strictfp class ComputeVolumeProcessTest {
     private final static double TOLERANCE = 1E-9;
     
     /**
-     * Default measure unit use to compute volume (Meter).
+     * {@link CoordinateReferenceSystem} to test compute volume process with data 
+     * from {@link DefaultEngineeringCRS} with cartesian {@link CoordinateSystem}.
      */
-    private final static BaseUnit<Length> METER = SI.METRE;
+    private static CoordinateReferenceSystem CARTESIAN_CRS = DefaultEngineeringCRS.CARTESIAN_2D;
+    
+    /**
+     * {@link CoordinateReferenceSystem} to test compute volume process with data from {@link GeographicCRS}.
+     */
+    private static CoordinateReferenceSystem GEO_CRS;
     
     /**
      * {@link GeometryFactory} to create geometry to test process in differents way.
      */
-    private final GeometryFactory gf = new GeometryFactory();
+    private final static GeometryFactory GF = new GeometryFactory();
+    
     static {
         try {
             GEO_CRS                  = CRS.decode("CRS:84");
-            TEST_GEODETIC_CALCULATOR = new GeodeticCalculator(GEO_CRS);
-            ELLIPS_TO_METER          = TEST_GEODETIC_CALCULATOR.getEllipsoid().getAxisUnit().getConverterToAny(METER);
         } catch (Exception ex) {
             throw new IllegalStateException(ex);
         }
@@ -254,15 +247,61 @@ public strictfp class ComputeVolumeProcessTest {
     }
     
     /**
+     * Test results from pike volume computing in cartesian space. 
+     */
+    @Test
+    public void testPikeCartesian() throws ProcessException {
+        pikeOrHoleTest(new double[]{1.5, 3.5}, 9, 9, 1, 1, new double[]{1, 0.5, 3}, CARTESIAN_CRS, 
+                       /*resolution = 1 -> */  54.5121953487,  107.487804651, 
+                       /*resolution = 0.5 -> */13.628048837,   26.871951162, 
+                       /*resolution = 3 -> */  490.609758138,  967.390241861);
+    }
+    
+    /**
+     * Test results from pike volume computing in geographic space.
+     */
+    @Test
+    public void testPikeGeographic() throws ProcessException {
+        pikeOrHoleTest(new double[]{1.5, 3.5}, 9, 9, 1, 1, new double[]{1, 0.5, 3}, GEO_CRS, 
+                       /*resolution = 1 -> */  6.682903349942173E11,  1.3178076433819812E12, 
+                       /*resolution = 0.5 -> */1.6757953095079672E11, 3.30439308736253E11, 
+                       /*resolution = 3 -> */  5.821184848428063E12,  1.1484593908367705E13);
+    }
+    
+    /**
+     * Test results from hole volume computing in cartesian space. 
+     */
+    @Test
+    public void testHoleCartesian() throws ProcessException {
+        pikeOrHoleTest(new double[]{2.5, 4.5}, 9, 9, 5, -1, new double[]{1, 0.5, 3}, CARTESIAN_CRS, 
+                       /*resolution = 1 -> */  107.333855986,  54.666144013, 
+                       /*resolution = 0.5 -> */26.833463996,   13.666536003, 
+                       /*resolution = 3 -> */  966.004703879,  491.995296121);
+    }
+    
+    /**
+     * Test results from hole volume computing in geographic space. 
+     */
+    @Test
+    public void testHoleGeographic() throws ProcessException {
+        pikeOrHoleTest(new double[]{2.5, 4.5}, 9, 9, 5, -1, new double[]{1, 0.5, 3}, GEO_CRS, 
+                       /*resolution = 1 -> */  1.3159128177964934E12,  6.701851605797041E11, 
+                       /*resolution = 0.5 -> */3.299655761603671E11,   1.6805326352668262E11, 
+                       /*resolution = 3 -> */  1.1467550530245646E13,  5.838228226550119E12);
+    }
+    
+    
+    /**
+     * Test process.
      * 
      * @param altitudes altitude[0] = geometry altitude, altitude[1] = ceiling value.
-     * @param imageWidth 
-     * @param imageHeight
-     * @param basicImageValue 
-     * @param imageStep
-     * @param resolution
-     * @param crs
-     * @param expectedResults
+     * @param imageWidth coverage DEM width.
+     * @param imageHeight coverage DEM height.
+     * @param basicImageValue value use to create pike or hole see fillImageWithPikeOrHole() method.
+     * @param imageStep value use to create pike or hole see fillImageWithPikeOrHole() method.
+     * @param resolution coverage resolution
+     * @param crs space test
+     * @param expectedResults test results. 2 results for each resolution. If n = resolution number. expectedResult lenght = 2 * n.
      * @throws ProcessException 
      */
     private void pikeOrHoleTest(double[] altitudes, final int imageWidth, final int imageHeight, final int basicImageValue, final int imageStep, 
@@ -309,50 +348,6 @@ public strictfp class ComputeVolumeProcessTest {
                 geomAltiId++;
             }
         }
-    }
-    
-    /**
-     * 
-     */
-    @Test
-    public void testPikeCartesian() throws ProcessException {
-        pikeOrHoleTest(new double[]{1.5, 3.5}, 9, 9, 1, 1, new double[]{1, 0.5, 3}, CARTESIAN_CRS, 
-                       /*resolution = 1 -> */  54.5121953487,  107.487804651, 
-                       /*resolution = 0.5 -> */13.628048837,   26.871951162, 
-                       /*resolution = 3 -> */  490.609758138,  967.390241861);
-    }
-    
-    /**
-     * 
-     */
-    @Test
-    public void testPikeGeographic() throws ProcessException {
-        pikeOrHoleTest(new double[]{1.5, 3.5}, 9, 9, 1, 1, new double[]{1, 0.5, 3}, GEO_CRS, 
-                       /*resolution = 1 -> */  6.682903349942173E11,  1.3178076433819812E12, 
-                       /*resolution = 0.5 -> */1.6757953095079672E11, 3.30439308736253E11, 
-                       /*resolution = 3 -> */  5.821184848428063E12,  1.1484593908367705E13);
-    }
-    
-    /**
-     * 
-     */
-    @Test
-    public void testHoleCartesian() throws ProcessException {
-        pikeOrHoleTest(new double[]{2.5, 4.5}, 9, 9, 5, -1, new double[]{1, 0.5, 3}, CARTESIAN_CRS, 
-                       /*resolution = 1 -> */  107.333855986,  54.666144013, 
-                       /*resolution = 0.5 -> */26.833463996,   13.666536003, 
-                       /*resolution = 3 -> */  966.004703879,  491.995296121);
-    }
-    
-    /**
-     * 
-     */
-    @Test
-    public void testHoleGeographic() throws ProcessException {
-        pikeOrHoleTest(new double[]{2.5, 4.5}, 9, 9, 5, -1, new double[]{1, 0.5, 3}, GEO_CRS, 
-                       /*resolution = 1 -> */  1.3159128177964934E12,  6.701851605797041E11, 
-                       /*resolution = 0.5 -> */3.299655761603671E11,   1.6805326352668262E11, 
-                       /*resolution = 3 -> */  1.1467550530245646E13,  5.838228226550119E12);
     }
     
     /**
@@ -419,7 +414,7 @@ public strictfp class ComputeVolumeProcessTest {
             final int coordID = c << 1;
             polyPoint[c] = new Coordinate(coords[coordID], coords[coordID + 1]);
         }
-        return gf.createPolygon(polyPoint);
+        return GF.createPolygon(polyPoint);
     }
     
     /**

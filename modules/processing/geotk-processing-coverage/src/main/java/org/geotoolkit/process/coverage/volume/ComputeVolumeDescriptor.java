@@ -43,7 +43,7 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
     /**************************************************************************/
     public static final String INPUT_READER_NAME = "GridCoverageReader";
     /**
-     * Input {@link GridCoverageReader} which will be resample.
+     * Input {@link GridCoverageReader} which will be studied.
      */
     public static final ParameterDescriptor<GridCoverageReader> IN_GRIDCOVERAGE_READER =
             new DefaultParameterDescriptor<>(INPUT_READER_NAME,
@@ -51,7 +51,7 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
     
     public static final String INPUT_JTS_GEOMETRY_NAME = "Geometry";
     /**
-     * Geometry which represent area where compute bulk.
+     * Geometry which represent area where compute volume.
      */
     public static final ParameterDescriptor<Geometry> IN_JTSGEOMETRY =
             new DefaultParameterDescriptor<>(INPUT_JTS_GEOMETRY_NAME,
@@ -67,7 +67,7 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
     
     public static final String INPUT_BAND_INDEX_NAME = "D E M band index.";
     /**
-     * DEM band index.
+     * DEM band index where volume is computed.
      */
     public static final ParameterDescriptor<Integer> IN_INDEX_BAND =
             new DefaultParameterDescriptor<>(INPUT_BAND_INDEX_NAME,
@@ -78,14 +78,14 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
      * Altitude ceiling value.<br/>
      * Bulk which will be compute between area formed by Geometry area and this altitude ceiling value.
      */
-    public static final ParameterDescriptor<Double> GEOMETRY_ALTITUDE =
+    public static final ParameterDescriptor<Double> IN_GEOMETRY_ALTITUDE =
             new DefaultParameterDescriptor<>(INPUT_GEOMETRY_ALTITUDE_NAME,
             "Minimal altitude value. Volume is computed between ground formed by geometry at this value and Maximum altitude value.", Double.class, 0.00, false);
     
     public static final String INPUT_MAX_CEILING_NAME = "Maximum Altitude ceiling value.";
     /**
      * Altitude ceiling value.<br/>
-     * Bulk which will be compute between area formed by Geometry area and this altitude ceiling value.
+     * volume which will be compute between area formed by Geometry area and this altitude ceiling value.
      */
     public static final ParameterDescriptor<Double> IN_MAX_ALTITUDE_CEILING =
             new DefaultParameterDescriptor<>(INPUT_MAX_CEILING_NAME,
@@ -97,7 +97,7 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
     public static final String OUTPUT_VOLUME_NAME = "computed volume result.";
     /**
      * Altitude ceiling value.<br/>
-     * Bulk which will be compute between area formed by Geometry area and this altitude ceiling value.
+     * Volume which will be compute between area formed by Geometry area and this altitude ceiling value.
      */
     public static final ParameterDescriptor<Double> OUT_VOLUME_RESULT =
             new DefaultParameterDescriptor<>(OUTPUT_VOLUME_NAME,
@@ -109,7 +109,7 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
     //Input group
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-                IN_GRIDCOVERAGE_READER, IN_JTSGEOMETRY, IN_GEOMETRY_CRS, IN_INDEX_BAND, GEOMETRY_ALTITUDE, IN_MAX_ALTITUDE_CEILING);
+                IN_GRIDCOVERAGE_READER, IN_JTSGEOMETRY, IN_GEOMETRY_CRS, IN_INDEX_BAND, IN_GEOMETRY_ALTITUDE, IN_MAX_ALTITUDE_CEILING);
     //Output group
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup("OutputParameters", OUT_VOLUME_RESULT);

@@ -58,16 +58,28 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 
 /**
+ * Process which compute volume from DEM (Digital Elevation Model) got 
+ * by {@link ComputeVolumeDescriptor#IN_GRIDCOVERAGE_READER GridCoverageReader}, on area defined by
+ * a {@link ComputeVolumeDescriptor#IN_JTSGEOMETRY Geometry} and 
+ * between 2 elevation value define by {@link ComputeVolumeDescriptor#GEOMETRY_ALTITUDE geometry altitude} 
+ * and {@link ComputeVolumeDescriptor#IN_MAX_ALTITUDE_CEILING maximum ceiling}.<br/><br/>
  * 
+ * Note : {@link ComputeVolumeDescriptor#GEOMETRY_ALTITUDE geometry altitude} may be lesser than 
+ * {@link ComputeVolumeDescriptor#IN_MAX_ALTITUDE_CEILING maximum ceiling}, to compute lock volume for example.
  *
  * @author Remi Marechal (Geomatys).
  */
 public class ComputeVolumeProcess extends AbstractProcess {
+    
     /**
      * Default measure unit use to compute volume (Meter).
      */
     private final static BaseUnit<Length> METER = SI.METRE;
     
+    /**
+     * Step move on grid X and grid Y axis.<br/>
+     * To compute volume we comute sum of 1/16 pixel area.
+     */
     private final static double PIXELSTEP = 0.25;
     
     ComputeVolumeProcess(final ParameterValueGroup input) {
@@ -85,7 +97,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
         final Geometry jtsGeom            = value(IN_JTSGEOMETRY          , inputParameters);
         CoordinateReferenceSystem geomCRS = value(IN_GEOMETRY_CRS         , inputParameters);
         final Integer bIndex              = value(IN_INDEX_BAND           , inputParameters);
-        final Double zMinCeil             = value(GEOMETRY_ALTITUDE       , inputParameters);
+        final Double zMinCeil             = value(IN_GEOMETRY_ALTITUDE       , inputParameters);
         final double zMaxCeiling          = value(IN_MAX_ALTITUDE_CEILING , inputParameters);
         
         final int bandIndex               = (bIndex   == null) ? 0 : (int) bIndex;
@@ -120,7 +132,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             final MathTransform covToGeomCRS = CRS.findMathTransform(covCrs, geomCRS);
             
             // next read only interest area.
-            final Envelope envGeom = jtsGeom.getEnvelopeInternal();
+            final Envelope envGeom     = jtsGeom.getEnvelopeInternal();
             final Envelope2D envGeom2D = new Envelope2D(geomCRS, envGeom.getMinX(), envGeom.getMinY(), envGeom.getWidth(), envGeom.getHeight());
 
             final GridCoverageReadParam gcrp = new GridCoverageReadParam();
@@ -130,7 +142,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             final GridCoverage2D dem      = (GridCoverage2D) gcReader.read(bandIndex, gcrp);
             final GridSampleDimension gsd = dem.getSampleDimension(bandIndex);
             
-            final MathTransform1D zmt = gsd.getSampleToGeophysics();
+            final MathTransform1D zmt     = gsd.getSampleToGeophysics();
             if (zmt == null) {
                 throw new ProcessException("you should stipulate MathTransform1D from sampleDimension to geophysic.", this, null);
             }
@@ -146,7 +158,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             if (gWidth < 1 || gHeight < 1) {
                 getOrCreate(OUT_VOLUME_RESULT, outputParameters).setValue(0);
                 return;
-            } else if (gWidth < 2 || gHeight < 2) {
+            } else if (gWidth < 2 || gHeight < 2) { 
                 interpolationChoice = InterpolationCase.NEIGHBOR;
             } else if (gWidth < 4 || gHeight < 4) {
                 interpolationChoice = InterpolationCase.BILINEAR;
@@ -216,33 +228,23 @@ public class ComputeVolumeProcess extends AbstractProcess {
                     // test if point is within geometry.
                     coords.setOrdinate(0, geomPoint[0]);
                     coords.setOrdinate(1, geomPoint[1]);
-//                    System.out.println("point : ("+geomPoint[0]+", "+geomPoint[1]+")");
+                    
                     if (jtsGeom.contains(gf.createPoint(coords))) {
-                        //get interpolate value
-                        double h = interpol.interpolate(pixPoint[0], pixPoint[1], bandIndex);
-//                        System.out.println("h = "+h);
-                        //projet h in geophysic value
-                        h = zmt.transform(h);
-                        //convert in meter
-                        h = hconverter.convert(h);
-                        // en une instruction et ou
-                        if (positiveSens) {
-                            
-                            if (h > zGroundCeiling) {
-                                // add in volum
-                                volume += (Math.min(Math.abs(h - zGroundCeiling), Math.abs(zMaxCeiling - zGroundCeiling))) * stePixCalculator.computeStepPixelArea(pixPoint);
-                            }
-                            
-                        } else {
-                            
-                            if (h < zGroundCeiling) {
-                                // add in volum
-                                volume += (Math.min(Math.abs(h - zGroundCeiling), Math.abs(zMaxCeiling - zGroundCeiling))) * stePixCalculator.computeStepPixelArea(pixPoint);
-                            }
-                        }
                         
-//                        // add in volum
-//                        volume += Math.min(Math.abs(h), Math.abs(zMaxCeiling)) * stePixCalculator.computeStepPixelArea(pixPoint); 
+                        // get interpolate value
+                        double h = interpol.interpolate(pixPoint[0], pixPoint[1], bandIndex);
+                        
+                        // projet h in geophysic value
+                        h = zmt.transform(h);
+                        
+                        // convert in meter
+                        h = hconverter.convert(h);
+                        
+                        // Verify that h value found is in appropriate interval.
+                        if ((positiveSens && h > zGroundCeiling) || (!positiveSens && h < zGroundCeiling)) {
+                            // add in volum
+                            volume += (Math.min(Math.abs(h - zGroundCeiling), Math.abs(zMaxCeiling - zGroundCeiling))) * stePixCalculator.computeStepPixelArea(pixPoint);
+                        }
                     }
                     pixPoint[0] += PIXELSTEP;
                 }
