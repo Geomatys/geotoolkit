@@ -330,7 +330,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
         try {
             final Point upperLeftPosition = this.getPositionOf(rect.x, rect.y);
-            final Point lowerRightPosition = this.getPositionOf(rect.x+rect.width, rect.y+rect.height);
+            final Point lowerRightPosition = this.getPositionOf(rect.x+rect.width-1, rect.y+rect.height-1);
 
             for (int y=Math.max(upperLeftPosition.y,0); y<Math.min(lowerRightPosition.y+1,this.getNumYTiles()); y++){
                 for (int x=Math.max(upperLeftPosition.x,0); x<Math.min(lowerRightPosition.x+1, this.getNumXTiles()); x++){
@@ -348,6 +348,10 @@ public class GridMosaicRenderedImage implements RenderedImage {
                         rectIn.translate(-tileRect.x, -tileRect.y);
                         final Rectangle rectOut = new Rectangle(minX, minY, maxX-minX, maxY-minY);
                         rectOut.translate(-rect.x, -rect.y);
+
+                        if (rectIn.width <= 0 || rectIn.height <= 0 || rectOut.width <= 0 || rectOut.height <= 0){
+                            continue;
+                        }
 
                         final RenderedImage sourceImg;
                         if (tile.getInput() instanceof RenderedImage) {
