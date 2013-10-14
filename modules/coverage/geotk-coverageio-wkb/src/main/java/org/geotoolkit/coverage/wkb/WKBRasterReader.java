@@ -37,6 +37,7 @@ import static org.geotoolkit.coverage.wkb.WKBRasterConstants.*;
 import org.geotoolkit.io.LEDataInputStream;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.operation.MathTransform;
@@ -301,7 +302,12 @@ public class WKBRasterReader {
 
         //rebuild image
         final SampleModel sm = raster.getSampleModel();
-        final ColorModel cm = PlanarImage.getDefaultColorModel(sm.getDataType(), raster.getNumBands());
+        ColorModel cm = PlanarImage.getDefaultColorModel(sm.getDataType(), raster.getNumBands());
+        if(cm==null){
+            //fallback
+            cm = BufferedImageUtilities.createGrayScaleColorModel(sm.getDataType(), sm.getNumBands(), 0, 0, 1);
+        }
+
         return new BufferedImage(cm, raster, false, null);
     }
 

@@ -78,8 +78,6 @@ public class XMLMosaic implements GridMosaic{
 
     //empty tile informations
     @XmlTransient
-    private BufferedImage emptyTile = null;
-    @XmlTransient
     private byte[] emptyTileEncoded = null;
 
     //written values
@@ -116,23 +114,31 @@ public class XMLMosaic implements GridMosaic{
             tileEmpty.set(i, c=='2');
         }
 
-        //create an empty tile
-        final List<XMLSampleDimension> dims = pyramid.getPyramidSet().getSampleDimensions();
-        if(dims!=null && !dims.isEmpty()){
-            emptyTile = BufferedImageUtilities.createImage(tileWidth, tileHeight, dims.size(), dims.get(0).getDataType());
-        }else{
-            emptyTile = new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
-        }
+    }
+
+    private synchronized byte[] createEmptyTile(){
+        if(emptyTileEncoded==null){
+            //create an empty tile
+            final List<XMLSampleDimension> dims = pyramid.getPyramidSet().getSampleDimensions();
+            final BufferedImage emptyTile;
+            if(dims!=null && !dims.isEmpty()){
+                emptyTile = BufferedImageUtilities.createImage(tileWidth, tileHeight, dims.size(), dims.get(0).getDataType());
+            }else{
+                emptyTile = new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
+            }
 
 
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            ImageIO.write(emptyTile, pyramid.getPyramidSet().getFormatName(), out);
-            out.flush();
-        } catch (IOException ex) {
-            Logger.getLogger(XMLMosaic.class.getName()).log(Level.SEVERE, null, ex);
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            try {
+                ImageIO.write(emptyTile, pyramid.getPyramidSet().getFormatName(), out);
+                out.flush();
+            } catch (IOException ex) {
+                Logger.getLogger(XMLMosaic.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            emptyTileEncoded = out.toByteArray();
         }
-        emptyTileEncoded = out.toByteArray();
+
+        return emptyTileEncoded;
     }
 
     private void updateCompletionString(){
@@ -240,7 +246,7 @@ public class XMLMosaic implements GridMosaic{
         if(isEmpty(col, row)){
             try {
                 tile = new DefaultTileReference(getPyramid().getPyramidSet().getReaderSpi(),
-                        ImageIO.createImageInputStream(new ByteArrayInputStream(emptyTileEncoded)), 0, new Point(col, row));
+                        ImageIO.createImageInputStream(new ByteArrayInputStream(createEmptyTile())), 0, new Point(col, row));
             } catch (IOException ex) {
                 throw new DataStoreException(ex);
             }
