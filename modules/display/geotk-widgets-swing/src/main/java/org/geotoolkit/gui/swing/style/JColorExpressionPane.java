@@ -30,6 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import org.geotoolkit.filter.FilterUtilities;
+import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_TARGET;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.expression.Expression;
 
@@ -73,11 +74,6 @@ public class JColorExpressionPane extends StyleElementEditor<Expression>{
         guiSpecial = new JSpecialExpressionButton();
 
         setOpaque(false);
-        addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                JColorExpressionPane.this.propertyChange(evt);
-            }
-        });
 
         guiColor.setBackground(new Color(255, 0, 0));
         guiColor.setText("...");
@@ -114,6 +110,7 @@ public class JColorExpressionPane extends StyleElementEditor<Expression>{
 private void guiColorActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiColorActionPerformed
     final Color color = JColorChooser.showDialog(null, "", guiColor.getBackground());
     parse(getStyleFactory().literal(color));
+    firePropertyChange(PROPERTY_TARGET, null, create());
 }//GEN-LAST:event_guiColorActionPerformed
 
 private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange
@@ -121,14 +118,6 @@ private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRS
         parse(guiSpecial.get());
     }
 }//GEN-LAST:event_guiSpecialPropertyChange
-
-    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-        // TODO add your handling code here:
-         if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
-            firePropertyChange(PROPERTY_TARGET, null, create());
-            parse(create());
-        }
-    }//GEN-LAST:event_propertyChange
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
