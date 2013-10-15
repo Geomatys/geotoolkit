@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -39,10 +40,13 @@ import org.opengis.filter.expression.Expression;
  */
 public class JColorExpressionPane extends StyleElementEditor<Expression>{
 
+    private final Dimension specialSize;
+
     /** Creates new form JColorExpressionPane */
     public JColorExpressionPane() {
         super(Expression.class);
         initComponents();
+        specialSize = new Dimension(guiSpecial.getPreferredSize());
     }
 
     @Override
@@ -50,7 +54,12 @@ public class JColorExpressionPane extends StyleElementEditor<Expression>{
         super.setLayer(layer);
         guiSpecial.setLayer(layer);
     }
-    
+
+    public void setExpressionVisible(boolean visible){
+        guiSpecial.setPreferredSize( visible ? new Dimension(specialSize) : new Dimension(1, 1));
+        guiSpecial.setVisible(visible);
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -115,7 +124,7 @@ private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRS
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         // TODO add your handling code here:
-         if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+         if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_TARGET, null, create());
             parse(create());
         }
