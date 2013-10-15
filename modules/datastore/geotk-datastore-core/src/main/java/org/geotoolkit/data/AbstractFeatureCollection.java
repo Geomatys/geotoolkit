@@ -47,6 +47,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -67,7 +68,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public abstract class AbstractFeatureCollection<F extends Feature> extends AbstractCollection<F>
         implements FeatureCollection<F>, FeatureStoreListener{
 
-    private final Set<FeatureStoreListener> listeners = new HashSet<FeatureStoreListener>();
+    private final Set<StorageListener> listeners = new HashSet<StorageListener>();
     private final FeatureStoreListener.Weak weakListener = new Weak(this);
 
     protected String id;
@@ -235,17 +236,17 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
     public void update(Feature feature) throws DataStoreException {
         if(feature == null) return;
         final Filter filter = FactoryFinder.getFilterFactory(null).id(Collections.singleton(feature.getIdentifier()));
-        
+
         final Map<AttributeDescriptor,Object> map = new HashMap<AttributeDescriptor, Object>();
         for(Property p : feature.getProperties()){
             if(p.getDescriptor() instanceof AttributeDescriptor){
                 map.put((AttributeDescriptor)p.getDescriptor(), p.getValue());
             }
         }
-        
+
         update(filter, map);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -386,7 +387,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * {@inheritDoc }
      */
     @Override
-    public void addStorageListener(final FeatureStoreListener listener) {
+    public void addStorageListener(final StorageListener listener) {
         synchronized (listeners) {
             listeners.add(listener);
         }
@@ -396,7 +397,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * {@inheritDoc }
      */
     @Override
-    public void removeStorageListener(final FeatureStoreListener listener) {
+    public void removeStorageListener(final StorageListener listener) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -437,11 +438,11 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * @param event , event to send to listeners.
      */
     protected void sendEvent(final FeatureStoreContentEvent event) {
-        final FeatureStoreListener[] lst;
+        final StorageListener[] lst;
         synchronized (listeners) {
-            lst = listeners.toArray(new FeatureStoreListener[listeners.size()]);
+            lst = listeners.toArray(new StorageListener[listeners.size()]);
         }
-        for (final FeatureStoreListener listener : lst) {
+        for (final StorageListener listener : lst) {
             listener.contentChanged(event);
         }
     }

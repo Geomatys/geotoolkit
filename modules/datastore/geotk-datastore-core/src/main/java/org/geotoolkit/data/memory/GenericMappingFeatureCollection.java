@@ -32,6 +32,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.storage.StorageListener;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -64,7 +65,7 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
                         defaults)
                 );
     }
-    
+
     public GenericMappingFeatureCollection(final FeatureCollection original, final FeatureMapper mapper){
         this.original = original;
         this.mapper = mapper;
@@ -117,12 +118,12 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
     }
 
     @Override
-    public void addStorageListener(final FeatureStoreListener listener) {
+    public void addStorageListener(final StorageListener listener) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void removeStorageListener(final FeatureStoreListener listener) {
+    public void removeStorageListener(final StorageListener listener) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -144,7 +145,7 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
     public void update(Feature feature) throws DataStoreException {
         throw new DataStoreException("Not writable");
     }
-    
+
     @Override
     public void update(final Filter filter, final AttributeDescriptor desc, final Object value) throws DataStoreException {
         throw new DataStoreException("Not writable");

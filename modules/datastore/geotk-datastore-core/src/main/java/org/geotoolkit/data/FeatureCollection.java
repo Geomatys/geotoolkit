@@ -24,6 +24,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.storage.StorageListener;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
@@ -58,7 +59,7 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
      * A collection may be linked to a session, this implies that changes maid
      * in the collection may not be send to the FeatureStore now.
      * A session.commit() call must be done.
-     * 
+     *
      * @return Session or null if not related to a session.
      */
     Session getSession();
@@ -112,7 +113,7 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
      * Override Iterator to return a limited type FeatureIterator.
      *
      * @see FeatureCollection#iterator(org.geotoolkit.factory.Hints)
-     * 
+     *
      * @return FeatureIterator
      * @throws FeatureStoreRuntimeException
      */
@@ -128,7 +129,7 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
      *
      * This approach is the counterpart of javax.jcr.query.QueryResult.getRows
      * from JSR-283 (Java Content Repository 2).
-     * 
+     *
      * @param hints : Extra hints
      * @return FeatureIterator
      * @throws FeatureStoreRuntimeException
@@ -140,7 +141,7 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
      * @see #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
      */
     void update(Feature feature) throws DataStoreException;
-    
+
     /**
      * Convinient method to update a single attribut.
      * @see #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
@@ -169,12 +170,12 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
      * and when features are added, modified or deleted.
      * @param listener to add
      */
-    void addStorageListener(FeatureStoreListener listener);
+    void addStorageListener(StorageListener listener);
 
     /**
      * Remove a storage listener
      * @param listener to remove
      */
-    void removeStorageListener(FeatureStoreListener listener);
+    void removeStorageListener(StorageListener listener);
 
 }

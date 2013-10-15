@@ -30,12 +30,12 @@ import org.apache.sis.util.Disposable;
 import org.apache.sis.util.logging.Logging;
 
 /**
- * Listener for storage objects. 
- * 
+ * Listener for storage objects.
+ *
  * Events are divided in :
  * - structure changes (like a new table or a field change)
  * - content changes (like a new record)
- * 
+ *
  * Used in : FeatureStore,Session,FeatureCollection,CoverageStore,CoverageReference,...
  *
  * @author Johann Sorel (Geomatys)
@@ -43,13 +43,13 @@ import org.apache.sis.util.logging.Logging;
 public interface StorageListener<S extends StorageEvent,C extends StorageEvent> extends EventListener{
 
     static final Logger LOGGER = Logging.getLogger(StorageListener.class);
-    
+
     /**
      * Fired when the internal structure of the storage has changed.
      * @param event
      */
     void structureChanged(S event);
-    
+
 
     /**
      * Fired when datas have been added,changed or deleted.
@@ -77,7 +77,7 @@ public interface StorageListener<S extends StorageEvent,C extends StorageEvent> 
             super(ref, ReferenceQueueConsumer.DEFAULT.queue);
             registerSource(source);
         }
-        
+
         /**
          * Register this listener on the given source.
          */
