@@ -1073,9 +1073,12 @@ public final class FeatureTypeUtilities {
 
         final String namespaceA = typeA.getName().getNamespaceURI();
         final String namespaceB = typeB.getName().getNamespaceURI();
-        if (namespaceA == null && namespaceB != null) {
-            return false;
-        } else if (!namespaceA.equals(namespaceB)) {
+
+        if (namespaceA == null && namespaceB == null) {
+            return true;
+        }
+
+        if (!namespaceA.equals(namespaceB)) {
             return false;
         }
 
