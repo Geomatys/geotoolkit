@@ -201,7 +201,7 @@ public class JNavigateToPanel extends javax.swing.JPanel {
             frame = new JInternalFrame();
             frame.setContentPane(navtoPanel);
             frame.setResizable(true);
-            frame.setClosable(false);
+            frame.setClosable(true);
             frame.setIconifiable(false);
             frame.setFrameIcon(IconBundle.getIcon("16_navto"));
             frame.pack();
