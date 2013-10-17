@@ -115,10 +115,19 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
      * @param geometry      The grid geometry.
      * @param pixelInCell   The value to assign to the {@code "pointInPixel"} attribute, or {@code null}.
      * @param cellGeometry  The value to assign to the {@code "cellGeometry"} attribute, or {@code null}.
+     */
+    public void setGridGeometry(final GridGeometry geometry, final PixelInCell pixelInCell, final CellGeometry cellGeometry) {
+        setGridGeometry(geometry, pixelInCell, cellGeometry, -1);
+    }
+
+    /**
+     * @deprecated The {@code axisToReverse} argument needs to be removed.
+     *
      * @param axisToReverse The axis to reverse (typically 1 for the <var>y</var> axis), or -1 if none.
      *
      * @since 3.15
      */
+    @Deprecated
     public void setGridGeometry(final GridGeometry geometry, final PixelInCell pixelInCell,
             final CellGeometry cellGeometry, final int axisToReverse)
     {

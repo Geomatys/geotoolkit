@@ -273,9 +273,9 @@ public final strictfp class WritableGridCoverageTableTest extends CatalogTestBas
                 assertEquals ( 0.0,                    reference.gridToCRS.getShearX(),     0.0);
                 assertEquals ( 0.0,                    reference.gridToCRS.getShearY(),     0.0);
                 assertEquals ( 0.0040461,              reference.gridToCRS.getScaleX(),     EPS);
-                assertEquals (-0.0026991,              reference.gridToCRS.getScaleY(),     EPS);
+                assertEquals ( 0.0026991,              reference.gridToCRS.getScaleY(),     EPS);
                 assertEquals (-5.3390946,              reference.gridToCRS.getTranslateX(), EPS);
-                assertEquals (48.7933655,              reference.gridToCRS.getTranslateY(), EPS);
+                assertEquals (47.6543427,              reference.gridToCRS.getTranslateY(), EPS);
                 assertEquals ("Horizontal",  4326,     reference.horizontalSRID);
                 assertEquals ("Expected no z.", 0,     reference.verticalSRID);
                 assertNull   ("Expected no z.",        reference.verticalValues);
@@ -323,8 +323,8 @@ public final strictfp class WritableGridCoverageTableTest extends CatalogTestBas
             assertEquals("Expected a three-dimensional coverage.", 3, envelope.getDimension());
             assertEquals(-5.3390946, envelope.getMinimum(0), EPS);
             assertEquals(-4.2345093, envelope.getMaximum(0), EPS);
-            assertEquals(47.6516435, envelope.getMinimum(1), EPS);
-            assertEquals(48.7933654, envelope.getMaximum(1), EPS);
+            assertEquals(47.6543427, envelope.getMinimum(1), EPS);
+            assertEquals(48.7960646, envelope.getMaximum(1), EPS);
             final double time = envelope.getMedian(2);
             assertTrue("Expected ordering from most recent to oldest entries.", time < lastTime);
             lastTime = time;
@@ -376,9 +376,9 @@ public final strictfp class WritableGridCoverageTableTest extends CatalogTestBas
                 assertEquals (        0.00,            reference.gridToCRS.getShearX(),     0);
                 assertEquals (        0.00,            reference.gridToCRS.getShearY(),     0);
                 assertEquals (    55597.46,            reference.gridToCRS.getScaleX(),     0.01);
-                assertEquals (   -55597.46,            reference.gridToCRS.getScaleY(),     0.01);
+                assertEquals (    55597.46,            reference.gridToCRS.getScaleY(),     0.01);
                 assertEquals (-19959489.33,            reference.gridToCRS.getTranslateX(), 0.01);
-                assertEquals ( 13843768.17,            reference.gridToCRS.getTranslateY(), 0.01);
+                assertEquals (-13843768.17,            reference.gridToCRS.getTranslateY(), 0.01);
                 assertEquals ("TODO", 0,               reference.horizontalSRID);
                 assertEquals ("TODO", 0,               reference.verticalSRID);
                 assertNotNull("Expected depths",       reference.verticalValues);
@@ -428,8 +428,8 @@ public final strictfp class WritableGridCoverageTableTest extends CatalogTestBas
             assertEquals("Expected a four-dimensional coverage.", 4, envelope.getDimension());
             assertEquals(-19959489.33, envelope.getMinimum(0), 0.01);
             assertEquals( 20070684.26, envelope.getMaximum(0), 0.01);
-            assertEquals(-13899365.64, envelope.getMinimum(1), 0.01);
-            assertEquals( 13843768.17, envelope.getMaximum(1), 0.01);
+            assertEquals(-13843768.17, envelope.getMinimum(1), 0.01);
+            assertEquals( 13899365.64, envelope.getMaximum(1), 0.01);
             assertEquals(        5,    envelope.getMinimum(2), 0);
             assertEquals(     1950,    envelope.getMaximum(2), 0);
             final double time = envelope.getMedian(3);

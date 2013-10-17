@@ -407,7 +407,8 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      * @since 3.14
      */
     MathTransform2D geodeticToPixelCoordinates(final GridGeometry2D gridGeometry,
-            final GridCoverageStoreParam geodeticParam, final IIOParam pixelParam)
+            final GridCoverageStoreParam geodeticParam, final IIOParam pixelParam,
+            final boolean isNetcdfHack) // TODO: DEPRECATED: to be removed in Apache SIS.
             throws CoverageStoreException
     {
         final boolean needsLongitudeShift = AxisRangeType.POSITIVE_LONGITUDE.indexIn(
@@ -418,7 +419,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
                     geodeticParam.getValidEnvelope(needsLongitudeShift),
                     geodeticParam.getResolution(),
                     geodeticParam.getCoordinateReferenceSystem(),
-                    pixelParam);
+                    pixelParam, isNetcdfHack);
         } catch (CoverageStoreException e) {
             throw e;
         } catch (Exception e) { // There is many different exceptions thrown by the above.
@@ -449,7 +450,8 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             final GeneralEnvelope           envelope,
             final double[]                  resolution,
             final CoordinateReferenceSystem requestCRS,
-            final IIOParam                  imageParam)
+            final IIOParam                  imageParam,
+            final boolean                   isNetcdfHack) // TODO: DEPRECATED: to be removed in Apache SIS.
             throws InvalidGridGeometryException, TransformException, FactoryException, CoverageStoreException
     {
         final Rectangle       gridExtent = gridGeometry.getExtent2D();
@@ -691,10 +693,10 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         if (requestCRS != null || dataCRS != null) {
             CoordinateSystem cs = (requestCRS != null ? requestCRS : dataCRS).getCoordinateSystem();
             flipX =  isOpposite(cs.getAxis(X_DIMENSION).getDirection());
-            flipY = !isOpposite(cs.getAxis(Y_DIMENSION).getDirection());
+            flipY = !isOpposite(cs.getAxis(Y_DIMENSION).getDirection()) ^ isNetcdfHack;
         } else {
             flipX = false;
-            flipY = true;
+            flipY = true ^ isNetcdfHack;
         }
         final int requestDimension = requestEnvelope.getDimension();
         final Matrix m = Matrices.create(requestDimension + 1, 3);

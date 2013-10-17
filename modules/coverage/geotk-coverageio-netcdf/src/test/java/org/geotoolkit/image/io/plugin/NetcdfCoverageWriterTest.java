@@ -259,7 +259,7 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
          * the lower-left corner, since NetCDF file typically use the geometric axis directions.
          */
         final WritableRaster raster = RasterFactory.createBandedRaster(DataBuffer.TYPE_FLOAT, WIDTH, HEIGHT, 1, null);
-        for (int inc=0,y=HEIGHT; --y>=0;) {
+        for (int inc=0,y=0; y<HEIGHT; y++) {
             for (int x=0; x<WIDTH; x++) {
                 raster.setSample(x, y, 0, firstValue + inc++);
             }
@@ -269,10 +269,10 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
          */
         final int dim = envelope.getDimension();
         final GeneralMatrix matrix = new GeneralMatrix(dim+1, dim+1);
-        matrix.setElement(0, 0,  envelope.getSpan(0) / WIDTH);
-        matrix.setElement(1, 1, -envelope.getSpan(1) / HEIGHT);
+        matrix.setElement(0, 0, envelope.getSpan(0) / WIDTH);
+        matrix.setElement(1, 1, envelope.getSpan(1) / HEIGHT);
         for (int i=0; i<dim; i++) {
-            matrix.setElement(i, dim, (i == 1) ? envelope.getMaximum(i) : envelope.getMinimum(i));
+            matrix.setElement(i, dim, envelope.getMinimum(i));
         }
         /*
          * Build the coverage.
@@ -353,6 +353,7 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
         final String expected = TestData.readText(NetcdfCoverageWriterTest.class, cdlFile);
         String actual = buffer.toString();
         actual = actual.substring(actual.indexOf('{')); // Trims the filename before '{'.
+        actual = actual.replace("\n\n", "\n");
         assertMultilinesEquals(expected, actual);
     }
 }

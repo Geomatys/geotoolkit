@@ -133,7 +133,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfImageReaderTestBase
     private static final String EXPECTED_METADATA =
             GEOTK_FORMAT_NAME + '\n' +
             "├───RectifiedGridDomain\n" +
-            "│   ├───origin=“-1.9959489E7 1.3843768E7 5.0 20975.0”\n" +
+            "│   ├───origin=“-1.9959489E7 -1.3843768E7 5.0 20975.0”\n" +
             "│   ├───Limits\n" +
             "│   │   ├───low=“0 0 0 0”\n" +
             "│   │   └───high=“719 498 58 0”\n" +
@@ -141,7 +141,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfImageReaderTestBase
             "│   │   ├───OffsetVector\n" +
             "│   │   │   └───values=“55597.46 0.0 0.0 0.0”\n" +
             "│   │   ├───OffsetVector\n" +
-            "│   │   │   └───values=“0.0 -55597.46 0.0 0.0”\n" +
+            "│   │   │   └───values=“0.0 55597.46 0.0 0.0”\n" +
             "│   │   ├───OffsetVector\n" +
             "│   │   │   └───values=“0.0 0.0 NaN 0.0”\n" +
             "│   │   └───OffsetVector\n" +
@@ -365,7 +365,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfImageReaderTestBase
          * Set the subregion to load.
          */
         final SpatialImageReadParam param = reader.getDefaultReadParam();
-        param.setSourceRegion(new Rectangle(360, 260, 2, 3));
+        param.setSourceRegion(new Rectangle(360, 236, 2, 3));
         param.setSourceBands(new int[] {0});
         Raster data;
         /*
@@ -376,7 +376,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfImageReaderTestBase
         assertEquals(2, data.getWidth());
         assertEquals(3, data.getHeight());
         assertEquals(1, data.getNumBands());
-        assertArrayEquals(new int[] {5941, 5933, 6046, 6029, 6138, 6120},
+        assertArrayEquals(new int[] {6138, 6120, 6046, 6029, 5941, 5933},
                 data.getSamples(0, 0, 2, 3, 0, (int[]) null));
         /*
          * Select a band and read data again.
@@ -386,7 +386,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfImageReaderTestBase
         assertEquals(2, data.getWidth());
         assertEquals(3, data.getHeight());
         assertEquals(1, data.getNumBands());
-        assertArrayEquals(new int[] {5880, 5888, 6007, 6007, 6125, 6124},
+        assertArrayEquals(new int[] {6125, 6124, 6007, 6007, 5880, 5888},
                 data.getSamples(0, 0, 2, 3, 0, (int[]) null));
     }
 
@@ -413,7 +413,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfImageReaderTestBase
          * Set the subregion to load.
          */
         final SpatialImageReadParam param = reader.getDefaultReadParam();
-        param.setSourceRegion(new Rectangle(360, 260, 2, 3));
+        param.setSourceRegion(new Rectangle(360, 236, 2, 3));
         assertNull(param.getSourceBands());
         Raster data;
         /*
@@ -423,7 +423,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfImageReaderTestBase
         assertEquals(2, data.getWidth());
         assertEquals(3, data.getHeight());
         assertEquals(1, data.getNumBands());
-        assertArrayEquals(new int[] {5941, 5933, 6046, 6029, 6138, 6120},
+        assertArrayEquals(new int[] {6138, 6120, 6046, 6029, 5941, 5933},
                 data.getSamples(0, 0, 2, 3, 0, (int[]) null));
         /*
          * Read data in the slice z1.
@@ -432,7 +432,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfImageReaderTestBase
         assertEquals(2, data.getWidth());
         assertEquals(3, data.getHeight());
         assertEquals(1, data.getNumBands());
-        assertArrayEquals(new int[] {5880, 5888, 6007, 6007, 6125, 6124},
+        assertArrayEquals(new int[] {6125, 6124, 6007, 6007, 5880, 5888},
                 data.getSamples(0, 0, 2, 3, 0, (int[]) null));
     }
 

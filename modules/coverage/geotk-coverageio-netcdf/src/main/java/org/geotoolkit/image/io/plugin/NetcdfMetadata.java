@@ -70,7 +70,6 @@ import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.collection.BackingStoreException;
 
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 import static org.geotoolkit.image.io.plugin.NetcdfImageReader.Spi.NATIVE_FORMAT_NAME;
 import static ucar.nc2.constants.CF.GRID_MAPPING;
@@ -354,7 +353,7 @@ final class NetcdfMetadata extends SpatialMetadata {
             final CoordinateReferenceSystem regularCRS = netcdfCRS.regularize();
             if (regularCRS instanceof GridGeometry) {
                 final GridDomainAccessor accessor = new GridDomainAccessor(this);
-                accessor.setGridGeometry((GridGeometry) regularCRS, null, null, Y_DIMENSION);
+                accessor.setGridGeometry((GridGeometry) regularCRS, null, null);
                 gridToCRS = null;
             }
             if (crs == null) {

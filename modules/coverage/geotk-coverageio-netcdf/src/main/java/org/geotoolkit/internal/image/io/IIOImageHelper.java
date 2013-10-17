@@ -244,65 +244,6 @@ public class IIOImageHelper {
     }
 
     /**
-     * Modifies the given {@code srcRegion} before reading an image which is vertically flipped.
-     * This is a helper method for handling file formats where the <var>y</var> pixel ordinates
-     * are increasing upward, while the Image I/O API expects <var>y</var> pixel ordinates to be
-     * increasing downward. This method applies the following modification:
-     *
-     * {@preformat java
-     *     srcRegion.y = srcHeight - (srcRegion.y + srcRegion.height);
-     * }
-     *
-     * plus an additional small <var>y</var> translation for taking subsampling in account,
-     * if the given {@code param} is not null.
-     * <p>
-     * This method should be invoked right after {@link ImageReader#computeRegions computeRegions}
-     * as in the example below:
-     *
-     * {@preformat java
-     *     computeRegions(param, srcWidth, srcHeight, image, srcRegion, destRegion);
-     *     flipVertically(param, srcHeight, srcRegion);
-     * }
-     *
-     * @param param     The {@code param}     argument given to {@code computeRegions}.
-     * @param srcHeight The {@code srcHeight} argument given to {@code computeRegions}.
-     * @param srcRegion The {@code srcRegion} argument given to {@code computeRegions}.
-     *
-     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-117">GEOTK-117</a>
-     *
-     * @deprecated We really need to stop flipping NetCDF images. Experience shows that it
-     *             just brings a big bunch of problems, one after other.
-     */
-    @Deprecated
-    // TODO: Remove the special case in GridDomainAccessor after this method has been removed.
-    public static void flipVertically(final IIOParam param, final int srcHeight, final Rectangle srcRegion) {
-        final int spaceLeft = srcRegion.y;
-        srcRegion.y = srcHeight - (srcRegion.y + srcRegion.height);
-        /*
-         * After the flip performed by the above line, we still have 'spaceLeft' pixels left for
-         * a downward translation.  We usually don't need to care about it, except if the source
-         * region is very close to the bottom of the source image,  in which case the correction
-         * computed below may be greater than the space left.
-         *
-         * We are done if there is no vertical subsampling. But if there is subsampling, then we
-         * need an adjustment. The flipping performed above must be computed as if the source
-         * region had exactly the size needed for reading nothing more than the last line, i.e.
-         * 'srcRegion.height' must be a multiple of 'sourceYSubsampling' plus 1. The "offset"
-         * correction is computed below accordingly.
-         */
-        if (param != null) {
-            int offset = (srcRegion.height - 1) % param.getSourceYSubsampling();
-            srcRegion.y += offset;
-            offset -= spaceLeft;
-            if (offset > 0) {
-                // Happen only if we are very close to image border and
-                // the above translation bring us outside the image area.
-                srcRegion.height -= offset;
-            }
-        }
-    }
-
-    /**
      * Returns {@code true} if iteration over the pixel values will perform sub-sampling.
      *
      * @return {@code true} if the parameters given at construction time specify a

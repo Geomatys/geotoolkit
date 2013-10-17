@@ -325,10 +325,8 @@ final class NetcdfImage extends IIOImageHelper {
         shape[yDimension]    = bufHeight;
         Arrays.fill(shape, 0, yDimension, 1); // Set all extra dimensions (if any) to a length of 1.
         final Array buffer   = Array.factory(var.getDataType(), shape);
-        final Array flipped  = buffer.flip(yDimension);
         /*
-         * Everytime we start an iteration over a new bands, the target variable may change. Then
-         * iterates over the rows in reverse order (http://jira.geotoolkit.org/browse/GEOTK-117)
+         * Everytime we start an iteration over a new bands, the target variable may change.
          * After every iteration on a row, we will flush the buffer if it is full.
          */
         int band = 0;
@@ -339,7 +337,7 @@ final class NetcdfImage extends IIOImageHelper {
                     var = variables[band];
                 }
                 final String name = var.getFullNameEscaped();
-                origin[yDimension] = height - bufHeight;
+                origin[yDimension] = 0;
                 int index = 0; // Flat index in the matrix.
                 iter.startLines();
                 if (!iter.finishedLines()) do {
@@ -354,8 +352,8 @@ final class NetcdfImage extends IIOImageHelper {
                     } while (!iter.nextPixelDone());
                     assert (index % width) == 0 : index;
                     if (index == capacity) {
-                        file.write(name, origin, flipped);
-                        origin[yDimension] -= bufHeight;
+                        file.write(name, origin, buffer);
+                        origin[yDimension] += bufHeight;
                         index = 0;
                     }
                 } while (!iter.nextLineDone());

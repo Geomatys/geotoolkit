@@ -94,7 +94,7 @@ public final strictfp class GeophysicsFormatTest extends NetcdfImageReaderTestBa
         assertMultilinesEquals(decodeQuotes(
             GEOTK_FORMAT_NAME + '\n' +
             "├───RectifiedGridDomain\n" +
-            "│   ├───origin=“6.0 81.0 55.0 73.0”\n" +
+            "│   ├───origin=“6.0 68.0 55.0 73.0”\n" +
             "│   ├───Limits\n" +
             "│   │   ├───low=“0 0 0 0”\n" +
             "│   │   └───high=“128 65 0 107”\n" +
@@ -102,7 +102,7 @@ public final strictfp class GeophysicsFormatTest extends NetcdfImageReaderTestBa
             "│   │   ├───OffsetVector\n" +
             "│   │   │   └───values=“0.5 0.0 0.0 0.0”\n" +
             "│   │   ├───OffsetVector\n" +
-            "│   │   │   └───values=“0.0 -0.2 0.0 0.0”\n" +
+            "│   │   │   └───values=“0.0 0.2 0.0 0.0”\n" +
             "│   │   ├───OffsetVector\n" +
             "│   │   │   └───values=“0.0 0.0 NaN 0.0”\n" +
             "│   │   └───OffsetVector\n" +

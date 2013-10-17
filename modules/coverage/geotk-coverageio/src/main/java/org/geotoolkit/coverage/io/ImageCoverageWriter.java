@@ -546,6 +546,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         if (!isLast && !imageWriter.canWriteSequence()) {
             throw new CoverageStoreException(Errors.format(Errors.Keys.UNSUPPORTED_MULTI_OCCURRENCE_1, GridCoverage.class));
         }
+        final boolean isNetcdfHack = imageWriter.getClass().getName().equals("org.geotoolkit.image.io.plugin.NetcdfImageWriter"); // TODO: DEPRECATED: to be removed in Apache SIS.
         /*
          * Convert the geodetic coordinates to pixel coordinates.
          */
@@ -575,7 +576,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 throw new CoverageStoreException(Errors.getResources(locale).getString(
                         Errors.Keys.ILLEGAL_ARGUMENT_2, "interpolation", interpolation.name()));
             }
-            destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry, param, imageParam);
+            destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry, param, imageParam, isNetcdfHack);
             imageParam.setSourceBands(param.getSourceBands());
             final Rectangle sourceRegion  = imageParam.getSourceRegion();
             final Rectangle requestRegion = requestedBounds;
@@ -700,16 +701,15 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 env = param.getEnvelope();
                 res = param.getResolution();
             }
-            final boolean hack = imageWriter.getClass().getName().equals("org.geotoolkit.image.io.plugin.NetcdfImageWriter"); // TODO, temporary hack!!
             if (crs == null && gridGeometry.isDefined(GridGeometry2D.CRS)) {
-                if (imageWriter instanceof MultidimensionalImageStore || hack) {
+                if (imageWriter instanceof MultidimensionalImageStore || isNetcdfHack) {
                     crs = gridGeometry.getCoordinateReferenceSystem();
                 } else {
                     crs = gridGeometry.getCoordinateReferenceSystem2D();
                 }
             }
             if (env == null && gridGeometry.isDefined(GridGeometry2D.ENVELOPE)) {
-                if (imageWriter instanceof MultidimensionalImageStore || hack) {
+                if (imageWriter instanceof MultidimensionalImageStore || isNetcdfHack) {
                     env = gridGeometry.getEnvelope();
                 } else {
                     env = gridGeometry.getEnvelope2D();

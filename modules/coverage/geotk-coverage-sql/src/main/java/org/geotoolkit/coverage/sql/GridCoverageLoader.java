@@ -384,7 +384,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
          */
         if (geometry != null) {
             final GridDomainAccessor accessor = new GridDomainAccessor(metadata);
-            accessor.setGridGeometry(geometry, PixelInCell.CELL_CORNER, null, -1);
+            accessor.setGridGeometry(geometry, PixelInCell.CELL_CORNER, null);
         }
         return metadata;
     }

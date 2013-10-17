@@ -56,10 +56,11 @@ final strictfp class ImageCoverageReaderInspector extends ImageCoverageReader {
      */
     @Override
     protected MathTransform2D geodeticToPixelCoordinates(final GridGeometry2D gridGeometry,
-            final GridCoverageStoreParam geodeticParam, final IIOParam pixelParam)
+            final GridCoverageStoreParam geodeticParam, final IIOParam pixelParam,
+            final boolean isNetcdfHack) // TODO: DEPRECATED: to be removed in Apache SIS.
             throws CoverageStoreException
     {
-        final MathTransform2D tr = super.geodeticToPixelCoordinates(gridGeometry, geodeticParam, pixelParam);
+        final MathTransform2D tr = super.geodeticToPixelCoordinates(gridGeometry, geodeticParam, pixelParam, isNetcdfHack);
         differenceTransform = tr;
         return tr;
     }
