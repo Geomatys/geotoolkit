@@ -146,7 +146,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
 
     @Override
     public List<Property> getValue() {
-        if(value == null){
+        if(value == null || value.isEmpty()){
             value = toProperties();
         }
         return value;
@@ -329,7 +329,10 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
 
         @Override
         public Object getValue() {
-            return valueArray[index];
+            if (valueArray != null) {
+                return valueArray[index];
+            }
+            return null;
         }
 
         @Override
@@ -349,7 +352,10 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
 
         @Override
         public Object getValue() {
-            return valueArray[index];
+            if (valueArray != null) {
+                return valueArray[index];
+            }
+            return null;
         }
 
         @Override

@@ -101,6 +101,9 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
             final PropertyDescriptor propertyDesc = (PropertyDescriptor) itr.next();
             if (propertyDesc instanceof GeometryDescriptor) {
                 final GeometryAttribute ga = (GeometryAttribute) getProperty(propertyDesc.getName());
+                if (ga == null) {
+                    continue;
+                }
                 final BoundingBox bbox = ga.getBounds();
                 if(bbox == null || bbox.isEmpty()){
                     continue;
