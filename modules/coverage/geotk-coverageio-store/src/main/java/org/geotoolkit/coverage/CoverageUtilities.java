@@ -17,17 +17,18 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.awt.image.RenderedImage;
+import java.io.IOException;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -38,6 +39,8 @@ import org.opengis.referencing.cs.SphericalCS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+
+import javax.imageio.ImageReader;
 
 /**
  * Utility functions for coverage and mosaic.
@@ -260,6 +263,35 @@ public final class CoverageUtilities {
     }
     
     /**
+     * Serach in the given pyramid all of the mosaics which fit the given. 2 modes
+     * are possible : 
+     * - Contains only : Suitable mosaics must be CONTAINED (or equal) into given filter. 
+     * - Intersection  : Suitable mosaics must INTERSECT given filter. 
+     * 
+     * @param toSearchIn The pyramid to get mosaics from.
+     * @param filter The {@link Envelope} to use to  specify spatial position of wanted mosaics.
+     * @param containOnly True if you wnat 'Contains only' mode, false if you want 'Intersection' mode.
+     * @return A list containing all the mosaics which fit the given envelope. Never nulll, but can be empty.
+     * @throws TransformException If input filter {@link CoordinateReferenceSystem} is not compatible with
+     * input mosaics one.
+     */
+    public static List<GridMosaic> findMosaics(final Pyramid toSearchIn, Envelope filter, boolean containOnly) throws TransformException {
+        final ArrayList<GridMosaic> result = new ArrayList<GridMosaic>();
+        
+        for (GridMosaic source : toSearchIn.getMosaics()) {
+            final Envelope sourceEnv = source.getEnvelope();
+            final GeneralEnvelope tmpFilter = new GeneralEnvelope(
+                    CRS.transform(filter, sourceEnv.getCoordinateReferenceSystem()));
+            if ((containOnly && tmpFilter.contains(filter, true))
+                    || (!containOnly && tmpFilter.intersects(filter, true))) {
+                result.add(source);
+            }
+        }
+        
+        return result;
+    }
+    
+    /**
      * <p>Compute ratio on each ordinate, not within 2D part of {@link CoordinateReferenceSystem},
      * which represent recovery from each ordinate of searchEnvelope on gridEnvelope.</p>
      * 
@@ -319,5 +351,57 @@ public final class CoverageUtilities {
             tempOrdinate += cs.getDimension();
         }
         throw new IllegalArgumentException("crs doesn't have any geoghaphic crs");
+    }
+    
+    /**
+     * Copy a set of pyramid pointed by source coverage reference into destination
+     * reference.
+     * @param sourceRef The {@link PyramidalCoverageReference} to copy data from.
+     * @param targetRef The {@link PyramidalCoverageReference} to copy data to.
+     * @throws DataStoreException If a problem occurs at pyramid access.
+     * @throws IOException If a problem occurs at image reading/writing.
+     */
+    public static void copyPyramidReference(PyramidalCoverageReference sourceRef, PyramidalCoverageReference targetRef) throws DataStoreException, IOException {
+        final Collection<Pyramid> pyramids = sourceRef.getPyramidSet().getPyramids();
+
+        //create pyramids
+        for (Pyramid sP : pyramids) {
+            final Pyramid tP = targetRef.createPyramid(sP.getCoordinateReferenceSystem());
+
+            //create mosaics
+            for (GridMosaic sM : sP.getMosaics()) {
+                final GridMosaic tM = targetRef.createMosaic(tP.getId(), sM.getGridSize(), sM.getTileSize(), sM.getUpperLeftCorner(), sM.getScale());
+
+                final int height = sM.getGridSize().height;
+                final int width = sM.getGridSize().width;
+
+                //Write tiles
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        if (!sM.isMissing(x, y)) {
+                            final TileReference sT = sM.getTile(x, y, null);
+
+                            final RenderedImage sourceImg;
+                            ImageReader reader = null;
+                            try {
+                                if (sT.getInput() instanceof RenderedImage) {
+                                    sourceImg = (RenderedImage) sT.getInput();
+                                } else {
+                                    final int imgIdx = sT.getImageIndex();
+                                    reader = sT.getImageReader();
+                                    sourceImg = sT.getImageReader().read(imgIdx);
+                                }
+                            } finally {
+                                if (reader != null) {
+                                    ImageIOUtilities.releaseReader(reader);
+                                }
+                            }
+
+                            targetRef.writeTile(tP.getId(), tM.getId(), x, y, sourceImg);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
