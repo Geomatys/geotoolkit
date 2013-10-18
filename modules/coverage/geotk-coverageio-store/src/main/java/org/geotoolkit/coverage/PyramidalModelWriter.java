@@ -323,10 +323,10 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                 if(currentPyramid==null){
                     if(pyramidsIte.hasNext()){
                         currentPyramid = pyramidsIte.next();
-                        mosaics = currentPyramid.getMosaics().iterator();
-
-                        //define CRS and mathTransform from current pyramid to source coverage.
                         try {
+                            mosaics = CoverageUtilities.findMosaics(currentPyramid, requestedEnvelope, false).iterator();
+
+                            //define CRS and mathTransform from current pyramid to source coverage.
                             destCrs2D = CRS.getHorizontalCRS(currentPyramid.getCoordinateReferenceSystem());
                             crsDestToCrsCoverage = CRS.findMathTransform(destCrs2D, crsCoverage2D);
                             //geographic
