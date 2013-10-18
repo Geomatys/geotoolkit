@@ -327,10 +327,10 @@ public class PyramidalModelWriter extends GridCoverageWriter {
 
                         //define CRS and mathTransform from current pyramid to source coverage.
                         try {
-                            destCrs2D = CRSUtilities.getCRS2D(currentPyramid.getCoordinateReferenceSystem());
+                            destCrs2D = CRS.getHorizontalCRS(currentPyramid.getCoordinateReferenceSystem());
                             crsDestToCrsCoverage = CRS.findMathTransform(destCrs2D, crsCoverage2D);
                             //geographic
-                            pyramidEnvelope = ReferencingUtilities.transform2DCRS(requestedEnvelope, destCrs2D);
+                            pyramidEnvelope = CRS.transform(requestedEnvelope, destCrs2D);
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
