@@ -118,7 +118,7 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
         if (useProvidedEditor) {
             
             if (this.property != null) {
-                editor.setValue(property.getType(), property.getValue());
+                editor.setValue(property.getType(), property.getValue(), property.getUserData());
             }
             editor.addPropertyChangeListener(this);
             editor.addFocusListener(this);
@@ -129,7 +129,7 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
             if (this.property != null) {
                 editor = getEditor(editors,this.property.getType());
                 if(editor != null){
-                    editor.setValue(property.getType(), property.getValue());
+                    editor.setValue(property.getType(), property.getValue(), property.getUserData());
                     editor.addPropertyChangeListener(this);
                     editor.addFocusListener(this);
                     add(BorderLayout.CENTER,editor);
