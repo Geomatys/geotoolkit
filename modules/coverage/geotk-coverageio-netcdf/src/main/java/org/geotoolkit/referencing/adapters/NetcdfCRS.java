@@ -67,8 +67,13 @@ import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
+import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
+import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.io.wkt.Formattable;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -394,7 +399,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * @module
      */
     static final class Compound extends NetcdfCRS implements CompoundCRS,
-            org.opengis.referencing.cs.CoordinateSystem
+            org.opengis.referencing.cs.CoordinateSystem, Formattable
     {
         /**
          * The components of this compound CRS.
@@ -450,6 +455,14 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         public List<CoordinateReferenceSystem> getComponents() {
             return components;
         }
+
+        /**
+         * Delegates to the Geotk formatting code.
+         */
+        @Override
+        public String formatWKT(final org.geotoolkit.io.wkt.Formatter formatter) {
+            return new DefaultCompoundCRS(this).formatWKT(formatter);
+        }
     }
 
 
@@ -464,7 +477,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * @since 3.14
      * @module
      */
-    static final class Temporal extends NetcdfCRS implements TemporalCRS, TimeCS {
+    static final class Temporal extends NetcdfCRS implements TemporalCRS, TimeCS, Formattable {
         /**
          * The temporal datum.
          */
@@ -528,6 +541,14 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         public TemporalDatum getDatum() {
             return datum;
         }
+
+        /**
+         * Delegates to the Geotk formatting code.
+         */
+        @Override
+        public String formatWKT(final org.geotoolkit.io.wkt.Formatter formatter) {
+            return new DefaultTemporalCRS(this).formatWKT(formatter);
+        }
     }
 
 
@@ -542,7 +563,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * @since 3.14
      * @module
      */
-    static final class Vertical extends NetcdfCRS implements VerticalCRS, VerticalCS {
+    static final class Vertical extends NetcdfCRS implements VerticalCRS, VerticalCS, Formattable {
         /**
          * The vertical datum.
          */
@@ -576,6 +597,14 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         public VerticalDatum getDatum() {
             return datum;
         }
+
+        /**
+         * Delegates to the Geotk formatting code.
+         */
+        @Override
+        public String formatWKT(final org.geotoolkit.io.wkt.Formatter formatter) {
+            return new DefaultVerticalCRS(this).formatWKT(formatter);
+        }
     }
 
 
@@ -594,7 +623,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * @since 3.08
      * @module
      */
-    static final class Geographic extends NetcdfCRS implements GeographicCRS, EllipsoidalCS {
+    static final class Geographic extends NetcdfCRS implements GeographicCRS, EllipsoidalCS, Formattable {
         /**
          * Wraps the given coordinate system. The given list of axes should in theory contains
          * exactly 2 elements (current {@link NetcdfCRS} implementation has no support for 3D
@@ -657,6 +686,14 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         public GeodeticDatum getDatum() {
             return DefaultGeodeticDatum.WGS84;
         }
+
+        /**
+         * Delegates to the Geotk formatting code.
+         */
+        @Override
+        public String formatWKT(final org.geotoolkit.io.wkt.Formatter formatter) {
+            return new DefaultGeographicCRS(this).formatWKT(formatter);
+        }
     }
 
 
@@ -674,7 +711,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * @since 3.08
      * @module
      */
-    static final class Projected extends NetcdfCRS implements ProjectedCRS, CartesianCS {
+    static final class Projected extends NetcdfCRS implements ProjectedCRS, CartesianCS, Formattable {
         /**
          * The NetCDF projection, or {@code null} if none.
          * Will be created when first needed.
@@ -733,6 +770,14 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
                 projection = new NetcdfProjection(p, getBaseCRS(), this);
             }
             return projection;
+        }
+
+        /**
+         * Delegates to the Geotk formatting code.
+         */
+        @Override
+        public String formatWKT(final org.geotoolkit.io.wkt.Formatter formatter) {
+            return new DefaultProjectedCRS(this).formatWKT(formatter);
         }
     }
 }

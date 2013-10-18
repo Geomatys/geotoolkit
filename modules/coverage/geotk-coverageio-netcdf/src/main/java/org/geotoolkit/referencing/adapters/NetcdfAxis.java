@@ -42,8 +42,10 @@ import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.measure.Units;
 
+import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
+import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.resources.Errors;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -62,7 +64,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @since 3.08
  * @module
  */
-public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSystemAxis {
+public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSystemAxis, Formattable {
     /**
      * The NetCDF coordinate axis wrapped by this {@code NetcdfAxis} instance.
      */
@@ -430,5 +432,13 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
             }
         }
         return unit;
+    }
+
+    /**
+     * Delegates to the Geotk formatting code.
+     */
+    @Override
+    public String formatWKT(final org.geotoolkit.io.wkt.Formatter formatter) {
+        return new DefaultCoordinateSystemAxis(this).formatWKT(formatter);
     }
 }
