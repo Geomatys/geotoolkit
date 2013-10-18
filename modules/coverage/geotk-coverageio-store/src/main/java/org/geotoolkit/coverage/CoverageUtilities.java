@@ -270,7 +270,7 @@ public final class CoverageUtilities {
      * 
      * @param toSearchIn The pyramid to get mosaics from.
      * @param filter The {@link Envelope} to use to  specify spatial position of wanted mosaics.
-     * @param containOnly True if you wnat 'Contains only' mode, false if you want 'Intersection' mode.
+     * @param containOnly True if you want 'Contains only' mode, false if you want 'Intersection' mode.
      * @return A list containing all the mosaics which fit the given envelope. Never nulll, but can be empty.
      * @throws TransformException If input filter {@link CoordinateReferenceSystem} is not compatible with
      * input mosaics one.
@@ -282,8 +282,8 @@ public final class CoverageUtilities {
             final Envelope sourceEnv = source.getEnvelope();
             final GeneralEnvelope tmpFilter = new GeneralEnvelope(
                     CRS.transform(filter, sourceEnv.getCoordinateReferenceSystem()));
-            if ((containOnly && tmpFilter.contains(filter, true))
-                    || (!containOnly && tmpFilter.intersects(filter, true))) {
+            if ((containOnly && tmpFilter.contains(sourceEnv, true))
+                    || (!containOnly && tmpFilter.intersects(sourceEnv, true))) {
                 result.add(source);
             }
         }
