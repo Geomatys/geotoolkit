@@ -78,7 +78,7 @@ public class ClassificationNodeType extends RegistryObjectType {
      */
     public List<ClassificationNodeType> getClassificationNode() {
         if (classificationNode == null) {
-            classificationNode = new ArrayList<ClassificationNodeType>();
+            classificationNode = new ArrayList<>();
         }
         return this.classificationNode;
     }
@@ -88,7 +88,7 @@ public class ClassificationNodeType extends RegistryObjectType {
      */
     public void setClassificationNode(final ClassificationNodeType classificationNode) {
         if (this.classificationNode == null) {
-            this.classificationNode = new ArrayList<ClassificationNodeType>();
+            this.classificationNode = new ArrayList<>();
         }
         this.classificationNode.add(classificationNode);
     }

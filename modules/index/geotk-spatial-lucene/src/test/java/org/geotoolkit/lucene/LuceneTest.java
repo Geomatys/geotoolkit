@@ -104,7 +104,7 @@ public class LuceneTest {
         }
         directory.mkdir();
         
-        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
+        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_45);
         final DocumentIndexer indexer = new DocumentIndexer(directory, fillTestData(), analyzer);
         indexer.createIndex();
         indexer.destroy();
@@ -2762,8 +2762,8 @@ public class LuceneTest {
          */
 
         //we perform a lucene query
-        Analyzer analyzer   = new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
-        QueryParser parser  = new QueryParser(org.apache.lucene.util.Version.LUCENE_40, "metafile", analyzer);
+        Analyzer analyzer   = new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_45);
+        QueryParser parser  = new QueryParser(org.apache.lucene.util.Version.LUCENE_45, "metafile", analyzer);
         Query query         = parser.parse("id:point*");
 
         docs = searcher.search(query, bboxQuery.getSpatialFilter(), 15);
@@ -2791,8 +2791,8 @@ public class LuceneTest {
          */
 
         //we perform two lucene query
-        analyzer      = new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
-        parser        = new QueryParser(org.apache.lucene.util.Version.LUCENE_40, "metafile", analyzer);
+        analyzer      = new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_45);
+        parser        = new QueryParser(org.apache.lucene.util.Version.LUCENE_45, "metafile", analyzer);
         query         = parser.parse("id:point*");
 
         TopDocs hits1 = searcher.search(query, 15);
@@ -2839,8 +2839,8 @@ public class LuceneTest {
          */
 
         //we perform two lucene query
-        analyzer                = new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
-        parser                  = new QueryParser(org.apache.lucene.util.Version.LUCENE_40, "metafile", analyzer);
+        analyzer                = new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_45);
+        parser                  = new QueryParser(org.apache.lucene.util.Version.LUCENE_45, "metafile", analyzer);
         Query query1            = parser.parse("id:point*");
         Query query2            = parser.parse("id:box*");
 
@@ -2890,7 +2890,7 @@ public class LuceneTest {
     public void QueryAndSpatialFilterAfterRemoveTest() throws Exception {
 
         // we remove a document
-        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
+        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_45);
         DocumentIndexer indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.removeDocument("box 2 projected");
         indexer.destroy();

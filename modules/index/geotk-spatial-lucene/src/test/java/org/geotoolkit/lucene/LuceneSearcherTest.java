@@ -106,11 +106,11 @@ public class LuceneSearcherTest {
 
         //creating tree (R-Tree)------------------------------------------------
 
-        final Analyzer analyzer  = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
+        final Analyzer analyzer  = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_45);
         final DocumentIndexer indexer = new DocumentIndexer(directory, fillTestData(), analyzer);
         indexer.createIndex();
 
-        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), false);
+        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_45), false);
     }
 
     @After
@@ -2376,12 +2376,12 @@ public class LuceneSearcherTest {
     public void QueryAndSpatialFilterAfterRemoveTest() throws Exception {
 
         // we remove a document
-        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
+        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_45);
 
         DocumentIndexer indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.removeDocument("box 2 projected");
 
-        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40), false);
+        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_45), false);
 
         /*
          * case 1: a normal spatial request BBOX
@@ -2423,7 +2423,7 @@ public class LuceneSearcherTest {
         indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.indexDocument(new DocumentIndexer.DocumentEnvelope(docu, env));
 
-        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40), false);
+        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_45), false);
 
 
          //we perform a lucene query

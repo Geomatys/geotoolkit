@@ -112,6 +112,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
     /**
      * Gets the value of the name property.
      */
+    @Override
     public InternationalStringType getName() {
         return name;
     }
@@ -156,7 +157,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
      */
     public List<ClassificationType> getClassification() {
         if (classification == null) {
-            classification = new ArrayList<ClassificationType>();
+            classification = new ArrayList<>();
         }
         return this.classification;
     }
@@ -166,7 +167,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
      */
     public void setClassification(final ClassificationType classification) {
         if (this.classification == null) {
-            this.classification = new ArrayList<ClassificationType>();
+            this.classification = new ArrayList<>();
         }
         this.classification.add(classification);
     }
@@ -184,7 +185,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
      */
     public List<ExternalIdentifierType> getExternalIdentifier() {
         if (externalIdentifier == null) {
-            externalIdentifier = new ArrayList<ExternalIdentifierType>();
+            externalIdentifier = new ArrayList<>();
         }
         return this.externalIdentifier;
     }
@@ -194,7 +195,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
      */
     public void setExternalIdentifier(final ExternalIdentifierType externalIdentifier) {
         if (this.externalIdentifier == null) {
-            this.externalIdentifier = new ArrayList<ExternalIdentifierType>();
+            this.externalIdentifier = new ArrayList<>();
         }
         this.externalIdentifier.add(externalIdentifier);
     }
@@ -204,7 +205,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
      */
     public void setExternalIdentifier(List<ExternalIdentifierType> externalIdentifier) {
         if (externalIdentifier == null) {
-            externalIdentifier = new ArrayList<ExternalIdentifierType>();
+            externalIdentifier = new ArrayList<>();
         }
         this.externalIdentifier = externalIdentifier;
     }
@@ -255,6 +256,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
      * Return a BRIEF representation of the registryObject.
      * @return
      */
+    @Override
     public RegistryObjectType toBrief() {
         RegistryObjectType brief = new RegistryObjectType();
         brief.setId(getId());
@@ -269,6 +271,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
      * Return a SUMMARY representation of the registryObject.
      * @return
      */
+    @Override
     public RegistryObjectType toSummary() {
         RegistryObjectType summary = toBrief();
         summary.setSlot(getSlot());

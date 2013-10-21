@@ -83,7 +83,7 @@ public abstract class IndexLucene {
     * Analyzer field is set to default value ClassicAnalyzer.
     */
     public IndexLucene() {
-        analyzer = new ClassicAnalyzer(Version.LUCENE_40, new CharArraySet(Version.LUCENE_40, new HashSet<String>(), true));
+        analyzer = new ClassicAnalyzer(Version.LUCENE_45, new CharArraySet(Version.LUCENE_45, new HashSet<String>(), true));
     }
 
     /**
@@ -92,21 +92,21 @@ public abstract class IndexLucene {
      */
     public IndexLucene(final Analyzer analyzer) {
         if (analyzer == null) {
-            this.analyzer = new ClassicAnalyzer(Version.LUCENE_40, new CharArraySet(Version.LUCENE_40, new HashSet<String>(), true));
+            this.analyzer = new ClassicAnalyzer(Version.LUCENE_45, new CharArraySet(Version.LUCENE_45, new HashSet<String>(), true));
         } else {
             this.analyzer = analyzer;
         }
     }
 
     /**
-     * Returns a RAMdirectory of this Index Object.
+     * Returns a {@link RAMDirectory} of this Index Object.
      */
     public RAMDirectory getRAMdirectory() {
         return ramDirectory;
     }
 
     /**
-     * The RAMdirectory setter for this Index object.
+     * The {@link RAMDirectory} setter for this index object.
      *
      * @param ramDirectory a RAMDirectory object.
      */

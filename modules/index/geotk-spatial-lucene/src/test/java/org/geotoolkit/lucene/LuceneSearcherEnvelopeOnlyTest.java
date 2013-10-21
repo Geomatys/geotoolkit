@@ -104,11 +104,11 @@ public class LuceneSearcherEnvelopeOnlyTest {
         
         //creating tree (R-Tree)------------------------------------------------
 
-        final Analyzer analyzer  = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
+        final Analyzer analyzer  = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_45);
         final DocumentIndexer indexer = new DocumentIndexer(directory, fillTestData(), analyzer);
         indexer.createIndex();
 
-        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true);
+        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_45), true);
         
     }
 
@@ -2135,11 +2135,11 @@ public class LuceneSearcherEnvelopeOnlyTest {
         /* 
          * we remove a document
          */ 
-        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40);
+        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_45);
         DocumentIndexer indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.removeDocument("box 2 projected");
 
-        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true);
+        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_45), true);
         
         //we perform a lucene query
         results = searcher.doSearch(bboxQuery);
@@ -2167,7 +2167,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         indexer.indexDocument(new DocumentEnvelope(doc, env));
 
 
-        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_40), true);
+        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_45), true);
         
          //we perform a lucene query
         results = searcher.doSearch(bboxQuery);
