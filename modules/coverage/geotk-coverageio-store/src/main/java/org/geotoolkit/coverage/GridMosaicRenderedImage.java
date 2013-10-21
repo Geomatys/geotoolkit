@@ -22,27 +22,12 @@ import javax.imageio.ImageReader;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Map;
 import java.util.Vector;
-import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.collection.Cache;
-import org.geotoolkit.image.interpolation.Interpolation;
-import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.image.interpolation.Resample;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.math.XMath;
-import org.geotoolkit.referencing.CRS;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 /**
  * Implementation of RenderedImage using GridMosaic.
@@ -278,7 +263,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     @Override
     public Raster getData() {
-        Raster rasterOut = this.getColorModel().createCompatibleWritableRaster(this.getWidth(), this.getHeight());
+        final Raster rasterOut = firstTileImage.getTile(0, 0).createCompatibleWritableRaster(getWidth(), getHeight());
 
         // Clear dataBuffer to 0 value for all bank
         for (int s=0; s<rasterOut.getDataBuffer().getSize(); s++){
@@ -319,7 +304,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
     @Override
     public Raster getData(Rectangle rect) {
-        Raster rasterOut = this.getColorModel().createCompatibleWritableRaster(rect.width, rect.height);
+        final Raster rasterOut = firstTileImage.getTile(0, 0).createCompatibleWritableRaster(rect.width, rect.height);
 
         // Clear dataBuffer to 0 value for all bank
         for (int s=0; s<rasterOut.getDataBuffer().getSize(); s++){
