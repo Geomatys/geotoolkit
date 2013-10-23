@@ -4,7 +4,7 @@
  *
  *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2011, Geomatys
- * 
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -65,6 +65,7 @@ import org.geotoolkit.util.NullProgressListener;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -78,11 +79,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * A FeatureStore implementation which allows reading and writing from Shapefiles.
- * 
+ *
  * @author Ian Schneider
  * @author Tommaso Nolli
  * @author jesse eichar
- * 
+ *
  * @module pending
  */
 public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
@@ -100,7 +101,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
     /**
      * Creates a new instance of ShapefileDataStore.
-     * 
+     *
      * @param url The URL of the shp file to use for this DataSource.
      */
     public IndexedShapefileFeatureStore(final URL url)
@@ -110,7 +111,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
     /**
      * Creates a new instance of ShapefileDataStore.
-     * 
+     *
      * @param url The URL of the shp file to use for this DataSource.
      * @param namespace DOCUMENT ME!
      */
@@ -121,7 +122,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
     /**
      * Creates a new instance of ShapefileDataStore.
-     * 
+     *
      * @param url The URL of the shp file to use for this DataSource.
      * @param useMemoryMappedBuffer enable/disable memory mapping of files
      * @param createIndex enable/disable automatic index creation if needed
@@ -133,14 +134,14 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
     /**
      * Creates a new instance of ShapefileDataStore.
-     * 
+     *
      * @param url The URL of the shp file to use for this DataSource.
      * @param namespace DOCUMENT ME!
      * @param useMemoryMappedBuffer enable/disable memory mapping of files
      * @param createIndex enable/disable automatic index creation if needed
      * @param treeType The type of index used
      * @param dbfCharset {@link Charset} used to decode strings from the DBF
-     * 
+     *
      * @throws MalformedURLException
      */
     public IndexedShapefileFeatureStore(final URL url, final String namespace, final boolean useMemoryMappedBuffer,
@@ -184,7 +185,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
     protected void finalize() throws Throwable {
         super.finalize();
     }
-    
+
     /**
      * Use the spatial index if available and adds a small optimization: if no
      * attributes are going to be read, don't uselessly open and read the dbf
@@ -266,7 +267,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
                 readPropertyNames[i] = readProperties.get(i).getName();
             }
             readSchema = (SimpleFeatureType)FeatureTypeUtilities.createSubType(originalSchema,readPropertyNames);
-            
+
             if(queryFilter instanceof BBOX){
                 //in case we have a BBOX filter only, which is very commun, we can speed
                 //the process by relying on the quadtree estimations
@@ -319,11 +320,11 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         return ShapefileFeatureReader.create(r, fidReader, featureType, hints);
     }
 
-    private IndexedShapefileAttributeReader getAttributesReader(final List<? extends PropertyDescriptor> properties, 
+    private IndexedShapefileAttributeReader getAttributesReader(final List<? extends PropertyDescriptor> properties,
             final Filter filter, final boolean read3D, final double[] resample) throws DataStoreException{
 
         final AccessManager locker = shpFiles.createLocker();
-        
+
         CloseableCollection<ShpData> goodRecs = null;
         if (filter instanceof Id && shpFiles.isLocal() && shpFiles.exists(FIX)) {
             final Id fidFilter = (Id) filter;
@@ -338,7 +339,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         } else {
             // will be bbox.isNull() to start
             Envelope bbox = new JTSEnvelope2D();
-            
+
             if (filter != null) {
                 // Add additional bounds from the filter
                 // will be null for Filter.EXCLUDES
@@ -364,11 +365,11 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             }
         }
 
-        final boolean readDBF = !(properties.size()==1 && properties.get(0) instanceof GeometryDescriptor);        
+        final boolean readDBF = !(properties.size()==1 && properties.get(0) instanceof GeometryDescriptor);
         final PropertyDescriptor[] atts = properties.toArray(new PropertyDescriptor[properties.size()]);
         try {
-            return new IndexedShapefileAttributeReader(locker,atts, 
-                    read3D, useMemoryMappedBuffer,resample, 
+            return new IndexedShapefileAttributeReader(locker,atts,
+                    read3D, useMemoryMappedBuffer,resample,
                     readDBF, dbfCharset, resample,
                     goodRecs, ((goodRecs!=null)?goodRecs.iterator():null));
         } catch (IOException ex) {
@@ -377,14 +378,14 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
     }
 
 
-    protected IndexedShapefileAttributeReader getBBoxAttributesReader(final List<PropertyDescriptor> properties, 
+    protected IndexedShapefileAttributeReader getBBoxAttributesReader(final List<PropertyDescriptor> properties,
             final Envelope bbox, final boolean loose, final Hints hints, final boolean read3D, final double[] res) throws DataStoreException {
 
         final AccessManager locker = shpFiles.createLocker();
         final double[] minRes = (double[]) hints.get(HintsPending.KEY_IGNORE_SMALL_FEATURES);
 
         CloseableCollection<ShpData> goodCollec = null;
-        
+
         final ShxReader shx;
         try {
             shx = locker.getSHXReader(useMemoryMappedBuffer);
@@ -403,13 +404,13 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             throw new DataStoreException("Error querying index: " + e.getMessage());
         }
         final LazySearchCollection<ShpData> col = (LazySearchCollection) goodCollec;
-        
+
         //check if we need to open the dbf reader, no need when only geometry
-        final boolean readDBF = !(properties.size()==1 && properties.get(0) instanceof GeometryDescriptor); 
+        final boolean readDBF = !(properties.size()==1 && properties.get(0) instanceof GeometryDescriptor);
         final PropertyDescriptor[] atts = properties.toArray(new PropertyDescriptor[properties.size()]);
         try {
-            return new IndexedBBoxShapefileAttributeReader(locker,atts, 
-                    read3D, useMemoryMappedBuffer,res, 
+            return new IndexedBBoxShapefileAttributeReader(locker,atts,
+                    read3D, useMemoryMappedBuffer,res,
                     readDBF, dbfCharset, minRes,
                     col, (LazyTyleSearchIterator.Buffered<ShpData>)col.bboxIterator(),
                     bbox,loose,minRes);
@@ -421,7 +422,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
     /**
      * Uses the Fid index to quickly lookup the shp offset and the record number
      * for the list of fids
-     * 
+     *
      * @param fids
      *                the fids of the features to find.  If the set is sorted by alphabet the performance is likely to be better.
      * @return a list of Data objects
@@ -435,7 +436,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         }
 
         final AccessManager locker = shpFiles.createLocker();
-        
+
         final IndexedFidReader reader = locker.getFIXReader(null);
         final CloseableCollection<ShpData> records = new CloseableArrayList(idsSet.size());
 
@@ -478,7 +479,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
     /**
      * Returns true if the index for the given type exists and is useable.
-     * 
+     *
      * @param indexType the type of index to check
      * @return true if the index for the given type exists and is useable.
      */
@@ -539,7 +540,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
     /**
      * Returns true if the indices already exist and do not need to be
      * regenerated or cannot be generated (IE isn't local).
-     * 
+     *
      * @return true if the indices already exist and do not need to be regenerated.
      */
     public boolean isIndexed() {
@@ -552,9 +553,9 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
     /**
      * QuadTree Query
-     * 
+     *
      * @param bbox
-     * 
+     *
      * @throws DataSourceException
      * @throws IOException
      * @throws TreeException DOCUMENT ME!
@@ -562,7 +563,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
     private CloseableCollection<ShpData> queryQuadTree(final AccessManager locker, final Envelope bbox)
             throws DataStoreException, IOException, TreeException {
         CloseableCollection<ShpData> tmp = null;
-        
+
         try {
             final QuadTree quadTree = openQuadTree();
             final DataReader dr = new IndexDataReader(locker.getSHXReader(useMemoryMappedBuffer));
@@ -584,7 +585,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
     /**
      * Convenience method for opening a QuadTree index.
-     * 
+     *
      * @return A new QuadTree
      * @throws StoreException
      */
@@ -594,13 +595,13 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
     /**
      * Create a FeatureWriter for the given type name.
-     * 
+     *
      * @param typeName The typeName of the FeatureType to write
      * @return A new FeatureWriter.
      * @throws IOException If the typeName is not available or some other error occurs.
      */
     @Override
-    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(final Name typeName, 
+    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(final Name typeName,
             final Filter filter, final Hints hints) throws DataStoreException {
 
         //will raise an error if it does not exist
@@ -620,7 +621,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         }
     }
 
-    
+
     @Override
     public org.opengis.geometry.Envelope getEnvelope(final Query query) throws DataStoreException {
 
@@ -649,7 +650,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         if (records.isEmpty()) return null;
 
         final AccessManager locker = shpFiles.createLocker();
-        
+
         ShapefileReader reader = null;
         try {
             reader = locker.getSHPReader(false, false, false, null);
@@ -680,7 +681,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
     /**
      * Builds the QuadTree index. Usually not necessary since reading features
      * will index when required
-     * 
+     *
      * @param maxDepth depth of the tree. if < 0 then a best guess is made.
      * @throws TreeException
      */
@@ -707,5 +708,32 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             }
         }
     }
+
+    @Override
+    public void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+        super.createFeatureType(typeName, featureType);
+
+        //generate proper indexes
+        try {
+            if (shpFiles.isLocal() && useIndex
+                    && needsGeneration(treeType.shpFileType)) {
+                createSpatialIndex();
+            }
+        } catch (IOException e) {
+            this.treeType = IndexType.NONE;
+            ShapefileFeatureStoreFactory.LOGGER.log(Level.WARNING, e.getLocalizedMessage());
+        }
+        try {
+            if (shpFiles.isLocal() && needsGeneration(FIX)) {
+                //regenerate index
+                IndexedFidWriter.generate(shpFiles);
+            }
+        } catch (IOException e) {
+            ShapefileFeatureStoreFactory.LOGGER.log(Level.WARNING, e.getLocalizedMessage());
+        }
+
+    }
+
+
 
 }
