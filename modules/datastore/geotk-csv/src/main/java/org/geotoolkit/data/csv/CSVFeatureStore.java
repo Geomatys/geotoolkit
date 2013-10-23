@@ -95,7 +95,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class CSVFeatureStore extends AbstractFeatureStore{
 
     static final String BUNDLE_PATH = "org/geotoolkit/csv/bundle";
-    
+
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
 
@@ -106,12 +106,22 @@ public class CSVFeatureStore extends AbstractFeatureStore{
     private SimpleFeatureType featureType;
 
     public CSVFeatureStore(final File f, final String namespace, final char separator) throws MalformedURLException, DataStoreException{
-        this(toParameters(f, namespace, separator));
+        this(f,namespace,separator,null);
     }
-    
+
+    /**
+     * Constructor forcing feature type, if the CSV does not have any header.
+     *
+     */
+    public CSVFeatureStore(final File f, final String namespace, final char separator, SimpleFeatureType ft) throws MalformedURLException, DataStoreException{
+        this(toParameters(f, namespace, separator));
+        this.featureType = ft;
+        name = featureType.getName().getLocalPart();
+    }
+
     public CSVFeatureStore(final ParameterValueGroup params) throws DataStoreException{
         super(params);
-        
+
         final URL url = (URL) params.parameter(CSVFeatureStoreFactory.URLP.getName().toString()).getValue();
         try {
             this.file = new File(url.toURI());
@@ -119,7 +129,7 @@ public class CSVFeatureStore extends AbstractFeatureStore{
             throw new DataStoreException(ex);
         }
         this.separator = (Character) params.parameter(CSVFeatureStoreFactory.SEPARATOR.getName().toString()).getValue();
-                
+
         final String path = url.toString();
         final int slash = Math.max(0, path.lastIndexOf('/') + 1);
         int dot = path.indexOf('.', slash);
@@ -127,10 +137,10 @@ public class CSVFeatureStore extends AbstractFeatureStore{
             dot = path.length();
         }
         this.name = path.substring(slash, dot);
-        
+
     }
 
-    private static ParameterValueGroup toParameters(final File f, 
+    private static ParameterValueGroup toParameters(final File f,
             final String namespace, final Character separator) throws MalformedURLException{
         final ParameterValueGroup params = CSVFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         Parameters.getOrCreate(CSVFeatureStoreFactory.URLP, params).setValue(f.toURL());
@@ -143,7 +153,7 @@ public class CSVFeatureStore extends AbstractFeatureStore{
     public FeatureStoreFactory getFactory() {
         return FeatureStoreFinder.getFactoryById(CSVFeatureStoreFactory.NAME);
     }
-    
+
     private synchronized void checkExist() throws DataStoreException{
         if(featureType != null) return;
 
@@ -409,7 +419,7 @@ public class CSVFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, 
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter,
             final Hints hints) throws DataStoreException {
         typeCheck(typeName); //raise error is type doesnt exist
         final FeatureWriter fw = new CSVFeatureWriter();
@@ -431,7 +441,7 @@ public class CSVFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures,hints);
     }
@@ -614,7 +624,7 @@ public class CSVFeatureStore extends AbstractFeatureStore{
                     }else if(att instanceof GeometryDescriptor){
                         str = wktWriter.write((Geometry) value);
                     }else{
-                        
+
                         if(value instanceof Date){
                             str = TemporalUtilities.toISO8601((Date)value);
                         }else if(value instanceof Boolean){
@@ -662,7 +672,7 @@ public class CSVFeatureStore extends AbstractFeatureStore{
 	@Override
 	public void refreshMetaModel() {
 		featureType=null;
-		
+
 	}
 
 }
