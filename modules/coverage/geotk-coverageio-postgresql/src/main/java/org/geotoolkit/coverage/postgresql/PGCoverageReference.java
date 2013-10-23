@@ -578,11 +578,13 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                      * Hack to find real min/max based on categories
                      */
                     final List<Category> categories = dim.getCategories();
-                    for (Category category : categories) {
-                        if (description.equals(category.getName().toString())) {
-                            //hack if category has same name as sampleDimension this is a data category
-                            min = category.getRange().getMinDouble();
-                            max = category.getRange().getMaxDouble();
+                    if (categories != null && !categories.isEmpty()) {
+                        for (Category category : categories) {
+                            if (description.equals(category.getName().toString())) {
+                                //hack if category has same name as sampleDimension this is a data category
+                                min = category.getRange().getMinDouble();
+                                max = category.getRange().getMaxDouble();
+                            }
                         }
                     }
 
