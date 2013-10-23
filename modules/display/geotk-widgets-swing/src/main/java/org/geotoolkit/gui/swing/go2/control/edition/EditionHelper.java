@@ -223,7 +223,7 @@ public class EditionHelper {
      * @param editedLayer
      * @param showAtributeditor display the feature attribute editor after creation.
      */
-    EditionHelper(final JMap2D map, final FeatureMapLayer editedLayer) {
+    public EditionHelper(final JMap2D map, final FeatureMapLayer editedLayer) {
         this.map = map;
         this.editedLayer = editedLayer;
         this.showAtributeditor = true;
