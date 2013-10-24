@@ -109,24 +109,24 @@ public final class XMath extends Static {
     }
 
     /**
-     * Truncates a value between min value and max value.
+     * Clamps a value between min value and max value.
      *
-     * @param val the value to truncate
+     * @param val the value to clamp
      * @param min the minimum value
      * @param max the maximum value
-     * @return val truncate between min and max
+     * @return val clamped between min and max
      */
     public static int clamp(int val, int min, int max) {
         return Math.min(Math.max(val, min), max);
     }
 
     /**
-     * Truncates each value of an array between min value and max value.
+     * Clamps each value of an array between min value and max value.
      *
-     * @param val the array of value to truncate
+     * @param val the array of values to clamp
      * @param min the minimum value
      * @param max the maximum value
-     * @return val truncate between min and max
+     * @return val clamped between min and max
      */
     public static int[] clamp(int[] val, int min, int max) {
         final int[] ret = new int[val.length];
@@ -137,24 +137,24 @@ public final class XMath extends Static {
     }
 
     /**
-     * Truncates a value between min value and max value.
+     * Clamps a value between min value and max value.
      *
-     * @param val the value to truncate
+     * @param val the value to clamp
      * @param min the minimum value
      * @param max the maximum value
-     * @return val truncate between min and max
+     * @return val clamped between min and max
      */
     public static long clamp(long val, long min, long max) {
         return Math.min(Math.max(val, min), max);
     }
 
     /**
-     * Truncates each value of an array between min value and max value.
+     * Clamps each value of an array between min value and max value.
      *
-     * @param val the array of value to truncate
+     * @param val the array of values to clamp
      * @param min the minimum value
      * @param max the maximum value
-     * @return val truncate between min and max
+     * @return val clamped between min and max
      */
     public static long[] clamp(long[] val, long min, long max) {
         final long[] ret = new long[val.length];
@@ -165,24 +165,24 @@ public final class XMath extends Static {
     }
 
     /**
-     * Truncates a value between min value and max value.
+     * Clamps a value between min value and max value.
      *
-     * @param val the value to truncate
+     * @param val the value to clamp
      * @param min the minimum value
      * @param max the maximum value
-     * @return val truncate between min and max
+     * @return val clamped between min and max
      */
     public static float clamp(float val, float min, float max) {
         return Math.min(Math.max(val, min), max);
     }
 
     /**
-     * Truncates each value of an array between min value and max value.
+     * Clamps each value of an array between min value and max value.
      *
-     * @param val the array of value to truncate
+     * @param val the array of values to clamp
      * @param min the minimum value
      * @param max the maximum value
-     * @return val truncate between min and max
+     * @return val clamped between min and max
      */
     public static float[] clamp(float[] val, float min, float max) {
         final float[] ret = new float[val.length];
@@ -193,24 +193,24 @@ public final class XMath extends Static {
     }
 
     /**
-     * Truncates a value between min value and max value.
+     * Clamps a value between min value and max value.
      *
-     * @param val the value to truncate
+     * @param val the value to clamp
      * @param min the minimum value
      * @param max the maximum value
-     * @return val truncate between min and max
+     * @return val clamped between min and max
      */
     public static double clamp(double val, double min, double max) {
         return Math.min(Math.max(val, min), max);
     }
 
     /**
-     * Truncates each value of an array between min value and max value.
+     * Clamps each value of an array between min value and max value.
      *
-     * @param val the array of value to truncate
+     * @param val the array of values to clamp
      * @param min the minimum value
      * @param max the maximum value
-     * @return val truncate between min and max
+     * @return val clamped between min and max
      */
     public static double[] clamp(double[] val, double min, double max) {
         final double[] ret = new double[val.length];
