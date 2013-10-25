@@ -40,33 +40,37 @@ import org.opengis.filter.expression.Expression;
 public class JNumberExpressionPane extends StyleElementEditor<Expression>{
 
     private final Dimension specialSize;
-    
+
+    private Class valType = Double.class;
+
     /** Creates new form JColorExpressionPane */
     public JNumberExpressionPane() {
         super(Expression.class);
         initComponents();
         specialSize = new Dimension(guiSpecial.getPreferredSize());
     }
-    
+
     public void setExpressionVisible(boolean visible){
         guiSpecial.setPreferredSize( visible ? new Dimension(specialSize) : new Dimension(1, 1));
         guiSpecial.setVisible(visible);
-    }  
+    }
 
     public void setModel(final double value, final double min, final double max, final double step){
         guiNumber.setModel(new SpinnerNumberModel(value, min, max, step));
+        valType = Double.class;
     }
-    
+
     public void setModel(final int value, final int min, final int max, final int step){
         guiNumber.setModel(new SpinnerNumberModel(value, min, max, step));
+        valType = Integer.class;
     }
-    
+
     @Override
     public void setLayer(final MapLayer layer) {
         super.setLayer(layer);
         guiSpecial.setLayer(layer);
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -111,7 +115,7 @@ public class JNumberExpressionPane extends StyleElementEditor<Expression>{
     }// </editor-fold>//GEN-END:initComponents
 
 private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange
-    if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+    if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_TARGET, null, create());
             parse(create());
         }
@@ -138,7 +142,12 @@ private void guiNumberStateChanged(final ChangeEvent evt) {//GEN-FIRST:event_gui
                 final Number value = target.evaluate(null, Number.class);
                 if(value != null){
                     guiSpecial.parse(null);
-                    guiNumber.setValue(value.doubleValue());
+                    if(Integer.class.equals(valType)){
+                        guiNumber.setValue(value.intValue());
+                    }else{
+                        guiNumber.setValue(value.doubleValue());
+                    }
+
                 }else{
                     guiSpecial.parse(target);
                 }
@@ -159,5 +168,5 @@ private void guiNumberStateChanged(final ChangeEvent evt) {//GEN-FIRST:event_gui
             return getFilterFactory().literal( ((SpinnerNumberModel)guiNumber.getModel()).getNumber());
         }
     }
-    
+
 }
