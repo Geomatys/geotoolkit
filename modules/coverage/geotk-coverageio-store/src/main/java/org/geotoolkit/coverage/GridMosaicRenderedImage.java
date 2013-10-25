@@ -149,9 +149,10 @@ public class GridMosaicRenderedImage implements RenderedImage {
     @Override
     public SampleModel getSampleModel() {
         if (sampleModel == null && firstTileImage != null) {
-            sampleModel = this.getColorModel().createCompatibleSampleModel(this.getWidth(), this.getHeight());
+            //sample model is for ONE tile, not the full image.
+            //javadoc is unclear on this, but in the code it works this way.
+            sampleModel = firstTileImage.getSampleModel();
         }
-
         return sampleModel;
     }
 
@@ -249,8 +250,11 @@ public class GridMosaicRenderedImage implements RenderedImage {
 
                 //create a raster from tile image with tile position offset.
                 LOGGER.log(Level.FINE, "Request tile {0}:{1} ", new Object[]{tileX,tileY});
-                final Point offset = new Point(tileX*this.getTileWidth(), tileY*this.getTileHeight());
-                raster = Raster.createWritableRaster(this.getColorModel().createCompatibleSampleModel(this.getTileWidth(), this.getTileHeight()), buffer , offset);
+                final int rX = tileX*this.getTileWidth();
+                final int rY = tileY*this.getTileHeight();
+
+                raster = Raster.createWritableRaster(getSampleModel(), buffer, new Point(rX, rY));
+
                 this.tileCache.put(new Point(tileX, tileY), raster);
 
             } catch ( DataStoreException | IOException e) {
