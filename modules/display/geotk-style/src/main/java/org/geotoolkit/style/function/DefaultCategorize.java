@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.DirectColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.util.ArrayList;
@@ -363,11 +364,34 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
                 model = new CompatibleColorModel(nbbit, this);
             }
 
+        }else if(candidate instanceof DirectColorModel) {
+            final DirectColorModel colors = (DirectColorModel) candidate;
+            final int nbbit = colors.getPixelSize();
+            final int type = image.getSampleModel().getDataType();
+
+            if(type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT){
+                final int mapSize = 1 << nbbit;
+                ARGB = new int[mapSize];
+
+                for(int j=0; j<mapSize;j++){
+                    int v = j*255/mapSize;
+                    int a = 255 << 24;
+                    int r = v << 16;
+                    int g = v <<  8;
+                    int b = v <<  0;
+                    ARGB[j] = a|r|g|b;
+                }
+
+                transformColormap(ARGB);
+                model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
+
+            } else {
+                //we can't handle a index color model when values exceed int max value
+                model = new CompatibleColorModel(nbbit, this);
+            }
+
         } else {
-            // Current implementation supports only sources that use of index color model
-            // and component color model
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_2,
-                    Classes.getClass(candidate), IndexColorModel.class));
+            model = new CompatibleColorModel(candidate.getPixelSize(), this);
         }
 
         /*

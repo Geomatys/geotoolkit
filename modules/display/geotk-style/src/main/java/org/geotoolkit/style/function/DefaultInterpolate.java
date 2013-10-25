@@ -422,10 +422,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                 }
 
             } else {
-                // Current implementation supports only sources that use of index color model
-                // and component color model
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_2,
-                        Classes.getClass(candidate), IndexColorModel.class));
+                model = new CompatibleColorModel(candidate.getPixelSize(), this);
             }
 
             /*
