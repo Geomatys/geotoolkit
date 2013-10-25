@@ -26,6 +26,7 @@ import org.geotoolkit.coverage.CoverageStoreListener;
 import org.geotoolkit.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
@@ -54,10 +55,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer> implements CoverageStoreListener{
 
     protected CoverageStoreListener.Weak weakStoreListener = new CoverageStoreListener.Weak(this);
-    
+
     private final DefaultProjectedCoverage projectedCoverage;
     private final boolean ignoreBuilders;
-    
+
     //compare values to update caches if necessary
     private final StatelessContextParams params;
     private CoordinateReferenceSystem lastObjectiveCRS = null;
@@ -65,25 +66,26 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
     public StatelessCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer){
         this(canvas,layer,false);
     }
-    
+
     public StatelessCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer, final boolean ignoreBuilders){
         super(canvas, layer, false);
 
         this.ignoreBuilders = ignoreBuilders;
-        
+
         try {
-            final GeneralGridGeometry ggg = layer.getCoverageReader().getGridGeometry(layer.getImageIndex());
+            final GridCoverageReader reader = layer.getCoverageReference().acquireReader();
+            final GeneralGridGeometry ggg = reader.getGridGeometry(layer.getCoverageReference().getImageIndex());
             if(ggg == null){
                 Logger.getLogger(StatelessCoverageLayerJ2D.class.getName()).log(
                         Level.WARNING, "Could not access envelope of layer {0}", layer.getName());
             }
-            
+
         } catch (CoverageStoreException ex) {
             Logger.getLogger(StatelessCoverageLayerJ2D.class.getName()).log(Level.WARNING, null, ex);
         }
 
         this.params = new StatelessContextParams(canvas,null);
-        this.projectedCoverage = new DefaultProjectedCoverage(params, layer);        
+        this.projectedCoverage = new DefaultProjectedCoverage(params, layer);
         this.weakStoreListener.registerSource(layer.getCoverageReference());
     }
 
@@ -125,8 +127,8 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
      */
     @Override
     public void paintLayer(final RenderingContext2D renderingContext) {
-                     
-        final Name coverageName = item.getCoverageName();
+
+        final Name coverageName = item.getCoverageReference().getName();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 renderingContext.getSEScale(), coverageName,null);
 
@@ -155,12 +157,13 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
                 return;
             }
         }
-        
-        if(!intersects(context.getCanvasObjectiveBounds2D())){
-            //grid not in the envelope, we have finisehd
-            return;
-        }
-        
+
+        //no need to do this here, it may open a coverage reader for nothing
+        //if(!intersects(context.getCanvasObjectiveBounds2D())){
+        //    //grid not in the envelope, we have finisehd
+        //    return;
+        //}
+
         for(final CachedRule rule : rules){
             for(final CachedSymbolizer symbol : rule.symbolizers()){
                 try {
@@ -185,7 +188,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
 
         final RenderingContext2D renderingContext = (RenderingContext2D) context;
 
-        final Name coverageName = item.getCoverageName();
+        final Name coverageName = item.getCoverageReference().getName();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 renderingContext.getSEScale(), coverageName,null);
 
@@ -201,7 +204,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
         }else{
             graphics = searchAt(item,rules,renderingContext,new DefaultSearchAreaJ2D(mask),filter,graphics);
         }
-        
+
 
         return graphics;
     }
@@ -219,7 +222,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
             }
             return graphics;
         }
-       
+
 
         for (final CachedRule rule : rules) {
             for (final CachedSymbolizer symbol : rule.symbolizers()) {
@@ -245,7 +248,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
             getCanvas().getController().repaint();
         }
     }
-    
+
     @Override
     public void dispose() {
         projectedCoverage.dispose();

@@ -17,43 +17,44 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Image;
-import java.util.concurrent.CancellationException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
+import org.geotoolkit.coverage.memory.MemoryCoverageReader;
 import org.opengis.feature.type.Name;
-import org.opengis.util.GenericName;
 
 /**
- * CoverageReference implementation wrapping a Coveragereader.
- * 
+ * CoverageReference implementation wrapping a coverage.
+ *
  * @author Johann Sorel
  */
 public class DefaultCoverageReference extends AbstractCoverageReference{
-    
-    private GridCoverageReader reader;
-    private int imageIndex;
 
-    public DefaultCoverageReference(final GridCoverageReader reader, final int imageIndex) {
-        this.reader = reader;
-        this.imageIndex = imageIndex;
+    private final GridCoverage2D coverage;
+    private final Object input;
+    private final Name name;
+    private final int imageIndex;
+
+    public DefaultCoverageReference(final GridCoverage2D coverage, Name name) {
+        this.coverage = coverage;
+        this.input = null;
+        this.name = name;
+        this.imageIndex = 0;
+    }
+
+    public DefaultCoverageReference(final Object input, Name name) {
+        this.coverage = null;
+        this.input = input;
+        this.name = name;
+        this.imageIndex = 0;
     }
 
     @Override
     public Name getName() {
-        try {
-            final GenericName gn = reader.getCoverageNames().get(imageIndex);
-            return DefaultName.valueOf(gn.toString());
-        } catch (CoverageStoreException ex) {
-            Logger.getLogger(DefaultCoverageReference.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
-        } catch (CancellationException ex) {
-            Logger.getLogger(DefaultCoverageReference.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
-        }
-        return new DefaultName("unnamed");
+        return name;
     }
 
     @Override
@@ -72,18 +73,24 @@ public class DefaultCoverageReference extends AbstractCoverageReference{
     }
 
     @Override
-    public GridCoverageReader createReader() throws DataStoreException {
-        return reader;
+    public GridCoverageReader acquireReader() throws CoverageStoreException {
+        if(coverage != null){
+            return new MemoryCoverageReader(coverage);
+        }else{
+            ImageCoverageReader reader = new ImageCoverageReader();
+            reader.setInput(input);
+            return reader;
+        }
     }
 
     @Override
-    public GridCoverageWriter createWriter() throws DataStoreException {
-        throw new UnsupportedOperationException("Writting not supported.");
+    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
+        throw new CoverageStoreException("Writting not supported.");
     }
 
     @Override
     public Image getLegend() throws DataStoreException {
         return null;
     }
-    
+
 }

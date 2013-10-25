@@ -54,7 +54,7 @@ public class WMSMapLayer extends DefaultCoverageMapLayer {
     }
 
     protected WMSMapLayer(final CoverageReference ref){
-        super(ref,new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER),ref.getName());
+        super(ref,new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
     }
 
     /**

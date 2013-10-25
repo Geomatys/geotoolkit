@@ -160,7 +160,7 @@ public class KmzContextInterpreter {
      * @return
      * @throws URISyntaxException
      */
-    private Feature writeStyle(MutableStyle style, Feature container) 
+    private Feature writeStyle(MutableStyle style, Feature container)
             throws URISyntaxException {
 
         final List<MutableFeatureTypeStyle> featureTypeStyles = style.featureTypeStyles();
@@ -323,7 +323,7 @@ public class KmzContextInterpreter {
      * @return
      * @throws URISyntaxException
      */
-    private Feature writeFeatureMapLayer(FeatureMapLayer featureMapLayer) 
+    private Feature writeFeatureMapLayer(FeatureMapLayer featureMapLayer)
             throws URISyntaxException {
 
         final Feature folder = KML_FACTORY.createFolder();
@@ -405,9 +405,9 @@ public class KmzContextInterpreter {
      * @return
      */
     private AbstractGeometry writeGeometry(Geometry geometry) {
-        
+
         final AbstractGeometry resultat;
-        
+
         if (geometry instanceof GeometryCollection) {
             final List<AbstractGeometry> liste = new ArrayList<AbstractGeometry>();
             if (geometry instanceof MultiPolygon) {
@@ -446,7 +446,7 @@ public class KmzContextInterpreter {
      * @return
      * @throws Exception
      */
-    private Feature writeCoverageMapLayer(CoverageMapLayer coverageMapLayer) 
+    private Feature writeCoverageMapLayer(CoverageMapLayer coverageMapLayer)
             throws Exception {
 
         final Feature groundOverlay = KML_FACTORY.createGroundOverlay();
@@ -454,7 +454,7 @@ public class KmzContextInterpreter {
         final CoordinateReferenceSystem targetCrs = DefaultGeographicCRS.WGS84;
 
         final GridCoverage2D coverage =
-                (GridCoverage2D) coverageMapLayer.getCoverageReader().read(0, null);
+                (GridCoverage2D) coverageMapLayer.getCoverageReference().acquireReader().read(0, null);
         //coverage.show();
 
         final GridCoverage2D targetCoverage =

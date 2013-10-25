@@ -241,20 +241,21 @@ public final class Portrayer {
 
         //we can bypass the renderer
         final CoverageMapLayer cml = (CoverageMapLayer) layer;
-        final GridCoverageReader reader = cml.getCoverageReader();
-        final String mime = outputDef.getMime();
-        final Envelope env = viewDef.getEnvelope();
-        final Dimension dim = canvasDef.getDimension();
-        final double[] resolution = new double[]{
-                env.getSpan(0) / (double)dim.width,
-                env.getSpan(1) / (double)dim.height};
-
-        final GridCoverageReadParam readParam = new GridCoverageReadParam();
-        readParam.setEnvelope(viewDef.getEnvelope());
-        readParam.setResolution(resolution);
-
+        
         try{
-            GridCoverage2D coverage = (GridCoverage2D)reader.read(cml.getImageIndex(), readParam);
+            final GridCoverageReader reader = cml.getCoverageReference().acquireReader();
+            final String mime = outputDef.getMime();
+            final Envelope env = viewDef.getEnvelope();
+            final Dimension dim = canvasDef.getDimension();
+            final double[] resolution = new double[]{
+                    env.getSpan(0) / (double)dim.width,
+                    env.getSpan(1) / (double)dim.height};
+
+            final GridCoverageReadParam readParam = new GridCoverageReadParam();
+            readParam.setEnvelope(viewDef.getEnvelope());
+            readParam.setResolution(resolution);
+
+            GridCoverage2D coverage = (GridCoverage2D)reader.read(cml.getCoverageReference().getImageIndex(), readParam);
             final RenderedImage image = coverage.getRenderedImage();
 
             // HACK TO FIX COLOR ERROR ON JPEG /////////////////////////////////

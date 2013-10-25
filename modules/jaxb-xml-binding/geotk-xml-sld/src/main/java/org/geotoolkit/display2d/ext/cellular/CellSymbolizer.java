@@ -67,7 +67,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
 
     private static final Logger LOGGER = Logging.getLogger(CellSymbolizer.class);
     public static final String NAME = "Cell";
-    
+
     @XmlElement(name = "CellSize",namespace="http://geotoolkit.org")
     private int cellSize;
     @XmlTransient
@@ -76,10 +76,10 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
     private PointSymbolizer pointSymbolizer;
     @XmlTransient
     private TextSymbolizer textSymbolizer;
-    
+
     @XmlElement(name = "Filter", namespace = "http://www.opengis.net/ogc")
     private FilterType filterType;
-    
+
     @XmlElement(name = "PointSymbolizer",namespace="http://geotoolkit.org")
     private PointSymbolizerType pointSymbolizerType;
     @XmlElement(name = "TextSymbolizer",namespace="http://geotoolkit.org")
@@ -94,7 +94,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         this.filter = filter;
         this.pointSymbolizer = ps;
         this.textSymbolizer = ts;
-        
+
         final StyleXmlIO util = new StyleXmlIO();
         if(filter!=null){
             this.filterType = util.getTransformerXMLv110().visit(filter);
@@ -105,7 +105,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         if(ts!=null){
             this.textSymbolizerType = util.getTransformerXMLv110().visit(ts,null).getValue();
         }
-        
+
     }
 
     @Override
@@ -117,7 +117,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
     public String getGeometryPropertyName() {
         return null;
     }
-    
+
     @Override
     public String getExtensionName() {
         return NAME;
@@ -135,7 +135,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         if(filter!=null){
             return filter;
         }
-        
+
         if(filterType!=null){
             final StyleXmlIO util = new StyleXmlIO();
             try {
@@ -144,33 +144,33 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
-        
+
         return filter;
     }
-    
+
     public PointSymbolizer getPointSymbolizer() {
         if(pointSymbolizer!=null){
             return pointSymbolizer;
         }
-        
+
         if(pointSymbolizerType!=null){
             final StyleXmlIO util = new StyleXmlIO();
             pointSymbolizer = util.getTransformer110().visit(pointSymbolizerType);
         }
-        
+
         return pointSymbolizer;
     }
-    
+
     public TextSymbolizer getTextSymbolizer() {
         if(textSymbolizer!=null){
             return textSymbolizer;
         }
-        
+
         if(textSymbolizerType!=null){
             final StyleXmlIO util = new StyleXmlIO();
             textSymbolizer = util.getTransformer110().visit(textSymbolizerType);
         }
-        
+
         return textSymbolizer;
     }
 
@@ -206,29 +206,25 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         final Map<String,Expression> config = new HashMap<String, Expression>();
         return config;
     }
-    
+
     @Override
     public Object accept(StyleVisitor sv, Object o) {
         return sv.visit(this, o);
     }
 
     public static SimpleFeatureType buildCellType(CoverageMapLayer layer) throws DataStoreException{
-        if(layer.getCoverageReference()!=null){
-            return buildCellType(layer.getCoverageReference());
-        }else{
-            return buildCellType(layer.getCoverageReader(), 0);
-        }
+        return buildCellType(layer.getCoverageReference());
     }
-    
+
     public static SimpleFeatureType buildCellType(CoverageReference ref) throws DataStoreException{
-        final GridCoverageReader reader = ref.createReader();
+        final GridCoverageReader reader = ref.acquireReader();
         try{
             return buildCellType(reader, ref.getImageIndex());
         }finally{
             //reader.dispose();
         }
     }
-    
+
     public static SimpleFeatureType buildCellType(GridCoverageReader reader, int imageIndex) throws DataStoreException{
         final List<GridSampleDimension> lst = reader.getSampleDimensions(imageIndex);
         final GeneralGridGeometry gg = reader.getGridGeometry(imageIndex);
@@ -244,12 +240,12 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
             return buildCellType(nbBands, crs);
         }
     }
-    
+
     public static SimpleFeatureType buildCellType(GridCoverage2D coverage){
         final int nbBand = coverage.getNumSampleDimensions();
         return buildCellType(nbBand, coverage.getCoordinateReferenceSystem2D());
     }
-    
+
     public static SimpleFeatureType buildCellType(int nbBand, CoordinateReferenceSystem crs){
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("cell");
@@ -271,5 +267,5 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
     public String toString() {
         return "CellSymbolizer";
     }
-    
+
 }

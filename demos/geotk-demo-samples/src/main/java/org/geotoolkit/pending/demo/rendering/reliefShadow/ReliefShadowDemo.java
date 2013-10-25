@@ -1,42 +1,25 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.geotoolkit.pending.demo.rendering.reliefShadow;
 
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.io.CoverageIO;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.gui.swing.go2.JMap2DFrame;
-import org.geotoolkit.image.interpolation.Interpolation;
-import org.geotoolkit.image.interpolation.InterpolationCase;
-import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.image.iterator.PixelIterator;
-import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.lang.Setup;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.StyleConstants;
 import static org.geotoolkit.style.StyleConstants.DEFAULT_DESCRIPTION;
 import static org.geotoolkit.style.StyleConstants.LITERAL_ONE_FLOAT;
 import org.opengis.filter.FilterFactory;
@@ -49,17 +32,16 @@ import org.opengis.style.OverlapBehavior;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.ShadedRelief;
 import org.opengis.style.Symbolizer;
-import org.openide.util.Exceptions;
 
 /**
- * Show how to use {@link ElevationModel} to add shadow on image in renderer. 
+ * Show how to use {@link ElevationModel} to add shadow on image in renderer.
  *
  * @author Remi Marechal (Geomatys).
  */
 public class ReliefShadowDemo {
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
     protected static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
-    
+
     /**
      * Relief path of Digital Elevation Model (DEM).
      */
@@ -67,7 +49,7 @@ public class ReliefShadowDemo {
     /**
      * Create {@link GridCoverageReader} which will be return by {@link ElevationModel} to read DEM.
      */
-    
+
     public static void main(String[] args) throws Exception {
         Demos.init();
         ImageReader covPath = XImageIO.getReaderByFormatName("tiff-wf", reliefPath, Boolean.FALSE, false);
@@ -76,15 +58,13 @@ public class ReliefShadowDemo {
         /*
          * Coverage which will be shadowed.
          */
-        final File input = new File("data/clouds.jpg");
-        final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
-                
+
         //create a mapcontext
-        final MapContext context = MapBuilder.createContext();        
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(reader, 0, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "raster");
-        
+        final MapContext context = MapBuilder.createContext();
+        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(new File("data/clouds.jpg"));
+
         /*
-         * Define Elevation Model object to get informations necessary to compute shadow on coverage. 
+         * Define Elevation Model object to get informations necessary to compute shadow on coverage.
          */
         cl.setElevationModel(new ElevationModel() {
 
@@ -115,14 +95,14 @@ public class ReliefShadowDemo {
             }
 
             /*
-             * Define angle formed by light direction and ground surface. 
+             * Define angle formed by light direction and ground surface.
              */
             @Override
             public double getAltitude() {
                 return 2;
             }
         });
-        
+
         MutableStyle style = customRaster();
         cl.setStyle(style);
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -131,7 +111,7 @@ public class ReliefShadowDemo {
         context.layers().add(cl);
         JMap2DFrame.show(context);
     }
-    
+
     /*
      * Define style.
      */
@@ -159,5 +139,5 @@ public class ReliefShadowDemo {
                 channels,overlap,colormap,enhance,relief,outline);
         final MutableStyle style = SF.style(symbol);
         return style;
-    }    
+    }
 }

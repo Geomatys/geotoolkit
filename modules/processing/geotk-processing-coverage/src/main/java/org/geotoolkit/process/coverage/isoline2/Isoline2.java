@@ -103,7 +103,7 @@ public class Isoline2 extends AbstractProcess {
         
         try{
             final int imgIndex = coverageRef.getImageIndex();
-            final GridCoverageReader reader  = coverageRef.createReader();
+            final GridCoverageReader reader  = coverageRef.acquireReader();
             final GeneralGridGeometry gridgeom = reader.getGridGeometry(imgIndex);
             crs = gridgeom.getCoordinateReferenceSystem();
             type = getOrCreateIsoType(featureStore, featureTypeName, crs);

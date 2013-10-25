@@ -63,7 +63,7 @@ public class MemoryStoreTest {
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
         
         ref.addStorageListener(reflistener);
-        ref.createWriter().write(coverage, null);
+        ref.acquireWriter().write(coverage, null);
         
         assertEquals(1, storelistener.numManageEvent);
         assertEquals(1, storelistener.numContentEvent);

@@ -38,7 +38,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * Not thread safe. 
+ * Not thread safe.
  * Use it knowing you make clear cache operation in a synchronize way.
  *
  * @author Johann Sorel (Geomatys)
@@ -73,9 +73,9 @@ public class DefaultProjectedCoverage implements ProjectedCoverage {
             try {
                 value = handler.peek();
                 if (value == null) {
-                    final GridCoverageReader reader = layer.getCoverageReader();
+                    final GridCoverageReader reader = layer.getCoverageReference().acquireReader();
                     synchronized(reader){
-                        value = (GridCoverage2D) reader.read(layer.getImageIndex(),param);
+                        value = (GridCoverage2D) reader.read(layer.getCoverageReference().getImageIndex(),param);
                     }
                 }
             } finally {

@@ -230,18 +230,19 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             try {
                 gcrp.clear();
                 gcrp.setEnvelope(visibleArea);
-                final GridCoverage2D cov = (GridCoverage2D) layer.getCoverageReader().read(layer.getImageIndex(), gcrp);
+                final GridCoverage2D cov = (GridCoverage2D) layer.getCoverageReference().acquireReader().read(
+                        layer.getCoverageReference().getImageIndex(), gcrp);
                 setCoverage(cov,selectRectangle);
                 writeParam = new GridCoverageWriteParam();
                 final MathTransform grid_To_Crs = cov.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
                 GeneralEnvelope env = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_2D);
                 env.setEnvelope(gridSelectionSize.x, gridSelectionSize.y, gridSelectionSize.x + gridSelectionSize.width, gridSelectionSize.y + gridSelectionSize.height);
                 env = CRS.transform(grid_To_Crs, env);
-                
+
                 final CoordinateReferenceSystem covCRS = cov.getCoordinateReferenceSystem();
                 GeneralEnvelope vAInCovArea = new GeneralEnvelope(visibleArea);
                 vAInCovArea = new GeneralEnvelope(ReferencingUtilities.transform2DCRS(vAInCovArea, CRSUtilities.getCRS2D(covCRS)));
-                
+
                 int minOrdinate = CoverageUtilities.getMinOrdinate(vAInCovArea.getCoordinateReferenceSystem());
                 vAInCovArea.setRange(minOrdinate++, env.getMinimum(0), env.getMaximum(0));
                 vAInCovArea.setRange(minOrdinate, env.getMinimum(1), env.getMaximum(1));
@@ -372,7 +373,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             return;
         }
         final CoverageReference ref = layer.getCoverageReference();
-        final GridCoverageWriter writer = ref.createWriter();
+        final GridCoverageWriter writer = ref.acquireWriter();
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setRenderedImage(img);
         gcb.setCoordinateReferenceSystem(coverage.getCoordinateReferenceSystem2D());

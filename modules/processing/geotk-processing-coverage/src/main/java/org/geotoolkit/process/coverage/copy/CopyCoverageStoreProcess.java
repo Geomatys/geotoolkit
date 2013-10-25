@@ -304,7 +304,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
 
         if(reduce == null) reduce = Boolean.TRUE;
 
-        final GridCoverageReader reader = inRef.createReader();
+        final GridCoverageReader reader = inRef.acquireReader();
         final int imageIndex = inRef.getImageIndex();
         final GeneralGridGeometry globalGeom = reader.getGridGeometry(imageIndex);
         final CoordinateReferenceSystem crs = globalGeom.getCoordinateReferenceSystem();

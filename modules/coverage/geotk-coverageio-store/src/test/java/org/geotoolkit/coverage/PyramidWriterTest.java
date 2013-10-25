@@ -84,11 +84,11 @@ public class PyramidWriterTest {
         ref.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, createImage(360, 180, Color.BLACK));
         
         //sanity check
-        RenderedImage candidate = ((GridCoverage2D)ref.createReader().read(0, null)).getRenderedImage();
+        RenderedImage candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
         testImage(candidate, 360, 180, Color.BLACK);
         
         //write over the tile
-        final GridCoverageWriter writer = ref.createWriter();
+        final GridCoverageWriter writer = ref.acquireWriter();
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -180, +180);
@@ -102,7 +102,7 @@ public class PyramidWriterTest {
         writer.write(gcb.build(), param);
         
         //image should be red
-        candidate = ((GridCoverage2D)ref.createReader().read(0, null)).getRenderedImage();
+        candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
         testImage(candidate, 360, 180, Color.RED);
     }
     
@@ -122,11 +122,11 @@ public class PyramidWriterTest {
         }
         
         //sanity check
-        RenderedImage candidate = ((GridCoverage2D)ref.createReader().read(0, null)).getRenderedImage();
+        RenderedImage candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
         testImage(candidate, 36, 18, Color.BLACK);
         
         //write over the tile
-        final GridCoverageWriter writer = ref.createWriter();
+        final GridCoverageWriter writer = ref.acquireWriter();
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -180, +180);
@@ -140,7 +140,7 @@ public class PyramidWriterTest {
         writer.write(gcb.build(), param);
         
         //image should be red
-        candidate = ((GridCoverage2D)ref.createReader().read(0, null)).getRenderedImage();
+        candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
         testImage(candidate, 36, 18, Color.RED);
     }
     
@@ -160,11 +160,11 @@ public class PyramidWriterTest {
         }
         
         //sanity check
-        RenderedImage candidate = ((GridCoverage2D)ref.createReader().read(0, null)).getRenderedImage();
+        RenderedImage candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
         testImage(candidate, 36, 18, Color.BLACK);
         
         //write over the tile
-        final GridCoverageWriter writer = ref.createWriter();
+        final GridCoverageWriter writer = ref.acquireWriter();
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -120, +70);
@@ -178,7 +178,7 @@ public class PyramidWriterTest {
         writer.write(gcb.build(), param);
         
         //image should be black/red
-        candidate = ((GridCoverage2D)ref.createReader().read(0, null)).getRenderedImage();
+        candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
         final Raster data = candidate.getData();
         
         final int[] black = new int[]{Color.BLACK.getRed(),Color.BLACK.getGreen(),Color.BLACK.getBlue(),Color.BLACK.getAlpha()};
@@ -219,11 +219,11 @@ public class PyramidWriterTest {
         }
         
         //sanity check
-        RenderedImage candidate = ((GridCoverage2D)ref.createReader().read(0, null)).getRenderedImage();
+        RenderedImage candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
         testImage(candidate, 36, 18, Color.BLACK);
         
         //write over the tile
-        final GridCoverageWriter writer = ref.createWriter();
+        final GridCoverageWriter writer = ref.acquireWriter();
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -120, +70);
@@ -237,7 +237,7 @@ public class PyramidWriterTest {
         writer.write(gcb.build(), param);
         
         //lower image should be black/red---------------------------------------
-        candidate = ((GridCoverage2D)ref.createReader().read(0, null)).getRenderedImage();
+        candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
         Raster data = candidate.getData();
         
         final int[] black = new int[]{Color.BLACK.getRed(),Color.BLACK.getGreen(),Color.BLACK.getBlue(),Color.BLACK.getAlpha()};
@@ -308,11 +308,11 @@ public class PyramidWriterTest {
         }
         
         //sanity check
-        RenderedImage candidate = ((GridCoverage2D)ref.createReader().read(0, null)).getRenderedImage();
+        RenderedImage candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
         testImage(candidate, 18, 36, Color.BLACK);
         
        //write over the tile
-        final GridCoverageWriter writer = ref.createWriter();
+        final GridCoverageWriter writer = ref.acquireWriter();
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(CRS84);
         env.setRange(0, -120, +70);
@@ -326,7 +326,7 @@ public class PyramidWriterTest {
         writer.write(gcb.build(), param);
         
         //lower image should be black/red---------------------------------------
-        candidate = ((GridCoverage2D)ref.createReader().read(0, null)).getRenderedImage();
+        candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
         Raster data = candidate.getData();
         
         final int[] black = new int[]{Color.BLACK.getRed(),Color.BLACK.getGreen(),Color.BLACK.getBlue(),Color.BLACK.getAlpha()};
@@ -397,11 +397,11 @@ public class PyramidWriterTest {
         }
         
         //sanity check
-        RenderedImage candidate = ((GridCoverage2D)ref.createReader().read(0, null)).getRenderedImage();
+        RenderedImage candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
         testImage(candidate, 36, 18, Color.BLACK);
         
         //write over the tile
-        final GridCoverageWriter writer = ref.createWriter();
+        final GridCoverageWriter writer = ref.acquireWriter();
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         final GeneralEnvelope env = new GeneralEnvelope(EPSG4326);
         env.setRange(0, -30, +60);
@@ -415,7 +415,7 @@ public class PyramidWriterTest {
         writer.write(gcb.build(), param);
         
         //lower image should be black/red---------------------------------------
-        candidate = ((GridCoverage2D)ref.createReader().read(0, null)).getRenderedImage();
+        candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
         Raster data = candidate.getData();
         
         final int[] black = new int[]{Color.BLACK.getRed(),Color.BLACK.getGreen(),Color.BLACK.getBlue(),Color.BLACK.getAlpha()};

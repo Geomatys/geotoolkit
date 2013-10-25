@@ -22,6 +22,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.DefaultCoverageReference;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 
@@ -35,7 +36,7 @@ public class CustomSymbolizerDemo {
     public static void main(String[] args) throws DataStoreException, NoninvertibleTransformException,
                                                   TransformException, IOException {
         Demos.init();
-        
+
         final MapContext context = createContext();
 
         final JMap2D jmap = new JMap2D();
@@ -65,10 +66,10 @@ public class CustomSymbolizerDemo {
         final MapContext context = MapBuilder.createContext();
 
         //create a coverage layer
-        final GridCoverageReader reader = CoverageIO.createSimpleReader(new File("data/clouds.jpg"));
         final MutableStyle coverageStyle = SF.style(new CrystallizeSymbolizer(2));
-        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(reader, 0, coverageStyle,"background");
-      
+        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(new File("data/clouds.jpg"));
+        coverageLayer.setStyle(coverageStyle);
+
         //add all layers in the context
         context.layers().add(coverageLayer);
         return context;

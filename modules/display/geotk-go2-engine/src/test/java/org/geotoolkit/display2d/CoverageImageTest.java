@@ -214,7 +214,7 @@ public class CoverageImageTest {
         //Envelope result
         resEnv = gridcov.getEnvelope();
         proportionalityCoefficient = 2;
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(mpCovStore.getCoverageReference(name), SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "raster");
+        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(mpCovStore.getCoverageReference(name));
         testImageLayer(img, cl);
 
         proportionalityCoefficient = 1;
@@ -267,7 +267,7 @@ public class CoverageImageTest {
 
         proportionalityCoefficient = 2;
 
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(reader, 0, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "raster");
+        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(input);
 
         //Envelope result
         resEnv = gridcov.getEnvelope();

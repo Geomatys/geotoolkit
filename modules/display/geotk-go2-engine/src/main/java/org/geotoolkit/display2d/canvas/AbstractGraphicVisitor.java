@@ -158,10 +158,10 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         param.setEnvelope(objBounds);
         param.setResolution(resolution);
 
-        final GridCoverageReader reader = layer.getCoverageReader();
         final GridCoverage2D coverage;
         try {
-            coverage = (GridCoverage2D) reader.read(layer.getImageIndex(),param);
+            final GridCoverageReader reader = layer.getCoverageReference().acquireReader();
+            coverage = (GridCoverage2D) reader.read(layer.getCoverageReference().getImageIndex(),param);
         } catch (CoverageStoreException ex) {
             context.getMonitor().exceptionOccured(ex, Level.INFO);
             return null;

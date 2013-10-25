@@ -235,8 +235,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                         if(eles.length > 0 && ComponentColorModel.class.getName().equalsIgnoreCase(eles[0].getClassName())){
 
                             try{
+                                final GridCoverageReader reader = projectedCoverage.getLayer().getCoverageReference().acquireReader();
                                 final Map<String,Object> analyze = StatisticOp.analyze(
-                                        projectedCoverage.getLayer().getCoverageReader(),projectedCoverage.getLayer().getImageIndex());
+                                        reader,projectedCoverage.getLayer().getCoverageReference().getImageIndex());
                                 final double[] minArray = (double[])analyze.get(StatisticOp.MINIMUM);
                                 final double[] maxArray = (double[])analyze.get(StatisticOp.MAXIMUM);
                                 final double min = findExtremum(minArray, true);

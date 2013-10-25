@@ -20,12 +20,12 @@ import org.opengis.metadata.Metadata;
 
 
 public class CoverageReaderDemo {
-    
+
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
-    
+
     public static void main(String[] args) throws Exception {
         Demos.init();
-        
+
         final File input = new File("data/clouds.jpg");
         final GridCoverageReader reader = CoverageIO.createSimpleReader(input);
                 
@@ -43,13 +43,13 @@ public class CoverageReaderDemo {
 
 
         //create a mapcontext
-        final MapContext context = MapBuilder.createContext();        
-        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(reader, 0, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "raster");
+        final MapContext context = MapBuilder.createContext();
+        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(new File("data/clouds.jpg"));
         context.layers().add(cl);
-        
+
         //display it
         JMap2DFrame.show(context);
-        
+
     }
-    
-}    
+
+}

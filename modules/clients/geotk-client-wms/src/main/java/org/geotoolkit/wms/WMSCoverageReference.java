@@ -238,18 +238,18 @@ public class WMSCoverageReference extends AbstractCoverageReference{
     }
 
     @Override
-    public boolean isWritable() throws DataStoreException {
+    public boolean isWritable() throws CoverageStoreException {
         return false;
     }
-    
+
     @Override
     public int getImageIndex() {
         return 0;
     }
 
     @Override
-    public GridCoverageWriter createWriter() throws DataStoreException {
-        throw new DataStoreException("WMS coverage are not writable.");
+    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
+        throw new CoverageStoreException("WMS coverage are not writable.");
     }
 
     @Override
@@ -460,7 +460,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
     }
 
     @Override
-    public synchronized GridCoverageReader createReader() throws CoverageStoreException{
+    public synchronized GridCoverageReader acquireReader() throws CoverageStoreException{
         if(reader == null){
             reader = new WMSCoverageReader(this);
         }

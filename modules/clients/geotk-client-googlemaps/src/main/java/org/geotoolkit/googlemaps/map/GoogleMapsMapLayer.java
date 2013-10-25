@@ -35,7 +35,7 @@ import org.opengis.feature.type.Name;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {    
+public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
 
     /**
      * The server to request.
@@ -46,7 +46,7 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
      * Output format of the response.
      */
     private static final String DEFAULT_FORMAT = GetMapRequest.FORMAT_PNG8;
-    
+
 
     private static CoverageReference getReference(StaticGoogleMapsServer server, String mapType){
         try {
@@ -56,23 +56,22 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
                 }
             }
             throw new RuntimeException("Not layer for name : " + mapType);
-            
+
         } catch (DataStoreException ex) {
             throw new RuntimeException(ex);
         }
     }
-    
+
     public GoogleMapsMapLayer(final StaticGoogleMapsServer server, String maptype) {
         super(getReference(server,maptype),
-              new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER),
-              new DefaultName("google"));
+              new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
         this.server = server;
         setUserProperty(PyramidSet.HINT_FORMAT, DEFAULT_FORMAT);
     }
-    
+
     /**
      * Sets the format for the output response. By default sets to {@code png}.     *
-     * @param format 
+     * @param format
      */
     public void setFormat(final String format) {
         ArgumentChecks.ensureNonNull("format", format);
@@ -81,7 +80,7 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
 
     /**
      * Gets the format for the output response. By default {@code png}.
-     * @return 
+     * @return
      */
     public String getFormat() {
         Object val = getUserProperty(PyramidSet.HINT_FORMAT);
@@ -93,10 +92,10 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
 
     /**
      * Returns the {@link StaticGoogleMapsServer} to request. Can't be {@code null}.
-     * @return 
+     * @return
      */
     public StaticGoogleMapsServer getServer() {
         return server;
     }
-   
+
 }

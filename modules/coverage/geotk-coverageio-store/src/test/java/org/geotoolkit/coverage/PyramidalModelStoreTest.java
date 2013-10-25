@@ -124,7 +124,7 @@ public abstract class PyramidalModelStoreTest {
     public void noArgumentTest() throws Exception{
         //load the coverage store
         getCoverageStore();
-        final GridCoverageReader reader = ref.createReader();
+        final GridCoverageReader reader = ref.acquireReader();
         
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
                 
@@ -166,7 +166,7 @@ public abstract class PyramidalModelStoreTest {
 
         //load the coverage store
         getCoverageStore();
-        final GridCoverageReader reader = ref.createReader();
+        final GridCoverageReader reader = ref.acquireReader();
         
         final GeneralEnvelope paramEnv = new GeneralEnvelope(crs);
         paramEnv.setRange(0, corner.getOrdinate(0) +(1*10)*1, corner.getOrdinate(0) +(2*10)*1);

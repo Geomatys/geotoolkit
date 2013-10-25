@@ -22,35 +22,34 @@ import org.opengis.parameter.ParameterValueGroup;
 
 
 public class CoverageStoreDemo {
-    
+
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
-    
+
     public static void main(String[] args) throws Exception {
         Demos.init();
         WorldFileImageReader.Spi.registerDefaults(null);
         WorldFileImageWriter.Spi.registerDefaults(null);
-                                
+
         final File input = new File("data");
-        
+
         final ParameterValueGroup params = FileCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         Parameters.getOrCreate(FileCoverageStoreFactory.PATH, params).setValue(input.toURI().toURL());
         Parameters.getOrCreate(FileCoverageStoreFactory.TYPE, params).setValue("jpg-wf");
-        
+
         final CoverageStore store = CoverageStoreFinder.open(params);
-        
+
         //create a mapcontext
-        final MapContext context = MapBuilder.createContext();     
-        
+        final MapContext context = MapBuilder.createContext();
+
         for(Name n : store.getNames()){
             final CoverageReference ref = store.getCoverageReference(n);
-            final CoverageMapLayer cl = MapBuilder.createCoverageLayer(
-                    ref, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "raster");
+            final CoverageMapLayer cl = MapBuilder.createCoverageLayer(ref);
             context.layers().add(cl);
         }
-        
+
         //display it
         JMap2DFrame.show(context);
-        
+
     }
-    
+
 }

@@ -18,12 +18,17 @@ package org.geotoolkit.coverage;
 
 import java.awt.Image;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.StorageListener;
 import org.opengis.feature.type.Name;
 
 /**
+ * Reference to a coverage in the coverage store.
+ *
+ * TODO : name is not following ISO. must find a proper name.
+ * something like RenderableCoverage...
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -36,7 +41,7 @@ public interface CoverageReference {
      * @return Name
      */
     Name getName();
-    
+
     /**
      * @return int image index in reader/writer.
      */
@@ -44,6 +49,7 @@ public interface CoverageReference {
 
     /**
      * @return true if coverage is writable
+     * @throws org.apache.sis.storage.DataStoreException
      */
     boolean isWritable() throws DataStoreException;
 
@@ -55,20 +61,37 @@ public interface CoverageReference {
     CoverageStore getStore();
 
     /**
-     * Get a new reader for this coverage.
+     * Get a reader for this coverage.
+     * When you have finished using it, return it using the recycle method.
      *
      * @return GridCoverageReader
-     * @throws DataStoreException
+     * @throws CoverageStoreException
      */
-    GridCoverageReader createReader() throws DataStoreException;
+    GridCoverageReader acquireReader() throws CoverageStoreException;
 
     /**
-     * Get a new writer for this coverage.
+     * Get a writer for this coverage.
+     * When you have finished using it, return it using the recycle method.
      *
      * @return GridCoverageWriter
-     * @throws DataStoreException
+     * @throws CoverageStoreException
      */
-    GridCoverageWriter createWriter() throws DataStoreException;
+    GridCoverageWriter acquireWriter() throws CoverageStoreException;
+
+//    /**
+//     * Return the used reader, they can be reused later.
+//     *
+//     * @param reader
+//     */
+//    void recycle(GridCoverageReader reader);
+
+//    /**
+//     * Return the used writer, they can be reused later.
+//     *
+//     * @param writer
+//     */
+//    void recycle(GridCoverageWriter writer);
+
 
     /**
      * Return the legend of this coverage
@@ -89,5 +112,5 @@ public interface CoverageReference {
      * @param listener to remove
      */
     void removeStorageListener(StorageListener listener);
-    
+
 }

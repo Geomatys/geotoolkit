@@ -86,7 +86,7 @@ public class WMCUtilities {
      * Get a {@linkplain MarshallerPool marshaller pool} for the WMC binding.
      *
      * @return The {@linkplain MarshallerPool marshaller pool}.
-     * @throws JAXBException 
+     * @throws JAXBException
      */
     public static MarshallerPool getMarshallerPool() throws JAXBException {
         return new MarshallerPool(JAXBContext.newInstance(
@@ -187,7 +187,7 @@ public class WMCUtilities {
                         if (n.getLocalPart().equalsIgnoreCase(layerName.getLocalPart())) {
                             final CoverageReference ref = cs.getCoverageReference(n);
                             final CoverageMapLayer mapLayer = MapBuilder.createCoverageLayer(ref,
-                                    GO2Utilities.STYLE_FACTORY.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), ref.getName().toString());
+                                    GO2Utilities.STYLE_FACTORY.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
                             context.layers().add(mapLayer);
                         }
                     }

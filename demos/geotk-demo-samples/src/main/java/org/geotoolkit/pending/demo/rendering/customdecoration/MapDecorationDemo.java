@@ -36,7 +36,7 @@ public class MapDecorationDemo {
     public static void main(String[] args) throws DataStoreException, NoninvertibleTransformException,
                                                   TransformException, IOException {
         Demos.init();
-        
+
         final MapContext context = createContext();
 
         final JMap2D jmap = new JMap2D();
@@ -65,14 +65,12 @@ public class MapDecorationDemo {
 
     private static MapContext createContext() throws DataStoreException  {
         WorldFileImageReader.Spi.registerDefaults(null);
-        
+
         //create a map context
         final MapContext context = MapBuilder.createContext();
 
         //create a coverage layer
-        final GridCoverageReader reader = CoverageIO.createSimpleReader(new File("data/clouds.jpg"));
-        final MutableStyle coverageStyle = SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
-        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(reader, 0, coverageStyle,"background");
+        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(new File("data/clouds.jpg"));
 
         //add all layers in the context
         context.layers().add(coverageLayer);

@@ -27,12 +27,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.coverage.*;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * 
+ *
  *
  * @author Marechal Remi (Geomatys).
  */
@@ -51,7 +52,7 @@ public class MPCoverageReference extends AbstractPyramidalModel {
      * {@inheritDoc }.
      */
     @Override
-    public boolean isWritable() throws DataStoreException {
+    public boolean isWritable() throws CoverageStoreException {
         return true;
     }
 
@@ -122,7 +123,7 @@ public class MPCoverageReference extends AbstractPyramidalModel {
     @Override
     public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
         final Pyramid pyramid = findPyramidByID(pyramidId);
-        
+
         final List<GridMosaic> listGM = pyramid.getMosaics();
         for (int id = 0, len = listGM.size(); id < len; id++) {
             if (listGM.get(id).getId().equalsIgnoreCase(mosaicId)) {
@@ -138,7 +139,7 @@ public class MPCoverageReference extends AbstractPyramidalModel {
     @Override
     public void writeTile(String pyramidId, String mosaicId, int tileX, int tileY, RenderedImage image) throws DataStoreException {
         final Pyramid pyram = findPyramidByID(pyramidId);
-        
+
         final List<GridMosaic> listGM = pyram.getMosaics();
         for (int id = 0, len = listGM.size(); id < len; id++) {
             final MPGridMosaic gm = (MPGridMosaic) listGM.get(id);
@@ -168,10 +169,10 @@ public class MPCoverageReference extends AbstractPyramidalModel {
             }
         }
     }
-    
+
     /**
      * Find and return Pyramid from pyramid set by its ID.
-     * 
+     *
      * @param pyramidId Pyramid to find.
      * @return Pyramid from pyramid set by its ID or {@code null} if no {@link Pyramid} is find.
      */

@@ -52,7 +52,7 @@ public class OSMTMSCoverageReference extends AbstractCoverageReference implement
     }
 
     @Override
-    public boolean isWritable() throws DataStoreException {
+    public boolean isWritable() throws CoverageStoreException {
         return false;
     }
 
@@ -60,22 +60,22 @@ public class OSMTMSCoverageReference extends AbstractCoverageReference implement
     public int getImageIndex() {
         return 0;
     }
-    
+
     @Override
     public CoverageStore getStore() {
         return server;
     }
 
     @Override
-    public GridCoverageReader createReader() throws CoverageStoreException {
+    public GridCoverageReader acquireReader() throws CoverageStoreException {
         final PyramidalModelReader reader = new PyramidalModelReader();
         reader.setInput(this);
         return reader;
     }
 
     @Override
-    public GridCoverageWriter createWriter() throws DataStoreException {
-        throw new DataStoreException("OSM TMS coverages are not writable.");
+    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
+        throw new CoverageStoreException("OSM TMS coverages are not writable.");
     }
 
     @Override
@@ -87,7 +87,7 @@ public class OSMTMSCoverageReference extends AbstractCoverageReference implement
     public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
-    
+
     @Override
     public void deletePyramid(String pyramidId) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
@@ -97,7 +97,7 @@ public class OSMTMSCoverageReference extends AbstractCoverageReference implement
     public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
-    
+
     @Override
     public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
@@ -117,7 +117,7 @@ public class OSMTMSCoverageReference extends AbstractCoverageReference implement
     public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
-    
+
     @Override
     public Image getLegend() throws DataStoreException {
         return null;

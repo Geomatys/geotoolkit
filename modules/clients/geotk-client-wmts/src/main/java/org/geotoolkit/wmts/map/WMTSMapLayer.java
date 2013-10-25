@@ -35,17 +35,17 @@ import org.opengis.feature.type.Name;
  * @module pending
  */
 public class WMTSMapLayer extends DefaultCoverageMapLayer {
-    
+
     /**
      * Query default format.
      */
     private static final String DEFAULT_FORMAT = "image/png";
-    
+
     /**
      * The server to request.
      */
     private final WebMapTileServer server;
-    
+
     private static CoverageReference getReference(WebMapTileServer server, String mapType){
         try {
             for(Name n : server.getNames()){
@@ -54,32 +54,31 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
                 }
             }
             throw new RuntimeException("Not layer for name : " + mapType);
-            
+
         } catch (DataStoreException ex) {
             throw new RuntimeException(ex);
         }
     }
-    
+
     public WMTSMapLayer(final WebMapTileServer server, String layerName) {
         super(getReference(server, layerName),
-              new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER),
-              new DefaultName("osm"));
+              new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
         setUserProperty(PyramidSet.HINT_FORMAT, DEFAULT_FORMAT);
         this.server = server;
     }
-    
+
     /**
      * Sets the format for the output response. By default sets to {@code image/png}.
-     * @param format 
+     * @param format
      */
     public void setFormat(final String format) {
         ArgumentChecks.ensureNonNull("format", format);
         setUserProperty(PyramidSet.HINT_FORMAT, format);
     }
-    
+
     /**
      * Gets the extension for the output response. By default {@code image/png}.
-     * @return 
+     * @return
      */
     public String getFormat() {
         Object val = getUserProperty(PyramidSet.HINT_FORMAT);
@@ -101,7 +100,7 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
     }
 
     /**
-     * @param tileSetStyle 
+     * @param tileSetStyle
      */
     public void setTileSetStyle(String tileSetStyle) {
         ArgumentChecks.ensureNonNull("tileSetStyle", tileSetStyle);
@@ -110,10 +109,10 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
 
     /**
      * Returns the {@link WebMapTileServer} to request. Can't be {@code null}.
-     * @return 
+     * @return
      */
     public WebMapTileServer getServer() {
         return server;
     }
-   
+
 }

@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.measure.NumberRange;
@@ -34,6 +33,7 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.resources.Vocabulary;
 import org.opengis.coverage.SampleDimensionType;
 
@@ -58,7 +58,7 @@ public class XMLCoverageReference extends AbstractPyramidalModel {
     }
 
     @Override
-    public boolean isWritable() throws DataStoreException {
+    public boolean isWritable() throws CoverageStoreException {
         return true;
     }
 

@@ -17,34 +17,19 @@
 package org.geotoolkit.map;
 
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.opengis.feature.type.Name;
 
 /**
  * MapLayer handeling coverages.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public interface CoverageMapLayer extends MapLayer{
 
-    Name getCoverageName();
-    
     /**
-     * @return int image index in reader.
-     */
-    int getImageIndex();
-        
-    /**
-     * CoverageReader used to obtain GridCoverages.
-     * @return GridCoverageReader
-     */
-    GridCoverageReader getCoverageReader();
-        
-    /**
-     * If layer is from a coverage store, returns it's reference
-     * @return CoverageReference, can be null.
+     * Reference to coverage.
+     * @return CoverageReference, never null.
      */
     CoverageReference getCoverageReference();
-    
+
 }

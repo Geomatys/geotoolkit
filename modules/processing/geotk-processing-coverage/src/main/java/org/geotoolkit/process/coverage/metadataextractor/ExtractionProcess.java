@@ -66,7 +66,7 @@ public class ExtractionProcess extends AbstractProcess {
             //TODO : add a convenience method into coverage interface to get metadata
         } else if (input instanceof CoverageReference) {
             try {
-                reader = ((CoverageReference)input).createReader();
+                reader = ((CoverageReference)input).acquireReader();
             } catch (DataStoreException ex) {
                 Logger.getLogger(ExtractionProcess.class.getName()).log(Level.SEVERE, null, ex);
             }

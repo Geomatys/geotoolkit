@@ -590,8 +590,8 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         }
         if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer)layer;
-            final GridCoverageReader reader = cml.getCoverageReader();
             try {
+                final GridCoverageReader reader = cml.getCoverageReference().acquireReader();
                 final List<? extends GenericName> names = reader.getCoverageNames();
                 int imageIndex = 0;
                 final CoverageReference ref = cml.getCoverageReference();
@@ -745,7 +745,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
     private void getInterpolationPoints(final GridCoverageReader reader, final CoverageMapLayer cml, List<Entry<Double, Color>> steps) throws CoverageStoreException {
         //we explore the image and try to find the min and max
-        Map<String,Object> an = StatisticOp.analyze(reader,cml.getImageIndex());
+        Map<String,Object> an = StatisticOp.analyze(reader,cml.getCoverageReference().getImageIndex());
         final double[] minArray = (double[])an.get(StatisticOp.MINIMUM);
         final double[] maxArray = (double[])an.get(StatisticOp.MAXIMUM);
         final double min = findExtremum(minArray, true);

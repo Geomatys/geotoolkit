@@ -24,6 +24,7 @@ import javax.imageio.ImageWriter;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
@@ -62,24 +63,24 @@ public class FileCoverageReference extends AbstractCoverageReference{
     }
 
     @Override
-    public GridCoverageReader createReader() throws DataStoreException{
+    public GridCoverageReader acquireReader() throws CoverageStoreException{
         final ImageCoverageReader reader = new ImageCoverageReader();
         try {
             final ImageReader ioreader =store.createReader(file);
             reader.setInput(ioreader);
         } catch (IOException ex) {
-            throw new DataStoreException(ex.getMessage(),ex);
+            throw new CoverageStoreException(ex.getMessage(),ex);
         }
         return reader;
     }
 
     @Override
-    public GridCoverageWriter createWriter() throws DataStoreException {
+    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
         final ImageCoverageWriter writer = new ImageCoverageWriter();
         try {
             writer.setOutput(store.createWriter(file));
         } catch (IOException ex) {
-            throw new DataStoreException(ex.getMessage(),ex);
+            throw new CoverageStoreException(ex.getMessage(),ex);
         }
         return writer;
     }
@@ -93,7 +94,7 @@ public class FileCoverageReference extends AbstractCoverageReference{
     public int getImageIndex() {
         return imageIndex;
     }
-    
+
     @Override
     public CoverageStore getStore() {
         return store;

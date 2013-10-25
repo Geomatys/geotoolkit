@@ -299,7 +299,7 @@ public final class GO2Utilities {
         renderingContext.switchToObjectiveCRS();
 
         RenderedImage img = dataCoverage.getRenderedImage();
-        
+
         if(!sameCRS){
             //will be reprojected, we must check that image has alpha support
             //otherwise we will have black borders after reprojection
@@ -323,7 +323,7 @@ public final class GO2Utilities {
                 img = buffer;
             }
         }
-        
+
         final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
         if(trs2D instanceof AffineTransform){
             g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
@@ -601,11 +601,11 @@ public final class GO2Utilities {
 
     /**
      * Calculate the most accurate pixel resolution for the given envelope.
-     * 
+     *
      * @param context2D
      * @param wanted
      * @return double, in envelope crs unit by pixel
-     * @throws TransformException 
+     * @throws TransformException
      */
     public static double pixelResolution(final RenderingContext2D context2D, final Envelope wanted) throws TransformException{
         final Dimension dim = context2D.getCanvasDisplayBounds().getSize();
@@ -616,20 +616,20 @@ public final class GO2Utilities {
         //wanted dpi.
         dim.width /= resolution[0];
         dim.height /= resolution[1];
-        
+
         final MathTransform objToDisp = context2D.getObjectiveToDisplay();
-        
+
         Envelope cropped = wanted;
         if(!CRS.equalsApproximatively(context2D.getCanvasObjectiveBounds2D(), wanted.getCoordinateReferenceSystem())){
             cropped = CRS.transform(wanted, context2D.getObjectiveCRS2D());
         }
-        
+
         cropped = CRS.transform(objToDisp, cropped);
-        
+
         //we assume we only have a regular
-        return wanted.getSpan(0) / cropped.getSpan(0);  
+        return wanted.getSpan(0) / cropped.getSpan(0);
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // renderers cache /////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -795,11 +795,6 @@ public final class GO2Utilities {
             return cov;
         }
 
-
-
-
-
-
         return reader.read(0, params);
     }
 
@@ -813,7 +808,7 @@ public final class GO2Utilities {
         final ParameterValueGroup result = process.call();
         return (GridCoverage2D) result.parameter("result").getValue();
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // some scale utility methods //////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -897,10 +892,10 @@ public final class GO2Utilities {
 
     /**
      * Compute Euclidean distance between a point and a line define by 2 points (ptA, ptB).
-     * 
+     *
      * @param point
      * @param ptA
-     * @param ptB 
+     * @param ptB
      */
     public static double euclidianDistance(final double[] point, final double[] ptA, final double[] ptB) {
         ArgumentChecks.ensureNonNull("point", point);
@@ -933,7 +928,7 @@ public final class GO2Utilities {
             return Math.sqrt(dist / normU);
         }
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // information about styles ////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -1114,7 +1109,7 @@ public final class GO2Utilities {
         }
         return names;
     }
-    
+
     public static Set<String> propertiesCachedNames(final Collection<CachedRule> rules){
         final Set<String> atts = new HashSet<String>();
         for(final CachedRule r : rules){
@@ -1171,7 +1166,7 @@ public final class GO2Utilities {
                         final GeometryType gtype = type.getGeometryDescriptor().getType();
                         ctype = gtype.getBinding();
                     }
-                    
+
                     boolean valid = false;
 
                     for(SemanticType semantic : semantics){
@@ -1371,13 +1366,13 @@ public final class GO2Utilities {
 
     public static CachedSymbolizer getCached(Symbolizer symbol,final ComplexType expected){
         CachedSymbolizer value;
-        
+
         if(expected != null){
             //optimize the symbolizer before caching it
             final StyleVisitor sv = new PrepareStyleVisitor(Feature.class, expected);
             symbol = (Symbolizer)symbol.accept(sv, null);
         }
-        
+
         final SymbolizerRendererService renderer = findRenderer(symbol.getClass());
         if(renderer != null){
             value = renderer.createCachedSymbolizer(symbol);
@@ -1385,8 +1380,8 @@ public final class GO2Utilities {
             throw new IllegalStateException("No renderer for the style "+ symbol);
         }
         return value;
-        
-        
+
+
 //        CachedSymbolizer value = CACHE.peek(symbol);
 //        if (value == null) {
 //            Cache.Handler<CachedSymbolizer> handler = CACHE.lock(symbol);

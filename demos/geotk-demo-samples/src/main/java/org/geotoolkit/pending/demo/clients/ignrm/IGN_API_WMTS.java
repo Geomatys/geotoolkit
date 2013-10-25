@@ -24,37 +24,37 @@ import org.opengis.parameter.ParameterValueGroup;
  * an account can be granted here : http://api.ign.fr
  */
 public class IGN_API_WMTS {
-    
+
     public static void main(String[] args) throws Exception {
-        
+
         final String key = "yourkey";
         final String login = "yourlogin";
         final String password = "yourpassword";
-        
-        final ClientSecurity authentication = new BasicAuthenticationSecurity(login, password);        
+
+        final ClientSecurity authentication = new BasicAuthenticationSecurity(login, password);
         final URL url = new URL("https://gpp3-wxs.ign.fr/"+key+"/wmts?");
-        
+
         final ParameterValueGroup params = WMTSServerFactory.PARAMETERS.createValue();
         Parameters.getOrCreate(WMTSServerFactory.URL, params).setValue(url);
         Parameters.getOrCreate(WMTSServerFactory.SECURITY, params).setValue(authentication);
         Parameters.getOrCreate(WMTSServerFactory.IMAGE_CACHE, params).setValue(true);
         Parameters.getOrCreate(WMTSServerFactory.NIO_QUERIES, params).setValue(true);
-        
+
         final WebMapTileServer store = (WebMapTileServer) CoverageStoreFinder.open(params);
-        
-        
+
+
         final MapContext context = MapBuilder.createContext();
-        
+
         for(Name n : store.getNames()){
-            final CoverageReference cr = store.getCoverageReference(n);            
-            final CoverageMapLayer cml = MapBuilder.createCoverageLayer(cr, RandomStyleBuilder.createDefaultRasterStyle(), "");
+            final CoverageReference cr = store.getCoverageReference(n);
+            final CoverageMapLayer cml = MapBuilder.createCoverageLayer(cr);
             cml.setDescription(new DefaultDescription(new SimpleInternationalString(n.getLocalPart()), new SimpleInternationalString("")));
             context.layers().add(cml);
         }
-        
-        
+
+
         JMap2DFrame.show(context,true,null);
-        
+
     }
-    
+
 }

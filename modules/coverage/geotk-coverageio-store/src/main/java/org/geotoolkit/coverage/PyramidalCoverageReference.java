@@ -21,6 +21,7 @@ import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -41,7 +42,7 @@ public interface PyramidalCoverageReference extends CoverageReference{
      *
      * @return true if model can be modified
      */
-    boolean isWritable() throws DataStoreException;
+    boolean isWritable() throws CoverageStoreException;
 
     /**
      * Create SampleDimension.
@@ -62,7 +63,7 @@ public interface PyramidalCoverageReference extends CoverageReference{
     /**
      * Delete given pyramid.
      *
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     void deletePyramid(String pyramidId) throws DataStoreException;
 
@@ -74,7 +75,7 @@ public interface PyramidalCoverageReference extends CoverageReference{
      * @param upperleft : upperleft corner position in pyramid crs
      * @param pixelscale : size of a pixel in crs unit
      * @return created mosaic
-     * @throws DataStoreException  
+     * @throws DataStoreException
      */
     GridMosaic createMosaic(String pyramidId, Dimension gridSize,
              Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException;
@@ -82,7 +83,7 @@ public interface PyramidalCoverageReference extends CoverageReference{
     /**
      * Delete given mosaic.
      *
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException;
 
@@ -94,7 +95,7 @@ public interface PyramidalCoverageReference extends CoverageReference{
      * @param mosaicId
      * @param image
      * @param onlyMissing : set to true to fill only missing tiles
-     * @throws DataStoreException  
+     * @throws DataStoreException
      */
     void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing) throws DataStoreException;
 
@@ -107,7 +108,7 @@ public interface PyramidalCoverageReference extends CoverageReference{
      * @param tileX : position of the tile , column
      * @param tileY : position of the tile , row
      * @param image : image to insert
-     * @throws DataStoreException  
+     * @throws DataStoreException
      */
     void writeTile(String pyramidId, String mosaicId, int tileX, int tileY, RenderedImage image) throws DataStoreException;
 

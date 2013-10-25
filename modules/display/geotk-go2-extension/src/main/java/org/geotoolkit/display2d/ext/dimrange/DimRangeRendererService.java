@@ -86,12 +86,10 @@ public class DimRangeRendererService extends AbstractSymbolizerRendererService<D
 
         if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
-            final GridCoverageReader reader = cml.getCoverageReader();
-
-
-            final GridCoverageReadParam param = new GridCoverageReadParam();
-            param.setResolution(1,1);
             try {
+                final GridCoverageReader reader = cml.getCoverageReference().acquireReader();
+                final GridCoverageReadParam param = new GridCoverageReadParam();
+                param.setResolution(1,1);
                 GridCoverage2D cov = (GridCoverage2D) reader.read(0, param);
                 cov = cov.view(ViewType.NATIVE);
                 RenderedImage img = cov.getRenderedImage();

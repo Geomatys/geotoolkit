@@ -98,7 +98,7 @@ public class J2DLegendUtilities {
         if (template == null) {
             //no template generate a glyph
             paintNoTemplate(item, g2d, bounds);
-        
+
         } else {
             float X = bounds.x, Y = bounds.y;
 
@@ -121,7 +121,7 @@ public class J2DLegendUtilities {
                 BackgroundUtilities.paint(g2d, area, background);
             }
 
-            g2d.translate(X, Y);            
+            g2d.translate(X, Y);
             paintWithTemplate(item, g2d, bounds, template, legendResults);
             g2d.translate(-X, -Y);
         }
@@ -143,7 +143,7 @@ public class J2DLegendUtilities {
             }
         }
     }
-    
+
     private static void paintWithTemplate(
             final MapItem item,
             final Graphics2D g2d,
@@ -159,16 +159,16 @@ public class J2DLegendUtilities {
         final Dimension glyphSize = template.getGlyphSize();
         final Rectangle2D rectangle = new Rectangle2D.Float();
         float moveY = 0;
-            
+
         final List<MapItem> layers = item.items();
         for (int l = 0, n = layers.size(); l < n; l++) {
             final MapItem currentItem = layers.get(l);
-            
+
             //check if the given layer is visible, and if we should display invisible layers.
             if (template.displayOnlyVisibleLayers() && !currentItem.isVisible()) {
                 continue;
             }
-            
+
             // Check for current item title.
             if (template.isLayerVisible()) {
                 if (l != 0) {
@@ -195,7 +195,7 @@ public class J2DLegendUtilities {
                     moveY += gapSize;
                 }
             }
-            
+
             // If we're not on a leaf, try to display this node children.
             if (!(currentItem instanceof MapLayer)) {
                 // Using double allows origin relative translation.
@@ -215,7 +215,7 @@ public class J2DLegendUtilities {
             if (layer instanceof DefaultCoverageMapLayer) {
                 final DefaultCoverageMapLayer covLayer = (DefaultCoverageMapLayer)layer;
                 // Get the image from the ones previously stored, to not resend a get legend graphic request.
-                final BufferedImage image = legendResults.get(covLayer.getCoverageName());
+                final BufferedImage image = legendResults.get(covLayer.getCoverageReference().getName().getLocalPart());
                 if (image == null) {
                     break wmscase;
                 }
@@ -295,11 +295,11 @@ public class J2DLegendUtilities {
                 }
             }
         }
-        
+
         g2d.translate(0, -moveY);
     }
-    
-    
+
+
     /**
      * Paint a legend using Java2D.
      *
@@ -351,10 +351,10 @@ public class J2DLegendUtilities {
      * @param mapitem The mapItem we want legend for.
      * @param template The {@link LegendTemplate} defining legend paniting rules.
      * Can be null.
-     * @param considerBackground A boolean to specify if we must count input 
-     * {@link LegendTemplate} background margins in the result size (true) or 
+     * @param considerBackground A boolean to specify if we must count input
+     * {@link LegendTemplate} background margins in the result size (true) or
      * not (false).
-     * 
+     *
      * @return An estimation of the size (pixels) needed to display the complete
      * legend of the input map item.
      */
@@ -370,10 +370,10 @@ public class J2DLegendUtilities {
      * Can be null.
      * @param images A map in which we'll store eventual legend we generated
      * during the process (key = layer name, value = layer legend). Can be null.
-     * @param considerBackground A boolean to specify if we must count input 
-     * {@link LegendTemplate} background margins in the result size (true) or 
+     * @param considerBackground A boolean to specify if we must count input
+     * {@link LegendTemplate} background margins in the result size (true) or
      * not (false).
-     * 
+     *
      * @return An estimation of the size (pixels) needed to display the complete
      * legend of the input map item.
      */
@@ -394,11 +394,11 @@ public class J2DLegendUtilities {
         if (template == null) {
             //fallback on glyph size
             estimateNoTemplate(mapitem, dim);
-            
+
         } else {
             estimateWithTemplate(g, mapitem, dim, template, images, considerBackground);
         }
-        
+
         checkMinimumSize(dim);
         return dim;
     }
@@ -411,24 +411,24 @@ public class J2DLegendUtilities {
      */
     private static void estimateNoTemplate(MapItem source, Dimension toSet) {
         for (MapItem childItem : source.items()) {
-            
+
             if (childItem instanceof MapLayer) {
                 final MapLayer ml = (MapLayer) childItem;
-                final Dimension preferred = new Dimension(0, 0); 
+                final Dimension preferred = new Dimension(0, 0);
                 DefaultGlyphService.glyphPreferredSize(ml.getStyle(), preferred, ml);
                 if (preferred != null) {
                     if (preferred.width > toSet.width) {
                         toSet.width = preferred.width;
                     }
-                    toSet.height += preferred.height;                    
+                    toSet.height += preferred.height;
                 }
-                
+
             } else {
                 estimateNoTemplate(childItem, toSet);
             }
         }
     }
-    
+
     /**
      * Estimate the size (pixels) needed to render the given {@link MapItem} legend
      * using the input rendering hint (see {@link LegendTemplate}).
@@ -438,18 +438,18 @@ public class J2DLegendUtilities {
      * @param template the {@link LegendTemplate} to use as rendering hint.
      * @param images A map in which we'll store eventual legend we generated
      * during the process (key = layer name, value = layer legend). Can be null.
-     * @param considerBackground A boolean to specify if we must count input 
-     * {@link LegendTemplate} background margins in the result size (true) or 
+     * @param considerBackground A boolean to specify if we must count input
+     * {@link LegendTemplate} background margins in the result size (true) or
      * not (false).
      */
     private static void estimateWithTemplate(
-            final Graphics2D g2d, 
-            final MapItem source, 
-            final Dimension toSet, 
+            final Graphics2D g2d,
+            final MapItem source,
+            final Dimension toSet,
             final LegendTemplate template,
-            final Map<Name,BufferedImage> images, 
+            final Map<Name,BufferedImage> images,
             final boolean considerBackground) {
-        
+
         final FontMetrics layerFontMetric = g2d.getFontMetrics(template.getLayerFont());
         final int layerFontHeight = layerFontMetric.getHeight();
         final FontMetrics ruleFontMetric = g2d.getFontMetrics(template.getRuleFont());
@@ -458,18 +458,18 @@ public class J2DLegendUtilities {
 
         final List<MapItem> childItems = source.items();
         for (int l = 0, n = childItems.size(); l < n; l++) {
-            
-            final MapItem currentItem = childItems.get(l);            
+
+            final MapItem currentItem = childItems.get(l);
             if (template.displayOnlyVisibleLayers() && !currentItem.isVisible()) {
                 continue;
             }
-            
+
             // Determines space to reserve for title.
             if (template.isLayerVisible()) {
                 if (l != 0) {
                     toSet.height += template.getGapSize();
                 }
-                
+
                 String title = "";
                 final Description description = currentItem.getDescription();
                 if (description != null) {
@@ -479,7 +479,7 @@ public class J2DLegendUtilities {
                     }
                     if(title.isEmpty() && currentItem.getName() != null) {
                         title = currentItem.getName();
-                    } 
+                    }
                 }
                 final int width = layerFontMetric.stringWidth(title);
 
@@ -489,14 +489,14 @@ public class J2DLegendUtilities {
                 }
                 toSet.height += template.getGapSize();
             }
-                        
+
             if (!(currentItem instanceof MapLayer)) {
                 estimateWithTemplate(g2d, currentItem, toSet, template, images, considerBackground);
                 continue;
             }
 
             final MapLayer layer = (MapLayer) currentItem;
-            
+
             // Launch a get legend request and take the dimensions from the result
             testwms:
             if (layer instanceof DefaultCoverageMapLayer) {
@@ -530,7 +530,7 @@ public class J2DLegendUtilities {
                         sb.append("?");
                     }
                     sb.append("request=GetLegendGraphic&service=WMS&format=image/png&layer=")
-                      .append(covLayer.getCoverageName());
+                      .append(covLayer.getCoverageReference().getName().getLocalPart());
 
                     try {
                         final URL getLegendUrl = new URL(sb.toString());
@@ -549,9 +549,9 @@ public class J2DLegendUtilities {
                     }
 
                     if(images != null){
-                        images.put(covLayer.getCoverageName(), image);
+                        images.put(covLayer.getCoverageReference().getName(), image);
                     }
-                    
+
                     continue;
                 }
             }
@@ -582,7 +582,7 @@ public class J2DLegendUtilities {
                     //calculate the glyph size
                     final int glyphHeight;
                     final int glyphWidth;
-                    
+
                     final Dimension preferred = DefaultGlyphService.glyphPreferredSize(rule, glyphSize, layer);
                     if (glyphSize == null) {
                         //find the best size
@@ -614,8 +614,8 @@ public class J2DLegendUtilities {
             toSet.height += insets.bottom + insets.top;
         }
     }
-    
-    
+
+
     private static void checkMinimumSize(final Dimension dim) {
         if (dim.width == 0) {
             dim.width = 1;

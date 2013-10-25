@@ -77,7 +77,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
         this();
         try {
             final CoverageReference ref = create(new DefaultName(getDefaultNamespace(), name));
-            ref.createWriter().write(gridCov, null);
+            ref.acquireWriter().write(gridCov, null);
         } catch (CoverageStoreException ex) {
             getLogger().log(Level.WARNING, ex.getMessage(), ex);
         } catch (CancellationException ex) {
@@ -128,12 +128,10 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
 
     private class MemoryCoverageReference extends DefaultCoverageReference{
 
-        private final Name name;
         private GridCoverage2D coverage;
 
         public MemoryCoverageReference(Name name) {
-            super(null, 0);
-            this.name = name;
+            super(null,name);
         }
 
         public void setCoverage(GridCoverage2D coverage) {
@@ -143,22 +141,17 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
         }
 
         @Override
-        public Name getName() {
-            return name;
-        }
-
-        @Override
         public MemoryCoverageStore getStore() {
             return MemoryCoverageStore.this;
         }
 
         @Override
-        public GridCoverageWriter createWriter() throws DataStoreException {
+        public GridCoverageWriter acquireWriter() throws CoverageStoreException {
             return new MemoryCoverageWriter(this);
         }
 
         @Override
-        public GridCoverageReader createReader() throws DataStoreException {
+        public GridCoverageReader acquireReader() throws CoverageStoreException {
             return new MemoryCoverageReader(this);
         }
 
@@ -212,7 +205,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
         }
 
     }
-    
+
 	@Override
 	public CoverageType getType() {
 		return CoverageType.GRID;

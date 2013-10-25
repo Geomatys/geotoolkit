@@ -54,18 +54,18 @@ public class WMTSCoverageReference extends AbstractCoverageReference implements 
     }
 
     @Override
-    public boolean isWritable() throws DataStoreException {
+    public boolean isWritable() throws CoverageStoreException {
         return false;
     }
-    
+
     @Override
     public int getImageIndex() {
         return 0;
     }
 
     @Override
-    public GridCoverageWriter createWriter() throws DataStoreException {
-        throw new DataStoreException("WMTS coverage are not writable.");
+    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
+        throw new CoverageStoreException("WMTS coverage are not writable.");
     }
 
     @Override
@@ -74,7 +74,7 @@ public class WMTSCoverageReference extends AbstractCoverageReference implements 
     }
 
     @Override
-    public GridCoverageReader createReader() throws CoverageStoreException {
+    public GridCoverageReader acquireReader() throws CoverageStoreException {
         final PyramidalModelReader reader = new PyramidalModelReader();
         reader.setInput(this);
         return reader;
@@ -89,7 +89,7 @@ public class WMTSCoverageReference extends AbstractCoverageReference implements 
     public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
-    
+
     @Override
     public void deletePyramid(String pyramidId) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
@@ -99,7 +99,7 @@ public class WMTSCoverageReference extends AbstractCoverageReference implements 
     public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
-    
+
     @Override
     public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
@@ -119,7 +119,7 @@ public class WMTSCoverageReference extends AbstractCoverageReference implements 
     public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
-    
+
     public Image getLegend() throws DataStoreException {
         return null;
     }

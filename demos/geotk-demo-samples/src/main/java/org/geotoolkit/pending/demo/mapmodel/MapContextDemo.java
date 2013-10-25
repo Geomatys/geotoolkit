@@ -40,7 +40,7 @@ public class MapContextDemo {
 
     public static void main(String[] args) throws Exception{
         Demos.init();
-        
+
         //preloading parameters --------------
         WorldFileImageReader.Spi.registerDefaults(null);
         Registry.setDefaultCodecPreferences();
@@ -56,9 +56,7 @@ public class MapContextDemo {
         final FeatureMapLayer featureLayer = MapBuilder.createFeatureLayer(features, featureStyle);
 
         //create a coverage layer
-        final GridCoverageReader reader = openWorldFile();
-        final MutableStyle coverageStyle = SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
-        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(reader, 0, coverageStyle,"coverage");
+        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(new File("data/clouds.jpg"));
 
         //add all layers in the context
         context.layers().add(coverageLayer);
@@ -66,8 +64,8 @@ public class MapContextDemo {
 
         //quickly test if it works
         JMap2DFrame.show(context);
-        
-        
+
+
         //Build the context in a tree structure
         //context.items().clear();
         //
@@ -84,7 +82,7 @@ public class MapContextDemo {
         //context.items().add(datagroup);
         //
         //JMap2DFrame.show(context);
-        
+
     }
 
     public static FeatureCollection openShapeFile() throws Exception{

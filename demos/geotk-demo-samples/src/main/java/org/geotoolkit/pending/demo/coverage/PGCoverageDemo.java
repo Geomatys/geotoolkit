@@ -67,7 +67,7 @@ public class PGCoverageDemo {
 
         final CoverageReference ref = store.getCoverageReference(new DefaultName(LAYER_NAME));
         final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref,
-                new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "layer");
+                new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
 
         final MapContext ctx = MapBuilder.createContext();
         ctx.layers().add(layer);

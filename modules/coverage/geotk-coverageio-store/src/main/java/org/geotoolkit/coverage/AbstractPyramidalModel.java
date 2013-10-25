@@ -64,14 +64,14 @@ public abstract class AbstractPyramidalModel extends AbstractCoverageReference i
     }
 
     @Override
-    public GridCoverageReader createReader() throws DataStoreException {
+    public GridCoverageReader acquireReader() throws CoverageStoreException {
         final PyramidalModelReader reader = new PyramidalModelReader();
         reader.setInput(this);
         return reader;
     }
 
     @Override
-    public GridCoverageWriter createWriter() throws DataStoreException {
+    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
         if(isWritable()){
             return new PyramidalModelWriter(this);
         }else{

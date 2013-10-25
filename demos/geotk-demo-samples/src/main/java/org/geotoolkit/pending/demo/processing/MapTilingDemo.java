@@ -128,7 +128,7 @@ public class MapTilingDemo {
         final MapContext context = MapBuilder.createContext();
 
         for(Name n : store.getNames()){
-            final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.getCoverageReference(n), RandomStyleBuilder.createDefaultRasterStyle(), "n");
+            final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.getCoverageReference(n));
             context.layers().add(layer);
         }
 

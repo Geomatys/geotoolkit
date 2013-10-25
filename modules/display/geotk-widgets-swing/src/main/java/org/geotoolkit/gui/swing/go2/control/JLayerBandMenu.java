@@ -115,15 +115,15 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
         if(context == null){
             return;
         }
-        
+
         removeAll();
         final List<MapLayer> layers = new ArrayList<MapLayer>();
         parseItem(context, layers);
-        
+
         for(final MapLayer layer : layers){
             add(new LayerPane(layer));
         }
-        
+
         if(event == null){
             return;
         }
@@ -136,7 +136,8 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
                 if(ml instanceof CoverageMapLayer){
                     final CoverageMapLayer cml = (CoverageMapLayer) ml;
                     try {
-                        crs = cml.getCoverageReader().getGridGeometry(cml.getImageIndex()).getCoordinateReferenceSystem();
+                        crs = cml.getCoverageReference().acquireReader().getGridGeometry(
+                                cml.getCoverageReference().getImageIndex()).getCoordinateReferenceSystem();
                     } catch (Exception ex) {
                         //we tryed ...
                     }
@@ -187,10 +188,10 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
         for (MapItem item : items) {
             parseItem(item, layers);
         }
-        
+
         final CollectionChangeEvent newEvent = new CollectionChangeEvent(
                 event.getSource(), layers, event.getType(), event.getRange(), event);
-        
+
         layerChange(newEvent);
     }
 
@@ -203,7 +204,7 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
             }
         }
     }
-    
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         final String propName = evt.getPropertyName();

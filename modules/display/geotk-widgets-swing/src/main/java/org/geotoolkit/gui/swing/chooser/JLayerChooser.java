@@ -68,14 +68,14 @@ import org.opengis.feature.type.Name;
  * @module pending
  */
 public class JLayerChooser extends javax.swing.JPanel {
-    
+
     private static final Comparator SORTER = new Comparator() {
 
         @Override
         public int compare(Object o1, Object o2) {
             final String str1;
             final String str2;
-            
+
             if(o1 instanceof FeatureType){
                 str1 = ((FeatureType)o1).getName().getLocalPart();
             }else if(o1 instanceof Name){
@@ -83,7 +83,7 @@ public class JLayerChooser extends javax.swing.JPanel {
             }else{
                 str1 = o1.toString();
             }
-            
+
             if(o2 instanceof FeatureType){
                 str2 = ((FeatureType)o2).getName().getLocalPart();
             }else if(o2 instanceof Name){
@@ -91,26 +91,26 @@ public class JLayerChooser extends javax.swing.JPanel {
             }else{
                 str2 = o2.toString();
             }
-            
+
             return str1.compareToIgnoreCase(str2);
         }
     };
-    
+
     private Object source = null;
-    
+
     public JLayerChooser() {
         initComponents();
         guiList.setCellRenderer(new NameCellRenderer());
     }
-    
+
     public List<MapLayer> getLayers() throws DataStoreException{
-                
+
         final MutableStyleFactory styleFactory = (MutableStyleFactory) FactoryFinder.getStyleFactory(
                             new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
-        
+
         final Object[] values = guiList.getSelectedValuesList().toArray();
         final List<MapLayer> layers = new ArrayList<>();
-        
+
         if(values != null){
             for(Object value : values){
                 final Name name;
@@ -119,7 +119,7 @@ public class JLayerChooser extends javax.swing.JPanel {
                 }else{
                     name = (Name) value;
                 }
-                
+
                 if(source instanceof FeatureStore){
                     final FeatureStore store = (FeatureStore) source;
                     final Session session = store.createSession(true);
@@ -128,27 +128,27 @@ public class JLayerChooser extends javax.swing.JPanel {
                     final FeatureMapLayer layer = MapBuilder.createFeatureLayer(collection, style);
                     layer.setDescription(styleFactory.description(name.getLocalPart(), name.toString()));
                     layers.add(layer);
-                    
+
                 }else if(source instanceof CoverageStore){
-                    final CoverageStore store = (CoverageStore) source;                    
+                    final CoverageStore store = (CoverageStore) source;
                     final CoverageReference ref = store.getCoverageReference(name);
                     final MutableStyle style = styleFactory.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
-                    final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref, style, name.getLocalPart());
+                    final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref, style);
                     layer.setDescription(styleFactory.description(name.getLocalPart(), name.toString()));
                     layers.add(layer);
                 }
             }
         }
-        
+
         return layers;
     }
 
     public void setSource(Object source) throws DataStoreException {
         this.source = source;
-        
+
         final List firstCandidates = new ArrayList<>();
         final List secondCandidates = new ArrayList<>();
-        
+
         if(source instanceof FeatureStore){
             final FeatureStore store = (FeatureStore) source;
             for(Name name : store.getNames()){
@@ -160,29 +160,29 @@ public class JLayerChooser extends javax.swing.JPanel {
                 }
             }
         }
-        
+
         if(source instanceof CoverageStore){
             final CoverageStore store = (CoverageStore) source;
             firstCandidates.addAll(store.getNames());
         }
-        
-        
+
+
         Collections.sort(firstCandidates, SORTER);
-        
+
         if(!secondCandidates.isEmpty()){
             Collections.sort(secondCandidates, SORTER);
-            
+
             firstCandidates.add(new JSeparator());
             firstCandidates.addAll(secondCandidates);
         }
-        
+
         guiList.setModel(new ListComboBoxModel(firstCandidates));
     }
 
     public Object getSource() {
         return source;
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -213,44 +213,44 @@ public class JLayerChooser extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
-    
+
     /**
      * Display a modal dialog.
-     * 
+     *
      * @param source
      * @return
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     public static List<MapLayer> showDialog(Object source) throws DataStoreException{
         final JLayerChooser chooser = new JLayerChooser();
         chooser.setSource(source);
-        
+
         final int res = JOptionDialog.show(null, chooser, JOptionPane.OK_OPTION);
-        
+
         if (JOptionPane.OK_OPTION == res) {
             return chooser.getLayers();
         } else {
             return Collections.EMPTY_LIST;
         }
     }
-    
+
     private class NameCellRenderer extends DefaultListCellRenderer{
 
         @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            
+
             if(value instanceof Component){
                 return (Component)value;
             }
-            
+
             final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            
+
             lbl.setIcon(null);
-            
+
             if(value instanceof FeatureType){
                 final FeatureType ft = (FeatureType) value;
                 final FeatureStore store = (FeatureStore) getSource();
-                
+
                 final GeometryDescriptor desc = ft.getGeometryDescriptor();
                 if(desc != null){
                     ImageIcon icon;
@@ -270,14 +270,14 @@ public class JLayerChooser extends javax.swing.JPanel {
                     }else{
                         icon = IconBundle.EMPTY_ICON_16;
                     }
-                    
+
                     boolean editable = false;
                     try {
                         if(store.isWritable(ft.getName())){
                             editable = true;
                         }
                     } catch (DataStoreException ex) {}
-                    
+
                     if(!editable){
                         final BufferedImage img = new BufferedImage(
                                                         icon.getIconWidth(),
@@ -289,22 +289,22 @@ public class JLayerChooser extends javax.swing.JPanel {
                         g.drawImage(lock.getImage(), 0, 0, null);
                         icon = new ImageIcon(img);
                     }
-                    
+
                     lbl.setIcon(icon);
                 }
-                
+
                 value = ft.getName();
             }
-            
+
             if(value instanceof Name){
                 final Name name = (Name) value;
                 lbl.setText(name.getLocalPart());
                 lbl.setToolTipText(DefaultName.toJCRExtendedForm(name));
             }
-            
+
             return lbl;
         }
-        
+
     }
 
 }

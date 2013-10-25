@@ -53,7 +53,7 @@ public class WMSCCoverageReference extends WMSCoverageReference implements Pyram
     }
     
     @Override
-    public synchronized GridCoverageReader createReader() throws CoverageStoreException {
+    public synchronized GridCoverageReader acquireReader() throws CoverageStoreException {
         final PyramidalModelReader reader = new PyramidalModelReader();
         reader.setInput(this);
         return reader;

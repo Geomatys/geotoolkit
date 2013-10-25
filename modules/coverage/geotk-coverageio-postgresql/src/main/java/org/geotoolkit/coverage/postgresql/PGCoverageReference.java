@@ -66,6 +66,7 @@ import org.geotoolkit.coverage.wkb.WKBRasterWriter;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.apache.sis.measure.NumberRange;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.version.Version;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.feature.type.Name;
@@ -104,7 +105,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
     }
 
     @Override
-    public boolean isWritable() throws DataStoreException {
+    public boolean isWritable() throws CoverageStoreException {
         return true;
     }
 
@@ -114,14 +115,14 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
     }
 
     @Override
-    public GridCoverageReader createReader() throws DataStoreException {
+    public GridCoverageReader acquireReader() throws CoverageStoreException {
         final PyramidalModelReader reader = new PyramidalModelReader();
         reader.setInput(this);
         return reader;
     }
 
     @Override
-    public GridCoverageWriter createWriter() throws DataStoreException {
+    public GridCoverageWriter acquireWriter() throws CoverageStoreException {
         return new PyramidalModelWriter(this);
     }
 
@@ -471,7 +472,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             } else {
                 versionStr = PGVersionControl.UNSET;
             }
-            
+
             final StringBuilder query = new StringBuilder();
             if(versionSupport) {
                 query.append("SELECT \"id\",\"version\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\",\"min\",\"max\" ");

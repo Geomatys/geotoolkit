@@ -33,7 +33,7 @@ import org.apache.sis.util.ArgumentChecks;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMTMSMapLayer extends DefaultCoverageMapLayer {    
+public class OSMTMSMapLayer extends DefaultCoverageMapLayer {
 
     private static CoverageReference getReference(OSMTileMapServer server){
         try {
@@ -46,24 +46,23 @@ public class OSMTMSMapLayer extends DefaultCoverageMapLayer {
      * Query extension.
      */
     private static final String DEFAULT_FORMAT = ".png";
-    
-    
+
+
     public OSMTMSMapLayer(final OSMTileMapServer server) {
         super(getReference(server),
-              new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER),
-              new DefaultName("osm"));
+              new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
         setUserProperty(PyramidSet.HINT_FORMAT, DEFAULT_FORMAT);
     }
-       
+
     /**
      * Sets the extension for the output response. By default sets to {@code .png}.
-     * @param format 
+     * @param format
      */
     public void setFormat(final String format) {
         ArgumentChecks.ensureNonNull("format", format);
         setUserProperty(PyramidSet.HINT_FORMAT, format);
     }
-    
+
     /**
      * Gets the extension for the output response. By default {@code .png}.
      */
@@ -74,5 +73,5 @@ public class OSMTMSMapLayer extends DefaultCoverageMapLayer {
         }
         return null;
     }
-    
+
 }

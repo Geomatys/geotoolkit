@@ -29,6 +29,7 @@ import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.CoverageStoreManagementEvent;
 import org.geotoolkit.coverage.CoverageType;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.feature.DefaultName;
@@ -54,16 +55,16 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
 
     private static ParameterValueGroup adaptParameter(ParameterValueGroup parameters){
         final ParameterValueGroup params = CoverageDatabase.PARAMETERS.createValue();
-        
+
         final StringBuilder url = new StringBuilder("jdbc:postgresql://");
         url.append(parameters.parameter("host").getValue());
         url.append(':');
         url.append(parameters.parameter("port").getValue());
         url.append('/');
         url.append(parameters.parameter("database").getValue());
-        
+
         params.parameter("URL").setValue(url.toString());
-        
+
         if(parameters.parameter("user")!=null){
             params.parameter("user").setValue(parameters.parameter("user").getValue());
         }
@@ -78,7 +79,7 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
         }
         return params;
     }
-    
+
     public CoverageSQLStore(ParameterValueGroup parameters) {
         super(adaptParameter(parameters));
         this.parameters = parameters;
@@ -118,7 +119,7 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
     public CoverageReference getCoverageReference(Name name, Version version) throws DataStoreException {
         throw new DataStoreException("Versioning not supported");
     }
-    
+
     @Override
     public CoverageReference getCoverageReference(Name name) throws DataStoreException {
         return new CoverageSQLLayerReference(name);
@@ -185,7 +186,7 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
             listener.contentChanged(event);
         }
     }
-    
+
     private class CoverageSQLLayerReference extends AbstractCoverageReference {
 
         private final Name name;
@@ -215,14 +216,14 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
         }
 
         @Override
-        public GridCoverageReader createReader() throws DataStoreException {
+        public GridCoverageReader acquireReader() throws CoverageStoreException {
             final LayerCoverageReader reader = CoverageSQLStore.this.createGridCoverageReader(name.getLocalPart());
             return reader;
         }
 
         @Override
-        public GridCoverageWriter createWriter() throws DataStoreException {
-            throw new DataStoreException("Coverage is not writable.");
+        public GridCoverageWriter acquireWriter() throws CoverageStoreException {
+            throw new CoverageStoreException("Coverage is not writable.");
         }
 
         @Override
@@ -231,7 +232,7 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
         }
 
     }
-    
+
 	@Override
 	public CoverageType getType() {
 		return CoverageType.GRID;

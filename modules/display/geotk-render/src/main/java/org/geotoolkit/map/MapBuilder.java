@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.map;
 
-import java.util.Arrays;
 import java.util.Collection;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.DefaultCoverageReference;
@@ -27,26 +26,21 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
-import org.geotoolkit.coverage.memory.MemoryCoverageReader;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.style.StyleConstants;
-import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.feature.Feature;
-import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Utility class to create MapLayers, MapContexts and Elevation models from different sources.
  * This class is thread safe.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -67,7 +61,7 @@ public final class MapBuilder {
      * The crs is not used for rendering, it is only used when calling the getEnvelope
      * method.
      * @param crs : mapcontext CoordinateReferenceSystem
-     * @return MapContext 
+     * @return MapContext
      */
     public static MapContext createContext(final CoordinateReferenceSystem crs){
         return new DefaultMapContext(crs);
@@ -98,7 +92,7 @@ public final class MapBuilder {
     /**
      * Create a default collection map layer with a collection.
      * The style expect the default geometry property to be named 'Geometry'
-     * 
+     *
      * @param collection layer data collection
      * @param style layer style
      * @return CollectionMapLayer
@@ -108,7 +102,7 @@ public final class MapBuilder {
         final FilterFactory ff = FactoryFinder.getFilterFactory(null);
         final MutableStyle style = sf.style();
         final MutableFeatureTypeStyle fts = sf.featureTypeStyle();
-        
+
         final MutableRule rulePoint = sf.rule(StyleConstants.DEFAULT_POINT_SYMBOLIZER);
         rulePoint.setFilter(ff.or(
                                 ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("Point")),
@@ -124,15 +118,15 @@ public final class MapBuilder {
                                 ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("Polygon")),
                                 ff.equals(ff.function("geometryType", ff.property("geometry")), ff.literal("MultiPolygon"))
                             ));
-        
+
         fts.rules().add(rulePoint);
         fts.rules().add(ruleLine);
         fts.rules().add(rulePolygon);
         style.featureTypeStyles().add(fts);
-        
+
         return createCollectionLayer(collection, style);
     }
-    
+
     /**
      * Create a default collection map layer with a collection and a style.
      * @param collection layer data collection
@@ -157,39 +151,44 @@ public final class MapBuilder {
      * Create a default coverage map layer with a gridCoverage, a style and the grid name.
      * @param grid GridCoverage2D
      * @param style layer style
-     * @param name layer name
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverage2D grid, final MutableStyle style, final String name){
-        return createCoverageLayer(new MemoryCoverageReader(grid), 0, style, name);
+        final CoverageReference ref = new DefaultCoverageReference(grid, new DefaultName(name));
+        return createCoverageLayer(ref, style);
     }
 
     /**
-     * Create a default coverage map layer with a coverageReader, a style and the grid name.
-     * @param reader GridCoverageReader
-     * @param imageIndex image index in the reader
-     * @param style layer style
-     * @param name layer name
+     * Create a default coverage map layer with a image input.
+     * Default style is used.
+     *
+     * @param ref input
      * @return  CoverageMapLayer
      */
-    public static CoverageMapLayer createCoverageLayer(final GridCoverageReader reader, 
-            final int imageIndex, final MutableStyle style, final String name){
-        final CoverageReference ref = new DefaultCoverageReference(reader, imageIndex);
-        return createCoverageLayer(ref, style, name);
+    public static CoverageMapLayer createCoverageLayer(final Object input){
+        final CoverageReference reference = new DefaultCoverageReference(input, new DefaultName("image"));
+        return createCoverageLayer(reference);
+    }
+
+    /**
+     * Create a default coverage map layer with a coveragrReference.
+     * Default style is used.
+     *
+     * @param ref CoverageReference
+     * @return  CoverageMapLayer
+     */
+    public static CoverageMapLayer createCoverageLayer(final CoverageReference ref){
+        return new DefaultCoverageMapLayer(ref, RandomStyleBuilder.createDefaultRasterStyle());
     }
 
     /**
      * Create a default coverage map layer with a coveragrReference, a style and the grid name.
      * @param ref CoverageReference
      * @param style layer style
-     * @param name layer name
      * @return  CoverageMapLayer
      */
-    public static CoverageMapLayer createCoverageLayer(final CoverageReference ref, final MutableStyle style, final String name){
-        ensureNonNull("name", name);
-        final CoverageMapLayer layer = new DefaultCoverageMapLayer(ref, style, new DefaultName(name) );
-        layer.setDescription(new DefaultDescription(new SimpleInternationalString(name), new SimpleInternationalString(name)));
-        return layer;
+    public static CoverageMapLayer createCoverageLayer(final CoverageReference ref, final MutableStyle style){
+        return new DefaultCoverageMapLayer(ref, style);
     }
 
     /**

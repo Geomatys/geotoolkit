@@ -561,7 +561,7 @@ public class Styles {
                 name,geom,desc,uom,opacity, selection, overlap, colorMap, enchance, relief, outline);
         return SF.style(symbol);
     }
-    
+
     public static MutableStyle colorCategorizeRaster(){
 
         final Map<Expression, Expression> values = new HashMap<Expression, Expression>();
@@ -609,10 +609,9 @@ public class Styles {
 
 
         //create your maplayer with your datas
-        final GridCoverageReader readerData = null;
         final GridCoverageReader elevationData = null;
 
-        final MapLayer layer = MapBuilder.createCoverageLayer(readerData, 0, SF.style(shadedSymbolizer), "data");
+        final MapLayer layer = MapBuilder.createCoverageLayer(null, SF.style(shadedSymbolizer));
         final ElevationModel elevationModel = MapBuilder.createElevationModel(elevationData);
         //associate this elevation model to the layer.
         layer.setElevationModel(elevationModel);
@@ -737,8 +736,7 @@ public class Styles {
         context.setName("demo context");
         context.setDescription(SF.description("demo context", ""));
 
-        final GridCoverageReader reader = CoverageIO.createSimpleReader(new File("data/clouds.jpg"));
-        final MapLayer layer = MapBuilder.createCoverageLayer(reader, 0, style, "world");
+        final MapLayer layer = MapBuilder.createCoverageLayer(new File("data/clouds.jpg"));
         layer.setDescription(SF.description("raster", ""));
         layer.setName("raster");
         context.layers().add(layer);
