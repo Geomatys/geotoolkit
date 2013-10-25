@@ -43,7 +43,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  * Tests the usage of {@link CoordinateOperationFactory} with the help of the EPSG database.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 4.00
  *
  * @since 2.4
  */
@@ -73,7 +73,7 @@ public final strictfp class OperationFactoryTest extends EpsgFactoryTestBase {
 
     /**
      * Tests the creation of an operation from a geographic CRS to WGS84 which is expected
-     * to be explicitly described in the database. The transformation involve a datum shift.
+     * to be explicitly described in the database. The transformation involves a datum shift.
      *
      * @throws FactoryException Should not happen.
      */
@@ -97,8 +97,8 @@ public final strictfp class OperationFactoryTest extends EpsgFactoryTestBase {
         assertSame(sourceCRS, operation.getSourceCRS());
         assertSame(targetCRS, operation.getTargetCRS());
         assertSame(operation, opFactory.createOperation(sourceCRS, targetCRS));
-        assertEquals("1612", getIdentifier(operation)); // See comment in DefaultDataSourceTest.
-        assertEquals(1.0, AbstractCoordinateOperation.getAccuracy(operation), 1E-6);
+        assertEquals("1133", getIdentifier(operation)); // See comment in DefaultDataSourceTest.
+        assertEquals(10.0, AbstractCoordinateOperation.getAccuracy(operation), 1E-6);
         assertTrue(operation instanceof Transformation);
     }
 
@@ -194,5 +194,40 @@ public final strictfp class OperationFactoryTest extends EpsgFactoryTestBase {
                 "    PARAMETER[“elt_0_1”, 1.0],\n" +
                 "    PARAMETER[“elt_1_0”, 1.0],\n" +
                 "    PARAMETER[“elt_1_1”, 0.0]]]"), wkt);
+    }
+
+    /**
+     * Tests the selection of operations from NAD27 (EPSG:4267) or NAD83 (EPSG:4269)
+     * to WGS84 (EPSG:4326) in different geographic areas.
+     *
+     * <table>
+     *   <tr><td>NAD27</td><td>NAD83</td> <td>Area</td></tr>
+     *   <tr><td>15851</td><td>1188</td><td>CONUS</td></tr>
+     *   <tr> <td>8609</td><td>1723</td><td>United States (USA) - Mississipi</td></tr>
+     *   <tr> <td>8630</td><td>1740</td><td>United States (USA) - Wyoming</td></tr>
+     *   <tr> <td>8624</td><td>1734</td><td>United States (USA) - Texas east of 100°W</td></tr>
+     *   <tr> <td>8625</td><td>1735</td><td>United States (USA) - Texas west of 100°W</td></tr>
+     * </table>
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    @Ignore("Work in progress.")
+    public final void testAreaDependant() throws FactoryException {
+        assumeNotNull(factory);
+
+        CoordinateReferenceSystem  sourceCRS = factory.createCoordinateReferenceSystem("4267"); // "4269"
+        CoordinateReferenceSystem  targetCRS = factory.createCoordinateReferenceSystem("4269"); // "4326"
+        CoordinateOperation        operation = opFactory.createOperation(sourceCRS, targetCRS);
+        System.out.println(operation);
+        System.out.println(operation.getDomainOfValidity());
+        System.out.println(operation.getMathTransform());
+
+        sourceCRS = factory.createCoordinateReferenceSystem("26769");
+        targetCRS = factory.createCoordinateReferenceSystem("26969");
+        operation = opFactory.createOperation(sourceCRS, targetCRS);
+        System.out.println(operation);
+        System.out.println(operation.getDomainOfValidity());
+        System.out.println(operation.getMathTransform());
     }
 }

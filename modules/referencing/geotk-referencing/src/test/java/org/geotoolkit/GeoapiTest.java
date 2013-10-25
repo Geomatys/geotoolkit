@@ -106,6 +106,7 @@ public final strictfp class GeoapiTest extends TestSuite implements Implementati
             setFactories(DatumAuthorityFactory.class);
             setFactories(CoordinateOperationAuthorityFactory.class);
         }
+        GeoapiWorkaround.install();
     }
 
     /**

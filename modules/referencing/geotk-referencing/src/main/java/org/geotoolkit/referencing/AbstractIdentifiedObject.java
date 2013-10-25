@@ -692,10 +692,14 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
             }
         }
         boolean isDeprecated = false;
-        for (final ReferenceIdentifier identifier : identifiers) {
-            if (identifier instanceof ImmutableIdentifier) {
-                isDeprecated = ((ImmutableIdentifier) identifier).isDeprecated();
-                if (!isDeprecated) break;
+        if (identifiers != null) {
+            for (final ReferenceIdentifier identifier : identifiers) {
+                if (identifier instanceof ImmutableIdentifier) {
+                    if (!((ImmutableIdentifier) identifier).isDeprecated()) {
+                        return false;
+                    }
+                    isDeprecated = true;
+                }
             }
         }
         return isDeprecated;

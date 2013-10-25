@@ -1440,18 +1440,13 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     double xmax = result.getDouble(5); if (result.wasNull()) xmax = Double.NaN;
                     if (!Double.isNaN(ymin) || !Double.isNaN(ymax) || !Double.isNaN(xmin) || !Double.isNaN(xmax)) {
                         /*
-                         * Some CRS like EPSG:4269 ("NAD83") use a longitude axis with positive
-                         * values increasing toward west (the opposite of the usual direction).
-                         * The extent is declared in units of such CRS. If we detect such case,
-                         * we need to reverse the sign (NOT to swap the min and max).
+                         * Fix an error found in EPSG:3790 New Zealand - South Island - Mount Pleasant mc
+                         * for older database (this error is fixed in EPSG database 8.2).
                          */
-                        if (xmin > xmax) {
-                            xmin = -xmin;
-                            xmax = -xmax;
-                        }
                         if (ymin > ymax) {
-                            ymin = -ymin;
-                            ymax = -ymax;
+                            final double t = ymin;
+                            ymin = ymax;
+                            ymax = t;
                         }
                         if (extent == null) {
                             extent = new DefaultExtent();
@@ -2755,7 +2750,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                      *       methods like createCoordinateReferenceSystem and createOperationMethod
                      *       overwrite the properties map.
                      */
-                    final Map<String,Object> properties = createProperties("[Coordinate_Operation]",
+                    Map<String,Object> properties = createProperties("[Coordinate_Operation]",
                             name, epsg, area, scope, remarks, deprecated);
                     if (version!=null && !(version = version.trim()).isEmpty()) {
                         properties.put(CoordinateOperation.OPERATION_VERSION_KEY, version);
@@ -2787,6 +2782,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                          * and also because it is not part of FactoryContainer anyway.
                          */
                         result.close();
+                        properties = new HashMap<>(properties); // Because this class uses a shared map.
                         final PreparedStatement cstmt = prepareStatement("[Coordinate_Operation Path]",
                                 "SELECT SINGLE_OPERATION_CODE" +
                                  " FROM [Coordinate_Operation Path]" +

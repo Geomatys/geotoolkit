@@ -31,16 +31,20 @@ import org.opengis.util.FactoryException;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.quality.ConformanceResult;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.operation.*;
 
+import org.apache.sis.util.Deprecable;
+import org.apache.sis.metadata.iso.extent.Extents;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.internal.referencing.Identifier3D;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.transform.EllipsoidalTransform;
@@ -353,6 +357,18 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
             log(Level.FINE, exception, authorityFactory, true);
             return null;
         }
+        /*
+         * We will loop over all coordinate operations and select the one having the largest intersection
+         * with the area of interest. Note that if the user did not specified an area of interest himself,
+         * then we need to get one from the CRS. This is necessary for preventing the transformation from
+         * NAD27 to NAD83 in Idaho to select the transform for Alaska (since the later has a larger area).
+         */
+        final GeographicBoundingBox areaOfInterest = Extents.intersection(
+                CRS.getGeographicBoundingBox(sourceCRS),
+                CRS.getGeographicBoundingBox(targetCRS));
+        double largestArea = 0;
+        CoordinateOperation bestChoice = null;
+        boolean stopAtFirstDeprecated = false;
         for (final Iterator<CoordinateOperation> it=operations.iterator(); it.hasNext();) {
             CoordinateOperation candidate;
             try {
@@ -384,6 +400,19 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
                 continue;
             }
             /*
+             * If we found at least one non-deprecated operation, since we will stop the search at
+             * the first deprecated one (assuming that deprecated operations are sorted last).
+             */
+            final boolean isDeprecated = (candidate instanceof Deprecable) && ((Deprecable) candidate).isDeprecated();
+            if (isDeprecated && stopAtFirstDeprecated) {
+                break;
+            }
+            final double area = Extents.area(Extents.intersection(areaOfInterest,
+                    Extents.getGeographicBoundingBox(candidate.getDomainOfValidity())));
+            if (bestChoice != null && !(area > largestArea)) { // Use '!' for catching NaN.
+                continue;
+            }
+            /*
              * It is possible that the Identifier in user's CRS is not quite right.   For
              * example the user may have created his source and target CRS from WKT using
              * a different axis order than the official one and still call it "EPSG:xxxx"
@@ -405,10 +434,14 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
              */
             candidate = complete(candidate, sourceCRS, targetCRS);
             if (accept(candidate)) {
-                return candidate;
+                bestChoice = candidate;
+                if (!Double.isNaN(area)) {
+                    largestArea = area;
+                }
+                stopAtFirstDeprecated = !isDeprecated;
             }
         }
-        return null;
+        return bestChoice;
     }
 
     /**

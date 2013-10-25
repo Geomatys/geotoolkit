@@ -50,6 +50,10 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public final strictfp class GeoapiTest extends AuthorityFactoryTest {
+    static {
+        org.geotoolkit.GeoapiWorkaround.install();
+    }
+
     /**
      * Creates a new test suite using the singleton factory instance.
      */
