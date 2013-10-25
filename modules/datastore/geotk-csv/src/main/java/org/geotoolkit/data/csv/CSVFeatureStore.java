@@ -115,8 +115,10 @@ public class CSVFeatureStore extends AbstractFeatureStore{
      */
     public CSVFeatureStore(final File f, final String namespace, final char separator, SimpleFeatureType ft) throws MalformedURLException, DataStoreException{
         this(toParameters(f, namespace, separator));
-        this.featureType = ft;
-        name = featureType.getName().getLocalPart();
+        if(ft!=null){
+            this.featureType = ft;
+            name = featureType.getName().getLocalPart();
+        }
     }
 
     public CSVFeatureStore(final ParameterValueGroup params) throws DataStoreException{
