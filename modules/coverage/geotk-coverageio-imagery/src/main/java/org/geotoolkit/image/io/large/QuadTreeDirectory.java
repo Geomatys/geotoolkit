@@ -16,7 +16,13 @@
  */
 package org.geotoolkit.image.io.large;
 
+import org.geotoolkit.util.ArgumentChecks;
+import org.geotoolkit.util.FileUtilities;
+
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Create tree directory made, starting from tree root directory, define by user.
@@ -24,6 +30,8 @@ import java.io.File;
  * @author Remi Marechal (Geomatys).
  */
 public class QuadTreeDirectory {
+
+    private static final Logger LOGGER = Logger.getLogger(QuadTreeDirectory.class.getName());
 
     private static final String D00 = "/00";
     private static final String D01 = "/01";
@@ -36,7 +44,6 @@ public class QuadTreeDirectory {
     private final int treeRootPathLength;
     private final String extension;
     private final boolean isDeleteOnExit;
-    private boolean archiscreate = false;
 
     /**
      * Recursive necessary attributes.
@@ -52,30 +59,26 @@ public class QuadTreeDirectory {
      * @param extension extension format of element will be stocked. May be null.
      * @param isDeleteOnExit true if user want delete all tree directory at end of JVM else false.
      */
-    public QuadTreeDirectory(String treeRootPath, int nbrElementX, int nbrElementY, String extension, boolean isDeleteOnExit) {
+    public QuadTreeDirectory(final String treeRootPath, final int nbrElementX, final int nbrElementY, final String extension, final boolean isDeleteOnExit) throws IOException {
+        ArgumentChecks.ensureNonNull("Quad-tree root file.", treeRootPath);
+        ArgumentChecks.ensureStrictlyPositive("Quad-tree X axis dimension", nbrElementX);
+        ArgumentChecks.ensureStrictlyPositive("Quad-tree Y axis dimension", nbrElementY);
+
         this.treeRootPathLength = treeRootPath.length();
         this.strBuilder         = new StringBuilder(treeRootPath);
         this.nbrElementX        = nbrElementX;
         this.nbrElementY        = nbrElementY;
         this.extension = (extension == null) ? "" : (extension.substring(0, 1).equalsIgnoreCase(".")) ? extension : "." + extension;
         this.isDeleteOnExit = isDeleteOnExit;
-    }
-
-    /**
-     * Create tree directory.
-     */
-    public void create4rchitecture() {
-        archiscreate = true;
-        final File root = new File(strBuilder.toString());
-        if (!root.exists()) {
-            root.mkdir();
-            if (isDeleteOnExit) root.deleteOnExit();
-        }
+        // Check if given path is valid, because if it's not, the all quad-tree is compromised.
+        createDirectory();
         create4rchitecture(nbrElementX, nbrElementY);
         strBuilder.setLength(treeRootPathLength);
+        LOGGER.log(Level.FINE, "Quad-tree have been successfully initialized for path" + treeRootPath);
     }
 
-    private void create4rchitecture( int numXTiles, int numYTiles) {
+    private void create4rchitecture(int numXTiles, int numYTiles) throws IOException {
+        LOGGER.log(Level.FINE, "Begin creation of an entire quadTree level");
         if (numXTiles <= 2 && numYTiles <= 2) return;
 
         final int pathLength = strBuilder.length();
@@ -138,16 +141,29 @@ public class QuadTreeDirectory {
             create4rchitecture(numXTiles-nxt, numYTiles-nyt);
 
             strBuilder.setLength(pathLength);
+
+            LOGGER.log(Level.FINE, "QuadTree level finely created.");
         }
     }
 
     /**
-     * Create directory at place define by StringBuilder path.
+     * Create directory at place define by StringBuilder path.A verification is done to be sure that folder has been
      */
-    private void createDirectory() {
-        final File file = new File(strBuilder.toString());
-        file.mkdir();
-        if (isDeleteOnExit) file.deleteOnExit();
+    private void createDirectory() throws IOException {
+        File f = new File(strBuilder.toString());
+        final String path = f.getAbsolutePath();
+
+        if (f.isFile()) {
+            throw new IOException("Current path represents a file, but a directory is needed here : "+path);
+        }
+        // If not exists, we try to create directory.
+        if (!f.exists()) {
+            f.mkdirs();
+            if (isDeleteOnExit) {
+                f.deleteOnExit();
+            }
+        }
+        checkDirectory(f);
     }
 
     /**
@@ -158,8 +174,6 @@ public class QuadTreeDirectory {
      * @return appropriate path of element at X, Y position.
      */
     public String getPath(int x, int y) {
-        if (!archiscreate)
-            throw new IllegalStateException("user must call create4rchitecture() method before");
         final String path = getPath(strBuilder, 0, 0, nbrElementX-1, nbrElementY-1, x, y);
         strBuilder.setLength(treeRootPathLength);
         return path;
@@ -213,10 +227,28 @@ public class QuadTreeDirectory {
                 return getPath(path, demx, demy, maxtx, maxty, tileX, tileY);
             }
         }
-        throw new IllegalStateException("undefine path");
+        throw new IllegalStateException("Undefined path. Asked tile ("+tileX+", "+tileY+") is out of bounds.");
     }
 
     private boolean intersect(int minx, int miny, int maxx, int maxy, int tx, int ty){
         return (tx >= minx) && (tx <= maxx) && (ty >= miny) && (ty <= maxy);
+    }
+
+    private final void checkDirectory(final File toCheck) throws IOException {
+        final String path = toCheck.getAbsolutePath();
+        if (toCheck.isFile()) {
+            throw new IOException("Current path represents a file, but a directory is needed here : "+path);
+        }
+        if (!toCheck.exists()) {
+            final File parent = FileUtilities.getExistingParent(toCheck);
+            if (parent != null && !parent.canWrite()) {
+                throw new IOException("Cannot create folder : "+path+", because application does not possess writing authorisation on parent folder : "+ parent.getAbsolutePath());
+            } else {
+                throw new IOException("Cannot create folder : "+path+" for some unknown reason");
+            }
+        }
+        if (!toCheck.canWrite() || ! toCheck.canRead()) {
+            throw new IOException("Given directory ("+ path +") for Quad-tree does not possess sufficient rights.");
+        }
     }
 }

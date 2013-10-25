@@ -1097,6 +1097,19 @@ public final class FileUtilities extends Static {
     }
 
     /**
+     * Search a parent folder for input file, one which actually exists on the file system.
+     * @param child The file to search parent for.
+     * @return the first exising parent folder of the given file, or null if we cannot find any.
+     */
+    public static File getExistingParent(final File child) {
+        final File parent = child.getParentFile();
+        if (parent != null && !parent.exists()) {
+            return getExistingParent(parent);
+        }
+        return parent;
+    }
+
+    /**
      * Return a recursive list of files under given directory.
      * @param directory start directory. If directory is a File and not a directory,
      *                  file list will be returned with only given directory.

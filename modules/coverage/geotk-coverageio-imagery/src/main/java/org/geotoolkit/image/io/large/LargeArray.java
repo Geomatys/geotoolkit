@@ -23,6 +23,8 @@ import org.geotoolkit.image.io.XImageIO;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
 import javax.media.jai.RasterFactory;
 import java.awt.*;
 import java.awt.image.*;
@@ -97,7 +99,6 @@ class LargeArray {
         //quad tree directory architecture.
         this.dirPath = TEMPORARY_PATH + "/img_"+ri.hashCode();
         this.qTD     = new QuadTreeDirectory(dirPath, numTilesX, numTilesY, FORMAT, true);
-        qTD.create4rchitecture();
 
         //reader writer
         this.imgReader = XImageIO.getReaderByFormatName(FORMAT, null, Boolean.FALSE, Boolean.TRUE);
@@ -174,10 +175,13 @@ class LargeArray {
         if ((lRaster = array[tY * numTilesX + tX]) == null) {
             final File getFile = new File(qTD.getPath(tX, tY));
 
-            if (getFile.exists()) {
+            if (getFile.exists()) {final ImageInputStream stream = ImageIO.createImageInputStream(getFile);
+                if (stream != null) {
                 imgReader.setInput(ImageIO.createImageInputStream(getFile));
                 final BufferedImage buff = imgReader.read(0);
+                imgReader.setInput(null);
                 imgReader.dispose();
+                stream.close();
                 //add in cache array.
                 res = buff.getRaster();
                 final int indice = getIndice(tX, tY);
@@ -186,6 +190,7 @@ class LargeArray {
                 stack.addLast(indice);
                 remainingCapacity -= rastWeight;
                 checkArray();
+                }
             }
         } else {
             res = lRaster.getRaster();
@@ -257,9 +262,15 @@ class LargeArray {
     private void writeRaster(File path, Raster raster) throws IOException {
         final WritableRaster wr  = RasterFactory.createWritableRaster(raster.getSampleModel(), raster.getDataBuffer(), WPOINT);
         final BufferedImage rast = new BufferedImage(cm, wr, true, null);
-        imgWriter.setOutput(ImageIO.createImageOutputStream(path));
+        final ImageOutputStream stream = ImageIO.createImageOutputStream(path);
+        if (stream == null) {
+            throw new IOException("No output connexion can be opened to write tile.");
+        }
+        imgWriter.setOutput(stream);
         imgWriter.write(rast);
+        imgWriter.setOutput(null);
         imgWriter.dispose();
+        stream.close();
         path.deleteOnExit();
     }
 
