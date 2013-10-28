@@ -43,7 +43,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  * Tests the usage of {@link CoordinateOperationFactory} with the help of the EPSG database.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 4.00
+ * @version 4.0-M2
  *
  * @since 2.4
  */
@@ -200,6 +200,7 @@ public final strictfp class OperationFactoryTest extends EpsgFactoryTestBase {
      * Tests the selection of operations from NAD27 (EPSG:4267) or NAD83 (EPSG:4269)
      * to WGS84 (EPSG:4326) in different geographic areas.
      *
+     * <p>Example of source CRS that we should test (not yet implemented, to do in Apache SIS):</p>
      * <table>
      *   <tr><td>NAD27</td><td>NAD83</td> <td>Area</td></tr>
      *   <tr><td>15851</td><td>1188</td><td>CONUS</td></tr>
@@ -212,22 +213,46 @@ public final strictfp class OperationFactoryTest extends EpsgFactoryTestBase {
      * @throws FactoryException Should not happen.
      */
     @Test
-    @Ignore("Work in progress.")
     public final void testAreaDependant() throws FactoryException {
         assumeNotNull(factory);
+        final int[] codes = {
+            /*
+             * Columns: [source CRS], [target CRS], [expected coordinate operation]
+             */
+             4267, 4269, 1241,   // NAD27 to NAD83 (1):  United States (USA) - CONUS including EEZ
+             3814, 4326, 1723,   // NAD83 to WGS84 (27): United States (USA) - Mississipi
+            32156, 4326, 1740,   // NAD83 to WGS84 (44): United States (USA) - Wyoming
+            32139, 4326, 1188    // NAD83 to WGS84 (1):  North America (source CRS was Texas central).
+        };
+        for (int i=0; i<codes.length;) {
+            final String sourceCode = Integer.toString(codes[i++]);
+            final String targetCode = Integer.toString(codes[i++]);
+            final String expectedOp = Integer.toString(codes[i++]);
+            final CoordinateReferenceSystem  sourceCRS = factory.createCoordinateReferenceSystem(sourceCode);
+            final CoordinateReferenceSystem  targetCRS = factory.createCoordinateReferenceSystem(targetCode);
+            final CoordinateOperation        operation = opFactory.createOperation(sourceCRS, targetCRS);
+            final Transformation            datumShift = getTransformation(operation);
+            assertNotNull(expectedOp, datumShift);
+            assertEquals(expectedOp, getIdentifier(datumShift));
+        }
+    }
 
-        CoordinateReferenceSystem  sourceCRS = factory.createCoordinateReferenceSystem("4267"); // "4269"
-        CoordinateReferenceSystem  targetCRS = factory.createCoordinateReferenceSystem("4269"); // "4326"
-        CoordinateOperation        operation = opFactory.createOperation(sourceCRS, targetCRS);
-        System.out.println(operation);
-        System.out.println(operation.getDomainOfValidity());
-        System.out.println(operation.getMathTransform());
-
-        sourceCRS = factory.createCoordinateReferenceSystem("26769");
-        targetCRS = factory.createCoordinateReferenceSystem("26969");
-        operation = opFactory.createOperation(sourceCRS, targetCRS);
-        System.out.println(operation);
-        System.out.println(operation.getDomainOfValidity());
-        System.out.println(operation.getMathTransform());
+    /**
+     * Returns the first coordinate operation which is a transformation.
+     * The skipped part are the map projections, which is not the purpose of this test.
+     */
+    private static Transformation getTransformation(final CoordinateOperation operation) {
+        if (operation instanceof Transformation) {
+            return (Transformation) operation;
+        }
+        if (operation instanceof ConcatenatedOperation) {
+            for (final CoordinateOperation op : ((ConcatenatedOperation) operation).getOperations()) {
+                final Transformation tr = getTransformation(op);
+                if (tr != null) {
+                    return tr;
+                }
+            }
+        }
+        return null;
     }
 }

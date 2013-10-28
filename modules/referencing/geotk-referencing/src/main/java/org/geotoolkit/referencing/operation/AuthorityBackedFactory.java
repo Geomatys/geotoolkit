@@ -44,7 +44,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.internal.referencing.Identifier3D;
-import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.internal.referencing.OperationContext;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.transform.EllipsoidalTransform;
@@ -363,10 +363,9 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
          * then we need to get one from the CRS. This is necessary for preventing the transformation from
          * NAD27 to NAD83 in Idaho to select the transform for Alaska (since the later has a larger area).
          */
-        final GeographicBoundingBox areaOfInterest = Extents.intersection(
-                CRS.getGeographicBoundingBox(sourceCRS),
-                CRS.getGeographicBoundingBox(targetCRS));
+        final GeographicBoundingBox areaOfInterest = OperationContext.getAreaOfInterest();
         double largestArea = 0;
+        double finestAccuracy = Double.POSITIVE_INFINITY;
         CoordinateOperation bestChoice = null;
         boolean stopAtFirstDeprecated = false;
         for (final Iterator<CoordinateOperation> it=operations.iterator(); it.hasNext();) {
@@ -409,7 +408,11 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
             }
             final double area = Extents.area(Extents.intersection(areaOfInterest,
                     Extents.getGeographicBoundingBox(candidate.getDomainOfValidity())));
-            if (bestChoice != null && !(area > largestArea)) { // Use '!' for catching NaN.
+            if (bestChoice != null && !(area >= largestArea)) { // Use '!' for catching NaN.
+                continue;
+            }
+            final double accuracy = AbstractCoordinateOperation.getAccuracy(candidate);
+            if (bestChoice != null && area == largestArea && !(accuracy < finestAccuracy)) { // Use '!' for catching NaN.
                 continue;
             }
             /*
@@ -438,6 +441,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
                 if (!Double.isNaN(area)) {
                     largestArea = area;
                 }
+                finestAccuracy = Double.isNaN(accuracy) ? Double.POSITIVE_INFINITY : accuracy;
                 stopAtFirstDeprecated = !isDeprecated;
             }
         }

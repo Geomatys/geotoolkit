@@ -40,6 +40,7 @@ import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.util.Version;
+import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.sql.DefaultDataSource;
@@ -638,5 +639,48 @@ public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
         assertSame(tr, CRS.findMathTransform(sourceCRS, targetCRS, true));
         assertEquals(3, tr.getSourceDimensions());
         assertEquals(2, tr.getTargetDimensions());
+    }
+
+    /**
+     * Tests {@link CRS#findMathTransform(CoordinateReferenceSystem, CoordinateReferenceSystem,
+     * GeographicBoundingBox, boolean)}.
+     *
+     * @throws FactoryException Should never happen.
+     *
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-80">GEOTK-80</a>
+     */
+    @Test
+    public void testCRSWithGeographicArea() throws FactoryException {
+        final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4267"); // NAD27
+        final CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326"); // WGS84
+        final DefaultGeographicBoundingBox box = new DefaultGeographicBoundingBox(-91.64, -88.09, 30.02, 35.00); // Mississipi (EPSG:1393)
+        final MathTransform mt = CRS.findMathTransform(sourceCRS, targetCRS, box, true);
+        /*
+         * We expect "NAD27 to WGS 84 (56)" (EPSG:8609). Since the CoordinateOperation is lost at this stagen
+         * we can not test the identifier code. So we will test the MathTransform WKT. In particular, we look
+         * for the "mshpgn.las" and "mshpgn.los" parameter value as an indication of Mississipi data.
+         */
+        assertMultilinesEquals(decodeQuotes(
+            "CONCAT_MT[PARAM_MT[“Affine”, \n" +
+            "    PARAMETER[“num_row”, 3], \n" +
+            "    PARAMETER[“num_col”, 3], \n" +
+            "    PARAMETER[“elt_0_0”, 0.0], \n" +
+            "    PARAMETER[“elt_0_1”, 1.0], \n" +
+            "    PARAMETER[“elt_1_0”, 1.0], \n" +
+            "    PARAMETER[“elt_1_1”, 0.0]], \n" +
+            "  PARAM_MT[“NADCON”, \n" +
+            "    PARAMETER[“Latitude difference file”, “conus.las”], \n" +
+            "    PARAMETER[“Longitude difference file”, “conus.los”]], \n" +
+            "  PARAM_MT[“NADCON”, \n" +
+            "    PARAMETER[“Latitude difference file”, “mshpgn.las”], \n" +
+            "    PARAMETER[“Longitude difference file”, “mshpgn.los”]], \n" +
+            "  PARAM_MT[“Affine”, \n" +
+            "    PARAMETER[“num_row”, 3], \n" +
+            "    PARAMETER[“num_col”, 3], \n" +
+            "    PARAMETER[“elt_0_0”, 0.0], \n" +
+            "    PARAMETER[“elt_0_1”, 1.0], \n" +
+            "    PARAMETER[“elt_1_0”, 1.0], \n" +
+            "    PARAMETER[“elt_1_1”, 0.0]]]"),
+            mt.toWKT());
     }
 }

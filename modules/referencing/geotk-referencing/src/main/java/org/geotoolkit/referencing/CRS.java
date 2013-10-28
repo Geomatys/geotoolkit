@@ -61,6 +61,7 @@ import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.AxisDirections;
+import org.geotoolkit.internal.referencing.OperationContext;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -1258,6 +1259,40 @@ check:      while (lower != 0 || upper != dimension) {
         ensureNonNull("targetCRS", targetCRS);
         CoordinateOperationFactory operationFactory = getCoordinateOperationFactory(lenient);
         return operationFactory.createOperation(sourceCRS, targetCRS).getMathTransform();
+    }
+
+    /**
+     * Grab a transform between two Coordinate Reference Systems for the given area of interest.
+     * This method may returns a more accurate transform than {@link #findMathTransform(CoordinateReferenceSystem,
+     * CoordinateReferenceSystem, boolean)} for that area in some cases.
+     *
+     * @param  sourceCRS The source CRS.
+     * @param  targetCRS The target CRS.
+     * @param  areaOfInterest The geographic area of interest.
+     * @param  lenient {@code true} if the math transform should be created even when there is
+     *         no information available for a datum shift.
+     * @return The math transform from {@code sourceCRS} to {@code targetCRS} in the given area of interest.
+     * @throws FactoryException If no math transform can be created for the specified source and target CRS.
+     *
+     * @since 4.0-M2
+     */
+    public static MathTransform findMathTransform(final CoordinateReferenceSystem sourceCRS,
+                                                  final CoordinateReferenceSystem targetCRS,
+                                                  final GeographicBoundingBox areaOfInterest,
+                                                  boolean lenient)
+            throws FactoryException
+    {
+        /*
+         * TODO: we use a ThreadLocal for now as an easy way to support this functionality without
+         * breaking the DefaultCoordinateOperationFactory API. However we will need to find a better
+         * approach in Apache SIS.
+         */
+        OperationContext.setAreaOfInterest(areaOfInterest);
+        try {
+            return findMathTransform(sourceCRS, targetCRS, true);
+        } finally {
+            OperationContext.clear();
+        }
     }
 
     // Note: the above 4 transform methods simply delegate their work to the Envelopes class.

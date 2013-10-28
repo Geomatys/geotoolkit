@@ -2907,6 +2907,10 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                  * conversions, and the second time for searching all other kind of operations.
                  * Defining conversions are searched first because they are, by definition, the
                  * most accurate operations.
+                 *
+                 * TODO: Remove the "area" and "accuracy" ordering, since they are now replaced
+                 *       by Java code (because we need to compute intersections while supporting
+                 *       anti-meridian spanning).
                  */
                 final String key, sql;
                 if (searchTransformations) {

@@ -37,12 +37,15 @@ import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
+import org.apache.sis.metadata.iso.extent.Extents;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
@@ -54,6 +57,7 @@ import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrix4;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.internal.referencing.AxisDirections;
+import org.geotoolkit.internal.referencing.OperationContext;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
 import static java.util.Collections.singletonList;
@@ -179,6 +183,38 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
     {
         ensureNonNull("sourceCRS", sourceCRS);
         ensureNonNull("targetCRS", targetCRS);
+        GeographicBoundingBox areaOfInterest = OperationContext.getAreaOfInterest();
+        if (areaOfInterest != null) {
+            return createOperation(sourceCRS, targetCRS, areaOfInterest);
+        }
+        areaOfInterest = Extents.intersection(
+                CRS.getGeographicBoundingBox(sourceCRS),
+                CRS.getGeographicBoundingBox(targetCRS));
+        OperationContext.setAreaOfInterest(areaOfInterest);
+        try {
+            return createOperation(sourceCRS, targetCRS, areaOfInterest);
+        } finally {
+            OperationContext.clear();
+        }
+    }
+
+    /**
+     * Implementation of {@link #createOperation(CoordinateReferenceSystem, CoordinateReferenceSystem)}.
+     * This is a private API for now, but may become public later.
+     *
+     * @todo HACK: For now, the area of interest is fetched from the OperationContext ThreadLocal, and
+     *             the given {@code areaOfInterest} argument is ignored. However in a future version,
+     *             we will use the argument and ignore the ThreadLocal. The ThreadLocal hack is used
+     *             for avoiding to break the API (i.e. all protected methods in this class). We will
+     *             try to fix this issue in a cleaner way in Apache SIS.
+     *
+     * @param areaOfInterest Ignored for now (see "hack" in above javadoc).
+     */
+    private CoordinateOperation createOperation(final CoordinateReferenceSystem sourceCRS,
+                                                final CoordinateReferenceSystem targetCRS,
+                                                final GeographicBoundingBox areaOfInterest)
+            throws OperationNotFoundException, FactoryException
+    {
         if (equalsIgnoreMetadata(sourceCRS, targetCRS)) {
             final int dim  = getDimension(sourceCRS);
             assert    dim == getDimension(targetCRS) : dim;

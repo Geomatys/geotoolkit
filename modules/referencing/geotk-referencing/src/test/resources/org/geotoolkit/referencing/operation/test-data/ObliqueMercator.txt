@@ -2715,7 +2715,7 @@ target crs = PROJCS["CH1903 / LV03",
   AXIS["y", NORTH],
   AUTHORITY["EPSG","21781"]]
 
-tolerance forward = (0.5, 0.5)
+tolerance forward = (1, 1)
 tolerance inverse = (1e-5, 1e-5)
 
 source pt = (8.963944444444444, 47.346805555555555)
