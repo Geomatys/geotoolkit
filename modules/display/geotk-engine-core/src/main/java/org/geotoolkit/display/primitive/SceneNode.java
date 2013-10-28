@@ -98,23 +98,7 @@ public class SceneNode extends DisplayElement implements Graphic {
             children = new NotifiedCheckedList<SceneNode>(SceneNode.class, 0) {
                 @Override
                 protected void notifyAdd(SceneNode item, int index) {
-                    //remove node from previous parent if any
-                    SceneNode parent = item.getParent();
-                    if(parent != null){
-                        parent.getChildren().remove(item);
-                    }
-                    //set this as parent
-                    item.setParent(SceneNode.this);
-                    item.addChildrenListener(childListener);
-                    
-                    //fire event
-                    fireChildrenChange(CollectionChangeEvent.ITEM_ADDED,
-                        Collections.singleton(item), NumberRange.create(index, true, index, true));
-                }
-
-                @Override
-                protected void notifyAdd(Collection<? extends SceneNode> items, NumberRange<Integer> range) {
-                    for(SceneNode item : items){
+                    if (item != null) {
                         //remove node from previous parent if any
                         SceneNode parent = item.getParent();
                         if(parent != null){
@@ -124,6 +108,29 @@ public class SceneNode extends DisplayElement implements Graphic {
                         item.setParent(SceneNode.this);
                         item.addChildrenListener(childListener);
                     }
+
+                    //fire event
+                    fireChildrenChange(CollectionChangeEvent.ITEM_ADDED,
+                        Collections.singleton(item), NumberRange.create(index, true, index, true));
+                }
+
+                @Override
+                protected void notifyAdd(Collection<? extends SceneNode> items, NumberRange<Integer> range) {
+                    if (items != null) {
+                        for(SceneNode item : items){
+                            if (item != null) {
+                                //remove node from previous parent if any
+                                SceneNode parent = item.getParent();
+                                if(parent != null){
+                                    parent.getChildren().remove(item);
+                                }
+                                //set this as parent
+                                item.setParent(SceneNode.this);
+                                item.addChildrenListener(childListener);
+                            }
+                        }
+
+                    }
                     
                     //fire event
                     fireChildrenChange(CollectionChangeEvent.ITEM_ADDED,items, range);
@@ -131,19 +138,22 @@ public class SceneNode extends DisplayElement implements Graphic {
 
                 @Override
                 protected void notifyChange(SceneNode oldItem, SceneNode newItem, int index) {
-                    //remove parent in old item
-                    oldItem.setParent(null);
-                    oldItem.removeChildrenListener(childListener);
-                    
-                    //remove node from previous parent if any
-                    final SceneNode parent = newItem.getParent();
-                    if(parent != null){
-                        parent.getChildren().remove(newItem);
+                    if (oldItem != null) {
+                        //remove parent in old item
+                        oldItem.setParent(null);
+                        oldItem.removeChildrenListener(childListener);
                     }
-                    //set this as parent
-                    newItem.setParent(SceneNode.this);
-                    newItem.addChildrenListener(childListener);
-                    
+
+                    if (newItem != null) {
+                        //remove node from previous parent if any
+                        final SceneNode parent = newItem.getParent();
+                        if(parent != null){
+                            parent.getChildren().remove(newItem);
+                        }
+                        //set this as parent
+                        newItem.setParent(SceneNode.this);
+                        newItem.addChildrenListener(childListener);
+                    }
                     //fire event
                     fireChildrenChange(CollectionChangeEvent.ITEM_CHANGED,
                         Collections.singleton(newItem), NumberRange.create(index, true, index, true));
@@ -151,10 +161,11 @@ public class SceneNode extends DisplayElement implements Graphic {
 
                 @Override
                 protected void notifyRemove(SceneNode item, int index) {
-                    //remove parent on item
-                    item.setParent(null);
-                    item.removeChildrenListener(childListener);
-                    
+                    if (item != null) {
+                        //remove parent on item
+                        item.setParent(null);
+                        item.removeChildrenListener(childListener);
+                    }
                     //fire event
                     fireChildrenChange(CollectionChangeEvent.ITEM_REMOVED,
                         Collections.singleton(item), NumberRange.create(index, true, index, true));
@@ -162,10 +173,14 @@ public class SceneNode extends DisplayElement implements Graphic {
 
                 @Override
                 protected void notifyRemove(Collection<? extends SceneNode> items, NumberRange<Integer> range) {
-                    for(SceneNode item : items){
-                        //remove parent on item
-                        item.setParent(null);
-                        item.removeChildrenListener(childListener);
+                    if (items != null) {
+                        for(SceneNode item : items){
+                            if (item != null) {
+                                //remove parent on item
+                                item.setParent(null);
+                                item.removeChildrenListener(childListener);
+                            }
+                        }
                     }
                     
                     //fire event
@@ -198,7 +213,7 @@ public class SceneNode extends DisplayElement implements Graphic {
      * @param parent , can be null
      */
     private void setParent(SceneNode parent){
-        if (Objects.equals(name, this.name)) return;
+        if (Objects.equals(parent, this.parent)) return;
         final SceneNode old = this.parent;
         this.parent = parent;
         firePropertyChange(PARENT_KEY, old, parent);
