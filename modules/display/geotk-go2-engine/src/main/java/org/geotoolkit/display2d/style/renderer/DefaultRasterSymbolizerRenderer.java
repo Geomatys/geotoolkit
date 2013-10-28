@@ -614,9 +614,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
             final double altiScale = elevationModel.getAmplitudeScale() / 100.0;
             // ReliefShadow creating
-            final ReliefShadow rfs = new ReliefShadow(gridAzim, altitude, brightness, relfactor);
             final GridCoverage2D mntCoverage = getDEMCoverage(coverage, elevationCoverage);
-//            rfs.setAltitudeAxisDirection(defaultAD);
+            final ReliefShadow rfs = new ReliefShadow(gridAzim, altitude, brightness, relfactor);
             rfs.setAltitudeAxisDirection(elevationModel.getAltitudeDirection());
             final RenderedImage mnt = mntCoverage.getRenderedImage();
             // mnt should be null if current elevation coverage doesn't concord with coverage.
@@ -631,8 +630,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 final Statistics[] stats = (Statistics[]) statProcess.call().parameter(ImageStatisticsDescriptor.OUTPUT_STATS_PARAM_NAME).getValue();
                 final double elevationAmplitude = stats[0].span();
                 image = rfs.getRelief(image, mnt, elevationAmplitude * altiScale);
-                ImageIO.write(image, "tiff", new File("/home/rmarechal/Documents/image/world-mnt/Exemple_MNTbathy/resulttest"
-                        + "/bathyShadowAzim"+((int)azimuth)+"Alti"+((int)altitude)+"ZScal"+(altiScale*100)+".tiff"));
             }
         }
 
