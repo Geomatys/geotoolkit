@@ -16,18 +16,16 @@
  */
 package org.geotoolkit.image.relief;
 
-import java.awt.AlphaComposite;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import java.awt.image.WritableRenderedImage;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.opengis.referencing.cs.AxisDirection;
 
 /**
  * Travel a source image and a dem (Digital Elevation Model) image to compute shadow.<br/>
@@ -62,11 +60,6 @@ public final class ReliefShadow {
      * Coefficient to increase pixel values. 
      */
     private final double brightness;
-    
-    /**
-     * {@link PixelIterator} which travel on source image.
-     */
-    private  PixelIterator srcIter;
     
     /**
      * {@link PixelIterator} which travel on dem image.
@@ -170,9 +163,9 @@ public final class ReliefShadow {
     private ColorModel sourceColorModel;
     
     /**
-     * {@link ColorModel} from destination image.
+     * Define positive altitude value sens.
      */
-    private ColorModel destColorModel;
+    private int axisDirection;
     
     /**
      * Create an object to apply shadow on some {@link RenderedImage}.<br/><br/>
@@ -212,11 +205,12 @@ public final class ReliefShadow {
         }
         this.shadowDimming = shadowDimming;
         this.brightness    = brightness;
-        alpha    = (PI/2) - ((lightSRCAzimuth % 360) * PI / 180);// on enleve les n 2kPI
-        cosAlpha = Math.cos(alpha);
-        sinAlpha = Math.sin(alpha);
-        tanAlpha = Math.tan(alpha);
-        this.tanAltitude = Math.tan(Math.abs(lightSRCAltitude % 360) * PI / 180);
+        alpha              = (PI/2) - ((lightSRCAzimuth % 360) * PI / 180);// on enleve les n 2kPI
+        cosAlpha           = Math.cos(alpha);
+        sinAlpha           = Math.sin(alpha);
+        tanAlpha           = Math.tan(alpha);
+        this.tanAltitude   = Math.tan(Math.abs(lightSRCAltitude % 360) * PI / 180);
+        this.axisDirection = 1;
         
         if (Math.abs(cosAlpha) >= COS45) {
             // alpha € [-PI/4 ; PI/4] U [3PI/4 ; 5PI/4] + 2kPI
@@ -250,6 +244,26 @@ public final class ReliefShadow {
         }
     }
     
+    /**
+     * Compute and return an appropriate {@link RenderedImage} which is a copy of source image with shadow added.
+     * 
+     * @param imgSource {@link RenderedImage} with no relief shadow.
+     * @param dem {@link RenderedImage} which contain all pixel elevations values (Digital Elevation Model).
+     * @param scaleZ elevation value of a pixel.
+     * @param Define positive altitude value sens.
+     * @throws NullArgumentException if imgSource or mnt is {@code null}.
+     * @throws IllegalArgumentException if scaleZ is lesser or equal to zero.
+     * @throws IllegalArgumentException if source image width and mnt image have a differente width.
+     * @throws IllegalArgumentException if source image width and mnt image have a differente height.
+     * @throws IllegalArgumentException if setted {@link AxisDirection} is not instance of {@link AxisDirection#DOWN} or {@link AxisDirection#UP}.
+     * @return an appropriate {@link RenderedImage} witch is a copy of source image with shadow added.
+     * @see #setAltitudeAxisDirection(org.opengis.referencing.cs.AxisDirection) 
+     */
+    public RenderedImage getRelief(final RenderedImage imgSource, final RenderedImage dem, 
+                                   final double scaleZ, final AxisDirection elevationValueSens) {
+        setAltitudeAxisDirection(elevationValueSens);
+        return getRelief(imgSource, dem, scaleZ);
+    }
     
     /**
      * Compute and return an appropriate {@link RenderedImage} which is a copy of source image with shadow added.
@@ -277,24 +291,18 @@ public final class ReliefShadow {
             throw new IllegalArgumentException("mnt image and source image should have same height. image source height = "
                     +imgWidth+" mnt height = "+dem.getWidth());
         }
-        this.minX = imgSource.getMinX();
-        this.maxX = minX + imgWidth;
-        this.minY = imgSource.getMinY();
-        this.maxY = minY + imgHeight;
-        this.sourceColorModel = imgSource.getColorModel();
+        this.minX              = imgSource.getMinX();
+        this.maxX              = minX + imgWidth;
+        this.minY              = imgSource.getMinY();
+        this.maxY              = minY + imgHeight;
+        this.sourceColorModel  = imgSource.getColorModel();
         
         final Raster srcRaster = imgSource.getData();
         // define step altitude, when iterator travel up along v axis. 
-        pasz = pash * scaleZ;
+        pasz                   = pash * scaleZ;
         final BufferedImage imgDest = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_ARGB);
-        this.destColorModel = imgDest.getColorModel();
-//        final WritableRenderedImage imgDest = new BufferedImage(imgSource.getColorModel(), imgSource.getColorModel().createCompatibleWritableRaster(imgWidth, imgHeight), false, null);
-        //        imgDest = new WritableLargeRenderedImage(imgWidth, imgHeight, imgSource.getColorModel());
-        
-//        srcIter            = PixelIteratorFactory.createRowMajorIterator(imgSource);
-//        final int numBand  = srcIter.getNumBands();
-        mntIter            = PixelIteratorFactory.createRowMajorIterator(dem);
-        destIter           = PixelIteratorFactory.createRowMajorWriteableIterator(imgDest, imgDest);
+        mntIter                     = PixelIteratorFactory.createRowMajorIterator(dem);
+        destIter                    = PixelIteratorFactory.createRowMajorWriteableIterator(imgDest, imgDest);
         
         // iteration attribut
         final int iterBeginX;
@@ -339,7 +347,6 @@ public final class ReliefShadow {
         while (iterBeginY >= minY && iterBeginY < maxY) {
             int x = iterBeginX;
             while (x >= minX && x < maxX) {
-//                srcIter.moveTo(x, iterBeginY, 0);
                 destIter.moveTo(x, iterBeginY, 0);
                 final Object pix = srcRaster.getDataElements(x, iterBeginY, null);
                 // alpha transparency
@@ -368,10 +375,14 @@ public final class ReliefShadow {
                               | (Math.min(255, (int)(blue  * brightness)));
                     imgDest.setRGB(x, iterBeginY, color);
                     mntIter.moveTo(x, iterBeginY, 0);
-                    final double z  = mntIter.getSampleDouble();
+                    double z  = mntIter.getSampleDouble();
+                    if (Double.isNaN(z)) {
+                        x+=iterPasX;
+                        continue;
+                    }
                     TABV[ordinateX] = x;
                     TABV[ordinateY] = iterBeginY;
-                    computeShadow(z);
+                    computeShadow(z * axisDirection);
                 }
                 x += iterPasX;
             }
@@ -400,11 +411,13 @@ public final class ReliefShadow {
         while (ordX >= minX && ordX < maxX && ordY >= minY && ordY < maxY) {
             
             mntIter.moveTo(ordX, ordY, 0);
-            final double currentZ = mntIter.getSampleDouble();
-            if (currentZ > sz) return;
-            destIter.moveTo(ordX, ordY, 0);
-            // set an arbitrary value just to define a shadow pixel.
-            destIter.setSample(1);
+            final double currentZ = mntIter.getSampleDouble() * axisDirection;
+            if (!Double.isNaN(currentZ)) {
+                if (currentZ > sz) return;
+                destIter.moveTo(ordX, ordY, 0);
+                // set an arbitrary value just to define a shadow pixel.
+                destIter.setSample(1);
+            }                
             TABV[0] += pasv;
             TABV[1] += pasfv;
             sz      += pasz;
@@ -412,6 +425,27 @@ public final class ReliefShadow {
             // define pixel x, y position
             ordX = (int) TABV[ordinateX];
             ordY = (int) TABV[ordinateY];
+        }
+    }
+    
+    /**
+     * Define positive altitude value sens.<br/>
+     * {@link AxisDirection} should be instance of following type: <br/>
+     * {@link AxisDirection#DOWN} or {@link AxisDirection#UP}.<br/><br/>
+     * 
+     * Note : Default value is {@link AxisDirection#UP}.
+     * 
+     * @param altitudeDirection direction of positive altitude value sens.
+     * @throws IllegalArgumentException if setted {@link AxisDirection} is not instance of {@link AxisDirection#DOWN} or {@link AxisDirection#UP}.
+     */
+    public void setAltitudeAxisDirection(final AxisDirection altitudeDirection) {
+        if (altitudeDirection.equals(AxisDirection.DOWN)) {
+            this.axisDirection = -1;
+        } else if (altitudeDirection.equals(AxisDirection.UP)) {
+            this.axisDirection = 1;
+        } else {
+            throw new IllegalArgumentException("setted altitude direction should be instance of "
+                    + "AxisDirection.DOWN or AxisDirection.UP. stted altitude = "+altitudeDirection);
         }
     }
 }

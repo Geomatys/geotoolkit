@@ -30,11 +30,11 @@ import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
+import org.geotoolkit.map.ElevationModel;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 

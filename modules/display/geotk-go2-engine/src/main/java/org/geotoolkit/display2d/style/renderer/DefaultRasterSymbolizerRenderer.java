@@ -26,11 +26,15 @@ import java.awt.image.ComponentColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.media.jai.Histogram;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
@@ -102,6 +106,8 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
@@ -507,7 +513,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @throws PortrayalException
      */
     public static RenderedImage applyStyle(GridCoverage2D coverage, GridCoverage2D elevationCoverage, final ElevationModel elevationModel, final RasterSymbolizer styleElement,
-                final RenderingHints hints, boolean isReprojected) throws PortrayalException, ProcessException, FactoryException, TransformException {
+                final RenderingHints hints, boolean isReprojected) throws PortrayalException, ProcessException, FactoryException, TransformException, IOException {
 
         //band select ----------------------------------------------------------
         //works as a JAI operation
@@ -575,15 +581,15 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
              * Next computes adapt azimuth angle in function of gridToCrs.
              */
             // unitary azimuth vector in PI / 2 - azimuth direction
-            final GridGeometry2D gg2d = elevationCoverage.getGridGeometry();
-            final Envelope2D env = elevationCoverage.getGridGeometry().getEnvelope2D();
+            final GridGeometry2D gg2d = coverage.getGridGeometry();
+            final Envelope2D env = gg2d.getEnvelope2D();
             final double[] uniVect = new double[4];
             uniVect[0] = env.getMedian(gg2d.axisDimensionX);
             uniVect[1] = env.getMedian(gg2d.axisDimensionY);
             final double crsAlpha = Math.PI/2 - (azimuth * Math.PI / 180);
             uniVect[2] = uniVect[0] + Math.cos(crsAlpha);
             uniVect[3] = uniVect[1] + Math.sin(crsAlpha);
-            final MathTransform2D crsToGrid = elevationCoverage.getGridGeometry().getGridToCRS2D().inverse();
+            final MathTransform2D crsToGrid = gg2d.getGridToCRS2D().inverse();
 
             // angle vector projection
             final double[] resultVect = new double[4];
@@ -595,7 +601,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             v /= magn;
 
             // angle (azimuth) exprimate in image space
-            final double gridAzim = ((Math.PI / 2) - Math.atan(v / u)) * 180 / Math.PI;
+            final double gridAzim = ((Math.PI / 2) - Math.atan2(v, u)) * 180 / Math.PI;
 
             // altitude angle
             final double altitude = elevationModel.getAltitude();
@@ -610,6 +616,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             // ReliefShadow creating
             final ReliefShadow rfs = new ReliefShadow(gridAzim, altitude, brightness, relfactor);
             final GridCoverage2D mntCoverage = getDEMCoverage(coverage, elevationCoverage);
+//            rfs.setAltitudeAxisDirection(defaultAD);
+            rfs.setAltitudeAxisDirection(elevationModel.getAltitudeDirection());
             final RenderedImage mnt = mntCoverage.getRenderedImage();
             // mnt should be null if current elevation coverage doesn't concord with coverage.
             if (mnt != null) {
@@ -623,6 +631,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 final Statistics[] stats = (Statistics[]) statProcess.call().parameter(ImageStatisticsDescriptor.OUTPUT_STATS_PARAM_NAME).getValue();
                 final double elevationAmplitude = stats[0].span();
                 image = rfs.getRelief(image, mnt, elevationAmplitude * altiScale);
+                ImageIO.write(image, "tiff", new File("/home/rmarechal/Documents/image/world-mnt/Exemple_MNTbathy/resulttest"
+                        + "/bathyShadowAzim"+((int)azimuth)+"Alti"+((int)altitude)+"ZScal"+(altiScale*100)+".tiff"));
             }
         }
 

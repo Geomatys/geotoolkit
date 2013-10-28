@@ -211,7 +211,6 @@ public final class MapBuilder {
      * @return ElevationModel
      */
     public static ElevationModel createElevationModel(final GridCoverageReader grid, final double altitudeScale, final double azimuthAngle, final double altitudeAngle){
-        return new DefaultElevationModel(grid, altitudeScale, azimuthAngle, altitudeAngle);
+        return new ElevationModel(grid, altitudeScale, azimuthAngle, altitudeAngle);
     }
-
 }
