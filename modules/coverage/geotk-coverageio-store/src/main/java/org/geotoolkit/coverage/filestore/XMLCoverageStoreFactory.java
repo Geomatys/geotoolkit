@@ -16,12 +16,17 @@
  */
 package org.geotoolkit.coverage.filestore;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.bind.JAXBException;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
@@ -31,6 +36,7 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.parameter.Parameters;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -125,4 +131,39 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory{
         return open(params);
     }
 
+    @Override
+    public boolean canProcess(ParameterValueGroup params) {
+        if (super.canProcess(params)) {
+            URL pathValue = Parameters.value(PATH, params);
+            try {
+                final File root = new File(pathValue.toURI());
+                if (root.isFile()) {
+                    final XMLPyramidSet set = XMLPyramidSet.read(root);
+                } else if (root.isDirectory()) {
+                    // TODO : We use a filter based on file extension. Maybe we could find a better way ? (header reading ?)
+                    final File[] xmlFiles = root.listFiles(new FilenameFilter() {
+                        @Override
+                        public boolean accept(File dir, String name) {
+                            return name.matches(".+\\.(?i)xml$");
+                        }
+                    });
+                    
+                    for (File f : xmlFiles) {
+                        try {
+                            final XMLPyramidSet set = XMLPyramidSet.read(f);
+                            return true;
+                        } catch (Exception e) {
+                            continue;
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                // Nothing to do, we'll just tell user we can't process his parameters.
+            }
+        }
+        
+        return false;
+    } 
+
+    
 }
