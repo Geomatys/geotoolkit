@@ -40,6 +40,7 @@ import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.referencing.CRS;
 import org.junit.Test;
 import org.opengis.feature.type.Name;
@@ -63,11 +64,11 @@ import org.junit.BeforeClass;
  * @author Johann Sorel (Geomatys)
  */
 public class PGCVersioningTest {
-    
+
     private static final TimeZone GMT0 = TimeZone.getTimeZone("GMT+0");
     private static final double DELTA = 0.00000001;
     private static final CoordinateReferenceSystem CRS_4326;
-    
+
     static{
         try {
             CRS_4326 = CRS.decode("EPSG:4326");
@@ -75,52 +76,52 @@ public class PGCVersioningTest {
             throw new RuntimeException("Failed to load CRS");
         } catch (FactoryException ex) {
             throw new RuntimeException("Failed to load CRS");
-        } 
+        }
     }
-    
+
     private static ParameterValueGroup params;
     private CoverageStore store;
-    
+
     @BeforeClass
     public static void beforeClass() throws IOException {
         String path = System.getProperty("user.home");
-        path += "/.geotoolkit.org/test-pgcoverage.properties";        
+        path += "/.geotoolkit.org/test-pgcoverage.properties";
         final File f = new File(path);
-        Assume.assumeTrue(f.exists());        
+        Assume.assumeTrue(f.exists());
         final Properties properties = new Properties();
         properties.load(new FileInputStream(f));
         params = FeatureUtilities.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
     }
-    
+
     public PGCVersioningTest(){
     }
-    
+
     private void reload() throws DataStoreException, VersioningException {
         if(store != null){
             store.dispose();
         }
-        
+
         final CoverageStoreFactory factory = CoverageStoreFinder.getFactoryById("pgraster");
-        
+
         try{
             store = factory.create(params);
         }catch(DataStoreException ex){
             //it may already exist
             store = factory.open(params);
         }
-        
-        
+
+
         for(Name n : store.getNames()){
             VersionControl vc = store.getVersioning(n);
             store.delete(n);
         }
         assertTrue(store.getNames().isEmpty());
     }
-    
+
     @Test
     public void testVersioning() throws DataStoreException, VersioningException {
         reload();
-        
+
         final GeneralDirectPosition upperLeft = new GeneralDirectPosition(CRS_4326);
         final Dimension dimension = new Dimension(20, 20);
         final Calendar calendar = Calendar.getInstance(GMT0);
@@ -132,16 +133,16 @@ public class PGCVersioningTest {
         Pyramid pyramid;
         GridMosaic mosaic;
         GridCoverage2D coverage;
-        
-        final Name name = new DefaultName(null, "versLayer");        
+
+        final Name name = new DefaultName(null, "versLayer");
         store.create(name);
         final VersionControl vc = store.getVersioning(name);
         versions = vc.list();
         assertTrue(versions.isEmpty());
-        
+
         //create version 1 -----------------------------------------------------
         calendar.setTimeInMillis(0);
-        final Date date1 = calendar.getTime();        
+        final Date date1 = calendar.getTime();
         version = vc.createVersion(date1);
         cref = (PyramidalCoverageReference) store.getCoverageReference(name, version);
         assertNotNull(cref);
@@ -149,15 +150,17 @@ public class PGCVersioningTest {
         pyramid = cref.createPyramid(CRS_4326);
         mosaic = cref.createMosaic(pyramid.getId(), new Dimension(1, 1), dimension, upperLeft, 1);
         cref.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, createImage(dimension, Color.RED));
-        
+
         versions = vc.list();
         assertEquals(1, versions.size());
         assertEquals(versions.get(0).getDate().getTime(),0);
         assertEquals(date1.getTime(),versions.get(0).getDate().getTime());
-        
-        coverage = (GridCoverage2D)cref.acquireReader().read(cref.getImageIndex(), null);
+
+        GridCoverageReader reader = cref.acquireReader();
+        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
+        cref.recycle(reader);
         assertImageColor(coverage.getRenderedImage(), Color.RED);
-        
+
         //create version 2 -----------------------------------------------------
         calendar.setTimeInMillis(50000);
         final Date date2 = calendar.getTime();
@@ -168,15 +171,17 @@ public class PGCVersioningTest {
         pyramid = cref.createPyramid(CRS_4326);
         mosaic = cref.createMosaic(pyramid.getId(), new Dimension(1, 1), dimension, upperLeft, 1);
         cref.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, createImage(dimension, Color.BLUE));
-        
-        coverage = (GridCoverage2D)cref.acquireReader().read(cref.getImageIndex(), null);
+
+        reader = cref.acquireReader();
+        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
+        cref.recycle(reader);
         assertImageColor(coverage.getRenderedImage(), Color.BLUE);
-        
+
         versions = vc.list();
         assertEquals(2, versions.size());
         assertEquals(versions.get(0).getDate().getTime(),0);
         assertEquals(versions.get(1).getDate().getTime(),50000);
-        
+
         //create version 3 -----------------------------------------------------
         calendar.setTimeInMillis(20000);
         final Date date3 = calendar.getTime();
@@ -187,52 +192,60 @@ public class PGCVersioningTest {
         pyramid = cref.createPyramid(CRS_4326);
         mosaic = cref.createMosaic(pyramid.getId(), new Dimension(1, 1), dimension, upperLeft, 1);
         cref.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, createImage(dimension, Color.GREEN));
-        
-        coverage = (GridCoverage2D)cref.acquireReader().read(cref.getImageIndex(), null);
+
+        reader = cref.acquireReader();
+        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
+        cref.recycle(reader);
         assertImageColor(coverage.getRenderedImage(), Color.GREEN);
-        
+
         versions = vc.list();
         assertEquals(3, versions.size());
         assertEquals(versions.get(0).getDate().getTime(),0);
         assertEquals(versions.get(1).getDate().getTime(),20000);
         assertEquals(versions.get(2).getDate().getTime(),50000);
-                
-        
+
+
         //try accesing different version ---------------------------------------
         cref = (PyramidalCoverageReference) store.getCoverageReference(name);
         //we should have the blue image
-        coverage = (GridCoverage2D)cref.acquireReader().read(cref.getImageIndex(), null);
+        reader = cref.acquireReader();
+        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
+        cref.recycle(reader);
         assertImageColor(coverage.getRenderedImage(), Color.BLUE);
-        
+
         //grab by version
         cref = (PyramidalCoverageReference) store.getCoverageReference(name,versions.get(0));
-        coverage = (GridCoverage2D)cref.acquireReader().read(cref.getImageIndex(), null);
+        reader = cref.acquireReader();
+        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
         assertImageColor(coverage.getRenderedImage(), Color.RED);
         cref = (PyramidalCoverageReference) store.getCoverageReference(name,versions.get(1));
-        coverage = (GridCoverage2D)cref.acquireReader().read(cref.getImageIndex(), null);
+        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
         assertImageColor(coverage.getRenderedImage(), Color.GREEN);
         cref = (PyramidalCoverageReference) store.getCoverageReference(name,versions.get(2));
-        coverage = (GridCoverage2D)cref.acquireReader().read(cref.getImageIndex(), null);
+        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
         assertImageColor(coverage.getRenderedImage(), Color.BLUE);
-        
-        
+        reader = cref.acquireReader();
+
+
         //drop some versions ---------------------------------------------------
         vc.dropVersion(versions.get(1));
         versions = vc.list();
         assertEquals(2, versions.size());
         assertEquals(versions.get(0).getDate().getTime(),0);
         assertEquals(versions.get(1).getDate().getTime(),50000);
-        
+
+        reader = cref.acquireReader();
         cref = (PyramidalCoverageReference) store.getCoverageReference(name,versions.get(0));
-        coverage = (GridCoverage2D)cref.acquireReader().read(cref.getImageIndex(), null);
+        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
         assertImageColor(coverage.getRenderedImage(), Color.RED);
         cref = (PyramidalCoverageReference) store.getCoverageReference(name,versions.get(1));
-        coverage = (GridCoverage2D)cref.acquireReader().read(cref.getImageIndex(), null);
+        coverage = (GridCoverage2D)reader.read(cref.getImageIndex(), null);
         assertImageColor(coverage.getRenderedImage(), Color.BLUE);
-        
+        cref.recycle(reader);
+
     }
-        
-    
+
+
     private static BufferedImage createImage(Dimension tileSize, Color color){
         final BufferedImage image = new BufferedImage(tileSize.width, tileSize.height, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = image.createGraphics();
@@ -240,7 +253,7 @@ public class PGCVersioningTest {
         g.fillRect(0, 0, tileSize.width, tileSize.height);
         return image;
     }
-    
+
     private static void assertImageColor(RenderedImage image, Color color){
         final BufferedImage img = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
         img.createGraphics().drawRenderedImage(image, new AffineTransform());
@@ -248,7 +261,7 @@ public class PGCVersioningTest {
         final int width = image.getWidth();
         final int height = image.getHeight();
         final int refargb = color.getRGB();;
-        
+
         for(int x=0;x<width;x++){
             for(int y=0;y<height;y++){
                 int argb = ((BufferedImage)image).getRGB(x, y);
@@ -256,5 +269,5 @@ public class PGCVersioningTest {
             }
         }
     }
-    
+
 }

@@ -35,8 +35,10 @@ import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
+import org.geotoolkit.coverage.CoverageReference;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
@@ -453,9 +455,10 @@ public class KmzContextInterpreter {
         final Collection<Property> groundOverlayProperties = groundOverlay.getProperties();
         final CoordinateReferenceSystem targetCrs = DefaultGeographicCRS.WGS84;
 
-        final GridCoverage2D coverage =
-                (GridCoverage2D) coverageMapLayer.getCoverageReference().acquireReader().read(0, null);
-        //coverage.show();
+        final CoverageReference ref = coverageMapLayer.getCoverageReference();
+        final GridCoverageReader reader = ref.acquireReader();
+        final GridCoverage2D coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), null);
+        ref.recycle(reader);
 
         final GridCoverage2D targetCoverage =
                 (GridCoverage2D) Operations.DEFAULT.resample(coverage, targetCrs);

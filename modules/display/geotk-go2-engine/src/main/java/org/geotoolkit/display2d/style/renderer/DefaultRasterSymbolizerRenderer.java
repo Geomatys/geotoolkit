@@ -61,6 +61,7 @@ import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.math.Statistics;
+import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -235,9 +236,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                         if(eles.length > 0 && ComponentColorModel.class.getName().equalsIgnoreCase(eles[0].getClassName())){
 
                             try{
-                                final GridCoverageReader reader = projectedCoverage.getLayer().getCoverageReference().acquireReader();
-                                final Map<String,Object> analyze = StatisticOp.analyze(
-                                        reader,projectedCoverage.getLayer().getCoverageReference().getImageIndex());
+                                final CoverageReference ref = projectedCoverage.getLayer().getCoverageReference();
+                                final GridCoverageReader reader = ref.acquireReader();
+                                final Map<String,Object> analyze = StatisticOp.analyze(reader,ref.getImageIndex());
+                                ref.recycle(reader);
                                 final double[] minArray = (double[])analyze.get(StatisticOp.MINIMUM);
                                 final double[] maxArray = (double[])analyze.get(StatisticOp.MAXIMUM);
                                 final double min = findExtremum(minArray, true);

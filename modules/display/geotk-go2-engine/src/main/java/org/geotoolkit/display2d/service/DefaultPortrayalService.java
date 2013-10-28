@@ -82,6 +82,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
@@ -502,7 +503,8 @@ public final class DefaultPortrayalService implements PortrayalService{
         final CoverageMapLayer cml = (CoverageMapLayer) layer;
 
         try{
-            final GridCoverageReader reader = cml.getCoverageReference().acquireReader();
+            final CoverageReference ref = cml.getCoverageReference();
+            final GridCoverageReader reader = ref.acquireReader();
             final String mime = outputDef.getMime();
             final Envelope env = viewDef.getEnvelope();
             final Dimension dim = canvasDef.getDimension();
@@ -516,6 +518,7 @@ public final class DefaultPortrayalService implements PortrayalService{
 
             GridCoverage2D coverage = (GridCoverage2D)reader.read(cml.getCoverageReference().getImageIndex(), readParam);
             final RenderedImage image = coverage.getRenderedImage();
+            ref.recycle(reader);
 
             // HACK TO FIX COLOR ERROR ON JPEG /////////////////////////////////
             if(mime.contains("jpeg") || mime.contains("jpg")){

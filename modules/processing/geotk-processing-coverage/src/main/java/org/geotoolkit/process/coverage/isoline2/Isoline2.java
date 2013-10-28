@@ -70,7 +70,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -79,13 +79,13 @@ public class Isoline2 extends AbstractProcess {
     private static final Logger LOGGER = Logging.getLogger(Isoline2.class);
     private static final GeometryFactory GF = new GeometryFactory();
     private static final boolean DEBUG = false;
-    
+
     //iteration informations
     private CoordinateReferenceSystem crs;
     private FeatureType type;
     private FeatureCollection col;
     private double[] intervals;
-          
+
     public Isoline2(ProcessDescriptor desc, ParameterValueGroup input) {
         super(desc, input);
     }
@@ -96,11 +96,11 @@ public class Isoline2 extends AbstractProcess {
         FeatureStore featureStore = value(FEATURE_STORE, inputParameters);
         final String featureTypeName = value(FEATURE_NAME, inputParameters);
         intervals = value(INTERVALS, inputParameters);
-        
+
         if(featureStore==null){
             featureStore = new MemoryFeatureStore();
         }
-        
+
         try{
             final int imgIndex = coverageRef.getImageIndex();
             final GridCoverageReader reader  = coverageRef.acquireReader();
@@ -108,7 +108,7 @@ public class Isoline2 extends AbstractProcess {
             crs = gridgeom.getCoordinateReferenceSystem();
             type = getOrCreateIsoType(featureStore, featureTypeName, crs);
             col = featureStore.createSession(false).getFeatureCollection(QueryBuilder.all(type.getName()));
-        
+
             if (coverageRef instanceof PyramidalCoverageReference) {
                 final PyramidalCoverageReference pm = (PyramidalCoverageReference) coverageRef;
                 computeIsolineFromPM(pm);
@@ -129,7 +129,7 @@ public class Isoline2 extends AbstractProcess {
                     final GridCoverage2D coverage = (GridCoverage2D) reader.read(coverageRef.getImageIndex(), null);
                     image = coverage.getRenderedImage();
                 }
-                
+
                 final PixelIterator ite = PixelIteratorFactory.createDefaultIterator(image);
                 final int width = image.getWidth();
                 final int height = image.getHeight();
@@ -137,14 +137,15 @@ public class Isoline2 extends AbstractProcess {
                 final BlockRunnable runnable = new BlockRunnable(gridtoCRS, ite, width, height, 0);
                 runnable.run();
             }
-        
+            coverageRef.recycle(reader);
+
         }catch(Exception ex){
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-        
+
         outputParameters.parameter("outFeatureCollection").setValue(col);
     }
-    
+
     private void computeIsolineFromPM(PyramidalCoverageReference pm) throws DataStoreException, ProcessException, InterruptedException{
 
         final PyramidSet set = pm.getPyramidSet();
@@ -162,7 +163,7 @@ public class Isoline2 extends AbstractProcess {
                     }
                 }
             }
-            
+
             for (final GridMosaic mosaic : pyramid.getMosaics()) {
                 final GridMosaicRenderedImage gridImage = new GridMosaicRenderedImage(mosaic);
 
@@ -198,31 +199,31 @@ public class Isoline2 extends AbstractProcess {
                     }
                 }
             }
-            
+
         }
-        
+
         exec.shutdown();
         exec.awaitTermination(1, TimeUnit.DAYS);
     }
-    
-     
+
+
     private static Coordinate interpolate(double candidate, Coordinate start, Coordinate end){
         if(start.z<candidate && candidate<end.z){
             double ratio = (candidate-start.z) / (end.z-start.z);
             return new Coordinate(
-                    start.x + (end.x-start.x)*ratio, 
+                    start.x + (end.x-start.x)*ratio,
                     start.y + (end.y-start.y)*ratio,
                     candidate);
         }else if(start.z>candidate && candidate>end.z){
             double ratio = (candidate-end.z) / (start.z-end.z);
             return new Coordinate(
-                    end.x + (start.x-end.x)*ratio, 
+                    end.x + (start.x-end.x)*ratio,
                     end.y + (start.y-end.y)*ratio,
                     candidate);
         }
         return null;
     }
-    
+
     private static FeatureType getOrCreateIsoType(FeatureStore featureStore, String featureTypeName, CoordinateReferenceSystem crs) throws DataStoreException {
         //FeatureType with scale
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -251,8 +252,8 @@ public class Isoline2 extends AbstractProcess {
 
         return type;
     }
-    
-    
+
+
     private class BlockRunnable implements Runnable {
 
         private final MathTransform gridtoCRS;
@@ -260,7 +261,7 @@ public class Isoline2 extends AbstractProcess {
         private final int width;
         private final int height;
         private final double scale;
-    
+
         //previous triangles informations
         private Boundary[][] line0TopNeighbor; // [level][X] for previous line
         private Boundary[][] line1TopNeighbor; // [level][X] for current line
@@ -288,7 +289,7 @@ public class Isoline2 extends AbstractProcess {
                 LOGGER.log(Level.SEVERE, null, ex);
             }
         }
-           
+
         private void computeIsoligne() throws ProcessException{
             try{
                 //line buffer
@@ -376,7 +377,7 @@ public class Isoline2 extends AbstractProcess {
             cst.update(leftNeighbor[k]);
         }
 
-        private Boundary buildTriangles(final int k, final double level, final Boundary top, final Boundary left) 
+        private Boundary buildTriangles(final int k, final double level, final Boundary top, final Boundary left)
                 throws MismatchedDimensionException, TransformException, ProcessException{
 
             final boolean ulCorner = (UL.z == level);
@@ -398,7 +399,7 @@ public class Isoline2 extends AbstractProcess {
             final Construction.Edge SBottom;
 
             if(top!=null && left!=null){ //-----------------------------------------
-                //pixel is somewhere in the image 
+                //pixel is somewhere in the image
 
                 if(top.HMiddle!=null){
                     if(crossHp!=null){
@@ -531,7 +532,7 @@ public class Isoline2 extends AbstractProcess {
                         SMiddle = top.HMiddle;
                         SMiddle.add(crossHp);
                         STop = null;
-                        SBottom = null; 
+                        SBottom = null;
                     }else if(crossLf!=null){
                         top.HMiddle.add(crossLf);
                         STop = null;
@@ -597,7 +598,7 @@ public class Isoline2 extends AbstractProcess {
                     STop = null;
                     SMiddle = null;
                     SBottom = null;
-                }            
+                }
 
                 if(DEBUG) checkIntermediate(level,SBottom, SMiddle, STop);
 
@@ -792,8 +793,8 @@ public class Isoline2 extends AbstractProcess {
         }
 
         private void checkIntermediate(final double level,
-                                              final Construction.Edge SBottom, 
-                                              final Construction.Edge SMiddle, 
+                                              final Construction.Edge SBottom,
+                                              final Construction.Edge SMiddle,
                                               final Construction.Edge STop) throws ProcessException{
             final Coordinate crossHp = interpolate(level, UR, BL);
 
@@ -809,9 +810,9 @@ public class Isoline2 extends AbstractProcess {
             }
         }
 
-        private Boundary createSecondTriangle(final double level, 
-                                              final Construction.Edge SBottom, 
-                                              final Construction.Edge SMiddle, 
+        private Boundary createSecondTriangle(final double level,
+                                              final Construction.Edge SBottom,
+                                              final Construction.Edge SMiddle,
                                               final Construction.Edge STop) throws ProcessException{
 
             final boolean urCorner = (UR.z == level);
@@ -906,7 +907,7 @@ public class Isoline2 extends AbstractProcess {
 
             if(newBoundary.VMiddle==null && newBoundary.HMiddle==null){
                 if(crossBt != null && crossRi != null){
-                    //create new lines 
+                    //create new lines
                     final Construction cst = new Construction(level);
                     newBoundary.VMiddle = cst.getEdge1();
                     newBoundary.VMiddle.add(crossBt);
@@ -967,6 +968,6 @@ public class Isoline2 extends AbstractProcess {
         }
 
     }
-    
-    
+
+
 }

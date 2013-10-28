@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.coverage.CoverageStoreListener;
 import org.geotoolkit.coverage.CoverageStoreManagementEvent;
@@ -69,21 +70,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
 
     public StatelessCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer, final boolean ignoreBuilders){
         super(canvas, layer, false);
-
         this.ignoreBuilders = ignoreBuilders;
-
-        try {
-            final GridCoverageReader reader = layer.getCoverageReference().acquireReader();
-            final GeneralGridGeometry ggg = reader.getGridGeometry(layer.getCoverageReference().getImageIndex());
-            if(ggg == null){
-                Logger.getLogger(StatelessCoverageLayerJ2D.class.getName()).log(
-                        Level.WARNING, "Could not access envelope of layer {0}", layer.getName());
-            }
-
-        } catch (CoverageStoreException ex) {
-            Logger.getLogger(StatelessCoverageLayerJ2D.class.getName()).log(Level.WARNING, null, ex);
-        }
-
         this.params = new StatelessContextParams(canvas,null);
         this.projectedCoverage = new DefaultProjectedCoverage(params, layer);
         this.weakStoreListener.registerSource(layer.getCoverageReference());

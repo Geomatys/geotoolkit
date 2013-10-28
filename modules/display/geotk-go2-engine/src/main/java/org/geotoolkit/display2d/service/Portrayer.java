@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -241,9 +242,10 @@ public final class Portrayer {
 
         //we can bypass the renderer
         final CoverageMapLayer cml = (CoverageMapLayer) layer;
-        
+
         try{
-            final GridCoverageReader reader = cml.getCoverageReference().acquireReader();
+            final CoverageReference ref = cml.getCoverageReference();
+            final GridCoverageReader reader = ref.acquireReader();
             final String mime = outputDef.getMime();
             final Envelope env = viewDef.getEnvelope();
             final Dimension dim = canvasDef.getDimension();
@@ -257,6 +259,7 @@ public final class Portrayer {
 
             GridCoverage2D coverage = (GridCoverage2D)reader.read(cml.getCoverageReference().getImageIndex(), readParam);
             final RenderedImage image = coverage.getRenderedImage();
+            ref.recycle(reader);
 
             // HACK TO FIX COLOR ERROR ON JPEG /////////////////////////////////
             if(mime.contains("jpeg") || mime.contains("jpg")){

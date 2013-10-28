@@ -20,6 +20,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.memory.MemoryCoverageStore;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.junit.Test;
@@ -30,23 +31,23 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  */
 public class MemoryStoreTest {
-    
+
     /**
      * Check events
      */
     @Test
     public void testEvent() throws DataStoreException{
-        
+
         final StorageCountListener storelistener = new StorageCountListener();
         final StorageCountListener reflistener = new StorageCountListener();
         final MemoryCoverageStore store = new MemoryCoverageStore();
         store.addStorageListener(storelistener);
-        
+
         assertEquals(0, store.getNames().size());
-        
+
         final DefaultName name = new DefaultName(store.getDefaultNamespace(), "test");
         final CoverageReference ref = store.create(name);
-        assertNotNull(ref);        
+        assertNotNull(ref);
         assertEquals(1, storelistener.numManageEvent);
         assertEquals(0, storelistener.numContentEvent);
         assertEquals(null, storelistener.lastContentEvent);
@@ -54,17 +55,19 @@ public class MemoryStoreTest {
         assertEquals(null, storelistener.lastManagementEvent.getPyramidId());
         assertEquals(null, storelistener.lastManagementEvent.getMosaicId());
         assertEquals(CoverageStoreManagementEvent.Type.COVERAGE_ADD, storelistener.lastManagementEvent.getType());
-        
+
         final float[][] data = new float[][]{{1}};
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
         gcb.setRenderedImage(data);
         gcb.setEnvelope(-180,-90,180,90);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
-        
+
         ref.addStorageListener(reflistener);
-        ref.acquireWriter().write(coverage, null);
-        
+        final GridCoverageWriter writer = ref.acquireWriter();
+        writer.write(coverage, null);
+        ref.recycle(writer);
+
         assertEquals(1, storelistener.numManageEvent);
         assertEquals(1, storelistener.numContentEvent);
         assertEquals(name, storelistener.lastContentEvent.getCoverageName());
@@ -72,7 +75,7 @@ public class MemoryStoreTest {
         assertEquals(null, storelistener.lastContentEvent.getMosaicId());
         assertEquals(null, storelistener.lastContentEvent.getTiles());
         assertEquals(CoverageStoreContentEvent.Type.DATA_UPDATE, storelistener.lastContentEvent.getType());
-        
+
         assertEquals(0, reflistener.numManageEvent);
         assertEquals(1, reflistener.numContentEvent);
         assertEquals(null, reflistener.lastManagementEvent);
@@ -81,7 +84,7 @@ public class MemoryStoreTest {
         assertEquals(null, reflistener.lastContentEvent.getMosaicId());
         assertEquals(null, reflistener.lastContentEvent.getTiles());
         assertEquals(CoverageStoreContentEvent.Type.DATA_UPDATE, reflistener.lastContentEvent.getType());
-        
+
     }
-    
+
 }

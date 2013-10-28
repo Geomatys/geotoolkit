@@ -590,16 +590,14 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         }
         if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer)layer;
+            final CoverageReference ref = cml.getCoverageReference();
             try {
-                final GridCoverageReader reader = cml.getCoverageReference().acquireReader();
-                final List<? extends GenericName> names = reader.getCoverageNames();
-                int imageIndex = 0;
-                final CoverageReference ref = cml.getCoverageReference();
-                if(ref!=null){
-                    imageIndex = ref.getImageIndex();
-                }
+
 
                 if(mustInterpolation){
+                    final GridCoverageReader reader = ref.acquireReader();
+                    final int imageIndex = ref.getImageIndex();
+
                     final List<MeasurementRange<?>> ranges = reader.getSampleValueRanges(imageIndex);
                     if(ranges != null && !ranges.isEmpty()){
                         final Integer index = (Integer) guiBand.getValue();
@@ -619,6 +617,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                     }else{
                         getInterpolationPoints(reader, cml, steps);
                     }
+                    ref.recycle(reader);
                 }else{
                     for(int s=0,l=steps.size();s<l;s++){
                         final Entry<Double, Color> step = steps.get(s);

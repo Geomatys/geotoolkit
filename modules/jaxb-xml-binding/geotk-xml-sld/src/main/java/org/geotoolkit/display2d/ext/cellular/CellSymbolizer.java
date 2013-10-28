@@ -218,11 +218,9 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
 
     public static SimpleFeatureType buildCellType(CoverageReference ref) throws DataStoreException{
         final GridCoverageReader reader = ref.acquireReader();
-        try{
-            return buildCellType(reader, ref.getImageIndex());
-        }finally{
-            //reader.dispose();
-        }
+        final SimpleFeatureType sft = buildCellType(reader, ref.getImageIndex());
+        ref.recycle(reader);
+        return sft;
     }
 
     public static SimpleFeatureType buildCellType(GridCoverageReader reader, int imageIndex) throws DataStoreException{

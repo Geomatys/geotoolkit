@@ -29,6 +29,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
@@ -45,11 +46,11 @@ import org.opengis.util.FactoryException;
 
 /**
  * Test pyramid coverage writer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class PyramidWriterTest {
-    
+
     private static final Name NAME = new DefaultName("test");
     private static final CoordinateReferenceSystem CRS84 = WGS84;
     private static final CoordinateReferenceSystem EPSG4326;
@@ -66,12 +67,12 @@ public class PyramidWriterTest {
         UL84 = new GeneralDirectPosition(CRS84);
         UL84.setOrdinate(0, -180);
         UL84.setOrdinate(1, 90);
-        
+
         UL4326 = new GeneralDirectPosition(EPSG4326);
         UL4326.setOrdinate(0, -90);
         UL4326.setOrdinate(1, 180);
     }
-    
+
     /**
      * Test writing over an existing mosaic 1x1.
      */
@@ -82,11 +83,13 @@ public class PyramidWriterTest {
         final Pyramid pyramid = ref.createPyramid(CRS84);
         final GridMosaic mosaic = ref.createMosaic(pyramid.getId(), new Dimension(1, 1), new Dimension(360, 180), UL84, 1);
         ref.writeTile(pyramid.getId(), mosaic.getId(), 0, 0, createImage(360, 180, Color.BLACK));
-        
+
         //sanity check
-        RenderedImage candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
+        GridCoverageReader reader = ref.acquireReader();
+        RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        ref.recycle(reader);
         testImage(candidate, 360, 180, Color.BLACK);
-        
+
         //write over the tile
         final GridCoverageWriter writer = ref.acquireWriter();
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
@@ -100,12 +103,15 @@ public class PyramidWriterTest {
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(360, 180, Color.RED));
         writer.write(gcb.build(), param);
-        
+        ref.recycle(writer);
+
         //image should be red
-        candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
+        reader = ref.acquireReader();
+        candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        ref.recycle(reader);
         testImage(candidate, 360, 180, Color.RED);
     }
-    
+
     /**
      * Test writing over an existing mosaic 4x4.
      */
@@ -120,11 +126,13 @@ public class PyramidWriterTest {
                 ref.writeTile(pyramid.getId(), mosaic.getId(), x, y, createImage(9, 9, Color.BLACK));
             }
         }
-        
+
         //sanity check
-        RenderedImage candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
+        GridCoverageReader reader = ref.acquireReader();
+        RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        ref.recycle(reader);
         testImage(candidate, 36, 18, Color.BLACK);
-        
+
         //write over the tile
         final GridCoverageWriter writer = ref.acquireWriter();
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
@@ -138,12 +146,15 @@ public class PyramidWriterTest {
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(36, 18, Color.RED));
         writer.write(gcb.build(), param);
-        
+        ref.recycle(writer);
+
         //image should be red
-        candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
+        reader = ref.acquireReader();
+        candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        ref.recycle(reader);
         testImage(candidate, 36, 18, Color.RED);
     }
-    
+
     /**
      * Test writing only a piece over an existing mosaic 4x2.
      */
@@ -158,11 +169,13 @@ public class PyramidWriterTest {
                 ref.writeTile(pyramid.getId(), mosaic.getId(), x, y, createImage(9, 9, Color.BLACK));
             }
         }
-        
+
         //sanity check
-        RenderedImage candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
+        GridCoverageReader reader = ref.acquireReader();
+        RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        ref.recycle(reader);
         testImage(candidate, 36, 18, Color.BLACK);
-        
+
         //write over the tile
         final GridCoverageWriter writer = ref.acquireWriter();
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
@@ -176,11 +189,14 @@ public class PyramidWriterTest {
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(19, 9, Color.RED));
         writer.write(gcb.build(), param);
-        
+        ref.recycle(writer);
+
         //image should be black/red
-        candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
+        reader = ref.acquireReader();
+        candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        ref.recycle(reader);
         final Raster data = candidate.getData();
-        
+
         final int[] black = new int[]{Color.BLACK.getRed(),Color.BLACK.getGreen(),Color.BLACK.getBlue(),Color.BLACK.getAlpha()};
         final int[] red = new int[]{Color.RED.getRed(),Color.RED.getGreen(),Color.RED.getBlue(),Color.RED.getAlpha()};
         final int[] buffer = new int[4];
@@ -192,11 +208,11 @@ public class PyramidWriterTest {
                 }else{
                     assertArrayEquals(""+y+" "+x,black, buffer);
                 }
-                
+
             }
         }
     }
-    
+
     /**
      * Test writing only a piece over two existing mosaic 4x2 and 2x1.
      */
@@ -217,11 +233,13 @@ public class PyramidWriterTest {
                 ref.writeTile(pyramid.getId(), mosaic2.getId(), x, y, createImage(9, 9, Color.BLACK));
             }
         }
-        
+
         //sanity check
-        RenderedImage candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
+        GridCoverageReader reader = ref.acquireReader();
+        RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        ref.recycle(reader);
         testImage(candidate, 36, 18, Color.BLACK);
-        
+
         //write over the tile
         final GridCoverageWriter writer = ref.acquireWriter();
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
@@ -235,11 +253,14 @@ public class PyramidWriterTest {
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(19, 9, Color.RED));
         writer.write(gcb.build(), param);
-        
+        ref.recycle(writer);
+
         //lower image should be black/red---------------------------------------
-        candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
+        reader = ref.acquireReader();
+        candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        ref.recycle(reader);
         Raster data = candidate.getData();
-        
+
         final int[] black = new int[]{Color.BLACK.getRed(),Color.BLACK.getGreen(),Color.BLACK.getBlue(),Color.BLACK.getAlpha()};
         final int[] red = new int[]{Color.RED.getRed(),Color.RED.getGreen(),Color.RED.getBlue(),Color.RED.getAlpha()};
         final int[] buffer = new int[4];
@@ -253,11 +274,11 @@ public class PyramidWriterTest {
                 }
             }
         }
-        
+
         //the higher tiles------------------------------------------------------
         final BufferedImage top1 = mosaic2.getTile(0, 0, null).getImageReader().read(0);
         final BufferedImage top2 = mosaic2.getTile(1, 0, null).getImageReader().read(0);
-        
+
         data = top1.getData();
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
@@ -269,7 +290,7 @@ public class PyramidWriterTest {
                 }
             }
         }
-        
+
         data = top2.getData();
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
@@ -281,12 +302,12 @@ public class PyramidWriterTest {
                 }
             }
         }
-        
+
     }
-    
+
     /**
      * Test writing only a piece over two existing mosaic 4x2 and 2x1.
-     * Source coverage in not in same crs (axis flip) 
+     * Source coverage in not in same crs (axis flip)
      * CRS:84 > EPSG:4326
      */
     @Test
@@ -306,11 +327,13 @@ public class PyramidWriterTest {
                 ref.writeTile(pyramid.getId(), mosaic2.getId(), x, y, createImage(9, 9, Color.BLACK));
             }
         }
-        
+
         //sanity check
-        RenderedImage candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
+        GridCoverageReader reader = ref.acquireReader();
+        RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        ref.recycle(reader);
         testImage(candidate, 18, 36, Color.BLACK);
-        
+
        //write over the tile
         final GridCoverageWriter writer = ref.acquireWriter();
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
@@ -324,11 +347,14 @@ public class PyramidWriterTest {
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(19, 9, Color.RED));
         writer.write(gcb.build(), param);
-        
+        ref.recycle(writer);
+
         //lower image should be black/red---------------------------------------
-        candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
+        reader = ref.acquireReader();
+        candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        ref.recycle(reader);
         Raster data = candidate.getData();
-        
+
         final int[] black = new int[]{Color.BLACK.getRed(),Color.BLACK.getGreen(),Color.BLACK.getBlue(),Color.BLACK.getAlpha()};
         final int[] red = new int[]{Color.RED.getRed(),Color.RED.getGreen(),Color.RED.getBlue(),Color.RED.getAlpha()};
         final int[] buffer = new int[4];
@@ -342,11 +368,11 @@ public class PyramidWriterTest {
                 }
             }
         }
-        
+
         //the higher tiles------------------------------------------------------
         final BufferedImage top1 = mosaic2.getTile(0, 0, null).getImageReader().read(0);
         final BufferedImage top2 = mosaic2.getTile(0, 1, null).getImageReader().read(0);
-        
+
         data = top1.getData();
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
@@ -358,7 +384,7 @@ public class PyramidWriterTest {
                 }
             }
         }
-        
+
         data = top2.getData();
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
@@ -370,9 +396,9 @@ public class PyramidWriterTest {
                 }
             }
         }
-        
+
     }
-    
+
     /**
      * Test writing only a piece over two existing mosaic 4x2 and 2x1.
      * Source coverage in not in same crs (axis flip)
@@ -395,11 +421,13 @@ public class PyramidWriterTest {
                 ref.writeTile(pyramid.getId(), mosaic2.getId(), x, y, createImage(9, 9, Color.BLACK));
             }
         }
-        
+
         //sanity check
-        RenderedImage candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
+        GridCoverageReader reader = ref.acquireReader();
+        RenderedImage candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        ref.recycle(reader);
         testImage(candidate, 36, 18, Color.BLACK);
-        
+
         //write over the tile
         final GridCoverageWriter writer = ref.acquireWriter();
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
@@ -413,11 +441,14 @@ public class PyramidWriterTest {
         gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setRenderedImage(createImage(9, 19, Color.RED));
         writer.write(gcb.build(), param);
-        
+        ref.recycle(writer);
+
         //lower image should be black/red---------------------------------------
-        candidate = ((GridCoverage2D)ref.acquireReader().read(0, null)).getRenderedImage();
+        reader = ref.acquireReader();
+        candidate = ((GridCoverage2D)reader.read(0, null)).getRenderedImage();
+        ref.recycle(reader);
         Raster data = candidate.getData();
-        
+
         final int[] black = new int[]{Color.BLACK.getRed(),Color.BLACK.getGreen(),Color.BLACK.getBlue(),Color.BLACK.getAlpha()};
         final int[] red = new int[]{Color.RED.getRed(),Color.RED.getGreen(),Color.RED.getBlue(),Color.RED.getAlpha()};
         final int[] buffer = new int[4];
@@ -431,11 +462,11 @@ public class PyramidWriterTest {
                 }
             }
         }
-        
+
         //the higher tiles------------------------------------------------------
         final BufferedImage top1 = mosaic2.getTile(0, 0, null).getImageReader().read(0);
         final BufferedImage top2 = mosaic2.getTile(1, 0, null).getImageReader().read(0);
-        
+
         data = top1.getData();
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
@@ -447,7 +478,7 @@ public class PyramidWriterTest {
                 }
             }
         }
-        
+
         data = top2.getData();
         for(int y=0;y<9;y++){
             for(int x=0;x<9;x++){
@@ -459,10 +490,10 @@ public class PyramidWriterTest {
                 }
             }
         }
-        
+
     }
-    
-    
+
+
     private static void testImage(RenderedImage img, int width, int height, Color fill){
         assertNotNull(img);
         assertEquals(img.getWidth(), width);
@@ -476,9 +507,9 @@ public class PyramidWriterTest {
                 assertArrayEquals(color, buffer);
             }
         }
-        
+
     }
-    
+
     private static BufferedImage createImage(int width, int height, Color color){
         final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = image.createGraphics();
@@ -486,5 +517,5 @@ public class PyramidWriterTest {
         g.fillRect(0, 0, width, height);
         return image;
     }
-    
+
 }

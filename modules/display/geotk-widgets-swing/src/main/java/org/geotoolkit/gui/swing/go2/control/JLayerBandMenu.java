@@ -36,6 +36,8 @@ import javax.swing.JMenu;
 import javax.swing.JPanel;
 
 import javax.swing.SwingConstants;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
@@ -135,9 +137,11 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
                 CoordinateReferenceSystem crs = null;
                 if(ml instanceof CoverageMapLayer){
                     final CoverageMapLayer cml = (CoverageMapLayer) ml;
+                    final CoverageReference ref = cml.getCoverageReference();
                     try {
-                        crs = cml.getCoverageReference().acquireReader().getGridGeometry(
-                                cml.getCoverageReference().getImageIndex()).getCoordinateReferenceSystem();
+                        final GridCoverageReader reader = ref.acquireReader();
+                        crs = reader.getGridGeometry(ref.getImageIndex()).getCoordinateReferenceSystem();
+                        ref.recycle(reader);
                     } catch (Exception ex) {
                         //we tryed ...
                     }

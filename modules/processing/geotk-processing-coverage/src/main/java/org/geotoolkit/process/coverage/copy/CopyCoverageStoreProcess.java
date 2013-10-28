@@ -314,6 +314,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         if(crs instanceof ImageCRS){
             //image is not georeferenced, we can't store it.
             fireWarningOccurred("Image "+name+" does not have a CoordinateReferenceSystem, insertion is skipped.", 0, null);
+            inRef.recycle(reader);
             return;
         }
 
@@ -357,6 +358,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
                 ce = ite.next();
             } while (ce != null);
         }
+        inRef.recycle(reader);
 
     }
 

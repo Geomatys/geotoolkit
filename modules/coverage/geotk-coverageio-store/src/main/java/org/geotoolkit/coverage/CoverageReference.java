@@ -78,20 +78,19 @@ public interface CoverageReference {
      */
     GridCoverageWriter acquireWriter() throws CoverageStoreException;
 
-//    /**
-//     * Return the used reader, they can be reused later.
-//     *
-//     * @param reader
-//     */
-//    void recycle(GridCoverageReader reader);
+    /**
+     * Return the used reader, they can be reused later.
+     *
+     * @param reader
+     */
+    void recycle(GridCoverageReader reader);
 
-//    /**
-//     * Return the used writer, they can be reused later.
-//     *
-//     * @param writer
-//     */
-//    void recycle(GridCoverageWriter writer);
-
+    /**
+     * Return the used writer, they can be reused later.
+     *
+     * @param writer
+     */
+    void recycle(GridCoverageWriter writer);
 
     /**
      * Return the legend of this coverage

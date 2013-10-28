@@ -110,11 +110,11 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
             }
         }
 
-
-        GridCoverageReader reader = null;
+        final CoverageReference ref = getCoverageReference();
         try {
-            reader = getCoverageReference().acquireReader();
+            GridCoverageReader reader = ref.acquireReader();
             final GeneralGridGeometry geom = reader.getGridGeometry(getCoverageReference().getImageIndex());
+            ref.recycle(reader);
             if(geom == null){
                 LOGGER.log(Level.WARNING, "Could not access envelope of layer {0}", getCoverageReference().getName());
                 return INFINITE;

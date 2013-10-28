@@ -77,7 +77,9 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
         this();
         try {
             final CoverageReference ref = create(new DefaultName(getDefaultNamespace(), name));
-            ref.acquireWriter().write(gridCov, null);
+            final GridCoverageWriter writer = ref.acquireWriter();
+            writer.write(gridCov, null);
+            ref.recycle(writer);
         } catch (CoverageStoreException ex) {
             getLogger().log(Level.WARNING, ex.getMessage(), ex);
         } catch (CancellationException ex) {

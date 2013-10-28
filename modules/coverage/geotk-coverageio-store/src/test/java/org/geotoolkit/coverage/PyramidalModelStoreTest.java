@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
  * @module pending
  */
 public abstract class PyramidalModelStoreTest {
- 
+
     private static final double DELTA = 0.00000001;
 
     private CoverageStore store;
@@ -118,16 +118,16 @@ public abstract class PyramidalModelStoreTest {
 
     /**
      * Read the full image.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void noArgumentTest() throws Exception{
         //load the coverage store
         getCoverageStore();
         final GridCoverageReader reader = ref.acquireReader();
-        
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
-                
+        ref.recycle(reader);
+
         //check coverage informations
         assertTrue(CRS.equalsIgnoreMetadata(crs,  coverage.getCoordinateReferenceSystem()));
         final Envelope env = coverage.getEnvelope();
@@ -140,10 +140,10 @@ public abstract class PyramidalModelStoreTest {
         //check tile aggregation
         final RenderedImage img = coverage.getRenderedImage();
         final Raster raster = img.getData();
-        
+
         assertEquals(4*10,img.getWidth());
         assertEquals(3*10,img.getHeight());
-        
+
         //we should have a different color each 10pixel
         final int[] buffer1 = new int[4];
         final int[] buffer2 = new int[4];
@@ -154,12 +154,12 @@ public abstract class PyramidalModelStoreTest {
                 System.arraycopy(buffer2, 0, buffer1, 0, 4);
             }
         }
-        
+
     }
-    
+
     /**
      * Read and image subset.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void reduceAreaTest() throws Exception{
@@ -167,19 +167,20 @@ public abstract class PyramidalModelStoreTest {
         //load the coverage store
         getCoverageStore();
         final GridCoverageReader reader = ref.acquireReader();
-        
+
         final GeneralEnvelope paramEnv = new GeneralEnvelope(crs);
         paramEnv.setRange(0, corner.getOrdinate(0) +(1*10)*1, corner.getOrdinate(0) +(2*10)*1);
         paramEnv.setRange(1, corner.getOrdinate(1) -(2*10)*1, corner.getOrdinate(1));
         //we should obtain tiles [1,0] and [1,1]
-        
+
         final GridCoverageReadParam param = new GridCoverageReadParam();
         param.setCoordinateReferenceSystem(crs);
         param.setResolution(1.2,1.2);
         param.setEnvelope(paramEnv);
-        
+
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, param);
-                
+        ref.recycle(reader);
+
         //check coverage informations
         assertTrue(CRS.equalsIgnoreMetadata(crs,  coverage.getCoordinateReferenceSystem()));
         final Envelope env = coverage.getEnvelope();
@@ -188,15 +189,15 @@ public abstract class PyramidalModelStoreTest {
         assertEquals(corner.getOrdinate(0) +(1*10)*1+(1*10)*1, env.getMaximum(0), DELTA);
         assertEquals(corner.getOrdinate(1) -(2*10)*1, env.getMinimum(1), DELTA);
         assertTrue(CRS.equalsIgnoreMetadata(crs,  env.getCoordinateReferenceSystem()));
-        
-        
+
+
         //check tile aggregation
         final RenderedImage img = coverage.getRenderedImage();
         final Raster raster = img.getData();
-        
+
         assertEquals(1*10,img.getWidth());
         assertEquals(2*10,img.getHeight());
-        
+
         //we should have a different color each 10pixel
         final int[] buffer1 = new int[4];
         final int[] buffer2 = new int[4];
@@ -207,8 +208,8 @@ public abstract class PyramidalModelStoreTest {
                 System.arraycopy(buffer2, 0, buffer1, 0, 4);
             }
         }
-        
+
     }
-    
-    
+
+
 }

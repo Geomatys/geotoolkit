@@ -33,6 +33,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.collection.Cache;
+import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
@@ -73,10 +74,10 @@ public class DefaultProjectedCoverage implements ProjectedCoverage {
             try {
                 value = handler.peek();
                 if (value == null) {
-                    final GridCoverageReader reader = layer.getCoverageReference().acquireReader();
-                    synchronized(reader){
-                        value = (GridCoverage2D) reader.read(layer.getCoverageReference().getImageIndex(),param);
-                    }
+                    final CoverageReference ref = layer.getCoverageReference();
+                    final GridCoverageReader reader = ref.acquireReader();
+                    value = (GridCoverage2D) reader.read(layer.getCoverageReference().getImageIndex(),param);
+                    ref.recycle(reader);
                 }
             } finally {
                 handler.putAndUnlock(value);

@@ -74,6 +74,7 @@ import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -230,8 +231,10 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             try {
                 gcrp.clear();
                 gcrp.setEnvelope(visibleArea);
-                final GridCoverage2D cov = (GridCoverage2D) layer.getCoverageReference().acquireReader().read(
-                        layer.getCoverageReference().getImageIndex(), gcrp);
+                final CoverageReference ref = layer.getCoverageReference();
+                final GridCoverageReader reader = ref.acquireReader();
+                final GridCoverage2D cov = (GridCoverage2D) reader.read(ref.getImageIndex(), gcrp);
+                ref.recycle(reader);
                 setCoverage(cov,selectRectangle);
                 writeParam = new GridCoverageWriteParam();
                 final MathTransform grid_To_Crs = cov.getGridGeometry().getGridToCRS(PixelInCell.CELL_CORNER);
@@ -379,6 +382,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         gcb.setCoordinateReferenceSystem(coverage.getCoordinateReferenceSystem2D());
         gcb.setGridToCRS(coverage.getGridGeometry().getGridToCRS2D());
         writer.write(gcb.getGridCoverage2D(), writeParam);
+        ref.recycle(writer);
         this.editedPixels.clear();
         map.getCanvas().repaint();
     }

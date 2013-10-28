@@ -43,6 +43,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.CoverageReference;
 import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
@@ -160,8 +161,10 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
 
         final GridCoverage2D coverage;
         try {
-            final GridCoverageReader reader = layer.getCoverageReference().acquireReader();
-            coverage = (GridCoverage2D) reader.read(layer.getCoverageReference().getImageIndex(),param);
+            final CoverageReference ref = layer.getCoverageReference();
+            final GridCoverageReader reader = ref.acquireReader();
+            coverage = (GridCoverage2D) reader.read(ref.getImageIndex(),param);
+            ref.recycle(reader);
         } catch (CoverageStoreException ex) {
             context.getMonitor().exceptionOccured(ex, Level.INFO);
             return null;
