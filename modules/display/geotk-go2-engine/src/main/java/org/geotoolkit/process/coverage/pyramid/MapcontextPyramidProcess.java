@@ -34,6 +34,7 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.display2d.service.PortrayalRenderedImage;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -138,14 +139,13 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
 
                 if (mosaic == null) {
                     //create a new mosaic
-                    mosaic = container.createMosaic(pyramid.getId(),
-                        gridSize, tileDim, upperleft, scale);
+                    mosaic = container.createMosaic(pyramid.getId(),gridSize, tileDim, upperleft, scale);
                 }
 
-                final ProgressiveImage image = new ProgressiveImage(
+                final PortrayalRenderedImage image = new PortrayalRenderedImage(
                         canvasDef, sceneDef, viewDef,
-                        mosaic.getGridSize(), mosaic.getTileSize(), scale,nbpainter);
-                image.addProgressListener(new ProgressiveImage.ProgressListener() {
+                        mosaic.getGridSize(), mosaic.getTileSize(), scale);
+                image.addProgressListener(new PortrayalRenderedImage.ProgressListener() {
                     @Override
                     public void tileCreated(int x, int y) {
                         progress++;

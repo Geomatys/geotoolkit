@@ -33,6 +33,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.map.ElevationModel;
 import org.opengis.geometry.Envelope;
@@ -76,8 +77,14 @@ public class DefaultProjectedCoverage implements ProjectedCoverage {
                 if (value == null) {
                     final CoverageReference ref = layer.getCoverageReference();
                     final GridCoverageReader reader = ref.acquireReader();
-                    value = (GridCoverage2D) reader.read(layer.getCoverageReference().getImageIndex(),param);
-                    ref.recycle(reader);
+                    try{
+                        value = (GridCoverage2D) reader.read(layer.getCoverageReference().getImageIndex(),param);
+                        ref.recycle(reader);
+                    }catch(DisjointCoverageDomainException ex){
+                        //wrong read parameters, we can recycle it anyway
+                        ref.recycle(reader);
+                        throw ex;
+                    }
                 }
             } finally {
                 handler.putAndUnlock(value);

@@ -130,22 +130,22 @@ public abstract class AbstractCoverageReference extends AbstractStorage implemen
      */
     protected void dispose(GridCoverageReader reader) {
         try {
-            //try to close sub stream
-            Object input = reader.getInput();
-            if(input instanceof ImageReader){
-                final ImageReader ireader = (ImageReader)input;
-                ImageIOUtilities.releaseReader(ireader);
-            }else if(input instanceof InputStream){
-                final InputStream stream = (InputStream) input;
-                stream.close();
-            }else if(input instanceof ImageInputStream){
-                final ImageInputStream stream = (ImageInputStream) input;
-                stream.close();
-            }
+//            //try to close sub stream
+//            Object input = reader.getInput();
+//            if(input instanceof ImageReader){
+//                final ImageReader ireader = (ImageReader)input;
+//                ImageIOUtilities.releaseReader(ireader);
+//            }else if(input instanceof InputStream){
+//                final InputStream stream = (InputStream) input;
+//                stream.close();
+//            }else if(input instanceof ImageInputStream){
+//                final ImageInputStream stream = (ImageInputStream) input;
+//                stream.close();
+//            }
 
             reader.dispose();
 
-        } catch (IOException | CoverageStoreException ex) {
+        } catch (CoverageStoreException ex) {
             Logging.getLogger(getClass()).log(Level.WARNING, ex.getMessage(), ex);
         }
     }

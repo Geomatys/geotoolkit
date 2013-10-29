@@ -28,12 +28,11 @@ import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader;
-import org.apache.sis.util.Version;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.util.ImageIOUtilities;
 
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
@@ -83,6 +82,15 @@ public class GeoTiffImageReader extends ImageReaderAdapter {
             throw new IOException(ex);
         } catch (FactoryException ex) {
             throw new IOException(ex);
+        }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        Object obj = main.getInput();
+        if(obj != null){
+            ImageIOUtilities.releaseReader(main);
         }
     }
 

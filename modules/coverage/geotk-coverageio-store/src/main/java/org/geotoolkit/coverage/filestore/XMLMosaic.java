@@ -418,7 +418,7 @@ public class XMLMosaic implements GridMosaic{
                 Raster raster = image.getTile(idx, idy);
 
                 //check if image is empty
-                if(isEmpty(raster)){
+                if(raster == null || isEmpty(raster)){
                     synchronized(tileExist){
                         tileExist.set(tileIndex, true);
                     }
@@ -455,12 +455,14 @@ public class XMLMosaic implements GridMosaic{
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 throw new RuntimeException(ex.getMessage(),ex);
             }finally{
-                writer.dispose();
-                if(out != null){
-                    try {
-                        out.close();
-                    } catch (IOException ex) {
-                        Logger.getLogger(XMLMosaic.class.getName()).log(Level.SEVERE, null, ex);
+                if(writer != null){
+                    writer.dispose();
+                    if(out != null){
+                        try {
+                            out.close();
+                        } catch (IOException ex) {
+                            Logger.getLogger(XMLMosaic.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
             }

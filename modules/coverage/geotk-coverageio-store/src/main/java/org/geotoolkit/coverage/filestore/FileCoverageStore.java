@@ -67,7 +67,6 @@ public class FileCoverageStore extends AbstractCoverageStore{
         rootPath = (URL) params.parameter(FileCoverageStoreFactory.PATH.getName().getCode()).getValue();
         root = new File(rootPath.toURI());
         format = (String) params.parameter(FileCoverageStoreFactory.TYPE.getName().getCode()).getValue();
-        visit(root);
 
         if("AUTO".equals(format)){
             spi = null;
@@ -75,6 +74,7 @@ public class FileCoverageStore extends AbstractCoverageStore{
             spi = XImageIO.getReaderSpiByFormatName(format);
         }
 
+        visit(root);
     }
 
     @Override

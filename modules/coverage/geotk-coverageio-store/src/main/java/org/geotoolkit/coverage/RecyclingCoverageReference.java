@@ -60,7 +60,7 @@ public abstract class RecyclingCoverageReference extends AbstractCoverageReferen
     }
 
     @Override
-    public void recycle(GridCoverageReader reader) {
+    public final void recycle(GridCoverageReader reader) {
         resetReader(reader);
         readers.push(reader);
         removeExpired(readers);

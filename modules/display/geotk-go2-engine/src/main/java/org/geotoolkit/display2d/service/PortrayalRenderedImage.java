@@ -23,10 +23,10 @@ import java.awt.Rectangle;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.image.*;
+import java.util.Deque;
 import java.util.EventListener;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.jai.RasterFactory;
@@ -48,19 +48,26 @@ import org.opengis.referencing.operation.TransformException;
 public class PortrayalRenderedImage implements RenderedImage{
 
     /** store pregenerated tiles */
-    private final Map<Integer,Raster> tileCache = new HashMap<Integer, Raster>();
+//    private final Map<Integer,Raster> tileCache = new HashMap<Integer, Raster>();
     private final ColorModel colorModel;
     private final SampleModel sampleModel;
     private final Dimension gridSize;
     private final Dimension tileSize;
     private final double scale;
     private final Point2D upperleft;
-    private final J2DCanvasBuffered canvas;
+//    private final J2DCanvasBuffered canvas;
     private final int nbtileonwidth;
     private final int nbtileonheight;
 
+    private final CoordinateReferenceSystem crs;
+    private final CanvasDef canvasDef;
+    private final SceneDef sceneDef;
+    private final ViewDef viewDef;
+
     /** listener support */
     private final EventListenerList listeners = new EventListenerList();
+
+    private final Deque<J2DCanvasBuffered> canvas = new ConcurrentLinkedDeque<J2DCanvasBuffered>();
 
     /**
      *
@@ -77,10 +84,13 @@ public class PortrayalRenderedImage implements RenderedImage{
         this.scale = scale;
         this.colorModel = ColorModel.getRGBdefault();
         this.sampleModel = colorModel.createCompatibleSampleModel(1, 1);
+        this.canvasDef = canvasDef;
+        this.sceneDef = sceneDef;
+        this.viewDef = viewDef;
 
 
         final Envelope envelope = viewDef.getEnvelope();
-        final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
+        crs = envelope.getCoordinateReferenceSystem();
         this.upperleft = new Point2D.Double(
                 envelope.getMinimum(0),
                 envelope.getMaximum(1));
@@ -88,25 +98,22 @@ public class PortrayalRenderedImage implements RenderedImage{
         //prepare a J2DCanvas to render several tiles in the same tile
         //we consider a 2000*2000 size to be the maximum, which is 16Mb in memory
         //we expect the user to access tile lines by lines.
-        final int maxNbTile = (2000*2000) / (tileSize.width*tileSize.height);
+//        final int maxNbTile = (2000*2000) / (tileSize.width*tileSize.height);
 
-        if(maxNbTile < gridSize.width){
-            //we can not generate a full line
-            nbtileonwidth = maxNbTile;
-            nbtileonheight = 1;
-        }else{
-            //we can generate more than one line
-            nbtileonwidth = gridSize.width;
-            nbtileonheight = maxNbTile / gridSize.width;
-        }
+//        if(maxNbTile < gridSize.width){
+//            //we can not generate a full line
+//            nbtileonwidth = maxNbTile;
+//            nbtileonheight = 1;
+//        }else{
+//            //we can generate more than one line
+//            nbtileonwidth = gridSize.width;
+//            nbtileonheight = maxNbTile / gridSize.width;
+//        }
+//
+        nbtileonheight = 1;
+        nbtileonwidth = 1;
 
-        final Dimension canvasSize = new Dimension(
-                nbtileonwidth*tileSize.width,
-                nbtileonheight*tileSize.height);
 
-        canvas = new J2DCanvasBuffered(crs, canvasSize);
-        canvas.setRenderingHint(GO2Hints.KEY_COLOR_MODEL, colorModel);
-        DefaultPortrayalService.prepareCanvas(canvas, canvasDef, sceneDef, viewDef);
     }
 
     /**
@@ -286,21 +293,12 @@ public class PortrayalRenderedImage implements RenderedImage{
     }
 
     @Override
-    public synchronized Raster getTile(int col, int row) {
-        final int index = getTileIndex(col, row);
-
-        Raster raster = tileCache.get(index);
-        if(raster != null){
-            return raster;
-        }
-        
-        //we clear our cache and geenrate tiles
-        tileCache.clear();
+    public Raster getTile(int col, int row) {
 
         final double tilespanX = scale*tileSize.width;
         final double tilespanY = scale*tileSize.height;
 
-        final GeneralEnvelope canvasEnv = new GeneralEnvelope(canvas.getObjectiveCRS());
+        final GeneralEnvelope canvasEnv = new GeneralEnvelope(crs);
         canvasEnv.setRange(0,
                 upperleft.getX() + (col)*tilespanX,
                 upperleft.getX() + (col+nbtileonwidth)*tilespanX
@@ -310,31 +308,28 @@ public class PortrayalRenderedImage implements RenderedImage{
                 upperleft.getY() - (row)*tilespanY
                 );
 
+        J2DCanvasBuffered cvs = canvas.poll();
+
         try {
-            canvas.getController().setVisibleArea(canvasEnv);
-        } catch (NoninvertibleTransformException ex) {
-            Logger.getLogger(PortrayalRenderedImage.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (TransformException ex) {
+            if(cvs == null){
+                cvs = new J2DCanvasBuffered(
+                    crs, new Dimension(tileSize.width,tileSize.height));
+                cvs.setRenderingHint(GO2Hints.KEY_COLOR_MODEL, colorModel);
+                DefaultPortrayalService.prepareCanvas(cvs, canvasDef, sceneDef, viewDef);
+            }
+
+            cvs.getController().setVisibleArea(canvasEnv);
+        } catch (NoninvertibleTransformException | TransformException | PortrayalException ex) {
             Logger.getLogger(PortrayalRenderedImage.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         //cut the canvas buffer in pieces
-        canvas.repaint();
-        final BufferedImage canvasBuffer = canvas.getSnapShot();
-        for(int x=0; x<nbtileonwidth && col+x<gridSize.width; x++){
-            for(int y=0; y<nbtileonheight && row+y<gridSize.height; y++){
-                final int idx = getTileIndex(col+x, row+y);
-                final BufferedImage tile = canvasBuffer.getSubimage(
-                        x*tileSize.width,
-                        y*tileSize.height,
-                        tileSize.width,
-                        tileSize.height);
-                tileCache.put(idx, tile.getRaster());
-                fireTileCreated(col+x,row+y);
-            }
-        }
-
-        return tileCache.get(index);
+        cvs.repaint();
+        final BufferedImage canvasBuffer = cvs.getSnapShot();
+        final Raster data = canvasBuffer.getData(); // make a copy since we will reuse canvas
+        fireTileCreated(col,row);
+        canvas.push(cvs);
+        return data;
     }
 
     @Override
