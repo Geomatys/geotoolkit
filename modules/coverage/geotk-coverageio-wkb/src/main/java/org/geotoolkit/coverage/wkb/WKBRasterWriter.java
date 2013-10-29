@@ -61,7 +61,7 @@ public class WKBRasterWriter {
         write(coverage, out);
         return out.toByteArray();
     }
-    
+
     /**
      * Encode given coverage in Postgis WKB.
      *
@@ -72,7 +72,7 @@ public class WKBRasterWriter {
     public void write(final GridCoverage2D coverage, final OutputStream stream) throws IOException, FactoryException {
         write(coverage, stream, true);
     }
-    
+
     /**
      * Encode given coverage in Postgis WKB.
      *
@@ -81,7 +81,7 @@ public class WKBRasterWriter {
      * @param littleEndian : wanted value encoding
      * @throws IOException
      */
-    public void write(final GridCoverage2D coverage, final OutputStream stream, final boolean littleEndian) 
+    public void write(final GridCoverage2D coverage, final OutputStream stream, final boolean littleEndian)
             throws IOException, FactoryException {
         final CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem2D();
         final Integer srid = IdentifiedObjects.lookupEpsgCode(crs, true);
@@ -93,10 +93,10 @@ public class WKBRasterWriter {
             throw new IOException("Coverage GridToCRS transform is not affine.");
         }
         final RenderedImage image = coverage.getRenderedImage();
-        
+
         write(image, (AffineTransform)gridToCRS, srid, stream);
     }
-    
+
     /**
      * Encode given image in Postgis WKB.
      *
@@ -119,10 +119,40 @@ public class WKBRasterWriter {
      * @param image : image , not null
      * @param gridToCRS : image grid to crs, can be null
      * @param srid : image srid
+     * @return byte[] encoded image
+     * @throws IOException
+     */
+    public byte[] write(final Raster image, final AffineTransform gridToCRS,
+            final int srid) throws IOException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        write(image, gridToCRS, srid, out);
+        return out.toByteArray();
+    }
+
+    /**
+     * Encode given image in Postgis WKB.
+     *
+     * @param image : image , not null
+     * @param gridToCRS : image grid to crs, can be null
+     * @param srid : image srid
      * @param stream : output stream to write in
      * @throws IOException
      */
     public void write(final RenderedImage image, AffineTransform gridToCRS,
+            final int srid, final OutputStream stream) throws IOException {
+        write(image.getData(), gridToCRS, srid, stream, true);
+    }
+
+    /**
+     * Encode given image in Postgis WKB.
+     *
+     * @param image : image , not null
+     * @param gridToCRS : image grid to crs, can be null
+     * @param srid : image srid
+     * @param stream : output stream to write in
+     * @throws IOException
+     */
+    public void write(final Raster image, AffineTransform gridToCRS,
             final int srid, final OutputStream stream) throws IOException {
         write(image, gridToCRS, srid, stream, true);
     }
@@ -137,7 +167,7 @@ public class WKBRasterWriter {
      * @param littleEndian : wanted value encoding
      * @throws IOException
      */
-    public void write(final RenderedImage image, AffineTransform gridToCRS,
+    public void write(final Raster image, AffineTransform gridToCRS,
             final int srid, final OutputStream stream, final boolean littleEndian) throws IOException {
         if(gridToCRS == null){
             gridToCRS = new AffineTransform();
@@ -151,7 +181,7 @@ public class WKBRasterWriter {
         }
 
         final SampleModel sm = image.getSampleModel();
-        final Raster raster = image.getData();
+        final Raster raster = image;
         final int nbBand = sm.getNumBands();
         final int width = image.getWidth();
         final int height = image.getHeight();

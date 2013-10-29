@@ -41,7 +41,7 @@ import org.opengis.referencing.operation.TransformException;
 
 /**
  * On the fly calculated image.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -58,61 +58,61 @@ public class PortrayalRenderedImage implements RenderedImage{
     private final J2DCanvasBuffered canvas;
     private final int nbtileonwidth;
     private final int nbtileonheight;
-    
+
     /** listener support */
     private final EventListenerList listeners = new EventListenerList();
-    
+
     /**
-     * 
+     *
      * @param canvasDef : canvas size will be ignored
      * @param sceneDef
      * @param viewDef
      * @param gridSize
-     * @param tileSize 
+     * @param tileSize
      */
-    public PortrayalRenderedImage(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef, 
+    public PortrayalRenderedImage(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef,
             final Dimension gridSize, final Dimension tileSize, final double scale) throws PortrayalException{
         this.gridSize = gridSize;
         this.tileSize = tileSize;
         this.scale = scale;
         this.colorModel = ColorModel.getRGBdefault();
         this.sampleModel = colorModel.createCompatibleSampleModel(1, 1);
-                
-        
+
+
         final Envelope envelope = viewDef.getEnvelope();
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
         this.upperleft = new Point2D.Double(
                 envelope.getMinimum(0),
-                envelope.getMaximum(1));        
-        
+                envelope.getMaximum(1));
+
         //prepare a J2DCanvas to render several tiles in the same tile
         //we consider a 2000*2000 size to be the maximum, which is 16Mb in memory
-        //we expect the user to access tile lines by lines.              
+        //we expect the user to access tile lines by lines.
         final int maxNbTile = (2000*2000) / (tileSize.width*tileSize.height);
-        
+
         if(maxNbTile < gridSize.width){
             //we can not generate a full line
             nbtileonwidth = maxNbTile;
-            nbtileonheight = 1;            
+            nbtileonheight = 1;
         }else{
             //we can generate more than one line
             nbtileonwidth = gridSize.width;
-            nbtileonheight = maxNbTile / gridSize.width; 
+            nbtileonheight = maxNbTile / gridSize.width;
         }
-        
+
         final Dimension canvasSize = new Dimension(
-                nbtileonwidth*tileSize.width, 
+                nbtileonwidth*tileSize.width,
                 nbtileonheight*tileSize.height);
-        
+
         canvas = new J2DCanvasBuffered(crs, canvasSize);
         canvas.setRenderingHint(GO2Hints.KEY_COLOR_MODEL, colorModel);
-        DefaultPortrayalService.prepareCanvas(canvas, canvasDef, sceneDef, viewDef);        
+        DefaultPortrayalService.prepareCanvas(canvas, canvasDef, sceneDef, viewDef);
     }
-    
+
     /**
      * Tiles are generated on the fly, so we have informations on their generation
      * process but we don't have the tiles themselves.
-     * 
+     *
      * @return empty vector
      */
     @Override
@@ -122,18 +122,18 @@ public class PortrayalRenderedImage implements RenderedImage{
 
     /**
      * A PortrayalRenderedImage does not have any properties
-     * 
+     *
      * @param name
      * @return always Image.UndefinedProperty
      */
     @Override
     public Object getProperty(String name) {
-        return Image.UndefinedProperty; 
+        return Image.UndefinedProperty;
     }
 
     /**
      * A PortrayalRenderedImage does not have any properties
-     * 
+     *
      * @return always null
      */
     @Override
@@ -143,7 +143,7 @@ public class PortrayalRenderedImage implements RenderedImage{
 
     /**
      * Fallback on the mosaic definition.
-     * 
+     *
      * @return mosaic grid size width * mosaic tile size width.
      */
     @Override
@@ -153,7 +153,7 @@ public class PortrayalRenderedImage implements RenderedImage{
 
     /**
      * Fallback on the mosaic definition.
-     * 
+     *
      * @return mosaic grid size width * mosaic tile size width.
      */
     @Override
@@ -163,7 +163,7 @@ public class PortrayalRenderedImage implements RenderedImage{
 
     /**
      * Generated tiles start at zero.
-     * 
+     *
      * @return 0
      */
     @Override
@@ -173,7 +173,7 @@ public class PortrayalRenderedImage implements RenderedImage{
 
     /**
      * Generated tiles start at zero.
-     * 
+     *
      * @return 0
      */
     @Override
@@ -183,7 +183,7 @@ public class PortrayalRenderedImage implements RenderedImage{
 
     /**
      * Fallback on the mosaic definition.
-     * 
+     *
      * @return mosaic grid size width.
      */
     @Override
@@ -193,7 +193,7 @@ public class PortrayalRenderedImage implements RenderedImage{
 
     /**
      * Fallback on the mosaic definition.
-     * 
+     *
      * @return mosaic grid size height.
      */
     @Override
@@ -203,7 +203,7 @@ public class PortrayalRenderedImage implements RenderedImage{
 
     /**
      * Generated tiles start at zero.
-     * 
+     *
      * @return 0
      */
     @Override
@@ -213,7 +213,7 @@ public class PortrayalRenderedImage implements RenderedImage{
 
     /**
      * Generated tiles start at zero.
-     * 
+     *
      * @return 0
      */
     @Override
@@ -223,7 +223,7 @@ public class PortrayalRenderedImage implements RenderedImage{
 
     /**
      * Fallback on the mosaic definition.
-     * 
+     *
      * @return mosaic tile size width.
      */
     @Override
@@ -233,7 +233,7 @@ public class PortrayalRenderedImage implements RenderedImage{
 
     /**
      * Fallback on the mosaic definition.
-     * 
+     *
      * @return mosaic tile size height.
      */
     @Override
@@ -243,7 +243,7 @@ public class PortrayalRenderedImage implements RenderedImage{
 
     /**
      * Generated tiles start at zero.
-     * 
+     *
      * @return 0
      */
     @Override
@@ -253,7 +253,7 @@ public class PortrayalRenderedImage implements RenderedImage{
 
     /**
      * Generated tiles start at zero.
-     * 
+     *
      * @return 0
      */
     @Override
@@ -268,13 +268,13 @@ public class PortrayalRenderedImage implements RenderedImage{
      * <code>getMinX()</code>, <code>getMinY()</code>,
      * <code>getWidth()</code>, and <code>getHeight()</code>.
      * A <code>Rectangle</code> is created based on these four methods.
-     * 
+     *
      * @return Rectangle
      */
     public Rectangle getBounds() {
 	return new Rectangle(getMinX(), getMinY(), getWidth(), getHeight());
     }
-    
+
     @Override
     public ColorModel getColorModel() {
         return colorModel;
@@ -284,11 +284,11 @@ public class PortrayalRenderedImage implements RenderedImage{
     public SampleModel getSampleModel() {
         return sampleModel;
     }
-    
+
     @Override
-    public Raster getTile(int col, int row) {
+    public synchronized Raster getTile(int col, int row) {
         final int index = getTileIndex(col, row);
-        
+
         Raster raster = tileCache.get(index);
         if(raster != null){
             return raster;
@@ -300,13 +300,13 @@ public class PortrayalRenderedImage implements RenderedImage{
         final double tilespanX = scale*tileSize.width;
         final double tilespanY = scale*tileSize.height;
 
-        final GeneralEnvelope canvasEnv = new GeneralEnvelope(canvas.getObjectiveCRS());            
-        canvasEnv.setRange(0, 
-                upperleft.getX() + (col)*tilespanX, 
+        final GeneralEnvelope canvasEnv = new GeneralEnvelope(canvas.getObjectiveCRS());
+        canvasEnv.setRange(0,
+                upperleft.getX() + (col)*tilespanX,
                 upperleft.getX() + (col+nbtileonwidth)*tilespanX
                 );
-        canvasEnv.setRange(1, 
-                upperleft.getY() - (row+nbtileonheight)*tilespanY, 
+        canvasEnv.setRange(1,
+                upperleft.getY() - (row+nbtileonheight)*tilespanY,
                 upperleft.getY() - (row)*tilespanY
                 );
 
@@ -317,7 +317,7 @@ public class PortrayalRenderedImage implements RenderedImage{
         } catch (TransformException ex) {
             Logger.getLogger(PortrayalRenderedImage.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         //cut the canvas buffer in pieces
         canvas.repaint();
         final BufferedImage canvasBuffer = canvas.getSnapShot();
@@ -325,15 +325,15 @@ public class PortrayalRenderedImage implements RenderedImage{
             for(int y=0; y<nbtileonheight && row+y<gridSize.height; y++){
                 final int idx = getTileIndex(col+x, row+y);
                 final BufferedImage tile = canvasBuffer.getSubimage(
-                        x*tileSize.width, 
-                        y*tileSize.height, 
-                        tileSize.width, 
+                        x*tileSize.width,
+                        y*tileSize.height,
+                        tileSize.width,
                         tileSize.height);
                 tileCache.put(idx, tile.getRaster());
                 fireTileCreated(col+x,row+y);
             }
-        }        
-        
+        }
+
         return tileCache.get(index);
     }
 
@@ -352,7 +352,7 @@ public class PortrayalRenderedImage implements RenderedImage{
         final Rectangle bounds = (raster!=null) ? raster.getBounds() : null;
         return copyData(bounds, raster);
     }
-    
+
     public WritableRaster copyData(Rectangle region, WritableRaster dstRaster) {
         final Rectangle bounds = getBounds();	// image's bounds
 
@@ -371,51 +371,51 @@ public class PortrayalRenderedImage implements RenderedImage{
             sampleModel = sampleModel.createCompatibleSampleModel(xsect.width, xsect.height);
             dstRaster = RasterFactory.createWritableRaster(sampleModel, new Point(0, 0));
         }
-        
+
         //calculate the first and last tiles index we will need
         final int startTileX = xsect.x / getTileWidth();
         final int startTileY = xsect.y / getTileHeight();
         final int endTileX = (xsect.x+xsect.width) / getTileWidth();
         final int endTileY = (xsect.y+xsect.height) / getTileHeight();
-        
+
         //loop on each tile
         for (int j = startTileY; j <= endTileY; j++) {
             for (int i = startTileX; i <= endTileX; i++) {
                 final Raster tile = getTile(i, j);
                 dstRaster.setRect(
-                        i*getTileWidth(), 
+                        i*getTileWidth(),
                         j*getTileHeight(),
                         tile);
             }
         }
-        
+
         return dstRaster;
     }
-        
+
     /**
      * @return unique index for this tile coordinate
      */
     private int getTileIndex(int col, int row){
         return row*getNumXTiles() + col;
     }
-    
+
     protected void fireTileCreated(int x, int y){
         for(ProgressListener l : listeners.getListeners(ProgressListener.class)){
             l.tileCreated(x, y);
         }
     }
-    
+
     public void addProgressListener(ProgressListener listener){
         listeners.add(ProgressListener.class, listener);
     }
-    
+
     public void removeProgressListener(ProgressListener listener){
         listeners.remove(ProgressListener.class, listener);
     }
-    
+
     public static interface ProgressListener extends EventListener{
-        
+
         void tileCreated(int x, int y);
-        
+
     }
 }

@@ -27,12 +27,15 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -55,6 +58,7 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.XImageIO;
 import org.apache.sis.util.Classes;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -67,11 +71,14 @@ import org.opengis.geometry.Envelope;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLMosaic implements GridMosaic{
 
+    @XmlTransient
+    private static final Logger LOGGER = Logging.getLogger(XMLMosaic.class);
+
     /** Executor used to write images */
     @XmlTransient
     private static final RejectedExecutionHandler LOCAL_REJECT_EXECUTION_HANDLER = new ThreadPoolExecutor.CallerRunsPolicy();
     @XmlTransient
-    private static final BlockingQueue IMAGEQUEUE = new ArrayBlockingQueue(Runtime.getRuntime().availableProcessors());
+    private static final BlockingQueue IMAGEQUEUE = new ArrayBlockingQueue(Runtime.getRuntime().availableProcessors()*2);
     @XmlTransient
     private static final ThreadPoolExecutor TILEWRITEREXECUTOR = new ThreadPoolExecutor(
             0, Runtime.getRuntime().availableProcessors(), 1, TimeUnit.MINUTES, IMAGEQUEUE, LOCAL_REJECT_EXECUTION_HANDLER);
@@ -315,8 +322,8 @@ public class XMLMosaic implements GridMosaic{
 
     void writeTiles(final RenderedImage image, final boolean onlyMissing) throws DataStoreException{
 
+        final List<Future> futurs = new ArrayList<>();
         try {
-
             for(int y=0,ny=image.getNumYTiles(); y<ny; y++){
                 for(int x=0,nx=image.getNumXTiles(); x<nx; x++){
                     if(onlyMissing && !isMissing(x, y)){
@@ -326,21 +333,19 @@ public class XMLMosaic implements GridMosaic{
                     final int tileIndex = getTileIndex(x, y);
                     checkPosition(x, y);
 
-                    final Raster raster = image.getTile(x, y);
-
-                    //check if image is empty
-                    if(isEmpty(raster)){
-                        tileExist.set(tileIndex, true);
-                        tileEmpty.set(tileIndex, true);
-                        continue;
-                    }
-
                     final File f = getTileFile(x, y);
                     f.getParentFile().mkdirs();
-                    TILEWRITEREXECUTOR.submit(new TileWriter(f, raster, image.getColorModel(), getPyramid().getPyramidSet().getFormatName()));
-                    tileExist.set(tileIndex, true);
-                    tileEmpty.set(tileIndex, false);
+                    Future fut = TILEWRITEREXECUTOR.submit(new TileWriter(f, image, x, y, tileIndex, image.getColorModel(), getPyramid().getPyramidSet().getFormatName()));
+                    futurs.add(fut);
+                }
+            }
 
+            //wait for all writing tobe done
+            for(Future f : futurs){
+                try {
+                    f.get();
+                } catch (InterruptedException | ExecutionException ex) {
+                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 }
             }
 
@@ -385,16 +390,22 @@ public class XMLMosaic implements GridMosaic{
         return AbstractGridMosaic.getTiles(this, positions, hints);
     }
 
-    private static class TileWriter implements Runnable{
+    private class TileWriter implements Runnable{
 
         private final File f;
-        private final Raster raster;
+        private final RenderedImage image;
+        private final int idx;
+        private final int idy;
+        private final int tileIndex;
         private final ColorModel cm;
         private final String formatName;
 
-        public TileWriter(File f,Raster raster, ColorModel cm, String formatName) {
+        public TileWriter(File f,RenderedImage image, int idx, int idy, int tileIndex, ColorModel cm, String formatName) {
             this.f = f;
-            this.raster = raster;
+            this.image = image;
+            this.idx = idx;
+            this.idy = idy;
+            this.tileIndex = tileIndex;
             this.cm = cm;
             this.formatName = formatName;
         }
@@ -404,9 +415,23 @@ public class XMLMosaic implements GridMosaic{
             ImageWriter writer = null;
             ImageOutputStream out = null;
             try{
+                Raster raster = image.getTile(idx, idy);
+
+                //check if image is empty
+                if(isEmpty(raster)){
+                    synchronized(tileExist){
+                        tileExist.set(tileIndex, true);
+                    }
+                    synchronized(tileEmpty){
+                        tileEmpty.set(tileIndex, true);
+                    }
+                    return;
+                }
+
                 out = ImageIO.createImageOutputStream(f);
                 writer = ImageIO.getImageWritersByFormatName(formatName).next();
                 writer.setOutput(out);
+
                 final boolean canWriteRaster = writer.canWriteRasters();
                 //write tile
                 if(canWriteRaster){
@@ -418,7 +443,16 @@ public class XMLMosaic implements GridMosaic{
                             cm, (WritableRaster)raster, true, null);
                     writer.write(buffer);
                 }
-            }catch(IOException ex){
+
+                synchronized(tileExist){
+                    tileExist.set(tileIndex, true);
+                }
+                synchronized(tileEmpty){
+                    tileEmpty.set(tileIndex, false);
+                }
+
+            }catch(Exception ex){
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 throw new RuntimeException(ex.getMessage(),ex);
             }finally{
                 writer.dispose();

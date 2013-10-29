@@ -16,23 +16,21 @@
  */
 package org.geotoolkit.coverage;
 
-import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.*;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.EventListener;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.media.jai.RasterFactory;
+import javax.swing.event.EventListenerList;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.filestore.XMLSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.image.interpolation.Interpolation;
@@ -48,6 +46,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * On the fly calculated tiled image for a Coverage reference and grid definition.
@@ -57,11 +56,6 @@ import org.opengis.referencing.operation.MathTransform;
  */
 public class CoverageReferenceRenderedImage implements RenderedImage{
 
-    /** store pregenerated tiles */
-//    private final Map<Integer,Raster> tileCache = new HashMap<Integer, Raster>();
-//    private final ColorModel colorModel;
-//    private final SampleModel sampleModel;
-
     private final CoverageReference ref;
     private final GridMosaic mosaic;
 
@@ -70,15 +64,20 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
     private final SampleModel sampleModel;
     private final Envelope dataEnv;
 
-    public CoverageReferenceRenderedImage(CoverageReference ref, GridMosaic mosaic) throws DataStoreException, IOException {
+    /** listener support */
+    private final EventListenerList listeners = new EventListenerList();
+
+    public CoverageReferenceRenderedImage(CoverageReference ref, GridMosaic mosaic) throws DataStoreException,
+            IOException, TransformException {
         this.ref = ref;
         this.mosaic = mosaic;
+
 
         final GridCoverageReader reader = ref.acquireReader();
         dataEnv = reader.getGridGeometry(ref.getImageIndex()).getEnvelope();
         ref.recycle(reader);
 
-        final BufferedImage prototype = mosaic.getTile(0, 0, null).getImageReader().read(0);
+        final RenderedImage prototype = getTileCoverage(0, 0).getRenderedImage();
         colorModel = prototype.getColorModel();
         sampleModel = prototype.getSampleModel();
         sampleDimensions = ref.acquireReader().getSampleDimensions(ref.getImageIndex());
@@ -261,21 +260,26 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
         return sampleModel;
     }
 
+    public GridCoverage2D getTileCoverage(int idx, int idy) throws CoverageStoreException, TransformException {
+        final GridCoverageReadParam rparam = new GridCoverageReadParam();
+        Envelope tenv = mosaic.getEnvelope(idx, idy);
+        final GeneralEnvelope genv = new GeneralEnvelope(tenv);
+        genv.setRange(0, tenv.getMinimum(0) - mosaic.getScale(), tenv.getMaximum(0) + mosaic.getScale());
+        genv.setRange(1, tenv.getMinimum(1) - mosaic.getScale(), tenv.getMaximum(1) + mosaic.getScale());
+        tenv = CRS.transform(genv, dataEnv.getCoordinateReferenceSystem());
+        rparam.setEnvelope(tenv);
+
+        final GridCoverageReader reader = ref.acquireReader();
+        final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, rparam);
+        ref.recycle(reader);
+        return coverage;
+    }
+
     @Override
     public Raster getTile(int idx, int idy) {
         try{
-            final GridCoverageReadParam rparam = new GridCoverageReadParam();
-            Envelope tenv = mosaic.getEnvelope(idx, idy);
-            final GeneralEnvelope genv = new GeneralEnvelope(tenv);
-            genv.setRange(0, tenv.getMinimum(0) - mosaic.getScale(), tenv.getMaximum(0) + mosaic.getScale());
-            genv.setRange(1, tenv.getMinimum(1) - mosaic.getScale(), tenv.getMaximum(1) + mosaic.getScale());
-            tenv = CRS.transform(genv, dataEnv.getCoordinateReferenceSystem());
-            rparam.setEnvelope(tenv);
-
-            final GridCoverageReader reader = ref.acquireReader();
-            final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, rparam);
+            final GridCoverage2D coverage = getTileCoverage(idx, idy);
             final Envelope coverageEnvelope = coverage.getEnvelope2D();
-            ref.recycle(reader);
             final RenderedImage image = coverage.getRenderedImage();
 
             Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(image), InterpolationCase.NEIGHBOR, 2);
@@ -316,6 +320,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
+            fireTileCreated(idx,idy);
 
             return workTile.getData();
         }catch(Exception ex){
@@ -377,6 +382,26 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
         }
 
         return dstRaster;
+    }
+
+    protected void fireTileCreated(int x, int y){
+        for(ProgressListener l : listeners.getListeners(ProgressListener.class)){
+            l.tileCreated(x, y);
+        }
+    }
+
+    public void addProgressListener(ProgressListener listener){
+        listeners.add(ProgressListener.class, listener);
+    }
+
+    public void removeProgressListener(ProgressListener listener){
+        listeners.remove(ProgressListener.class, listener);
+    }
+
+    public static interface ProgressListener extends EventListener{
+
+        void tileCreated(int x, int y);
+
     }
 
 }

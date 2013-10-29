@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.wkb;
 
 import java.awt.geom.AffineTransform;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
@@ -67,6 +68,30 @@ public class WKBRasterImageWriter extends ImageWriter{
     @Override
     public IIOMetadata convertImageMetadata(IIOMetadata inData, ImageTypeSpecifier imageType, ImageWriteParam param) {
         return new SpatialMetadata(false, this, null);
+    }
+
+    @Override
+    public boolean canWriteRasters() {
+        return true;
+    }
+
+    @Override
+    public void write(IIOImage image) throws IOException {
+        final Raster ri = image.getRaster();
+        final WKBRasterWriter writer = new WKBRasterWriter();
+
+        final Object out = getOutput();
+        if(out instanceof ImageOutputStream){
+            final ImageOutputStream stream = (ImageOutputStream) out;
+            final byte[] data = writer.write(ri, new AffineTransform(), 0);
+            stream.write(data);
+
+        }else{
+            final OutputStream stream = IOUtilities.openWrite(getOutput());
+            writer.write(ri, new AffineTransform(), 0, stream);
+            stream.flush();
+            stream.close();
+        }
     }
 
     @Override
