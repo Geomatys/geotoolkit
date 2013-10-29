@@ -76,6 +76,8 @@ public class DefaultCoverageReference extends AbstractCoverageReference{
     public GridCoverageReader acquireReader() throws CoverageStoreException {
         if(coverage != null){
             return new MemoryCoverageReader(coverage);
+        }else if(input instanceof GridCoverageReader){
+            return (GridCoverageReader)input;
         }else{
             ImageCoverageReader reader = new ImageCoverageReader();
             reader.setInput(input);
@@ -85,12 +87,29 @@ public class DefaultCoverageReference extends AbstractCoverageReference{
 
     @Override
     public GridCoverageWriter acquireWriter() throws CoverageStoreException {
-        throw new CoverageStoreException("Writting not supported.");
+        throw new CoverageStoreException("Writing not supported.");
+    }
+
+    @Override
+    public void recycle(GridCoverageReader reader) {
+        if(input instanceof GridCoverageReader){
+            //do not dispose it, it will be reused
+        }else{
+            super.recycle(reader);
+        }
     }
 
     @Override
     public Image getLegend() throws DataStoreException {
         return null;
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        if(input instanceof GridCoverageReader){
+            dispose((GridCoverageReader)input);
+        }
+        super.finalize();
     }
 
 }
