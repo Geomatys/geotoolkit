@@ -17,13 +17,18 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Point;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.logging.Level;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.AbstractStorage;
+import org.geotoolkit.util.ImageIOUtilities;
 
 /**
  *
@@ -39,11 +44,7 @@ public abstract class AbstractCoverageReference extends AbstractStorage implemen
      */
     @Override
     public void recycle(GridCoverageReader reader) {
-        try {
-            reader.dispose();
-        } catch (CoverageStoreException ex) {
-            Logging.getLogger(getClass()).log(Level.WARNING, ex.getMessage(), ex);
-        }
+        dispose(reader);
     }
 
     /**
@@ -119,6 +120,34 @@ public abstract class AbstractCoverageReference extends AbstractStorage implemen
         final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileDeleteEvent(this, getName(), pyramidId, mosaicId, tiles);
         sendContentEvent(event);
         return event;
+    }
+
+    /**
+     * Dispose a reader, trying to properly release sub resources.
+     * Best effort.
+     *
+     * @param reader
+     */
+    protected void dispose(GridCoverageReader reader) {
+        try {
+            //try to close sub stream
+            Object input = reader.getInput();
+            if(input instanceof ImageReader){
+                final ImageReader ireader = (ImageReader)input;
+                ImageIOUtilities.releaseReader(ireader);
+            }else if(input instanceof InputStream){
+                final InputStream stream = (InputStream) input;
+                stream.close();
+            }else if(input instanceof ImageInputStream){
+                final ImageInputStream stream = (ImageInputStream) input;
+                stream.close();
+            }
+
+            reader.dispose();
+
+        } catch (IOException | CoverageStoreException ex) {
+            Logging.getLogger(getClass()).log(Level.WARNING, ex.getMessage(), ex);
+        }
     }
 
 }

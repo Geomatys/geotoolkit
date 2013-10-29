@@ -21,9 +21,10 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
+import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.AbstractCoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.coverage.RecyclingCoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -37,18 +38,20 @@ import org.opengis.feature.type.Name;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class FileCoverageReference extends AbstractCoverageReference{
+public class FileCoverageReference extends RecyclingCoverageReference{
 
     private final FileCoverageStore store;
     private final Name name;
     private final File file;
     private final int imageIndex;
+    private ImageReaderSpi spi;
 
     FileCoverageReference(FileCoverageStore store, Name name, File file, int imageIndex) {
         this.store = store;
         this.name = name;
         this.file = file;
         this.imageIndex = imageIndex;
+        this.spi = store.spi;
     }
 
     @Override
@@ -63,10 +66,14 @@ public class FileCoverageReference extends AbstractCoverageReference{
     }
 
     @Override
-    public GridCoverageReader acquireReader() throws CoverageStoreException{
+    protected GridCoverageReader createReader() throws CoverageStoreException {
         final ImageCoverageReader reader = new ImageCoverageReader();
         try {
-            final ImageReader ioreader =store.createReader(file);
+            final ImageReader ioreader =store.createReader(file,spi);
+            if(spi==null){
+                //format was on AUTO. keep the spi for futur reuse.
+                spi = ioreader.getOriginatingProvider();
+            }
             reader.setInput(ioreader);
         } catch (IOException ex) {
             throw new CoverageStoreException(ex.getMessage(),ex);

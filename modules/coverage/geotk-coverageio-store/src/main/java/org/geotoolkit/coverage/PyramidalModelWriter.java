@@ -427,7 +427,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
             this.mosAreaMaxY = mosAreaMaxY;
             this.mosULX = mosULX;
             this.mosULY = mosULY;
-            this.interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(image), InterpolationCase.NEIGHBOR, 2);;
+            this.interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(image), InterpolationCase.NEIGHBOR, 2);
             this.nbBand = nbBand;
             this.res = res;
             this.crsDestToSrcGrid = crsDestToSrcGrid;

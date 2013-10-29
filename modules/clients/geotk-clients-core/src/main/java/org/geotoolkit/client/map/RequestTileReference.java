@@ -59,22 +59,8 @@ public class RequestTileReference extends DefaultTileReference {
             }
         }
 
-        final Class[] supportedTypes = spi.getInputTypes();
-        Object in = null;
-
-        //try to reuse input if it's supported
         final Object inputTmp = ((Request)input).getResponseStream();
-        for(Class type : supportedTypes){
-            if(type.isInstance(inputTmp)){
-                in = inputTmp;
-                break;
-            }
-        }
-
-        //use default image stream if necessary
-        if(in == null){
-            in = ImageIO.createImageInputStream(inputTmp);
-        }
+        Object in = ImageIOUtilities.toSupportedInput(spi, inputTmp);
 
         final ImageReader reader = spi.createReaderInstance();
         reader.setInput(in, true, true);

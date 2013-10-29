@@ -239,4 +239,32 @@ public final class ImageIOUtilities extends Static {
         reader.dispose();
     }
 
+    /**
+     * Convert given input to an input support by given spi.
+     * In last case an ImageInputStream will be created.
+     *
+     * @param spi
+     * @param input
+     * @return
+     * @throws IOException
+     */
+    public static Object toSupportedInput(ImageReaderSpi spi, Object input) throws IOException{
+        final Class[] supportedTypes = spi.getInputTypes();
+        Object in = null;
+
+        //try to reuse input if it's supported
+        for(Class type : supportedTypes){
+            if(type.isInstance(input)){
+                in = input;
+                break;
+            }
+        }
+
+        //use default image stream if necessary
+        if(in == null){
+            in = ImageIO.createImageInputStream(input);
+        }
+        return in;
+    }
+
 }

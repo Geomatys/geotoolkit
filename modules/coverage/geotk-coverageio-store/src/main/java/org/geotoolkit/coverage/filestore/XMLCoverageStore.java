@@ -122,8 +122,8 @@ public class XMLCoverageStore extends AbstractCoverageStore{
         return ref;
     }
 
-	@Override
-	public CoverageType getType() {
-		return CoverageType.PYRAMID;
-	}
+    @Override
+    public CoverageType getType() {
+        return CoverageType.PYRAMID;
+    }
 }

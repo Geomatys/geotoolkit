@@ -18,11 +18,10 @@ package org.geotoolkit.coverage;
 
 import java.awt.Point;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.util.ImageIOUtilities;
 
 /**
  * Default implementation of a TileReference
@@ -60,21 +59,7 @@ public class DefaultTileReference implements TileReference{
             throw new IOException("Could not find image reader spi for input : "+input);
         }
         
-        final Class[] supportedTypes = spi.getInputTypes();
-        Object in = null;
-
-        //try to reuse input if it's supported
-        for(Class type : supportedTypes){
-            if(type.isInstance(input)){
-                in = input;
-                break;
-            }
-        }
-
-        //use default image stream if necessary
-        if(in == null){
-            in = ImageIO.createImageInputStream(input);
-        }
+        Object in = ImageIOUtilities.toSupportedInput(spi, input);
 
         if(reader == null){
             reader = spi.createReaderInstance();
