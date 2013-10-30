@@ -21,11 +21,7 @@ import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.CoverageReference;
@@ -52,23 +48,11 @@ import org.opengis.geometry.Envelope;
  * @module pending
  */
 public class StatefullMapItemJ2D<T extends MapItem> extends GraphicJ2D implements ItemListener{
-    
+
     private final ItemListener.Weak weakListener = new ItemListener.Weak(this);
 
-    /** Executor used to update graphics */
-    private static final RejectedExecutionHandler LOCAL_REJECT_EXECUTION_HANDLER = new ThreadPoolExecutor.CallerRunsPolicy(){
 
-        @Override
-        public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
-            System.out.println("> Rejected update");
-            super.rejectedExecution(r, e);
-        }
-        
-    }; 
-    private BlockingQueue queue;
-    private ThreadPoolExecutor exec;
-    
-    
+
     //childs
     private final Map<MapItem, GraphicJ2D> itemGraphics = new HashMap<>();
     protected final T item;
@@ -76,7 +60,7 @@ public class StatefullMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
     public StatefullMapItemJ2D(final J2DCanvas canvas,final T item, boolean allowChildren){
         super(canvas, allowChildren);
         this.item = item;
-        
+
         //build children nodes
         final List<MapItem> childs = item.items();
         for(int i=0,n=childs.size(); i<n; i++){
@@ -85,23 +69,21 @@ public class StatefullMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
             itemGraphics.put(child, gj2d);
             getChildren().add(gj2d);
         }
-        
+
         //listen to mapitem changes
         weakListener.registerSource(item);
     }
 
     protected ThreadPoolExecutor getExecutor(){
-        if(parent != null){
+        if(parent instanceof StatefullMapItemJ2D){
             return ((StatefullMapItemJ2D)parent).getExecutor();
-        }else if(exec == null){
-            queue = new ArrayBlockingQueue(100000);
-            exec = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), Runtime.getRuntime().availableProcessors(), 
-                    1, TimeUnit.MINUTES, queue, 
-                    LOCAL_REJECT_EXECUTION_HANDLER);
+        }else if(parent instanceof RootSceneNode){
+            return ((RootSceneNode)parent).getExecutor();
+        }else{
+            throw new RuntimeException("Get not access executor if node is not linked to the scene root.");
         }
-        return exec;
     }
-    
+
     @Override
     public T getUserObject() {
         return item;
@@ -116,20 +98,13 @@ public class StatefullMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
             graphic.dispose();
         }
         itemGraphics.clear();
-        
-        if (exec != null) {
-           exec.shutdownNow();
-           exec = null;
-           queue = null;
-        }
-        
     }
 
     @Override
     public Envelope getEnvelope() {
         return null;
     }
-    
+
     // create graphics ---------------------------------------------------------
 
     protected GraphicJ2D parseChild(final MapItem child){
@@ -146,7 +121,7 @@ public class StatefullMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
             }else{
                 //normal coverage
                 g2d = new StatefullMapLayerJ2D(getCanvas(), (CoverageMapLayer)child, false);
-            }            
+            }
         }else if (child instanceof MapLayer){
             g2d = new StatefullMapLayerJ2D(getCanvas(), (MapLayer)child, false);
         }else{
@@ -161,7 +136,7 @@ public class StatefullMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
 
         //we abort painting if the item is not visible.
         if (!item.isVisible()) return;
-        
+
         for(final MapItem child : item.items()){
             if(renderingContext.getMonitor().stopRequested()) break;
             final GraphicJ2D gra = itemGraphics.get(child);
@@ -211,10 +186,10 @@ public class StatefullMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
                 itemGraphics.put(child, gj2d);
                 index++;
             }
-            
+
             //TODO should call a repaint only on this graphic
             getCanvas().getController().repaint();
-            
+
         }else if(CollectionChangeEvent.ITEM_REMOVED == type){
             for(final MapItem child : event.getItems()){
                 //remove the graphic
@@ -224,12 +199,12 @@ public class StatefullMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
                     gra.dispose();
                 }
             }
-            
+
             //TODO should call a repaint only on this graphic
             getCanvas().getController().repaint();
         }
 
     }
 
-    
+
 }

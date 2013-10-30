@@ -278,19 +278,26 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
 
             toRemove.add(st.getCoordinate());
         }
+
+        //remove old tiles
         for(Point3d pt : toRemove){
-            gtiles.remove(pt);
+            StatefullTileJ2D tile = gtiles.remove(pt);
+            getChildren().remove(tile);
         }
 
+        //add new tiles
         for(Point3d c : ttiles){
             if(!gtiles.containsKey(c)){
-                gtiles.put(c,new StatefullTileJ2D(mosaic, c, getCanvas(), item, rules));
+                StatefullTileJ2D tile = new StatefullTileJ2D(mosaic, c, getCanvas(), item, rules);
+                gtiles.put(c,tile);
+                getChildren().add(tile);
             }
         }
 
         //paint sub tiles ------------------------------------------------------
-        for(final StatefullTileJ2D gt : gtiles.values()){
-            gt.paint(context2D);
+        final Object[] cp = getChildren().toArray();
+        for(Object obj : cp){
+            ((StatefullTileJ2D)obj).paint(context2D);
         }
     }
 

@@ -37,6 +37,7 @@ import org.geotoolkit.style.StyleConstants;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.container.DefaultGraphicContainer;
 import org.geotoolkit.display.primitive.SceneNode;
+import org.geotoolkit.display2d.container.statefull.RootSceneNode;
 import org.geotoolkit.display2d.container.statefull.StatefullMapItemJ2D;
 import org.geotoolkit.display2d.container.stateless.StatelessMapItemJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
@@ -114,16 +115,16 @@ public class ContextContainer2D extends DefaultGraphicContainer{
         DEFAULT_SELECTION_STYLE = style;
     }
 
-    
+
     private GraphicJ2D contextGraphic = null;
     private final boolean statefull;
     private MapContext context = null;
-    
+
     /**
      * CreContextContainer2D with no particular hints.
      */
     public ContextContainer2D(final J2DCanvas canvas, final boolean statefull){
-        super(canvas, new SceneNode(canvas));
+        super(canvas, statefull ? new RootSceneNode(canvas) : new SceneNode(canvas));
         this.statefull = statefull;
     }
 
@@ -218,7 +219,7 @@ public class ContextContainer2D extends DefaultGraphicContainer{
      * @param context : MapContext to render
      */
     public void setContext(MapContext context){
-        
+
         if(this.context != null && context != null){
             if(this.context.equals(context)){
                 //same context
@@ -231,7 +232,7 @@ public class ContextContainer2D extends DefaultGraphicContainer{
             getRoot().getChildren().remove(contextGraphic);
             contextGraphic.dispose();
         }
-        
+
         final MapContext oldcontext = this.context;
         this.context = context;
 
@@ -242,7 +243,7 @@ public class ContextContainer2D extends DefaultGraphicContainer{
             }else{
                 contextGraphic = new StatelessMapItemJ2D(getCanvas(), context, true);
             }
-            
+
             getRoot().getChildren().add(contextGraphic);
         }
 
