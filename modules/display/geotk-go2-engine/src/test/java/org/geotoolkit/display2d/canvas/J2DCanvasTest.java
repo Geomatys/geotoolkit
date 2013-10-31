@@ -18,6 +18,7 @@
 package org.geotoolkit.display2d.canvas;
 
 import java.awt.Dimension;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.Date;
 
@@ -39,6 +40,7 @@ import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.junit.Assert.*;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Test envelope configuration on J2DCanvas.
@@ -134,6 +136,24 @@ public class J2DCanvasTest {
 
          final AffineTransform2D objtoDisp = canvas.getObjectiveToDisplay();
          assertEquals(new AffineTransform2D(1, 0, 0, -1, 180, 90), objtoDisp);
+     }
+
+     @Test
+     public void testCenterTransform() throws NoninvertibleTransformException, TransformException{
+         final J2DCanvas canvas = new J2DCanvasBuffered(DefaultGeographicCRS.WGS84, new Dimension(360,180));
+         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+         env.setRange(0, -180, +180);
+         env.setRange(1, -90, +90);
+         canvas.getController().setVisibleArea(env);
+
+         final AffineTransform2D objtoDisp = canvas.getObjectiveToDisplay();
+         final AffineTransform centerTrs = canvas.getController().getCenterTransform();
+         assertEquals(new AffineTransform2D(1, 0, 0, -1, 0, 0), centerTrs);
+
+         //reset it and check
+         canvas.getController().setCenterTransform(centerTrs);
+         final AffineTransform objToDisp2 = canvas.getObjectiveToDisplay();
+         assertEquals(objtoDisp, objToDisp2);
      }
 
 }

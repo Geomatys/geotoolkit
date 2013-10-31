@@ -263,6 +263,53 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
+    public AffineTransform getCenterTransform(){
+//        final Rectangle2D rect = canvas.getDisplayBounds();
+//        final double centerX = rect.getCenterX();
+//        final double centerY = rect.getCenterY();
+//
+//        final AffineTransform2D objToDisp = canvas.getObjectiveToDisplay();
+//        final AffineTransform change = objToDisp.createInverse();
+//
+////        change.translate(+centerX, +centerY);
+////        change.rotate(-r);
+//        change.translate(-centerX, -centerY);
+//
+//        change.concatenate(objToDisp);
+//        XAffineTransform.roundIfAlmostInteger(change, EPS);
+//        transform(change);
+//
+//
+//
+//
+        final Rectangle2D rect = canvas.getDisplayBounds();
+        final double centerX = rect.getCenterX();
+        final double centerY = rect.getCenterY();
+        final AffineTransform trs = new AffineTransform(1, 0, 0, 1, -centerX, -centerY);
+//
+//        final
+//
+        final AffineTransform objToDisp = canvas.getObjectiveToDisplay().clone();
+        trs.concatenate(objToDisp);
+//        objToDisp.translate(centerX, centerY);
+
+        return trs;
+    }
+
+    @Override
+    public void setCenterTransform(AffineTransform trs) {
+
+        final Rectangle2D rect = canvas.getDisplayBounds();
+        final double centerX = rect.getCenterX();
+        final double centerY = rect.getCenterY();
+        final AffineTransform centerTrs = new AffineTransform(1, 0, 0, 1, centerX, centerY);
+        centerTrs.concatenate(trs);
+
+        canvas.setTransform(centerTrs);
+
+    }
+
+    @Override
     public void setDisplayVisibleArea(final Rectangle2D dipsEnv) {
         try {
             Shape shp = canvas.getObjectiveToDisplay().createInverse().createTransformedShape(dipsEnv);

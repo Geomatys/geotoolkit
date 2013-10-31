@@ -30,10 +30,10 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * Default canvas 2D controller methods. 
+ * Default canvas 2D controller methods.
  * This interface sum up the common 2D controls needed to correctly
  * navigate in the canvas.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -48,7 +48,7 @@ public interface CanvasController2D extends CanvasController{
      * <p>
      */
     void reset() throws NoninvertibleTransformException;
-    
+
     void repaint();
 
     Point2D getDisplayCenter();
@@ -64,9 +64,9 @@ public interface CanvasController2D extends CanvasController{
     DirectPosition getCenter() throws NoninvertibleTransformException;
 
     void setAutoRepaint(boolean auto);
-    
+
     boolean isAutoRepaint();
-    
+
     /**
      * Set the proportions support between X and Y axis.
      * if prop = Double.NaN then no correction will be applied
@@ -74,25 +74,25 @@ public interface CanvasController2D extends CanvasController{
      * else value will mean that prop*Y will be used
      */
     void setAxisProportions(double prop);
-    
+
     /**
-     * 
+     *
      * @return the X/Y proportion
      */
     double getAxisProportions();
-    
+
     /**
      *
      * @return a snapshot objective To display transform.
      */
     AffineTransform2D getTransform();
-    
-    // Relative position operations --------------------------------------------
-    
-    void rotate(double r) throws NoninvertibleTransformException;    
 
-    void rotate(double r, Point2D center) throws NoninvertibleTransformException;    
-    
+    // Relative position operations --------------------------------------------
+
+    void rotate(double r) throws NoninvertibleTransformException;
+
+    void rotate(double r, Point2D center) throws NoninvertibleTransformException;
+
     /**
      * Change scale by a precise amount.
      *
@@ -107,7 +107,7 @@ public interface CanvasController2D extends CanvasController{
      * @throws NoninvertibleTransformException
      */
     void scale(double s, Point2D center) throws NoninvertibleTransformException;
-    
+
     /**
      * Translate of x and y amount in display units.
      *
@@ -117,11 +117,11 @@ public interface CanvasController2D extends CanvasController{
     void translateDisplay(double x, double y) throws NoninvertibleTransformException;
 
     void translateObjective(double x, double y) throws NoninvertibleTransformException;
-    
+
     /**
      * Changes the {@linkplain AffineTransform} by applying a concatenate affine transform.
      * The {@code change} transform
-     * must express a change in logical units, for example, a translation in metres. 
+     * must express a change in logical units, for example, a translation in metres.
      *
      * @param  change The affine transform change, as an affine transform in logical coordinates. If
      *         {@code change} is the identity transform, then this method does nothing and
@@ -140,14 +140,26 @@ public interface CanvasController2D extends CanvasController{
      * @since 2.1
      */
     void transformPixels(final AffineTransform change);
-    
+
     // Absolute position operations --------------------------------------------
-    
+
     void setRotation(double r) throws NoninvertibleTransformException;
 
     double getRotation();
 
     void setScale(double newScale) throws NoninvertibleTransformException;
+
+    /**
+     * Get objective to display transform at canvas center.
+     * @return AffineTransform
+     */
+    AffineTransform getCenterTransform();
+
+    /**
+     * Set objective to display transform at canvas center.
+     * @param centerTrs
+     */
+    void setCenterTransform(AffineTransform centerTrs);
 
     /**
      * Returns the current scale factor. A value of 1/100 means that 100 metres
@@ -162,8 +174,8 @@ public interface CanvasController2D extends CanvasController{
      *
      */
     double getScale();
-    
-    void setDisplayVisibleArea(Rectangle2D dipsEnv);
+
+    void setDisplayVisibleArea(Rectangle2D dipsEnv) ;
 
     void setVisibleArea(Envelope env) throws NoninvertibleTransformException,TransformException;
 
@@ -175,7 +187,7 @@ public interface CanvasController2D extends CanvasController{
      * @param  logicalBounds Logical coordinates of the region to be displayed.
      * @throws IllegalArgumentException if {@code source} is empty.
      */
-    void setVisibleArea(final Rectangle2D logicalBounds) 
+    void setVisibleArea(final Rectangle2D logicalBounds)
             throws IllegalArgumentException, NoninvertibleTransformException;
 
     /**
@@ -220,5 +232,5 @@ public interface CanvasController2D extends CanvasController{
     Double[] getElevationRange();
 
     Unit<Length> getElevationUnit();
-    
+
 }

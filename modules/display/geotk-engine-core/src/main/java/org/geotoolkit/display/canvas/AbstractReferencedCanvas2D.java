@@ -64,17 +64,17 @@ import org.opengis.util.FactoryException;
  */
 public abstract class AbstractReferencedCanvas2D extends AbstractCanvas{
 
-    
+
     public static final String OBJECTIVE_CRS_PROPERTY = "ObjectiveCRS";
 
     public static final String OBJECTIVE_TO_DISPLAY_PROPERTY = "ObjectiveToDisplay";
-    
+
     /**
      * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
      * {@linkplain AbstractCanvas#getEnvelope canvas envelope} changed.
      */
     public static final String ENVELOPE_PROPERTY = "envelope";
-    
+
     /**
      * A set of {@link MathTransform}s from various source CRS. The target CRS must be the
      * {@linkplain #getObjectiveCRS objective CRS} for all entries. Keys are source CRS.
@@ -221,7 +221,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas{
      * Can be used to temporal or elevatio range of the map.
      */
     final void setRange(final int ordinate, final double min, final double max){
-     
+
         if(min == envelope.getMinimum(ordinate) && max == envelope.getMaximum(ordinate)){
             //nothing changed
             return;
@@ -264,6 +264,19 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas{
             firePropertyChange(OBJECTIVE_TO_DISPLAY_PROPERTY, old, getObjectiveToDisplay());
             repaintIfAuto();
 
+        }
+    }
+
+    final void setTransform(final AffineTransform transform){
+        final AffineTransform2D old = getObjectiveToDisplay();
+
+        if(!old.equals(transform)){
+            displayCRS = null; //clear display crs cache
+            objToDisp.setTransform(transform);
+            //fire event and repaint
+            updateEnvelope();
+            firePropertyChange(OBJECTIVE_TO_DISPLAY_PROPERTY, old, getObjectiveToDisplay());
+            repaintIfAuto();
         }
     }
 
