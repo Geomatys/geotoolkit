@@ -23,6 +23,7 @@ import java.util.List;
 import org.geotoolkit.data.iso8211.SubFieldDescription;
 import org.opengis.util.CodeList;
 import static org.geotoolkit.data.iso8211.FieldValueType.*;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.opengis.feature.type.FeatureType;
 
@@ -33,12 +34,30 @@ import org.opengis.feature.type.FeatureType;
  */
 public final class S57Constants {
 
+    /**
+     * Name of the rebuilded geometry in Feature and Spatial records.
+     */
+    public static final String PROPERTY_GEOMETRY = "geometry";
+
+    /**
+     * Name of the vectors properties used in the feature record.
+     *
+     */
+    public static final String PROPERTY_VECTORS = "vectors";
+
     public static final FeatureType ABSTRACT_S57FEATURETYPE;
     static {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setAbstract(true);
         ftb.setName("S57");
-        ftb.add("spatial", Geometry.class, null);
+        ftb.add(PROPERTY_GEOMETRY, Geometry.class, null);
+
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        adb.setName(PROPERTY_VECTORS);
+        adb.setType(TypeBanks.getVectorType(null));
+        adb.setMinOccurs(0);
+        adb.setMaxOccurs(Integer.MAX_VALUE);
+        ftb.add(adb.buildDescriptor());
         ABSTRACT_S57FEATURETYPE = ftb.buildFeatureType();
     }
 

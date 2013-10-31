@@ -59,7 +59,8 @@ public class S57FeatureReader implements FeatureReader{
     private final S57FeatureStore store;
 
     //searched type
-    private final FeatureType type;
+    private final FeatureType featureType;
+    private final FeatureType vectorType;
     private final Map<Integer,PropertyDescriptor> properties;
     /**
      * May be null if type is the global S-57 type.
@@ -79,7 +80,8 @@ public class S57FeatureReader implements FeatureReader{
     public S57FeatureReader(S57FeatureStore store,FeatureType type, Integer s57typeCode, S57Reader mreader,
             DataSetIdentification datasetIdentification,DataSetParameter datasetParameter) throws DataStoreException {
         this.store = store;
-        this.type = type;
+        this.featureType = type;
+        this.vectorType = (FeatureType)type.getDescriptor(S57Constants.PROPERTY_VECTORS).getType();
         this.s57TypeCode = s57typeCode;
         this.mreader = mreader;
         this.datasetIdentification = datasetIdentification;
@@ -112,7 +114,7 @@ public class S57FeatureReader implements FeatureReader{
 
     @Override
     public FeatureType getFeatureType() {
-        return type;
+        return featureType;
     }
 
     @Override
@@ -161,11 +163,11 @@ public class S57FeatureReader implements FeatureReader{
     private Feature toFeature(final FeatureRecord record) throws DataStoreException{
 
         final FeatureType currentType;
-        if(type.isAbstract()){
+        if(featureType.isAbstract()){
             //search appropriate S-57 type from code
             currentType = TypeBanks.getFeatureType(record.code,datasetParameter.buildCoordinateReferenceSystem());
         }else{
-            currentType = type;
+            currentType = featureType;
         }
 
         //we must not append the version in the id, otherwise we can't find older versions
@@ -202,7 +204,7 @@ public class S57FeatureReader implements FeatureReader{
 
         if(geometry != null){
             JTS.setCRS(geometry, currentType.getCoordinateReferenceSystem());
-            f.getProperty("spatial").setValue(geometry);
+            f.getProperty(S57Constants.PROPERTY_GEOMETRY).setValue(geometry);
         }
 
         return f;
@@ -427,6 +429,11 @@ public class S57FeatureReader implements FeatureReader{
     @Override
     public void remove() {
         throw new FeatureStoreRuntimeException("writing not supported");
+    }
+
+    public static Feature toFeature(VectorRecord record, FeatureType type){
+        //TODO
+        return null;
     }
 
 }

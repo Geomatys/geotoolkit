@@ -31,6 +31,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.data.s57.S57Constants;
+import static org.geotoolkit.data.s57.S57Constants.PROPERTY_VECTORS;
 import org.geotoolkit.data.s57.S57FeatureStore;
 import org.geotoolkit.data.s57.TypeBank;
 import org.geotoolkit.data.s57.TypeBanks;
@@ -138,7 +139,18 @@ public final class AMLTypeBank implements TypeBank{
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setSuperType(S57Constants.ABSTRACT_S57FEATURETYPE);
-        ftb.add("spatial", Geometry.class, crs);
+
+        //geometry property
+        ftb.add(S57Constants.PROPERTY_GEOMETRY, Geometry.class, crs);
+        //vector properties
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        adb.setName(S57Constants.PROPERTY_VECTORS);
+        adb.setType(TypeBanks.getVectorType(crs));
+        adb.setMinOccurs(0);
+        adb.setMaxOccurs(Integer.MAX_VALUE);
+        ftb.add(adb.buildDescriptor());
+
+
         ftb.setName(type.Feature_Type_Acronym);
         ftb.setDescription(new SimpleInternationalString(type.Feature_Type_Name+".  "+type.Feature_Type_Definition));
 

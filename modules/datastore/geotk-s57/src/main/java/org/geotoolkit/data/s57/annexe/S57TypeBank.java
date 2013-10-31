@@ -179,7 +179,14 @@ public class S57TypeBank implements TypeBank{
         ftb.setName(sft.acronym);
         ftb.setDescription(new SimpleInternationalString(sft.fullName+".  "+sft.description));
         //add a geometry type
-        ftb.add("spatial", Geometry.class, crs);
+        ftb.add(S57Constants.PROPERTY_GEOMETRY, Geometry.class, crs);
+        //vector properties
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        adb.setName(S57Constants.PROPERTY_VECTORS);
+        adb.setType(TypeBanks.getVectorType(crs));
+        adb.setMinOccurs(0);
+        adb.setMaxOccurs(Integer.MAX_VALUE);
+        ftb.add(adb.buildDescriptor());
 
         final List<String> allAtts = new ArrayList<>();
         allAtts.addAll(sft.attA);

@@ -34,9 +34,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import org.geotoolkit.data.s57.S57Constants;
 import org.geotoolkit.data.s57.S57FeatureStore;
+import org.geotoolkit.data.s57.TypeBanks;
 import org.geotoolkit.data.s57.annexe.S57FeatureType;
 import org.geotoolkit.data.s57.annexe.S57PropertyType;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -107,7 +110,14 @@ public final class S57AnnexeParser {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(sft.acronym);
         //add a geometry type
-        ftb.add("spatial", Geometry.class, DefaultGeographicCRS.WGS84);
+        ftb.add(S57Constants.PROPERTY_GEOMETRY, Geometry.class, DefaultGeographicCRS.WGS84);
+        //vector properties
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        adb.setName(S57Constants.PROPERTY_VECTORS);
+        adb.setType(TypeBanks.getVectorType(DefaultGeographicCRS.WGS84));
+        adb.setMinOccurs(0);
+        adb.setMaxOccurs(Integer.MAX_VALUE);
+        ftb.add(adb.buildDescriptor());
 
         final List<String> allAtts = new ArrayList<String>();
         allAtts.addAll(sft.attA);

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.s57;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,6 +25,7 @@ import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.internal.LazySet;
 import org.geotoolkit.lang.Static;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -116,6 +118,20 @@ public final class TypeBanks extends Static {
 
     private static synchronized Set<TypeBank> getBanks(){
         return getBanks(null);
+    }
+
+    /**
+     * Get abstract feature type for Vector Record types.
+     * This type is abstract because there is no limitation of attributes contained on spatial records.
+     *
+     * @return FeatureType
+     */
+    public static FeatureType getVectorType(final CoordinateReferenceSystem crs){
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("vector");
+        ftb.setAbstract(true);
+        ftb.add(S57Constants.PROPERTY_GEOMETRY, Geometry.class, crs);
+        return ftb.buildFeatureType();
     }
 
     /**
