@@ -56,11 +56,7 @@ public class ConditionalSymbolProcedure extends Instruction{
             List<S52Graphic> all, S52Graphic s52graphic) throws PortrayalException {
 
         final Procedure proc = context.getProcedure(procedureName);
-        if(proc == null){
-            System.out.println("TODO unknowned procedure : "+procedureName);
-        }else{
-            proc.render(ctx, context, colorTable, all, s52graphic);
-        }
+        proc.render(ctx, context, colorTable, all, s52graphic);
     }
 
 }

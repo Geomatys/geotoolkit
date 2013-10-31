@@ -43,10 +43,12 @@ import org.geotoolkit.data.s57.model.VectorRecord;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.util.Converters;
+import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -60,7 +62,7 @@ public class S57FeatureReader implements FeatureReader{
 
     //searched type
     private final FeatureType featureType;
-    private final FeatureType vectorType;
+    private final PropertyDescriptor vectorType;
     private final Map<Integer,PropertyDescriptor> properties;
     /**
      * May be null if type is the global S-57 type.
@@ -81,7 +83,7 @@ public class S57FeatureReader implements FeatureReader{
             DataSetIdentification datasetIdentification,DataSetParameter datasetParameter) throws DataStoreException {
         this.store = store;
         this.featureType = type;
-        this.vectorType = (FeatureType)type.getDescriptor(S57Constants.PROPERTY_VECTORS).getType();
+        this.vectorType = type.getDescriptor(S57Constants.PROPERTY_VECTORS);
         this.s57TypeCode = s57typeCode;
         this.mreader = mreader;
         this.datasetIdentification = datasetIdentification;
@@ -187,24 +189,19 @@ public class S57FeatureReader implements FeatureReader{
             readAttribute(att, desc, f.getProperty(desc.getName().getLocalPart()));
         }
 
-        //rebuild geometry
-        Geometry geometry = null;
+        //rebuild geometry and vector attributes
+        final CoordinateReferenceSystem crs = currentType.getCoordinateReferenceSystem();
         final S57Constants.DataStructure structure = datasetIdentification.information.dataStructure;
         if(structure == S57Constants.DataStructure.NONREV){
             //no geometry
         }else if(structure == S57Constants.DataStructure.SPAGHETTI){
-            geometry = rebuildSpaghetti(record);
+            rebuildSpaghetti(record,f,crs);
         }else if(structure == S57Constants.DataStructure.CHAINNODE){
-            geometry = rebuildChained(record);
+            rebuildChained(record,f,crs);
         }else if(structure == S57Constants.DataStructure.GRAPH){
             throw new FeatureStoreRuntimeException("S-57 Graph topology mode not supported.");
         }else if(structure == S57Constants.DataStructure.FULL){
             throw new FeatureStoreRuntimeException("S-57 Full topology mode not supported.");
-        }
-
-        if(geometry != null){
-            JTS.setCRS(geometry, currentType.getCoordinateReferenceSystem());
-            f.getProperty(S57Constants.PROPERTY_GEOMETRY).setValue(geometry);
         }
 
         return f;
@@ -222,13 +219,16 @@ public class S57FeatureReader implements FeatureReader{
         }
     }
 
-    private Geometry rebuildSpaghetti(final FeatureRecord record){
+    private void rebuildSpaghetti(final FeatureRecord record, Feature feature, CoordinateReferenceSystem crs){
 
         Geometry geometry = null;
         if(S57Constants.Primitive.PRIMITIVE_POINT == record.primitiveType){
             final List<Coordinate> coords = new ArrayList<>();
             for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
                 final VectorRecord rec = spatials.get(sp);
+                //rebuild complex vector record attribute
+                feature.getProperties().add(toAttribute(rec, vectorType));
+                //rebuild the global geometry
                 coords.addAll(rec.getCoordinates(coordFactor, soundingFactor));
             }
             if(!coords.isEmpty()){
@@ -238,6 +238,9 @@ public class S57FeatureReader implements FeatureReader{
             final List<LineString> lines = new ArrayList<>();
             for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
                 final VectorRecord rec = spatials.get(sp);
+                //rebuild complex vector record attribute
+                feature.getProperties().add(toAttribute(rec, vectorType));
+                //rebuild the global geometry
                 final List<Coordinate> coords = rec.getCoordinates(coordFactor, soundingFactor);
                 if(coords.size() == 1){ //we need at least 2 points
                     coords.add((Coordinate)coords.get(0).clone());
@@ -255,6 +258,9 @@ public class S57FeatureReader implements FeatureReader{
             LinearRing exterior = null;
             for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
                 final VectorRecord rec = spatials.get(sp);
+                //rebuild complex vector record attribute
+                feature.getProperties().add(toAttribute(rec, vectorType));
+                //rebuild the global geometry
                 final List<Coordinate> coords = rec.getCoordinates(coordFactor, soundingFactor);
 
                 if(coords.isEmpty()){
@@ -276,16 +282,23 @@ public class S57FeatureReader implements FeatureReader{
             }
         }
 
-        return geometry;
+        //set the geometry on the feature
+        if(geometry != null){
+            JTS.setCRS(geometry, crs);
+            feature.getProperty(S57Constants.PROPERTY_GEOMETRY).setValue(geometry);
+        }
     }
 
-    private Geometry rebuildChained(final FeatureRecord record){
+    private void rebuildChained(final FeatureRecord record, Feature feature, CoordinateReferenceSystem crs){
 
         Geometry geometry = null;
         if(S57Constants.Primitive.PRIMITIVE_POINT == record.primitiveType){
             final List<Coordinate> coords = new ArrayList<>();
             for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
                 final VectorRecord rec = spatials.get(sp);
+                //rebuild complex vector record attribute
+                feature.getProperties().add(toAttribute(rec, vectorType));
+                //rebuild the global geometry
                 coords.addAll(rec.getCoordinates(coordFactor, soundingFactor));
             }
             if(!coords.isEmpty()){
@@ -303,6 +316,11 @@ public class S57FeatureReader implements FeatureReader{
                 final VectorRecord startPoint = spatials.get(edgeStart);
                 final VectorRecord endPoint = spatials.get(edgeEnd);
                 final List<Coordinate> scoords = edge.getCoordinates(coordFactor,soundingFactor);
+
+                //rebuild complex vector record attribute
+                feature.getProperties().add(toAttribute(edge, vectorType));
+                if(startPoint != null) feature.getProperties().add(toAttribute(startPoint, vectorType));
+                if(endPoint != null) feature.getProperties().add(toAttribute(endPoint, vectorType));
 
                 if(startNode == null){
                     //first exterior segment
@@ -359,6 +377,11 @@ public class S57FeatureReader implements FeatureReader{
                 final VectorRecord endPoint = spatials.get(edgeEnd);
                 final List<Coordinate> scoords = edge.getCoordinates(coordFactor,soundingFactor);
 
+                //rebuild complex vector record attribute
+                feature.getProperties().add(toAttribute(edge, vectorType));
+                if(startPoint != null) feature.getProperties().add(toAttribute(startPoint, vectorType));
+                if(endPoint != null) feature.getProperties().add(toAttribute(endPoint, vectorType));
+
                 if(startNode == null){
                     //first exterior segment
                     inprogress.addAll(scoords);
@@ -407,7 +430,27 @@ public class S57FeatureReader implements FeatureReader{
             geometry = GF.createPolygon(outter,interiors.toArray(new LinearRing[interiors.size()]));
         }
 
-        return geometry;
+        if(geometry != null){
+            JTS.setCRS(geometry, crs);
+            feature.getProperty(S57Constants.PROPERTY_GEOMETRY).setValue(geometry);
+        }
+    }
+
+    /**
+     * Rebuild a complex property from VectorRecord.
+     * @param record
+     * @param type
+     * @return
+     */
+    private ComplexAttribute toAttribute(VectorRecord record, PropertyDescriptor pdesc){
+        final ComplexAttribute vf = (ComplexAttribute)FeatureUtilities.defaultProperty(pdesc, ""+record.id);
+        for(VectorRecord.Attribute att : record.attributes){
+            final PropertyDescriptor desc = properties.get(att.code);
+            final Property prop = FeatureUtilities.defaultProperty(desc);
+            readAttribute(att, desc, prop);
+            vf.getProperties().add(prop);
+        }
+        return vf;
     }
 
     private static LinearRing toRing(List<Coordinate> coords){
@@ -429,11 +472,6 @@ public class S57FeatureReader implements FeatureReader{
     @Override
     public void remove() {
         throw new FeatureStoreRuntimeException("writing not supported");
-    }
-
-    public static Feature toFeature(VectorRecord record, FeatureType type){
-        //TODO
-        return null;
     }
 
 }
