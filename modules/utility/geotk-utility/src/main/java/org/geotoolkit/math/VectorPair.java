@@ -22,7 +22,6 @@ import java.io.Serializable;
 import javax.vecmath.MismatchedSizeException;
 
 import org.apache.sis.util.ArraysExt;
-import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -262,7 +261,7 @@ public class VectorPair implements Serializable {
              * 'direction' is negative instead than positive).
              */
             if (Math.abs(direction) >= 2) {
-                direction = MathFunctions.sgn(direction);
+                direction = Integer.signum(direction);
                 int size = Xi.length;
                 for (int i=size; --i>=2;) {
                     if (Xi[i] == Xi[i-2]) {

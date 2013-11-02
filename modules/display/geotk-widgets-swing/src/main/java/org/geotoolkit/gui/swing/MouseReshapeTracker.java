@@ -52,7 +52,6 @@ import java.text.SimpleDateFormat;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
@@ -447,11 +446,11 @@ class MouseReshapeTracker extends MouseInputAdapter implements Shape {
             tmp.x /= normalize;
             tmp.y /= normalize;
             adjusting = 0;
-            switch (MathFunctions.sgn(Math.rint(tmp.x))) {
+            switch ((int) Math.signum(Math.rint(tmp.x))) {
                 case -1: adjusting |= WEST; break;
                 case +1: adjusting |= EAST; break;
             }
-            switch (MathFunctions.sgn(Math.rint(tmp.y))) {
+            switch ((int) Math.signum(Math.rint(tmp.y))) {
                 case -1: adjusting |= NORTH; break;
                 case +1: adjusting |= SOUTH; break;
             }
