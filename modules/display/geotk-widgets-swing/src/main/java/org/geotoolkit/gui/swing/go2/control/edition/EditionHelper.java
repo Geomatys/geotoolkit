@@ -293,6 +293,25 @@ public class EditionHelper {
         try {
             final Polygon geo = mousePositionToGeometry(mx, my);
             Filter flt = toFilter(geo, editedLayer);
+
+            //concatenate with temporal range if needed ----------------------------
+            for (final FeatureMapLayer.DimensionDef def : editedLayer.getExtraDimensions()) {
+                final CoordinateReferenceSystem crs = def.getCrs();
+                final org.opengis.geometry.Envelope canvasEnv = map.getCanvas().getVisibleEnvelope();
+                final org.opengis.geometry.Envelope dimEnv;
+                try {
+                    dimEnv = CRS.transform(canvasEnv, crs);
+                } catch (TransformException ex) {
+                    continue;
+                }
+
+                final Filter dimFilter = FF.and(
+                        FF.lessOrEqual(FF.literal(dimEnv.getMinimum(0)), def.getLower()),
+                        FF.greaterOrEqual(FF.literal(dimEnv.getMaximum(0)), def.getUpper()));
+
+                flt = FF.and(flt, dimFilter);
+            }
+
             QueryBuilder qb = new QueryBuilder(editedLayer.getCollection().getFeatureType().getName());
             //we filter in the map CRS
             qb.setCRS(map.getCanvas().getObjectiveCRS2D());
