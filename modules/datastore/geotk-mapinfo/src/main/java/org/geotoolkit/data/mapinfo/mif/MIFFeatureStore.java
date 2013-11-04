@@ -24,7 +24,6 @@ import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.parameter.Parameters;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
