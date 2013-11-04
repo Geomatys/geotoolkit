@@ -56,7 +56,8 @@ public enum FileFormat {
     WEBMAPCONTEXT("filter_wmc", "wmc"),
     S57("filter_s57", "000"),
     WORLD_IMAGE("filter_world_image", "jpg", "jpeg", "bmp", "png"),
-    NETCDF_GRIB("filter_netcdfgrib", "nc", "ncml", "cdf", "grib","grib1","grib2","grb","grb1","grb2","grd");
+    NETCDF_GRIB("filter_netcdfgrib", "nc", "ncml", "cdf", "grib","grib1","grib2","grb","grb1","grb2","grd"),
+    NMEA("filter_nmea", "txt", "log");
 
     private final InternationalString desc;
     private final String[] ends;
