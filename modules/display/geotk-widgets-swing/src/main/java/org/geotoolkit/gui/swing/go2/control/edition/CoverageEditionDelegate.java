@@ -60,6 +60,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.go2.control.navigation.PanHandler;
 import org.geotoolkit.gui.swing.go2.decoration.AbstractMapDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
@@ -497,9 +498,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                 public void actionPerformed(ActionEvent e) {
                     try {
                         setCoverage(null,null);
-                        container.removeAll();
-                        container.revalidate();
-                        container.repaint();
+                        map.setHandler(new PanHandler(map));
                     } catch (Exception ex) {
                         LOGGER.log(Level.WARNING, ex.getMessage(),ex);
                     }
