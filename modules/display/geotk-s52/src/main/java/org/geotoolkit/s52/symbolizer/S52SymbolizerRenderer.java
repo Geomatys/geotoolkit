@@ -76,6 +76,9 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
     public void portray(Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
         elements.clear();
 
+        //used by filters
+        final double currentScale = renderingContext.getGeographicScale();
+
         final S52Context context = getS52Context();
         final S52Palette colorTable = context.getPalette();
 
@@ -87,6 +90,19 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
             final S52Graphic element = new S52Graphic();
             element.graphic = graphics.next();
             element.feature = (Feature) element.graphic.getCandidate();
+
+            //check min/max scale on the record
+            if(context.isScaleFilter()){
+                final Number minScale = (Number)S52Utilities.getValue(element, "SCAMIN");
+                final Number maxScale = (Number)S52Utilities.getValue(element, "SCAMAX");
+                if(minScale!=null && minScale.doubleValue() < currentScale){
+                    continue;
+                }
+                if(maxScale!=null && maxScale.doubleValue() > currentScale){
+                    continue;
+                }
+            }
+
             //copy and cache the graphic
             final DefaultProjectedFeature dpf = new DefaultProjectedFeature(
                     ((DefaultProjectedObject)element.graphic).getParameters(),element.feature);

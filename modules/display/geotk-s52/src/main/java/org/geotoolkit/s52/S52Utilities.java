@@ -27,7 +27,9 @@ import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.Canvas;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.s52.symbolizer.S52Graphic;
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 
 /**
  *
@@ -116,6 +118,18 @@ public final class S52Utilities extends Static{
             if(ArraysExt.contains(array, value)) return true;
         }
         return false;
+    }
+
+    /**
+     * Get feature property value, checks if the property exist.
+     * @param s52graphic
+     * @param name property name
+     * @return property value or null
+     */
+    public static Object getValue(S52Graphic s52graphic, String name){
+        final Property prop = s52graphic.feature.getProperty(name);
+        if(prop==null) return null;
+        return prop.getValue();
     }
 
 }

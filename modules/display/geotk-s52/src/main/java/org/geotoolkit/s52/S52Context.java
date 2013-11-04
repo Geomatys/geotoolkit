@@ -198,6 +198,8 @@ public class S52Context {
     private boolean isolatedDangerInShallowWater = true;
     //used by procedure SOUNDG02
     private float analyzedDepth = 0f;
+    //filter visible features using  provided SCALEMIN/SCALEMAX attributes if present.
+    private boolean scaleFilter = true;
 
     // DAI informations ////////////////////////////////////////////////////////
 
@@ -461,6 +463,14 @@ public class S52Context {
 
     public boolean isIsolatedDangerInShallowWater() {
         return isolatedDangerInShallowWater;
+    }
+
+    public void setScaleFilter(boolean scaleFilter) {
+        this.scaleFilter = scaleFilter;
+    }
+
+    public boolean isScaleFilter() {
+        return scaleFilter;
     }
 
     ////////////////////////////////////////////////////////////////////////////
