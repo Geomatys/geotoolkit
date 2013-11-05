@@ -66,6 +66,7 @@ public class JS52MarinerPane extends javax.swing.JPanel {
         guiDistanceTag.setValue(context.getDistanceTags());
         guiTimeTag.setValue(context.getTimeTags());
 
+        guiScaleFilter.setSelected(context.isScaleFilter());
         guiShallowPatern.setSelected(context.isShallowPattern());
         guiTwoShades.setSelected(context.isTwoShades());
         guiNoText.setSelected(context.isNoText());
@@ -93,6 +94,7 @@ public class JS52MarinerPane extends javax.swing.JPanel {
         context.setDistanceTags(    (Float)guiDistanceTag.getValue());
         context.setTimeTags(        (Float)guiTimeTag.getValue());
 
+        context.setScaleFilter(guiScaleFilter.isSelected());
         context.setShallowPattern(guiShallowPatern.isSelected());
         context.setTwoShades(guiTwoShades.isSelected());
         context.setNoText(guiNoText.isSelected());
@@ -130,6 +132,7 @@ public class JS52MarinerPane extends javax.swing.JPanel {
         guiContourLabels = new JCheckBox();
         guiFullSectors = new JCheckBox();
         guiLightDescription = new JCheckBox();
+        guiScaleFilter = new JCheckBox();
         JPanel jPanel3 = new JPanel();
         JLabel jLabel5 = new JLabel();
         JLabel jlabel6 = new JLabel();
@@ -222,6 +225,8 @@ public class JS52MarinerPane extends javax.swing.JPanel {
 
         guiLightDescription.setText(MessageBundle.getString("s52.lightdescription")); // NOI18N
 
+        guiScaleFilter.setText(MessageBundle.getString("s52.scalefilter")); // NOI18N
+
         GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -236,16 +241,19 @@ public class JS52MarinerPane extends javax.swing.JPanel {
                     .addComponent(guiShipOutline)
                     .addComponent(guiContourLabels)
                     .addComponent(guiFullSectors)
-                    .addComponent(guiLightDescription))
+                    .addComponent(guiLightDescription)
+                    .addComponent(guiScaleFilter))
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiContourLabels, guiFullSectors, guiLightDescription, guiLowAccuracySymbols, guiNoText, guiShallowPatern, guiShipOutline, guiTwoShades});
+        jPanel2Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiContourLabels, guiFullSectors, guiLightDescription, guiLowAccuracySymbols, guiNoText, guiScaleFilter, guiShallowPatern, guiShipOutline, guiTwoShades});
 
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(guiScaleFilter)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(guiShallowPatern)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(guiTwoShades)
@@ -397,6 +405,7 @@ public class JS52MarinerPane extends javax.swing.JPanel {
     private JComboBox guiPointTable;
     private JSpinner guiSafetyContour;
     private JSpinner guiSafetyDeph;
+    private JCheckBox guiScaleFilter;
     private JSpinner guiShallowContour;
     private JCheckBox guiShallowPatern;
     private JCheckBox guiShipOutline;

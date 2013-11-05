@@ -21,12 +21,14 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Point;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
@@ -75,7 +77,7 @@ public class S57FeatureReader implements FeatureReader{
     private int soundingFactor;
     // S-57 objects
     private final S57Reader mreader;
-    private final Map<Pointer,VectorRecord> spatials = new HashMap<>();
+    private final Map<Pointer,VectorEntity> spatials = new HashMap<>();
 
     private Feature feature;
 
@@ -145,7 +147,7 @@ public class S57FeatureReader implements FeatureReader{
                 if(modelObj instanceof VectorRecord){
                     final VectorRecord rec = (VectorRecord) modelObj;
                     final Pointer key = rec.generatePointer();
-                    final VectorRecord previous = spatials.put(key, rec);
+                    final VectorEntity previous = spatials.put(key, new VectorEntity(rec));
                     if(previous!=null){
                         throw new FeatureStoreRuntimeException("Duplicate vector record : "+key);
                     }
@@ -225,11 +227,11 @@ public class S57FeatureReader implements FeatureReader{
         if(S57Constants.Primitive.PRIMITIVE_POINT == record.primitiveType){
             final List<Coordinate> coords = new ArrayList<>();
             for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
-                final VectorRecord rec = spatials.get(sp);
+                final VectorEntity rec = spatials.get(sp);
                 //rebuild complex vector record attribute
-                feature.getProperties().add(toAttribute(rec, vectorType));
+                feature.getProperties().add(rec.toComplexAttribute(crs));
                 //rebuild the global geometry
-                coords.addAll(rec.getCoordinates(coordFactor, soundingFactor));
+                coords.addAll(rec.getCoordinates());
             }
             if(!coords.isEmpty()){
                 geometry = GF.createMultiPoint(coords.toArray(new Coordinate[coords.size()]));
@@ -237,11 +239,11 @@ public class S57FeatureReader implements FeatureReader{
         }else if(S57Constants.Primitive.PRIMITIVE_LINE == record.primitiveType){
             final List<LineString> lines = new ArrayList<>();
             for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
-                final VectorRecord rec = spatials.get(sp);
+                final VectorEntity rec = spatials.get(sp);
                 //rebuild complex vector record attribute
-                feature.getProperties().add(toAttribute(rec, vectorType));
+                feature.getProperties().add(rec.toComplexAttribute(crs));
                 //rebuild the global geometry
-                final List<Coordinate> coords = rec.getCoordinates(coordFactor, soundingFactor);
+                final List<Coordinate> coords = rec.getCoordinates();
                 if(coords.size() == 1){ //we need at least 2 points
                     coords.add((Coordinate)coords.get(0).clone());
                 }
@@ -257,11 +259,11 @@ public class S57FeatureReader implements FeatureReader{
             final List<LinearRing> interiors = new ArrayList<>();
             LinearRing exterior = null;
             for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
-                final VectorRecord rec = spatials.get(sp);
+                final VectorEntity rec = spatials.get(sp);
                 //rebuild complex vector record attribute
-                feature.getProperties().add(toAttribute(rec, vectorType));
+                feature.getProperties().add(rec.toComplexAttribute(crs));
                 //rebuild the global geometry
-                final List<Coordinate> coords = rec.getCoordinates(coordFactor, soundingFactor);
+                final List<Coordinate> coords = rec.getCoordinates();
 
                 if(coords.isEmpty()){
                    //an empty ring ?
@@ -295,11 +297,11 @@ public class S57FeatureReader implements FeatureReader{
         if(S57Constants.Primitive.PRIMITIVE_POINT == record.primitiveType){
             final List<Coordinate> coords = new ArrayList<>();
             for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
-                final VectorRecord rec = spatials.get(sp);
+                final VectorEntity rec = spatials.get(sp);
                 //rebuild complex vector record attribute
-                feature.getProperties().add(toAttribute(rec, vectorType));
+                feature.getProperties().add(rec.toComplexAttribute(crs));
                 //rebuild the global geometry
-                coords.addAll(rec.getCoordinates(coordFactor, soundingFactor));
+                coords.addAll(rec.getCoordinates());
             }
             if(!coords.isEmpty()){
                 geometry = GF.createMultiPoint(coords.toArray(new Coordinate[coords.size()]));
@@ -310,43 +312,43 @@ public class S57FeatureReader implements FeatureReader{
             Pointer endNode = null;
 
             for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
-                final VectorRecord edge = spatials.get(sp);
-                final Pointer edgeStart = edge.getEdgeBeginNode();
-                final Pointer edgeEnd = edge.getEdgeEndNode();
-                final VectorRecord startPoint = spatials.get(edgeStart);
-                final VectorRecord endPoint = spatials.get(edgeEnd);
-                final List<Coordinate> scoords = edge.getCoordinates(coordFactor,soundingFactor);
+                final VectorEntity edge = spatials.get(sp);
+                final Pointer edgeStart = edge.record.getEdgeBeginNode();
+                final Pointer edgeEnd = edge.record.getEdgeEndNode();
+                final VectorEntity startPoint = spatials.get(edgeStart);
+                final VectorEntity endPoint = spatials.get(edgeEnd);
+                final List<Coordinate> scoords = edge.getCoordinates();
 
                 //rebuild complex vector record attribute
-                feature.getProperties().add(toAttribute(edge, vectorType));
-                if(startPoint != null) feature.getProperties().add(toAttribute(startPoint, vectorType));
-                if(endPoint != null) feature.getProperties().add(toAttribute(endPoint, vectorType));
+                feature.getProperties().add(edge.toComplexAttribute(crs));
+                if(startPoint != null) feature.getProperties().add(startPoint.toComplexAttribute(crs));
+                if(endPoint != null) feature.getProperties().add(endPoint.toComplexAttribute(crs));
 
                 if(startNode == null){
                     //first exterior segment
                     inprogress.addAll(scoords);
                     startNode = edgeStart;
                     endNode = edgeEnd;
-                    inprogress.add(0,startPoint.getNodeCoordinate(coordFactor));
-                    inprogress.add(endPoint.getNodeCoordinate(coordFactor));
+                    inprogress.add(0,startPoint.getNodeCoordinate());
+                    inprogress.add(endPoint.getNodeCoordinate());
                 }else{
                     if(edgeStart.equals(startNode)){
                         Collections.reverse(scoords);
                         inprogress.addAll(0,scoords);
-                        inprogress.add(0,endPoint.getNodeCoordinate(coordFactor));
+                        inprogress.add(0,endPoint.getNodeCoordinate());
                         startNode = edgeEnd;
                     }else if(edgeStart.equals(endNode)){
                         inprogress.addAll(scoords);
-                        inprogress.add(endPoint.getNodeCoordinate(coordFactor));
+                        inprogress.add(endPoint.getNodeCoordinate());
                         endNode = edgeEnd;
                     }else if(edgeEnd.equals(startNode)){
                         inprogress.addAll(0,scoords);
-                        inprogress.add(0,startPoint.getNodeCoordinate(coordFactor));
+                        inprogress.add(0,startPoint.getNodeCoordinate());
                         startNode = edgeStart;
                     }else if(edgeEnd.equals(endNode)){
                         Collections.reverse(scoords);
                         inprogress.addAll(scoords);
-                        inprogress.add(startPoint.getNodeCoordinate(coordFactor));
+                        inprogress.add(startPoint.getNodeCoordinate());
                         endNode = edgeStart;
                     }else{
                         throw new FeatureStoreRuntimeException("Segment not connected");
@@ -370,43 +372,43 @@ public class S57FeatureReader implements FeatureReader{
             Pointer endNode = null;
 
             for(FeatureRecord.SpatialPointer sp : record.spatialPointers){
-                final VectorRecord edge = spatials.get(sp);
-                final Pointer edgeStart = edge.getEdgeBeginNode();
-                final Pointer edgeEnd = edge.getEdgeEndNode();
-                final VectorRecord startPoint = spatials.get(edgeStart);
-                final VectorRecord endPoint = spatials.get(edgeEnd);
-                final List<Coordinate> scoords = edge.getCoordinates(coordFactor,soundingFactor);
+                final VectorEntity edge = spatials.get(sp);
+                final Pointer edgeStart = edge.record.getEdgeBeginNode();
+                final Pointer edgeEnd = edge.record.getEdgeEndNode();
+                final VectorEntity startPoint = spatials.get(edgeStart);
+                final VectorEntity endPoint = spatials.get(edgeEnd);
+                final List<Coordinate> scoords = edge.getCoordinates();
 
                 //rebuild complex vector record attribute
-                feature.getProperties().add(toAttribute(edge, vectorType));
-                if(startPoint != null) feature.getProperties().add(toAttribute(startPoint, vectorType));
-                if(endPoint != null) feature.getProperties().add(toAttribute(endPoint, vectorType));
+                feature.getProperties().add(edge.toComplexAttribute(crs));
+                if(startPoint != null) feature.getProperties().add(startPoint.toComplexAttribute(crs));
+                if(endPoint != null) feature.getProperties().add(endPoint.toComplexAttribute(crs));
 
                 if(startNode == null){
                     //first exterior segment
                     inprogress.addAll(scoords);
                     startNode = edgeStart;
                     endNode = edgeEnd;
-                    inprogress.add(0,startPoint.getNodeCoordinate(coordFactor));
-                    inprogress.add(endPoint.getNodeCoordinate(coordFactor));
+                    inprogress.add(0,startPoint.getNodeCoordinate());
+                    inprogress.add(endPoint.getNodeCoordinate());
                 }else{
                     if(edgeStart.equals(startNode)){
                         Collections.reverse(scoords);
                         inprogress.addAll(0,scoords);
-                        inprogress.add(0,endPoint.getNodeCoordinate(coordFactor));
+                        inprogress.add(0,endPoint.getNodeCoordinate());
                         startNode = edgeEnd;
                     }else if(edgeStart.equals(endNode)){
                         inprogress.addAll(scoords);
-                        inprogress.add(endPoint.getNodeCoordinate(coordFactor));
+                        inprogress.add(endPoint.getNodeCoordinate());
                         endNode = edgeEnd;
                     }else if(edgeEnd.equals(startNode)){
                         inprogress.addAll(0,scoords);
-                        inprogress.add(0,startPoint.getNodeCoordinate(coordFactor));
+                        inprogress.add(0,startPoint.getNodeCoordinate());
                         startNode = edgeStart;
                     }else if(edgeEnd.equals(endNode)){
                         Collections.reverse(scoords);
                         inprogress.addAll(scoords);
-                        inprogress.add(startPoint.getNodeCoordinate(coordFactor));
+                        inprogress.add(startPoint.getNodeCoordinate());
                         endNode = edgeStart;
                     }else{
                         throw new FeatureStoreRuntimeException("Segment not connected");
@@ -436,23 +438,6 @@ public class S57FeatureReader implements FeatureReader{
         }
     }
 
-    /**
-     * Rebuild a complex property from VectorRecord.
-     * @param record
-     * @param type
-     * @return
-     */
-    private ComplexAttribute toAttribute(VectorRecord record, PropertyDescriptor pdesc){
-        final ComplexAttribute vf = (ComplexAttribute)FeatureUtilities.defaultProperty(pdesc, ""+record.id);
-        for(VectorRecord.Attribute att : record.attributes){
-            final PropertyDescriptor desc = properties.get(att.code);
-            final Property prop = FeatureUtilities.defaultProperty(desc);
-            readAttribute(att, desc, prop);
-            vf.getProperties().add(prop);
-        }
-        return vf;
-    }
-
     private static LinearRing toRing(List<Coordinate> coords){
         while(coords.size() < 4 || !coords.get(0).equals2D(coords.get(coords.size()-1))){
             coords.add((Coordinate)coords.get(0).clone());
@@ -472,6 +457,70 @@ public class S57FeatureReader implements FeatureReader{
     @Override
     public void remove() {
         throw new FeatureStoreRuntimeException("writing not supported");
+    }
+
+    private class VectorEntity{
+
+        public final VectorRecord record;
+        private ComplexAttribute vf = null;
+        private Coordinate coord = null;
+        private List<Coordinate> coords = null;
+
+        public VectorEntity(VectorRecord record) {
+            this.record = record;
+        }
+
+        private Coordinate getNodeCoordinate(){
+            if(coord==null){
+                coord = record.getNodeCoordinate(coordFactor);
+            }
+            return coord;
+        }
+
+        private List<Coordinate> getCoordinates(){
+            if(this.coords==null){
+                this.coords = record.getCoordinates(new ArrayList<Coordinate>(), coordFactor, soundingFactor);
+            }
+            return new ArrayList<>(this.coords);
+        }
+
+        /**
+        * Rebuild a complex property from VectorRecord.
+        * @param record
+        * @param type
+        * @return
+        */
+        private ComplexAttribute toComplexAttribute(CoordinateReferenceSystem crs){
+            if(vf == null){
+                vf = (ComplexAttribute)FeatureUtilities.defaultProperty(vectorType, ""+record.id);
+                //rebuild attributs
+                for(VectorRecord.Attribute att : record.attributes){
+                    final PropertyDescriptor desc = properties.get(att.code);
+                    final Property prop = FeatureUtilities.defaultProperty(desc);
+                    readAttribute(att, desc, prop);
+                    vf.getProperties().add(prop);
+                }
+                //rebuild geometry
+                final List<Coordinate> coords = getCoordinates();
+                final Geometry geom;
+                if(coords.isEmpty()){
+                    //do not create geometry, leave it null
+                    geom = null;
+                }else if(coords.size()==1){
+                    //create a Point
+                    geom = GF.createPoint(coords.get(0));
+                }else{
+                    //create a MultiPoint
+                    geom = GF.createMultiPoint(coords.toArray(new Coordinate[coords.size()]));
+                }
+                if(geom != null){
+                    JTS.setCRS(geom, crs);
+                    vf.getProperty(S57Constants.PROPERTY_GEOMETRY).setValue(geom);
+                }
+            }
+            return vf;
+        }
+
     }
 
 }

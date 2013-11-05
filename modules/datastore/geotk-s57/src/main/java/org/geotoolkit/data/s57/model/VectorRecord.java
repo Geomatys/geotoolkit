@@ -94,8 +94,8 @@ public class VectorRecord extends S57Object {
      * If vector is an edge/nodes, return it's coordinates.
      * @return Coordinate
      */
-    public List<Coordinate> getCoordinates(double coordFactor,double soundingFactor){
-        final List<Coordinate> coords = new ArrayList<>(this.coords.size());
+    public List<Coordinate> getCoordinates(List<Coordinate> coords, double coordFactor,double soundingFactor){
+        if(coords == null) coords = new ArrayList<>();
         for(Coordinate2D c : this.coords){
             if(c.is3D){
                 coords.add(new Coordinate(c.x/coordFactor, c.y/coordFactor, c.z/soundingFactor));
