@@ -48,14 +48,14 @@ public class IterateShapeStroke implements Stroke {
     @Override
     public Shape createStrokedShape(final Shape shape) {
         final PathIterator it = new FlatteningPathIterator(shape.getPathIterator(null), 1d);
-        final PathWalker walker = new DefaultPathWalker(it);
+        final PathWalker walker = new PathWalker(it);
 
         walker.walk(initialGap);
         while(!walker.isFinished()){
             //paint the motif --------------------------------------------------
             walker.getPosition(pt);
             final float angle = walker.getRotation();
-            
+
             final AffineTransform trs = new AffineTransform();
             trs.translate(pt.getX(), pt.getY());
             trs.rotate(angle);

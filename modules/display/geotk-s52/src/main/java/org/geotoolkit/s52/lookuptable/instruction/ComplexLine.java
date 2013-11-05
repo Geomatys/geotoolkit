@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.style.j2d.DefaultPathWalker;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
@@ -76,7 +75,7 @@ public class ComplexLine extends Instruction{
         } catch (TransformException ex) {
             throw new PortrayalException(ex);
         }
-        final DefaultPathWalker walker = new DefaultPathWalker(ite);
+        final PathWalker walker = new PathWalker(ite);
 //        ss.render(g2d, context, colorTable, walker);
 
         final Point2D pt = new Point2D.Double();

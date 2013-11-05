@@ -39,7 +39,6 @@ import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
 import org.geotoolkit.display2d.style.CachedStroke;
 import org.geotoolkit.display2d.style.CachedStrokeGraphic;
 import org.geotoolkit.display2d.style.CachedStrokeSimple;
-import org.geotoolkit.display2d.style.j2d.DefaultPathWalker;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.operation.TransformException;
@@ -172,7 +171,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
                 final AffineTransform trs = new AffineTransform();
 
                 final PathIterator ite = shape.getPathIterator(null);
-                final PathWalker walker = new DefaultPathWalker(ite);
+                final PathWalker walker = new PathWalker(ite);
                 walker.walk(initGap);
                 while(!walker.isFinished()){
                     //paint the motif --------------------------------------------------
