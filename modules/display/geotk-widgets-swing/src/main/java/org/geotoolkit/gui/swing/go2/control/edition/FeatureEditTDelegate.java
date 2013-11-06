@@ -88,7 +88,7 @@ public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
             map.getContainer().setContext(context);
             try {
                 map.getCanvas().setObjectiveCRS(feature.getDefaultGeometryProperty().getType().getCoordinateReferenceSystem());
-                map.getCanvas().getController().setVisibleArea(feature.getBounds());
+                map.getCanvas().setVisibleArea(feature.getBounds());
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }

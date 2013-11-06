@@ -264,7 +264,7 @@ public class EditionHelper {
     }
 
     public Coordinate toCoord(final int x, final int y){
-        final AffineTransform2D trs = map.getCanvas().getController().getTransform();
+        final AffineTransform2D trs = map.getCanvas().getObjectiveToDisplay();
         AffineTransform dispToObj;
         try {
             dispToObj = trs.createInverse();
@@ -416,8 +416,8 @@ public class EditionHelper {
     public void moveGeometry(final Geometry geo, final int dx, final int dy) {
 
         try{
-            final Point2D pt0 = map.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(0, 0), null);
-            final Point2D pt = map.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(dx, dy), null);
+            final Point2D pt0 = map.getCanvas().getObjectiveToDisplay().inverseTransform(new Point2D.Double(0, 0), null);
+            final Point2D pt = map.getCanvas().getObjectiveToDisplay().inverseTransform(new Point2D.Double(dx, dy), null);
             pt.setLocation(pt.getX()-pt0.getX(), pt.getY()-pt0.getY());
 
             for (int i=0,n=geo.getNumGeometries(); i<n; i++) {
@@ -441,8 +441,8 @@ public class EditionHelper {
     public void moveSubGeometry(final Geometry geo, final int indice, final int dx, final int dy) {
 
         try{
-            final Point2D pt0 = map.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(0, 0), null);
-            final Point2D pt = map.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(dx, dy), null);
+            final Point2D pt0 = map.getCanvas().getObjectiveToDisplay().inverseTransform(new Point2D.Double(0, 0), null);
+            final Point2D pt = map.getCanvas().getObjectiveToDisplay().inverseTransform(new Point2D.Double(dx, dy), null);
             pt.setLocation(pt.getX()-pt0.getX(), pt.getY()-pt0.getY());
 
             final Geometry subgeo = geo.getGeometryN(indice);
@@ -943,7 +943,7 @@ public class EditionHelper {
                 }
             }
 
-            map.getCanvas().getController().repaint();
+            map.getCanvas().repaint();
 
             return feature;
         }
@@ -985,7 +985,7 @@ public class EditionHelper {
             } catch (final Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
             } finally {
-                map.getCanvas().getController().repaint();
+                map.getCanvas().repaint();
             }
 
         }
@@ -1009,7 +1009,7 @@ public class EditionHelper {
                 LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
             }
 
-            map.getCanvas().getController().repaint();
+            map.getCanvas().repaint();
         }
 
     }

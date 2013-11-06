@@ -34,6 +34,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Java2D graphic object displaying a scalebar.
@@ -45,7 +46,7 @@ public class GraphicScaleBarJ2D extends PositionedGraphic2D{
 
     private static final int ROUND_SIZE = 12;
     private static final int INTER_MARGIN = 10;
-    
+
     private ScaleBarTemplate template = new DefaultScaleBarTemplate(null,
                             new Dimension(500, 40),10,
                             false, 5, NumberFormat.getNumberInstance(),
@@ -72,7 +73,7 @@ public class GraphicScaleBarJ2D extends PositionedGraphic2D{
     public Envelope getEnvelope() {
         return null;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -83,8 +84,11 @@ public class GraphicScaleBarJ2D extends PositionedGraphic2D{
 
         final double[] center;
         try {
-            center = context.getCanvas().getController().getCenter().getCoordinate();
+            center = context.getCanvas().getObjectiveCenter().getCoordinate();
         } catch (NoninvertibleTransformException ex) {
+            Logger.getLogger(GraphicScaleBarJ2D.class.getName()).log(Level.WARNING, null, ex);
+            return;
+        } catch (TransformException ex) {
             Logger.getLogger(GraphicScaleBarJ2D.class.getName()).log(Level.WARNING, null, ex);
             return;
         }
@@ -143,7 +147,7 @@ public class GraphicScaleBarJ2D extends PositionedGraphic2D{
         } catch (PortrayalException ex) {
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
         }
-        
+
     }
 
 }

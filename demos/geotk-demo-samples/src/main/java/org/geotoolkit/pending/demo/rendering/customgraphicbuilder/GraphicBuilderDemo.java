@@ -52,7 +52,7 @@ public class GraphicBuilderDemo {
         final JNavigationBar navBar = new JNavigationBar(jmap);
         jmap.getContainer().setContext(context);
         jmap.addDecoration(new JClassicNavigationDecoration(JClassicNavigationDecoration.THEME.CLASSIC));
-        jmap.getCanvas().getController().setVisibleArea(context.getBounds());
+        jmap.getCanvas().setVisibleArea(context.getBounds());
         jmap.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 

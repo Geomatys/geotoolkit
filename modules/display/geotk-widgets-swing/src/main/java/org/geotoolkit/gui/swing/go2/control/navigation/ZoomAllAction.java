@@ -48,10 +48,10 @@ public class ZoomAllAction extends AbstractMapAction {
             if(container instanceof ContextContainer2D){
                 final Envelope rect = ((ContextContainer2D)container).getGraphicsEnvelope();
                 try {
-                    map.getCanvas().getController().setVisibleArea(rect);
+                    map.getCanvas().setVisibleArea(rect);
                 } catch (TransformException | IllegalArgumentException | NoninvertibleTransformException ex) {
                     getLogger().log(Level.WARNING, null, ex);
-                } 
+                }
             }
         }
     }

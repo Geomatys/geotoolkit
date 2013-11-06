@@ -115,7 +115,7 @@ public class JNorthArrowDecoration extends JComponent implements MapDecoration{
 
          final Graphics2D g2d = (Graphics2D) g;
 
-        float rotate = (float)map.getCanvas().getController().getRotation();
+        float rotate = (float)map.getCanvas().getRotation();
         if(rotate != lastRotation){
             Graphics2D bufferG = buffer.createGraphics();
             bufferG.setBackground(new Color(0f,0f,0f,0f));
@@ -148,7 +148,7 @@ public class JNorthArrowDecoration extends JComponent implements MapDecoration{
             arrowArea.y = all.y+all.height-margin-arrowDimension.height;
         }
 
-       
+
         g2d.drawImage(buffer, arrowArea.x, arrowArea.y, null);
 
     }

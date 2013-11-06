@@ -84,11 +84,11 @@ public abstract class JAbstractMapPane extends javax.swing.JPanel {
         guiMap.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         guiMap.getCanvas().setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         guiMap.getCanvas().setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        guiMap.getCanvas().getController().setAutoRepaint(true);
+        guiMap.getCanvas().setAutoRepaint(true);
 
         try{
             guiMap.getCanvas().setObjectiveCRS(context.getCoordinateReferenceSystem());
-            guiMap.getCanvas().getController().setVisibleArea(context.getBounds());
+            guiMap.getCanvas().setVisibleArea(context.getBounds());
         }catch(Exception ex ){
             ex.printStackTrace();
         }
@@ -104,7 +104,7 @@ public abstract class JAbstractMapPane extends javax.swing.JPanel {
         guiSelectionBar.setMap(guiMap);
         guiEditBar.setMap(guiMap);
 
-        guiMap.getCanvas().getController().setAutoRepaint(true);
+        guiMap.getCanvas().setAutoRepaint(true);
 
 
 

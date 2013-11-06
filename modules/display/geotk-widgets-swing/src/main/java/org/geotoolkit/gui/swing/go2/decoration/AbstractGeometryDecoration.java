@@ -34,7 +34,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
+import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -126,7 +126,7 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
 
         //check if the map has a Java2D canvas
         if(map == null) return;
-        final AbstractReferencedCanvas2D candidate = map.getCanvas();
+        final AbstractCanvas2D candidate = map.getCanvas();
         if(!(candidate instanceof J2DCanvas)) return;
 
         final J2DCanvas canvas = (J2DCanvas) candidate;

@@ -61,7 +61,7 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
 
         @Override
         public void propertyChange(PropertyChangeEvent event) {
-            if(getCanvas().getController().isAutoRepaint()){
+            if(getCanvas().isAutoRepaint()){
                 final String propName = event.getPropertyName();
                 if(MapLayer.VISIBILITY_PROPERTY.equals(propName)){
                     //handle in StatelessMapItemJ2D
@@ -71,7 +71,7 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
                    || MapLayer.OPACITY_PROPERTY.equals(propName)
                    || MapLayer.QUERY_PROPERTY.equals(propName) )){
                     //TODO should call a repaint only on this graphic
-                    getCanvas().getController().repaint();
+                    getCanvas().repaint();
                 }
             }
         }
@@ -79,7 +79,7 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
 
     private final LayerListener.Weak weakListener = new LayerListener.Weak(ll);
     private SoftReference<Collection<? extends GraphicJ2D>> weakGraphic = null;
-    
+
 
     public StatelessMapLayerJ2D(final J2DCanvas canvas, final T layer, boolean allowChildren){
         //do not use layer crs here, to long to calculate
@@ -143,8 +143,8 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
             }
             return;
         }
-        
-        final GraphicBuilder<? extends GraphicJ2D> builder = item.getGraphicBuilder(GraphicJ2D.class);        
+
+        final GraphicBuilder<? extends GraphicJ2D> builder = item.getGraphicBuilder(GraphicJ2D.class);
         if(builder != null){
             final Collection<? extends GraphicJ2D> graphics = builder.createGraphics(item, canvas);
             weakGraphic = new SoftReference<Collection<? extends GraphicJ2D>>(graphics);

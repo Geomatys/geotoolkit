@@ -55,10 +55,8 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.decoration.AbstractMapDecoration;
@@ -72,7 +70,6 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.opengis.geometry.Envelope;
@@ -227,7 +224,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
         if(selectAction){
             selectAction = false;
 
-            final Envelope visibleArea = getMap().getCanvas().getController().getVisibleEnvelope();
+            final Envelope visibleArea = getMap().getCanvas().getVisibleEnvelope();
             try {
                 gcrp.clear();
                 gcrp.setEnvelope(visibleArea);

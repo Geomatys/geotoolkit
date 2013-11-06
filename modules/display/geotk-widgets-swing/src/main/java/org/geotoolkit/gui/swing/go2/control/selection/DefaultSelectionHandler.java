@@ -78,7 +78,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Selection handler
- * 
+ *
  * @author Johann Sorel
  * @module pending
  */
@@ -89,7 +89,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
     protected static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
                                                 new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
     protected static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
-    
+
 
     private final EventListener mouseInputListener;
     private final DefaultSelectionDecoration selectionPane = new DefaultSelectionDecoration();
@@ -108,7 +108,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
             super.endVisit();
 
             //disable auto repaint to avoid a repaint on each layer selection change
-            map2D.getCanvas().getController().setAutoRepaint(false);
+            map2D.getCanvas().setAutoRepaint(false);
 
             MapContext context = ((ContextContainer2D)map2D.getCanvas().getContainer()).getContext();
 
@@ -123,7 +123,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
 
             selection.clear();
 
-            map2D.getCanvas().getController().setAutoRepaint(true);
+            map2D.getCanvas().setAutoRepaint(true);
         }
 
         @Override
@@ -200,7 +200,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         }else if(ids == null){
             ids = new HashSet<>();
         }
-        
+
         if(key == KeyEvent.VK_SHIFT){
             //add selection
             final Set<Identifier> in = new HashSet<>(ids);
@@ -226,7 +226,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
 
     private void doSelection(final List<Point> points, final int key) {
         this.key = key;
-            
+
         if (points.size() > 2) {
 
             if(geographicArea){
@@ -235,7 +235,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
                 if(container instanceof ContextContainer2D){
                     final ContextContainer2D cc = (ContextContainer2D) container;
                     final MapContext context = cc.getContext();
-                    
+
                     //make a geographic selection
                     final List<Coordinate> coords = new ArrayList<>();
                     for(Point p : points){
@@ -262,7 +262,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
 
                             try {
                                 final Geometry dataPoly = JTS.transform(poly, CRS.findMathTransform(map2D.getCanvas().getDisplayCRS(), dataCrs,true));
-                                
+
                                 final Expression geomData = FF.literal(dataPoly);
                                 final Filter f = (withinArea) ? FF.within(geomField, geomData) : FF.intersects(geomField, geomData);
 
@@ -271,7 +271,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
                                 builder.setFilter(f);
                                 builder.setProperties(new String[]{geoStr});
                                 final Query query = builder.buildQuery();
-                                
+
                                 FeatureCollection<Feature> fc = (FeatureCollection<Feature>) fl.getCollection().subCollection(query);
                                 FeatureIterator<Feature> fi = fc.iterator();
                                 while(fi.hasNext()){
@@ -299,10 +299,10 @@ public class DefaultSelectionHandler implements CanvasHandler {
                     Point p = points.get(i);
                     path.lineTo(p.x, p.y);
                 }
-                
+
                 map2D.getCanvas().getGraphicsIn(path, visitor, (withinArea) ? VisitFilter.WITHIN : VisitFilter.INTERSECTS);
             }
-            map2D.getCanvas().getController().repaint();
+            map2D.getCanvas().repaint();
         }
 
     }
@@ -344,7 +344,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         public void mouseClicked(final MouseEvent e) {
             if(e.getButton()!=MouseEvent.BUTTON1)return;
             selecting = true;
-            
+
             final Point point = e.getPoint();
             points.clear();
             points.add(new Point(point.x-1, point.y-1));
@@ -360,7 +360,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         public void mousePressed(final MouseEvent e) {
             if(e.getButton()!=MouseEvent.BUTTON1)return;
             selecting = true;
-            
+
             lastValid = e.getPoint();
             points.clear();
             if(squareArea){
@@ -374,7 +374,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         @Override
         public void mouseReleased(final MouseEvent e) {
             if(e.getButton()!=MouseEvent.BUTTON1)return;
-            
+
             final Point lastPoint = e.getPoint();
             if(squareArea){
                 points.clear();
@@ -404,7 +404,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         @Override
         public void mouseDragged(final MouseEvent e) {
             if(!selecting)return;
-            
+
             Point eventPoint = e.getPoint();
             if(squareArea){
                 points.clear();

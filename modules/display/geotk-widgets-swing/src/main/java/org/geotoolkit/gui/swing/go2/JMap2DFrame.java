@@ -124,7 +124,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
             guiMap.getCanvas().setRenderingHints(hints);
         }
 
-        guiMap.getCanvas().getController().setAutoRepaint(true);
+        guiMap.getCanvas().setAutoRepaint(true);
 
         for(TreePopupItem item : guiContextTree.controls()){
             item.setMapView(guiMap);
@@ -139,7 +139,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
                 guiMap.getCanvas().setObjectiveCRS(context.getCoordinateReferenceSystem());
             }
             if(env != null){
-                guiMap.getCanvas().getController().setVisibleArea(env);
+                guiMap.getCanvas().setVisibleArea(env);
             }
         }catch(Exception ex ){
             ex.printStackTrace();
@@ -157,7 +157,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiMarinerBar.setMap(guiMap);
         guiEditBar.setMap(guiMap);
 
-        guiMap.getCanvas().getController().setAutoRepaint(true);
+        guiMap.getCanvas().setAutoRepaint(true);
 
         setSize(1024,768);
         setLocationRelativeTo(null);

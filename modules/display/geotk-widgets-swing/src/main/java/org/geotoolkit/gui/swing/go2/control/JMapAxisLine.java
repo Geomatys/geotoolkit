@@ -42,14 +42,13 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.geotoolkit.display.canvas.DefaultCanvasController2D;
-import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.navigator.DoubleRenderer;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
 import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.map.*;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -76,18 +75,18 @@ import org.opengis.referencing.operation.TransformException;
     private final SpinnerNumberModel modelBas;
 
     /**
-     * The popup menu to display at right click. Contains several options to 
+     * The popup menu to display at right click. Contains several options to
      * manage movements, animation, etc.
      */
     private final JPopupMenu menu;
-    
+
     /**
      * A Jcomponent to configure animation mecanism on the current axis.
      */
     private final JAnimationMenu animation = new JAnimationMenu() {
         @Override
         protected void update(JMap2D map, double step) {
-            final Double[] range = ((DefaultCanvasController2D)map.getCanvas().getController()).getAxisRange(axisIndexFinder).clone();
+            final Double[] range = map.getCanvas().getAxisRange(axisIndexFinder).clone();
 
             if(range[0] != null){
                 range[0] = range[0] + step;
@@ -97,7 +96,7 @@ import org.opengis.referencing.operation.TransformException;
             }
 
             try{
-                ((DefaultCanvasController2D)map.getCanvas().getController()).setAxisRange(range[0], range[1], axisIndexFinder, crs);
+                map.getCanvas().setAxisRange(range[0], range[1], axisIndexFinder, crs);
             } catch (TransformException ex) {
                 LOGGER.log(Level.WARNING, null, ex);
             }
@@ -116,7 +115,7 @@ import org.opengis.referencing.operation.TransformException;
                 if(vb.isInfinite()) vb = null;
 
                 try{
-                    ((DefaultCanvasController2D)map.getCanvas().getController()).setAxisRange(vb, vh, axisIndexFinder,crs);
+                    map.getCanvas().setAxisRange(vb, vh, axisIndexFinder,crs);
                 } catch (TransformException ex) {
                     LOGGER.log(Level.WARNING, null, ex);
                 }
@@ -126,7 +125,7 @@ import org.opengis.referencing.operation.TransformException;
     private JLayerBandMenu layers = null;
 
     private volatile JMap2D map = null;
-    
+
     /** The CRS containing the axis to browse. This CRS should have only one dimension. */
     private final CoordinateReferenceSystem crs;
 
@@ -139,15 +138,15 @@ import org.opengis.referencing.operation.TransformException;
             return -1;
         }
     };
-    
+
     /**
      * A boolean to determine what mecanism must be used for layer activation.
-     * Two mecanisms are allowed : 
-     *  - If true, a menu will be added on right click, on which the user will 
+     * Two mecanisms are allowed :
+     *  - If true, a menu will be added on right click, on which the user will
      *    be able to choose which layer to activate on the current line.
      *  - If false, the choice mecanism will use directly the {@link MapLayer#isSelectable() }
-     *    property to determine if should be activated or not. The 
-     *    {@link MapLayer#isSelectable() } property can be changed via 
+     *    property to determine if should be activated or not. The
+     *    {@link MapLayer#isSelectable() } property can be changed via
      *    {@link org.geotoolkit.gui.swing.contexttree.JContextTree} component.
      */
     private final boolean useMenu;
@@ -155,7 +154,7 @@ import org.opengis.referencing.operation.TransformException;
     public JMapAxisLine(final CoordinateReferenceSystem crs){
         this(crs, true);
     }
-    
+
     public JMapAxisLine(final CoordinateReferenceSystem crs, final boolean useMenu) {
         this.crs = crs;
         this.useMenu = useMenu;
@@ -234,7 +233,7 @@ import org.opengis.referencing.operation.TransformException;
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
-                            final DefaultCanvasController2D controller = (DefaultCanvasController2D)getMap().getCanvas().getController();
+                            final AbstractCanvas2D controller = getMap().getCanvas();
                             final Double[] range = controller.getAxisRange(axisIndexFinder);
                             try{
                                 if(range == null){
@@ -253,7 +252,7 @@ import org.opengis.referencing.operation.TransformException;
             @Override
             public boolean isEnabled() {
                 if(getMap() != null){
-                    final DefaultCanvasController2D controller = (DefaultCanvasController2D) getMap().getCanvas().getController();
+                    final AbstractCanvas2D controller = getMap().getCanvas();
                     final Double[] range = controller.getAxisRange(axisIndexFinder);
                     return range == null || range[0] == null || (range[0] != null && range[0] < popupEdit);
                 }
@@ -265,7 +264,7 @@ import org.opengis.referencing.operation.TransformException;
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
-                            final DefaultCanvasController2D controller = (DefaultCanvasController2D) getMap().getCanvas().getController();
+                            final AbstractCanvas2D controller = getMap().getCanvas();
                             final Double[] range = controller.getAxisRange(axisIndexFinder);
                             try{
                                 if(range == null){
@@ -284,7 +283,7 @@ import org.opengis.referencing.operation.TransformException;
             @Override
             public boolean isEnabled() {
                 if(getMap() != null){
-                    final DefaultCanvasController2D controller = (DefaultCanvasController2D) getMap().getCanvas().getController();
+                    final AbstractCanvas2D controller = getMap().getCanvas();
                     final Double[] range = controller.getAxisRange(axisIndexFinder);
                     return range == null || range[1] == null || (range[1] != null && range[1] > popupEdit);
                 }
@@ -300,7 +299,7 @@ import org.opengis.referencing.operation.TransformException;
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
-                            final DefaultCanvasController2D controller = (DefaultCanvasController2D) getMap().getCanvas().getController();
+                            final AbstractCanvas2D controller = getMap().getCanvas();
                             try{
                                 controller.setAxisRange(null, null, axisIndexFinder, crs);
                             } catch (TransformException ex) {
@@ -314,7 +313,7 @@ import org.opengis.referencing.operation.TransformException;
             @Override
             public boolean isEnabled() {
                 if(getMap() != null){
-                    final DefaultCanvasController2D controller = (DefaultCanvasController2D) getMap().getCanvas().getController();
+                    final AbstractCanvas2D controller = getMap().getCanvas();
                     final Double[] range = controller.getAxisRange(axisIndexFinder);
                     return range != null;
                 }
@@ -327,7 +326,7 @@ import org.opengis.referencing.operation.TransformException;
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
-                            final DefaultCanvasController2D controller = (DefaultCanvasController2D) getMap().getCanvas().getController();
+                            final AbstractCanvas2D controller = getMap().getCanvas();
                             final Double[] range = controller.getAxisRange(axisIndexFinder);
                             if(range != null){
                                 range[1] = null;
@@ -345,8 +344,7 @@ import org.opengis.referencing.operation.TransformException;
             @Override
             public boolean isEnabled() {
                 if(getMap() != null){
-                    final DefaultCanvasController2D controller = (DefaultCanvasController2D) getMap().getCanvas().getController();
-                    final Double[] range = controller.getAxisRange(axisIndexFinder);
+                    final Double[] range = getMap().getCanvas().getAxisRange(axisIndexFinder);
                     return range != null && range[0] != null;
                 }
                 return false;
@@ -357,12 +355,11 @@ import org.opengis.referencing.operation.TransformException;
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
-                            final DefaultCanvasController2D controller = (DefaultCanvasController2D) getMap().getCanvas().getController();
-                            final Double[] range = controller.getAxisRange(axisIndexFinder);
+                            final Double[] range = getMap().getCanvas().getAxisRange(axisIndexFinder);
                             if(range != null){
                                 range[0] = null;
                                 try{
-                                    controller.setAxisRange(range[0], range[1], axisIndexFinder, crs);
+                                    getMap().getCanvas().setAxisRange(range[0], range[1], axisIndexFinder, crs);
                                 } catch (TransformException ex) {
                                     LOGGER.log(Level.WARNING, null, ex);
                                 }
@@ -375,8 +372,7 @@ import org.opengis.referencing.operation.TransformException;
             @Override
             public boolean isEnabled() {
                 if(getMap() != null){
-                    final DefaultCanvasController2D controller = (DefaultCanvasController2D) getMap().getCanvas().getController();
-                    final Double[] range = controller.getAxisRange(axisIndexFinder);
+                    final Double[] range = getMap().getCanvas().getAxisRange(axisIndexFinder);
                     return range != null && range[0] != null;
                 }
                 return false;
@@ -453,7 +449,7 @@ import org.opengis.referencing.operation.TransformException;
     public void mousePressed(final MouseEvent e) {
 
         if(map != null){
-            final Double[] range = ((DefaultCanvasController2D)map.getCanvas().getController()).getAxisRange(axisIndexFinder);
+            final Double[] range = getMap().getCanvas().getAxisRange(axisIndexFinder);
 
             if(range != null){
                 final int y = e.getY();
@@ -490,19 +486,19 @@ import org.opengis.referencing.operation.TransformException;
 
         if(selected >= 0 && edit != null){
 
-            final Double[] range = ((DefaultCanvasController2D)map.getCanvas().getController()).getAxisRange(axisIndexFinder);
+            final Double[] range = getMap().getCanvas().getAxisRange(axisIndexFinder);
 
             try{
                 if(selected == 0){
-                    ((DefaultCanvasController2D)map.getCanvas().getController()).setAxisRange(edit, range[1], axisIndexFinder, crs);
+                    getMap().getCanvas().setAxisRange(edit, range[1], axisIndexFinder, crs);
                 }else if(selected == 2){
-                    ((DefaultCanvasController2D)map.getCanvas().getController()).setAxisRange(range[0], edit, axisIndexFinder, crs);
+                    getMap().getCanvas().setAxisRange(range[0], edit, axisIndexFinder, crs);
                 }else if(selected == 1){
                     double middle = (range[0] + range[1]) / 2d;
                     double step = edit - middle;
                     double start = range[0] + step;
                     double end = range[1] + step;
-                    ((DefaultCanvasController2D)map.getCanvas().getController()).setAxisRange(start, end, axisIndexFinder, crs);
+                    getMap().getCanvas().setAxisRange(start, end, axisIndexFinder, crs);
                 }
             } catch (TransformException ex) {
                 LOGGER.log(Level.WARNING, null, ex);
@@ -524,7 +520,7 @@ import org.opengis.referencing.operation.TransformException;
             edit = getModel().getDimensionValueAt(e.getY());
 
             //ensure we do not go over the other limit
-            final Double[] range = ((DefaultCanvasController2D)map.getCanvas().getController()).getAxisRange(axisIndexFinder);
+            final Double[] range = getMap().getCanvas().getAxisRange(axisIndexFinder);
             if(selected == 0 && range[1] != null){
                 if(edit > range[1]) edit = range[1];
             }else if(selected == 2 && range[0] != null){
@@ -540,8 +536,8 @@ import org.opengis.referencing.operation.TransformException;
 
     @Override
     public void propertyChange(final PropertyChangeEvent evt) {
-        if(evt.getPropertyName().equals(AbstractReferencedCanvas2D.ENVELOPE_PROPERTY)){
-            Double[] range = ((DefaultCanvasController2D)map.getCanvas().getController()).getAxisRange(axisIndexFinder);
+        if(evt.getPropertyName().equals(AbstractCanvas2D.ENVELOPE_KEY)){
+            Double[] range = map.getCanvas().getAxisRange(axisIndexFinder);
 
             if(range == null){
                 range = new Double[2];
@@ -558,7 +554,7 @@ import org.opengis.referencing.operation.TransformException;
 
             updateSpiners(range[0], range[1]);
             repaint();
-            
+
         } else if (evt.getSource() instanceof MapLayer && !useMenu) {
             checkLayerBands((MapItem) evt.getSource(), CollectionChangeEvent.ITEM_CHANGED);
         }
@@ -566,17 +562,16 @@ import org.opengis.referencing.operation.TransformException;
 
     void moveTo(final Double targetValue) {
         if (getMap() != null && targetValue != null) {
-            final DefaultCanvasController2D controller = (DefaultCanvasController2D) getMap().getCanvas().getController();
-            final Double[] range = controller.getAxisRange(axisIndexFinder);
+            final Double[] range = getMap().getCanvas().getAxisRange(axisIndexFinder);
             try{
                 if (range == null || range[0] == null || range[1] == null) {
-                    controller.setAxisRange(targetValue, targetValue, axisIndexFinder, crs);
+                    getMap().getCanvas().setAxisRange(targetValue, targetValue, axisIndexFinder, crs);
                 } else {
                     double middle = (range[0] + range[1]) / 2l;
                     double step = targetValue - middle;
                     double start = range[0] + step;
                     double end = range[1] + step;
-                    ((DefaultCanvasController2D)getMap().getCanvas().getController()).setAxisRange(start, end, axisIndexFinder, crs);
+                    getMap().getCanvas().setAxisRange(start, end, axisIndexFinder, crs);
                 }
             } catch (TransformException ex) {
                 LOGGER.log(Level.WARNING, null, ex);
@@ -592,7 +587,7 @@ import org.opengis.referencing.operation.TransformException;
 
         if(map == null) return;
 
-        final Double[] range = ((DefaultCanvasController2D)map.getCanvas().getController()).getAxisRange(axisIndexFinder);
+        final Double[] range = getMap().getCanvas().getAxisRange(axisIndexFinder);
 
         if(range == null) return;
 
@@ -697,7 +692,7 @@ import org.opengis.referencing.operation.TransformException;
     /**
      * If an item of the current {@link MapContext} changed, we'll check for the
      * corresponding {@link JLayerBand} of this axis.
-     * @param event 
+     * @param event
      */
     @Override
     public void itemChange(CollectionChangeEvent<MapItem> event) {

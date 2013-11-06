@@ -110,7 +110,7 @@ public class JMap2D extends JPanel{
         mapDecorationPane.revalidate();
 
         canvas.setContainer(new ContextContainer2D(canvas, statefull));
-        canvas.getController().setAutoRepaint(true);
+        canvas.setAutoRepaint(true);
 
 
         canvas.addPropertyChangeListener(new PropertyChangeListener() {
@@ -118,7 +118,7 @@ public class JMap2D extends JPanel{
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
 
-                if(canvas.getController().isAutoRepaint()){
+                if(canvas.isAutoRepaint()){
                     //dont show the painting icon if the cans is in auto render mode
                     // since it may repaint dynamic graphic it would show up all the time
                     return;

@@ -33,7 +33,7 @@ public class StatefullFeatureMapLayerJ2D extends StatefullMapLayerJ2D<FeatureMap
 
     protected FeatureStoreListener.Weak weakSessionListener = new FeatureStoreListener.Weak(this);
 
-    
+
     public StatefullFeatureMapLayerJ2D(J2DCanvas canvas, FeatureMapLayer layer) {
         super(canvas, layer, false);
         final Session session = layer.getCollection().getSession();
@@ -46,9 +46,9 @@ public class StatefullFeatureMapLayerJ2D extends StatefullMapLayerJ2D<FeatureMap
 
     @Override
     public void contentChanged(FeatureStoreContentEvent event) {
-        if(item.isVisible() && getCanvas().getController().isAutoRepaint()){
+        if(item.isVisible() && getCanvas().isAutoRepaint()){
             update();
         }
     }
-    
+
 }

@@ -81,13 +81,13 @@ import org.opengis.style.LineSymbolizer;
 
 /**
  * CRSChooser component
- * 
+ *
  * @author Johann Sorel
  * @module pending
  */
 public class JCRSChooser extends javax.swing.JDialog {
 
-    
+
     public static enum ACTION {
         APPROVE,
         CANCEL,
@@ -99,7 +99,7 @@ public class JCRSChooser extends javax.swing.JDialog {
 
     /** Creates new form JCRSChooser
      * @param parent
-     * @param modal 
+     * @param modal
      */
     public JCRSChooser(final java.awt.Frame parent, final boolean modal) {
         super(parent, modal);
@@ -144,17 +144,17 @@ public class JCRSChooser extends javax.swing.JDialog {
                 }
             }
         }.start();
-        
+
         wktArea.setEditable(false);
         wktArea.setContentType("text/html");
-        
+
         guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_GENERALIZE, false);
-        guiMap.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+        guiMap.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                             RenderingHints.VALUE_ANTIALIAS_ON);
         guiMap.getContainer().setContext(MapBuilder.createContext());
         guiNav.setMap(guiMap);
         guiMap.setHandler(new PanHandler(guiMap));
-        
+
         GridTemplate gridTemplate = new DefaultGridTemplate(
                         DefaultGeographicCRS.WGS84,
                         new BasicStroke(1.2f),
@@ -167,7 +167,7 @@ public class JCRSChooser extends javax.swing.JDialog {
         BackgroundPainter bgWhite = new SolidColorPainter(Color.WHITE);
         guiMap.getCanvas().setBackgroundPainter(BackgroundPainterGroup.wrap(bgWhite ,new GridPainter(gridTemplate)));
         guiForceLongitudeFirst.setSelected(true);
-        
+
     }
 
     public void setCRS(final CoordinateReferenceSystem crs) {
@@ -197,8 +197,8 @@ public class JCRSChooser extends javax.swing.JDialog {
 
     private void setIdentifiedObject(final IdentifiedObject item) {
         final WKTFormat formatter = new WKTFormat();
-        formatter.setColors(Colors.DEFAULT);        
-        
+        formatter.setColors(Colors.DEFAULT);
+
         final StringBuilder buffer = new StringBuilder();
         /*
          * Set the Well Known Text (WKT) panel using the following steps:
@@ -226,36 +226,36 @@ public class JCRSChooser extends javax.swing.JDialog {
         // confusion between WKT quotes and HTML quotes while we search for text to make italic.
         makeItalic(X364.toHTML(text.replace('"', '\u001A')), buffer, '\u001A');
         wktArea.setText(buffer.append("</pre></html>").toString());
-        
-        
+
+
         //update map area
         final MapContext ctx = guiMap.getContainer().getContext();
         ctx.layers().clear();
-        
+
         if(item instanceof CoordinateReferenceSystem){
             final Envelope env = CRS.getEnvelope((CoordinateReferenceSystem)item);
-            
+
             if(env != null){
                 final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
                 ftb.setName("validity");
                 ftb.add("geom", Polygon.class,env.getCoordinateReferenceSystem());
-                final FeatureType type = ftb.buildFeatureType();            
+                final FeatureType type = ftb.buildFeatureType();
                 final GeometryFactory GF = new GeometryFactory();
                 final FilterFactory FF = FactoryFinder.getFilterFactory(null);
                 final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
                                                    new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
-                
+
                 final LinearRing ring = GF.createLinearRing(new Coordinate[]{
                                     new Coordinate(env.getMinimum(0), env.getMinimum(1)),
                                     new Coordinate(env.getMinimum(0), env.getMaximum(1)),
                                     new Coordinate(env.getMaximum(0), env.getMaximum(1)),
                                     new Coordinate(env.getMaximum(0), env.getMinimum(1)),
                                     new Coordinate(env.getMinimum(0), env.getMinimum(1))});
-                final Polygon polygon = GF.createPolygon(ring, new LinearRing[0]);                
+                final Polygon polygon = GF.createPolygon(ring, new LinearRing[0]);
                 final Feature feature = FeatureUtilities.defaultFeature(type, "0");
                 feature.getProperty("geom").setValue(polygon);
                 final FeatureCollection col = FeatureStoreUtilities.collection(feature);
-                
+
                 //general informations
                 final String name = "mySymbol";
                 final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
@@ -269,16 +269,16 @@ public class JCRSChooser extends javax.swing.JDialog {
                 final org.opengis.style.Stroke stroke = SF.stroke(color,width,opacity);
                 final LineSymbolizer symbolizer = SF.lineSymbolizer(name,geometry,desc,unit,stroke,offset);
                 final MutableStyle style = SF.style(symbolizer);
-                
+
                 final MapLayer layer = MapBuilder.createFeatureLayer(col, style);
                 ctx.layers().add(layer);
                 try {
-                    guiMap.getCanvas().getController().setVisibleArea(env);
+                    guiMap.getCanvas().setVisibleArea(env);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
-            
+
         }
     }
 
@@ -297,7 +297,7 @@ public class JCRSChooser extends javax.swing.JDialog {
         }
         buffer.append(text.substring(last));
     }
-    
+
     /**
      * Sets an error message to display instead of the current identified object.
      *

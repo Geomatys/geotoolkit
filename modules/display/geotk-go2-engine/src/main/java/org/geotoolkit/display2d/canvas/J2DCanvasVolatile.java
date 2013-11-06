@@ -21,8 +21,6 @@ import java.awt.geom.Area;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.VolatileImage;
 import java.util.logging.Level;
-import org.geotoolkit.display.canvas.CanvasController2D;
-import org.geotoolkit.display.canvas.DefaultCanvasController2D;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
@@ -42,10 +40,10 @@ public class J2DCanvasVolatile extends J2DCanvas{
 
     private final GraphicsConfiguration GC;
     private final DrawTask drawtask = new DrawTask();
-    private final J2DCanvasVolatile.DelayedController controller = new J2DCanvasVolatile.DelayedController(this);
     private VolatileImage buffer0;
     private Dimension dim;
     private boolean mustupdate = false;
+    private Envelope wishedEnvelope = null;
 
     private final Object LOCK = new Object();
 
@@ -84,15 +82,15 @@ public class J2DCanvasVolatile extends J2DCanvas{
             //first time we affect the size
             this.dim = dim;
             setDisplayBounds(new Rectangle(dim));
-            if(controller.wishedEnvelope!=null){
+            if(wishedEnvelope!=null){
                 try {
-                    controller.setVisibleArea(controller.wishedEnvelope);
+                    setVisibleArea(wishedEnvelope);
                 } catch (NoninvertibleTransformException ex) {
                     getLogger().log(Level.SEVERE, null, ex);
                 } catch (TransformException ex) {
                     getLogger().log(Level.SEVERE, null, ex);
                 }
-                controller.wishedEnvelope = null;
+                wishedEnvelope = null;
                 return;
             }
         }else if(this.dim.equals(dim)){
@@ -111,7 +109,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
         setDisplayBounds(new Rectangle(dim));
         buffer0 = null;
 
-        if(getController().isAutoRepaint()){
+        if(isAutoRepaint()){
             repaint();
         }
 
@@ -122,11 +120,6 @@ public class J2DCanvasVolatile extends J2DCanvas{
             return null;
         }
         return GC.createCompatibleVolatileImage(dim.width, dim.height, VolatileImage.OPAQUE);
-    }
-
-    @Override
-    public CanvasController2D getController() {
-        return controller;
     }
 
     private void render(Shape paintingDisplayShape){
@@ -258,26 +251,14 @@ public class J2DCanvasVolatile extends J2DCanvas{
         }
     }
 
-    /**
-     * Stores the requested visible area if the canvas size is not knowned yet.
-     */
-    private class DelayedController extends DefaultCanvasController2D{
-
-        private Envelope wishedEnvelope = null;
-
-        public DelayedController(final J2DCanvasVolatile canvas){
-            super(canvas);
+    @Override
+    public void setVisibleArea(final Envelope env) throws NoninvertibleTransformException, TransformException {
+        if(dim == null){
+            //we don't know our size yet, store the information for later
+            wishedEnvelope = env;
+        }else{
+            super.setVisibleArea(env);
         }
-
-        @Override
-        public void setVisibleArea(final Envelope env) throws NoninvertibleTransformException, TransformException {
-            if(dim == null){
-                //we don't know our size yet, store the information for later
-                wishedEnvelope = env;
-            }else{
-                super.setVisibleArea(env);
-            }
-        }
-
     }
+
 }

@@ -47,7 +47,7 @@ import javax.swing.JComponent;
 
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
+import org.geotoolkit.display.canvas.AbstractCanvas2D;
 
 /**
  *
@@ -68,7 +68,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
     private static final int MIN_SIZE = 20;
     private static final int CERCLE_WIDTH = 100;
     private static final int MARGIN = CERCLE_WIDTH / 10;
-    
+
     private boolean minimized = false;
     private final Color teinte = Color.GRAY.brighter();
     private final Color north = Color.RED;
@@ -88,15 +88,15 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
 
     private final BufferedImage buffer = new BufferedImage(MARGIN + CERCLE_WIDTH+1, MARGIN + CERCLE_WIDTH+1, BufferedImage.TYPE_INT_ARGB);
     private boolean mustUpdate = true;
-    
-    
+
+
     /**
      * 0 = drag scale
      * 1 = drag rotation
      * -1 = no drag
      */
     private short actionFlag = -1;
-    
+
     /**
      * -1 = no button
      * 0 = top
@@ -105,7 +105,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
      * 3 = left
      */
     private short overButton = -1;
-    
+
 
     public JClassicNavigationDecoration(){
         this(THEME.CLASSIC);
@@ -133,11 +133,11 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
         addMouseListener(mouseListener);
         addMouseMotionListener(mouseMotionListener);
         setOpaque(false);
-        
+
         innerCercle = new java.awt.geom.Ellipse2D.Float(3 * MARGIN, 3 * MARGIN, CERCLE_WIDTH - 4 * MARGIN, CERCLE_WIDTH - 4 * MARGIN);
         outerCercle = new java.awt.geom.Ellipse2D.Float(MARGIN, MARGIN, CERCLE_WIDTH, CERCLE_WIDTH);
         arrow = new Polygon(new int[]{0, MIN_SIZE / 2, MIN_SIZE / 4 }, new int[]{MIN_SIZE / 2 , MIN_SIZE / 2 , 0}, 3);
-        
+
         final int centerX = MARGIN+CERCLE_WIDTH/2;
         resetShape = new java.awt.geom.Ellipse2D.Float(centerX-10,centerX-10,20,20);
     }
@@ -314,98 +314,98 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
         g2d.drawImage(buffer, 0, 0, this);
 
         g2d.dispose();
-        
+
     }
-        
+
     private void setRotation(final double r){
         rotation = r;
         mustUpdate = true;
         repaint(MARGIN,MARGIN,CERCLE_WIDTH,CERCLE_WIDTH);
     }
-    
+
     private double getRotation(){
         return rotation;
     }
-    
+
     private void moveUp(){
         if(map!=null){
             try {
-                map.getCanvas().getController().translateDisplay(0, getHeight() / 10);
+                map.getCanvas().translateDisplay(0, getHeight() / 10);
             } catch (NoninvertibleTransformException ex) {
                 LOGGER.log(Level.WARNING, null, ex);
             }
         }
     }
-    
+
     private void moveDown(){
         if(map!=null){
             try {
-                map.getCanvas().getController().translateDisplay(0, -getHeight() / 10);
+                map.getCanvas().translateDisplay(0, -getHeight() / 10);
             } catch (NoninvertibleTransformException ex) {
                 LOGGER.log(Level.WARNING, null, ex);
             }
         }
     }
-    
+
     private void moveLeft(){
         if(map!=null){
             try {
-                map.getCanvas().getController().translateDisplay(getWidth() / 10, 0);
+                map.getCanvas().translateDisplay(getWidth() / 10, 0);
             } catch (NoninvertibleTransformException ex) {
                 LOGGER.log(Level.WARNING, null, ex);
             }
         }
     }
-    
+
     private void moveRight(){
         if(map!=null){
             try {
-                map.getCanvas().getController().translateDisplay(-getWidth() / 10, 0);
+                map.getCanvas().translateDisplay(-getWidth() / 10, 0);
             } catch (NoninvertibleTransformException ex) {
                 LOGGER.log(Level.WARNING, null, ex);
             }
         }
     }
-    
+
     private void mapRotate(final double d){
 
         if (map != null) {
             try {
-                map.getCanvas().getController().setRotation(d);
+                map.getCanvas().setRotation(d);
             } catch (NoninvertibleTransformException ex) {
                 LOGGER.log(Level.WARNING, null, ex);
             }
 
         }
     }
-    
+
     private double calculateAngle(final int mouseX, final int mouseY){
-        
+
         final Point pa = new Point( (MARGIN + CERCLE_WIDTH / 2) ,0);
         final Point pb = new Point( (MARGIN + CERCLE_WIDTH / 2) , (MARGIN + CERCLE_WIDTH / 2) );
         final Point pc = new Point(mouseX,mouseY);
-        
+
         final double a = Math.pow(    Math.pow( pc.x - pb.x , 2) +  Math.pow( pc.y - pb.y , 2)    ,0.5d);
         final double b = Math.pow(    Math.pow( pa.x - pc.x , 2) +  Math.pow( pa.y - pc.y , 2)    ,0.5d);
         final double c = Math.pow(    Math.pow( pa.x - pb.x , 2) +  Math.pow( pa.y - pb.y , 2)    ,0.5d);
-                
+
 //        double angleA = Math.acos(  ( Math.pow(b, 2) + Math.pow(c, 2) - Math.pow(a, 2) )/(2*b*c) );
         double angleB = Math.acos(  ( Math.pow(a, 2) + Math.pow(c, 2) - Math.pow(b, 2) )/(2*a*c) );
 //        double angleC = Math.acos(  ( Math.pow(a, 2) + Math.pow(b, 2) - Math.pow(c, 2) )/(2*a*b) );
-        
+
         if(mouseX < (MARGIN + CERCLE_WIDTH / 2)  ){
-            angleB = 2* Math.PI - angleB; 
+            angleB = 2* Math.PI - angleB;
         }
-        
+
         return angleB;
     }
-    
+
     @Override
     public boolean contains(final int x, final int y) {
       return outerCercle.contains(x,y);
     }
 
-    
+
     private final MouseListener mouseListener = new MouseListener() {
 
         @Override
@@ -453,7 +453,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
                     }
 
                 }
-                
+
         }
 
         @Override
@@ -470,11 +470,11 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
             if(overButton !=-1){
                 overButton = -1;
                 mustUpdate = true;
-                repaint(innerCercle.getBounds());                
+                repaint(innerCercle.getBounds());
             }
         }
     };
-    
+
     private final MouseMotionListener mouseMotionListener = new MouseMotionListener() {
 
         @Override
@@ -518,13 +518,13 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
 
         }
     };
-    
+
     private final PropertyChangeListener propertyListener = new PropertyChangeListener() {
 
         @Override
         public void propertyChange(final PropertyChangeEvent arg0) {
-            if(AbstractReferencedCanvas2D.OBJECTIVE_TO_DISPLAY_PROPERTY.equals(arg0.getPropertyName())){
-                final double rotation = map.getCanvas().getController().getRotation();
+            if(AbstractCanvas2D.TRANSFORM_KEY.equals(arg0.getPropertyName())){
+                final double rotation = map.getCanvas().getRotation();
 
                 if(rotation != getRotation()){
                     setRotation(rotation);
@@ -566,11 +566,11 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
 
     @Override
     public void setMap2D(final JMap2D map) {
-        
+
         if(this.map != null){
             this.map.getCanvas().removePropertyChangeListener(propertyListener);
         }
-        
+
         this.map = map;
         this.map.getCanvas().addPropertyChangeListener(propertyListener);
     }

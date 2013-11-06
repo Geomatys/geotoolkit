@@ -42,7 +42,7 @@ public class ZoomToLayerItem extends AbstractTreePopupItem{
 
                 if(map == null || layer == null) return;
                 try {
-                    map.getCanvas().getController().setVisibleArea(layer.getBounds());
+                    map.getCanvas().setVisibleArea(layer.getBounds());
                 } catch (NoninvertibleTransformException ex) {
                     Logger.getLogger(ZoomToLayerItem.class.getName()).log(Level.WARNING, null, ex);
                 } catch (TransformException ex) {

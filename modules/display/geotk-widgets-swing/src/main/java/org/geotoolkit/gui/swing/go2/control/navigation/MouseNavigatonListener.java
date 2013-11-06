@@ -39,7 +39,7 @@ import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
  */
 public class MouseNavigatonListener implements MouseInputListener, MouseWheelListener {
 
-    
+
     private final ZoomDecoration decorationPane = new ZoomDecoration();
     private double zoomFactor = 2;
     private JMap2D map;
@@ -59,7 +59,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
         if(map == null) return false;
         return map.getCanvas() instanceof J2DCanvasSwing;
     }
-    
+
     public void setMap(final JMap2D map) {
         this.map = map;
     }
@@ -100,7 +100,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
      */
     protected void scale(final Point2D center, final double zoom){
         try {
-            map.getCanvas().getController().scale(zoom, center);
+            map.getCanvas().scale(zoom, center);
         } catch (NoninvertibleTransformException ex) {
             map.getInformationDecoration().displayMessage(ex.getLocalizedMessage(), 3000, LEVEL.ERROR);
         }
@@ -123,7 +123,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
         }
 
         final Rectangle2D rect = new Rectangle(startx,starty,endx-startx,endy-starty);
-        map.getCanvas().getController().setDisplayVisibleArea(rect);
+        map.getCanvas().setDisplayVisibleArea(rect);
     }
 
     /**
@@ -147,7 +147,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
      */
     protected void processDrag(final int x1, final int y1, final int x2, final int y2) {
         try {
-            map.getCanvas().getController().translateDisplay(x2 - x1, y2 - y1);
+            map.getCanvas().translateDisplay(x2 - x1, y2 - y1);
         } catch (NoninvertibleTransformException ex) {
             map.getInformationDecoration().displayMessage(ex.getLocalizedMessage(), 3000, LEVEL.ERROR);
         }
@@ -224,7 +224,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
             if ((lastX > 0) && (lastY > 0)) {
                 int dx = lastX - startX;
                 int dy = lastY - startY;
-                
+
                 if(isStateFull()){
                     processDrag(lastX, lastY, x, y);
                 }else{

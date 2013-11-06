@@ -93,7 +93,7 @@ public class SwingVolatileGeoComponent extends JComponent{
                             try{
                                 final RenderedImage buffer = (RenderedImage) canvas.getSnapShot();
                                 if(buffer!=null){
-                                    MathTransform2D aff = canvas.getController().getTransform();
+                                    MathTransform2D aff = canvas.getObjectiveToDisplay();
                                     aff = aff.inverse();
                                     final GridCoverageBuilder gcb = new GridCoverageBuilder();
                                     gcb.setRenderedImage(buffer);

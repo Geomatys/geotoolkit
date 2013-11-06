@@ -33,12 +33,13 @@ import javax.measure.unit.SI;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRenderable;
 
-import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
+import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.scalebar.DefaultScaleBarTemplate;
 import org.geotoolkit.display2d.ext.scalebar.J2DScaleBarUtilities;
 import org.geotoolkit.display2d.ext.scalebar.ScaleBarTemplate;
 import org.geotoolkit.report.graphic.map.CanvasRenderer;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Jasper Report renderer used to render scale bar graphic.
@@ -109,16 +110,14 @@ public class ScaleBarRenderer implements JRRenderable{
         final Graphics2D g2d = (Graphics2D) g.create();
         final Rectangle area = rect.getBounds();
 
-        if(canvas instanceof AbstractReferencedCanvas2D){
-            AbstractReferencedCanvas2D c2d = (AbstractReferencedCanvas2D) canvas;
+        if(canvas instanceof AbstractCanvas2D){
+            AbstractCanvas2D c2d = (AbstractCanvas2D) canvas;
 
             try {
-                final double[] center = c2d.getController().getCenter().getCoordinate();
+                final double[] center = c2d.getObjectiveCenter().getCoordinate();
                 final Point2D centerPoint = new Point2D.Double(center[0], center[1]);
                 J2DScaleBarUtilities.paint(c2d.getObjectiveCRS(), c2d.getDisplayCRS(), centerPoint, g2d, area.x,area.y, template);
-            } catch (PortrayalException ex) {
-                Logger.getLogger(ScaleBarRenderer.class.getName()).log(Level.WARNING, null, ex);
-            }catch (NoninvertibleTransformException ex) {
+            } catch ( PortrayalException | NoninvertibleTransformException | TransformException ex) {
                 Logger.getLogger(ScaleBarRenderer.class.getName()).log(Level.WARNING, null, ex);
             }
 

@@ -41,7 +41,7 @@ public class RefreshAction extends AbstractMapAction {
     @Override
     public void actionPerformed(final ActionEvent arg0) {
         if (map != null) {
-            map.getCanvas().getController().repaint();
+            map.getCanvas().repaint();
         }
     }
 

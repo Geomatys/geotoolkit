@@ -411,9 +411,9 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
 
     @Override
     public void contentChanged(CoverageStoreContentEvent event) {
-        if(item.isVisible() && getCanvas().getController().isAutoRepaint()){
+        if(item.isVisible() && getCanvas().isAutoRepaint()){
             //TODO should call a repaint only on this graphic
-            getCanvas().getController().repaint();
+            getCanvas().repaint();
         }
     }
 

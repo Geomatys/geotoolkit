@@ -313,7 +313,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
     public void contentChanged(CoverageStoreContentEvent event) {
         //TODO should call a repaint only on this graphic
         gtiles.clear();
-        getCanvas().getController().repaint();
+        getCanvas().repaint();
     }
 
     private Point3d[] getReplacements(Pyramid pyramid, Point3d coord, final GridMosaic mosaicUpdate,

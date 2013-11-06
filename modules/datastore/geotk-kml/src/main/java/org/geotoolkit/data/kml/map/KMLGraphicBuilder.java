@@ -73,7 +73,7 @@ import org.geotoolkit.data.kml.model.StyleState;
 import org.geotoolkit.data.kml.model.Vec2;
 import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xsd.Cdata;
-import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
+import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -161,7 +161,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
 
     @Override
     public Collection<GraphicJ2D> createGraphics(MapLayer layer, Canvas canvas) {
-        if (layer instanceof KmlMapLayer && canvas instanceof AbstractReferencedCanvas2D) {
+        if (layer instanceof KmlMapLayer && canvas instanceof AbstractCanvas2D) {
             return Collections.singleton((GraphicJ2D) new KMLGraphic((J2DCanvas) canvas, (KmlMapLayer) layer));
         } else {
             return Collections.emptyList();

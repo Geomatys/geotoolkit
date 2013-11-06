@@ -188,7 +188,7 @@ public class StatefullMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
             }
 
             //TODO should call a repaint only on this graphic
-            getCanvas().getController().repaint();
+            getCanvas().repaint();
 
         }else if(CollectionChangeEvent.ITEM_REMOVED == type){
             for(final MapItem child : event.getItems()){
@@ -201,7 +201,7 @@ public class StatefullMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
             }
 
             //TODO should call a repaint only on this graphic
-            getCanvas().getController().repaint();
+            getCanvas().repaint();
         }
 
     }

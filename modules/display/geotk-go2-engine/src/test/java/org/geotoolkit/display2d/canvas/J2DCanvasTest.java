@@ -70,8 +70,8 @@ public class J2DCanvasTest {
          assertTrue( canvas.getDisplayBounds().getBounds().height == 600 );
 
          //check sended temporal and elevation
-         Date[] temps = canvas.getController().getTemporalRange();
-         Double[] elev = canvas.getController().getElevationRange();
+         Date[] temps = canvas.getTemporalRange();
+         Double[] elev = canvas.getElevationRange();
          assertTrue(temps == null);
          assertTrue(elev == null);
 
@@ -87,11 +87,11 @@ public class J2DCanvasTest {
          env.setRange(2, -50, 150);
          env.setRange(3, 3000, 6000);
 
-         canvas.getController().setObjectiveCRS(crs);
-         canvas.getController().setVisibleArea(env);
+         canvas.setObjectiveCRS(crs);
+         canvas.setVisibleArea(env);
 
-         temps = canvas.getController().getTemporalRange();
-         elev = canvas.getController().getElevationRange();
+         temps = canvas.getTemporalRange();
+         elev = canvas.getElevationRange();
          assertTrue(temps[0] != null);
          assertTrue(temps[1] != null);
          assertTrue(elev[0] != null);
@@ -132,7 +132,7 @@ public class J2DCanvasTest {
          final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
          env.setRange(0, -180, +180);
          env.setRange(1, -90, +90);
-         canvas.getController().setVisibleArea(env);
+         canvas.setVisibleArea(env);
 
          final AffineTransform2D objtoDisp = canvas.getObjectiveToDisplay();
          assertEquals(new AffineTransform2D(1, 0, 0, -1, 180, 90), objtoDisp);
@@ -144,14 +144,14 @@ public class J2DCanvasTest {
          final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
          env.setRange(0, -180, +180);
          env.setRange(1, -90, +90);
-         canvas.getController().setVisibleArea(env);
+         canvas.setVisibleArea(env);
 
          final AffineTransform2D objtoDisp = canvas.getObjectiveToDisplay();
-         final AffineTransform centerTrs = canvas.getController().getCenterTransform();
+         final AffineTransform centerTrs = canvas.getCenterTransform();
          assertEquals(new AffineTransform2D(1, 0, 0, -1, 0, 0), centerTrs);
 
          //reset it and check
-         canvas.getController().setCenterTransform(centerTrs);
+         canvas.setCenterTransform(centerTrs);
          final AffineTransform objToDisp2 = canvas.getObjectiveToDisplay();
          assertEquals(objtoDisp, objToDisp2);
      }

@@ -76,7 +76,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
     }
 
     @Override
-    protected void setDisplayBounds(final Rectangle2D rect) {
+    public void setDisplayBounds(final Rectangle2D rect) {
         super.setDisplayBounds(rect);
         buffer = null; //todo should check if the size is really different
     }

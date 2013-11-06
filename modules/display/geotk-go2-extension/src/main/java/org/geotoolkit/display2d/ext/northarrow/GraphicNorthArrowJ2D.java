@@ -55,7 +55,7 @@ public class GraphicNorthArrowJ2D extends PositionedGraphic2D{
     public Envelope getEnvelope() {
         return null;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -114,7 +114,7 @@ public class GraphicNorthArrowJ2D extends PositionedGraphic2D{
         }
 
         try {
-            J2DNorthArrowUtilities.paint((float)context.getCanvas().getController().getRotation(),g2d, x,y, template);
+            J2DNorthArrowUtilities.paint((float)context.getCanvas().getRotation(),g2d, x,y, template);
         } catch (PortrayalException ex) {
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
         }

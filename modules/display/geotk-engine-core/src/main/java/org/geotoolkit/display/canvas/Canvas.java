@@ -33,9 +33,7 @@ public abstract class Canvas extends DisplayElement {
     public Canvas(Hints hints) {
         super(hints);
     }
-    
-    public abstract CanvasController getController();
-    
+
     public abstract GraphicContainer getContainer();
-    
+
 }

@@ -36,7 +36,6 @@ import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.coverage.processing.Operations;
-import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
@@ -106,18 +105,17 @@ public final class Portrayer {
         final MapContext context = sceneDef.getContext();
         container.setContext(context);
         try {
-            canvas.getController().setObjectiveCRS(crs);
+            canvas.setObjectiveCRS(crs);
         } catch (TransformException ex) {
             throw new PortrayalException("Could not set objective crs",ex);
         }
 
         //we specifically say to not repect X/Y proportions
-        final CanvasController2D control = canvas.getController();
-        if(canvasDef.isStretchImage()) control.setAxisProportions(Double.NaN);
+        if(canvasDef.isStretchImage()) canvas.setAxisProportions(Double.NaN);
         try {
-            control.setVisibleArea(contextEnv);
+            canvas.setVisibleArea(contextEnv);
             if (viewDef.getAzimuth() != 0) {
-                control.rotate( -Math.toRadians(viewDef.getAzimuth()) );
+                canvas.rotate( -Math.toRadians(viewDef.getAzimuth()) );
             }
         } catch (NoninvertibleTransformException ex) {
             throw new PortrayalException(ex);
@@ -133,7 +131,7 @@ public final class Portrayer {
             }
         }
 
-        canvas.getController().repaint();
+        canvas.repaint();
         final BufferedImage buffer = canvas.getSnapShot();
         container.setContext(EMPTY_CONTEXT);
 

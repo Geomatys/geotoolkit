@@ -80,14 +80,14 @@ import org.opengis.util.FactoryException;
  * A rendering usually implies the following transformations (names are
  * {@linkplain CoordinateReferenceSystem coordinate reference systems} and arrows
  * are {@linkplain MathTransform transforms}):
- * 
+ *
  * <p align="center">
  * &nbsp; {@code graphicCRS}    &nbsp; <img src="doc-files/right.png">
  * &nbsp; {@link #objectiveCRS} &nbsp; <img src="doc-files/right.png">
  * &nbsp; {@link #displayCRS}   &nbsp; <img src="doc-files/right.png">
  * &nbsp; {@code deviceCRS}
  * </p>
- * 
+ *
  * @module pending
  * @since 2.3
  * @version $Id$
@@ -98,7 +98,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 
     private static final Logger LOGGER = Logging.getLogger(DefaultRenderingContext2D.class);
     private static Map<Font,FontMetrics> fontMetrics = new HashMap<Font, FontMetrics>();
-    
+
     private static final int DISPLAY_TRS = 0;
     private static final int OBJECTIVE_TRS = 1;
     private static final int OTHER_TRS = 2;
@@ -155,7 +155,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      * @see ReferencedCanvas#getDisplayCRS
      */
     private CoordinateReferenceSystem displayCRS = null;
-    
+
     private CanvasMonitor monitor = null;
 
     private AffineTransform2D objectiveToDisplay = null;
@@ -173,17 +173,17 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      * Used by {@link #setGraphicsCRS} when the CRS is {@link #displayCRS}.
      */
     private AffineTransform displayToDevice = null;
-    
+
     /**
      * The label renderer. Shall be created only once.
      */
     private LabelRenderer labelRenderer = null;
-    
+
     /**
      * List of coefficients from "Unit" to Objective CRS.
      */
-    private final Map<Unit<Length>,Float> coeffs = new IdentityHashMap<Unit<Length>, Float>();
-    
+    private final Map<Unit<Length>,Float> coeffs = new IdentityHashMap<>();
+
     /**
      * Precalculated resolution, avoid graphics to recalculate it since
      */
@@ -219,7 +219,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     private Shape              canvasObjectiveShape = null;
     private Envelope           canvasObjectiveBBox  = null;
     private Envelope           canvasObjectiveBBox2D  = null;
-    
+
 
     /**
      * Constructs a new {@code RenderingContext} for the specified canvas.
@@ -233,7 +233,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     public void initParameters(final AffineTransform2D objToDisp, final CanvasMonitor monitor,
             final Shape paintingDisplayShape, final Shape paintingObjectiveShape,
             final Shape canvasDisplayShape, final Shape canvasObjectiveShape, final double dpi){
-        this.canvasObjectiveBBox= canvas.getController().getVisibleEnvelope();
+        this.canvasObjectiveBBox= canvas.getVisibleEnvelope();
         this.objectiveCRS       = canvasObjectiveBBox.getCoordinateReferenceSystem();
         this.objectiveCRS2D     = canvas.getObjectiveCRS2D();
         this.displayCRS         = canvas.getDisplayCRS();
@@ -244,9 +244,9 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
             Logging.getLogger(DefaultRenderingContext2D.class).log(Level.WARNING, null, ex);
         }
         this.monitor = monitor;
-        
+
         this.labelRenderer = null;
-        
+
         this.coeffs.clear();
         //set the Pixel coeff = 1
         this.coeffs.put(NonSI.PIXEL, 1f);
@@ -257,7 +257,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         final Rectangle2D canvasDisplayBounds = canvasDisplayShape.getBounds2D();
         this.canvasDisplaybounds = canvasDisplayBounds.getBounds();
         this.canvasObjectiveShape = canvasObjectiveShape;
-        
+
         final Rectangle2D canvasObjectiveBounds = canvasObjectiveShape.getBounds2D();
 
         //calculate the objective bbox with there temporal and elevation parameters ----
@@ -288,7 +288,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         ((GeneralEnvelope)this.paintingObjectiveBBox).setRange(1, paintingObjectiveBounds.getMinY(), paintingObjectiveBounds.getMaxY());
 
         try {
-            geoScale = canvas.getController().getGeographicScale();
+            geoScale = canvas.getGeographicScale();
         } catch (TransformException ex) {
             //could not calculate the geographic scale.
             geoScale = 1;
@@ -296,7 +296,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         }
 
         //set temporal and elevation range--------------------------------------
-        final Date[] temporal = canvas.getController().getTemporalRange();
+        final Date[] temporal = canvas.getTemporalRange();
         if(temporal != null){
             temporalRange[0] = temporal[0];
             temporalRange[1] = temporal[1];
@@ -304,7 +304,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
             Arrays.fill(temporalRange, null);
         }
 
-        final Double[] elevation = canvas.getController().getElevationRange();
+        final Double[] elevation = canvas.getElevationRange();
         if(elevation != null){
             elevationRange[0] = elevation[0];
             elevationRange[1] = elevation[1];
@@ -350,9 +350,9 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         }
         reset();
     }
-    
-    
-    
+
+
+
     /**
      * {@inheritDoc }
      */
@@ -360,7 +360,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     public J2DCanvas getCanvas(){
         return canvas;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -384,7 +384,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     public CoordinateReferenceSystem getDisplayCRS() {
         return displayCRS;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -435,7 +435,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
             throw new TransformException(Errors.format(
                         Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM), e);
         }
-        
+
     }
 
     /**
@@ -505,7 +505,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         }
         return labelRenderer;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -556,14 +556,14 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
                 final double[] origRes = getResolution();
                 res[0] = origRes[0];
                 res[1] = origRes[1];
-                
+
                 final MathTransform trs = CRS.findMathTransform(canvasObjectiveBBox2D.getCoordinateReferenceSystem(), crs);
                 final GeneralDirectPosition pos = new GeneralDirectPosition(
                         canvasObjectiveBBox2D.getMedian(0),
                         canvasObjectiveBBox2D.getMedian(1));
                 final Matrix matrix = trs.derivative(pos);
-                
-                res[0] *= Math.hypot(matrix.getElement(0, 0),matrix.getElement(1, 0)) ; 
+
+                res[0] *= Math.hypot(matrix.getElement(0, 0),matrix.getElement(1, 0)) ;
                 res[1] *= Math.hypot(matrix.getElement(0, 1),matrix.getElement(1, 1)) ;
                 for(int i=2; i<res.length; i++){
                     //other dimension are likely to be the temporal and elevation one.
@@ -577,7 +577,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, null, ex);
             }
-            
+
             return adjustResolutionWithDPI(res);
         }
     }
@@ -598,7 +598,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      */
     @Override
     public double getScale() {
-        return canvas.getController().getScale();
+        return canvas.getScale();
     }
 
     /**
@@ -784,7 +784,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         sb.append("Display to Objective = \n");
         sb.append(displayToObjective).append("\n");
 
-        
+
         sb.append("\n---------- Rendering Hints ----------\n");
         if(renderingHints != null){
             for(Entry<Object,Object> entry : renderingHints.entrySet()){

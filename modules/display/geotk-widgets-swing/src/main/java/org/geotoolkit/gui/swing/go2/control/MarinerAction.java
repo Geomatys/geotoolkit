@@ -79,7 +79,7 @@ public class MarinerAction extends AbstractMapAction {
                 if(result == JOptionPane.OK_OPTION){
                     basepane.apply();
                     viewpane.apply();
-                    map.getCanvas().getController().repaint();
+                    map.getCanvas().repaint();
                     //change the map background
                     //S-52 Annex A part I p.143 (12.2.2)
                     map.getCanvas().setBackgroundPainter(new S52Background());

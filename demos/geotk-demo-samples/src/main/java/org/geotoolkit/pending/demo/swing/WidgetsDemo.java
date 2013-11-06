@@ -59,7 +59,7 @@ public class WidgetsDemo extends javax.swing.JFrame {
 
     public WidgetsDemo() throws DataStoreException {
         Demos.init();
-        
+
         initComponents();
 
         //link bars to the map widget ----------------------
@@ -81,12 +81,8 @@ public class WidgetsDemo extends javax.swing.JFrame {
         guiTree.setContext(context);
 
         try {
-            guiMap.getCanvas().getController().setVisibleArea(context.getBounds());
-        } catch (NoninvertibleTransformException ex) {
-            Logger.getLogger(WidgetsDemo.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (TransformException ex) {
-            Logger.getLogger(WidgetsDemo.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+            guiMap.getCanvas().setVisibleArea(context.getBounds());
+        } catch (NoninvertibleTransformException | TransformException | IOException ex) {
             Logger.getLogger(WidgetsDemo.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -130,7 +126,7 @@ public class WidgetsDemo extends javax.swing.JFrame {
             menuItem.setMapView(guiMap);
         }
 
-        
+
 
 
     }

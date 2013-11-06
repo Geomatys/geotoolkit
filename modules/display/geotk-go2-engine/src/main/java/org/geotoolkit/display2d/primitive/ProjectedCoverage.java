@@ -25,7 +25,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
+import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.geometry.jts.JTS;
@@ -176,7 +176,7 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
     }
 
     @Override
-    public AbstractReferencedCanvas2D getCanvas() {
+    public AbstractCanvas2D getCanvas() {
         return params.canvas;
     }
 

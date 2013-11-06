@@ -20,7 +20,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
+import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.geometry.jts.JTS;
@@ -175,7 +175,7 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
     }
 
     @Override
-    public AbstractReferencedCanvas2D getCanvas() {
+    public AbstractCanvas2D getCanvas() {
         return params.canvas;
     }
 

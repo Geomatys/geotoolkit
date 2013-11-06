@@ -48,14 +48,14 @@ public class AbstractNavigationHandler implements CanvasHandler{
     protected boolean isStateFull(){
         if(map == null) return false;
         return map.getCanvas() instanceof J2DCanvasSwing;
-    }    
-    
+    }
+
     /**
      * Make a zoom on the map at the given point
      */
     protected void scale(final Point2D center, final double zoom){
         try {
-            map.getCanvas().getController().scale(zoom, center);
+            map.getCanvas().scale(zoom, center);
         } catch (NoninvertibleTransformException ex) {
             map.getInformationDecoration().displayMessage(ex.getLocalizedMessage(), 3000, LEVEL.ERROR);
         }
@@ -78,7 +78,7 @@ public class AbstractNavigationHandler implements CanvasHandler{
         }
 
         final Rectangle2D rect = new Rectangle(startx,starty,endx-startx,endy-starty);
-        map.getCanvas().getController().setDisplayVisibleArea(rect);
+        map.getCanvas().setDisplayVisibleArea(rect);
     }
 
     /**
@@ -102,12 +102,12 @@ public class AbstractNavigationHandler implements CanvasHandler{
      */
     protected void processDrag(final int x1, final int y1, final int x2, final int y2) {
         try {
-            map.getCanvas().getController().translateDisplay(x2 - x1, y2 - y1);
+            map.getCanvas().translateDisplay(x2 - x1, y2 - y1);
         } catch (NoninvertibleTransformException ex) {
             map.getInformationDecoration().displayMessage(ex.getLocalizedMessage(), 3000, LEVEL.ERROR);
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */

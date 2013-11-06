@@ -57,7 +57,6 @@ import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.coverage.processing.Operations;
-import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -147,21 +146,21 @@ public final class DefaultPortrayalService implements PortrayalService{
 
         renderer.setContext(context);
         try {
-            canvas.getController().setObjectiveCRS(coverage.getCoordinateReferenceSystem());
+            canvas.setObjectiveCRS(coverage.getCoordinateReferenceSystem());
         } catch (TransformException ex) {
             throw new PortrayalException("Could not set objective crs",ex);
         }
 
         //we specifically say to not repect X/Y proportions
-        if(strechImage) canvas.getController().setAxisProportions(Double.NaN);
+        if(strechImage) canvas.setAxisProportions(Double.NaN);
         try {
-            canvas.getController().setVisibleArea(mapArea);
+            canvas.setVisibleArea(mapArea);
         } catch (IllegalArgumentException ex) {
             throw new PortrayalException("Could not set map to requested area",ex);
         } catch (NoninvertibleTransformException ex) {
             throw new PortrayalException(ex);
         }
-        canvas.getController().repaint();
+        canvas.repaint();
         BufferedImage buffer = canvas.getSnapShot();
         canvas.dispose();
 
@@ -235,7 +234,7 @@ public final class DefaultPortrayalService implements PortrayalService{
 
         prepareCanvas(canvas, canvasDef, sceneDef, viewDef);
 
-        canvas.getController().repaint();
+        canvas.repaint();
         final BufferedImage buffer = canvas.getSnapShot();
         canvas.dispose();
 
@@ -270,18 +269,17 @@ public final class DefaultPortrayalService implements PortrayalService{
         final MapContext context = sceneDef.getContext();
         renderer.setContext(context);
         try {
-            canvas.getController().setObjectiveCRS(crs);
+            canvas.setObjectiveCRS(crs);
         } catch (TransformException ex) {
             throw new PortrayalException("Could not set objective crs",ex);
         }
 
         //we specifically say to not repect X/Y proportions
-        final CanvasController2D control = canvas.getController();
-        if(canvasDef.isStretchImage()) control.setAxisProportions(Double.NaN);
+        if(canvasDef.isStretchImage()) canvas.setAxisProportions(Double.NaN);
         try {
-            control.setVisibleArea(contextEnv);
+            canvas.setVisibleArea(contextEnv);
             if (viewDef.getAzimuth() != 0) {
-                control.rotate( -Math.toRadians(viewDef.getAzimuth()) );
+                canvas.rotate( -Math.toRadians(viewDef.getAzimuth()) );
             }
         } catch (NoninvertibleTransformException | TransformException ex) {
             throw new PortrayalException(ex);
@@ -648,15 +646,15 @@ public final class DefaultPortrayalService implements PortrayalService{
 
         renderer.setContext(context);
         try {
-            canvas.getController().setObjectiveCRS(contextEnv.getCoordinateReferenceSystem());
+            canvas.setObjectiveCRS(contextEnv.getCoordinateReferenceSystem());
         } catch (TransformException ex) {
             throw new PortrayalException("Could not set objective crs",ex);
         }
 
         //we specifically say to not repect X/Y proportions
-        if(strechImage) canvas.getController().setAxisProportions(Double.NaN);
+        if(strechImage) canvas.setAxisProportions(Double.NaN);
         try {
-            canvas.getController().setVisibleArea(contextEnv);
+            canvas.setVisibleArea(contextEnv);
         } catch (NoninvertibleTransformException ex) {
             throw new PortrayalException(ex);
         } catch (TransformException ex) {

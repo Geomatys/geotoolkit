@@ -318,7 +318,7 @@ public class PortrayalRenderedImage implements RenderedImage{
                 DefaultPortrayalService.prepareCanvas(cvs, canvasDef, sceneDef, viewDef);
             }
 
-            cvs.getController().setVisibleArea(canvasEnv);
+            cvs.setVisibleArea(canvasEnv);
         } catch (NoninvertibleTransformException | TransformException | PortrayalException ex) {
             Logger.getLogger(PortrayalRenderedImage.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -24,7 +24,6 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
-import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
@@ -87,7 +86,7 @@ public interface RenderingContext2D extends RenderingContext{
      * on the same context.
      */
     RenderingContext2D create(Graphics2D g2d);
-    
+
     /**
      * Get or Create a label renderer for this rendering context.
      * @param create : if true will create a label renderer if there is none.
@@ -95,7 +94,7 @@ public interface RenderingContext2D extends RenderingContext{
     LabelRenderer getLabelRenderer(boolean create);
 
     FontMetrics getFontMetrics(Font f);
-    
+
     // Informations related to scale datas -------------------------------------
     /**
      * Find the coefficient between the given Unit and the Objective CRS.
@@ -171,17 +170,17 @@ public interface RenderingContext2D extends RenderingContext{
     Envelope getPaintingObjectiveBounds();
 
 
-    
+
     // Informations about the complete canvas area -----------------------------
 
     Shape getCanvasDisplayShape();
-    
+
     Rectangle getCanvasDisplayBounds();
-    
+
     Shape getCanvasObjectiveShape();
 
     BoundingBox getCanvasObjectiveBounds2D();
-    
+
     Envelope getCanvasObjectiveBounds();
-    
+
 }

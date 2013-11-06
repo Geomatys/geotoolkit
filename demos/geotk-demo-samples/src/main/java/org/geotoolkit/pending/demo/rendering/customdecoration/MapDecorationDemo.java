@@ -42,7 +42,7 @@ public class MapDecorationDemo {
         final JMap2D jmap = new JMap2D();
         final JNavigationBar navBar = new JNavigationBar(jmap);
         jmap.getContainer().setContext(context);
-        jmap.getCanvas().getController().setVisibleArea(context.getBounds());
+        jmap.getCanvas().setVisibleArea(context.getBounds());
 
 
         //our custom decoration object

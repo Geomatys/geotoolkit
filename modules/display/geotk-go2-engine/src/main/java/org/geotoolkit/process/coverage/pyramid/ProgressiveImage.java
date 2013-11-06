@@ -476,10 +476,8 @@ public class ProgressiveImage implements RenderedImage{
                 upperleft.getY() - (row) * tilespanY);
 
         try {
-            canvas.getController().setVisibleArea(canvasEnv);
-        } catch (NoninvertibleTransformException ex) {
-            Logger.getLogger(ProgressiveImage.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (TransformException ex) {
+            canvas.setVisibleArea(canvasEnv);
+        } catch (NoninvertibleTransformException | TransformException ex) {
             Logger.getLogger(ProgressiveImage.class.getName()).log(Level.SEVERE, null, ex);
         }
 

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
+import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.display.primitive.Graphic;
 
@@ -54,6 +54,6 @@ public interface ProjectedObject<T> extends Graphic {
     /**
      * @return original canvas of this graphic
      */
-    AbstractReferencedCanvas2D getCanvas();
+    AbstractCanvas2D getCanvas();
 
 }

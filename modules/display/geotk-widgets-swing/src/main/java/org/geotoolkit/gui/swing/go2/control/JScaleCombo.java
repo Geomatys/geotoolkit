@@ -57,7 +57,7 @@ public class JScaleCombo extends JComboBox {
         public void propertyChange(PropertyChangeEvent evt) {
             removeItemListener(action);
             try {
-                final double  scale = map.getCanvas().getController().getGeographicScale();
+                final double  scale = map.getCanvas().getGeographicScale();
                 scales.set(0, scale);
                 setSelectedIndex(0);
                 repaint();
@@ -76,7 +76,7 @@ public class JScaleCombo extends JComboBox {
             }
             if (map != null) {
                 try {
-                    map.getCanvas().getController().setGeographicScale(((Number) getSelectedItem()).doubleValue());
+                    map.getCanvas().setGeographicScale(((Number) getSelectedItem()).doubleValue());
                 } catch (TransformException ex) {
                     Logger.getLogger(JScaleCombo.class.getName()).log(Level.WARNING, null, ex);
                 }
@@ -196,7 +196,7 @@ public class JScaleCombo extends JComboBox {
                 @Override
                 public void stateChanged(ChangeEvent ce) {
                     ActionEvent event = new ActionEvent(ScaleEditor.this, 0, "");
-                    
+
                     for(ActionListener lst : listeners.getListeners(ActionListener.class)){
                         lst.actionPerformed(event);
                     }

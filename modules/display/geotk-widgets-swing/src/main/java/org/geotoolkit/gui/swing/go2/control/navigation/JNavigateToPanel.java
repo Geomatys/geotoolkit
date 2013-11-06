@@ -17,6 +17,7 @@
 package org.geotoolkit.gui.swing.go2.control.navigation;
 
 import java.awt.BorderLayout;
+import java.awt.geom.NoninvertibleTransformException;
 import java.util.logging.Level;
 import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
@@ -33,6 +34,9 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -43,7 +47,7 @@ public class JNavigateToPanel extends javax.swing.JPanel {
 
     private CoordinateReferenceSystem navCRS = DefaultGeographicCRS.WGS84;
     private JMap2D map = null;
-    
+
     public JNavigateToPanel() {
         initComponents();
         guiCRS.setText(navCRS.getName().toString());
@@ -139,19 +143,23 @@ public class JNavigateToPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void guiNavActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiNavActionPerformed
-        
+
         final GeneralDirectPosition pos = new GeneralDirectPosition(navCRS);
         pos.setOrdinate(0, (Double)guiXValue.getValue());
         pos.setOrdinate(1, (Double)guiYValue.getValue());
 
         if(map != null){
-            map.getCanvas().getController().setCenter(pos);
+            try {
+                map.getCanvas().setObjectiveCenter(pos);
+            } catch (NoninvertibleTransformException | TransformException | FactoryException ex) {
+                Exceptions.printStackTrace(ex);
+            }
         }
-        
+
     }//GEN-LAST:event_guiNavActionPerformed
 
     private void guiCRSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiCRSActionPerformed
-       
+
         if (map != null ) {
             final JCRSChooser chooser = new JCRSChooser(null, true);
             chooser.setCRS(navCRS);
@@ -162,7 +170,7 @@ public class JNavigateToPanel extends javax.swing.JPanel {
                 guiCRS.setText(navCRS.getName().toString());
             }
         }
-        
+
     }//GEN-LAST:event_guiCRSActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -181,27 +189,27 @@ public class JNavigateToPanel extends javax.swing.JPanel {
         private final JLayeredPane desktop;
         private final JInternalFrame frame;
         private final JNavigateToPanel navtoPanel;
-        
+
         public NavigateToMapDecoration() {
             container.setOpaque(false);
             container.setFocusable(false);
-            
+
             navtoPanel = new JNavigateToPanel();
-            
+
             frame = new JInternalFrame();
-            frame.setContentPane(navtoPanel);      
+            frame.setContentPane(navtoPanel);
             frame.setResizable(true);
             frame.setClosable(false);
             frame.setIconifiable(false);
             frame.setFrameIcon(IconBundle.getIcon("16_navto"));
             frame.pack();
             frame.setVisible(true);
-            
+
             desktop = new JLayeredPane();
             desktop.setOpaque(false);
             desktop.add(frame);
-            
-            container.add(BorderLayout.CENTER,desktop);            
+
+            container.add(BorderLayout.CENTER,desktop);
         }
 
         @Override
@@ -209,7 +217,7 @@ public class JNavigateToPanel extends javax.swing.JPanel {
             super.setMap2D(map);
             navtoPanel.map = map;
         }
-        
+
         @Override
         public void refresh() {
         }
@@ -218,7 +226,7 @@ public class JNavigateToPanel extends javax.swing.JPanel {
         public JComponent getComponent() {
             return container;
         }
-        
+
     }
 
 }

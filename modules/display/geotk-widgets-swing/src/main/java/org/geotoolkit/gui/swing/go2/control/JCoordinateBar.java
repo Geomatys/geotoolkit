@@ -116,15 +116,15 @@ public class JCoordinateBar extends AbstractMapControlBar {
             @Override
             public boolean isSelected() {
                 if(map == null) return false;
-                return map.getCanvas().getController().getAxisProportions() == 1;
+                return map.getCanvas().getAxisProportions() == 1;
             }
         };
         guiAxis.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 if(map != null){
-                    double d = map.getCanvas().getController().getAxisProportions();
-                    map.getCanvas().getController().setAxisProportions((d == 1) ? Double.NaN : 1);
+                    double d = map.getCanvas().getAxisProportions();
+                    map.getCanvas().setAxisProportions((d == 1) ? Double.NaN : 1);
                 }
             }
         });
@@ -431,7 +431,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
 
             Point2D coord = new DirectPosition2D();
             try {
-                coord = map.getCanvas().getController().getTransform().inverseTransform(event.getPoint(), coord);
+                coord = map.getCanvas().getObjectiveToDisplay().inverseTransform(event.getPoint(), coord);
             } catch (NoninvertibleTransformException ex) {
                 guiCoord.setText(error);
                 return;
@@ -452,7 +452,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
 
         @Override
         public void propertyChange(final PropertyChangeEvent arg0) {
-            if(J2DCanvas.OBJECTIVE_CRS_PROPERTY.equals(arg0.getPropertyName())){
+            if(J2DCanvas.OBJECTIVE_CRS_KEY.equals(arg0.getPropertyName())){
                 CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
                 guiCRS.setText(crs.getName().toString());
             }else if(AbstractCanvas.RENDERSTATE_KEY.equals(arg0.getPropertyName())){

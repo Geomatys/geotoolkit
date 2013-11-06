@@ -17,13 +17,13 @@
 package org.geotoolkit.display2d.container.stateless;
 
 import java.awt.geom.AffineTransform;
-import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -34,7 +34,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class StatelessContextParams<T extends MapLayer> {
 
     public RenderingContext2D context;
-    public final AbstractReferencedCanvas2D canvas;
+    public final AbstractCanvas2D canvas;
     public final T layer;
     public final AffineTransform objectiveToDisplay = new AffineTransform(2,0,0,2,0,0);
     public final GeometryCSTransformer objToDisplayTransformer =
@@ -42,7 +42,7 @@ public class StatelessContextParams<T extends MapLayer> {
     public CoordinateReferenceSystem objectiveCRS;
     public CoordinateReferenceSystem displayCRS;
 
-    public StatelessContextParams(final AbstractReferencedCanvas2D canvas, final T layer){
+    public StatelessContextParams(final AbstractCanvas2D canvas, final T layer){
         this.canvas = canvas;
         this.layer = layer;
     }

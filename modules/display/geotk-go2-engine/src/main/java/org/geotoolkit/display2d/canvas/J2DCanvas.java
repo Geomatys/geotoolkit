@@ -24,9 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
-import org.geotoolkit.display.canvas.CanvasController2D;
-import org.geotoolkit.display.canvas.DefaultCanvasController2D;
 import org.geotoolkit.display2d.GraphicVisitor;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.VisitFilter;
@@ -41,6 +38,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display.primitive.SceneNode;
 import org.geotoolkit.display.primitive.SpatialNode;
@@ -55,9 +53,8 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
+public abstract class J2DCanvas extends AbstractCanvas2D{
 
-    protected final CanvasController2D controller = new DefaultCanvasController2D(this);
     protected final DefaultRenderingContext2D context2D = new DefaultRenderingContext2D(this);
 
     protected BackgroundPainter painter = null;
@@ -73,30 +70,6 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
     public BackgroundPainter getBackgroundPainter() {
         return painter;
     }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public CanvasController2D getController() {
-        return controller;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-//    @Override
-//    protected void graphicsDisplayChanged(final ContainerEvent event) {
-//        for(Graphic gra : event.getGraphics()){
-//            if(gra instanceof GraphicJ2D){
-//                final GraphicJ2D j2d = (GraphicJ2D) gra;
-//                final Rectangle rect = j2d.getDisplayBounds().getBounds();
-//                if(getController().isAutoRepaint()){
-//                    repaint(rect);
-//                }
-//            }
-//        }
-//    }
 
     @Override
     public void dispose() {
@@ -115,6 +88,10 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
      * with the correct bounds and transform datas.
      * You may provide a null Graphic2D if you need to prepare a context for only a "hit"
      * operation.
+     * @param context
+     * @param output
+     * @param paintingDisplayShape
+     * @return
      */
     public DefaultRenderingContext2D prepareContext(final DefaultRenderingContext2D context,
             final Graphics2D output, Shape paintingDisplayShape){
@@ -176,7 +153,7 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
 
         //TODO update multithreading rendering for scene tree model
 //        final Boolean mt = (Boolean) context2D.getRenderingHints().get(GO2Hints.KEY_MULTI_THREAD);
-//        
+//
 //        if(Boolean.TRUE.equals(mt)){
 //            final MultiThreadedRendering rendering = new MultiThreadedRendering(this.item, this.itemGraphics, renderingContext);
 //            rendering.render();
@@ -191,7 +168,7 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
 //                }
 //            }
 //        }
-        
+
         /*
          * Draw all graphics, starting with the one with the lowest <var>z</var> value. Before
          * to start the actual drawing,  we will notify all graphics that they are about to be
@@ -227,6 +204,9 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
      * Visit the {@code Graphics} that occupy the given shape.
      * You should give an Area Object if you can, this will avoid many creation
      * while testing.
+     * @param displayShape
+     * @param visitor
+     * @param filter
      */
     public void getGraphicsIn(final Shape displayShape, final GraphicVisitor visitor, final VisitFilter filter) {
         ensureNonNull("mask", displayShape);
@@ -255,11 +235,11 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
                     objectiveGeometryISO, displayGeometryISO,
                     objectiveGeometryJTS, displayGeometryJTS,
                     objectiveShape, displayShape);
-            
+
             final List<SceneNode> sorted = container.flatten(true);
             //reverse the list order
             Collections.reverse(sorted);
-            
+
             //see if the visitor request a stop-----------------------------
             if(visitor.isStopRequested()){ visitor.endVisit(); return; }
             //--------------------------------------------------------------

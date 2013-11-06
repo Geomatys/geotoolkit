@@ -23,7 +23,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.measure.unit.Unit;
@@ -32,14 +31,9 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JToolTip;
 import javax.swing.SwingConstants;
-import org.geotoolkit.display.canvas.DefaultCanvasController2D;
-import org.geotoolkit.display2d.ext.text.J2DTextUtilities;
 import org.geotoolkit.gui.swing.go2.JMap2D;
-import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -94,7 +88,7 @@ public class JAdditionalAxisNavigator extends JPanel implements ContextListener{
     private final JPanel grid = new JPanel(new GridLayout(1, 0));
     private final JComboBox guiAxis = new JComboBox();
     private volatile JMap2D map = null;
-    
+
     private final JButton addButton = new JButton(IconBundle.getIcon("16_add"));
 
     public JAdditionalAxisNavigator(){
@@ -184,7 +178,7 @@ public class JAdditionalAxisNavigator extends JPanel implements ContextListener{
         }
         guiAxis.setModel(new ListComboBoxModel(values));
     }
-    
+
     private void getDimensions(final MapItem source, final List<CoordinateReferenceSystem> toFill) {
         if (source == null) {
             return;
@@ -218,7 +212,7 @@ browseCRS:      for (CoordinateReferenceSystem part : parts) {
                     }
                 }
             }
-            
+
         } else {
             for (MapItem item : source.items()) {
                 getDimensions(item, toFill);
@@ -261,7 +255,7 @@ browseCRS:      for (CoordinateReferenceSystem part : parts) {
                 }
             }
         });
-        
+
         axis.add(def);
         grid.add(def.pane);
         grid.revalidate();
@@ -271,9 +265,8 @@ browseCRS:      for (CoordinateReferenceSystem part : parts) {
     private void removeAxis(AxisDef def){
 
         if(map != null){
-            final DefaultCanvasController2D control = (DefaultCanvasController2D) map.getCanvas().getController();
             try {
-                control.setAxisRange(null, null, def.nav.getAxisIndexFinder(), def.nav.getCrs());
+                map.getCanvas().setAxisRange(null, null, def.nav.getAxisIndexFinder(), def.nav.getCrs());
             } catch (TransformException ex) {
                 ex.printStackTrace();
             }

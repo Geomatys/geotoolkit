@@ -230,10 +230,10 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
 
     @Override
     public void contentChanged(CoverageStoreContentEvent event) {
-        if(item.isVisible() && getCanvas().getController().isAutoRepaint()){
+        if(item.isVisible() && getCanvas().isAutoRepaint()){
             //TODO should call a repaint only on this graphic
             projectedCoverage.clearObjectiveCache();
-            getCanvas().getController().repaint();
+            getCanvas().repaint();
         }
     }
 

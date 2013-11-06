@@ -176,11 +176,11 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
 
     @Override
     public void propertyChange(final PropertyChangeEvent event) {
-        if(getCanvas().getController().isAutoRepaint()){
+        if(getCanvas().isAutoRepaint()){
             final String propName = event.getPropertyName();
             if(MapItem.VISIBILITY_PROPERTY.equals(propName)){
                 //TODO should call a repaint only on this graphic
-                getCanvas().getController().repaint();
+                getCanvas().repaint();
             }
         }
     }
@@ -200,7 +200,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
             }
 
             //TODO should call a repaint only on this graphic
-            getCanvas().getController().repaint();
+            getCanvas().repaint();
 
         }else if(CollectionChangeEvent.ITEM_REMOVED == type){
             for(final MapItem child : event.getItems()){
@@ -213,7 +213,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends GraphicJ2D implement
             }
 
             //TODO should call a repaint only on this graphic
-            getCanvas().getController().repaint();
+            getCanvas().repaint();
         }
 
     }

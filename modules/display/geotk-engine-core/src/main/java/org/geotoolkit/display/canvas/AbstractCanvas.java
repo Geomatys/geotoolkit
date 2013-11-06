@@ -165,7 +165,6 @@ public abstract class AbstractCanvas<T extends GraphicContainer> extends Canvas 
         super.dispose();
     }
 
-
     //--------------Canvas Listeners convinient methods-------------------------
 
     protected void fireRenderingStateChanged(final boolean newState){

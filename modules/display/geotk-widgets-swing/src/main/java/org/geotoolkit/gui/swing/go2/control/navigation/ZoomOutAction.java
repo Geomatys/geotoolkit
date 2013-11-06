@@ -44,10 +44,10 @@ public class ZoomOutAction extends AbstractMapAction {
     public void actionPerformed(final ActionEvent arg0) {
         if (map != null ) {
             try {
-                map.getCanvas().getController().scale(0.5d);
+                map.getCanvas().scale(0.5d);
             } catch (NoninvertibleTransformException ex) {
                 getLogger().log(Level.WARNING, null, ex);
-            } 
+            }
         }
     }
 

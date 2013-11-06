@@ -27,8 +27,6 @@ import java.util.logging.Level;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRenderable;
 
-import org.geotoolkit.display.canvas.CanvasController2D;
-import org.geotoolkit.display.canvas.DefaultCanvasController2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
 import org.geotoolkit.factory.Hints;
@@ -52,14 +50,6 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
 
     private Envelope area = null;
 
-    private final CanvasController2D controller = new DefaultCanvasController2D(this){
-        @Override
-        public void setVisibleArea(Envelope env) throws NoninvertibleTransformException, TransformException {
-            super.setVisibleArea(env);
-            area = env;
-        }
-    };
-
     private Graphics2D g2d = null;
 
     public CanvasRenderer(final MapContext context){
@@ -70,6 +60,11 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
         super(DefaultGeographicCRS.WGS84,hints);
     }
 
+    @Override
+    public void setVisibleArea(Envelope env) throws NoninvertibleTransformException, TransformException {
+        super.setVisibleArea(env);
+        area = env;
+    }
 
     /**
      * {@inheritDoc }
@@ -86,14 +81,6 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
     public void dispose(){
         super.dispose();
         context2D.dispose();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public CanvasController2D getController() {
-        return controller;
     }
 
     /**
@@ -180,12 +167,12 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
      */
     @Override
     public void render(final Graphics2D g, final Rectangle2D rect) throws JRException {
-        double rotation = getController().getRotation();
+        double rotation = getRotation();
 
         setDisplayBounds(rect);
         try {
-            getController().setVisibleArea(area);
-            getController().setRotation(rotation);
+            setVisibleArea(area);
+            setRotation(rotation);
         } catch (NoninvertibleTransformException ex) {
             Logging.getLogger(CanvasRenderer.class).log(Level.WARNING, null, ex);
         } catch (TransformException ex) {

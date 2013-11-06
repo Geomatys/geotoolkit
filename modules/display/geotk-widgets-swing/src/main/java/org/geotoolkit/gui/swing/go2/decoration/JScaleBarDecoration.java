@@ -40,6 +40,7 @@ import org.geotoolkit.display2d.ext.scalebar.J2DScaleBarUtilities;
 import org.geotoolkit.display2d.ext.scalebar.ScaleBarTemplate;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Decoration displaying a scale bar
@@ -144,20 +145,24 @@ public class JScaleBarDecoration extends JComponent implements MapDecoration{
         final Graphics2D g2d = (Graphics2D) g;
 
         final double[] center;
+        final Point2D centerPoint;
+        final CoordinateReferenceSystem objCRS;
+        final CoordinateReferenceSystem dispCRS;
         try {
-            center = map.getCanvas().getController().getCenter().getCoordinate();
-        } catch (NoninvertibleTransformException ex) {
+            center = map.getCanvas().getObjectiveCenter().getCoordinate();
+            centerPoint = new Point2D.Double(center[0], center[1]);
+            objCRS = map.getCanvas().getObjectiveCRS();
+            dispCRS = map.getCanvas().getDisplayCRS();
+        } catch (NoninvertibleTransformException | TransformException ex) {
             Logger.getLogger(JScaleBarDecoration.class.getName()).log(Level.WARNING, null, ex);
             return;
         }
-        final Point2D centerPoint = new Point2D.Double(center[0], center[1]);
-        final CoordinateReferenceSystem objCRS = map.getCanvas().getObjectiveCRS();
-        final CoordinateReferenceSystem dispCRS = map.getCanvas().getDisplayCRS();
+
 
 
 
         if(mustUpdate ||!centerPoint.equals(lastCenter) || !dispCRS.equals(lastDisplayCRS) || !objCRS.equals(lastObjCRS) ){
-            
+
             Graphics2D bufferG = buffer.createGraphics();
             bufferG.setBackground(new Color(0f,0f,0f,0f));
             bufferG.clearRect(0, 0, buffer.getWidth(), buffer.getHeight());
@@ -195,7 +200,7 @@ public class JScaleBarDecoration extends JComponent implements MapDecoration{
         g2d.drawImage(buffer, scaleArea.x, scaleArea.y, null);
 
 
-        
+
 
 
     }

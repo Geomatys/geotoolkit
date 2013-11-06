@@ -70,7 +70,7 @@ public class JConfigDialog extends javax.swing.JDialog {
         }else{
             guiScaleActivate.setSelected(false);
         }
-        
+
 
         List<Unit> list = new ArrayList<Unit>();
         list.add(SI.METRE);
@@ -315,7 +315,7 @@ public class JConfigDialog extends javax.swing.JDialog {
             map.getCanvas().setBackgroundPainter(deco);
         }
 
-        map.getCanvas().getController().repaint();
+        map.getCanvas().repaint();
 
     }//GEN-LAST:event_colorApplyActionPerformed
 
@@ -328,7 +328,7 @@ public class JConfigDialog extends javax.swing.JDialog {
             crs = chooser.getCRS();
             guiCRS.setText(crs.getName().toString());
         }
-    
+
     }//GEN-LAST:event_choose
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

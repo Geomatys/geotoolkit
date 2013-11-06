@@ -46,7 +46,7 @@ public class GraphicDemo {
         final J2DCanvas canvas = jmap.getCanvas();
         jmap.getContainer().setContext(context);
         jmap.addDecoration(new JClassicNavigationDecoration(JClassicNavigationDecoration.THEME.CLASSIC));
-        jmap.getCanvas().getController().setVisibleArea(context.getBounds());
+        jmap.getCanvas().setVisibleArea(context.getBounds());
 
 
         //our custom graphic object
