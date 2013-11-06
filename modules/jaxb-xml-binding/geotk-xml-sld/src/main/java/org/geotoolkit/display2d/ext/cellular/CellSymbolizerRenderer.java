@@ -51,7 +51,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.apache.sis.math.Statistics;
-import org.geotoolkit.display2d.primitive.DefaultProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
@@ -132,7 +131,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         final SimpleFeature feature = new DefaultSimpleFeature(cellType, new DefaultFeatureId("cell-n"), values, false);
         final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(), null);
         params.update(renderingContext);
-        final DefaultProjectedFeature pf = new DefaultProjectedFeature(params,feature);
+        final ProjectedFeature pf = new ProjectedFeature(params,feature);
 
         //iterator on image
         final CellIterator ite = new CellIterator(image,decimateX,decimateY);

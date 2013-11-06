@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import org.geotoolkit.display2d.primitive.DefaultProjectedFeature;
 import java.awt.RenderingHints;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -193,7 +192,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             final RenderingContext2D renderingContext, final StatelessContextParams params) {
         final Hints iteHints = new Hints(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
         final FeatureIterator<? extends Feature> iterator = ((FeatureCollection)features).iterator(iteHints);
-        final DefaultProjectedFeature projectedFeature = new DefaultProjectedFeature(params);
+        final ProjectedFeature projectedFeature = new ProjectedFeature(params);
         return new GraphicIterator(iterator, projectedFeature);
     }
 
@@ -269,7 +268,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         //prepare the renderers
         final DefaultCachedRule preparedRenderers = new DefaultCachedRule(rules, renderingContext);
 
-        final DefaultProjectedFeature projectedFeature = new DefaultProjectedFeature(params);
+        final ProjectedFeature projectedFeature = new ProjectedFeature(params);
         try{
             while(iterator.hasNext()){
                 Feature feature = iterator.next();
@@ -284,7 +283,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
                         painted = true;
                         for(SymbolizerRenderer renderer : preparedRenderers.renderers[i]){
                             if(renderer.hit(projectedFeature, mask, visitFilter)){
-                                if(feature != null) graphics.add( new DefaultProjectedFeature(getCanvas(), layer, feature) );
+                                if(feature != null) graphics.add( new ProjectedFeature(getCanvas(), layer, feature) );
                                 break;
                             }
                         }
@@ -300,7 +299,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
                         if (ruleFilter == null || ruleFilter.evaluate(feature)) {
                             for(SymbolizerRenderer renderer : preparedRenderers.renderers[i]){
                                 if(renderer.hit(projectedFeature, mask, visitFilter)){
-                                    if(feature != null) graphics.add( new DefaultProjectedFeature(getCanvas(), layer, feature) );
+                                    if(feature != null) graphics.add( new ProjectedFeature(getCanvas(), layer, feature) );
                                     break;
                                 }
                             }
@@ -569,9 +568,9 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
     private static class GraphicIterator implements RenderingIterator{
 
         private final FeatureIterator<? extends Feature> ite;
-        private final DefaultProjectedFeature projected;
+        private final ProjectedFeature projected;
 
-        public GraphicIterator(final FeatureIterator<? extends Feature> ite, final DefaultProjectedFeature projected) {
+        public GraphicIterator(final FeatureIterator<? extends Feature> ite, final ProjectedFeature projected) {
             this.ite = ite;
             this.projected = projected;
         }

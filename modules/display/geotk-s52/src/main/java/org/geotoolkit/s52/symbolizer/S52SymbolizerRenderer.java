@@ -30,7 +30,7 @@ import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.DefaultProjectedFeature;
+import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.DefaultProjectedObject;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
@@ -104,7 +104,7 @@ public class S52SymbolizerRenderer extends AbstractSymbolizerRenderer<S52CachedS
             }
 
             //copy and cache the graphic
-            final DefaultProjectedFeature dpf = new DefaultProjectedFeature(
+            final ProjectedFeature dpf = new ProjectedFeature(
                     ((DefaultProjectedObject)element.graphic).getParameters(),element.feature);
             element.graphic = dpf;
 

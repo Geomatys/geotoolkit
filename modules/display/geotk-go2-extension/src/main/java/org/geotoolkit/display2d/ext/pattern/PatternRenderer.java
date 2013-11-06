@@ -30,13 +30,13 @@ import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.DefaultProjectedFeature;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
@@ -62,7 +62,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
     }
 
     /**
-     * minimum size of the blocks to use. 
+     * minimum size of the blocks to use.
      * Values between 1 and 3 give fair result.
      */
     private static final float MINIMUM_BLOCK_SIZE = 1.5f;
@@ -132,7 +132,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
         }
         GeometryTransformer trs = new GeometryCSTransformer(cstrs);
 
-        final DefaultProjectedFeature projectedFeature = new DefaultProjectedFeature(params);
+        final ProjectedFeature projectedFeature = new ProjectedFeature(params);
         try {
             for(final Map.Entry<SimpleFeature,List<CachedSymbolizer>> entry : features.entrySet()){
                 Feature f = entry.getKey();
