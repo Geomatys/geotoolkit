@@ -17,20 +17,141 @@
 package org.geotoolkit.display2d.primitive;
 
 import java.awt.Shape;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.display.shape.ProjectedShape;
+import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
+import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
+import org.geotoolkit.geometry.isoonjts.JTSUtils;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.Geometry;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * Convinient interface to manipulate geometry in the go2 engine.
+ * convenient class to manipulate geometry in the go2 engine.
  * The geometry may be asked in different format depending of the needs.
  * </br>
- * For exemple it is interesting to use the java2d shape for painting and the
+ * For example it is interesting to use the java2d shape for painting and the
  * ISO/JTS geometries for intersections tests.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface ProjectedGeometry  {
+public class ProjectedGeometry  {
+
+    private final StatelessContextParams params;
+    private MathTransform2D dataToObjective;
+    private MathTransform2D dataToDisplay;
+
+    //Geometry is data CRS
+    private com.vividsolutions.jts.geom.Geometry    dataGeometryJTS = null;
+    private Geometry                                dataGeometryISO = null;
+    private Shape                                   dataShape = null;
+
+    //Geometry in objective CRS
+    private com.vividsolutions.jts.geom.Geometry    objectiveGeometryJTS = null;
+    private Geometry                                objectiveGeometryISO = null;
+    private Shape                                   objectiveShape = null;
+
+    //Geometry in display CRS
+    private com.vividsolutions.jts.geom.Geometry    displayGeometryJTS = null;
+    private Geometry                                displayGeometryISO = null;
+    private Shape                                   displayShape = null;
+
+    private boolean geomSet = false;
+
+    private CoordinateReferenceSystem dataCRS = null;
+
+    public ProjectedGeometry(final StatelessContextParams params){
+        this.params = params;
+    }
+
+    public ProjectedGeometry(final ProjectedGeometry copy){
+        this.params = copy.params;
+        this.dataToObjective = copy.dataToObjective;
+        this.dataToDisplay = copy.dataToDisplay;
+        this.dataGeometryJTS = copy.dataGeometryJTS;
+        this.dataGeometryISO = copy.dataGeometryISO;
+        this.dataShape       = copy.dataShape;
+        this.objectiveGeometryJTS = copy.objectiveGeometryJTS;
+        this.objectiveGeometryISO = copy.objectiveGeometryISO;
+        this.objectiveShape       = copy.objectiveShape;
+        this.displayGeometryJTS = null;
+        this.displayGeometryISO = null;
+        this.displayShape       = null;
+        this.geomSet = copy.geomSet;
+    }
+
+    public void setDataGeometry(final com.vividsolutions.jts.geom.Geometry geom, CoordinateReferenceSystem dataCRS){
+        clearDataCache();
+        this.dataGeometryJTS = geom;
+        this.geomSet = this.dataGeometryJTS != null;
+
+        try {
+            if(dataCRS == null){
+                //try to extract data crs from geometry
+                dataCRS = JTS.findCoordinateReferenceSystem(geom);
+            }
+            if(dataCRS != null && this.dataCRS!=dataCRS){
+                this.dataCRS = dataCRS;
+                dataCRS = CRSUtilities.getCRS2D(dataCRS);
+                dataToObjective = (MathTransform2D) CRS.findMathTransform(dataCRS, params.context.getObjectiveCRS2D());
+                dataToDisplay = (MathTransform2D) CRS.findMathTransform(dataCRS, params.displayCRS);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ProjectedGeometry.class.getName()).log(Level.WARNING, null, ex);
+        }
+    }
+
+    public boolean isSet(){
+        return this.dataGeometryJTS != null;
+    }
+
+    public void clearAll(){
+        clearDataCache();
+    }
+
+    public void clearDataCache(){
+        clearObjectiveCache();
+        dataGeometryISO = null;
+        dataGeometryJTS = null;
+        dataShape = null;
+    }
+
+    public void clearObjectiveCache(){
+        clearDisplayCache();
+        objectiveGeometryISO = null;
+        objectiveGeometryJTS = null;
+        objectiveShape = null;
+    }
+
+    public void clearDisplayCache(){
+        displayGeometryISO = null;
+        displayGeometryJTS = null;
+        displayShape = null;
+    }
+
+    public Geometry getDataGeometryISO() {
+        return dataGeometryISO;
+    }
+
+    public com.vividsolutions.jts.geom.Geometry getDataGeometryJTS() {
+        return dataGeometryJTS;
+    }
+
+    public Shape getDataShape() {
+        if(dataShape == null && geomSet){
+            dataShape = new JTSGeometryJ2D(dataGeometryJTS);
+        }
+
+        return dataShape;
+    }
 
     /**
      * Get a JTS representation of the geometry in objective CRS.
@@ -38,7 +159,18 @@ public interface ProjectedGeometry  {
      * @return JTS Geometry
      * @throws TransformException if geometry could not be reprojected.
      */
-    com.vividsolutions.jts.geom.Geometry getObjectiveGeometryJTS() throws TransformException;
+    public com.vividsolutions.jts.geom.Geometry getObjectiveGeometryJTS() throws TransformException {
+        if(objectiveGeometryJTS == null && geomSet){
+            if(dataToObjective == null){
+                //we assume data and objective are in the same crs
+                objectiveGeometryJTS = dataGeometryJTS;
+            }else{
+                final GeometryCSTransformer transformer = new GeometryCSTransformer(new CoordinateSequenceMathTransformer(dataToObjective));
+                objectiveGeometryJTS = transformer.transform(getDataGeometryJTS());
+            }
+        }
+        return objectiveGeometryJTS;
+    }
 
     /**
      * Get a JTS representation of the geometry in display CRS.
@@ -46,7 +178,12 @@ public interface ProjectedGeometry  {
      * @return JTS Geometry
      * @throws TransformException if geometry could not be reprojected.
      */
-    com.vividsolutions.jts.geom.Geometry getDisplayGeometryJTS() throws TransformException;
+    public com.vividsolutions.jts.geom.Geometry getDisplayGeometryJTS() throws TransformException{
+        if(displayGeometryJTS == null && geomSet){
+            displayGeometryJTS = params.objToDisplayTransformer.transform(getObjectiveGeometryJTS());
+        }
+        return displayGeometryJTS;
+    }
 
     /**
      * Get a Java2D representation of the geometry in objective CRS.
@@ -54,7 +191,12 @@ public interface ProjectedGeometry  {
      * @return Java2D shape
      * @throws TransformException if geometry could not be reprojected.
      */
-    Shape getObjectiveShape() throws TransformException;
+    public Shape getObjectiveShape() throws TransformException{
+        if(objectiveShape == null && geomSet){
+            objectiveShape = ProjectedShape.wrap(getDataShape(), dataToObjective);
+        }
+        return objectiveShape;
+    }
 
     /**
      * Get a Java2D representation of the geometry in display CRS.
@@ -62,7 +204,12 @@ public interface ProjectedGeometry  {
      * @return Java2D shape
      * @throws TransformException if geometry could not be reprojected.
      */
-    Shape getDisplayShape() throws TransformException;
+    public Shape getDisplayShape() throws TransformException{
+        if(displayShape == null && geomSet){
+            displayShape = ProjectedShape.wrap(getDataShape(), dataToDisplay);
+        }
+        return displayShape;
+    }
 
     /**
      * Get an ISO representation of the geometry in objective CRS.
@@ -70,7 +217,12 @@ public interface ProjectedGeometry  {
      * @return ISO Geometry
      * @throws TransformException if geometry could not be reprojected.
      */
-    Geometry getObjectiveGeometry() throws TransformException;
+    public Geometry getObjectiveGeometry() throws TransformException {
+        if(objectiveGeometryISO == null && geomSet){
+            objectiveGeometryISO = JTSUtils.toISO(getObjectiveGeometryJTS(), params.objectiveCRS);
+        }
+        return objectiveGeometryISO;
+    }
 
     /**
      * Get a ISO representation of the geometry in display CRS.
@@ -78,6 +230,11 @@ public interface ProjectedGeometry  {
      * @return ISO Geometry
      * @throws TransformException if geometry could not be reprojected.
      */
-    Geometry getDisplayGeometry() throws TransformException;
+    public Geometry getDisplayGeometry() throws TransformException {
+        if(displayGeometryISO == null && geomSet){
+            displayGeometryISO = JTSUtils.toISO(getDisplayGeometryJTS(), params.displayCRS);
+        }
+        return displayGeometryISO;
+    }
 
 }

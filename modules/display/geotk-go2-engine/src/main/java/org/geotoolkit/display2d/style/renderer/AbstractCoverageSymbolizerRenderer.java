@@ -24,7 +24,6 @@ import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.DefaultProjectedCoverage;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
@@ -61,7 +60,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 final CoverageMapLayer ml = MapBuilder.createCoverageLayer((GridCoverage2D)obj, GO2Utilities.STYLE_FACTORY.style(), "");
                 final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
                 params.update(renderingContext);
-                final DefaultProjectedCoverage pc = new DefaultProjectedCoverage(params, ml);
+                final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
                 portray(pc);
             }
         }
@@ -77,13 +76,13 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
                 final CoverageMapLayer ml = MapBuilder.createCoverageLayer((GridCoverage2D)obj, GO2Utilities.STYLE_FACTORY.style(), "");
                 final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(),ml);
                 params.update(renderingContext);
-                final DefaultProjectedCoverage pc = new DefaultProjectedCoverage(params, ml);
+                final ProjectedCoverage pc = new ProjectedCoverage(params, ml);
                 return hit(pc,mask,filter);
             }
         }
         return false;
     }
-    
+
     /**
      * {@inheritDoc }
      */

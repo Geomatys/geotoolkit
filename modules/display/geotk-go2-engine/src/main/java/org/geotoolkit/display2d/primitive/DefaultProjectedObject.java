@@ -23,7 +23,6 @@ import java.util.logging.Level;
 import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
-import org.geotoolkit.display2d.container.stateless.DefaultProjectedGeometry;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
@@ -47,7 +46,7 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
     protected static final String DEFAULT_GEOM = "";
 
     protected final StatelessContextParams params;
-    protected final Map<String,DefaultProjectedGeometry> geometries =
+    protected final Map<String,ProjectedGeometry> geometries =
             new LinkedHashMap<>(); //linked hashmap is faster than hashmap on iteration.
     protected T candidate;
 
@@ -73,19 +72,19 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
     }
 
     public void clearDataCache(){
-        for(DefaultProjectedGeometry sg : geometries.values()){
+        for(ProjectedGeometry sg : geometries.values()){
             sg.clearAll();
         }
     }
 
     public void clearObjectiveCache(){
-        for(DefaultProjectedGeometry geom : geometries.values()){
+        for(ProjectedGeometry geom : geometries.values()){
             geom.clearObjectiveCache();
         }
     }
 
     public void clearDisplayCache(){
-        for(DefaultProjectedGeometry geom : geometries.values()){
+        for(ProjectedGeometry geom : geometries.values()){
             geom.clearDisplayCache();
         }
     }
@@ -94,9 +93,9 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
     public ProjectedGeometry getGeometry(String name) {
         if(name == null) name = DEFAULT_GEOM;
 
-        DefaultProjectedGeometry proj = geometries.get(name);
+        ProjectedGeometry proj = geometries.get(name);
         if(proj == null){
-            proj = new DefaultProjectedGeometry(params);
+            proj = new ProjectedGeometry(params);
             geometries.put(name, proj);
         }
 

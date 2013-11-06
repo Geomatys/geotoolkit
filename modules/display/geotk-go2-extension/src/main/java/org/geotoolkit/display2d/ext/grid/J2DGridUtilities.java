@@ -34,7 +34,6 @@ import org.geotoolkit.display.axis.NumberGraduation;
 import org.geotoolkit.display.axis.TickIterator;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.DefaultProjectedGeometry;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
 import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelDescriptor;
@@ -42,6 +41,7 @@ import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.display2d.style.labeling.LinearLabelDescriptor;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.Envelope;
@@ -57,7 +57,7 @@ import org.opengis.referencing.operation.MathTransform;
 public class J2DGridUtilities {
 
     private static final double MIN = 1e-6;
-    
+
     private J2DGridUtilities() {
     }
 
@@ -93,28 +93,28 @@ public class J2DGridUtilities {
         final RenderingHints tickHint = new RenderingHints(null);
         tickHint.put(Graduation.VISUAL_AXIS_LENGTH, context.getCanvasDisplayBounds().width);
         tickHint.put(Graduation.VISUAL_TICK_SPACING, 200);
-        
+
         //number of point by line
         final int nbPoint = 20;
-        
+
         final CoordinateReferenceSystem objectiveCRS = context.getObjectiveCRS2D();
         try{
             //reduce grid bounds to validity area
             Envelope gridBounds = CRS.transform(context.getCanvasObjectiveBounds2D(), gridCRS);
-            
+
             if(Math.abs(gridBounds.getSpan(0)) < MIN || Math.abs(gridBounds.getSpan(1)) < MIN ){
                 return;
             }
-            
-            
+
+
             Envelope validity = CRS.getEnvelope(gridCRS);
             if(validity != null){
                 GeneralEnvelope env = new GeneralEnvelope(gridBounds);
                 env.intersect(validity);
                 gridBounds = env;
             }
-            
-            
+
+
             final MathTransform gridToObj = CRS.findMathTransform(gridCRS, objectiveCRS, true);
             final MathTransform objToGrid = gridToObj.inverse();
 
@@ -143,8 +143,8 @@ public class J2DGridUtilities {
                 Geometry geom = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
                 if(geom == null) continue;
 
-                final StatelessContextParams params = new StatelessContextParams(null, null);            
-                final DefaultProjectedGeometry pg = new DefaultProjectedGeometry(params);
+                final StatelessContextParams params = new StatelessContextParams(null, null);
+                final ProjectedGeometry pg = new ProjectedGeometry(params);
                 params.update(context);
                 pg.setDataGeometry(geom, gridCRS);
 
@@ -155,16 +155,16 @@ public class J2DGridUtilities {
                 }else{
                     g.setPaint(template.getLinePaint());
                     g.setStroke(template.getLineStroke());
-                }                
+                }
                 g.draw(pg.getDisplayShape());
-                
-                
+
+
                 //clip geometry to avoid text outside visible area
                 geom = JTS.transform(geom, gridToObj);
                 if(geom == null) continue;
                 geom = geom.intersection(bounds);
                 pg.setDataGeometry(geom, objectiveCRS);
-                
+
                 //draw text
                 final LinearLabelDescriptor desc;
                 if(tickIte.isMajorTick()){
@@ -184,7 +184,7 @@ public class J2DGridUtilities {
                 }
                 layer.labels().add(desc);
 
-                
+
             }
 
             //grid on Y axis ---------------------------------------------------
@@ -210,8 +210,8 @@ public class J2DGridUtilities {
                 lineCoords.add(new Coordinate(Math.nextAfter(maxX,Double.NEGATIVE_INFINITY), d));
 
                 Geometry geom = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
-                final StatelessContextParams params = new StatelessContextParams(null, null);            
-                final DefaultProjectedGeometry pg = new DefaultProjectedGeometry(params);
+                final StatelessContextParams params = new StatelessContextParams(null, null);
+                final ProjectedGeometry pg = new ProjectedGeometry(params);
                 params.update(context);
                 pg.setDataGeometry(geom, gridCRS);
 
@@ -222,15 +222,15 @@ public class J2DGridUtilities {
                 }else{
                     g.setPaint(template.getLinePaint());
                     g.setStroke(template.getLineStroke());
-                }                
+                }
                 g.draw(pg.getDisplayShape());
-                
+
                 //clip geometry to avoid text outside visible area
                 geom = JTS.transform(geom, gridToObj);
                 if(geom == null) continue;
                 geom = geom.intersection(bounds);
                 pg.setDataGeometry(geom, objectiveCRS);
-                
+
                 //draw text
                 final LinearLabelDescriptor desc;
                 if(tickIte.isMajorTick()){

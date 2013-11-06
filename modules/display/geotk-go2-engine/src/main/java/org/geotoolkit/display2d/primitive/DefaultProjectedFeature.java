@@ -14,10 +14,20 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.container.stateless;
+package org.geotoolkit.display2d.primitive;
 
-import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
+import java.util.Collections;
+import java.util.logging.Level;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display2d.GO2Utilities;
+import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
+import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.DefaultProjectedObject;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
@@ -26,6 +36,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -39,23 +50,49 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class DefaultProjectedFeature extends DefaultProjectedObject<Feature> implements ProjectedFeature {
 
+    private final boolean fullFeature;
+
+    public DefaultProjectedFeature(final J2DCanvas canvas, final FeatureMapLayer layer, final Feature feature){
+        super(new StatelessContextParams(canvas,layer),feature);
+        final DefaultRenderingContext2D context = new DefaultRenderingContext2D(canvas);
+        canvas.prepareContext(context, null, null);
+        params.update(context);
+        fullFeature = true;
+
+    }
+
     public DefaultProjectedFeature(final StatelessContextParams<FeatureMapLayer> params){
         this(params,null);
     }
 
-    public DefaultProjectedFeature(final StatelessContextParams<FeatureMapLayer> params, 
+    public DefaultProjectedFeature(final StatelessContextParams<FeatureMapLayer> params,
             final Feature feature){
         super(params,feature);
+        fullFeature = false;
+    }
+
+    @Override
+    public Feature getCandidate(){
+        if(fullFeature){
+            try {
+                return getCompleteFeature(getFeatureId());
+            } catch (DataStoreException ex) {
+                Logging.getLogger(DefaultProjectedFeature.class).log(Level.WARNING, null, ex);
+            }
+        }
+
+        //worst case, return the partial feature
+        return candidate;
     }
 
     @Override
     public ProjectedGeometry getGeometry(String name) {
         if(name == null) name = DEFAULT_GEOM;
-        DefaultProjectedGeometry proj = geometries.get(name);
-        
+        ProjectedGeometry proj = geometries.get(name);
+
         CoordinateReferenceSystem dataCRS = null;
         if(proj == null){
-            
+
             final FeatureType featuretype = candidate.getType();
             final PropertyDescriptor prop;
             if (name != null && !name.trim().isEmpty()) {
@@ -68,17 +105,17 @@ public class DefaultProjectedFeature extends DefaultProjectedObject<Feature> imp
 
             if(prop != null){
                 dataCRS = ((GeometryDescriptor)prop).getCoordinateReferenceSystem();
-            } 
-            
-            proj = new DefaultProjectedGeometry(params);
+            }
+
+            proj = new ProjectedGeometry(params);
             geometries.put(name, proj);
         }
-        
+
         //check that the geometry is set
         if(!proj.isSet()){
             proj.setDataGeometry(GO2Utilities.getGeometry(candidate, name),dataCRS);
         }
-        
+
         return proj;
     }
 
@@ -90,6 +127,37 @@ public class DefaultProjectedFeature extends DefaultProjectedObject<Feature> imp
     @Override
     public FeatureId getFeatureId() {
         return candidate.getIdentifier();
+    }
+
+    private Feature getCompleteFeature(final FeatureId id)throws DataStoreException{
+
+        final FeatureMapLayer fml = (FeatureMapLayer) params.layer;
+        if(fml != null){
+            final Filter filter = FILTER_FACTORY.id(Collections.singleton(id));
+            Feature feature = null;
+
+            final FeatureCollection<? extends Feature> collection =
+                    fml.getCollection().subCollection(
+                    QueryBuilder.filtered(fml.getCollection().getFeatureType().getName(), filter));
+
+            if(!collection.isEmpty()){
+                final FeatureIterator<? extends Feature> ite = collection.iterator();
+                if(ite.hasNext()){
+                    feature = ite.next();
+                }
+                ite.close();
+            }
+
+            if(feature == null){
+                //worst case, return the partial feature
+                return this.candidate;
+            }
+
+            return feature;
+        }else{
+            //worst case, return the partial feature
+            return candidate;
+        }
     }
 
 }

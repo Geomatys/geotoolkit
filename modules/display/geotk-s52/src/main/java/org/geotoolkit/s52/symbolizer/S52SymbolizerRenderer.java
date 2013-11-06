@@ -30,7 +30,7 @@ import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.DefaultProjectedFeature;
+import org.geotoolkit.display2d.primitive.DefaultProjectedFeature;
 import org.geotoolkit.display2d.primitive.DefaultProjectedObject;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedObject;

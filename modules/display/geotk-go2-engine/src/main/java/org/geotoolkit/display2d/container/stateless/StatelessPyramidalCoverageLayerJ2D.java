@@ -393,7 +393,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
 
 
         final CoverageMapLayer tilelayer = MapBuilder.createCoverageLayer(coverage, getUserObject().getStyle(), "");
-        final ProjectedCoverage projectedCoverage = new DefaultProjectedCoverage(params, tilelayer);
+        final ProjectedCoverage projectedCoverage = new ProjectedCoverage(params, tilelayer);
         for(final CachedRule rule : rules){
             for(final CachedSymbolizer symbol : rule.symbolizers()){
                 try {

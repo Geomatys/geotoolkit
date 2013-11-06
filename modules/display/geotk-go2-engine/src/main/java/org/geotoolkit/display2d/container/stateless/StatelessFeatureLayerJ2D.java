@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
+import org.geotoolkit.display2d.primitive.DefaultProjectedFeature;
 import java.awt.RenderingHints;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,7 +48,6 @@ import static org.geotoolkit.display2d.GO2Utilities.*;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessCollectionLayerJ2D.RenderingIterator;
-import org.geotoolkit.display2d.primitive.DefaultGraphicFeatureJ2D;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
@@ -284,7 +284,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
                         painted = true;
                         for(SymbolizerRenderer renderer : preparedRenderers.renderers[i]){
                             if(renderer.hit(projectedFeature, mask, visitFilter)){
-                                if(feature != null) graphics.add( new DefaultGraphicFeatureJ2D(getCanvas(), layer, feature) );
+                                if(feature != null) graphics.add( new DefaultProjectedFeature(getCanvas(), layer, feature) );
                                 break;
                             }
                         }
@@ -300,7 +300,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
                         if (ruleFilter == null || ruleFilter.evaluate(feature)) {
                             for(SymbolizerRenderer renderer : preparedRenderers.renderers[i]){
                                 if(renderer.hit(projectedFeature, mask, visitFilter)){
-                                    if(feature != null) graphics.add( new DefaultGraphicFeatureJ2D(getCanvas(), layer, feature) );
+                                    if(feature != null) graphics.add( new DefaultProjectedFeature(getCanvas(), layer, feature) );
                                     break;
                                 }
                             }

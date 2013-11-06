@@ -27,7 +27,7 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultCachedRule {
+public final class DefaultCachedRule {
 
     public final CachedRule[] rules;
     public final SymbolizerRenderer renderers[][];
@@ -52,6 +52,8 @@ public class DefaultCachedRule {
 
     /**
      * sort the rules, isolate the else rules, they must be handle differently
+     * @param sortedRules
+     * @return
      */
     public static int sortByElseRule(final CachedRule[] sortedRules){
         int elseRuleIndex = sortedRules.length;

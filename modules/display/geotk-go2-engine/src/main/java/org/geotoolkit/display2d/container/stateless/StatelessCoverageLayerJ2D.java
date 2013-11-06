@@ -37,6 +37,7 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
@@ -57,7 +58,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
 
     protected CoverageStoreListener.Weak weakStoreListener = new CoverageStoreListener.Weak(this);
 
-    private final DefaultProjectedCoverage projectedCoverage;
+    private final ProjectedCoverage projectedCoverage;
     private final boolean ignoreBuilders;
 
     //compare values to update caches if necessary
@@ -72,7 +73,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
         super(canvas, layer, false);
         this.ignoreBuilders = ignoreBuilders;
         this.params = new StatelessContextParams(canvas,null);
-        this.projectedCoverage = new DefaultProjectedCoverage(params, layer);
+        this.projectedCoverage = new ProjectedCoverage(params, layer);
         this.weakStoreListener.registerSource(layer.getCoverageReference());
     }
 

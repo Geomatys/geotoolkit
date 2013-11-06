@@ -23,7 +23,6 @@ import java.awt.geom.AffineTransform;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.DefaultProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
@@ -73,7 +72,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
         //test if the symbol is visible on this feature
         if(symbol.isVisible(candidate)){
-            
+
             //we adjust coefficient for rendering ------------------------------
             float coeff = 1;
             if(dispGeom){
@@ -116,14 +115,14 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             //symbolizer doesnt match the featuretype, no geometry found with this name.
             if(projectedGeometry == null) return;
 
-            projectedGeometry = new DefaultProjectedGeometry((DefaultProjectedGeometry)projectedGeometry);
+            projectedGeometry = new ProjectedGeometry(projectedGeometry);
 
             portray(projectedGeometry, renderingContext, projectedFeature, placement, haloWidth, haloPaint, fontPaint, j2dFont, label);
         }
 
     }
 
-    private void portray(final ProjectedGeometry projectedGeometry, final RenderingContext2D context, 
+    private void portray(final ProjectedGeometry projectedGeometry, final RenderingContext2D context,
             final ProjectedObject projectedFeature, final CachedLabelPlacement placement,
             final float haloWidth, final Paint haloPaint, final Paint fontPaint, final Font j2dFont,
             final String label) throws PortrayalException{
@@ -141,7 +140,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
         if(placement instanceof CachedPointPlacement){
             final CachedPointPlacement pp = (CachedPointPlacement) placement;
-            
+
             final float[] anchor = pp.getAnchor(feature, null);
             final float[] disp = pp.getDisplacement(feature,null);
             final float rotation = pp.getRotation(feature);

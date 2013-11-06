@@ -46,12 +46,12 @@ import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.DefaultProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.gui.swing.go2.control.information.presenter.AbstractInformationPresenter;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.wms.WMSCoverageReference;
 import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
@@ -80,11 +80,11 @@ public class WMSPresenter extends AbstractInformationPresenter{
     public JComponent createComponent(final Object graphic,
             final RenderingContext2D context, final SearchAreaJ2D area) {
 
-        if (!(graphic instanceof DefaultProjectedCoverage)) {
+        if (!(graphic instanceof ProjectedCoverage)) {
             return null;
         }
 
-        final DefaultProjectedCoverage graCoverage = (DefaultProjectedCoverage) graphic;
+        final ProjectedCoverage graCoverage = (ProjectedCoverage) graphic;
         final CoverageMapLayer layer = graCoverage.getLayer();
 
         if(!(layer.getCoverageReference() instanceof WMSCoverageReference)){

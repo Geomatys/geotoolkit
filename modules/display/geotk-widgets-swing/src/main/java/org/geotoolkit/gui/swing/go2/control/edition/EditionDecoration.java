@@ -39,7 +39,6 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
-import org.geotoolkit.display2d.container.stateless.DefaultProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.gui.swing.go2.control.edition.EditionHelper.EditionGeometry;
 import org.geotoolkit.gui.swing.go2.decoration.AbstractGeometryDecoration;
@@ -94,9 +93,9 @@ public final class EditionDecoration extends AbstractGeometryDecoration {
 
         if(nodeSelection.numHole < 0){
             final Coordinate coord = geo.getCoordinates()[nodeSelection.selectedNode[0]];
-            
-            final StatelessContextParams params = new StatelessContextParams(null, null);            
-            final DefaultProjectedGeometry projected = new DefaultProjectedGeometry(params);
+
+            final StatelessContextParams params = new StatelessContextParams(null, null);
+            final ProjectedGeometry projected = new ProjectedGeometry(params);
             params.update(context);
             projected.setDataGeometry(new GeometryFactory().createPoint(coord), null);
             try {

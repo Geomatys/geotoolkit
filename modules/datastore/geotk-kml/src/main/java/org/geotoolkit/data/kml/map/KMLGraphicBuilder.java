@@ -79,7 +79,6 @@ import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
-import org.geotoolkit.display2d.container.stateless.DefaultProjectedGeometry;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
@@ -96,6 +95,7 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display.SearchArea;
 import org.geotoolkit.display.VisitFilter;
 import org.geotoolkit.display.canvas.Canvas;
+import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
@@ -652,7 +652,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             } catch (IOException ex) {
                 Logger.getLogger(KmlMapLayer.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             cache.styles.clear();
             cache.styleMaps.clear();
         }
@@ -1332,9 +1332,9 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
 
                     final StatelessContextParams params = new StatelessContextParams(null, null);
                     params.update(context2d);
-                    final DefaultProjectedGeometry projectedGeometry = new DefaultProjectedGeometry(params);
+                    final ProjectedGeometry projectedGeometry = new ProjectedGeometry(params);
                     projectedGeometry.setDataGeometry(geom, null);
-                    
+
                     final LabelLayer labelLayer = new DefaultLabelLayer(false, false);
                     //                Paint textPaint;
                     //                textPaint.
@@ -1415,6 +1415,6 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         public Envelope getEnvelope() {
             return null;
         }
-        
+
     }
 }
