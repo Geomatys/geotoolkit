@@ -28,14 +28,13 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.Threads;
-import org.opengis.display.canvas.RenderingState;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 /**
  * Canvas based on a VolatileImage.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -51,14 +50,14 @@ public class J2DCanvasVolatile extends J2DCanvas{
     private final Object LOCK = new Object();
 
     private final Area dirtyArea = new Area();
-    
+
     public J2DCanvasVolatile(final CoordinateReferenceSystem crs, final Dimension dim){
         this(crs,dim,null);
     }
-    
+
     public J2DCanvasVolatile(final CoordinateReferenceSystem crs, final Dimension dim, final Hints hints){
         super(crs,hints);
-        
+
         //we might not know our dimension until it is painted by a swing component for exemple.
         if(dim != null){
             setDisplayBounds(new Rectangle(dim));
@@ -107,7 +106,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
             if(dim.width<=0)dim.width=1;
             if(dim.height<=0)dim.height=1;
         }
-        
+
         this.dim = dim;
         setDisplayBounds(new Rectangle(dim));
         buffer0 = null;
@@ -129,7 +128,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
     public CanvasController2D getController() {
         return controller;
     }
-    
+
     private void render(Shape paintingDisplayShape){
 
         if(paintingDisplayShape == null) paintingDisplayShape = getDisplayBounds();
@@ -197,7 +196,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
         }
 
         monitor.renderingStarted();
-        fireRenderingStateChanged(RenderingState.RENDERING);
+        fireRenderingStateChanged(RENDERING);
 
         try{
             final GraphicContainer container = getContainer();
@@ -208,13 +207,13 @@ public class J2DCanvasVolatile extends J2DCanvas{
             //volatile canvas must never lock itself.
             monitor.exceptionOccured(ex, Level.WARNING);
         }
-        
+
         //End painting
         output.dispose();
-        fireRenderingStateChanged(RenderingState.ON_HOLD);
+        fireRenderingStateChanged(ON_HOLD);
         monitor.renderingFinished();
     }
-        
+
     @Override
     public Image getSnapShot(){
         if(buffer0 != null){
@@ -233,7 +232,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
     public synchronized void repaint(final Shape displayArea) {
         //finish any previous painting
         getMonitor().stopRendering();
-        
+
         this.dirtyArea.add(new Area(displayArea));
         mustupdate = true;
         Threads.executeWork(drawtask);

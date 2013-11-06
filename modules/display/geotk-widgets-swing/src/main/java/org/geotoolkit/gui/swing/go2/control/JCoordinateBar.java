@@ -62,7 +62,6 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.jdesktop.swingx.JXBusyLabel;
 
-import org.opengis.display.canvas.RenderingState;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -334,20 +333,20 @@ public class JCoordinateBar extends AbstractMapControlBar {
         constraints.weightx = 1;
         constraints.gridx = x++;
         bottom.add(guiCoord,constraints);
-        
+
         constraints.weightx = 0.5;
         constraints.gridx = x++;
         bottom.add(guiCombo,constraints);
-        
+
         constraints.weightx = 0;
         constraints.gridx = x++;
         bottom.add(guiCRS,constraints);
-        
+
         constraints.gridx = x++;
         bottom.add(guiPainting,constraints);
 
         setMap(candidate);
-        
+
         paneElev.setVisible(false);
         paneTemp.setVisible(false);
         horizontalSplit.setDividerSize(2);
@@ -356,7 +355,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
         verticalSplit.setTopComponent(horizontalSplit);
         verticalSplit.setBottomComponent(paneTemp);
     }
-    
+
     private Container baseMapContainer;
     private Component baseMapComponent;
 
@@ -366,7 +365,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
          guiCombo.setMap(map);
          guiTimeLine.setMap(map);
          guiAdditional.setMap(map);
-         
+
         if(baseMapContainer != null){
             horizontalSplit.remove(baseMapComponent);
             baseMapContainer.remove(verticalSplit);
@@ -374,19 +373,19 @@ public class JCoordinateBar extends AbstractMapControlBar {
             baseMapComponent.removeMouseMotionListener(listener);
             this.map.getCanvas().removePropertyChangeListener(listener);
         }
-        
+
          this.map = map;
          guiCRS.setMap(this.map);
-         
+
          if(this.map != null){
             baseMapContainer = map.getUIContainer();
             baseMapComponent = map.getComponent(0);
             baseMapComponent.addMouseMotionListener(listener);
             this.map.getCanvas().addPropertyChangeListener(listener);
             map.getCanvas().addPropertyChangeListener(listener);
- 
+
             baseMapContainer.remove(baseMapComponent);
- 
+
 
             horizontalSplit.setRightComponent(baseMapComponent);
             //multiSplitPane.setDividerSize(2);
@@ -396,7 +395,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
             final CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
             guiCRS.setText(crs.getName().toString());
         }
-        
+
         guiCRS.setEnabled(this.map != null);
      }
 
@@ -439,7 +438,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
             }
 
             final CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
-            
+
             final StringBuilder sb = new StringBuilder("  ");
             sb.append(crs.getCoordinateSystem().getAxis(0).getAbbreviation());
             sb.append(" : ");
@@ -457,10 +456,10 @@ public class JCoordinateBar extends AbstractMapControlBar {
                 CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
                 guiCRS.setText(crs.getName().toString());
             }else if(AbstractCanvas.RENDERSTATE_KEY.equals(arg0.getPropertyName())){
-                final RenderingState state = (RenderingState) arg0.getNewValue();
-                if(RenderingState.ON_HOLD.equals(state)){
+                final Object state = arg0.getNewValue();
+                if(AbstractCanvas.ON_HOLD.equals(state)){
                     guiPainting.setBusy(false);
-                }else if(RenderingState.RENDERING.equals(state)){
+                }else if(AbstractCanvas.RENDERING.equals(state)){
                     guiPainting.setBusy(true);
                 }else{
                     guiPainting.setBusy(false);

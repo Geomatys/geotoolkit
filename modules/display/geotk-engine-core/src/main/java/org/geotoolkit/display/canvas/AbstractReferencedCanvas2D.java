@@ -42,7 +42,6 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.Classes;
-import org.opengis.display.canvas.CanvasController;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.DerivedCRS;
@@ -123,6 +122,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas{
         displayBounds.setRect(rect);
     }
 
+    @Override
     public abstract CanvasController2D getController();
 
     public final synchronized void setObjectiveCRS(final CoordinateReferenceSystem objective) throws TransformException {

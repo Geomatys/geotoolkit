@@ -45,7 +45,6 @@ import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.visitor.ListingColorVisitor;
-import org.opengis.display.canvas.RenderingState;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -103,7 +102,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
     public void repaint(final Shape displayArea) {
         //finish any previous painting
         getMonitor().stopRendering();
-        
+
         final Dimension dim = getSize();
 
         if(buffer == null){
@@ -117,7 +116,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
         }
 
         monitor.renderingStarted();
-        fireRenderingStateChanged(RenderingState.RENDERING);
+        fireRenderingStateChanged(RENDERING);
 
         final Graphics2D output = (Graphics2D) buffer.getGraphics();
 
@@ -154,7 +153,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
          * End painting, erase dirtyArea
          */
         output.dispose();
-        fireRenderingStateChanged(RenderingState.ON_HOLD);
+        fireRenderingStateChanged(ON_HOLD);
         monitor.renderingFinished();
     }
 
@@ -235,7 +234,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
     }
 
     private static BufferedImage createBufferedImage(final Dimension dim, final Set<Integer> colors){
-        
+
         if(colors.size() <= 1){
             //in case no colors where used after all filters.
             //icm must have at least 2 values
@@ -301,7 +300,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
             }else{
                 buffer = extractColors(child, buffer);
             }
-            
+
             if(buffer == null){
                 //unpredictable colors
                 return buffer;

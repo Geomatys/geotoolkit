@@ -16,14 +16,12 @@
  */
 package org.geotoolkit.display.canvas;
 
-import org.geotoolkit.display.DisplayElement;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.canvas.control.FailOnErrorMonitor;
 import org.geotoolkit.factory.Hints;
 
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.opengis.display.canvas.RenderingState;
 
 /**
  * Manages the display and user manipulation of {@link Graphic} instances. A newly constructed
@@ -66,6 +64,8 @@ public abstract class AbstractCanvas<T extends GraphicContainer> extends Canvas 
      * {@linkplain AbstractCanvas#getRenderState canvas state} changed.
      */
     public static final String RENDERSTATE_KEY = "renderstate";
+    public static final Boolean ON_HOLD = Boolean.FALSE;
+    public static final Boolean RENDERING = Boolean.TRUE;
 
     /**
      * Small number for floating point compare.
@@ -82,8 +82,6 @@ public abstract class AbstractCanvas<T extends GraphicContainer> extends Canvas 
      */
     protected CanvasMonitor monitor = new FailOnErrorMonitor();
 
-    private RenderingState renderState = null;
-    
     /**
      * Creates an initial empty canvas.
      *
@@ -108,11 +106,6 @@ public abstract class AbstractCanvas<T extends GraphicContainer> extends Canvas 
         return container;
     }
 
-    public RenderingState getRenderState() {
-        return renderState;
-    }
-
-    
     /**
      * Returns the monitor assigned to this {@code Canvas}, it can not be null.
      *
@@ -175,10 +168,8 @@ public abstract class AbstractCanvas<T extends GraphicContainer> extends Canvas 
 
     //--------------Canvas Listeners convinient methods-------------------------
 
-    protected void fireRenderingStateChanged(final RenderingState state){
-        final RenderingState old = renderState;
-        renderState = state;
-        firePropertyChange(RENDERSTATE_KEY, old, state);
+    protected void fireRenderingStateChanged(final boolean newState){
+        firePropertyChange(RENDERSTATE_KEY, !newState, newState);
     }
 
 }

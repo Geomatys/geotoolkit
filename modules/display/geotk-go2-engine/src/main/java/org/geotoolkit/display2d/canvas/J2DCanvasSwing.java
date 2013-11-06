@@ -31,7 +31,6 @@ import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.DefaultCanvasController2D;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.factory.Hints;
-import org.opengis.display.canvas.RenderingState;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -119,7 +118,7 @@ public class J2DCanvasSwing extends J2DCanvas{
         final Dimension dim = component.getSize();
 
         monitor.renderingStarted();
-        fireRenderingStateChanged(RenderingState.RENDERING);
+        fireRenderingStateChanged(RENDERING);
 
 
         Rectangle clipBounds = output.getClipBounds();
@@ -154,7 +153,7 @@ public class J2DCanvasSwing extends J2DCanvas{
         /**
          * End painting, erase dirtyArea
          */
-        fireRenderingStateChanged(RenderingState.ON_HOLD);
+        fireRenderingStateChanged(ON_HOLD);
         monitor.renderingFinished();
     }
 

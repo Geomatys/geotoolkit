@@ -37,13 +37,12 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.container.GraphicContainer;
 
-import org.opengis.display.canvas.RenderingState;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 /**
  * Special canvas used to render maps in JasperReport templates.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -62,16 +61,16 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
     };
 
     private Graphics2D g2d = null;
-    
+
     public CanvasRenderer(final MapContext context){
         super(context.getCoordinateReferenceSystem(),null);
     }
-    
+
     private CanvasRenderer( final Hints hints){
         super(DefaultGeographicCRS.WGS84,hints);
     }
 
-    
+
     /**
      * {@inheritDoc }
      */
@@ -96,14 +95,14 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
     public CanvasController2D getController() {
         return controller;
     }
-        
+
     /**
      * {@inheritDoc }
      */
     @Override
     public void repaint(final Shape area) {
         monitor.renderingStarted();
-        fireRenderingStateChanged(RenderingState.RENDERING);
+        fireRenderingStateChanged(RENDERING);
 
         final Graphics2D output = g2d;
         output.addRenderingHints(getHints(true));
@@ -124,10 +123,10 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
          * End painting, erase dirtyArea
          */
         output.dispose();
-        fireRenderingStateChanged(RenderingState.ON_HOLD);
+        fireRenderingStateChanged(ON_HOLD);
         monitor.renderingFinished();
     }
-     
+
     /**
      * {@inheritDoc }
      */
@@ -151,7 +150,7 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
     public byte getType() {
         return TYPE_SVG;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -192,7 +191,7 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
         } catch (TransformException ex) {
             Logging.getLogger(CanvasRenderer.class).log(Level.WARNING, null, ex);
         }
-        
+
         g2d = (Graphics2D) g.create();
         g2d.clip(rect);
         g2d.translate(rect.getMinX(), rect.getMinY());
@@ -200,5 +199,5 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
         g2d = new PDFFixGraphics2D(g2d);
         repaint();
     }
-    
+
 }

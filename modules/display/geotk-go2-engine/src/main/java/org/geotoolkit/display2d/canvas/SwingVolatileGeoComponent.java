@@ -33,9 +33,6 @@ import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.opengis.display.canvas.CanvasEvent;
-import org.opengis.display.canvas.CanvasListener;
-import org.opengis.display.canvas.RenderingState;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 
@@ -57,7 +54,7 @@ public class SwingVolatileGeoComponent extends JComponent{
         /** Invoked when the component's size changes. */
         @Override
         public void componentResized(final ComponentEvent event) {
-            synchronized (SwingVolatileGeoComponent.this) {                
+            synchronized (SwingVolatileGeoComponent.this) {
                 canvas.resize(SwingVolatileGeoComponent.this.getSize());
             }
         }
@@ -72,7 +69,7 @@ public class SwingVolatileGeoComponent extends JComponent{
                 repaint();
             }
         });
-        
+
         canvas = new J2DCanvasVolatile(crs,null);
         canvas.addPropertyChangeListener(new PropertyChangeListener() {
 
@@ -81,14 +78,14 @@ public class SwingVolatileGeoComponent extends JComponent{
                 if(!AbstractCanvas.RENDERSTATE_KEY.equals(evt.getPropertyName())){
                     return;
                 }
-                
-                final RenderingState state = (RenderingState) evt.getNewValue();
-                
-                if(RenderingState.RENDERING.equals(state)){
+
+                final Object state = (Object) evt.getNewValue();
+
+                if(AbstractCanvas.RENDERING.equals(state)){
                     timer.start();
                 }else{
                     final Object val = canvas.getRenderingHint(GO2Hints.KEY_BEHAVIOR_MODE);
-                    
+
                     if(GO2Hints.BEHAVIOR_KEEP_TILE.equals(val) || GO2Hints.BEHAVIOR_ON_FINISH.equals(val)){
                         //create a buffer only if it was a successful paint
                         //otherwise reuse previous buffer
@@ -112,7 +109,7 @@ public class SwingVolatileGeoComponent extends JComponent{
                     }else{
                         coverage = null;
                     }
-                    
+
                     timer.stop();
                     repaint();
                 }
@@ -128,18 +125,18 @@ public class SwingVolatileGeoComponent extends JComponent{
 
     @Override
     public void paintComponent(final Graphics g) {
-        
+
         final Object val = canvas.getRenderingHint(GO2Hints.KEY_BEHAVIOR_MODE);
-                    
+
         if(val == null || GO2Hints.BEHAVIOR_PROGRESSIVE.equals(val) || GO2Hints.BEHAVIOR_KEEP_TILE.equals(val)){
             //progressive repaint
             final Image img = canvas.getVolatile();
             if (img != null) {
                 g.drawImage(img, 0, 0, this);
             }
-            
+
         }
-        
+
         if (GO2Hints.BEHAVIOR_KEEP_TILE.equals(val) || GO2Hints.BEHAVIOR_ON_FINISH.equals(val)) {
             if (coverage != null) {
                 //we want to render as if we where on the canvas
@@ -152,7 +149,7 @@ public class SwingVolatileGeoComponent extends JComponent{
                 }
             }
         }
-        
+
     }
 
 }

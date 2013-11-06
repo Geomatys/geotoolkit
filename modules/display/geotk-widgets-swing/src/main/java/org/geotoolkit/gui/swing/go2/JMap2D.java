@@ -44,7 +44,6 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.canvas.AbstractCanvas;
-import org.opengis.display.canvas.RenderingState;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -61,7 +60,7 @@ public class JMap2D extends JPanel{
     public static final String HANDLER_PROPERTY = "handler";
     private static final MapDecoration[] EMPTY_OVERLAYER_ARRAY = {};
     private static final Logger LOGGER = Logging.getLogger(JMap2D.class);
-    
+
     private CanvasHandler handler;
     private final J2DCanvas canvas;
     private final JComponent geoComponent;
@@ -105,7 +104,7 @@ public class JMap2D extends JPanel{
             canvas = ((SwingVolatileGeoComponent)geoComponent).getCanvas();
         }
         canvas.setMonitor(new NeverFailMonitor());
-        
+
 
         mapDecorationPane.add(geoComponent, Integer.valueOf(0));
         mapDecorationPane.revalidate();
@@ -126,10 +125,10 @@ public class JMap2D extends JPanel{
                 }
 
                 if(AbstractCanvas.RENDERSTATE_KEY.equals(evt.getPropertyName())){
-                    final RenderingState state = (RenderingState) evt.getNewValue();
-                    if(RenderingState.ON_HOLD.equals(state)){
+                    final Object state = evt.getNewValue();
+                    if(AbstractCanvas.ON_HOLD.equals(state)){
                         getInformationDecoration().setPaintingIconVisible(false);
-                    }else if(RenderingState.RENDERING.equals(state)){
+                    }else if(AbstractCanvas.RENDERING.equals(state)){
                         getInformationDecoration().setPaintingIconVisible(true);
                     }else{
                         getInformationDecoration().setPaintingIconVisible(false);
@@ -143,7 +142,7 @@ public class JMap2D extends JPanel{
         } catch (TransformException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }
-                
+
     }
 
     /**
@@ -156,7 +155,7 @@ public class JMap2D extends JPanel{
     public ContextContainer2D getContainer(){
         return (ContextContainer2D) canvas.getContainer();
     }
-    
+
     /**
      * Must be called when the map2d is not used anymore.
      * to avoid memory leak if it uses thread or other resources
@@ -164,7 +163,7 @@ public class JMap2D extends JPanel{
     public void dispose() {
         canvas.dispose();
     }
-    
+
     public CanvasHandler getHandler(){
         return handler;
     }
