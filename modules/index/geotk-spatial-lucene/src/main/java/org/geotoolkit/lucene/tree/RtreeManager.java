@@ -72,21 +72,23 @@ public class RtreeManager {
     }
 
     private static Tree buildNewTree(final File directory) {
-        try {
-            final CoordinateReferenceSystem crs = CRS.decode("CRS:84");
-            //creating tree (R-Tree)------------------------------------------------
-            final File treeFile   = new File(directory, "tree.bin");
-            final File mapperFile = new File(directory, "mapper.bin");
-            treeFile.createNewFile();
-            mapperFile.createNewFile();
-            return new FileStarRTree(treeFile, 5, crs, new LuceneFileTreeEltMapper(crs, mapperFile));
+        if (directory.exists()) {
+            try {
+                final CoordinateReferenceSystem crs = CRS.decode("CRS:84");
+                //creating tree (R-Tree)------------------------------------------------
+                final File treeFile   = new File(directory, "tree.bin");
+                final File mapperFile = new File(directory, "mapper.bin");
+                treeFile.createNewFile();
+                mapperFile.createNewFile();
+                return new FileStarRTree(treeFile, 5, crs, new LuceneFileTreeEltMapper(crs, mapperFile));
 
-        } catch (FactoryException ex) {
-            LOGGER.log(Level.WARNING, "Unable to get the CRS:84 CRS", ex);
-        } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "Unable to create file to write Tree", ex);
-        } catch (org.geotoolkit.index.tree.StoreIndexException ex) {
-            LOGGER.log(Level.WARNING, "Unable to create Tree", ex);
+            } catch (FactoryException ex) {
+                LOGGER.log(Level.WARNING, "Unable to get the CRS:84 CRS", ex);
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, "Unable to create file to write Tree", ex);
+            } catch (org.geotoolkit.index.tree.StoreIndexException ex) {
+                LOGGER.log(Level.WARNING, "Unable to create Tree", ex);
+            }
         }
         return null;
     }
