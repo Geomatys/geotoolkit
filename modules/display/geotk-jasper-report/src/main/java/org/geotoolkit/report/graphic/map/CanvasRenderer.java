@@ -28,7 +28,7 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRenderable;
 
 import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -94,7 +94,7 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
         final Graphics2D output = g2d;
         output.addRenderingHints(getHints(true));
 
-        final DefaultRenderingContext2D context = prepareContext(context2D, output,null);
+        final RenderingContext2D context = prepareContext(context2D, output,null);
 
         //paint background if there is one.
         if(painter != null){

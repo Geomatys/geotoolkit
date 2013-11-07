@@ -25,7 +25,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
-import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import static org.geotoolkit.display2d.primitive.DefaultProjectedObject.DEFAULT_GEOM;
@@ -53,7 +53,7 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
 
     public ProjectedFeature(final J2DCanvas canvas, final FeatureMapLayer layer, final Feature feature){
         super(new StatelessContextParams(canvas,layer),feature);
-        final DefaultRenderingContext2D context = new DefaultRenderingContext2D(canvas);
+        final RenderingContext2D context = new RenderingContext2D(canvas);
         canvas.prepareContext(context, null, null);
         params.update(context);
         fullFeature = true;

@@ -130,7 +130,7 @@ public class J2DCanvasSwing extends J2DCanvas{
         output.setClip(clipBounds);
         output.addRenderingHints(getHints(true));
 
-        final DefaultRenderingContext2D context = prepareContext(context2D, output,null);
+        final RenderingContext2D context = prepareContext(context2D, output,null);
 
         //paint background if there is one.
         if(painter != null){

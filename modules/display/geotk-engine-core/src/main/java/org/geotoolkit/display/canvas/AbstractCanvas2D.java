@@ -148,7 +148,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
 
     public void setObjectiveCRS(final CoordinateReferenceSystem crs) throws TransformException{
         ArgumentChecks.ensureNonNull("Objective CRS", crs);
-        if(CRS.equalsIgnoreMetadata(envelope.getCoordinateReferenceSystem(), crs)){
+        if(CRS.equalsIgnoreMetadata(objectiveCRS, crs)){
             return;
         }
 

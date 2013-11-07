@@ -35,7 +35,6 @@ import javax.swing.JPanel;
 
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
-import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
@@ -55,8 +54,8 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
 
     private static final Logger LOGGER = Logging.getLogger(AbstractGeometryDecoration.class);
 
-    protected final List<Geometry> geometries = new ArrayList<Geometry>();
-    private DefaultRenderingContext2D context = null;
+    protected final List<Geometry> geometries = new ArrayList<>();
+    private RenderingContext2D context = null;
     private AffineTransform objToDisp = null;
     protected JMap2D map = null;
 
@@ -100,7 +99,7 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
         this.map = map;
 
         if(map != null && map.getCanvas() instanceof J2DCanvas){
-            context = new DefaultRenderingContext2D(map.getCanvas());
+            context = new RenderingContext2D(map.getCanvas());
         }else{
             context = null;
         }
@@ -139,7 +138,7 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
         paintComponent(g2, context);
     }
 
-    protected void paintComponent(final Graphics2D g2, final DefaultRenderingContext2D context){
+    protected void paintComponent(final Graphics2D g2, final RenderingContext2D context){
 
         final StatelessContextParams params = new StatelessContextParams(null, null);
         final ProjectedGeometry projected = new ProjectedGeometry(params);

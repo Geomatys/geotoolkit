@@ -36,7 +36,6 @@ import java.awt.Shape;
 import java.util.logging.Level;
 
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
@@ -75,7 +74,7 @@ public final class EditionDecoration extends AbstractGeometryDecoration {
     }
 
     @Override
-    protected void paintComponent(final Graphics2D g2, final DefaultRenderingContext2D context) {
+    protected void paintComponent(final Graphics2D g2, final RenderingContext2D context) {
         super.paintComponent(g2, context);
 
         //paint the selected node

@@ -55,7 +55,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public abstract class J2DCanvas extends AbstractCanvas2D{
 
-    protected final DefaultRenderingContext2D context2D = new DefaultRenderingContext2D(this);
+    protected final RenderingContext2D context2D = new RenderingContext2D(this);
 
     protected BackgroundPainter painter = null;
 
@@ -93,7 +93,7 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
      * @param paintingDisplayShape
      * @return
      */
-    public DefaultRenderingContext2D prepareContext(final DefaultRenderingContext2D context,
+    public RenderingContext2D prepareContext(final RenderingContext2D context,
             final Graphics2D output, Shape paintingDisplayShape){
 
         final Shape canvasDisplayShape = getDisplayBounds();
@@ -221,7 +221,7 @@ public abstract class J2DCanvas extends AbstractCanvas2D{
 
             final List<Graphic> candidates = new ArrayList<>();
 
-            final DefaultRenderingContext2D searchContext = context2D;
+            final RenderingContext2D searchContext = context2D;
             prepareContext(searchContext,null,null);
 
             final AffineTransform dispToObj = searchContext.getDisplayToObjective();

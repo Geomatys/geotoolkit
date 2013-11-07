@@ -140,7 +140,7 @@ public class SwingVolatileGeoComponent extends JComponent{
         if (GO2Hints.BEHAVIOR_KEEP_TILE.equals(val) || GO2Hints.BEHAVIOR_ON_FINISH.equals(val)) {
             if (coverage != null) {
                 //we want to render as if we where on the canvas
-                final DefaultRenderingContext2D context = new DefaultRenderingContext2D(canvas);
+                final RenderingContext2D context = new RenderingContext2D(canvas);
                 canvas.prepareContext(context, (Graphics2D) g, g.getClip());
                 try {
                     GO2Utilities.portray(context, coverage);

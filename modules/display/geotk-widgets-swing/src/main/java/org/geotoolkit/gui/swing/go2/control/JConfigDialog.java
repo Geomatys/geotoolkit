@@ -53,7 +53,7 @@ public class JConfigDialog extends javax.swing.JDialog {
 
     private final JMap2D map;
 
-    private CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
+    private CoordinateReferenceSystem crs = null;
 
     /** Creates new form JConfigDialog */
     public JConfigDialog(final java.awt.Frame parent,final JMap2D map) {
@@ -80,7 +80,11 @@ public class JConfigDialog extends javax.swing.JDialog {
 
         guiUnit.setModel(new ListComboBoxModel(list));
 
-        guiCRS.setText(crs.getName().toString());
+        if(crs == null){
+            guiCRS.setText(" ");
+        }else{
+            guiCRS.setText(crs.getName().toString());
+        }
 
     }
 
@@ -326,7 +330,11 @@ public class JConfigDialog extends javax.swing.JDialog {
 
         if(ACTION.APPROVE.equals(act)){
             crs = chooser.getCRS();
-            guiCRS.setText(crs.getName().toString());
+            if(crs == null){
+                guiCRS.setText(" ");
+            }else{
+                guiCRS.setText(crs.getName().toString());
+            }
         }
 
     }//GEN-LAST:event_choose

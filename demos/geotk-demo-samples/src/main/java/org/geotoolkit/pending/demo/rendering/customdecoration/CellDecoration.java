@@ -13,7 +13,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 
 import org.geotoolkit.gui.swing.go2.decoration.AbstractMapDecoration;
 import org.opengis.geometry.BoundingBox;
@@ -31,7 +31,7 @@ public class CellDecoration extends AbstractMapDecoration{
             final Graphics2D g2d = (Graphics2D) g;
 
             //we want to render as if we where on the canvas
-            final DefaultRenderingContext2D context = new DefaultRenderingContext2D(map.getCanvas());
+            final RenderingContext2D context = new RenderingContext2D(map.getCanvas());
             map.getCanvas().prepareContext(context, g2d, g.getClip());
 
 

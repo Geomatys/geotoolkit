@@ -55,7 +55,7 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.go2.JMap2D;
@@ -98,7 +98,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
 
     //coverage edition variables
     private JMap2D map = null;
-    private DefaultRenderingContext2D context = null;
+    private RenderingContext2D context = null;
     private GridCoverage2D coverage = null;
     // Write parameters discovered when setting the coverage
     private GridCoverageWriteParam writeParam = null;
@@ -454,7 +454,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             CoverageEditionDelegate.this.map = map;
 
             if(map != null && map.getCanvas() != null){
-                context = new DefaultRenderingContext2D(map.getCanvas());
+                context = new RenderingContext2D(map.getCanvas());
             }else{
                 context = null;
             }
