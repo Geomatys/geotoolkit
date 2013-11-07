@@ -122,6 +122,11 @@ public class JTimeStamp extends javax.swing.JComponent {
                 final int second = calendar.get(Calendar.SECOND);
                 seconds.setValue(second);
             }
+        } else {
+            datePicker.setDate(null);
+            hours.setValue(0);
+            minutes.setValue(0);
+            seconds.setValue(0);
         }
     }
 
@@ -162,5 +167,14 @@ public class JTimeStamp extends javax.swing.JComponent {
     public void setTimeZone(final TimeZone timeZone) {
         this.timeZone = timeZone;
         datePicker.setTimeZone(timeZone);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        this.datePicker.setEnabled(enabled);
+        this.hours.setEnabled(enabled);
+        this.minutes.setEnabled(enabled);
+        this.seconds.setEnabled(enabled);
     }
 }
