@@ -55,6 +55,32 @@ public final class ParametersExt {
         }
         return null;
     }
+
+
+    /**
+     * Get all parameters recursively for this class, do not create parameter if missing.
+     */
+    public static List<ParameterValue> getParameters(ParameterValueGroup group, Class type){
+
+        final List<ParameterValue> result = new ArrayList<ParameterValue>();
+        getParameters(group, type, result);
+        return result;
+    }
+
+    private static void getParameters(ParameterValueGroup group, Class type, List<ParameterValue> result) {
+
+        final List<GeneralParameterValue> params = getParameters(group);
+        for(GeneralParameterValue p : params) {
+            if(p instanceof ParameterValue) {
+                final Class clazz = ((ParameterDescriptor)p.getDescriptor()).getValueClass();
+                if (type.isAssignableFrom(clazz)) {
+                    result.add((ParameterValue)p);
+                }
+            } else if (p instanceof ParameterValueGroup) {
+                getParameters((ParameterValueGroup)p, type, result);
+            }
+        }
+    }
     
     /**
      * List of all parameters, ParameterValue OR ParameterGroups of this name.
