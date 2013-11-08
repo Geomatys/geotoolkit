@@ -303,11 +303,7 @@ public final class FileUtilities extends Static {
                 }
             } finally {
                 if (fos != null) {
-                    try {
-                        fos.close();
-                    } catch (IOException e) {
-                        LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
-                    }
+                    fos.close();
                 }
                 try {
                     in.close();
