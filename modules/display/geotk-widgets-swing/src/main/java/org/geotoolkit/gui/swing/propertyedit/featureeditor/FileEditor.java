@@ -21,6 +21,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.prefs.Preferences;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
@@ -73,19 +74,27 @@ public class FileEditor extends PropertyValueEditor implements ActionListener, D
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
         final JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         chooser.setMultiSelectionEnabled(false);
+
+        final String prevPath = getPreviousPath();
+        if (prevPath != null) {
+            chooser.setCurrentDirectory(new File(prevPath));
+        }
+
         final int response = chooser.showDialog(chooseButton, MessageBundle.getString("ok"));
         if(response == JFileChooser.APPROVE_OPTION){
             final File f = chooser.getSelectedFile();
             if(f!=null){
+                setPreviousPath(f.getAbsolutePath());
                 setValue(null, f);
                 valueChanged();
             }
         }
     }
-    
+
     @Override
     public void insertUpdate(DocumentEvent e) {
         valueChanged();
@@ -100,7 +109,7 @@ public class FileEditor extends PropertyValueEditor implements ActionListener, D
     public void changedUpdate(DocumentEvent e) {
         valueChanged();
     }
-    
+
     @Override
     public void setEnabled(boolean enabled) {
         component.setEnabled(enabled);
@@ -111,4 +120,16 @@ public class FileEditor extends PropertyValueEditor implements ActionListener, D
     public boolean isEnabled() {
         return component.isEnabled() && chooseButton.isEnabled();
     }
+
+    public static String getPreviousPath() {
+        final Preferences prefs = Preferences.userNodeForPackage(FileEditor.class);
+        return prefs.get("path", null);
+    }
+
+    public static void setPreviousPath(final String path) {
+        final Preferences prefs = Preferences.userNodeForPackage(FileEditor.class);
+        prefs.put("path", path);
+    }
+
+
 }

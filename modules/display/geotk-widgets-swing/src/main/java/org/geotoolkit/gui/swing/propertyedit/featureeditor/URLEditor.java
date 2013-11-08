@@ -31,12 +31,14 @@ import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import static org.geotoolkit.gui.swing.propertyedit.featureeditor.FileEditor.getPreviousPath;
+import static org.geotoolkit.gui.swing.propertyedit.featureeditor.FileEditor.setPreviousPath;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.opengis.feature.type.PropertyType;
 
 /**
  * Throw PropertyChange event when TextField text change.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  */
 public class URLEditor extends PropertyValueEditor implements ActionListener, DocumentListener {
@@ -88,10 +90,17 @@ public class URLEditor extends PropertyValueEditor implements ActionListener, Do
         final JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         chooser.setMultiSelectionEnabled(false);
+
+        final String prevPath = getPreviousPath();
+        if (prevPath != null) {
+            chooser.setCurrentDirectory(new File(prevPath));
+        }
+
         final int response = chooser.showDialog(chooseButton, MessageBundle.getString("ok"));
         if(response == JFileChooser.APPROVE_OPTION){
             final File f = chooser.getSelectedFile();
             if(f!=null){
+                setPreviousPath(f.getAbsolutePath());
                 component.setText(f.toURI().toString());
             }
         }
