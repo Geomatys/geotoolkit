@@ -22,26 +22,35 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.sis.geometry.DirectPosition2D;
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
+import org.geotoolkit.referencing.operation.projection.Mercator;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.cs.EllipsoidalCS;
+import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -55,6 +64,71 @@ public final class ReferencingUtilities {
     private ReferencingUtilities(){}
 
     /**
+     * Test if the Coordinate Reference System has a wrap around axis.
+     * This method checks if the CRS is geographic or projected with a compatible
+     * transformation (only linear or Mercator).
+     *
+     * Example, for EPSG:4326 the result is :
+     * [0] = Position(0,-180)
+     * [1] = Position(0,+180)
+     *
+     * Example, for EPSG:3395 (mercator) the result is :
+     * [0] = Position(-2M,0)
+     * [1] = Position(+2M,0)
+     *
+     * Example, for EPSG:27582 (conic) the result is :
+     * null since there is no possible wrap around.
+     *
+     * @param crs to test
+     * @return DirectPosition[] size 2 :
+     *     [0] : start wrap around position in given CRS.
+     *     [1] : end wrap around position in given CRS.
+     *    null if crs does not have a wrap around axis
+     *
+     * @throws org.opengis.referencing.operation.TransformException
+     */
+    public static DirectPosition[] findWrapAround(CoordinateReferenceSystem crs) throws TransformException{
+        if(crs instanceof GeographicCRS){
+            final EllipsoidalCS cs = ((GeographicCRS)crs).getCoordinateSystem();
+            for(int i=0,n=cs.getDimension();i<n;i++){
+                final CoordinateSystemAxis axis = cs.getAxis(i);
+                if(RangeMeaning.WRAPAROUND.equals(axis.getRangeMeaning())){
+                    final DirectPosition start = new GeneralDirectPosition(crs);
+                    start.setOrdinate(i, axis.getMinimumValue());
+                    final DirectPosition end = new DirectPosition2D(crs);
+                    end.setOrdinate(i, axis.getMaximumValue());
+                    return new DirectPosition[]{start,end};
+                }
+            }
+        }else if(crs instanceof ProjectedCRS){
+            final ProjectedCRS projectedCRS = (ProjectedCRS) crs;
+            final MathTransform trs = projectedCRS.getConversionFromBase().getMathTransform();
+
+            //test if the transform can contain a wrap axis
+            if(isWrapAroundCompatible(trs)){
+                final CoordinateReferenceSystem baseCrs = projectedCRS.getBaseCRS();
+                final DirectPosition[] info = findWrapAround(baseCrs);
+                info[0] = trs.transform(info[0], null);
+                info[1] = trs.transform(info[1], null);
+                return info;
+            }
+        }
+
+        return null;
+    }
+
+    private static boolean isWrapAroundCompatible(MathTransform trs){
+        if(trs instanceof ConcatenatedTransform){
+            final ConcatenatedTransform ct = (ConcatenatedTransform) trs;
+            for(MathTransform step : ct.getSteps()){
+                if(!isWrapAroundCompatible(step)) return false;
+            }
+            return true;
+        }
+        return trs instanceof LinearTransform || trs instanceof Mercator;
+    }
+
+    /**
      * Transform the given envelope to the given crs.
      * Unlike CRS.transform this method handle growing number of dimensions by filling
      * other axes with default values.
@@ -62,6 +136,7 @@ public final class ReferencingUtilities {
      * @param env source Envelope
      * @param targetCRS target CoordinateReferenceSystem
      * @return transformed envelope
+     * @throws org.opengis.referencing.operation.TransformException
      */
     public static Envelope transform(Envelope env, CoordinateReferenceSystem targetCRS) throws TransformException{
         try {
@@ -116,6 +191,11 @@ public final class ReferencingUtilities {
 
     /**
      * Make a new envelope with vertical and temporal dimensions.
+     * @param bounds
+     * @param temporal
+     * @param elevation
+     * @return
+     * @throws org.opengis.referencing.operation.TransformException
      */
     public static GeneralEnvelope combine(final Envelope bounds, final Date[] temporal, final Double[] elevation) throws TransformException{
         CoordinateReferenceSystem crs = bounds.getCoordinateReferenceSystem();
@@ -129,6 +209,12 @@ public final class ReferencingUtilities {
 
     /**
      * Make a new envelope with vertical and temporal dimensions.
+     * @param crs
+     * @param bounds
+     * @param temporal
+     * @param elevation
+     * @return
+     * @throws org.opengis.referencing.operation.TransformException
      */
     public static GeneralEnvelope combine(CoordinateReferenceSystem crs, final Rectangle2D bounds,
             final Date[] temporal, final Double[] elevation) throws TransformException{
@@ -166,7 +252,7 @@ public final class ReferencingUtilities {
                 coords[0] = (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY;
                 coords[1] = (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY;
                 trs.transform(coords, 0, coords, 0, 2);
-                env.setRange(3,coords[0],coords[1]);                
+                env.setRange(3,coords[0],coords[1]);
             } catch (FactoryException ex) {
                 throw new TransformException(ex.getMessage(),ex);
             }
@@ -177,7 +263,7 @@ public final class ReferencingUtilities {
                 coords[0] = (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY;
                 coords[1] = (elevation[1] != null) ? elevation[1] : Double.POSITIVE_INFINITY;
                 trs.transform(coords, 0, coords, 0, 2);
-                env.setRange(2,coords[0],coords[1]);                
+                env.setRange(2,coords[0],coords[1]);
             } catch (FactoryException ex) {
                 throw new TransformException(ex.getMessage(),ex);
             }
@@ -187,7 +273,7 @@ public final class ReferencingUtilities {
             env = new GeneralEnvelope(crs);
             env.setRange(0, bounds.getMinX(), bounds.getMaxX());
             env.setRange(1, bounds.getMinY(), bounds.getMaxY());
-            
+
             try {
                 final CoordinateReferenceSystem realTemporal = DefaultTemporalCRS.JAVA;
                 final MathTransform trs = CRS.findMathTransform(realTemporal, temporalDim);
@@ -195,19 +281,19 @@ public final class ReferencingUtilities {
                 coords[0] = (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY;
                 coords[1] = (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY;
                 trs.transform(coords, 0, coords, 0, 2);
-                env.setRange(2,coords[0],coords[1]);                
+                env.setRange(2,coords[0],coords[1]);
             } catch (FactoryException ex) {
                 throw new TransformException(ex.getMessage(),ex);
             }
-            
-            
+
+
         }else if(verticalDim != null){
             crs = new DefaultCompoundCRS(crs2D.getName().getCode()+"/"+verticalDim.getName().getCode(),
                     crs2D, verticalDim);
             env = new GeneralEnvelope(crs);
             env.setRange(0, bounds.getMinX(), bounds.getMaxX());
             env.setRange(1, bounds.getMinY(), bounds.getMaxY());
-            
+
             try {
                 final CoordinateReferenceSystem realElevation = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
                 final MathTransform trs = CRS.findMathTransform(realElevation, verticalDim);
@@ -215,11 +301,11 @@ public final class ReferencingUtilities {
                 coords[0] = (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY;
                 coords[1] = (elevation[1] != null) ? elevation[1] : Double.POSITIVE_INFINITY;
                 trs.transform(coords, 0, coords, 0, 2);
-                env.setRange(2,coords[0],coords[1]);                
+                env.setRange(2,coords[0],coords[1]);
             } catch (FactoryException ex) {
                 throw new TransformException(ex.getMessage(),ex);
             }
-            
+
         }else{
             crs = crs2D;
             env = new GeneralEnvelope(crs);
@@ -277,6 +363,10 @@ public final class ReferencingUtilities {
     /**
      * Transform the CRS 2D component of this envelope.
      * This preserve temporal/elevation or other axis.
+     * @param env
+     * @param crs2D
+     * @return
+     * @throws org.opengis.referencing.operation.TransformException
      */
     public static Envelope transform2DCRS(final Envelope env, final CoordinateReferenceSystem crs2D) throws TransformException{
         final CoordinateReferenceSystem originalCRS = env.getCoordinateReferenceSystem();
@@ -287,6 +377,10 @@ public final class ReferencingUtilities {
     /**
      * Try to change a coordinate reference system axis order to place the east axis first.
      * Reproject the envelope.
+     * @param env
+     * @return
+     * @throws org.opengis.referencing.operation.TransformException
+     * @throws org.opengis.util.FactoryException
      */
     public static Envelope setLongitudeFirst(final Envelope env) throws TransformException, FactoryException{
         if(env == null) return env;
@@ -298,6 +392,9 @@ public final class ReferencingUtilities {
 
     /**
      * Try to change a coordinate reference system axis order to place the east axis first.
+     * @param crs
+     * @return
+     * @throws org.opengis.util.FactoryException
      */
     public static CoordinateReferenceSystem setLongitudeFirst(final CoordinateReferenceSystem crs) throws FactoryException{
         if(crs instanceof SingleCRS){
@@ -364,6 +461,9 @@ public final class ReferencingUtilities {
      * match the top left corner of the envelope.
      * This method assume that the Y axis of the rectangle is going down.
      * This return the display to objective transform (rect to env).
+     * @param rect
+     * @param env
+     * @return
      */
     public static AffineTransform toAffine(final Dimension rect, final Envelope env){
         final double minx = env.getMinimum(0);

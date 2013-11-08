@@ -23,11 +23,14 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -46,13 +49,17 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.display2d.style.labeling.decimate.DecimationLabelRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.resources.Errors;
 import org.opengis.geometry.BoundingBox;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
@@ -69,6 +76,7 @@ import org.opengis.util.FactoryException;
 public class RenderingContext2D implements RenderingContext{
 
     private static final Logger LOGGER = Logging.getLogger(RenderingContext2D.class);
+    private static final int MAX_WRAP = 3;
     private static final Map<Font,FontMetrics> fontMetrics = new HashMap<>();
 
     private static final int DISPLAY_TRS = 0;
@@ -132,6 +140,13 @@ public class RenderingContext2D implements RenderingContext{
 
     private AffineTransform2D objectiveToDisplay = null;
     private AffineTransform2D displayToObjective = null;
+
+    /**
+     * Multiple repetition if there is a world wrap
+     */
+    public com.vividsolutions.jts.geom.Polygon wrapArea = null;
+    public AffineTransform2D[] wrapsObjectiveToDisplay = null;
+    public AffineTransform2D[] wrapsObjectives = null;
 
     /**
      * The affine transform from {@link #objectiveCRS} to {@code deviceCRS}. Used by
@@ -290,7 +305,108 @@ public class RenderingContext2D implements RenderingContext{
 
         //calculate the symbology encoding scale -------------------------------
         seScale = GO2Utilities.computeSEScale(this);
+
+        //prepare informations for possible map repetition ---------------------
+        try {
+            //test if wrap is possible
+            final DirectPosition[] wrapInfo = ReferencingUtilities.findWrapAround(objectiveCRS2D);
+
+            if(wrapInfo != null){
+                //search the multiples transformations
+
+                //project the 4 canvas bounds points on the wrap line
+                final double[] projs = new double[8];
+                projs[0] = canvasDisplaybounds.x;                           projs[1] = canvasDisplaybounds.y;
+                projs[2] = canvasDisplaybounds.x+canvasDisplaybounds.width; projs[3] = canvasDisplaybounds.y;
+                projs[4] = canvasDisplaybounds.x+canvasDisplaybounds.width; projs[5] = canvasDisplaybounds.y+canvasDisplaybounds.height;
+                projs[6] = canvasDisplaybounds.x;                           projs[7] = canvasDisplaybounds.y+canvasDisplaybounds.height;
+                displayToObjective.transform(projs, 0, projs, 0, 4);
+
+                final double x1 = wrapInfo[0].getOrdinate(0);
+                final double y1 = wrapInfo[0].getOrdinate(1);
+                final double x2 = wrapInfo[1].getOrdinate(0);
+                final double y2 = wrapInfo[1].getOrdinate(1);
+                nearestColinearPoint(x1, y1, x2, y2, projs, 0);
+                nearestColinearPoint(x1, y1, x2, y2, projs, 2);
+                nearestColinearPoint(x1, y1, x2, y2, projs, 4);
+                nearestColinearPoint(x1, y1, x2, y2, projs, 6);
+
+                final Rectangle2D.Double rect = new Rectangle2D.Double(projs[0],projs[1],0,0);
+                rect.add(projs[2], projs[3]);
+                rect.add(projs[4], projs[5]);
+                rect.add(projs[6], projs[7]);
+
+                Point2D.Double p0 = new Point2D.Double(x1, y1);
+                Point2D.Double p1 = new Point2D.Double(x2, y2);
+                final double length = p0.distance(p1);
+                final double distanceLeft = Math.min(p0.distance(rect.x, rect.y),p0.distance(rect.x+rect.width, rect.y+rect.height));
+                final double distanceRight = Math.min(p1.distance(rect.x, rect.y),p1.distance(rect.x+rect.width, rect.y+rect.height));
+                final int nbLeft = (int) Math.ceil(distanceLeft/length);
+                final int nbRight = (int) Math.ceil(distanceRight/length);
+
+                if(nbLeft>0 || nbRight>0){
+                    final List<AffineTransform2D> objDisps = new ArrayList<>(nbLeft+nbRight+1);
+                    final List<AffineTransform2D> objs = new ArrayList<>(nbLeft+nbRight+1);
+                    objDisps.add(objToDisp);
+                    objs.add(new AffineTransform2D(new AffineTransform()));
+
+                    //rebuild transforms on the left and right
+                    final AffineTransform dif = new AffineTransform();
+                    final AffineTransform step = new AffineTransform(objToDisp);
+                    dif.setToTranslation(x2-x1,y2-y1);
+                    for(int i=0;i<MAX_WRAP && i<nbLeft;i++){
+                        step.concatenate(dif);
+                        objs.add(new AffineTransform2D(1, 0, 0, 1, (x2-x1)*(i+1), (y2-y1)*(i+1)));
+                        objDisps.add(new AffineTransform2D(step));
+                    }
+                    step.setTransform(objToDisp);
+                    dif.setToTranslation(x1-x2,y1-y2);
+                    for(int i=0;i<MAX_WRAP && i<nbRight;i++){
+                        step.concatenate(dif);
+                        objs.add(new AffineTransform2D(1, 0, 0, 1, (x1-x2)*(i+1), (y1-y2)*(i+1)));
+                        objDisps.add(new AffineTransform2D(step));
+                    }
+
+                    //build the wrap rectangle
+                    final GeneralEnvelope env = new GeneralEnvelope(objectiveCRS2D);
+                    env.add(wrapInfo[0]);
+                    env.add(wrapInfo[1]);
+                    if(env.getSpan(0) == 0){
+                        env.setRange(1, canvasObjectiveBBox2D.getMinimum(0), canvasObjectiveBBox2D.getMaximum(0));
+                    }else{
+                        env.setRange(1, canvasObjectiveBBox2D.getMinimum(1), canvasObjectiveBBox2D.getMaximum(1));
+                    }
+                    wrapArea = (com.vividsolutions.jts.geom.Polygon)JTS.toGeometry(env);
+                    wrapsObjectiveToDisplay = objDisps.toArray(new AffineTransform2D[0]);
+                    wrapsObjectives = objs.toArray(new AffineTransform2D[0]);
+                }
+
+            }
+
+        } catch (TransformException ex) {
+            LOGGER.log(Level.INFO, ex.getLocalizedMessage(), ex);
+        }
+
     }
+
+
+    public static void nearestColinearPoint(final double x1, final double y1,
+                                            final double x2, final double y2,
+                                            final double[] point, int offset) {
+        double x = point[offset];
+        double y = point[offset+1];
+        final double slope = (y2-y1) / (x2-x1);
+        if (!Double.isInfinite(slope)) {
+            final double y0 = (y2 - slope*x2);
+            x = ((y-y0)*slope+x) / (slope*slope+1);
+            y = x*slope + y0;
+        } else {
+            x = x2;
+        }
+        point[offset] = x;
+        point[offset+1] = y;
+    }
+
 
     public void initGraphic(final Graphics2D graphics){
         this.graphics           = graphics;
