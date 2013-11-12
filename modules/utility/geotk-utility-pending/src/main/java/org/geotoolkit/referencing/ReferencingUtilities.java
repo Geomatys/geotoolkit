@@ -128,6 +128,67 @@ public final class ReferencingUtilities {
         return trs instanceof LinearTransform || trs instanceof Mercator;
     }
 
+    public static Envelope wrapNormalize(Envelope env, DirectPosition[] warp) {
+        if(warp==null){
+            return env;
+        }
+
+        //TODO we assume the warp is on a along an axis of the coordinate system.
+        final DirectPosition p0 = warp[0];
+        final DirectPosition p1 = warp[1];
+        for(int i=0,n=p0.getDimension();i<n;i++){
+            final double minimum = p0.getOrdinate(i);
+            final double maximum = p1.getOrdinate(i);
+            if(minimum == maximum){
+                //not the wrap axis
+                continue;
+            }
+
+            final double csSpan = maximum-minimum;
+            double o1 = env.getMinimum(i);
+            double o2 = env.getMaximum(i);
+
+            final GeneralEnvelope res = new GeneralEnvelope(env);
+
+            if (Math.abs(o2-o1) >= csSpan) {
+                /*
+                 * If the range exceed the CS span, then we have to replace it by the
+                 * full span, otherwise the range computed by the "else" block is too
+                 * small. The full range will typically be [-180 … 180]°.  However we
+                 * make a special case if the two bounds are multiple of the CS span,
+                 * typically [0 … 360]°. In this case the [0 … -0]° range matches the
+                 * original values and is understood by GeneralEnvelope as a range
+                 * spanning all the world.
+                 */
+                if (o1 != minimum || o2 != maximum) {
+                    if ((o1 % csSpan) == 0 && (o2 % csSpan) == 0) {
+                        res.setRange(i, +0.0, -0.0);
+                    } else {
+                        res.setRange(i, minimum, maximum);
+                    }
+                }
+            } else {
+                if(o1<minimum || o2>maximum){
+                    //envelope cross the anti-méridian
+                    res.setRange(i, minimum, maximum);
+                }
+
+//                o1 = Math.floor((o1 - minimum) / csSpan) * csSpan;
+//                o2 = Math.floor((o2 - minimum) / csSpan) * csSpan;
+//                if (o1 != 0){
+//                    res.setRange(i, res.getMinimum(i)-o1, res.getMaximum(i));
+//                }
+//                if (o2 != 0){
+//                    res.setRange(i, res.getMinimum(i), res.getMaximum(i)-o2);
+//                }
+            }
+
+            return res;
+        }
+
+        return env;
+    }
+
     /**
      * Transform the given envelope to the given crs.
      * Unlike CRS.transform this method handle growing number of dimensions by filling

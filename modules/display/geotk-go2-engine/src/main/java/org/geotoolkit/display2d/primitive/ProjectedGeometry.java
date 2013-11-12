@@ -16,7 +16,11 @@
  */
 package org.geotoolkit.display2d.primitive;
 
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import java.awt.Shape;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.display.shape.ProjectedShape;
@@ -28,6 +32,7 @@ import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -168,6 +173,40 @@ public class ProjectedGeometry  {
                 final GeometryCSTransformer transformer = new GeometryCSTransformer(new CoordinateSequenceMathTransformer(dataToObjective));
                 objectiveGeometryJTS = transformer.transform(getDataGeometryJTS());
             }
+
+            //check if we need to demultiply the geometry
+            if(params.context.wrapArea != null){
+                final List<com.vividsolutions.jts.geom.Geometry> geoms = new  ArrayList();
+                final GeometryFactory GF = new GeometryFactory();
+                for(AffineTransform2D trs : params.context.wrapsObjectives){
+                    final com.vividsolutions.jts.geom.Geometry g = JTS.transform(objectiveGeometryJTS, trs);
+                    if(g instanceof GeometryCollection){
+                        GeometryCollection gc = (GeometryCollection) g;
+                        for(int i=0;i<gc.getNumGeometries();i++){
+                            geoms.add(gc.getGeometryN(i));
+                        }
+                    }else{
+                        geoms.add(g);
+                    }
+                }
+
+                if(objectiveGeometryJTS instanceof com.vividsolutions.jts.geom.Point){
+                    objectiveGeometryJTS = GF.createMultiPoint(geoms.toArray(new com.vividsolutions.jts.geom.Point[0]));
+                }else if(objectiveGeometryJTS instanceof com.vividsolutions.jts.geom.LineString){
+                    objectiveGeometryJTS = GF.createMultiLineString(geoms.toArray(new com.vividsolutions.jts.geom.LineString[0]));
+                }else if(objectiveGeometryJTS instanceof com.vividsolutions.jts.geom.Polygon){
+                    objectiveGeometryJTS = GF.createMultiPolygon(geoms.toArray(new com.vividsolutions.jts.geom.Polygon[0]));
+                }else if(objectiveGeometryJTS instanceof com.vividsolutions.jts.geom.MultiPoint){
+                    objectiveGeometryJTS = GF.createMultiPoint(geoms.toArray(new com.vividsolutions.jts.geom.Point[0]));
+                }else if(objectiveGeometryJTS instanceof com.vividsolutions.jts.geom.MultiLineString){
+                    objectiveGeometryJTS = GF.createMultiLineString(geoms.toArray(new com.vividsolutions.jts.geom.LineString[0]));
+                }else if(objectiveGeometryJTS instanceof com.vividsolutions.jts.geom.MultiPolygon){
+                    objectiveGeometryJTS = GF.createMultiPolygon(geoms.toArray(new com.vividsolutions.jts.geom.Polygon[0]));
+                }else{
+                    objectiveGeometryJTS = GF.createGeometryCollection(geoms.toArray(new com.vividsolutions.jts.geom.Geometry[0]));
+                }
+            }
+
         }
         return objectiveGeometryJTS;
     }
@@ -193,7 +232,13 @@ public class ProjectedGeometry  {
      */
     public Shape getObjectiveShape() throws TransformException{
         if(objectiveShape == null && geomSet){
-            objectiveShape = ProjectedShape.wrap(getDataShape(), dataToObjective);
+            if(params.context.wrapArea != null){
+                //we need to rely on the objective geometry which has been
+                //demultiplied/clipped as necessary for the map wrap
+                objectiveShape = new JTSGeometryJ2D(getObjectiveGeometryJTS());
+            }else{
+                objectiveShape = ProjectedShape.wrap(getDataShape(), dataToObjective);
+            }
         }
         return objectiveShape;
     }
@@ -206,7 +251,13 @@ public class ProjectedGeometry  {
      */
     public Shape getDisplayShape() throws TransformException{
         if(displayShape == null && geomSet){
-            displayShape = ProjectedShape.wrap(getDataShape(), dataToDisplay);
+            if(params.context.wrapArea != null){
+                //we need to rely on the objective geometry which has been
+                //demultiplied/clipped as necessary for the map wrap
+                displayShape = new JTSGeometryJ2D(getDisplayGeometryJTS());
+            }else{
+                displayShape = ProjectedShape.wrap(getDataShape(), dataToDisplay);
+            }
         }
         return displayShape;
     }

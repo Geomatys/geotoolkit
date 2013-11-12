@@ -228,74 +228,88 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
 
             RenderedImage img = applyStyle(dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), symbol.getSource(), hints, isReprojected);
-//            ImageIO.write(img, "tiff", new File("/home/rmarechal/Documents/image/geo2.tiff"));
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-            if (trs2D instanceof AffineTransform) {
-                g2d.setComposite(symbol.getJ2DComposite());
-                try {
-                    g2d.drawRenderedImage(img, (AffineTransform)trs2D);
-                } catch (Exception ex) {
 
-                    if(ex instanceof ArrayIndexOutOfBoundsException){
-                        //we can recover when it's an inapropriate componentcolormodel
-                        final StackTraceElement[] eles = ex.getStackTrace();
-                        if(eles.length > 0 && ComponentColorModel.class.getName().equalsIgnoreCase(eles[0].getClassName())){
-
-                            try{
-                                final CoverageReference ref = projectedCoverage.getLayer().getCoverageReference();
-                                final GridCoverageReader reader = ref.acquireReader();
-                                final Map<String,Object> analyze = StatisticOp.analyze(reader,ref.getImageIndex());
-                                ref.recycle(reader);
-                                final double[] minArray = (double[])analyze.get(StatisticOp.MINIMUM);
-                                final double[] maxArray = (double[])analyze.get(StatisticOp.MAXIMUM);
-                                final double min = findExtremum(minArray, true);
-                                final double max = findExtremum(maxArray, false);
-
-                                final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();
-                                values.add(new DefaultInterpolationPoint(Double.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
-                                values.add(new DefaultInterpolationPoint(min, GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
-                                values.add(new DefaultInterpolationPoint(max, GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
-                                final Literal lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
-                                final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
-                                final Function function = GO2Utilities.STYLE_FACTORY.interpolateFunction(
-                                        lookup, values, Method.COLOR, Mode.LINEAR, fallback);
-                                final CompatibleColorModel model = new CompatibleColorModel(img.getColorModel().getPixelSize(), function);
-                                final ImageLayout layout = new ImageLayout().setColorModel(model);
-                                img = new NullOpImage(img, layout, null, OpImage.OP_COMPUTE_BOUND);
-                                g2d.drawRenderedImage(img, (AffineTransform)trs2D);
-                            }catch(Exception e){
-                                //plenty of errors can happen when painting an image
-                                monitor.exceptionOccured(e, Level.WARNING);
-
-                                //raise the original error
-                                monitor.exceptionOccured(ex, Level.WARNING);
-                            }
-                        }
-                    }else{
-                        //plenty of errors can happen when painting an image
-                        monitor.exceptionOccured(ex, Level.WARNING);
-                    }
-                }
-            }else if (trs2D instanceof LinearTransform) {
-                final LinearTransform lt = (LinearTransform) trs2D;
-                final int col = lt.getMatrix().getNumCol();
-                final int row = lt.getMatrix().getNumRow();
-                //TODO using only the first parameters of the linear transform
-                throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
+            if(renderingContext.wrapArea == null){
+                //single rendering
+                renderCoverage(projectedCoverage, img, trs2D);
             }else{
-                throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass() );
-            }
-
-            //draw the border if there is one---------------------------------------
-            CachedSymbolizer outline = symbol.getOutLine();
-            if(outline != null){
-                GO2Utilities.portray(projectedCoverage, outline, renderingContext);
+                final AffineTransform2D[] trss = renderingContext.wrapsObjectiveToDisplay;
+                for(AffineTransform2D trs : trss){
+                    g2d.setTransform(trs);
+                    renderCoverage(projectedCoverage, img, trs2D);
+                }
             }
 
             renderingContext.switchToDisplayCRS();
         }catch (Exception e) {
             LOGGER.warning(e.getMessage());
         }
+    }
+
+    private void renderCoverage(final ProjectedCoverage projectedCoverage, RenderedImage img, MathTransform2D trs2D) throws PortrayalException{
+        if (trs2D instanceof AffineTransform) {
+            g2d.setComposite(symbol.getJ2DComposite());
+            try {
+                g2d.drawRenderedImage(img, (AffineTransform)trs2D);
+            } catch (Exception ex) {
+
+                if(ex instanceof ArrayIndexOutOfBoundsException){
+                    //we can recover when it's an inapropriate componentcolormodel
+                    final StackTraceElement[] eles = ex.getStackTrace();
+                    if(eles.length > 0 && ComponentColorModel.class.getName().equalsIgnoreCase(eles[0].getClassName())){
+
+                        try{
+                            final CoverageReference ref = projectedCoverage.getLayer().getCoverageReference();
+                            final GridCoverageReader reader = ref.acquireReader();
+                            final Map<String,Object> analyze = StatisticOp.analyze(reader,ref.getImageIndex());
+                            ref.recycle(reader);
+                            final double[] minArray = (double[])analyze.get(StatisticOp.MINIMUM);
+                            final double[] maxArray = (double[])analyze.get(StatisticOp.MAXIMUM);
+                            final double min = findExtremum(minArray, true);
+                            final double max = findExtremum(maxArray, false);
+
+                            final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();
+                            values.add(new DefaultInterpolationPoint(Double.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
+                            values.add(new DefaultInterpolationPoint(min, GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
+                            values.add(new DefaultInterpolationPoint(max, GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
+                            final Literal lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
+                            final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
+                            final Function function = GO2Utilities.STYLE_FACTORY.interpolateFunction(
+                                    lookup, values, Method.COLOR, Mode.LINEAR, fallback);
+                            final CompatibleColorModel model = new CompatibleColorModel(img.getColorModel().getPixelSize(), function);
+                            final ImageLayout layout = new ImageLayout().setColorModel(model);
+                            img = new NullOpImage(img, layout, null, OpImage.OP_COMPUTE_BOUND);
+                            g2d.drawRenderedImage(img, (AffineTransform)trs2D);
+                        }catch(Exception e){
+                            //plenty of errors can happen when painting an image
+                            monitor.exceptionOccured(e, Level.WARNING);
+
+                            //raise the original error
+                            monitor.exceptionOccured(ex, Level.WARNING);
+                        }
+                    }
+                }else{
+                    //plenty of errors can happen when painting an image
+                    monitor.exceptionOccured(ex, Level.WARNING);
+                }
+            }
+        }else if (trs2D instanceof LinearTransform) {
+            final LinearTransform lt = (LinearTransform) trs2D;
+            final int col = lt.getMatrix().getNumCol();
+            final int row = lt.getMatrix().getNumRow();
+            //TODO using only the first parameters of the linear transform
+            throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
+        }else{
+            throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass() );
+        }
+
+        //draw the border if there is one---------------------------------------
+        CachedSymbolizer outline = symbol.getOutLine();
+        if(outline != null){
+            GO2Utilities.portray(projectedCoverage, outline, renderingContext);
+        }
+
     }
 
     /**

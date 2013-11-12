@@ -218,7 +218,7 @@ public class JCRSChooser extends javax.swing.JDialog {
             warning = e.getLocalizedMessage();
         }
         if (warning != null) {
-            buffer.append("<p><b>").append(Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.WARNING))
+            buffer.append("<p><b>").append(Vocabulary.format(Vocabulary.Keys.WARNING))
                     .append(":</b> ").append(warning).append("</p><hr>\n");
         }
         buffer.append("<pre>");

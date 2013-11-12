@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -59,7 +59,6 @@ import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
@@ -307,6 +306,9 @@ public class RenderingContext2D implements RenderingContext{
         seScale = GO2Utilities.computeSEScale(this);
 
         //prepare informations for possible map repetition ---------------------
+        this.wrapArea = null;
+        this.wrapsObjectiveToDisplay = null;
+        this.wrapsObjectives = null;
         try {
             //test if wrap is possible
             final DirectPosition[] wrapInfo = ReferencingUtilities.findWrapAround(objectiveCRS2D);
@@ -331,18 +333,37 @@ public class RenderingContext2D implements RenderingContext{
                 nearestColinearPoint(x1, y1, x2, y2, projs, 4);
                 nearestColinearPoint(x1, y1, x2, y2, projs, 6);
 
-                final Rectangle2D.Double rect = new Rectangle2D.Double(projs[0],projs[1],0,0);
-                rect.add(projs[2], projs[3]);
-                rect.add(projs[4], projs[5]);
-                rect.add(projs[6], projs[7]);
+                final Point2D.Double p0 = new Point2D.Double(x1, y1);
+                final Point2D.Double p1 = new Point2D.Double(x2, y2);
 
-                Point2D.Double p0 = new Point2D.Double(x1, y1);
-                Point2D.Double p1 = new Point2D.Double(x2, y2);
-                final double length = p0.distance(p1);
-                final double distanceLeft = Math.min(p0.distance(rect.x, rect.y),p0.distance(rect.x+rect.width, rect.y+rect.height));
-                final double distanceRight = Math.min(p1.distance(rect.x, rect.y),p1.distance(rect.x+rect.width, rect.y+rect.height));
-                final int nbLeft = (int) Math.ceil(distanceLeft/length);
-                final int nbRight = (int) Math.ceil(distanceRight/length);
+                //test projected points
+                final Point2D.Double refVector = toVector(p0, p1);
+                double kLeft = 0;
+                double kRight = 0;
+                for(int i=0;i<8;i+=2){
+                    final Point2D.Double candidate = new Point2D.Double(projs[i], projs[i+1]);
+                    final Point2D.Double candidateVector = toVector(p0, candidate);
+
+                    double k = refVector.x*candidateVector.x + refVector.y*candidateVector.y;
+                    k /= (refVector.x*refVector.x) + (refVector.y*refVector.y);
+
+                    if(k<0){
+                        if(kLeft==0){
+                            kLeft = -k;
+                        }else{
+                            kLeft = Math.max(kLeft,-k);
+                        }
+                    }else if(k>1){
+                        k -=1;
+                        if(kRight==0){
+                            kRight = k;
+                        }else{
+                            kRight = Math.max(kRight,k);
+                        }
+                    }
+                }
+                final int nbLeft = (int) Math.ceil(kLeft);
+                final int nbRight = (int) Math.ceil(kRight);
 
                 if(nbLeft>0 || nbRight>0){
                     final List<AffineTransform2D> objDisps = new ArrayList<>(nbLeft+nbRight+1);
@@ -354,14 +375,14 @@ public class RenderingContext2D implements RenderingContext{
                     final AffineTransform dif = new AffineTransform();
                     final AffineTransform step = new AffineTransform(objToDisp);
                     dif.setToTranslation(x2-x1,y2-y1);
-                    for(int i=0;i<MAX_WRAP && i<nbLeft;i++){
+                    for(int i=0;i<MAX_WRAP && i<nbRight;i++){
                         step.concatenate(dif);
                         objs.add(new AffineTransform2D(1, 0, 0, 1, (x2-x1)*(i+1), (y2-y1)*(i+1)));
                         objDisps.add(new AffineTransform2D(step));
                     }
                     step.setTransform(objToDisp);
                     dif.setToTranslation(x1-x2,y1-y2);
-                    for(int i=0;i<MAX_WRAP && i<nbRight;i++){
+                    for(int i=0;i<MAX_WRAP && i<nbLeft;i++){
                         step.concatenate(dif);
                         objs.add(new AffineTransform2D(1, 0, 0, 1, (x1-x2)*(i+1), (y1-y2)*(i+1)));
                         objDisps.add(new AffineTransform2D(step));
@@ -381,6 +402,15 @@ public class RenderingContext2D implements RenderingContext{
                     wrapsObjectives = objs.toArray(new AffineTransform2D[0]);
                 }
 
+                //fix the envelopes, normalize them using wrap infos
+                canvasObjectiveBBox = ReferencingUtilities.wrapNormalize(canvasObjectiveBBox, wrapInfo);
+                canvasObjectiveBBox2D = ReferencingUtilities.wrapNormalize(canvasObjectiveBBox2D, wrapInfo);
+                canvasObjectiveBBox2DB = new DefaultBoundingBox(canvasObjectiveBBox2D);
+
+                paintingObjectiveBBox = ReferencingUtilities.wrapNormalize(paintingObjectiveBBox, wrapInfo);
+                paintingObjectiveBBox2D = ReferencingUtilities.wrapNormalize(paintingObjectiveBBox2D, wrapInfo);
+                paintingObjectiveBBox2DB = new DefaultBoundingBox(paintingObjectiveBBox2D);
+
             }
 
         } catch (TransformException ex) {
@@ -389,6 +419,9 @@ public class RenderingContext2D implements RenderingContext{
 
     }
 
+    private static Point2D.Double toVector(Point2D.Double p0, Point2D.Double p1){
+        return new Point2D.Double(p1.x-p0.x, p1.y-p1.y);
+    }
 
     public static void nearestColinearPoint(final double x1, final double y1,
                                             final double x2, final double y2,
