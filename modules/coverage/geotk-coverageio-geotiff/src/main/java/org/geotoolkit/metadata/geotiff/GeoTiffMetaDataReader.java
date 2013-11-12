@@ -112,7 +112,7 @@ public final class GeoTiffMetaDataReader {
         if(imgFileDir == null) throw new IOException("No GeoTiff metadatatas");
 
         geoKeyDir = getNodeByNumber(imgFileDir,TAG_GEO_KEY_DIRECTORY);
-        if(geoKeyDir == null) throw new IOException("No GeoTiff metadatatas informations");
+//        if(geoKeyDir == null) throw new IOException("No GeoTiff metadatatas informations");
     }
 
     /**
@@ -138,15 +138,15 @@ public final class GeoTiffMetaDataReader {
         final ValueMap entries = new ValueMap();
         for(int i=0,l=4; i<nbKeys; i++,l+=4){
             final Object value;
-
+            System.out.println("i = "+i);
             final int valueKey      = structure[l+0];
             final int valuelocation = structure[l+1];
             final int valueNb       = structure[l+2];
             final int valueOffset   = structure[l+3];
-            if(valuelocation == 0){
+            if (valuelocation == 0) {
                 //value is located in the offset field
                 value = valueOffset;
-            }else{
+            } else {
                 //value is in another tag
                 value = readValue(valuelocation, valueOffset, valueNb);
             }
@@ -184,7 +184,7 @@ public final class GeoTiffMetaDataReader {
         //get the raster type
         final Object value = entries.get(GTRasterTypeGeoKey);
         final PixelOrientation orientation;
-        if(value != null){
+        if (value != null) {
             int type = (Integer)value;
             if(type < 1 || type > 2){
                 throw new IOException("Unexpected raster type : "+ type);
@@ -257,8 +257,7 @@ public final class GeoTiffMetaDataReader {
         if(widthNode != null) rect.width = (int) readTiffLongs(widthNode)[0];
         if(widthNode == null) throw new IOException("Could not find tiff image width value");
 
-
-        final Node height = getNodeByNumber(imgFileDir, ImageLenght);
+        final Node height = getNodeByNumber(imgFileDir, ImageLength);
         //value can be stored in a short field
         Node heightNode = getNodeByLocalName(height, TAG_GEOTIFF_SHORTS);
         if(heightNode != null) rect.height = readTiffShorts(heightNode)[0];
@@ -338,6 +337,7 @@ public final class GeoTiffMetaDataReader {
 
     /**
      * Read values for the given tag number.
+     * 
      * @param tagNumber
      * @param offset
      * @param lenght
@@ -360,8 +360,8 @@ public final class GeoTiffMetaDataReader {
 
         final Object value;
 
-        if(TAG_GEOTIFF_ASCII.equalsIgnoreCase(typeName)){
-            if(lenght != 1){
+        if (TAG_GEOTIFF_ASCII.equalsIgnoreCase(typeName)) {
+            if (lenght != 1) {
                 throw new IOException("Incorrect metadata description, single value type "
                         +typeName+" used to retrieve more than one value");
             }
