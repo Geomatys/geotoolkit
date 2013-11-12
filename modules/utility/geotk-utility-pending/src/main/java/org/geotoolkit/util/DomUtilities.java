@@ -176,6 +176,7 @@ public final class DomUtilities extends Static {
      * matchs the given name. Or null if there are no such node.
      */
     public static Node getNodeByLocalName(final Node parent, final String name) {
+        if (name.equalsIgnoreCase(parent.getLocalName())) return parent;
         final NodeList lst = parent.getChildNodes();
 
         for(int i=0,n=lst.getLength();i<n;i++){
