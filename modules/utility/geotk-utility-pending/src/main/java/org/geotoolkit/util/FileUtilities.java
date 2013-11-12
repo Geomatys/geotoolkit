@@ -647,11 +647,7 @@ public final class FileUtilities extends Static {
 
     /**
      * <p>This method allows to put resources into zip archive specified resource,
-     * with compression :</p>
-     * <ul>
-     * <li>Compression method is set to DEFLATED.</li>
-     * <li>Level of compression is set to 9.</li>
-     * </ul>
+     * without compression</p>
      *
      * @param zip The resource which files will be archived into. This argument must be
      * instance of File, String (representing a path), or OutputStream. Cannot be null.
@@ -672,8 +668,8 @@ public final class FileUtilities extends Static {
      * @param method The compression method is a static int constant from ZipOutputSteeam with
      * two theorical possible values :
      * <ul>
-     * <li>DEFLATED to compress archive.</li>
-     * <li>STORED to let the archive uncompressed (unsupported).</li>
+     * <li>{@link ZipOutputStream#DEFLATED} to compress archive.</li>
+     * <li>{@link ZipOutputStream#STORED} to let the archive uncompressed (unsupported).</li>
      * </ul>
      * @param level The compression level is an integer between 0 (not compressed) to 9 (best compression).
      * @param checksum Checksum object (instance of Alder32 or CRC32).
@@ -709,8 +705,8 @@ public final class FileUtilities extends Static {
      * @param method The compression method is a static int constant from ZipOutputSteeam with
      * two theorical possible values :
      * <ul>
-     * <li>DEFLATED to compress archive.</li>
-     * <li>STORED to let the archive uncompressed (unsupported).</li>
+     * <li>{@link ZipOutputStream#DEFLATED} to compress archive.</li>
+     * <li>{@link ZipOutputStream#STORED} to let the archive uncompressed (unsupported).</li>
      * </ul>
      * @param level The compression level is an integer between 0 (not compressed) to 9 (best compression).
      * @param resources The files to compress. Tese objects can be File instances or
