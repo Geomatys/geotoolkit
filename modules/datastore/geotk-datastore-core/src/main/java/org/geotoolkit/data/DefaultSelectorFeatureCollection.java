@@ -112,8 +112,8 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
         final Query iteQuery;
         if(hints != null){
             final QueryBuilder qb = new QueryBuilder(this.query);
-            final Hints hts = new Hints(hints);
-            hts.add(this.query.getHints());
+            final Hints hts = new Hints(this.query.getHints());
+            hts.add(hints);
             qb.setHints(hts);
             iteQuery = qb.buildQuery();
         }else{

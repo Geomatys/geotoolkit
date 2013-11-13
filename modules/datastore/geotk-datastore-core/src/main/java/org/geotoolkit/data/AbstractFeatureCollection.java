@@ -18,11 +18,14 @@
 package org.geotoolkit.data;
 
 import java.util.AbstractCollection;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
@@ -344,6 +347,43 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
         }
 
         return result;
+    }
+
+    // fix toArray methods to forced separate features
+    @Override
+    public Object[] toArray() {
+        final List<Object> datas = new ArrayList<>();
+
+        final Hints hints = new Hints();
+        hints.put(HintsPending.FEATURE_DETACHED, Boolean.TRUE);
+        final FeatureIterator ite = iterator(hints);
+        try{
+            while(ite.hasNext()){
+                datas.add(ite.next());
+            }
+        }finally{
+            ite.close();
+        }
+
+        return datas.toArray();
+    }
+
+    @Override
+    public <T> T[] toArray(T[] a) {
+        final List<Object> datas = new ArrayList<>();
+
+        final Hints hints = new Hints();
+        hints.put(HintsPending.FEATURE_DETACHED, Boolean.TRUE);
+        final FeatureIterator ite = iterator(hints);
+        try{
+            while(ite.hasNext()){
+                datas.add(ite.next());
+            }
+        }finally{
+            ite.close();
+        }
+
+        return datas.toArray(a);
     }
 
     ////////////////////////////////////////////////////////////////////////////
