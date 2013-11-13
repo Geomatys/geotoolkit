@@ -905,10 +905,10 @@ public class EditionHelper {
         try{
             final MathTransform trs = CRS.findMathTransform(
                     editedLayer.getCollection().getFeatureType().getCoordinateReferenceSystem(),
-                    map.getCanvas().getObjectiveCRS(), true);
+                    map.getCanvas().getObjectiveCRS2D(), true);
 
             geom = JTS.transform(geom, trs);
-            JTS.setCRS(geom, map.getCanvas().getObjectiveCRS());
+            JTS.setCRS(geom, map.getCanvas().getObjectiveCRS2D());
             return geom;
         }catch(final Exception ex){
             LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
@@ -919,8 +919,8 @@ public class EditionHelper {
 
     /**
      *
-     * @param geom : in canvas objective CRS
-     * @param layer : target layer filter
+     * @param poly : in canvas objective CRS
+     * @param fl : target layer filter
      * @return geometry filter
      */
     public Filter toFilter(final Geometry poly, final FeatureMapLayer fl) throws FactoryException, MismatchedDimensionException, TransformException{
@@ -949,7 +949,7 @@ public class EditionHelper {
             final Feature feature = FeatureUtilities.defaultFeature(featureType, UUID.randomUUID().toString());
 
             try {
-                geom = JTS.transform(geom, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs, true));
+                geom = JTS.transform(geom, CRS.findMathTransform(map.getCanvas().getObjectiveCRS2D(), dataCrs, true));
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, null, ex);
             }
