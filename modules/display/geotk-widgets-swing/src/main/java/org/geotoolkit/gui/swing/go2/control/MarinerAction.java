@@ -25,6 +25,7 @@ import javax.swing.JTabbedPane;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
+import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
@@ -82,7 +83,15 @@ public class MarinerAction extends AbstractMapAction {
                     map.getCanvas().repaint();
                     //change the map background
                     //S-52 Annex A part I p.143 (12.2.2)
-                    map.getCanvas().setBackgroundPainter(new S52Background());
+                    if(context.isBackgroundEnable()){
+                        map.getCanvas().setBackgroundPainter(new S52Background());
+                    }else{
+                        //check it's not active
+                        final BackgroundPainter bgpainter = map.getCanvas().getBackgroundPainter();
+                        if(bgpainter instanceof S52Background){
+                            map.getCanvas().setBackgroundPainter(new SolidColorPainter(Color.WHITE));
+                        }
+                    }
                 }
             }catch(PortrayalException ex){
                 ex.printStackTrace();

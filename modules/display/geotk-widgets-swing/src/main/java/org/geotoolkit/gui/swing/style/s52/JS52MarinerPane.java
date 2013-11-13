@@ -66,6 +66,7 @@ public class JS52MarinerPane extends javax.swing.JPanel {
         guiDistanceTag.setValue(context.getDistanceTags());
         guiTimeTag.setValue(context.getTimeTags());
 
+        guiBackground.setSelected(context.isBackgroundEnable());
         guiScaleFilter.setSelected(context.isScaleFilter());
         guiShallowPatern.setSelected(context.isShallowPattern());
         guiTwoShades.setSelected(context.isTwoShades());
@@ -94,6 +95,7 @@ public class JS52MarinerPane extends javax.swing.JPanel {
         context.setDistanceTags(    (Float)guiDistanceTag.getValue());
         context.setTimeTags(        (Float)guiTimeTag.getValue());
 
+        context.setBackgroundEnable(guiBackground.isSelected());
         context.setScaleFilter(guiScaleFilter.isSelected());
         context.setShallowPattern(guiShallowPatern.isSelected());
         context.setTwoShades(guiTwoShades.isSelected());
@@ -133,6 +135,7 @@ public class JS52MarinerPane extends javax.swing.JPanel {
         guiFullSectors = new JCheckBox();
         guiLightDescription = new JCheckBox();
         guiScaleFilter = new JCheckBox();
+        guiBackground = new JCheckBox();
         JPanel jPanel3 = new JPanel();
         JLabel jLabel5 = new JLabel();
         JLabel jlabel6 = new JLabel();
@@ -227,12 +230,18 @@ public class JS52MarinerPane extends javax.swing.JPanel {
 
         guiScaleFilter.setText(MessageBundle.getString("s52.scalefilter")); // NOI18N
 
+        guiBackground.setText(MessageBundle.getString("s52.background")); // NOI18N
+
         GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(guiBackground)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(guiShallowPatern)
                     .addComponent(guiTwoShades)
@@ -243,15 +252,17 @@ public class JS52MarinerPane extends javax.swing.JPanel {
                     .addComponent(guiFullSectors)
                     .addComponent(guiLightDescription)
                     .addComponent(guiScaleFilter))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
-        jPanel2Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiContourLabels, guiFullSectors, guiLightDescription, guiLowAccuracySymbols, guiNoText, guiScaleFilter, guiShallowPatern, guiShipOutline, guiTwoShades});
+        jPanel2Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiBackground, guiContourLabels, guiFullSectors, guiLightDescription, guiLowAccuracySymbols, guiNoText, guiScaleFilter, guiShallowPatern, guiShipOutline, guiTwoShades});
 
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(guiBackground)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(guiScaleFilter)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(guiShallowPatern)
@@ -384,15 +395,16 @@ public class JS52MarinerPane extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JComboBox guiAreaTable;
+    private JCheckBox guiBackground;
     private JCheckBox guiContourLabels;
     private JSpinner guiDeepContour;
     private JSpinner guiDistanceTag;

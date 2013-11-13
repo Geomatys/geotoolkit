@@ -200,6 +200,9 @@ public class S52Context {
     private float analyzedDepth = 0f;
     //filter visible features using  provided SCALEMIN/SCALEMAX attributes if present.
     private boolean scaleFilter = true;
+    //enable or disable background pattern
+    private boolean background = false;
+
 
     // DAI informations ////////////////////////////////////////////////////////
 
@@ -250,6 +253,13 @@ public class S52Context {
     }
 
     // MARINER CONFIGURATION ///////////////////////////////////////////////////
+    public void setBackgroundEnable(boolean background) {
+        this.background = background;
+    }
+
+    public boolean isBackgroundEnable() {
+        return background;
+    }
 
     public void setNoText(boolean noText) {
         this.noText = noText;
