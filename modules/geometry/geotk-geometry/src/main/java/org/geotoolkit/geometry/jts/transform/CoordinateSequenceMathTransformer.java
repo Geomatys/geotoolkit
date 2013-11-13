@@ -45,7 +45,7 @@ public class CoordinateSequenceMathTransformer implements CoordinateSequenceTran
     /**
      * The coordinate sequence factory to use.
      */
-    private static final CoordinateSequenceFactory DEFAULT_CS_FACTORY = CoordinateArraySequenceFactory.instance();
+    static final CoordinateSequenceFactory DEFAULT_CS_FACTORY = CoordinateArraySequenceFactory.instance();
     /**
      * A buffer for coordinate transformations. We choose a length which is divisible by
      * both 2 and 3, since JTS coordinates may be up to three-dimensional. If the number
@@ -157,5 +157,5 @@ public class CoordinateSequenceMathTransformer implements CoordinateSequenceTran
         sb.append(transform);
         return sb.toString();
     }
-    
+
 }

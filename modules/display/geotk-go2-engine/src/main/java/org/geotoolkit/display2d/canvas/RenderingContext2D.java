@@ -143,6 +143,7 @@ public class RenderingContext2D implements RenderingContext{
     /**
      * Multiple repetition if there is a world wrap
      */
+    public DirectPosition[] wrapPoints = null;
     public com.vividsolutions.jts.geom.Polygon wrapArea = null;
     public AffineTransform2D[] wrapsObjectiveToDisplay = null;
     public AffineTransform2D[] wrapsObjectives = null;
@@ -306,14 +307,15 @@ public class RenderingContext2D implements RenderingContext{
         seScale = GO2Utilities.computeSEScale(this);
 
         //prepare informations for possible map repetition ---------------------
+        this.wrapPoints = null;
         this.wrapArea = null;
         this.wrapsObjectiveToDisplay = null;
         this.wrapsObjectives = null;
         try {
             //test if wrap is possible
-            final DirectPosition[] wrapInfo = ReferencingUtilities.findWrapAround(objectiveCRS2D);
+            wrapPoints = ReferencingUtilities.findWrapAround(objectiveCRS2D);
 
-            if(wrapInfo != null){
+            if(wrapPoints != null){
                 //search the multiples transformations
 
                 //project the 4 canvas bounds points on the wrap line
@@ -324,10 +326,10 @@ public class RenderingContext2D implements RenderingContext{
                 projs[6] = canvasDisplaybounds.x;                           projs[7] = canvasDisplaybounds.y+canvasDisplaybounds.height;
                 displayToObjective.transform(projs, 0, projs, 0, 4);
 
-                final double x1 = wrapInfo[0].getOrdinate(0);
-                final double y1 = wrapInfo[0].getOrdinate(1);
-                final double x2 = wrapInfo[1].getOrdinate(0);
-                final double y2 = wrapInfo[1].getOrdinate(1);
+                final double x1 = wrapPoints[0].getOrdinate(0);
+                final double y1 = wrapPoints[0].getOrdinate(1);
+                final double x2 = wrapPoints[1].getOrdinate(0);
+                final double y2 = wrapPoints[1].getOrdinate(1);
                 nearestColinearPoint(x1, y1, x2, y2, projs, 0);
                 nearestColinearPoint(x1, y1, x2, y2, projs, 2);
                 nearestColinearPoint(x1, y1, x2, y2, projs, 4);
@@ -390,8 +392,8 @@ public class RenderingContext2D implements RenderingContext{
 
                     //build the wrap rectangle
                     final GeneralEnvelope env = new GeneralEnvelope(objectiveCRS2D);
-                    env.add(wrapInfo[0]);
-                    env.add(wrapInfo[1]);
+                    env.add(wrapPoints[0]);
+                    env.add(wrapPoints[1]);
                     if(env.getSpan(0) == 0){
                         env.setRange(1, canvasObjectiveBBox2D.getMinimum(0), canvasObjectiveBBox2D.getMaximum(0));
                     }else{
@@ -403,12 +405,12 @@ public class RenderingContext2D implements RenderingContext{
                 }
 
                 //fix the envelopes, normalize them using wrap infos
-                canvasObjectiveBBox = ReferencingUtilities.wrapNormalize(canvasObjectiveBBox, wrapInfo);
-                canvasObjectiveBBox2D = ReferencingUtilities.wrapNormalize(canvasObjectiveBBox2D, wrapInfo);
+                canvasObjectiveBBox = ReferencingUtilities.wrapNormalize(canvasObjectiveBBox, wrapPoints);
+                canvasObjectiveBBox2D = ReferencingUtilities.wrapNormalize(canvasObjectiveBBox2D, wrapPoints);
                 canvasObjectiveBBox2DB = new DefaultBoundingBox(canvasObjectiveBBox2D);
 
-                paintingObjectiveBBox = ReferencingUtilities.wrapNormalize(paintingObjectiveBBox, wrapInfo);
-                paintingObjectiveBBox2D = ReferencingUtilities.wrapNormalize(paintingObjectiveBBox2D, wrapInfo);
+                paintingObjectiveBBox = ReferencingUtilities.wrapNormalize(paintingObjectiveBBox, wrapPoints);
+                paintingObjectiveBBox2D = ReferencingUtilities.wrapNormalize(paintingObjectiveBBox2D, wrapPoints);
                 paintingObjectiveBBox2DB = new DefaultBoundingBox(paintingObjectiveBBox2D);
 
             }

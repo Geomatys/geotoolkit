@@ -29,6 +29,7 @@ import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceWrapTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
@@ -174,6 +175,17 @@ public class ProjectedGeometry  {
                 objectiveGeometryJTS = transformer.transform(getDataGeometryJTS());
             }
 
+            //check if geometries cross the meridian
+            if(params.context.wrapPoints != null){
+                final double dx = params.context.wrapPoints[1].getOrdinate(0) - params.context.wrapPoints[0].getOrdinate(0);
+                final double dy = params.context.wrapPoints[1].getOrdinate(1) - params.context.wrapPoints[0].getOrdinate(1);
+                final double[] wrapTranslate = new double[]{-dx,-dy};
+                final double[] wrapDistance = new double[]{dx/2,dy/2};
+                final CoordinateSequenceWrapTransformer cstrs = new CoordinateSequenceWrapTransformer(wrapDistance,wrapTranslate);
+                final GeometryCSTransformer transformer = new GeometryCSTransformer(cstrs);
+                objectiveGeometryJTS = transformer.transform(objectiveGeometryJTS);
+            }
+
             //check if we need to demultiply the geometry
             if(params.context.wrapArea != null){
                 final List<com.vividsolutions.jts.geom.Geometry> geoms = new  ArrayList();
@@ -232,7 +244,7 @@ public class ProjectedGeometry  {
      */
     public Shape getObjectiveShape() throws TransformException{
         if(objectiveShape == null && geomSet){
-            if(params.context.wrapArea != null){
+            if(params.context.wrapPoints != null){
                 //we need to rely on the objective geometry which has been
                 //demultiplied/clipped as necessary for the map wrap
                 objectiveShape = new JTSGeometryJ2D(getObjectiveGeometryJTS());
@@ -251,7 +263,7 @@ public class ProjectedGeometry  {
      */
     public Shape getDisplayShape() throws TransformException{
         if(displayShape == null && geomSet){
-            if(params.context.wrapArea != null){
+            if(params.context.wrapPoints != null){
                 //we need to rely on the objective geometry which has been
                 //demultiplied/clipped as necessary for the map wrap
                 displayShape = new JTSGeometryJ2D(getDisplayGeometryJTS());
