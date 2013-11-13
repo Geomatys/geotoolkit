@@ -58,6 +58,7 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
 import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
@@ -395,10 +396,12 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         }
         //}
 
-        //concatenate geographique filter with data filter if there is one
+        //concatenate geographic filter with data filter if there is one
         if(layer.getQuery() != null && layer.getQuery().getFilter() != null){
             filter = FILTER_FACTORY.and(filter,layer.getQuery().getFilter());
         }
+
+        final Set<String> copy = new HashSet<String>();
 
         //concatenate with temporal range if needed ----------------------------
         for (final FeatureMapLayer.DimensionDef def : layer.getExtraDimensions()) {
@@ -416,6 +419,15 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
                     FILTER_FACTORY.greaterOrEqual(FILTER_FACTORY.literal(dimEnv.getMaximum(0)), def.getUpper()));
 
             filter = FILTER_FACTORY.and(filter, dimFilter);
+
+            //add extra dimension property name on attributes list for retype.
+            if (def.getLower() instanceof DefaultPropertyName) {
+                copy.add(((DefaultPropertyName)def.getLower()).getPropertyName());
+            }
+
+            if (def.getUpper() instanceof DefaultPropertyName) {
+                copy.add(((DefaultPropertyName)def.getUpper()).getPropertyName());
+            }
         }
 
         final FeatureType expected;
@@ -426,7 +438,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             atts = null;
         }else{
             final Set<String> attributs = styleRequieredAtts;
-            final Set<String> copy = new HashSet<String>(attributs);
+            copy.addAll(attributs);
             if(geomAttName != null){
                 copy.add(geomAttName);
             }
