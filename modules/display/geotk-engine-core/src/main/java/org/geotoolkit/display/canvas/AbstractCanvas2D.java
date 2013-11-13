@@ -153,7 +153,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         }
 
         //store the visible area to restore it later
-        Envelope preserve = null;
+        GeneralEnvelope preserve = null;
         if(!displayBounds.isEmpty()){
             preserve = new GeneralEnvelope(envelope);
         }
@@ -172,9 +172,40 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
 
         if(preserve != null){
             //restore previous visible area
-            preserve = CRS.transform(preserve, objectiveCRS2D);
+            GeneralEnvelope env = new GeneralEnvelope(CRS.transform(preserve, objectiveCRS2D));
+            if(!isValid(env)) env = null;
+
+            //try to normalize before reproject
+            if(env == null && preserve.normalize()){
+                env = new GeneralEnvelope(CRS.transform(preserve, objectiveCRS2D));
+            }
+            if(!isValid(env)) env = null;
+
+            //try to reduce to domain before reproject
+            if(env == null){
+                final Envelope domain = CRS.getEnvelope(preserve.getCoordinateReferenceSystem());
+                if(domain != null){
+                    preserve.intersect(domain);
+                    env = new GeneralEnvelope(CRS.transform(preserve, objectiveCRS2D));
+                }
+            }
+            if(!isValid(env)) env = null;
+
+            //fall back on crs domain
+            if(env == null){
+                final Envelope domain = CRS.getEnvelope(objectiveCRS2D);
+                if(domain!=null){
+                    env = new GeneralEnvelope(domain);
+                }
+            }
+
             try {
-                setVisibleArea(preserve);
+                if(env != null){
+                    setVisibleArea(env);
+                }else{
+                    //what can we do ?
+                }
+
             } catch (NoninvertibleTransformException ex) {
                 throw new TransformException("Fail to change objective CRS", ex);
             }
@@ -368,6 +399,18 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
     //convinient method -----------------------------------------
+
+    private static boolean isValid(GeneralEnvelope env){
+        if(env == null) return false;
+
+        if(env.isAllNaN() || env.isEmpty()) return false;
+
+        if(Double.isInfinite(env.getMinimum(0)) || Double.isInfinite(env.getMinimum(1)) ||
+           Double.isInfinite(env.getMaximum(0)) || Double.isInfinite(env.getMaximum(1)) ){
+            return false;
+        }
+        return true;
+    }
 
     /**
      * Checks whether the rectangle {@code rect} is valid.  The rectangle
