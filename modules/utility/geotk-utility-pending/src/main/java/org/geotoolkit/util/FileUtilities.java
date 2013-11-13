@@ -290,7 +290,26 @@ public final class FileUtilities extends Static {
 
         return result;
     }
-    
+
+    /**
+     * Get the file name without extension of a {@link File}.
+     *
+     * @param file Should not be {@code null}.
+     * @return The file name without extension if any.
+     */
+    public static String getFileName(final File file) {
+        if (file.isDirectory()) {
+            return file.getName();
+        }
+
+        final String fileName = file.getName();
+        if (!fileName.contains(".")) {
+            return fileName;
+        }
+
+        return fileName.substring(0, fileName.lastIndexOf("."));
+    }
+
     public static File buildFileFromStream(final InputStream in, final File dest) throws IOException {
         if (in != null && dest != null) {
             final FileOutputStream fos = new FileOutputStream(dest);
