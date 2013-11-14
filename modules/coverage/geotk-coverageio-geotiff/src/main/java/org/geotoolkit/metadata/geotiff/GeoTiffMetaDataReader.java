@@ -138,7 +138,6 @@ public final class GeoTiffMetaDataReader {
         final ValueMap entries = new ValueMap();
         for(int i=0,l=4; i<nbKeys; i++,l+=4){
             final Object value;
-            System.out.println("i = "+i);
             final int valueKey      = structure[l+0];
             final int valuelocation = structure[l+1];
             final int valueNb       = structure[l+2];
