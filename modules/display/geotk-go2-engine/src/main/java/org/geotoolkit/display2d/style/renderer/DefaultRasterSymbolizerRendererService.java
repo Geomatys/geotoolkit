@@ -60,12 +60,12 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
 
     private static final int LEGEND_PALETTE_WIDTH = 30;
     private static final Font LEGEND_FONT = new Font(Font.SERIF, Font.BOLD, 12);
-    
+
     @Override
     public boolean isGroupSymbolizer() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -101,22 +101,22 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
     @Override
     public Rectangle2D glyphPreferredSize(CachedRasterSymbolizer symbol, MapLayer layer) {
         final Map<Object, Color> colorMap = getMapColor(symbol);
-        
+
         if (colorMap.isEmpty()) {
             return super.glyphPreferredSize(symbol, layer);
-            
+
         } else {
             final int mapLength = colorMap.size();
             int maxX = LEGEND_PALETTE_WIDTH;
-            
+
             final BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
             final FontMetrics fm = img.createGraphics().getFontMetrics(LEGEND_FONT);
-            
+
             for (Object key : colorMap.keySet()) {
                 int lineWidth = LEGEND_PALETTE_WIDTH + fm.stringWidth("< "+key.toString());
                 maxX = Math.max(maxX, lineWidth);
             }
-            
+
             int maxY = mapLength * fm.getHeight();
             return new Rectangle2D.Double(0, 0, maxX+5, maxY);
         }
@@ -130,16 +130,16 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
 
         float[] fractions;
         Color[] colors;
-        
+
         final ColorMap cm = symbol.getSource().getColorMap();
-        
+
         //paint default Glyph
         if (cm == null || cm.getFunction() == null || ( !(cm.getFunction() instanceof Interpolate)
                 && !(cm.getFunction() instanceof Jenks) && !(cm.getFunction() instanceof Categorize) )) {
-            
+
             fractions = new float[] {0.0f, 0.5f, 1.0f};
             colors = new Color[] {Color.RED, Color.GREEN, Color.BLUE};
-            
+
             final MultipleGradientPaint.CycleMethod cycleMethod = MultipleGradientPaint.CycleMethod.NO_CYCLE;
 
             final LinearGradientPaint paint = new LinearGradientPaint(
@@ -153,31 +153,31 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
             g.setPaint(paint);
             g.fill(rectangle);
             return;
-        } 
-        
+        }
+
         //paint Interpolation, Categorize and Jenks Glyphs
         final Map<Object, Color> colorMap = getMapColor(symbol);
-        
+
         if (!colorMap.isEmpty()) {
             boolean doInterpolation = true;
             if (colorMap.keySet().iterator().next() instanceof Range) {
                 doInterpolation = false;
             }
-            
+
             final int colorMapSize = colorMap.size();
-            
+
             int fillHeight = Double.valueOf(rectangle.getHeight()).intValue();
             int intervalHeight = fillHeight / colorMapSize;
-           
+
             Rectangle2D paintRectangle = new Rectangle(0, 0, LEGEND_PALETTE_WIDTH, fillHeight);
-            
+
             g.setClip(rectangle);
-            
-            
+
+
             if (doInterpolation) {
                 //fill color array
                 colors = colorMap.values().toArray(new Color[colorMapSize]);
-                
+
                 //fill fraction array
                 final float interval = 0.9f / colorMapSize;
                 float fraction = 0.1f;
@@ -186,7 +186,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                     fractions[i] = fraction;
                     fraction += interval;
                 }
-                
+
                 //paint nothing
                 if(colors.length == 0){
                     return;
@@ -197,7 +197,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                     colors = new Color[]{colors[0],colors[0]};
                     fractions = new float[]{fractions[0], 1.0f};
                 }
-                
+
                 //create gradient
                 final LinearGradientPaint paint = new LinearGradientPaint(
                     new Point2D.Double(paintRectangle.getMinX(),rectangle.getMinY()),
@@ -209,12 +209,12 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                 g.setPaint(paint);
                 g.fill(paintRectangle);
             } else {
-                
+
                 //paint all colors rectangles
                 Collection<Color> colorsList = colorMap.values();
                 int intX = Double.valueOf(rectangle.getMinX()).intValue();
                 int intY = Double.valueOf(rectangle.getMinY()).intValue();
-                
+
                 for (Color color : colorsList) {
                     final Rectangle2D colorRect = new Rectangle(intX, intY, LEGEND_PALETTE_WIDTH, intervalHeight);
                     g.setPaint(color);
@@ -222,7 +222,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                     intY += intervalHeight;
                 }
             }
-            
+
             //paint text
             float Y = Double.valueOf(rectangle.getMinY()).floatValue();
             float shift = doInterpolation ? 0.6f : 0.7f;
@@ -231,24 +231,24 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
             for (Map.Entry<Object, Color> elem : colorMap.entrySet()) {
                 final String text = "< "+elem.getKey().toString();
                 g.drawString(text, LEGEND_PALETTE_WIDTH + 1f , Y + intervalHeight * shift );
-                
+
                 Y += intervalHeight;
             }
         }
     }
-    
+
     /**
-     * Create a map of object and colors from symbolizer colormap functions like 
+     * Create a map of object and colors from symbolizer colormap functions like
      * Interpolate, Jenks and Categorize.
-     * 
+     *
      * @param symbol CachedRaserSymbolizer
-     * @return a Map containing Object like Range or String for key and Color as value. 
+     * @return a Map containing Object like Range or String for key and Color as value.
      */
     private Map<Object, Color> getMapColor(final CachedRasterSymbolizer symbol) {
         Map<Object, Color> colorMap = new LinkedHashMap<Object, Color>();
-        
+
         final ColorMap cm = symbol.getSource().getColorMap();
-        
+
         if (cm != null && cm.getFunction() != null ) {
             final Function fct = cm.getFunction();
             if (fct instanceof Interpolate) {
@@ -257,7 +257,10 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                 final int size = points.size();
                 for(int i=0;i<size;i++){
                     final InterpolationPoint pt = points.get(i);
-                    final Color color = Converters.convert(pt.getValue().toString(), Color.class);
+                    Color color = pt.getValue().evaluate(null, Color.class);
+                    if(color == null){
+                        color = Converters.convert(pt.getValue().toString(), Color.class);
+                    }
                     colorMap.put(pt.getData().toString(), color);
                 }
 
@@ -265,9 +268,9 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                 final Jenks jenks = (Jenks) fct;
                 final Map<Double, Color> jenksColorMap = jenks.getColorMap();
                 final Map<Color, List<Double>> rangeJenksMap = new HashMap<Color, List<Double>>();
-                
+
                 for (Map.Entry<Double, Color> elem : jenksColorMap.entrySet()) {
-                    
+
                     if (rangeJenksMap.containsKey(elem.getValue())) {
                         final List<Double> values = (List<Double>)rangeJenksMap.get(elem.getValue());
                         values.add(elem.getKey());
@@ -287,15 +290,15 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                     Collections.sort(values);
                     colorMap.put(new NumberRange<Double>(Double.class, values.get(0), true, values.get(values.size()-1), true), elem.getKey());
                 }
-                
+
             } else if(fct instanceof Categorize) {
                 final Categorize categorize = (Categorize) fct;
                 final Map<Expression, Expression> thresholds = categorize.getThresholds();
-                
+
                 final Map<Color, List<Double>> colorValuesMap = new HashMap<Color, List<Double>>();
-                
+
                 for (Map.Entry<Expression, Expression> entry : thresholds.entrySet()) {
-                    
+
                     final Color currentColor = entry.getValue().evaluate(null, Color.class);
                     Double currentValue = Double.NEGATIVE_INFINITY;
 
@@ -318,7 +321,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                         }
                     }
                 }
-                
+
                 //create range sorted map.
                 colorMap = new TreeMap(new RangeComparator());
                 for (Map.Entry<Color, List<Double>> elem : colorValuesMap.entrySet()) {
@@ -328,7 +331,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                 }
             }
         }
-        
+
         return colorMap;
     }
 
@@ -342,5 +345,5 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
             return o1.getMaxValue().compareTo(o2.getMinValue());
         }
     }
-    
+
 }

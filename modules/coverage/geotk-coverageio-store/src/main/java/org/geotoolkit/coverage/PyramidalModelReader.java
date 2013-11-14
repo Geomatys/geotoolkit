@@ -43,10 +43,12 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.math.XMath;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
@@ -353,10 +355,10 @@ public class PyramidalModelReader extends GridCoverageReader{
         double tileMaxRow = Math.floor( (tileMatrixMaxY - bBoxMinY) / tileSpanY - epsilon)+1;
 
         //ensure we dont go out of the grid
-        if(tileMinCol < 0) tileMinCol = 0;
-        if(tileMaxCol > gridWidth) tileMaxCol = gridWidth;
-        if(tileMinRow < 0) tileMinRow = 0;
-        if(tileMaxRow > gridHeight) tileMaxRow = gridHeight;
+        tileMinCol = XMath.clamp(tileMinCol, 0, gridWidth);
+        tileMaxCol = XMath.clamp(tileMaxCol, 0, gridWidth);
+        tileMinRow = XMath.clamp(tileMinRow, 0, gridHeight);
+        tileMaxRow = XMath.clamp(tileMaxRow, 0, gridHeight);
 
 
         //tiles to render, coordinate in grid -> image offset
@@ -369,6 +371,11 @@ public class PyramidalModelReader extends GridCoverageReader{
                     continue;
                 }candidates.add(new Point(tileCol, tileRow));
             }
+        }
+
+        if(candidates.isEmpty()){
+            //no tiles intersect
+            throw new DisjointCoverageDomainException("Requested envelope do not intersect tiles.");
         }
 
         //aggregation ----------------------------------------------------------
