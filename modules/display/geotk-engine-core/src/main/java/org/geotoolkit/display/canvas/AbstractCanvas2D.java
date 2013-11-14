@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
@@ -46,7 +45,6 @@ import org.apache.sis.util.Classes;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.GeodeticCalculator;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -65,6 +63,7 @@ import org.opengis.referencing.crs.GeneralDerivedCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -74,8 +73,6 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  */
 public abstract class AbstractCanvas2D extends AbstractCanvas{
-
-    private static final double DEFAULT_DPI = 90d;
 
     /**
      * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
@@ -121,6 +118,10 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     private boolean autoRepaint = false;
 
     private GeneralEnvelope envelope;
+
+    //navigation constraint
+    private double minscale = Double.NaN;
+    private double maxscale = Double.NaN;
 
     public AbstractCanvas2D() {
         this(new Hints());
@@ -285,11 +286,50 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      *         {@code change} is the identity transform, then this method does nothing and
      *         listeners are not notified.
      */
-    public void applyTransform(final AffineTransform change){
+    public void applyTransform(AffineTransform change){
         if(change.isIdentity()) return;
         objToDisp.concatenate(change);
         XAffineTransform.roundIfAlmostInteger(objToDisp, EPS);
         updateEnvelope();
+
+        fixScale:
+        if(!Double.isNaN(minscale) || !Double.isNaN(maxscale)){
+            double scale = CanvasUtilities.computeSEScale(envelope, objToDisp, getDisplayBounds().getBounds());
+
+            final Point2D center = getDisplayCenter();
+            if(center== null) break fixScale;
+            final double centerX = center.getX();
+            final double centerY = center.getY();
+
+            try {
+                change = objToDisp.createInverse();
+            } catch (NoninvertibleTransformException ex) {
+                getLogger().log(Level.WARNING, null, ex);
+                break fixScale;
+            }
+
+            double correction = Double.NaN;
+            if(!Double.isNaN(maxscale) && scale>maxscale){
+                correction = scale/maxscale;
+
+            }
+            if(!Double.isNaN(minscale) && scale<minscale){
+                correction = scale/minscale;
+            }
+
+            if(!Double.isNaN(correction)){
+                change.translate(+centerX, +centerY);
+                change.scale(correction, correction);
+                change.translate(-centerX, -centerY);
+                change.concatenate(objToDisp);
+
+                objToDisp.concatenate(change);
+                XAffineTransform.roundIfAlmostInteger(objToDisp, EPS);
+                updateEnvelope();
+            }
+
+        }
+
         firePropertyChange(TRANSFORM_KEY, null, change);
         repaintIfAuto();
     }
@@ -329,6 +369,42 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
     public abstract Image getSnapShot();
+
+    /**
+     * Set minimum scale do display.
+     * Scale is in SE scale.
+     * @param minscale
+     */
+    public void setMinscale(double minscale) {
+        this.minscale = minscale;
+    }
+
+    /**
+     * Get minimum scale do display.
+     * Scale is in SE scale.
+     * @return min scale
+     */
+    public double getMinscale() {
+        return minscale;
+    }
+
+    /**
+     * Set maximum scale do display.
+     * Scale is in SE scale.
+     * @param maxscale
+     */
+    public void setMaxscale(double maxscale) {
+        this.maxscale = maxscale;
+    }
+
+    /**
+     * Get maximum scale do display.
+     * Scale is in SE scale.
+     * @return max scale
+     */
+    public double getMaxscale() {
+        return maxscale;
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // Next methods are convinient methods which always end up by calling applyTransform(trs)
@@ -894,80 +970,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
      *                               illegal state.
      */
     public double getGeographicScale() throws TransformException {
-        final Point2D center = getDisplayCenter();
-        final double[] P1 = new double[]{center.getX(), center.getY()};
-        final double[] P2 = new double[]{P1[0], P1[1] + 1};
-
-        final AffineTransform trs;
-        try {
-            trs = getObjectiveToDisplay().createInverse();
-        } catch (NoninvertibleTransformException ex) {
-            throw new TransformException(ex.getLocalizedMessage(), ex);
-        }
-        trs.transform(P1, 0, P1, 0, 1);
-        trs.transform(P2, 0, P2, 0, 1);
-
-        final CoordinateReferenceSystem crs = getObjectiveCRS2D();
-        final Unit unit = crs.getCoordinateSystem().getAxis(0).getUnit();
-
-        final double distance;
-        if (unit.isCompatible(SI.METRE)) {
-            final Point2D p1 = new Point2D.Double(P1[0], P1[1]);
-            final Point2D p2 = new Point2D.Double(P2[0], P2[1]);
-            final UnitConverter conv = unit.getConverterTo(SI.METRE);
-            distance = conv.convert(p1.distance(p2));
-        } else {
-            /*
-             * If the latitude ordinates (for example) are outside the +/-90°
-             * range, translate the points in order to bring them back in the
-             * domain of validity.
-             */
-            final CoordinateSystem cs = crs.getCoordinateSystem();
-            for (int i = cs.getDimension(); --i >= 0;) {
-                final CoordinateSystemAxis axis = cs.getAxis(i);
-                double delta = P1[i] - axis.getMaximumValue();
-                if (delta > 0) {
-                    P1[i] -= delta;
-                    P2[i] -= delta;
-                }
-                delta = P2[i] - axis.getMaximumValue();
-                if (delta > 0) {
-                    P1[i] -= delta;
-                    P2[i] -= delta;
-                }
-                delta = axis.getMinimumValue() - P1[i];
-                if (delta > 0) {
-                    P1[i] += delta;
-                    P2[i] += delta;
-                }
-                delta = axis.getMinimumValue() - P2[i];
-                if (delta > 0) {
-                    P1[i] += delta;
-                    P2[i] += delta;
-                }
-            }
-            final GeodeticCalculator gc = new GeodeticCalculator(crs);
-            final GeneralDirectPosition pos1 = new GeneralDirectPosition(crs);
-            pos1.setOrdinate(0, P1[0]);
-            pos1.setOrdinate(1, P1[1]);
-            final GeneralDirectPosition pos2 = new GeneralDirectPosition(crs);
-            pos2.setOrdinate(0, P2[0]);
-            pos2.setOrdinate(1, P2[1]);
-            try {
-                gc.setStartingPosition(pos1);
-                gc.setDestinationPosition(pos2);
-            } catch (TransformException ex) {
-                throw new TransformException(ex.getLocalizedMessage(), ex);
-            } catch (IllegalArgumentException ex) {
-                //might happen when changing projection and moving the area.
-                //the coordinate can be out of the crs area, which causes this exception
-                throw new TransformException(ex.getLocalizedMessage(), ex);
-            }
-            distance = Math.abs(gc.getOrthodromicDistance());
-        }
-
-        final double displayToDevice = 1f / DEFAULT_DPI * 0.0254f;
-        return distance / displayToDevice;
+        return CanvasUtilities.getGeographicScale(getDisplayCenter(), getObjectiveToDisplay(), getObjectiveCRS2D());
     }
 
     public void setTemporalRange(final Date startDate, final Date endDate) throws TransformException {

@@ -42,6 +42,7 @@ import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display.canvas.CanvasUtilities;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
@@ -304,7 +305,10 @@ public class RenderingContext2D implements RenderingContext{
         }
 
         //calculate the symbology encoding scale -------------------------------
-        seScale = GO2Utilities.computeSEScale(this);
+        seScale = CanvasUtilities.computeSEScale(
+            getCanvasObjectiveBounds2D(),
+            getObjectiveToDisplay(),
+            getCanvasDisplayBounds());
 
         //prepare informations for possible map repetition ---------------------
         this.wrapPoints = null;
@@ -364,9 +368,11 @@ public class RenderingContext2D implements RenderingContext{
                         }
                     }
                 }
-                final int nbLeft = (int) Math.ceil(kLeft);
-                final int nbRight = (int) Math.ceil(kRight);
-
+                int nbLeft = (int) Math.ceil(kLeft);
+                int nbRight = (int) Math.ceil(kRight);
+                if(nbLeft<0)nbLeft=0;
+                if(nbRight<0)nbRight=0;
+                
                 if(nbLeft>0 || nbRight>0){
                     final List<AffineTransform2D> objDisps = new ArrayList<>(nbLeft+nbRight+1);
                     final List<AffineTransform2D> objs = new ArrayList<>(nbLeft+nbRight+1);

@@ -337,7 +337,7 @@ public final class GeoTiffMetaDataReader {
 
     /**
      * Read values for the given tag number.
-     * 
+     *
      * @param tagNumber
      * @param offset
      * @param lenght

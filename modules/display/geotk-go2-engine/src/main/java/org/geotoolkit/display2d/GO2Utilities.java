@@ -160,14 +160,8 @@ public final class GO2Utilities {
     private static final Map<Class<? extends CachedSymbolizer>,SymbolizerRendererService> RENDERERS =
             new HashMap<Class<? extends CachedSymbolizer>, SymbolizerRendererService>();
 
-    /**
-     * Used in SLD/SE to calculate scale for degree CRSs.
-     */
-    private static final double SE_DEGREE_TO_METERS = 6378137.0 * 2.0 * Math.PI / 360;
-    private static final double DEFAULT_DPI = 90; // ~ 0.28 * 0.28mm
-    private static final double PIXEL_SIZE = 0.0254;
     private static final double SE_EPSILON = 1e-6;
-
+    
     public static final MutableStyleFactory STYLE_FACTORY;
     public static final FilterFactory2 FILTER_FACTORY;
     public static final float SELECTION_LOWER_ALPHA = 0.09f;
@@ -932,28 +926,6 @@ public final class GO2Utilities {
     ////////////////////////////////////////////////////////////////////////////
     // information about styles ////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-
-    public static double computeSEScale(final RenderingContext2D context) {
-        final Envelope envelope = context.getCanvasObjectiveBounds2D();
-        final CoordinateReferenceSystem objCRS = envelope.getCoordinateReferenceSystem();
-        final AffineTransform objToDisp = context.getObjectiveToDisplay();
-        final int width = context.getCanvasDisplayBounds().width;
-
-        if (XAffineTransform.getRotation(objToDisp) != 0.0) {
-            final double scale = XAffineTransform.getScale(objToDisp);
-            if(objCRS instanceof GeographicCRS) {
-                return (SE_DEGREE_TO_METERS*DEFAULT_DPI) / (scale*PIXEL_SIZE);
-            } else {
-                return DEFAULT_DPI / (scale *PIXEL_SIZE);
-            }
-        }else{
-            if(objCRS instanceof GeographicCRS) {
-                return (envelope.getSpan(0) * SE_DEGREE_TO_METERS) / (width / DEFAULT_DPI*PIXEL_SIZE);
-            } else {
-                return envelope.getSpan(0) / (width / DEFAULT_DPI*PIXEL_SIZE);
-            }
-        }
-    }
 
     public static float[] validDashes(final float[] dashes) {
         if (dashes == null || dashes.length == 0) {
