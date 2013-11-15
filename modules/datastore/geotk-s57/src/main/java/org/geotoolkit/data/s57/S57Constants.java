@@ -17,14 +17,19 @@
 package org.geotoolkit.data.s57;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.iso8211.SubFieldDescription;
 import org.opengis.util.CodeList;
 import static org.geotoolkit.data.iso8211.FieldValueType.*;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.util.collection.CheckedArrayList;
 import org.opengis.feature.type.FeatureType;
 
 /**
@@ -33,6 +38,8 @@ import org.opengis.feature.type.FeatureType;
  * @author Johann Sorel (Geomatys)
  */
 public final class S57Constants {
+
+    public static final Logger LOGGER = Logging.getLogger(S57Constants.class);
 
     /**
      * Name of the rebuilded geometry in Feature and Spatial records.
@@ -84,7 +91,7 @@ public final class S57Constants {
             this.binary = binary;
         }
 
-        static S57CodeList valueOf(final List<? extends S57CodeList> lst, final Object code) {
+        static S57CodeList valueOf(final CheckedArrayList<? extends S57CodeList> lst, final Object code, boolean allowCreate) {
 
             final String ascii;
             final int binary;
@@ -93,31 +100,38 @@ public final class S57Constants {
                 for(S57CodeList exp : lst){
                     if(exp.binary == binary) return exp;
                 }
+                ascii = ""+binary;
             }else if(code instanceof String){
                 ascii = (String)code;
                 for(S57CodeList exp : lst){
                     if(exp.ascii.equals(ascii)) return exp;
                 }
+                binary = Integer.valueOf(ascii);
             }else{
                 throw new IllegalArgumentException("Expected a String or Number object, received : "+code);
             }
 
-            throw new IllegalArgumentException("Unknwoned type : "+ code);
+            if(allowCreate){
+                final Class c = lst.getElementType();
+                LOGGER.log(Level.INFO, "Unknowed "+c.getSimpleName() +" added to list : ASCII="+ascii+" Binary="+binary);
+                try {
+                    final Constructor construct = c.getDeclaredConstructor(String.class,int.class);
+                    return (S57CodeList) construct.newInstance(ascii,binary);
+                } catch (NoSuchMethodException ex) {
+                    throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
+                } catch (SecurityException ex) {
+                    throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
+                } catch (IllegalAccessException ex) {
+                    throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
+                } catch (InvocationTargetException ex) {
+                    throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
+                } catch (InstantiationException ex) {
+                    throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
+                }
+            }else{
+                throw new IllegalArgumentException("Unknwoned type : "+ code);
+            }
 
-//            try {
-//                final Constructor construct = c.getDeclaredConstructor(String.class,int.class);
-//                return (S57CodeList) construct.newInstance(ascii,binary);
-//            } catch (NoSuchMethodException ex) {
-//                throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
-//            } catch (SecurityException ex) {
-//                throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
-//            } catch (IllegalAccessException ex) {
-//                throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
-//            } catch (InvocationTargetException ex) {
-//                throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
-//            } catch (InstantiationException ex) {
-//                throw new IllegalStateException("Class "+c.getSimpleName()+" has not been properly declared, expecting a constructor with String,Integer arguments.",ex);
-//            }
         }
 
     }
@@ -130,7 +144,7 @@ public final class S57Constants {
         public static final String NAME = "RCNM";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 2);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<RecordType> VALUES = new ArrayList<RecordType>();
+        static final CheckedArrayList<RecordType> VALUES = new CheckedArrayList<RecordType>(RecordType.class);
         //---------------
         /**
          * Data Set General Information
@@ -205,7 +219,7 @@ public final class S57Constants {
         }
 
         public static RecordType valueOf(Object code) {
-            return (RecordType) valueOf(VALUES, code);
+            return (RecordType) valueOf(VALUES, code, false);
         }
 
     }
@@ -219,7 +233,7 @@ public final class S57Constants {
         public static final String NAME = "COUN";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 2);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<Unit> VALUES = new ArrayList<Unit>();
+        static final CheckedArrayList<Unit> VALUES = new CheckedArrayList<Unit>(Unit.class);
         //---------------
         /** LL {1} Latitude and longitude : Degrees of arc */
         public static final Unit LATLON = new Unit("LL", 1);
@@ -244,7 +258,7 @@ public final class S57Constants {
         }
 
         public static Unit valueOf(Object code) {
-            return (Unit) valueOf(VALUES, code);
+            return (Unit) valueOf(VALUES, code,false);
         }
     }
 
@@ -253,7 +267,7 @@ public final class S57Constants {
         public static final String NAME = "PROJ";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 3);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<Projection> VALUES = new ArrayList<Projection>();
+        static final CheckedArrayList<Projection> VALUES = new CheckedArrayList<Projection>(Projection.class);
         //---------------
         /**
          * When transforming units, other than latitude and longitude, into geographical positions (referenced to the
@@ -372,7 +386,7 @@ public final class S57Constants {
         }
 
         public static Projection valueOf(Object code) {
-            return (Projection) valueOf(VALUES, code);
+            return (Projection) valueOf(VALUES, code, false);
         }
     }
 
@@ -384,7 +398,7 @@ public final class S57Constants {
         public static final String NAME = "PRIM";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<Primitive> VALUES = new ArrayList<Primitive>();
+        static final CheckedArrayList<Primitive> VALUES = new CheckedArrayList<Primitive>(Primitive.class);
         //---------------
         /** Point */
         public static final Primitive PRIMITIVE_POINT = new Primitive("P",1);
@@ -411,7 +425,7 @@ public final class S57Constants {
         }
 
         public static Primitive valueOf(Object code) {
-            return (Primitive) valueOf(VALUES, code);
+            return (Primitive) valueOf(VALUES, code, false);
         }
     }
 
@@ -420,7 +434,7 @@ public final class S57Constants {
         public static final String NAME = "USAG";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<Usage> VALUES = new ArrayList<Usage>();
+        static final CheckedArrayList<Usage> VALUES = new CheckedArrayList<Usage>(Usage.class);
         //---------------
         /** exterior */
         public static final Usage EXTERIOR = new Usage("E",1);
@@ -447,7 +461,7 @@ public final class S57Constants {
         }
 
         public static Usage valueOf(Object code) {
-            return (Usage) valueOf(VALUES, code);
+            return (Usage) valueOf(VALUES, code, true);
         }
     }
 
@@ -456,7 +470,7 @@ public final class S57Constants {
         public static final String NAME = "ORNT";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<Orientation> VALUES = new ArrayList<Orientation>();
+        static final CheckedArrayList<Orientation> VALUES = new CheckedArrayList<Orientation>(Orientation.class);
         //---------------
         /** Forward */
         public static final Orientation FORWARD = new Orientation("F",1);
@@ -481,7 +495,7 @@ public final class S57Constants {
         }
 
         public static Orientation valueOf(Object code) {
-            return (Orientation) valueOf(VALUES, code);
+            return (Orientation) valueOf(VALUES, code, false);
         }
     }
 
@@ -490,7 +504,7 @@ public final class S57Constants {
         public static final String NAME = "MASK";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<Mask> VALUES = new ArrayList<Mask>();
+        static final CheckedArrayList<Mask> VALUES = new CheckedArrayList<Mask>(Mask.class);
         //---------------
         /** Forward */
         public static final Mask MASK = new Mask("M",1);
@@ -515,7 +529,7 @@ public final class S57Constants {
         }
 
         public static Mask valueOf(Object code) {
-            return (Mask) valueOf(VALUES, code);
+            return (Mask) valueOf(VALUES, code,false);
         }
     }
 
@@ -524,7 +538,7 @@ public final class S57Constants {
         public static final String NAME = "TOPI";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<Topology> VALUES = new ArrayList<Topology>();
+        static final CheckedArrayList<Topology> VALUES = new CheckedArrayList<Topology>(Topology.class);
         //---------------
         /** Forward */
         public static final Topology TOPI_BEGIN_NODE = new Topology("B", 1);
@@ -550,7 +564,7 @@ public final class S57Constants {
         }
 
         public static Topology valueOf(Object code) {
-            return (Topology) valueOf(VALUES, code);
+            return (Topology) valueOf(VALUES, code, false);
         }
     }
 
@@ -559,7 +573,7 @@ public final class S57Constants {
         public static final String NAME = "ATYP";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<ArcType> VALUES = new ArrayList<ArcType>();
+        static final CheckedArrayList<ArcType> VALUES = new CheckedArrayList<ArcType>(ArcType.class);
         //---------------
         /** Forward */
         public static final ArcType ATYP_ARC_3_POINT = new ArcType("C",1);
@@ -584,7 +598,7 @@ public final class S57Constants {
         }
 
         public static ArcType valueOf(Object code) {
-            return (ArcType) valueOf(VALUES, code);
+            return (ArcType) valueOf(VALUES, code, false);
         }
     }
 
@@ -593,7 +607,7 @@ public final class S57Constants {
         public static final String NAME = "SURF";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<ConstructionSurface> VALUES = new ArrayList<ConstructionSurface>();
+        static final CheckedArrayList<ConstructionSurface> VALUES = new CheckedArrayList<ConstructionSurface>(ConstructionSurface.class);
         //---------------
         /** Ellipsoidal Object must be reconstructed prior to projection onto a 2-D surface */
         public static final ConstructionSurface MASK = new ConstructionSurface("E",1);
@@ -616,7 +630,7 @@ public final class S57Constants {
         }
 
         public static ConstructionSurface valueOf(Object code) {
-            return (ConstructionSurface) valueOf(VALUES, code);
+            return (ConstructionSurface) valueOf(VALUES, code, false);
         }
     }
 
@@ -628,7 +642,7 @@ public final class S57Constants {
         public static final String NAME = "EXPP";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<ExchangePurpose> VALUES = new ArrayList<ExchangePurpose>();
+        static final CheckedArrayList<ExchangePurpose> VALUES = new CheckedArrayList<ExchangePurpose>(ExchangePurpose.class);
         //---------------
         public static final ExchangePurpose NEW = new ExchangePurpose("N", 1);
         public static final ExchangePurpose REVISION = new ExchangePurpose("R", 2);
@@ -649,7 +663,7 @@ public final class S57Constants {
         }
 
         public static ExchangePurpose valueOf(Object code) {
-            return (ExchangePurpose) valueOf(VALUES, code);
+            return (ExchangePurpose) valueOf(VALUES, code, false);
         }
     }
 
@@ -660,7 +674,7 @@ public final class S57Constants {
 
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<IntendedUsage> VALUES = new ArrayList<IntendedUsage>();
+        static final CheckedArrayList<IntendedUsage> VALUES = new CheckedArrayList<IntendedUsage>(IntendedUsage.class);
         //---------------
         public static final IntendedUsage OVERVIEW = new IntendedUsage("1", 1);
         public static final IntendedUsage GENERAL = new IntendedUsage("2", 2);
@@ -685,7 +699,7 @@ public final class S57Constants {
         }
 
         public static IntendedUsage valueOf(Object code) {
-            return (IntendedUsage) valueOf(VALUES, code);
+            return (IntendedUsage) valueOf(VALUES, code, true);
         }
     }
 
@@ -696,7 +710,7 @@ public final class S57Constants {
 
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 3);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<ProductSpecification> VALUES = new ArrayList<ProductSpecification>();
+        static final CheckedArrayList<ProductSpecification> VALUES = new CheckedArrayList<ProductSpecification>(ProductSpecification.class);
         //---------------
         public static final ProductSpecification ENC = new ProductSpecification("ENC", 1);
         public static final ProductSpecification ODD = new ProductSpecification("ODD", 2);
@@ -717,7 +731,7 @@ public final class S57Constants {
         }
 
         public static ProductSpecification valueOf(Object code) {
-            return (ProductSpecification) valueOf(VALUES, code);
+            return (ProductSpecification) valueOf(VALUES, code, true);
         }
     }
 
@@ -728,7 +742,7 @@ public final class S57Constants {
 
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 2);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<ApplicationProfile> VALUES = new ArrayList<ApplicationProfile>();
+        static final CheckedArrayList<ApplicationProfile> VALUES = new CheckedArrayList<ApplicationProfile>(ApplicationProfile.class);
         //---------------
         public static final ApplicationProfile ENC_NEW = new ApplicationProfile("EN", 1);
         public static final ApplicationProfile ENC_REVISION = new ApplicationProfile("ER", 2);
@@ -750,7 +764,7 @@ public final class S57Constants {
         }
 
         public static ApplicationProfile valueOf(Object code) {
-            return (ApplicationProfile) valueOf(VALUES, code);
+            return (ApplicationProfile) valueOf(VALUES, code,true);
         }
     }
 
@@ -764,7 +778,7 @@ public final class S57Constants {
 
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 2);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<DataStructure> VALUES = new ArrayList<DataStructure>();
+        static final CheckedArrayList<DataStructure> VALUES = new CheckedArrayList<DataStructure>(DataStructure.class);
         //---------------
         /**
          * {1} Cartographic spaghetti (see part 2, clause 2.2.1.1)
@@ -803,7 +817,7 @@ public final class S57Constants {
         }
 
         public static DataStructure valueOf(Object code) {
-            return (DataStructure) valueOf(VALUES, code);
+            return (DataStructure) valueOf(VALUES, code, false);
         }
     }
 
@@ -814,7 +828,7 @@ public final class S57Constants {
 
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<LexicalLevel> VALUES = new ArrayList<LexicalLevel>();
+        static final CheckedArrayList<LexicalLevel> VALUES = new CheckedArrayList<LexicalLevel>(LexicalLevel.class);
         //---------------
         /**
          * ASCII text, IRV of ISO/IEC 646
@@ -870,7 +884,7 @@ public final class S57Constants {
         }
 
         public static LexicalLevel valueOf(Object code) {
-            return (LexicalLevel) valueOf(VALUES, code);
+            return (LexicalLevel) valueOf(VALUES, code, false);
         }
     }
 
@@ -881,7 +895,7 @@ public final class S57Constants {
 
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<RelationShip> VALUES = new ArrayList<RelationShip>();
+        static final CheckedArrayList<RelationShip> VALUES = new CheckedArrayList<RelationShip>(RelationShip.class);
         //---------------
         public static final RelationShip LEVEL0 = new RelationShip("M", 1);
         public static final RelationShip LEVEL1 = new RelationShip("S", 2);
@@ -903,7 +917,7 @@ public final class S57Constants {
         }
 
         public static RelationShip valueOf(Object code) {
-            return (RelationShip) valueOf(VALUES, code);
+            return (RelationShip) valueOf(VALUES, code, false);
         }
     }
 
@@ -911,7 +925,7 @@ public final class S57Constants {
     public static final class UpdateInstruction extends S57CodeList<UpdateInstruction> {
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<UpdateInstruction> VALUES = new ArrayList<UpdateInstruction>();
+        static final CheckedArrayList<UpdateInstruction> VALUES = new CheckedArrayList<UpdateInstruction>(UpdateInstruction.class);
         //---------------
         /** Insert */
         public static final UpdateInstruction INSERT = new UpdateInstruction("I",1);
@@ -936,7 +950,7 @@ public final class S57Constants {
         }
 
         public static UpdateInstruction valueOf(Object code) {
-            return (UpdateInstruction) valueOf(VALUES, code);
+            return (UpdateInstruction) valueOf(VALUES, code, false);
         }
     }
 
@@ -945,7 +959,7 @@ public final class S57Constants {
         public static final String NAME = "ASET";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<AttributeSet> VALUES = new ArrayList<AttributeSet>();
+        static final CheckedArrayList<AttributeSet> VALUES = new CheckedArrayList<AttributeSet>(AttributeSet.class);
         //---------------
         /** Atribute set A : Attributes in this subset define the individual
          * characteristics of an object; */
@@ -974,7 +988,7 @@ public final class S57Constants {
         }
 
         public static AttributeSet valueOf(Object code) {
-            return (AttributeSet) valueOf(VALUES, code);
+            return (AttributeSet) valueOf(VALUES, code, false);
         }
     }
 
@@ -983,7 +997,7 @@ public final class S57Constants {
         public static final String NAME = "RFTP";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 2);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<ReferenceType> VALUES = new ArrayList<ReferenceType>();
+        static final CheckedArrayList<ReferenceType> VALUES = new CheckedArrayList<ReferenceType>(ReferenceType.class);
         //---------------
         /** INT 1 : International chart 1, Symbols, Abbreviations, Terms used on charts */
         public static final ReferenceType SET_A = new ReferenceType("I1", 1);
@@ -1006,7 +1020,7 @@ public final class S57Constants {
         }
 
         public static ReferenceType valueOf(Object code) {
-            return (ReferenceType) valueOf(VALUES, code);
+            return (ReferenceType) valueOf(VALUES, code, false);
         }
     }
 
@@ -1015,7 +1029,7 @@ public final class S57Constants {
         public static final String NAME = "RAVA";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<RangeOrValue> VALUES = new ArrayList<RangeOrValue>();
+        static final CheckedArrayList<RangeOrValue> VALUES = new CheckedArrayList<RangeOrValue>(RangeOrValue.class);
         //---------------
         /** DVAL contains the maximum value */
         public static final RangeOrValue MINIMUM = new RangeOrValue("M", 1);
@@ -1040,7 +1054,7 @@ public final class S57Constants {
         }
 
         public static RangeOrValue valueOf(Object code) {
-            return (RangeOrValue) valueOf(VALUES, code);
+            return (RangeOrValue) valueOf(VALUES, code, false);
         }
     }
 
@@ -1049,7 +1063,7 @@ public final class S57Constants {
         public static final String NAME = "ATDO";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<AttributeDomain> VALUES = new ArrayList<AttributeDomain>();
+        static final CheckedArrayList<AttributeDomain> VALUES = new CheckedArrayList<AttributeDomain>(AttributeDomain.class);
         //---------------
         /** Enumerated */
         public static final AttributeDomain ENUMERATED = new AttributeDomain("E", 1);
@@ -1080,7 +1094,7 @@ public final class S57Constants {
         }
 
         public static AttributeDomain valueOf(Object code) {
-            return (AttributeDomain) valueOf(VALUES, code);
+            return (AttributeDomain) valueOf(VALUES, code, false);
         }
     }
 
@@ -1089,7 +1103,7 @@ public final class S57Constants {
         public static final String NAME = "OATY";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<ObjectType> VALUES = new ArrayList<ObjectType>();
+        static final CheckedArrayList<ObjectType> VALUES = new CheckedArrayList<ObjectType>(ObjectType.class);
         //---------------
         /** Meta object */
         public static final ObjectType METADATA = new ObjectType("M", 1);
@@ -1122,7 +1136,7 @@ public final class S57Constants {
         }
 
         public static ObjectType valueOf(Object code) {
-            return (ObjectType) valueOf(VALUES, code);
+            return (ObjectType) valueOf(VALUES, code, false);
         }
     }
 
@@ -1131,7 +1145,7 @@ public final class S57Constants {
         public static final String NAME = "OORA";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 1);
         public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(LE_INTEGER_UNSIGNED, 1);
-        static final List<ObjectOrAttribute> VALUES = new ArrayList<ObjectOrAttribute>();
+        static final CheckedArrayList<ObjectOrAttribute> VALUES = new CheckedArrayList<ObjectOrAttribute>(ObjectOrAttribute.class);
         //---------------
         /** The content of OAAC/OACO is an attribute */
         public static final ObjectOrAttribute OBJECT = new ObjectOrAttribute("A", 1);
@@ -1154,7 +1168,7 @@ public final class S57Constants {
         }
 
         public static ObjectOrAttribute valueOf(Object code) {
-            return (ObjectOrAttribute) valueOf(VALUES, code);
+            return (ObjectOrAttribute) valueOf(VALUES, code, false);
         }
     }
 
@@ -1163,7 +1177,7 @@ public final class S57Constants {
         public static final String NAME = "IMPL";
         public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(TEXT, 3);
         public static final SubFieldDescription BINARYFORMAT = null;
-        static final List<Implementation> VALUES = new ArrayList<Implementation>();
+        static final CheckedArrayList<Implementation> VALUES = new CheckedArrayList<Implementation>(Implementation.class);
         //---------------
         /** ASCII */
         public static final Implementation ASCII = new Implementation("ASC", -1);
@@ -1186,7 +1200,7 @@ public final class S57Constants {
         }
 
         public static Implementation valueOf(Object code) {
-            return (Implementation) valueOf(VALUES, code);
+            return (Implementation) valueOf(VALUES, code, false);
         }
     }
 

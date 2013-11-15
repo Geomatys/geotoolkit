@@ -25,11 +25,14 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.TopologyException;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
+import org.geotoolkit.display2d.primitive.jts.JTSLineIterator;
+import org.geotoolkit.display2d.style.j2d.PathWalker;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.symbolizer.S52Graphic;
@@ -97,7 +100,37 @@ public abstract class Instruction {
                 //S-52 Annex A Part I p.47 7.1.1
                 // The pivot-point for text for a line is the centre of a single segment line.
                 // For a multi-segment-line the pivot-point is the mid-point of the run-length of the line.
-                return geom.getInteriorPoint().getCoordinate();
+
+                double length;
+                if(geom instanceof MultiLineString){
+                    //we use the longest line segment
+                    MultiLineString mls = (MultiLineString) geom;
+                    final int nbls = mls.getNumGeometries();
+                    geom = mls.getGeometryN(0);
+                    length = geom.getLength();
+                    for(int i=0;i<nbls;i++){
+                        final Geometry candidate = mls.getGeometryN(i);
+                        final double l = candidate.getLength();
+                        if(l>length){
+                            length = l;
+                            geom = candidate;
+                        }
+                    }
+
+                }else{
+                    length = geom.getLength();
+                }
+
+                if(length==0){
+                    return geom.getCoordinate();
+                }else{
+                    final PathWalker walker = new PathWalker(new JTSLineIterator((LineString)geom, null));
+                    walker.walk(0);
+                    walker.walk((float)length/2);
+                    Point2D pt = new Point2D.Double();
+                    pt = walker.getPosition(pt);
+                    return new Coordinate(pt.getX(), pt.getY());
+                }
 
             }else if(geom instanceof Polygon || geom instanceof MultiPolygon){
                 // The pivot-point for text for an area object is the centre of the area

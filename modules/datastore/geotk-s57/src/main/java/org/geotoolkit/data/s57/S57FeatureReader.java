@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
@@ -184,10 +185,30 @@ public class S57FeatureReader implements FeatureReader{
         //read attributes
         for(FeatureRecord.Attribute att : record.attributes){
             final PropertyDescriptor desc = properties.get(att.code);
-            readAttribute(att, desc, f.getProperty(desc.getName().getLocalPart()));
+            Property prop = f.getProperty(desc.getName().getLocalPart());
+            if(prop == null){
+                //this property has not been defined in the original S-57 feature type
+                //still the description of this property exist but was not listed for this feature type.
+                //we create the property and add it, knowing it won't be declared in the feature type.
+                prop = FeatureUtilities.defaultProperty(desc);
+                f.getProperties().add(prop);
+                S57Constants.LOGGER.log(Level.INFO, "Property "+desc.getName().getLocalPart()+" is not declared within type "
+                        +currentType.getName().getLocalPart()+", property will be added but not declared in feature type.");
+            }
+            readAttribute(att, desc, prop);
         }
         for(FeatureRecord.NationalAttribute att : record.nattributes){
             final PropertyDescriptor desc = properties.get(att.code);
+            Property prop = f.getProperty(desc.getName().getLocalPart());
+            if(prop == null){
+                //this property has not been defined in the original S-57 feature type
+                //still the description of this property exist but was not listed for this feature type.
+                //we create the property and add it, knowing it won't be declared in the feature type.
+                prop = FeatureUtilities.defaultProperty(desc);
+                f.getProperties().add(prop);
+                S57Constants.LOGGER.log(Level.INFO, "Property "+desc.getName().getLocalPart()+" is not declared within type "
+                        +currentType.getName().getLocalPart()+", property will be added but not declared in feature type.");
+            }
             readAttribute(att, desc, f.getProperty(desc.getName().getLocalPart()));
         }
 
@@ -206,6 +227,7 @@ public class S57FeatureReader implements FeatureReader{
             throw new FeatureStoreRuntimeException("S-57 Full topology mode not supported.");
         }
 
+        //System.out.println(f);
         return f;
     }
 

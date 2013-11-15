@@ -20,19 +20,20 @@ import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.data.iso8211.FieldValueType;
 import org.geotoolkit.data.iso8211.SubFieldDescription;
+import org.geotoolkit.util.collection.CheckedArrayList;
 
 /**
  * 7.3.11 Agencices.
- * 
+ *
  * LAST UPDATE 11/04/2013 from http://registry.iho.int/s100_gi_registry/home.php
- * 
+ *
  * @author  Johann Sorel (Geomatys)
  */
 public final class S62Agency extends S57Constants.S57CodeList<S62Agency> {
     public static final SubFieldDescription ASCIIFORMAT = new SubFieldDescription(FieldValueType.TEXT, 2);
     public static final SubFieldDescription BINARYFORMAT = new SubFieldDescription(FieldValueType.LE_INTEGER_UNSIGNED, 2);
-    static final List<S62Agency> VALUES = new ArrayList<S62Agency>();
-    
+    static final CheckedArrayList<S62Agency> VALUES = new CheckedArrayList<S62Agency>(S62Agency.class);
+
     ////////////////////////////////////////////////////////////////////////
     // MAIN PRODUCERS : IHO MS /////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////
@@ -751,7 +752,7 @@ public final class S62Agency extends S57Constants.S57CodeList<S62Agency> {
     }
 
     public static S62Agency valueOf(Object code) {
-        return (S62Agency) valueOf(VALUES, code);
+        return (S62Agency) valueOf(VALUES, code, false);
     }
-    
+
 }
