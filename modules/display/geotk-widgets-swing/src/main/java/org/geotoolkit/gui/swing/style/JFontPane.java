@@ -95,7 +95,14 @@ public class JFontPane extends StyleElementEditor<Font>{
     public MapLayer getLayer(){
         return layer;
     }
-        
+
+    public void setExpressionVisible(final boolean visible) {
+        guiFamily.setExpressionVisible(visible);
+        guiSize.setExpressionVisible(visible);
+        guiStyle.setExpressionVisible(visible);
+        guiWeight.setExpressionVisible(visible);
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

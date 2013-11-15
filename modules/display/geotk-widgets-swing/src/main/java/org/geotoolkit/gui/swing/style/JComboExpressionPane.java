@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
@@ -42,13 +43,20 @@ import org.opengis.filter.expression.Literal;
 public class JComboExpressionPane extends StyleElementEditor<Expression>{
 
     private final List<Literal> values = new ArrayList<Literal>();
-    
+
+    private final Dimension specialSize;
     
     /** Creates new form JColorExpressionPane */
     public JComboExpressionPane() {
         super(Expression.class);
         initComponents();
         guiCombo.setEditable(false);
+        specialSize = guiSpecial.getPreferredSize();
+    }
+
+    public void setExpressionVisible(boolean visible){
+        guiSpecial.setPreferredSize( visible ? new Dimension(specialSize) : new Dimension(1, 1));
+        guiSpecial.setVisible(visible);
     }
 
     @Override
