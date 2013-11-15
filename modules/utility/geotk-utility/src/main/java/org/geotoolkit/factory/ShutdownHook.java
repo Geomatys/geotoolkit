@@ -39,9 +39,16 @@ import org.geotoolkit.internal.io.TemporaryFile;
  * @module
  */
 @ThreadSafe
-final class ShutdownHook extends Thread {
+public final class ShutdownHook extends Thread {
+
+    /**
+     * Hook static reference.
+     */
+    private static final ShutdownHook SHUTDOWN_HOOK;
+
     static {
-        Runtime.getRuntime().addShutdownHook(new ShutdownHook());
+        SHUTDOWN_HOOK = new ShutdownHook();
+        Runtime.getRuntime().addShutdownHook(SHUTDOWN_HOOK);
     }
 
     /**
@@ -54,6 +61,15 @@ final class ShutdownHook extends Thread {
      */
     private ShutdownHook() {
         super(Threads.RESOURCE_DISPOSERS, "ShutdownHook");
+    }
+
+    /**
+     * Run hook and remove it from JVM shutdown.
+     */
+    public synchronized static void runAndremove() {
+        if(Runtime.getRuntime().removeShutdownHook(SHUTDOWN_HOOK)) {
+            SHUTDOWN_HOOK.run();
+        }
     }
 
     /**
