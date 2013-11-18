@@ -80,7 +80,30 @@ public class JComboExpressionPane extends StyleElementEditor<Expression>{
         }
         guiCombo.setModel(new ListComboBoxModel(this.values));
     }
-    
+
+    /**
+     * Allow to modify the prototype element used for combo size calculation.
+     *
+     * @param prototypeDisplayValue an element on which combo box will be based to calculate
+     *                              its size
+     * @see JComboBox#setPrototypeDisplayValue(java.lang.Object)
+     */
+    public void setPrototypeDisplayValue(final Object prototypeDisplayValue) {
+        guiCombo.setPrototypeDisplayValue(specialSize);
+    }
+
+    /**
+     * Set the prototype display value to the first item in the list.
+     * Should be called after adding items to do something.
+     *
+     * @see #setPrototypeDisplayValue(java.lang.Object)
+     */
+    public void setPrototypeDisplayValueToFirstItem() {
+        if (guiCombo.getItemCount() > 0) {
+            setPrototypeDisplayValue(guiCombo.getItemAt(0));
+        }
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

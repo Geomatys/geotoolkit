@@ -17,17 +17,20 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import java.awt.Component;
+import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.JLabel;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
+import org.opengis.filter.expression.Literal;
 import org.opengis.style.Font;
 
 /**
@@ -39,11 +42,24 @@ import org.opengis.style.Font;
 public class JFontPane extends StyleElementEditor<Font>{
     
     private MapLayer layer = null;
+    private final Literal[] fontFamilies;
     
     /** Creates new form JfontPanel */
     public JFontPane() {
         super(Font.class);
         initComponents();
+
+        //Initialize family font list with available font family
+        final GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        final String[] fontNames = environment.getAvailableFontFamilyNames();
+        final List<String> fontNamesList = Arrays.asList(fontNames);
+
+        final int nbFamilies = fontNamesList.size();
+        fontFamilies = new Literal[nbFamilies];
+        for (int i=0; i<nbFamilies; i++) {
+            fontFamilies[i] = new DefaultLiteral(fontNamesList.get(i));
+        }
+
         init();
     }
     
@@ -56,6 +72,10 @@ public class JFontPane extends StyleElementEditor<Font>{
         guiWeight.setModel(
                 StyleConstants.FONT_WEIGHT_NORMAL,
                 StyleConstants.FONT_WEIGHT_BOLD);
+
+        guiFamily.setModel(fontFamilies);
+        guiFamily.setSize(200, guiFamily.getPreferredSize().height);
+//        guiFamily.setPrototypeDisplayValueToFirstItem();
     }
     
     @Override
@@ -110,109 +130,89 @@ public class JFontPane extends StyleElementEditor<Font>{
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        GridBagConstraints gridBagConstraints;
 
         jLabel1 = new JLabel();
+        guiFamily = new JComboExpressionPane();
         jLabel2 = new JLabel();
-        jLabel3 = new JLabel();
-        jLabel4 = new JLabel();
-        guiSize = new JNumberExpressionPane();
-        guiFamily = new JTextExpressionPane();
         guiStyle = new JComboExpressionPane();
+        jLabel3 = new JLabel();
+        guiSize = new JNumberExpressionPane();
+        jLabel4 = new JLabel();
         guiWeight = new JComboExpressionPane();
 
         setOpaque(false);
+        setLayout(new GridBagLayout());
 
-        jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
+        jLabel1.setHorizontalAlignment(SwingConstants.LEFT);
         jLabel1.setText(MessageBundle.getString("family")); // NOI18N
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        add(jLabel1, gridBagConstraints);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 10.0;
+        add(guiFamily, gridBagConstraints);
 
-        jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
+        jLabel2.setHorizontalAlignment(SwingConstants.LEFT);
         jLabel2.setText(MessageBundle.getString("style")); // NOI18N
-
-        jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel3.setText(MessageBundle.getString("size")); // NOI18N
-
-        jLabel4.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel4.setText(MessageBundle.getString("weight")); // NOI18N
-
-        guiSize.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                JFontPane.this.propertyChange(evt);
-            }
-        });
-
-        guiFamily.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                JFontPane.this.propertyChange(evt);
-            }
-        });
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        add(jLabel2, gridBagConstraints);
 
         guiStyle.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 JFontPane.this.propertyChange(evt);
             }
         });
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 10.0;
+        add(guiStyle, gridBagConstraints);
+
+        jLabel3.setHorizontalAlignment(SwingConstants.LEFT);
+        jLabel3.setText(MessageBundle.getString("size")); // NOI18N
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        add(jLabel3, gridBagConstraints);
+
+        guiSize.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JFontPane.this.propertyChange(evt);
+            }
+        });
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 10.0;
+        add(guiSize, gridBagConstraints);
+
+        jLabel4.setHorizontalAlignment(SwingConstants.LEFT);
+        jLabel4.setText(MessageBundle.getString("weight")); // NOI18N
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        add(jLabel4, gridBagConstraints);
 
         guiWeight.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 JFontPane.this.propertyChange(evt);
             }
         });
-
-        GroupLayout layout = new GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiFamily, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiWeight, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3))
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                            .addComponent(guiStyle, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(guiSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel2, jLabel3, jLabel4});
-
-        layout.setVerticalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(guiFamily, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(guiStyle, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(guiSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(guiWeight, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)))
-        );
-
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiFamily, jLabel1});
-
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiSize, jLabel3});
-
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiWeight, jLabel4});
-
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiStyle, jLabel2});
-
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 10.0;
+        add(guiWeight, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
@@ -224,7 +224,7 @@ public class JFontPane extends StyleElementEditor<Font>{
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JTextExpressionPane guiFamily;
+    private JComboExpressionPane guiFamily;
     private JNumberExpressionPane guiSize;
     private JComboExpressionPane guiStyle;
     private JComboExpressionPane guiWeight;
