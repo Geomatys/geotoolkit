@@ -19,12 +19,15 @@ package org.geotoolkit.display2d.jts;
 import com.vividsolutions.jts.geom.Point;
 import java.awt.Shape;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
 import java.awt.geom.PathIterator;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.display2d.primitive.jts.JTSMultiLineStringJ2D;
@@ -81,7 +84,7 @@ public class PathIteratorTest {
         assertEquals(20, buffer[1], DELTA);
         assertEquals(PathIterator.SEG_MOVETO, type);
         ite.next();
-        
+
         assertTrue(ite.isDone());
     }
 
@@ -180,6 +183,65 @@ public class PathIteratorTest {
         ite.next();
 
         assertTrue(ite.isDone());
+    }
+
+    @Test
+    public void testMultiLineString2() throws ParseException{
+
+        final WKTReader reader = new WKTReader();
+        final Geometry geom = reader.read("MULTILINESTRING ((-5 0, 5 0), (355 0, 365 0), (-365 0, -355 0))");
+
+        final JTSGeometryJ2D shape = new JTSGeometryJ2D(geom);
+
+        final PathIterator ite = shape.getPathIterator(null);
+
+        double[] buffer = new double[2];
+        int type;
+
+        assertFalse(ite.isDone());
+        type = ite.currentSegment(buffer);
+        assertEquals(-5, buffer[0], DELTA);
+        assertEquals(0, buffer[1], DELTA);
+        assertEquals(PathIterator.SEG_MOVETO, type);
+        ite.next();
+
+        assertFalse(ite.isDone());
+        type = ite.currentSegment(buffer);
+        assertEquals(5, buffer[0], DELTA);
+        assertEquals(0, buffer[1], DELTA);
+        assertEquals(PathIterator.SEG_LINETO, type);
+        ite.next();
+
+        assertFalse(ite.isDone());
+        type = ite.currentSegment(buffer);
+        assertEquals(355, buffer[0], DELTA);
+        assertEquals(0, buffer[1], DELTA);
+        assertEquals(PathIterator.SEG_MOVETO, type);
+        ite.next();
+
+        assertFalse(ite.isDone());
+        type = ite.currentSegment(buffer);
+        assertEquals(365, buffer[0], DELTA);
+        assertEquals(0, buffer[1], DELTA);
+        assertEquals(PathIterator.SEG_LINETO, type);
+        ite.next();
+
+        assertFalse(ite.isDone());
+        type = ite.currentSegment(buffer);
+        assertEquals(-365, buffer[0], DELTA);
+        assertEquals(0, buffer[1], DELTA);
+        assertEquals(PathIterator.SEG_MOVETO, type);
+        ite.next();
+
+        assertFalse(ite.isDone());
+        type = ite.currentSegment(buffer);
+        assertEquals(-355, buffer[0], DELTA);
+        assertEquals(0, buffer[1], DELTA);
+        assertEquals(PathIterator.SEG_LINETO, type);
+        ite.next();
+
+        assertTrue(ite.isDone());
+
     }
 
     @Test

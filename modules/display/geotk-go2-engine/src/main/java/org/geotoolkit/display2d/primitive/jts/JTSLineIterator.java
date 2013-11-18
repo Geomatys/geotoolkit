@@ -57,6 +57,7 @@ public final class JTSLineIterator extends JTSGeometryIterator<LineString> {
             coordinateCount = coordinates.size();
             isClosed = geom instanceof LinearRing;
         }
+        reset();
     }
 
     /**

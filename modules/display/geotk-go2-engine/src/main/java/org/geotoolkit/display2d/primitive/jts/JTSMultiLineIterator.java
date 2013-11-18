@@ -59,6 +59,7 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
             nbGeom = geom.getNumGeometries();
             nextSubGeom();
         }
+        reset();
     }
 
     private void nextSubGeom(){
