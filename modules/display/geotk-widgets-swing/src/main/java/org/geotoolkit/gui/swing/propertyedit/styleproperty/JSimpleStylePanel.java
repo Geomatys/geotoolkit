@@ -80,21 +80,21 @@ import org.opengis.style.TextSymbolizer;
  * @author Johann Sorel (Geomatys)
  */
 public class JSimpleStylePanel extends StyleElementEditor implements PropertyPane{
-    
+
     private static final Icon ICO_UP = IconBundle.getIcon("16_vertical_previous");
     private static final Icon ICO_DOWN = IconBundle.getIcon("16_vertical_next");
     private static final Icon ICO_DELETE = IconBundle.getIcon("16_delete");
-    
+
     private final SymbolizerModel model = new SymbolizerModel();
-    
+
     private MapLayer layer = null;
     private MutableStyle style = null;
-    private JBankPanel bankController = new JBankPanel();    
+    private JBankPanel bankController = new JBankPanel();
     private final PropertyChangeListener changeListener = new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if(PROPERTY_TARGET.equals(evt.getPropertyName())){
-                    if (evt.getNewValue() instanceof Symbolizer) {     
+                    if (evt.getNewValue() instanceof Symbolizer) {
                         final Symbolizer s = (Symbolizer) evt.getNewValue();
                         guiOverviewLabel.parse(s);
                         final int selecteRow = guiTable.getSelectedRow();
@@ -108,21 +108,21 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         };
     //current visible editor
     private StyleElementEditor currentEditor = null;
-    
+
     /**
      * Creates new form jStylePane
      */
     public JSimpleStylePanel() {
         super(Object.class);
         initComponents();
-       
-        // Set models       
+
+        // Set models
         guiTable.setTableHeader(null);
         guiTable.setModel(model);
         guiTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+
         guiTable.getColumn(0).setCellRenderer(new SymbolizerRenderer());
-        
+
         guiTable.getColumn(1).setCellRenderer(new ActionCell.Renderer(ICO_UP));
         guiTable.getColumn(1).setCellEditor(new ActionCell.Editor(ICO_UP) {
             @Override
@@ -131,7 +131,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                 model.moveUp(symbol);
             }
         });
-        
+
         guiTable.getColumn(2).setCellRenderer(new ActionCell.Renderer(ICO_DOWN));
         guiTable.getColumn(2).setCellEditor(new ActionCell.Editor(ICO_DOWN) {
             @Override
@@ -140,7 +140,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                 model.moveDown(symbol);
             }
         });
-                
+
         guiTable.getColumn(3).setCellRenderer(new ActionCell.Renderer(ICO_DELETE));
         guiTable.getColumn(3).setCellEditor(new ActionCell.Editor(ICO_DELETE) {
             @Override
@@ -149,15 +149,15 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                 model.deleteSymbolizer(symbol);
             }
         });
-        
+
         final int width = 30;
-        guiTable.getColumn(1).setMinWidth(width);        
+        guiTable.getColumn(1).setMinWidth(width);
         guiTable.getColumn(1).setPreferredWidth(width);
         guiTable.getColumn(1).setMaxWidth(width);
-        guiTable.getColumn(2).setMinWidth(width);     
+        guiTable.getColumn(2).setMinWidth(width);
         guiTable.getColumn(2).setPreferredWidth(width);
         guiTable.getColumn(2).setMaxWidth(width);
-        guiTable.getColumn(3).setMinWidth(width);     
+        guiTable.getColumn(3).setMinWidth(width);
         guiTable.getColumn(3).setPreferredWidth(width);
         guiTable.getColumn(3).setMaxWidth(width);
         guiTable.setTableHeader(null);
@@ -172,15 +172,15 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
             @Override
             public void valueChanged(ListSelectionEvent evt) {
                 if(evt.getValueIsAdjusting()) return;
-                
+
                 if(currentEditor != null){
                     currentEditor.removePropertyChangeListener(changeListener);
                 }
-                
-                
+
+
                 guiScrollInfo.setViewportView(null);
                 guiOverviewLabel.parse(null);
-                
+
                 // Get all selected items
                 final int selectetRow = guiTable.getSelectedRow();
                 if (selectetRow >= 0 && model.symbolizers.size() > selectetRow) {
@@ -210,15 +210,15 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                         guiOverviewLabel.parse(item);
                     }
                 }
-                
+
                 guiScrollInfo.revalidate();
                 guiScrollInfo.repaint();
             }
         });
-        
+
         guiOverviewLabel.setMir(true);
-    }   
-     
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -353,7 +353,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
     }
 
     @Override
-    public void setTarget(Object target) {        
+    public void setTarget(Object target) {
          if(target instanceof MapLayer){
             this.layer = (MapLayer) target;
             parse(layer);
@@ -363,6 +363,10 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
     @Override
     public void apply() {
          if(layer != null){
+             if(currentEditor!=null){
+                 currentEditor.apply();
+             }
+
             final MutableStyleFactory SF = getStyleFactory();
             final Symbolizer[] array = model.symbolizers.toArray(new Symbolizer[0]);
             layer.setStyle(SF.style(array));
@@ -371,7 +375,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
 
     @Override
     public void reset() {
-       
+
     }
 
     @Override
@@ -388,7 +392,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
     public Image getPreview() {
         return IconBundle.getIcon("preview_style_simple").getImage();
     }
-    
+
     @Override
     public String getToolTip() {
         return "";
@@ -398,11 +402,11 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
     public Component getComponent() {
         return this;
     }
-    
+
      @Override
     public void setLayer(final MapLayer layer) {
-        this.layer = layer;       
-        
+        this.layer = layer;
+
     }
 
     @Override
@@ -412,14 +416,14 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
 
     @Override
     public void parse(final Object obj) {
-       
+
         model.clear();
-        
-        if(layer != null){            
+
+        if(layer != null){
             for(final FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
                 for(final Rule rule : fts.rules()){
                     for(final Symbolizer symbol : rule.symbolizers()){
-                        if(symbol instanceof Symbolizer){                                
+                        if(symbol instanceof Symbolizer){
                             model.addSymbolizer(symbol);
                         }
                     }
@@ -436,7 +440,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
     }
 
     private void jAddButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jAddButtonActionPerformed
-        
+
         final List<Class> clazz = new ArrayList<Class>();
         clazz.add(Symbolizer.class);
         clazz.add(PointSymbolizer.class);
@@ -444,7 +448,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         clazz.add(PolygonSymbolizer.class);
         clazz.add(TextSymbolizer.class);
         clazz.add(RasterSymbolizer.class);
-        
+
         bankController.setClazzList(clazz);
 
         final int result = JOptionDialog.show(null, bankController,JOptionPane.OK_CANCEL_OPTION);
@@ -472,8 +476,8 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
     private JScrollPane jScrollPane2;
     private JSplitPane jSplitPane1;
     // End of variables declaration//GEN-END:variables
-    
-    
+
+
     private static class SymbolizerModel extends AbstractTableModel {
 
         private final List<Symbolizer> symbolizers = new ArrayList<Symbolizer>();
@@ -485,14 +489,14 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
             symbolizers.clear();
             fireTableDataChanged();
         }
-        
+
         public int addSymbolizer(Symbolizer s){
             symbolizers.add(s);
             int last = symbolizers.size() - 1;
             fireTableRowsInserted(last, last);
             return last;
         }
-        
+
         public void deleteSymbolizer(final Symbolizer symbolizer) {
             final int index = symbolizers.indexOf(symbolizer);
             if (index >= 0) {
@@ -509,7 +513,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                 fireTableDataChanged();
             }
         }
-        
+
         public void change(int index, final Symbolizer s) {
             symbolizers.set(index, s);
             fireTableRowsUpdated(index, index);
@@ -561,16 +565,16 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
     }
 
     private static class SymbolizerRenderer extends DefaultTableCellRenderer {
-        
+
         private final JPreview preview = new JPreview();
 
         @Override
-        public Component getTableCellRendererComponent(final JTable table, final Object value, 
+        public Component getTableCellRendererComponent(final JTable table, final Object value,
             final boolean isSelected, final boolean hasFocus, final int row, final int column) {
 
             final JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, "", isSelected, hasFocus, row, column);
             lbl.setIcon(null);
-            
+
             if (value instanceof Symbolizer) {
                 Symbolizer symbol = (Symbolizer) value;
                 preview.parse(symbol);
@@ -582,15 +586,15 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                     lbl.setText("Unnamed");
                 }
             }
-            
+
             final JPanel pane = new JPanel(new BorderLayout());
             pane.add(BorderLayout.CENTER, lbl);
             pane.add(BorderLayout.WEST, preview);
             pane.setOpaque(false);
             EmptyCellRenderer.mimicStyle(lbl, preview);
-            
+
             return pane;
         }
     }
-        
+
 }

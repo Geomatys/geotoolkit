@@ -27,6 +27,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.geom.Path2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -35,23 +37,24 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_TARGET;
 import org.geotoolkit.map.MapLayer;
 import org.openide.awt.DropDownButtonFactory;
 
 /**
  * A Two state editor.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
-public class JTwoStateEditor<T> extends StyleElementEditor<T> {
+public class JTwoStateEditor<T> extends StyleElementEditor<T> implements PropertyChangeListener{
 
     private static final ImageIcon ICON_SIMPLE = IconBundle.getIcon("16_simple_style");
     private static final ImageIcon ICON_ADVANCED = IconBundle.getIcon("16_statefull_disable");
-    
+
     private final StyleElementEditor<T> simple;
     private final StyleElementEditor<T> advanced;
     private StyleElementEditor<T> current;
-    
+
     private final JLayeredPane layeredpane = new JLayeredPane();
     private final JButton typeselect;
     private final JPanel typeSelectPane = new JPanel(new FlowLayout(FlowLayout.RIGHT,0,0)){
@@ -59,10 +62,10 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            
+
             final Graphics2D g2d = (Graphics2D) g;
             g2d.setColor(Color.WHITE);
-            
+
             final int width = getWidth();
             final int theight = typeselect.getHeight() +4;
             final int twidth = typeselect.getWidth() +4;
@@ -73,42 +76,47 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> {
             path.lineTo(width-twidth-theight, 0);
             path.lineTo(width, 0);
             path.closePath();
-            
+
             g2d.fill(path);
         }
-        
+
     };
-    
+
     public JTwoStateEditor(final StyleElementEditor<T> simple, final StyleElementEditor<T> advanced) {
         super(simple.getEditedClass());
         setLayout(new BorderLayout());
         this.simple = simple;
         this.advanced = advanced;
         this.current = simple;
-        
+        current.addPropertyChangeListener(this);
+
         final JPopupMenu menu = new JPopupMenu();
         menu.add(new AbstractAction(MessageBundle.getString("style.twostate.simple"), ICON_SIMPLE) {
             @Override
             public void actionPerformed(ActionEvent e) {
+                current.removePropertyChangeListener(JTwoStateEditor.this);
                 layeredpane.remove(simple);
                 layeredpane.remove(advanced);
                 layeredpane.add(simple,new Integer(0));
                 typeselect.setIcon(ICON_SIMPLE);
                 current = simple;
+                current.addPropertyChangeListener(JTwoStateEditor.this);
             }
         });
         menu.add(new AbstractAction(MessageBundle.getString("style.twostate.advanced"), ICON_ADVANCED) {
             @Override
             public void actionPerformed(ActionEvent e) {
+                current.removePropertyChangeListener(JTwoStateEditor.this);
                 layeredpane.remove(simple);
                 layeredpane.remove(advanced);
                 layeredpane.add(advanced,new Integer(0));
                 typeselect.setIcon(ICON_ADVANCED);
                 current = advanced;
+                current.addPropertyChangeListener(JTwoStateEditor.this);
             }
         });
-        
-        
+
+
         typeselect = DropDownButtonFactory.createDropDownButton(ICON_SIMPLE, menu);
         typeselect.setBorderPainted(false);
         typeselect.setContentAreaFilled(false);
@@ -117,9 +125,9 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> {
         typeSelectPane.setOpaque(false);
         layeredpane.add(simple,new Integer(0));
         layeredpane.add(typeSelectPane,new Integer(1));
-        
+
         add(layeredpane,BorderLayout.CENTER);
-        
+
         addComponentListener(new ComponentListener() {
 
             @Override
@@ -153,7 +161,7 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> {
         simple.setLayer(layer);
         advanced.setLayer(layer);
     }
-    
+
     @Override
     public void parse(T target) {
         simple.parse(target);
@@ -164,5 +172,11 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> {
     public T create() {
         return current.create();
     }
-    
+
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
+            firePropertyChange(PROPERTY_TARGET, null, create());
+        }
+    }
+
 }
