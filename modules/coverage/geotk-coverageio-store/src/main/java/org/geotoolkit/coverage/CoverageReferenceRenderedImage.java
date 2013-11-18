@@ -59,7 +59,6 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
     private final CoverageReference ref;
     private final GridMosaic mosaic;
 
-    private final List<GridSampleDimension> sampleDimensions;
     private final ColorModel colorModel;
     private final SampleModel sampleModel;
     private final Envelope dataEnv;
@@ -80,7 +79,11 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
         final RenderedImage prototype = getTileCoverage(0, 0).getRenderedImage();
         colorModel = prototype.getColorModel();
         sampleModel = prototype.getSampleModel();
-        sampleDimensions = ref.acquireReader().getSampleDimensions(ref.getImageIndex());
+
+        //TODO we should do this here, but the GRIB reader do not return the same data
+        //types on the reader and on the readed coverage.
+        //TODO wait for the new NETCDF reader
+        //sampleDimensions = ref.acquireReader().getSampleDimensions(ref.getImageIndex());
 
     }
 
@@ -281,7 +284,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
             final GridCoverage2D coverage = getTileCoverage(idx, idy);
             final Envelope coverageEnvelope = coverage.getEnvelope2D();
             final RenderedImage image = coverage.getRenderedImage();
-
+            final GridSampleDimension[] sampleDimensions = coverage.getSampleDimensions();
             Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(image), InterpolationCase.NEIGHBOR, 2);
 
             //create an empty tile
@@ -289,11 +292,11 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
             final int tileWidth = getTileWidth();
             final int tileHeight = getTileHeight();
             final BufferedImage workTile;
-            final int nbBand = sampleDimensions.size();
+            final int nbBand = sampleDimensions.length;
             final double res = mosaic.getScale();
-            if(sampleDimensions!=null && !sampleDimensions.isEmpty()){
-                workTile = BufferedImageUtilities.createImage(tileWidth, tileHeight, sampleDimensions.size(),
-                        XMLSampleDimension.getDataType(sampleDimensions.get(0).getSampleDimensionType()));
+            if(sampleDimensions!=null && sampleDimensions.length>0){
+                workTile = BufferedImageUtilities.createImage(tileWidth, tileHeight, sampleDimensions.length,
+                        XMLSampleDimension.getDataType(sampleDimensions[0].getSampleDimensionType()));
             }else{
                 workTile = new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
             }
