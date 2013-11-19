@@ -112,7 +112,6 @@ public final class GeoTiffMetaDataReader {
         if(imgFileDir == null) throw new IOException("No GeoTiff metadatatas");
 
         geoKeyDir = getNodeByNumber(imgFileDir,TAG_GEO_KEY_DIRECTORY);
-//        if(geoKeyDir == null) throw new IOException("No GeoTiff metadatatas informations");
     }
 
     /**
@@ -124,6 +123,9 @@ public final class GeoTiffMetaDataReader {
      * @throws FactoryException
      */
     public SpatialMetadata readSpatialMetaData() throws NoSuchAuthorityCodeException, FactoryException,IOException{
+        if(geoKeyDir==null){
+            throw new IOException("No GeoTiff metadatatas informations");
+        }
 
         final int[] structure = readTiffShorts(getNodeByLocalName(geoKeyDir, TAG_GEOTIFF_SHORTS));
 
