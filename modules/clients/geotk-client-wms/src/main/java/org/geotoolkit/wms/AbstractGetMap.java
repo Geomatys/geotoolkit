@@ -51,7 +51,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  */
 public abstract class AbstractGetMap extends AbstractRequest implements GetMapRequest {
 
-    private static final SimpleDateFormat ISO_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
+    private static final SimpleDateFormat ISO_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     static {
         ISO_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT+0"));
     }
