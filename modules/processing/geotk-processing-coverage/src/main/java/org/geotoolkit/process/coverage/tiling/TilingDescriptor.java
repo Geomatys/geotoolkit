@@ -49,7 +49,7 @@ public final class TilingDescriptor extends AbstractProcessDescriptor{
      * Mandatory - Coverage to process
      */
     public static final ParameterDescriptor<File> IN_SOURCE_FILE =
-            new DefaultParameterDescriptor<File>("source","Coverage to tyle.",File.class,null,true);
+            new DefaultParameterDescriptor<File>("source","Coverage to tile.",File.class,null,true);
     
     public static final ParameterDescriptor<ImageReader> IN_SOURCE_READER =
             new DefaultParameterDescriptor<ImageReader>("sourceReader","An image reader for the input",ImageReader.class,null,false);

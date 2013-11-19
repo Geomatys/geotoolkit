@@ -19,6 +19,7 @@ package org.geotoolkit.data;
 
 import java.net.URL;
 import java.util.Collections;
+import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
 import org.opengis.parameter.ParameterDescriptor;
@@ -78,7 +79,14 @@ public abstract class AbstractFileFeatureStoreFactory extends AbstractFeatureSto
      */
     @Override
     public FeatureStore createDataStore(final URL url) throws DataStoreException {
-        return open(Collections.singletonMap(URLP.getName().toString(), url));
+        FeatureStore result;
+        final  Map params = Collections.singletonMap(URLP.getName().toString(), url);
+        try {
+            result = open(params);
+        } catch (DataStoreException e) {
+            result = create(params);
+        }
+        return result;
     }
 
 }
