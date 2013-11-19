@@ -48,6 +48,8 @@ public enum FileFormat {
     MAPINFO_EXCHANGE("filter_mif", "mif"),
     MAPINFO_TAB("filter_tab", "tab"),
     MICROSTATION_DGN("filter_microstation_dgn", "dgn"),
+    NETCDF_GRIB("filter_netcdfgrib", "nc", "ncml", "cdf", "grib","grib1","grib2","grb","grb1","grb2","grd"),
+    NMEA("filter_nmea", "txt", "log"),
     PORTABLE_NETWORK_GRAPHICS("filter_png", "png"),
     SCALABLE_VECTOR_GRAPHICS("filter_svg", "svg"),
     STYLE_LAYER_DESCRIPTOR("filter_sld", "sld"),
@@ -55,9 +57,7 @@ public enum FileFormat {
     VISUALDEM("filter_vdem", "dem"),
     WEBMAPCONTEXT("filter_wmc", "wmc"),
     S57("filter_s57", "000"),
-    WORLD_IMAGE("filter_world_image", "jpg", "jpeg", "bmp", "png"),
-    NETCDF_GRIB("filter_netcdfgrib", "nc", "ncml", "cdf", "grib","grib1","grib2","grb","grb1","grb2","grd"),
-    NMEA("filter_nmea", "txt", "log");
+    WORLD_IMAGE("filter_world_image", "jpg", "jpeg", "bmp", "png");
 
     private final InternationalString desc;
     private final String[] ends;
