@@ -120,18 +120,36 @@ public class JOptionDialog extends JDialog implements ActionListener {
      * @return the selection end action or DIALOG_CLOSE
      */
     public static Object show(Component parent, Component comp, String[] actionCommands) {
-        
+        return show(parent, comp, null, actionCommands);
+    }
+    
+    /**
+     * 
+     * @param comp : component to display
+     * @param modal : set the dialog modal or not.
+     * @param title : A title to set the dialog. Can be null.
+     * @param actionCommands : ending actions to display
+     * @return the selection end action or DIALOG_CLOSE
+     */
+    public static Object show(Component parent, Component comp, String title, String[] actionCommands) {        
         final Action[] actions = new Action[actionCommands.length];
         for(int i=0;i<actionCommands.length;i++){
             actions[i] = new NoEventAction(actionCommands[i], actionCommands[i]);
         }
         
-        return show(parent,comp,actions);
+        return show(parent, comp, title, actions);
     }
     
-    private static Object show(Component parent, Component comp, Action[] actions){
+    private static Object show(Component parent, Component comp, Action[] actions) {
+        return show(parent, comp, null, actions);
+    }
+    
+    private static Object show(Component parent, Component comp, String title, Action[] actions) {
         
         final JOptionDialog dialog = new JOptionDialog(null, true, actions);
+        if (title != null) {
+            dialog.setTitle(title);
+        }
         dialog.add(BorderLayout.CENTER,comp);
         dialog.pack();
         if(parent != null) {

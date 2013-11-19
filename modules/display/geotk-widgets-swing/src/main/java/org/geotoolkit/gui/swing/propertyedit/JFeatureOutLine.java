@@ -229,22 +229,7 @@ public class JFeatureOutLine extends Outline{
 
         @Override
         public Object getValueFor(final Object o, final int i) {
-            final MutableTreeNode node = (MutableTreeNode) o;
-            final Object candidate = node.getUserObject();
-
-            if(i==0){
-                return node;
-//                //first column, property value
-//                if(candidate instanceof Property && !(candidate instanceof ComplexAttribute)){
-//                    return ((Property)candidate).getValue();
-//                }else{
-//                    return null;
-//                }
-            }else{
-                //second column, actions
-                return node;
-            }
-
+            return (MutableTreeNode) o;
         }
 
         @Override
