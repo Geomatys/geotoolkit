@@ -19,7 +19,6 @@ package org.geotoolkit.coverage;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.apache.sis.util.ArgumentChecks;
 import org.opengis.feature.type.Name;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -36,31 +35,16 @@ import org.apache.sis.storage.DataStoreException;
  */
 public abstract class AbstractPyramidalModel extends AbstractCoverageReference implements PyramidalCoverageReference {
 
-    protected final CoverageStore store;
-    protected final Name name;
     protected final int imageIndex;
 
     public AbstractPyramidalModel(CoverageStore store,Name name,int imageIndex){
-        ArgumentChecks.ensureNonNull("store",store);
-        ArgumentChecks.ensureNonNull("name",name);
-        this.store = store;
-        this.name = name;
+        super(store,name);
         this.imageIndex = imageIndex;
-    }
-
-    @Override
-    public Name getName() {
-        return name;
     }
 
     @Override
     public int getImageIndex() {
         return imageIndex;
-    }
-
-    @Override
-    public CoverageStore getStore() {
-        return store;
     }
 
     @Override

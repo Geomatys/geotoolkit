@@ -19,11 +19,9 @@ package org.geotoolkit.coverage;
 
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.atomic.AtomicBoolean;
-import org.apache.sis.internal.system.DelayedExecutor;
-import org.apache.sis.internal.system.DelayedRunnable;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.opengis.feature.type.Name;
 
 /**
  * Abstract coverage reference which recycle readers.
@@ -49,6 +47,10 @@ public abstract class RecyclingCoverageReference extends AbstractCoverageReferen
      * @see #recycle(GridCoverageReader)
      */
     private final ConcurrentLinkedDeque<GridCoverageReader> readers = new ConcurrentLinkedDeque<>();
+
+    public RecyclingCoverageReference(CoverageStore store, Name name) {
+        super(store, name);
+    }
 
     @Override
     public final GridCoverageReader acquireReader() throws CoverageStoreException {

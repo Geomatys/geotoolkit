@@ -18,6 +18,7 @@ package org.geotoolkit.coverage;
 
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -47,6 +48,21 @@ public interface CoverageStore {
     CoverageStoreFactory getFactory();
 
     /**
+     * Returns the root node of the coverage store.
+     * This node is the main access point to the content of the store.
+     *
+     * TODO move this in Apache SIS DataStore class when ready
+     *
+     * @return DataNode never null.
+     */
+    DataNode getRootNode() throws DataStoreException;
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    // OLD API /////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
      * Get a collection of all available coverage names.
      * @return Set<Name> , never null, but can be empty.
      * @throws DataStoreException
@@ -58,13 +74,13 @@ public interface CoverageStore {
      * @return true if versioning is supported.
      */
     boolean handleVersioning();
-        
+
     /**
      * Get version history for given coverage.
      * @return VersionHistory for given name.
      */
     VersionControl getVersioning(Name typeName) throws VersioningException;
-    
+
     /**
      * Get the coverage reference for the given name.
      * @param name reference name
@@ -76,14 +92,14 @@ public interface CoverageStore {
     /**
      * Get the coverage reference for the given name and version.
      * If the version do not exist it will be created.
-     * 
+     *
      * @param name reference name
      * @param version version
      * @return CoverageReference
      * @throws DataStoreException
      */
     CoverageReference getCoverageReference(Name name, Version version) throws DataStoreException;
-    
+
     /**
      * Create a new coverage reference.
      * The returned coverage reference might have a different namespace.
@@ -99,7 +115,7 @@ public interface CoverageStore {
      * @return a {@link CoverageType}
      */
     CoverageType getType();
-    
+
     /**
      * Delete an existing coverage reference.
      *
@@ -114,7 +130,7 @@ public interface CoverageStore {
      */
     void dispose();
 
-    
+
     /**
      * Add a storage listener which will be notified when structure changes or
      * when coverage data changes.
@@ -127,5 +143,5 @@ public interface CoverageStore {
      * @param listener to remove
      */
     void removeStorageListener(StorageListener listener);
-    
+
 }

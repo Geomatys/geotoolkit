@@ -38,19 +38,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class WMTSCoverageReference extends AbstractCoverageReference implements PyramidalCoverageReference{
 
-    private final WebMapTileServer server;
-    private final Name name;
     private final PyramidSet set;
 
     WMTSCoverageReference(WebMapTileServer server, Name name, boolean cacheImage){
-        this.server = server;
-        this.name = name;
+        super(server,name);
         set = new WMTSPyramidSet(server, name.getLocalPart(), cacheImage);
-    }
-
-    @Override
-    public Name getName() {
-        return name;
     }
 
     @Override
@@ -66,11 +58,6 @@ public class WMTSCoverageReference extends AbstractCoverageReference implements 
     @Override
     public GridCoverageWriter acquireWriter() throws CoverageStoreException {
         throw new CoverageStoreException("WMTS coverage are not writable.");
-    }
-
-    @Override
-    public CoverageStore getStore() {
-        return server;
     }
 
     @Override

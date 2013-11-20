@@ -19,11 +19,8 @@ package org.geotoolkit.coverage.filestore;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-
 import javax.xml.bind.JAXBException;
 
 import org.geotoolkit.coverage.AbstractCoverageStore;
@@ -33,6 +30,8 @@ import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.CoverageType;
 import org.geotoolkit.feature.DefaultName;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DefaultDataNode;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -47,7 +46,7 @@ public class XMLCoverageStore extends AbstractCoverageStore{
     private final File root;
     private final URL rootPath;
     private String format;
-    private final Map<Name,XMLCoverageReference> names = new HashMap<>();
+    private final DataNode rootNode = new DefaultDataNode();
 
     XMLCoverageStore(ParameterValueGroup params) throws URISyntaxException{
         super(params);
@@ -61,6 +60,11 @@ public class XMLCoverageStore extends AbstractCoverageStore{
     @Override
     public CoverageStoreFactory getFactory() {
         return CoverageStoreFinder.getFactoryById(XMLCoverageStoreFactory.NAME);
+    }
+
+    @Override
+    public DataNode getRootNode() {
+        return rootNode;
     }
 
     /**
@@ -84,23 +88,12 @@ public class XMLCoverageStore extends AbstractCoverageStore{
                     final XMLPyramidSet set = XMLPyramidSet.read(f);
                     final Name name = new DefaultName(getDefaultNamespace(), set.getId());
                     final XMLCoverageReference ref = new XMLCoverageReference(this,name,set);
-                    names.put(name, ref);
+                    rootNode.getChildren().add(ref);
                 } catch (JAXBException ex) {
                     getLogger().log(Level.FINE, "file is not a pyramid : {0}", f.getPath());
                 }
             }
         }
-    }
-
-    @Override
-    public Set<Name> getNames() throws DataStoreException {
-        return names.keySet();
-    }
-
-    @Override
-    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        typeCheck(name);
-        return names.get(name);
     }
 
     @Override
@@ -110,14 +103,15 @@ public class XMLCoverageStore extends AbstractCoverageStore{
     @Override
     public CoverageReference create(Name name) throws DataStoreException {
         name = new DefaultName(getDefaultNamespace(), name.getLocalPart());
-        if(names.containsKey(name)){
+        final Set<Name> names = getNames();
+        if(names.contains(name)){
             throw new DataStoreException("Name already used in store : " + name.getLocalPart());
         }
 
         final XMLPyramidSet set = new XMLPyramidSet(format);
         set.initialize(new File(root, name.getLocalPart()+".xml"));
         final XMLCoverageReference ref = new XMLCoverageReference(this,name,set);
-        names.put(name, ref);
+        rootNode.getChildren().add(ref);
         ref.save();
         return ref;
     }

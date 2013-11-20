@@ -17,15 +17,19 @@
  */
 package org.geotoolkit.gui.swing.filter;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -47,10 +51,11 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
+import org.opengis.util.InternationalString;
 
 /**
  * CQL filter panel
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
@@ -63,7 +68,7 @@ public class JCQLEditor extends javax.swing.JPanel{
         initComponents();
 
         final DefaultMutableTreeNode root = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode("root");
-        
+
         for(FunctionFactory ff : Functions.getFactories()){
             final DefaultMutableTreeNode fnode = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode(ff.getIdentifier());
             for(String str : ff.getNames()){
@@ -72,14 +77,14 @@ public class JCQLEditor extends javax.swing.JPanel{
             }
             root.add(fnode);
         }
-        
+
         guiFunctions.setModel(new DefaultTreeModel(root));
         guiFunctions.setRootVisible(false);
         guiFunctions.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         guiFunctions.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
             @Override
             public void valueChanged(TreeSelectionEvent e) {
-                
+
                 TreePath ob = guiFunctions.getSelectionPath();
                 if(ob != null){
                     final DefaultMutableTreeNode node = (DefaultMutableTreeNode) ob.getLastPathComponent();
@@ -87,22 +92,24 @@ public class JCQLEditor extends javax.swing.JPanel{
                         guiCQL.insertText(" "+node.getUserObject().toString()+"()");
                         guiFunctions.clearSelection();
                     }
-                    
+
                 }
             }
         });
-        
+
         guiProperties.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 Object ob = guiProperties.getSelectedValue();
                 if(ob != null){
-                    guiCQL.insertText(" "+ob.toString());
+                    final String name = ((PropertyDescriptor)ob).getName().getLocalPart();
+                    guiCQL.insertText(" "+name);
                     guiProperties.clearSelection();
                 }
             }
         });
-        
+        guiProperties.setCellRenderer(new PropertyRenderer());
+
         final ActionListener actListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -110,7 +117,7 @@ public class JCQLEditor extends javax.swing.JPanel{
                 guiCQL.insertText(but.getName());
             }
         };
-        
+
         jButton1.addActionListener(actListener);
         jButton2.addActionListener(actListener);
         jButton3.addActionListener(actListener);
@@ -154,13 +161,13 @@ public class JCQLEditor extends javax.swing.JPanel{
         jButton41.addActionListener(actListener);
         jButton42.addActionListener(actListener);
         jButton43.addActionListener(actListener);
-        
+
         guiPropertiesPane.setSize(1, 1);
         guiPropertiesPane.setVisible(false);
         guiFilterOps.setVisible(false);
         guiFilterOps.setSize(1,1);
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -607,17 +614,17 @@ public class JCQLEditor extends javax.swing.JPanel{
     private final org.jdesktop.swingx.JXTitledSeparator jXTitledSeparator5 = new org.jdesktop.swingx.JXTitledSeparator();
     private final org.jdesktop.swingx.JXTitledSeparator jXTitledSeparator6 = new org.jdesktop.swingx.JXTitledSeparator();
     // End of variables declaration//GEN-END:variables
-    
+
     public void setExpression(final Expression exp){
         guiCQL.setExpression(exp);
         guiFilterOps.setVisible(false);
         guiFilterOps.setSize(1,1);
     }
-    
+
     public Expression getExpression() throws CQLException{
         return guiCQL.getExpression();
     }
-    
+
     public void setFilter(final Filter filter) {
         guiCQL.setFilter(filter);
         guiFilterOps.setVisible(true);
@@ -630,32 +637,26 @@ public class JCQLEditor extends javax.swing.JPanel{
 
     public void setLayer(final MapLayer layer) {
         this.layer = layer;
-        
+
         if (layer instanceof FeatureMapLayer) {
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
 
             final Collection<PropertyDescriptor> col = fml.getCollection().getFeatureType().getDescriptors();
-            final Iterator<PropertyDescriptor> it = col.iterator();
-
-            final List<String> vec = new ArrayList<String>();
-            while (it.hasNext()) {
-                vec.add(it.next().getName().getLocalPart().toString());
-            }
-            guiProperties.setModel(new ListComboBoxModel(vec));
+            guiProperties.setModel(new ListComboBoxModel(new ArrayList(col)));
             guiPropertiesPane.setSize(guiPropertiesPane.getPreferredSize());
             guiPropertiesPane.setVisible(true);
         }else{
             guiPropertiesPane.setSize(1, 1);
             guiPropertiesPane.setVisible(false);
         }
-        
+
     }
 
     public MapLayer getLayer() {
         return layer;
     }
- 
-        
+
+
     public String getTitle() {
         return MessageBundle.getString("property_cql_filter");
     }
@@ -667,39 +668,61 @@ public class JCQLEditor extends javax.swing.JPanel{
     public String getToolTip() {
         return null;
     }
-       
+
     public JComponent getComponent() {
         return this;
     }
-    
+
     public static Filter showDialog(final MapLayer layer, final Filter filter) throws CQLException{
-        
+
         final JCQLEditor editor = new JCQLEditor();
         editor.setLayer(layer);
         editor.setFilter(filter);
-        
+
         final int res = JOptionDialog.show(null, editor, JOptionPane.OK_CANCEL_OPTION);
-        
+
         if(res == JOptionPane.OK_OPTION){
             return editor.getFilter();
         }else{
             return filter;
         }
     }
-    
+
     public static Expression showDialog(final MapLayer layer, final Expression expression) throws CQLException{
-        
+
         final JCQLEditor editor = new JCQLEditor();
         editor.setLayer(layer);
         editor.setExpression(expression);
-        
+
         final int res = JOptionDialog.show(null, editor, JOptionPane.OK_CANCEL_OPTION);
-    
+
         if(res == JOptionPane.OK_OPTION){
             return editor.getExpression();
         }else{
             return expression;
         }
     }
-    
+
+    private static final class PropertyRenderer extends DefaultListCellRenderer{
+
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            if(value instanceof PropertyDescriptor){
+                final PropertyDescriptor desc = (PropertyDescriptor) value;
+                String text = desc.getName().getLocalPart().toString();
+
+                final InternationalString is = desc.getType().getDescription();
+                if(is!=null && !is.toString().isEmpty()){
+                    text += "  ("+is.toString()+")";
+                }
+
+                lbl.setText(text);
+            }
+
+            return lbl;
+        }
+
+    }
+
 }

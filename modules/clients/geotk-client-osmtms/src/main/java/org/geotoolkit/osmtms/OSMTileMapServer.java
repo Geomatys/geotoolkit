@@ -31,6 +31,8 @@ import org.geotoolkit.osmtms.model.OSMTMSPyramidSet;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DefaultDataNode;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -43,7 +45,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class OSMTileMapServer extends AbstractCoverageServer implements CoverageStore{
 
     private final OSMTMSPyramidSet pyramidSet;
-    private final Name name;
+    private final DataNode rootNode = new DefaultDataNode();
 
     /**
      * Builds a tile map server with the given server url and version.
@@ -78,21 +80,34 @@ public class OSMTileMapServer extends AbstractCoverageServer implements Coverage
      */
     public OSMTileMapServer(final URL serverURL, final ClientSecurity security,
             final int maxZoomLevel, boolean cacheImage) {
-        super(create(OSMTMSServerFactory.PARAMETERS, serverURL, security));
-        Parameters.getOrCreate(OSMTMSServerFactory.MAX_ZOOM_LEVEL, parameters).setValue(maxZoomLevel);
-        this.name = new DefaultName(serverURL.toString(),"main");
-        pyramidSet = new OSMTMSPyramidSet(this,maxZoomLevel,cacheImage);
+        this(toParameters(serverURL, security, maxZoomLevel, cacheImage));
     }
 
     public OSMTileMapServer(ParameterValueGroup params){
         super(params);
-        this.name = new DefaultName(serverURL.toString(),"main");
+        final Name name = new DefaultName(serverURL.toString(),"main");
         pyramidSet = new OSMTMSPyramidSet(this,getMaxZoomLevel(),getCacheImage());
+        final OSMTMSCoverageReference ref = new OSMTMSCoverageReference(this,name);
+        rootNode.getChildren().add(ref);
+    }
+
+    private static ParameterValueGroup toParameters(
+            final URL serverURL, final ClientSecurity security,
+            final int maxZoomLevel, boolean cacheImage){
+        final ParameterValueGroup params = create(OSMTMSServerFactory.PARAMETERS, serverURL, security);
+        Parameters.getOrCreate(OSMTMSServerFactory.MAX_ZOOM_LEVEL, params).setValue(maxZoomLevel);
+        Parameters.getOrCreate(OSMTMSServerFactory.IMAGE_CACHE, params).setValue(cacheImage);
+        return params;
     }
 
     @Override
     public OSMTMSServerFactory getFactory() {
         return (OSMTMSServerFactory)ServerFinder.getFactoryById(OSMTMSServerFactory.NAME);
+    }
+
+    @Override
+    public DataNode getRootNode() {
+        return rootNode;
     }
 
     public boolean getCacheImage(){
@@ -118,19 +133,6 @@ public class OSMTileMapServer extends AbstractCoverageServer implements Coverage
     }
 
     @Override
-    public Set<Name> getNames() {
-        return Collections.singleton(name);
-    }
-
-    @Override
-    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        if(DefaultName.match(this.name, name)){
-            return new OSMTMSCoverageReference(this,name);
-        }
-        throw new DataStoreException("No coverage for name : " + name);
-    }
-
-    @Override
     public void dispose() {
     }
 
@@ -143,7 +145,7 @@ public class OSMTileMapServer extends AbstractCoverageServer implements Coverage
     public void delete(Name name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
-    
+
 	@Override
 	public CoverageType getType() {
 		return CoverageType.PYRAMID;

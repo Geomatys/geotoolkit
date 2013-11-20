@@ -38,17 +38,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class OSMTMSCoverageReference extends AbstractCoverageReference implements PyramidalCoverageReference{
 
-    private final OSMTileMapServer server;
-    private final Name name;
-
     OSMTMSCoverageReference(OSMTileMapServer server, Name name){
-        this.server = server;
-        this.name = name;
-    }
-
-    @Override
-    public Name getName() {
-        return name;
+        super(server,name);
     }
 
     @Override
@@ -59,11 +50,6 @@ public class OSMTMSCoverageReference extends AbstractCoverageReference implement
     @Override
     public int getImageIndex() {
         return 0;
-    }
-
-    @Override
-    public CoverageStore getStore() {
-        return server;
     }
 
     @Override
@@ -80,7 +66,7 @@ public class OSMTMSCoverageReference extends AbstractCoverageReference implement
 
     @Override
     public PyramidSet getPyramidSet() throws DataStoreException {
-        return server.getPyramidSet();
+        return ((OSMTileMapServer)store).getPyramidSet();
     }
 
     @Override

@@ -55,13 +55,13 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
     @Override
     public Collection<GraphicJ2D> createGraphics(final MapLayer layer, final Canvas canvas) {
-        
+
         if(!(layer instanceof CoverageMapLayer) || !(canvas instanceof J2DCanvas)){
             return Collections.emptyList();
         }
-        
+
         final CoverageMapLayer cml = (CoverageMapLayer) layer;
-        
+
         final CoverageReference cr = cml.getCoverageReference();
         final GraphicJ2D gra;
         if(cr instanceof PyramidalCoverageReference){
@@ -69,7 +69,7 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         }else{
             gra = new StatelessCoverageLayerJ2D((J2DCanvas)canvas, cml,true);
         }
-        
+
         return Collections.<GraphicJ2D>singleton(gra);
     }
 
@@ -83,17 +83,17 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         if(!(layer instanceof CoverageMapLayer)){
             return null;
         }
-        
+
         final CoverageMapLayer cml = (CoverageMapLayer) layer;
         final CoverageReference cr = cml.getCoverageReference();
-        
+
         if(!(cr instanceof WMSCoverageReference)){
             return null;
         }
-        
+
         final WMSCoverageReference reference = (WMSCoverageReference) cr;
-        final WebMapServer server = reference.getStore();
-        
+        final WebMapServer server = (WebMapServer)reference.getStore();
+
         final GetLegendRequest request = server.createGetLegend();
         request.setLayer(reference.getLayerNames()[0]);
 

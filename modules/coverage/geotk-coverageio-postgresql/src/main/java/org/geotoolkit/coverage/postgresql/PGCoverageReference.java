@@ -82,21 +82,15 @@ import org.opengis.util.FactoryException;
  */
 public class PGCoverageReference extends AbstractCoverageReference implements PyramidalCoverageReference{
 
-    private final PGCoverageStore store;
+    private final PGCoverageStore pgstore;
     private final PGPyramidSet pyramidSet;
-    private final Name name;
     final Version version;
 
     public PGCoverageReference(final PGCoverageStore store, final Name name, Version version) {
-        this.store = store;
-        this.name = name;
+        super(store,name);
+        this.pgstore = store;
         this.pyramidSet = new PGPyramidSet(this);
         this.version = version;
-    }
-
-    @Override
-    public Name getName() {
-        return name;
     }
 
     @Override
@@ -111,7 +105,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
 
     @Override
     public PGCoverageStore getStore() {
-        return store;
+        return (PGCoverageStore) pgstore;
     }
 
     @Override
@@ -145,19 +139,19 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         Statement stmt = null;
         ResultSet rs = null;
         try{
-            cnx = store.getDataSource().getConnection();
+            cnx = pgstore.getDataSource().getConnection();
             cnx.setReadOnly(false);
             //find or insert coordinate reference system
-            final PGEPSGWriter writer = new PGEPSGWriter(store);
+            final PGEPSGWriter writer = new PGEPSGWriter(pgstore);
             final String epsgCode = String.valueOf(writer.getOrCreateCoordinateReferenceSystem(crs));
 
             stmt = cnx.createStatement();
 
-            final int layerId = store.getLayerId(cnx,name.getLocalPart());
+            final int layerId = pgstore.getLayerId(cnx,name.getLocalPart());
 
             StringBuilder query = new StringBuilder();
             query.append("INSERT INTO ");
-            query.append(store.encodeTableName("Pyramid"));
+            query.append(pgstore.encodeTableName("Pyramid"));
             query.append("(\"layerId\",\"epsg\") VALUES (");
             query.append(layerId);
             query.append(",'");
@@ -175,7 +169,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             if(version!=null && !version.getLabel().equals(PGVersionControl.UNSET)){
                 query.setLength(0);
                 query.append("INSERT INTO ");
-                query.append(store.encodeTableName("PyramidProperty"));
+                query.append(pgstore.encodeTableName("PyramidProperty"));
                 query.append("(\"pyramidId\",\"key\",\"type\",\"value\") VALUES (");
                 query.append(pyramidId);
                 query.append(",'version','date','");
@@ -189,7 +183,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         }catch(SQLException ex){
             throw new DataStoreException(ex);
         }finally{
-            store.closeSafe(cnx, stmt, rs);
+            pgstore.closeSafe(cnx, stmt, rs);
         }
 
         pyramidSet.mustUpdate();
@@ -211,19 +205,19 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         Statement stmt = null;
         ResultSet rs = null;
         try{
-            cnx = store.getDataSource().getConnection();
+            cnx = pgstore.getDataSource().getConnection();
             cnx.setReadOnly(false);
             stmt = cnx.createStatement();
             final int pyramidIdInt = Integer.valueOf(pyramidId);
             final StringBuilder sql = new StringBuilder("DELETE FROM ");
-            sql.append(store.encodeTableName("Pyramid"));
+            sql.append(pgstore.encodeTableName("Pyramid"));
             sql.append(" WHERE id = ");
             sql.append(pyramidIdInt);
             stmt.executeUpdate(sql.toString());
         }catch(SQLException ex){
             throw new DataStoreException(ex.getMessage(), ex);
         }finally{
-            store.closeSafe(cnx, stmt, rs);
+            pgstore.closeSafe(cnx, stmt, rs);
             pyramidSet.mustUpdate();
         }
     }
@@ -238,7 +232,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         Statement stmt = null;
         ResultSet rs = null;
         try{
-            cnx = store.getDataSource().getConnection();
+            cnx = pgstore.getDataSource().getConnection();
             cnx.setReadOnly(false);
             stmt = cnx.createStatement();
 
@@ -246,7 +240,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
 
             StringBuilder query = new StringBuilder();
             query.append("INSERT INTO ");
-            query.append(store.encodeTableName("Mosaic"));
+            query.append(pgstore.encodeTableName("Mosaic"));
             query.append("(\"pyramidId\",\"upperCornerX\",\"upperCornerY\",\"gridWidth\",\"gridHeight\",\"scale\",\"tileWidth\",\"tileHeight\") VALUES (");
             query.append(pyramidIdInt           ).append(',');
             query.append(upperleft.getOrdinate(0)).append(',');
@@ -271,7 +265,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                 final double value = upperleft.getOrdinate(i);
                 query = new StringBuilder();
                 query.append("INSERT INTO ");
-                query.append(store.encodeTableName("MosaicAxis"));
+                query.append(pgstore.encodeTableName("MosaicAxis"));
                 query.append("(\"mosaicId\",\"indice\",\"value\") VALUES (");
                 query.append(mosaicId).append(',');
                 query.append(i).append(',');
@@ -283,7 +277,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         }catch(SQLException ex){
             throw new DataStoreException(ex.getMessage(), ex);
         }finally{
-            store.closeSafe(cnx, stmt, rs);
+            pgstore.closeSafe(cnx, stmt, rs);
         }
 
         pyramidSet.mustUpdate();
@@ -312,19 +306,19 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         Statement stmt = null;
         ResultSet rs = null;
         try{
-            cnx = store.getDataSource().getConnection();
+            cnx = pgstore.getDataSource().getConnection();
             cnx.setReadOnly(false);
             stmt = cnx.createStatement();
             final int mosaicdIdInt = Integer.valueOf(mosaicId);
             final StringBuilder sql = new StringBuilder("DELETE FROM ");
-            sql.append(store.encodeTableName("Mosaic"));
+            sql.append(pgstore.encodeTableName("Mosaic"));
             sql.append(" WHERE id = ");
             sql.append(mosaicdIdInt);
             stmt.executeUpdate(sql.toString());
         }catch(SQLException ex){
             throw new DataStoreException(ex.getMessage(), ex);
         }finally{
-            store.closeSafe(cnx, stmt, rs);
+            pgstore.closeSafe(cnx, stmt, rs);
             pyramidSet.mustUpdate();
         }
     }
@@ -378,11 +372,11 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         try{
             StringBuilder query = new StringBuilder();
             query.append("SELECT id,\"mosaicId\",\"positionX\",\"positionY\" FROM ")
-                 .append(store.encodeTableName("Tile"))
+                 .append(pgstore.encodeTableName("Tile"))
                  .append(" WHERE \"mosaicId\"=").append(Integer.valueOf(mosaicId))
                  .append(" AND \"positionX\"=").append(Integer.valueOf(col))
                  .append(" AND \"positionY\"=").append(Integer.valueOf(row));
-            cnx = store.getDataSource().getConnection();
+            cnx = pgstore.getDataSource().getConnection();
             cnx.setReadOnly(false);
             selectStmt = cnx.createStatement();
             rs = selectStmt.executeQuery(query.toString());
@@ -391,7 +385,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                 final int id = rs.getInt("id");
                 query = new StringBuilder();
                 query.append("DELETE FROM ")
-                     .append(store.encodeTableName("Tile"))
+                     .append(pgstore.encodeTableName("Tile"))
                      .append(" WHERE id=").append(id);
                 deleteStmt = cnx.createStatement();
                 deleteStmt.executeUpdate(query.toString());
@@ -403,7 +397,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
 
             query = new StringBuilder();
             query.append("INSERT INTO");
-            query.append(store.encodeTableName("Tile"));
+            query.append(pgstore.encodeTableName("Tile"));
             query.append("(\"raster\",\"mosaicId\",\"positionX\",\"positionY\") VALUES ( (");
             query.append("encode(").append("decode('").append(base64).append("','base64')").append(",'hex')").append(")::raster,");
             query.append(Integer.valueOf(mosaicId)).append(',');
@@ -420,9 +414,9 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         }catch(SQLException ex){
             throw new DataStoreException(ex.getMessage(), ex);
         }finally{
-            store.closeSafe(cnx, selectStmt, rs);
-            store.closeSafe(insertStmt);
-            store.closeSafe(deleteStmt);
+            pgstore.closeSafe(cnx, selectStmt, rs);
+            pgstore.closeSafe(insertStmt);
+            pgstore.closeSafe(deleteStmt);
         }
 
     }
@@ -433,12 +427,12 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         Statement stmt = null;
         ResultSet rs = null;
         try{
-            cnx = store.getDataSource().getConnection();
+            cnx = pgstore.getDataSource().getConnection();
             cnx.setReadOnly(false);
             stmt = cnx.createStatement();
             final int mosaicdIdInt = Integer.valueOf(mosaicId);
             final StringBuilder sql = new StringBuilder("DELETE FROM ");
-            sql.append(store.encodeTableName("Tile"));
+            sql.append(pgstore.encodeTableName("Tile"));
             sql.append(" WHERE \"mosaicId\" = ").append(mosaicdIdInt);
             sql.append(" AND \"positionX\" = ").append(col);
             sql.append(" AND \"positionY\" = ").append(row);
@@ -446,7 +440,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         }catch(SQLException ex){
             throw new DataStoreException(ex.getMessage(), ex);
         }finally{
-            store.closeSafe(cnx, stmt, rs);
+            pgstore.closeSafe(cnx, stmt, rs);
             pyramidSet.mustUpdate();
         };
     }
@@ -462,10 +456,10 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         ResultSet rs = null;
 
         try {
-            cnx = store.getDataSource().getConnection();
+            cnx = pgstore.getDataSource().getConnection();
             cnx.setReadOnly(false);
 
-            final int layerId = store.getLayerId(cnx,name.getLocalPart());
+            final int layerId = pgstore.getLayerId(cnx,name.getLocalPart());
             String versionStr;
             if (version != null && !version.getLabel().equals(PGVersionControl.UNSET)) {
                 versionStr = TemporalUtilities.toISO8601Z(version.getDate(), TimeZone.getTimeZone("GMT+0"));
@@ -476,14 +470,14 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             final StringBuilder query = new StringBuilder();
             if(versionSupport) {
                 query.append("SELECT \"id\",\"version\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\",\"min\",\"max\" ");
-                query.append("FROM ").append(store.encodeTableName("Band"));
+                query.append("FROM ").append(pgstore.encodeTableName("Band"));
                 query.append(" WHERE ");
                 query.append("\"layerId\"=").append(Integer.valueOf(layerId));
                 query.append(" AND \"version\" LIKE \'").append(versionStr).append("\' ");
                 query.append("ORDER BY \"indice\" ASC");
             } else {
                 query.append("SELECT \"id\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\",\"min\",\"max\" ");
-                query.append("FROM ").append(store.encodeTableName("Band"));
+                query.append("FROM ").append(pgstore.encodeTableName("Band"));
                 query.append(" WHERE ");
                 query.append("\"layerId\"=").append(Integer.valueOf(layerId));
                 query.append("ORDER BY \"indice\" ASC");
@@ -532,7 +526,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         } catch (SQLException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         } finally {
-            store.closeSafe(cnx, stmt, rs);
+            pgstore.closeSafe(cnx, stmt, rs);
         }
         return dimensions;
     }
@@ -558,10 +552,10 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             PreparedStatement pstmt = null;
             ResultSet rs = null;
             try{
-                cnx = store.getDataSource().getConnection();
+                cnx = pgstore.getDataSource().getConnection();
                 cnx.setReadOnly(false);
 
-                final int layerId = store.getLayerId(cnx,name.getLocalPart());
+                final int layerId = pgstore.getLayerId(cnx,name.getLocalPart());
                 for (int i = 0; i < dimensions.size(); i++) {
 
                     final GridSampleDimension dim = dimensions.get(i);
@@ -590,7 +584,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                     final StringBuilder query = new StringBuilder();
                     if (versionSupport) {
                         query.append("INSERT INTO ");
-                        query.append(store.encodeTableName("Band"));
+                        query.append(pgstore.encodeTableName("Band"));
                         query.append(" (\"layerId\",\"version\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\", \"min\", \"max\") ");
                         query.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
@@ -608,7 +602,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
 
                     } else {
                         query.append("INSERT INTO ");
-                        query.append(store.encodeTableName("Band"));
+                        query.append(pgstore.encodeTableName("Band"));
                         query.append(" (\"layerId\",\"indice\",\"description\",\"dataType\",\"unit\",\"noData\", \"min\", \"max\") ");
                         query.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
@@ -633,7 +627,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
             }catch(SQLException ex){
                 throw new DataStoreException(ex.getMessage(), ex);
             }finally{
-                store.closeSafe(cnx, pstmt, rs);
+                pgstore.closeSafe(cnx, pstmt, rs);
             }
         }
     }
@@ -644,12 +638,12 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         Statement stmt = null;
         ResultSet rs = null;
         try {
-            cnx = store.getDataSource().getConnection();
+            cnx = pgstore.getDataSource().getConnection();
             cnx.setReadOnly(false);
 
             final StringBuilder query = new StringBuilder();
             query.append("SELECT \"version\" ");
-            query.append("FROM ").append(store.encodeTableName("Band"));
+            query.append("FROM ").append(pgstore.encodeTableName("Band"));
 
             stmt = cnx.createStatement();
             rs = stmt.executeQuery(query.toString());
@@ -658,7 +652,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
         } catch(SQLException ex) {
             return false;
         } finally {
-            store.closeSafe(cnx, stmt, rs);
+            pgstore.closeSafe(cnx, stmt, rs);
         }
     }
 

@@ -37,7 +37,7 @@ public class PGGridMosaic extends AbstractGridMosaic{
 
     private final PGCoverageReference ref;
     private final long id;
-    
+
     public PGGridMosaic(final PGCoverageReference ref, final long id,
             Pyramid pyramid, DirectPosition upperLeft, Dimension gridSize, Dimension tileSize, double scale) {
         super(String.valueOf(id),pyramid, upperLeft, gridSize, tileSize, scale);
@@ -51,10 +51,10 @@ public class PGGridMosaic extends AbstractGridMosaic{
         Statement stmt = null;
         ResultSet rs = null;
         try{
-            
+
             cnx = ref.getStore().getDataSource().getConnection();
             stmt = cnx.createStatement();
-            
+
             final long mosaicId = getDatabaseId();
 
             final StringBuilder query = new StringBuilder();
@@ -63,7 +63,7 @@ public class PGGridMosaic extends AbstractGridMosaic{
             query.append(" WHERE \"mosaicId\"=").append(mosaicId);
             query.append(" AND \"positionX\"=").append(col);
             query.append(" AND \"positionY\"=").append(row);
-            
+
             rs = stmt.executeQuery(query.toString());
             rs.next();
             return rs.getInt(1) <= 0;
@@ -81,11 +81,11 @@ public class PGGridMosaic extends AbstractGridMosaic{
     public PGCoverageReference getCoverageReference() {
         return ref;
     }
-    
+
     @Override
     public TileReference getTile(int col, int row, Map hints) throws DataStoreException {
         final PGTileReference tile = new PGTileReference(this, new Point(col, row));
         return tile;
     }
-    
+
 }

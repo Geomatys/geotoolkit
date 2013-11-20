@@ -18,9 +18,6 @@ package org.geotoolkit.googlemaps;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.geotoolkit.client.AbstractCoverageServer;
 import org.geotoolkit.client.AbstractServerFactory;
@@ -32,6 +29,8 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DefaultDataNode;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -44,7 +43,6 @@ import org.opengis.parameter.ParameterValueGroup;
 public class StaticGoogleMapsServer extends AbstractCoverageServer implements CoverageStore{
 
     public static final URL DEFAULT_GOOGLE_STATIC_MAPS;
-    private static final Set<Name> LAYER_NAMES;
 
     static {
         try {
@@ -53,19 +51,14 @@ public class StaticGoogleMapsServer extends AbstractCoverageServer implements Co
             //will not happen
             throw new RuntimeException(ex.getLocalizedMessage(),ex);
         }
-
-        final Set<Name> names = new HashSet<Name>();
-        names.add(DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_HYBRID));
-        names.add(DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_ROADMAP));
-        names.add(DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_SATELLITE));
-        names.add(DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_TERRAIN));
-        LAYER_NAMES = Collections.unmodifiableSet(names);
     }
+
+    private final DataNode rootNode = new DefaultDataNode();
 
     /**
      * Builds a google maps server with the default google server address.
      */
-    public StaticGoogleMapsServer() {
+    public StaticGoogleMapsServer() throws DataStoreException {
         this(DEFAULT_GOOGLE_STATIC_MAPS,null);
     }
 
@@ -75,37 +68,50 @@ public class StaticGoogleMapsServer extends AbstractCoverageServer implements Co
      * @param serverURL The server base url.
      * @param key, account key.
      */
-    public StaticGoogleMapsServer(final URL serverURL, final String key) {
+    public StaticGoogleMapsServer(final URL serverURL, final String key) throws DataStoreException {
         this(serverURL,key,null,false);
     }
 
     public StaticGoogleMapsServer(final URL serverURL, final String key,
-            final ClientSecurity security, boolean cacheImage) {
-        super(create(StaticGoogleServerFactory.PARAMETERS, serverURL, security));
-        Parameters.getOrCreate(StaticGoogleServerFactory.IMAGE_CACHE, parameters).setValue(cacheImage);
+            final ClientSecurity security, boolean cacheImage) throws DataStoreException {
+        this(toParameters(serverURL, key, security, cacheImage));
     }
 
-    public StaticGoogleMapsServer(ParameterValueGroup params) {
+    public StaticGoogleMapsServer(ParameterValueGroup params) throws DataStoreException {
         super(params);
+
+        final boolean cache = getCacheImage();
+        final GoogleCoverageReference ref1 = new GoogleCoverageReference(this,DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_HYBRID),cache);
+        final GoogleCoverageReference ref2 = new GoogleCoverageReference(this,DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_ROADMAP),cache);
+        final GoogleCoverageReference ref3 = new GoogleCoverageReference(this,DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_SATELLITE),cache);
+        final GoogleCoverageReference ref4 = new GoogleCoverageReference(this,DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_TERRAIN),cache);
+
+        rootNode.getChildren().add(ref1);
+        rootNode.getChildren().add(ref2);
+        rootNode.getChildren().add(ref3);
+        rootNode.getChildren().add(ref4);
     }
+
+    private static ParameterValueGroup toParameters(final URL serverURL, final String key,
+            final ClientSecurity security, boolean cacheImage){
+        final ParameterValueGroup params = create(StaticGoogleServerFactory.PARAMETERS, serverURL, security);
+        Parameters.getOrCreate(StaticGoogleServerFactory.IMAGE_CACHE, params).setValue(cacheImage);
+        return params;
+    }
+
 
     @Override
     public StaticGoogleServerFactory getFactory() {
         return (StaticGoogleServerFactory) ServerFinder.getFactoryById(StaticGoogleServerFactory.NAME);
     }
 
+    @Override
+    public DataNode getRootNode() throws DataStoreException {
+        return rootNode;
+    }
+
     public boolean getCacheImage(){
         return (Boolean)Parameters.getOrCreate(AbstractServerFactory.IMAGE_CACHE, parameters).getValue();
-    }
-
-    @Override
-    public Set<Name> getNames() {
-        return LAYER_NAMES;
-    }
-
-    @Override
-    public GoogleCoverageReference getCoverageReference(Name name) throws DataStoreException {
-        return new GoogleCoverageReference(this,name,getCacheImage());
     }
 
     @Override
@@ -121,9 +127,10 @@ public class StaticGoogleMapsServer extends AbstractCoverageServer implements Co
     public void delete(Name name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
-    
-	@Override
-	public CoverageType getType() {
-		return CoverageType.PYRAMID;
-	}
+
+    @Override
+    public CoverageType getType() {
+        return CoverageType.PYRAMID;
+    }
+
 }

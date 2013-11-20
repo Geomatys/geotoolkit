@@ -35,6 +35,8 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DefaultDataNode;
 import org.geotoolkit.wms.v111.GetCapabilities111;
 import org.geotoolkit.wms.v111.GetFeatureInfo111;
 import org.geotoolkit.wms.v111.GetLegend111;
@@ -69,7 +71,7 @@ public class WebMapServer extends AbstractCoverageServer implements CoverageStor
     private static final long TIMEOUT_GETCAPS = 20000L;
 
     private AbstractWMSCapabilities capabilities;
-    private Set<Name> names = null;
+    private DataNode rootNode = null;
 
     /**
      * The request header map for this server
@@ -342,9 +344,9 @@ public class WebMapServer extends AbstractCoverageServer implements CoverageStor
     }
 
     @Override
-    public synchronized Set<Name> getNames() throws DataStoreException {
-        if(names == null){
-            names = new HashSet<Name>();
+    public synchronized DataNode getRootNode() throws DataStoreException {
+        if(rootNode == null){
+            rootNode = new DefaultDataNode();
             final AbstractWMSCapabilities capa;
             try {
                 capa = getCapabilities();
@@ -356,21 +358,24 @@ public class WebMapServer extends AbstractCoverageServer implements CoverageStor
             for(AbstractLayer al : layers){
                 final String name = al.getName();
                 if(name != null){
-                    names.add(DefaultName.valueOf(name));
+                    final Name nn = DefaultName.valueOf(name);
+                    final CoverageReference ref = createReference(nn);
+                    rootNode.getChildren().add(ref);
                 }
             }
-
-            names = Collections.unmodifiableSet(names);
         }
-        return names;
+
+        return rootNode;
     }
 
-    @Override
-    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        if(getNames().contains(name)){
-            return new WMSCoverageReference(this,name);
-        }
-        throw new DataStoreException("No layer for name : " + name);
+    /**
+     * Override by WMS-c and NCWMS.
+     *
+     * @param name
+     * @return
+     */
+    protected CoverageReference createReference(Name name) throws DataStoreException{
+        return new WMSCoverageReference(this,name);
     }
 
     @Override
@@ -394,7 +399,7 @@ public class WebMapServer extends AbstractCoverageServer implements CoverageStor
           .append("version: ").append(getVersion()).append("]");
         return sb.toString();
     }
-    
+
 	@Override
 	public CoverageType getType() {
 		return CoverageType.GRID;

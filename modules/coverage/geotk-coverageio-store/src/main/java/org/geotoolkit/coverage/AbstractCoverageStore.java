@@ -19,12 +19,18 @@ package org.geotoolkit.coverage;
 
 import java.awt.Point;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.collection.TreeTable.Node;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.AbstractStorage;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.AbstractDataStore;
+import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -32,12 +38,12 @@ import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Uncomplete implementation of a coveragestore.
+ * Abstract implementation of a coverage store.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractCoverageStore extends AbstractStorage implements CoverageStore{
+public abstract class AbstractCoverageStore extends AbstractDataStore implements CoverageStore{
 
 
     protected static final String NO_NAMESPACE = "no namespace";
@@ -81,11 +87,51 @@ public abstract class AbstractCoverageStore extends AbstractStorage implements C
     public void delete(Name name) throws DataStoreException {
         throw new DataStoreException("Deletion of coverage not supported.");
     }
-    
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Convinient methods, fallback on getRootNode                            //
+    ////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public final Set<Name> getNames() throws DataStoreException {
+        final Map<Name,CoverageReference> map = listReferences(getRootNode(), new HashMap<Name, CoverageReference>());
+        return map.keySet();
+    }
+
+    @Override
+    public final CoverageReference getCoverageReference(Name name) throws DataStoreException {
+        final Map<Name,CoverageReference> map = listReferences(getRootNode(), new HashMap<Name, CoverageReference>());
+        final CoverageReference ref = map.get(name);
+        if(ref==null){
+            final StringBuilder sb = new StringBuilder("Type name : ");
+            sb.append(name);
+            sb.append(" do not exist in this datastore, available names are : ");
+            for(final Name n : map.keySet()){
+                sb.append(n).append(", ");
+            }
+            throw new DataStoreException(sb.toString());
+        }
+        return ref;
+    }
+
+    private Map<Name,CoverageReference> listReferences(Node node, Map<Name,CoverageReference> map){
+
+        if(node instanceof CoverageReference){
+            final CoverageReference cr = (CoverageReference) node;
+            map.put(cr.getName(), cr);
+        }
+
+        for(Node child : node.getChildren()){
+            listReferences(child, map);
+        }
+
+        return map;
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     // versioning methods : handle nothing by default                         //
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public boolean handleVersioning() {
         return false;
@@ -100,92 +146,92 @@ public abstract class AbstractCoverageStore extends AbstractStorage implements C
     public CoverageReference getCoverageReference(Name name, Version version) throws DataStoreException {
         throw new DataStoreException("Versioning not supported");
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // convinient methods                                                     //
     ////////////////////////////////////////////////////////////////////////////
-    
+
     protected CoverageStoreManagementEvent fireCoverageAdded(final Name name){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createCoverageAddEvent(this, name);
         sendStructureEvent(event);
         return event;
     }
-    
+
     protected CoverageStoreManagementEvent fireCoverageUpdated(final Name name){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createCoverageUpdateEvent(this, name);
         sendStructureEvent(event);
         return event;
     }
-    
+
     protected CoverageStoreManagementEvent fireCoverageDeleted(final Name name){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createCoverageDeleteEvent(this, name);
         sendStructureEvent(event);
         return event;
     }
-    
+
     protected CoverageStoreManagementEvent firePyramidAdded(final Name name, final String pyramidId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidAddEvent(this, name, pyramidId);
         sendStructureEvent(event);
         return event;
     }
-    
+
     protected CoverageStoreManagementEvent firePyramidUpdated(final Name name, final String pyramidId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidUpdateEvent(this, name, pyramidId);
         sendStructureEvent(event);
         return event;
     }
-    
+
     protected CoverageStoreManagementEvent firePyramidDeleted(final Name name, final String pyramidId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidDeleteEvent(this, name, pyramidId);
         sendStructureEvent(event);
         return event;
     }
-    
+
     protected CoverageStoreManagementEvent fireMosaicAdded(final Name name, final String pyramidId, final String mosaicId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicAddEvent(this, name, pyramidId, mosaicId);
         sendStructureEvent(event);
         return event;
     }
-    
+
     protected CoverageStoreManagementEvent fireMosaicUpdated(final Name name, final String pyramidId, final String mosaicId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicUpdateEvent(this, name, pyramidId, mosaicId);
         sendStructureEvent(event);
         return event;
     }
-    
+
     protected CoverageStoreManagementEvent fireMosaicDeleted(final Name name, final String pyramidId, final String mosaicId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicDeleteEvent(this, name, pyramidId, mosaicId);
         sendStructureEvent(event);
         return event;
     }
-        
+
     protected CoverageStoreContentEvent fireDataUpdated(final Name name){
         final CoverageStoreContentEvent event = CoverageStoreContentEvent.createDataUpdateEvent(this, name);
         sendContentEvent(event);
         return event;
     }
-        
-    protected CoverageStoreContentEvent fireTileAdded(final Name name, 
+
+    protected CoverageStoreContentEvent fireTileAdded(final Name name,
             final String pyramidId, final String mosaicId, final List<Point> tiles){
         final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileAddEvent(this, name, pyramidId, mosaicId, tiles);
         sendContentEvent(event);
         return event;
     }
-    
-    protected CoverageStoreContentEvent fireTileUpdated(final Name name, 
+
+    protected CoverageStoreContentEvent fireTileUpdated(final Name name,
             final String pyramidId, final String mosaicId, final List<Point> tiles){
         final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileUpdateEvent(this, name, pyramidId, mosaicId, tiles);
         sendContentEvent(event);
         return event;
     }
-    
-    protected CoverageStoreContentEvent fireTileDeleted(final Name name, 
+
+    protected CoverageStoreContentEvent fireTileDeleted(final Name name,
             final String pyramidId, final String mosaicId, final List<Point> tiles){
         final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileDeleteEvent(this, name, pyramidId, mosaicId, tiles);
         sendContentEvent(event);
         return event;
     }
-    
+
     /**
      * Convinient method to check that the given type name exist.
      * Will raise a datastore exception if the name do not exist in this datastore.

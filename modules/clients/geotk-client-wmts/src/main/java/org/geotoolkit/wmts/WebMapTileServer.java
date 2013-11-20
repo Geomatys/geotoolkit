@@ -37,6 +37,8 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DefaultDataNode;
 import org.geotoolkit.wmts.v100.GetCapabilities100;
 import org.geotoolkit.wmts.v100.GetTile100;
 import org.geotoolkit.wmts.xml.WMTSBindingUtilities;
@@ -58,7 +60,7 @@ public class WebMapTileServer extends AbstractCoverageServer implements Coverage
     private static final Logger LOGGER = Logging.getLogger(WebMapTileServer.class);
 
     private Capabilities capabilities;
-    private Set<Name> names = null;
+    private DataNode rootNode = null;
 
     /**
      * Builds a web map server with the given server url and version.
@@ -221,9 +223,10 @@ public class WebMapTileServer extends AbstractCoverageServer implements Coverage
     }
 
     @Override
-    public synchronized Set<Name> getNames() throws DataStoreException {
-        if(names == null){
-            names = new HashSet<Name>();
+    public synchronized DataNode getRootNode() throws DataStoreException {
+        if(rootNode == null){
+            rootNode = new DefaultDataNode();
+
             final Capabilities capa = getCapabilities();
             if(capa == null){
                 throw new DataStoreException("Could not get Capabilities.");
@@ -231,19 +234,13 @@ public class WebMapTileServer extends AbstractCoverageServer implements Coverage
             final List<LayerType> layers = capa.getContents().getLayers();
             for(LayerType lt : layers){
                 final String name = lt.getIdentifier().getValue();
-                names.add(new DefaultName(name));
+                final Name nn = new DefaultName(name);
+                final CoverageReference ref = new WMTSCoverageReference(this,nn,getImageCache());
+                rootNode.getChildren().add(ref);
             }
-            names = Collections.unmodifiableSet(names);
-        }
-        return names;
-    }
 
-    @Override
-    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        if(getNames().contains(name)){
-            return new WMTSCoverageReference(this,name,getImageCache());
         }
-        throw new DataStoreException("No layer for name : " + name);
+        return rootNode;
     }
 
     @Override
@@ -260,9 +257,9 @@ public class WebMapTileServer extends AbstractCoverageServer implements Coverage
         throw new DataStoreException("Can not create new coverage.");
     }
 
-	@Override
-	public CoverageType getType() {
-		return CoverageType.PYRAMID;
-	}
-    
+    @Override
+    public CoverageType getType() {
+        return CoverageType.PYRAMID;
+    }
+
 }

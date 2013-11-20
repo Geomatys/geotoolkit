@@ -43,6 +43,8 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DefaultDataNode;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -62,7 +64,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
      */
     private static final ParameterDescriptorGroup desc = new DefaultParameterDescriptorGroup("Unamed", AbstractCoverageStoreFactory.NAMESPACE);
 
-    private final Map<Name, CoverageReference> layers = new HashMap<Name, CoverageReference>();
+    private final DataNode rootNode = new DefaultDataNode();
 
 
     public MemoryCoverageStore() {
@@ -98,25 +100,17 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public Set<Name> getNames() throws DataStoreException {
-        return layers.keySet();
-    }
-
-    @Override
-    public CoverageReference getCoverageReference(final Name name) throws DataStoreException {
-        final CoverageReference cr = layers.get(name);
-        if(cr == null){
-            throw new DataStoreException("CoverageReference for name "+name+" does not exist.");
-        }
-        return cr;
+    public DataNode getRootNode() {
+        return rootNode;
     }
 
     @Override
     public CoverageReference create(final Name name) throws DataStoreException {
-        if(layers.containsKey(name)){
+        final Set<Name> names = getNames();
+        if(names.contains(name)){
             throw new DataStoreException("Layer "+name+" already exist");
         }
-        layers.put(name, new MemoryCoverageReference(name));
+        rootNode.getChildren().add(new MemoryCoverageReference(name));
         fireCoverageAdded(name);
         return getCoverageReference(name);
     }
@@ -133,18 +127,13 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
         private GridCoverage2D coverage;
 
         public MemoryCoverageReference(Name name) {
-            super(null,name);
+            super(MemoryCoverageStore.this,null,name);
         }
 
         public void setCoverage(GridCoverage2D coverage) {
             this.coverage = coverage;
             final CoverageStoreContentEvent event = fireDataUpdated();
-            getStore().forwardContentEvent(event);
-        }
-
-        @Override
-        public MemoryCoverageStore getStore() {
-            return MemoryCoverageStore.this;
+            ((MemoryCoverageStore)getStore()).forwardContentEvent(event);
         }
 
         @Override

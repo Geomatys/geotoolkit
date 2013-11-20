@@ -193,6 +193,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
     }
 
     public WMSCoverageReference(final WebMapServer server, final Name ... names) {
+        super(server,names[0]);
         this.server = server;
 
         if(names == null || names.length == 0){
@@ -219,18 +220,6 @@ public class WMSCoverageReference extends AbstractCoverageReference{
     }
 
     /**
-     * @return first layer name
-     */
-    @Override
-    public Name getName() throws FeatureStoreRuntimeException{
-        try {
-            return getNames()[0];
-        } catch (DataStoreException ex) {
-            throw new FeatureStoreRuntimeException(ex);
-        }
-    }
-
-    /**
      * @return array of all layer names
      */
     public Name[] getNames() throws DataStoreException{
@@ -250,11 +239,6 @@ public class WMSCoverageReference extends AbstractCoverageReference{
     @Override
     public GridCoverageWriter acquireWriter() throws CoverageStoreException {
         throw new CoverageStoreException("WMS coverage are not writable.");
-    }
-
-    @Override
-    public WebMapServer getStore() {
-        return server;
     }
 
     /**

@@ -29,15 +29,15 @@ import org.opengis.feature.type.Name;
 
 /**
  * WMS-C is a osgeo profile for WMS 1.1.1.
- * 
- * 
+ *
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class WebMapServerCached extends WebMapServer implements CoverageStore{
-    
+
     private final boolean cacheImage;
-    
+
     /**
      * Builds a web map server with the given server url.
      *
@@ -73,13 +73,13 @@ public class WebMapServerCached extends WebMapServer implements CoverageStore{
      *
      * @param serverURL The server base url.
      * @param security
-     * @param cacheImage  
+     * @param cacheImage
      */
     public WebMapServerCached(final URL serverURL, final ClientSecurity security, boolean cacheImage) {
         super(serverURL, security, WMSVersion.v111, null);
         this.cacheImage = cacheImage;
     }
-    
+
     @Override
     public GetMapRequest createGetMap() {
         final GetMapRequest request = super.createGetMap();
@@ -88,9 +88,9 @@ public class WebMapServerCached extends WebMapServer implements CoverageStore{
     }
 
     @Override
-    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
+    protected CoverageReference createReference(Name name) throws DataStoreException{
         try {
-            return new WMSCCoverageReference(this, name);
+            return new WMSCCoverageReference(this,name);
         } catch (CapabilitiesException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
@@ -103,5 +103,5 @@ public class WebMapServerCached extends WebMapServer implements CoverageStore{
     @Override
     public void dispose() {
     }
-    
+
 }

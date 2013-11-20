@@ -48,11 +48,13 @@ public final class BeanBinding extends AbstractBinding<Object> implements Serial
         if((xpath==null || xpath.isEmpty()) &&Geometry.class.isAssignableFrom(target)){
             xpath = "geometry";
         }
-        
+
+        if(candidate==null) return null;
+
         try {
             final BeanInfo info = Introspector.getBeanInfo(candidate.getClass());
             final PropertyDescriptor[] descs = info.getPropertyDescriptors();
-            if(descs==null)return null;            
+            if(descs==null)return null;
             for(PropertyDescriptor d : descs){
                 if(d.getName().equalsIgnoreCase(xpath)){
                     Object o = d.getReadMethod().invoke(candidate);
@@ -70,7 +72,7 @@ public final class BeanBinding extends AbstractBinding<Object> implements Serial
         try {
             final BeanInfo info = Introspector.getBeanInfo(candidate.getClass());
             final PropertyDescriptor[] descs = info.getPropertyDescriptors();
-            if(descs==null)return;            
+            if(descs==null)return;
             for(PropertyDescriptor d : descs){
                 if(d.getName().equalsIgnoreCase(xpath)){
                     d.getWriteMethod().invoke(candidate, value);

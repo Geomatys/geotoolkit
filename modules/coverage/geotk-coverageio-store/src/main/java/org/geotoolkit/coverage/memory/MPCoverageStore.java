@@ -27,6 +27,8 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageType;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DefaultDataNode;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
@@ -36,7 +38,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  */
 public class MPCoverageStore extends AbstractCoverageStore {
 
-    private final Map<Name, CoverageReference> layers = new HashMap<>();
+    private final DataNode rootNode = new DefaultDataNode();
 
     /**
      * Dummy parameter descriptor group.
@@ -48,25 +50,20 @@ public class MPCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
+    public DataNode getRootNode() {
+        return rootNode;
+    }
+
+    @Override
     public CoverageReference create(Name name) throws DataStoreException {
         final MPCoverageReference mpcref = new MPCoverageReference(this, name);
-        layers.put(name, mpcref);
+        rootNode.getChildren().add(mpcref);
         return mpcref;
     }
 
     @Override
     public CoverageStoreFactory getFactory() {
         return null;
-    }
-
-    @Override
-    public Set<Name> getNames() throws DataStoreException {
-        return layers.keySet();
-    }
-
-    @Override
-    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        return layers.get(name);
     }
 
     @Override

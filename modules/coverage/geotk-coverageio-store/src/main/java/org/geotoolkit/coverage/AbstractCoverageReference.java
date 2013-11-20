@@ -17,24 +17,47 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Point;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.logging.Level;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
+import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.collection.TableColumn;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.storage.AbstractStorage;
-import org.geotoolkit.util.ImageIOUtilities;
+import org.geotoolkit.storage.DefaultDataNode;
+import org.opengis.feature.type.Name;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractCoverageReference extends AbstractStorage implements CoverageReference {
+public abstract class AbstractCoverageReference extends DefaultDataNode implements CoverageReference {
+
+    protected final CoverageStore store;
+    protected final Name name;
+
+    /**
+     *
+     * @param store can be null
+     * @param name never null
+     */
+    public AbstractCoverageReference(CoverageStore store, Name name) {
+        ArgumentChecks.ensureNonNull("name",name);
+        setValue(TableColumn.NAME, name.getLocalPart());
+        this.store = store;
+        this.name = name;
+    }
+
+    @Override
+    public Name getName() {
+        return name;
+    }
+
+    @Override
+    public CoverageStore getStore() {
+        return store;
+    }
 
     /**
      * Default recycle implementation.

@@ -33,6 +33,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -93,6 +94,16 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
     @Override
     public CoverageStoreFactory getFactory() {
         return CoverageStoreFinder.getFactoryById(CoverageSQLStoreFactory.NAME);
+    }
+
+    @Override
+    public CoverageType getType() {
+        return CoverageType.GRID;
+    }
+
+    @Override
+    public DataNode getRootNode() throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -189,16 +200,11 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
 
     private class CoverageSQLLayerReference extends AbstractCoverageReference {
 
-        private final Name name;
 
         private CoverageSQLLayerReference(Name name) {
-            this.name = name;
+            super(CoverageSQLStore.this,name);
         }
 
-        @Override
-        public Name getName() {
-            return name;
-        }
 
         @Override
         public int getImageIndex() {
@@ -208,11 +214,6 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
         @Override
         public boolean isWritable() {
             return false;
-        }
-
-        @Override
-        public CoverageStore getStore() {
-            return CoverageSQLStore.this;
         }
 
         @Override
@@ -232,10 +233,5 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
         }
 
     }
-
-	@Override
-	public CoverageType getType() {
-		return CoverageType.GRID;
-	}
 
 }

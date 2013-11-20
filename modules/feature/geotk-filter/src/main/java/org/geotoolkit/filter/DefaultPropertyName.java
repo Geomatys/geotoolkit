@@ -67,7 +67,7 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
         }
 
         Binding cp = lastAccessor;
-        if (cp != null && cp.getBindingClass().isAssignableFrom(cs)) {
+        if (cp != null && cp.getBindingClass() != Object.class && cp.getBindingClass().isAssignableFrom(cs)) {
             return cp.get( candidate, property, null );
         }
 

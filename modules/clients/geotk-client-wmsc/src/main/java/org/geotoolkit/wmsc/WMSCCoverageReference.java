@@ -40,35 +40,30 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class WMSCCoverageReference extends WMSCoverageReference implements PyramidalCoverageReference{
 
     private final PyramidSet set;
-    
-    public WMSCCoverageReference(final WebMapServerCached server, 
+
+    public WMSCCoverageReference(final WebMapServerCached server,
             final Name name) throws CapabilitiesException{
         super(server, name);
         set = new WMSCPyramidSet(server, name.getLocalPart());
     }
-    
-    @Override
-    public WebMapServerCached getStore() {
-        return getStore();
-    }
-    
+
     @Override
     public synchronized GridCoverageReader acquireReader() throws CoverageStoreException {
         final PyramidalModelReader reader = new PyramidalModelReader();
         reader.setInput(this);
         return reader;
     }
-    
+
     @Override
     public PyramidSet getPyramidSet() throws DataStoreException {
         return set;
     }
-    
+
     @Override
     public Pyramid createPyramid(CoordinateReferenceSystem crs) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
-    
+
     @Override
     public void deletePyramid(String pyramidId) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
@@ -78,7 +73,7 @@ public class WMSCCoverageReference extends WMSCoverageReference implements Pyram
     public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize, DirectPosition upperleft, double pixelscale) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
-    
+
     @Override
     public void deleteMosaic(String pyramidId, String mosaicId) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
@@ -93,7 +88,7 @@ public class WMSCCoverageReference extends WMSCoverageReference implements Pyram
     public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
-    
+
     @Override
     public void deleteTile(String pyramidId, String mosaicId, int col, int row) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");

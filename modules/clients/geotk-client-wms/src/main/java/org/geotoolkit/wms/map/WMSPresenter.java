@@ -95,7 +95,7 @@ public class WMSPresenter extends AbstractInformationPresenter{
 
         //get the different mime types
         final List<String> mimeTypes = new ArrayList<String>();
-        final WebMapServer server = reference.getStore();
+        final WebMapServer server = (WebMapServer)reference.getStore();
         try {
             final AbstractWMSCapabilities capa = server.getCapabilities();
             mimeTypes.addAll(capa.getCapability().getRequest().getGetFeatureInfo().getFormats());

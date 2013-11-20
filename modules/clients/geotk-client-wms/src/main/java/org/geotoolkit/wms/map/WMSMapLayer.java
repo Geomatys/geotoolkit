@@ -196,7 +196,7 @@ public class WMSMapLayer extends DefaultCoverageMapLayer {
      * @deprecated use getCoverageReference() methods
      */
     public WebMapServer getServer() {
-        return getCoverageReference().getStore();
+        return (WebMapServer)getCoverageReference().getStore();
     }
 
     /**

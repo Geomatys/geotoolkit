@@ -38,19 +38,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class GoogleCoverageReference extends AbstractCoverageReference implements PyramidalCoverageReference{
 
-    private final StaticGoogleMapsServer server;
     private final GoogleMapsPyramidSet set;
-    private final Name name;
 
-    GoogleCoverageReference(final StaticGoogleMapsServer server, final Name name,boolean cacheImage) throws DataStoreException{
-        this.server = server;
-        this.name = name;
+    GoogleCoverageReference(final StaticGoogleMapsServer server, final Name name, boolean cacheImage) throws DataStoreException{
+        super(server,name);
         this.set = new GoogleMapsPyramidSet(this,cacheImage);
-    }
-
-    @Override
-    public Name getName() {
-        return name;
     }
 
     @Override
@@ -63,13 +55,8 @@ public class GoogleCoverageReference extends AbstractCoverageReference implement
         return 0;
     }
 
-    @Override
-    public StaticGoogleMapsServer getStore() {
-        return server;
-    }
-
     public GetMapRequest createGetMap() {
-        return new DefaultGetMap(server,name.getLocalPart());
+        return new DefaultGetMap( (StaticGoogleMapsServer)store, name.getLocalPart());
     }
 
     @Override

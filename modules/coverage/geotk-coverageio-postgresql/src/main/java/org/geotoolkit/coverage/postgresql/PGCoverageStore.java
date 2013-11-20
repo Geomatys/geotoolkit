@@ -21,9 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,7 +30,6 @@ import javax.sql.DataSource;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverageStore;
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.CoverageType;
@@ -40,6 +37,8 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DefaultDataNode;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -100,12 +99,9 @@ public class PGCoverageStore extends AbstractCoverageStore{
         return CoverageStoreFinder.getFactoryById(PGCoverageStoreFactory.NAME);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Set<Name> getNames() throws DataStoreException {
-        final Set<Name> names = new HashSet<Name>();
+    public DataNode getRootNode() throws DataStoreException {
+        final DataNode root = new DefaultDataNode();
         final String ns = getDefaultNamespace();
 
         final StringBuilder query = new StringBuilder();
@@ -121,27 +117,16 @@ public class PGCoverageStore extends AbstractCoverageStore{
             stmt = cnx.createStatement();
             rs = stmt.executeQuery(query.toString());
             while (rs.next()){
-                names.add(new DefaultName(ns,rs.getString(1)));
+                final Name n = new DefaultName(ns,rs.getString(1));
+                final CoverageReference ref = getCoverageReference(n, null);
+                root.getChildren().add(ref);
             }
         } catch (SQLException ex) {
             throw new DataStoreException(ex);
         } finally {
             closeSafe(cnx,stmt,rs);
         }
-        return names;
-    }
-
-    /**
-     * Get the coverage reference for the given name.
-     *
-     * @param name Table name in the {@linkplain CoverageStore coverage store}.
-     *
-     * @return The matching {@linkplain CoverageReference coverage reference}.
-     * @throws DataStoreException if the name was not found in the {@linkplain CoverageStore coverage store}.
-     */
-    @Override
-    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        return getCoverageReference(name, null);
+        return root;
     }
 
     @Override
@@ -246,7 +231,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
     ////////////////////////////////////////////////////////////////////////////
     // Versioning support //////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     @Override
     public boolean handleVersioning() {
         return true;
@@ -283,7 +268,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         }
         return new PGCoverageReference(this, name, version);
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // Connection utils ////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////

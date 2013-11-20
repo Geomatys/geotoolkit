@@ -23,7 +23,6 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.RecyclingCoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -40,15 +39,12 @@ import org.opengis.feature.type.Name;
  */
 public class FileCoverageReference extends RecyclingCoverageReference{
 
-    private final FileCoverageStore store;
-    private final Name name;
     private final File file;
     private final int imageIndex;
     private ImageReaderSpi spi;
 
     FileCoverageReference(FileCoverageStore store, Name name, File file, int imageIndex) {
-        this.store = store;
-        this.name = name;
+        super(store,name);
         this.file = file;
         this.imageIndex = imageIndex;
         this.spi = store.spi;
@@ -57,7 +53,7 @@ public class FileCoverageReference extends RecyclingCoverageReference{
     @Override
     public boolean isWritable() throws DataStoreException {
         try {
-            final ImageWriter writer = store.createWriter(file);
+            final ImageWriter writer = ((FileCoverageStore)store).createWriter(file);
             writer.dispose();
             return true;
         } catch (IOException ex) {
@@ -69,7 +65,7 @@ public class FileCoverageReference extends RecyclingCoverageReference{
     protected GridCoverageReader createReader() throws CoverageStoreException {
         final ImageCoverageReader reader = new ImageCoverageReader();
         try {
-            final ImageReader ioreader =store.createReader(file,spi);
+            final ImageReader ioreader = ((FileCoverageStore)store).createReader(file,spi);
             if(spi==null){
                 //format was on AUTO. keep the spi for futur reuse.
                 spi = ioreader.getOriginatingProvider();
@@ -85,7 +81,7 @@ public class FileCoverageReference extends RecyclingCoverageReference{
     public GridCoverageWriter acquireWriter() throws CoverageStoreException {
         final ImageCoverageWriter writer = new ImageCoverageWriter();
         try {
-            writer.setOutput(store.createWriter(file));
+            writer.setOutput( ((FileCoverageStore)store).createWriter(file) );
         } catch (IOException ex) {
             throw new CoverageStoreException(ex.getMessage(),ex);
         }
@@ -93,18 +89,8 @@ public class FileCoverageReference extends RecyclingCoverageReference{
     }
 
     @Override
-    public Name getName() {
-        return name;
-    }
-
-    @Override
     public int getImageIndex() {
         return imageIndex;
-    }
-
-    @Override
-    public CoverageStore getStore() {
-        return store;
     }
 
     public Image getLegend() throws DataStoreException {

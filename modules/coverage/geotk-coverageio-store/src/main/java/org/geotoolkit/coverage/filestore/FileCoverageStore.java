@@ -20,10 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,9 +28,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 
-import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverageStore;
-import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.CoverageType;
@@ -42,6 +37,9 @@ import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.XImageIO;
 import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.storage.DataNode;
+import org.geotoolkit.storage.DefaultDataNode;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
@@ -58,11 +56,17 @@ public class FileCoverageStore extends AbstractCoverageStore{
     private final File root;
     private final String format;
     private final URL rootPath;
-    private final Map<Name,FileCoverageReference> names = new HashMap<Name, FileCoverageReference>();
+
+    private final DataNode rootNode = new DefaultDataNode();
+
     //default spi
     final ImageReaderSpi spi;
 
-    FileCoverageStore(ParameterValueGroup params) throws URISyntaxException{
+    public FileCoverageStore(URL url, String format) throws URISyntaxException{
+        this(toParameters(url, format));
+    }
+
+    public FileCoverageStore(ParameterValueGroup params) throws URISyntaxException{
         super(params);
         rootPath = (URL) params.parameter(FileCoverageStoreFactory.PATH.getName().getCode()).getValue();
         root = new File(rootPath.toURI());
@@ -77,9 +81,23 @@ public class FileCoverageStore extends AbstractCoverageStore{
         visit(root);
     }
 
+    private static ParameterValueGroup toParameters(URL url, String format){
+        final ParameterValueGroup params = FileCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        ParametersExt.getOrCreateValue(params,"path").setValue(url);
+        if(format!=null){
+            ParametersExt.getOrCreateValue(params,"type").setValue(format);
+        }
+        return params;
+    }
+
     @Override
     public CoverageStoreFactory getFactory() {
         return CoverageStoreFinder.getFactoryById(FileCoverageStoreFactory.NAME);
+    }
+
+    @Override
+    public DataNode getRootNode() {
+        return rootNode;
     }
 
     /**
@@ -122,21 +140,22 @@ public class FileCoverageStore extends AbstractCoverageStore{
 
             final int nbImage = reader.getNumImages(true);
 
+
+            final Name baseName = new DefaultName(nmsp,filename);
+            final FileCoverageReference baseNode = new FileCoverageReference(this,baseName,candidate,-1);
+            rootNode.getChildren().add(baseNode);
+
             if(reader instanceof NamedImageStore){
                 //try to find a proper name for each image
                 final NamedImageStore nis = (NamedImageStore) reader;
+
 
                 final List<String> imageNames = nis.getImageNames();
                 for(int i=0,n=imageNames.size();i<n;i++){
                     final String in = imageNames.get(i);
                     final Name name = new DefaultName(nmsp,filename+"."+in);
-                    final FileCoverageReference previous = names.put(
-                            name,
-                            new FileCoverageReference(this,name,candidate,i));
-
-                    if(previous != null){
-                        getLogger().log(Level.WARNING, "Several files with name : "+name+" exist in folder :" + root.getPath());
-                    }
+                    final FileCoverageReference fcr = new FileCoverageReference(this,name,candidate,i);
+                    baseNode.getChildren().add(fcr);
                 }
 
             }else{
@@ -149,13 +168,8 @@ public class FileCoverageStore extends AbstractCoverageStore{
                         name = new DefaultName(nmsp,filename+"."+i);
                     }
 
-                    final FileCoverageReference previous = names.put(
-                            name,
-                            new FileCoverageReference(this,name,candidate,i));
-
-                    if(previous != null){
-                        getLogger().log(Level.WARNING, "Several files with name : "+name+" exist in folder :" + root.getPath());
-                    }
+                    final FileCoverageReference fcr = new FileCoverageReference(this,name,candidate,i);
+                    baseNode.getChildren().add(fcr);
                 }
             }
 
@@ -166,17 +180,6 @@ public class FileCoverageStore extends AbstractCoverageStore{
         } finally {
             ImageIOUtilities.releaseReader(reader);
         }
-    }
-
-    @Override
-    public Set<Name> getNames() throws DataStoreException {
-        return names.keySet();
-    }
-
-    @Override
-    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        typeCheck(name);
-        return names.get(name);
     }
 
     @Override

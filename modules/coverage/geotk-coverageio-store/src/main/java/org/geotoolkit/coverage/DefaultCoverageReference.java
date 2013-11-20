@@ -18,6 +18,7 @@ package org.geotoolkit.coverage;
 
 import java.awt.Image;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.collection.TableColumn;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -35,27 +36,31 @@ public class DefaultCoverageReference extends AbstractCoverageReference{
 
     private final GridCoverage2D coverage;
     private final Object input;
-    private final Name name;
     private final int imageIndex;
 
-    public DefaultCoverageReference(final GridCoverage2D coverage, Name name) {
+    public DefaultCoverageReference(final CoverageStore store, final GridCoverage2D coverage, Name name) {
+        super(store,name);
+        setValue(TableColumn.NAME, name.getLocalPart());
         this.coverage = coverage;
         this.input = null;
-        this.name = name;
+        this.imageIndex = 0;
+    }
+
+    public DefaultCoverageReference(final GridCoverage2D coverage, Name name) {
+        super(null,name);
+        setValue(TableColumn.NAME, name.getLocalPart());
+        this.coverage = coverage;
+        this.input = null;
         this.imageIndex = 0;
     }
 
     public DefaultCoverageReference(final Object input, Name name) {
+        super(null,name);
         this.coverage = null;
         this.input = input;
-        this.name = name;
         this.imageIndex = 0;
     }
 
-    @Override
-    public Name getName() {
-        return name;
-    }
 
     @Override
     public int getImageIndex() {
@@ -65,11 +70,6 @@ public class DefaultCoverageReference extends AbstractCoverageReference{
     @Override
     public boolean isWritable() throws DataStoreException {
         return false;
-    }
-
-    @Override
-    public CoverageStore getStore() {
-        return null;
     }
 
     @Override

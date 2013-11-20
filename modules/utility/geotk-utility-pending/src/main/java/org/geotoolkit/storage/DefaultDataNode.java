@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,26 +14,36 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+
 package org.geotoolkit.storage;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.sis.util.Classes;
+import org.apache.sis.util.collection.DefaultTreeTable;
+import org.apache.sis.util.collection.TableColumn;
+import org.geotoolkit.gui.swing.tree.Trees;
 
 /**
- * Abstract storage class, adds convinient event methods.
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractStorage {
+public class DefaultDataNode extends DefaultTreeTable.Node implements DataNode {
 
     protected final Set<StorageListener> listeners = new HashSet<>();
 
+    public DefaultDataNode() {
+        super("");
+    }
+
+    @Override
     public void addStorageListener(final StorageListener listener) {
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
+    @Override
     public void removeStorageListener(final StorageListener listener) {
         synchronized (listeners) {
             listeners.remove(listener);
@@ -84,6 +94,12 @@ public abstract class AbstractStorage {
      */
     public void forwardContentEvent(StorageEvent event){
         sendContentEvent(event.copy(this));
+    }
+
+    @Override
+    public String toString() {
+        final CharSequence name = getValue(TableColumn.NAME);
+        return Trees.toString(name.toString(), getChildren());
     }
 
 }

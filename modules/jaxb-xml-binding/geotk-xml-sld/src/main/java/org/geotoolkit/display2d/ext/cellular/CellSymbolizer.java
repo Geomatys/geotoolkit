@@ -46,6 +46,8 @@ import org.geotoolkit.se.xml.v110.SymbolizerType;
 import org.geotoolkit.se.xml.v110.TextSymbolizerType;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
@@ -228,35 +230,71 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         final GeneralGridGeometry gg = reader.getGridGeometry(imageIndex);
         final CoordinateReferenceSystem crs = gg.getCoordinateReferenceSystem();
         if(lst!=null){
-            return buildCellType(lst.size(), crs);
+            final String[] names = new String[lst.size()];
+            for(int i=0;i<names.length;i++){
+                names[i] = lst.get(i).getDescription().toString();
+            }
+            return buildCellType(lst.size(), names, crs);
         }else{
             //we need to find the number of bands by some other way
             final GridCoverageReadParam param = new GridCoverageReadParam();
             param.setResolution(gg.getEnvelope().getSpan(0),gg.getEnvelope().getSpan(1));
             final GridCoverage2D cov = (GridCoverage2D) reader.read(0, param);
             final int nbBands = cov.getRenderedImage().getSampleModel().getNumBands();
-            return buildCellType(nbBands, crs);
+            return buildCellType(nbBands, null, crs);
         }
     }
 
     public static SimpleFeatureType buildCellType(GridCoverage2D coverage){
         final int nbBand = coverage.getNumSampleDimensions();
-        return buildCellType(nbBand, coverage.getCoordinateReferenceSystem2D());
+        final GridSampleDimension[] dims = coverage.getSampleDimensions();
+        final String[] names = new String[dims.length];
+        for(int i=0;i<names.length;i++){
+            names[i] = dims[i].getDescription().toString();
+        }
+        return buildCellType(nbBand, names, coverage.getCoordinateReferenceSystem2D());
     }
 
-    public static SimpleFeatureType buildCellType(int nbBand, CoordinateReferenceSystem crs){
+    public static SimpleFeatureType buildCellType(int nbBand, String[] bandnames, CoordinateReferenceSystem crs){
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+        atb.setBinding(double.class);
+
         ftb.setName("cell");
         ftb.add("geom", Point.class,crs);
         for(int b=0,n=nbBand;b<n;b++){
-            String name = "band_"+b;
-            ftb.add(name+"_count",double.class);
-            ftb.add(name+"_min",double.class);
-            ftb.add(name+"_mean",double.class);
-            ftb.add(name+"_max",double.class);
-            ftb.add(name+"_range",double.class);
-            ftb.add(name+"_rms",double.class);
-            ftb.add(name+"_sum",double.class);
+            final String name = "band_"+b;
+            final String bandName = (bandnames!=null) ? bandnames[b] : "";
+            atb.setDescription(bandName);
+
+            adb.setName(name+"_count");
+            adb.setType(atb.buildType());
+            ftb.add(adb.buildDescriptor());
+
+            adb.setName(name+"_min");
+            adb.setType(atb.buildType());
+            ftb.add(adb.buildDescriptor());
+
+            adb.setName(name+"_mean");
+            adb.setType(atb.buildType());
+            ftb.add(adb.buildDescriptor());
+
+            adb.setName(name+"_max");
+            adb.setType(atb.buildType());
+            ftb.add(adb.buildDescriptor());
+
+            adb.setName(name+"_range");
+            adb.setType(atb.buildType());
+            ftb.add(adb.buildDescriptor());
+
+            adb.setName(name+"_rms");
+            adb.setType(atb.buildType());
+            ftb.add(adb.buildDescriptor());
+
+            adb.setName(name+"_sum");
+            adb.setType(atb.buildType());
+            ftb.add(adb.buildDescriptor());
         }
         return ftb.buildSimpleFeatureType();
     }

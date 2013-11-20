@@ -21,6 +21,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.StorageListener;
 import org.opengis.feature.type.Name;
 
@@ -33,7 +34,7 @@ import org.opengis.feature.type.Name;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface CoverageReference {
+public interface CoverageReference extends DataNode {
 
     /**
      * Name of the coverage. act as an identifier in the coverage store
