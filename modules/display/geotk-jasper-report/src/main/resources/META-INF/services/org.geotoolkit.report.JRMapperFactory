@@ -1,6 +1,0 @@
-org.geotoolkit.report.simple.string.StaticStringMapperFactory
-org.geotoolkit.report.graphic.map.CanvasMapperFactory
-org.geotoolkit.report.graphic.northarrow.NorthArrowMapperFactory
-org.geotoolkit.report.graphic.scalebar.ScaleBarMapperFactory
-org.geotoolkit.report.graphic.legend.LegendMapperFactory
-org.geotoolkit.report.attribut.context.title.ContextTitleMapperFactory
