@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,10 +16,9 @@
  */
 package org.geotoolkit.filter.function.string;
 
-import org.geotoolkit.filter.function.FunctionFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import java.util.HashMap;
+import java.util.Map;
+import org.geotoolkit.filter.function.AbstractFunctionFactory;
 
 
 /**
@@ -29,7 +28,7 @@ import org.opengis.filter.expression.Literal;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class StringFunctionFactory implements FunctionFactory{
+public class StringFunctionFactory extends AbstractFunctionFactory{
 
     public static final String CONCAT = "strConcat";
     public static final String ENDS_WITH = "strEndsWith";
@@ -48,56 +47,30 @@ public class StringFunctionFactory implements FunctionFactory{
     public static final String TRUNCATE_FIRST = "strTruncateFirst";
     public static final String TRUNCATE_LAST = "strTruncateLast";
 
-    private static final String[] NAMES;
+    private static final Map<String,Class> FUNCTIONS = new HashMap<>();
 
-    static {
-        NAMES = new String[] {
-                  CONCAT, ENDS_WITH, EQUALS_IGNORE_CASE, INDEX_OF, LAST_INDEX_OF, LENGTH,
-                  MATCHES, REPLACE, STARTS_WITH, SUBSTRING, SUBSTRING_START, TO_LOWER_CASE,
-                  TO_UPPER_CASE, TRIM, TRUNCATE_FIRST, TRUNCATE_LAST
-        };
+    static{
+        FUNCTIONS.put(CONCAT,               ConcatFunction.class);
+        FUNCTIONS.put(ENDS_WITH,            EndsWithFunction.class);
+        FUNCTIONS.put(EQUALS_IGNORE_CASE,   EqualsIgnoreCaseFunction.class);
+        FUNCTIONS.put(INDEX_OF,             IndexOfFunction.class);
+        FUNCTIONS.put(LAST_INDEX_OF,        LastIndexOfFunction.class);
+        FUNCTIONS.put(LENGTH,               LengthFunction.class);
+        FUNCTIONS.put(MATCHES,              MatchesFunction.class);
+        FUNCTIONS.put(REPLACE,              ReplaceFunction.class);
+        FUNCTIONS.put(STARTS_WITH,          StartsWithFunction.class);
+        FUNCTIONS.put(SUBSTRING,            SubstringFunction.class);
+        FUNCTIONS.put(SUBSTRING_START,      SubstringStartFunction.class);
+        FUNCTIONS.put(TO_LOWER_CASE,        ToLowerCaseFunction.class);
+        FUNCTIONS.put(TO_UPPER_CASE,        ToUpperCaseFunction.class);
+        FUNCTIONS.put(TRIM,                 TrimFunction.class);
+        FUNCTIONS.put(TRUNCATE_FIRST,       TruncateFirstFunction.class);
+        FUNCTIONS.put(TRUNCATE_LAST,        TruncateLastFunction.class);
+
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String getIdentifier() {
-        return "string";
-    }
-    
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String[] getNames() {
-        return NAMES;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Function createFunction(final String name, final Literal fallback, final Expression... parameters) throws IllegalArgumentException {
-
-        if(name.equals(CONCAT)) return new ConcatFunction(parameters[0], parameters[1]);
-        if(name.equals(ENDS_WITH)) return new EndsWithFunction(parameters[0], parameters[1]);
-        if(name.equals(EQUALS_IGNORE_CASE)) return new EqualsIgnoreCaseFunction(parameters[0], parameters[1]);
-        if(name.equals(INDEX_OF)) return new IndexOfFunction(parameters[0], parameters[1]);
-        if(name.equals(LAST_INDEX_OF)) return new LastIndexOfFunction(parameters[0], parameters[1]);
-        if(name.equals(LENGTH)) return new LengthFunction(parameters[0]);
-        if(name.equals(MATCHES)) return new MatchesFunction(parameters[0], parameters[1]);
-        if(name.equals(REPLACE)) return new ReplaceFunction(parameters[0], parameters[1], parameters[2], parameters[3]);
-        if(name.equals(STARTS_WITH)) return new StartsWithFunction(parameters[0], parameters[1]);
-        if(name.equals(SUBSTRING)) return new SubstringFunction(parameters[0], parameters[1], parameters[2]);
-        if(name.equals(SUBSTRING_START)) return new SubstringStartFunction(parameters[0], parameters[1]);
-        if(name.equals(TO_LOWER_CASE)) return new ToLowerCaseFunction(parameters[0]);
-        if(name.equals(TO_UPPER_CASE)) return new ToUpperCaseFunction(parameters[0]);
-        if(name.equals(TRIM)) return new TrimFunction(parameters[0]);
-        if(name.equals(TRUNCATE_FIRST)) return new TruncateFirstFunction(parameters[0], parameters[1]);
-        if(name.equals(TRUNCATE_LAST)) return new TruncateLastFunction(parameters[0], parameters[1]);
-
-        throw new IllegalArgumentException("Unknowed function name : "+ name);
+    public StringFunctionFactory() {
+        super("string", FUNCTIONS);
     }
 
 }

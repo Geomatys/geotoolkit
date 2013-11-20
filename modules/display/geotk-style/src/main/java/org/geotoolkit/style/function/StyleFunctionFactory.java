@@ -17,6 +17,9 @@
 
 package org.geotoolkit.style.function;
 
+import java.util.HashMap;
+import java.util.Map;
+import org.geotoolkit.filter.function.AbstractFunctionFactory;
 import org.geotoolkit.filter.function.FunctionFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
@@ -24,37 +27,24 @@ import org.opengis.filter.expression.Literal;
 
 /**
  * Factory registering the default Symbology Encoding functions.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StyleFunctionFactory implements FunctionFactory{
+public class StyleFunctionFactory extends AbstractFunctionFactory{
 
     public static final String INTERPOLATE = DefaultInterpolate.NAME.getName();
     public static final String CATEGORIZE = DefaultCategorize.NAME.getName();
 
-    private static final String[] NAMES;
+    private static final Map<String,Class> FUNCTIONS = new HashMap<>();
 
     static{
-        NAMES = new String[]{
-         INTERPOLATE,
-         CATEGORIZE};
+        FUNCTIONS.put(INTERPOLATE, DefaultInterpolate.class);
+        FUNCTIONS.put(CATEGORIZE, DefaultCategorize.class);
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String getIdentifier() {
-        return "style";
-    }
-    
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String[] getNames() {
-        return NAMES;
+    public StyleFunctionFactory() {
+        super("style", FUNCTIONS);
     }
 
     /**

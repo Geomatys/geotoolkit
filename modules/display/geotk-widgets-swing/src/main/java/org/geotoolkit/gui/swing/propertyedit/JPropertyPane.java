@@ -151,8 +151,6 @@ public class JPropertyPane extends JPanel{
         dia.setModal(modal);
         dia.setTitle(MessageBundle.getString("property_properties"));
         dia.setAlwaysOnTop(true);
-        dia.setSize(700,500);
-        dia.setLocationRelativeTo(null);
 
         final JPropertyPane pane = new JPropertyPane(true,true,true,dia);
         dia.setContentPane(pane);
@@ -162,6 +160,8 @@ public class JPropertyPane extends JPanel{
             pane.addEditPanel(pro);
         }
 
+        dia.setSize(800,600);
+        dia.setLocationRelativeTo(null);
         dia.setVisible(true);
     }
 

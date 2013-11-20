@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.filter;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,11 +32,13 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JTree;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -43,6 +46,8 @@ import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.filter.function.FunctionFactory;
 import org.geotoolkit.filter.function.Functions;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -51,6 +56,8 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
+import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.InternationalString;
 
 /**
@@ -60,6 +67,9 @@ import org.opengis.util.InternationalString;
  * @module pending
  */
 public class JCQLEditor extends javax.swing.JPanel{
+
+    private static final ImageIcon ICON_FUNCTION = IconBuilder.createIcon(FontAwesomeIcons.ICON_COG, 16, Color.GRAY);
+    private static final ImageIcon ICON_GROUP = IconBuilder.createIcon(FontAwesomeIcons.ICON_FOLDER_CLOSE, 16, Color.GRAY);
 
     private MapLayer layer;
 
@@ -72,7 +82,8 @@ public class JCQLEditor extends javax.swing.JPanel{
         for(FunctionFactory ff : Functions.getFactories()){
             final DefaultMutableTreeNode fnode = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode(ff.getIdentifier());
             for(String str : ff.getNames()){
-                final DefaultMutableTreeNode enode = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode(str);
+                final ParameterDescriptorGroup desc = ff.describeFunction(str);
+                final DefaultMutableTreeNode enode = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode(desc);
                 fnode.add(enode);
             }
             root.add(fnode);
@@ -85,16 +96,43 @@ public class JCQLEditor extends javax.swing.JPanel{
             @Override
             public void valueChanged(TreeSelectionEvent e) {
 
-                TreePath ob = guiFunctions.getSelectionPath();
+                final TreePath ob = guiFunctions.getSelectionPath();
                 if(ob != null){
                     final DefaultMutableTreeNode node = (DefaultMutableTreeNode) ob.getLastPathComponent();
-                    if(node.getChildCount()==0){
-                        guiCQL.insertText(" "+node.getUserObject().toString()+"()");
+                    if(node.getChildCount()==0 && node.getUserObject() instanceof ParameterDescriptorGroup){
+                        final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) node.getUserObject();
+                        final StringBuilder sb = new StringBuilder();
+                        sb.append(desc.getName().getCode()).append('(');
+                        final List<GeneralParameterDescriptor> gpds = desc.descriptors();
+                        for(int i=0;i<gpds.size();i++){
+                            if(i>0) sb.append(',');
+                            sb.append(gpds.get(i).getName().getCode());
+                        }
+                        sb.append(')');
+                        guiCQL.insertText(" "+sb.toString());
                         guiFunctions.clearSelection();
                     }
-
                 }
             }
+        });
+        guiFunctions.setCellRenderer(new DefaultTreeCellRenderer(){
+            @Override
+            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
+                    boolean expanded, boolean leaf, int row, boolean hasFocus) {
+                final JLabel lbl =  (JLabel)super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+                if(value instanceof DefaultMutableTreeNode){
+                    value = ((DefaultMutableTreeNode)value).getUserObject();
+                }
+                if(value instanceof ParameterDescriptorGroup){
+                    final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) value;
+                    lbl.setText(desc.getName().getCode());
+                    lbl.setIcon(ICON_FUNCTION);
+                }else{
+                    lbl.setIcon(ICON_GROUP);
+                }
+                return lbl;
+            }
+
         });
 
         guiProperties.addListSelectionListener(new ListSelectionListener() {
@@ -162,7 +200,6 @@ public class JCQLEditor extends javax.swing.JPanel{
         jButton42.addActionListener(actListener);
         jButton43.addActionListener(actListener);
 
-        guiPropertiesPane.setSize(1, 1);
         guiPropertiesPane.setVisible(false);
         guiFilterOps.setVisible(false);
         guiFilterOps.setSize(1,1);
@@ -179,7 +216,9 @@ public class JCQLEditor extends javax.swing.JPanel{
         setLayout(new java.awt.BorderLayout());
 
         jSplitPane1.setDividerLocation(300);
+        jSplitPane1.setDividerSize(2);
 
+        guiTextPropertySplit.setDividerSize(2);
         guiTextPropertySplit.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
         guiProperties.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -194,7 +233,7 @@ public class JCQLEditor extends javax.swing.JPanel{
             .addGroup(guiPropertiesPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jXTitledSeparator6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(guiScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
+            .addComponent(guiScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
         );
         guiPropertiesPaneLayout.setVerticalGroup(
             guiPropertiesPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -643,12 +682,14 @@ public class JCQLEditor extends javax.swing.JPanel{
 
             final Collection<PropertyDescriptor> col = fml.getCollection().getFeatureType().getDescriptors();
             guiProperties.setModel(new ListComboBoxModel(new ArrayList(col)));
-            guiPropertiesPane.setSize(guiPropertiesPane.getPreferredSize());
             guiPropertiesPane.setVisible(true);
+            guiTextPropertySplit.setDividerLocation(120);
         }else{
-            guiPropertiesPane.setSize(1, 1);
             guiPropertiesPane.setVisible(false);
+            guiTextPropertySplit.setDividerLocation(0);
         }
+        guiTextPropertySplit.revalidate();
+        guiTextPropertySplit.repaint();
 
     }
 

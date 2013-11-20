@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,18 +17,17 @@
 
 package org.geotoolkit.filter.function.math;
 
-import org.geotoolkit.filter.function.FunctionFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import java.util.HashMap;
+import java.util.Map;
+import org.geotoolkit.filter.function.AbstractFunctionFactory;
 
 /**
  * Factory registering the commun mathematical functions.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class MathFunctionFactory implements FunctionFactory{
+public class MathFunctionFactory extends AbstractFunctionFactory{
 
     public static final String ABS                  = "abs";
     public static final String ACOS                 = "acos";
@@ -55,84 +54,38 @@ public class MathFunctionFactory implements FunctionFactory{
     public static final String TO_DEGREES           = "toDegrees";
     public static final String TO_RADIANS           = "toRadians";
 
-    private static final String[] NAMES;
+    private static final Map<String,Class> FUNCTIONS = new HashMap<>();
 
     static{
-        NAMES = new String[]{
-         ABS,
-         ACOS,
-         ASIN,
-         ATAN2,
-         ATAN,
-         CEIL,
-         COS,
-         EXP,
-         FLOOR,
-         HYPOT,
-         IEEE_REMAINDER,
-         LOG,
-         MAX,
-         MIN,
-         PI,
-         POW,
-         RANDOM,
-         RINT,
-         ROUND,
-         SIN,
-         SQRT,
-         TAN,
-         TO_DEGREES,
-         TO_RADIANS};
+        FUNCTIONS.put(ABS,              AbsFunction.class);
+        FUNCTIONS.put(ACOS,             AcosFunction.class);
+        FUNCTIONS.put(ASIN,             AsinFunction.class);
+        FUNCTIONS.put(ATAN2,            Atan2Function.class);
+        FUNCTIONS.put(ATAN,             AtanFunction.class);
+        FUNCTIONS.put(CEIL,             CeilFunction.class);
+        FUNCTIONS.put(COS,              CosFunction.class);
+        FUNCTIONS.put(EXP,              ExpFunction.class);
+        FUNCTIONS.put(FLOOR,            FloorFunction.class);
+        FUNCTIONS.put(HYPOT,            HypotFunction.class);
+        FUNCTIONS.put(IEEE_REMAINDER,   IEEERemainderFunction.class);
+        FUNCTIONS.put(LOG,              LogFunction.class);
+        FUNCTIONS.put(MAX,              MaxFunction.class);
+        FUNCTIONS.put(MIN,              MinFunction.class);
+        FUNCTIONS.put(PI,               PiFunction.class);
+        FUNCTIONS.put(POW,              PowFunction.class);
+        FUNCTIONS.put(RANDOM,           RandomFunction.class);
+        FUNCTIONS.put(RINT,             RintFunction.class);
+        FUNCTIONS.put(ROUND,            RoundFunction.class);
+        FUNCTIONS.put(SIN,              SinFunction.class);
+        FUNCTIONS.put(SQRT,             SqrtFunction.class);
+        FUNCTIONS.put(TAN,              TanFunction.class);
+        FUNCTIONS.put(TO_DEGREES,       ToDegreesFunction.class);
+        FUNCTIONS.put(TO_RADIANS,       ToRadiansFunction.class);
+
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String getIdentifier() {
-        return "math";
-    }
-    
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String[] getNames() {
-        return NAMES;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Function createFunction(final String name, final Literal fallback, final Expression... parameters) throws IllegalArgumentException {
-
-        if(name.equals(ABS))                    return new AbsFunction(parameters[0]);
-        else if(name.equals(ACOS))              return new AcosFunction(parameters[0]);
-        else if(name.equals(ASIN))              return new AsinFunction(parameters[0]);
-        else if(name.equals(ATAN2))             return new Atan2Function(parameters[0], parameters[1]);
-        else if(name.equals(ATAN))              return new AtanFunction(parameters[0]);
-        else if(name.equals(CEIL))              return new CeilFunction(parameters[0]);
-        else if(name.equals(COS))               return new CosFunction(parameters[0]);
-        else if(name.equals(EXP))               return new ExpFunction(parameters[0]);
-        else if(name.equals(FLOOR))             return new FloorFunction(parameters[0]);
-        else if(name.equals(HYPOT))             return new HypotFunction(parameters[0],parameters[1]);
-        else if(name.equals(IEEE_REMAINDER))    return new IEEERemainderFunction(parameters[0],parameters[1]);
-        else if(name.equals(LOG))               return new LogFunction(parameters[0]);
-        else if(name.equals(MAX))               return new MaxFunction(parameters[0],parameters[1]);
-        else if(name.equals(MIN))               return new MinFunction(parameters[0],parameters[1]);
-        else if(name.equals(PI))                return new PiFunction();
-        else if(name.equals(POW))               return new PowFunction(parameters[0],parameters[1]);
-        else if(name.equals(RANDOM))            return new RandomFunction();
-        else if(name.equals(RINT))              return new RintFunction(parameters[0]);
-        else if(name.equals(ROUND))             return new RoundFunction(parameters[0]);
-        else if(name.equals(SIN))               return new SinFunction(parameters[0]);
-        else if(name.equals(SQRT))              return new SqrtFunction(parameters[0]);
-        else if(name.equals(TAN))               return new TanFunction(parameters[0]);
-        else if(name.equals(TO_DEGREES))        return new ToDegreesFunction(parameters[0]);
-        else if(name.equals(TO_RADIANS))        return new ToRadiansFunction(parameters[0]);
-
-        throw new IllegalArgumentException("Unknowed function name : "+ name);
+    public MathFunctionFactory() {
+        super("math",FUNCTIONS);
     }
 
 }

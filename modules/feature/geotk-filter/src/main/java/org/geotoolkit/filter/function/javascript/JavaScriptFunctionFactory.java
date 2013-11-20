@@ -17,59 +17,21 @@
 
 package org.geotoolkit.filter.function.javascript;
 
-import javax.script.ScriptException;
-import org.geotoolkit.filter.function.FunctionFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import java.util.Collections;
+import org.geotoolkit.filter.function.AbstractFunctionFactory;
 
 /**
  * Factory registering javascript functions.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class JavaScriptFunctionFactory implements FunctionFactory{
+public class JavaScriptFunctionFactory extends AbstractFunctionFactory{
 
     public static final String JAVASCRIPT = "javascript";
 
-    private static final String[] NAMES;
-
-    static{
-        NAMES = new String[]{JAVASCRIPT};
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String getIdentifier() {
-        return "javascript";
-    }
-    
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String[] getNames() {
-        return NAMES;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Function createFunction(final String name, final Literal fallback, final Expression... parameters) throws IllegalArgumentException {
-
-        if(name.equals(JAVASCRIPT)){
-            try {
-                return new JavaScriptFunction(parameters[0]);
-            } catch (ScriptException ex) {
-                throw new IllegalArgumentException("Malformated Javascript function : "+ ex.getMessage(), ex);
-            }
-        }
-
-        throw new IllegalArgumentException("Unknowed function name : "+ name);
+    public JavaScriptFunctionFactory() {
+        super(JAVASCRIPT, Collections.singletonMap(JAVASCRIPT, (Class)JavaScriptFunction.class));
     }
 
 }

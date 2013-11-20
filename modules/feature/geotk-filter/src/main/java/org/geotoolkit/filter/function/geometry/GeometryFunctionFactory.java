@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,10 +16,9 @@
  */
 package org.geotoolkit.filter.function.geometry;
 
-import org.geotoolkit.filter.function.FunctionFactory;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
+import java.util.HashMap;
+import java.util.Map;
+import org.geotoolkit.filter.function.AbstractFunctionFactory;
 
 
 /**
@@ -29,7 +28,7 @@ import org.opengis.filter.expression.Literal;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class GeometryFunctionFactory implements FunctionFactory {
+public class GeometryFunctionFactory extends AbstractFunctionFactory {
 
     public static final String AREA     = "area";
     public static final String BETWEEN  = "between";
@@ -79,91 +78,59 @@ public class GeometryFunctionFactory implements FunctionFactory {
     public static final String UNION = "union";
     public static final String WITHIN = "within";
 
-    private static final String[] NAMES;
+    private static final Map<String,Class> FUNCTIONS = new HashMap<>();
 
     static {
-        NAMES = new String[] {
-                    AREA, BETWEEN, BOUNDARY, BOUNDARY_DIMENSION, BUFFER, BUFFER_WITH_SEGMENTS,
-                    CENTROID, CONTAINS, CONVEX_HULL, CROSSES, DIFFERENCE, DIMENSION, DISJOINT,
-                    DISTANCE, ENDPOINT, ENVELOPE, EXTERIOR_RING, GEOMETRY_TYPE, GEOM_FROM_WKT,
-                    GEOM_LENGTH, GET_GEOMETRY_N, GET_X, GET_Y, GET_Z, INTERIOR_POINT, INTERIOR_RING_N,
-                    INTERSECTION, INTERSECTS, IS_CLOSED, IS_EMPTY, IS_RING, IS_SIMPLE, IS_VALID,
-                    IS_WITHIN_DISTANCE, NUM_GEOMETRIES, NUM_INTERIOR_RING, OVERLAPS, POINT_N,
-                    RELATE, RELATE_PATTERN, START_POINT, SYM_DIFFERENCE, TOUCHES, TO_WKT, UNION,
-                    WITHIN
-        };
+        FUNCTIONS.put(AREA,                 AreaFunction.class);
+        FUNCTIONS.put(BETWEEN,              BetweenFunction.class);
+        FUNCTIONS.put(BOUNDARY,             BoundaryFunction.class);
+        FUNCTIONS.put(BOUNDARY_DIMENSION,   BoundaryDimensionFunction.class);
+        FUNCTIONS.put(BUFFER,               BufferFunction.class);
+        FUNCTIONS.put(BUFFER_WITH_SEGMENTS, BufferWithSegmentsFunction.class);
+        FUNCTIONS.put(CENTROID,             CentroidFunction.class);
+        FUNCTIONS.put(CONTAINS,             ContainsFunction.class);
+        FUNCTIONS.put(CONVEX_HULL,          ConvexHullFunction.class);
+        FUNCTIONS.put(CROSSES,              CrossesFunction.class);
+        FUNCTIONS.put(DIFFERENCE,           DifferenceFunction.class);
+        FUNCTIONS.put(DIMENSION,            DimensionFunction.class);
+        FUNCTIONS.put(DISJOINT,             DisjointFunction.class);
+        FUNCTIONS.put(DISTANCE,             DistanceFunction.class);
+        FUNCTIONS.put(ENDPOINT,             EndPointFunction.class);
+        FUNCTIONS.put(ENVELOPE,             EnvelopeFunction.class);
+        FUNCTIONS.put(EXTERIOR_RING,        ExteriorRingFunction.class);
+        FUNCTIONS.put(GEOMETRY_TYPE,        GeometryTypeFunction.class);
+        FUNCTIONS.put(GEOM_FROM_WKT,        GeomFromWKTFunction.class);
+        FUNCTIONS.put(GEOM_LENGTH,          GeomLengthFunction.class);
+        FUNCTIONS.put(GET_GEOMETRY_N,       GetGeometryNFunction.class);
+        FUNCTIONS.put(GET_X,                GetXFunction.class);
+        FUNCTIONS.put(GET_Y,                GetYFunction.class);
+        FUNCTIONS.put(GET_Z,                GetZFunction.class);
+        FUNCTIONS.put(INTERIOR_POINT,       InteriorPointFunction.class);
+        FUNCTIONS.put(INTERIOR_RING_N,      InteriorRingNFunction.class);
+        FUNCTIONS.put(INTERSECTION,         IntersectionFunction.class);
+        FUNCTIONS.put(INTERSECTS,           IntersectsFunction.class);
+        FUNCTIONS.put(IS_CLOSED,            IsClosedFunction.class);
+        FUNCTIONS.put(IS_EMPTY,             IsEmptyFunction.class);
+        FUNCTIONS.put(IS_RING,              IsRingFunction.class);
+        FUNCTIONS.put(IS_SIMPLE,            IsSimpleFunction.class);
+        FUNCTIONS.put(IS_VALID,             IsValidFunction.class);
+        FUNCTIONS.put(IS_WITHIN_DISTANCE,   IsWithinDistanceFunction.class);
+        FUNCTIONS.put(NUM_GEOMETRIES,       NumGeometriesFunction.class);
+        FUNCTIONS.put(NUM_INTERIOR_RING,    NumInteriorRingFunction.class);
+        FUNCTIONS.put(OVERLAPS,             OverlapsFunction.class);
+        FUNCTIONS.put(POINT_N,              PointNFunction.class);
+        FUNCTIONS.put(RELATE,               RelateFunction.class);
+        FUNCTIONS.put(RELATE_PATTERN,       RelatePatternFunction.class);
+        FUNCTIONS.put(START_POINT,          StartPointFunction.class);
+        FUNCTIONS.put(SYM_DIFFERENCE,       SymDifferenceFunction.class);
+        FUNCTIONS.put(TOUCHES,              TouchesFunction.class);
+        FUNCTIONS.put(TO_WKT,               ToWKTFunction.class);
+        FUNCTIONS.put(UNION,                UnionFunction.class);
+        FUNCTIONS.put(WITHIN,               WithinFunction.class);
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String getIdentifier() {
-        return "geometry";
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String[] getNames() {
-        return NAMES;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Function createFunction(final String name, final Literal fallback, final Expression... parameters) throws IllegalArgumentException {
-
-        if (name.equals(AREA))     return new AreaFunction  (parameters[0]);
-        if (name.equals(BETWEEN))  return new BetweenFunction(parameters[0], parameters[1], parameters[2]);
-        if (name.equals(BOUNDARY)) return new BoundaryFunction(parameters[0]);
-        if (name.equals(BOUNDARY_DIMENSION)) return new BoundaryDimensionFunction(parameters[0]);
-        if (name.equals(BUFFER))   return new BufferFunction(parameters[0], parameters[1]);
-        if (name.equals(BUFFER_WITH_SEGMENTS)) return new BufferWithSegmentsFunction(parameters[0], parameters[1], parameters[2]);
-        if (name.equals(CENTROID)) return new CentroidFunction(parameters[0]);
-        if (name.equals(CONTAINS)) return new ContainsFunction(parameters[0], parameters[1]);
-        if (name.equals(CONVEX_HULL)) return new ConvexHullFunction(parameters[0]);
-        if (name.equals(CROSSES)) return new CrossesFunction(parameters[0], parameters[1]);
-        if (name.equals(DIFFERENCE)) return new DifferenceFunction(parameters[0], parameters[1]);
-        if (name.equals(DIMENSION)) return new DimensionFunction(parameters[0]);
-        if (name.equals(DISJOINT)) return new DisjointFunction(parameters[0], parameters[1]);
-        if (name.equals(DISTANCE)) return new DistanceFunction(parameters[0], parameters[1]);
-        if (name.equals(ENDPOINT)) return new EndPointFunction(parameters[0]);
-        if (name.equals(ENVELOPE)) return new EnvelopeFunction(parameters[0]);
-        if (name.equals(EXTERIOR_RING)) return new ExteriorRingFunction(parameters[0]);
-        if (name.equals(GEOMETRY_TYPE)) return new GeometryTypeFunction(parameters[0]);
-        if (name.equals(GEOM_FROM_WKT)) return new GeomFromWKTFunction(parameters[0]);
-        if (name.equals(GEOM_LENGTH)) return new GeomLengthFunction(parameters[0]);
-        if (name.equals(GET_GEOMETRY_N)) return new GetGeometryNFunction(parameters[0], parameters[1]);
-        if (name.equals(GET_X)) return new GetXFunction(parameters[0]);
-        if (name.equals(GET_Y)) return new GetYFunction(parameters[0]);
-        if (name.equals(GET_Z)) return new GetZFunction(parameters[0]);
-        if (name.equals(INTERIOR_POINT)) return new InteriorPointFunction(parameters[0]);
-        if (name.equals(INTERIOR_RING_N)) return new InteriorRingNFunction(parameters[0], parameters[1]);
-        if (name.equals(INTERSECTION)) return new IntersectionFunction(parameters[0], parameters[1]);
-        if (name.equals(INTERSECTS)) return new IntersectsFunction(parameters[0], parameters[1]);
-        if (name.equals(IS_CLOSED)) return new IsClosedFunction(parameters[0]);
-        if (name.equals(IS_EMPTY)) return new IsEmptyFunction(parameters[0]);
-        if (name.equals(IS_RING)) return new IsRingFunction(parameters[0]);
-        if (name.equals(IS_SIMPLE)) return new IsSimpleFunction(parameters[0]);
-        if (name.equals(IS_VALID)) return new IsValidFunction(parameters[0]);
-        if (name.equals(IS_WITHIN_DISTANCE)) return new IsWithinDistanceFunction(parameters[0], parameters[1], parameters[2]);
-        if (name.equals(NUM_GEOMETRIES)) return new NumGeometriesFunction(parameters[0]);
-        if (name.equals(NUM_INTERIOR_RING)) return new NumInteriorRingFunction(parameters[0]);
-        if (name.equals(OVERLAPS)) return new OverlapsFunction(parameters[0], parameters[1]);
-        if (name.equals(POINT_N)) return new PointNFunction(parameters[0], parameters[1]);
-        if (name.equals(RELATE)) return new RelateFunction(parameters[0], parameters[1]);
-        if (name.equals(RELATE_PATTERN)) return new RelatePatternFunction(parameters[0], parameters[1], parameters[2]);
-        if (name.equals(START_POINT)) return new StartPointFunction(parameters[0]);
-        if (name.equals(SYM_DIFFERENCE)) return new SymDifferenceFunction(parameters[0], parameters[1]);
-        if (name.equals(TOUCHES)) return new TouchesFunction(parameters[0], parameters[1]);
-        if (name.equals(TO_WKT)) return new ToWKTFunction(parameters[0]);
-        if (name.equals(UNION)) return new UnionFunction(parameters[0], parameters[1]);
-        if (name.equals(WITHIN)) return new WithinFunction(parameters[0], parameters[1]);
-
-        throw new IllegalArgumentException("Unknowed function name : "+ name);
+    public GeometryFunctionFactory() {
+        super("geometry", FUNCTIONS);
     }
 
 }

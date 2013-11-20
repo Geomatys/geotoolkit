@@ -18,6 +18,7 @@ package org.geotoolkit.display2d.ext.cellular;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -32,13 +33,11 @@ import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.processing.CoverageProcessingException;
 import org.geotoolkit.coverage.processing.Operations;
-import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.CachedRule;
-import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer;
 import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.extractQuery;
@@ -51,11 +50,14 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.apache.sis.math.Statistics;
+import org.geotoolkit.display2d.container.stateless.DefaultCachedRule;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -135,8 +137,13 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
         //iterator on image
         final CellIterator ite = new CellIterator(image,decimateX,decimateY);
-        final CachedRule rule = symbol.getCachedRule();
-        final CanvasMonitor monitor = renderingContext.getMonitor();
+        final DefaultCachedRule renderers = new DefaultCachedRule(new CachedRule[]{symbol.getCachedRule()},renderingContext);
+
+        //force image interpolation here
+        Object oldValue = g2d.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
+        if(oldValue == null) oldValue = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        renderingContext.getRenderingHints().put(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 
         while(ite.next()){
             if(monitor.stopRequested()) break;
@@ -148,20 +155,42 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                 final Statistics[] stats = ite.statistics();
 
                 values[0] = GF.createPoint(new Coordinate(obj.getX(), obj.getY()));
-                int i=0;
+                int k=0;
                 for(int b=0,n=nbBand;b<n;b++){
-                    values[++i] = stats[b].count();
-                    values[++i] = stats[b].minimum();
-                    values[++i] = stats[b].mean();
-                    values[++i] = stats[b].maximum();
-                    values[++i] = stats[b].span();
-                    values[++i] = stats[b].rms();
-                    values[++i] = stats[b].sum();
+                    values[++k] = stats[b].count();
+                    values[++k] = stats[b].minimum();
+                    values[++k] = stats[b].mean();
+                    values[++k] = stats[b].maximum();
+                    values[++k] = stats[b].span();
+                    values[++k] = stats[b].rms();
+                    values[++k] = stats[b].sum();
                 }
 
-                if(rule.getFilter() == null || rule.getFilter().evaluate(feature)){
-                    for(CachedSymbolizer cs : rule.symbolizers()){
-                        cs.getRenderer().createRenderer(cs, renderingContext).portray(pf);
+
+                boolean painted = false;
+                for(int i=0; i<renderers.elseRuleIndex; i++){
+                    final CachedRule rule = renderers.rules[i];
+                    final Filter ruleFilter = rule.getFilter();
+                    //test if the rule is valid for this feature
+                    if (ruleFilter == null || ruleFilter.evaluate(feature)) {
+                        painted = true;
+                        for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
+                            renderer.portray(pf);
+                        }
+                    }
+                }
+
+                //the feature hasn't been painted, paint it with the 'else' rules
+                if(!painted){
+                    for(int i=renderers.elseRuleIndex; i<renderers.rules.length; i++){
+                        final CachedRule rule = renderers.rules[i];
+                        final Filter ruleFilter = rule.getFilter();
+                        //test if the rule is valid for this feature
+                        if (ruleFilter == null || ruleFilter.evaluate(feature)) {
+                            for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
+                                renderer.portray(pf);
+                            }
+                        }
                     }
                 }
 
@@ -169,6 +198,10 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                 LOGGER.log(Level.INFO, ex.getMessage(),ex);
             }
         }
+
+        //restore image interpolation
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,oldValue);
+        renderingContext.getRenderingHints().put(RenderingHints.KEY_INTERPOLATION,oldValue);
 
     }
 

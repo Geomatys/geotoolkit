@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,21 +16,22 @@
  */
 package org.geotoolkit.filter.function.other;
 
-import org.geotoolkit.filter.function.FunctionFactory;
+import java.util.HashMap;
+import java.util.Map;
+import org.geotoolkit.filter.function.AbstractFunctionFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.PropertyName;
 
 
 /**
  * Factory registering the various functions.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class OtherFunctionFactory implements FunctionFactory{
+public class OtherFunctionFactory extends AbstractFunctionFactory{
 
     public static final String CONVERT = "convert";
     public static final String DATE_FORMAT = "dateFormat";
@@ -60,33 +61,41 @@ public class OtherFunctionFactory implements FunctionFactory{
     public static final String PROPERTY_EXISTS  = "PropertyExists";
     public static final String ROUND_DOUBLE = "roundDouble";
 
+    private static final Map<String,Class> FUNCTIONS = new HashMap<>();
 
-    private static final String[] NAMES;
+    static{
+        FUNCTIONS.put(CONVERT,                  ConvertFunction.class);
+        FUNCTIONS.put(DATE_FORMAT,              DateFormatFunction.class);
+        FUNCTIONS.put(DOUBLE_TO_BOOL,           DoubleToBoolFunction.class);
+        FUNCTIONS.put(DATE_PARSE,               DateParseFunction.class);
+        FUNCTIONS.put(EQUAL_TO,                 EqualToFunction.class);
+        FUNCTIONS.put(EQUALS_EXACT,             EqualsExactFunction.class);
+        FUNCTIONS.put(EQUALS_EXACT_TOLERANCE,   EqualsExactToleranceFunction.class);
+        FUNCTIONS.put(EXPRESSION_VALUE_LENGHT,  LengthFunction.class);
+        FUNCTIONS.put(GREATER_EQUAL_THAN,       GreaterEqualThanFunction.class);
+        FUNCTIONS.put(GREATER_THAN,             GreaterThanFunction.class);
+        FUNCTIONS.put(IF_THEN_ELSE,             IfThenElseFunction.class);
+        FUNCTIONS.put(IN,                       InFunction.class);
+        FUNCTIONS.put(INT_TO_BBOOL,             IntToBbool.class);
+        FUNCTIONS.put(INT_TO_DDOUBLE,           IntToDdoubleFunction.class);
+        FUNCTIONS.put(IS_LIKE,                  IsLikeFunction.class);
+        FUNCTIONS.put(IS_NULL,                  IsNullFunction.class);
+        FUNCTIONS.put(LESS_EQUAL_THAN,          LessEqualThanFunction.class);
+        FUNCTIONS.put(LESS_THAN,                LessThanFunction.class);
+        FUNCTIONS.put(NOT,                      NotFunction.class);
+        FUNCTIONS.put(NOT_EQUAL_TO,             NotEqualToFunction.class);
+        FUNCTIONS.put(NUMBER_FORMAT,            NumberFormatFunction.class);
+        FUNCTIONS.put(PARSE_BOOLEAN,            ParseBooleanFunction.class);
+        FUNCTIONS.put(PARSE_DOUBLE,             ParseDoubleFunction.class);
+        FUNCTIONS.put(PARSE_INT,                ParseIntFunction.class);
+        FUNCTIONS.put(PARSE_LONG,               ParseLongFunction.class);
+        FUNCTIONS.put(PROPERTY_EXISTS,          PropertyExistsFunction.class);
+        FUNCTIONS.put(ROUND_DOUBLE,             RoundDoubleFunction.class);
 
-    static {
-        NAMES = new String[] {
-                    CONVERT, DATE_FORMAT, DATE_PARSE, DOUBLE_TO_BOOL, EQUALS_EXACT, EQUALS_EXACT_TOLERANCE,
-                    EQUAL_TO, EXPRESSION_VALUE_LENGHT, GREATER_EQUAL_THAN, GREATER_THAN, IF_THEN_ELSE, IN,
-                    INT_TO_BBOOL, INT_TO_DDOUBLE, IS_LIKE, IS_NULL,
-                    LESS_EQUAL_THAN, LESS_THAN, NOT, NOT_EQUAL_TO, NUMBER_FORMAT, PARSE_BOOLEAN, PARSE_DOUBLE,
-                    PARSE_INT, PARSE_LONG, PROPERTY_EXISTS, ROUND_DOUBLE
-        };
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String getIdentifier() {
-        return "other";
-    }
-    
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String[] getNames() {
-        return NAMES;
+    public OtherFunctionFactory() {
+        super("other", FUNCTIONS);
     }
 
     /**
@@ -94,36 +103,8 @@ public class OtherFunctionFactory implements FunctionFactory{
      */
     @Override
     public Function createFunction(final String name, final Literal fallback, final Expression... parameters) throws IllegalArgumentException {
-
-        if(name.equals(CONVERT)) return new ConvertFunction(parameters[0], parameters[1]);
-        if(name.equals(DATE_FORMAT)) return new DateFormatFunction(parameters[0], parameters[1]);
-        if(name.equals(DATE_PARSE)) return new DateParseFunction(parameters[0], parameters[1]);
-        if(name.equals(DOUBLE_TO_BOOL)) return new DoubleToBoolFunction(parameters[0]);
-        if(name.equals(EQUALS_EXACT)) return new EqualsExactFunction(parameters[0], parameters[1]);
-        if(name.equals(EQUALS_EXACT_TOLERANCE)) return new EqualsExactFunction(parameters[0], parameters[1]);
-        if(name.equals(EQUAL_TO)) return new EqualToFunction(parameters[0], parameters[1]);
-        if(name.equals(EXPRESSION_VALUE_LENGHT))   return new LengthFunction((PropertyName) parameters[0]);
-        if(name.equals(GREATER_EQUAL_THAN)) return new GreaterEqualThanFunction(parameters[0], parameters[1]);
-        if(name.equals(GREATER_THAN)) return new GreaterThanFunction(parameters[0], parameters[1]);
-        if(name.equals(IF_THEN_ELSE)) return new IfThenElseFunction(parameters[0], parameters[1], parameters[2]);
         if(name.equals(IN)) return new InFunction(parameters);
-        if(name.equals(INT_TO_BBOOL)) return new IntToBbool(parameters[0]);
-        if(name.equals(INT_TO_DDOUBLE)) return new IntToDdoubleFunction(parameters[0]);
-        if(name.equals(IS_LIKE)) return new IsLikeFunction(parameters[0], parameters[1]);
-        if(name.equals(IS_NULL)) return new IsNullFunction(parameters[0]);
-        if(name.equals(LESS_EQUAL_THAN)) return new LessEqualThanFunction(parameters[0], parameters[1]);
-        if(name.equals(LESS_THAN)) return new LessThanFunction(parameters[0], parameters[1]);
-        if(name.equals(NOT)) return new NotFunction(parameters[0]);
-        if(name.equals(NOT_EQUAL_TO)) return new NotEqualToFunction(parameters[0], parameters[1]);
-        if(name.equals(NUMBER_FORMAT)) return new NumberFormatFunction(parameters[0], parameters[1]);
-        if(name.equals(PARSE_BOOLEAN)) return new ParseBooleanFunction(parameters[0]);
-        if(name.equals(PARSE_DOUBLE)) return new ParseDoubleFunction(parameters[0]);
-        if(name.equals(PARSE_INT)) return new ParseIntFunction(parameters[0]);
-        if(name.equals(PARSE_LONG)) return new ParseLongFunction(parameters[0]);
-        if(name.equals(PROPERTY_EXISTS))           return new PropertyExistsFunction(parameters[0]);
-        if(name.equals(ROUND_DOUBLE)) return new RoundDoubleFunction(parameters[0]);
-
-        throw new IllegalArgumentException("Unknowed function name : "+ name);
+        return super.createFunction(name,fallback,parameters);
     }
 
 }
