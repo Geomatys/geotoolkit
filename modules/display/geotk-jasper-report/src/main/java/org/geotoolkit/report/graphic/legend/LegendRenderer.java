@@ -58,7 +58,7 @@ public class LegendRenderer implements JRRenderable{
             new Dimension(25, 20),
             new Font("Serial", Font.ITALIC, 11),
             true,
-            new Font("Serial", Font.BOLD, 15));
+            new Font("Serial", Font.BOLD, 11));
 
     private final String id = System.currentTimeMillis() + "-" + Math.random();
     private MapContext context;
