@@ -33,13 +33,6 @@ import org.apache.sis.internal.jaxb.gml.CodeListAdapter;
  */
 public final class CS_AxisDirection extends CodeListAdapter<AxisDirection> {
     /**
-     * Ensures that the adapted code list class is loaded.
-     */
-    static {
-        ensureClassLoaded(AxisDirection.class);
-    }
-
-    /**
      * Empty constructor for JAXB only.
      */
     public CS_AxisDirection() {

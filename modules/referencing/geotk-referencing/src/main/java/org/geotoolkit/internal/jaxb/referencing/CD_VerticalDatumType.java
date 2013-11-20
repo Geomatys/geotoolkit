@@ -33,13 +33,6 @@ import org.apache.sis.internal.jaxb.gml.CodeListAdapter;
  */
 public final class CD_VerticalDatumType extends CodeListAdapter<VerticalDatumType> {
     /**
-     * Ensures that the adapted code list class is loaded.
-     */
-    static {
-        ensureClassLoaded(VerticalDatumType.class);
-    }
-
-    /**
      * Empty constructor for JAXB only.
      */
     public CD_VerticalDatumType() {
