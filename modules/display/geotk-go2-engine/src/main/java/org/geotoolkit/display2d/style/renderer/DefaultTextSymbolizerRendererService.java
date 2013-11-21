@@ -38,6 +38,8 @@ import org.opengis.style.TextSymbolizer;
  */
 public class DefaultTextSymbolizerRendererService extends AbstractSymbolizerRendererService<TextSymbolizer, CachedTextSymbolizer>{
 
+    private static final String GLYPH_CANDIDATE = "T";
+    
     @Override
     public boolean isGroupSymbolizer() {
         return false;
@@ -89,9 +91,25 @@ public class DefaultTextSymbolizerRendererService extends AbstractSymbolizerRend
             family = "Dialog";
         }
 
-        final Font font = new Font(family, Font.PLAIN, (int)rectangle.getHeight()/2);
+        /*
+         * Build the glyph font. We get the font of input symbolizer and apply a filter to ensure
+         * font size will not overlap more than a quarter of the asked rectangle.
+         */
+        final Font font;
+        final int defaultSize = (int) (rectangle.getHeight()/2);
+        final Font cachedFont = symbol.getJ2dFont(GLYPH_CANDIDATE, 1);
+        if (cachedFont != null) {
+            if (cachedFont.getSize() > defaultSize) {
+                font = cachedFont.deriveFont((float)defaultSize);
+            } else {
+                font = cachedFont;
+            }
+        } else {
+            font = new Font(family, Font.PLAIN, defaultSize);
+        }
+        
         final FontRenderContext frc = g.getFontRenderContext();
-        final GlyphVector glyphVector = font.createGlyphVector(frc, "T");
+        final GlyphVector glyphVector = font.createGlyphVector(frc, GLYPH_CANDIDATE);
         final Shape shape = glyphVector.getOutline();
 
         g.translate(rectangle.getMinX()+3, rectangle.getMaxY()-3);
@@ -135,7 +153,7 @@ public class DefaultTextSymbolizerRendererService extends AbstractSymbolizerRend
 
         g.setPaint(paint);
         g.setFont(font);
-        g.drawString("T", 0, 0);
+        g.drawString(GLYPH_CANDIDATE, 0, 0);
     }
 
 }
