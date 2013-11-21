@@ -232,40 +232,17 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         InterpolationPoint after = null;
         for(InterpolationPoint ip : points){
             final Number ipnum = ip.getData();
+            final double ipdnum = ipnum.doubleValue();
             final double ipval;
 
-            if(ipnum instanceof Double && Double.isNaN(ipnum.doubleValue())){
-                if(!(value instanceof Double)){
+            if(Double.isNaN(ipdnum)){
+                ipval = ipdnum;
+                //if we want exact NaN match use doubleToRawLongBits
+                if(Double.doubleToLongBits(ipval) == Double.doubleToLongBits(dval)){
+                    before = ip;
+                    break;
+                }else{
                     continue;
-                }
-
-                ipval = ipnum.doubleValue();
-
-                if(Double.isNaN(ipval)){
-                    //if we want exact NaN match use doubleToRawLongBits
-                    if(Double.doubleToLongBits(ipval) == Double.doubleToLongBits(dval)){
-                        before = ip;
-                        break;
-                    }else{
-                        continue;
-                    }
-                }
-            }else if(ipnum instanceof Float && Float.isNaN(ipnum.floatValue())){
-                if(!(value instanceof Float)){
-                    continue;
-                }
-
-                ipval = ipnum.doubleValue();
-                final float ipfloat = ipnum.floatValue();
-
-                if(Float.isNaN(ipfloat)){
-                    //if we want exact NaN match use floatToRawLongBits
-                    if(Float.floatToIntBits(ipfloat) == Float.floatToIntBits(value.floatValue())){
-                        before = ip;
-                        break;
-                    }else{
-                        continue;
-                    }
                 }
             }else{
                 ipval = ipnum.doubleValue();
