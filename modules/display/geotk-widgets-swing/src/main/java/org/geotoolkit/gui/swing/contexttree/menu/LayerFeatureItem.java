@@ -37,23 +37,23 @@ import org.geotoolkit.map.FeatureMapLayer;
 
 /**
  * Default popup control for property page of MapLayer, use for JContextTreePopup
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
 public class LayerFeatureItem extends AbstractTreePopupItem{
-    
+
     private WeakReference<FeatureMapLayer> layerRef;
     private final List<JComponent> actions = new ArrayList<JComponent>();
-    
-    /** 
-     * Creates a new instance of DefaultContextPropertyPop 
+
+    /**
+     * Creates a new instance of DefaultContextPropertyPop
      */
     public LayerFeatureItem() {
         super( MessageBundle.getString("contexttreetable_feature_table")  );
         init();
     }
-        
+
     private void init(){
         addActionListener(new ActionListener() {
             @Override
@@ -69,8 +69,8 @@ public class LayerFeatureItem extends AbstractTreePopupItem{
                 panel.actions().addAll(actions);
 
                 lst.add(panel);
-                JPropertyPane.showDialog(lst, layer);
-                
+                JPropertyPane.showDialog(LayerFeatureItem.this, lst, layer);
+
             }
         }
         );
@@ -91,5 +91,5 @@ public class LayerFeatureItem extends AbstractTreePopupItem{
         layerRef = new WeakReference<FeatureMapLayer>((FeatureMapLayer) node.getUserObject());
         return this;
     }
-    
+
 }

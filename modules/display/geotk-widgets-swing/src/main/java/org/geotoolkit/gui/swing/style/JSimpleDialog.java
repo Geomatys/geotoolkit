@@ -19,8 +19,10 @@ package org.geotoolkit.gui.swing.style;
 
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
@@ -29,33 +31,34 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 
 /**
  * Simple dialog
- * 
+ *
  * @author Johann Sorel
  * @module pending
  */
 public class JSimpleDialog extends javax.swing.JDialog {
 
-    private static final ImageIcon ICO_CLOSE = IconBundle.getIcon("16_close");
-    
     /** Creates new form JSimpleDialog */
-    public JSimpleDialog(final java.awt.Frame parent, final boolean modal,final Component child) {
-        super(parent, modal);
+    public JSimpleDialog(final Window parent, final boolean modal,final Component child) {
+        super(parent);
+        setModal(modal);
         initComponents();
-        
+
         JToolBar guiBar = new JToolBar();
         guiBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
         guiBar.add(guiClose);
         guiBar.setFloatable(false);
-        
+
         JScrollPane jsp = new JScrollPane(child);
-        
+
         add(BorderLayout.CENTER,jsp);
         add(BorderLayout.SOUTH,guiBar);
-        
+
     }
 
     /** This method is called from within the constructor to
@@ -69,7 +72,6 @@ public class JSimpleDialog extends javax.swing.JDialog {
 
         guiClose = new JButton();
 
-        guiClose.setIcon(ICO_CLOSE);
         guiClose.setText(MessageBundle.getString("property_close")); // NOI18N
         guiClose.setFocusable(false);
         guiClose.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -86,7 +88,7 @@ public class JSimpleDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
 private void guiCloseActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiCloseActionPerformed
-    
+
     this.dispose();
 }//GEN-LAST:event_guiCloseActionPerformed
 

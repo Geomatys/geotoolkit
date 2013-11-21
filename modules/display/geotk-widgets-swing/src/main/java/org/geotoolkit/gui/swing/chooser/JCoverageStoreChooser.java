@@ -18,6 +18,7 @@ package org.geotoolkit.gui.swing.chooser;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -230,8 +231,8 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
      * @return
      * @throws DataStoreException
      */
-    public static List<CoverageStore> showDialog() throws DataStoreException{
-        return showDialog(Collections.EMPTY_LIST);
+    public static List<CoverageStore> showDialog(Component parent) throws DataStoreException{
+        return showDialog(parent,Collections.EMPTY_LIST);
     }
 
     /**
@@ -241,8 +242,8 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
      * @return
      * @throws DataStoreException
      */
-    public static List<MapLayer> showLayerDialog(List<PropertyValueEditor> editors) throws DataStoreException{
-        return showDialog(editors, true);
+    public static List<MapLayer> showLayerDialog(Component parent, List<PropertyValueEditor> editors) throws DataStoreException{
+        return showDialog(parent, editors, true);
     }
 
     /**
@@ -252,19 +253,19 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
      * @return
      * @throws DataStoreException
      */
-    public static List<CoverageStore> showDialog(List<PropertyValueEditor> editors) throws DataStoreException{
-        return showDialog(editors, false);
+    public static List<CoverageStore> showDialog(Component parent, List<PropertyValueEditor> editors) throws DataStoreException{
+        return showDialog(parent,editors, false);
     }
 
-    private static List showDialog(List<PropertyValueEditor> editors, boolean layerVisible) throws DataStoreException{
+    private static List showDialog(Component parent, List<PropertyValueEditor> editors, boolean layerVisible) throws DataStoreException{
         final JCoverageStoreChooser chooser = new JCoverageStoreChooser();
         if(editors != null){
             chooser.guiEditor.getEditors().addAll(editors);
         }
         chooser.setLayerSelectionVisible(layerVisible);
-        
-        final int res = JOptionDialog.show(null, chooser, JOptionPane.OK_OPTION);
-        
+
+        final int res = JOptionDialog.show(parent, chooser, JOptionPane.OK_OPTION);
+
         if (JOptionPane.OK_OPTION == res) {
             if(layerVisible){
                 return chooser.getSelectedLayers();

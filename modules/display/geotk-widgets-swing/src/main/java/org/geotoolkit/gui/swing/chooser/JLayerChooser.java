@@ -221,11 +221,11 @@ public class JLayerChooser extends javax.swing.JPanel {
      * @return
      * @throws DataStoreException
      */
-    public static List<MapLayer> showDialog(Object source) throws DataStoreException{
+    public static List<MapLayer> showDialog(Component parent, Object source) throws DataStoreException{
         final JLayerChooser chooser = new JLayerChooser();
         chooser.setSource(source);
 
-        final int res = JOptionDialog.show(null, chooser, JOptionPane.OK_OPTION);
+        final int res = JOptionDialog.show(parent, chooser, JOptionPane.OK_OPTION);
 
         if (JOptionPane.OK_OPTION == res) {
             return chooser.getLayers();

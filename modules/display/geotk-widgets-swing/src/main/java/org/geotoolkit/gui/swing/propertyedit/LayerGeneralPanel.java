@@ -54,6 +54,8 @@ import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.datum.AbstractDatum;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.netbeans.swing.outline.DefaultOutlineModel;
 import org.netbeans.swing.outline.Outline;
 import org.netbeans.swing.outline.OutlineModel;
@@ -75,7 +77,7 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
     private MapLayer layer = null;
     private final String title;
 
-    private static final ImageIcon ICON_DELETE = IconBundle.getIcon("16_delete");
+    private static final ImageIcon ICON_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, Color.BLACK);
 
     /** Creates new form LayerGeneralPanel */
     public LayerGeneralPanel() {

@@ -97,12 +97,54 @@ public class JCRSChooser extends javax.swing.JDialog {
     private ACTION exitmode = ACTION.CLOSE;
     private CoordinateReferenceSystem crs = null;
 
+    public static JCRSChooser create(final Window parent, final boolean modal) {
+        if(parent instanceof JFrame){
+            return new JCRSChooser((JFrame)parent, modal);
+        }else if(parent instanceof JDialog){
+            return new JCRSChooser((JDialog)parent, modal);
+        }else{
+            return new JCRSChooser(modal);
+        }
+    }
+
     /** Creates new form JCRSChooser
      * @param parent
      * @param modal
      */
-    public JCRSChooser(final java.awt.Frame parent, final boolean modal) {
+    public JCRSChooser(final JDialog parent, final boolean modal) {
         super(parent, modal);
+        init();
+    }
+
+    /** Creates new form JCRSChooser
+     * @param parent
+     * @param modal
+     */
+    public JCRSChooser(final JFrame parent, final boolean modal) {
+        super(parent, modal);
+        init();
+    }
+
+    /** Creates new form JCRSChooser
+     * @param parent
+     * @param modal
+     */
+    public JCRSChooser(final Frame parent, final boolean modal) {
+        super(parent, modal);
+        init();
+    }
+
+    /** Creates new form JCRSChooser
+     * @param parent
+     * @param modal
+     */
+    public JCRSChooser(final boolean modal) {
+        super();
+        setModal(modal);
+        init();
+    }
+
+    private void init(){
         initComponents();
 
         final JLabel lbl = new JLabel(MessageBundle.getString("loading"));
@@ -169,6 +211,7 @@ public class JCRSChooser extends javax.swing.JDialog {
         guiForceLongitudeFirst.setSelected(true);
 
     }
+
 
     public void setCRS(final CoordinateReferenceSystem crs) {
         this.crs = crs;

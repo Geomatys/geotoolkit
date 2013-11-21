@@ -525,14 +525,14 @@ public class JFeatureOutLine extends Outline{
         return new JLabel();
     }
 
-    public static void show(final Property candidate){
-        show(candidate, false);
+    public static void show(Component parent, final Property candidate){
+        show(parent, candidate, false);
     }
 
-    public static void show(final Property candidate, boolean modal){
+    public static void show(Component parent, final Property candidate, boolean modal){
         final JFeatureOutLine outline = new JFeatureOutLine();
         outline.setEdited(candidate);
-        JOptionDialog.show(null, outline, JOptionPane.OK_OPTION);
+        JOptionDialog.show(parent, outline, JOptionPane.OK_OPTION);
     }
 
 }

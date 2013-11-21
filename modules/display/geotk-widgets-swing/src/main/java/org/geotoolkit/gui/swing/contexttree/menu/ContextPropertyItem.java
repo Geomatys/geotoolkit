@@ -34,23 +34,23 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapContext;
 
 /**
- * Default popup control for property page of MapContext, use for JContextTreePopup 
- * 
+ * Default popup control for property page of MapContext, use for JContextTreePopup
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
 public class ContextPropertyItem extends AbstractTreePopupItem{
-    
+
     private WeakReference<MapContext> contextRef;
-    
-    /** 
-     * Creates a new instance of DefaultContextPropertyPop 
+
+    /**
+     * Creates a new instance of DefaultContextPropertyPop
      */
     public ContextPropertyItem() {
         super( MessageBundle.getString("contexttreetable_properties")  );
         init();
     }
-    
+
     private void init(){
         addActionListener(new ActionListener() {
             @Override
@@ -63,12 +63,12 @@ public class ContextPropertyItem extends AbstractTreePopupItem{
                 ArrayList<PropertyPane> lst = new ArrayList<PropertyPane>();
                 lst.add(new ContextGeneralPanel());
                 lst.add(new ContextCRSPropertyPanel());
-                JPropertyPane.showDialog(lst, context);
+                JPropertyPane.showDialog(ContextPropertyItem.this, lst, context);
             }
         }
         );
     }
-            
+
     @Override
     public boolean isValid(final TreePath[] selection) {
         return uniqueAndType(selection,MapContext.class);
@@ -80,5 +80,5 @@ public class ContextPropertyItem extends AbstractTreePopupItem{
         contextRef = new WeakReference<MapContext>((MapContext) node.getUserObject()) ;
         return this;
     }
-    
+
 }

@@ -92,16 +92,16 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     private static final Icon ICON_NEW = IconBundle.getIcon("16_add_data");
     private static final Icon ICON_DUPLICATE = IconBundle.getIcon("16_duplicate");
     private static final Icon ICON_DELETE = IconBundle.getIcon("16_delete");
-    
+
     private T style = null;
     private StyleTreeModel<T> treemodel = null;
     /** Variables needed for DnD */
     private DragSource dragSource = null;
 
     public JStyleTree() {
-        super();        
+        super();
         setModel(treemodel);
-        setEditable(false); 
+        setEditable(false);
 
         setCellRenderer(new StyleCellRenderer());
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -111,10 +111,10 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
         DragGestureRecognizer dgr = dragSource.createDefaultDragGestureRecognizer(this,DnDConstants.ACTION_COPY_OR_MOVE, this);
         dgr.setSourceActions(dgr.getSourceActions() & ~InputEvent.BUTTON3_MASK);
         DropTarget dropTarget = new DropTarget(this, this);
-        
+
         setRolloverEnabled(true);
-        addHighlighter(new ColorHighlighter(HighlightPredicate.ROLLOVER_ROW, null, Color.RED));  
-        
+        addHighlighter(new ColorHighlighter(HighlightPredicate.ROLLOVER_ROW, null, Color.RED));
+
     }
 
     public T getStyleElement() {
@@ -196,7 +196,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
         final Transferable trs = dd;
 
-        if(!(trs instanceof StyleElementTransferable)) return;        
+        if(!(trs instanceof StyleElementTransferable)) return;
         final StyleElementTransferable strs = (StyleElementTransferable) trs;
 
 
@@ -271,10 +271,10 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
         }
 
     }
-    
+
     //-------------private classes----------------------------------------------
     class StyleCellRenderer extends DefaultTreeCellRenderer {
-        
+
         @Override
         public Component getTreeCellRendererComponent(final JTree tree, final Object value, final boolean selected,
                 final boolean expanded, final boolean leaf, final int row, final boolean hasFocus) {
@@ -309,7 +309,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
             }
             return comp;
         }
-        
+
         private String text(Description desc){
             if(desc == null){
                 return " \u26AB unnamed";
@@ -333,7 +333,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
         @Override
         public void setVisible(final boolean visible) {
             TreePath path = JStyleTree.this.getSelectionModel().getSelectionPath();
-            
+
             final Point mousePosition = JStyleTree.this.getMousePosition();
             if(mousePosition != null){
                 final int rowIndex = getRowForLocation(mousePosition.x, mousePosition.y);
@@ -341,7 +341,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
                     path = JStyleTree.this.getPathForRow(rowIndex);
                 }
             }
-            
+
 
             if (path != null && visible) {
                 removeAll();
@@ -379,7 +379,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
                     final Symbolizer symb = (Symbolizer) val;
                     add(new DuplicateAction(node));
                 }
-                                
+
                 if(treemodel.isDeletable(node)){
                     add(new JSeparator(SwingConstants.HORIZONTAL));
                     add(new DeleteAction(node));
@@ -447,7 +447,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
             pan.add(spiMax);
 
             final JOptionPane jop = new JOptionPane(pan);
-            final JDialog dialog = jop.createDialog("Change scale");
+            final JDialog dialog = jop.createDialog(JStyleTree.this,"Change scale");
             dialog.pack();
             dialog.setLocationRelativeTo(null);
             dialog.setVisible(true);
@@ -505,7 +505,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
             rule.symbolizers().add((Symbolizer)editor.create());
         }
     }
-    
+
     class DuplicateAction extends AbstractAction {
         private final DefaultMutableTreeNode parentNode;
 

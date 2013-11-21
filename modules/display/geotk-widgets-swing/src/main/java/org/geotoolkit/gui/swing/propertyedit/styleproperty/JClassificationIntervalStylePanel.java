@@ -77,6 +77,8 @@ import org.geotoolkit.style.interval.IntervalPalette;
 import org.geotoolkit.style.interval.IntervalStyleBuilder;
 import org.geotoolkit.style.interval.IntervalStyleBuilder.METHOD;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.EnumComboBoxModel;
@@ -104,6 +106,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
     private static final Logger LOGGER = Logging.getLogger(JClassificationIntervalStylePanel.class);
     private static NumberFormat FORMAT = NumberFormat.getNumberInstance();
+    private static final ImageIcon DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, Color.BLACK);
 
     private final Dimension GLYPH_DIMENSION = new Dimension(30, 20);
 
@@ -113,7 +116,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     static{
         PALETTES = new ArrayList<IntervalPalette>();
         final Set<String> paletteNames = PF.getAvailableNames();
-        
+
         for (String palName : paletteNames) {
             try {
                 PALETTES.add(new DefaultIntervalPalette(PF.getColors(palName)));
@@ -133,7 +136,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     public JClassificationIntervalStylePanel() {
         initComponents();
         guiTable.setModel(model);
-        
+
         guiProperty.setRenderer(new PropertyRenderer());
 
         guiPalette.setModel(new ListComboBoxModel(PALETTES));
@@ -157,7 +160,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
         guiMethod.setModel(new EnumComboBoxModel(IntervalStyleBuilder.METHOD.class));
         guiMethod.setRenderer(new MethodRenderer());
-        
+
         guiNormalize.setRenderer(new DefaultListCellRenderer(){
 
             @Override
@@ -166,10 +169,10 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
                 if(value == analyze.noValue){
                     lbl.setText("-");
                 }
-                
+
                 return lbl;
             }
-            
+
         });
 
     }
@@ -196,7 +199,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
         guiMethod.setSelectedItem(analyze.getMethod());
         guiClasses.setValue(analyze.getNbClasses());
-        
+
         guiTable.revalidate();
         guiTable.repaint();
     }
@@ -217,7 +220,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         if(guiNormalize.getSelectedItem() == null){
             guiNormalize.setSelectedItem(analyze.noValue);
         }
-        
+
     }
 
     private void updateModelGlyph(){
@@ -449,7 +452,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     }//GEN-LAST:event_guiGenerateActionPerformed
 
     private void guiModelActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiModelActionPerformed
-        analyze.setTemplate(JPropertyPane.showSymbolizerDialog(analyze.getTemplate(), true, layer));
+        analyze.setTemplate(JPropertyPane.showSymbolizerDialog(this,analyze.getTemplate(), true, layer));
         updateModelGlyph();
     }//GEN-LAST:event_guiModelActionPerformed
 
@@ -491,8 +494,8 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
     private void guiClassifyActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiClassifyActionPerformed
 
-        final JAnalizePanel panel = new JAnalizePanel(analyze);        
-        JOptionDialog.show(null,panel, JOptionPane.OK_CANCEL_OPTION);
+        final JAnalizePanel panel = new JAnalizePanel(analyze);
+        JOptionDialog.show(this, panel, JOptionPane.OK_CANCEL_OPTION);
 
         guiMethod.setSelectedItem(analyze.getMethod());
         guiClasses.setValue(analyze.getNbClasses());
@@ -503,7 +506,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     public boolean canHandle(Object target) {
         return target instanceof FeatureMapLayer;
     }
-    
+
     @Override
     public void setTarget(final Object layer) {
         if(layer instanceof FeatureMapLayer){
@@ -541,7 +544,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     public ImageIcon getIcon() {
         return IconBundle.getIcon("16_classification_interval");
     }
-    
+
     @Override
     public Image getPreview() {
         return IconBundle.getIcon("preview_style_class2").getImage();
@@ -601,7 +604,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
             if(value instanceof IntervalStyleBuilder.METHOD){
                 METHOD mt = (METHOD) value;
-                
+
                 final String txt;
                 switch(mt){
                     case EL : txt = MessageBundle.getString("el"); break;
@@ -616,13 +619,14 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
     private class DeleteRenderer extends DefaultTableCellRenderer{
 
+
         @Override
         public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            DeleteRenderer.this.setIcon(IconBundle.getIcon("16_delete"));
+            DeleteRenderer.this.setIcon(DELETE);
             return DeleteRenderer.this;
         }
-        
+
     }
 
     private class DeleteEditor extends AbstractCellEditor implements TableCellEditor{
@@ -633,7 +637,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         public DeleteEditor() {
             button.setBorderPainted(false);
             button.setContentAreaFilled(false);
-            button.setIcon(IconBundle.getIcon("16_delete"));
+            button.setIcon(DELETE);
 
             button.addActionListener(new ActionListener() {
                 @Override
@@ -645,7 +649,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
                     }
                 }
             });
-            
+
         }
 
         @Override
@@ -812,7 +816,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if(value != null){
-                        Symbolizer symbol = JPropertyPane.showSymbolizerDialog(value.symbolizers().get(0), layer);
+                        Symbolizer symbol = JPropertyPane.showSymbolizerDialog(JClassificationIntervalStylePanel.this,value.symbolizers().get(0), layer);
                         value.symbolizers().clear();
                         value.symbolizers().add(symbol);
                         guiTable.revalidate();

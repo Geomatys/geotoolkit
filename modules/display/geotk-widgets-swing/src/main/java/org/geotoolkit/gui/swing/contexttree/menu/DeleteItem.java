@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.contexttree.menu;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,21 +28,21 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.geotoolkit.gui.swing.contexttree.AbstractTreePopupItem;
-import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 
 /**
  * delete item for JContextTree
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
 public class DeleteItem extends AbstractTreePopupItem{
 
     private WeakReference<TreePath> itemRef;
-    
+
     /**
      * delete item for jcontexttree
      */
@@ -51,7 +52,7 @@ public class DeleteItem extends AbstractTreePopupItem{
     }
 
     private void init(){
-        setIcon( IconBundle.getIcon("16_delete") );
+        setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, Color.BLACK) );
         setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
 
         addActionListener(new ActionListener() {
@@ -69,7 +70,7 @@ public class DeleteItem extends AbstractTreePopupItem{
         }
         );
     }
-    
+
     @Override
     public boolean isValid(final TreePath[] selection) {
         boolean valid = uniqueAndType(selection,MapItem.class);

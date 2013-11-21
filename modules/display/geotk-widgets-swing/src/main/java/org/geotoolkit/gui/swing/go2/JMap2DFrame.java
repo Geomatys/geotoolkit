@@ -437,7 +437,7 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
 
 private void openCoverageStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openCoverageStoreChooser
         try {
-            final List<MapLayer> layers = JCoverageStoreChooser.showLayerDialog(null);
+            final List<MapLayer> layers = JCoverageStoreChooser.showLayerDialog(this,null);
 
             for(MapLayer layer : layers){
                 if(layer == null) continue;
@@ -454,7 +454,7 @@ private void openCoverageStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openCo
 private void openFeatureStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openFeatureStoreChooser
 
         try {
-            final List<MapLayer> layers = JFeatureStoreChooser.showLayerDialog(null);
+            final List<MapLayer> layers = JFeatureStoreChooser.showLayerDialog(this,null);
 
             for(MapLayer layer : layers){
                 if(layer == null) continue;
@@ -470,7 +470,7 @@ private void openFeatureStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openFea
 private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerChooser
 
     try {
-        final List<MapLayer> layers = JServerChooser.showLayerDialog(null);
+        final List<MapLayer> layers = JServerChooser.showLayerDialog(this,null);
 
         for(MapLayer layer : layers){
             if(layer == null) continue;

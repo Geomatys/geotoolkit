@@ -17,6 +17,7 @@
 package org.geotoolkit.gui.swing.go2.control;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.Insets;
@@ -34,6 +35,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -70,7 +73,7 @@ public class JAdditionalAxisNavigator extends JPanel implements ContextListener{
             pane.add(BorderLayout.NORTH,guiDel);
             pane.add(BorderLayout.CENTER,nav);
 
-            guiDel.setIcon(IconBundle.getIcon("16_remove"));
+            guiDel.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, Color.BLACK));
             guiDel.setText(axis.getName().getCode());
             guiDel.setMargin(new Insets(0, 0, 0, 0));
             guiDel.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -89,7 +92,7 @@ public class JAdditionalAxisNavigator extends JPanel implements ContextListener{
     private final JComboBox guiAxis = new JComboBox();
     private volatile JMap2D map = null;
 
-    private final JButton addButton = new JButton(IconBundle.getIcon("16_add"));
+    private final JButton addButton = new JButton(IconBuilder.createIcon(FontAwesomeIcons.ICON_PLUS_SIGN, 16, Color.BLACK));
 
     public JAdditionalAxisNavigator(){
         super(new BorderLayout());

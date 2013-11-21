@@ -37,7 +37,7 @@ import org.opengis.style.Rule;
 
 /**
  * Default popup control for editing a given style of the layer.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
@@ -47,8 +47,8 @@ public class LayerStyleItem extends AbstractTreePopupItem {
     private WeakReference<MapLayer> layerRef;
     private final List<PropertyPane> lst = new ArrayList<PropertyPane>();
 
-    /** 
-     * Creates a new instance of DefaultContextPropertyPop 
+    /**
+     * Creates a new instance of DefaultContextPropertyPop
      */
     public LayerStyleItem() {
         super(MessageBundle.getString("contexttreetable_properties"));
@@ -56,7 +56,7 @@ public class LayerStyleItem extends AbstractTreePopupItem {
     }
 
     private void init() {
-        final JAdvancedStylePanel stylePanel = new JAdvancedStylePanel();        
+        final JAdvancedStylePanel stylePanel = new JAdvancedStylePanel();
 
         lst.add(stylePanel);
         addActionListener(new ActionListener() {
@@ -73,7 +73,7 @@ public class LayerStyleItem extends AbstractTreePopupItem {
                 stylePanel.parse(styleRef.get());
 
 
-                JPropertyPane.showDialog(lst, null, false);
+                JPropertyPane.showDialog(LayerStyleItem.this, lst, null, false);
 
             }
         });

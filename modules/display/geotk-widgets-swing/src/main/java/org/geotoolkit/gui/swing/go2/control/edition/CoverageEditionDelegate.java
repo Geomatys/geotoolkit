@@ -180,7 +180,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                     panel.add(spinner);
                 }
 
-                final int res = JOptionDialog.show(null, panel, JOptionPane.OK_CANCEL_OPTION);
+                final int res = JOptionDialog.show(map, panel, JOptionPane.OK_CANCEL_OPTION);
                 if(res == JOptionPane.OK_OPTION){
                     editedPixels.add(mouseGridPosition);
                     //update image

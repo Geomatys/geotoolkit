@@ -17,6 +17,7 @@
 package org.geotoolkit.gui.swing.shapefile;
 
 import java.awt.Component;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -46,6 +47,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.gui.swing.crschooser.JCRSChooser;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.util.SwingUtilities;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.JXTitledSeparator;
@@ -56,7 +58,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Widget Panel to open ShapeFiles.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  */
 public class ShapeCreationTool extends JPanel {
@@ -66,8 +68,8 @@ public class ShapeCreationTool extends JPanel {
     private CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
     private File file = new File("default.shp");
 
-    /** 
-     * Creates new form shapeCreationPanel 
+    /**
+     * Creates new form shapeCreationPanel
      */
     public ShapeCreationTool() {
         initComponents();
@@ -387,7 +389,7 @@ public class ShapeCreationTool extends JPanel {
             final Field data = model.getDataAt(selected);
             model.deleteAttribut(data);
         }
-        
+
     }//GEN-LAST:event_deleteAction
 
     private void upAction(final ActionEvent evt) {//GEN-FIRST:event_upAction
@@ -423,7 +425,9 @@ public class ShapeCreationTool extends JPanel {
     }//GEN-LAST:event_geomMultiPolygonAction
 
     private void crsAction(final ActionEvent evt) {//GEN-FIRST:event_crsAction
-        final JCRSChooser jcrs = new JCRSChooser(null, true);
+
+        final Window frame = SwingUtilities.windowForComponent(this);
+        final JCRSChooser jcrs = JCRSChooser.create(frame, true);
         jcrs.setCRS(crs);
         final JCRSChooser.ACTION act = jcrs.showDialog();
 
@@ -432,7 +436,7 @@ public class ShapeCreationTool extends JPanel {
         }
 
         guiCrs.setText(crs.getName().toString());
-                
+
     }//GEN-LAST:event_crsAction
 
     private void fileAction(final ActionEvent evt) {//GEN-FIRST:event_fileAction
@@ -441,7 +445,7 @@ public class ShapeCreationTool extends JPanel {
 
         if (act == JFileChooser.APPROVE_OPTION) {
             File f = jfc.getSelectedFile();
-            
+
             if (f != null) {
                 if (f.getAbsolutePath().endsWith(".shp")) {
                     file = f;
@@ -453,14 +457,14 @@ public class ShapeCreationTool extends JPanel {
                     }else{
                         f = new File(f.getAbsolutePath() +".shp");
                     }
-                    
+
                     file = f;
                     guiFileName.setText(file.getAbsolutePath());
                 }
             }
 
         }
-        
+
     }//GEN-LAST:event_fileAction
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

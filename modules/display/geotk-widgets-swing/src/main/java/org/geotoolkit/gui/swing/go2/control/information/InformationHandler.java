@@ -41,7 +41,7 @@ import org.opengis.display.primitive.Graphic;
 
 /**
  * Information handler.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
@@ -62,7 +62,7 @@ public class InformationHandler extends AbstractNavigationHandler {
     public void setPresenter(final InformationPresenter presenter) {
         this.presenter = presenter;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -84,7 +84,7 @@ public class InformationHandler extends AbstractNavigationHandler {
         component.removeMouseMotionListener(mouseInputListener);
         component.removeMouseWheelListener(mouseInputListener);
     }
-    
+
     private class MouseListen implements MouseInputListener, MouseWheelListener {
 
         private int startX;
@@ -112,28 +112,28 @@ public class InformationHandler extends AbstractNavigationHandler {
                 map.getCanvas().getGraphicsIn(searchArea, visitor, VisitFilter.INTERSECTS);
 
                 if(!visitor.graphics.isEmpty()){
-                    final JInformationDialog dialog = new JInformationDialog();
+                    final JInformationDialog dialog = new JInformationDialog(map);
                     dialog.display(visitor.graphics, presenter, e.getLocationOnScreen(), visitor.ctx, visitor.area);
                 }
-                
+
             } else if (mousebutton == MouseEvent.BUTTON3) {
                 decorationPane.setCoord(0, 0, map.getComponent().getWidth(), map.getComponent().getHeight(), true);
             }
-            
+
         }
 
         @Override
         public void mouseReleased(final MouseEvent e) {
             int endX = e.getX();
             int endY = e.getY();
-            
+
             //right mouse button : pan action
             if (mousebutton == MouseEvent.BUTTON3) {
                 decorationPane.setFill(false);
                 decorationPane.setCoord(-10, -10,-10, -10, false);
                 processDrag(startX, startY, endX, endY);
             }
-            
+
             lastX = 0;
             lastY = 0;
         }

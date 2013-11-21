@@ -19,8 +19,7 @@ package org.geotoolkit.gui.swing.misc;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.AbstractAction;
@@ -30,53 +29,54 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.util.SwingUtilities;
 
 /**
  * Component similar to JOptionPane but with a resizeable dialog.
- * 
+ *
  * @author Fabien Retif (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
 public class JOptionDialog extends JDialog implements ActionListener {
 
     public static final Object DIALOG_CLOSE = "dialogClose";
-    
+
     private static final String PROPERTY_CLOSE_ACTION = "closeAction";
     private final JPanel guiActions = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     private Object closeAction = DIALOG_CLOSE;
-    
+
     /**
      * Creates new form JOptionDialog
      */
-    private JOptionDialog(Frame parent, boolean modal, Action[] actions) {
-        super(parent, modal);
+    private JOptionDialog(Window parent, boolean modal, Action[] actions) {
+        super(parent);
+        setModal(modal);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         add(BorderLayout.SOUTH,guiActions);
-        
+
         for(Action act : actions){
             final JButton actButton = new JButton(act);
             actButton.addActionListener(this);
             guiActions.add(actButton);
         }
-        
+
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         final JButton button = ((JButton)e.getSource());
         closeAction = button.getAction().getValue(PROPERTY_CLOSE_ACTION);
-        dispose(); 
+        dispose();
     }
 
     /**
-     * 
+     *
      * @param comp : component to display
      * @param modal : set the dialog modal or not.
      * @param optionType : JOptionpane.YES_NO_CANCEL_OPTION / OK_CANCEL_OPTION / YES_NO_OPTION / OK_OPTION
-     * @return 
+     * @return
      */
     public static int show(Component parent, Component comp, int optionType) {
         final Action[] actions;
@@ -103,7 +103,7 @@ public class JOptionDialog extends JDialog implements ActionListener {
         }else{
             throw new RuntimeException("Unexpected option type : " + optionType);
         }
-        
+
         final Object res = show(parent,comp,actions);
         if(res == DIALOG_CLOSE){
             return JOptionPane.CANCEL_OPTION;
@@ -111,9 +111,9 @@ public class JOptionDialog extends JDialog implements ActionListener {
             return (Integer)res;
         }
     }
-    
+
     /**
-     * 
+     *
      * @param comp : component to display
      * @param modal : set the dialog modal or not.
      * @param actionCommands : ending actions to display
@@ -122,70 +122,56 @@ public class JOptionDialog extends JDialog implements ActionListener {
     public static Object show(Component parent, Component comp, String[] actionCommands) {
         return show(parent, comp, null, actionCommands);
     }
-    
+
     /**
-     * 
+     *
      * @param comp : component to display
      * @param modal : set the dialog modal or not.
      * @param title : A title to set the dialog. Can be null.
      * @param actionCommands : ending actions to display
      * @return the selection end action or DIALOG_CLOSE
      */
-    public static Object show(Component parent, Component comp, String title, String[] actionCommands) {        
+    public static Object show(Component parent, Component comp, String title, String[] actionCommands) {
         final Action[] actions = new Action[actionCommands.length];
         for(int i=0;i<actionCommands.length;i++){
             actions[i] = new NoEventAction(actionCommands[i], actionCommands[i]);
         }
-        
+
         return show(parent, comp, title, actions);
     }
-    
+
     private static Object show(Component parent, Component comp, Action[] actions) {
         return show(parent, comp, null, actions);
     }
-    
+
     private static Object show(Component parent, Component comp, String title, Action[] actions) {
-        
-        final JOptionDialog dialog = new JOptionDialog(null, true, actions);
+        final Window window = SwingUtilities.windowForComponent(parent);
+        final JOptionDialog dialog = new JOptionDialog(window, true, actions);
         if (title != null) {
             dialog.setTitle(title);
         }
         dialog.add(BorderLayout.CENTER,comp);
         dialog.pack();
-        if(parent != null) {
-            final Point p = parent.getLocationOnScreen();
-            p.x -= dialog.getWidth() / 2;
-            p.y -= dialog.getHeight() / 2;
-            if (p.x < 0) {
-                p.x = 0;
-            }
-            if (p.y < 0) {
-                p.y = 0;
-            }
-            dialog.setLocation(p);
-        } else {
-            dialog.setLocationRelativeTo(null);
-        }
-        
+        dialog.setLocationRelativeTo(parent);
         dialog.setVisible(true);
-        
+
         return dialog.closeAction;
     }
-    
+
     private static final class NoEventAction extends AbstractAction{
 
         public NoEventAction(String name, Object closeAction) {
             this(name,closeAction,null);
         }
-        
+
         public NoEventAction(String name, Object closeAction, Icon icon) {
             super(name,icon);
             putValue(PROPERTY_CLOSE_ACTION, closeAction);
         }
-        
+
         @Override
         public void actionPerformed(ActionEvent e) {
         }
     }
-    
+
 }

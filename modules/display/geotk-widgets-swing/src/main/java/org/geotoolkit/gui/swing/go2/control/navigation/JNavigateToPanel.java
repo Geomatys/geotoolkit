@@ -17,8 +17,8 @@
 package org.geotoolkit.gui.swing.go2.control.navigation;
 
 import java.awt.BorderLayout;
+import java.awt.Window;
 import java.awt.geom.NoninvertibleTransformException;
-import java.util.logging.Level;
 import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JLayeredPane;
@@ -32,6 +32,7 @@ import org.geotoolkit.gui.swing.go2.decoration.AbstractMapDecoration;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.util.SwingUtilities;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -161,7 +162,8 @@ public class JNavigateToPanel extends javax.swing.JPanel {
     private void guiCRSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiCRSActionPerformed
 
         if (map != null ) {
-            final JCRSChooser chooser = new JCRSChooser(null, true);
+            final Window frame = SwingUtilities.windowForComponent(this);
+            final JCRSChooser chooser = JCRSChooser.create(frame, true);
             chooser.setCRS(navCRS);
             ACTION act = chooser.showDialog();
 

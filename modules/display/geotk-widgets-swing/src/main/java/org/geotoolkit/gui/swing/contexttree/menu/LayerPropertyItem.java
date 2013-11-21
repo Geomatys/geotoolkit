@@ -38,7 +38,7 @@ import org.geotoolkit.map.MapLayer;
 
 /**
  * Default popup control for property page of MapLayer, use for JContextTreePopup
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
@@ -47,8 +47,8 @@ public class LayerPropertyItem extends AbstractTreePopupItem {
     private WeakReference<MapLayer> layerRef;
     private final List<PropertyPane> lst = new ArrayList<PropertyPane>();
 
-    /** 
-     * Creates a new instance of DefaultContextPropertyPop 
+    /**
+     * Creates a new instance of DefaultContextPropertyPop
      */
     public LayerPropertyItem() {
         super(MessageBundle.getString("contexttreetable_properties"));
@@ -80,7 +80,7 @@ public class LayerPropertyItem extends AbstractTreePopupItem {
                 if(layer == null) return;
 
 
-                JPropertyPane.showDialog(lst, layer, false);
+                JPropertyPane.showDialog(LayerPropertyItem.this, lst, layer, false);
 
             }
         });

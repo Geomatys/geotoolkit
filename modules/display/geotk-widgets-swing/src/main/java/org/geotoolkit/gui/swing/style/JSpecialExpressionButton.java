@@ -35,25 +35,25 @@ import org.opengis.filter.expression.Expression;
 public class JSpecialExpressionButton extends JButton{
 
     public static final String EXPRESSION_PROPERTY = "expression";
-    
+
     private static final Icon ICON_EXP_NO = IconBundle.getIcon("16_expression_no");
     private static final Icon ICON_EXP_YES = IconBundle.getIcon("16_expression_yes");
     private Expression exp = null;
     private MapLayer layer = null;
-    
+
     public JSpecialExpressionButton(){
         setBorderPainted(false);
         setContentAreaFilled(false);
         setBorder(null);
         setIcon(ICON_EXP_NO);
-        
+
         addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                
+
                 try{
-                    final Expression ne = JCQLEditor.showDialog(layer, exp);
+                    final Expression ne = JCQLEditor.showDialog(JSpecialExpressionButton.this, layer, exp);
                     if(ne != null && ne != exp){
                         parse(ne);
                         firePropertyChange(EXPRESSION_PROPERTY, exp, ne);
@@ -64,22 +64,22 @@ public class JSpecialExpressionButton extends JButton{
             }
         });
     }
-    
+
     public void setLayer(final MapLayer layer){
         this.layer = layer;
     }
-    
+
     public MapLayer getLayer(){
         return layer;
     }
-    
+
     public void parse(final Expression exp){
         this.exp = exp;
         setIcon( (exp == null) ? ICON_EXP_NO : ICON_EXP_YES);
     }
-    
+
     public Expression get(){
         return exp;
     }
-    
+
 }

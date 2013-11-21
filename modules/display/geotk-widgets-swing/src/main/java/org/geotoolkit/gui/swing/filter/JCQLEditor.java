@@ -714,13 +714,13 @@ public class JCQLEditor extends javax.swing.JPanel{
         return this;
     }
 
-    public static Filter showDialog(final MapLayer layer, final Filter filter) throws CQLException{
+    public static Filter showDialog(Component parent, final MapLayer layer, final Filter filter) throws CQLException{
 
         final JCQLEditor editor = new JCQLEditor();
         editor.setLayer(layer);
         editor.setFilter(filter);
 
-        final int res = JOptionDialog.show(null, editor, JOptionPane.OK_CANCEL_OPTION);
+        final int res = JOptionDialog.show(parent, editor, JOptionPane.OK_CANCEL_OPTION);
 
         if(res == JOptionPane.OK_OPTION){
             return editor.getFilter();
@@ -729,13 +729,13 @@ public class JCQLEditor extends javax.swing.JPanel{
         }
     }
 
-    public static Expression showDialog(final MapLayer layer, final Expression expression) throws CQLException{
+    public static Expression showDialog(Component parent, final MapLayer layer, final Expression expression) throws CQLException{
 
         final JCQLEditor editor = new JCQLEditor();
         editor.setLayer(layer);
         editor.setExpression(expression);
 
-        final int res = JOptionDialog.show(null, editor, JOptionPane.OK_CANCEL_OPTION);
+        final int res = JOptionDialog.show(parent, editor, JOptionPane.OK_CANCEL_OPTION);
 
         if(res == JOptionPane.OK_OPTION){
             return editor.getExpression();

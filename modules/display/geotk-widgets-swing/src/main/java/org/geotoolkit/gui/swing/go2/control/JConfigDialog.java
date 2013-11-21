@@ -27,7 +27,6 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
 import org.geotoolkit.display2d.canvas.painter.BackgroundPainterGroup;
-import org.geotoolkit.display2d.canvas.painter.GradiantColorPainter;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.ext.grid.DefaultGridTemplate;
 import org.geotoolkit.display2d.ext.grid.GridPainter;
@@ -35,12 +34,11 @@ import org.geotoolkit.display2d.ext.grid.GridTemplate;
 import org.geotoolkit.gui.swing.crschooser.JCRSChooser;
 import org.geotoolkit.gui.swing.crschooser.JCRSChooser.ACTION;
 import org.geotoolkit.gui.swing.go2.JMap2D;
-import org.geotoolkit.gui.swing.go2.decoration.ColorDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.JNorthArrowDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.JScaleBarDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.util.SwingUtilities;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -56,8 +54,9 @@ public class JConfigDialog extends javax.swing.JDialog {
     private CoordinateReferenceSystem crs = null;
 
     /** Creates new form JConfigDialog */
-    public JConfigDialog(final java.awt.Frame parent,final JMap2D map) {
-        super(parent, true);
+    public JConfigDialog(final java.awt.Frame parent, final JMap2D map) {
+        super((parent==null) ? SwingUtilities.windowForComponent(map) : parent);
+        setModal(true);
         this.map = map;
         initComponents();
 
@@ -324,7 +323,8 @@ public class JConfigDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_colorApplyActionPerformed
 
     private void choose(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_choose
-        JCRSChooser chooser = new JCRSChooser(null, true);
+
+        final JCRSChooser chooser = new JCRSChooser(this, true);
         chooser.setCRS(map.getCanvas().getObjectiveCRS());
         ACTION act = chooser.showDialog();
 

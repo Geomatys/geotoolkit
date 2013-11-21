@@ -21,6 +21,7 @@ import org.apache.sis.util.Static;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Window;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.HierarchyEvent;
@@ -37,6 +38,16 @@ import javax.swing.JSplitPane;
  * @author Quentin Boileau (Geomatys).
  */
 public final class SwingUtilities extends Static {
+
+    public static Window windowForComponent(Component component){
+        if(component == null){
+            return null;
+        }else if(component instanceof Window){
+            return (Window) component;
+        }else{
+            return javax.swing.SwingUtilities.windowForComponent(component);
+        }
+    }
 
     /**
      * Force divider location for a JSplitPan in percent.
@@ -115,7 +126,7 @@ public final class SwingUtilities extends Static {
     }
 
     /**
-     * Remove all children from a JCompontent and remove all 
+     * Remove all children from a JCompontent and remove all
      * PropertyChangeListeners for all children recursively.
      *
      * @param container

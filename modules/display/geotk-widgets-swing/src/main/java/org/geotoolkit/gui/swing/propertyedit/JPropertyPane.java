@@ -18,8 +18,10 @@
 package org.geotoolkit.gui.swing.propertyedit;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -40,9 +42,11 @@ import javax.swing.JToolBar;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSymbolizerStylePanel;
-import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.style.RandomStyleBuilder;
+import org.geotoolkit.util.SwingUtilities;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.PolygonSymbolizer;
@@ -80,9 +84,9 @@ public class JPropertyPane extends JPanel{
         if(rev)bas.add(revert);
         if(clo)bas.add(close);
 
-        apply.setIcon(IconBundle.getIcon("16_apply"));
-        revert.setIcon(IconBundle.getIcon("16_reload"));
-        close.setIcon(IconBundle.getIcon("16_close"));
+        apply.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_CHECK_SIGN, 16, new Color(0, 100, 0)));
+        revert.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_UNDO, 16, new Color(255, 150, 50)));
+        close.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_CHEVRON_SIGN_RIGHT, 16, new Color(0, 100, 0)));
 
 
         tabs.addChangeListener(new ChangeListener() {
@@ -141,13 +145,14 @@ public class JPropertyPane extends JPanel{
         apply.addActionListener(listener);
     }
 
-    public static void showDialog(final List<PropertyPane> lst, final Object target){
-        showDialog(lst,target, true);
+    public static void showDialog(Component parent, final List<PropertyPane> lst, final Object target){
+        showDialog(parent,lst,target, true);
     }
 
-    public static void showDialog(final List<PropertyPane> lst, final Object target, final boolean modal){
+    public static void showDialog(Component parent, final List<PropertyPane> lst, final Object target, final boolean modal){
 
-        final JDialog dia = new JDialog();
+        final Window window = SwingUtilities.windowForComponent(parent);
+        final JDialog dia = new JDialog(window);
         dia.setModal(modal);
         dia.setTitle(MessageBundle.getString("property_properties"));
         dia.setAlwaysOnTop(true);
@@ -166,11 +171,11 @@ public class JPropertyPane extends JPanel{
     }
 
 
-    public static Symbolizer showSymbolizerDialog(final Symbolizer symbol, final Object target){
-        return showSymbolizerDialog(symbol, false, target);
+    public static Symbolizer showSymbolizerDialog(Component parent, final Symbolizer symbol, final Object target){
+        return showSymbolizerDialog(parent, symbol, false, target);
     }
 
-    public static Symbolizer showSymbolizerDialog(final Symbolizer symbol, final boolean allowTypeChange, final Object target){
+    public static Symbolizer showSymbolizerDialog(Component parent, final Symbolizer symbol, final boolean allowTypeChange, final Object target){
 
         final JPanel container = new JPanel(new BorderLayout());
         final JSymbolizerStylePanel pane = new JSymbolizerStylePanel();
@@ -226,7 +231,8 @@ public class JPropertyPane extends JPanel{
             container.add(BorderLayout.NORTH,box);
         }
 
-        final JDialog dia = new JDialog();
+        final Window window = SwingUtilities.windowForComponent(parent);
+        final JDialog dia = new JDialog(window);
         dia.setModal(true);
         dia.setTitle(MessageBundle.getString("property_properties"));
         dia.setAlwaysOnTop(true);

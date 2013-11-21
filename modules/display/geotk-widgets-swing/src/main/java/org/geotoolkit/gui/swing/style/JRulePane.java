@@ -50,9 +50,9 @@ import org.opengis.filter.Filter;
  */
 public class JRulePane extends StyleElementEditor<MutableRule> {
 
-    private MutableRule rule = null;    
+    private MutableRule rule = null;
     private MapLayer layer = null;
-    
+
 
     /** Creates new form JRulePanel */
     public JRulePane() {
@@ -237,15 +237,15 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         if(rule == null){
             rule = getStyleFactory().rule();
         }
-        
+
         try {
-            final Filter nf = JCQLEditor.showDialog(layer, rule.getFilter());
+            final Filter nf = JCQLEditor.showDialog(this, layer, rule.getFilter());
             rule.setFilter(nf);
             guiCQL.setFilter(rule.getFilter());
         } catch (CQLException ex) {
             Logger.getLogger(JRulePane.class.getName()).log(Level.INFO, ex.getMessage(), ex);
         }
-                
+
     }//GEN-LAST:event_but_editActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton but_edit;
@@ -283,10 +283,10 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
             jtf_title.setText(descriptionTitleText(rule.getDescription()));
             jtf_abstract.setText(descriptionAbstractText(rule.getDescription()));
             jck_else.setSelected(rule.isElseFilter());
-            
+
             jsp_maxscale.setValue(rule.getMaxScaleDenominator());
             jsp_minscale.setValue(rule.getMinScaleDenominator());
-            
+
             if (rule.getFilter() != null) {
                 guiCQL.setFilter(rule.getFilter());
             }
@@ -298,10 +298,10 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         if(rule == null){
             rule = getStyleFactory().rule();
         }
-        
+
         rule.setName(jtf_name.getText());
         rule.setDescription(getStyleFactory().description(
-                jtf_title.getText(), 
+                jtf_title.getText(),
                 jtf_abstract.getText()));
         rule.setMinScaleDenominator( (Double)jsp_minscale.getValue() );
         rule.setMaxScaleDenominator( (Double)jsp_maxscale.getValue() );
@@ -317,7 +317,7 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
                 System.out.println("Invalide CQL expression : ignore it");
             }
         }
-        
+
         return rule;
     }
 
@@ -325,5 +325,5 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
     public void apply() {
         create();
     }
-    
+
 }

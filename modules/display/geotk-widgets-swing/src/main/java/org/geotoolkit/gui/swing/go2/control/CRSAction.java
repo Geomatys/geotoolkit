@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.go2.control;
 
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.util.logging.Level;
 
@@ -46,7 +47,8 @@ public class CRSAction extends AbstractMapAction {
     @Override
     public void actionPerformed(final ActionEvent arg0) {
         if (map != null ) {
-            JCRSChooser chooser = new JCRSChooser(null, true);
+            final Window frame = org.geotoolkit.util.SwingUtilities.windowForComponent(map);
+            final JCRSChooser chooser = JCRSChooser.create(frame, true);
             chooser.setCRS(map.getCanvas().getObjectiveCRS());
             ACTION act = chooser.showDialog();
 

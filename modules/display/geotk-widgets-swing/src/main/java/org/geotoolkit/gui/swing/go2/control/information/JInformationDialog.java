@@ -17,6 +17,7 @@
 package org.geotoolkit.gui.swing.go2.control.information;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -35,18 +36,19 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.gui.swing.go2.control.information.presenter.InformationPresenter;
 import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.util.SwingUtilities;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public class JInformationDialog extends JDialog {
-    
+
     private final AbstractAction nextAction;
     private final AbstractAction previousAction;
     private final JLabel label = new JLabel("0/0");
     private final JPanel contentPane = new JPanel(new BorderLayout());
-        
+
     private List<? extends Object> selecteds = new ArrayList<Object>();
     private InformationPresenter presenter = null;
     private JComponent currentComponent = null;
@@ -54,10 +56,11 @@ public class JInformationDialog extends JDialog {
     private SearchAreaJ2D area = null;
     private int selected = 0;
 
-    public JInformationDialog() {
+    public JInformationDialog(Component parent) {
+        super(SwingUtilities.windowForComponent(parent));
         setContentPane(contentPane);
         this.setIconImage(IconBundle.EMPTY_ICON_16.getImage());
-        
+
         //configure buttons ----------------------------------------------------
 
         nextAction = new AbstractAction(" > ") {
@@ -73,7 +76,7 @@ public class JInformationDialog extends JDialog {
                 setSelectedInfo(selected-1);
             }
         };
-        
+
         final GridBagConstraints cst = new GridBagConstraints();
         final JToolBar toolbar = new JToolBar();
         toolbar.setLayout(new GridBagLayout());
@@ -85,33 +88,33 @@ public class JInformationDialog extends JDialog {
         cst.gridx = 2;
         cst.weightx = 1;
         toolbar.add(label,cst);
-        
+
         contentPane.add(BorderLayout.SOUTH,toolbar);
-    
+
     }
-    
+
     private void setSelectedInfo(final int index){
-        
+
         if(currentComponent != null){
             contentPane.remove(currentComponent);
         }
-        
+
         selected = index;
 
         final Object candidate = selecteds.get(index);
         currentComponent = presenter.createComponent(candidate,context,area);
         contentPane.add(BorderLayout.CENTER,currentComponent);
-        
+
         previousAction.setEnabled(index != 0);
         nextAction.setEnabled(index < (selecteds.size()-1));
         label.setText("  "+(selected+1) +"/"+selecteds.size()+"  ");
         setTitle(label.getText());
-        
+
         contentPane.revalidate();
         contentPane.repaint();
     }
-    
-    public void display(final List<? extends Object> selecteds, final InformationPresenter presenter, 
+
+    public void display(final List<? extends Object> selecteds, final InformationPresenter presenter,
             final Point2D where, final RenderingContext2D context, final SearchAreaJ2D area){
 
         this.presenter = presenter;
@@ -133,5 +136,5 @@ public class JInformationDialog extends JDialog {
         this.setLocation((int)where.getX(),(int)where.getY());
         this.setVisible(true);
     }
-    
+
 }

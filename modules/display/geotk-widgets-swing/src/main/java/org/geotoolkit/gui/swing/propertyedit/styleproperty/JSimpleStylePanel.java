@@ -49,6 +49,8 @@ import org.geotoolkit.gui.swing.misc.ActionCell;
 import org.geotoolkit.gui.swing.misc.EmptyCellRenderer;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JBankPanel;
@@ -80,9 +82,9 @@ import org.opengis.style.TextSymbolizer;
  */
 public class JSimpleStylePanel extends StyleElementEditor implements PropertyPane{
 
-    private static final Icon ICO_UP = IconBundle.getIcon("16_vertical_previous");
-    private static final Icon ICO_DOWN = IconBundle.getIcon("16_vertical_next");
-    private static final Icon ICO_DELETE = IconBundle.getIcon("16_delete");
+    private static final ImageIcon ICO_UP = IconBuilder.createIcon(FontAwesomeIcons.ICON_CHEVRON_UP, 16, Color.BLACK);
+    private static final ImageIcon ICO_DOWN = IconBuilder.createIcon(FontAwesomeIcons.ICON_CHEVRON_DOWN, 16, Color.BLACK);
+    private static final ImageIcon ICO_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, Color.BLACK);
 
     private final SymbolizerModel model = new SymbolizerModel();
 
@@ -450,7 +452,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
 
         bankController.setClazzList(clazz);
 
-        final int result = JOptionDialog.show(null, bankController,JOptionPane.OK_CANCEL_OPTION);
+        final int result = JOptionDialog.show(this, bankController,JOptionPane.OK_CANCEL_OPTION);
 
         if (result == JOptionPane.OK_OPTION) {
             if (bankController.getSelectedSymbol() != null) {

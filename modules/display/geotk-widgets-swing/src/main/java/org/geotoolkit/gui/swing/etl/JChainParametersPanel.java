@@ -21,6 +21,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -47,6 +48,7 @@ import org.geotoolkit.process.chain.model.Parameter;
 import org.geotoolkit.process.chain.model.Parameterized;
 import org.geotoolkit.process.chain.model.event.ChainListener;
 import org.geotoolkit.process.chain.model.event.EventChain;
+import org.geotoolkit.util.SwingUtilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.jdesktop.swingx.JXTable;
 
@@ -62,7 +64,6 @@ public class JChainParametersPanel extends JPanel{
 
     private final boolean editableInput;
     private final boolean editableOutput;
-    private final JDialog optionPaneDialog = new JDialog();
 
     /**
      * Currently edited chain.
@@ -164,7 +165,7 @@ public class JChainParametersPanel extends JPanel{
                 }
 
                 //show edit dialog
-                JParameterPanel.showDialog(process,parameter, (in) ? Integer.MIN_VALUE : Integer.MAX_VALUE, in, editable);
+                JParameterPanel.showDialog(JChainParametersPanel.this, process,parameter, (in) ? Integer.MIN_VALUE : Integer.MAX_VALUE, in, editable);
                 model.fireTableDataChanged();
             }
 
@@ -353,7 +354,7 @@ public class JChainParametersPanel extends JPanel{
             updateModel();
         }
     }
-    
+
     /**
      * Open JDialog of editor.
      */
@@ -361,6 +362,8 @@ public class JChainParametersPanel extends JPanel{
 
         final JOptionPane optPane = new JOptionPane(this,
                 JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+        final Window frame = SwingUtilities.windowForComponent(this);
+        final JDialog optionPaneDialog = new JDialog(frame);
 
         optPane.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent e) {

@@ -86,13 +86,13 @@ public class FilterEditor extends PropertyValueEditor implements ActionListener{
 
         if(Expression.class.isAssignableFrom(type.getBinding())){
             try {
-                value = JCQLEditor.showDialog(null, (Expression)value);
+                value = JCQLEditor.showDialog(this, null, (Expression)value);
             } catch (CQLException ex) {
                 Logger.getLogger(FilterEditor.class.getName()).log(Level.INFO, ex.getMessage(), ex);
             }
         }else{
             try {
-                value = JCQLEditor.showDialog(null, (Filter)value);
+                value = JCQLEditor.showDialog(this, null, (Filter)value);
             } catch (CQLException ex) {
                 Logger.getLogger(FilterEditor.class.getName()).log(Level.INFO, ex.getMessage(), ex);
             }

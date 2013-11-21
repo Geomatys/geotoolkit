@@ -44,6 +44,8 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.gui.swing.misc.ActionCell;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
@@ -57,17 +59,17 @@ import org.opengis.style.PointSymbolizer;
 
 /**
  * graphic symbol table
- * 
+ *
  * @author Johann Sorel
  * @module pending
  */
 public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
 
     private static final Icon ICO_ADD = IconBundle.getIcon("16_edit_add");
-    private static final Icon ICO_UP = IconBundle.getIcon("16_vertical_previous");
-    private static final Icon ICO_DOWN = IconBundle.getIcon("16_vertical_next");
     private static final Icon ICO_EDIT = IconBundle.getIcon("16_edit_geom");
-    private static final Icon ICO_DELETE = IconBundle.getIcon("16_delete");
+    private static final ImageIcon ICO_UP = IconBuilder.createIcon(FontAwesomeIcons.ICON_CHEVRON_UP, 16, Color.BLACK);
+    private static final ImageIcon ICO_DOWN = IconBuilder.createIcon(FontAwesomeIcons.ICON_CHEVRON_DOWN, 16, Color.BLACK);
+    private static final ImageIcon ICO_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, Color.BLACK);
 
     private MapLayer layer = null;
     private final GraphicalModel model = new GraphicalModel(null);
@@ -75,13 +77,13 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
     public JGraphicSymbolTable() {
         super(List.class);
         initComponents();
-       
+
         tabGraphics.setTableHeader(null);
         tabGraphics.setModel(model);
         tabGraphics.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+
         tabGraphics.getColumn(0).setCellRenderer(new GraphicRenderer());
-        
+
         tabGraphics.getColumn(1).setCellRenderer(new ActionCell.Renderer(ICO_UP));
         tabGraphics.getColumn(1).setCellEditor(new ActionCell.Editor(ICO_UP) {
             @Override
@@ -90,7 +92,7 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
                 model.moveUp(graphic);
             }
         });
-        
+
         tabGraphics.getColumn(2).setCellRenderer(new ActionCell.Renderer(ICO_DOWN));
         tabGraphics.getColumn(2).setCellEditor(new ActionCell.Editor(ICO_DOWN) {
             @Override
@@ -99,14 +101,14 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
                 model.moveDown(graphic);
             }
         });
-        
+
         tabGraphics.getColumn(3).setCellRenderer(new ActionCell.Renderer(ICO_EDIT));
         tabGraphics.getColumn(3).setCellEditor(new ActionCell.Editor(ICO_EDIT) {
             @Override
             public void actionPerformed(final ActionEvent e, Object value) {
                 GraphicalSymbol symbol = (GraphicalSymbol) value;
-                final GraphicalSymbol oldMark = symbol;      
-                
+                final GraphicalSymbol oldMark = symbol;
+
                 final StyleElementEditor editor;
                 if(symbol instanceof Mark){
                     editor = new JMarkPane();
@@ -117,7 +119,7 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
                 }
                 editor.setLayer(layer);
 
-                final int res = JOptionDialog.show(null, editor, JOptionPane.OK_CANCEL_OPTION);
+                final int res = JOptionDialog.show(JGraphicSymbolTable.this, editor, JOptionPane.OK_CANCEL_OPTION);
                 if(JOptionPane.OK_OPTION == res){
                     symbol = (GraphicalSymbol) editor.create();
                     final List<GraphicalSymbol> symbols = model.getGraphics();
@@ -127,7 +129,7 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
                 }
             }
         });
-        
+
         tabGraphics.getColumn(4).setCellRenderer(new ActionCell.Renderer(ICO_DELETE));
         tabGraphics.getColumn(4).setCellEditor(new ActionCell.Editor(ICO_DELETE) {
             @Override
@@ -136,18 +138,18 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
                 model.deleteGraphical(graphic);
             }
         });
-        
+
         final int width = 30;
-        tabGraphics.getColumn(1).setMinWidth(width);        
+        tabGraphics.getColumn(1).setMinWidth(width);
         tabGraphics.getColumn(1).setPreferredWidth(width);
         tabGraphics.getColumn(1).setMaxWidth(width);
-        tabGraphics.getColumn(2).setMinWidth(width);     
+        tabGraphics.getColumn(2).setMinWidth(width);
         tabGraphics.getColumn(2).setPreferredWidth(width);
         tabGraphics.getColumn(2).setMaxWidth(width);
-        tabGraphics.getColumn(3).setMinWidth(width);     
+        tabGraphics.getColumn(3).setMinWidth(width);
         tabGraphics.getColumn(3).setPreferredWidth(width);
         tabGraphics.getColumn(3).setMaxWidth(width);
-        tabGraphics.getColumn(4).setMinWidth(width);     
+        tabGraphics.getColumn(4).setMinWidth(width);
         tabGraphics.getColumn(4).setPreferredWidth(width);
         tabGraphics.getColumn(4).setMaxWidth(width);
         tabGraphics.setTableHeader(null);
@@ -157,7 +159,7 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
         tabGraphics.setShowGrid(true);
         tabGraphics.setShowHorizontalLines(true);
         tabGraphics.setShowVerticalLines(false);
-        
+
     }
 
     @Override
@@ -345,24 +347,24 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
 
             final JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, "", isSelected, hasFocus, row, column);
             lbl.setIcon(null);
-            
+
             if(value instanceof GraphicalSymbol){
                 final List<GraphicalSymbol> lst = new ArrayList<GraphicalSymbol>();
                 lst.add((GraphicalSymbol)value);
-                
+
                 final Graphic gra = GO2Utilities.STYLE_FACTORY.graphic(
                         lst,
-                        StyleConstants.DEFAULT_GRAPHIC_OPACITY, 
-                        GO2Utilities.FILTER_FACTORY.literal(16), 
-                        StyleConstants.DEFAULT_GRAPHIC_ROTATION, 
-                        StyleConstants.DEFAULT_ANCHOR_POINT, 
+                        StyleConstants.DEFAULT_GRAPHIC_OPACITY,
+                        GO2Utilities.FILTER_FACTORY.literal(16),
+                        StyleConstants.DEFAULT_GRAPHIC_ROTATION,
+                        StyleConstants.DEFAULT_ANCHOR_POINT,
                         StyleConstants.DEFAULT_DISPLACEMENT);
-                
+
                 final PointSymbolizer ps = GO2Utilities.STYLE_FACTORY.pointSymbolizer(gra, null);
                 final BufferedImage image = DefaultGlyphService.create(ps, new Dimension(18, 18), null);
                 lbl.setIcon(new ImageIcon(image));
             }
-            
+
             if (value instanceof Mark) {
                 final Mark m = (Mark) value;
                 lbl.setText(m.getWellKnownName().toString());

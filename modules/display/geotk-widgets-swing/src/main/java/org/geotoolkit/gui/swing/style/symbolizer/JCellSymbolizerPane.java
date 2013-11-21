@@ -47,13 +47,13 @@ import org.opengis.style.TextSymbolizer;
 
 /**
  * Cell Symbolizer editor.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> implements PropertyPane {
-    
+
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
-    
+
     private MapLayer layer = null;
     private StyleElementEditor editor = null;
     private Filter filter = null;
@@ -65,22 +65,22 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
             final String typeName = String.valueOf(e.getItem());
 
             pan_info.removeAll();
-            
+
             final Symbolizer symbol;
             if("Text".equalsIgnoreCase(typeName)){
                 symbol =  getStyleFactory().textSymbolizer();
             }else{
                 symbol =  getStyleFactory().pointSymbolizer();
             }
-            
+
             setEditedSymbolizer(symbol);
         }
     };
-    
+
     //keep track of where the symbolizer was to avoid rewriting the complete style
     private MutableRule parentRule = null;
     private int parentIndex = 0;
-    
+
     /**
      * Creates new form JCellSymbolizerPane
      */
@@ -91,37 +91,37 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
     }
 
     private void setEditedSymbolizer(Symbolizer symbol){
-        
+
         pan_info.removeAll();
-        
+
         if(symbol instanceof TextSymbolizer){
             guiTypeList.setSelectedIndex(1);
         }else{
             guiTypeList.setSelectedIndex(0);
         }
-        
+
         editor = StyleElementEditor.findEditor(symbol);
         if(editor != null){
             editor.setLayer(cellMimicLayer);
             editor.parse(symbol);
             pan_info.add(editor);
         }
-        
-        
+
+
         pan_info.revalidate();
         pan_info.repaint();
     }
-    
+
     @Override
     public boolean canHandle(Object target) {
         return target instanceof CoverageMapLayer || target instanceof CellSymbolizer;
     }
-    
+
     @Override
     public ImageIcon getIcon() {
         return IconBundle.getIcon("16_classification_cell");
     }
-    
+
     @Override
     public Image getPreview() {
         return null;
@@ -141,7 +141,7 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
     public MapLayer getLayer() {
         return layer;
     }
-    
+
     @Override
     public void setTarget(Object candidate) {
         cellMimicLayer = null;
@@ -191,12 +191,12 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
     public Component getComponent() {
         return this;
     }
-    
+
     @Override
     public void apply() {
         if(layer!=null){
             final CellSymbolizer symbol = create();
-            
+
             if(parentRule!=null){
                 parentRule.symbolizers().remove(parentIndex);
                 parentRule.symbolizers().add(parentIndex,symbol);
@@ -213,7 +213,7 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
             }
         }
     }
-    
+
     @Override
     public void parse(CellSymbolizer target) {
         guiCellSize.setValue(20);
@@ -225,13 +225,13 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
         guiTypeList.setSelectedIndex(0);
         final Symbolizer symbol =  getStyleFactory().pointSymbolizer();
         setEditedSymbolizer(symbol);
-        
+
         if(target!=null){
             guiCellSize.setValue(target.getCellSize());
             final PointSymbolizer ps = target.getPointSymbolizer();
             final TextSymbolizer ts = target.getTextSymbolizer();
             filter = target.getFilter();
-                        
+
             if(ps!=null){
                 guiTypeList.setSelectedIndex(0);
                 setEditedSymbolizer(ps);
@@ -239,9 +239,9 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
                 guiTypeList.setSelectedIndex(1);
                 setEditedSymbolizer(ts);
             }
-            
+
         }
-        
+
         guiCQL.setFilter(filter);
     }
 
@@ -254,7 +254,7 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
         }
         PointSymbolizer ps = null;
         TextSymbolizer ts = null;
-        
+
         if(editor!=null){
             Object c = editor.create();
             if(c instanceof PointSymbolizer){
@@ -263,10 +263,10 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
                 ts = (TextSymbolizer) c;
             }
         }
-        
+
         return new CellSymbolizer((Integer)guiCellSize.getValue(), filter, ps, ts);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -362,9 +362,9 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
     }// </editor-fold>//GEN-END:initComponents
 
     private void but_editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_but_editActionPerformed
-        
+
         try {
-            filter = JCQLEditor.showDialog(cellMimicLayer, filter);
+            filter = JCQLEditor.showDialog(this, cellMimicLayer, filter);
             guiCQL.setFilter(filter);
         } catch (CQLException ex) {
             LOGGER.log(Level.INFO, ex.getMessage(), ex);
@@ -385,6 +385,6 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
     private javax.swing.JPanel pan_info;
     // End of variables declaration//GEN-END:variables
 
-    
-    
+
+
 }

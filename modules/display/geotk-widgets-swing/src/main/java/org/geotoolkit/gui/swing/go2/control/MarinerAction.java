@@ -76,7 +76,7 @@ public class MarinerAction extends AbstractMapAction {
                 tabs.add(MessageBundle.getString("s52.rules"), lookupsPane);
 
 
-                final int result = JOptionDialog.show(null, tabs, JOptionPane.OK_CANCEL_OPTION);
+                final int result = JOptionDialog.show(map, tabs, JOptionPane.OK_CANCEL_OPTION);
                 if(result == JOptionPane.OK_OPTION){
                     basepane.apply();
                     viewpane.apply();

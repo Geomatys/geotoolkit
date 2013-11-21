@@ -57,6 +57,8 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.propertyedit.JPropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -88,6 +90,8 @@ import org.opengis.style.Symbolizer;
  */
 public class JClassificationSingleStylePanel extends JPanel implements PropertyPane{
 
+    private static final ImageIcon ICON_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, Color.BLACK);
+
     private final Dimension GLYPH_DIMENSION = new Dimension(30, 20);
 
     private static final List<RandomPalette> PALETTES;
@@ -107,7 +111,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     public JClassificationSingleStylePanel() {
         initComponents();
         guiTable.setModel(model);
-        
+
         guiProperty.setRenderer(new PropertyRenderer());
 
         guiPalette.setModel(new ListComboBoxModel(PALETTES));
@@ -311,7 +315,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         builder.setPalette((RandomPalette) guiPalette.getSelectedItem());
         builder.setOther(guiOther.isSelected());
         builder.setCurrentProperty((PropertyName) guiProperty.getSelectedItem());
-        builder.create();        
+        builder.create();
         model.fireTableDataChanged();
         guiTable.revalidate();
         guiTable.repaint();
@@ -319,7 +323,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     }//GEN-LAST:event_guiGenerateActionPerformed
 
     private void guiModelActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiModelActionPerformed
-        builder.setTemplate( JPropertyPane.showSymbolizerDialog(builder.getTemplate(), true, layer) );
+        builder.setTemplate( JPropertyPane.showSymbolizerDialog(this, builder.getTemplate(), true, layer) );
         updateModelGlyph();
     }//GEN-LAST:event_guiModelActionPerformed
 
@@ -327,7 +331,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     public boolean canHandle(Object target) {
         return target instanceof FeatureMapLayer;
     }
-    
+
     @Override
     public void setTarget(final Object layer) {
         if(layer instanceof FeatureMapLayer){
@@ -370,7 +374,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     public Image getPreview() {
         return IconBundle.getIcon("preview_style_class1").getImage();
     }
-    
+
     @Override
     public String getToolTip() {
         return "";
@@ -445,10 +449,10 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         @Override
         public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            DeleteRenderer.this.setIcon(IconBundle.getIcon("16_delete"));
+            DeleteRenderer.this.setIcon(ICON_DELETE);
             return DeleteRenderer.this;
         }
-        
+
     }
 
     private class DeleteEditor extends AbstractCellEditor implements TableCellEditor{
@@ -459,7 +463,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         public DeleteEditor() {
             button.setBorderPainted(false);
             button.setContentAreaFilled(false);
-            button.setIcon(IconBundle.getIcon("16_delete"));
+            button.setIcon(ICON_DELETE);
 
             button.addActionListener(new ActionListener() {
                 @Override
@@ -471,7 +475,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
                     }
                 }
             });
-            
+
         }
 
         @Override
@@ -637,7 +641,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if(value != null){
-                        Symbolizer symbol = JPropertyPane.showSymbolizerDialog(value.symbolizers().get(0), layer);
+                        Symbolizer symbol = JPropertyPane.showSymbolizerDialog(JClassificationSingleStylePanel.this, value.symbolizers().get(0), layer);
                         value.symbolizers().clear();
                         value.symbolizers().add(symbol);
                         guiTable.revalidate();

@@ -17,6 +17,8 @@
 package org.geotoolkit.gui.swing.etl;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDialog;
@@ -30,6 +32,7 @@ import org.geotoolkit.process.chain.model.ClassFull;
 import org.geotoolkit.process.chain.model.DataLink;
 import org.geotoolkit.process.chain.model.Parameter;
 import org.geotoolkit.process.chain.model.Parameterized;
+import org.geotoolkit.util.SwingUtilities;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.parameter.ParameterDescriptor;
 
@@ -50,7 +53,7 @@ public class JParameterPanel extends javax.swing.JPanel {
     // Last value for class
     private Class oldType;
 
-    private JParameterPanel(final Parameterized process, final Parameter parameter, 
+    private JParameterPanel(final Parameterized process, final Parameter parameter,
             final int paramId, final boolean inParam, final JDialog dialog, final boolean editable) {
         this.process = process;
         this.parameter = parameter;
@@ -331,9 +334,10 @@ private void guiCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
-    public static void showDialog(final Parameterized process,final Parameter parameter, final int paramId, final boolean inParam, final boolean editable){
+    public static void showDialog(final Component parent, final Parameterized process,final Parameter parameter, final int paramId, final boolean inParam, final boolean editable){
 
-        final JDialog dialog = new JDialog();
+        final Window frame = SwingUtilities.windowForComponent(parent);
+        final JDialog dialog = new JDialog(frame);
         dialog.setModal(true);
         final JParameterPanel pane = new JParameterPanel(process, parameter, paramId, inParam, dialog, editable);
         dialog.setContentPane(pane);

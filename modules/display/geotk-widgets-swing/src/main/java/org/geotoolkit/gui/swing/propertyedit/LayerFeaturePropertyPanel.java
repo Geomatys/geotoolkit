@@ -158,7 +158,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         initComponents();
 
         guiPanFilter.add(BorderLayout.CENTER,guiCQL);
-        
+
         tab_data.setEditable(false);
         tab_data.setColumnControlVisible(true);
         tab_data.setHorizontalScrollEnabled(true);
@@ -494,10 +494,10 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     }//GEN-LAST:event_guiShowIdActionPerformed
 
     private void guiQueryButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiQueryButtonActionPerformed
-        
+
         try {
             panCenter.removeAll();
-        
+
             Filter f = guiCQL.getFilter();
             final QueryBuilder qb = new QueryBuilder(layer.getCollection().getFeatureType().getName());
             qb.setFilter(f);
@@ -521,7 +521,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        
+
     }//GEN-LAST:event_guiQueryButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -579,7 +579,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             }
 
             weakListener.registerSource(layer);
-            
+
             //list versions
             final Source src = source.getSource();
             final List lst = new ArrayList();
@@ -597,7 +597,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
                 }
             }
             guiVersions.setModel(new ListComboBoxModel(lst));
-            
+
         }
 
         panCenter.revalidate();
@@ -639,7 +639,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     public Image getPreview() {
         return null;
     }
-    
+
     @Override
     public String getToolTip() {
         return "";
@@ -701,7 +701,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
         public VersionEditor() {
         }
-        
+
         @Override
         public Object getCellEditorValue() {
             return null;
@@ -724,10 +724,10 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
                 return new JLabel("");
             }
         }
-    } 
-    
+    }
+
     private class VersionButton extends JButton implements ActionListener{
-        
+
         private Versioned versioned;
 
         public VersionButton(Versioned v) {
@@ -739,7 +739,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            
+
             final JComboBox jcb = new JComboBox();
             try{
                 ComboBoxModel m = new ListComboBoxModel(versioned.getHistory().list());
@@ -749,7 +749,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             }
             final JFeatureOutLine editor = new JFeatureOutLine();
             editor.setEnabled(false);
-            
+
             jcb.addItemListener(new ItemListener() {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
@@ -773,14 +773,14 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
                     editor.setEdited((Feature)null);
                 }
             }
-            
-            final JPanel p = new JPanel(new BorderLayout());            
+
+            final JPanel p = new JPanel(new BorderLayout());
             p.add(BorderLayout.NORTH,jcb);
             p.add(BorderLayout.CENTER,new JScrollPane(editor));
-            
-            JOptionDialog.show(null, p, JOptionPane.OK_OPTION);
+
+            JOptionDialog.show(VersionButton.this, p, JOptionPane.OK_OPTION);
         }
-        
+
     }
-    
+
 }

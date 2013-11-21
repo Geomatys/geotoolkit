@@ -919,7 +919,7 @@ public class EditionHelper {
     public Feature sourceAddGeometry(Geometry geom) {
 
         if (editedLayer != null && geom != null) {
-            
+
             final FeatureType featureType = (FeatureType) editedLayer.getCollection().getFeatureType();
             final CoordinateReferenceSystem dataCrs = featureType.getCoordinateReferenceSystem();
             final Feature feature = FeatureUtilities.defaultFeature(featureType, UUID.randomUUID().toString());
@@ -932,7 +932,7 @@ public class EditionHelper {
 
             feature.getDefaultGeometryProperty().setValue(geom);
             if(showAtributeditor){
-                JFeatureOutLine.show(feature);
+                JFeatureOutLine.show(map,feature);
             }
 
             if(editedLayer.getCollection().isWritable()){

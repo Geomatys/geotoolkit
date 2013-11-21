@@ -32,7 +32,7 @@ public class FeatureEditionDemo {
         final FeatureType type = ftb.buildFeatureType();
         final Feature feature = FeatureUtilities.defaultFeature(type, "id-1");
 
-        JFeatureOutLine.show(feature,true);
+        JFeatureOutLine.show(null,feature,true);
 
 
         System.out.println(feature.toString());
