@@ -56,6 +56,7 @@ import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.TileReference;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.XImageIO;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
@@ -401,6 +402,8 @@ public class XMLMosaic implements GridMosaic{
         private final String formatName;
 
         public TileWriter(File f,RenderedImage image, int idx, int idy, int tileIndex, ColorModel cm, String formatName) {
+            ArgumentChecks.ensureNonNull("file", f);
+            ArgumentChecks.ensureNonNull("image", image);
             this.f = f;
             this.image = image;
             this.idx = idx;

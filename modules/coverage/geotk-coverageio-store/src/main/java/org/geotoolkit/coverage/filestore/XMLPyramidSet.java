@@ -18,10 +18,14 @@ package org.geotoolkit.coverage.filestore;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.xml.bind.JAXBException;
@@ -179,7 +183,11 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     Pyramid createPyramid(CoordinateReferenceSystem crs) {
         final XMLPyramid pyramid = new XMLPyramid();
         pyramid.crs = crs.toWKT();
-        pyramid.id = IdentifiedObjects.getIdentifier(crs);
+        try {
+            pyramid.id = URLEncoder.encode(IdentifiedObjects.getIdentifier(crs),"UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex.getMessage(),ex);
+        }
         pyramid.initialize(this);
         pyramids().add(pyramid);
         return pyramid;
