@@ -39,14 +39,18 @@ import org.opengis.style.Stroke;
  */
 public class JStrokeControlPane extends StyleElementEditor<Stroke> {
 
-    private final JButton guiStrokeButton = new JButton(new AbstractAction(MessageBundle.getString("change")) {
+    private final AbstractAction strokeChange = new AbstractAction(MessageBundle.getString("change")) {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(null, paneStrokeChooser, "", JOptionPane.PLAIN_MESSAGE);
-            parse(create());
-            firePropertyChange(PROPERTY_TARGET, null, create());
+            if (JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(JStrokeControlPane.this, paneStrokeChooser, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE)) {
+                final Stroke created = create();
+                parse(created);
+                JStrokeControlPane.this.firePropertyChange(PROPERTY_TARGET, null, created);
+            }
         }
-    });
+    };
+    
+    private final JButton guiStrokeButton = new JButton(strokeChange);
     private final JPreview guiStrokeLabel = new JPreview();
     private final JStrokePane paneStrokeChooser = new JStrokePane();
     private MapLayer layer = null;
@@ -61,9 +65,7 @@ public class JStrokeControlPane extends StyleElementEditor<Stroke> {
         guiStrokeLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                JOptionPane.showMessageDialog(null, paneStrokeChooser, "", JOptionPane.PLAIN_MESSAGE);
-                parse(create());
-                firePropertyChange(PROPERTY_TARGET, null, create());
+                strokeChange.actionPerformed(new ActionEvent(JStrokeControlPane.this, evt.getID(), PROPERTY_TARGET));
             }
         });
         

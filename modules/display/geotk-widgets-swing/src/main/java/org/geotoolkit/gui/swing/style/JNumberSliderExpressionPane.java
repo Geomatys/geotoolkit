@@ -92,6 +92,7 @@ public class JNumberSliderExpressionPane extends StyleElementEditor<Expression> 
 
     private void guiSliderStateChanged(ChangeEvent evt) {//GEN-FIRST:event_guiSliderStateChanged
         guiNumber.parse(getFilterFactory().literal(guiSlider.getValue()));
+        firePropertyChange(PROPERTY_TARGET, null, create());
     }//GEN-LAST:event_guiSliderStateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JNumberExpressionPane guiNumber;

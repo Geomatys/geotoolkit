@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -38,14 +39,17 @@ import org.opengis.style.Fill;
  */
 public class JFillControlPane extends StyleElementEditor<Fill> {
 
-    private final JButton guiColorButton = new JButton(new AbstractAction(MessageBundle.getString("change")) {
+    private final Action colorChange = new AbstractAction(MessageBundle.getString("change")) {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(null,paneFillChooser,"",JOptionPane.PLAIN_MESSAGE);
-            parse(create());
-            firePropertyChange(PROPERTY_TARGET, null, create());  
+            JOptionPane.showMessageDialog(null, paneFillChooser, "", JOptionPane.PLAIN_MESSAGE);
+            final Fill created = create();
+            parse(created);
+            JFillControlPane.this.firePropertyChange(PROPERTY_TARGET, null, created);
         }
-    });
+    };
+            
+    private final JButton guiColorButton = new JButton(colorChange);
     private final JPreview guiColorLabel = new JPreview();
     private final JFillPane paneFillChooser = new JFillPane();
     
@@ -62,14 +66,14 @@ public class JFillControlPane extends StyleElementEditor<Fill> {
         guiColorLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                JOptionPane.showMessageDialog(null,paneFillChooser,"",JOptionPane.PLAIN_MESSAGE);
-                parse(create());
-                firePropertyChange(PROPERTY_TARGET, null, create());  
+                colorChange.actionPerformed(new ActionEvent(JFillControlPane.this, evt.getID(), null));
             }
         });
         
         add(guiColorButton, java.awt.BorderLayout.EAST);
         add(guiColorLabel, java.awt.BorderLayout.WEST);
+        
+        
     }
     
     /**
@@ -107,7 +111,7 @@ public class JFillControlPane extends StyleElementEditor<Fill> {
         return paneFillChooser.create();
     }  
     
-    public void setActive(boolean bool){       
+    public void setActive(boolean bool) {       
         guiColorButton.setEnabled(bool);
         guiColorLabel.setVisible(bool);
     }

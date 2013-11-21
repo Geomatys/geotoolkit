@@ -113,19 +113,10 @@
       </Properties>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiDisplacementX">
-      <Events>
-        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
-      </Events>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiDisplacementY">
-      <Events>
-        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
-      </Events>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiOffset">
-      <Events>
-        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="guiOffsetLabel">
       <Properties>
@@ -135,14 +126,8 @@
       </Properties>
     </Component>
     <Component class="org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JStrokeControlPane" name="guiStrokeControlPane">
-      <Events>
-        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
-      </Events>
     </Component>
     <Component class="org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JFillControlPane" name="guiFillControlPane">
-      <Events>
-        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
-      </Events>
     </Component>
   </SubComponents>
 </Form>

@@ -116,8 +116,9 @@ public class JNumberExpressionPane extends StyleElementEditor<Expression>{
 
 private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange
     if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
-            firePropertyChange(PROPERTY_TARGET, null, create());
-            parse(create());
+        final Expression created = create();
+            firePropertyChange(PROPERTY_TARGET, null, created);
+            parse(created);
         }
     if(evt.getPropertyName().equals(JSpecialExpressionButton.EXPRESSION_PROPERTY)) {
         parse(guiSpecial.get());

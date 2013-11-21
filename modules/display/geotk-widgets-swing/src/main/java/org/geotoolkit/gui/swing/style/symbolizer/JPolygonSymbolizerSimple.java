@@ -30,6 +30,7 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JStrokeControl
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JNumberExpressionPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
+import static org.geotoolkit.gui.swing.style.StyleElementEditor.PROPERTY_TARGET;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.PolygonSymbolizer;
@@ -40,7 +41,7 @@ import org.opengis.style.PolygonSymbolizer;
  * @author Fabien Rétif (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class JPolygonSymbolizerSimple extends  StyleElementEditor<PolygonSymbolizer>  {
+public class JPolygonSymbolizerSimple extends StyleElementEditor<PolygonSymbolizer> implements PropertyChangeListener {
 
     private MapLayer layer = null;
     
@@ -55,7 +56,13 @@ public class JPolygonSymbolizerSimple extends  StyleElementEditor<PolygonSymboli
         guiDisplacementY.setModel(0d, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1d);
         guiDisplacementX.setExpressionVisible(false);
         guiDisplacementY.setExpressionVisible(false);
-        guiOffset.setExpressionVisible(false);        
+        guiOffset.setExpressionVisible(false);
+        
+        guiFillControlPane.addPropertyChangeListener(this);
+        guiStrokeControlPane.addPropertyChangeListener(this);
+        guiOffset.addPropertyChangeListener(this);
+        guiDisplacementX.addPropertyChangeListener(this);
+        guiDisplacementY.addPropertyChangeListener(this);
     }
     
     /**
@@ -110,6 +117,12 @@ public class JPolygonSymbolizerSimple extends  StyleElementEditor<PolygonSymboli
                     guiOffset.create());
     }
 
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
+            firePropertyChange(PROPERTY_TARGET, null, create());
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -139,37 +152,7 @@ public class JPolygonSymbolizerSimple extends  StyleElementEditor<PolygonSymboli
 
         jLabel10.setText(MessageBundle.getString("shapeBorder")); // NOI18N
 
-        guiDisplacementX.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                JPolygonSymbolizerSimple.this.propertyChange(evt);
-            }
-        });
-
-        guiDisplacementY.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                JPolygonSymbolizerSimple.this.propertyChange(evt);
-            }
-        });
-
-        guiOffset.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                JPolygonSymbolizerSimple.this.propertyChange(evt);
-            }
-        });
-
         guiOffsetLabel.setText(MessageBundle.getString("offset")); // NOI18N
-
-        guiStrokeControlPane.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                JPolygonSymbolizerSimple.this.propertyChange(evt);
-            }
-        });
-
-        guiFillControlPane.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                JPolygonSymbolizerSimple.this.propertyChange(evt);
-            }
-        });
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -244,12 +227,6 @@ public class JPolygonSymbolizerSimple extends  StyleElementEditor<PolygonSymboli
         layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiStrokeControlPane, jLabel10});
 
     }// </editor-fold>//GEN-END:initComponents
-
-    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
-            firePropertyChange(PROPERTY_TARGET, null, create());
-        }
-    }//GEN-LAST:event_propertyChange
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JNumberExpressionPane guiDisplacementX;

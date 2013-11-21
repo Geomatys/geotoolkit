@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import org.geotoolkit.display2d.GO2Utilities;
