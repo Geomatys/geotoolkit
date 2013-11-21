@@ -155,7 +155,7 @@ public class JPropertyPane extends JPanel{
         final JDialog dia = new JDialog(window);
         dia.setModal(modal);
         dia.setTitle(MessageBundle.getString("property_properties"));
-        dia.setAlwaysOnTop(true);
+        //dia.setAlwaysOnTop(true);
 
         final JPropertyPane pane = new JPropertyPane(true,true,true,dia);
         dia.setContentPane(pane);
@@ -235,8 +235,8 @@ public class JPropertyPane extends JPanel{
         final JDialog dia = new JDialog(window);
         dia.setModal(true);
         dia.setTitle(MessageBundle.getString("property_properties"));
-        dia.setAlwaysOnTop(true);
-        dia.setSize(700,500);
+        //dia.setAlwaysOnTop(true);
+        dia.setSize(800,600);
         dia.setLocationRelativeTo(null);
         dia.setContentPane(container);
         dia.setVisible(true);
