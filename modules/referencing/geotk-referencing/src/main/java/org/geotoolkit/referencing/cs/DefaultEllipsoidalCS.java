@@ -41,6 +41,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.referencing.cs.AxisRangeType;
 
 
 /**

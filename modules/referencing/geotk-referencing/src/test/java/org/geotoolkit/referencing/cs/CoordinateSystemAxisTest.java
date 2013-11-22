@@ -43,7 +43,7 @@ import static org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis.*;
  *
  * @since 2.2
  */
-@DependsOn({/*IdentifiedObjectTest.class,*/ DirectionAlongMeridianTest.class})
+//@DependsOn({IdentifiedObjectTest.class, DirectionAlongMeridianTest.class})
 public final strictfp class CoordinateSystemAxisTest extends ReferencingTestBase {
     /**
      * For floating point number comparisons.

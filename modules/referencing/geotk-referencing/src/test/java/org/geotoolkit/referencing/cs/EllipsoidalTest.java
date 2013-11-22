@@ -23,7 +23,7 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.junit.*;
 
 import static org.geotoolkit.referencing.Assert.*;
-import static org.geotoolkit.referencing.cs.AxisRangeType.*;
+import static org.apache.sis.referencing.cs.AxisRangeType.*;
 
 
 /**
@@ -55,10 +55,10 @@ public final strictfp class EllipsoidalTest extends ReferencingTestBase {
         assertSame("Expected the original CS.", cs,      shifted.shiftAxisRange(SPANNING_ZERO_LONGITUDE));
         assertSame("Expected cached instance.", shifted, cs     .shiftAxisRange(POSITIVE_LONGITUDE));
 
-        assertEquals( 0, AxisRangeType.SPANNING_ZERO_LONGITUDE.indexIn(cs));
-        assertEquals(-1, AxisRangeType.SPANNING_ZERO_LONGITUDE.indexIn(shifted));
-        assertEquals(-1, AxisRangeType.POSITIVE_LONGITUDE.indexIn(cs));
-        assertEquals( 0, AxisRangeType.POSITIVE_LONGITUDE.indexIn(shifted));
+        assertEquals( 0, SPANNING_ZERO_LONGITUDE.indexIn(cs));
+        assertEquals(-1, SPANNING_ZERO_LONGITUDE.indexIn(shifted));
+        assertEquals(-1, POSITIVE_LONGITUDE.indexIn(cs));
+        assertEquals( 0, POSITIVE_LONGITUDE.indexIn(shifted));
     }
 
     /**
@@ -82,9 +82,9 @@ public final strictfp class EllipsoidalTest extends ReferencingTestBase {
         assertSame("Expected the original CS.", cs,      shifted.shiftAxisRange(SPANNING_ZERO_LONGITUDE));
         assertSame("Expected cached instance.", shifted, cs     .shiftAxisRange(POSITIVE_LONGITUDE));
 
-        assertEquals( 0, AxisRangeType.SPANNING_ZERO_LONGITUDE.indexIn(cs));
-        assertEquals(-1, AxisRangeType.SPANNING_ZERO_LONGITUDE.indexIn(shifted));
-        assertEquals(-1, AxisRangeType.POSITIVE_LONGITUDE.indexIn(cs));
-        assertEquals( 0, AxisRangeType.POSITIVE_LONGITUDE.indexIn(shifted));
+        assertEquals( 0, SPANNING_ZERO_LONGITUDE.indexIn(cs));
+        assertEquals(-1, SPANNING_ZERO_LONGITUDE.indexIn(shifted));
+        assertEquals(-1, POSITIVE_LONGITUDE.indexIn(cs));
+        assertEquals( 0, POSITIVE_LONGITUDE.indexIn(shifted));
     }
 }

@@ -35,7 +35,7 @@ import org.opengis.geometry.Envelope;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.cs.AxisRangeType;
+import org.apache.sis.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;

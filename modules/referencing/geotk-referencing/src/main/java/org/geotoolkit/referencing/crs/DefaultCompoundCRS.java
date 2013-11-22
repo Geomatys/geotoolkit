@@ -39,7 +39,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.Datum;
 
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.cs.AxisRangeType;
+import org.apache.sis.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.cs.DefaultCompoundCS;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.apache.sis.internal.util.UnmodifiableArrayList;

@@ -17,16 +17,18 @@
  */
 package org.geotoolkit.measure;
 
-import java.util.Objects;
 import javax.measure.unit.Unit;
-import net.jcip.annotations.Immutable;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.Immutable;
+import org.apache.sis.internal.util.Numerics;
+
+// Related to JDK7
+import java.util.Objects;
 
 
 /**
- * A scalar with a unit.
+ * A scalar value with a unit of measurement.
  *
- * @author Martin Desruisseaux (MPO, IRD)
+ * @author  Martin Desruisseaux (MPO, IRD)
  * @version 3.00
  *
  * @since 2.1
@@ -45,7 +47,7 @@ public final class Measure extends Number {
     private final double value;
 
     /**
-     * The unit.
+     * The unit, or {@code null} if unknown or inapplicable.
      */
     private final Unit<?> unit;
 
@@ -53,24 +55,57 @@ public final class Measure extends Number {
      * Creates a new measure with the specified value and unit.
      *
      * @param value The value.
-     * @param unit The unit of measurement for the given value.
+     * @param unit  The unit of measurement for the given value, or {@code null} if unknown or inapplicable.
      */
     public Measure(final double value, final Unit<?> unit) {
         this.value = value;
         this.unit  = unit;
     }
 
-    /** Returns the scalar value. */ @Override public double doubleValue() {return         value;}
-    /** Returns the scalar value. */ @Override public float   floatValue() {return (float) value;}
-    /** Returns the scalar value. */ @Override public long     longValue() {return (long)  value;}
-    /** Returns the scalar value. */ @Override public int       intValue() {return (int)   value;}
-    /** Returns the scalar value. */ @Override public short   shortValue() {return (short) value;}
-    /** Returns the scalar value. */ @Override public byte     byteValue() {return (byte)  value;}
+    /**
+     * Returns the scalar value.
+     *
+     * @return The scalar value.
+     */
+    @Override
+    public double doubleValue() {
+        return value;
+    }
 
     /**
-     * Returns the unit.
+     * Returns the scalar value casted as a {@code float}.
      *
-     * @return The unit of measurement.
+     * @return The scalar value.
+     */
+    @Override
+    public float floatValue() {
+        return (float) value;
+    }
+
+    /**
+     * Returns the scalar value {@linkplain Math#round(double) rounded} to the nearest long integer.
+     *
+     * @return The scalar value.
+     */
+    @Override
+    public long longValue() {
+        return Math.round(value);
+    }
+
+    /**
+     * Returns the scalar value {@linkplain Math#round(float) rounded} to the nearest integer.
+     *
+     * @return The scalar value.
+     */
+    @Override
+    public int intValue() {
+        return Math.round((float) value);
+    }
+
+    /**
+     * Returns the unit of measurement.
+     *
+     * @return The unit of measurement, or {@code null} if unknown or inapplicable.
      */
     public Unit<?> getUnit() {
         return unit;
@@ -78,11 +113,12 @@ public final class Measure extends Number {
 
     /**
      * Returns a hash code value for this measure.
+     *
+     * @return A hash code value.
      */
     @Override
     public int hashCode() {
-        long code = Double.doubleToLongBits(value);
-        return Utilities.hash(unit, (int) code ^ (int)(code >>> 32));
+        return Numerics.hash(value, Objects.hashCode(unit));
     }
 
     /**
@@ -95,18 +131,22 @@ public final class Measure extends Number {
     public boolean equals(final Object object) {
         if (object instanceof Measure) {
             final Measure that = (Measure) object;
-            return Utilities.equals(value, that.value) &&
-                     Objects.equals(unit,  that.unit);
+            return Numerics.equals(value, that.value) &&
+                    Objects.equals(unit,  that.unit);
         }
         return false;
     }
 
     /**
      * Returns a string representation of this measure.
+     *
+     * @return A string representation of this measure.
      */
     @Override
     public String toString() {
-        final String n = String.valueOf(value);
-        return (unit != null) ? n + ' ' + unit : n;
+        if (unit == null) {
+            return String.valueOf(value);
+        }
+        return new StringBuilder().append(value).append(' ').append(unit).toString();
     }
 }
