@@ -45,6 +45,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.unit.Unit;
+import javax.swing.ProgressMonitor;
 import net.iharder.Base64;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.AbstractCoverageReference;
@@ -325,7 +326,7 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
 
     @Override
     public void writeTiles(final String pyramidId, final String mosaicId,
-            final RenderedImage image, final boolean onlyMissing) throws DataStoreException {
+            final RenderedImage image, final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException {
         final int offsetX = image.getMinTileX();
         final int offsetY = image.getMinTileY();
 
@@ -346,6 +347,9 @@ public class PGCoverageReference extends AbstractCoverageReference implements Py
                 executor.submit(new Runnable() {
                     @Override
                     public void run() {
+                        if (monitor != null && monitor.isCanceled()) {
+                            return;
+                        }
                         try {
                             writeTile(pyramidId, mosaicId, tx, ty, img);
                         } catch (DataStoreException ex) {

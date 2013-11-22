@@ -28,6 +28,7 @@ import java.awt.image.WritableRaster;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ProgressMonitor;
 import org.apache.sis.storage.DataStoreException;
 
 /**
@@ -72,7 +73,8 @@ public abstract class AbstractPyramidalModel extends AbstractCoverageReference i
      * {@inheritDoc }.
      */
     @Override
-    public void writeTiles(final String pyramidId, final String mosaicId, final RenderedImage image, final boolean onlyMissing) throws DataStoreException {
+    public void writeTiles(final String pyramidId, final String mosaicId, final RenderedImage image, final boolean onlyMissing,
+            final ProgressMonitor monitor) throws DataStoreException {
         final int offsetX = image.getMinTileX();
         final int offsetY = image.getMinTileY();
 
@@ -93,6 +95,10 @@ public abstract class AbstractPyramidalModel extends AbstractCoverageReference i
                 executor.submit(new Runnable() {
                     @Override
                     public void run() {
+                        if (monitor != null && monitor.isCanceled()) {
+                            return;
+                        }
+
                         try {
                             writeTile(pyramidId, mosaicId, tx, ty, img);
                         } catch (DataStoreException ex) {

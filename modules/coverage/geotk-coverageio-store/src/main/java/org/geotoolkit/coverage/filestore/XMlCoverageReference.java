@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.unit.Unit;
+import javax.swing.ProgressMonitor;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
@@ -117,11 +118,11 @@ public class XMLCoverageReference extends AbstractPyramidalModel {
     }
 
     @Override
-    public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing) throws DataStoreException {
+    public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing, ProgressMonitor monitor) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
         final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
-        mosaic.writeTiles(image,onlyMissing);
+        mosaic.writeTiles(image,onlyMissing, monitor);
         save();
     }
 

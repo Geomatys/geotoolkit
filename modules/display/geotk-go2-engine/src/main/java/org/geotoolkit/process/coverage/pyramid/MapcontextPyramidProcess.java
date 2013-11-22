@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,9 @@
 package org.geotoolkit.process.coverage.pyramid;
 
 import java.awt.Dimension;
-import java.awt.geom.Point2D;
+import java.util.concurrent.CancellationException;
+import javax.swing.JLabel;
+import javax.swing.ProgressMonitor;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidalCoverageReference;
@@ -113,6 +115,10 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
 
             //generate each mosaic
             for (final double scale : scales) {
+                if (isCanceled()) {
+                    throw new CancellationException();
+                }
+
                 final double gridWidth  = envelope.getSpan(0) / (scale*tileSize.width);
                 final double gridHeight = envelope.getSpan(1) / (scale*tileSize.height);
 
@@ -142,6 +148,9 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                     mosaic = container.createMosaic(pyramid.getId(),gridSize, tileDim, upperleft, scale);
                 }
 
+                if (isCanceled()) {
+                    throw new CancellationException();
+                }
                 final PortrayalRenderedImage image = new PortrayalRenderedImage(
                         canvasDef, sceneDef, viewDef,
                         mosaic.getGridSize(), mosaic.getTileSize(), scale);
@@ -153,7 +162,10 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                     }
                 });
 
-                container.writeTiles(pyramid.getId(), mosaic.getId(), image, true);
+                container.writeTiles(pyramid.getId(), mosaic.getId(), image, true, new MapcontextPyramidMonitor(this));
+                if (isCanceled()) {
+                    throw new CancellationException();
+                }
 
                 getOrCreate(OUT_CONTAINER, outputParameters).setValue(container);
             }
@@ -169,4 +181,20 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
         fireProgressing(progress+"/"+total, (float)((double)progress/(double)total)*100f, false);
     }
 
+    /**
+     * Allow to cancel the tiles creation process.
+     */
+    private class MapcontextPyramidMonitor extends ProgressMonitor {
+        private final MapcontextPyramidProcess process;
+
+        public MapcontextPyramidMonitor(final MapcontextPyramidProcess process) {
+            super(new JLabel(), "", "", 0, 100);
+            this.process = process;
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return process.isCanceled();
+        }
+    }
 }

@@ -18,6 +18,9 @@ package org.geotoolkit.process.coverage.pgpyramid;
 
 import java.awt.Dimension;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
+import javax.swing.JLabel;
+import javax.swing.ProgressMonitor;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -71,12 +74,20 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
         }
 
         final PyramidCoverageBuilder pgcb = new PyramidCoverageBuilder(tilesize, interpolationcase, 2);
+        if (isCanceled()) {
+            throw new CancellationException();
+        }
         try {
-            pgcb.create(coverage, coverageStore, new DefaultName(pyramid_name), resolution_per_envelope, fillvalue, this);
-            getOrCreate(OUT_COVERAGESTORE, outputParameters).setValue(coverageStore);
+            pgcb.create(coverage, coverageStore, new DefaultName(pyramid_name), resolution_per_envelope, fillvalue,
+                    this, new PyramidMonitor(this));
         } catch (Exception ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
+
+        if (isCanceled()) {
+            throw new CancellationException();
+        }
+        getOrCreate(OUT_COVERAGESTORE, outputParameters).setValue(coverageStore);
     }
 
     /**
@@ -125,5 +136,22 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
     @Override
     public void failed(ProcessEvent event) {
         fireProcessFailed(event.getTask(), event.getException());
+    }
+
+    /**
+     * Allow to cancel the tiles creation process.
+     */
+    private class PyramidMonitor extends ProgressMonitor {
+        private final PyramidProcess process;
+
+        public PyramidMonitor(final PyramidProcess process) {
+            super(new JLabel(), "", "", 0, 100);
+            this.process = process;
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return process.isCanceled();
+        }
     }
 }

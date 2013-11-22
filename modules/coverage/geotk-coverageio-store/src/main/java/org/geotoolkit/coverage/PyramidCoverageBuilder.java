@@ -20,6 +20,8 @@ import java.awt.Dimension;
 import java.awt.image.*;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
+import javax.swing.ProgressMonitor;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -220,7 +222,7 @@ public class PyramidCoverageBuilder {
     public void create(GridCoverage gridCoverage, CoverageStore coverageStore, Name coverageName,
             Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue)
             throws DataStoreException, TransformException, FactoryException {
-        create(gridCoverage, coverageStore, coverageName, resolution_Per_Envelope, fillValue, null);
+        create(gridCoverage, coverageStore, coverageName, resolution_Per_Envelope, fillValue, null, null);
     }
 
     /**
@@ -238,12 +240,14 @@ public class PyramidCoverageBuilder {
      * @param resolution_Per_Envelope reprojection and resampling attibuts.
      * @param fillValue contains value use when pixel transformation is out of source image boundary.
      * @param processListener {@link ProcessListener} to send state informations (should be null).
+     * @param monitor A progress monitor used for detecting a cancel request during the process. Can be {@code null}.
      * @throws DataStoreException if tile writing throw exception.
      * @throws TransformException if problems during resampling operation.
      * @throws FactoryException if impossible to find {@code MathTransform} between two {@link CoordinateReferenceSystem}.
      */
     public void create(GridCoverage gridCoverage, CoverageStore coverageStore, Name coverageName,
-            Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue, ProcessListener processListener)
+            Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue,
+            ProcessListener processListener, ProgressMonitor monitor)
             throws DataStoreException, TransformException, FactoryException {
         ArgumentChecks.ensureNonNull("GridCoverage"           , gridCoverage);
         ArgumentChecks.ensureNonNull("output CoverageStore"   , coverageStore);
@@ -265,12 +269,22 @@ public class PyramidCoverageBuilder {
             if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
             throw ex;
         }
+        if (monitor != null && monitor.isCanceled()) {
+            final CancellationException ex = new CancellationException();
+            if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
+            throw ex;
+        }
         final PyramidalCoverageReference pm     = (PyramidalCoverageReference) cv;
 
         //Image
         fillValue = getFillValue((GridCoverage2D)gridCoverage, fillValue);
 
         for (Envelope envDest : resolution_Per_Envelope.keySet()) {
+            if (monitor != null && monitor.isCanceled()) {
+                final CancellationException ex = new CancellationException();
+                if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
+                throw ex;
+            }
             final CoordinateReferenceSystem crs = envDest.getCoordinateReferenceSystem();
             final int minOrdi0                  = CoverageUtilities.getMinOrdinate(crs);
             final int minOrdi1                  = minOrdi0 + 1;

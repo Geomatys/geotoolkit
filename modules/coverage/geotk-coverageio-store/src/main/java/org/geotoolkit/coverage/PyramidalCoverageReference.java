@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.Map;
+import javax.swing.ProgressMonitor;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.opengis.geometry.DirectPosition;
@@ -42,6 +43,7 @@ public interface PyramidalCoverageReference extends CoverageReference{
      *
      * @return true if model can be modified
      */
+    @Override
     boolean isWritable() throws CoverageStoreException;
 
     /**
@@ -95,9 +97,10 @@ public interface PyramidalCoverageReference extends CoverageReference{
      * @param mosaicId
      * @param image
      * @param onlyMissing : set to true to fill only missing tiles
+     * @param monitor A progress monitor in order to eventually cancel the process. May be {@code null}.
      * @throws DataStoreException
      */
-    void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing) throws DataStoreException;
+    void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing, ProgressMonitor monitor) throws DataStoreException;
 
     /**
      * Write or update a single tile in the mosaic.

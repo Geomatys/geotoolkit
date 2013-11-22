@@ -44,8 +44,8 @@ import java.util.logging.Logger;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
-import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageOutputStream;
+import javax.swing.ProgressMonitor;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -321,12 +321,16 @@ public class XMLMosaic implements GridMosaic{
         }
     }
 
-    void writeTiles(final RenderedImage image, final boolean onlyMissing) throws DataStoreException{
-
+    void writeTiles(final RenderedImage image, final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException{
         final List<Future> futurs = new ArrayList<>();
         try {
             for(int y=0,ny=image.getNumYTiles(); y<ny; y++){
                 for(int x=0,nx=image.getNumXTiles(); x<nx; x++){
+                    if (monitor != null && monitor.isCanceled()) {
+                        // Stops submitting new thread
+                        return;
+                    }
+
                     if(onlyMissing && !isMissing(x, y)){
                         continue;
                     }
@@ -336,7 +340,7 @@ public class XMLMosaic implements GridMosaic{
 
                     final File f = getTileFile(x, y);
                     f.getParentFile().mkdirs();
-                    Future fut = TILEWRITEREXECUTOR.submit(new TileWriter(f, image, x, y, tileIndex, image.getColorModel(), getPyramid().getPyramidSet().getFormatName()));
+                    Future fut = TILEWRITEREXECUTOR.submit(new TileWriter(f, image, x, y, tileIndex, image.getColorModel(), getPyramid().getPyramidSet().getFormatName(), monitor));
                     futurs.add(fut);
                 }
             }
@@ -400,8 +404,9 @@ public class XMLMosaic implements GridMosaic{
         private final int tileIndex;
         private final ColorModel cm;
         private final String formatName;
+        private final ProgressMonitor monitor;
 
-        public TileWriter(File f,RenderedImage image, int idx, int idy, int tileIndex, ColorModel cm, String formatName) {
+        public TileWriter(File f,RenderedImage image, int idx, int idy, int tileIndex, ColorModel cm, String formatName, ProgressMonitor monitor) {
             ArgumentChecks.ensureNonNull("file", f);
             ArgumentChecks.ensureNonNull("image", image);
             this.f = f;
@@ -411,10 +416,16 @@ public class XMLMosaic implements GridMosaic{
             this.tileIndex = tileIndex;
             this.cm = cm;
             this.formatName = formatName;
+            this.monitor = monitor;
         }
 
         @Override
         public void run() {
+            // Stops writing tile if process cancelled
+            if (monitor != null && monitor.isCanceled()) {
+                return;
+            }
+
             ImageWriter writer = null;
             ImageOutputStream out = null;
             try{

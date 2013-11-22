@@ -21,6 +21,7 @@ import java.awt.Image;
 import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.Map;
+import javax.swing.ProgressMonitor;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -102,7 +103,7 @@ public class GoogleCoverageReference extends AbstractCoverageReference implement
     }
 
     @Override
-    public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing) throws DataStoreException {
+    public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing, ProgressMonitor monitor) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
 
