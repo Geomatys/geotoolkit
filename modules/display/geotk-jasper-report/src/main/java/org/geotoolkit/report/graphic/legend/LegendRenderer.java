@@ -126,6 +126,4 @@ public class LegendRenderer implements JRRenderable{
             throw new JRException(ex);
         }
     }
-
-
 }

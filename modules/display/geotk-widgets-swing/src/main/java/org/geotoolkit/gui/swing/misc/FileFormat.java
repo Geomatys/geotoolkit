@@ -50,6 +50,7 @@ public enum FileFormat {
     MICROSTATION_DGN("filter_microstation_dgn", "dgn"),
     NETCDF_GRIB("filter_netcdfgrib", "nc", "ncml", "cdf", "grib","grib1","grib2","grb","grb1","grb2","grd"),
     NMEA("filter_nmea", "txt", "log"),
+    PDF("filter_pdf", "pdf"),
     PORTABLE_NETWORK_GRAPHICS("filter_png", "png"),
     SCALABLE_VECTOR_GRAPHICS("filter_svg", "svg"),
     STYLE_LAYER_DESCRIPTOR("filter_sld", "sld"),
