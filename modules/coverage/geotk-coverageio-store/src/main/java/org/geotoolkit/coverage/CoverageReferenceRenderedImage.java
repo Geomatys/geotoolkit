@@ -21,6 +21,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.*;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.EventListener;
 import java.util.List;
 import java.util.Vector;
@@ -37,6 +38,7 @@ import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
@@ -293,13 +295,23 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
             final int tileHeight = getTileHeight();
             final BufferedImage workTile;
             final int nbBand = sampleDimensions.length;
+            final double[] fillValue = new double[nbBand];
+            Arrays.fill(fillValue,Double.NaN);
             final double res = mosaic.getScale();
-            if(sampleDimensions!=null && sampleDimensions.length>0){
+            if(sampleDimensions.length>0){
                 workTile = BufferedImageUtilities.createImage(tileWidth, tileHeight, sampleDimensions.length,
                         XMLSampleDimension.getDataType(sampleDimensions[0].getSampleDimensionType()));
+                for(int i=0;i<nbBand;i++){
+                    final double[] nodata = sampleDimensions[i].geophysics(true).getNoDataValues();
+                    if(nodata!=null && nodata.length>0){
+                        fillValue[i] = nodata[0];
+                    }
+                }
             }else{
                 workTile = new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
             }
+
+            ImageUtilities.fill(workTile, fillValue[0]);
 
             // define tile translation from bufferedImage min pixel position to mosaic pixel position.
             final int minidx = idx * getTileWidth();
@@ -318,7 +330,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
             final MathTransform destImgToCrsCoverage = MathTransforms.concatenate(destImgToCRSDest, crsDestToSrcGrid);
 
             try {
-                final Resample resample = new Resample(destImgToCrsCoverage, workTile, interpolation, new double[nbBand]);
+                final Resample resample = new Resample(destImgToCrsCoverage, workTile, interpolation, fillValue);
                 resample.fillImage();
             } catch (Exception ex) {
                 throw new RuntimeException(ex);

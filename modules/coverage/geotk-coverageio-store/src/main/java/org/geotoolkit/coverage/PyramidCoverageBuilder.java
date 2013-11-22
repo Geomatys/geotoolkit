@@ -18,6 +18,7 @@ package org.geotoolkit.coverage;
 
 import java.awt.Dimension;
 import java.awt.image.*;
+import java.util.Arrays;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -36,6 +37,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessException;
@@ -266,11 +268,9 @@ public class PyramidCoverageBuilder {
         final PyramidalCoverageReference pm     = (PyramidalCoverageReference) cv;
 
         //Image
-        final RenderedImage baseImg = ((GridCoverage2D)gridCoverage).getRenderedImage();
-        final ColorModel cm         = baseImg.getColorModel();
-        final double[] fill         = (fillValue == null) ? new double[cm.getNumComponents()] : fillValue;
-        for (Envelope envDest : resolution_Per_Envelope.keySet()) {
+        fillValue = getFillValue((GridCoverage2D)gridCoverage, fillValue);
 
+        for (Envelope envDest : resolution_Per_Envelope.keySet()) {
             final CoordinateReferenceSystem crs = envDest.getCoordinateReferenceSystem();
             final int minOrdi0                  = CoverageUtilities.getMinOrdinate(crs);
             final int minOrdi1                  = minOrdi0 + 1;
@@ -279,7 +279,7 @@ public class PyramidCoverageBuilder {
             upperLeft.setOrdinate(minOrdi1, envDest.getMaximum(minOrdi1));
             //one pyramid for each CoordinateReferenceSystem.
             final Pyramid pyram                 = getOrCreatePyramid(pm, crs);
-            resample(pm, pyram.getId(), ((GridCoverage2D)gridCoverage), resolution_Per_Envelope.get(envDest), upperLeft, envDest, minOrdi0, minOrdi1, fill, processListener);
+            resample(pm, pyram.getId(), ((GridCoverage2D)gridCoverage), resolution_Per_Envelope.get(envDest), upperLeft, envDest, minOrdi0, minOrdi1, fillValue, processListener);
         }
         if (processListener != null)  processListener.completed(new ProcessEvent(fakeProcess, "Pyramid coverage builder successfully submitted.", 100));
     }
@@ -419,7 +419,7 @@ public class PyramidCoverageBuilder {
         final double envWidth       = envDest.getSpan(widthAxis);
         final double envHeight      = envDest.getSpan(heightAxis);
         final int nbBand            = baseImg.getSampleModel().getNumBands();
-        final double[] fill         = (fillValue == null) ? new double[nbBand] : fillValue;
+        final double[] fill         = getFillValue(gridCoverage2D, fillValue);
         final int dataType          = baseImg.getSampleModel().getDataType();
         final double min0           = envDest.getMinimum(widthAxis);
         final double max1           = envDest.getMaximum(heightAxis);
@@ -450,6 +450,8 @@ public class PyramidCoverageBuilder {
                     final int destMinX  = cTX * tileWidth;
                     final int destMinY  = cTY * tileHeight;
                     final WritableRenderedImage destImg = BufferedImageUtilities.createImage(tileWidth, tileHeight, baseImg);
+                    //ensure fill value is set.
+                    ImageUtilities.fill(destImg, fillValue[0]);
 
                     if (processListener != null) {
                         processListener.progressing(new ProcessEvent(fakeProcess, (++niemeTile)+"/"+globalTileNumber, (niemeTile * 100 / globalTileNumber)));
@@ -466,6 +468,23 @@ public class PyramidCoverageBuilder {
                 }
             }
         }
+    }
+
+    private static double[] getFillValue(GridCoverage2D gridCoverage2D, double[] fillValue){
+        //calculate fill values
+        if(fillValue == null){
+            final GridSampleDimension[] dimensions = gridCoverage2D.getSampleDimensions();
+            final int nbBand = dimensions.length;
+            fillValue = new double[nbBand];
+            Arrays.fill(fillValue, Double.NaN);
+            for(int i=0;i<nbBand;i++){
+                final double[] nodata = dimensions[i].geophysics(true).getNoDataValues();
+                if(nodata!=null && nodata.length>0){
+                    fillValue[i] = nodata[0];
+                }
+            }
+        }
+        return fillValue;
     }
 
     /**
