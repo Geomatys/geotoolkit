@@ -17,11 +17,8 @@
 package org.geotoolkit.gui.swing.navigator;
 
 import java.awt.FontMetrics;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+
 import org.geotoolkit.temporal.object.TemporalConstants;
 
 /**
@@ -104,6 +101,7 @@ public interface TimeSubdivision {
         public long[] getSteps(long begin, long end) {
             final GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTimeInMillis(begin);
+            calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
             calendar.set(Calendar.MONTH, 0);
             calendar.set(Calendar.DAY_OF_MONTH, 1);
             calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -153,6 +151,7 @@ public interface TimeSubdivision {
         public String getText(long milliseconds) {
             final GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTimeInMillis(milliseconds);
+            calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
             return calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault());
         }
 
@@ -160,6 +159,7 @@ public interface TimeSubdivision {
         public long[] getSteps(long begin, long end) {
             final GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTimeInMillis(begin);
+            calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
             calendar.set(Calendar.DAY_OF_MONTH, 1);
             calendar.set(Calendar.HOUR_OF_DAY, 0);
             calendar.set(Calendar.MINUTE, 0);
@@ -208,6 +208,7 @@ public interface TimeSubdivision {
         public String getText(long milliseconds) {
             final GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTimeInMillis(milliseconds);
+            calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
             return String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
         }
 
@@ -215,6 +216,7 @@ public interface TimeSubdivision {
         public long[] getSteps(long begin, long end) {
             final GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTimeInMillis(begin);
+            calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
             calendar.set(Calendar.HOUR_OF_DAY, 0);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.MILLISECOND, 1);
@@ -262,6 +264,7 @@ public interface TimeSubdivision {
         public String getText(long milliseconds) {
             final GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTimeInMillis(milliseconds);
+            calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
             return String.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
         }
 
@@ -269,6 +272,7 @@ public interface TimeSubdivision {
         public long[] getSteps(long begin, long end) {
             final GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTimeInMillis(begin);
+            calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.MILLISECOND, 1);
 
@@ -315,6 +319,7 @@ public interface TimeSubdivision {
         public String getText(long milliseconds) {
             final GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTimeInMillis(milliseconds);
+            calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
             return String.valueOf(calendar.get(Calendar.MINUTE));
         }
 
@@ -322,6 +327,7 @@ public interface TimeSubdivision {
         public long[] getSteps(long begin, long end) {
             final GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTimeInMillis(begin);
+            calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.MILLISECOND, 1);
 
@@ -368,6 +374,7 @@ public interface TimeSubdivision {
         public String getText(long milliseconds) {
             final GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTimeInMillis(milliseconds);
+            calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
             return String.valueOf(calendar.get(Calendar.MINUTE));
         }
 
@@ -375,6 +382,7 @@ public interface TimeSubdivision {
         public long[] getSteps(long begin, long end) {
             final GregorianCalendar calendar = new GregorianCalendar();
             calendar.setTimeInMillis(begin);
+            calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.MILLISECOND, 1);
 

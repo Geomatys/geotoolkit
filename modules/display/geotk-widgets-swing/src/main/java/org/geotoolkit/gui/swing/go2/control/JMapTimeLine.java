@@ -524,7 +524,7 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener, 
     private void checkLayerBands(MapItem source, int checkType) {
         if (source == null) {
             return;
-}
+        }
 
         if (source instanceof MapLayer) {
             final MapLayer layer = (MapLayer) source;
