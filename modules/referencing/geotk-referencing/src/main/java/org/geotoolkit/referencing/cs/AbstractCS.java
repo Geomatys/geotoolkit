@@ -24,12 +24,9 @@ import java.util.Map;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Collections;
-import java.util.Objects;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.unit.NonSI;
-import javax.measure.converter.UnitConverter;
-import javax.measure.converter.LinearConverter;
 import javax.measure.converter.ConversionException;
 import javax.xml.bind.annotation.XmlElement;
 import net.jcip.annotations.Immutable;
@@ -42,15 +39,14 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.InternationalString;
 
 import org.apache.sis.util.ComparisonMode;
-import org.apache.sis.util.Classes;
 import org.geotoolkit.measure.Measure;
-import org.apache.sis.measure.Units;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
+import org.apache.sis.referencing.cs.CoordinateSystems;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.Utilities.deepEquals;
@@ -299,20 +295,6 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
     }
 
     /**
-     * Returns the axis direction for the specified coordinate system.
-     *
-     * @param  cs The coordinate system.
-     * @return The axis directions for the specified coordinate system.
-     */
-    private static AxisDirection[] getAxisDirections(final CoordinateSystem cs) {
-        final AxisDirection[] axis = new AxisDirection[cs.getDimension()];
-        for (int i=0; i<axis.length; i++) {
-            axis[i] = cs.getAxis(i).getDirection();
-        }
-        return axis;
-    }
-
-    /**
      * Returns an affine transform between two coordinate systems. Only units and
      * axis order (e.g. transforming from
      * ({@linkplain AxisDirection#NORTH NORTH},{@linkplain AxisDirection#WEST WEST}) to
@@ -338,65 +320,15 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
      * @throws IllegalArgumentException if axis doesn't matches, or the CS doesn't have the
      *         same geometry.
      * @throws ConversionException if the units are not compatible, or the conversion is non-linear.
+     *
+     * @deprecated Moved to Apache SIS as {@link CoordinateSystems#swapAndScaleAxes(CoordinateSystem, CoordinateSystem)}.
      */
+    @Deprecated
     public static Matrix swapAndScaleAxis(final CoordinateSystem sourceCS,
                                           final CoordinateSystem targetCS)
             throws IllegalArgumentException, ConversionException
     {
-        if (!Classes.implementSameInterfaces(sourceCS.getClass(), targetCS.getClass(), CoordinateSystem.class)) {
-            throw new IllegalArgumentException(Errors.format(
-                      Errors.Keys.INCOMPATIBLE_COORDINATE_SYSTEM_TYPE));
-        }
-        final AxisDirection[] sourceAxis = getAxisDirections(sourceCS);
-        final AxisDirection[] targetAxis = getAxisDirections(targetCS);
-        final GeneralMatrix matrix = new GeneralMatrix(sourceAxis, targetAxis);
-        assert Arrays.equals(sourceAxis, targetAxis) == matrix.isIdentity() : matrix;
-        /*
-         * The previous code computed a matrix for swapping axis. Usually, this
-         * matrix contains only 0 and 1 values with only one "1" value by row.
-         * For example, the matrix operation for swapping x and y axis is:
-         *          ┌ ┐   ┌         ┐ ┌ ┐
-         *          │y│   │ 0  1  0 │ │x│
-         *          │x│ = │ 1  0  0 │ │y│
-         *          │1│   │ 0  0  1 │ │1│
-         *          └ ┘   └         ┘ └ ┘
-         * Now, take in account units conversions. Each matrix's element (j,i)
-         * is multiplied by the conversion factor from sourceCS.getUnit(i) to
-         * targetCS.getUnit(j). This is an element-by-element multiplication,
-         * not a matrix multiplication. The last column is processed in a special
-         * way, since it contains the offset values.
-         */
-        final int sourceDim = matrix.getNumCol()-1;
-        final int targetDim = matrix.getNumRow()-1;
-        assert sourceDim == sourceCS.getDimension() : sourceCS;
-        assert targetDim == targetCS.getDimension() : targetCS;
-        for (int j=0; j<targetDim; j++) {
-            final Unit<?> targetUnit = targetCS.getAxis(j).getUnit();
-            for (int i=0; i<sourceDim; i++) {
-                final double element = matrix.getElement(j,i);
-                if (element == 0) {
-                    // There is no dependency between source[i] and target[j]
-                    // (i.e. axis are orthogonal).
-                    continue;
-                }
-                final Unit<?> sourceUnit = sourceCS.getAxis(i).getUnit();
-                if (Objects.equals(sourceUnit, targetUnit)) {
-                    // There is no units conversion to apply
-                    // between source[i] and target[j].
-                    continue;
-                }
-                final UnitConverter converter = sourceUnit.getConverterToAny(targetUnit);
-                if (!(converter instanceof LinearConverter)) {
-                    throw new ConversionException(Errors.format(
-                              Errors.Keys.NON_LINEAR_UNIT_CONVERSION_2, sourceUnit, targetUnit));
-                }
-                final double offset = converter.convert(0);
-                final double scale  = Units.derivative(converter, 0);
-                matrix.setElement(j,i, element*scale);
-                matrix.setElement(j,sourceDim, matrix.getElement(j,sourceDim) + element*offset);
-            }
-        }
-        return matrix;
+        return new GeneralMatrix(CoordinateSystems.swapAndScaleAxes(sourceCS, targetCS));
     }
 
     /**

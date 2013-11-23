@@ -42,6 +42,7 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.io.wkt.Formatter;
 import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.cs.CoordinateSystems;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -985,31 +986,16 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
      * @param  direction The direction name (e.g. "north", "east", etc.).
      * @return The axis direction for the given name.
      * @throws NoSuchElementException if the given name is not a know axis direction.
+     *
+     * @deprecated Moved to Apache SIS {@link CoordinateSystems#parseAxisDirection(String)}.
      */
+    @Deprecated
     public static AxisDirection getDirection(String direction) throws NoSuchElementException {
-        ensureNonNull("direction", direction);
-        direction = direction.trim();
-        AxisDirection candidate = Directions.find(direction);
-        if (candidate != null) {
-            return candidate;
+        try {
+            return CoordinateSystems.parseAxisDirection(direction);
+        } catch (IllegalArgumentException e) {
+            throw new NoSuchElementException(e.getMessage());
         }
-        /*
-         * Some EPSG direction names are of the form "South along 180 deg". We check that the
-         * direction before "along" is valid and create a new axis direction if it is. We can
-         * not just replace "South along 180 deg" by "South" because the same CRS may use two
-         * of those directions. For example EPSG:32661 has the following axis direction:
-         *
-         * South along 180 deg
-         * South along 90 deg East
-         */
-        final DirectionAlongMeridian meridian = DirectionAlongMeridian.parse(direction);
-        if (meridian != null) {
-            candidate = meridian.getDirection();
-            assert candidate == Directions.find(meridian.toString());
-            return candidate;
-        }
-        throw new NoSuchElementException(
-                Errors.format(Errors.Keys.UNKNOWN_AXIS_DIRECTION_1, direction));
     }
 
     /**
@@ -1119,17 +1105,6 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
         return n >= 0 && n < COMPASS_DIRECTION_COUNT;
     }
 
-    /*
-     * Returns {@code true} if the specified direction is a direction along a meridian.
-     * Those directions are used in coordinate systems for polar area. Examples:
-     * "<cite>North along 90 deg East</cite>", "<cite>North along 0 deg</cite>".
-     *
-     * We do not provide such method yet. If we want this functionality, maybe we should
-     * consider making DirectionAlongMeridian a public class extending AxisDirection code
-     * list instead.
-     */
-//  public static boolean isDirectionAlongMeridian(final AxisDirection direction);
-
     /**
      * Returns the arithmetic (counterclockwise) angle from the first direction to the second
      * direction, in decimal <strong>degrees</strong>. This method returns a value between
@@ -1154,24 +1129,12 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
      *         {@link Double#NaN} if this value can't be computed.
      *
      * @since 2.4
+     *
+     * @deprecated Moved to Apache SIS as {@link CoordinateSystems#angle(AxisDirection, AxisDirection)}
      */
+    @Deprecated
     public static double getAngle(final AxisDirection source, final AxisDirection target) {
-        ensureNonNull("source", source);
-        ensureNonNull("target", target);
-        // Tests for NORTH, SOUTH, EAST, EAST-NORTH-EAST, etc. directions.
-        final int compass = getCompassAngle(source, target);
-        if (compass != Integer.MIN_VALUE) {
-            return compass * (360.0 / COMPASS_DIRECTION_COUNT);
-        }
-        // Tests for "South along 90 deg East", etc. directions.
-        final DirectionAlongMeridian src = DirectionAlongMeridian.parse(source);
-        if (src != null) {
-            final DirectionAlongMeridian tgt = DirectionAlongMeridian.parse(target);
-            if (tgt != null) {
-                return src.getAngle(tgt);
-            }
-        }
-        return Double.NaN;
+        return CoordinateSystems.angle(source, target);
     }
 
     /**
@@ -1206,7 +1169,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
      * @since 2.4
      */
     public static boolean perpendicular(final AxisDirection first, final AxisDirection second) {
-        return Math.abs(Math.abs(getAngle(first, second)) - 90) <= DirectionAlongMeridian.EPS;
+        return Math.abs(Math.abs(getAngle(first, second)) - 90) <= 1E-10;
     }
 
     /**

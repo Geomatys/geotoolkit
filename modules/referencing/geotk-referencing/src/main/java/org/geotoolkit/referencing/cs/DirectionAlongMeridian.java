@@ -47,11 +47,6 @@ final class DirectionAlongMeridian implements Comparable<DirectionAlongMeridian>
     private static final long serialVersionUID = 1602711631943838328L;
 
     /**
-     * For floating point comparisons.
-     */
-    static final double EPS = 1E-10;
-
-    /**
      * A parser for EPSG axis names. Examples:
      *
      * "<cite>South along 180 deg</cite>",

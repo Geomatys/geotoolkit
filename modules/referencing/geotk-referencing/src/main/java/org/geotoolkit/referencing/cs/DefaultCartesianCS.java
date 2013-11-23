@@ -268,7 +268,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
             for (int j=i; ++j<dimension;) {
                 final AxisDirection axis1 = getAxis(j).getDirection();
                 final double angle = DefaultCoordinateSystemAxis.getAngle(axis0, axis1);
-                if (Math.abs(Math.abs(angle) - 90) > DirectionAlongMeridian.EPS) {
+                if (Math.abs(Math.abs(angle) - 90) > 1E-10) {
                     throw new IllegalArgumentException(Errors.format(
                             Errors.Keys.NON_PERPENDICULAR_AXIS_2, axis0.name(), axis1.name()));
                 }
