@@ -20,6 +20,12 @@
  */
 package org.geotoolkit.referencing.cs;
 
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.EllipsoidalCS;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.geotoolkit.internal.referencing.AxisDirections;
+
 
 /**
  * High-level characteristics about the range of ordinate values expected in a coordinate system.
@@ -40,25 +46,49 @@ package org.geotoolkit.referencing.cs;
  *
  * @since 3.20
  * @module
- *
- * @deprecated Moved to {@link org.apache.sis.referencing.cs.AxisRangeType}.
  */
-@Deprecated
-public final class AxisRangeType {
+public enum AxisRangeType {
     /**
      * The coordinate system uses positive and negative longitude values, typically
      * in the [-180 … +180]° range. The exact range and the angular units may vary.
      */
-    public static final org.apache.sis.referencing.cs.AxisRangeType SPANNING_ZERO_LONGITUDE =
-            org.apache.sis.referencing.cs.AxisRangeType.SPANNING_ZERO_LONGITUDE;
+    SPANNING_ZERO_LONGITUDE,
 
     /**
      * The coordinate system uses positive longitude values, typically in the [0 … 360]° range.
      * The exact range and the angular units may vary.
      */
-    public static final org.apache.sis.referencing.cs.AxisRangeType POSITIVE_LONGITUDE =
-            org.apache.sis.referencing.cs.AxisRangeType.POSITIVE_LONGITUDE;
+    POSITIVE_LONGITUDE;
 
-    private AxisRangeType() {
+    /*
+     * If more enum are added, please edit the {@code AXIS_RANGE_*} constants in the
+     * org.geotoolkit.internal.referencing.CRSUtilities class.
+     */
+
+    /**
+     * Finds the dimension of the first axis having a range of values described by this type.
+     * If no axis uses this type, returns -1.
+     *
+     * @param  cs The coordinate system in which to search for an axis having this type of range.
+     * @return Dimension of the first axis having this type of range, of -1 if none.
+     */
+    public int indexIn(final CoordinateSystem cs) {
+        if (cs instanceof DefaultCompoundCS) {
+            for (final CoordinateSystem component : ((DefaultCompoundCS) cs).getComponents()) {
+                final int i = indexIn(component);
+                if (i >= 0) return i;
+            }
+        }
+        if (cs instanceof EllipsoidalCS) {
+            final int i = AxisDirections.indexOf(cs, AxisDirection.EAST);
+            if (i >= 0) {
+                final CoordinateSystemAxis axis = cs.getAxis(i);
+                final boolean positive = axis.getMinimumValue() >= 0;
+                if ((this == POSITIVE_LONGITUDE) == positive) {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 }

@@ -23,7 +23,7 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.junit.*;
 
 import static org.geotoolkit.referencing.Assert.*;
-import static org.apache.sis.referencing.cs.AxisRangeType.*;
+import static org.geotoolkit.referencing.cs.AxisRangeType.*;
 
 
 /**

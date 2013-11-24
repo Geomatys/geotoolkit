@@ -43,7 +43,7 @@ import org.geotoolkit.measure.Measure;
 import org.apache.sis.metadata.iso.extent.Extents;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
-import org.apache.sis.referencing.cs.AxisRangeType;
+import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
