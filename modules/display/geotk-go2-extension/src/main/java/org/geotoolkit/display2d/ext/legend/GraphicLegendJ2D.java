@@ -119,12 +119,7 @@ public class GraphicLegendJ2D extends PositionedGraphic2D{
         }
 
         final Rectangle area = new Rectangle(x, y, imgWidth, imgHeight);
-
-        try {
-            J2DLegendUtilities.paintLegend(mapContext, g, area, template);
-        } catch (PortrayalException ex) {
-            context.getMonitor().exceptionOccured(ex, Level.WARNING);
-        }
+        J2DLegendUtilities.paintLegend(mapContext, g, area, template);
     }
 
     @Override

@@ -29,7 +29,6 @@ import java.awt.geom.Rectangle2D;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRenderable;
 
-import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.DefaultBackgroundTemplate;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendTemplate;
@@ -114,16 +113,10 @@ public class LegendRenderer implements JRRenderable{
      * {@inheritDoc }
      */
     @Override
-    public void render(final Graphics2D g, final Rectangle2D rect) throws JRException {
+    public void render(final Graphics2D g, final Rectangle2D rect) {
         if(context == null) return;
-
         final Graphics2D g2d = (Graphics2D) g.create();
         final Rectangle area = rect.getBounds();
-
-        try {
-            J2DLegendUtilities.paintLegend(context, g2d, area, template);
-        } catch (PortrayalException ex) {
-            throw new JRException(ex);
-        }
+        J2DLegendUtilities.paintLegend(context, g2d, area, template);
     }
 }
