@@ -169,7 +169,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
             int fillHeight = Double.valueOf(rectangle.getHeight()).intValue();
             int intervalHeight = fillHeight / colorMapSize;
 
-            Rectangle2D paintRectangle = new Rectangle(0, 0, LEGEND_PALETTE_WIDTH, fillHeight);
+            Rectangle2D paintRectangle = new Rectangle((int) rectangle.getX(), (int) rectangle.getY(), LEGEND_PALETTE_WIDTH, fillHeight);
 
             g.setClip(rectangle);
 
@@ -204,8 +204,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                     new Point2D.Double(paintRectangle.getMinX(),rectangle.getMaxY()),
                     fractions,
                     colors,
-                    MultipleGradientPaint.CycleMethod.NO_CYCLE
-                );
+                    MultipleGradientPaint.CycleMethod.NO_CYCLE);
                 g.setPaint(paint);
                 g.fill(paintRectangle);
             } else {
@@ -226,7 +225,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
             //paint text
             float Y = Double.valueOf(rectangle.getMinY()).floatValue();
             float shift = doInterpolation ? 0.6f : 0.7f;
-            g.setFont(LEGEND_FONT);
+
             g.setColor(Color.BLACK);
             for (Map.Entry<Object, Color> elem : colorMap.entrySet()) {
                 final String text = "< "+elem.getKey().toString();
