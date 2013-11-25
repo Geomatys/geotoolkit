@@ -225,7 +225,7 @@ public class LuceneSearcherTest {
      */
     @Test
     public void rTreeBBOXTest() throws Exception {
-        Tree rTree = RtreeManager.get(searcher.getFileDirectory());
+        Tree rTree = RtreeManager.get(searcher.getFileDirectory(), this);
         /*
          * first bbox
          */

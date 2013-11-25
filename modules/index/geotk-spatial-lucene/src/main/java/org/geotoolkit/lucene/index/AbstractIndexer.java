@@ -132,7 +132,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             setFileDirectory(currentIndexDirectory);
             needCreation = false;
         }
-        rTree = RtreeManager.get(currentIndexDirectory);
+        rTree = RtreeManager.get(currentIndexDirectory, this);
     }
 
     /**

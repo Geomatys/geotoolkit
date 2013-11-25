@@ -153,12 +153,12 @@ public abstract class IndexLucene {
     }
 
     protected void resetTree() throws StoreIndexException, IOException {
-        rTree = RtreeManager.resetTree(getFileDirectory(), rTree);
+        rTree = RtreeManager.resetTree(getFileDirectory(), rTree, this);
     }
 
     private void closeTree() {
         try {
-            RtreeManager.close(rTree);
+            RtreeManager.close(getFileDirectory(), rTree, this);
         } catch (StoreIndexException | IOException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }

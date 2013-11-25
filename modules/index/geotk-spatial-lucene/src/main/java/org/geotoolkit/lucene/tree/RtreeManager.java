@@ -19,7 +19,9 @@ package org.geotoolkit.lucene.tree;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,20 +40,29 @@ import org.opengis.util.FactoryException;
 public class RtreeManager {
 
     private static final Map<File, Tree<NamedEnvelope>> CACHED_TREES = new HashMap<>();
+    private static final Map<File, List<Object>> TREE_OWNERS = new HashMap<>();
+
     private static final Logger LOGGER = Logging.getLogger(RtreeManager.class);
 
-    public static void close(final Tree rTree) throws StoreIndexException, IOException {
-        if (rTree != null) {
-            if (!rTree.isClosed()) {
-                rTree.close();
-                if (rTree.getTreeElementMapper() != null) {
-                    rTree.getTreeElementMapper().close();
+    public static void close(final File directory, final Tree rTree, final Object owner) throws StoreIndexException, IOException {
+        final List<Object> owners = TREE_OWNERS.get(directory);
+        owners.remove(owner);
+
+        if (owners.isEmpty()) {
+            if (rTree != null) {
+                if (!rTree.isClosed()) {
+                    rTree.close();
+                    if (rTree.getTreeElementMapper() != null) {
+                        rTree.getTreeElementMapper().close();
+                    }
                 }
             }
+        } else {
+            LOGGER.config("R-tree is used by another object. Not closing");
         }
     }
 
-    public static Tree<NamedEnvelope> get(final File directory) {
+    public static Tree<NamedEnvelope> get(final File directory, final Object owner) {
         Tree<NamedEnvelope> tree = CACHED_TREES.get(directory);
         if (tree == null || tree.isClosed()) {
             final File treeFile   = new File(directory, "tree.bin");
@@ -66,7 +77,16 @@ public class RtreeManager {
             } else {
                 tree = buildNewTree(directory);
             }
+            final List<Object> owners = new ArrayList<>();
+            owners.add(owner);
+            TREE_OWNERS.put(directory, owners);
             CACHED_TREES.put(directory, tree);
+        } else {
+            //look if the owner is already registred
+            final List<Object> owners = TREE_OWNERS.get(directory);
+            if (!owners.contains(owner)) {
+                owners.add(owner);
+            }
         }
         return tree;
     }
@@ -93,9 +113,9 @@ public class RtreeManager {
         return null;
     }
 
-    public static Tree resetTree(final File directory, final Tree tree) throws StoreIndexException, IOException {
+    public static Tree resetTree(final File directory, final Tree tree, final Object owner) throws StoreIndexException, IOException {
         if (tree != null) {
-            close(tree);
+            close(directory, tree, owner);
         }
         final File treeFile   = new File(directory, "tree.bin");
         final File mapperFile = new File(directory, "mapper.bin");
@@ -103,6 +123,6 @@ public class RtreeManager {
             treeFile.delete();
             mapperFile.delete();
         }
-        return get(directory);
+        return get(directory, owner);
     }
 }

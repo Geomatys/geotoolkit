@@ -207,7 +207,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
      */
     @Test
     public void rTreeBBOXTest() throws Exception {
-        final Tree rTree = RtreeManager.get(searcher.getFileDirectory());
+        final Tree rTree = RtreeManager.get(searcher.getFileDirectory(), this);
         
         /*
          * first bbox

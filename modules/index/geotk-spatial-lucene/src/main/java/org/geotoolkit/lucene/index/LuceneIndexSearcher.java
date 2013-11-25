@@ -188,7 +188,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      */
     private void initSearcher() throws CorruptIndexException, IOException {
         final File indexDirectory = getFileDirectory();
-        this.rTree = RtreeManager.get(indexDirectory);
+        this.rTree = RtreeManager.get(indexDirectory, this);
         final IndexReader reader  = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(indexDirectory));
         searcher                  = new IndexSearcher(reader);
         LOGGER.log(Level.INFO, "Creating new Index Searcher with index directory:{0}", indexDirectory.getPath());
@@ -213,7 +213,7 @@ public class LuceneIndexSearcher extends IndexLucene {
     /**
      * Refresh the searcher (must be call after deleting document from the index for example)
      *
-     * @throws org.constellation.lucene.IndexingException
+     * @throws IndexingException
      */
     public void refresh() throws IndexingException {
         try {
@@ -249,6 +249,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      * @param id A simple Term query on "identifier field".
      *
      * @return A database id.
+     * @throws SearchingException
      */
     public String identifierQuery(final String id) throws SearchingException {
         try {
@@ -307,6 +308,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      * @param spatialQuery The lucene query string with spatials filters.
      *
      * @return A List of metadata identifiers.
+     * @throws SearchingException
      */
     public Set<String> doSearch(final SpatialQuery spatialQuery) throws SearchingException {
         try {
