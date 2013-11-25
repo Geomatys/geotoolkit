@@ -118,13 +118,24 @@ public class Classification {
      * Class data from Jenks method.
      */
     public void computeJenks() {
+        computeJenks(true);
+    }
+
+    /**
+     * Class data from Jenks method.
+     */
+    public void computeJenks(boolean checkData) {
         if (data == null)
             throw new IllegalArgumentException("you must set data");
         if (classNumber > dataLength)
             throw new IllegalArgumentException("impossible to classify datas"
                 + " with class number larger than overall elements number");
-        if (!checkJenksDataValidity())
-            throw new IllegalArgumentException("not enough distincts datas for the requested number of classes");
+        if (checkData) {
+            if(!checkJenksDataValidity()) {
+                throw new IllegalArgumentException("not enough distincts datas for the requested number of classes");
+            }
+        }
+
         this.index = new int[classNumber];
         this.reComputeList = true;
         if (classNumber == 1) {

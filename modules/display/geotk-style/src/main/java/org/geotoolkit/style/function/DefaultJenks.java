@@ -114,7 +114,9 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
             final int numBands = data.getNumBands();
             final int width = data.getWidth();
             final int height = data.getHeight();
-            
+
+            //TODO use a simple list to get all distinct pixel values and sort this list before
+            //convert it into an array and give it to classification algorithm
             final Map<Double, Double> valuesStats = new TreeMap<Double, Double>();
             
             int[] pixel = new int[numBands];
@@ -150,9 +152,9 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
             
             //compute classes
             final Classification classification = new Classification();
-            classification.setData(pixelOccurs);
+            classification.setData(pixelValues);
             classification.setClassNumber(classes);
-            classification.computeJenks();
+            classification.computeJenks(false);
 
             final int[] indexes = classification.getIndex();
             
@@ -178,6 +180,7 @@ public class DefaultJenks extends AbstractExpression implements Jenks {
             for (int i = 0; i < indexes.length; i++) {
                 int start = lastindex;
                 int end = indexes[i];
+                if (start < 0 || end < 0) continue;
                 for (int j = start; j < end; j++) {
                     colorMap.put(Double.valueOf(pixelValues[j]), colors.get(i));
                 }
