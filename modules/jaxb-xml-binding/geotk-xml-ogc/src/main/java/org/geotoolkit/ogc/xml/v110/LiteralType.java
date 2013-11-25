@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.XMLLiteral;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -78,13 +77,13 @@ public class LiteralType implements XMLLiteral {
      * build a new Literal with the specified Object.
      */
     public LiteralType(final Object content) {
-        this.content = new ArrayList<Object>(); 
+        this.content = new ArrayList<>(); 
         this.content.add(content);
     }
     
     public LiteralType(final LiteralType that) {
         if (that != null && that.content != null) {
-            this.content = new ArrayList<Object>(that.content); 
+            this.content = new ArrayList<>(that.content); 
         }
     }
     
@@ -92,7 +91,7 @@ public class LiteralType implements XMLLiteral {
      * build a new Literal with the specified String
      */
     public LiteralType(final String content) {
-        this.content = new ArrayList<Object>(); 
+        this.content = new ArrayList<>(); 
         this.content.add(content);
     }
     
@@ -103,7 +102,7 @@ public class LiteralType implements XMLLiteral {
     @Override
     public List<Object> getContent() {
         if (content == null) {
-            content = new ArrayList<Object>();
+            content = new ArrayList<>();
         }
         return Collections.unmodifiableList(content);
     }
@@ -115,7 +114,7 @@ public class LiteralType implements XMLLiteral {
     public void setContent(final Object content) {
         if (content != null) {
             if (this.content == null) {
-                this.content = new ArrayList<Object>();
+                this.content = new ArrayList<>();
             }
             this.content.add(content);
         }
@@ -165,7 +164,7 @@ public class LiteralType implements XMLLiteral {
             literal = content.get(0);
        } 
        
-       if (literal == null || literal.getClass().equals(context)) {
+       if (literal == null || (context != null && context.isAssignableFrom(literal.getClass()))) {
             return context.cast( literal );
        } else {
             return null;
