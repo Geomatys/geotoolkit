@@ -167,8 +167,9 @@ public final class ClassicTokenizer extends Tokenizer {
     offsetAtt.setOffset(finalOffset, finalOffset);
   }
 
-  @Override
-  public void reset() throws IOException {
-    scanner.yyreset(input);
-  }
+    @Override
+    public void reset() throws IOException {
+        super.reset();
+        scanner.yyreset(input);
+    }
 }

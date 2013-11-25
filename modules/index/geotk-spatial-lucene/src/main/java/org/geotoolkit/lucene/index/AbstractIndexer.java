@@ -178,7 +178,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         final long time = System.currentTimeMillis();
         int nbEntries = 0;
         try {
-            final IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_45, analyzer);
+            final IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_46, analyzer);
             final IndexWriter writer     = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
             final String serviceID       = getServiceID();
             
@@ -217,7 +217,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         final long time  = System.currentTimeMillis();
         int nbEntries      = 0;
         try {
-            final IndexWriterConfig conf   = new IndexWriterConfig(Version.LUCENE_45, analyzer);
+            final IndexWriterConfig conf   = new IndexWriterConfig(Version.LUCENE_46, analyzer);
             final IndexWriter writer       = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
             final String serviceID         = getServiceID();
             final Collection<String> identifiers = getAllIdentifiers();
@@ -281,7 +281,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public void indexDocument(final E meta) {
         try {
-            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_45, analyzer);
+            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_46, analyzer);
             final IndexWriter writer = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), config);
 
             final int docId = writer.maxDoc();
@@ -369,7 +369,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             final NamedEnvelope env = new NamedEnvelope(getTreeCrs(), identifier);
             rTree.remove(env);
             
-            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_45, analyzer);
+            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_46, analyzer);
             final IndexWriter writer       = new IndexWriter(dir, config);
             writer.deleteDocuments(query);
             LOGGER.log(logLevel, "Metadata: {0} removed from the index", identifier);
