@@ -176,7 +176,7 @@ public class S52Context {
     // S-52 Annex A Part I p.23
     private String paletteName = TIME_DAY;
     //selected lookups
-    private String arealk = LKN_AREA_SYMBOLIZED;
+    private String arealk = LKN_AREA_PLAIN;
     private String linelk = LKN_LINE;
     private String pointlk = LKN_POINT_SIMPLIFIED;
     // See also : 7.1.3.1 Text Groupings
