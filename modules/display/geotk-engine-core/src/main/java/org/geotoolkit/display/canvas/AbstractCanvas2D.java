@@ -1064,7 +1064,8 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final CoordinateSystem cs = objCrs.getCoordinateSystem();
         for (int i = 0, n = cs.getDimension(); i < n; i++) {
             final AxisDirection direction = cs.getAxis(i).getDirection();
-            if (direction == AxisDirection.UP || direction == AxisDirection.DOWN) {
+            final Unit unit = cs.getAxis(i).getUnit();
+            if (direction == AxisDirection.UP || direction == AxisDirection.DOWN && (unit != null && unit.isCompatible(SI.METRE))) {
                 return i;
             }
         }
