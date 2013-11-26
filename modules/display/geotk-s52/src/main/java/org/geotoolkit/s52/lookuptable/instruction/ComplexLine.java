@@ -18,14 +18,14 @@ package org.geotoolkit.s52.lookuptable.instruction;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Graphics2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.List;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.style.j2d.PathWalker;
+import org.geotoolkit.display2d.style.j2d.RegularPathWalker;
 import org.geotoolkit.s52.S52Context;
 import org.geotoolkit.s52.S52Palette;
 import org.geotoolkit.s52.render.SymbolStyle;
@@ -75,23 +75,21 @@ public class ComplexLine extends Instruction{
         } catch (TransformException ex) {
             throw new PortrayalException(ex);
         }
-        final PathWalker walker = new PathWalker(ite);
-//        ss.render(g2d, context, colorTable, walker);
 
-        final Point2D pt = new Point2D.Double();
-        walker.walk(0f);
+        final RegularPathWalker walker = new RegularPathWalker(ite, symbolwidth);
         while(!walker.isFinished()){
-
-            if(walker.getSegmentLengthRemaining() < symbolwidth){
-                //walk just enough th get on the next segment
-                walker.walk(Math.nextUp(walker.getSegmentLengthRemaining()));
-            }else{
-                walker.getPosition(pt);
-                final float rotation = walker.getRotation() + (float)Math.PI;
-                ss.render(g2d, context, colorTable, new Coordinate(pt.getX(),pt.getY()), rotation);
-                walker.walk(symbolwidth);
-            }
+            final Line2D.Double line = walker.next();
+            float angle = (float)angle(line.x1, line.y1, line.x2, line.y2);
+            angle += (float)Math.PI;
+            ss.render(g2d, context, colorTable, new Coordinate(line.x1,line.y1), angle);
         }
+
+    }
+
+    private static double angle(final double x1, final double y1, final double x2, final double y2) {
+        double dx = x1 - x2;
+        double dy = y1 - y2;
+        return Math.atan2(dy, dx);
     }
 
 }

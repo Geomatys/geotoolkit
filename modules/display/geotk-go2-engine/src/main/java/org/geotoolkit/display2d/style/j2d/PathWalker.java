@@ -30,6 +30,8 @@ public class PathWalker {
     private final PathIterator pathIterator;
     private final float lastPoint[] = new float[6];
     private final float currentPoint[] = new float[6];
+    private float lastmoveToX = 0f;
+    private float lastmoveToY = 0f;
     private float segmentStartX = 0f;
     private float segmentStartY = 0f;
     private float segmentEndX = 0f;
@@ -53,9 +55,14 @@ public class PathWalker {
                     segmentStartY = lastPoint[1];
                     segmentEndX = currentPoint[0];
                     segmentEndY = currentPoint[1];
+                    //keep point for close instruction
+                    lastmoveToX = currentPoint[0];
+                    lastmoveToY = currentPoint[1];
                     break;
 
                 case PathIterator.SEG_CLOSE:
+                    currentPoint[0] = lastmoveToX;
+                    currentPoint[1] = lastmoveToY;
                 // Fall into....
 
                 case PathIterator.SEG_LINETO:
@@ -105,10 +112,15 @@ public class PathWalker {
                         segmentStartY = lastPoint[1];
                         segmentEndX = currentPoint[0];
                         segmentEndY = currentPoint[1];
+                        //keep point for close instruction
+                        lastmoveToX = currentPoint[0];
+                        lastmoveToY = currentPoint[1];
                         break;
 
                     case PathIterator.SEG_CLOSE:
-                    // Fall into....
+                        currentPoint[0] = lastmoveToX;
+                        currentPoint[1] = lastmoveToY;
+                        // Fall into....
 
                     case PathIterator.SEG_LINETO:
                         segmentStartX = lastPoint[0];

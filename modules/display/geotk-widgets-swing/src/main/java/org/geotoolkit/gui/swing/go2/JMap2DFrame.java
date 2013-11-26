@@ -86,6 +86,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gui.swing.go2.control.JMarinerBar;
+import org.geotoolkit.gui.swing.go2.control.navigation.PanHandler;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -158,6 +159,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiEditBar.setMap(guiMap);
 
         guiMap.getCanvas().setAutoRepaint(true);
+        guiMap.setHandler(new PanHandler(guiMap));
 
         setSize(1024,768);
         setLocationRelativeTo(null);
