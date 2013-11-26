@@ -598,7 +598,7 @@ public final class IdentifiedObjects extends Static {
         if (object instanceof AbstractIdentifiedObject) {
             return ((AbstractIdentifiedObject) object).nameMatches(name);
         } else {
-            return org.apache.sis.referencing.IdentifiedObjects.nameMatches(object, name);
+            return org.apache.sis.referencing.IdentifiedObjects.isHeuristicMatchForName(object, name);
         }
     }
 
