@@ -16,23 +16,19 @@
  */
 package org.geotoolkit.process.coverage.reducetodomain;
 
-import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.parameter.Parameters;
 import static org.geotoolkit.parameter.Parameters.*;
@@ -40,12 +36,13 @@ import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
 import static org.geotoolkit.process.coverage.straighten.StraightenDescriptor.*;
+
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.referencing.operation.MathTransform;
@@ -86,10 +83,12 @@ public class ReduceToDomainProcess extends AbstractProcess {
         for(int i=0;i<cs.getDimension();i++){
             wrapAround[i] = crs instanceof GeographicCRS || (cs.getAxis(i).getRangeMeaning() == RangeMeaning.WRAPAROUND);
         }
-        if(!wrapAround[0] && !wrapAround[1]){
-            //no wrap around axis, can't fix anything.
-            getOrCreate(COVERAGE_OUT, outputParameters).setValue(candidate);
-            return;
+        if (!(crs instanceof ProjectedCRS)) {
+            if(!wrapAround[0] && !wrapAround[1]){
+                //no wrap around axis, can't fix anything.
+                getOrCreate(COVERAGE_OUT, outputParameters).setValue(candidate);
+                return;
+            }
         }
         
 
@@ -136,7 +135,24 @@ public class ReduceToDomainProcess extends AbstractProcess {
                 axiXMaxValue = +180;
                 axiYMinValue = -90;
                 axiYMaxValue = +90;
-            }else{
+            } else if (crs2d instanceof ProjectedCRS) {
+                /*
+                 * Hack : we did not verified if base CRS is long/lat
+                 * this hack work only for Mercator and Plate Carré
+                 */
+                final MathTransform mt = ((ProjectedCRS)crs2d).getConversionFromBase().getMathTransform();
+
+                DirectPosition2D pt1 = new DirectPosition2D(-180, 0);
+                pt1 = (DirectPosition2D) mt.transform(pt1, pt1);
+                axiXMinValue = pt1.getX();
+
+                DirectPosition2D pt2 = new DirectPosition2D(180, 0);
+                pt2 = (DirectPosition2D) mt.transform(pt2, pt2);
+                axiXMaxValue = pt2.getX();
+
+                axiYMinValue = Double.NEGATIVE_INFINITY;
+                axiYMaxValue = Double.POSITIVE_INFINITY;
+            } else {
                 axiXMinValue = cs.getAxis(0).getMinimumValue();
                 axiXMaxValue = cs.getAxis(0).getMinimumValue();
                 axiYMinValue = cs.getAxis(1).getMaximumValue();
