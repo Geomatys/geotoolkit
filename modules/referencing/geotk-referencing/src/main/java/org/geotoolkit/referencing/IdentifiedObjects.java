@@ -611,11 +611,14 @@ public final class IdentifiedObjects extends Static {
      * @param o2 The second object to compare by name.
      * @return {@code true} if both objects have a common name.
      *
-     * @deprecated Moved to Apache SIS.
+     * @deprecated No replacement.
      */
     @Deprecated
     public static boolean nameMatches(final IdentifiedObject o1, final IdentifiedObject o2) {
-        return org.apache.sis.referencing.IdentifiedObjects.nameMatches(o1, o2);
+        ensureNonNull("o1", o1);
+        ensureNonNull("o2", o2);
+        return nameMatches(o1, o2.getName().getCode()) ||
+               nameMatches(o2, o1.getName().getCode());
     }
 
     /**
