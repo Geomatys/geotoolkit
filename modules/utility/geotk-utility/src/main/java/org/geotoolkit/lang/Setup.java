@@ -20,13 +20,16 @@ package org.geotoolkit.lang;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ServiceLoader;
+
 import javax.imageio.spi.IIORegistry;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
 
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.logging.MonolineFormatter;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.ShutdownHook;
 import org.geotoolkit.internal.SetupService;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.resources.Errors;
@@ -222,6 +225,7 @@ public final class Setup extends Static {
             for (final SetupService service : ServiceLoader.load(SetupService.class)) {
                 service.shutdown();
             }
+            ShutdownHook.runAndremove();
         }
     }
 
