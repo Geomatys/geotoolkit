@@ -87,6 +87,7 @@ import org.opengis.util.FactoryException;
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import static org.junit.Assert.*;
 import org.opengis.feature.type.AssociationType;
+import org.opengis.filter.identity.FeatureId;
 
 /**
  *
@@ -608,7 +609,7 @@ public class PostgresFeatureStoreTest {
         feature.getProperty("double").setValue(14.5);
         feature.getProperty("string").setValue("a string");
         
-        store.addFeatures(resType.getName(), Collections.singleton(feature));
+        List<FeatureId> addedIds = store.addFeatures(resType.getName(), Collections.singleton(feature));
         
         Session session = store.createSession(false);
         FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
@@ -647,7 +648,7 @@ public class PostgresFeatureStoreTest {
         feature.getProperty("double").setValue(Double.NaN);
         feature.getProperty("string").setValue("a string");
         
-        store.addFeatures(resType.getName(), Collections.singleton(feature));
+        addedIds = store.addFeatures(resType.getName(), Collections.singleton(feature));
         
         session = store.createSession(false);
         col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));

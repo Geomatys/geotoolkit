@@ -977,6 +977,11 @@ public class DefaultJDBCFeatureStore extends AbstractFeatureStore implements JDB
                 }
                 
                 insertFlat(flat, flat.getType(), cx);
+                // we pass the fid to the root
+                if (flat.getType().getName().equals(feature.getType().getName())) {
+                    final String fid = (String) flat.getUserData().get("fid");
+                    feature.getUserData().put("fid", fid);
+                }
             }
         }
     }

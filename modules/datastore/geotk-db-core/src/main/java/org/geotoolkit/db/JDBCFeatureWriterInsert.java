@@ -27,7 +27,9 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 
@@ -41,8 +43,8 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
     private boolean batchInsert;
     private Collection<Feature> toAdd;
     
-    private String id;
-    private Feature last;
+    //private String id;
+    private AbstractFeature last;
 
     public JDBCFeatureWriterInsert(final DefaultJDBCFeatureStore store, final String sql, 
             final FeatureType type, Connection cnx, boolean release, final Hints hints)
@@ -57,7 +59,7 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
     }
     
     private void init(){
-        last = FeatureUtilities.defaultFeature(type, "-1");
+        last = (AbstractFeature)FeatureUtilities.defaultFeature(type, "-1");
 //        last = new AbstractFeature<Collection<Property>>(type, (FeatureId)null) {
 //            @Override
 //            public FeatureId getIdentifier() {
@@ -93,7 +95,7 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
         
         if(batchInsert){
             toAdd.add(last);
-            last = FeatureUtilities.defaultFeature(type, "-1");
+            last = (AbstractFeature)FeatureUtilities.defaultFeature(type, "-1");
             if(toAdd.size() > 1000){
                 try {
                     store.insert(toAdd, type, cx);
@@ -106,7 +108,10 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
             try {
                 store.insert(last, type, cx);
                 //the featurestore sets as userData, grab it and update the fid
-                id = (String) last.getUserData().get("fid");
+                final String id = (String) last.getUserData().get("fid");
+                if (id != null) {
+                    last.setIdentifier(new DefaultFeatureId(id));
+                }
             } catch (DataStoreException e) {
                 throw new FeatureStoreRuntimeException(e);
             }

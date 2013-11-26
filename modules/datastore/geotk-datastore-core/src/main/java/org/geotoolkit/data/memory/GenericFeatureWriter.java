@@ -158,7 +158,7 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
                 try {
                     final List<FeatureId> res = store.addFeatures(typeName, Collections.singleton(modified));
                     if(modified instanceof AbstractFeature){
-                        ((AbstractFeature)modified).setId(res.get(0));
+                        ((AbstractFeature)modified).setIdentifier(res.get(0));
                     }
                 } catch (DataStoreException ex) {
                     throw new FeatureStoreRuntimeException(ex);

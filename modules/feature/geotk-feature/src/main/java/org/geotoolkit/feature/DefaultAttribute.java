@@ -95,6 +95,10 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
         return id;
     }
 
+     public void setIdentifier(final I fid){
+        this.id = fid;
+    }
+
     /**
      * {@inheritDoc }
      */

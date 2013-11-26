@@ -204,8 +204,9 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
         return id;
     }
 
+    @Override
     public void setIdentifier(final FeatureId fid){
-        this.id = fid;
+        super.setIdentifier(fid);
         this.strID = fid.getID();
     }
 

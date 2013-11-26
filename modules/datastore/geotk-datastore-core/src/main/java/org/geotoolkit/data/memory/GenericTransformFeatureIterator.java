@@ -190,7 +190,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
         @Override
         public F next() throws FeatureStoreRuntimeException {
             final Feature next = iterator.next();
-            feature.setId(next.getIdentifier());
+            feature.setIdentifier(next.getIdentifier());
 
             properties.clear();
             for(Property prop : next.getProperties()){
