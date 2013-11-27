@@ -141,9 +141,9 @@ public class FileCoverageStore extends AbstractCoverageStore{
             final int nbImage = reader.getNumImages(true);
 
 
-            final Name baseName = new DefaultName(nmsp,filename);
-            final FileCoverageReference baseNode = new FileCoverageReference(this,baseName,candidate,-1);
-            rootNode.getChildren().add(baseNode);
+//            final Name baseName = new DefaultName(nmsp,filename);
+//            final FileCoverageReference baseNode = new FileCoverageReference(this,baseName,candidate,-1);
+//            rootNode.getChildren().add(baseNode);
 
             if(reader instanceof NamedImageStore){
                 //try to find a proper name for each image
@@ -155,7 +155,7 @@ public class FileCoverageStore extends AbstractCoverageStore{
                     final String in = imageNames.get(i);
                     final Name name = new DefaultName(nmsp,filename+"."+in);
                     final FileCoverageReference fcr = new FileCoverageReference(this,name,candidate,i);
-                    baseNode.getChildren().add(fcr);
+                    rootNode.getChildren().add(fcr);
                 }
 
             }else{
@@ -169,7 +169,7 @@ public class FileCoverageStore extends AbstractCoverageStore{
                     }
 
                     final FileCoverageReference fcr = new FileCoverageReference(this,name,candidate,i);
-                    baseNode.getChildren().add(fcr);
+                    rootNode.getChildren().add(fcr);
                 }
             }
 
