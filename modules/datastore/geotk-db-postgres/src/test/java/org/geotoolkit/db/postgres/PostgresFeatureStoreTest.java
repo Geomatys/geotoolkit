@@ -46,7 +46,6 @@ import java.util.Properties;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -85,6 +84,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
 import static org.junit.Assert.*;
 import org.opengis.feature.type.AssociationType;
 import org.opengis.filter.identity.FeatureId;
@@ -122,11 +122,10 @@ public class PostgresFeatureStoreTest {
             throw new RuntimeException("Failed to load CRS");
         }
         
-        FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         
         ////////////////////////////////////////////////////////////////////////
-        ftb = new FeatureTypeBuilder();
+        FeatureTypeBuilder  ftb = new FeatureTypeBuilder();
         ftb.setName("testTable");
         ftb.add("boolean",  Boolean.class);
         ftb.add("byte",     Byte.class);
@@ -316,7 +315,7 @@ public class PostgresFeatureStoreTest {
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
         assertEquals(resType.getName().getLocalPart(), refType.getName().getLocalPart());
         //we expect one more field for id
-        final List<PropertyDescriptor> descs = new ArrayList<PropertyDescriptor>(resType.getDescriptors());
+        final List<PropertyDescriptor> descs = new ArrayList<>(resType.getDescriptors());
         
         int index=1;
         PropertyDescriptor desc;
@@ -358,7 +357,7 @@ public class PostgresFeatureStoreTest {
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
         assertEquals(resType.getName().getLocalPart(), refType.getName().getLocalPart());
         //we expect one more field for id
-        final List<PropertyDescriptor> descs = new ArrayList<PropertyDescriptor>(resType.getDescriptors());
+        final List<PropertyDescriptor> descs = new ArrayList<>(resType.getDescriptors());
         
         //Postgis allow NULL in arrays, so returned array are not primitive types
         int index=1;
@@ -401,7 +400,7 @@ public class PostgresFeatureStoreTest {
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
         assertEquals(resType.getName().getLocalPart(), refType.getName().getLocalPart());
         //we expect one more field for id
-        final List<PropertyDescriptor> descs = new ArrayList<PropertyDescriptor>(resType.getDescriptors());
+        final List<PropertyDescriptor> descs = new ArrayList<>(resType.getDescriptors());
         
         //Postgis allow NULL in arrays, so returned array are not primitive types
         int index=1;
@@ -444,7 +443,7 @@ public class PostgresFeatureStoreTest {
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
         assertEquals(resType.getName().getLocalPart(), refType.getName().getLocalPart());
         //we expect one more field for id
-        final List<PropertyDescriptor> descs = new ArrayList<PropertyDescriptor>(resType.getDescriptors());
+        final List<PropertyDescriptor> descs = new ArrayList<>(resType.getDescriptors());
         
         int index=1;
         PropertyDescriptor desc;
@@ -610,6 +609,9 @@ public class PostgresFeatureStoreTest {
         feature.getProperty("string").setValue("a string");
         
         List<FeatureId> addedIds = store.addFeatures(resType.getName(), Collections.singleton(feature));
+
+        assertEquals(1, addedIds.size());
+        assertEquals(new DefaultFeatureId("testTable.1"), addedIds.get(0));
         
         Session session = store.createSession(false);
         FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
@@ -649,7 +651,10 @@ public class PostgresFeatureStoreTest {
         feature.getProperty("string").setValue("a string");
         
         addedIds = store.addFeatures(resType.getName(), Collections.singleton(feature));
-        
+
+        assertEquals(1, addedIds.size());
+        assertEquals(new DefaultFeatureId("testTable.1"), addedIds.get(0));
+                
         session = store.createSession(false);
         col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
         assertEquals(1, col.size());
@@ -692,7 +697,10 @@ public class PostgresFeatureStoreTest {
         feature.getProperty("double").setValue(new double[]{78.3d,41.23d,-99.66d});
         feature.getProperty("string").setValue(new String[]{"marc","hubert","samy"});
         
-        store.addFeatures(resType.getName(), Collections.singleton(feature));
+         List<FeatureId> addedIds = store.addFeatures(resType.getName(), Collections.singleton(feature));
+
+        assertEquals(1, addedIds.size());
+        assertEquals(new DefaultFeatureId("testTable.1"), addedIds.get(0));
         
         final Session session = store.createSession(false);
         final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
@@ -735,8 +743,11 @@ public class PostgresFeatureStoreTest {
         feature.getProperty("double").setValue(new Double[][]{{1d,2d,3d},{4d,5d,6d},{7d,8d,9d}});
         feature.getProperty("string").setValue(new String[][]{{"1","2","3"},{"4","5","6"},{"7","8","9"}});
         
-        store.addFeatures(resType.getName(), Collections.singleton(feature));
-        
+        List<FeatureId> addedIds = store.addFeatures(resType.getName(), Collections.singleton(feature));
+
+        assertEquals(1, addedIds.size());
+        assertEquals(new DefaultFeatureId("testTable.1"), addedIds.get(0));
+
         final Session session = store.createSession(false);
         final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
         assertEquals(1, col.size());
@@ -819,7 +830,10 @@ public class PostgresFeatureStoreTest {
         feature.getProperty("multipolygon").setValue(mpolygon);
         feature.getProperty("geometrycollection").setValue(gc);
         
-        store.addFeatures(resType.getName(), Collections.singleton(feature));
+        List<FeatureId> addedIds = store.addFeatures(resType.getName(), Collections.singleton(feature));
+
+        assertEquals(1, addedIds.size());
+        assertEquals(new DefaultFeatureId("testTable.1"), addedIds.get(0));
         
         final Session session = store.createSession(false);
         final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
@@ -895,7 +909,10 @@ public class PostgresFeatureStoreTest {
         stop3.getProperty("time").setValue(new Date(7000000));
         voyage.getProperties().add(stop3);
         
-        store.addFeatures(resType.getName(), Collections.singleton(voyage));
+        List<FeatureId> addedIds = store.addFeatures(resType.getName(), Collections.singleton(voyage));
+
+        assertEquals(1, addedIds.size());
+        assertEquals(new DefaultFeatureId("Voyage.1"), addedIds.get(0));
         
         final Session session = store.createSession(false);
         final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
@@ -978,7 +995,10 @@ public class PostgresFeatureStoreTest {
         sounding.getProperties().add(record2);
         
                 
-        store.addFeatures(soundingType.getName(), Collections.singleton(sounding));
+        List<FeatureId> addedIds = store.addFeatures(soundingType.getName(), Collections.singleton(sounding));
+
+        assertEquals(1, addedIds.size());
+        assertEquals(new DefaultFeatureId("Sounding.1"), addedIds.get(0));
         
         final Session session = store.createSession(false);
         final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(soundingType.getName()));
@@ -1056,6 +1076,8 @@ public class PostgresFeatureStoreTest {
     
     /**
      * multiple complex properties of same type
+     * @throws org.apache.sis.storage.DataStoreException
+     * @throws org.geotoolkit.version.VersioningException
      */
     @Test
     public void testComplex3Insert() throws DataStoreException, VersioningException{
@@ -1081,7 +1103,10 @@ public class PostgresFeatureStoreTest {
         record.getProperties().add(data2);
         record.getProperties().add(data3);
                         
-        store.addFeatures(recordType.getName(), Collections.singleton(record));
+        List<FeatureId> addedIds = store.addFeatures(recordType.getName(), Collections.singleton(record));
+
+        assertEquals(1, addedIds.size());
+        assertEquals(new DefaultFeatureId("Record.1"), addedIds.get(0));
         
         final Session session = store.createSession(false);
         final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(recordType.getName()));
@@ -1145,7 +1170,10 @@ public class PostgresFeatureStoreTest {
         stop3.getProperty("time").setValue(new Date(7000000));
         voyage.getProperties().add(stop3);
         
-        store.addFeatures(resType.getName(), Collections.singleton(voyage));
+        List<FeatureId> addedIds = store.addFeatures(resType.getName(), Collections.singleton(voyage));
+
+        assertEquals(1, addedIds.size());
+        assertEquals(new DefaultFeatureId("Voyage.1"), addedIds.get(0));
         
         final Query query = QueryBuilder.language(JDBCFeatureStore.CUSTOM_SQL, "SELECT * FROM \"Stop\"", new DefaultName("s1"));        
         final FeatureReader ite = store.getFeatureReader(query);
