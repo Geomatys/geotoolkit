@@ -101,7 +101,7 @@ public class SymbolStyle {
      * @param context
      * @param colorTable
      * @param center
-     * @param rotation
+     * @param rotation in Radians
      * @throws PortrayalException
      */
     public void render(final Graphics2D g2d, S52Context context, S52Palette colorTable,

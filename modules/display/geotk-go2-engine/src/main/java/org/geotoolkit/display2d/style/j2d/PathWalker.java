@@ -173,13 +173,13 @@ public class PathWalker {
         return angle;
     }
 
-    private static float distance(final float x1, final float y1, final float x2, final float y2) {
+    public static float distance(final float x1, final float y1, final float x2, final float y2) {
         float dx = x1 - x2;
         float dy = y1 - y2;
         return (float) Math.sqrt(dx * dx + dy * dy);
     }
 
-    private static float angle(final float x1, final float y1, final float x2, final float y2) {
+    public static float angle(final float x1, final float y1, final float x2, final float y2) {
         float dx = x1 - x2;
         float dy = y1 - y2;
         return (float) Math.atan2(dy, dx);

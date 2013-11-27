@@ -102,6 +102,10 @@ public class SimpleLine extends Instruction{
         return stroke;
     }
 
+    public Color getColor(S52Palette colorTable){
+        return colorTable.getColor(this.color);
+    }
+
     @Override
     public void readParameters(String str) throws IOException {
         final String[] parts = str.split(",");
@@ -115,7 +119,7 @@ public class SimpleLine extends Instruction{
             List<S52Graphic> all, S52Graphic s52graphic) throws PortrayalException {
         final Graphics2D g2d = ctx.getGraphics();
         final Stroke stroke = getStroke();
-        final Color color = colorTable.getColor(this.color);
+        final Color color = getColor(colorTable);
         g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
         g2d.setColor(color);
         g2d.setStroke(stroke);
