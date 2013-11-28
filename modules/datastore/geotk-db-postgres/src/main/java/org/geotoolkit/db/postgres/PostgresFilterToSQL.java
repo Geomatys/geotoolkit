@@ -419,7 +419,11 @@ public class PostgresFilterToSQL implements FilterToSQL {
     public StringBuilder visit(PropertyIsNotEqualTo candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
         candidate.getExpression1().accept(this, o);
-        sb.append(" <> ");
+        if (candidate.isMatchingCase()) {
+            sb.append(" <> ");
+        } else {
+            sb.append(" not ilike ");
+        }
         candidate.getExpression2().accept(this, o);
         return sb;
     }
