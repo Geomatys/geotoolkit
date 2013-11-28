@@ -22,7 +22,9 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Arc2D;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.Arrays;
@@ -414,17 +416,19 @@ public class LIGHTS05 extends Procedure{
         //concatenate map rotation
         sector1 = (sector1+mapRotation);
         sector2 = (sector2+mapRotation);
-
+        
         // JVM crash for arc2d with sector values : 160, 90
-        // TODO find a solution ...
-        //System.out.println(sector1+"  "+sector2);
-
+        // to fix it flatten the geometry
+        // TODO find a beter solution ...
         double extent = sector1 - sector2;
-        return new Arc2D.Double(startX-distance, startY-distance,
+        final Arc2D arc = new Arc2D.Double(startX-distance, startY-distance,
                          distance*2,
                          distance*2,
                          sector2, extent,
                          Arc2D.OPEN);
+        final Path2D path = new GeneralPath();
+        path.append(arc.getPathIterator(null,1f), false);
+        return path;
     }
 
     /**
