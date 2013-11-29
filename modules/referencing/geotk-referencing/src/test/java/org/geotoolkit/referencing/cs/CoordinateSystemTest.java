@@ -21,13 +21,11 @@ import javax.measure.converter.ConversionException;
 import static javax.measure.unit.SI.*;
 
 import org.opengis.test.Validators;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 
 import static org.apache.sis.test.Assert.*;
 import static org.geotoolkit.referencing.cs.DefaultTimeCS.*;
@@ -93,75 +91,6 @@ public final strictfp class CoordinateSystemTest extends ReferencingTestBase {
         assertSerializedEquals(GEOCENTRIC);
         assertSerializedEquals(GEODETIC_2D);
         assertSerializedEquals(GEODETIC_3D);
-    }
-
-    /**
-     * Tests the swapping of axis.
-     *
-     * @throws ConversionException Should not happen.
-     */
-    @Test
-    public void testAxisSwapping() throws ConversionException {
-        CoordinateSystem cs1, cs2;
-        cs1 = new DefaultEllipsoidalCS("cs1",
-                DefaultCoordinateSystemAxis.GEODETIC_LONGITUDE,
-                DefaultCoordinateSystemAxis.GEODETIC_LATITUDE);
-        cs2 = new DefaultEllipsoidalCS("cs2",
-                DefaultCoordinateSystemAxis.GEODETIC_LATITUDE,
-                DefaultCoordinateSystemAxis.GEODETIC_LONGITUDE);
-        assertTrue(AbstractCS.swapAndScaleAxis(cs1, cs1).isIdentity());
-        assertTrue(AbstractCS.swapAndScaleAxis(cs2, cs2).isIdentity());
-        compareMatrix(cs1, cs2, new double[] {
-            0, 1, 0,
-            1, 0, 0,
-            0, 0, 1
-        });
-
-        cs1 = new DefaultEllipsoidalCS("cs1",
-                DefaultCoordinateSystemAxis.GEODETIC_LONGITUDE,
-                DefaultCoordinateSystemAxis.GEODETIC_LATITUDE,
-                DefaultCoordinateSystemAxis.ELLIPSOIDAL_HEIGHT);
-        cs2 = new DefaultEllipsoidalCS("cs2",
-                DefaultCoordinateSystemAxis.GEODETIC_LATITUDE,
-                DefaultCoordinateSystemAxis.GEODETIC_LONGITUDE,
-                DefaultCoordinateSystemAxis.ELLIPSOIDAL_HEIGHT);
-        compareMatrix(cs1, cs2, new double[] {
-            0, 1, 0, 0,
-            1, 0, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1
-        });
-
-        cs1 = new DefaultCartesianCS("cs1",
-                DefaultCoordinateSystemAxis.ELLIPSOIDAL_HEIGHT,
-                DefaultCoordinateSystemAxis.EASTING,
-                DefaultCoordinateSystemAxis.NORTHING);
-        cs2 = new DefaultCartesianCS("cs2",
-                DefaultCoordinateSystemAxis.SOUTHING,
-                DefaultCoordinateSystemAxis.EASTING,
-                DefaultCoordinateSystemAxis.ELLIPSOIDAL_HEIGHT);
-        compareMatrix(cs1, cs2, new double[] {
-            0, 0,-1, 0,
-            0, 1, 0, 0,
-            1, 0, 0, 0,
-            0, 0, 0, 1
-        });
-    }
-
-    /**
-     * Compares the matrix computes by {@link AbstractCS#swapAndScaleAxis} with the specified one.
-     *
-     * @throws ConversionException Should not happen.
-     */
-    private static void compareMatrix(final CoordinateSystem cs1, final CoordinateSystem cs2,
-            final double[] expected) throws ConversionException
-    {
-        final Matrix matrix = AbstractCS.swapAndScaleAxis(cs1, cs2);
-        final int numRow = matrix.getNumRow();
-        final int numCol = matrix.getNumCol();
-        assertEquals(expected.length, numRow*numCol);
-        final Matrix em = new GeneralMatrix(numRow, numCol, expected);
-        assertEquals(em, matrix);
     }
 
     /**

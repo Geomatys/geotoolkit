@@ -23,7 +23,6 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 
 import org.junit.*;
-import org.opengis.test.Validators;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import static org.geotoolkit.referencing.Assert.*;
@@ -38,62 +37,6 @@ import static org.geotoolkit.referencing.Assert.*;
  * @since 2.2
  */
 public final strictfp class CartesianTest extends ReferencingTestBase {
-    /**
-     * Tests the creation of a Cartesian CS with legal and illegal axis.
-     */
-    @Test
-    public void testAxis() {
-        DefaultCartesianCS cs;
-        try {
-            cs = new DefaultCartesianCS("Test",
-                    DefaultCoordinateSystemAxis.LONGITUDE,
-                    DefaultCoordinateSystemAxis.LATITUDE);
-            fail("Angular units should not be accepted for " + cs);
-        } catch (IllegalArgumentException e) {
-            // Expected exception: illegal angular units.
-        }
-
-        // Legal CS (the most usual one).
-        cs = new DefaultCartesianCS("Test",
-                DefaultCoordinateSystemAxis.EASTING,
-                DefaultCoordinateSystemAxis.NORTHING);
-        Validators.validate(cs);
-
-        try {
-            cs = new DefaultCartesianCS("Test",
-                    DefaultCoordinateSystemAxis.SOUTHING,
-                    DefaultCoordinateSystemAxis.NORTHING);
-            fail("Colinear units should not be accepted for " + cs);
-        } catch (IllegalArgumentException e) {
-            // Expected exception: colinear axis.
-        }
-
-        // Legal CS rotated 45°
-        cs = create(AxisDirection.NORTH_EAST, AxisDirection.SOUTH_EAST);
-        Validators.validate(cs);
-
-        try {
-            cs = create(AxisDirection.NORTH_EAST, AxisDirection.EAST);
-            fail("Non-perpendicular axis should not be accepted for " + cs);
-        } catch (IllegalArgumentException e) {
-            // Expected exception: non-perpendicular axis.
-        }
-
-        // Legal CS, but no perpendicularity check.
-        cs = create(AxisDirection.NORTH_EAST, AxisDirection.UP);
-        Validators.validate(cs);
-
-        // Inconsistent axis direction.
-        try {
-            cs = new DefaultCartesianCS("Test",
-                    DefaultCoordinateSystemAxis.EASTING,
-                    new DefaultCoordinateSystemAxis("Northing", AxisDirection.SOUTH, SI.METRE));
-            fail("Inconsistent axis should not be accepted for " + cs);
-        } catch (IllegalArgumentException e) {
-            // Expected exception: inconsistent direction.
-        }
-    }
-
     /**
      * Tests {@link AbstractCS#standard} with Cartesian CS, especially
      * the ones that leads to the creation of right-handed CS.

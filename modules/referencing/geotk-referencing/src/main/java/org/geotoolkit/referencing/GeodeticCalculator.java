@@ -1091,9 +1091,9 @@ public class GeodeticCalculator {
 
             // the longitude difference
             final double s = sinalf*(ao*sig + a2*ssig*q2 + a4*r2*q4 + a6*r3*q6);
-            double xz = dlon+s;
+            final double xz = dlon+s;
             xy = abs(xz - ab);
-            ab = dlon+s;
+            ab = xz;
         } while (xy >= TOLERANCE_1);
 
         final double z  = ESQP*w;

@@ -287,6 +287,11 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
         }
     }
 
+    /*
+     * Note: the following getLongitude, getLatitude and getHeight methods will not be ported to SIS.
+     *       Instead, we will try to provide methods for computing the MathTransform between two CS.
+     */
+
     /**
      * Returns the longitude found in the specified coordinate point,
      * always in {@linkplain NonSI#DEGREE_ANGLE decimal degrees}.
