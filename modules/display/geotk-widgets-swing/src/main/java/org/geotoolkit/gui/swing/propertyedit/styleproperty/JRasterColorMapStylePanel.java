@@ -895,7 +895,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
         @Override
         public void addValue(Number value, Color color) {
-            final InterpolationPoint pt = SF.interpolationPoint(Float.NaN, SF.literal(Color.BLACK));
+            final InterpolationPoint pt = SF.interpolationPoint(value, SF.literal(color));
             points.add(pt);
             Collections.sort(points,COMP);
             fireTableDataChanged();
