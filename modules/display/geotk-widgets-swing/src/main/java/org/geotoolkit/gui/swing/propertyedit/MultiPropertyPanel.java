@@ -49,24 +49,24 @@ import org.jdesktop.swingx.JXTaskPaneContainer;
  */
 public abstract class MultiPropertyPanel extends JPanel implements PropertyPane {
 
-    private final Map<String,List<PropertyPane>> panels = new LinkedHashMap<String,List<PropertyPane>>();
+    private final Map<String,List<Object>> panels = new LinkedHashMap<>();
     private final JXTaskPaneContainer guiMenus = new JXTaskPaneContainer();
-    private final Map<String,JXTaskPane> guiGroups = new HashMap<String,JXTaskPane>();
+    private final Map<String,JXTaskPane> guiGroups = new HashMap<>();
     private final JImagePane guiPreview = new JImagePane();
     private PropertyPane active = null;
-    
-    private final JXTaskPane preview = new JXTaskPane();
-    
 
-    /** 
-     * Creates new form MultiPropertyPanel 
+    private final JXTaskPane preview = new JXTaskPane();
+
+
+    /**
+     * Creates new form MultiPropertyPanel
      */
     public MultiPropertyPanel() {
         super();
         initComponents();
         preview.getContentPane().setLayout(new BorderLayout());
         preview.add(BorderLayout.CENTER,guiPreview);
-        
+
         guiMenus.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
         guiTypesPane.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         guiTypesPane.add(guiMenus, BorderLayout.CENTER);
@@ -74,12 +74,21 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
     }
 
     public void addPropertyPanel(final String groupName, final PropertyPane panel) {
-        List<PropertyPane> lst = panels.get(groupName);
+        List<Object> lst = panels.get(groupName);
         if(lst==null){
-            lst = new ArrayList<PropertyPane>();
+            lst = new ArrayList<>();
             panels.put(groupName, lst);
         }
         lst.add(panel);
+    }
+
+    public void addAction(final String groupName, final Action action) {
+        List<Object> lst = panels.get(groupName);
+        if(lst==null){
+            lst = new ArrayList<>();
+            panels.put(groupName, lst);
+        }
+        lst.add(action);
     }
 
     public boolean setSelectedPropertyPanel(final PropertyPane panel) {
@@ -90,7 +99,7 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
             revalidate();
             repaint();
         }
-        
+
         if (panel != null) {
             active = panel;
             SwingUtilities.invokeLater(new Runnable() {
@@ -102,7 +111,7 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
                             repaint();
                         }
                     });
-            
+
             final Image img = panel.getPreview();
             guiPreview.setVisible(img!=null);
             guiPreview.setImage(img);
@@ -117,12 +126,12 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
                 preview.setEnabled(false);
                 preview.setCollapsed(true);
             }
-            
+
             return true;
         }
-        
-        
-        
+
+
+
         return false;
     }
 
@@ -147,42 +156,49 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
 
         add(jScrollPane1, BorderLayout.WEST);
     }// </editor-fold>//GEN-END:initComponents
-    
+
     @Override
     public void setTarget(final Object target) {
-        
+
         //select only panels which handle this target
         for(JXTaskPane tp : guiGroups.values()){
             guiMenus.remove(tp);
         }
         guiMenus.remove(preview);
         guiGroups.clear();
-        
+
         PropertyPane selected = null;
-        for (Entry<String,List<PropertyPane>> entry : panels.entrySet()) {
+        for (Entry<String,List<Object>> entry : panels.entrySet()) {
             final String groupName = entry.getKey();
-            final List<PropertyPane> panels = entry.getValue();
-            for(final PropertyPane panel : panels){
-//                if(panel.canHandle(target)){
+            final List<Object> panels = entry.getValue();
+            for(final Object candidate : panels){
+
+                JXTaskPane task = guiGroups.get(groupName);
+                if(task==null){
+                    task = new JXTaskPane();
+                    task.setTitle(groupName);
+                    task.setIcon(null);
+                    task.setCollapsed(true);
+                    task.setSpecial(true);
+                    task.setEnabled(false);
+                    guiGroups.put(groupName, task);
+                    guiMenus.add(task);
+                }
+
+                final Action act;
+                if(candidate instanceof Action){
+                    act = (Action) candidate;
+                    task.setSpecial(false);
+                    task.setCollapsed(false);
+                    task.setEnabled(true);
+                }else {
+                    final PropertyPane panel = (PropertyPane) candidate;
                     if(selected==null){
                         selected = panel;
                     }
-                    
                     panel.setTarget(target);
 
-                    JXTaskPane task = guiGroups.get(groupName);
-                    if(task==null){
-                        task = new JXTaskPane();
-                        task.setTitle(groupName);
-                        task.setIcon(null);
-                        task.setCollapsed(true);
-                        task.setSpecial(true);
-                        task.setEnabled(false);
-                        guiGroups.put(groupName, task);
-                        guiMenus.add(task);
-                    }
-                    
-                    final Action act = new AbstractAction() {
+                    act = new AbstractAction() {
                         {
                             putValue(Action.NAME, panel.getTitle());
                             putValue(Action.SHORT_DESCRIPTION, panel.getToolTip());
@@ -192,7 +208,7 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
                           setSelectedPropertyPanel(panel);
                         }
                       };
-                    
+
                     if(panel.canHandle(target)){
                         act.setEnabled(true);
                         panel.setTarget(target);
@@ -204,20 +220,24 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
                         act.setEnabled(false);
                         panel.setTarget(null);
                     }
-                    
-                    task.add(act);
+                }
+
+                task.add(act);
             }
         }
-                  
+
         guiMenus.add(preview);
-        
+
         setSelectedPropertyPanel(selected);
     }
 
     @Override
     public void apply() {
-        for (List<PropertyPane> lst : panels.values()) {
-            for(PropertyPane pan : lst){
+        for (List<Object> lst : panels.values()) {
+            for(Object candidate : lst){
+                if(!(candidate instanceof PropertyPane)) continue;
+                final PropertyPane pan = (PropertyPane) candidate;
+
                 if (pan.equals(active)) {
                     pan.apply();
                 } else {
@@ -229,8 +249,11 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
 
     @Override
     public void reset() {
-        for (List<PropertyPane> lst : panels.values()) {
-            for(PropertyPane pan : lst){
+        for (List<Object> lst : panels.values()) {
+
+            for(Object candidate : lst){
+                if(!(candidate instanceof PropertyPane)) continue;
+                final PropertyPane pan = (PropertyPane) candidate;
                 pan.reset();
             }
         }
@@ -249,7 +272,7 @@ public abstract class MultiPropertyPanel extends JPanel implements PropertyPane 
     public Component getComponent() {
         return this;
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JPanel guiTypesPane;
     private JScrollPane jScrollPane1;
