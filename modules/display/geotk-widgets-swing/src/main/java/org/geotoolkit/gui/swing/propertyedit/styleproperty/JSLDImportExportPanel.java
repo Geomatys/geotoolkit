@@ -57,6 +57,7 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
     public JSLDImportExportPanel() {
         initComponents();
         guiVersion.setModel(new EnumComboBoxModel(StyledLayerDescriptor.class));
+        guiVersion.setSelectedItem(StyledLayerDescriptor.V_1_1_0);
     }
 
     /** This method is called from within the constructor to
@@ -86,8 +87,6 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
             }
         });
 
-        guiVersion.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -99,7 +98,7 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
                 .addComponent(jButton3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addContainerGap(89, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -176,22 +175,22 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
                 } catch (FactoryException ex) {
                     Logging.getLogger(JSLDImportExportPanel.class).log(Level.FINEST,ex.getMessage(),ex);
                 }
-                
+
                 try {
-                    final MutableStyle style = tool.readStyle(chooser.getSelectedFile(), 
-                            (version==StyledLayerDescriptor.V_1_0_0) ? 
-                            Specification.SymbologyEncoding.SLD_1_0_0 : 
+                    final MutableStyle style = tool.readStyle(chooser.getSelectedFile(),
+                            (version==StyledLayerDescriptor.V_1_0_0) ?
+                            Specification.SymbologyEncoding.SLD_1_0_0 :
                             Specification.SymbologyEncoding.V_1_1_0);
 
                     layer.setStyle(style);
-                    
+
                     break parse;
                 } catch (JAXBException ex) {
                     Logging.getLogger(JSLDImportExportPanel.class).log(Level.FINEST,ex.getMessage(),ex);
                 } catch (FactoryException ex) {
                     Logging.getLogger(JSLDImportExportPanel.class).log(Level.FINEST,ex.getMessage(),ex);
                 }
-                
+
             }
         }
     }
@@ -230,7 +229,7 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
     public Image getPreview() {
         return null;
     }
-    
+
     @Override
     public String getToolTip() {
         return "";
