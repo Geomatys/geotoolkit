@@ -185,7 +185,7 @@ String result = sw.toString();
 
 -----------------------------------------------------------------------------------
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<csw:Record xmlns:gml="http://www.opengis.net/gml"
+<csw:Record xmlns:gml="http://www.opengis.net/gml/3.2"
             xmlns:ogc="http://www.opengis.net/ogc"
             xmlns:ows="http://www.opengis.net/ows"
             xmlns:dc="http://purl.org/dc/elements/1.1/"

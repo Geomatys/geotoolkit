@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <gml:GeographicCRS gml:id="WGS84(DD)"
-        xmlns:gmd = "http://www.isotc211.org/2005/gmd"
-        xmlns:gml = "http://www.opengis.net/gml"
+        xmlns:gml = "http://www.opengis.net/gml/3.2"
         xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation = "http://www.isotc211.org/2005/gmd http://schemas.opengis.net/iso/19139/20070417/gmd/gmd.xsd">
+        xsi:schemaLocation = "http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/datums.xsd">
   <gml:name>WGS84(DD)</gml:name>
   <gml:ellipsoidalCS>
     <gml:EllipsoidalCS gml:id="Géodésique 2D">

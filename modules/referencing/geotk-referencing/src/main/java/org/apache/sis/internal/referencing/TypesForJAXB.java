@@ -44,5 +44,10 @@ public class TypesForJAXB extends TypeRegistration {
     @Override
     public void getTypes(final Collection<Class<?>> addTo) {
         addTo.add(DefaultVerticalCRS.class);
+        /*
+         * Temporarily remove the Apache SIS types. This hack will be removed
+         * after we finished to port the Geotk referencing module to SIS.
+         */
+        addTo.remove(org.apache.sis.referencing.AbstractIdentifiedObject.class);
     }
 }
