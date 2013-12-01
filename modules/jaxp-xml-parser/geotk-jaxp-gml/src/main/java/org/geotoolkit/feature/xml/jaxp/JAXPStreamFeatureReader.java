@@ -98,6 +98,11 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
     public static final String BINDING_PACKAGE = "bindingPackage";
 
+    /**
+     * GML namespace for this class.
+     */
+    private static final String GML = "http://www.opengis.net/gml";
+
     public JAXPStreamFeatureReader() {
         this(new ArrayList<FeatureType>());
     }
@@ -174,7 +179,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 }
 
                 final Name name  = Utils.getNameFromQname(reader.getName());
-                final String id  = reader.getAttributeValue(Namespaces.GML, "id");
+                final String id  = reader.getAttributeValue(GML, "id");
                 final StringBuilder expectedFeatureType = new StringBuilder();
 
                 if (name.getLocalPart().equals("FeatureCollection")) {

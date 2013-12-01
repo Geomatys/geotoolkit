@@ -33,7 +33,6 @@ import org.geotoolkit.gml.xml.v311.LineStringSegmentType;
 import org.geotoolkit.gml.xml.v311.ObjectFactory;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.gml.xml.v311.TimePositionType;
-import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.xml.MarshallerPool;
 
 //Junit dependencies
@@ -48,6 +47,11 @@ import static org.apache.sis.test.Assert.*;
  * @module pending
  */
 public class GmlXMLBindingTest {
+
+    /**
+     * GML namespace for this class.
+     */
+    private static final String GML = "http://www.opengis.net/gml";
 
     private static MarshallerPool pool;
     private Marshaller   marshaller;
@@ -98,7 +102,7 @@ public class GmlXMLBindingTest {
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
 
-        String expResult = "<gml:Envelope xmlns:gml=\"" + Namespaces.GML + '"' +
+        String expResult = "<gml:Envelope xmlns:gml=\"" + GML + '"' +
                            " srsName=\"urn:ogc:def:crs:EPSG:6.8:4283\" gml:id=\"bound-1\" >" + '\n' +
                            "  <gml:lowerCorner>-30.711 134.196</gml:lowerCorner>" + '\n' +
                            "  <gml:upperCorner>-30.702 134.205</gml:upperCorner>" + '\n' +
@@ -131,7 +135,7 @@ public class GmlXMLBindingTest {
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
 
-        expResult = "<gml:LineStringSegment xmlns:gml=\"" + Namespaces.GML + "\">\n" +
+        expResult = "<gml:LineStringSegment xmlns:gml=\"" + GML + "\">\n" +
                     "  <gml:posList>1.0 1.1 1.2</gml:posList>" + '\n' +
                     "</gml:LineStringSegment>" + '\n' ;
         assertXmlEquals(expResult, result, "xmlns:*");
@@ -149,7 +153,7 @@ public class GmlXMLBindingTest {
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
 
-        expResult = "<gml:LineStringSegment xmlns:gml=\"" + Namespaces.GML + "\">\n" +
+        expResult = "<gml:LineStringSegment xmlns:gml=\"" + GML + "\">\n" +
                     "  <gml:pos>1.1 1.2</gml:pos>" + '\n' +
                     "  <gml:pos>2.3 48.1</gml:pos>" + '\n' +
                     "</gml:LineStringSegment>" + '\n' ;

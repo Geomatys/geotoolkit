@@ -120,7 +120,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             gmlNamespace = "http://www.opengis.net/gml/3.2";
             gmlLocation  = "http://schemas.opengis.net/gml/3.2.1/gml.xsd";
         } else {
-            gmlNamespace = Namespaces.GML;
+            gmlNamespace = "http://www.opengis.net/gml";
             gmlLocation  = "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd";
         }
 
@@ -405,7 +405,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         FeatureType type = featureCollection.getFeatureType();
         if (type != null && type.getName() != null) {
             String namespace = type.getName().getNamespaceURI();
-            if (namespace != null && !(namespace.equals(Namespaces.GML) || namespace.equals("http://www.opengis.net/gml/3.2")) && !namespace.isEmpty()) {
+            if (namespace != null && !(namespace.equals("http://www.opengis.net/gml") || namespace.equals("http://www.opengis.net/gml/3.2")) && !namespace.isEmpty()) {
                 Prefix prefix    = getPrefix(namespace);
                 writer.writeNamespace(prefix.prefix, namespace);
             }

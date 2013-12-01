@@ -82,6 +82,11 @@ public class ElementFeatureWriter {
      */
     private static final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
 
+    /**
+     * GML namespace for this class.
+     */
+    private static final String GML = "http://www.opengis.net/gml";
+
     protected String schemaLocation;
 
     private int lastUnknowPrefix = 0;
@@ -170,7 +175,7 @@ public class ElementFeatureWriter {
         if (!fragment) {
             rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:gml", "http://www.opengis.net/gml");
         }
-        final Attr idAttr = document.createAttributeNS(Namespaces.GML, "id");
+        final Attr idAttr = document.createAttributeNS(GML, "id");
         idAttr.setValue(feature.getIdentifier().getID());
         idAttr.setPrefix("gml");
         rootElement.setAttributeNodeNS(idAttr);
@@ -256,8 +261,8 @@ public class ElementFeatureWriter {
                     String value = Utils.getStringValue(valueA);
                     if (value != null || (value == null && !a.isNillable())) {
 
-                        if ((nameProperty.equals("name") || nameProperty.equals("description")) && !Namespaces.GML.equals(namespaceProperty)) {
-                            namespaceProperty = Namespaces.GML;
+                        if ((nameProperty.equals("name") || nameProperty.equals("description")) && !GML.equals(namespaceProperty)) {
+                            namespaceProperty = GML;
                             LOGGER.finer("the property name and description of a feature must have the GML namespace");
                         }
                         final Element element;
@@ -348,7 +353,7 @@ public class ElementFeatureWriter {
         if (featureCollection.getID() != null) {
             collectionID = featureCollection.getID();
         }
-        final Attr idAttribute = document.createAttributeNS(Namespaces.GML, "id");
+        final Attr idAttribute = document.createAttributeNS(GML, "id");
         idAttribute.setValue(collectionID);
         idAttribute.setPrefix("gml");
         rootElement.setAttributeNodeNS(idAttribute);
@@ -371,7 +376,7 @@ public class ElementFeatureWriter {
         /*FeatureType type = featureCollection.getFeatureType();
         if (type != null && type.getName() != null) {
             String namespace = type.getName().getNamespaceURI();
-            if (namespace != null && !namespace.equals(Namespaces.GML)) {
+            if (namespace != null && !namespace.equals(GML)) {
                 Prefix prefix    = getPrefix(namespace);
                 writer.writeNamespace(prefix.prefix, namespace);
             }
@@ -389,7 +394,7 @@ public class ElementFeatureWriter {
         try {
             while (iterator.hasNext()) {
                 final Feature f = iterator.next();
-                final Element memberElement = document.createElementNS(Namespaces.GML, "featureMember");
+                final Element memberElement = document.createElementNS(GML, "featureMember");
                 memberElement.setPrefix("gml");
                 memberElement.appendChild(writeFeature(f, document, true));
                 rootElement.appendChild(memberElement);
@@ -414,9 +419,9 @@ public class ElementFeatureWriter {
                     LOGGER.log(Level.WARNING, null, ex);
                 }
             }
-            final Element boundElement = document.createElementNS(Namespaces.GML, "boundedBy");
+            final Element boundElement = document.createElementNS(GML, "boundedBy");
             boundElement.setPrefix("gml");
-            final Element envElement = document.createElementNS(Namespaces.GML, "Envelope");
+            final Element envElement = document.createElementNS(GML, "Envelope");
             envElement.setPrefix("gml");
             if (srsName != null) {
                 envElement.setAttribute("srsName", srsName);
@@ -425,14 +430,14 @@ public class ElementFeatureWriter {
             }
 
             // lower corner
-            final Element lower = document.createElementNS(Namespaces.GML, "lowerCorner");
+            final Element lower = document.createElementNS(GML, "lowerCorner");
             String lowValue = bounds.getLowerCorner().getOrdinate(0) + " " + bounds.getLowerCorner().getOrdinate(1);
             lower.setTextContent(lowValue);
             lower.setPrefix("gml");
             envElement.appendChild(lower);
 
             // upper corner
-            final Element upper = document.createElementNS(Namespaces.GML, "upperCorner");
+            final Element upper = document.createElementNS(GML, "upperCorner");
             String uppValue = bounds.getUpperCorner().getOrdinate(0) + " " + bounds.getUpperCorner().getOrdinate(1);
             upper.setTextContent(uppValue);
             upper.setPrefix("gml");

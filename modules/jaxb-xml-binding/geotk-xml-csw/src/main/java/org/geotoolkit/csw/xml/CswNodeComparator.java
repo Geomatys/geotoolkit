@@ -66,7 +66,7 @@ import static org.apache.sis.util.CharSequences.trimWhitespaces;
  * @author  Johann Sorel (Geomatys)
  * @author  Martin Desruisseaux (Geomatys)
  * @author  Guilhem Legal (Geomatys)
- 
+
  * @version 0.4
  * @module
  *
@@ -84,7 +84,7 @@ public class CswNodeComparator {
         map.put("xmlns", "http://www.w3.org/2000/xmlns"); // No trailing slash.
         map.put("xlink", Namespaces.XLINK);
         map.put("xsi",   Namespaces.XSI);
-        map.put("gml",   Namespaces.GML);
+        map.put("gml",   "http://www.opengis.net/gml");
         map.put("gmd",   Namespaces.GMD);
         map.put("gmx",   Namespaces.GMX);
         map.put("gmi",   Namespaces.GMI);
@@ -199,7 +199,7 @@ public class CswNodeComparator {
         ignoredNodes      = new HashSet<>();
     }
 
-    
+
     /**
      * If the given attribute name begins with one of the well known prefixes,
      * substitutes the prefix by the full URL. Otherwise returns the name unchanged.

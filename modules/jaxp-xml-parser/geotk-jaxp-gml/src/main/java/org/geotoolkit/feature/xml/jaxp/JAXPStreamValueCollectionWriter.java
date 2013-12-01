@@ -260,7 +260,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
         FeatureType type = featureCollection.getFeatureType();
         if (type != null && type.getName() != null) {
             String namespace = type.getName().getNamespaceURI();
-            if (namespace != null && !(namespace.equals(Namespaces.GML) || namespace.equals("http://www.opengis.net/gml/3.2"))) {
+            if (namespace != null && !(namespace.equals("http://www.opengis.net/gml") || namespace.equals("http://www.opengis.net/gml/3.2"))) {
                 Prefix prefix    = getPrefix(namespace);
                 writer.writeNamespace(prefix.prefix, namespace);
             }
