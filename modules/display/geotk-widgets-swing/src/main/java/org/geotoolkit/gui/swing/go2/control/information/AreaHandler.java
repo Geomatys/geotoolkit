@@ -57,9 +57,9 @@ public class AreaHandler implements CanvasHandler {
     public static final List<Unit> UNITS = new ArrayList<Unit>();
 
     static{
+        UNITS.add(Unit.valueOf("km2")); //SI.SQUARE_METRE.times(1000000));
         UNITS.add(SI.SQUARE_METRE);
         UNITS.add(NonSI.ARE);
-        UNITS.add(NonSI.HECTARE);
     }
 
     private final MouseListen mouseInputListener;
