@@ -164,14 +164,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 dataCoverage = projectedCoverage.getCoverage(param);
                 elevationCoverage = projectedCoverage.getElevationCoverage(param);
             } catch (DisjointCoverageDomainException ex) {
-                LOGGER.log(Level.INFO, ex.getMessage());
+                //LOGGER.log(Level.INFO, ex.getMessage());
                 return;
             } catch (CoverageStoreException ex) {
                 throw new PortrayalException(ex);
             }
 
             if(dataCoverage == null){
-                LOGGER.log(Level.WARNING, "Requested an area where no coverage where found.");
+                //LOGGER.log(Level.WARNING, "Requested an area where no coverage where found.");
                 return;
             }
 
@@ -219,7 +219,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
 
             if(dataCoverage == null){
-                LOGGER.log(Level.WARNING, "Reprojected coverage is null.");
+                //LOGGER.log(Level.WARNING, "RasterSymbolizer : Reprojected coverage is null.");
                 return;
             }
 

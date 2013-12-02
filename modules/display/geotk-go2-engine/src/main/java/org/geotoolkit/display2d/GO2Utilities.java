@@ -161,7 +161,7 @@ public final class GO2Utilities {
             new HashMap<Class<? extends CachedSymbolizer>, SymbolizerRendererService>();
 
     private static final double SE_EPSILON = 1e-6;
-    
+
     public static final MutableStyleFactory STYLE_FACTORY;
     public static final FilterFactory2 FILTER_FACTORY;
     public static final float SELECTION_LOWER_ALPHA = 0.09f;
@@ -285,7 +285,7 @@ public final class GO2Utilities {
         }
 
         if(dataCoverage == null){
-            monitor.exceptionOccured(new NullArgumentException("Reprojected coverage is null."),Level.WARNING);
+            monitor.exceptionOccured(new NullArgumentException("GO2Utilities : Reprojected coverage is null."),Level.WARNING);
             return;
         }
 

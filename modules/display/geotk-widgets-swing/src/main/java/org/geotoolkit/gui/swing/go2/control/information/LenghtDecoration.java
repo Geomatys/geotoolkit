@@ -57,9 +57,9 @@ public class LenghtDecoration extends AbstractGeometryDecoration{
     LenghtDecoration(){
         setLayout(new BorderLayout());
 
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        final JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panel.setOpaque(false);
-        JPanel sub = new JPanel(new FlowLayout());
+        final JPanel sub = new JPanel(new FlowLayout());
         sub.setOpaque(false);
         sub.add(guiLbl);
         sub.add(guiUOM);

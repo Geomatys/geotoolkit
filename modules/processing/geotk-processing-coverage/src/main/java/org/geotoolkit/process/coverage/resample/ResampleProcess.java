@@ -26,6 +26,7 @@ import java.awt.image.ImagingOpException;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -67,6 +68,7 @@ import org.geotoolkit.referencing.operation.AbstractCoordinateOperationFactory;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
+import org.geotoolkit.util.BufferedImageUtilities;
 
 
 import org.opengis.coverage.grid.GridCoverage;
@@ -90,9 +92,9 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  */
 public class ResampleProcess extends AbstractProcess {
-        
+
     private static final Logger LOGGER = Logging.getLogger(ResampleProcess.class);
-    
+
     /**
      * The corner to use for performing calculation. By default {@link GridGeometry#getGridToCRS()}
      * maps to pixel center (as of OGC specification). In JAI, the transforms rather map to the
@@ -100,7 +102,7 @@ public class ResampleProcess extends AbstractProcess {
      */
     private static final PixelOrientation CORNER = PixelOrientation.UPPER_LEFT;
 
-    
+
     ResampleProcess(final ParameterValueGroup input) {
         super(INSTANCE, input);
     }
@@ -110,8 +112,8 @@ public class ResampleProcess extends AbstractProcess {
      */
     @Override
     protected void execute() throws ProcessException {
-          
-        
+
+
         final GridCoverage2D source = (GridCoverage2D) Parameters.getOrCreate(IN_COVERAGE, inputParameters).getValue();
         final double[] background = (double[]) Parameters.getOrCreate(IN_BACKGROUND, inputParameters).getValue();
         InterpolationCase interpolation = (InterpolationCase) Parameters.getOrCreate(IN_INTERPOLATION_TYPE, inputParameters).getValue();
@@ -125,7 +127,7 @@ public class ResampleProcess extends AbstractProcess {
         final GridGeometry2D targetGG = GridGeometry2D.castOrCopy(
                 (GridGeometry) inputParameters.parameter("GridGeometry").getValue());
         final GridCoverage2D target;
-        
+
         try {
             target = reproject(source, targetCRS, targetGG, interpolation, background, null);
         } catch (FactoryException exception) {
@@ -135,10 +137,10 @@ public class ResampleProcess extends AbstractProcess {
             throw new CannotReprojectException(Errors.format(
                     Errors.Keys.CANT_REPROJECT_COVERAGE_1, source.getName()), exception);
         }
-        
+
         Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(target);
     }
-    
+
     /**
      * Constructs a new grid coverage for the specified grid geometry.
      *
@@ -257,7 +259,7 @@ public class ResampleProcess extends AbstractProcess {
                 }
             }
         }
-        
+
         final GridGeometry2D sourceGG = sourceCoverage.getGridGeometry();
         final CoordinateReferenceSystem compatibleSourceCRS = compatibleSourceCRS(
                 sourceCoverage.getCoordinateReferenceSystem2D(), sourceCRS, targetCRS);
@@ -410,14 +412,13 @@ public class ResampleProcess extends AbstractProcess {
         ////            STEP 4: Applies the transform operation ("Affine","Warp")           ////
         ////                                                                                ////
         ////////////////////////////////////////////////////////////////////////////////////////
-        
-        
+
+
         final Rectangle sourceBB = sourceGG.getExtent2D();
         final Rectangle targetBB = targetGG.getExtent2D();
-        final WritableRaster targetRaster = sourceImage.getColorModel().createCompatibleWritableRaster(targetBB.width,targetBB.height);
-        final BufferedImage targetImage = new BufferedImage(sourceImage.getColorModel(),
-                targetRaster,sourceImage.getColorModel().isAlphaPremultiplied(),new Hashtable<>());
-        
+        final BufferedImage targetImage = BufferedImageUtilities.createImage(targetBB.width,targetBB.height, sourceImage);
+        final WritableRaster targetRaster = targetImage.getRaster();
+
         ////////////////////////////////////////////////////////////////////////////////////////
         ////                                                                                ////
         ////            STEP 1: Extracts needed informations from the parameters            ////
@@ -426,41 +427,41 @@ public class ResampleProcess extends AbstractProcess {
         //// =======>>  STEP 4: Applies the transform operation ("Affine","Warp")  <<====== ////
         ////                                                                                ////
         ////////////////////////////////////////////////////////////////////////////////////////
-        
+
         if(allSteps2D.isIdentity()){
             //we can directly copy raster to raster
             targetRaster.setDataElements(0, 0, sourceImage.getData());
             return create(sourceCoverage, targetImage, targetGG, finalView, hints);
         }
-        
+
         //try to optimize resample using java wrap operation
         if(canUseJavaInterpolation(sourceImage, allSteps2D, interpolationType)){
             allSteps2D = PixelTranslation.translate(allSteps2D, PixelOrientation.CENTER,PixelOrientation.UPPER_LEFT,0,1);
             try{
-                return resampleUsingJava(sourceCoverage, sourceImage, interpolationType, 
+                return resampleUsingJava(sourceCoverage, sourceImage, interpolationType,
                                    allSteps2D, targetImage, targetGG, finalView, hints);
             }catch(ImagingOpException ex){
                 LOGGER.log(Level.WARNING, "Resampling process : Failed to use java affine resampling.");
             }
         }
-        
+
         MathTransform targetToSource = allSteps2D;
         if(!(targetToSource instanceof AffineTransform)){
             //try to use a grid transform to improve performances
             try{
                 final TransformGrid tr = TransformGrid.create(
-                        (MathTransform2D)targetToSource, 
+                        (MathTransform2D)targetToSource,
                         new Rectangle(targetImage.getWidth(),targetImage.getHeight()) );
                 if(tr.globalTransform!=null){
                     //we can completly replace it by an affine transform
                     targetToSource = new AffineTransform2D(tr.globalTransform);
                     targetToSource = PixelTranslation.translate(targetToSource, PixelOrientation.UPPER_LEFT,PixelOrientation.UPPER_LEFT,0,1);
-                    
+
                     // we should be able to use Java affine op here, but this produces plenty of artifact
                     // since the transform is approximative, artifact = white pixels on tile borders
                     //if(canUseJavaInterpolation(sourceImage, targetToSource, interpolationType)){
                     //    MathTransform inv = targetToSource.inverse();
-                    //    return resampleUsingJava(sourceCoverage, sourceImage, interpolationType, 
+                    //    return resampleUsingJava(sourceCoverage, sourceImage, interpolationType,
                     //                       inv, targetImage, targetGG, finalView, hints);
                     //}
                 }else{
@@ -470,38 +471,54 @@ public class ResampleProcess extends AbstractProcess {
                 //could not be optimized
                 LOGGER.log(Level.FINE, ex.getMessage());
             }
-        }   
-        
+        }
+
+        final double[] fillValue = getFillValue(sourceCoverage);
+
         final Interpolation interpolator = Interpolation.create(
                 PixelIteratorFactory.createDefaultIterator(sourceImage,sourceBB), interpolationType, 2);
-        final Resample resample = new Resample(targetToSource, targetImage, 
-                interpolator, new double[targetImage.getSampleModel().getNumBands()]);
+        final Resample resample = new Resample(targetToSource, targetImage,
+                interpolator, fillValue);
         resample.fillImage();
-        
+
         return create(sourceCoverage, targetImage, targetGG, finalView, hints);
     }
-    
+
+    private static double[] getFillValue(GridCoverage2D gridCoverage2D){
+        final GridSampleDimension[] dimensions = gridCoverage2D.getSampleDimensions();
+        final int nbBand = dimensions.length;
+        final double[] fillValue = new double[nbBand];
+        Arrays.fill(fillValue, Double.NaN);
+        for(int i=0;i<nbBand;i++){
+            final double[] nodata = dimensions[i].geophysics(true).getNoDataValues();
+            if(nodata!=null && nodata.length>0){
+                fillValue[i] = nodata[0];
+            }
+        }
+        return fillValue;
+    }
+
     /**
      * Check if conditions are met to use java affine interpolation.
-     * 
+     *
      * @param sourceImage
      * @param trs
      * @param interpolation
-     * @return 
+     * @return
      */
-    private static boolean canUseJavaInterpolation(RenderedImage sourceImage, 
+    private static boolean canUseJavaInterpolation(RenderedImage sourceImage,
             MathTransform trs, InterpolationCase interpolation){
         final int datatype = sourceImage.getSampleModel().getDataType();;
         if(!(datatype == DataBuffer.TYPE_BYTE || datatype == DataBuffer.TYPE_INT)){
             return false;
         }
-        return interpolation != InterpolationCase.LANCZOS && trs instanceof AffineTransform && 
+        return interpolation != InterpolationCase.LANCZOS && trs instanceof AffineTransform &&
               ((sourceImage instanceof BufferedImage) || (sourceImage.getNumXTiles()==1 && sourceImage.getNumYTiles()==1));
     }
-    
+
     /**
      * Find the Java interpolation equivalent value.
-     * 
+     *
      * @return RenderingHints or null if not found
      */
     private static Object fingJavaInterpolationHint(final InterpolationCase interpolationType){
@@ -513,11 +530,11 @@ public class ResampleProcess extends AbstractProcess {
             default: return null;
         }
     }
-    
+
     private static GridCoverage2D resampleUsingJava(GridCoverage2D sourceCoverage,
             RenderedImage sourceImage,InterpolationCase interpolationType, MathTransform trs,
             BufferedImage targetImage, GridGeometry2D targetGG, ViewType finalView, Hints hints){
-        
+
         final Object javaInterHint = fingJavaInterpolationHint(interpolationType);
         final RenderingHints ophints = new RenderingHints(new HashMap());
         ophints.put(RenderingHints.KEY_INTERPOLATION, javaInterHint);
@@ -614,7 +631,7 @@ public class ResampleProcess extends AbstractProcess {
         record.setLoggerName(logger.getName());
         logger.log(record);
     }
-    
+
     /**
      * General purpose method used in various operations for {@link GridCoverage2D} to help
      * with taking decisions on how to treat coverages with respect to their {@link ColorModel}.
@@ -749,7 +766,7 @@ public class ResampleProcess extends AbstractProcess {
         }
         return ViewType.SAME;
     }
-    
+
     /**
      * Computes a grid geometry from a source coverage and a target envelope. This is a convenience
      * method for computing the {@link #GRID_GEOMETRY} argument of a {@code "resample"} operation
@@ -836,6 +853,6 @@ public class ResampleProcess extends AbstractProcess {
     private static void recoverableException(final String method, final Exception exception) {
         Logging.recoverableException(ResampleProcess.class, method, exception);
     }
-    
-    
+
+
 }
