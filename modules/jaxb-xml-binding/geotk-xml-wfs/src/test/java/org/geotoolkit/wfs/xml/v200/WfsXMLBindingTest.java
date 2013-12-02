@@ -80,7 +80,7 @@ public class WfsXMLBindingTest {
         assertTrue(result.getFeatureTypeList() != null);
 
         WFSCapabilitiesType expResult = new WFSCapabilitiesType();
-        List<FeatureTypeType> featList = new ArrayList<FeatureTypeType>();
+        List<FeatureTypeType> featList = new ArrayList<>();
         List<String> otherSRS = Arrays.asList("urn:ogc:def:crs","crs:EPSG::32615","crs:EPSG::5773");
         WGS84BoundingBoxType bbox = new WGS84BoundingBoxType(29.8, -90.1, 30, -89.9);
         FeatureTypeType ft1 = new FeatureTypeType(new QName("http://www.opengis.net/ows-6/utds/0.3", "Building", "utds"), "", "urn:ogc:def:crs:EPSG::4979", otherSRS, Arrays.asList(bbox));
@@ -161,7 +161,7 @@ public class WfsXMLBindingTest {
     public void marshallingTest() throws JAXBException {
 
         WFSCapabilitiesType capa = new WFSCapabilitiesType();
-        List<FeatureTypeType> featList = new ArrayList<FeatureTypeType>();
+        List<FeatureTypeType> featList = new ArrayList<>();
         List<String> otherSRS = Arrays.asList("urn:ogc:def:crs","crs:EPSG::32615","crs:EPSG::5773");
         WGS84BoundingBoxType bbox = new WGS84BoundingBoxType(29.8, -90.1, 30, -89.9);
         FeatureTypeType ft1 = new FeatureTypeType(new QName("http://www.opengis.net/ows-6/utds/0.3", "Building", "utds"), "", "urn:ogc:def:crs:EPSG::4979", otherSRS, Arrays.asList(bbox));
@@ -188,7 +188,7 @@ public class WfsXMLBindingTest {
         sw = new StringWriter();
         marshaller.marshal(transac, sw);
 
-        final List<StoredQueryDescription> descriptions = new ArrayList<StoredQueryDescription>();
+        final List<StoredQueryDescription> descriptions = new ArrayList<>();
         final ParameterExpressionType param = new ParameterExpressionType("param1", "parameter 1", "a test parameter", new QName("http://www.w3.org/2001/XMLSchema", "string", "xs"));
         final List<QName> types = Arrays.asList(new QName("http://test.com", "someType"));
         final QueryType query = new QueryType(filter, types, "2.0.0");

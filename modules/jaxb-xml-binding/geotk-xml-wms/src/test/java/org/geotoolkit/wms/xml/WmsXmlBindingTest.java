@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wms.xml;
 
-import java.io.IOException;
 import org.geotoolkit.wms.xml.v111.VendorSpecificCapabilities;
 import java.io.StringReader;
 import java.util.List;
@@ -29,12 +28,13 @@ import java.net.URI;
 import org.opengis.util.NameFactory;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import org.opengis.metadata.citation.Citation;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.ParserConfigurationException;
 import org.apache.sis.util.iso.DefaultInternationalString;
 
 import org.geotoolkit.inspire.xml.vs.ExtendedCapabilitiesType;
@@ -68,11 +68,12 @@ import org.opengis.metadata.maintenance.ScopeCode;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.temporal.Period;
 import javax.xml.bind.JAXBContext;
-import org.xml.sax.SAXException;
+import org.apache.sis.internal.jaxb.gml.GMLAdapter;
 
 import static org.apache.sis.test.TestUtilities.getSingleton;
 
 import static org.apache.sis.test.Assert.*;
+import org.apache.sis.xml.XML;
 
 
 /**
@@ -88,11 +89,13 @@ public class WmsXmlBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put(XML.GML_VERSION, GMLAdapter.GML_3_0);
         pool = new MarshallerPool(JAXBContext.newInstance(
                 "org.geotoolkit.wms.xml.v111:" +
                 "org.geotoolkit.wms.xml.v130:" +
                 "org.geotoolkit.inspire.xml.vs:" +
-                "org.apache.sis.internal.jaxb.geometry"), null);
+                "org.apache.sis.internal.jaxb.geometry"), properties);
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }
@@ -108,7 +111,7 @@ public class WmsXmlBindingTest {
     }
 
     /**
-     * @throws java.lang.Exception
+     * @throws javax.xml.bind.JAXBException
      */
     @Test
     public void WMSCUnmarshallingTest() throws JAXBException {
@@ -147,7 +150,7 @@ public class WmsXmlBindingTest {
         VendorSpecificCapabilities spec = new VendorSpecificCapabilities();
 
         BoundingBox bb1 = new BoundingBox("EPSG:310024802", -1048576, 3670016, 2621440, 8388608, null, null);
-        List<Double> res = new ArrayList<Double>();
+        List<Double> res = new ArrayList<>();
         res.add(0.5);
         res.add(1.0);
         res.add(2.0);
@@ -158,7 +161,7 @@ public class WmsXmlBindingTest {
         spec.getTileSet().add(ts);
 
         BoundingBox bb2 = new BoundingBox("EPSG:310915814", -6791168, 1761280, -6553600, 2023424, null, null);
-        List<Double> res2 = new ArrayList<Double>();
+        List<Double> res2 = new ArrayList<>();
         res2.add(0.5);
         res2.add(1.0);
         res2.add(2.0);
@@ -176,7 +179,7 @@ public class WmsXmlBindingTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void WMSCMarshallingTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
+    public void WMSCMarshallingTest() throws Exception {
         String expResult =
         "<Capability >" + '\n' +
         "    <VendorSpecificCapabilities>" + '\n' +
@@ -207,7 +210,7 @@ public class WmsXmlBindingTest {
         VendorSpecificCapabilities spec = new VendorSpecificCapabilities();
 
         BoundingBox bb1 = new BoundingBox("EPSG:310024802", -1048576, 3670016, 2621440, 8388608, null, null);
-        List<Double> res = new ArrayList<Double>();
+        List<Double> res = new ArrayList<>();
         res.add(0.5);
         res.add(1.0);
         res.add(2.0);
@@ -218,7 +221,7 @@ public class WmsXmlBindingTest {
         spec.getTileSet().add(ts);
 
         BoundingBox bb2 = new BoundingBox("EPSG:310915814", -6791168, 1761280, -6553600, 2023424, null, null);
-        List<Double> res2 = new ArrayList<Double>();
+        List<Double> res2 = new ArrayList<>();
         res2.add(0.5);
         res2.add(1.0);
         res2.add(2.0);
@@ -282,7 +285,7 @@ public class WmsXmlBindingTest {
         DefaultKeywords key = new DefaultKeywords(new SimpleInternationalString("something"));
         ext.setInpireKeywords(key);
 
-        List<LanguageType> langs = new ArrayList<LanguageType>();
+        List<LanguageType> langs = new ArrayList<>();
         langs.add(new LanguageType("FR"));
         langs.add(new LanguageType("EN", true));
         LanguagesType languages = new LanguagesType(langs);
@@ -439,7 +442,7 @@ public class WmsXmlBindingTest {
 
 //      org.apache.sis.internal.jaxb.gml.GMLAdapter.IDs.removeUUID(period);
 
-        assertXmlEquals(expResult, result, "xmlns:*");
+        assertXmlEquals(expResult, result, "http://www.w3.org/2000/xmlns:*");
 
     }
 
@@ -623,7 +626,7 @@ public class WmsXmlBindingTest {
         DefaultKeywords key = new DefaultKeywords(new SimpleInternationalString("something"));
         ext.setInpireKeywords(key);
 
-        List<LanguageType> langs = new ArrayList<LanguageType>();
+        List<LanguageType> langs = new ArrayList<>();
         langs.add(new LanguageType("FR"));
         langs.add(new LanguageType("EN", true));
         LanguagesType languages = new LanguagesType(langs);

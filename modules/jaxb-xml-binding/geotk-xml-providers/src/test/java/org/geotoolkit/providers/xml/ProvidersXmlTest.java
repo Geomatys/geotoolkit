@@ -120,11 +120,11 @@ public class ProvidersXmlTest {
      */
     @Test
     public void testMarshallingWithoutSLD() throws Exception {
-        final List<MapItem> mapLayers2 = new ArrayList<MapItem>();
+        final List<MapItem> mapLayers2 = new ArrayList<>();
         mapLayers2.add(new MapLayer(new DataReference("postgis_test:my_otherlayer"), new StyleReference("my_otherstyle")));
         mapLayers2.add(new MapLayer(new DataReference("coverage:my_thirdlayer"), new StyleReference("my_newstyle")));
 
-        final List<MapItem> mapItems = new ArrayList<MapItem>();
+        final List<MapItem> mapItems = new ArrayList<>();
         mapItems.add(new MapItem(mapLayers2));
 
         final MapLayer ml = new MapLayer(new DataReference("postgis_test:my_layer"), new StyleReference("my_style"));
@@ -145,6 +145,7 @@ public class ProvidersXmlTest {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         XMLComparator comparator = new XMLComparator(RESULT_MARSHALLING_WITHOUT_SLD, result.trim());
+        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
     }
 
@@ -155,7 +156,7 @@ public class ProvidersXmlTest {
      */
     @Test
     public void testMarshallingWithSLD() throws JAXBException, Exception {
-        final List<MapItem> mapLayers2 = new ArrayList<MapItem>();
+        final List<MapItem> mapLayers2 = new ArrayList<>();
         final StyledLayerDescriptor sld = new StyledLayerDescriptor();
         final UserStyle us = new UserStyle();
         final DescriptionType title = new DescriptionType();
@@ -171,7 +172,7 @@ public class ProvidersXmlTest {
         mapLayers2.add(new MapLayer(new DataReference("postgis_test:my_otherlayer"), sld));
         mapLayers2.add(new MapLayer(new DataReference("coverage:my_thirdlayer"), new StyleReference("my_newstyle")));
 
-        final List<MapItem> mapItems = new ArrayList<MapItem>();
+        final List<MapItem> mapItems = new ArrayList<>();
         mapItems.add(new MapItem(mapLayers2));
 
         final MapLayer ml = new MapLayer(new DataReference("postgis_test:my_layer"), new StyleReference("my_style"));
@@ -192,6 +193,7 @@ public class ProvidersXmlTest {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         XMLComparator comparator = new XMLComparator(RESULT_MARSHALLING_WITH_SLD, result.trim());
+        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
     }
 

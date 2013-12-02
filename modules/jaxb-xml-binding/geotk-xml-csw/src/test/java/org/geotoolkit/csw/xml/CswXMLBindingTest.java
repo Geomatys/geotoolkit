@@ -1238,7 +1238,7 @@ public class CswXMLBindingTest {
         "</csw:GetRecords>\n";
 
         XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.ignoredAttributes.add("xmlns:*");
+        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
 
          /*
@@ -1279,7 +1279,7 @@ public class CswXMLBindingTest {
         "</cat:GetRecords>\n";
 
         comparator = new XMLComparator(expResult, result);
-        comparator.ignoredAttributes.add("xmlns:*");
+        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
 
         pool.recycle(marshaller);
@@ -1450,7 +1450,7 @@ public class CswXMLBindingTest {
         String result = sw.toString();
 
         XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.ignoredAttributes.add("xmlns:*");
+        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
 
         /**
@@ -1500,7 +1500,7 @@ public class CswXMLBindingTest {
         result = sw.toString();
 
         comparator = new XMLComparator(expResult, result);
-        comparator.ignoredAttributes.add("xmlns:*");
+        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
 
         pool.recycle(marshaller);
@@ -1742,7 +1742,7 @@ public class CswXMLBindingTest {
         String result = sw.toString();
 
         XMLComparator comparator = new XMLComparator(expResult, result);
-        comparator.ignoredAttributes.add("xmlns:*");
+        comparator.ignoredAttributes.add("http://www.w3.org/2000/xmlns:*");
         comparator.compare();
 
         pool.recycle(marshaller);
