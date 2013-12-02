@@ -58,7 +58,11 @@ public class AnchoredMarshallerPool extends MarshallerPool {
      * @throws JAXBException If the JAXB context can not be created.
      */
     public AnchoredMarshallerPool(final JAXBContext context) throws JAXBException {
-        this(null, context, null, new HashMap<String,URI>());
+        this(null, context, null, new HashMap<String,URI>(), null);
+    }
+
+    public AnchoredMarshallerPool(final JAXBContext context, final Map<String, Object> properties) throws JAXBException {
+        this(null, context, null, new HashMap<String,URI>(), properties);
     }
 
     /**
@@ -90,7 +94,7 @@ public class AnchoredMarshallerPool extends MarshallerPool {
      * @throws JAXBException    If the JAXB context can not be created.
      */
     public AnchoredMarshallerPool(final String rootNamespace, final String schemaLocation, final Class<?>... classesToBeBound) throws JAXBException {
-        this(rootNamespace, JAXBContext.newInstance(classesToBeBound), schemaLocation, new HashMap<String,URI>());
+        this(rootNamespace, JAXBContext.newInstance(classesToBeBound), schemaLocation, new HashMap<String,URI>(), null);
     }
 
     /**
@@ -127,13 +131,13 @@ public class AnchoredMarshallerPool extends MarshallerPool {
      * @throws JAXBException    If the JAXB context can not be created.
      */
     public AnchoredMarshallerPool(final String rootNamespace, final String packages, final String schemaLocation) throws JAXBException {
-        this(rootNamespace, JAXBContext.newInstance(packages), schemaLocation, new HashMap<String,URI>());
+        this(rootNamespace, JAXBContext.newInstance(packages), schemaLocation, new HashMap<String,URI>(), null);
     }
 
     private AnchoredMarshallerPool(final String rootNamespace, final JAXBContext context, final String schemaLocation,
-            final Map<String,URI> anchors) throws JAXBException
+            final Map<String,URI> anchors, final Map<String, Object> properties) throws JAXBException
     {
-        super(context, getProperties(rootNamespace, anchors));
+        super(context, getProperties(rootNamespace, anchors, properties));
         this.schemaLocation = schemaLocation;
         this.anchors = anchors;
     }
@@ -155,8 +159,14 @@ public class AnchoredMarshallerPool extends MarshallerPool {
      * @param rootNamespace The root namespace, for example {@code "http://www.isotc211.org/2005/gmd"}.
      * @param anchors Map of anchors to be stored as the {@link #anchors} field.
      */
-    private static Map<String, Object> getProperties(final String rootNamespace, final Map<String,URI> anchors) {
-        final Map<String, Object> properties = new HashMap<>();
+    private static Map<String, Object> getProperties(final String rootNamespace, final Map<String,URI> anchors, final Map<String, Object> previousProperties) {
+        final Map<String, Object> properties;
+        if (previousProperties != null) {
+            properties = previousProperties;
+        } else {
+            properties = new HashMap<>();
+        }
+
         if (rootNamespace != null) {
             properties.put(XML.DEFAULT_NAMESPACE, rootNamespace);
         }
