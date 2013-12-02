@@ -4279,11 +4279,11 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractGMLType }{@code >}}
      * 
-     */
+     
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "AbstractGML", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractObject")
     public JAXBElement<AbstractGMLType> createAbstractGML(AbstractGMLType value) {
         return new JAXBElement<AbstractGMLType>(_AbstractGML_QNAME, AbstractGMLType.class, null, value);
-    }
+    }*/
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiSolidPropertyType }{@code >}}
@@ -4711,11 +4711,11 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
      * 
-     */
+    
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "AbstractObject")
     public JAXBElement<Object> createAbstractObject(Object value) {
         return new JAXBElement<Object>(_AbstractObject_QNAME, Object.class, null, value);
-    }
+    } */
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GeocentricCRSType }{@code >}}
@@ -6025,11 +6025,11 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractGeometryType }{@code >}}
      * 
-     */
+     
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "AbstractGeometry", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractGML")
     public JAXBElement<AbstractGeometryType> createAbstractGeometry(AbstractGeometryType value) {
         return new JAXBElement<AbstractGeometryType>(_AbstractGeometry_QNAME, AbstractGeometryType.class, null, value);
-    }
+    }*/
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractTimeGeometricPrimitiveType }{@code >}}
