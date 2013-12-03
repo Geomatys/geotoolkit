@@ -25,6 +25,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.memory.MemoryCoverageReader;
+import org.opengis.coverage.Coverage;
 import org.opengis.feature.type.Name;
 
 /**
@@ -76,6 +77,8 @@ public class DefaultCoverageReference extends AbstractCoverageReference{
     public GridCoverageReader acquireReader() throws CoverageStoreException {
         if(coverage != null){
             return new MemoryCoverageReader(coverage);
+        }else if(input instanceof GridCoverage2D){
+            return new MemoryCoverageReader((GridCoverage2D)input);
         }else if(input instanceof GridCoverageReader){
             return (GridCoverageReader)input;
         }else{

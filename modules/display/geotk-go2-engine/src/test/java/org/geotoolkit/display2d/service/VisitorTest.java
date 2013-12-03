@@ -24,7 +24,9 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.geotoolkit.data.FeatureStoreUtilities;
 
@@ -37,6 +39,8 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -70,8 +74,13 @@ public class VisitorTest {
     public static void tearDownClass() throws Exception {
     }
 
+    /**
+     * Feature visitor test.
+     *
+     * @throws Exception
+     */
     @Test
-    public void intersectionTest() throws Exception {
+    public void intersectionFeatureTest() throws Exception {
         final MutableStyleFactory sf = new DefaultStyleFactory();
 
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
@@ -129,10 +138,46 @@ public class VisitorTest {
 
     }
 
+    /**
+     * Coverage visitor test
+     */
+    @Test
+    public void intersectionCoverageTest() throws Exception {
+
+        final float[][] data = new float[180][360];
+        for(int i=0;i<180;i++)Arrays.fill(data[i], 15f);
+
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setName("coverage");
+        gcb.setRenderedImage(data);
+        gcb.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
+        final AffineTransform trs = new AffineTransform(1,0,0,-1,-180,90);
+        gcb.setGridToCRS(trs);
+
+
+        final CoverageMapLayer cml = MapBuilder.createCoverageLayer(gcb.build());
+        cml.setSelectable(true);
+        MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
+        context.layers().add(cml);
+
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -180, 180);
+        env.setRange(1, -90, 90);
+        final Dimension dim = new Dimension(360, 180);
+        Shape shparea = new Rectangle(195, 75, 2, 2); //starting at top left corner
+        ListVisitor visitor = new ListVisitor();
+
+        DefaultPortrayalService.visit(context, env, dim, true, null, shparea, visitor);
+
+        assertTrue(visitor.coverages.size() != 0);
+
+    }
+
 
     private static class ListVisitor extends AbstractGraphicVisitor {
 
         public List<FeatureId> features = new ArrayList<FeatureId>();
+        public List<ProjectedCoverage> coverages = new ArrayList<ProjectedCoverage>();
 
         @Override
         public void visit(final ProjectedFeature feature, final RenderingContext2D context, final SearchAreaJ2D queryArea) {
@@ -141,7 +186,7 @@ public class VisitorTest {
 
         @Override
         public void visit(final ProjectedCoverage coverage, final RenderingContext2D context, final SearchAreaJ2D queryArea) {
-            throw new IllegalStateException("Should not have raised this kind of visit event.");
+            coverages.add(coverage);
         }
     }
 }

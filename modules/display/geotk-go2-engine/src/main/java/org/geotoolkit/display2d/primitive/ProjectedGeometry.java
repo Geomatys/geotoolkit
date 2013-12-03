@@ -176,7 +176,7 @@ public class ProjectedGeometry  {
             }
 
             //check if geometries cross the meridian
-            if(params.context.wrapPoints != null){
+            if(params.context.wrapArea != null){
                 final double dx = params.context.wrapPoints[1].getOrdinate(0) - params.context.wrapPoints[0].getOrdinate(0);
                 final double dy = params.context.wrapPoints[1].getOrdinate(1) - params.context.wrapPoints[0].getOrdinate(1);
                 final double[] wrapTranslate = new double[]{-dx,-dy};
@@ -244,7 +244,7 @@ public class ProjectedGeometry  {
      */
     public Shape getObjectiveShape() throws TransformException{
         if(objectiveShape == null && geomSet){
-            if(params.context.wrapPoints != null){
+            if(params.context.wrapArea != null){
                 //we need to rely on the objective geometry which has been
                 //demultiplied/clipped as necessary for the map wrap
                 objectiveShape = new JTSGeometryJ2D(getObjectiveGeometryJTS());
@@ -263,7 +263,7 @@ public class ProjectedGeometry  {
      */
     public Shape getDisplayShape() throws TransformException{
         if(displayShape == null && geomSet){
-            if(params.context.wrapPoints != null){
+            if(params.context.wrapArea != null){
                 //we need to rely on the objective geometry which has been
                 //demultiplied/clipped as necessary for the map wrap
                 displayShape = new JTSGeometryJ2D(getDisplayGeometryJTS());
