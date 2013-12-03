@@ -18,8 +18,6 @@
 package org.geotoolkit.gui.swing.go2.control.navigation;
 
 import java.awt.event.ActionEvent;
-import java.awt.geom.NoninvertibleTransformException;
-import java.util.logging.Level;
 
 import org.geotoolkit.gui.swing.go2.control.AbstractMapAction;
 import org.geotoolkit.gui.swing.resource.IconBundle;
@@ -43,11 +41,7 @@ public class ZoomOutAction extends AbstractMapAction {
     @Override
     public void actionPerformed(final ActionEvent arg0) {
         if (map != null ) {
-            try {
-                map.getCanvas().scale(0.5d);
-            } catch (NoninvertibleTransformException ex) {
-                getLogger().log(Level.WARNING, null, ex);
-            }
+            map.setHandler(new ZoomOutHandler(map));
         }
     }
 
