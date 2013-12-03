@@ -39,7 +39,9 @@ public class ComplexAttributeBinding extends AbstractBinding<ComplexAttribute>{
     
     @Override
     public boolean support(String xpath) {
-        return !xpath.startsWith("/") && (PROPERTY_PATTERN.matcher(xpath).matches() || ID_PATTERN.matcher(xpath).matches());
+        return !xpath.startsWith("/") &&
+               !xpath.startsWith("*") &&
+               (PROPERTY_PATTERN.matcher(xpath).matches() || ID_PATTERN.matcher(xpath).matches());
     }
 
     @Override
@@ -49,7 +51,7 @@ public class ComplexAttributeBinding extends AbstractBinding<ComplexAttribute>{
         if(candidate instanceof Feature && ID_PATTERN.matcher(xpath).matches()){
             return (T) ((Feature)candidate).getIdentifier().getID();
         }
-        
+
         if(target != null){
             if(Property.class.isAssignableFrom(target)){
                 final Property prop = candidate.getProperty(xpath);
@@ -78,5 +80,5 @@ public class ComplexAttributeBinding extends AbstractBinding<ComplexAttribute>{
         }
         candidate.getProperty(xpath).setValue(value);
     }
-    
+
 }

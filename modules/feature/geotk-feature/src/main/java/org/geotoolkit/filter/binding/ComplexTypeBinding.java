@@ -30,7 +30,7 @@ public class ComplexTypeBinding extends AbstractBinding<ComplexType>{
     public ComplexTypeBinding() {
         super(ComplexType.class, 10);
     }
-    
+
     @Override
     public boolean support(String xpath) {
         return !xpath.startsWith("/") && PROPERTY_PATTERN.matcher(xpath).matches();
@@ -47,5 +47,5 @@ public class ComplexTypeBinding extends AbstractBinding<ComplexType>{
     public void set(ComplexType candidate, String xpath, Object value) throws IllegalArgumentException {
         throw new IllegalArgumentException("Types are immutable");
     }
-    
+
 }

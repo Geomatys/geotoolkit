@@ -1,10 +1,10 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
- *    
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -25,10 +25,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.filter.binding.Binding;
+import org.geotoolkit.filter.binding.Bindings;
+import org.opengis.feature.Feature;
 import org.opengis.feature.type.ComplexType;
 
 import org.opengis.filter.And;
@@ -113,12 +117,12 @@ import org.opengis.filter.temporal.TOverlaps;
  * After the accept() call returns, we look again at the preStack.size() and postStack.size(). If
  * the postStack has grown, that means that there was stuff down in the accept()-ed filter that
  * wasn't supportable. Usually this means that our filter isn't supportable, but not always.
- * 
+ *
  * In some cases a sub-filter being unsupported isn't necessarily bad, as we can 'unpack' OR
  * statements into AND statements (DeMorgans rule/modus poens) and still see if we can handle the
  * other side of the OR. Same with NOT and certain kinds of AND statements.
  * </p>
- * 
+ *
  * @author dzwiers
  * @author commented and ported from gt to ogc filters by saul.farber
  * @author ported to work upon {@code org.geotoolkit.filter.Capabilities} by Gabriel Roldan
@@ -128,6 +132,8 @@ import org.opengis.filter.temporal.TOverlaps;
 public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisitor {
 
     private static final Logger LOGGER = Logging.getLogger(CapabilitiesFilterSplitter.class);
+    private static final Pattern ID_PATTERN       = Pattern.compile("@(\\w+:)?id");
+    private static final Pattern PROPERTY_PATTERN = Pattern.compile("(\\w+:)?(.+)");
 
     private static final Class[] SPATIAL_OPS = new Class[]{Beyond.class, Contains.class, Crosses.class,
             Disjoint.class, DWithin.class, Equals.class, Intersects.class, Overlaps.class,
@@ -159,7 +165,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param fcs
      *            The FilterCapabilties that describes what Filters/Expressions the server can
      *            process.
@@ -174,7 +180,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     /**
      * Gets the filter that cannot be sent to the server and must be post-processed on the client by
      * geotoolkit.
-     * 
+     *
      * @return the filter that cannot be sent to the server and must be post-processed on the client
      *         by geotoolkit.
      */
@@ -195,7 +201,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
 
     /**
      * Gets the filter that can be sent to the server for pre-processing.
-     * 
+     *
      * @return the filter that can be sent to the server for pre-processing.
      */
     public Filter getPreFilter() {
@@ -210,7 +216,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
         // JE: Changed to peek because get implies that the value can be retrieved multiple
         // times
         final Filter f = preStack.isEmpty() ? Filter.INCLUDE : (Filter) preStack.peek();
-        
+
         if (changedStack.isEmpty()) {
             return f;
         }
@@ -234,7 +240,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
 
     /**
      * @see FilterVisitor#visit(IncludeFilter, Object)
-     * 
+     *
      * @param filter the {@link Filter} to visit
      */
     public void visit(final IncludeFilter filter) {
@@ -243,7 +249,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
 
     /**
      * @see FilterVisitor#visit(ExcludeFilter, Object)
-     * 
+     *
      * @param filter the {@link Filter} to visit
      */
     public void visit(final ExcludeFilter filter) {
@@ -258,7 +264,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      * @see FilterVisitor#visit(PropertyIsBetween, Object) NOTE: This method is extra documented as
      *      an example of how all the other methods are implemented. If you want to know how this
      *      class works read this method first!
-     * 
+     *
      * @param filter the {@link Filter} to visit
      */
     @Override
@@ -354,7 +360,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
         // stack. Now when we return we've added exactly one thing to
         // the preStack...namely, the given filter.
         preStack.addFirst(filter);
-        
+
         return null;
     }
 
@@ -619,7 +625,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     public Object visit(TOverlaps filter, Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     @Override
     public Object visit(final PropertyIsLike filter, final Object notUsed) {
         if (original == null) {
@@ -797,7 +803,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     public Object visit(final PropertyIsNil filter, Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     @Override
     public Object visit(final Id filter, final Object notUsed) {
         if (original == null) {
@@ -815,6 +821,13 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
 
     @Override
     public Object visit(final PropertyName expression, final Object notUsed) {
+
+        if(!support(expression.getPropertyName())){
+            //not a simple propert name, xpath or something else.
+            postStack.addFirst(expression);
+            return null;
+        }
+
         // JD: use an expression to get at the attribute type intead of accessing directly
         if (parent != null && expression.evaluate(parent) == null) {
             throw new IllegalArgumentException("Property '" + expression.getPropertyName() + "' could not be found in " + parent.getName());
@@ -822,6 +835,12 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
 
         preStack.addFirst(expression);
         return null;
+    }
+
+    private static boolean support(String xpath) {
+        return !xpath.startsWith("/") &&
+               !xpath.startsWith("*") &&
+               (PROPERTY_PATTERN.matcher(xpath).matches() || ID_PATTERN.matcher(xpath).matches());
     }
 
     @Override
@@ -904,8 +923,8 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
             postStack.addFirst(expression);
             return null;
         }
-        
-        
+
+
         /*if (!fcs.fullySupports(expression)) {
         postStack.addFirst(expression);
         return null;
@@ -931,7 +950,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
                 return null;
             }
         }
-        
+
         while (j < preStack.size()) {
             preStack.removeFirst();
         }

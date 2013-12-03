@@ -19,6 +19,8 @@ package org.geotoolkit.filter.binding;
 
 import java.util.Iterator;
 import java.util.List;
+import org.geotoolkit.filter.DefaultPropertyName;
+import org.geotoolkit.filter.FilterTestConstants;
 
 import org.jaxen.JaxenException;
 import org.jaxen.XPath;
@@ -29,6 +31,7 @@ import org.opengis.feature.Property;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
+import org.opengis.filter.expression.PropertyName;
 
 /**
  *
@@ -106,5 +109,24 @@ public class XPathBindingTest {
 
     }
 
+    @Test
+    public void testDoubleSlashXPath(){
+
+        final String exp = "//gml:testString";
+        final PropertyName pn = new DefaultPropertyName(exp);
+        final Object result = pn.evaluate(FilterTestConstants.FEATURE_1, null);
+        assertEquals("test string data", result);
+
+    }
+
+    @Test
+    public void testStarXPath(){
+
+        final String exp = "*[10]";
+        final PropertyName pn = new DefaultPropertyName(exp);
+        final Object result = pn.evaluate(FilterTestConstants.FEATURE_1, null);
+        assertEquals("test string data", result);
+
+    }
 
 }

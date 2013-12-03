@@ -17,6 +17,9 @@
 
 package org.geotoolkit.filter.binding;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.sis.util.logging.Logging;
 import org.jaxen.ContextSupport;
 import org.jaxen.JaxenException;
 import org.jaxen.Navigator;
@@ -39,6 +42,8 @@ import org.jaxen.saxpath.Axis;
  * @module pending
  */
 final class FeatureXPathFactory extends DefaultXPathFactory{
+
+    private static final Logger LOGGER = Logging.getLogger(FeatureXPathFactory.class);
 
     static final FeatureXPathFactory INSTANCE = new FeatureXPathFactory();
 
@@ -109,7 +114,7 @@ final class FeatureXPathFactory extends DefaultXPathFactory{
             if (hasPrefix()) {
                 myUri = contextSupport.translateNamespacePrefixToUri(getPrefix());
                 if (myUri == null) {
-                    throw new UnresolvableException("Cannot resolve namespace prefix '" + getPrefix() + "'");
+                    LOGGER.log(Level.INFO, "Cannot resolve namespace prefix ''{0}'' , continue ignoring prefix", getPrefix());
                 }
             } else if (isMatchesAnyName()) {
                 return true;
