@@ -113,7 +113,12 @@ public class EditionHelper {
                 coords[selectedNode[1]].setCoordinate(newCoordinate);
                 geo.geometryChanged();
             }else{
-                throw new UnsupportedOperationException("not yet implemented");
+                final Polygon p = (Polygon) geo;
+                final LineString ls = p.getInteriorRingN(numHole);
+                final Coordinate[] coords = ls.getCoordinates();
+                coords[selectedNode[0]].setCoordinate(newCoordinate);
+                coords[selectedNode[1]].setCoordinate(newCoordinate);
+                geo.geometryChanged();
             }
 
             geo.geometryChanged();

@@ -105,7 +105,21 @@ public final class EditionDecoration extends AbstractGeometryDecoration {
                 getLogger().log(Level.WARNING, null, ex);
             }
         }else{
-            throw new UnsupportedOperationException("not yet implemented");
+            final Polygon poly = (Polygon) geo;
+            final LineString ls = poly.getInteriorRingN(nodeSelection.numHole);
+            final Coordinate coord = ls.getCoordinates()[nodeSelection.selectedNode[0]];
+
+            final StatelessContextParams params = new StatelessContextParams(null, null);
+            final ProjectedGeometry projected = new ProjectedGeometry(params);
+            params.update(context);
+            projected.setDataGeometry(new GeometryFactory().createPoint(coord), null);
+            try {
+                final Point p = (Point) projected.getDisplayGeometryJTS();
+                final double[] crds = new double[]{p.getX(),p.getY()};
+                paintRound(g2,crds);
+            } catch (TransformException ex) {
+                getLogger().log(Level.WARNING, null, ex);
+            }
         }
 
     }
