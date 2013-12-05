@@ -34,6 +34,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,11 +52,10 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageUtilities;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageWriteParam;
-import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.coverage.io.*;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -71,7 +72,6 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -87,7 +87,7 @@ import org.opengis.util.FactoryException;
  */
 public class CoverageEditionDelegate extends AbstractEditionDelegate {
 
-    private final CoverageMapDecoration decoration = new CoverageMapDecoration();
+    private final CoverageMapDecoration decoration;
     private final CoverageMapLayer layer;
 
     //mouse gesture variables
@@ -115,6 +115,9 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
     public CoverageEditionDelegate(JMap2D map, CoverageMapLayer layer) {
         super(map);
         this.layer = layer;
+
+        final GeneralEnvelope layerEnv = new GeneralEnvelope(layer.getBounds());
+        this.decoration = new CoverageMapDecoration(map, layerEnv);
     }
 
     @Override
@@ -385,19 +388,62 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
     }
 
 
-    private class CoverageMapDecoration extends AbstractMapDecoration{
+    private class CoverageMapDecoration extends AbstractMapDecoration implements PropertyChangeListener {
 
         private final JPanel container = new GridComponent();
-        private final JPanel guiRight = new JPanel(new BorderLayout(10, 10));
-        private final JPanel guiTools = new JPanel(new BorderLayout(0, 0));
-        private final JPanel guiApplyPane = new JPanel(new GridLayout(0,1,2,2));
 
-        protected CoverageMapDecoration() {
+        private GeneralEnvelope layerEnvelope;
+        private boolean selectEnable = true;
+
+        protected CoverageMapDecoration(JMap2D map, GeneralEnvelope layerEnvelope) {
+            map.getCanvas().addPropertyChangeListener(this);
+            this.layerEnvelope = layerEnvelope;
+
+            final Envelope visibleArea = getMap().getCanvas().getVisibleEnvelope();
+            checkEditable(new GeneralEnvelope(visibleArea));
+            initComponent();
+        }
+
+        /**
+         * Check if the current canvas envelope is contained in layer envelope.
+         *
+         * @param canvasEnv
+         */
+        private void checkEditable (GeneralEnvelope canvasEnv) {
+            if (layerEnvelope != null) {
+                int canvasDims = canvasEnv.getDimension();
+                int layerDim = layerEnvelope.getDimension();
+
+                if (canvasDims == layerDim) {
+                    try {
+                        canvasEnv = new GeneralEnvelope(CRS.transform(canvasEnv, layerEnvelope.getCoordinateReferenceSystem()));
+                        selectEnable = canvasEnv.intersects(layerEnvelope, true);
+                    } catch (TransformException ex) {
+                        LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                        selectEnable = false;
+                    }
+                } else {
+                    selectEnable = false;
+                }
+                return;
+            }
+            selectEnable = true;
+        }
+
+        private void initComponent() {
+            //clear
+            container.removeAll();
+
             container.setLayout(new BorderLayout());
             container.setOpaque(false);
             container.setFocusable(false);
+
+            final JPanel guiRight = new JPanel(new BorderLayout(10, 10));
             guiRight.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
+            //NORTH
+
+            //select area
             final JButton guiSelect = new JButton(MessageBundle.getString("select_area"));
             guiSelect.setIcon(IconBundle.getIcon("16_select"));
             guiSelect.addActionListener(new ActionListener() {
@@ -406,7 +452,29 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                     selectAction = true;
                 }
             });
-            guiApplyPane.add(guiSelect);
+            guiSelect.setEnabled(selectEnable);
+
+
+            //CENTER
+            final JPanel guiTools = new JPanel(new BorderLayout(0, 0));
+            guiTools.add(BorderLayout.NORTH,new JSeparator(SwingConstants.HORIZONTAL));
+            if (!selectEnable) {
+                final JPanel warningPanel = new JPanel(new BorderLayout(0, 0));
+                final JLabel warningMessage = new JLabel();
+                StringBuilder sb = new StringBuilder("<html><p width=\"120px\">");
+                sb.append(MessageBundle.getString("edition.coverage.warrningdimension"));
+                sb.append("</p></html>");
+                warningMessage.setText(sb.toString());
+                warningPanel.add(BorderLayout.NORTH, warningMessage);
+                guiTools.add(BorderLayout.CENTER, warningPanel);
+            }
+            guiTools.add(BorderLayout.SOUTH,new JSeparator(SwingConstants.HORIZONTAL));
+
+
+            //SOUTH
+            final JPanel guiApplyPane = new JPanel(new GridLayout(0,1,2,2));
+
+            //save edition
             final JButton guiSave = new JButton(MessageBundle.getString("save"));
             guiSave.setIcon(IconBundle.getIcon("16_session_commit"));
             guiSave.addActionListener(new ActionListener() {
@@ -419,6 +487,9 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                     }
                 }
             });
+            guiApplyPane.add(guiSave);
+
+            //cancel edition
             final JButton guiCancel = new JButton(MessageBundle.getString("cancel"));
             guiCancel.setIcon(IconBundle.getIcon("16_session_rollback"));
             guiCancel.addActionListener(new ActionListener() {
@@ -426,16 +497,15 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                 public void actionPerformed(ActionEvent e) {
                     try {
                         setCoverage(null,null);
+                        container.removeAll();
+                        container.revalidate();
+                        container.repaint();
                     } catch (Exception ex) {
                         LOGGER.log(Level.WARNING, ex.getMessage(),ex);
                     }
                 }
             });
-            guiApplyPane.add(guiSave);
             guiApplyPane.add(guiCancel);
-
-            guiTools.add(BorderLayout.NORTH,new JSeparator(SwingConstants.HORIZONTAL));
-            guiTools.add(BorderLayout.SOUTH,new JSeparator(SwingConstants.HORIZONTAL));
 
             guiRight.add(BorderLayout.NORTH, guiSelect);
             guiRight.add(BorderLayout.CENTER, guiTools);
@@ -446,6 +516,9 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
 
         @Override
         public void refresh() {
+            initComponent();
+            container.revalidate();
+            container.repaint();
         }
 
         @Override
@@ -465,6 +538,14 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             return container;
         }
 
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (evt.getPropertyName().equals(J2DCanvas.ENVELOPE_KEY)) {
+                final Envelope newEnv = (Envelope) evt.getNewValue();
+                checkEditable(new GeneralEnvelope(newEnv));
+                this.refresh();
+            }
+        }
     }
 
     private class GridComponent extends JPanel{

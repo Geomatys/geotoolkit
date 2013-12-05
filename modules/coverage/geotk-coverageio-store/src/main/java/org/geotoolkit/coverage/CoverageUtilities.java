@@ -277,11 +277,13 @@ public final class CoverageUtilities {
      */
     public static List<GridMosaic> findMosaics(final Pyramid toSearchIn, Envelope filter, boolean containOnly) throws TransformException {
         final ArrayList<GridMosaic> result = new ArrayList<GridMosaic>();
-        
+
+        //Rebuild filter envelope from pyramid CRS
+        final GeneralEnvelope tmpFilter = new GeneralEnvelope(
+                ReferencingUtilities.transform(filter, toSearchIn.getCoordinateReferenceSystem()));
+
         for (GridMosaic source : toSearchIn.getMosaics()) {
             final Envelope sourceEnv = source.getEnvelope();
-            final GeneralEnvelope tmpFilter = new GeneralEnvelope(
-                    CRS.transform(filter, sourceEnv.getCoordinateReferenceSystem()));
             if ((containOnly && tmpFilter.contains(sourceEnv, true))
                     || (!containOnly && tmpFilter.intersects(sourceEnv, true))) {
                 result.add(source);
