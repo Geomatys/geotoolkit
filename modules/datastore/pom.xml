@@ -109,6 +109,7 @@
     <module>geotk-db-mysql</module>
     <module>geotk-s57</module>
     <module>geotk-mapinfo</module>
+    <module>geotk-nmea</module>
   </modules>
 
 </project>

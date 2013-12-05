@@ -329,6 +329,18 @@
           <version>3.3.1.Final</version>
       </dependency>
 
+      <!-- GPS,Marine -->
+      <dependency>
+        <groupId>net.sf.marineapi</groupId>
+        <artifactId>marineapi</artifactId>
+        <version>0.6.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.rxtx</groupId>
+        <artifactId>rxtxcomm</artifactId>
+        <version>2.2pre2</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
