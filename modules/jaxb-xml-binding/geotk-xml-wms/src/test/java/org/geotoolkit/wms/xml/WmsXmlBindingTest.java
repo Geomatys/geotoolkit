@@ -73,6 +73,7 @@ import org.apache.sis.internal.jaxb.LegacyNamespaces;
 import static org.apache.sis.test.TestUtilities.getSingleton;
 
 import static org.apache.sis.test.Assert.*;
+import org.apache.sis.test.XMLComparator;
 import org.apache.sis.xml.XML;
 
 
@@ -235,9 +236,6 @@ public class WmsXmlBindingTest {
         marshaller.marshal(capa, sw);
         String result = sw.toString();
 
-        //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
-
         assertXmlEquals(expResult, result, "xmlns:*");
 
     }
@@ -299,12 +297,6 @@ public class WmsXmlBindingTest {
         StringWriter sw = new StringWriter();
         marshaller.marshal(capability, sw);
         String result = sw.toString();
-
-        //System.out.println("RESULT:" + result);
-
-        //we remove the first line
-        result = result.substring(result.indexOf("?>") + 3);
-
 
         String expResult =
         "<wms:Capability xmlns:wms=\"http://www.opengis.net/wms\""
