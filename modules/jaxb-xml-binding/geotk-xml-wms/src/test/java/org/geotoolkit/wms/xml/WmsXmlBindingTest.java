@@ -68,7 +68,7 @@ import org.opengis.metadata.maintenance.ScopeCode;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.temporal.Period;
 import javax.xml.bind.JAXBContext;
-import org.apache.sis.internal.jaxb.gml.GMLAdapter;
+import org.apache.sis.internal.jaxb.LegacyNamespaces;
 
 import static org.apache.sis.test.TestUtilities.getSingleton;
 
@@ -90,7 +90,7 @@ public class WmsXmlBindingTest {
     @Before
     public void setUp() throws JAXBException {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put(XML.GML_VERSION, GMLAdapter.GML_3_0);
+        properties.put(XML.GML_VERSION, LegacyNamespaces.VERSION_3_0);
         pool = new MarshallerPool(JAXBContext.newInstance(
                 "org.geotoolkit.wms.xml.v111:" +
                 "org.geotoolkit.wms.xml.v130:" +

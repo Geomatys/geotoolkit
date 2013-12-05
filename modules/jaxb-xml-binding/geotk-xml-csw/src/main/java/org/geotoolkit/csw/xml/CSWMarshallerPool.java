@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBException;
-import org.apache.sis.internal.jaxb.gml.GMLAdapter;
+import org.apache.sis.internal.jaxb.LegacyNamespaces;
 import org.geotoolkit.xml.AnchoredMarshallerPool;
 import org.apache.sis.xml.MarshallerPool;
 import org.apache.sis.xml.XML;
@@ -39,7 +39,7 @@ public final class CSWMarshallerPool {
     static {
         try {
             final Map<String, Object> properties = new HashMap<>();
-            properties.put(XML.GML_VERSION, GMLAdapter.GML_3_2);
+            properties.put(XML.GML_VERSION, LegacyNamespaces.VERSION_3_2);
             instance = new AnchoredMarshallerPool(createJAXBContext(CSWClassesContext.getAllClasses()), properties);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
@@ -60,7 +60,7 @@ public final class CSWMarshallerPool {
     public static MarshallerPool getInstance() {
         return instance;
     }
-    
+
     public static MarshallerPool getInstanceCswOnly() {
         return instanceCswOnly;
     }
