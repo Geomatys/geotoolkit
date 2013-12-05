@@ -91,7 +91,7 @@ public final strictfp class DatumMarshallingTest {
         assertXmlEquals(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<gml:SecondDefiningParameter xmlns:gml=\"http://www.opengis.net/gml/3.2\">\n" +
-            "  <gml:semiMinorAxis uom=\"http://schemas.opengis.net/iso/19139/20070417/resources/uom/gmxUom.xml#xpointer(//*[@gml:id='m'])\">6371000.0</gml:semiMinorAxis>\n" +
+            "  <gml:semiMinorAxis uom=\"urn:ogc:def:uom:EPSG::9001\">6371000.0</gml:semiMinorAxis>\n" +
             "</gml:SecondDefiningParameter>", xml, "xmlns:*", "xsi:schemaLocation");
     }
 
@@ -106,7 +106,7 @@ public final strictfp class DatumMarshallingTest {
         final String xml =
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<gml:SecondDefiningParameter xmlns:gml=\"http://www.opengis.net/gml/3.2\">\n" +
-            "  <gml:semiMinorAxis uom=\"http://schemas.opengis.net/iso/19139/20070417/resources/uom/gmxUom.xml#xpointer(//*[@gml:id='m'])\">6371000.0</gml:semiMinorAxis>\n" +
+            "  <gml:semiMinorAxis uom=\"urn:ogc:def:uom:EPSG::9001\">6371000.0</gml:semiMinorAxis>\n" +
             "</gml:SecondDefiningParameter>";
         final Object object;
         try (StringReader reader = new StringReader(xml)) {
