@@ -95,7 +95,6 @@
     <module>geotk-svg</module>
     <module>geotk-go2-engine</module>
     <module>geotk-jasper-report</module>
-    <module>geotk-go2-extension</module>
     <module>geotk-s52</module>
     <module>geotk-widgets-swing</module>
   </modules>

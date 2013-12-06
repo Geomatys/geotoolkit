@@ -19,7 +19,7 @@
   <!-- =========================================================== -->
     <artifactId>geotk-jasperreport</artifactId>
     <packaging>jar</packaging>
-    <name>Display engine GO2 JasperReport extension</name>
+    <name>Display JasperReport</name>
     <description>Integration of jasper report using the GO2 renderer</description>
     <licenses>
         <license>
