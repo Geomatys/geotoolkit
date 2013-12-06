@@ -17,45 +17,15 @@
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-    <artifactId>geotk-render2d</artifactId>
+    <artifactId>geotk-render3d</artifactId>
     <packaging>jar</packaging>
-    <name>Display engine 2D</name>
-    <description>New generation of Java2D renderer based on GeoAPI Display package.</description>
+    <name>Display engine 3D</name>
     <licenses>
         <license>
             <name>Lesser General Public License (LGPL)</name>
             <distribution>repo</distribution>
         </license>
     </licenses>
-
-  <!-- =========================================================== -->
-  <!--     Developers and Contributors                             -->
-  <!-- =========================================================== -->
-    <developers>
-        <developer>
-            <name>Martin Desruisseaux</name>
-            <id>desruisseaux</id>
-            <email>desruisseaux@users.sourceforge.net</email>
-            <organization>Geomatys</organization>
-            <organizationUrl>http://www.geomatys.fr/</organizationUrl>
-            <timezone>+1</timezone>
-            <roles>
-                <role>Java Developer</role>
-                <role>Module Maintainer</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Johann Sorel</name>
-            <id>jsorel</id>
-            <email>johann.sorel@geomatys.fr</email>
-            <organization>Geomatys</organization>
-            <organizationUrl>http://www.geomatys.fr/</organizationUrl>
-            <timezone>+1</timezone>
-            <roles>
-                <role>Java Developer</role>
-            </roles>
-        </developer>
-    </developers>
 
 
   <!-- =========================================================== -->
