@@ -59,6 +59,7 @@ public class SetupNMEA implements SetupService {
             tmpFolder.deleteOnExit();
         }
 
+
         try {
             // ... and add its location to the library path.
             addLibraryPath(tmpFolder.getAbsolutePath());
@@ -86,11 +87,15 @@ public class SetupNMEA implements SetupService {
                 FileUtilities.buildFileFromStream(resource, tmpFile);
                 tmpFile.deleteOnExit();
             }
+
+           CommPortIdentifier.getPortIdentifiers();
+
         } catch (Exception ex) {
             LOGGER.log(Level.WARNING, "A problem occured while loading RXTX native libraries. Port communication might not work.", ex);
+        } catch (UnsatisfiedLinkError er){
+            LOGGER.log(Level.INFO, "A problem occured while loading RXTX native libraries. Library not found for "+System.getProperty("os.name")+" "+System.getProperty("os.arch")+" architecture.");
         }
 
-        CommPortIdentifier.getPortIdentifiers();
     }
 
     @Override
