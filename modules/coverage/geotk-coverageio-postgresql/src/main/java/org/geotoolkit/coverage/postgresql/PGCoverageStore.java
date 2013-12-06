@@ -118,7 +118,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
             rs = stmt.executeQuery(query.toString());
             while (rs.next()){
                 final Name n = new DefaultName(ns,rs.getString(1));
-                final CoverageReference ref = getCoverageReference(n, null);
+                final CoverageReference ref = createCoverageReference(n, null);
                 root.getChildren().add(ref);
             }
         } catch (SQLException ex) {
@@ -250,10 +250,14 @@ public class PGCoverageStore extends AbstractCoverageStore{
     @Override
     public CoverageReference getCoverageReference(Name name, Version version) throws DataStoreException {
         typeCheck(name);
+        return createCoverageReference(name, version);
+    }
+
+    private CoverageReference createCoverageReference(final Name name, Version version) throws DataStoreException {
         if(version == null){
             try {
                 //grab the latest
-                VersionControl vc = getVersioning(name);
+                VersionControl vc = new PGVersionControl(this, name);
                 final List<Version> versions = vc.list();
                 if(versions.isEmpty()){
                     final Calendar cal = Calendar.getInstance(PGVersionControl.GMT0);
