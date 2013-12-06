@@ -71,8 +71,7 @@
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-filter</artifactId>              <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-filter-cql</artifactId>          <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-geometry</artifactId>            <version>${project.version}</version></dependency>
-        <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-go2</artifactId>                 <version>${project.version}</version></dependency>
-        <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-go2-style-extension</artifactId> <version>${project.version}</version></dependency>
+        <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-render2d</artifactId>            <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-gpx</artifactId>                 <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-jasperreport</artifactId>        <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-jaxp-core</artifactId>           <version>${project.version}</version></dependency>

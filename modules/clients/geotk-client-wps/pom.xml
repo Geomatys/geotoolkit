@@ -51,7 +51,7 @@
     <dependencies>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
-            <artifactId>geotk-go2</artifactId>
+            <artifactId>geotk-render2d</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -91,7 +91,7 @@
             <version>${project.version}</version>
         </dependency>
         <!-- End of dependences for converters -->
-    
+
         <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -102,5 +102,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    
+
 </project>
