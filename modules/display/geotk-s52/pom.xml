@@ -19,7 +19,7 @@
   <!-- =========================================================== -->
     <artifactId>geotk-s52</artifactId>
     <packaging>jar</packaging>
-    <name>Display engine GO2 ECDIS/ENC S-52 extension</name>
+    <name>Display ECDIS/ENC S-52</name>
     <description>Display engine GO2 ECDIS/ENC S-52 extension. </description>
     <licenses>
         <license>

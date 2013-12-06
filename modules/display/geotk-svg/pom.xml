@@ -24,7 +24,7 @@
   <!-- =========================================================== -->
   <artifactId>geotk-svg</artifactId>
   <packaging>jar</packaging>
-  <name>Display SVG utils</name>
+  <name>Display SVG</name>
 
   <description>
     The svg module contains utility classes for SVG and an external image factory.
