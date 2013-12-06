@@ -1,16 +1,40 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2012-1013, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package org.geotoolkit.data.geojson;
 
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.Triangle;
 import net.sf.json.JSONObject;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.opengis.feature.Feature;
-import org.opengis.geometry.*;
+import org.apache.sis.util.UnconvertibleObjectException;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -29,16 +53,16 @@ public final class GeoJSONWriter {
 
     private GeoJSONWriter() {}
 
-    public static Map<String, Object> geometryToGeoJSON(final Object source) throws NonconvertibleObjectException {
-        Map<String, Object> jsonMap = new LinkedHashMap<String, Object>();
+    public static Map<String, Object> geometryToGeoJSON(final Object source) throws UnconvertibleObjectException {
+        final Map<String, Object> jsonMap = new LinkedHashMap<>();
 
-        Object tmpSrc = toWellKnownGeometry(source);
+        final Object tmpSrc = toWellKnownGeometry(source);
 
         final String geomName = tmpSrc.getClass().getSimpleName();
         try {
             GeometryTypes.valueOf(geomName);
         } catch (IllegalArgumentException e) {
-            throw new NonconvertibleObjectException("unsupported geometry type ["+ geomName +"] have been given for GeoJSON conversion.");
+            throw new UnconvertibleObjectException("unsupported geometry type ["+ geomName +"] have been given for GeoJSON conversion.");
         }
         jsonMap.put("type", geomName);
 
@@ -48,30 +72,33 @@ public final class GeoJSONWriter {
             jsonMap.put("coordinates", new double[]{((Point)jtsGeometry).getX(), ((Point)jtsGeometry).getY()});
 
         } else if(jtsGeometry instanceof LineString) {
-            final Coordinate[] points = ((LineString)jtsGeometry).getCoordinates();
-            ArrayList<double[]> linePts = new ArrayList<double[]>(points.length);
-            for(Coordinate c : points) {
+            final CoordinateSequence points = ((LineString)jtsGeometry).getCoordinateSequence();
+            final ArrayList<double[]> linePts = new ArrayList<>(points.size());
+            for(int i = 0, n = points.size(); i < n; i++) {
+                final Coordinate c = points.getCoordinate(i);
                 linePts.add(new double[]{c.x, c.y});
             }
             jsonMap.put("coordinates", linePts);
 
         } else if(jtsGeometry instanceof Polygon) {
             final Polygon polygon = (Polygon)jtsGeometry;
-            final ArrayList<ArrayList> rings = new ArrayList<ArrayList>(polygon.getNumInteriorRing()+1);
+            final ArrayList<ArrayList> rings = new ArrayList<>(polygon.getNumInteriorRing()+1);
 
             // hull
-            final Coordinate[] exterior = polygon.getExteriorRing().getCoordinates();
-            ArrayList<double[]> extRing = new ArrayList<double[]>(exterior.length);
-            for(Coordinate c : exterior) {
+            final CoordinateSequence exterior = polygon.getExteriorRing().getCoordinateSequence();
+            final ArrayList<double[]> extRing = new ArrayList<>(exterior.size());
+            for(int i = 0, n = exterior.size(); i < n; i++) {
+                final Coordinate c = exterior.getCoordinate(i);
                 extRing.add(new double[]{c.x, c.y});
             }
             rings.add(extRing);
 
             // holes
-            for(int i = 0 ; i < polygon.getNumInteriorRing() ; i++) {
-                final Coordinate[] interior = polygon.getInteriorRingN(i).getCoordinates();
-                ArrayList<double[]> intRing = new ArrayList<double[]>(interior.length);
-                for(Coordinate c : interior) {
+            for(int i = 0, n = polygon.getNumInteriorRing()  ; i < n ; i++) {
+                final CoordinateSequence interior = polygon.getInteriorRingN(i).getCoordinateSequence();
+                final ArrayList<double[]> intRing = new ArrayList<>(interior.size());
+                for(int k = 0, l = interior.size(); k < l; k++) {
+                    final Coordinate c = interior.getCoordinate(k);
                     intRing.add(new double[]{c.x, c.y});
                 }
                 rings.add(intRing);
@@ -81,19 +108,19 @@ public final class GeoJSONWriter {
 
         } else if (jtsGeometry instanceof MultiPoint) {
             final MultiPoint multiPt = (MultiPoint) jtsGeometry;
-            final ArrayList<double[]> coordinates = new ArrayList<double[]>(multiPt.getNumGeometries());
-            for (int i = 0 ; i < multiPt.getNumGeometries() ; i++) {
+            final ArrayList<double[]> coordinates = new ArrayList<>(multiPt.getNumGeometries());
+            for (int i = 0, n = multiPt.getNumGeometries() ; i < n ; i++) {
                 final Coordinate c = multiPt.getGeometryN(i).getCoordinate();
                 coordinates.add(new double[]{c.x, c.y});
             }
             jsonMap.put("coordinates", coordinates);
 
         } else if (jtsGeometry instanceof MultiLineString) {
-            MultiLineString multiLine = (MultiLineString) jtsGeometry;
-            final ArrayList<ArrayList> lines = new ArrayList<ArrayList>(multiLine.getNumGeometries());
-            for(int i = 0 ; i < multiLine.getNumGeometries() ; i++) {
+            final MultiLineString multiLine = (MultiLineString) jtsGeometry;
+            final ArrayList<ArrayList> lines = new ArrayList<>(multiLine.getNumGeometries());
+            for(int i = 0, n = multiLine.getNumGeometries() ; i < n ; i++) {
                 final Coordinate[] points = multiLine.getGeometryN(i).getCoordinates();
-                ArrayList<double[]> linePts = new ArrayList<double[]>(points.length);
+                final ArrayList<double[]> linePts = new ArrayList<>(points.length);
                 for(Coordinate c : points) {
                     linePts.add(new double[]{c.x, c.y});
                 }
@@ -102,25 +129,27 @@ public final class GeoJSONWriter {
             jsonMap.put("coordinates", lines);
 
         } else if (jtsGeometry instanceof MultiPolygon) {
-            MultiPolygon region = (MultiPolygon) jtsGeometry;
-            final ArrayList<ArrayList> polygons = new ArrayList<ArrayList>(region.getNumGeometries());
-            for (int i = 0; i < region.getNumGeometries(); i++) {
-                Polygon polygon = (Polygon) region.getGeometryN(i);
-                final ArrayList<ArrayList> rings = new ArrayList<ArrayList>(polygon.getNumInteriorRing() + 1);
+            final MultiPolygon region = (MultiPolygon) jtsGeometry;
+            final ArrayList<ArrayList> polygons = new ArrayList<>(region.getNumGeometries());
+            for (int i = 0, n = region.getNumGeometries(); i < n; i++) {
+                final Polygon polygon = (Polygon) region.getGeometryN(i);
+                final ArrayList<ArrayList> rings = new ArrayList<>(polygon.getNumInteriorRing() + 1);
 
                 // hull
-                final Coordinate[] exterior = polygon.getExteriorRing().getCoordinates();
-                ArrayList<double[]> extRing = new ArrayList<double[]>(exterior.length);
-                for (Coordinate c : exterior) {
+                final CoordinateSequence exterior = polygon.getExteriorRing().getCoordinateSequence();
+                final ArrayList<double[]> extRing = new ArrayList<>(exterior.size());
+                for(int k = 0, l = exterior.size(); k < l; k++) {
+                    final Coordinate c = exterior.getCoordinate(k);
                     extRing.add(new double[]{c.x, c.y});
                 }
                 rings.add(extRing);
 
                 // holes
-                for (int holeCount = 0; holeCount < polygon.getNumInteriorRing(); holeCount++) {
-                    final Coordinate[] interior = polygon.getInteriorRingN(holeCount).getCoordinates();
-                    ArrayList<double[]> intRing = new ArrayList<double[]>(interior.length);
-                    for (Coordinate c : interior) {
+                for (int holeCount = 0, k = polygon.getNumInteriorRing(); holeCount < k; holeCount++) {
+                    final CoordinateSequence interior = polygon.getInteriorRingN(holeCount).getCoordinateSequence();
+                    final ArrayList<double[]> intRing = new ArrayList<>(interior.size());
+                    for(int r = 0, l = interior.size(); r < l; r++) {
+                    final Coordinate c = interior.getCoordinate(r);
                         intRing.add(new double[]{c.x, c.y});
                     }
                     rings.add(intRing);
@@ -130,14 +159,14 @@ public final class GeoJSONWriter {
             jsonMap.put("coordinates", polygons);
 
         } else if(jtsGeometry instanceof GeometryCollection) {
-            ArrayList< Map<String, Object> > geometries = new ArrayList<Map<String, Object>>(jtsGeometry.getNumGeometries());
-            for(int geomCount = 0 ; geomCount < jtsGeometry.getNumGeometries() ; geomCount++) {
+            final ArrayList< Map<String, Object> > geometries = new ArrayList<>(jtsGeometry.getNumGeometries());
+            for(int geomCount = 0 , n = jtsGeometry.getNumGeometries(); geomCount < n ; geomCount++) {
                 geometries.add(geometryToGeoJSON(jtsGeometry.getGeometryN(geomCount)));
             }
             jsonMap.put("geometries", geometries);
 
         } else {
-            throw new NonconvertibleObjectException("Given geometry is of unknown type : "+ jtsGeometry.getClass().getName());
+            throw new UnconvertibleObjectException("Given geometry is of unknown type : "+ jtsGeometry.getClass().getName());
         }
 
         return jsonMap;
@@ -163,8 +192,8 @@ public final class GeoJSONWriter {
 
         // OpenGIS case.
         if(source instanceof org.opengis.geometry.Envelope) {
-            org.opengis.geometry.Envelope env = (org.opengis.geometry.Envelope) source;
-            Envelope jtsEnv = new Envelope(env.getMinimum(0), env.getMaximum(0), env.getMinimum(1), env.getMaximum(1));
+            final org.opengis.geometry.Envelope env = (org.opengis.geometry.Envelope) source;
+            final Envelope jtsEnv = new Envelope(env.getMinimum(0), env.getMaximum(0), env.getMinimum(1), env.getMaximum(1));
             target = GEOMETRY_FACTORY.toGeometry(jtsEnv);
         }
 
@@ -176,8 +205,8 @@ public final class GeoJSONWriter {
      * @param toConvert the feature to get a {@link java.util.LinkedHashMap} ready to be GeoJSONed.
      * @return A map containing all needed information for JSON creation.
      */
-    private static Map<String,Object> featureToGeoJSON(Feature toConvert) throws NonconvertibleObjectException {
-        final Map<String, Object> jsonMap = new LinkedHashMap<String, Object>();
+    private static Map<String,Object> featureToGeoJSON(Feature toConvert) throws UnconvertibleObjectException {
+        final Map<String, Object> jsonMap = new LinkedHashMap<>();
         jsonMap.put("type", "feature");
 
         final Map<String, Object> properties = FeatureUtilities.toMap(toConvert);
@@ -202,15 +231,15 @@ public final class GeoJSONWriter {
      * @return A string representation of the generated GeoJSON.
      * @throws org.geotoolkit.util.converter.NonconvertibleObjectException If the input object is of unknown type.
      */
-    public static String toGeoJSON(Object source) throws NonconvertibleObjectException {
+    public static String toGeoJSON(Object source) throws UnconvertibleObjectException {
         final Map<String, Object> jsonMap;
         if(source instanceof FeatureCollection) {
-            jsonMap = new LinkedHashMap<String, Object>();
-            FeatureCollection fColl = (FeatureCollection) source;
+            jsonMap = new LinkedHashMap<>();
+            final FeatureCollection fColl = (FeatureCollection) source;
             jsonMap.put("type", "FeatureCollection");
             jsonMap.put("totalResults", fColl.size());
 
-            ArrayList<Map<String, Object> > features = new ArrayList<Map<String, Object>>(fColl.size());
+            final ArrayList<Map<String, Object> > features = new ArrayList<>(fColl.size());
             for (Iterator<Feature> it = fColl.iterator(); it.hasNext(); ) {
                 features.add(featureToGeoJSON(it.next()));
             }
@@ -221,7 +250,7 @@ public final class GeoJSONWriter {
         } else if (source instanceof Geometry) {
             jsonMap = geometryToGeoJSON(source);
         } else {
-            throw new NonconvertibleObjectException("No JSON conversion found for object type : "+source.getClass());
+            throw new UnconvertibleObjectException("No JSON conversion found for object type : "+source.getClass());
         }
 
         return JSONObject.fromObject(jsonMap).toString(2);
