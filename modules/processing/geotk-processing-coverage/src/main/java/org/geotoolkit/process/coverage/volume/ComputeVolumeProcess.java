@@ -219,7 +219,7 @@ public class ComputeVolumeProcess extends AbstractProcess {
             double volume = 0;
 
             final UnitConverter hconverter;
-            if(Unit.ONE.equals(gsd.getUnits())){
+            if(gsd.getUnits() == null || Unit.ONE.equals(gsd.getUnits())){
                 //unit unknowed, assume it's meters already
                 hconverter = METER.getConverterTo(METER);
             }else{
@@ -227,8 +227,10 @@ public class ComputeVolumeProcess extends AbstractProcess {
             }
 
             while (pixPoint[1] < maxy) {
+                if(isCanceled()) break;
                 pixPoint[0] = debx;
                 while (pixPoint[0] < maxx) {
+                    if(isCanceled()) break;
                     // project point in geomtry CRS
                     gridToGeom.transform(pixPoint, 0, geomPoint, 0, 1);
 
