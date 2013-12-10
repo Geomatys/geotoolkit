@@ -281,7 +281,9 @@
                       <SubComponents>
                         <Component class="javax.swing.JButton" name="guiConfig3D">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value=" "/>
+                            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                              <Connection code="M3D_CONFIG" type="code"/>
+                            </Property>
                             <Property name="focusable" type="boolean" value="false"/>
                             <Property name="horizontalTextPosition" type="int" value="0"/>
                             <Property name="verticalTextPosition" type="int" value="3"/>

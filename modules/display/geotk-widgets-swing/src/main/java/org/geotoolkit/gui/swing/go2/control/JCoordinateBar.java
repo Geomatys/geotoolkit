@@ -58,7 +58,8 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.gui.swing.go2.JMap2D;
-import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.jdesktop.swingx.JXBusyLabel;
 
@@ -71,9 +72,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class JCoordinateBar extends AbstractMapControlBar {
 
-    private static final ImageIcon ICON_HINT = addHorizontalMargin(IconBundle.getIcon("16_hint"),2);
-    private static final ImageIcon ICON_TEMPORAL = addHorizontalMargin(IconBundle.getIcon("16_temporal"),2);
-    private static final ImageIcon ICON_ELEVATION = addHorizontalMargin(IconBundle.getIcon("16_elevation"),2);
+    private static final ImageIcon ICON_HINT = IconBuilder.createIcon(FontAwesomeIcons.ICON_LIGHTBULB, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_TEMPORAL = IconBuilder.createIcon(FontAwesomeIcons.ICON_TIME, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_ELEVATION = IconBuilder.createIcon(FontAwesomeIcons.ICON_BAR_CHART, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance();
 

@@ -20,10 +20,13 @@ package org.geotoolkit.gui.swing.go2.control.edition;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreListener;
 import org.geotoolkit.data.FeatureStoreManagementEvent;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -35,6 +38,7 @@ import org.geotoolkit.map.FeatureMapLayer;
  */
 public class SessionRollbackAction extends AbstractAction implements FeatureStoreListener {
 
+    private static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_REMOVE_SIGN, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private final FeatureStoreListener.Weak weakListener = new Weak(this);
     private FeatureMapLayer layer;
 
@@ -43,7 +47,7 @@ public class SessionRollbackAction extends AbstractAction implements FeatureStor
     }
 
     public SessionRollbackAction(final FeatureMapLayer layer) {
-        putValue(SMALL_ICON, IconBundle.getIcon("16_session_rollback"));
+        putValue(SMALL_ICON, ICON);
         putValue(NAME, MessageBundle.getString("sessionRollback"));
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("sessionRollback"));
         setLayer(layer);
@@ -74,7 +78,7 @@ public class SessionRollbackAction extends AbstractAction implements FeatureStor
 
     @Override
     public void actionPerformed(final ActionEvent event) {
-        
+
         if (layer != null ) {
             putValue(SMALL_ICON, IconBundle.getIcon("16_wait"));
             final Thread t = new Thread(){

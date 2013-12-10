@@ -19,31 +19,34 @@
 package org.geotoolkit.gui.swing.go2.control.navigation;
 
 import java.awt.event.ActionEvent;
+import javax.swing.ImageIcon;
 
 import org.geotoolkit.gui.swing.go2.control.AbstractMapAction;
 import org.geotoolkit.gui.swing.go2.control.navigation.JNavigateToPanel.NavigateToMapDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
-import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
  * Shows a dialog to fill in a coordinate and navigate to it.
- * 
+ *
  * @author Johann Sorel
  * @module pending
  */
 public class NavigateToAction extends AbstractMapAction {
 
-    
+    private static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_SCREENSHOT, 16, FontAwesomeIcons.DEFAULT_COLOR);
+
     public NavigateToAction() {
-        putValue(SMALL_ICON, IconBundle.getIcon("16_navto"));
+        putValue(SMALL_ICON, ICON);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_nav_to"));
     }
 
     @Override
     public void actionPerformed(final ActionEvent arg0) {
         if (map != null) {
-            
+
             //search if a navigate to decoration is already present
             MapDecoration navtoDeco = null;
             for(MapDecoration deco : map.getDecorations()){
@@ -52,7 +55,7 @@ public class NavigateToAction extends AbstractMapAction {
                     break;
                 }
             }
-            
+
             if(navtoDeco != null){
                 //remove the deco
                 map.removeDecoration(navtoDeco);
@@ -61,7 +64,7 @@ public class NavigateToAction extends AbstractMapAction {
                 navtoDeco = new NavigateToMapDecoration();
                 map.addDecoration(navtoDeco);
             }
-            
+
         }
     }
 

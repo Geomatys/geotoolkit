@@ -352,6 +352,9 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
                 if( (txt==null || txt.isEmpty()) && mapitem.getDescription() != null){
                     txt = String.valueOf(mapitem.getDescription().getTitle());
                 }
+                if( (txt==null || txt.isEmpty())){
+                    txt = "";
+                }
                 lbl.setText(txt);
             }
 

@@ -16,12 +16,15 @@
  */
 package org.geotoolkit.gui.swing.resource;
 
+import java.awt.Color;
 import org.apache.sis.util.Static;
 
 /**
  * @author Quentin Boileau (Geomatys)
  */
 public final class FontAwesomeIcons extends Static {
+
+    public static final Color DEFAULT_COLOR = Color.DARK_GRAY;
 
     public static final String ICON_GLASS = "\uf000";
     public static final String ICON_MUSIC = "\uf001";

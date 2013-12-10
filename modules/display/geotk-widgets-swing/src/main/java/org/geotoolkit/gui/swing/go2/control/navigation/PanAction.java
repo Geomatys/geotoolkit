@@ -18,9 +18,11 @@
 package org.geotoolkit.gui.swing.go2.control.navigation;
 
 import java.awt.event.ActionEvent;
+import javax.swing.ImageIcon;
 
 import org.geotoolkit.gui.swing.go2.control.AbstractMapAction;
-import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
@@ -29,8 +31,10 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class PanAction extends AbstractMapAction {
 
+    private static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_MOVE, 16, FontAwesomeIcons.DEFAULT_COLOR);
+
     public PanAction() {
-        putValue(SMALL_ICON, IconBundle.getIcon("16_zoom_pan"));
+        putValue(SMALL_ICON, ICON);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_pan"));
     }
 

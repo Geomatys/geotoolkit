@@ -18,8 +18,10 @@
 package org.geotoolkit.gui.swing.go2.control;
 
 import java.awt.event.ActionEvent;
+import javax.swing.ImageIcon;
 import org.geotoolkit.gui.swing.go2.JMap2D;
-import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
@@ -29,13 +31,15 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class ConfigAction extends AbstractMapAction {
 
+    private static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_COG, 16, FontAwesomeIcons.DEFAULT_COLOR);
+
     public ConfigAction() {
         this(null);
     }
 
     public ConfigAction(final JMap2D map) {
         super(map);
-        putValue(SMALL_ICON, IconBundle.getIcon("16_map2d_optimize"));
+        putValue(SMALL_ICON, ICON);
         putValue(NAME, "config");
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_config"));
     }

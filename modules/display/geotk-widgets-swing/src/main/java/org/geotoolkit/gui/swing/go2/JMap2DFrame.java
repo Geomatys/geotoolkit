@@ -19,6 +19,7 @@
 package org.geotoolkit.gui.swing.go2;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -91,7 +92,8 @@ import org.geotoolkit.gui.swing.go2.control.navigation.PanHandler;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.render3d.JMap3D;
 import org.geotoolkit.gui.swing.render3d.control.JMap3dConfigPanel;
-import org.geotoolkit.gui.swing.render3d.control.JTerrainConfigPanel;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -101,6 +103,8 @@ import org.opengis.geometry.Envelope;
  * @module pending
  */
 public class JMap2DFrame extends javax.swing.JFrame {
+
+    private static final ImageIcon M3D_CONFIG = IconBuilder.createIcon(FontAwesomeIcons.ICON_COG, 16, Color.BLACK);
 
     private final JMap2D guiMap2D;
     private final JMap3D guiMap3D;
@@ -345,7 +349,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         jToolBar2.setFloatable(false);
         jToolBar2.setRollover(true);
 
-        guiConfig3D.setText(" ");
+        guiConfig3D.setIcon(M3D_CONFIG);
         guiConfig3D.setFocusable(false);
         guiConfig3D.setHorizontalTextPosition(SwingConstants.CENTER);
         guiConfig3D.setVerticalTextPosition(SwingConstants.BOTTOM);

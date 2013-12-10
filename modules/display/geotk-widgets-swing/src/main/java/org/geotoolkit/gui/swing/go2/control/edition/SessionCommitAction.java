@@ -20,8 +20,8 @@ package org.geotoolkit.gui.swing.go2.control.edition;
 
 import java.awt.event.ActionEvent;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreListener;
@@ -30,7 +30,8 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 
 /**
  *
@@ -39,7 +40,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public class SessionCommitAction extends AbstractAction implements FeatureStoreListener {
 
-    private static final Logger LOGGER = Logging.getLogger(SessionCommitAction.class);
+    private static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_SAVE, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private final FeatureStoreListener.Weak weakListener = new Weak(this);
     private FeatureMapLayer layer;
@@ -49,7 +50,7 @@ public class SessionCommitAction extends AbstractAction implements FeatureStoreL
     }
 
     public SessionCommitAction(final FeatureMapLayer layer) {
-        putValue(SMALL_ICON, IconBundle.getIcon("16_session_commit"));
+        putValue(SMALL_ICON, ICON);
         putValue(NAME, MessageBundle.getString("sessionCommit"));
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("sessionCommit"));
         setLayer(layer);
@@ -68,7 +69,7 @@ public class SessionCommitAction extends AbstractAction implements FeatureStoreL
     public void setLayer(final FeatureMapLayer layer) {
         //remove previous listener
         weakListener.unregisterAll();
-        
+
         final boolean newst = isEnabled();
         this.layer = layer;
         firePropertyChange("enabled", !newst, newst);
@@ -80,7 +81,7 @@ public class SessionCommitAction extends AbstractAction implements FeatureStoreL
 
     @Override
     public void actionPerformed(final ActionEvent event) {
-        
+
         if (layer != null ) {
             putValue(SMALL_ICON, IconBundle.getIcon("16_wait"));
             final Thread t = new Thread(){

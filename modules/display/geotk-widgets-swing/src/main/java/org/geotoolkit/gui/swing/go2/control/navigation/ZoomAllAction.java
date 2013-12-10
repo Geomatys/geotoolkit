@@ -19,11 +19,13 @@ package org.geotoolkit.gui.swing.go2.control.navigation;
 import java.awt.event.ActionEvent;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.logging.Level;
+import javax.swing.ImageIcon;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 
 import org.geotoolkit.gui.swing.go2.control.AbstractMapAction;
-import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 import org.opengis.geometry.Envelope;
@@ -36,8 +38,10 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class ZoomAllAction extends AbstractMapAction {
 
+    private static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_GLOBE, 16, FontAwesomeIcons.DEFAULT_COLOR);
+
     public ZoomAllAction() {
-        putValue(SMALL_ICON, IconBundle.getIcon("16_zoom_all"));
+        putValue(SMALL_ICON, ICON);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_zoom_all"));
     }
 

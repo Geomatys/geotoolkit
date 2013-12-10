@@ -53,7 +53,7 @@ public class MarinerAction extends AbstractMapAction {
 
     public MarinerAction(final JMap2D map) {
         super(map);
-        putValue(SMALL_ICON, IconBuilder.createIcon(FontAwesomeIcons.ICON_ANCHOR, 16, Color.BLACK));
+        putValue(SMALL_ICON, IconBuilder.createIcon(FontAwesomeIcons.ICON_ANCHOR, 16, FontAwesomeIcons.DEFAULT_COLOR));
         putValue(NAME, "S-52");
         putValue(SHORT_DESCRIPTION, "S-52");
     }

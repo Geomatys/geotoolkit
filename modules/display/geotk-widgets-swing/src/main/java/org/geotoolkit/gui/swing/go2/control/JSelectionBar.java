@@ -56,6 +56,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.GeotkClipboard;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.container.GraphicContainer;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.opengis.filter.Filter;
 import org.openide.awt.DropDownButtonFactory;
 
@@ -68,7 +70,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
 
     private static final Logger LOGGER = Logging.getLogger(JSelectionBar.class);
 
-    private static final ImageIcon ICON_SELECT = IconBundle.getIcon("16_select");
+    private static final ImageIcon ICON_SELECT = IconBuilder.createIcon(FontAwesomeIcons.ICON_LOCATION_ARROW, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_INTERSECT = IconBundle.getIcon("16_select_intersect");
     private static final ImageIcon ICON_WITHIN = IconBundle.getIcon("16_select_within");
     private static final ImageIcon ICON_LASSO = IconBundle.getIcon("16_select_lasso");

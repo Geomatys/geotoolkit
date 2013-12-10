@@ -24,9 +24,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -43,18 +43,21 @@ import org.geotoolkit.gui.swing.go2.control.edition.JEditionToolComboBox;
 import org.geotoolkit.gui.swing.go2.control.edition.JLayerComboBox;
 import org.geotoolkit.gui.swing.go2.control.edition.SessionCommitAction;
 import org.geotoolkit.gui.swing.go2.control.edition.SessionRollbackAction;
-import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.openide.awt.DropDownButtonFactory;
 
 
 /**
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
 public class JEditionBar extends AbstractMapControlBar implements ActionListener,PropertyChangeListener,ListSelectionListener{
+
+    private static final ImageIcon ICON_EDIT = IconBuilder.createIcon(FontAwesomeIcons.ICON_PENCIL, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     private final SessionCommitAction commitAction = new SessionCommitAction();
     private final SessionRollbackAction rollbackAction = new SessionRollbackAction();
@@ -116,7 +119,7 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
         menu.add(pane);
         menu.add(active);// ok button
 
-        guiEdit = DropDownButtonFactory.createDropDownButton(IconBundle.getIcon("16_edit_geom"), menu);
+        guiEdit = DropDownButtonFactory.createDropDownButton(ICON_EDIT, menu);
         guiEdit.setToolTipText(MessageBundle.getString("map_edit"));
         guiEdit.addActionListener(this);
         active.addActionListener(this);

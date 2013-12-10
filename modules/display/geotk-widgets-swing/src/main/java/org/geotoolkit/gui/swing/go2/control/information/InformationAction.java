@@ -18,9 +18,11 @@
 package org.geotoolkit.gui.swing.go2.control.information;
 
 import java.awt.event.ActionEvent;
+import javax.swing.ImageIcon;
 import org.geotoolkit.gui.swing.go2.control.AbstractMapAction;
 import org.geotoolkit.gui.swing.go2.control.information.presenter.InformationPresenter;
-import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
@@ -30,10 +32,12 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class InformationAction extends AbstractMapAction {
 
+    private static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_INFO, 16, FontAwesomeIcons.DEFAULT_COLOR);
+
     private InformationPresenter presenter = null;
 
     public InformationAction(){
-        putValue(SMALL_ICON, IconBundle.getIcon("16_deco_info"));
+        putValue(SMALL_ICON, ICON);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_information"));
     }
 

@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.go2.control;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import javax.swing.ImageIcon;
 
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
@@ -31,7 +32,8 @@ import org.geotoolkit.display2d.primitive.GraphicProbe;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.decoration.AbstractMapDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
-import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.util.StringUtilities;
 
@@ -45,6 +47,8 @@ import org.geotoolkit.util.StringUtilities;
  */
 public class DebugAction extends AbstractMapAction {
 
+    private static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_WARNING_SIGN, 16, FontAwesomeIcons.DEFAULT_COLOR);
+
     private final DebugDecoration deco = new DebugDecoration();
 
     public DebugAction() {
@@ -52,7 +56,7 @@ public class DebugAction extends AbstractMapAction {
     }
 
     public DebugAction(final JMap2D map) {
-        super("config", IconBundle.getIcon("16_deco_debug"),map);
+        super("config", ICON,map);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_debug"));
         setMap(map);
     }
