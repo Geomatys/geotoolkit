@@ -18,7 +18,6 @@ package org.geotoolkit.display3d.scene.loader;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
-import javax.measure.converter.ConversionException;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
@@ -27,8 +26,6 @@ import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.map.MapContext;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 /**
  *
@@ -44,24 +41,19 @@ public class MapContextImageLoader implements ImageLoader {
     }
 
     @Override
-    public void setOutputCRS(CoordinateReferenceSystem outputCrs) throws FactoryException, ConversionException {
+    public void setOutputCRS(CoordinateReferenceSystem outputCrs) throws PortrayalException {
         this.outputCRS = outputCrs;
     }
 
     @Override
     public BufferedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension)
-            throws TransformException, FactoryException, ConversionException {
+            throws PortrayalException {
 
         final CanvasDef cdef = new CanvasDef(outputDimension, null);
         final ViewDef vdef = new ViewDef(outputEnv);
         final SceneDef sdef = new SceneDef(context);
 
-        try {
-            return DefaultPortrayalService.portray(cdef, sdef, vdef);
-        } catch (PortrayalException ex) {
-            throw new TransformException(ex.getMessage(), ex);
-        }
-
+        return DefaultPortrayalService.portray(cdef, sdef, vdef);
     }
 
 }

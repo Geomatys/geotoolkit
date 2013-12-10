@@ -20,12 +20,11 @@ import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.io.IOException;
 import java.io.InputStream;
 import javax.measure.converter.ConversionException;
 import javax.media.opengl.*;
 
-import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display3d.Map3D;
 import org.geotoolkit.display3d.scene.camera.TrackBallCamera;
 import org.geotoolkit.display3d.scene.component.Tile3D;
@@ -121,7 +120,7 @@ public class Terrain extends SceneNode3D {
         return this.loaderMNT;
     }
 
-    public void setElevationLoader(ElevationLoader loaderMNT) throws FactoryException, ConversionException {
+    public void setElevationLoader(ElevationLoader loaderMNT) throws PortrayalException {
         this.loaderMNT = loaderMNT;
         this.loaderMNT.setOutputCRS(this.quadTree.getCoordinateReferenceSystem());
     }
@@ -130,7 +129,7 @@ public class Terrain extends SceneNode3D {
         return loaderImg;
     }
 
-    public void setImageLoader(ImageLoader loaderImg) throws FactoryException, ConversionException {
+    public void setImageLoader(ImageLoader loaderImg) throws PortrayalException {
         this.loaderImg = loaderImg;
         this.loaderImg.setOutputCRS(this.quadTree.getCoordinateReferenceSystem());
     }
@@ -145,11 +144,11 @@ public class Terrain extends SceneNode3D {
      *************************************************************/
 
 
-    public double getAltitudeOf(DirectPosition position, double scale) throws DataStoreException, FactoryException, TransformException, ConversionException, IOException {
+    public double getAltitudeOf(DirectPosition position, double scale) throws PortrayalException {
         return this.loaderMNT.getValueOf(position, scale);
     }
 
-    public double getAltitudeSmoothOf(DirectPosition position, double scale) throws FactoryException, ConversionException, TransformException {
+    public double getAltitudeSmoothOf(DirectPosition position, double scale) throws PortrayalException {
         return this.loaderMNT.getSmoothValueOf(position, scale);
     }
 

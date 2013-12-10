@@ -16,14 +16,11 @@
  */
 package org.geotoolkit.display3d.scene.loader;
 
+import java.awt.Dimension;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
-
-import javax.measure.converter.ConversionException;
-import java.awt.*;
 import java.awt.image.BufferedImage;
+import org.geotoolkit.display.PortrayalException;
 
 /**
  * Generate tile images for terrain.
@@ -33,9 +30,8 @@ import java.awt.image.BufferedImage;
  */
 public interface ImageLoader {
 
-    void setOutputCRS(CoordinateReferenceSystem outputCrs) throws FactoryException, ConversionException;
+    void setOutputCRS(CoordinateReferenceSystem outputCrs) throws PortrayalException;
 
-    BufferedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension) throws
-            TransformException, FactoryException, ConversionException;
+    BufferedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension) throws PortrayalException;
 
 }

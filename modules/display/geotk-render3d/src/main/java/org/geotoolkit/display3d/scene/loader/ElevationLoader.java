@@ -16,17 +16,12 @@
  */
 package org.geotoolkit.display3d.scene.loader;
 
-import org.apache.sis.storage.DataStoreException;
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
-
-import javax.measure.converter.ConversionException;
-import java.awt.*;
-import java.awt.image.*;
-import java.io.IOException;
+import org.geotoolkit.display.PortrayalException;
 
 /**
  * Generate tile elevation for terrain.
@@ -40,12 +35,12 @@ public interface ElevationLoader {
 
     double getMaximumElevation();
 
-    void setOutputCRS(CoordinateReferenceSystem outputCrs) throws FactoryException, ConversionException;
+    void setOutputCRS(CoordinateReferenceSystem outputCrs) throws PortrayalException;
 
-    BufferedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension) throws TransformException, FactoryException, ConversionException;
+    BufferedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension) throws PortrayalException;
 
-    double getSmoothValueOf(DirectPosition position, double scale) throws FactoryException, ConversionException, TransformException;
+    double getSmoothValueOf(DirectPosition position, double scale) throws PortrayalException;
 
-    double getValueOf(DirectPosition position, double scale) throws DataStoreException, TransformException, IOException, ConversionException, FactoryException;
+    double getValueOf(DirectPosition position, double scale) throws PortrayalException;
 
 }

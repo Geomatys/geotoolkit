@@ -38,6 +38,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
+import org.geotoolkit.display.PortrayalException;
 
 import org.geotoolkit.display.primitive.SceneNode;
 import org.geotoolkit.display3d.Map3D;
@@ -267,7 +268,7 @@ public class TerrainUpdater implements PropertyChangeListener, Updater {
         }
     }
 
-    public void updateMntOn(final QuadTreeNode node) throws TransformException, ConversionException, FactoryException {
+    public void updateMntOn(final QuadTreeNode node) throws PortrayalException {
 
         if (node.isData()) {
             final SceneNode3D sceneNode3d  = node.getData();
@@ -318,7 +319,7 @@ public class TerrainUpdater implements PropertyChangeListener, Updater {
         }
     }
 
-    public void updateImageOn(final QuadTreeNode node) throws TransformException, ConversionException, FactoryException {
+    public void updateImageOn(final QuadTreeNode node) throws PortrayalException {
         if (node.isData()) {
             final Envelope tileEnv = node.getEnvelope();
             final Dimension textureDimension = node.getTileSize();

@@ -19,15 +19,11 @@ package org.geotoolkit.display3d.scene.loader;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.io.IOException;
 import java.util.List;
-import javax.measure.converter.ConversionException;
-import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.display.PortrayalException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 /**
  * Create a stack of elevation models.
@@ -65,14 +61,14 @@ public class StackElevationLoader implements ElevationLoader{
     }
 
     @Override
-    public void setOutputCRS(CoordinateReferenceSystem outputCrs) throws FactoryException, ConversionException {
+    public void setOutputCRS(CoordinateReferenceSystem outputCrs) throws PortrayalException {
         for(ElevationLoader e : stack){
             e.setOutputCRS(outputCrs);
         }
     }
 
     @Override
-    public BufferedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension) throws TransformException, FactoryException, ConversionException {
+    public BufferedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension) throws PortrayalException {
         BufferedImage image = stack.get(0).getBufferedImageOf(outputEnv, outputDimension);
 
         final boolean[][] mask = new boolean[outputDimension.height][outputDimension.width];
@@ -88,12 +84,12 @@ public class StackElevationLoader implements ElevationLoader{
     }
 
     @Override
-    public double getSmoothValueOf(DirectPosition position, double scale) throws FactoryException, ConversionException, TransformException {
+    public double getSmoothValueOf(DirectPosition position, double scale) throws PortrayalException {
         return stack.get(0).getSmoothValueOf(position, scale);
     }
 
     @Override
-    public double getValueOf(DirectPosition position, double scale) throws DataStoreException, TransformException, IOException, ConversionException, FactoryException {
+    public double getValueOf(DirectPosition position, double scale) throws PortrayalException {
         return stack.get(0).getValueOf(position, scale);
     }
 

@@ -17,16 +17,17 @@
 package org.geotoolkit.display3d.scene.loader;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.List;
 import javax.measure.converter.ConversionException;
 
-import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -36,12 +37,14 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.coverage.AbstractGridMosaic;
-import org.geotoolkit.coverage.GridMosaic;
-import org.geotoolkit.coverage.GridMosaicRenderedImage;
-import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display3d.utils.TextureUtils;
+import org.geotoolkit.internal.image.ImageUtilities;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -51,24 +54,53 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
- * Generate tile images for terrain.
  *
  * @author Thomas Rouby (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class PyramidImageLoader implements ImageLoader{
+public class DefaultElevationLoader extends AbstractElevationLoader {
 
-    private final Pyramid dataSource;
-    private GridMosaicRenderedImage dataRenderedImage = null;
+    private final CoverageReference coverageRef;
+    private final GeneralGridGeometry gridGeom;
+    private final double minElevation;
+    private final double maxElevation;
 
     private CoordinateReferenceSystem outputCrs;
-    private MathTransform transformToOutput, transformFromOutput;
+    private MathTransform coverageToOutput, outputToCoverage;
 
-    public PyramidImageLoader(final Pyramid dataSource) throws FactoryException, ConversionException {
-        ArgumentChecks.ensureNonNull("pyramid", dataSource);
-        this.dataSource = dataSource;
+    public DefaultElevationLoader(CoverageReference ref) throws FactoryException, ConversionException, DataStoreException {
+        this.coverageRef = ref;
+
+        final GridCoverageReader reader = coverageRef.acquireReader();
+        this.gridGeom = reader.getGridGeometry(ref.getImageIndex());
+        final List<GridSampleDimension> dimensions = reader.getSampleDimensions(ref.getImageIndex());
+        final GridSampleDimension elevationDim = dimensions.get(0).geophysics(true);
+        this.minElevation = elevationDim.getMinimumValue();
+        this.maxElevation = elevationDim.getMaximumValue();
+
+        ref.recycle(reader);
+
     }
 
+    @Override
+    public double getMinimumElevation() {
+        return minElevation;
+    }
+
+    @Override
+    public double getMaximumElevation() {
+        return maxElevation;
+    }
+
+    /**
+     * Return the current outputCRS if set, else null
+     * @return
+     */
+    public CoordinateReferenceSystem getOutputCRS() {
+        return outputCrs;
+    }
+
+    @Override
     public void setOutputCRS(CoordinateReferenceSystem outputCrs) throws PortrayalException {
         this.outputCrs = outputCrs;
         try {
@@ -85,18 +117,19 @@ public class PyramidImageLoader implements ImageLoader{
      */
     private void createTransformOutput() throws FactoryException, ConversionException {
         if (outputCrs != null){
-            final CoordinateReferenceSystem crsImg = this.dataSource.getCoordinateReferenceSystem();
-            transformToOutput = CRS.findMathTransform(crsImg, outputCrs, true);
+            final CoordinateReferenceSystem crsImg = gridGeom.getCoordinateReferenceSystem();
+            coverageToOutput = CRS.findMathTransform(crsImg, outputCrs, true);
             try {
-                transformFromOutput = transformToOutput.inverse();
+                outputToCoverage = coverageToOutput.inverse();
             } catch (NoninvertibleTransformException ex) {
-                transformFromOutput = CRS.findMathTransform(outputCrs, crsImg, true);
+                outputToCoverage = CRS.findMathTransform(outputCrs, crsImg, true);
             }
         }
     }
 
     @Override
-    public BufferedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension) throws PortrayalException {
+    public BufferedImage getBufferedImageOf(final Envelope outputEnv, final Dimension outputDimension) throws PortrayalException {
+
         if(outputCrs == null){
             throw new PortrayalException("Output crs has not been set");
         }
@@ -105,47 +138,23 @@ public class PyramidImageLoader implements ImageLoader{
             this.setOutputCRS(outputEnv.getCoordinateReferenceSystem());
         }
 
-        final Envelope env;
-        try {
-            env = CRS.transform(transformFromOutput, outputEnv);
-        } catch (TransformException ex) {
-            throw new PortrayalException(ex);
-        }
-
-        final double scale = env.getSpan(0)/outputDimension.width;
-        final int indexImg = TextureUtils.getNearestScaleIndex(dataSource.getScales(), scale);
-
-        if (dataRenderedImage != null) {
-            final GridMosaic gridMosaic = dataRenderedImage.getGridMosaic();
-            final double mosaicScale = gridMosaic.getScale();
-            final double mosaicIndex = TextureUtils.getNearestScaleIndex(dataSource.getScales(), mosaicScale);
-            if (gridMosaic.getPyramid() != dataSource || mosaicIndex != indexImg) {
-                final Collection<GridMosaic> mosaics = dataSource.getMosaics(indexImg);
-                if (!mosaics.isEmpty()) {
-                    dataRenderedImage = new GridMosaicRenderedImage(mosaics.iterator().next());
-                } else {
-                    dataRenderedImage = null;
-                    return null;
-                }
-            }
-        } else {
-            final Collection<GridMosaic> mosaics = dataSource.getMosaics(indexImg);
-            if (!mosaics.isEmpty()) {
-                dataRenderedImage = new GridMosaicRenderedImage(mosaics.iterator().next());
-            } else {
-                dataRenderedImage = null;
-                return null;
-            }
-        }
-        try {
-            return extractTileImage(outputEnv, dataRenderedImage, transformFromOutput, outputDimension);
-        } catch (TransformException ex) {
+        try{
+            final GridCoverageReader reader = coverageRef.acquireReader();
+            final GridCoverageReadParam params = new GridCoverageReadParam();
+            params.setEnvelope(outputEnv);
+            final GridCoverage2D coverage = (GridCoverage2D)reader.read(coverageRef.getImageIndex(), params);
+            return extractTileImage(outputEnv, coverage, outputToCoverage, outputDimension);
+        }catch(Exception ex){
             throw new PortrayalException(ex);
         }
     }
 
-    private static BufferedImage extractTileImage(final Envelope tileEnvelope, final GridMosaicRenderedImage dataRenderedImage,
-            final MathTransform transformFromOutput, final Dimension tileSize) throws TransformException {
+    private static BufferedImage extractTileImage(final Envelope tileEnvelope,
+            final GridCoverage2D coverage, final MathTransform outputCRSToCoverageCRS,
+            final Dimension tileSize) throws TransformException {
+
+        final RenderedImage dataRenderedImage = coverage.getRenderedImage();
+
         if (dataRenderedImage == null) {
             return null;
         }
@@ -153,10 +162,9 @@ public class PyramidImageLoader implements ImageLoader{
         final double targetTileWidth = tileSize.width;
         final double targetTileHeight = tileSize.height;
 
-        final GridMosaic gridmosaic = dataRenderedImage.getGridMosaic();
-        final MathTransform mosaicCrsToMosaicGrid = AbstractGridMosaic.getTileGridToCRS(gridmosaic, new Point(0, 0)).inverse();
+        final MathTransform coverageCRSToImageGrid = coverage.getGridGeometry().getGridToCRS2D().inverse();
 
-        final AffineTransform2D targetGridToTargetCrs = new AffineTransform2D(
+        final AffineTransform2D tileGridToOutputCRS = new AffineTransform2D(
                 tileEnvelope.getSpan(0)/targetTileWidth,
                 0, 0,
                 -tileEnvelope.getSpan(1)/targetTileHeight,
@@ -168,12 +176,14 @@ public class PyramidImageLoader implements ImageLoader{
         //prepare the output image
         final WritableRaster targetRaster = prototype.createCompatibleWritableRaster(tileSize.width, tileSize.height);
         final BufferedImage targetImage = new BufferedImage(sourceColorModel, targetRaster, sourceColorModel.isAlphaPremultiplied(), null);
+        ImageUtilities.fill(targetImage, Double.NaN);
 
         final MathTransform sourceToTarget = MathTransforms.concatenate(
-                targetGridToTargetCrs, transformFromOutput, mosaicCrsToMosaicGrid);
+                tileGridToOutputCRS, outputCRSToCoverageCRS, coverageCRSToImageGrid);
 
         //resample image
         final double[] fillValue = new double[targetImage.getData().getNumBands()];
+        Arrays.fill(fillValue, Double.NaN);
         final PixelIterator it = PixelIteratorFactory.createRowMajorIterator(dataRenderedImage);
         final Interpolation interpol = Interpolation.create(it, InterpolationCase.NEIGHBOR, 2);
         final Resample resampler = new Resample(sourceToTarget, targetImage, interpol, fillValue);

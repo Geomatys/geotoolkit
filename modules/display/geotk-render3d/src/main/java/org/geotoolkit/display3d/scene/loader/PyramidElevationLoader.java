@@ -16,20 +16,32 @@
  */
 package org.geotoolkit.display3d.scene.loader;
 
-import org.apache.sis.geometry.GeneralDirectPosition;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
+import java.util.Arrays;
+import java.util.Collection;
+import javax.measure.converter.ConversionException;
+
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
+
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.math.XMath;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.opengis.geometry.DirectPosition;
+import org.geotoolkit.display.PortrayalException;
+import org.geotoolkit.display3d.utils.TextureUtils;
+import org.geotoolkit.internal.image.ImageUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -37,31 +49,12 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
-import javax.measure.converter.ConversionException;
-import java.awt.*;
-import java.awt.image.*;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import org.geotoolkit.display3d.utils.TextureUtils;
-import org.geotoolkit.internal.image.ImageUtilities;
-
 /**
+ * 
  * @author Thomas Rouby (Geomatys))
  */
-public class PyramidElevationLoader implements ElevationLoader {
+public class PyramidElevationLoader extends AbstractElevationLoader {
 
-    private final static double[][] mask = new double[5][5];
-    static {
-        mask[0] = new double[]{ 0, 1, 2, 1, 0};
-        mask[1] = new double[]{ 1, 2, 3, 2, 1};
-        mask[2] = new double[]{ 2, 3, 4, 3, 2};
-        mask[3] = new double[]{ 1, 2, 3, 2, 1};
-        mask[4] = new double[]{ 0, 1, 2, 1, 0};
-    }
-
-//    private final CoverageReference dataCoverage;
     private final PyramidalCoverageReference coverageRef;
     private Pyramid dataSource;
     private final double minElevation;
@@ -71,7 +64,8 @@ public class PyramidElevationLoader implements ElevationLoader {
     private CoordinateReferenceSystem outputCrs;
     private MathTransform transformToOutput, transformFromOutput;
 
-    public PyramidElevationLoader(PyramidalCoverageReference ref) throws FactoryException, ConversionException, DataStoreException {
+    public PyramidElevationLoader(final PyramidalCoverageReference ref) throws FactoryException, ConversionException, DataStoreException {
+        ArgumentChecks.ensureNonNull("pyramid reference", ref);
         this.coverageRef = ref;
 
         final Collection<Pyramid> pyramidsMNT = (Collection<Pyramid>) ref.getPyramidSet().getPyramids();
@@ -79,34 +73,11 @@ public class PyramidElevationLoader implements ElevationLoader {
             dataSource = pyramidsMNT.iterator().next();
         }
 
+        ArgumentChecks.ensureNonNull("pyramid", dataSource);
 
         final GridSampleDimension elevationDim = ref.getSampleDimensions(0).get(0).geophysics(true);
         this.minElevation = elevationDim.getMinimumValue();
         this.maxElevation = elevationDim.getMaximumValue();
-        //Get the Layer image
-
-//        this.dataCoverage = dataCoverage;
-//        if (dataCoverage instanceof PyramidalCoverageReference){
-//            final PyramidalCoverageReference dataPyramidal = (PyramidalCoverageReference) dataCoverage;
-//            final PyramidSet pyramidSet = dataPyramidal.getPyramidSet();
-//            if (pyramidSet.getPyramids().size() > 0){
-//                final Pyramid pyramid = pyramidSet.getPyramids().iterator().next();
-//                if (pyramid != null) {
-//                    this.dataSource = pyramid;
-//                } else {
-//                    this.dataSource = null;
-//                }
-//            } else {
-//                this.dataSource = null;
-//            }
-//        } else {
-//            throw new UnsupportedOperationException("CoverageReference " + dataCoverage.getClass().getName() + " is not supported by this loader");
-//        }
-//
-//        if (this.dataSource == null) {
-//            throw new DataStoreException("DataSource cannot be null");
-//        }
-
     }
 
     @Override
@@ -127,9 +98,13 @@ public class PyramidElevationLoader implements ElevationLoader {
         return outputCrs;
     }
 
-    public void setOutputCRS(CoordinateReferenceSystem outputCrs) throws FactoryException, ConversionException {
+    public void setOutputCRS(CoordinateReferenceSystem outputCrs) throws PortrayalException {
         this.outputCrs = outputCrs;
-        createTransformOutput();
+        try {
+            createTransformOutput();
+        } catch (FactoryException | ConversionException ex) {
+            throw new PortrayalException(ex);
+        }
     }
 
     /**
@@ -149,63 +124,26 @@ public class PyramidElevationLoader implements ElevationLoader {
         }
     }
 
-    public BufferedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension) throws TransformException, FactoryException, ConversionException {
+    public BufferedImage getBufferedImageOf(final Envelope outputEnv, final Dimension outputDimension) throws PortrayalException {
 
         if(outputCrs == null){
-            throw new TransformException("Output crs has not been set");
+            throw new PortrayalException("Output crs has not been set");
         }
 
         if (!CRS.equalsApproximatively(outputEnv.getCoordinateReferenceSystem(), outputCrs)){
             this.setOutputCRS(outputEnv.getCoordinateReferenceSystem());
         }
 
-        if (dataSource != null) {
-            final Envelope env = CRS.transform(transformFromOutput, outputEnv);
-
-            final double scale = env.getSpan(0)/outputDimension.width;
-            final int indexImg = TextureUtils.getNearestScaleIndex(dataSource.getScales(), scale);
-
-            if (dataRenderedImage != null) {
-                final GridMosaic gridMosaic = dataRenderedImage.getGridMosaic();
-                final double mosaicScale = gridMosaic.getScale();
-                final double mosaicIndex = TextureUtils.getNearestScaleIndex(dataSource.getScales(), mosaicScale);
-                if (gridMosaic.getPyramid() != dataSource || mosaicIndex != indexImg) {
-                    final Collection<GridMosaic> mosaics = dataSource.getMosaics(indexImg);
-                    if (!mosaics.isEmpty()) {
-                        dataRenderedImage = new GridMosaicRenderedImage(mosaics.iterator().next());
-                    } else {
-                        dataRenderedImage = null;
-                        return null;
-                    }
-                }
-            } else {
-                final Collection<GridMosaic> mosaics = dataSource.getMosaics(indexImg);
-                if (!mosaics.isEmpty()) {
-                    dataRenderedImage = new GridMosaicRenderedImage(mosaics.iterator().next());
-                } else {
-                    dataRenderedImage = null;
-                    return null;
-                }
-            }
+        final Envelope env;
+        try {
+            env = CRS.transform(transformFromOutput, outputEnv);
+        } catch (TransformException ex) {
+            throw new PortrayalException(ex);
         }
 
-        return extractTileImage(outputEnv, dataRenderedImage, transformFromOutput, outputDimension);
-    }
-
-    public double getSmoothValueOf(DirectPosition position, double scale) throws FactoryException, ConversionException, TransformException {
-        final DirectPosition pos = new GeneralDirectPosition(this.dataSource.getCoordinateReferenceSystem());
-        if (CRS.equalsApproximatively(this.dataSource.getCoordinateReferenceSystem(), position.getCoordinateReferenceSystem())) {
-            pos.setOrdinate(0, position.getOrdinate(0));
-            pos.setOrdinate(1, position.getOrdinate(1));
-        } else {
-            if (!CRS.equalsApproximatively(position.getCoordinateReferenceSystem(), outputCrs)){
-                this.setOutputCRS(position.getCoordinateReferenceSystem());
-            }
-            transformFromOutput.transform(position, pos);
-            scale *= XAffineTransform.getScale((AffineTransform2D)transformFromOutput);
-        }
-
+        final double scale = env.getSpan(0)/outputDimension.width;
         final int indexImg = TextureUtils.getNearestScaleIndex(dataSource.getScales(), scale);
+
         if (dataRenderedImage != null) {
             final GridMosaic gridMosaic = dataRenderedImage.getGridMosaic();
             final double mosaicScale = gridMosaic.getScale();
@@ -216,7 +154,7 @@ public class PyramidElevationLoader implements ElevationLoader {
                     dataRenderedImage = new GridMosaicRenderedImage(mosaics.iterator().next());
                 } else {
                     dataRenderedImage = null;
-                    return minElevation;
+                    return null;
                 }
             }
         } else {
@@ -225,131 +163,19 @@ public class PyramidElevationLoader implements ElevationLoader {
                 dataRenderedImage = new GridMosaicRenderedImage(mosaics.iterator().next());
             } else {
                 dataRenderedImage = null;
-                return minElevation;
+                return null;
             }
         }
-
-        final Envelope env = dataRenderedImage.getGridMosaic().getEnvelope();
-
-        boolean contains = true;
-        final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
-        for (int i=0; i<crs.getCoordinateSystem().getDimension() && contains; i++) {
-            final double ordinate = pos.getOrdinate(i);
-            contains = env.getMinimum(i) < ordinate && ordinate < env.getMaximum(i);
+        try {
+            return extractTileImage(outputEnv, dataRenderedImage, transformFromOutput, outputDimension);
+        } catch (TransformException ex) {
+            throw new PortrayalException(ex);
         }
-
-        if (contains) {
-
-            final int x = (int)Math.floor(((pos.getOrdinate(0)-env.getMinimum(0))/env.getSpan(0)) * dataRenderedImage.getWidth());
-            final int startX = XMath.clamp(x-2, 0, dataRenderedImage.getWidth()-1);
-            final int y = dataRenderedImage.getHeight() - (int)Math.floor(((pos.getOrdinate(1) - env.getMinimum(1)) / env.getSpan(1)) * dataRenderedImage.getHeight());
-            final int startY = XMath.clamp(y-2, 0, dataRenderedImage.getHeight()-1);
-
-            final int width = Math.min(startX+5, dataRenderedImage.getWidth()-1) - startX;
-            final int height = Math.min(startY+5, dataRenderedImage.getHeight()-1) - startY;
-
-            if (width > 0 && height > 0){
-                final Raster pixels = dataRenderedImage.getData(
-                        new Rectangle(startX, startY, width, height));
-
-                final double[] values = pixels.getSamples(pixels.getMinX(), pixels.getMinY(), width, height, 0, (double[])null);
-                double value = 1.0;
-                double divider = 0.0;
-
-                for (int u=0; u<width; u++) {
-                    for (int v=0; v<height; v++) {
-                        int i = 2-(x-(startX+u));
-                        int j = 2-(y-(startY+v));
-
-                        divider += mask[i][j];
-                        value += mask[i][j] * values[u+v*width];
-                    }
-                }
-
-                if(Double.isNaN(value)){
-                    return minElevation;
-                }
-
-                if (divider > 0.0) {
-                    return value/divider;
-                }
-            }
-        }
-
-        return minElevation;
     }
 
-    public double getValueOf(DirectPosition position, double scale) throws DataStoreException, TransformException, IOException, ConversionException, FactoryException {
-
-        final DirectPosition pos = new GeneralDirectPosition(this.dataSource.getCoordinateReferenceSystem());
-        if (CRS.equalsApproximatively(this.dataSource.getCoordinateReferenceSystem(), position.getCoordinateReferenceSystem())) {
-            pos.setOrdinate(0, position.getOrdinate(0));
-            pos.setOrdinate(1, position.getOrdinate(1));
-        } else {
-            if (!CRS.equalsApproximatively(position.getCoordinateReferenceSystem(), outputCrs)){
-                this.setOutputCRS(position.getCoordinateReferenceSystem());
-            }
-            transformFromOutput.transform(position, pos);
-            scale *= XAffineTransform.getScale((AffineTransform2D)transformFromOutput);
-        }
-
-        final int indexImg = TextureUtils.getNearestScaleIndex(dataSource.getScales(), scale);
-        double val = getValueOf(pos, indexImg);
-        if(Double.isNaN(val)){
-            val = minElevation;
-        }
-        return val;
-    }
-
-    private double getValueOf(DirectPosition pos, int indexImg) throws FactoryException, ConversionException, TransformException, DataStoreException, IOException {
-
-        final Collection<GridMosaic> mosaics = this.dataSource.getMosaics(indexImg);
-        Iterator<GridMosaic> iterator = mosaics.iterator();
-        if (iterator.hasNext()) {
-            final GridMosaic mosaic = iterator.next();
-
-            final Envelope mosaicEnv = mosaic.getEnvelope();
-
-            boolean contains = true;
-            final CoordinateReferenceSystem crs = mosaicEnv.getCoordinateReferenceSystem();
-            for (int i=0; i<crs.getCoordinateSystem().getDimension() && contains; i++) {
-                final double ordinate = pos.getOrdinate(i);
-                contains = mosaicEnv.getMinimum(i) < ordinate && ordinate < mosaicEnv.getMaximum(i);
-            }
-
-            if (contains) {
-                final Dimension tileSize = mosaic.getTileSize();
-                final Dimension gridSize = mosaic.getGridSize();
-
-                final double tileLon = mosaicEnv.getSpan(0) / gridSize.getWidth();
-                final double tileLat = mosaicEnv.getSpan(1) / gridSize.getHeight();
-
-                final int posX = (int)Math.floor((pos.getOrdinate(0)-mosaicEnv.getMinimum(0))/tileLon);
-                final int posY = gridSize.height - (int)Math.ceil((pos.getOrdinate(1)-mosaicEnv.getMinimum(1))/tileLat);
-
-                final TileReference tile = mosaic.getTile(posX, posY, null);
-                final Envelope tileEnv = mosaic.getEnvelope(posX, posY);
-
-                final RenderedImage tileImage;
-                if (tile.getInput() instanceof RenderedImage){
-                    tileImage = (RenderedImage) tile.getInput();
-                } else {
-                    tileImage = tile.getImageReader().read(tile.getImageIndex());
-                }
-
-                final int x = (int)Math.floor(((pos.getOrdinate(0)-tileEnv.getMinimum(0))/tileEnv.getSpan(0))*tileSize.getWidth());
-                final int y = tileSize.height - (int)Math.floor(((pos.getOrdinate(1) - tileEnv.getMinimum(1)) / tileEnv.getSpan(1)) * tileSize.getHeight());
-
-                final Raster pixel = tileImage.getData(new Rectangle(XMath.clamp(x, 0, tileSize.width-1), XMath.clamp(y, 0, tileSize.height-1), 1, 1));
-
-                return pixel.getPixel(pixel.getMinX(),pixel.getMinY(), (double[])null)[0];
-            }
-        }
-
-        return 0.0;
-    }
-
-    private static BufferedImage extractTileImage(final Envelope tileEnvelope, final GridMosaicRenderedImage dataRenderedImage, final MathTransform transformFromOutput, final Dimension tileSize) throws TransformException {
+    private static BufferedImage extractTileImage(final Envelope tileEnvelope,
+            final GridMosaicRenderedImage dataRenderedImage, final MathTransform transformFromOutput,
+            final Dimension tileSize) throws TransformException {
         if (dataRenderedImage == null) {
             return null;
         }
