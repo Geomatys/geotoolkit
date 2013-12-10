@@ -40,6 +40,7 @@ import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridMosaicRenderedImage;
 import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display3d.utils.TextureUtils;
 
@@ -58,15 +59,21 @@ import org.opengis.util.FactoryException;
  */
 public class PyramidImageLoader implements ImageLoader{
 
+    private final PyramidalCoverageReference ref;
     private final Pyramid dataSource;
     private GridMosaicRenderedImage dataRenderedImage = null;
 
     private CoordinateReferenceSystem outputCrs;
     private MathTransform transformToOutput, transformFromOutput;
 
-    public PyramidImageLoader(final Pyramid dataSource) throws FactoryException, ConversionException {
+    public PyramidImageLoader(final PyramidalCoverageReference ref, final Pyramid dataSource) throws FactoryException, ConversionException {
         ArgumentChecks.ensureNonNull("pyramid", dataSource);
+        this.ref = ref;
         this.dataSource = dataSource;
+    }
+
+    public PyramidalCoverageReference getCoverageReference() {
+        return ref;
     }
 
     public void setOutputCRS(CoordinateReferenceSystem outputCrs) throws PortrayalException {

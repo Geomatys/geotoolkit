@@ -122,6 +122,22 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
         guiLayerList.setCellRenderer(new CoverageRefRenderer());
         guiMntList.setCellRenderer(new CoverageRefRenderer());
 
+        //extract selected values from current map
+//        final ContextContainer3D container = (ContextContainer3D) map.getMap3D().getContainer();
+//        final Terrain terrain = container.getTerrain();
+//        if(terrain != null){
+//            final ImageLoader imgLoader = terrain.getImageLoader();
+//            final ElevationLoader eleLoader = terrain.getElevationLoader();
+//
+//            if(imgLoader instanceof PyramidImageLoader){
+//                final PyramidalCoverageReference ref = ((PyramidImageLoader)imgLoader).getCoverageReference();
+//                guiLayerList.setSelectedValue(ref, true);
+//            }else if(imgLoader instanceof MapContextImageLoader){
+//                final List<MapLayer> layers = ((MapContextImageLoader)imgLoader).getContext().layers();
+//            }
+//
+//        }
+
     }
 
     private void updateLayersBox(){
@@ -192,7 +208,7 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
                         if (pyramidsImg.size() > 0){
                             pyramidImg = pyramidsImg.get(0);
                         }
-                        imageLoader = new PyramidImageLoader(pyramidImg);
+                        imageLoader = new PyramidImageLoader(pcf, pyramidImg);
                     }
                 }
             }

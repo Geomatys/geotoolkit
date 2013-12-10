@@ -35,6 +35,11 @@ public class JTerrainShadowPanel extends javax.swing.JPanel {
     public JTerrainShadowPanel(final JMap3D map3d) {
         initComponents();
         this.map = map3d;
+
+        final Map3D m3d = map.getMap3D();
+        guiShadowEnable.setSelected(m3d.getLightManager().isEnable());
+        rotationSpinner.setValue((double)m3d.getLightRotation());
+        azimutSpinner.setValue((double)m3d.getLightAzimut());
     }
 
     /**
@@ -50,7 +55,7 @@ public class JTerrainShadowPanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         azimutSpinner = new javax.swing.JSpinner();
-        jSpinner1 = new javax.swing.JSpinner();
+        rotationSpinner = new javax.swing.JSpinner();
 
         guiShadowEnable.setText(MessageBundle.getString("org.geotoolkit.gui.swing.render3d.show")); // NOI18N
         guiShadowEnable.addActionListener(new java.awt.event.ActionListener() {
@@ -70,10 +75,10 @@ public class JTerrainShadowPanel extends javax.swing.JPanel {
             }
         });
 
-        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(45.0d, 0.0d, 360.0d, 1.0d));
-        jSpinner1.addChangeListener(new javax.swing.event.ChangeListener() {
+        rotationSpinner.setModel(new javax.swing.SpinnerNumberModel(45.0d, 0.0d, 360.0d, 1.0d));
+        rotationSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jSpinner1StateChanged(evt);
+                rotationSpinnerStateChanged(evt);
             }
         });
 
@@ -94,7 +99,7 @@ public class JTerrainShadowPanel extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(rotationSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -112,7 +117,7 @@ public class JTerrainShadowPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(rotationSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -126,13 +131,13 @@ public class JTerrainShadowPanel extends javax.swing.JPanel {
         map3d.getLightManager().setEnable(guiShadowEnable.isSelected());
     }//GEN-LAST:event_guiShadowEnableActionPerformed
 
-    private void jSpinner1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinner1StateChanged
+    private void rotationSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rotationSpinnerStateChanged
          if (map.getMap3D() == null){
             return;
         }
         final Map3D map3d = map.getMap3D();
-        map3d.setLightRotation(((Number) jSpinner1.getValue()).floatValue());
-    }//GEN-LAST:event_jSpinner1StateChanged
+        map3d.setLightRotation(((Number) rotationSpinner.getValue()).floatValue());
+    }//GEN-LAST:event_rotationSpinnerStateChanged
 
     private void azimutSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_azimutSpinnerStateChanged
          if (map.getMap3D() == null){
@@ -147,6 +152,6 @@ public class JTerrainShadowPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox guiShadowEnable;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JSpinner jSpinner1;
+    private javax.swing.JSpinner rotationSpinner;
     // End of variables declaration//GEN-END:variables
 }

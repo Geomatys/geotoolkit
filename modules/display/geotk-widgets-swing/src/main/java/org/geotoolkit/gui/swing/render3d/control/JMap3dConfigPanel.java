@@ -53,6 +53,9 @@ public class JMap3dConfigPanel extends JPanel{
             }
         });
 
+        final Map3D map = map3d.getMap3D();
+        exageration.setValue((int)map.getCamera().getScale3d().z);
+
         add(terrainpane);
         add(shadowpane);
         add(exageration);

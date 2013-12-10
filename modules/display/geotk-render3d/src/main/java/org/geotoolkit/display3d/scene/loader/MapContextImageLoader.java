@@ -40,6 +40,10 @@ public class MapContextImageLoader implements ImageLoader {
         this.context = context;
     }
 
+    public MapContext getContext() {
+        return context;
+    }
+    
     @Override
     public void setOutputCRS(CoordinateReferenceSystem outputCrs) throws PortrayalException {
         this.outputCRS = outputCrs;
