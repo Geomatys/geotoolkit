@@ -72,13 +72,12 @@
 
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-render</artifactId>
+      <artifactId>geotk-render2d</artifactId>
       <version>${project.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-render2d</artifactId>
+      <artifactId>geotk-render3d</artifactId>
       <version>${project.version}</version>
     </dependency>
 

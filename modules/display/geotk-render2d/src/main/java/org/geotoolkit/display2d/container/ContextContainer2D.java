@@ -37,6 +37,7 @@ import org.geotoolkit.style.StyleConstants;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.container.DefaultGraphicContainer;
 import org.geotoolkit.display.primitive.SceneNode;
+import org.geotoolkit.display.container.MapContextContainer;
 import org.geotoolkit.display2d.container.statefull.RootSceneNode;
 import org.geotoolkit.display2d.container.statefull.StatefullMapItemJ2D;
 import org.geotoolkit.display2d.container.stateless.StatelessMapItemJ2D;
@@ -65,7 +66,7 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ContextContainer2D extends DefaultGraphicContainer{
+public class ContextContainer2D extends DefaultGraphicContainer implements MapContextContainer {
 
     public static final String CONTEXT_PROPERTY = "context";
 
@@ -218,6 +219,7 @@ public class ContextContainer2D extends DefaultGraphicContainer{
      *
      * @param context : MapContext to render
      */
+    @Override
     public void setContext(MapContext context){
 
         if(this.context != null && context != null){
@@ -255,6 +257,7 @@ public class ContextContainer2D extends DefaultGraphicContainer{
      *
      * @return MapContext or null
      */
+    @Override
     public MapContext getContext(){
         return context;
     }
