@@ -276,6 +276,8 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
     public static final QName _Dictionary_QNAME = new QName("http://www.opengis.net/gml", "Dictionary");
     public static final QName _BaseCurve_QNAME = new QName("http://www.opengis.net/gml", "baseCurve");
     public static final QName _TimeInstant_QNAME = new QName("http://www.opengis.net/gml", "TimeInstant");
+    public final static QName _AbstractGML_QNAME = new QName("http://www.opengis.net/gml", "AbstractGML");
+    public final static QName _AbstractObject_QNAME = new QName("http://www.opengis.net/gml", "AbstractObject");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.gml
@@ -1682,6 +1684,29 @@ public class ObjectFactory extends org.apache.sis.internal.jaxb.geometry.ObjectF
      */
     public AngleType createAngleType() {
         return new AngleType();
+    }
+
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractObject")
+    public JAXBElement<Object> createAbstractObject(Object value) {
+        return new JAXBElement<Object>(_AbstractObject_QNAME, Object.class, null, value);
+    }
+    
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AbstractGMLType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractGML", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractObject")
+    public JAXBElement<AbstractGMLType> createAbstractGML(AbstractGMLType value) {
+        return new JAXBElement<AbstractGMLType>(_AbstractGML_QNAME, AbstractGMLType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AbstractGeometryType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractGeometry", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
+    public JAXBElement<AbstractGeometryType> createAbstractGeometry(AbstractGeometryType value) {
+        return new JAXBElement<AbstractGeometryType>(_Geometry_QNAME, AbstractGeometryType.class, null, value);
     }
 
     /**
