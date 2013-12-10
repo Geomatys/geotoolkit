@@ -105,7 +105,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
     public JLayerBand(final MapLayer layer) {
         this(layer, null);
     }
-    
+
     public JLayerBand (final MapLayer layer, NavigatorModel model) {
         ArgumentChecks.ensureNonNull("layer", layer);
         this.layer = layer;
@@ -113,7 +113,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
         setComponentPopupMenu(popupmenu);
         setMinimumSize(new Dimension(24, 24));
         setPreferredSize(new Dimension(24, 24));
-        
+
         if (model != null) {
             setModel(model);
         }
@@ -296,7 +296,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
     }
 
     @Override
-    protected void paintComponent(Graphics g) {        
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         analyze();
         final Graphics2D g2d = (Graphics2D) g;
@@ -512,12 +512,12 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
             return getComponentCount() > 0;
         }
     }
-    
+
     public boolean isEmpty() {
         if (getModel() != null) {
             analyze();
             return (ranges.isEmpty() && ponctuals.isEmpty());
-            
+
         } else return false;
     }
 }

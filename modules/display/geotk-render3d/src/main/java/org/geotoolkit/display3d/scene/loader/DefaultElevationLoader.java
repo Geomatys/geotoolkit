@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
@@ -41,13 +42,17 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.internal.image.ImageUtilities;
+import org.geotoolkit.util.BufferedImageUtilities;
 
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -74,9 +79,14 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
         final GridCoverageReader reader = coverageRef.acquireReader();
         this.gridGeom = reader.getGridGeometry(ref.getImageIndex());
         final List<GridSampleDimension> dimensions = reader.getSampleDimensions(ref.getImageIndex());
-        final GridSampleDimension elevationDim = dimensions.get(0).geophysics(true);
-        this.minElevation = elevationDim.getMinimumValue();
-        this.maxElevation = elevationDim.getMaximumValue();
+        if(dimensions!=null && !dimensions.isEmpty()){
+            final GridSampleDimension elevationDim = dimensions.get(0).geophysics(true);
+            this.minElevation = elevationDim.getMinimumValue();
+            this.maxElevation = elevationDim.getMaximumValue();
+        }else{
+            this.minElevation = 0;
+            this.maxElevation = 1000;
+        }
 
         ref.recycle(reader);
 
@@ -142,8 +152,18 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
             final GridCoverageReader reader = coverageRef.acquireReader();
             final GridCoverageReadParam params = new GridCoverageReadParam();
             params.setEnvelope(outputEnv);
-            final GridCoverage2D coverage = (GridCoverage2D)reader.read(coverageRef.getImageIndex(), params);
-            return extractTileImage(outputEnv, coverage, outputToCoverage, outputDimension);
+            try{
+                final GridCoverage2D coverage = (GridCoverage2D)reader.read(coverageRef.getImageIndex(), params);
+                return extractTileImage(outputEnv, coverage, outputToCoverage, outputDimension);
+            }catch(DisjointCoverageDomainException de){
+                //tile outside of the coverage, it's possible
+                //create a fake tile at minimum elevation
+                final BufferedImage img = BufferedImageUtilities.createImage(
+                        outputDimension.width, outputDimension.height, 1, DataBuffer.TYPE_DOUBLE);
+                ImageUtilities.fill(img, minElevation);
+                return img;
+            }
+
         }catch(Exception ex){
             throw new PortrayalException(ex);
         }
@@ -162,7 +182,7 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
         final double targetTileWidth = tileSize.width;
         final double targetTileHeight = tileSize.height;
 
-        final MathTransform coverageCRSToImageGrid = coverage.getGridGeometry().getGridToCRS2D().inverse();
+        final MathTransform coverageCRSToImageGrid = coverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT).inverse();
 
         final AffineTransform2D tileGridToOutputCRS = new AffineTransform2D(
                 tileEnvelope.getSpan(0)/targetTileWidth,

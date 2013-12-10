@@ -14,9 +14,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.render3d;
+package org.geotoolkit.gui.swing.render3d.control;
 
 import org.geotoolkit.display3d.Map3D;
+import org.geotoolkit.gui.swing.render3d.JMap3D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.render3d;
+package org.geotoolkit.gui.swing.render3d.control;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -37,22 +37,24 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.xml.bind.JAXBException;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidalCoverageReference;
+import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display3d.Map3D;
 import org.geotoolkit.display3d.scene.ContextContainer3D;
 import org.geotoolkit.display3d.scene.Terrain;
 import org.geotoolkit.display3d.scene.camera.TrackBallCamera;
+import org.geotoolkit.display3d.scene.loader.DefaultElevationLoader;
 import org.geotoolkit.display3d.scene.loader.ElevationLoader;
+import org.geotoolkit.display3d.scene.loader.FlatElevationLoader;
 import org.geotoolkit.display3d.scene.loader.ImageLoader;
 import org.geotoolkit.display3d.scene.loader.MapContextImageLoader;
-import org.geotoolkit.display3d.scene.loader.PyramidElevationLoader;
 import org.geotoolkit.display3d.scene.loader.PyramidImageLoader;
 import org.geotoolkit.display3d.scene.loader.StackElevationLoader;
+import org.geotoolkit.gui.swing.render3d.JMap3D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -78,7 +80,6 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
     /**
      * Creates new form JTerrainConfigPanel
      * @param map3d
-     * @param context
      */
     public JTerrainConfigPanel(final JMap3D map3d) {
         initComponents();
@@ -153,32 +154,26 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
 
     }
 
-    private void resetScene(final List<MapItem> contextLayers, final List<PyramidalCoverageReference> mntList){
+    private void resetScene(final List<MapItem> contextLayers, final List<CoverageReference> mntList){
         try{
 
             GeneralEnvelope envelope = null;
             int numMosaic = 1;
 
-            //prepare the terrain MNT loader
-            final List<Pyramid> pyramidsMNT = (List<Pyramid>) mntList.get(0).getPyramidSet().getPyramids();
-            Pyramid pyramidMnt = null;
-            if (pyramidsMNT.size() > 0){
-                pyramidMnt = pyramidsMNT.get(0);
-                envelope = new GeneralEnvelope(pyramidMnt.getPyramidSet().getEnvelope());
-                numMosaic = pyramidMnt.getMosaics().size();
-            }
-
             final ElevationLoader elevationLoader;
             if(mntList.size()==1){
                 //single elevation
-                elevationLoader = new PyramidElevationLoader(mntList.get(0));
-            }else{
+                elevationLoader = new DefaultElevationLoader(mntList.get(0));
+            }else if( mntList.size()>1){
                 //multiple elevation
                 final List<ElevationLoader> mnts = new ArrayList<>();
-                for(PyramidalCoverageReference ref : mntList){
-                    mnts.add(new PyramidElevationLoader(ref));
+                for(CoverageReference ref : mntList){
+                    mnts.add(new DefaultElevationLoader(ref));
                 }
                 elevationLoader = new StackElevationLoader(mnts);
+            }else{
+                //no elevation
+                elevationLoader = new FlatElevationLoader(0);
             }
 
 
@@ -189,13 +184,16 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
                 final MapItem layer = contextLayers.get(0);
                 if(layer instanceof CoverageMapLayer){
                     //we can use the coverage reference directly
-                    final PyramidalCoverageReference modelImg = (PyramidalCoverageReference) ((CoverageMapLayer)layer).getCoverageReference();
-                    final List<Pyramid> pyramidsImg = (List<Pyramid>) modelImg.getPyramidSet().getPyramids();
-                    Pyramid pyramidImg = null;
-                    if (pyramidsImg.size() > 0){
-                        pyramidImg = pyramidsImg.get(0);
+                    final CoverageReference modelImg = ((CoverageMapLayer)layer).getCoverageReference();
+                    if(modelImg instanceof PyramidalCoverageReference){
+                        final PyramidalCoverageReference pcf = (PyramidalCoverageReference) modelImg;
+                        final List<Pyramid> pyramidsImg = (List<Pyramid>) pcf.getPyramidSet().getPyramids();
+                        Pyramid pyramidImg = null;
+                        if (pyramidsImg.size() > 0){
+                            pyramidImg = pyramidsImg.get(0);
+                        }
+                        imageLoader = new PyramidImageLoader(pyramidImg);
                     }
-                    imageLoader = new PyramidImageLoader(pyramidImg);
                 }
             }
 
@@ -220,7 +218,7 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
             terrain.setElevationLoader(elevationLoader);
             terrain.setImageLoader(imageLoader);
 
-        } catch (DataStoreException | TransformException | FactoryException | ConversionException ex) {
+        } catch (PortrayalException | TransformException | FactoryException | DataStoreException | ConversionException ex) {
             Map3D.LOGGER.log(Level.WARNING, ex.getMessage(), ex);
         }
     }
@@ -349,7 +347,11 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
                 final CoverageReference ref = (CoverageReference) value;
                 lbl.setText(ref.getName().getLocalPart());
             }else if(value instanceof MapItem){
-                final String txt = ((MapItem)value).getName();
+                final MapItem mapitem = (MapItem) value;
+                String txt = mapitem.getName();
+                if( (txt==null || txt.isEmpty()) && mapitem.getDescription() != null){
+                    txt = String.valueOf(mapitem.getDescription().getTitle());
+                }
                 lbl.setText(txt);
             }
 

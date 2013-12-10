@@ -85,8 +85,13 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.display3d.scene.ContextContainer3D;
 import org.geotoolkit.gui.swing.go2.control.JMarinerBar;
 import org.geotoolkit.gui.swing.go2.control.navigation.PanHandler;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
+import org.geotoolkit.gui.swing.render3d.JMap3D;
+import org.geotoolkit.gui.swing.render3d.control.JMap3dConfigPanel;
+import org.geotoolkit.gui.swing.render3d.control.JTerrainConfigPanel;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -97,7 +102,8 @@ import org.opengis.geometry.Envelope;
  */
 public class JMap2DFrame extends javax.swing.JFrame {
 
-    private final JMap2D guiMap;
+    private final JMap2D guiMap2D;
+    private final JMap3D guiMap3D;
     private final JContextTree guiContextTree;
     private final JChainEditor guiChainEditor;
 
@@ -112,54 +118,57 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiContextTree.setContext(context);
         initTree(guiContextTree);
 
-        guiMap = new JMap2D(statefull);
-        guiMap.getContainer().setContext(context);
-        guiMap.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_GENERALIZE, GO2Hints.GENERALIZE_ON);
-        guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_BEHAVIOR_MODE, GO2Hints.BEHAVIOR_PROGRESSIVE);
+        guiMap2D = new JMap2D(statefull);
+        guiMap2D.getContainer().setContext(context);
+        guiMap2D.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        guiMap2D.getCanvas().setRenderingHint(GO2Hints.KEY_GENERALIZE, GO2Hints.GENERALIZE_ON);
+        guiMap2D.getCanvas().setRenderingHint(GO2Hints.KEY_BEHAVIOR_MODE, GO2Hints.BEHAVIOR_PROGRESSIVE);
 
         guiChainEditor = new JChainEditor(true);
         panETL.add(BorderLayout.CENTER, guiChainEditor);
 
         if(hints != null){
-            guiMap.getCanvas().setRenderingHints(hints);
+            guiMap2D.getCanvas().setRenderingHints(hints);
         }
 
-        guiMap.getCanvas().setAutoRepaint(true);
+        guiMap2D.getCanvas().setAutoRepaint(true);
 
         for(TreePopupItem item : guiContextTree.controls()){
-            item.setMapView(guiMap);
+            item.setMapView(guiMap2D);
         }
 
         try{
             Envelope env = context.getAreaOfInterest();
             if(env != null){
-                guiMap.getCanvas().setObjectiveCRS(env.getCoordinateReferenceSystem());
+                guiMap2D.getCanvas().setObjectiveCRS(env.getCoordinateReferenceSystem());
             }else{
                 env = context.getBounds();
-                guiMap.getCanvas().setObjectiveCRS(context.getCoordinateReferenceSystem());
+                guiMap2D.getCanvas().setObjectiveCRS(context.getCoordinateReferenceSystem());
             }
             if(env != null){
-                guiMap.getCanvas().setVisibleArea(env);
+                guiMap2D.getCanvas().setVisibleArea(env);
             }
         }catch(Exception ex ){
             ex.printStackTrace();
         }
 
-        guiMap.addDecoration(new JClassicNavigationDecoration(JClassicNavigationDecoration.THEME.CLASSIC));
+        // 2D map
+        guiMap2D.addDecoration(new JClassicNavigationDecoration(JClassicNavigationDecoration.THEME.CLASSIC));
+        panMap2D.add(BorderLayout.CENTER, guiMap2D);
+        guiNavBar.setMap(guiMap2D);
+        guiInfoBar.setMap(guiMap2D);
+        guiCoordBar.setMap(guiMap2D);
+        guiConfigBar.setMap(guiMap2D);
+        guiSelectionBar.setMap(guiMap2D);
+        guiMarinerBar.setMap(guiMap2D);
+        guiEditBar.setMap(guiMap2D);
+        guiMap2D.getCanvas().setAutoRepaint(true);
+        guiMap2D.setHandler(new PanHandler(guiMap2D));
 
-        panGeneral.add(BorderLayout.CENTER, guiMap);
-
-        guiNavBar.setMap(guiMap);
-        guiInfoBar.setMap(guiMap);
-        guiCoordBar.setMap(guiMap);
-        guiConfigBar.setMap(guiMap);
-        guiSelectionBar.setMap(guiMap);
-        guiMarinerBar.setMap(guiMap);
-        guiEditBar.setMap(guiMap);
-
-        guiMap.getCanvas().setAutoRepaint(true);
-        guiMap.setHandler(new PanHandler(guiMap));
+        //3D map
+        guiMap3D = new JMap3D();
+        ((ContextContainer3D)guiMap3D.getMap3D().getContainer()).setContext(context);
+        panMap3D.add(BorderLayout.CENTER, guiMap3D);
 
         setSize(1024,768);
         setLocationRelativeTo(null);
@@ -221,7 +230,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
 
         jSplitPane1 = new JSplitPane();
         panTabs = new JTabbedPane();
-        panGeneral = new JPanel();
+        panMap2D = new JPanel();
         jPanel1 = new JPanel();
         jToolBar1 = new JToolBar();
         jButton3 = new JButton();
@@ -235,6 +244,10 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiMarinerBar = new JMarinerBar();
         guiConfigBar = new JConfigBar();
         guiCoordBar = new JCoordinateBar();
+        panMap3D = new JPanel();
+        jPanel2 = new JPanel();
+        jToolBar2 = new JToolBar();
+        guiConfig3D = new JButton();
         panETL = new JPanel();
         panTree = new JPanel();
         jScrollPane1 = new JContextTree();
@@ -251,7 +264,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
 
         jSplitPane1.setDividerLocation(200);
 
-        panGeneral.setLayout(new BorderLayout());
+        panMap2D.setLayout(new BorderLayout());
 
         jPanel1.setLayout(new GridBagLayout());
 
@@ -318,12 +331,42 @@ public class JMap2DFrame extends javax.swing.JFrame {
         gridBagConstraints.fill = GridBagConstraints.BOTH;
         jPanel1.add(guiConfigBar, gridBagConstraints);
 
-        panGeneral.add(jPanel1, BorderLayout.NORTH);
+        panMap2D.add(jPanel1, BorderLayout.NORTH);
 
         guiCoordBar.setFloatable(false);
-        panGeneral.add(guiCoordBar, BorderLayout.PAGE_END);
+        panMap2D.add(guiCoordBar, BorderLayout.PAGE_END);
 
-        panTabs.addTab("2D", panGeneral);
+        panTabs.addTab("2D", panMap2D);
+
+        panMap3D.setLayout(new BorderLayout());
+
+        jPanel2.setLayout(new GridBagLayout());
+
+        jToolBar2.setFloatable(false);
+        jToolBar2.setRollover(true);
+
+        guiConfig3D.setText(" ");
+        guiConfig3D.setFocusable(false);
+        guiConfig3D.setHorizontalTextPosition(SwingConstants.CENTER);
+        guiConfig3D.setVerticalTextPosition(SwingConstants.BOTTOM);
+        guiConfig3D.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiConfig3DActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(guiConfig3D);
+
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel2.add(jToolBar2, gridBagConstraints);
+
+        panMap3D.add(jPanel2, BorderLayout.NORTH);
+
+        panTabs.addTab("3D", panMap3D);
 
         panETL.setLayout(new BorderLayout());
         panTabs.addTab("ETL", panETL);
@@ -388,7 +431,7 @@ private void jMenuItem1ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event
 private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
 
     try{
-        BufferedImage image = (BufferedImage) guiMap.getCanvas().getSnapShot();
+        BufferedImage image = (BufferedImage) guiMap2D.getCanvas().getSnapShot();
         Object output0 = new File("temp0.png");
         Object output1 = new File("temp1.png");
 
@@ -485,6 +528,13 @@ private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerCho
 
 }//GEN-LAST:event_openServerChooser
 
+    private void guiConfig3DActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiConfig3DActionPerformed
+
+        final JMap3dConfigPanel config = new JMap3dConfigPanel(guiMap3D);
+        JOptionDialog.show(this, config, JOptionPane.OK_OPTION);
+
+    }//GEN-LAST:event_guiConfig3DActionPerformed
+
     private boolean isValidType(final Class<?>[] validTypes, final Object type) {
         for (final Class<?> t : validTypes) {
             if (t.isInstance(type)) {
@@ -515,6 +565,7 @@ private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerCho
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JButton guiConfig3D;
     private JConfigBar guiConfigBar;
     private JCoordinateBar guiCoordBar;
     private JEditionBar guiEditBar;
@@ -530,6 +581,7 @@ private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerCho
     private JMenuItem jMenuItem3;
     private JMenuItem jMenuItem4;
     private JPanel jPanel1;
+    private JPanel jPanel2;
     private JScrollPane jScrollPane1;
     private Separator jSeparator1;
     private Separator jSeparator2;
@@ -537,8 +589,10 @@ private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerCho
     private JPopupMenu.Separator jSeparator4;
     private JSplitPane jSplitPane1;
     private JToolBar jToolBar1;
+    private JToolBar jToolBar2;
     private JPanel panETL;
-    private JPanel panGeneral;
+    private JPanel panMap2D;
+    private JPanel panMap3D;
     protected JTabbedPane panTabs;
     private JPanel panTree;
     // End of variables declaration//GEN-END:variables
