@@ -19,10 +19,11 @@ package org.geotoolkit.gml.xml;
 
 import java.util.Map;
 import java.util.Collections;
+import java.util.HashMap;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.xml.MarshallerPool;
-
+import org.apache.sis.internal.jaxb.LegacyNamespaces;
 /**
  *
  * @author Quentin Boileau (Geomatys)
@@ -31,11 +32,13 @@ public final class GMLMarshallerPool {
 
     private static final MarshallerPool instance;
     static {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put(LegacyNamespaces.APPLY_NAMESPACE_REPLACEMENTS, Boolean.FALSE);
         try {
             instance = new MarshallerPool(createJAXBContext(
                     "org.geotoolkit.gml.xml.v311:" +
                     "org.geotoolkit.gml.xml.v321",
-                    GMLMarshallerPool.class.getClassLoader()), null);
+                    GMLMarshallerPool.class.getClassLoader()), properties);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a configuration problem.
         }

@@ -91,7 +91,7 @@ public class WmsXmlBindingTest {
     @Before
     public void setUp() throws JAXBException {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put(XML.GML_VERSION, LegacyNamespaces.VERSION_3_0);
+        properties.put(LegacyNamespaces.APPLY_NAMESPACE_REPLACEMENTS, Boolean.TRUE);
         pool = new MarshallerPool(JAXBContext.newInstance(
                 "org.geotoolkit.wms.xml.v111:" +
                 "org.geotoolkit.wms.xml.v130:" +
@@ -304,7 +304,7 @@ public class WmsXmlBindingTest {
                 + " xmlns:gco=\"http://www.isotc211.org/2005/gco\""
                 + " xmlns:srv=\"http://www.isotc211.org/2005/srv\""
                 + " xmlns:inspire_vs=\"http://inspira.europa.eu/networkservice/view/1.0\""
-                + " xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
+                + " xmlns:gml=\"http://www.opengis.net/gml/3.2\">" + '\n' +
         "    <inspire_vs:ExtendedCapabilities>" + '\n' +
         "        <inspire_vs:Resourcelocator>" + '\n' +
         "            <gmd:linkage>" + '\n' +
@@ -448,7 +448,7 @@ public class WmsXmlBindingTest {
 
 
         String xml =
-        "<wms:Capability xmlns:wms=\"http://www.opengis.net/wms\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" xmlns:srv=\"http://www.isotc211.org/2005/srv\" xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:sld=\"http://www.opengis.net/sld\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:inspire_vs=\"http://inspira.europa.eu/networkservice/view/1.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + '\n' +
+        "<wms:Capability xmlns:wms=\"http://www.opengis.net/wms\" xmlns:gml=\"http://www.opengis.net/gml/3.2\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\" xmlns:srv=\"http://www.isotc211.org/2005/srv\" xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:sld=\"http://www.opengis.net/sld\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:inspire_vs=\"http://inspira.europa.eu/networkservice/view/1.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + '\n' +
         "    <inspire_vs:ExtendedCapabilities>" + '\n' +
         "        <inspire_vs:Resourcelocator>" + '\n' +
         "            <gmd:linkage>" + '\n' +
