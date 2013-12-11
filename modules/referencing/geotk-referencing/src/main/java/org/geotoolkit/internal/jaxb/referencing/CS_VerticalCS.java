@@ -77,7 +77,7 @@ public final class CS_VerticalCS extends PropertyType<CS_VerticalCS, VerticalCS>
      */
     @XmlElement(name = "VerticalCS")
     public DefaultVerticalCS getElement() {
-        return skip() ? null : DefaultVerticalCS.castOrCopy(metadata);
+        return DefaultVerticalCS.castOrCopy(metadata);
     }
 
     /**

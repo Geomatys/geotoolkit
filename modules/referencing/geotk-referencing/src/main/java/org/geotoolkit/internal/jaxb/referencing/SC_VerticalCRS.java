@@ -87,6 +87,6 @@ public final class SC_VerticalCRS extends org.apache.sis.internal.jaxb.gml.SC_Ve
      */
     @Override
     public Object getElement() {
-        return skip() ? null : DefaultVerticalCRS.castOrCopy(metadata);
+        return DefaultVerticalCRS.castOrCopy(metadata);
     }
 }

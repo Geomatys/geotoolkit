@@ -77,7 +77,7 @@ public final class CS_CartesianCS extends PropertyType<CS_CartesianCS, Cartesian
      */
     @XmlElement(name = "CartesianCS")
     public DefaultCartesianCS getElement() {
-        return skip() ? null : DefaultCartesianCS.castOrCopy(metadata);
+        return DefaultCartesianCS.castOrCopy(metadata);
     }
 
     /**

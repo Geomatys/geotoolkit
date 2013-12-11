@@ -77,7 +77,7 @@ public final class CS_AffineCS extends PropertyType<CS_AffineCS, AffineCS> {
      */
     @XmlElement(name = "AffineCS")
     public DefaultAffineCS getElement() {
-        return skip() ? null : DefaultAffineCS.castOrCopy(metadata);
+        return DefaultAffineCS.castOrCopy(metadata);
     }
 
     /**

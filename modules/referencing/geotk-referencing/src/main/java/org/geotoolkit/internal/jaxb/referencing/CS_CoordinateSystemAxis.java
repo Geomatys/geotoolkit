@@ -80,7 +80,7 @@ public final class CS_CoordinateSystemAxis extends
      */
     @XmlElement(name = "CoordinateSystemAxis")
     public DefaultCoordinateSystemAxis getElement() {
-        return skip() ? null : DefaultCoordinateSystemAxis.castOrCopy(metadata);
+        return DefaultCoordinateSystemAxis.castOrCopy(metadata);
     }
 
     /**
