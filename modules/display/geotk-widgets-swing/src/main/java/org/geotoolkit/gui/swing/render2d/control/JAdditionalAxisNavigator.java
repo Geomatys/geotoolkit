@@ -188,30 +188,32 @@ public class JAdditionalAxisNavigator extends JPanel implements ContextListener{
         }
         if (source instanceof MapLayer) {
             final MapLayer layer = (MapLayer) source;
-            final Envelope bounds = layer.getBounds();
-            if (bounds != null && bounds.getCoordinateReferenceSystem() != null) {
-                final CoordinateReferenceSystem layerCRS = bounds.getCoordinateReferenceSystem();
+            if (layer.isVisible() || layer.isSelectable()) {
+                final Envelope bounds = layer.getBounds();
+                if (bounds != null && bounds.getCoordinateReferenceSystem() != null) {
+                    final CoordinateReferenceSystem layerCRS = bounds.getCoordinateReferenceSystem();
 
-                final List<CoordinateReferenceSystem> parts = ReferencingUtilities.decompose(layerCRS);
-browseCRS:      for (CoordinateReferenceSystem part : parts) {
-                    if (part.getCoordinateSystem().getDimension() == 1
-                            && part.getCoordinateSystem().getAxis(0).getDirection() != AxisDirection.FUTURE) {
-                        // Check we haven't already got it
-                        for (CoordinateReferenceSystem inserted : toFill) {
-                            if (CRS.equalsApproximatively(inserted, part)) {
-                                continue browseCRS;
+                    final List<CoordinateReferenceSystem> parts = ReferencingUtilities.decompose(layerCRS);
+browseCRS:          for (CoordinateReferenceSystem part : parts) {
+                        if (part.getCoordinateSystem().getDimension() == 1
+                                && part.getCoordinateSystem().getAxis(0).getDirection() != AxisDirection.FUTURE) {
+                            // Check we haven't already got it
+                            for (CoordinateReferenceSystem inserted : toFill) {
+                                if (CRS.equalsApproximatively(inserted, part)) {
+                                    continue browseCRS;
+                                }
                             }
+                            toFill.add(part);
                         }
-                        toFill.add(part);
                     }
                 }
-            }
-            // Handle extra dimensions of feature map layer
-            if (layer instanceof FeatureMapLayer) {
-                final FeatureMapLayer fml = (FeatureMapLayer) layer;
-                for (final DimensionDef extraDim : fml.getExtraDimensions()) {
-                    if (extraDim.getCrs() != null) {
-                        toFill.add(extraDim.getCrs());
+                // Handle extra dimensions of feature map layer
+                if (layer instanceof FeatureMapLayer) {
+                    final FeatureMapLayer fml = (FeatureMapLayer) layer;
+                    for (final DimensionDef extraDim : fml.getExtraDimensions()) {
+                        if (extraDim.getCrs() != null) {
+                            toFill.add(extraDim.getCrs());
+                        }
                     }
                 }
             }
