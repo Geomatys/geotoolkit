@@ -96,7 +96,6 @@
     <module>geotk-render2d</module>
     <module>geotk-render3d</module>
     <module>geotk-jasperreport</module>
-    <module>geotk-s52</module>
     <module>geotk-widgets-swing</module>
   </modules>
 

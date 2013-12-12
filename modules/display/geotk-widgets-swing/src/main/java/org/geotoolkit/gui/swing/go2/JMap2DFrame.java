@@ -87,7 +87,6 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.display3d.scene.ContextContainer3D;
-import org.geotoolkit.gui.swing.go2.control.JMarinerBar;
 import org.geotoolkit.gui.swing.go2.control.navigation.PanHandler;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.render3d.JMap3D;
@@ -164,7 +163,6 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiCoordBar.setMap(guiMap2D);
         guiConfigBar.setMap(guiMap2D);
         guiSelectionBar.setMap(guiMap2D);
-        guiMarinerBar.setMap(guiMap2D);
         guiEditBar.setMap(guiMap2D);
         guiMap2D.getCanvas().setAutoRepaint(true);
         guiMap2D.setHandler(new PanHandler(guiMap2D));
@@ -245,7 +243,6 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiSelectionBar = new JSelectionBar();
         jSeparator3 = new Separator();
         guiEditBar = new JEditionBar();
-        guiMarinerBar = new JMarinerBar();
         guiConfigBar = new JConfigBar();
         guiCoordBar = new JCoordinateBar();
         panMap3D = new JPanel();
@@ -322,12 +319,6 @@ public class JMap2DFrame extends javax.swing.JFrame {
         gridBagConstraints.fill = GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         jPanel1.add(guiEditBar, gridBagConstraints);
-
-        guiMarinerBar.setFloatable(false);
-        guiMarinerBar.setRollover(true);
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
-        jPanel1.add(guiMarinerBar, gridBagConstraints);
 
         guiConfigBar.setFloatable(false);
         guiConfigBar.setRollover(true);
@@ -574,7 +565,6 @@ private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerCho
     private JCoordinateBar guiCoordBar;
     private JEditionBar guiEditBar;
     private JInformationBar guiInfoBar;
-    private JMarinerBar guiMarinerBar;
     private JNavigationBar guiNavBar;
     private JSelectionBar guiSelectionBar;
     private JButton jButton3;
