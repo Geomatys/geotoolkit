@@ -41,6 +41,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.gui.swing.parameters.editor.JParameterValuesEditor;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.opengis.parameter.ParameterValueGroup;
@@ -63,14 +64,15 @@ public class JServerChooser extends javax.swing.JPanel {
         }
     };
 
-    private final JFeatureOutLine guiEditor = new JFeatureOutLine();
+    private final JParameterValuesEditor guiEditor = new JParameterValuesEditor();
     private final JLayerChooser chooser = new JLayerChooser();
 
     public JServerChooser() {
         initComponents();
-        guiEditPane.add(BorderLayout.CENTER,new JScrollPane(guiEditor));
+        guiEditPane.add(BorderLayout.CENTER,guiEditor);
+        guiEditor.setHelpVisible(false);
 
-        final List<ServerFactory> factories = new ArrayList<ServerFactory>(ServerFinder.getAvailableFactories(null));
+        final List<ServerFactory> factories = new ArrayList<>(ServerFinder.getAvailableFactories(null));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );
@@ -81,7 +83,7 @@ public class JServerChooser extends javax.swing.JPanel {
             public void valueChanged(ListSelectionEvent e) {
                 final ServerFactory factory = (ServerFactory) guiList.getSelectedValue();
                 final ParameterValueGroup param = factory.getParametersDescriptor().createValue();
-                guiEditor.setEdited(param);
+                guiEditor.setParameterValue(param);
             }
         });
         setLayerSelectionVisible(false);
@@ -105,7 +107,7 @@ public class JServerChooser extends javax.swing.JPanel {
             return null;
         }
 
-        final ParameterValueGroup param = guiEditor.getEditedAsParameter(factory.getParametersDescriptor());
+        final ParameterValueGroup param = (ParameterValueGroup) guiEditor.getParameterValue();
         return factory.open(param);
     }
 
@@ -250,7 +252,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private static List showDialog(Component parent, List<PropertyValueEditor> editors, boolean layerVisible) throws DataStoreException{
         final JServerChooser chooser = new JServerChooser();
         if(editors != null){
-            chooser.guiEditor.getEditors().addAll(editors);
+            chooser.guiEditor.setAvailableEditors(editors);
         }
         chooser.setLayerSelectionVisible(layerVisible);
 

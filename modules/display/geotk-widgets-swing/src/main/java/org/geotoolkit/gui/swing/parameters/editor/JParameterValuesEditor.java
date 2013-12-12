@@ -52,6 +52,10 @@ public class JParameterValuesEditor extends javax.swing.JPanel implements Proper
      */
     private GeneralParameterValuePanel selected = null;
     
+    public JParameterValuesEditor() {
+        this(null,null);
+    }
+    
     public JParameterValuesEditor(final List<PropertyValueEditor> availableEditors,
             final CustomParameterEditor customEditor) {
         this.customEditor = customEditor;
@@ -72,13 +76,14 @@ public class JParameterValuesEditor extends javax.swing.JPanel implements Proper
             final CustomParameterEditor customEditor) {
         this(descGroup.createValue(), availableEditors, customEditor);
     }
-     
+
     /**
      * Create new JParameterValuesEditor.
      * 
      * @param valueGroup ParameterValueGroup to edit.
      * @param availableEditors list of {@link PropertyValueEditor} used for default value editing in creation panel.
      * Can be null. In this case, default editors will be used.
+     * @param customEditor
      */
     public JParameterValuesEditor(final ParameterValueGroup valueGroup, final List<PropertyValueEditor> availableEditors,
             final CustomParameterEditor customEditor) {
@@ -95,6 +100,27 @@ public class JParameterValuesEditor extends javax.swing.JPanel implements Proper
         setParameterValue(valueGroup);
     }
 
+    public void setAvailableEditors(List<PropertyValueEditor> availableEditors) {
+        this.availableEditors = availableEditors;
+    }
+    
+    public boolean isHelpVisible(){
+        return jSplitPane2.getRightComponent() != null;
+    }
+    
+    public void setHelpVisible(boolean visible){
+        if(isHelpVisible() == visible) return;
+        
+        if(visible){
+            jSplitPane2.setRightComponent(rightScrollPane);
+            jSplitPane2.setDividerSize(3);
+        }else{
+            jSplitPane2.setRightComponent(null);
+            jSplitPane2.setDividerSize(0);
+        }
+        jSplitPane2.revalidate();
+    }
+    
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         
@@ -221,7 +247,7 @@ public class JParameterValuesEditor extends javax.swing.JPanel implements Proper
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Set dividier position depending on the size of creator panel.
+     * Set divider position depending on the size of creator panel.
      */
     private void updateDividerPosition() {
         

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,8 @@ package org.geotoolkit.gui.swing.chooser;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,7 +28,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.geotoolkit.data.FeatureStore;
@@ -34,12 +35,12 @@ import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.gui.swing.chooser.JServerChooser.FactoryCellRenderer;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
-import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.gui.swing.parameters.editor.JParameterValuesEditor;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.opengis.parameter.ParameterValueGroup;
@@ -62,14 +63,15 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
         }
     };
 
-    private final JFeatureOutLine guiEditor = new JFeatureOutLine();
     private final JLayerChooser chooser = new JLayerChooser();
+    private final JParameterValuesEditor guiEditor = new JParameterValuesEditor(null, null);
 
     public JFeatureStoreChooser() {
         initComponents();
-        guiEditPane.add(BorderLayout.CENTER,new JScrollPane(guiEditor));
+        guiEditPane.add(BorderLayout.CENTER,guiEditor);
+        guiEditor.setHelpVisible(false);
 
-        final List<FeatureStoreFactory> factories = new ArrayList<FeatureStoreFactory>(FeatureStoreFinder.getAvailableFactories(null));
+        final List<FeatureStoreFactory> factories = new ArrayList<>(FeatureStoreFinder.getAvailableFactories(null));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );
@@ -80,7 +82,7 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
             public void valueChanged(ListSelectionEvent e) {
                 final FeatureStoreFactory factory = (FeatureStoreFactory) guiList.getSelectedValue();
                 final ParameterValueGroup param = factory.getParametersDescriptor().createValue();
-                guiEditor.setEdited(param);
+                guiEditor.setParameterValue(param);
             }
         });
         setLayerSelectionVisible(false);
@@ -104,7 +106,7 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
             return null;
         }
 
-        final ParameterValueGroup param = guiEditor.getEditedAsParameter(factory.getParametersDescriptor());
+        final ParameterValueGroup param = (ParameterValueGroup) guiEditor.getParameterValue();
         if(guiCreateNew.isSelected()){
             return factory.create(param);
         }else{
@@ -260,11 +262,11 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private static List showDialog(Component parent, List<PropertyValueEditor> editors, boolean layerVisible) throws DataStoreException{
         final JFeatureStoreChooser chooser = new JFeatureStoreChooser();
         if(editors != null){
-            chooser.guiEditor.getEditors().addAll(editors);
+            chooser.guiEditor.setAvailableEditors(editors);
         }
         chooser.setLayerSelectionVisible(layerVisible);
-
-        final int res = JOptionDialog.show(parent, chooser, JOptionPane.OK_OPTION);
+        
+        final int res = JOptionDialog.show(parent, chooser, JOptionPane.OK_CANCEL_OPTION);
 
         if (JOptionPane.OK_OPTION == res) {
             if(layerVisible){

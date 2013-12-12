@@ -40,6 +40,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.gui.swing.parameters.editor.JParameterValuesEditor;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.opengis.parameter.ParameterValueGroup;
@@ -62,14 +63,15 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
         }
     };
 
-    private final JFeatureOutLine guiEditor = new JFeatureOutLine();
+    private final JParameterValuesEditor guiEditor = new JParameterValuesEditor();
     private final JLayerChooser chooser = new JLayerChooser();
 
     public JCoverageStoreChooser() {
         initComponents();
-        guiEditPane.add(BorderLayout.CENTER,new JScrollPane(guiEditor));
+        guiEditPane.add(BorderLayout.CENTER,guiEditor);
+        guiEditor.setHelpVisible(false);
 
-        final List<CoverageStoreFactory> factories = new ArrayList<CoverageStoreFactory>(
+        final List<CoverageStoreFactory> factories = new ArrayList<>(
                 CoverageStoreFinder.getAvailableFactories(null));
         Collections.sort(factories, SORTER);
 
@@ -81,7 +83,7 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
             public void valueChanged(ListSelectionEvent e) {
                 final CoverageStoreFactory factory = (CoverageStoreFactory) guiList.getSelectedValue();
                 final ParameterValueGroup param = factory.getParametersDescriptor().createValue();
-                guiEditor.setEdited(param);
+                guiEditor.setParameterValue(param);
             }
         });
         setLayerSelectionVisible(false);
@@ -105,7 +107,7 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
             return null;
         }
 
-        final ParameterValueGroup param = guiEditor.getEditedAsParameter(factory.getParametersDescriptor());
+        final ParameterValueGroup param = (ParameterValueGroup) guiEditor.getParameterValue();
         if(guiCreateNew.isSelected()){
             return factory.create(param);
         }else{
@@ -260,11 +262,11 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private static List showDialog(Component parent, List<PropertyValueEditor> editors, boolean layerVisible) throws DataStoreException{
         final JCoverageStoreChooser chooser = new JCoverageStoreChooser();
         if(editors != null){
-            chooser.guiEditor.getEditors().addAll(editors);
+            chooser.guiEditor.setAvailableEditors(editors);
         }
         chooser.setLayerSelectionVisible(layerVisible);
 
-        final int res = JOptionDialog.show(parent, chooser, JOptionPane.OK_OPTION);
+        final int res = JOptionDialog.show(parent, chooser, JOptionPane.OK_CANCEL_OPTION);
 
         if (JOptionPane.OK_OPTION == res) {
             if(layerVisible){
