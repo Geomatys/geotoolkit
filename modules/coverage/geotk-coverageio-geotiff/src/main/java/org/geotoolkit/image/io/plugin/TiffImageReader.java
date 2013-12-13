@@ -163,8 +163,9 @@ public class TiffImageReader extends SpatialImageReader {
      * The size of each type in bytes, or 0 if unknown.
      */
     private static final int[] TYPE_SIZE = new int[19];
+    
     static {
-        final int[] size = TYPE_SIZE;
+        int[] size = TYPE_SIZE;
         size[TYPE_BYTE]  = size[TYPE_UBYTE] = size[TYPE_ASCII] =    Byte.SIZE        / Byte.SIZE; 
         size[TYPE_SHORT] = size[TYPE_USHORT]                   =   Short.SIZE        / Byte.SIZE;
         size[TYPE_INT]   = size[TYPE_UINT]  = size[TYPE_IFD]   = Integer.SIZE        / Byte.SIZE;
@@ -174,9 +175,11 @@ public class TiffImageReader extends SpatialImageReader {
         size[TYPE_URATIONAL] = size[TYPE_RATIONAL]             = (Integer.SIZE << 1) / Byte.SIZE; //rational = Integer / Integer. 2 Integer values red.
     }
 
+    
     /**
      * The channel to the TIFF file. Will be created from the {@linkplain #input} when first needed.
      */
+    
     private FileChannel channel;
 
     /**
@@ -270,6 +273,13 @@ public class TiffImageReader extends SpatialImageReader {
      * Map which contain all tiff properties of the current selected image.
      */
     private Map<Integer, Map> headProperties;
+    
+    /**
+     * Define size in {@code Byte} of offset in each Tiff tag.<br/>
+     * In tiff specification : {@link Integer#SIZE} / {@link Byte#SIZE}.<br/>
+     * In big tiff specification : {@link Long#SIZE} / {@link Byte#SIZE}.
+     */
+    private int offsetSize;
     
     /**
      * Creates a new reader.
@@ -379,6 +389,7 @@ public class TiffImageReader extends SpatialImageReader {
             } else if (version != 0x002A) {
                 throw invalidFile("MagicNumber");
             }
+            offsetSize = ((isBigTIFF) ? Long.SIZE : Integer.SIZE) / Byte.SIZE;
             countIFD = 0;
             nextImageFileDirectory();
             currentImage = -1;
@@ -449,7 +460,7 @@ public class TiffImageReader extends SpatialImageReader {
      */
     private boolean nextImageFileDirectory() {
         assert countIFD >= 0;
-        final long position = readInt();
+        final long position = readInt();// long if is big tiff
         if (position != 0) {
             if (countIFD == positionIFD.length) {
                 final int countIFD2 = countIFD << 1;
@@ -597,9 +608,9 @@ public class TiffImageReader extends SpatialImageReader {
                     final Map<String, Object> ihObj   = headProperties.get(ImageLength);
                     final Map<String, Object> isppObj = headProperties.get(SamplesPerPixel);
                     
-                    imageWidth      = (iwObj == null)   ? -1 : ((int[]) iwObj.get(ATT_VALUE))[0];
-                    imageHeight     = (ihObj == null)   ? -1 : ((int[]) ihObj.get(ATT_VALUE))[0];
-                    samplesPerPixel = (isppObj == null) ? -1 : ((int[]) isppObj.get(ATT_VALUE))[0];
+                    imageWidth      = (int) ((iwObj == null)   ? -1 : ((long[]) iwObj.get(ATT_VALUE))[0]);
+                    imageHeight     = (int) ((ihObj == null)   ? -1 : ((long[]) ihObj.get(ATT_VALUE))[0]);
+                    samplesPerPixel = (int) ((isppObj == null) ? -1 : ((long[]) isppObj.get(ATT_VALUE))[0]);
                     
                     final Map<String, Object> twObj   =  headProperties.get(TileWidth);
                     final Map<String, Object> thObj   =  headProperties.get(TileLength);
@@ -614,15 +625,15 @@ public class TiffImageReader extends SpatialImageReader {
                         final Map<String, Object> sOffObj  =  headProperties.get(StripOffsets);
                         final Map<String, Object> sbcObj   =  headProperties.get(StripByteCounts);
                         
-                        rowsPerStrip = (rpsObj == null) ? -1 : ((int[]) rpsObj.get(ATT_VALUE))[0];
+                        rowsPerStrip = (int) ((rpsObj == null) ? -1 : ((long[]) rpsObj.get(ATT_VALUE))[0]);
                         if (sOffObj != null) stripOffsets    = (long[]) sOffObj.get(ATT_VALUE);
                         if (sbcObj  != null) stripByteCounts = (long[]) sbcObj.get(ATT_VALUE);
                         ensureDefined(rowsPerStrip,    "rowsPerStrip");
                         ensureDefined(stripOffsets,    "stripOffsets");
                         ensureDefined(stripByteCounts, "stripByteCounts");
                     } else {                        
-                        tileWidth   = (twObj == null) ? -1 : ((int[]) twObj.get(ATT_VALUE))[0];
-                        tileHeight  = (thObj == null) ? -1 : ((int[]) thObj.get(ATT_VALUE))[0];
+                        tileWidth   = (int) ((twObj == null) ? -1 : ((long[]) twObj.get(ATT_VALUE))[0]);
+                        tileHeight  = (int) ((thObj == null) ? -1 : ((long[]) thObj.get(ATT_VALUE))[0]);
                         if (toObj  != null)  tileOffsets = (long[]) toObj.get(ATT_VALUE);
                         
                         ensureDefined(tileWidth,   "tileWidth");
@@ -648,7 +659,7 @@ public class TiffImageReader extends SpatialImageReader {
             
             final String name  = (String) currenTagAttributs.get(ATT_NAME);
             final short type   = (short) currenTagAttributs.get(ATT_TYPE);
-            final int count    = (int) currenTagAttributs.get(ATT_COUNT); 
+            final int count    = (int)(long) currenTagAttributs.get(ATT_COUNT); 
             final Object value = currenTagAttributs.get(ATT_VALUE);
             
             final IIOMetadataNode tagBody = new IIOMetadataNode(TAG_GEOTIFF_FIELD);
@@ -768,16 +779,16 @@ public class TiffImageReader extends SpatialImageReader {
      * @throws IIOException If an error occurred while parsing an entry.
      */
     private void parseDirectoryEntries(final Collection<long[]> deferred) throws IIOException {
-        final int tag      = buffer.getShort() & 0xFFFF;
-        final short type   = buffer.getShort();
-        final int count    = buffer.getInt();
-        final int datasize = count * TYPE_SIZE[type];
+        final int tag       = buffer.getShort() & 0xFFFF;
+        final short type    = buffer.getShort();
+        final long count    = readInt();
+        final long datasize = count * TYPE_SIZE[type];
         System.out.println("tag : "+tag+" : "+getName(tag));
-        if (datasize <= (Integer.SIZE / Byte.SIZE)) {
+        if (datasize <= offsetSize) {
             //on lit et add in map
             entryValue(tag, type, count);
         } else {                //  id  type datanumber offset
-            deferred.add(new long[]{tag, type, count, buffer.getInt()});
+            deferred.add(new long[]{tag, type, count, readInt()});
         }
     }
 
@@ -853,8 +864,10 @@ public class TiffImageReader extends SpatialImageReader {
      * @param  name The name of the entry being parsed.
      * @throws IIOException If the entry can not be read as an integer.
      */
-    private void entryValue(final int tag, final short type, final int count) throws IIOException {
+    private void entryValue(final int tag, final short type, final long count) throws IIOException {
         assert count != 0;
+        if (count > 0xFFFFFFFFL) throw new IllegalStateException("count value too expensive. not supported yet.");
+        final int offsetSize = (isBigTIFF) ? Long.SIZE : Integer.SIZE;
         final Map<String, Object> tagAttributs = new HashMap<String, Object>();
         tagAttributs.put(ATT_NAME, getName(tag));
         tagAttributs.put(ATT_TYPE, type);
@@ -863,7 +876,7 @@ public class TiffImageReader extends SpatialImageReader {
         switch(tag) {
             case PlanarConfiguration: { // PlanarConfiguration.
                 assert count == 1 : "with tiff PlanarConfiguration tag, count should be equal 1.";
-                final short planarConfiguration = buffer.getShort();
+                final short planarConfiguration = (short) buffer.getShort(); 
                 if (planarConfiguration != 1) { // '1' stands for "chunky", 2 for "planar".
                     throw new UnsupportedImageFormatException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2,
                             "planarConfiguration", planarConfiguration));
@@ -874,7 +887,7 @@ public class TiffImageReader extends SpatialImageReader {
             }
             case PhotometricInterpretation: { // PhotometricInterpretation.
                 assert count == 1 : "with tiff PhotometricInterpretation tag, count should be equal 1.";
-                final short photometricInterpretation = buffer.getShort();
+                final short photometricInterpretation = (short) buffer.getShort();
 //                if (photometricInterpretation != 2) { // '2' stands for RGB.
 //                    throw new UnsupportedImageFormatException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2,
 //                            "photometricInterpretation", photometricInterpretation));
@@ -886,8 +899,8 @@ public class TiffImageReader extends SpatialImageReader {
             }
             case Compression: { // Compression.
                 assert count == 1 : "with tiff compression tag, count should be equal 1.";
-                compression = buffer.getShort() & 0xFFFF;
-                if (compression != 1 && compression != 32773) { // '1' stands for "uncompressed". // '32 773' stands for packbits compression
+                compression = (int) (buffer.getShort() & 0xFFFF);
+                if (compression != 1 && compression != 32773 && compression !=5) { // '1' stands for "uncompressed". // '32 773' stands for packbits compression
                     final Object nameCompress;
                     switch (compression) {
                         case 6:  nameCompress = "JPEG";      break;
@@ -905,9 +918,9 @@ public class TiffImageReader extends SpatialImageReader {
                switch (type) {// ici le les 4 bytes 8-11 ne sont pas des offset mais les valeurs reelles car elles tiennent dans 4 octets.
                     case TYPE_ASCII : 
                     case TYPE_BYTE  : {
-                        if (count > 4) 
+                        if (count > offsetSize / Byte.SIZE) 
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
-                        final byte[] result = new byte[count];
+                        final long[] result = new long[(int) count]; ///// 
                         for (int i = 0; i < count; i++) {
                             result[i] = buffer.get();
                         }
@@ -916,9 +929,9 @@ public class TiffImageReader extends SpatialImageReader {
                         break;
                     }
                     case TYPE_UBYTE : {
-                        if (count > 4) 
+                        if (count > offsetSize / Byte.SIZE) 
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
-                        final int[] result = new int[count];
+                        final long[] result = new long[(int)count]; ////// j'aime pas trop ce cast
                         for (int i = 0; i < count; i++) {
                             result[i] = buffer.get() & 0xFF;
                         }
@@ -927,31 +940,31 @@ public class TiffImageReader extends SpatialImageReader {
                         break;
                     }
                     case TYPE_SHORT : {
-                        if (count > 2) 
+                        if (count > (offsetSize / Short.SIZE)) 
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
-                        final short[] result = new short[count];
+                        final long[] result = new long[(int)count];
                         for (int i = 0; i < count; i++) {
-                            result[i] = buffer.getShort();
+                            result[i] = (short) buffer.getShort();/// ici pas sur
                         }
                         tagAttributs.put(ATT_VALUE, result);
                         headProperties.put(tag, tagAttributs);
                         break;
                     }
                     case TYPE_USHORT: {
-                        if (count > 2) 
+                        if (count > (offsetSize / Short.SIZE)) 
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
-                        final int[] result = new int[count];
+                        final long[] result = new long[(int)count];
                         for (int i = 0; i < count; i++) {
-                            result[i] = buffer.getShort() & 0xFFFF;
+                            result[i] = (int) (buffer.getShort() & 0xFFFF);
                         }
                         tagAttributs.put(ATT_VALUE, result);
                         headProperties.put(tag, tagAttributs);
                         break;
                     }
                     case TYPE_INT   : {
-                        if (count > 1) 
+                        if (count > (offsetSize / Integer.SIZE))
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
-                        final int[] result = new int[count];
+                        final long[] result = new long[(int)count];
                         for (int i = 0; i < count; i++) {
                             result[i] = buffer.getInt();
                         }
@@ -959,15 +972,38 @@ public class TiffImageReader extends SpatialImageReader {
                         headProperties.put(tag, tagAttributs);
                         break;
                     }
-                    case TYPE_UINT  : {
-                        if (count > 1) 
+                    case TYPE_UINT :
+                    case TYPE_IFD  : {
+                        if (count > (offsetSize / Integer.SIZE))
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
-                        final long[] result = new long[count];
+                        final long[] result = new long[(int)count];
                         for (int i = 0; i < count; i++) {
                             result[i] = buffer.getInt() & 0xFFFFFFFFL;
                         }
                         tagAttributs.put(ATT_VALUE, result);
                         headProperties.put(tag, tagAttributs);
+                        break;
+                    }
+                    /*
+                     * Only use by bigTiff format.
+                     */
+                    case TYPE_LONG  : 
+                    case TYPE_ULONG : 
+                    case TYPE_IFD8  : {
+                        if (count > 1)
+                            throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
+                        if (!isBigTIFF) {
+                            throw new IllegalStateException("in standard tiff offset or value in tiff tag, should not be instance of long.");
+                        }
+                        final long[] result = new long[(int)count];
+                        for (int i = 0; i < count; i++) {
+                            result[i] = buffer.getLong() & 0xFFFFFFFFL;
+                        }
+                        tagAttributs.put(ATT_VALUE, result);
+                        headProperties.put(tag, tagAttributs);
+                        break;
+                    } 
+                    case 7 : {
                         break;
                     }
                     default : throw new IIOException(error(Errors.Keys.ILLEGAL_PARAMETER_TYPE_2, getName(tag), type));
@@ -988,10 +1024,11 @@ public class TiffImageReader extends SpatialImageReader {
         Arrays.sort(deferred, OFFSET_COMPARATOR);// range offset du + petit o + grand pour eviter les gros mouvements de chariots.
         
         for (long[] defTab : deferred) {
-            final int tag      = (short) defTab[0] & 0xFFFF;
+            final int tag      = (int) (defTab[0] & 0xFFFF);
             final short type   = (short) defTab[1];
             final int count    = (int) defTab[2];
-            final long offset  = defTab[3];
+            // in tiff spec offset or data are always unsigned
+            final long offset  = defTab[3] & 0xFFFFFFFFL;
             final int dataSize = TYPE_SIZE[type];
             
             final int length = count * dataSize;
@@ -999,13 +1036,13 @@ public class TiffImageReader extends SpatialImageReader {
             final Map<String, Object> tagAttributs = new HashMap<String, Object>();
             tagAttributs.put(ATT_NAME, getName(tag));
             tagAttributs.put(ATT_TYPE, type);
-            tagAttributs.put(ATT_COUNT, count);
+            tagAttributs.put(ATT_COUNT, (long) count);
             
             Object result = (type == TYPE_DOUBLE || type == TYPE_FLOAT || type == TYPE_RATIONAL || type == TYPE_URATIONAL) ? new double[count] : new long[count];
             
             int currentPos = (int) offset;
             int maxBuffPos = (int) (offset + length);
-            final int buffCapacity = buffer.capacity();
+            final int buffCapacity = (buffer.capacity() / dataSize) * dataSize;
             int resultId = 0;
             while (currentPos < maxBuffPos) {
                 final int currentByteLength = Math.min(currentPos + buffCapacity, maxBuffPos) - currentPos;
@@ -1243,20 +1280,15 @@ public class TiffImageReader extends SpatialImageReader {
                         throw new UnsupportedImageFormatException(error(Errors.Keys.FORBIDDEN_ATTRIBUTE_2,
                             "bitsPerSamples", "color map"));
                     
-                    final int bitpersampl;
-                    final int bitPerSampleType = (short) bitsPerSamples.get(ATT_TYPE);
-                    if (bitPerSampleType == 3) {
-                        bitpersampl = ((int[])bitsPerSamples.get(ATT_VALUE))[0];
-                    } else {
-                        bitpersampl = ((short[])bitsPerSamples.get(ATT_VALUE))[0];
-                    }
+                    final int bitpersampl = (int) ((long[])bitsPerSamples.get(ATT_VALUE))[0];
                     
                     // find appropriate databuffer image type from size of sample.
                     final int databufferType;
                     switch (bitpersampl) {
-                        case Byte   .SIZE: databufferType = DataBuffer.TYPE_BYTE;   break;
-                        case Short  .SIZE: databufferType = DataBuffer.TYPE_USHORT; break;
-                        case Integer.SIZE: databufferType = DataBuffer.TYPE_INT;    break;
+                        case Byte   .SIZE : databufferType = DataBuffer.TYPE_BYTE;   break;
+                        case Short  .SIZE : databufferType = DataBuffer.TYPE_USHORT; break;
+                        case Integer.SIZE : databufferType = DataBuffer.TYPE_INT;    break;
+                        case Double.SIZE  : databufferType = DataBuffer.TYPE_DOUBLE; break;
                         default: {
                             throw new UnsupportedImageFormatException(error(
                                     Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", bitpersampl));
@@ -1265,6 +1297,7 @@ public class TiffImageReader extends SpatialImageReader {
                     
                     final long[] index  = (long[]) colorMod.get(ATT_VALUE);
                     final int[] indexes = buildColorMapArray(index);
+                    System.out.println("reader : "+Arrays.toString(indexes));
                     final ColorModel cm = new IndexColorModel(bitpersampl, indexes.length, indexes, 0, true, -1, databufferType);
                     rawImageType        = new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(imageWidth, imageHeight));
                     return rawImageType;
@@ -1299,9 +1332,10 @@ public class TiffImageReader extends SpatialImageReader {
                  * in one contiguous read operation.
                  */
                 switch (size) {
-                    case Byte   .SIZE: type = DataBuffer.TYPE_BYTE;   break;
-                    case Short  .SIZE: type = DataBuffer.TYPE_USHORT; break;
-                    case Integer.SIZE: type = DataBuffer.TYPE_INT;    break;
+                    case Byte   .SIZE : type = DataBuffer.TYPE_BYTE;   break;
+                    case Short  .SIZE : type = DataBuffer.TYPE_USHORT; break;
+                    case Integer.SIZE : type = DataBuffer.TYPE_INT;    break;
+                    case Double.SIZE  : type = DataBuffer.TYPE_DOUBLE; break;
                     default: {
                         throw new UnsupportedImageFormatException(error(
                                 Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", size));
