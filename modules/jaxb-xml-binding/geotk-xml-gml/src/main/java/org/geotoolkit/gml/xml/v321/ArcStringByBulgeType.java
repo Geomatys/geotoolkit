@@ -18,7 +18,6 @@
 
 package org.geotoolkit.gml.xml.v321;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -93,7 +92,7 @@ public class ArcStringByBulgeType
     @XmlAttribute
     private CurveInterpolationType interpolation;
     @XmlAttribute
-    private BigInteger numArc;
+    private Integer numArc;
 
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
@@ -265,10 +264,10 @@ public class ArcStringByBulgeType
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getNumArc() {
+    public Integer getNumArc() {
         return numArc;
     }
 
@@ -277,10 +276,10 @@ public class ArcStringByBulgeType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setNumArc(BigInteger value) {
+    public void setNumArc(Integer value) {
         this.numArc = value;
     }
 

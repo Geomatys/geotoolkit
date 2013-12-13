@@ -18,7 +18,6 @@
 
 package org.geotoolkit.gml.xml.v321;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -52,7 +51,7 @@ import javax.xml.bind.annotation.XmlValue;
 public class Count {
 
     @XmlValue
-    private BigInteger value;
+    private Integer value;
     @XmlAttribute
     private List<String> nilReason;
 
@@ -61,10 +60,10 @@ public class Count {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getValue() {
+    public Integer getValue() {
         return value;
     }
 
@@ -73,10 +72,10 @@ public class Count {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setValue(BigInteger value) {
+    public void setValue(Integer value) {
         this.value = value;
     }
 

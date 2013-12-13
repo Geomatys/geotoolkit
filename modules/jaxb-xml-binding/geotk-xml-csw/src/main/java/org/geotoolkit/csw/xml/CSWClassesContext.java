@@ -84,7 +84,7 @@ public class CSWClassesContext {
         // GML base factory
         classeList.add(org.apache.sis.internal.jaxb.geometry.ObjectFactory.class);
         classeList.add(org.geotoolkit.gml.xml.v311.ObjectFactory.class);
-        //classeList.add(org.geotoolkit.gml.xml.v321.ObjectFactory.class);
+        classeList.add(org.geotoolkit.gml.xml.v321.ObjectFactory.class);
 
         // vertical CRS
         try {

@@ -40,10 +40,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "VerticalDatumType")
-public class VerticalDatumType
-    extends AbstractDatumType
-{
-
+//@XmlType(name = "VerticalDatumType")
+public class VerticalDatumType extends AbstractDatumType {
 
 }

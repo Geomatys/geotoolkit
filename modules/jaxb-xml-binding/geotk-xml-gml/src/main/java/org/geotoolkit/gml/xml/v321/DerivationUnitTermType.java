@@ -18,7 +18,6 @@
 
 package org.geotoolkit.gml.xml.v321;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -44,22 +43,20 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DerivationUnitTermType")
-public class DerivationUnitTermType
-    extends UnitOfMeasureType
-{
+public class DerivationUnitTermType extends UnitOfMeasureType {
 
     @XmlAttribute
-    private BigInteger exponent;
+    private Integer exponent;
 
     /**
      * Gets the value of the exponent property.
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getExponent() {
+    public Integer getExponent() {
         return exponent;
     }
 
@@ -68,10 +65,10 @@ public class DerivationUnitTermType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setExponent(BigInteger value) {
+    public void setExponent(Integer value) {
         this.exponent = value;
     }
 

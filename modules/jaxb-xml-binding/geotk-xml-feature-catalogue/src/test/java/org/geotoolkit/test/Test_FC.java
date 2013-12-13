@@ -240,7 +240,7 @@ public class Test_FC {
             cof.add(attr2);
 
             code = "AA010";
-            FeatureTypeImpl ft1 = new FeatureTypeImpl(factory.createLocalName(null, "Mine"),
+            FeatureTypeImpl ft1 = new FeatureTypeImpl("mine-1", factory.createLocalName(null, "Mine"),
                                                       def,
                                                       code,
                                                       false,
@@ -282,7 +282,7 @@ public class Test_FC {
             //feature type 2
             List<PropertyType> cof2 = new ArrayList<PropertyType>();
 
-            FeatureTypeImpl ft2 = new FeatureTypeImpl(factory.createLocalName(null,"Road"),
+            FeatureTypeImpl ft2 = new FeatureTypeImpl("road-1", factory.createLocalName(null,"Road"),
                                                       "An open way maintained for vehicular use.",
                                                       "AP030",
                                                       false,
@@ -293,7 +293,7 @@ public class Test_FC {
             //feature type 3
             List<PropertyType> cof3 = new ArrayList<PropertyType>();
 
-            FeatureTypeImpl ft3 = new FeatureTypeImpl(factory.createLocalName(null,"Bidge"),
+            FeatureTypeImpl ft3 = new FeatureTypeImpl("bidge-1", factory.createLocalName(null,"Bidge"),
                                                       "A man made structure spanning and providing passage over a body of water",
                                                       "AQ040",
                                                       false,
@@ -334,7 +334,7 @@ public class Test_FC {
             // Feature association
             List<AssociationRole> roles = new ArrayList<AssociationRole>();
 
-            FeatureAssociationImpl fassoc = new FeatureAssociationImpl(factory.createLocalName(null,"Stacked On"),
+            FeatureAssociationImpl fassoc = new FeatureAssociationImpl("stack-1", factory.createLocalName(null,"Stacked On"),
                                                                     "An object is over another object",
                                                                     "101",
                                                                     false,
@@ -354,7 +354,7 @@ public class Test_FC {
 
             //feature type 4
 
-            FeatureTypeImpl ft4 = new FeatureTypeImpl(factory.createLocalName(null,"Building"),
+            FeatureTypeImpl ft4 = new FeatureTypeImpl("building-1", factory.createLocalName(null,"Building"),
                                                       "A relatively permanent structure, roofed and usually walled and designed for some particular use.",
                                                       "AL015",
                                                       false,
@@ -363,7 +363,7 @@ public class Test_FC {
                                                       null);
              //feature type 5
 
-            FeatureTypeImpl ft5 = new FeatureTypeImpl(factory.createLocalName(null,"Lighthouse"),
+            FeatureTypeImpl ft5 = new FeatureTypeImpl("lh-1", factory.createLocalName(null,"Lighthouse"),
                                                       "A distinctive structure exhibiting light(s) designed to serve as an aid to navigation.",
                                                       "BC050",
                                                       false,

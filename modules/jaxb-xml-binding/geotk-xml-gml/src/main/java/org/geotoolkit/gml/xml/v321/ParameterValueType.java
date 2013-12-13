@@ -18,7 +18,6 @@
 
 package org.geotoolkit.gml.xml.v321;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -71,19 +70,17 @@ import javax.xml.bind.annotation.XmlType;
     "valueFile",
     "operationParameterProperty"
 })
-public class ParameterValueType
-    extends AbstractGeneralParameterValueType
-{
+public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     private MeasureType value;
     private DMSAngleType dmsAngleValue;
     private String stringValue;
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger integerValue;
+    private Integer integerValue;
     private java.lang.Boolean booleanValue;
     private MeasureListType valueList;
     @XmlList
-    private List<BigInteger> integerValueList;
+    private List<Integer> integerValueList;
     @XmlSchemaType(name = "anyURI")
     private String valueFile;
     @XmlElementRef(name = "operationParameterProperty", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
@@ -166,10 +163,10 @@ public class ParameterValueType
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getIntegerValue() {
+    public Integer getIntegerValue() {
         return integerValue;
     }
 
@@ -178,10 +175,10 @@ public class ParameterValueType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setIntegerValue(BigInteger value) {
+    public void setIntegerValue(Integer value) {
         this.integerValue = value;
     }
 
@@ -235,29 +232,14 @@ public class ParameterValueType
 
     /**
      * Gets the value of the integerValueList property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the integerValueList property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getIntegerValueList().add(newItem);
-     * </pre>
-     * 
-     * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link BigInteger }
-     * 
+     * {@link Integer }
      * 
      */
-    public List<BigInteger> getIntegerValueList() {
+    public List<Integer> getIntegerValueList() {
         if (integerValueList == null) {
-            integerValueList = new ArrayList<BigInteger>();
+            integerValueList = new ArrayList<>();
         }
         return this.integerValueList;
     }

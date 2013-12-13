@@ -18,7 +18,6 @@
 
 package org.geotoolkit.gml.xml.v321;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -74,7 +73,7 @@ public class GridType extends AbstractGeometryType {
     private List<JAXBElement<?>> rest;
     @XmlAttribute(required = true)
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger dimension;
+    private Integer dimension;
 
     /**
      * Gets the rest of the content model. 
@@ -112,7 +111,7 @@ public class GridType extends AbstractGeometryType {
      */
     public List<JAXBElement<?>> getRest() {
         if (rest == null) {
-            rest = new ArrayList<JAXBElement<?>>();
+            rest = new ArrayList<>();
         }
         return this.rest;
     }
@@ -122,10 +121,10 @@ public class GridType extends AbstractGeometryType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getDimension() {
+    public Integer getDimension() {
         return dimension;
     }
 
@@ -134,10 +133,10 @@ public class GridType extends AbstractGeometryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setDimension(BigInteger value) {
+    public void setDimension(Integer value) {
         this.dimension = value;
     }
 

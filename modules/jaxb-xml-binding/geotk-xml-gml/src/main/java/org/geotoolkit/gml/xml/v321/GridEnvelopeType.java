@@ -18,7 +18,6 @@
 
 package org.geotoolkit.gml.xml.v321;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -57,36 +56,21 @@ public class GridEnvelopeType {
 
     @XmlList
     @XmlElement(required = true)
-    private List<BigInteger> low;
+    private List<Integer> low;
     @XmlList
     @XmlElement(required = true)
-    private List<BigInteger> high;
+    private List<Integer> high;
 
     /**
      * Gets the value of the low property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the low property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getLow().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link BigInteger }
-     * 
+     * {@link Integer }
      * 
      */
-    public List<BigInteger> getLow() {
+    public List<Integer> getLow() {
         if (low == null) {
-            low = new ArrayList<BigInteger>();
+            low = new ArrayList<>();
         }
         return this.low;
     }
@@ -94,28 +78,13 @@ public class GridEnvelopeType {
     /**
      * Gets the value of the high property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the high property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getHigh().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link BigInteger }
-     * 
+     * {@link Integer }
      * 
      */
-    public List<BigInteger> getHigh() {
+    public List<Integer> getHigh() {
         if (high == null) {
-            high = new ArrayList<BigInteger>();
+            high = new ArrayList<>();
         }
         return this.high;
     }

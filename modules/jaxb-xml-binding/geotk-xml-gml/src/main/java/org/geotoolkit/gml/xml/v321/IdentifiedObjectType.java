@@ -46,7 +46,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "IdentifiedObjectType")
+//@XmlType(name = "IdentifiedObjectType")
 @XmlSeeAlso({
     CoordinateSystemAxisType.class,
     PrimeMeridianType.class,
@@ -58,9 +58,6 @@ import javax.xml.bind.annotation.XmlType;
     AbstractCoordinateSystemType.class,
     AbstractDatumType.class
 })
-public abstract class IdentifiedObjectType
-    extends DefinitionType
-{
-
+public abstract class IdentifiedObjectType extends DefinitionType {
 
 }

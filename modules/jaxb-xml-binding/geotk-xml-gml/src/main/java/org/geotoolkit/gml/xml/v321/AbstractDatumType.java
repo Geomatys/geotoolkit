@@ -54,7 +54,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AbstractDatumType", propOrder = {
+@XmlType(propOrder = {
     "domainOfValidity",
     "scope",
     "anchorDefinition",
@@ -67,9 +67,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     GeodeticDatumType.class,
     TemporalDatumBaseType.class
 })
-public abstract class AbstractDatumType
-    extends IdentifiedObjectType
-{
+public abstract class AbstractDatumType extends IdentifiedObjectType {
 
     private DomainOfValidity domainOfValidity;
     @XmlElement(required = true)

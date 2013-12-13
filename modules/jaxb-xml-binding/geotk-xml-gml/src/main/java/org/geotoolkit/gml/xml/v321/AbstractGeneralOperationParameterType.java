@@ -18,7 +18,6 @@
 
 package org.geotoolkit.gml.xml.v321;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchemaType;
@@ -58,17 +57,17 @@ public abstract class AbstractGeneralOperationParameterType
 {
 
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger minimumOccurs;
+    private Integer minimumOccurs;
 
     /**
      * Gets the value of the minimumOccurs property.
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getMinimumOccurs() {
+    public Integer getMinimumOccurs() {
         return minimumOccurs;
     }
 
@@ -77,10 +76,10 @@ public abstract class AbstractGeneralOperationParameterType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setMinimumOccurs(BigInteger value) {
+    public void setMinimumOccurs(Integer value) {
         this.minimumOccurs = value;
     }
 

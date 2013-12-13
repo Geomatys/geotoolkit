@@ -93,9 +93,9 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
     /**
      * Build a new FeatureAssociation
      */
-    public FeatureAssociationImpl(final LocalName typeName, final String definition, final String code, final Boolean isAbstract, final List<LocalName> aliases,
+    public FeatureAssociationImpl(final String id, final LocalName typeName, final String definition, final String code, final Boolean isAbstract, final List<LocalName> aliases,
             final FeatureCatalogue catalogue, final List<PropertyType> carrierOfCharacteristics, final List<AssociationRole> roleName) {
-       super(typeName, definition, code, isAbstract, aliases, catalogue, carrierOfCharacteristics);
+       super(id, typeName, definition, code, isAbstract, aliases, catalogue, carrierOfCharacteristics);
        this.role = roleName; 
        this.setId("fassoc-" + code);
     }
@@ -105,7 +105,7 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
      */
     public List<AssociationRole> getRole() {
         if (role == null) {
-            role = new ArrayList<AssociationRole>();
+            role = new ArrayList<>();
         }
         return this.role;
     }
@@ -116,7 +116,7 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
     
     public void setRole(final AssociationRole role) {
         if (this.role == null) {
-            this.role = new ArrayList<AssociationRole>();
+            this.role = new ArrayList<>();
         }
         this.role.add(role);
     }
@@ -141,7 +141,7 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
     public Map<String, Referenceable> beforeMarshal(Map<String, Referenceable> alreadySee) {
         alreadySee = super.beforeMarshal(alreadySee);
         rootElement = false;
-        List<AssociationRole> replacement = new ArrayList<AssociationRole>();
+        List<AssociationRole> replacement = new ArrayList<>();
         for (AssociationRole r: getRole()) {
             AssociationRoleImpl ri = (AssociationRoleImpl) r;
             

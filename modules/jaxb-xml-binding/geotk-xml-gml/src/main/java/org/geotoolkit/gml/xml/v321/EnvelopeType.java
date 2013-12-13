@@ -109,10 +109,10 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
     public EnvelopeType(final EnvelopeType that) {
         if (that != null) {
             if (that.axisLabels != null) {
-                this.axisLabels = new ArrayList<String>(that.axisLabels);
+                this.axisLabels = new ArrayList<>(that.axisLabels);
             }
             if (that.uomLabels != null) {
-                this.uomLabels = new ArrayList<String>(that.uomLabels);
+                this.uomLabels = new ArrayList<>(that.uomLabels);
             }
             if (that.coordinates != null) {
                 this.coordinates = new CoordinatesType(that.coordinates);
@@ -124,7 +124,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
                 this.upperCorner = new DirectPositionType(that.upperCorner);
             }
             if (that.pos != null) {
-                this.pos = new ArrayList<DirectPositionType>();
+                this.pos = new ArrayList<>();
                 for (DirectPositionType dp : that.pos) {
                     this.pos.add(new DirectPositionType(dp));
                 }
@@ -150,7 +150,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
                 this.coordinates  = new CoordinatesType(that.getCoordinates());
             }
             if (that.getPos() != null) {
-                this.pos = new ArrayList<DirectPositionType>();
+                this.pos = new ArrayList<>();
                 for (DirectPosition p : that.getPos()) {
                     this.pos.add(new DirectPositionType(p));
                 }
@@ -219,7 +219,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
     @Override
     public List<DirectPositionType> getPos() {
         if (pos == null) {
-            pos = new ArrayList<DirectPositionType>();
+            pos = new ArrayList<>();
         }
         return this.pos;
     }
@@ -279,7 +279,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      *
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *
      */
     @Override
@@ -292,7 +292,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      *
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *
      */
     public void setSrsDimension(Integer value) {
@@ -310,7 +310,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
     @Override
     public List<String> getAxisLabels() {
         if (axisLabels == null) {
-            axisLabels = new ArrayList<String>();
+            axisLabels = new ArrayList<>();
         }
         return this.axisLabels;
     }
@@ -322,7 +322,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
     public void setAxisLabels(final String axisLabel) {
         if (axisLabel != null) {
             if (axisLabels == null) {
-                axisLabels = new ArrayList<String>();
+                axisLabels = new ArrayList<>();
             }
             this.axisLabels.add(axisLabel);
         }
@@ -339,7 +339,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
     @Override
     public List<String> getUomLabels() {
         if (uomLabels == null) {
-            uomLabels = new ArrayList<String>();
+            uomLabels = new ArrayList<>();
         }
         return this.uomLabels;
     }

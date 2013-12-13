@@ -18,7 +18,6 @@
 
 package org.geotoolkit.gml.xml.v321;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -54,12 +53,10 @@ import javax.xml.bind.annotation.XmlType;
     "maximumOccurs",
     "parameter"
 })
-public class OperationParameterGroupType
-    extends AbstractGeneralOperationParameterType
-{
+public class OperationParameterGroupType extends AbstractGeneralOperationParameterType {
 
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger maximumOccurs;
+    private Integer maximumOccurs;
     @XmlElementRef(name = "parameter", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private List<JAXBElement<AbstractGeneralOperationParameterPropertyType>> parameter;
 
@@ -68,10 +65,10 @@ public class OperationParameterGroupType
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getMaximumOccurs() {
+    public Integer getMaximumOccurs() {
         return maximumOccurs;
     }
 
@@ -80,30 +77,16 @@ public class OperationParameterGroupType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setMaximumOccurs(BigInteger value) {
+    public void setMaximumOccurs(Integer value) {
         this.maximumOccurs = value;
     }
 
     /**
      * Gets the value of the parameter property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the parameter property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getParameter().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractGeneralOperationParameterPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractGeneralOperationParameterPropertyType }{@code >}
@@ -114,7 +97,7 @@ public class OperationParameterGroupType
      */
     public List<JAXBElement<AbstractGeneralOperationParameterPropertyType>> getParameter() {
         if (parameter == null) {
-            parameter = new ArrayList<JAXBElement<AbstractGeneralOperationParameterPropertyType>>();
+            parameter = new ArrayList<>();
         }
         return this.parameter;
     }

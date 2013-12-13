@@ -18,7 +18,6 @@
 
 package org.geotoolkit.gml.xml.v321;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -57,13 +56,11 @@ import javax.xml.bind.annotation.XmlType;
     "modifiedCoordinate",
     "coordOperation"
 })
-public class PassThroughOperationType
-    extends AbstractCoordinateOperationType
-{
+public class PassThroughOperationType extends AbstractCoordinateOperationType {
 
     @XmlElement(required = true)
     @XmlSchemaType(name = "positiveInteger")
-    private List<BigInteger> modifiedCoordinate;
+    private List<Integer> modifiedCoordinate;
     @XmlElementRef(name = "coordOperation", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private JAXBElement<CoordinateOperationPropertyType> coordOperation;
     @XmlAttribute
@@ -73,27 +70,14 @@ public class PassThroughOperationType
      * Gets the value of the modifiedCoordinate property.
      * 
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the modifiedCoordinate property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getModifiedCoordinate().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link BigInteger }
+     * {@link Integer }
      * 
      * 
      */
-    public List<BigInteger> getModifiedCoordinate() {
+    public List<Integer> getModifiedCoordinate() {
         if (modifiedCoordinate == null) {
-            modifiedCoordinate = new ArrayList<BigInteger>();
+            modifiedCoordinate = new ArrayList<>();
         }
         return this.modifiedCoordinate;
     }

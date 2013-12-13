@@ -19,7 +19,6 @@
 package org.geotoolkit.gml.xml.v321;
 
 import java.util.Objects;
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -63,23 +62,23 @@ import org.geotoolkit.gml.xml.AbstractCurveSegment;
 public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
 
     @XmlAttribute
-    private BigInteger numDerivativesAtStart;
+    private Integer numDerivativesAtStart;
     @XmlAttribute
-    private BigInteger numDerivativesAtEnd;
+    private Integer numDerivativesAtEnd;
     @XmlAttribute
-    private BigInteger numDerivativeInterior;
+    private Integer numDerivativeInterior;
 
     /**
      * Gets the value of the numDerivativesAtStart property.
      *
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *
      */
-    public BigInteger getNumDerivativesAtStart() {
+    public Integer getNumDerivativesAtStart() {
         if (numDerivativesAtStart == null) {
-            return new BigInteger("0");
+            return new Integer("0");
         } else {
             return numDerivativesAtStart;
         }
@@ -90,10 +89,10 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
      *
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *
      */
-    public void setNumDerivativesAtStart(BigInteger value) {
+    public void setNumDerivativesAtStart(Integer value) {
         this.numDerivativesAtStart = value;
     }
 
@@ -102,12 +101,12 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
      *
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *
      */
-    public BigInteger getNumDerivativesAtEnd() {
+    public Integer getNumDerivativesAtEnd() {
         if (numDerivativesAtEnd == null) {
-            return new BigInteger("0");
+            return new Integer("0");
         } else {
             return numDerivativesAtEnd;
         }
@@ -118,10 +117,10 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
      *
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *
      */
-    public void setNumDerivativesAtEnd(BigInteger value) {
+    public void setNumDerivativesAtEnd(Integer value) {
         this.numDerivativesAtEnd = value;
     }
 
@@ -130,12 +129,12 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
      *
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *
      */
-    public BigInteger getNumDerivativeInterior() {
+    public Integer getNumDerivativeInterior() {
         if (numDerivativeInterior == null) {
-            return new BigInteger("0");
+            return new Integer("0");
         } else {
             return numDerivativeInterior;
         }
@@ -146,10 +145,10 @@ public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
      *
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *
      */
-    public void setNumDerivativeInterior(BigInteger value) {
+    public void setNumDerivativeInterior(Integer value) {
         this.numDerivativeInterior = value;
     }
 

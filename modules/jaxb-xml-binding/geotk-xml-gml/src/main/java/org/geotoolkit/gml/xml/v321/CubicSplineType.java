@@ -18,7 +18,6 @@
 
 package org.geotoolkit.gml.xml.v321;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -89,7 +88,7 @@ public class CubicSplineType
     @XmlAttribute
     private CurveInterpolationType interpolation;
     @XmlAttribute
-    private BigInteger degree;
+    private Integer degree;
 
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
@@ -251,12 +250,12 @@ public class CubicSplineType
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getDegree() {
+    public Integer getDegree() {
         if (degree == null) {
-            return new BigInteger("3");
+            return new Integer("3");
         } else {
             return degree;
         }
@@ -267,10 +266,10 @@ public class CubicSplineType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setDegree(BigInteger value) {
+    public void setDegree(Integer value) {
         this.degree = value;
     }
 

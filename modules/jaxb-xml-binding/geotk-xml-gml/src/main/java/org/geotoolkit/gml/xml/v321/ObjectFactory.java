@@ -19,7 +19,6 @@
 package org.geotoolkit.gml.xml.v321;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
@@ -2585,10 +2584,10 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link VerticalCRSType }
      * 
-     */
+     
     public VerticalCRSType createVerticalCRSType() {
         return new VerticalCRSType();
-    }
+    }*/
 
     /**
      * Create an instance of {@link AbstractGeneralParameterValuePropertyType }
@@ -3157,7 +3156,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "userDefinedCSProperty")
     public JAXBElement<UserDefinedCSPropertyType> createUserDefinedCSProperty(UserDefinedCSPropertyType value) {
-        return new JAXBElement<UserDefinedCSPropertyType>(_UserDefinedCSProperty_QNAME, UserDefinedCSPropertyType.class, null, value);
+        return new JAXBElement<>(_UserDefinedCSProperty_QNAME, UserDefinedCSPropertyType.class, null, value);
     }
 
     /**
@@ -3166,7 +3165,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "boundedBy")
     public JAXBElement<BoundingShapeType> createBoundedBy(BoundingShapeType value) {
-        return new JAXBElement<BoundingShapeType>(_BoundedBy_QNAME, BoundingShapeType.class, null, value);
+        return new JAXBElement<>(_BoundedBy_QNAME, BoundingShapeType.class, null, value);
     }
 
     /**
@@ -3175,16 +3174,16 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "AbstractSingleCRS", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractCRS")
     public JAXBElement<AbstractCRSType> createAbstractSingleCRS(AbstractCRSType value) {
-        return new JAXBElement<AbstractCRSType>(_AbstractSingleCRS_QNAME, AbstractCRSType.class, null, value);
+        return new JAXBElement<>(_AbstractSingleCRS_QNAME, AbstractCRSType.class, null, value);
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link BigInteger }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "modifiedCoordinate")
-    public JAXBElement<BigInteger> createModifiedCoordinate(BigInteger value) {
-        return new JAXBElement<BigInteger>(_ModifiedCoordinate_QNAME, BigInteger.class, null, value);
+    public JAXBElement<Integer> createModifiedCoordinate(Integer value) {
+        return new JAXBElement<>(_ModifiedCoordinate_QNAME, Integer.class, null, value);
     }
 
     /**
@@ -3193,7 +3192,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "AbstractCRS", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "Definition")
     public JAXBElement<AbstractCRSType> createAbstractCRS(AbstractCRSType value) {
-        return new JAXBElement<AbstractCRSType>(_AbstractCRS_QNAME, AbstractCRSType.class, null, value);
+        return new JAXBElement<>(_AbstractCRS_QNAME, AbstractCRSType.class, null, value);
     }
 
     /**
@@ -3202,7 +3201,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "OperationParameterGroup", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractGeneralOperationParameter")
     public JAXBElement<OperationParameterGroupType> createOperationParameterGroup(OperationParameterGroupType value) {
-        return new JAXBElement<OperationParameterGroupType>(_OperationParameterGroup_QNAME, OperationParameterGroupType.class, null, value);
+        return new JAXBElement<>(_OperationParameterGroup_QNAME, OperationParameterGroupType.class, null, value);
     }
 
     /**
@@ -3220,7 +3219,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "TopoPoint")
     public JAXBElement<TopoPointType> createTopoPoint(TopoPointType value) {
-        return new JAXBElement<TopoPointType>(_TopoPoint_QNAME, TopoPointType.class, null, value);
+        return new JAXBElement<>(_TopoPoint_QNAME, TopoPointType.class, null, value);
     }
 
     /**
@@ -3238,7 +3237,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "multiExtentOf")
     public JAXBElement<MultiSurfacePropertyType> createMultiExtentOf(MultiSurfacePropertyType value) {
-        return new JAXBElement<MultiSurfacePropertyType>(_MultiExtentOf_QNAME, MultiSurfacePropertyType.class, null, value);
+        return new JAXBElement<>(_MultiExtentOf_QNAME, MultiSurfacePropertyType.class, null, value);
     }
 
     /**
@@ -3247,7 +3246,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "methodFormula", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "formula")
     public JAXBElement<CodeType> createMethodFormula(CodeType value) {
-        return new JAXBElement<CodeType>(_MethodFormula_QNAME, CodeType.class, null, value);
+        return new JAXBElement<>(_MethodFormula_QNAME, CodeType.class, null, value);
     }
 
     /**
@@ -3256,7 +3255,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "GeodeticDatum", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractDatum")
     public JAXBElement<GeodeticDatumType> createGeodeticDatum(GeodeticDatumType value) {
-        return new JAXBElement<GeodeticDatumType>(_GeodeticDatum_QNAME, GeodeticDatumType.class, null, value);
+        return new JAXBElement<>(_GeodeticDatum_QNAME, GeodeticDatumType.class, null, value);
     }
 
     /**
@@ -3265,7 +3264,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "status")
     public JAXBElement<StringOrRefType> createStatus(StringOrRefType value) {
-        return new JAXBElement<StringOrRefType>(_Status_QNAME, StringOrRefType.class, null, value);
+        return new JAXBElement<>(_Status_QNAME, StringOrRefType.class, null, value);
     }
 
     /**
@@ -3274,7 +3273,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "multiSurfaceDomain", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "domainSet")
     public JAXBElement<DomainSetType> createMultiSurfaceDomain(DomainSetType value) {
-        return new JAXBElement<DomainSetType>(_MultiSurfaceDomain_QNAME, DomainSetType.class, null, value);
+        return new JAXBElement<>(_MultiSurfaceDomain_QNAME, DomainSetType.class, null, value);
     }
 
     /**
@@ -3283,7 +3282,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "CompoundCRS", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractCRS")
     public JAXBElement<CompoundCRSType> createCompoundCRS(CompoundCRSType value) {
-        return new JAXBElement<CompoundCRSType>(_CompoundCRS_QNAME, CompoundCRSType.class, null, value);
+        return new JAXBElement<>(_CompoundCRS_QNAME, CompoundCRSType.class, null, value);
     }
 
     /**
@@ -3292,7 +3291,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "directedNode")
     public JAXBElement<DirectedNodePropertyType> createDirectedNode(DirectedNodePropertyType value) {
-        return new JAXBElement<DirectedNodePropertyType>(_DirectedNode_QNAME, DirectedNodePropertyType.class, null, value);
+        return new JAXBElement<>(_DirectedNode_QNAME, DirectedNodePropertyType.class, null, value);
     }
 
     /**
@@ -3301,7 +3300,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "topoPrimitiveMember")
     public JAXBElement<TopoPrimitiveMemberType> createTopoPrimitiveMember(TopoPrimitiveMemberType value) {
-        return new JAXBElement<TopoPrimitiveMemberType>(_TopoPrimitiveMember_QNAME, TopoPrimitiveMemberType.class, null, value);
+        return new JAXBElement<>(_TopoPrimitiveMember_QNAME, TopoPrimitiveMemberType.class, null, value);
     }
 
     /**
@@ -3310,7 +3309,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "AbstractScalarValueList", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractValue")
     public JAXBElement<Object> createAbstractScalarValueList(Object value) {
-        return new JAXBElement<Object>(_AbstractScalarValueList_QNAME, Object.class, null, value);
+        return new JAXBElement<>(_AbstractScalarValueList_QNAME, Object.class, null, value);
     }
 
     /**
@@ -3319,7 +3318,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "abstractReference")
     public JAXBElement<ReferenceType> createAbstractReference(ReferenceType value) {
-        return new JAXBElement<ReferenceType>(_AbstractReference_QNAME, ReferenceType.class, null, value);
+        return new JAXBElement<>(_AbstractReference_QNAME, ReferenceType.class, null, value);
     }
 
     /**
@@ -3328,7 +3327,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "MultiPoint", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractGeometricAggregate")
     public JAXBElement<MultiPointType> createMultiPoint(MultiPointType value) {
-        return new JAXBElement<MultiPointType>(_MultiPoint_QNAME, MultiPointType.class, null, value);
+        return new JAXBElement<>(_MultiPoint_QNAME, MultiPointType.class, null, value);
     }
 
     /**
@@ -3337,7 +3336,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "MultiSurfaceCoverage", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractDiscreteCoverage")
     public JAXBElement<DiscreteCoverageType> createMultiSurfaceCoverage(DiscreteCoverageType value) {
-        return new JAXBElement<DiscreteCoverageType>(_MultiSurfaceCoverage_QNAME, DiscreteCoverageType.class, null, value);
+        return new JAXBElement<>(_MultiSurfaceCoverage_QNAME, DiscreteCoverageType.class, null, value);
     }
 
     /**
@@ -3346,7 +3345,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "polarCSProperty")
     public JAXBElement<PolarCSPropertyType> createPolarCSProperty(PolarCSPropertyType value) {
-        return new JAXBElement<PolarCSPropertyType>(_PolarCSProperty_QNAME, PolarCSPropertyType.class, null, value);
+        return new JAXBElement<>(_PolarCSProperty_QNAME, PolarCSPropertyType.class, null, value);
     }
 
     /**
@@ -3355,7 +3354,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "targetElement")
     public JAXBElement<String> createTargetElement(String value) {
-        return new JAXBElement<String>(_TargetElement_QNAME, String.class, null, value);
+        return new JAXBElement<>(_TargetElement_QNAME, String.class, null, value);
     }
 
     /**
@@ -3364,7 +3363,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "parameter")
     public JAXBElement<AbstractGeneralOperationParameterPropertyType> createParameter(AbstractGeneralOperationParameterPropertyType value) {
-        return new JAXBElement<AbstractGeneralOperationParameterPropertyType>(_Parameter_QNAME, AbstractGeneralOperationParameterPropertyType.class, null, value);
+        return new JAXBElement<>(_Parameter_QNAME, AbstractGeneralOperationParameterPropertyType.class, null, value);
     }
 
     /**
@@ -3373,7 +3372,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "axisDirection")
     public JAXBElement<CodeWithAuthorityType> createAxisDirection(CodeWithAuthorityType value) {
-        return new JAXBElement<CodeWithAuthorityType>(_AxisDirection_QNAME, CodeWithAuthorityType.class, null, value);
+        return new JAXBElement<>(_AxisDirection_QNAME, CodeWithAuthorityType.class, null, value);
     }
 
     /**
@@ -3382,7 +3381,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "geodeticDatumRef")
     public JAXBElement<GeodeticDatumPropertyType> createGeodeticDatumRef(GeodeticDatumPropertyType value) {
-        return new JAXBElement<GeodeticDatumPropertyType>(_GeodeticDatumRef_QNAME, GeodeticDatumPropertyType.class, null, value);
+        return new JAXBElement<>(_GeodeticDatumRef_QNAME, GeodeticDatumPropertyType.class, null, value);
     }
 
     /**
@@ -3391,7 +3390,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "vector")
     public JAXBElement<VectorType> createVector(VectorType value) {
-        return new JAXBElement<VectorType>(_Vector_QNAME, VectorType.class, null, value);
+        return new JAXBElement<>(_Vector_QNAME, VectorType.class, null, value);
     }
 
     /**
@@ -3400,7 +3399,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "definedByConversion", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "conversionProperty")
     public JAXBElement<GeneralConversionPropertyType> createDefinedByConversion(GeneralConversionPropertyType value) {
-        return new JAXBElement<GeneralConversionPropertyType>(_DefinedByConversion_QNAME, GeneralConversionPropertyType.class, null, value);
+        return new JAXBElement<>(_DefinedByConversion_QNAME, GeneralConversionPropertyType.class, null, value);
     }
 
     /**
@@ -3409,7 +3408,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "OperationMethod", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "Definition")
     public JAXBElement<OperationMethodType> createOperationMethod(OperationMethodType value) {
-        return new JAXBElement<OperationMethodType>(_OperationMethod_QNAME, OperationMethodType.class, null, value);
+        return new JAXBElement<>(_OperationMethod_QNAME, OperationMethodType.class, null, value);
     }
 
     /**
@@ -3418,7 +3417,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "dmsAngle")
     public JAXBElement<DMSAngleType> createDmsAngle(DMSAngleType value) {
-        return new JAXBElement<DMSAngleType>(_DmsAngle_QNAME, DMSAngleType.class, null, value);
+        return new JAXBElement<>(_DmsAngle_QNAME, DMSAngleType.class, null, value);
     }
 
     /**
@@ -3427,7 +3426,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "Count", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractScalarValue")
     public JAXBElement<Count> createCount(Count value) {
-        return new JAXBElement<Count>(_Count_QNAME, Count.class, null, value);
+        return new JAXBElement<>(_Count_QNAME, Count.class, null, value);
     }
 
     /**
@@ -3436,7 +3435,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "direction")
     public JAXBElement<DirectionPropertyType> createDirection(DirectionPropertyType value) {
-        return new JAXBElement<DirectionPropertyType>(_Direction_QNAME, DirectionPropertyType.class, null, value);
+        return new JAXBElement<>(_Direction_QNAME, DirectionPropertyType.class, null, value);
     }
 
     /**
@@ -3445,7 +3444,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "target")
     public JAXBElement<TargetPropertyType> createTarget(TargetPropertyType value) {
-        return new JAXBElement<TargetPropertyType>(_Target_QNAME, TargetPropertyType.class, null, value);
+        return new JAXBElement<>(_Target_QNAME, TargetPropertyType.class, null, value);
     }
 
     /**
@@ -3454,7 +3453,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "AbstractGeneralConversion", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractOperation")
     public JAXBElement<AbstractGeneralConversionType> createAbstractGeneralConversion(AbstractGeneralConversionType value) {
-        return new JAXBElement<AbstractGeneralConversionType>(_AbstractGeneralConversion_QNAME, AbstractGeneralConversionType.class, null, value);
+        return new JAXBElement<>(_AbstractGeneralConversion_QNAME, AbstractGeneralConversionType.class, null, value);
     }
 
     /**
@@ -3463,7 +3462,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "verticalCSRef")
     public JAXBElement<VerticalCSPropertyType> createVerticalCSRef(VerticalCSPropertyType value) {
-        return new JAXBElement<VerticalCSPropertyType>(_VerticalCSRef_QNAME, VerticalCSPropertyType.class, null, value);
+        return new JAXBElement<>(_VerticalCSRef_QNAME, VerticalCSPropertyType.class, null, value);
     }
 
     /**
@@ -3472,7 +3471,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "timeCSProperty")
     public JAXBElement<TimeCSPropertyType> createTimeCSProperty(TimeCSPropertyType value) {
-        return new JAXBElement<TimeCSPropertyType>(_TimeCSProperty_QNAME, TimeCSPropertyType.class, null, value);
+        return new JAXBElement<>(_TimeCSProperty_QNAME, TimeCSPropertyType.class, null, value);
     }
 
     /**
@@ -3481,7 +3480,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "PolarCS", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractCoordinateSystem")
     public JAXBElement<PolarCSType> createPolarCS(PolarCSType value) {
-        return new JAXBElement<PolarCSType>(_PolarCS_QNAME, PolarCSType.class, null, value);
+        return new JAXBElement<>(_PolarCS_QNAME, PolarCSType.class, null, value);
     }
 
     /**
@@ -3647,12 +3646,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link BigInteger }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "integerValue")
-    public JAXBElement<BigInteger> createIntegerValue(BigInteger value) {
-        return new JAXBElement<BigInteger>(_IntegerValue_QNAME, BigInteger.class, null, value);
+    public JAXBElement<Integer> createIntegerValue(Integer value) {
+        return new JAXBElement<Integer>(_IntegerValue_QNAME, Integer.class, null, value);
     }
 
     /**
@@ -4358,12 +4357,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link BigInteger }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "sourceDimensions")
-    public JAXBElement<BigInteger> createSourceDimensions(BigInteger value) {
-        return new JAXBElement<BigInteger>(_SourceDimensions_QNAME, BigInteger.class, null, value);
+    public JAXBElement<Integer> createSourceDimensions(Integer value) {
+        return new JAXBElement<Integer>(_SourceDimensions_QNAME, Integer.class, null, value);
     }
 
     /**
@@ -5123,12 +5122,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link BigInteger }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "minimumOccurs")
-    public JAXBElement<BigInteger> createMinimumOccurs(BigInteger value) {
-        return new JAXBElement<BigInteger>(_MinimumOccurs_QNAME, BigInteger.class, null, value);
+    public JAXBElement<Integer> createMinimumOccurs(Integer value) {
+        return new JAXBElement<Integer>(_MinimumOccurs_QNAME, Integer.class, null, value);
     }
 
     /**
@@ -5204,12 +5203,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link BigInteger }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "targetDimensions")
-    public JAXBElement<BigInteger> createTargetDimensions(BigInteger value) {
-        return new JAXBElement<BigInteger>(_TargetDimensions_QNAME, BigInteger.class, null, value);
+    public JAXBElement<Integer> createTargetDimensions(Integer value) {
+        return new JAXBElement<Integer>(_TargetDimensions_QNAME, Integer.class, null, value);
     }
 
     /**
@@ -5998,11 +5997,11 @@ public class ObjectFactory {
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link VerticalCRSType }{@code >}}
      * 
-     */
+     
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "VerticalCRS", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractSingleCRS")
     public JAXBElement<VerticalCRSType> createVerticalCRS(VerticalCRSType value) {
         return new JAXBElement<VerticalCRSType>(_VerticalCRS_QNAME, VerticalCRSType.class, null, value);
-    }
+    }*/
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TimeInstantType }{@code >}}
@@ -6086,12 +6085,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link List }{@code <}{@link BigInteger }{@code >}{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link List }{@code <}{@link Integer }{@code >}{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "integerValueList")
-    public JAXBElement<List<BigInteger>> createIntegerValueList(List<BigInteger> value) {
-        return new JAXBElement<List<BigInteger>>(_IntegerValueList_QNAME, ((Class) List.class), null, ((List<BigInteger> ) value));
+    public JAXBElement<List<Integer>> createIntegerValueList(List<Integer> value) {
+        return new JAXBElement<List<Integer>>(_IntegerValueList_QNAME, ((Class) List.class), null, ((List<Integer> ) value));
     }
 
     /**
@@ -6725,12 +6724,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link BigInteger }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "maximumOccurs")
-    public JAXBElement<BigInteger> createMaximumOccurs(BigInteger value) {
-        return new JAXBElement<BigInteger>(_MaximumOccurs_QNAME, BigInteger.class, null, value);
+    public JAXBElement<Integer> createMaximumOccurs(Integer value) {
+        return new JAXBElement<Integer>(_MaximumOccurs_QNAME, Integer.class, null, value);
     }
 
     /**
@@ -6793,7 +6792,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "using")
     public JAXBElement<ProcedurePropertyType> createUsing(ProcedurePropertyType value) {
-        return new JAXBElement<ProcedurePropertyType>(_Using_QNAME, ProcedurePropertyType.class, null, value);
+        return new JAXBElement<>(_Using_QNAME, ProcedurePropertyType.class, null, value);
     }
 
     /**
@@ -6802,7 +6801,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "OperationParameter", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractGeneralOperationParameter")
     public JAXBElement<OperationParameterType> createOperationParameter(OperationParameterType value) {
-        return new JAXBElement<OperationParameterType>(_OperationParameter_QNAME, OperationParameterType.class, null, value);
+        return new JAXBElement<>(_OperationParameter_QNAME, OperationParameterType.class, null, value);
     }
 
     /**
@@ -6811,7 +6810,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "Arc", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "ArcString")
     public JAXBElement<ArcType> createArc(ArcType value) {
-        return new JAXBElement<ArcType>(_Arc_QNAME, ArcType.class, null, value);
+        return new JAXBElement<>(_Arc_QNAME, ArcType.class, null, value);
     }
 
     /**
@@ -6820,7 +6819,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "dynamicMembers")
     public JAXBElement<DynamicFeatureMemberType> createDynamicMembers(DynamicFeatureMemberType value) {
-        return new JAXBElement<DynamicFeatureMemberType>(_DynamicMembers_QNAME, DynamicFeatureMemberType.class, null, value);
+        return new JAXBElement<>(_DynamicMembers_QNAME, DynamicFeatureMemberType.class, null, value);
     }
 
     /**
@@ -6829,7 +6828,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "PassThroughOperation", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractSingleOperation")
     public JAXBElement<PassThroughOperationType> createPassThroughOperation(PassThroughOperationType value) {
-        return new JAXBElement<PassThroughOperationType>(_PassThroughOperation_QNAME, PassThroughOperationType.class, null, value);
+        return new JAXBElement<>(_PassThroughOperation_QNAME, PassThroughOperationType.class, null, value);
     }
 
     /**
@@ -6838,7 +6837,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "ellipsoidRef")
     public JAXBElement<EllipsoidPropertyType> createEllipsoidRef(EllipsoidPropertyType value) {
-        return new JAXBElement<EllipsoidPropertyType>(_EllipsoidRef_QNAME, EllipsoidPropertyType.class, null, value);
+        return new JAXBElement<>(_EllipsoidRef_QNAME, EllipsoidPropertyType.class, null, value);
     }
 
     /**
@@ -6847,7 +6846,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "VerticalDatum", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractDatum")
     public JAXBElement<VerticalDatumType> createVerticalDatum(VerticalDatumType value) {
-        return new JAXBElement<VerticalDatumType>(_VerticalDatum_QNAME, VerticalDatumType.class, null, value);
+        return new JAXBElement<>(_VerticalDatum_QNAME, VerticalDatumType.class, null, value);
     }
 
     /**
@@ -6856,7 +6855,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "TimeCS", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractCoordinateSystem")
     public JAXBElement<TimeCSType> createTimeCS(TimeCSType value) {
-        return new JAXBElement<TimeCSType>(_TimeCS_QNAME, TimeCSType.class, null, value);
+        return new JAXBElement<>(_TimeCS_QNAME, TimeCSType.class, null, value);
     }
 
     /**
@@ -6865,7 +6864,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "datumRef")
     public JAXBElement<DatumPropertyType> createDatumRef(DatumPropertyType value) {
-        return new JAXBElement<DatumPropertyType>(_DatumRef_QNAME, DatumPropertyType.class, null, value);
+        return new JAXBElement<>(_DatumRef_QNAME, DatumPropertyType.class, null, value);
     }
 
     /**
@@ -6874,7 +6873,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "pointProperty")
     public JAXBElement<PointPropertyType> createPointProperty(PointPropertyType value) {
-        return new JAXBElement<PointPropertyType>(_PointProperty_QNAME, PointPropertyType.class, null, value);
+        return new JAXBElement<>(_PointProperty_QNAME, PointPropertyType.class, null, value);
     }
 
     /**
@@ -6883,7 +6882,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "valueFile")
     public JAXBElement<String> createValueFile(String value) {
-        return new JAXBElement<String>(_ValueFile_QNAME, String.class, null, value);
+        return new JAXBElement<>(_ValueFile_QNAME, String.class, null, value);
     }
 
     /**
@@ -6892,7 +6891,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "polarCSRef")
     public JAXBElement<PolarCSPropertyType> createPolarCSRef(PolarCSPropertyType value) {
-        return new JAXBElement<PolarCSPropertyType>(_PolarCSRef_QNAME, PolarCSPropertyType.class, null, value);
+        return new JAXBElement<>(_PolarCSRef_QNAME, PolarCSPropertyType.class, null, value);
     }
 
     /**
@@ -6901,7 +6900,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "AbstractGeneralParameterValue", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractObject")
     public JAXBElement<AbstractGeneralParameterValueType> createAbstractGeneralParameterValue(AbstractGeneralParameterValueType value) {
-        return new JAXBElement<AbstractGeneralParameterValueType>(_AbstractGeneralParameterValue_QNAME, AbstractGeneralParameterValueType.class, null, value);
+        return new JAXBElement<>(_AbstractGeneralParameterValue_QNAME, AbstractGeneralParameterValueType.class, null, value);
     }
 
     /**
@@ -6910,7 +6909,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "Node", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractTopoPrimitive")
     public JAXBElement<NodeType> createNode(NodeType value) {
-        return new JAXBElement<NodeType>(_Node_QNAME, NodeType.class, null, value);
+        return new JAXBElement<>(_Node_QNAME, NodeType.class, null, value);
     }
 
     /**
@@ -6919,7 +6918,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "GeographicCRS", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractSingleCRS")
     public JAXBElement<GeographicCRSType> createGeographicCRS(GeographicCRSType value) {
-        return new JAXBElement<GeographicCRSType>(_GeographicCRS_QNAME, GeographicCRSType.class, null, value);
+        return new JAXBElement<>(_GeographicCRS_QNAME, GeographicCRSType.class, null, value);
     }
 
     /**
@@ -6928,7 +6927,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "conversionRef")
     public JAXBElement<ConversionPropertyType> createConversionRef(ConversionPropertyType value) {
-        return new JAXBElement<ConversionPropertyType>(_ConversionRef_QNAME, ConversionPropertyType.class, null, value);
+        return new JAXBElement<>(_ConversionRef_QNAME, ConversionPropertyType.class, null, value);
     }
 
     /**
@@ -6937,7 +6936,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "abstractInlineProperty")
     public JAXBElement<InlinePropertyType> createAbstractInlineProperty(InlinePropertyType value) {
-        return new JAXBElement<InlinePropertyType>(_AbstractInlineProperty_QNAME, InlinePropertyType.class, null, value);
+        return new JAXBElement<>(_AbstractInlineProperty_QNAME, InlinePropertyType.class, null, value);
     }
 
     /**
@@ -6946,7 +6945,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "Edge", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractTopoPrimitive")
     public JAXBElement<EdgeType> createEdge(EdgeType value) {
-        return new JAXBElement<EdgeType>(_Edge_QNAME, EdgeType.class, null, value);
+        return new JAXBElement<>(_Edge_QNAME, EdgeType.class, null, value);
     }
 
     /**
@@ -6955,7 +6954,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "valueComponent")
     public JAXBElement<ValuePropertyType> createValueComponent(ValuePropertyType value) {
-        return new JAXBElement<ValuePropertyType>(_ValueComponent_QNAME, ValuePropertyType.class, null, value);
+        return new JAXBElement<>(_ValueComponent_QNAME, ValuePropertyType.class, null, value);
     }
 
     /**
@@ -6964,7 +6963,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "generalOperationParameter", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "parameter")
     public JAXBElement<AbstractGeneralOperationParameterPropertyType> createGeneralOperationParameter(AbstractGeneralOperationParameterPropertyType value) {
-        return new JAXBElement<AbstractGeneralOperationParameterPropertyType>(_GeneralOperationParameter_QNAME, AbstractGeneralOperationParameterPropertyType.class, null, value);
+        return new JAXBElement<>(_GeneralOperationParameter_QNAME, AbstractGeneralOperationParameterPropertyType.class, null, value);
     }
 
     /**
@@ -6973,7 +6972,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "roughConversionToPreferredUnit")
     public JAXBElement<ConversionToPreferredUnitType> createRoughConversionToPreferredUnit(ConversionToPreferredUnitType value) {
-        return new JAXBElement<ConversionToPreferredUnitType>(_RoughConversionToPreferredUnit_QNAME, ConversionToPreferredUnitType.class, null, value);
+        return new JAXBElement<>(_RoughConversionToPreferredUnit_QNAME, ConversionToPreferredUnitType.class, null, value);
     }
 
     /**
@@ -6982,7 +6981,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "catalogSymbol")
     public JAXBElement<CodeType> createCatalogSymbol(CodeType value) {
-        return new JAXBElement<CodeType>(_CatalogSymbol_QNAME, CodeType.class, null, value);
+        return new JAXBElement<>(_CatalogSymbol_QNAME, CodeType.class, null, value);
     }
 
     /**
@@ -6991,7 +6990,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "DerivedUnit", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "UnitDefinition")
     public JAXBElement<DerivedUnitType> createDerivedUnit(DerivedUnitType value) {
-        return new JAXBElement<DerivedUnitType>(_DerivedUnit_QNAME, DerivedUnitType.class, null, value);
+        return new JAXBElement<>(_DerivedUnit_QNAME, DerivedUnitType.class, null, value);
     }
 
     /**
@@ -7000,7 +6999,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "dmsAngleValue")
     public JAXBElement<DMSAngleType> createDmsAngleValue(DMSAngleType value) {
-        return new JAXBElement<DMSAngleType>(_DmsAngleValue_QNAME, DMSAngleType.class, null, value);
+        return new JAXBElement<>(_DmsAngleValue_QNAME, DMSAngleType.class, null, value);
     }
 
     /**
@@ -7009,7 +7008,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "extentOf")
     public JAXBElement<SurfacePropertyType> createExtentOf(SurfacePropertyType value) {
-        return new JAXBElement<SurfacePropertyType>(_ExtentOf_QNAME, SurfacePropertyType.class, null, value);
+        return new JAXBElement<>(_ExtentOf_QNAME, SurfacePropertyType.class, null, value);
     }
 
     /**
@@ -7018,7 +7017,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "CountExtent", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractValue")
     public JAXBElement<List<String>> createCountExtent(List<String> value) {
-        return new JAXBElement<List<String>>(_CountExtent_QNAME, ((Class) List.class), null, ((List<String> ) value));
+        return new JAXBElement<>(_CountExtent_QNAME, ((Class) List.class), null, ((List<String> ) value));
     }
 
     /**
@@ -7027,7 +7026,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "directedEdge")
     public JAXBElement<DirectedEdgePropertyType> createDirectedEdge(DirectedEdgePropertyType value) {
-        return new JAXBElement<DirectedEdgePropertyType>(_DirectedEdge_QNAME, DirectedEdgePropertyType.class, null, value);
+        return new JAXBElement<>(_DirectedEdge_QNAME, DirectedEdgePropertyType.class, null, value);
     }
 
     /**
@@ -7036,7 +7035,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "CoordinateSystemAxis", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "Definition")
     public JAXBElement<CoordinateSystemAxisType> createCoordinateSystemAxis(CoordinateSystemAxisType value) {
-        return new JAXBElement<CoordinateSystemAxisType>(_CoordinateSystemAxis_QNAME, CoordinateSystemAxisType.class, null, value);
+        return new JAXBElement<>(_CoordinateSystemAxis_QNAME, CoordinateSystemAxisType.class, null, value);
     }
 
     /**
@@ -7045,7 +7044,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "derivedCRSType")
     public JAXBElement<CodeWithAuthorityType> createDerivedCRSType(CodeWithAuthorityType value) {
-        return new JAXBElement<CodeWithAuthorityType>(_DerivedCRSType_QNAME, CodeWithAuthorityType.class, null, value);
+        return new JAXBElement<>(_DerivedCRSType_QNAME, CodeWithAuthorityType.class, null, value);
     }
 
     /**
@@ -7054,7 +7053,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "parameterValueProperty")
     public JAXBElement<AbstractGeneralParameterValuePropertyType> createParameterValueProperty(AbstractGeneralParameterValuePropertyType value) {
-        return new JAXBElement<AbstractGeneralParameterValuePropertyType>(_ParameterValueProperty_QNAME, AbstractGeneralParameterValuePropertyType.class, null, value);
+        return new JAXBElement<>(_ParameterValueProperty_QNAME, AbstractGeneralParameterValuePropertyType.class, null, value);
     }
 
     /**
@@ -7063,7 +7062,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "Ring", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractRing")
     public JAXBElement<RingType> createRing(RingType value) {
-        return new JAXBElement<RingType>(_Ring_QNAME, RingType.class, null, value);
+        return new JAXBElement<>(_Ring_QNAME, RingType.class, null, value);
     }
 
     /**
@@ -7072,7 +7071,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "topoVolumeProperty")
     public JAXBElement<TopoVolumePropertyType> createTopoVolumeProperty(TopoVolumePropertyType value) {
-        return new JAXBElement<TopoVolumePropertyType>(_TopoVolumeProperty_QNAME, TopoVolumePropertyType.class, null, value);
+        return new JAXBElement<>(_TopoVolumeProperty_QNAME, TopoVolumePropertyType.class, null, value);
     }
 
     /**
@@ -7081,7 +7080,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "Rectangle", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractSurfacePatch")
     public JAXBElement<RectangleType> createRectangle(RectangleType value) {
-        return new JAXBElement<RectangleType>(_Rectangle_QNAME, RectangleType.class, null, value);
+        return new JAXBElement<>(_Rectangle_QNAME, RectangleType.class, null, value);
     }
 
     /**
@@ -7090,7 +7089,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "derivationUnitTerm")
     public JAXBElement<DerivationUnitTermType> createDerivationUnitTerm(DerivationUnitTermType value) {
-        return new JAXBElement<DerivationUnitTermType>(_DerivationUnitTerm_QNAME, DerivationUnitTermType.class, null, value);
+        return new JAXBElement<>(_DerivationUnitTerm_QNAME, DerivationUnitTermType.class, null, value);
     }
 
     /**
@@ -7099,7 +7098,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "cylindricalCSProperty")
     public JAXBElement<CylindricalCSPropertyType> createCylindricalCSProperty(CylindricalCSPropertyType value) {
-        return new JAXBElement<CylindricalCSPropertyType>(_CylindricalCSProperty_QNAME, CylindricalCSPropertyType.class, null, value);
+        return new JAXBElement<>(_CylindricalCSProperty_QNAME, CylindricalCSPropertyType.class, null, value);
     }
 
     /**
@@ -7108,7 +7107,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "engineeringDatumProperty")
     public JAXBElement<EngineeringDatumPropertyType> createEngineeringDatumProperty(EngineeringDatumPropertyType value) {
-        return new JAXBElement<EngineeringDatumPropertyType>(_EngineeringDatumProperty_QNAME, EngineeringDatumPropertyType.class, null, value);
+        return new JAXBElement<>(_EngineeringDatumProperty_QNAME, EngineeringDatumPropertyType.class, null, value);
     }
 
     /**
@@ -7117,7 +7116,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "ObliqueCartesianCS", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractCoordinateSystem")
     public JAXBElement<ObliqueCartesianCSType> createObliqueCartesianCS(ObliqueCartesianCSType value) {
-        return new JAXBElement<ObliqueCartesianCSType>(_ObliqueCartesianCS_QNAME, ObliqueCartesianCSType.class, null, value);
+        return new JAXBElement<>(_ObliqueCartesianCS_QNAME, ObliqueCartesianCSType.class, null, value);
     }
 
     /**
@@ -7126,7 +7125,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "history")
     public JAXBElement<HistoryPropertyType> createHistory(HistoryPropertyType value) {
-        return new JAXBElement<HistoryPropertyType>(_History_QNAME, HistoryPropertyType.class, null, value);
+        return new JAXBElement<>(_History_QNAME, HistoryPropertyType.class, null, value);
     }
 
     /**
@@ -7135,7 +7134,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "Polygon", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractSurface")
     public JAXBElement<PolygonType> createPolygon(PolygonType value) {
-        return new JAXBElement<PolygonType>(_Polygon_QNAME, PolygonType.class, null, value);
+        return new JAXBElement<>(_Polygon_QNAME, PolygonType.class, null, value);
     }
 
     /**
@@ -7144,7 +7143,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "multiCoverage")
     public JAXBElement<MultiSurfacePropertyType> createMultiCoverage(MultiSurfacePropertyType value) {
-        return new JAXBElement<MultiSurfacePropertyType>(_MultiCoverage_QNAME, MultiSurfacePropertyType.class, null, value);
+        return new JAXBElement<>(_MultiCoverage_QNAME, MultiSurfacePropertyType.class, null, value);
     }
 
     /**
@@ -7153,7 +7152,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "solidMember")
     public JAXBElement<SolidPropertyType> createSolidMember(SolidPropertyType value) {
-        return new JAXBElement<SolidPropertyType>(_SolidMember_QNAME, SolidPropertyType.class, null, value);
+        return new JAXBElement<>(_SolidMember_QNAME, SolidPropertyType.class, null, value);
     }
 
     /**
@@ -7162,7 +7161,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "Geodesic", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "GeodesicString")
     public JAXBElement<GeodesicType> createGeodesic(GeodesicType value) {
-        return new JAXBElement<GeodesicType>(_Geodesic_QNAME, GeodesicType.class, null, value);
+        return new JAXBElement<>(_Geodesic_QNAME, GeodesicType.class, null, value);
     }
 
     /**
@@ -7171,7 +7170,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "member")
     public JAXBElement<AssociationRoleType> createMember(AssociationRoleType value) {
-        return new JAXBElement<AssociationRoleType>(_Member_QNAME, AssociationRoleType.class, null, value);
+        return new JAXBElement<>(_Member_QNAME, AssociationRoleType.class, null, value);
     }
 
     /**
@@ -7180,7 +7179,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "maximumValue")
     public JAXBElement<Double> createMaximumValue(Double value) {
-        return new JAXBElement<Double>(_MaximumValue_QNAME, Double.class, null, value);
+        return new JAXBElement<>(_MaximumValue_QNAME, Double.class, null, value);
     }
 
     /**
@@ -7189,7 +7188,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "anchorDefinition")
     public JAXBElement<CodeType> createAnchorDefinition(CodeType value) {
-        return new JAXBElement<CodeType>(_AnchorDefinition_QNAME, CodeType.class, null, value);
+        return new JAXBElement<>(_AnchorDefinition_QNAME, CodeType.class, null, value);
     }
 
     /**
@@ -7198,7 +7197,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "OrientableSurface", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractSurface")
     public JAXBElement<OrientableSurfaceType> createOrientableSurface(OrientableSurfaceType value) {
-        return new JAXBElement<OrientableSurfaceType>(_OrientableSurface_QNAME, OrientableSurfaceType.class, null, value);
+        return new JAXBElement<>(_OrientableSurface_QNAME, OrientableSurfaceType.class, null, value);
     }
 
     /**
@@ -7207,7 +7206,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "BooleanList", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "AbstractScalarValueList")
     public JAXBElement<List<String>> createBooleanList(List<String> value) {
-        return new JAXBElement<List<String>>(_BooleanList_QNAME, ((Class) List.class), null, ((List<String> ) value));
+        return new JAXBElement<>(_BooleanList_QNAME, ((Class) List.class), null, ((List<String> ) value));
     }
 
     /**
@@ -7216,7 +7215,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "coordOperation")
     public JAXBElement<CoordinateOperationPropertyType> createCoordOperation(CoordinateOperationPropertyType value) {
-        return new JAXBElement<CoordinateOperationPropertyType>(_CoordOperation_QNAME, CoordinateOperationPropertyType.class, null, value);
+        return new JAXBElement<>(_CoordOperation_QNAME, CoordinateOperationPropertyType.class, null, value);
     }
 
     /**
@@ -7225,7 +7224,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "limits", scope = GridType.class)
     public JAXBElement<GridLimitsType> createGridTypeLimits(GridLimitsType value) {
-        return new JAXBElement<GridLimitsType>(_GridTypeLimits_QNAME, GridLimitsType.class, GridType.class, value);
+        return new JAXBElement<>(_GridTypeLimits_QNAME, GridLimitsType.class, GridType.class, value);
     }
 
     /**
@@ -7234,7 +7233,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "axisLabels", scope = GridType.class)
     public JAXBElement<List<String>> createGridTypeAxisLabels(List<String> value) {
-        return new JAXBElement<List<String>>(_GridTypeAxisLabels_QNAME, ((Class) List.class), GridType.class, ((List<String> ) value));
+        return new JAXBElement<>(_GridTypeAxisLabels_QNAME, ((Class) List.class), GridType.class, ((List<String> ) value));
     }
 
     /**
@@ -7243,7 +7242,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "axisName", scope = GridType.class)
     public JAXBElement<String> createGridTypeAxisName(String value) {
-        return new JAXBElement<String>(_GridTypeAxisName_QNAME, String.class, GridType.class, value);
+        return new JAXBElement<>(_GridTypeAxisName_QNAME, String.class, GridType.class, value);
     }
     
     public JAXBElement<?> buildAnyGeometry(final Object value) {

@@ -18,7 +18,6 @@
 
 package org.geotoolkit.gml.xml.v321;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -56,7 +55,7 @@ public class GridFunctionType {
 
     private SequenceRuleType sequenceRule;
     @XmlList
-    private List<BigInteger> startPoint;
+    private List<Integer> startPoint;
 
     /**
      * Gets the value of the sequenceRule property.
@@ -84,29 +83,10 @@ public class GridFunctionType {
 
     /**
      * Gets the value of the startPoint property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the startPoint property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getStartPoint().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link BigInteger }
-     * 
-     * 
      */
-    public List<BigInteger> getStartPoint() {
+    public List<Integer> getStartPoint() {
         if (startPoint == null) {
-            startPoint = new ArrayList<BigInteger>();
+            startPoint = new ArrayList<>();
         }
         return this.startPoint;
     }

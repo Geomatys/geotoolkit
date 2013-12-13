@@ -18,7 +18,6 @@
 
 package org.geotoolkit.gml.xml.v321;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -70,9 +69,9 @@ public class OperationMethodType
     @XmlElementRef(name = "formula", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private JAXBElement<CodeType> formula;
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger sourceDimensions;
+    private Integer sourceDimensions;
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger targetDimensions;
+    private Integer targetDimensions;
     @XmlElementRef(name = "parameter", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private List<JAXBElement<AbstractGeneralOperationParameterPropertyType>> parameter;
 
@@ -131,10 +130,10 @@ public class OperationMethodType
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getSourceDimensions() {
+    public Integer getSourceDimensions() {
         return sourceDimensions;
     }
 
@@ -143,10 +142,10 @@ public class OperationMethodType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setSourceDimensions(BigInteger value) {
+    public void setSourceDimensions(Integer value) {
         this.sourceDimensions = value;
     }
 
@@ -155,10 +154,10 @@ public class OperationMethodType
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getTargetDimensions() {
+    public Integer getTargetDimensions() {
         return targetDimensions;
     }
 
@@ -167,30 +166,16 @@ public class OperationMethodType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setTargetDimensions(BigInteger value) {
+    public void setTargetDimensions(Integer value) {
         this.targetDimensions = value;
     }
 
     /**
      * Gets the value of the parameter property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the parameter property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getParameter().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractGeneralOperationParameterPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractGeneralOperationParameterPropertyType }{@code >}
@@ -201,7 +186,7 @@ public class OperationMethodType
      */
     public List<JAXBElement<AbstractGeneralOperationParameterPropertyType>> getParameter() {
         if (parameter == null) {
-            parameter = new ArrayList<JAXBElement<AbstractGeneralOperationParameterPropertyType>>();
+            parameter = new ArrayList<>();
         }
         return this.parameter;
     }

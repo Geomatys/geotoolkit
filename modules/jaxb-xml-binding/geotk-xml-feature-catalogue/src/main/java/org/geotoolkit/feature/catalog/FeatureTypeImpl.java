@@ -146,7 +146,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
             this.aliases                  = feature.getAliases();
             this.carrierOfCharacteristics = feature.getCarrierOfCharacteristics();
             this.code                     = feature.getCode();
-            this.id                       = "ftype-" + feature.getCode();
+            this.id                       = feature.getId();
             this.constrainedBy            = feature.getConstrainedBy();
             this.definition               = feature.getDefinition();
             this.definitionReference      = feature.getDefinitionReference();
@@ -161,9 +161,13 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     /**
      * Build a new Feature type
      */
-    public FeatureTypeImpl(final LocalName typeName, final String definition, final String code, final Boolean isAbstract, final List<LocalName> aliases,
+    public FeatureTypeImpl(final String id, final LocalName typeName, final String definition, final String code, final Boolean isAbstract, final List<LocalName> aliases,
             final FeatureCatalogue catalogue, final List<PropertyType> carrierOfCharacteristics) {
-        this.id                       = "ftype-" + code;
+        if (id != null) {
+            this.id                   = id;
+        } else {
+            this.id                   = "ftype-" + code;
+        }
         this.aliases                  = aliases;
         this.carrierOfCharacteristics = carrierOfCharacteristics;
         this.code                     = code;
