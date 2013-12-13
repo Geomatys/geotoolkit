@@ -558,9 +558,14 @@ final class GeoTiffCRSWriter {
         stack.addShort(
                 (model == 0) ? GeogAngularUnitsGeoKey : ProjLinearUnitsGeoKey,
                 GTUserDefinedGeoKey);
-
-        // citation
-        stack.addAscii(GeogCitationGeoKey, unit.toString());
+        
+        try {
+            // citation
+            stack.addAscii(GeogCitationGeoKey, unit.toString());
+        } catch(Exception ex) {
+            // do nothing unit is unamed. Adding citation is useless. 
+        }
+        
 
         final Unit base;
         if (SI.METRE.isCompatible(unit)) {
