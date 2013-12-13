@@ -147,6 +147,23 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
     }
 
     /**
+     * Gets the value of the value property.
+     */
+    public void setValue(final List<String> value) {
+        this.value = value;
+    }
+
+    /**
+     * Gets the value of the value property.
+     */
+    public void setValue(final String value) {
+        if (this.value == null) {
+            this.value = new ArrayList<String>();
+        }
+        this.value.add(value);
+    }
+
+    /**
      * Gets the value of the referenceTime property.
      */
     @Override

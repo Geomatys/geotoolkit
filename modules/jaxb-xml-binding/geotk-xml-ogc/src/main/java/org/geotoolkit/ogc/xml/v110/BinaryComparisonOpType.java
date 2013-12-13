@@ -91,7 +91,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
      */
     public BinaryComparisonOpType(final LiteralType literal, final PropertyNameType propertyName, final Boolean matchCase) {
         if (this.expression == null) {
-            this.expression = new ArrayList<JAXBElement<?>>();
+            this.expression = new ArrayList<>();
         }
         if (propertyName != null) {
             this.expression.add(FACTORY.createPropertyName(propertyName));
@@ -105,7 +105,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
     public BinaryComparisonOpType(final BinaryComparisonOpType that) {
         if (that != null) {
             if (that.expression != null) {
-                this.expression = new ArrayList<JAXBElement<?>>();
+                this.expression = new ArrayList<>();
                 final ObjectFactory factory = new ObjectFactory();
                 for (JAXBElement jb : that.expression) {
                     final Object exp = jb.getValue();
@@ -157,7 +157,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
      */
     public List<JAXBElement<?>> getExpression() {
         if (expression == null) {
-            expression = new ArrayList<JAXBElement<?>>();
+            expression = new ArrayList<>();
         }
         return this.expression;
     }
@@ -249,17 +249,17 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
 
     public String getPropertyName() {
         for (JAXBElement<?> elem : getExpression()) {
-            final Object value = elem.getValue();
-            if (value instanceof String) {
+                final Object value = elem.getValue();
+                if (value instanceof String) {
                 return (String) value;
             }
             if (value instanceof QName) {
-                QName content = (QName) value;
-                if (content.getNamespaceURI() != null && !"".equals(content.getNamespaceURI())) {
+                    QName content = (QName) value;
+                    if (content.getNamespaceURI() != null && !"".equals(content.getNamespaceURI())) {
                     return content.getNamespaceURI() + ':' + content.getLocalPart();
-            }
+                    }
                 return content.getLocalPart();
-            }
+                }
             if (value instanceof PropertyNameType) {
                 return ((PropertyNameType) value).getContent();
             }
@@ -268,11 +268,11 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
     }
 
     public void setPropertyName(final String propertyName) {
-        getExpression().add(FACTORY.createPropertyName(new PropertyNameType(propertyName)));
+        getExpression().add(0, FACTORY.createPropertyName(new PropertyNameType(propertyName)));
     }
 
     public void setPropertyName(final PropertyNameType propertyName) {
-        getExpression().add(FACTORY.createPropertyName(propertyName));
+        getExpression().add(0, FACTORY.createPropertyName(propertyName));
     }
 
     @Override

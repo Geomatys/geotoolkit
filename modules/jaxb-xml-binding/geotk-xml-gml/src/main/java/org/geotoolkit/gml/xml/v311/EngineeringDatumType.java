@@ -19,6 +19,7 @@ package org.geotoolkit.gml.xml.v311;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.EngineeringDatum;
 
 
 /**
@@ -45,7 +46,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EngineeringDatumType")
-public class EngineeringDatumType extends AbstractDatumType {
+public class EngineeringDatumType extends AbstractDatumType implements EngineeringDatum {
 
     public EngineeringDatumType() {
 

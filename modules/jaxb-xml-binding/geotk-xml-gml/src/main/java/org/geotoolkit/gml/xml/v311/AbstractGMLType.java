@@ -139,7 +139,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
 
     @Override
     public MetadataStandard getStandard() {
-        return null;
+        return MetadataStandard.ISO_19111;
     }
     
     /**
@@ -199,6 +199,9 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      */
     @Override
     public String getId() {
+        if (id == null) {
+            id = getIdentifierMap().get(IdentifierSpace.ID);
+        }
         return id;
     }
 
@@ -239,9 +242,9 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     }
 
     @Override
-    public Collection<? extends Identifier> getIdentifiers() {
+    public Collection<Identifier> getIdentifiers() {
         if (identifiers == null) {
-            identifiers = new ArrayList<Identifier>();
+            identifiers = new ArrayList<>();
         }
         return identifiers;
     }
@@ -253,7 +256,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
          * DefaultObjective override getIdentifiers() in order to return a filtered list.
          */
         if (identifiers == null) {
-            identifiers = new ArrayList<Identifier>();
+            identifiers = new ArrayList<>();
         }
         /*
          * We do not cache (for now) the IdentifierMap because it is cheap to create, and if were

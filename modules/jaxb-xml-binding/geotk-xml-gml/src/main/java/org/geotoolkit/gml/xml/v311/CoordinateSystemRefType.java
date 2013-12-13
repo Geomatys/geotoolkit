@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.gml.xml.CoordinateSystemRef;
 
 
 /**
@@ -54,7 +54,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "CoordinateSystemRefType", propOrder = {
     "coordinateSystem"
 })
-public class CoordinateSystemRefType {
+public class CoordinateSystemRefType implements CoordinateSystemRef {
 
     @XmlElementRef(name = "AbstractCoordinateSystem", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<? extends AbstractCoordinateSystemType> coordinateSystem;

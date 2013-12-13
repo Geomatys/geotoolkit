@@ -23,6 +23,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.CoordinateSystemRef;
+import org.geotoolkit.gml.xml.EngineeringCRS;
+import org.geotoolkit.gml.xml.EngineeringDatumRef;
 
 
 /**
@@ -66,9 +69,7 @@ import javax.xml.bind.annotation.XmlType;
     "coordinateSystem",
     "engineeringDatumProperty"
 })
-public class EngineeringCRSType
-    extends AbstractCRSType
-{
+public class EngineeringCRSType extends AbstractCRSType implements EngineeringCRS {
 
     @XmlElementRef(name = "affineCSProperty", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private JAXBElement<AffineCSPropertyType> affineCSProperty;
@@ -309,6 +310,18 @@ public class EngineeringCRSType
      */
     public void setEngineeringDatumProperty(JAXBElement<EngineeringDatumPropertyType> value) {
         this.engineeringDatumProperty = ((JAXBElement<EngineeringDatumPropertyType> ) value);
+    }
+
+    @Override
+    public CoordinateSystemRef getUsesCS() {
+        // TODO
+        return null;
+    }
+
+    @Override
+    public EngineeringDatumRef getUsesEngineeringDatum() {
+        // TODO
+        return null;
     }
 
 }

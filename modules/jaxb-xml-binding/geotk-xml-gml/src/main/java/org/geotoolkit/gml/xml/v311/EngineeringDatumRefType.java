@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.gml.xml.EngineeringDatumRef;
 
 
 /**
@@ -53,7 +53,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "EngineeringDatumRefType", propOrder = {
     "engineeringDatum"
 })
-public class EngineeringDatumRefType {
+public class EngineeringDatumRefType implements EngineeringDatumRef {
 
     @XmlElement(name = "EngineeringDatum")
     private EngineeringDatumType engineeringDatum;
@@ -93,6 +93,7 @@ public class EngineeringDatumRefType {
     /**
      * Gets the value of the engineeringDatum property.
      */
+    @Override
     public EngineeringDatumType getEngineeringDatum() {
         return engineeringDatum;
     }

@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.internal.simple.SimpleCitation;
+import org.apache.sis.metadata.MetadataStandard;
 import org.geotoolkit.gml.xml.v311.AbstractGMLType;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.apache.sis.util.ComparisonMode;
@@ -97,7 +99,12 @@ public abstract class AbstractDataComponentType extends AbstractGMLType implemen
         }
         this.fixed      = fixed;
     }
-    
+
+    @Override
+    public MetadataStandard getStandard() {
+        return  new MetadataStandard(new SimpleCitation("SWE"), Package.getPackage("org.geotoolkit.swe.xml"));
+    }
+
     /**
      * Gets the value of the fixed property.
      */

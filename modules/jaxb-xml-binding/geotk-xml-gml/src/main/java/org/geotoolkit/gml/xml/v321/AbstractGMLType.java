@@ -41,7 +41,6 @@ import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.xml.IdentifierMap;
 import org.apache.sis.xml.IdentifierSpace;
-import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.Identifier;
 import org.apache.sis.xml.IdentifiedObject;
 
@@ -127,7 +126,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
             }
             setId(that.getId());
             if (that.getName() != null) {
-                this.name = new ArrayList<CodeType>();
+                this.name = new ArrayList<>();
                 this.name.add(new CodeType(that.getName()));
             }
             if (that instanceof AbstractGMLType) {
@@ -136,7 +135,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
                     this.identifier = new CodeWithAuthorityType(thatGML.identifier);
                 }
                 if (thatGML.metaDataProperty != null) {
-                    this.metaDataProperty = new ArrayList<MetaDataPropertyType>();
+                    this.metaDataProperty = new ArrayList<>();
                     for (MetaDataPropertyType m : thatGML.metaDataProperty) {
                         this.metaDataProperty.add(new MetaDataPropertyType(m));
                     }
@@ -148,7 +147,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     public AbstractGMLType(final String id, final String name, final String description, final ReferenceType descriptionReference) {
         setId(id);
         if (name != null) {
-            this.name = new ArrayList<CodeType>();
+            this.name = new ArrayList<>();
             this.name.add(new CodeType(name));
         }
         if (description != null) {
@@ -160,7 +159,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
 
     @Override
     public MetadataStandard getStandard() {
-        return null;
+        return MetadataStandard.ISO_19111;
     }
 
     /**
@@ -171,7 +170,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      */
     public List<MetaDataPropertyType> getMetaDataProperty() {
         if (metaDataProperty == null) {
-            metaDataProperty = new ArrayList<MetaDataPropertyType>();
+            metaDataProperty = new ArrayList<>();
         }
         return this.metaDataProperty;
     }
@@ -244,6 +243,9 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      */
     @Override
     public String getIdentifier() {
+        if (id == null) {
+            id = getIdentifierMap().get(IdentifierSpace.ID);
+        }
         return id;
     }
 
@@ -269,7 +271,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      */
     public List<CodeType> getNames() {
         if (name == null) {
-            name = new ArrayList<CodeType>();
+            name = new ArrayList<>();
         }
         return this.name;
     }
@@ -284,11 +286,12 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
 
     /**
      *
+     * @param name
      */
     @Override
     public void setName(final String name) {
         if (this.name == null) {
-            this.name = new ArrayList<CodeType>();
+            this.name = new ArrayList<>();
         }
         this.name.add(0, new CodeType(name));
     }
@@ -303,6 +306,9 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      */
     @Override
     public String getId() {
+        if (id == null) {
+            id = getIdentifierMap().get(IdentifierSpace.ID);
+        }
         return id;
     }
 
@@ -327,7 +333,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         return null; // not implemented in 3.2.1
     }
 
-     @Override
+    @Override
     public boolean equals(final Object obj, final ComparisonMode mode) {
         if (obj == null) {
             return false;
@@ -344,10 +350,10 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         return false;
     }
 
-     @Override
-    public Collection<? extends Identifier> getIdentifiers() {
+    @Override
+    public Collection<Identifier> getIdentifiers() {
         if (identifiers == null) {
-            identifiers = new ArrayList<Identifier>();
+            identifiers = new ArrayList<>();
         }
         return identifiers;
     }

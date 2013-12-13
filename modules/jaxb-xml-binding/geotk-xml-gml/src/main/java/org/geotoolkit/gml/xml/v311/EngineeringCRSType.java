@@ -21,8 +21,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.internal.simple.SimpleCitation;
+import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.gml.xml.EngineeringCRS;
 
 
 /**
@@ -56,7 +58,7 @@ import org.geotoolkit.util.Utilities;
     "usesCS",
     "usesEngineeringDatum"
 })
-public class EngineeringCRSType extends AbstractReferenceSystemType {
+public class EngineeringCRSType extends AbstractReferenceSystemType implements EngineeringCRS {
 
     @XmlElement(required = true)
     private CoordinateSystemRefType usesCS;
@@ -77,6 +79,7 @@ public class EngineeringCRSType extends AbstractReferenceSystemType {
      * Gets the value of the usesCS property.
      * 
      */
+    @Override
     public CoordinateSystemRefType getUsesCS() {
         return usesCS;
     }
@@ -93,6 +96,7 @@ public class EngineeringCRSType extends AbstractReferenceSystemType {
      * Gets the value of the usesEngineeringDatum property.
      * 
     */
+    @Override
     public EngineeringDatumRefType getUsesEngineeringDatum() {
         return usesEngineeringDatum;
     }
@@ -140,4 +144,8 @@ public class EngineeringCRSType extends AbstractReferenceSystemType {
         return sb.toString();
      }
 
+    @Override
+    public MetadataStandard getStandard() {
+        return new MetadataStandard(new SimpleCitation("GML"), Package.getPackage("org.geotoolkit.gml.xml"));
+    }
 }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -53,7 +54,9 @@ public final class GmlGeometryAdapter extends GM_Object implements AdapterReplac
      * @param metadata The metadata value to marshall.
      */
     protected GmlGeometryAdapter(final Geometry metadata) {
-        ObjectFactory factory = new ObjectFactory();
+        final ObjectFactory factory = new ObjectFactory();
+        final org.geotoolkit.gml.xml.v321.ObjectFactory factory321 = new org.geotoolkit.gml.xml.v321.ObjectFactory();
+
         if (metadata instanceof PointType) {
             this.geometry = factory.createPoint((PointType) metadata);
 
@@ -87,18 +90,53 @@ public final class GmlGeometryAdapter extends GM_Object implements AdapterReplac
         } else if (metadata instanceof MultiPolygonType) {
             this.geometry = factory.createMultiPolygon((MultiPolygonType) metadata);
 
-        } else if (metadata instanceof MultiPolygonType) {
-            this.geometry = factory.createMultiPolygon((MultiPolygonType) metadata);
-
         } else if (metadata instanceof PolygonType) {
             this.geometry = factory.createPolygon((PolygonType) metadata);
 
         } else if (metadata instanceof SurfaceType) {
             this.geometry = factory.createSurface((SurfaceType) metadata);
+            
+        } else if (metadata instanceof org.geotoolkit.gml.xml.v321.PointType) {
+            this.geometry = factory321.createPoint((org.geotoolkit.gml.xml.v321.PointType) metadata);
 
+        } else if (metadata instanceof org.geotoolkit.gml.xml.v321.MultiSurfaceType) {
+            this.geometry = factory321.createMultiSurface((org.geotoolkit.gml.xml.v321.MultiSurfaceType) metadata);
+
+        } else if (metadata instanceof org.geotoolkit.gml.xml.v321.CurveType) {
+            this.geometry = factory321.createCurve((org.geotoolkit.gml.xml.v321.CurveType) metadata);
+
+        } else if (metadata instanceof org.geotoolkit.gml.xml.v321.LineStringType) {
+            this.geometry = factory321.createLineString((org.geotoolkit.gml.xml.v321.LineStringType) metadata);
+
+        /*} else if (metadata instanceof org.geotoolkit.gml.xml.v321.MultiLineStringType) {
+            this.geometry = factory321.createMultiLineString((org.geotoolkit.gml.xml.v321.MultiLineStringType) metadata); ==> ISSUE
+
+        */} else if (metadata instanceof org.geotoolkit.gml.xml.v321.MultiPointType) {
+            this.geometry = factory321.createMultiPoint((org.geotoolkit.gml.xml.v321.MultiPointType) metadata);
+
+
+        } else if (metadata instanceof org.geotoolkit.gml.xml.v321.MultiCurveType) {
+            this.geometry = factory321.createMultiCurve((org.geotoolkit.gml.xml.v321.MultiCurveType) metadata);
+
+
+        } else if (metadata instanceof org.geotoolkit.gml.xml.v321.MultiGeometryType) {
+            this.geometry = factory321.createMultiGeometry((org.geotoolkit.gml.xml.v321.MultiGeometryType) metadata);
+
+
+        } else if (metadata instanceof org.geotoolkit.gml.xml.v321.MultiSolidType) {
+            this.geometry = factory321.createMultiSolid((org.geotoolkit.gml.xml.v321.MultiSolidType) metadata);
+
+        /*} else if (metadata instanceof org.geotoolkit.gml.xml.v321.MultiPolygonType) {
+            this.geometry = factory321.createMultiPolygon((org.geotoolkit.gml.xml.v321.MultiPolygonType) metadata); ==> ISSUE
+
+        */} else if (metadata instanceof org.geotoolkit.gml.xml.v321.PolygonType) {
+            this.geometry = factory321.createPolygon((org.geotoolkit.gml.xml.v321.PolygonType) metadata);
+
+        } else if (metadata instanceof org.geotoolkit.gml.xml.v321.SurfaceType) {
+            this.geometry = factory321.createSurface((org.geotoolkit.gml.xml.v321.SurfaceType) metadata);
 
         } else if (metadata != null){
-            LOGGER.warning("Unexpected geometry class in geometryAdpater:" + metadata.getClass().getName());
+            LOGGER.log(Level.WARNING, "Unexpected geometry class in geometryAdpater:{0}", metadata.getClass().getName());
         }
     }
 

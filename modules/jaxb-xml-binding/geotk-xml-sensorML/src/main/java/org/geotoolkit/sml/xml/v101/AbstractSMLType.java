@@ -20,6 +20,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.internal.simple.SimpleCitation;
+import org.apache.sis.metadata.MetadataStandard;
 import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 import org.geotoolkit.sml.xml.AbstractSML;
 
@@ -65,5 +67,10 @@ public abstract class AbstractSMLType extends AbstractFeatureType implements Abs
 
     public AbstractSMLType(final AbstractSML sm) {
         super(sm);
+    }
+
+    @Override
+    public MetadataStandard getStandard() {
+        return  new MetadataStandard(new SimpleCitation("SensorML"), Package.getPackage("org.geotoolkit.sml.xml"));
     }
 }

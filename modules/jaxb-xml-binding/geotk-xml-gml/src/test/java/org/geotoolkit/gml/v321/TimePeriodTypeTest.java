@@ -20,6 +20,7 @@ import java.util.Date;
 import java.io.StringReader;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBException;
+import org.apache.sis.internal.jaxb.LegacyNamespaces;
 import org.opengis.temporal.Period;
 import org.opengis.metadata.extent.Extent;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
@@ -115,7 +116,7 @@ public class TimePeriodTypeTest {
         assertEquals(-1, tp.getTime());
     }
 
-    @Ignore
+    @Test
     public void testUnmarshalling() throws JAXBException {
         final String xml =
             "<gmd:EX_Extent\n" +
@@ -157,6 +158,7 @@ public class TimePeriodTypeTest {
             "</gmd:EX_Extent>\n";
 
         final Unmarshaller um = GMLMarshallerPool.getInstance().acquireUnmarshaller();
+        um.setProperty(LegacyNamespaces.APPLY_NAMESPACE_REPLACEMENTS, Boolean.TRUE);
         final Extent extent = (Extent) um.unmarshal(new StringReader(xml));
         GMLMarshallerPool.getInstance().recycle(um);
 
