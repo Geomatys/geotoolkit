@@ -142,31 +142,31 @@ public class TiffImageReader extends SpatialImageReader {
      * Types supported by this reader. The type is the short at offset 2 in the directory entry.
      */
     private static final short // 1, 2, 3, 4, 5 unsigned 0 -> 2^nbit  6, 7, 8, 9, 10 signed -2^(nbit-1) -> 2^(nbit-1) 11, 12 signed.
-            TYPE_UBYTE     = 1, 
-            TYPE_ASCII     = 2, 
-            TYPE_USHORT    = 3, 
-            TYPE_UINT      = 4, 
+            TYPE_UBYTE     = 1,
+            TYPE_ASCII     = 2,
+            TYPE_USHORT    = 3,
+            TYPE_UINT      = 4,
             TYPE_URATIONAL = 5, // unsigned Integer / unsigned Integer
-            TYPE_BYTE      = 6, 
+            TYPE_BYTE      = 6,
             // type 7 is undefined
-            TYPE_SHORT     = 8, 
-            TYPE_INT       = 9, 
+            TYPE_SHORT     = 8,
+            TYPE_INT       = 9,
             TYPE_RATIONAL  = 10, // signed Integer / signed Integer
-            TYPE_FLOAT     = 11, 
+            TYPE_FLOAT     = 11,
             TYPE_DOUBLE    = 12,
             TYPE_IFD       = 13, // IFD is like UINT.
-            TYPE_ULONG     = 16, 
-            TYPE_LONG      = 17, 
+            TYPE_ULONG     = 16,
+            TYPE_LONG      = 17,
             TYPE_IFD8      = 18; // IFD is like ULONG.
 
     /**
      * The size of each type in bytes, or 0 if unknown.
      */
     private static final int[] TYPE_SIZE = new int[19];
-    
+
     static {
         int[] size = TYPE_SIZE;
-        size[TYPE_BYTE]  = size[TYPE_UBYTE] = size[TYPE_ASCII] =    Byte.SIZE        / Byte.SIZE; 
+        size[TYPE_BYTE]  = size[TYPE_UBYTE] = size[TYPE_ASCII] =    Byte.SIZE        / Byte.SIZE;
         size[TYPE_SHORT] = size[TYPE_USHORT]                   =   Short.SIZE        / Byte.SIZE;
         size[TYPE_INT]   = size[TYPE_UINT]  = size[TYPE_IFD]   = Integer.SIZE        / Byte.SIZE;
         size[TYPE_LONG]  = size[TYPE_ULONG] = size[TYPE_IFD8]  =    Long.SIZE        / Byte.SIZE;
@@ -175,11 +175,11 @@ public class TiffImageReader extends SpatialImageReader {
         size[TYPE_URATIONAL] = size[TYPE_RATIONAL]             = (Integer.SIZE << 1) / Byte.SIZE; //rational = Integer / Integer. 2 Integer values red.
     }
 
-    
+
     /**
      * The channel to the TIFF file. Will be created from the {@linkplain #input} when first needed.
      */
-    
+
     private FileChannel channel;
 
     /**
@@ -227,18 +227,18 @@ public class TiffImageReader extends SpatialImageReader {
      * {@linkplain #currentImage current image}.
      */
     private int imageWidth, imageHeight, tileWidth, tileHeight, samplesPerPixel;
-    
+
     /**
      * Information from the <cite>Directory Entries</cite> for the
      * {@linkplain #currentImage current image}.
      */
     private long[] stripOffsets, stripByteCounts;
-    
+
     /**
      * How image rows are cover by strip.
      */
     private int rowsPerStrip;
-    
+
     /**
      * Number of bits per samples. This is (8,8,8) for RGB images.
      */
@@ -253,34 +253,34 @@ public class TiffImageReader extends SpatialImageReader {
      * The cached return value of {@link #getRawDataType(int)} for the current image.
      */
     private ImageTypeSpecifier rawImageType;
-    
+
     /**
-     * Metadata root Node for each image. 
+     * Metadata root Node for each image.
      */
     private IIOMetadataNode[] roots;
-    
+
     /**
      * Compression type of current selected image.
      */
     private int compression;
-    
+
     /**
      * Map table which contain all tiff properties from all images.
      */
     private Map<Integer, Map>[] metaHeads;
-    
+
     /**
      * Map which contain all tiff properties of the current selected image.
      */
     private Map<Integer, Map> headProperties;
-    
+
     /**
      * Define size in {@code Byte} of offset in each Tiff tag.<br/>
      * In tiff specification : {@link Integer#SIZE} / {@link Byte#SIZE}.<br/>
      * In big tiff specification : {@link Long#SIZE} / {@link Byte#SIZE}.
      */
     private int offsetSize;
-    
+
     /**
      * Creates a new reader.
      *
@@ -308,7 +308,7 @@ public class TiffImageReader extends SpatialImageReader {
     public boolean isRandomAccessEasy(final int imageIndex) throws IOException {
         return true;
     }
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -321,7 +321,7 @@ public class TiffImageReader extends SpatialImageReader {
         if (metaHeads[imageIndex] == null) {
             selectImage(imageIndex);
         }
-        
+
         //if there are not geotiff tag return null
         boolean isGeotiff = false;
         for(int key : headProperties.keySet()) {
@@ -330,9 +330,9 @@ public class TiffImageReader extends SpatialImageReader {
                 break;
             }
         }
-        
+
         if (!isGeotiff) return null;
-        
+
         fillRootMetadataNode(imageIndex);
         final IIOMetadata metadata = new IIOTiffMetadata(roots[imageIndex]);
             final GeoTiffMetaDataReader metareader = new GeoTiffMetaDataReader(metadata);
@@ -354,7 +354,7 @@ public class TiffImageReader extends SpatialImageReader {
      * @throws IOException If an error occurred while opening the channel.
      */
     private void open() throws IllegalStateException, IOException {
-        
+
         if (channel == null) {
             if (input == null) {
                 throw new IllegalStateException(error(Errors.Keys.NO_IMAGE_INPUT));
@@ -369,7 +369,7 @@ public class TiffImageReader extends SpatialImageReader {
             // Closing the channel will close the input stream.
             buffer.clear();
             readFully(16, 1024); // Header size of Big TIFF (the standard header size is 8 bytes).
-            final byte c = buffer.get();// 1 
+            final byte c = buffer.get();// 1
             if (c != buffer.get()) {
                 throw invalidFile("ByteOrder");
             }
@@ -581,12 +581,12 @@ public class TiffImageReader extends SpatialImageReader {
                     bitsPerSample   = null;
                     tileOffsets     = null;
                     rawImageType    = null;
-                    
+
                     if (metaHeads[imageIndex] == null) {
                         metaHeads[imageIndex] = new HashMap<Integer, Map>();
                     }
                     headProperties = metaHeads[imageIndex];
-                    
+
                     final Collection<long[]> deferred = new ArrayList<>(4);
                     long position = positionIFD[imageIndex];
                     ensureBufferContains(position, shortSize + intSize, IFD_SIZE);
@@ -603,19 +603,19 @@ public class TiffImageReader extends SpatialImageReader {
                      * Las valeurs manquante sont les valeurs contenant plusieurs champs a un offset donné.
                      */
                     readDeferredArrays(deferred.toArray(new long[deferred.size()][]));
-                    
+
                     final Map<String, Object> iwObj   = headProperties.get(ImageWidth);
                     final Map<String, Object> ihObj   = headProperties.get(ImageLength);
                     final Map<String, Object> isppObj = headProperties.get(SamplesPerPixel);
-                    
+
                     imageWidth      = (int) ((iwObj == null)   ? -1 : ((long[]) iwObj.get(ATT_VALUE))[0]);
                     imageHeight     = (int) ((ihObj == null)   ? -1 : ((long[]) ihObj.get(ATT_VALUE))[0]);
                     samplesPerPixel = (int) ((isppObj == null) ? -1 : ((long[]) isppObj.get(ATT_VALUE))[0]);
-                    
+
                     final Map<String, Object> twObj   =  headProperties.get(TileWidth);
                     final Map<String, Object> thObj   =  headProperties.get(TileLength);
                     final Map<String, Object> toObj   =  headProperties.get(TileOffsets);
-                    
+
 //                    System.out.println(root.toString());
                     /*
                      * Declare the image as valid only if the mandatory information are present.
@@ -624,18 +624,18 @@ public class TiffImageReader extends SpatialImageReader {
                         final Map<String, Object> rpsObj   =  headProperties.get(RowsPerStrip);
                         final Map<String, Object> sOffObj  =  headProperties.get(StripOffsets);
                         final Map<String, Object> sbcObj   =  headProperties.get(StripByteCounts);
-                        
+
                         rowsPerStrip = (int) ((rpsObj == null) ? -1 : ((long[]) rpsObj.get(ATT_VALUE))[0]);
                         if (sOffObj != null) stripOffsets    = (long[]) sOffObj.get(ATT_VALUE);
                         if (sbcObj  != null) stripByteCounts = (long[]) sbcObj.get(ATT_VALUE);
                         ensureDefined(rowsPerStrip,    "rowsPerStrip");
                         ensureDefined(stripOffsets,    "stripOffsets");
                         ensureDefined(stripByteCounts, "stripByteCounts");
-                    } else {                        
+                    } else {
                         tileWidth   = (int) ((twObj == null) ? -1 : ((long[]) twObj.get(ATT_VALUE))[0]);
                         tileHeight  = (int) ((thObj == null) ? -1 : ((long[]) thObj.get(ATT_VALUE))[0]);
                         if (toObj  != null)  tileOffsets = (long[]) toObj.get(ATT_VALUE);
-                        
+
                         ensureDefined(tileWidth,   "tileWidth");
                         ensureDefined(tileHeight,  "tileHeight");
                         ensureDefined(tileOffsets, "tileOffsets");
@@ -647,7 +647,7 @@ public class TiffImageReader extends SpatialImageReader {
             throw new IndexOutOfBoundsException(error(Errors.Keys.INDEX_OUT_OF_BOUNDS_1, imageIndex));
         }
     }
-    
+
     /**
      * Fill {@link IIOMetadataNode} root in native metadata format to create {@link SpatialMetadata}.
      */
@@ -656,16 +656,16 @@ public class TiffImageReader extends SpatialImageReader {
         roots[indexImage] = new IIOMetadataNode(TAG_GEOTIFF_IFD);
         for (int tag : headProperties.keySet()) {
             final Map<String, Object> currenTagAttributs = headProperties.get(tag);
-            
+
             final String name  = (String) currenTagAttributs.get(ATT_NAME);
             final short type   = (short) currenTagAttributs.get(ATT_TYPE);
-            final int count    = (int)(long) currenTagAttributs.get(ATT_COUNT); 
+            final int count    = (int)(long) currenTagAttributs.get(ATT_COUNT);
             final Object value = currenTagAttributs.get(ATT_VALUE);
-            
+
             final IIOMetadataNode tagBody = new IIOMetadataNode(TAG_GEOTIFF_FIELD);
             tagBody.setAttribute(ATT_NAME, name);
             tagBody.setAttribute(ATT_NUMBER, Integer.toString(tag));
-            
+
             switch (type) {
                 case TYPE_ASCII : {
                     final IIOMetadataNode valuesNode = new IIOMetadataNode(TAG_GEOTIFF_ASCIIS);
@@ -690,7 +690,7 @@ public class TiffImageReader extends SpatialImageReader {
                     tagBody.appendChild(valuesNode);
                     break;
                 }
-                case TYPE_UBYTE : 
+                case TYPE_UBYTE :
                 case TYPE_SHORT : {
                     final IIOMetadataNode valueNode = new IIOMetadataNode(TAG_GEOTIFF_SHORTS);
                     for (int i = 0; i < count; i++) {
@@ -713,7 +713,7 @@ public class TiffImageReader extends SpatialImageReader {
                 }
                 case TYPE_INT :
                 case TYPE_UINT :
-                case TYPE_LONG : 
+                case TYPE_LONG :
                 case TYPE_ULONG : {
                     final IIOMetadataNode valueNode = new IIOMetadataNode(TAG_GEOTIFF_LONGS);
                     for (int i = 0; i < count; i++) {
@@ -724,9 +724,9 @@ public class TiffImageReader extends SpatialImageReader {
                     tagBody.appendChild(valueNode);
                     break;
                 }
-                case TYPE_RATIONAL : 
-                case TYPE_URATIONAL : 
-                case TYPE_FLOAT : 
+                case TYPE_RATIONAL :
+                case TYPE_URATIONAL :
+                case TYPE_FLOAT :
                 case TYPE_DOUBLE : {
                     final IIOMetadataNode valueNode = new IIOMetadataNode(TAG_GEOTIFF_DOUBLES);
                     for (int i = 0; i < count; i++) {
@@ -770,7 +770,7 @@ public class TiffImageReader extends SpatialImageReader {
             throw new IIOException(error(Errors.Keys.NO_SUCH_ELEMENT_NAME_1, name));
         }
     }
-    
+
     /**
      * Parses the content of the directory entry at the current {@linkplain #buffer} position.
      * The {@linkplain #buffer} is assumed to have all the required bytes for one entry. The
@@ -852,12 +852,12 @@ public class TiffImageReader extends SpatialImageReader {
             default: throw new AssertionError(type);
         }
     }
-    
+
     /**
      * Reads a value from the directory entry and add them in {@linkplain #headProperties}. This method can be invoked right after the entry ID.
      * The {@linkplain #buffer} is assumed to have all the required bytes for one entry. The buffer
      * position is undetermined after this method call.
-     * 
+     *
      * @param tag Tiff tag integer.
      * @param type type of tag
      * @param count data number will be read
@@ -876,7 +876,7 @@ public class TiffImageReader extends SpatialImageReader {
         switch(tag) {
             case PlanarConfiguration: { // PlanarConfiguration.
                 assert count == 1 : "with tiff PlanarConfiguration tag, count should be equal 1.";
-                final short planarConfiguration = (short) buffer.getShort(); 
+                final short planarConfiguration = (short) buffer.getShort();
                 if (planarConfiguration != 1) { // '1' stands for "chunky", 2 for "planar".
                     throw new UnsupportedImageFormatException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2,
                             "planarConfiguration", planarConfiguration));
@@ -892,7 +892,7 @@ public class TiffImageReader extends SpatialImageReader {
 //                    throw new UnsupportedImageFormatException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2,
 //                            "photometricInterpretation", photometricInterpretation));
 //                }
-                
+
                 tagAttributs.put(ATT_VALUE, new short[]{photometricInterpretation});
                 headProperties.put(tag, tagAttributs);
                 break;
@@ -916,11 +916,11 @@ public class TiffImageReader extends SpatialImageReader {
             }
             default : {
                switch (type) {// ici le les 4 bytes 8-11 ne sont pas des offset mais les valeurs reelles car elles tiennent dans 4 octets.
-                    case TYPE_ASCII : 
+                    case TYPE_ASCII :
                     case TYPE_BYTE  : {
-                        if (count > offsetSize / Byte.SIZE) 
+                        if (count > offsetSize / Byte.SIZE)
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
-                        final long[] result = new long[(int) count]; ///// 
+                        final long[] result = new long[(int) count]; /////
                         for (int i = 0; i < count; i++) {
                             result[i] = buffer.get();
                         }
@@ -929,7 +929,7 @@ public class TiffImageReader extends SpatialImageReader {
                         break;
                     }
                     case TYPE_UBYTE : {
-                        if (count > offsetSize / Byte.SIZE) 
+                        if (count > offsetSize / Byte.SIZE)
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
                         final long[] result = new long[(int)count]; ////// j'aime pas trop ce cast
                         for (int i = 0; i < count; i++) {
@@ -940,7 +940,7 @@ public class TiffImageReader extends SpatialImageReader {
                         break;
                     }
                     case TYPE_SHORT : {
-                        if (count > (offsetSize / Short.SIZE)) 
+                        if (count > (offsetSize / Short.SIZE))
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
                         final long[] result = new long[(int)count];
                         for (int i = 0; i < count; i++) {
@@ -951,7 +951,7 @@ public class TiffImageReader extends SpatialImageReader {
                         break;
                     }
                     case TYPE_USHORT: {
-                        if (count > (offsetSize / Short.SIZE)) 
+                        if (count > (offsetSize / Short.SIZE))
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
                         final long[] result = new long[(int)count];
                         for (int i = 0; i < count; i++) {
@@ -987,8 +987,8 @@ public class TiffImageReader extends SpatialImageReader {
                     /*
                      * Only use by bigTiff format.
                      */
-                    case TYPE_LONG  : 
-                    case TYPE_ULONG : 
+                    case TYPE_LONG  :
+                    case TYPE_ULONG :
                     case TYPE_IFD8  : {
                         if (count > 1)
                             throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
@@ -1002,16 +1002,16 @@ public class TiffImageReader extends SpatialImageReader {
                         tagAttributs.put(ATT_VALUE, result);
                         headProperties.put(tag, tagAttributs);
                         break;
-                    } 
+                    }
                     case 7 : {
                         break;
                     }
                     default : throw new IIOException(error(Errors.Keys.ILLEGAL_PARAMETER_TYPE_2, getName(tag), type));
                 }
             }
-        }       
+        }
     }
-    
+
     /**
      * To be invoked after {@link #entryValues(String, Collection)} in order to process all
      * the deferred arrays. This method tries to read the arrays in sequential order as much
@@ -1022,7 +1022,7 @@ public class TiffImageReader extends SpatialImageReader {
      */
     private void readDeferredArrays(final long[][] deferred) throws IOException {
         Arrays.sort(deferred, OFFSET_COMPARATOR);// range offset du + petit o + grand pour eviter les gros mouvements de chariots.
-        
+
         for (long[] defTab : deferred) {
             final int tag      = (int) (defTab[0] & 0xFFFF);
             final short type   = (short) defTab[1];
@@ -1030,16 +1030,16 @@ public class TiffImageReader extends SpatialImageReader {
             // in tiff spec offset or data are always unsigned
             final long offset  = defTab[3] & 0xFFFFFFFFL;
             final int dataSize = TYPE_SIZE[type];
-            
+
             final int length = count * dataSize;
-            
+
             final Map<String, Object> tagAttributs = new HashMap<String, Object>();
             tagAttributs.put(ATT_NAME, getName(tag));
             tagAttributs.put(ATT_TYPE, type);
             tagAttributs.put(ATT_COUNT, (long) count);
-            
+
             Object result = (type == TYPE_DOUBLE || type == TYPE_FLOAT || type == TYPE_RATIONAL || type == TYPE_URATIONAL) ? new double[count] : new long[count];
-            
+
             int currentPos = (int) offset;
             int maxBuffPos = (int) (offset + length);
             final int buffCapacity = (buffer.capacity() / dataSize) * dataSize;
@@ -1050,7 +1050,7 @@ public class TiffImageReader extends SpatialImageReader {
                     ensureBufferContains(currentPos, Math.min(currentByteLength, buffCapacity), Math.max(currentByteLength, 1024));
                     final int dataNumber = currentByteLength / dataSize;
                     assert buffer.remaining() >= currentByteLength;
-                    
+
                 if (type == TYPE_DOUBLE || type == TYPE_FLOAT || type == TYPE_RATIONAL || type == TYPE_URATIONAL) {
                     for (int i = 0; i < dataNumber; i++) {
                         Array.setDouble(result, resultId++, readAsDouble(type));
@@ -1066,7 +1066,7 @@ public class TiffImageReader extends SpatialImageReader {
             headProperties.put(tag, tagAttributs);
         }
     }
-    
+
     /**
      * Comparator used for sorting the array to be processed by {@link #readDeferredArrays(long[][])},
      * in order to read the data sequentially from the disk.
@@ -1269,19 +1269,19 @@ public class TiffImageReader extends SpatialImageReader {
                 case 2 : { // RGB
                     cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
                     break;
-                } 
+                }
                 case 3 : {// palette
                     Map<String, Object> colorMod = headProperties.get(ColorMap);
-                    if (colorMod == null) 
+                    if (colorMod == null)
                         throw new UnsupportedImageFormatException("image should own colorMap informations.");
-                                        
+
                     final Map<String, Object> bitsPerSamples = (headProperties.get(BitsPerSample));
-                    if (bitsPerSamples == null) 
+                    if (bitsPerSamples == null)
                         throw new UnsupportedImageFormatException(error(Errors.Keys.FORBIDDEN_ATTRIBUTE_2,
                             "bitsPerSamples", "color map"));
-                    
+
                     final int bitpersampl = (int) ((long[])bitsPerSamples.get(ATT_VALUE))[0];
-                    
+
                     // find appropriate databuffer image type from size of sample.
                     final int databufferType;
                     switch (bitpersampl) {
@@ -1294,7 +1294,7 @@ public class TiffImageReader extends SpatialImageReader {
                                     Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", bitpersampl));
                         }
                     }
-                    
+
                     final long[] index  = (long[]) colorMod.get(ATT_VALUE);
                     final int[] indexes = buildColorMapArray(index);
                     System.out.println("reader : "+Arrays.toString(indexes));
@@ -1307,7 +1307,7 @@ public class TiffImageReader extends SpatialImageReader {
                             "photometricInterpretation", photoInter));
                 }
             }
-            
+
             final int type;
             final int[] bits;
             final long[] bitsPerSample = this.bitsPerSample;
@@ -1359,7 +1359,7 @@ public class TiffImageReader extends SpatialImageReader {
 
     /**
      * Convert and return color map array from tiff file to an Integer array adapted to build {@link IndexColorModel} in java.
-     * 
+     *
      * @param colorMap array given by tiff reading.
      * @return an Integer array adapted to build {@link IndexColorModel} in java.
      */
@@ -1368,38 +1368,38 @@ public class TiffImageReader extends SpatialImageReader {
         assert (indexLength % 3 == 0) : "color map array length should be modulo 3";
         final int length_3 = indexLength / 3;
         final int[] result = new int[length_3];
-        
+
         // color map in a tiff file : N Red values -> N Green values -> N Blue values
         int idR = 0;
         int idG = length_3;
         int idB = length_3 << 1;// = 2 * length_3
-        
+
         /*
          * mask applied to avoid the low-order bits from the red color overlaps the bits of green color.
          * Moreover to avoid the low-order bits from the green color overlaps the bits of blue color.
          */
         final int mask = 0x0000FF00;
-        
+
         /*
          * In indexed color model in java, values to defind palette for each color are between 0 -> 255.
          * To build integer value in palette, we need to shift red value by 16 bits, green value by 8 bits and no shift to blue.
-         * 
+         *
          * In our case we build a color model from color map (tiff palette) values define between 0 -> 65535.
          * Then build integer value in palette we will shift each color value by normaly shift minus 8, to bring back all values between 0 -> 256.
          */
-        
+
         final int alpha = 0xFF000000;
-        
+
         // pixel : 1111 1111 | R | G | B
         for (int i = 0; i < length_3; i++) {
-            final int r = ((int) (colorMap[idR++] & mask) << 8);  
-            final int g = ((int) colorMap[idG++] & mask);    
+            final int r = ((int) (colorMap[idR++] & mask) << 8);
+            final int g = ((int) colorMap[idG++] & mask);
             final int b = ((int) colorMap[idB++] >> 8) ;
             result[i] = alpha | r | g | b;
         }
         return result;
     }
-    
+
     /**
      * Returns a collection of {@link ImageTypeSpecifier} containing possible image types to which
      * the given image may be decoded. The default implementation returns a singleton containing
@@ -1428,7 +1428,7 @@ public class TiffImageReader extends SpatialImageReader {
         final BufferedImage image = getDestination(param, getImageTypes(imageIndex), imageWidth, imageHeight);// creer une image vide du bon type
         final Rectangle srcRegion = new Rectangle();
         final Rectangle dstRegion = new Rectangle();
-        
+
         /*
          * compute region : ajust les 2 rectangles src region et dest region en fonction des coeff subsampling present dans Imagereadparam.
          */
@@ -1451,7 +1451,7 @@ public class TiffImageReader extends SpatialImageReader {
     /**
      * Processes to the image reading, and stores the pixels in the given raster.<br/>
      * Process fill raster from informations stored in stripOffset made.
-     * 
+     *
      * @param  raster    The raster where to store the pixel values.
      * @param  param     Parameters used to control the reading process, or {@code null}.
      * @param  srcRegion The region to read in source image.
@@ -1489,7 +1489,7 @@ public class TiffImageReader extends SpatialImageReader {
         final int targetPixelStride    = sampleSize * numBands;
         final int sourceScanlineStride = sourcePixelStride * imageWidth;
         final int targetScanlineStride = SampleModels.getScanlineStride(raster.getSampleModel());
-        
+
         /*
          * Get a view of the ByteBuffer as a NIO Buffer of the appropriate type.
          * The buffer is cleared first because the 'sourceBuffer' capacity will
@@ -1510,7 +1510,7 @@ public class TiffImageReader extends SpatialImageReader {
             default: throw new IIOException(error(Errors.Keys.UNSUPPORTED_DATA_TYPE, dataBuffer.getClass()));
         }
         buffer.limit(limit).position(position);
-        
+
         for (int bank = 0; bank < bankOffsets.length; bank++) {
             /*
              * Get the underlying array of the image DataBuffer in which to write the data.
@@ -1525,20 +1525,20 @@ public class TiffImageReader extends SpatialImageReader {
                 case DataBuffer.TYPE_DOUBLE : targetArray = ((DataBufferDouble) dataBuffer).getData(bank); break;
                 default: throw new AssertionError(dataType);
             }
-            
+
             int readLength, srcStepX, srcStepY;
-            
+
             if (sourceXSubsampling == 1) {
                 /*
                  * if we want to read all image which mean : srcRegion = dstRegion
                  * and all strip are organize inascending order in tiff file and
                  * moreover if datatype is Byte, we can fill a byteBuffer in one time, by all red samples values.
                  */
-                if (sourceYSubsampling == 1 && dstRegion.equals(srcRegion) 
-                                            && checkStrips(stripOffsets, stripByteCounts) 
+                if (sourceYSubsampling == 1 && dstRegion.equals(srcRegion)
+                                            && checkStrips(stripOffsets, stripByteCounts)
                                             && sourceScanlineStride == dstRegion.width * targetPixelStride
                                             && dataType == DataBuffer.TYPE_BYTE) {
-                    
+
                     readLength = (int) ((stripOffsets[stripOffsets.length-1] + stripByteCounts[stripOffsets.length-1] - stripOffsets[0]) / sampleSize);
                     final ByteBuffer bbuff = ByteBuffer.wrap((byte[]) targetArray);
                     channel.read(bbuff, stripOffsets[0]);
@@ -1552,7 +1552,7 @@ public class TiffImageReader extends SpatialImageReader {
                 readLength = numBands;
                 srcStepX   = sourceXSubsampling;
             }
-            
+
             srcStepY              = sourceYSubsampling;
             final int buffStepX   = (sourceXSubsampling - 1) * sourcePixelStride;
             /*
@@ -1561,41 +1561,41 @@ public class TiffImageReader extends SpatialImageReader {
              */
             int currentMaxRowPerStrip = -1;
             int currentStripOffset, srcBuffPos = -1;
-            
+
             final int srcMaxx = srcRegion.x + srcRegion.width;
             final int srcMaxy = srcRegion.y + srcRegion.height;
-            
-            // target start 
+
+            // target start
             int bankID = bankOffsets[bank] + targetScanlineStride * dstRegion.y;
-            
+
             // step on x axis in source window (srcRegion)
             final int srcStepBeforeReadX = srcRegion.x * sourcePixelStride;
             final int srcStepAfterReadX  = (sourceScanlineStride - (srcRegion.x + srcRegion.width) * targetPixelStride);
-            
+
             // step on x axis in target window (dstRegion)
             final int dstStepBeforeReadX = dstRegion.x * numBands;
             final int dstStepAfterReadX  = (targetScanlineStride - (dstRegion.x + dstRegion.width) * targetPixelStride) / sampleSize;
-            
+
             // byte number read for each buffer read action.
             final int srcBuffReadLength = readLength * sampleSize;
-            
+
             // buffer.capacity
             final int buffCapacity = buffer.capacity();
-            
+
             for (int y = srcRegion.y; y < srcMaxy; y += srcStepY) {
                 if (y >= currentMaxRowPerStrip) {
                     currentStripOffset    = y / rowsPerStrip;
                     currentMaxRowPerStrip = currentStripOffset + rowsPerStrip;
                     srcBuffPos = (int) stripOffsets[currentStripOffset] + (y - currentStripOffset * rowsPerStrip) * sourceScanlineStride;
                 }
-                
+
                 // move at correct table position from dstRegion.x begin position.
                 bankID += dstStepBeforeReadX;
-                
+
                 // move at correct buffer position from srcRegion.x begin position.
                 assert srcBuffPos != -1 : "bad source buffer position initialize value.";
                 srcBuffPos += srcStepBeforeReadX;
-                
+
                 for (int x = srcRegion.x; x < srcMaxx; x += srcStepX) {
                     // adjust read length in function of buffer capacity.
                     int currentPos       = srcBuffPos;
@@ -1603,16 +1603,16 @@ public class TiffImageReader extends SpatialImageReader {
                     while (currentPos < maxBuffPos) {
                         final int currentByteLength = Math.min(currentPos + buffCapacity, maxBuffPos) - currentPos;
                         assert currentByteLength % sampleSize == 0 : "current length = "+currentByteLength+" samplesize = "+sampleSize;
-                        
+
                         // adjust buffer to read currentByteLength at srcBuff position
                         ensureBufferContains(srcBuffPos, Math.min(currentByteLength, buffCapacity), Math.max(currentByteLength, 1024));
                         sourceBuffer.limit(buffer.limit()).position(buffer.position());
-                        
+
                         assert currentByteLength % sampleSize == 0;
-                        
+
                         // sample number red
                         final int samplesLenght = currentByteLength / sampleSize;
-                        
+
                         switch (dataType) {
                             case DataBuffer.TYPE_BYTE   : ((ByteBuffer)   sourceBuffer).get((byte[])   targetArray, bankID, samplesLenght); break;
                             case DataBuffer.TYPE_USHORT :
@@ -1625,7 +1625,7 @@ public class TiffImageReader extends SpatialImageReader {
                         bankID     += samplesLenght;
                         currentPos += currentByteLength;
                     }
-                    
+
                     // move bank index and source buffer position by read length.
                     srcBuffPos += srcBuffReadLength;
                     /*
@@ -1634,21 +1634,21 @@ public class TiffImageReader extends SpatialImageReader {
                      */
                     srcBuffPos += buffStepX;
                 }
-                
+
                 // advance bank index from end destination window (dstRegion.x + dstRegion.width) to end of row.
                 bankID     += dstStepAfterReadX;
-                
+
                 // move at correct buffer position from end source window (srcRegion.x + srcRegion.width) to end of row.
                 srcBuffPos += srcStepAfterReadX;
             }
         }
     }
-    
+
     /**
      * Processes to the image reading, and stores the pixels in the given raster.<br/>
      * Process fill raster from informations stored in stripOffset made.<br/>
      * Method adapted to read data from packbits(tag 32773) compression.
-     * 
+     *
      * @param  raster    The raster where to store the pixel values.
      * @param  param     Parameters used to control the reading process, or {@code null}.
      * @param  srcRegion The region to read in source image.
@@ -1686,7 +1686,7 @@ public class TiffImageReader extends SpatialImageReader {
         final int targetPixelStride    = sampleSize * numBands;
         final int sourceScanlineStride = sourcePixelStride * imageWidth;
         final int targetScanlineStride = SampleModels.getScanlineStride(raster.getSampleModel());
-        
+
         assert dataType == DataBuffer.TYPE_BYTE : "with packBits compression input and output databuffer type should be instance of DataBuffer.TYPE_BYTE";
         /*
          * Get a view of the ByteBuffer as a NIO Buffer of the appropriate type.
@@ -1700,53 +1700,53 @@ public class TiffImageReader extends SpatialImageReader {
         buffer.clear();
         sourceBuffer = buffer.duplicate();
         buffer.limit(limit).position(position);
-        
+
         for (int bank = 0; bank < bankOffsets.length; bank++) {
             /*
              * Get the underlying array of the image DataBuffer in which to write the data.
              */
             final byte[] targetArray = ((DataBufferByte) dataBuffer).getData(bank);
-            
+
             /*
              * Iterate over the strip to read, in sequential file access order (which is not
              * necessarily the same than row indices order).
              */
             final int srcMaxx = srcRegion.x + srcRegion.width;
             final int srcMaxy = srcRegion.y + srcRegion.height;
-            
+
             // step on x axis in target window (dstRegion)
             final int dstStepBeforeReadX = dstRegion.x * numBands;
             final int dstStepAfterReadX  = (targetScanlineStride - (dstRegion.x + dstRegion.width) * targetPixelStride) / sampleSize;
-            
-            // target start 
+
+            // target start
             int bankID = bankOffsets[bank] + targetScanlineStride * dstRegion.y;
-            
+
             // buffer.capacity
             final int buffCapacity = buffer.capacity();
-            
+
             // stripoffset array index start
             int currentStripOffset    = srcRegion.y / rowsPerStrip;
-            
+
             // buffer start position
             int currentBuffPos        = (int) stripOffsets[currentStripOffset];
-            
+
             // row index of next strip
             int currentMaxRowperStrip = (currentStripOffset + 1) * rowsPerStrip;
-            
+
             // row index from stripoffset
             int ypos                  = currentStripOffset * rowsPerStrip;
-            
+
             // row index to begin to write
             int yref                  = srcRegion.y;
             int xref, bankStepBefore, bankStepAfter;
-            
+
             while (ypos < srcMaxy) {
                 if (ypos >= currentMaxRowperStrip) {
                     currentStripOffset++;
                     currentBuffPos = (int) stripOffsets[currentStripOffset];
                     currentMaxRowperStrip += rowsPerStrip;
                 }
-                
+
                 if (ypos == yref) {
                     // we write current row
                     xref     = srcRegion.x;
@@ -1758,14 +1758,14 @@ public class TiffImageReader extends SpatialImageReader {
                     xref = srcMaxx; // assertion (xpos == xref && xref < srcMaxx) will never be append
                     bankStepBefore = bankStepAfter = 0;
                 }
-                
+
                 int xpos = 0;
                 bankID += bankStepBefore;
                 while (xpos < sourceScanlineStride) {
                     // adjust buffer to read currentByteLength at currentBuffPos position
                     ensureBufferContains(currentBuffPos, Math.min(sourceScanlineStride - xpos, buffCapacity), Math.max(sourceScanlineStride - xpos, 1024));
                     sourceBuffer.limit(buffer.limit()).position(buffer.position());
-                    
+
                     int n = ((ByteBuffer)sourceBuffer).get();
                     if (n >= -127 && n <= - 1) {
                         n = - n + 1; // we write n times the following value.
@@ -1795,7 +1795,7 @@ public class TiffImageReader extends SpatialImageReader {
                                     ensureBufferContains(currentBuffPos, Math.min(remainCap, buffCapacity), Math.max(remainCap, 1024));
                                     sourceBuffer.limit(buffer.limit()).position(buffer.position());
                                 }
-                                
+
                                 final int length = endx - debx;
                                 sourceBuffer.get(targetArray, bankID, length);
                                 bankID         += length;
@@ -1824,10 +1824,10 @@ public class TiffImageReader extends SpatialImageReader {
             }
         }
     }
-    
+
     /**
      * Verifies if all the strips are sequenced as a result in the file.
-     * 
+     *
      * @param stripOffsets strip offset table.
      * @param stripByteCounts strip length in Byte.
      * @return true if all the strips are sequenced as a result in the file else false.
@@ -1838,7 +1838,7 @@ public class TiffImageReader extends SpatialImageReader {
         }
         return true;
     }
-    
+
     /**
      * Processes to the image reading, and stores the pixels in the given raster.
      *
@@ -2061,21 +2061,21 @@ public class TiffImageReader extends SpatialImageReader {
     /**
      * Formats an error message with no argument.
      */
-    private String error(final int key) {
+    private String error(final short key) {
         return Errors.getResources(getLocale()).getString(key);
     }
 
     /**
      * Formats an error message with one argument.
      */
-    private String error(final int key, final Object arg0) {
+    private String error(final short key, final Object arg0) {
         return Errors.getResources(getLocale()).getString(key, arg0);
     }
 
     /**
      * Formats an error message with two argument.
      */
-    private String error(final int key, final Object arg0, final Object arg1) {
+    private String error(final short key, final Object arg0, final Object arg1) {
         return Errors.getResources(getLocale()).getString(key, arg0, arg1);
     }
 

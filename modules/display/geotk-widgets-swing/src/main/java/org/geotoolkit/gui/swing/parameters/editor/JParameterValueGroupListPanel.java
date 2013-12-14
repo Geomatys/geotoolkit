@@ -50,161 +50,161 @@ import org.openide.util.NbBundle;
  * @author Quentin Boileau (Geomatys)
  */
 public final class JParameterValueGroupListPanel extends GeneralParameterValuePanel {
-    
+
     /**
      * Expender/Collapse icons.
      */
     private static final ImageIcon CARET_DOWN = IconBuilder.createIcon(FontAwesomeIcons.ICON_CARET_DOWN, 18, Color.BLACK);
     private static final ImageIcon CARET_RIGHT = IconBuilder.createIcon(FontAwesomeIcons.ICON_CARET_RIGHT, 18, Color.BLACK);
-    
+
     /*
      * JParameterEditor propertyChangeListener transfered to JParameterValueGroupPanel children
      * GeneralParameterValuePanel. This listener is use by JParameterEditor to know if a parameter
      * is selected or not in order to update creatorPanel.
      */
-    private final PropertyChangeListener editorListener; //JParameterEditor 
-    
+    private final PropertyChangeListener editorListener; //JParameterEditor
+
     /*
-     * Min/Max group occurences. This define the min/max range for 
+     * Min/Max group occurences. This define the min/max range for
      * JParameterValueGroupPanel child list.
      */
     private final int minOccurs;
     private final int maxOccurs;
-    
+
     /*
      * Custom editor used by JParameterValuePanel
      */
     private final CustomParameterEditor customEditor;
-    
+
     /*
      * List of avaible editors used by JParameterValuePanel
      */
     private final List<PropertyValueEditor> availableEditors;
-    
+
     /*
      * Boolean to know if current ParameterValueGroup is unic.
      * True if min and max occurs of current ParameterValueGroup descriptor are equals to 1.
-     */ 
-    private final boolean isUnicGroup; 
-    
+     */
+    private final boolean isUnicGroup;
+
     /*
      * Expended state
      */
     private boolean isExpended = true;
-    
+
     /*
      * List of JParameterValueGroupPanel child.
      */
     private List<JParameterValueGroupPanel> valueGroupPanels;
-    
+
     /**
-     * Keep default label color in order to restore if a 
+     * Keep default label color in order to restore if a
      * validation error occurs and turn it in red.
      */
     private Color defaultLabelColor;
-    
+
     /**
      * Create JParameterValueGroupPanel from ParameterDescriptorGroup
      * @param descriptor
      * @param parent
-     * @param listener 
+     * @param listener
      */
     public JParameterValueGroupListPanel(final ParameterDescriptorGroup descriptor, final JParameterValueGroupPanel parent,
             final PropertyChangeListener listener, final List<PropertyValueEditor> availableEditors, final CustomParameterEditor customEditor) {
         this(descriptor.createValue(), parent, listener, availableEditors,customEditor);
     }
-    
+
     /**
      * Create JParameterValueGroupPanel from ParameterValueGroup
      * @param valueGroup
      * @param parent
-     * @param listener 
+     * @param listener
      */
-    public JParameterValueGroupListPanel(final ParameterValueGroup valueGroup, final JParameterValueGroupPanel parent, 
+    public JParameterValueGroupListPanel(final ParameterValueGroup valueGroup, final JParameterValueGroupPanel parent,
             final PropertyChangeListener listener, final List<PropertyValueEditor> availableEditors, final CustomParameterEditor customEditor) {
         this(Collections.singletonList(valueGroup), valueGroup.getDescriptor(), parent, listener, availableEditors, customEditor);
     }
-    
+
     /**
      * Create JParameterValueGroupPanel from a list of ParameterValueGroup.
      * @param valueGroups
      * @param descriptor
      * @param parent
-     * @param listener 
+     * @param listener
      */
     JParameterValueGroupListPanel(final List<ParameterValueGroup> valueGroups, final ParameterDescriptorGroup descriptor,
             final JParameterValueGroupPanel parent, final PropertyChangeListener listener, final List<PropertyValueEditor> availableEditors,
             final CustomParameterEditor customEditor) {
         super(descriptor, parent);
-        
+
         this.availableEditors = availableEditors;
         this.customEditor = customEditor;
         this.editorListener = listener;
         this.minOccurs = paramDesc.getMinimumOccurs();
         this.maxOccurs = paramDesc.getMaximumOccurs();
         this.isUnicGroup = (minOccurs==1 && maxOccurs==1);
-        
+
         //create groups
         this.valueGroupPanels = new LinkedList<JParameterValueGroupPanel>();
         for (ParameterValueGroup valueGroup : valueGroups) {
             valueGroupPanels.add(new JParameterValueGroupPanel(valueGroup, this, editorListener, availableEditors, customEditor));
         }
-        
+
         initComponents();
-        
+
         //expender
         guiExpenderBtn.setText(null);
         guiExpenderBtn.setIcon(CARET_DOWN);
-        
+
         //ToolTipText on buttons.
         guiExpenderBtn.setToolTipText(MessageBundle.getString("parameters.collapse"));
         guiNewGroupBtn.setToolTipText(MessageBundle.getString("parameters.addNewGroupParameter"));
-       
+
         //label
         guiGroupNameLbl.setText(code);
         guiGroupNameLbl.setCursor(new Cursor(Cursor.HAND_CURSOR));
         guiGroupNameLbl.addMouseListener(this);
         SwingUtilities.bold(guiGroupNameLbl);
         defaultLabelColor = guiGroupNameLbl.getForeground();
-        
+
         this.setBorder(new EmptyBorder(1, 1, 1, 1));
-        
+
         if (isUnicGroup) {
             guiNewGroupBtn.setVisible(false);
         }
-        
+
         updateContent();
     }
-    
+
     /**
      * Return all create groups.
      * @return list of <code>ParameterValueGroup</code>
      */
     public List<ParameterValueGroup> getParameterValues() {
         final List<ParameterValueGroup> valueGroups = new ArrayList<ParameterValueGroup>();
-        
+
         for (final JParameterValueGroupPanel valueGroup : valueGroupPanels) {
             valueGroups.add(valueGroup.getParameterValue());
         }
-        
+
         return valueGroups;
     }
-    
+
     public boolean validateValues() {
         boolean valid = true;
         validationError = null;
-        
+
         for (JParameterValueGroupPanel groupEditor : valueGroupPanels) {
             if (!groupEditor.validateValues()) {
                 valid = false;
             }
         }
-        
+
         final int groupSize = valueGroupPanels.size();
         if (groupSize < minOccurs || groupSize > maxOccurs) {
             //Error
             final String name = paramDesc.getName().getCode();
-            final int key;
+            final short key;
             final Object[] param;
             if (groupSize == 0) {
                 key = Errors.Keys.NO_PARAMETER_1;
@@ -216,16 +216,16 @@ public final class JParameterValueGroupListPanel extends GeneralParameterValuePa
             validationError = Errors.formatInternational(key, param).toString();
             valid = false;
         }
-        
+
         if (!valid && validationError != null) {
             guiGroupNameLbl.setForeground(Color.RED);
         } else {
             guiGroupNameLbl.setForeground(defaultLabelColor);
         }
-        
+
         return valid;
     }
-    
+
     @Override
     public void setBackgroundColor(final Color color) {
         topPanel.setBackground(color);
@@ -243,7 +243,7 @@ public final class JParameterValueGroupListPanel extends GeneralParameterValuePa
     public int getMaxOccurs() {
         return maxOccurs;
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -336,7 +336,7 @@ public final class JParameterValueGroupListPanel extends GeneralParameterValuePa
 
     /**
      * Expend/Collapse children parameters.
-     * @param evt 
+     * @param evt
      */
     private void guiExpenderBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiExpenderBtnActionPerformed
         isExpended = !isExpended;
@@ -344,7 +344,7 @@ public final class JParameterValueGroupListPanel extends GeneralParameterValuePa
             guiExpenderBtn.setIcon(CARET_DOWN);
             guiExpenderBtn.setToolTipText(MessageBundle.getString("parameters.collapse"));
             bottomPanel.setVisible(true);
-            
+
         } else {
             guiExpenderBtn.setIcon(CARET_RIGHT);
             guiExpenderBtn.setToolTipText(MessageBundle.getString("parameters.expend"));
@@ -354,7 +354,7 @@ public final class JParameterValueGroupListPanel extends GeneralParameterValuePa
 
     /**
      * Add new JParameterValueGroupPanel to children.
-     * @param evt 
+     * @param evt
      */
     private void guiNewGroupBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiNewGroupBtnActionPerformed
         //create new group only if current number of groups is < to max occurences defined by group descriptor.
@@ -372,7 +372,7 @@ public final class JParameterValueGroupListPanel extends GeneralParameterValuePa
             updateContent();
         }
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JPanel containerPanel;
@@ -389,32 +389,32 @@ public final class JParameterValueGroupListPanel extends GeneralParameterValuePa
      */
     @Override
     public void updateContent() {
-        
+
         guiGroupNameLbl.setText(code);
-        
+
         if (valueGroupPanels.size() >= maxOccurs) {
             guiNewGroupBtn.setEnabled(false);
         } else {
             guiNewGroupBtn.setEnabled(true);
         }
-        
+
         boolean canRemove = (valueGroupPanels.size() > minOccurs);
-        
+
         //clear
         containerPanel.removeAll();
-        
+
         GridBagConstraints constraint;
         JLabel guiNumberLbl;
         JButton guiRemoveGroupBtn;
-        
+
         int index = 0;
-        
+
         //first all simple parameters
         for (JParameterValueGroupPanel group : valueGroupPanels) {
-            final Color color = index % 2 == 0 ? UIManager.getColor("Label.background") 
+            final Color color = index % 2 == 0 ? UIManager.getColor("Label.background")
                     : SwingUtilities.darker(UIManager.getColor("Label.background"), 0.85f);
             if (group != null) {
-                
+
                 if (!isUnicGroup) {
                     //////////////////
                     // group number
@@ -431,7 +431,7 @@ public final class JParameterValueGroupListPanel extends GeneralParameterValuePa
                     guiNumberLbl.setBackground(color);
                     containerPanel.add(guiNumberLbl, constraint);
                 }
-                
+
                 ///////////////////
                 //group panel
                 constraint = new GridBagConstraints();
@@ -441,12 +441,12 @@ public final class JParameterValueGroupListPanel extends GeneralParameterValuePa
                 constraint.weighty = 0.0;
                 constraint.fill = GridBagConstraints.BOTH;
                 if (isUnicGroup) constraint.gridwidth = GridBagConstraints.REMAINDER;
-                
+
                 group.setBorder(new LineBorder(color, 2));
                 group.setOpaque(false);
                 group.setBackground(color);
                 containerPanel.add(group, constraint);
-                
+
                 //if current Group is root group or if had multiplicity 1 - 1
                 if (!isUnicGroup) {
                     ///////////////////
@@ -474,16 +474,16 @@ public final class JParameterValueGroupListPanel extends GeneralParameterValuePa
                     });
                     containerPanel.add(guiRemoveGroupBtn, constraint);
                 }
-                
+
                 index++;
             }
         }
-        
+
         this.revalidate();
     }
-    
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        
+
     }
 }
