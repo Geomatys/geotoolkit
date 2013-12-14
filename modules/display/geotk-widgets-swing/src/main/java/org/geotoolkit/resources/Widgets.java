@@ -50,101 +50,101 @@ public final class Widgets extends IndexedResourceBundle {
         /**
          * Add all
          */
-        public static final int ADD_ALL = 0;
+        public static final short ADD_ALL = 0;
 
         /**
          * Add selected elements
          */
-        public static final int ADD_SELECTED_ELEMENTS = 1;
+        public static final short ADD_SELECTED_ELEMENTS = 1;
 
         /**
          * Confirm data addition
          */
-        public static final int CONFIRM_ADD_DATA = 10;
+        public static final short CONFIRM_ADD_DATA = 10;
 
         /**
          * Confirm delete
          */
-        public static final int CONFIRM_DELETE = 6;
+        public static final short CONFIRM_DELETE = 6;
 
         /**
          * <html>Are you sure you want to delete "<cite>{0}</cite>"?< <strong>This action will remove
          * all references to raster data in that layer.</strong> However, the raster files will not be
          * deleted.</html>
          */
-        public static final int CONFIRM_DELETE_LAYER_1 = 7;
+        public static final short CONFIRM_DELETE_LAYER_1 = 7;
 
         /**
          * A {0,choice,0#horizontal|1#vertical} Coordinate Reference System must be specified.
          */
-        public static final int CRS_REQUIRED_1 = 16;
+        public static final short CRS_REQUIRED_1 = 16;
 
         /**
          * Domain of entries to list
          */
-        public static final int DOMAIN_OF_ENTRIES = 8;
+        public static final short DOMAIN_OF_ENTRIES = 8;
 
         /**
          * You can restrict the amount of images to be listed by specifying a smaller geographic area
          * or time range, or a larger resolution. Leave the values unchanged for listing every images
          * available in the layer.
          */
-        public static final int EXPLAIN_DOMAIN_OF_ENTRIES = 11;
+        public static final short EXPLAIN_DOMAIN_OF_ENTRIES = 11;
 
         /**
          * Incomplete form
          */
-        public static final int INCOMPLETE_FORM = 17;
+        public static final short INCOMPLETE_FORM = 17;
 
         /**
          * Elements of layer {0}
          */
-        public static final int LAYER_ELEMENTS_1 = 9;
+        public static final short LAYER_ELEMENTS_1 = 9;
 
         /**
          * New format (editable).
          */
-        public static final int NEW_FORMAT = 13;
+        public static final short NEW_FORMAT = 13;
 
         /**
          * Raster sample values are geophysics.
          */
-        public static final int RASTER_IS_GEOPHYSICS = 15;
+        public static final short RASTER_IS_GEOPHYSICS = 15;
 
         /**
          * Remove all
          */
-        public static final int REMOVE_ALL = 2;
+        public static final short REMOVE_ALL = 2;
 
         /**
          * Remove selected elements
          */
-        public static final int REMOVE_SELECTED_ELEMENTS = 3;
+        public static final short REMOVE_SELECTED_ELEMENTS = 3;
 
         /**
          * Rename this format if sample dimensions need to be edited.
          */
-        public static final int RENAME_FORMAT_FOR_EDIT = 14;
+        public static final short RENAME_FORMAT_FOR_EDIT = 14;
 
         /**
          * Select a directory
          */
-        public static final int SELECT_DIRECTORY = 4;
+        public static final short SELECT_DIRECTORY = 4;
 
         /**
          * Select a file
          */
-        public static final int SELECT_FILE = 12;
+        public static final short SELECT_FILE = 12;
 
         /**
          * Select variables
          */
-        public static final int SELECT_VARIABLES = 18;
+        public static final short SELECT_VARIABLES = 18;
 
         /**
          * <html><i>from</i> {0}<br><i>to</i> {1}</html>
          */
-        public static final int TIME_RANGE_2 = 5;
+        public static final short TIME_RANGE_2 = 5;
     }
 
     /**
@@ -174,7 +174,7 @@ public final class Widgets extends IndexedResourceBundle {
      * @return The string for the given key.
      * @throws MissingResourceException If no object for the given key can be found.
      */
-    public static String format(final int key) throws MissingResourceException {
+    public static String format(final short key) throws MissingResourceException {
         return getResources(null).getString(key);
     }
 }

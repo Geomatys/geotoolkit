@@ -346,7 +346,7 @@ public class ParameterWriter extends FilterWriter implements Localized {
         table.nextLine(DOUBLE_HORIZONTAL_LINE);
 header: for (int i=0; ; i++) {
             boolean eol = false;
-            final int key;
+            final short key;
             switch (i) {
                 case 0: key = Vocabulary.Keys.NAME;    break;
                 case 1: key = Vocabulary.Keys.TYPE;    break;

@@ -813,7 +813,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
      * @param log {@code true} if the given key is from the {@link Loggings} bundle,
      *        or {@code false} if it is from the {@link Vocabulary} bundle.
      */
-    private void log(final boolean log, final int key, final Object arg) {
+    private void log(final boolean log, final short key, final Object arg) {
         final IndexedResourceBundle bundle = log ?
                 Loggings.getResources(locale) : Vocabulary.getResources(locale);
         final LogRecord record = bundle.getLogRecord(getFineLevel(), key, arg);

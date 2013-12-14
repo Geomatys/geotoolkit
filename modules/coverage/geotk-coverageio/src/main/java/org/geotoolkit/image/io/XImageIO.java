@@ -376,7 +376,7 @@ public final class XImageIO extends Static {
                  */
                 if (input instanceof File) {
                     File file = (File) input;
-                    int messageKey = Errors.Keys.FILE_DOES_NOT_EXIST_1;
+                    short messageKey = Errors.Keys.FILE_DOES_NOT_EXIST_1;
                     File parent;
                     while ((parent = file.getParentFile()) != null && !parent.isDirectory()) {
                         messageKey = Errors.Keys.NOT_A_DIRECTORY_1;
@@ -384,7 +384,7 @@ public final class XImageIO extends Static {
                     }
                     throw new FileNotFoundException(Errors.format(messageKey, file));
                 } else {
-                    final int messageKey;
+                    final short messageKey;
                     final Object argument;
                     if (IOUtilities.canProcessAsPath(input)) {
                         messageKey = Errors.Keys.CANT_READ_FILE_1;
@@ -413,7 +413,7 @@ public final class XImageIO extends Static {
         if (name == null || hasFound) {
             return Errors.format(write ? Errors.Keys.NO_IMAGE_WRITER : Errors.Keys.NO_IMAGE_READER);
         }
-        final int key;
+        final short key;
         String[] choices;
         switch (mode) {
             case NAME:   {

@@ -161,7 +161,7 @@ public class FloatParameter extends AbstractParameterValue<Double> {
         if (thisUnit == null) {
             throw unitlessParameter(descriptor);
         }
-        final int expectedID = getUnitMessageID(thisUnit);
+        final short expectedID = getUnitMessageID(thisUnit);
         if (getUnitMessageID(unit) != expectedID) {
             throw new IllegalArgumentException(Errors.format(expectedID, unit));
         }
@@ -332,7 +332,7 @@ public class FloatParameter extends AbstractParameterValue<Double> {
                 throw unitlessParameter(descriptor);
             } else {
                 ensureNonNull("unit", unit);
-                final int expectedID = getUnitMessageID(targetUnit);
+                final short expectedID = getUnitMessageID(targetUnit);
                 if (getUnitMessageID(unit) != expectedID) {
                     throw new InvalidParameterValueException(Errors.format(expectedID, unit),
                             descriptor.getName().getCode(), value);

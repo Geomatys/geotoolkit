@@ -302,7 +302,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
     /**
      * List of resource keys, to construct the menus in the user's language.
      */
-    private static final int[] RESOURCE_ID = {
+    private static final short[] RESOURCE_ID = {
         /*[0] Left        */ Vocabulary.Keys.LEFT,
         /*[1] Right       */ Vocabulary.Keys.RIGHT,
         /*[2] Up          */ Vocabulary.Keys.UP,

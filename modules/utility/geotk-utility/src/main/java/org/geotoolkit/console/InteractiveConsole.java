@@ -542,7 +542,7 @@ public abstract class InteractiveConsole implements Runnable {
     /**
      * Throws an exception with the given error message.
      */
-    final IllegalArgumentException unexpectedArgument(final int key, String instruction) {
+    final IllegalArgumentException unexpectedArgument(final short key, String instruction) {
         if (colors) {
             instruction = FOREGROUND_YELLOW.sequence() + instruction +
                           FOREGROUND_DEFAULT.sequence();

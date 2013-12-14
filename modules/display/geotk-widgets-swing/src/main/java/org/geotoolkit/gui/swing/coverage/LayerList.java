@@ -360,7 +360,7 @@ public class LayerList extends WindowCreator {
      *
      * @return The field where to write the property value.
      */
-    private static JLabel createField(final Vocabulary resources, final int key) {
+    private static JLabel createField(final Vocabulary resources, final short key) {
         final JLabel label = new JLabel();
         label.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(resources.getString(key)),

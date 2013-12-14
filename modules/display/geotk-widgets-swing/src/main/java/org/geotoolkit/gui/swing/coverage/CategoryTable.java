@@ -204,7 +204,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
         final Vocabulary resources = Vocabulary.getResources(locale);
         headers = new String[TYPES.length];
         for (int i=0; i<TYPES.length; i++) {
-            final int key;
+            final short key;
             switch (i) {
                 case NAME:       key = Vocabulary.Keys.NAME;    break;
                 case SAMPLE_MIN:

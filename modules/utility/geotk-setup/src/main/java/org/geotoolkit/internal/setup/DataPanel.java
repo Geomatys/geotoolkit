@@ -94,7 +94,7 @@ final class DataPanel extends JComponent {
         for (int i=0; i<COUNT; i++) {
             c.gridy = i;
             final String label;
-            final int button;
+            final short button;
             switch (i) {
                 case EPSG: {
                     label = resources.getString(Vocabulary.Keys.DATA_BASE_1, "EPSG");

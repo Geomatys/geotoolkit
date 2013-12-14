@@ -266,7 +266,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
             throw unitlessParameter(descriptor);
         }
         ensureNonNull("unit", unit);
-        final int expectedID = getUnitMessageID(actual);
+        final short expectedID = getUnitMessageID(actual);
         if (getUnitMessageID(unit) != expectedID) {
             throw new IllegalArgumentException(Errors.format(expectedID, unit));
         }
@@ -408,7 +408,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
             throw unitlessParameter(descriptor);
         }
         ensureNonNull("unit", unit);
-        final int expectedID = getUnitMessageID(actual);
+        final short expectedID = getUnitMessageID(actual);
         if (getUnitMessageID(unit) != expectedID) {
             throw new IllegalArgumentException(Errors.format(expectedID, unit));
         }
@@ -560,7 +560,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         if (targetUnit == null) {
             throw unitlessParameter(descriptor);
         }
-        final int expectedID = getUnitMessageID(targetUnit);
+        final short expectedID = getUnitMessageID(targetUnit);
         if (getUnitMessageID(unit) != expectedID) {
             throw new InvalidParameterValueException(Errors.format(expectedID, unit),
                       descriptor.getName().getCode(), value);
@@ -692,7 +692,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         if (targetUnit == null) {
             throw unitlessParameter(descriptor);
         }
-        final int expectedID = getUnitMessageID(targetUnit);
+        final short expectedID = getUnitMessageID(targetUnit);
         if (getUnitMessageID(unit) != expectedID) {
             throw new IllegalArgumentException(Errors.format(expectedID, unit));
         }

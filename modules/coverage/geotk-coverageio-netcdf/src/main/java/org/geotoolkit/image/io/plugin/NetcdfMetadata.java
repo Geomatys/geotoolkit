@@ -681,7 +681,7 @@ final class NetcdfMetadata extends SpatialMetadata {
     /**
      * Convenience method for logging a warning.
      */
-    private void warning(final String method, final int key, final Object value) {
+    private void warning(final String method, final short key, final Object value) {
         LogRecord record = Errors.getResources(getLocale()).getLogRecord(Level.WARNING, key, value);
         record.setSourceClassName(NetcdfMetadata.class.getName());
         record.setSourceMethodName(method);

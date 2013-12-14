@@ -1390,7 +1390,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * We do not use the "variable argument list" syntax because of possible confusion
      * with the {@code Object} type, which is too generic.
      */
-    private void warning(final String method, final int key, final Object arg1, final Object arg2) {
+    private void warning(final String method, final short key, final Object arg1, final Object arg2) {
         if (!Level.OFF.equals(warningLevel)) {
             warning(method, key, new Object[] {arg1, arg2});
         }
@@ -1400,7 +1400,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * Convenience method for logging a warning. Do not allow overriding, because it
      * would not work for warnings emitted by the {@link #getAttributeAsDate} method.
      */
-    private void warning(final String method, final int key, final Object value) {
+    private void warning(final String method, final short key, final Object value) {
         if (!Level.OFF.equals(warningLevel)) {
             warning(MetadataNodeParser.class, method, getErrorResources(), key, value);
         }
@@ -1411,7 +1411,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * {@code MetadataNodeParser} class.
      */
     final void warning(final Class<?> classe, final String method,
-            final IndexedResourceBundle resource, final int key, final Object value)
+            final IndexedResourceBundle resource, final short key, final Object value)
     {
         final Level warningLevel = this.warningLevel;
         if (!Level.OFF.equals(warningLevel)) {

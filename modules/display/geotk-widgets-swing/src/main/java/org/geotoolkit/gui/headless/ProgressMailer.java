@@ -138,7 +138,7 @@ public class ProgressMailer extends ProgressController {
      *        {@link ResourceKeys#WARNING} or {@link ResourceKeys#EXCEPTION}.
      * @param messageText The message to send by email.
      */
-    private void send(final String method, final int subjectKey, final String messageText) {
+    private void send(final String method, final short subjectKey, final String messageText) {
         final Locale locale = getLocale();
         try {
             final Message message = new MimeMessage(session);

@@ -1196,21 +1196,21 @@ public class RawTiffImageReader extends SpatialImageReader {
     /**
      * Formats an error message with no argument.
      */
-    private String error(final int key) {
+    private String error(final short key) {
         return Errors.getResources(getLocale()).getString(key);
     }
 
     /**
      * Formats an error message with one argument.
      */
-    private String error(final int key, final Object arg0) {
+    private String error(final short key, final Object arg0) {
         return Errors.getResources(getLocale()).getString(key, arg0);
     }
 
     /**
      * Formats an error message with two argument.
      */
-    private String error(final int key, final Object arg0, final Object arg1) {
+    private String error(final short key, final Object arg0, final Object arg1) {
         return Errors.getResources(getLocale()).getString(key, arg0, arg1);
     }
 

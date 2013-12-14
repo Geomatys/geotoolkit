@@ -105,7 +105,7 @@ final class TableFactory extends SpatialDatabase {
      * @param method The {@link CoverageDatabase} method which is causing (indirectly)
      *        this object construction.
      */
-    private static void log(final String method, final int key) {
+    private static void log(final String method, final short key) {
         if (LOGGER.isLoggable(Level.FINE)) {
             final LogRecord record = Loggings.format(Level.FINE, key, "CoverageDatabase");
             record.setSourceMethodName(method);

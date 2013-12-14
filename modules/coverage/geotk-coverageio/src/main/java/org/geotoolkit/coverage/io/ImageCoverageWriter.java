@@ -257,7 +257,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                         if (needStream) {
                             imageOutput = ImageIO.createImageOutputStream(output);
                             if (imageOutput == null) {
-                                final int messageKey;
+                                final short messageKey;
                                 final Object argument;
                                 if (IOUtilities.canProcessAsPath(output)) {
                                     messageKey = Errors.Keys.CANT_WRITE_FILE_1;

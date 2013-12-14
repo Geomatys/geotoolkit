@@ -169,7 +169,7 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
          */
         @Override
         public String getColumnName(int column) {
-            final int key;
+            final short key;
             if (column >= VALUE_COLUMN) {
                 column += COLUMN_COUNT - getColumnCount();
                 // Skip the "values" column if it doesn't exist.

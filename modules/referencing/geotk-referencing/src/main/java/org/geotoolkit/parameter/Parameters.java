@@ -356,7 +356,7 @@ public final class Parameters extends Static {
                     final int max = desc.getMaximumOccurs();
                     if (n < min || n > max) {
                         final String name = desc.getName().getCode();
-                        final int key;
+                        final short key;
                         final Object[] param;
                         if (n == 0) {
                             key = Errors.Keys.NO_PARAMETER_1;

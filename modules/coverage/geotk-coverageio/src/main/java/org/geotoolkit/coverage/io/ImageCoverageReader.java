@@ -396,7 +396,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                                 assert CheckedImageInputStream.isValid((ImageInputStream) (imageInput =
                                        CheckedImageInputStream.wrap((ImageInputStream) imageInput)));
                                 if (imageInput == null) {
-                                    final int messageKey;
+                                    final short messageKey;
                                     final Object argument;
                                     if (IOUtilities.canProcessAsPath(input)) {
                                         messageKey = Errors.Keys.CANT_READ_FILE_1;

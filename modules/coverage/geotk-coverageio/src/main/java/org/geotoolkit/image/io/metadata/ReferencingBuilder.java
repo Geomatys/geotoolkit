@@ -1011,7 +1011,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
     /**
      * Convenience method for logging a warning using the error resource bundle.
      */
-    private void warning(final String method, final int key, final Object value) {
+    private void warning(final String method, final short key, final Object value) {
         warning(method, Errors.getResources(accessor.getLocale()), key, value);
     }
 
@@ -1019,7 +1019,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      * Convenience method for logging a warning using the given resource bundle.
      */
     private void warning(final String method, final IndexedResourceBundle resources,
-            final int key, final Object value)
+            final short key, final Object value)
     {
         accessor.warning(getClass(), method, resources, key, value);
     }

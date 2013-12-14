@@ -226,7 +226,7 @@ public class CatalogException extends SQLNonTransientException {
         final String column = getColumnName();
         final Comparable<?> key = getPrimaryKey();
         if (table != null) {
-            final int localKey;
+            final short localKey;
             final Comparable<?>[] args;
             if (column != null) {
                 if (key != null) {

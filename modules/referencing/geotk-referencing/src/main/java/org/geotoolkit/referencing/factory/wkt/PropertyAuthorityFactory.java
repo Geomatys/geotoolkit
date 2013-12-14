@@ -351,7 +351,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
      * @param url The URL to put in the message, or {@code null} if none.
      * @param ext An additional parameter to put in the message, or {@code null} if none.
      */
-    private static void log(final boolean warning, final int key, final URL url, final Object ext) {
+    private static void log(final boolean warning, final short key, final URL url, final Object ext) {
         final Level level = warning ? Level.WARNING : Level.CONFIG;
         final LogRecord record;
         if (url != null) {

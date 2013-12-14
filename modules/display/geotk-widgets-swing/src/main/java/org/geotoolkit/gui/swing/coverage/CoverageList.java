@@ -233,7 +233,7 @@ public class CoverageList extends JComponent {
     /**
      * Creates a new button and adds it to the toolbar.
      */
-    private JButton button(final Vocabulary resources, final int key, final String image, final String action) {
+    private JButton button(final Vocabulary resources, final short key, final String image, final String action) {
         final String text = resources.getString(key);
         final JButton button = IconFactory.DEFAULT.getButton(image, text, text);
         button.setActionCommand(action);

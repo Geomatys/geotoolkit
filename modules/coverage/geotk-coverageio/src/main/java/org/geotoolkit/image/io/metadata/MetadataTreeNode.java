@@ -507,7 +507,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
      * Formats a localized error message. This method is used only for the error messages
      * where the first argument is the parameter name.
      */
-    private String error(final int key, final Object argument) {
+    private String error(final short key, final Object argument) {
         return Errors.getResources(tree.getLocale()).getString(key, getLabel(), argument);
     }
 

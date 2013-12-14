@@ -78,7 +78,7 @@ final class MetadataHandler implements InvocationHandler {
     private static void checkArgumentCount(final Object[] args, final int expected) {
         final int count = (args != null) ? args.length : 0;
         if (count != expected) {
-            final int key;
+            final short key;
             final Object value;
             if (count == 0) {
                 key = Errors.Keys.NO_PARAMETER_1;

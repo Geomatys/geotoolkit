@@ -334,7 +334,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      *
      * @param key One of the constants declared in the {@link Errors.Keys} inner class.
      */
-    final String formatErrorMessage(final int key) {
+    final String formatErrorMessage(final short key) {
         return Errors.getResources(locale).getString(key);
     }
 

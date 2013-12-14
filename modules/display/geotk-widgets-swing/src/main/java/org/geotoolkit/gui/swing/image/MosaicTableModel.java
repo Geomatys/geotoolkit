@@ -172,7 +172,7 @@ public class MosaicTableModel extends ListTableModel<Tile> {
      */
     @Override
     public String getColumnName(final int column) {
-        final int key;
+        final short key;
         switch (column) {
             case 0: key = Vocabulary.Keys.FILE;   break;
             case 1: key = Vocabulary.Keys.INDEX;  break;

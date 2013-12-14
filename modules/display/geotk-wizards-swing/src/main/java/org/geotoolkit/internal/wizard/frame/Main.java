@@ -213,7 +213,7 @@ public final class Main extends JFrame implements ActionListener {
     /**
      * Shows the given component in an internal frame.
      */
-    private void show(final int titleKey, final JComponent component) {
+    private void show(final short titleKey, final JComponent component) {
         final Vocabulary resources = Vocabulary.getResources(getLocale());
         final JInternalFrame frame = new JInternalFrame(resources.getString(titleKey), true, true, true, true);
         frame.add(component);

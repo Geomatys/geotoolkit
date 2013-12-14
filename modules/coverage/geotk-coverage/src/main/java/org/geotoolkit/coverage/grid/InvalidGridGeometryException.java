@@ -47,7 +47,7 @@ public class InvalidGridGeometryException extends IllegalStateException {
      * Constructs an exception with a detail message from the specified error code.
      * Should not be public because the Geotk I18N framework is not a committed one.
      */
-    InvalidGridGeometryException(final int code) {
+    InvalidGridGeometryException(final short code) {
         super(Errors.format(code));
     }
 

@@ -544,7 +544,7 @@ public class CoverageTableModel extends AbstractTableModel {
          *       is inserted between every rows.
          */
         final StringBuffer buffer = new StringBuffer(256);
-        final int[] keys = new int[] {
+        final short[] keys = {
             Vocabulary.Keys.NAME,
             Vocabulary.Keys.START_TIME,
             Vocabulary.Keys.END_TIME
@@ -721,7 +721,7 @@ public class CoverageTableModel extends AbstractTableModel {
      */
     private void commitEdit(final GridCoverageReference[] oldEntries,
                             final GridCoverageReference[] newEntries,
-                            final int key)
+                            final short key)
     {
         final String name = Vocabulary.getResources(locale).getString(key).toLowerCase();
 

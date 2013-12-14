@@ -563,7 +563,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedCont
      */
     static void ensureValid(final int first, final int step, final int length) {
         if (length < 0) {
-            final int key;
+            final short key;
             final Object arg1, arg2;
             if (step == 1) {
                 key  = Errors.Keys.ILLEGAL_RANGE_2;

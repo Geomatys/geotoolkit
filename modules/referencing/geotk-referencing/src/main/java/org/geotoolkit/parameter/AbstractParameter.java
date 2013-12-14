@@ -175,7 +175,7 @@ public abstract class AbstractParameter extends FormattableObject
      * Returns the unit type as one of error message code. Used for checking unit with a better
      * error message formatting if needed.
      */
-    static int getUnitMessageID(final Unit<?> unit) {
+    static short getUnitMessageID(final Unit<?> unit) {
         if (Units.isLinear  (unit)) return Errors.Keys.NON_LINEAR_UNIT_1;
         if (Units.isAngular (unit)) return Errors.Keys.NON_ANGULAR_UNIT_1;
         if (Units.isTemporal(unit)) return Errors.Keys.NON_TEMPORAL_UNIT_1;

@@ -351,7 +351,7 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
     /**
      * Adds a field and its label to the given panel.
      */
-    private static void add(JComponent panel, Vocabulary resources, int key, JComponent field, GridBagConstraints c) {
+    private static void add(JComponent panel, Vocabulary resources, short key, JComponent field, GridBagConstraints c) {
         add(panel, new JLabel(resources.getLabel(key)), field, c);
     }
 

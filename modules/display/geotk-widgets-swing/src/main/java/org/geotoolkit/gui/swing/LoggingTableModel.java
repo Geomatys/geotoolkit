@@ -55,7 +55,7 @@ final class LoggingTableModel extends Handler implements TableModel {
      * If the order is changed, then the constants in {@link #getValueAt(int,int)} and
      * {@link LoggingPanel} must be updated.
      */
-    private static final int[] COLUMN_NAMES = new int[] {
+    private static final short[] COLUMN_NAMES = {
         Vocabulary.Keys.LOGGER,
         Vocabulary.Keys.CLASS,
         Vocabulary.Keys.METHOD,

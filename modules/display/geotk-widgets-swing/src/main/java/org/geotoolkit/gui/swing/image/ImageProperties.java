@@ -209,7 +209,7 @@ public class ImageProperties extends JComponent implements Dialog {
         c.gridy=0; c.anchor=WEST; c.fill=HORIZONTAL;
         for (int i=0; i<descriptions.length; i++) {
             c.gridx=0;
-            final int labelKey;
+            final short labelKey;
             switch (i) {
                 case DESCRIPTION: {
                     c.insets.left=9; c.weightx=1;    // No need to reset those particular settings.
@@ -594,7 +594,7 @@ public class ImageProperties extends JComponent implements Dialog {
      */
     @SuppressWarnings("fallthrough")
     private static String getDataType(final int type, final ColorModel cm, final Vocabulary resources) {
-        final int key;
+        final short key;
         switch (type) {
             case DataBuffer.TYPE_BYTE:      // Fall through
             case DataBuffer.TYPE_USHORT:    key = Vocabulary.Keys.UNSIGNED_INTEGER_2; break;
@@ -831,7 +831,7 @@ public class ImageProperties extends JComponent implements Dialog {
          */
         @Override
         public String getColumnName(final int column) {
-            final int key;
+            final short key;
             switch (column) {
                 case 0: key=Vocabulary.Keys.NAME;  break;
                 case 1: key=Vocabulary.Keys.VALUE; break;

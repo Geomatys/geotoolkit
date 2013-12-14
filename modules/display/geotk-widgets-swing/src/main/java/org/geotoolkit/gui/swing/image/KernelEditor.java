@@ -877,7 +877,7 @@ public class KernelEditor extends JComponent implements Dialog {
         /**
          * Convenience method returning a string for the specified resource keys.
          */
-        private String getString(final int key) {
+        private String getString(final short key) {
             return getResources().getString(key);
         }
 

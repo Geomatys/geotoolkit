@@ -104,7 +104,7 @@ final class ReferencingAction {
     /**
      * Formats the resources at the given key with bold characters.
      */
-    private String bold(final int key) {
+    private String bold(final short key) {
         return cmd.bold(resources.getString(key));
     }
 

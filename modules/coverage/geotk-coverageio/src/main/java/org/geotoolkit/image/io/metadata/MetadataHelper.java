@@ -140,7 +140,7 @@ public class MetadataHelper implements Localized {
      * The key shall be one of the {@link Errors.Key} constants. This is used
      * for formatting the message in {@link ImageMetadataException}.
      */
-    private String error(final int key, final Object... arguments) {
+    private String error(final short key, final Object... arguments) {
         return Errors.getResources(getLocale()).getString(key, arguments);
     }
 

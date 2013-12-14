@@ -212,7 +212,7 @@ public class ProgressWindow extends ProgressController implements Disposable {
     /**
      * Returns a localized string for the specified key.
      */
-    private String getString(final int key) {
+    private String getString(final short key) {
         return Vocabulary.getResources(window.getLocale()).getString(key);
     }
 

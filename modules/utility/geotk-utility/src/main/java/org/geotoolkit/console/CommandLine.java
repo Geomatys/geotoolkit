@@ -370,14 +370,14 @@ public abstract class CommandLine implements Runnable {
     /**
      * Convenience method for formatting a localized error message.
      */
-    private String error(final int key, final Object param) {
+    private String error(final short key, final Object param) {
         return Errors.getResources(locale).getString(key, param);
     }
 
     /**
      * Convenience method for formatting a localized error message.
      */
-    private String error(final int key, final Object param1, final Object param2) {
+    private String error(final short key, final Object param1, final Object param2) {
         return Errors.getResources(locale).getString(key, param1, param2);
     }
 

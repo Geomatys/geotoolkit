@@ -179,7 +179,7 @@ public class IIOMetadataPanel extends JComponent {
     /**
      * Creates a new label for the given target component.
      */
-    private static JLabel label(final Vocabulary resources, final int key, final JComponent target) {
+    private static JLabel label(final Vocabulary resources, final short key, final JComponent target) {
         final JLabel label = new JLabel(resources.getLabel(key));
         label.setLabelFor(target);
         return label;

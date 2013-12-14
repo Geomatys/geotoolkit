@@ -103,7 +103,7 @@ abstract class DatabasePanel extends JComponent implements ActionListener {
         /**
          * Creates a new {@code Field} instance with a label created from the given property key.
          */
-        Field(final String propertyKey, final int resourceKey, final Vocabulary resources,
+        Field(final String propertyKey, final short resourceKey, final Vocabulary resources,
                 final JComponent component, final String defaultValue)
         {
             this.propertyKey  = propertyKey;
@@ -483,7 +483,7 @@ abstract class DatabasePanel extends JComponent implements ActionListener {
      *
      * @param key Whatever we are reading of writing the file, as a resource key.
      */
-    private void error(final int key, final IOException ex) {
+    private void error(final short key, final IOException ex) {
         JOptionPane.showMessageDialog(this, ex.getLocalizedMessage(),
                 Errors.format(key, Installation.DATASOURCE_FILE), JOptionPane.ERROR_MESSAGE);
     }

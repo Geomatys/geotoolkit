@@ -376,7 +376,7 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
         final TableWriter table = new TableWriter(out, TableWriter.SINGLE_VERTICAL_LINE);
         table.setMultiLinesCells(true);
         table.writeHorizontalSeparator();
-        final int[] keys = { // In reverse ordeR.
+        final short[] keys = { // In reverse ordeR.
             Vocabulary.Keys.DESCRIPTION,
             Vocabulary.Keys.CLASS,
             Vocabulary.Keys.TYPE,

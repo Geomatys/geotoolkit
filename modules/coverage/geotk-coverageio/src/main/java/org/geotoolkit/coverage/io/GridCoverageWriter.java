@@ -162,7 +162,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
     public void write(final Iterable<? extends GridCoverage> coverages, final GridCoverageWriteParam param)
             throws CoverageStoreException, CancellationException
     {
-        int errorKey = Errors.Keys.NO_SUCH_ELEMENT_1;
+        short errorKey = Errors.Keys.NO_SUCH_ELEMENT_1;
         final Iterator<? extends GridCoverage> it = coverages.iterator();
         if (it.hasNext()) {
             final GridCoverage coverage = it.next();

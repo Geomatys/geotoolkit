@@ -127,7 +127,7 @@ public final class Warnings extends Static {
      *         or {@link SpatialImageWriter}.
      */
     public static void log(final WarningProducer plugin, Level level,
-            final Class<?> caller, final String method, final int key, final Object... arguments)
+            final Class<?> caller, final String method, final short key, final Object... arguments)
     {
         if (level == null) {
             level = Level.WARNING;
@@ -153,7 +153,7 @@ public final class Warnings extends Static {
      * @param  arguments The arguments to be used together with the key for building the message.
      * @return The configured record to log.
      */
-    public static String message(final Localized plugin, final int key, final Object... arguments) {
+    public static String message(final Localized plugin, final short key, final Object... arguments) {
         return Errors.getResources(plugin != null ? plugin.getLocale() : null).getString(key, arguments);
     }
 }

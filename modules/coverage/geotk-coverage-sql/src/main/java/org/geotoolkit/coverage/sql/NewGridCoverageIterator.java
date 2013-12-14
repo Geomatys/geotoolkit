@@ -286,7 +286,7 @@ final class NewGridCoverageIterator {
     /**
      * Formats an error message for the given key.
      */
-    private String error(final int key, final Object argument) {
+    private String error(final short key, final Object argument) {
         return Errors.getResources(listeners.getLocale()).getString(key, argument);
     }
 }

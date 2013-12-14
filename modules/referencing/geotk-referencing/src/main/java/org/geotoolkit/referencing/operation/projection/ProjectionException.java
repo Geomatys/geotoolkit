@@ -49,7 +49,7 @@ public class ProjectionException extends TransformException {
      *
      * @param code One of the constants suitable for {@link Errors#format(int)}.
      */
-    ProjectionException(final int code) {
+    ProjectionException(final short code) {
         this(Errors.format(code));
     }
 
@@ -59,7 +59,7 @@ public class ProjectionException extends TransformException {
      * @param code One of the constants suitable for {@link Errors#format(int)}.
      * @param value An argument value to be formatted.
      */
-    ProjectionException(final int code, final Object value) {
+    ProjectionException(final short code, final Object value) {
         this(Errors.format(code, value));
     }
 

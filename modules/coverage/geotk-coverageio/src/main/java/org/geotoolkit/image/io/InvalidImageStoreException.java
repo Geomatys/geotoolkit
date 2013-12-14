@@ -110,7 +110,7 @@ public class InvalidImageStoreException extends IIOException {
                     return resources.getString(Errors.Keys.NOT_A_DIRECTORY_1, file);
                 }
             } else if (!file.exists()) {
-                int key = Errors.Keys.FILE_DOES_NOT_EXIST_1;
+                short key = Errors.Keys.FILE_DOES_NOT_EXIST_1;
                 final File parent = file.getParentFile();
                 if (parent != null && !parent.isDirectory()) {
                     key = Errors.Keys.NOT_A_DIRECTORY_1;

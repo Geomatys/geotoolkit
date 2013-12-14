@@ -673,7 +673,7 @@ public class CoverageStack extends AbstractCoverage {
          */
         Envelope[] envelopes = null;
         int zDimension = 0;
-        int errorCode = Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM; // In case of error
+        short errorCode = Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM; // In case of error
         if (crs == null) {
             errorCode = Errors.Keys.MISMATCHED_COORDINATE_REFERENCE_SYSTEM;
             FrequencySortedSet<CoordinateReferenceSystem> frequency = null;
@@ -1558,7 +1558,7 @@ public class CoverageStack extends AbstractCoverage {
      * Prepares a log record about an image to be loaded, and put the log record in a stack.
      * The record will be effectively logged only when image loading really beging.
      */
-    private void logLoading(final int key, final Object[] parameters) {
+    private void logLoading(final short key, final Object[] parameters) {
         final Locale locale = null;
         final LogRecord record = Vocabulary.getResources(locale).getLogRecord(Level.INFO, key);
         record.setSourceClassName(CoverageStack.class.getName());

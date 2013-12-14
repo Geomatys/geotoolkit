@@ -53,70 +53,70 @@ public final class Descriptions extends IndexedResourceBundle {
         /**
          * Data distributed over a grid
          */
-        public static final int CODEC_GRID = 0;
+        public static final short CODEC_GRID = 0;
 
         /**
          * Matrix in text file
          */
-        public static final int CODEC_MATRIX = 1;
+        public static final short CODEC_MATRIX = 1;
 
         /**
          * Raw binary file
          */
-        public static final int CODEC_RAW = 2;
+        public static final short CODEC_RAW = 2;
 
         /**
          * Usage: {0} [OPTION...] [COMMAND] [PARAMETER...]
          */
-        public static final int COMMAND_USAGE_1 = 3;
+        public static final short COMMAND_USAGE_1 = 3;
 
         /**
          * Concatenation of {0} adapted to the 3D domain
          */
-        public static final int CONCATENATED_OPERATION_ADAPTED_1 = 15;
+        public static final short CONCATENATED_OPERATION_ADAPTED_1 = 4;
 
         /**
          * This result indicates if a datum shift method has been applied.
          */
-        public static final int CONFORMANCE_MEANS_DATUM_SHIFT = 4;
+        public static final short CONFORMANCE_MEANS_DATUM_SHIFT = 5;
 
         /**
          * This result indicates if the factory “{0}” is available for use.
          */
-        public static final int CONFORMANCE_MEANS_FACTORY_AVAILABLE_1 = 5;
+        public static final short CONFORMANCE_MEANS_FACTORY_AVAILABLE_1 = 6;
 
         /**
          * This result indicates if the parameters are valid.
          */
-        public static final int CONFORMANCE_MEANS_VALID_PARAMETERS = 6;
+        public static final short CONFORMANCE_MEANS_VALID_PARAMETERS = 7;
 
         /**
          * Are the {0} data installed? Some optional data can be downloaded and installed by running
          * the “{2}” module. The default directory for {0} data is “{1}”, but {2} allows to change this
          * setting.
          */
-        public static final int DATA_NOT_INSTALLED_3 = 7;
+        public static final short DATA_NOT_INSTALLED_3 = 8;
 
         /**
          * {0} files have been read successfully but {1} files can not be read. The failure causes are
          * reported below.
          */
-        public static final int ERROR_READING_SOME_FILES_2 = 8;
+        public static final short ERROR_READING_SOME_FILES_2 = 9;
 
         /**
          * Inserted {0} rows in {1} seconds.
          */
-        public static final int INSERTED_ROWS_2 = 9;
+        public static final short INSERTED_ROWS_2 = 10;
 
         /**
          * Parameter “{0}” is not conform. {1}
          */
-        public static final int NON_CONFORM_PARAMETER_2 = 10;
+        public static final short NON_CONFORM_PARAMETER_2 = 11;
 
         /**
          * Do not use a valuable password, since it will not be encrypted.
          */
-        public static final int PASSWORD_NOT_ENCRYPTED = 11;
+        public static final short PASSWORD_NOT_ENCRYPTED = 12;
 
         /**
          * Count: {0}
@@ -126,17 +126,17 @@ public final class Descriptions extends IndexedResourceBundle {
          * RMS: {4}
          * Standard deviation: {5}
          */
-        public static final int STATISTICS_TO_STRING_6 = 12;
+        public static final short STATISTICS_TO_STRING_6 = 13;
 
         /**
          * Use {0,choice,0#the embedded|1#a specific} database.
          */
-        public static final int USE_EOS_DATABASE_1 = 13;
+        public static final short USE_EOS_DATABASE_1 = 14;
 
         /**
          * Use "help" to show available commands.
          */
-        public static final int USE_HELP_COMMAND = 14;
+        public static final short USE_HELP_COMMAND = 15;
     }
 
     /**
@@ -207,7 +207,7 @@ public final class Descriptions extends IndexedResourceBundle {
      * @todo Current implementation just invokes {@link #format}. Need to format only when
      *       {@code toString(Locale)} is invoked.
      */
-    public static InternationalString formatInternational(final int key, final Object arg) {
+    public static InternationalString formatInternational(final short key, final Object arg) {
         return new org.apache.sis.util.iso.SimpleInternationalString(format(key, arg));
     }
 
@@ -225,7 +225,7 @@ public final class Descriptions extends IndexedResourceBundle {
      * @todo Current implementation just invokes {@link #format}. Need to format only when
      *       {@code toString(Locale)} is invoked.
      */
-    public static InternationalString formatInternational(final int key, final Object... args) {
+    public static InternationalString formatInternational(final short key, final Object... args) {
         return new org.apache.sis.util.iso.SimpleInternationalString(format(key, args));
     }
 
@@ -236,7 +236,7 @@ public final class Descriptions extends IndexedResourceBundle {
      * @return The string for the given key.
      * @throws MissingResourceException If no object for the given key can be found.
      */
-    public static String format(final int key) throws MissingResourceException {
+    public static String format(final short key) throws MissingResourceException {
         return getResources(null).getString(key);
     }
 
@@ -249,7 +249,7 @@ public final class Descriptions extends IndexedResourceBundle {
      * @return The formatted string for the given key.
      * @throws MissingResourceException If no object for the given key can be found.
      */
-    public static String format(final int     key,
+    public static String format(final short  key,
                                 final Object arg0) throws MissingResourceException
     {
         return getResources(null).getString(key, arg0);
@@ -265,7 +265,7 @@ public final class Descriptions extends IndexedResourceBundle {
      * @return The formatted string for the given key.
      * @throws MissingResourceException If no object for the given key can be found.
      */
-    public static String format(final int     key,
+    public static String format(final short  key,
                                 final Object arg0,
                                 final Object arg1) throws MissingResourceException
     {
@@ -283,7 +283,7 @@ public final class Descriptions extends IndexedResourceBundle {
      * @return The formatted string for the given key.
      * @throws MissingResourceException If no object for the given key can be found.
      */
-    public static String format(final int     key,
+    public static String format(final short  key,
                                 final Object arg0,
                                 final Object arg1,
                                 final Object arg2) throws MissingResourceException

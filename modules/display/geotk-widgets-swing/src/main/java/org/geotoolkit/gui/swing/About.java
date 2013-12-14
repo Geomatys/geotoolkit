@@ -301,7 +301,7 @@ public class About extends JComponent implements Dialog {
              * twice: first for readers, then for writers.
              */
             for (int index=0; index<2; index++) {
-                final int titleKey;
+                final short titleKey;
                 final Class<? extends ImageReaderWriterSpi> category;
                 switch (index) {
                     case 0: {
