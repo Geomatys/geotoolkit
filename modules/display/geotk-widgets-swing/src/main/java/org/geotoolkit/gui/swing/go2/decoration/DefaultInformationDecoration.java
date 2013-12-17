@@ -119,6 +119,7 @@ public class DefaultInformationDecoration extends JPanel implements InformationD
         }
         
         final JLabel label = new JLabel();
+        label.setForeground(Color.WHITE);
         switch(level){
             case NORMAL :   label.setIcon(ICO_INFO); break;
             case INFO :     label.setIcon(ICO_INFO); break;

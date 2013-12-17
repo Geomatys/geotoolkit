@@ -91,13 +91,13 @@ public class JScaleCombo extends JComboBox {
         scales.add(5000l);
         scales.add(20000l);
         scales.add(50000l);
+        setPrototypeDisplayValue(100000000000l);
         setModel(new ListComboBoxModel(scales));
         setRenderer(new ScaleRenderer());
         setEditor(edit);
         setEditable(false);
         setSelectedIndex(0);
         setEditable(true);
-
         addItemListener(action);
         setEditor(editor);
 

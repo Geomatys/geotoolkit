@@ -31,7 +31,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class PanAction extends AbstractMapAction {
 
-    private static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_MOVE, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    public static final ImageIcon ICON = IconBuilder.createIcon(FontAwesomeIcons.ICON_MOVE, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
     public PanAction() {
         putValue(SMALL_ICON, ICON);

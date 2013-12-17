@@ -88,7 +88,6 @@ public class JStepPane extends JPanel{
         
         for(final Step step : steps){
             
-            
             final AbstractAction act = new AbstractAction(step.name, step.icon) {
                 @Override
                 public void actionPerformed(ActionEvent e) {

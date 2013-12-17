@@ -23,13 +23,9 @@ import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.image.BufferedImage;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseListener;
-import javax.swing.ImageIcon;
-
-import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 
 /**
@@ -40,18 +36,12 @@ import org.geotoolkit.gui.swing.go2.JMap2D;
  */
 public class ZoomOutHandler extends AbstractNavigationHandler {
 
-    private final Cursor CUR_ZOOM_OUT;
+    private static final Cursor CUR_ZOOM_OUT = Toolkit.getDefaultToolkit().createCustomCursor(ZoomOutAction.ICON.getImage(),new Point(0, 0),"zoomout");
     private final MouseListen mouseInputListener = new MouseListen();
     private double zoomFactor = 2;
 
     public ZoomOutHandler(final JMap2D map) {
         super(map);
-        
-        final Toolkit tk = Toolkit.getDefaultToolkit();
-        final ImageIcon ico_zoomOut = IconBundle.getIcon("16_zoom_out");
-        final BufferedImage img = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
-        img.getGraphics().drawImage(ico_zoomOut.getImage(), 0, 0, null);
-        CUR_ZOOM_OUT = tk.createCustomCursor(img, new Point(1, 1), "out");
     }
     
     /**
@@ -62,6 +52,7 @@ public class ZoomOutHandler extends AbstractNavigationHandler {
         super.install(component);
         component.addMouseListener(mouseInputListener);
         component.addMouseWheelListener(mouseInputListener);
+        map.setCursor(CUR_ZOOM_OUT);
     }
 
     /**
@@ -72,6 +63,7 @@ public class ZoomOutHandler extends AbstractNavigationHandler {
         super.uninstall(component);
         component.removeMouseListener(mouseInputListener);
         component.removeMouseWheelListener(mouseInputListener);
+        map.setCursor(null);
     }
 
     private class MouseListen implements MouseListener, MouseWheelListener {
@@ -128,7 +120,6 @@ public class ZoomOutHandler extends AbstractNavigationHandler {
 
         @Override
         public void mouseEntered(final MouseEvent e) {
-            map.getComponent().setCursor(CUR_ZOOM_OUT);
         }
 
         @Override

@@ -334,7 +334,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
         constraints.gridx = x++;
         bottom.add(guiCoord,constraints);
 
-        constraints.weightx = 0.5;
+        constraints.weightx = 0;
         constraints.gridx = x++;
         bottom.add(guiCombo,constraints);
 

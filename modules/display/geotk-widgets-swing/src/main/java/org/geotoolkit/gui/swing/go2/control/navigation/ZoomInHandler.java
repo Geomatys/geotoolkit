@@ -23,13 +23,9 @@ import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.image.BufferedImage;
 import java.awt.Point;
 import java.awt.Toolkit;
-import javax.swing.ImageIcon;
 import javax.swing.event.MouseInputListener;
-
-import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 
 /**
@@ -40,18 +36,12 @@ import org.geotoolkit.gui.swing.go2.JMap2D;
  */
 public class ZoomInHandler extends AbstractNavigationHandler {
 
-    private final Cursor CUR_ZOOM_IN;
+    private static final Cursor CUR_ZOOM_IN = Toolkit.getDefaultToolkit().createCustomCursor(ZoomInAction.ICON.getImage(),new Point(0, 0),"zoomin");
     private final MouseListen mouseInputListener = new MouseListen();
     private double zoomFactor = 2;
 
     public ZoomInHandler(final JMap2D map) {
         super(map);
-        
-        final Toolkit tk = Toolkit.getDefaultToolkit();
-        final ImageIcon ico_zoomIn = IconBundle.getIcon("16_zoom_in");
-        final BufferedImage img = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
-        img.getGraphics().drawImage(ico_zoomIn.getImage(), 0, 0, null);
-        CUR_ZOOM_IN = tk.createCustomCursor(img, new Point(1, 1), "in");
     }
     
     /**
@@ -63,6 +53,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
         component.addMouseListener(mouseInputListener);
         component.addMouseMotionListener(mouseInputListener);
         component.addMouseWheelListener(mouseInputListener);
+        map.setCursor(CUR_ZOOM_IN);
     }
 
     /**
@@ -74,6 +65,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
         component.removeMouseListener(mouseInputListener);
         component.removeMouseMotionListener(mouseInputListener);
         component.removeMouseWheelListener(mouseInputListener);
+        map.setCursor(null);
     }
 
     private class MouseListen implements MouseInputListener, MouseWheelListener {
@@ -156,7 +148,6 @@ public class ZoomInHandler extends AbstractNavigationHandler {
 
         @Override
         public void mouseEntered(final MouseEvent e) {
-            map.getComponent().setCursor(CUR_ZOOM_IN);
         }
 
         @Override

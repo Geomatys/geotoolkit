@@ -23,12 +23,9 @@ import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.image.BufferedImage;
 import java.awt.Point;
-import javax.swing.ImageIcon;
 import javax.swing.event.MouseInputListener;
 
-import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 
 /**
@@ -39,17 +36,12 @@ import org.geotoolkit.gui.swing.go2.JMap2D;
  */
 public class PanHandler extends AbstractNavigationHandler {
 
-    private final Cursor CUR_ZOOM_PAN;
+    private static  final Cursor CUR_ZOOM_PAN = Toolkit.getDefaultToolkit().createCustomCursor(PanAction.ICON.getImage(),new Point(8, 8),"zoompan");
     private final MouseListen mouseInputListener = new MouseListen();
     private double zoomFactor = 2;
 
     public PanHandler(final JMap2D map) {
         super(map);
-        final Toolkit tk = Toolkit.getDefaultToolkit();
-        final ImageIcon ico_zoomPan = IconBundle.getIcon("16_zoom_pan");
-        final BufferedImage img3 = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
-        img3.getGraphics().drawImage(ico_zoomPan.getImage(), 0, 0, null);
-        CUR_ZOOM_PAN = tk.createCustomCursor(img3, new Point(1, 1), "in");
     }
 
     /**
@@ -61,6 +53,7 @@ public class PanHandler extends AbstractNavigationHandler {
         component.addMouseListener(mouseInputListener);
         component.addMouseMotionListener(mouseInputListener);
         component.addMouseWheelListener(mouseInputListener);
+        map.setCursor(CUR_ZOOM_PAN);
     }
 
     /**
@@ -72,6 +65,7 @@ public class PanHandler extends AbstractNavigationHandler {
         component.removeMouseListener(mouseInputListener);
         component.removeMouseMotionListener(mouseInputListener);
         component.removeMouseWheelListener(mouseInputListener);
+        map.setCursor(null);
     }
     
     //---------------------PRIVATE CLASSES--------------------------------------
@@ -132,7 +126,6 @@ public class PanHandler extends AbstractNavigationHandler {
 
         @Override
         public void mouseEntered(final MouseEvent e) {
-            map.getComponent().setCursor(CUR_ZOOM_PAN);
         }
 
         @Override

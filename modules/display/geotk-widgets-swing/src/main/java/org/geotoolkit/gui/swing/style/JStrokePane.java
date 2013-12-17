@@ -26,9 +26,11 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.GraphicFill;
@@ -148,11 +150,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
             pane.parse(stroke.getGraphicFill());
         }
 
-        final JSimpleDialog dia = new JSimpleDialog(null, true, pane);
-        dia.pack();
-        dia.setLocationRelativeTo(butFill);
-        dia.setVisible(true);
-
+        JOptionDialog.show(null, pane,JOptionPane.OK_OPTION);
         graphicFill = pane.create();
     }
 
