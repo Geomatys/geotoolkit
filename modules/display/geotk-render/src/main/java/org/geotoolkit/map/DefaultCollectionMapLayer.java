@@ -17,6 +17,7 @@
 package org.geotoolkit.map;
 
 import java.util.Collection;
+import java.util.Objects;
 import org.apache.sis.geometry.Envelope2D;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.MutableStyle;
@@ -61,7 +62,7 @@ class DefaultCollectionMapLayer extends AbstractMapLayer implements CollectionMa
         final Filter oldfilter;
         synchronized (this) {
             oldfilter = this.selectionFilter;
-            if(oldfilter == filter){
+            if(Objects.equals(oldfilter, filter)){
                 return;
             }
             this.selectionFilter = filter;
