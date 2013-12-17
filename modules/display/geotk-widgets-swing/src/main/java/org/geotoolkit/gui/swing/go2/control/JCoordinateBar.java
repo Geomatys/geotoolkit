@@ -85,7 +85,6 @@ public class JCoordinateBar extends AbstractMapControlBar {
     private final JScaleCombo guiCombo = new JScaleCombo();
     private final JTextField guiCoord = new JTextField();
     private final JCRSButton guiCRS = new JCRSButton();
-    private final JXBusyLabel guiPainting = new JXBusyLabel();
     private final JToggleButton guiElevation = new JToggleButton(ICON_ELEVATION);
     private final JToggleButton guiTemporal = new JToggleButton(ICON_TEMPORAL);
 
@@ -343,9 +342,6 @@ public class JCoordinateBar extends AbstractMapControlBar {
         constraints.gridx = x++;
         bottom.add(guiCRS,constraints);
 
-        constraints.gridx = x++;
-        bottom.add(guiPainting,constraints);
-
         setMap(candidate);
 
         paneElev.setVisible(false);
@@ -459,11 +455,11 @@ public class JCoordinateBar extends AbstractMapControlBar {
             }else if(AbstractCanvas.RENDERSTATE_KEY.equals(arg0.getPropertyName())){
                 final Object state = arg0.getNewValue();
                 if(AbstractCanvas.ON_HOLD.equals(state)){
-                    guiPainting.setBusy(false);
+                    map.getInformationDecoration().setPaintingIconVisible(false);
                 }else if(AbstractCanvas.RENDERING.equals(state)){
-                    guiPainting.setBusy(true);
+                    map.getInformationDecoration().setPaintingIconVisible(true);
                 }else{
-                    guiPainting.setBusy(false);
+                    map.getInformationDecoration().setPaintingIconVisible(false);
                 }
             }
         }

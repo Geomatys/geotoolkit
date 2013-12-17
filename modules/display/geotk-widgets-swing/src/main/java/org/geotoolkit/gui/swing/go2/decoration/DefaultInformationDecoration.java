@@ -2,8 +2,8 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2009 - 2013, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,31 +17,30 @@
  */
 package org.geotoolkit.gui.swing.go2.decoration;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.GridLayout;
 import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.OverlayLayout;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.jdesktop.swingx.JXBusyLabel;
 
 /**
  * Default information decoration
  *
- * @author Johann Sorel (Puzzle-GIS)
+ * @author Johann Sorel (Puzzle-GIS/Geomatys)
  * @module pending
  */
 public class DefaultInformationDecoration extends JPanel implements InformationDecoration {
@@ -49,28 +48,40 @@ public class DefaultInformationDecoration extends JPanel implements InformationD
     private static final ImageIcon ICO_ERROR = IconBuilder.createIcon(FontAwesomeIcons.ICON_WARNING_SIGN, 16, Color.RED);
     private static final ImageIcon ICO_WARNING = IconBuilder.createIcon(FontAwesomeIcons.ICON_WARNING_SIGN, 16, Color.YELLOW);
     private static final ImageIcon ICO_INFO = IconBuilder.createIcon(FontAwesomeIcons.ICON_WARNING_SIGN, 16, Color.BLUE);
-    private static final ImageIcon ICO_PAINTING = IconBuilder.createIcon(FontAwesomeIcons.ICON_COGS, 24, Color.DARK_GRAY);
 
-    private JMap2D map = null;;
-    private final Map<String, LEVEL> messages = new LinkedHashMap<>();
+    private JMap2D map = null;
+    
+    private static final Paint gp = new Color(0, 0, 0, 0.5f);
+    private final JPanel messagesPanel = new JPanel(new GridLayout(-1, 1)){
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            final Graphics2D g2d = (Graphics2D) g;
+            final Dimension dim = messagesPanel.getSize();
+            g2d.setPaint(gp);
+            g2d.fillRect(0, 0, dim.width, dim.height);
+        }
+        
+    };
+    private final JXBusyLabel guiPainting = new JXBusyLabel();
     private boolean lowlevel = true;
-    private boolean icon = false;
-
-
 
     public DefaultInformationDecoration() {
-        super(null);
-        OverlayLayout layout = new OverlayLayout(this);
-        setLayout(layout);
+        super(new BorderLayout());
+        
+        guiPainting.setHorizontalAlignment(SwingConstants.CENTER);
+        guiPainting.setVisible(false);
+        
+        add(BorderLayout.CENTER,guiPainting);
+        add(BorderLayout.SOUTH,messagesPanel);
         setOpaque(false);
+        messagesPanel.setOpaque(false);
     }
-
 
     @Override
     public void setPaintingIconVisible(final boolean b) {
-        icon = b;
-        revalidate();
-        repaint();
+        guiPainting.setVisible(b);
+        guiPainting.setBusy(b);
     }
 
     @Override
@@ -95,104 +106,42 @@ public class DefaultInformationDecoration extends JPanel implements InformationD
 
     @Override
     public boolean isPaintingIconVisible() {
-        return icon;
+        return guiPainting.isVisible();
     }
 
     @Override
     public void displayMessage(final String text, final int time, final LEVEL level) {
+        
+        if(!lowlevel){
+            if (level != LEVEL.ERROR && level != LEVEL.WARNING) {
+                return;
+            }
+        }
+        
+        final JLabel label = new JLabel();
+        switch(level){
+            case NORMAL :   label.setIcon(ICO_INFO); break;
+            case INFO :     label.setIcon(ICO_INFO); break;
+            case WARNING :  label.setIcon(ICO_WARNING); break;
+            case ERROR :    label.setIcon(ICO_ERROR); break;
+        }
+        label.setText(text);
+        messagesPanel.add(label);
 
-        messages.put(text, level);
-
-        repaint();
-
-        Timer tim = new Timer(time, new ActionListener() {
-
+        final Timer tim = new Timer(time, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                messages.remove(text);
-                repaint();
+                messagesPanel.remove(label);
+                messagesPanel.revalidate();
             }
         });
         tim.setRepeats(false);
         tim.start();
-
-    }
-
-    public String getLastDisplayedMessage() {
-        return null;
-    }
-
-    @Override
-    public void paintComponent(final Graphics g) {
-//        super.paintComponent(g);
-        final Graphics2D g2 = (Graphics2D) g;
-
-        if(icon){
-            final Image image = ICO_PAINTING.getImage();
-            int x = (getWidth() - image.getWidth(null)) / 2;
-            int y = (getHeight() - image.getHeight(null)) / 2;
-            g2.drawImage(ICO_PAINTING.getImage(), x, y, this);
-        }
-
-        final Set<String> keys = messages.keySet();
-        final Object[] ite = keys.toArray();
-        final List<String> msgs = new ArrayList<>();
-
-        int height = 0;
-        if (!lowlevel) {
-            for (int n = 0; n < ite.length; n++) {
-                LEVEL lvl = messages.get(ite[n]);
-                if (lvl == LEVEL.ERROR || lvl == LEVEL.WARNING) {
-                    msgs.add((String) ite[n]);
-                    height++;
-                }
-            }
-        } else {
-            for (int n = 0; n < ite.length; n++) {
-                msgs.add((String) ite[n]);
-                height++;
-            }
-        }
-
-        height = (height > 0) ? (height) * 20 + 5 : 0;
-        Paint gp = new Color(0, 0, 0, 0.5f);
-        g2.setPaint(gp);
-        g2.fillRect(0, getHeight() - height, getWidth(), height);
-
-        g2.setPaint(Color.WHITE);
-
-        int i = getHeight() - 22;
-
-        for (int n = 0; n < msgs.size(); n++) {
-            String text = msgs.get(n);
-            LEVEL lvl = messages.get(text);
-            switch (lvl) {
-                case ERROR:
-                    g2.drawImage(ICO_ERROR.getImage(), 3, i + 2, this);
-                    g2.drawString((String) text, 20, i + 15);
-                    break;
-                case WARNING:
-                    g2.drawImage(ICO_WARNING.getImage(), 3, i + 2, this);
-                    g2.drawString((String) text, 20, i + 15);
-                    break;
-                case INFO:
-                    g2.drawImage(ICO_INFO.getImage(), 3, i + 2, this);
-                    g2.drawString((String) text, 20, i + 15);
-                    break;
-                case NORMAL:
-                    g2.drawString((String) text, 3, i + 15);
-                    break;
-            }
-
-            i -= 20;
-        }
-
     }
 
     @Override
     public void displayLowLevelMessages(final boolean display) {
         lowlevel = display;
-        repaint();
     }
 
     @Override
@@ -203,4 +152,5 @@ public class DefaultInformationDecoration extends JPanel implements InformationD
     @Override
     public void dispose() {
     }
+    
 }
