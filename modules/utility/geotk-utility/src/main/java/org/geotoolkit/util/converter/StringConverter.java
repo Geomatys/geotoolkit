@@ -581,7 +581,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             }
             source = source.trim();
             try {
-                return Locales.parseLanguage(source, 0);
+                return Locales.parse(source);
             } catch (IllegalArgumentException e) {
                 throw new NonconvertibleObjectException(Errors.format(Errors.Keys.ILLEGAL_LANGUAGE_CODE_1, source), e);
             }
