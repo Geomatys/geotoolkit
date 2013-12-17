@@ -99,7 +99,7 @@
                         <gco:CharacterString>Donnees CTD NEDIPROD VI 120</gco:CharacterString>
                     </gmd:abstract>
                     <gmd:language>
-                        <gmd:LanguageCode codeListValue="eng" codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/ML_gmxCodelists.xml#LanguageCode">English</gmd:LanguageCode>
+                        <gmd:LanguageCode codeListValue="eng" codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#LanguageCode">English</gmd:LanguageCode>
                     </gmd:language>
                     <gmd:topicCategory>
                         <gmd:MD_TopicCategoryCode>oceans</gmd:MD_TopicCategoryCode>

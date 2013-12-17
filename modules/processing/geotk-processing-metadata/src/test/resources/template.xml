@@ -9,7 +9,7 @@
     </gmd:fileIdentifier>
     <gmd:language>
         <gmd:LanguageCode
-                codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/ML_gmxCodelists.xml#LanguageCode"
+                codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#LanguageCode"
                 codeListValue="fra">français
         </gmd:LanguageCode>
     </gmd:language>
@@ -65,7 +65,7 @@
             </gmd:abstract>
             <gmd:language>
                 <gmd:LanguageCode
-                        codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/ML_gmxCodelists.xml#LanguageCode"
+                        codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#LanguageCode"
                         codeListValue="fra">français
                 </gmd:LanguageCode>
             </gmd:language>
