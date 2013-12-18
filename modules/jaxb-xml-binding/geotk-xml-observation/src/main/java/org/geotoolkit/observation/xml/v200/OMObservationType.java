@@ -294,8 +294,8 @@ public class OMObservationType extends AbstractFeatureType implements AbstractOb
                 ((TimePeriodType)phenomenonTime.getTimeObject()).setEndPosition(new TimePositionType(newEndBound));
             } else if (phenomenonTime != null && phenomenonTime.getTimeObject() instanceof TimeInstantType) {
                 final TimeInstantType instant = (TimeInstantType) phenomenonTime.getTimeObject();
-                if (!newEndBound.equals(instant.getTimePosition().getSingleValue())) {
-                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getSingleValue(), newEndBound);
+                if (!newEndBound.equals(instant.getTimePosition().getValue())) {
+                    final TimePeriodType period = new TimePeriodType(instant.getId(), instant.getTimePosition().getValue(), newEndBound);
                     phenomenonTime.setTimeObject(period);
                 }
             }

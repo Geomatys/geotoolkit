@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.AbstractRingProperty;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -120,7 +119,7 @@ public class AbstractRingPropertyType implements AbstractRingProperty {
     /**
      * Sets the value of the abstractRing property.
      *
-     * @param value
+     * @param ring
      *     allowed object is
      *     {@code <}{@link AbstractRingType }{@code >}
      *     {@code <}{@link RingType }{@code >}

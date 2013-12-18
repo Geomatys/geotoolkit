@@ -74,9 +74,10 @@ public class RingType extends AbstractRingType implements Ring{
      * 
      * 
      */
+    @Override
     public List<CurvePropertyType> getCurveMember() {
         if (curveMember == null) {
-            curveMember = new ArrayList<CurvePropertyType>();
+            curveMember = new ArrayList<>();
         }
         return this.curveMember;
     }
@@ -87,7 +88,7 @@ public class RingType extends AbstractRingType implements Ring{
 
     public void setCurveMember(final CurvePropertyType curveMember) {
         if (this.curveMember == null) {
-            this.curveMember = new ArrayList<CurvePropertyType>();
+            this.curveMember = new ArrayList<>();
         }
         this.curveMember.add(curveMember);
     }

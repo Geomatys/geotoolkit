@@ -64,7 +64,7 @@ public class CurveSegmentArrayPropertyType implements CurveSegmentArrayProperty{
     public CurveSegmentArrayPropertyType(final List<? extends AbstractCurveSegmentType> segments) {
         if (segments != null) {
             ObjectFactory factory = new ObjectFactory();
-            abstractCurveSegment = new ArrayList<JAXBElement<? extends AbstractCurveSegmentType>>();
+            abstractCurveSegment = new ArrayList<>();
             for (AbstractCurveSegmentType segment : segments) {
                 abstractCurveSegment.add(factory.createLineStringSegment((LineStringSegmentType) segment));
             }
@@ -96,7 +96,7 @@ public class CurveSegmentArrayPropertyType implements CurveSegmentArrayProperty{
      */
     public List<JAXBElement<? extends AbstractCurveSegmentType>> getJbAbstractCurveSegment() {
         if (abstractCurveSegment == null) {
-            abstractCurveSegment = new ArrayList<JAXBElement<? extends AbstractCurveSegmentType>>();
+            abstractCurveSegment = new ArrayList<>();
         }
         return this.abstractCurveSegment;
     }
@@ -107,7 +107,7 @@ public class CurveSegmentArrayPropertyType implements CurveSegmentArrayProperty{
 
     public void setAbstractCurveSegment(final AbstractCurveSegmentType abstractCurveSegment) {
         if (this.abstractCurveSegment == null) {
-            this.abstractCurveSegment = new ArrayList<JAXBElement<? extends AbstractCurveSegmentType>>();
+            this.abstractCurveSegment = new ArrayList<>();
         }
         ObjectFactory factory = new ObjectFactory();
         if (abstractCurveSegment instanceof LineStringSegmentType) {
@@ -148,9 +148,9 @@ public class CurveSegmentArrayPropertyType implements CurveSegmentArrayProperty{
 
     public List<? extends AbstractCurveSegmentType> getAbstractCurveSegment() {
         if (abstractCurveSegment == null) {
-            abstractCurveSegment = new ArrayList<JAXBElement<? extends AbstractCurveSegmentType>>();
+            abstractCurveSegment = new ArrayList<>();
         }
-        List<AbstractCurveSegmentType> response = new ArrayList<AbstractCurveSegmentType>();
+        List<AbstractCurveSegmentType> response = new ArrayList<>();
         for (JAXBElement<? extends AbstractCurveSegmentType> jb : abstractCurveSegment) {
             response.add(jb.getValue());
         }

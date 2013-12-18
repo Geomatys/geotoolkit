@@ -96,7 +96,7 @@ public class LineStringSegmentType extends AbstractCurveSegmentType implements L
      */
     public List<JAXBElement<?>> getRest() {
         if (pointPropertyOrPointRep == null) {
-            pointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
+            pointPropertyOrPointRep = new ArrayList<>();
         }
         return this.pointPropertyOrPointRep;
     }
@@ -110,11 +110,22 @@ public class LineStringSegmentType extends AbstractCurveSegmentType implements L
      */
     public List<DirectPositionType> getPos() {
          if (pos == null) {
-            pos = new ArrayList<DirectPositionType>();
+            pos = new ArrayList<>();
         }
         return this.pos;
     }
 
+    public void setPos(final List<DirectPositionType> pos) {
+        this.pos = pos;
+    }
+
+    public void setPos(final DirectPositionType pos) {
+        if (this.pos == null) {
+            this.pos = new ArrayList<>();
+        }
+        this.pos.add(pos);
+    }
+    
     /**
      * Gets the value of the posList property.
      *

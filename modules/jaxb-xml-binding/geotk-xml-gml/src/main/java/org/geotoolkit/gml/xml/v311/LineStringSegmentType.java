@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.LineStringSegment;
-import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.DirectPosition;
 
 
@@ -94,7 +93,7 @@ public class LineStringSegmentType extends AbstractCurveSegmentType implements L
             final CurveInterpolationType interpolation, final List<DirectPosition> positions) {
         super(numDerivativesAtStart, numDerivativesAtEnd, numDerivativeInterior);
         this.interpolation = interpolation;
-        this.pos = new ArrayList<DirectPositionType>();
+        this.pos = new ArrayList<>();
         for (DirectPosition currentPos : positions) {
             DirectPositionType position = new DirectPositionType(currentPos);
             this.pos.add(position);
@@ -126,7 +125,7 @@ public class LineStringSegmentType extends AbstractCurveSegmentType implements L
      */
     public List<DirectPositionType> getPos() {
         if (pos == null) {
-            pos = new ArrayList<DirectPositionType>();
+            pos = new ArrayList<>();
         }
         return this.pos;
     }
@@ -137,7 +136,7 @@ public class LineStringSegmentType extends AbstractCurveSegmentType implements L
 
     public void setPos(final DirectPositionType pos) {
         if (this.pos == null) {
-            this.pos = new ArrayList<DirectPositionType>();
+            this.pos = new ArrayList<>();
         }
         this.pos.add(pos);
     }

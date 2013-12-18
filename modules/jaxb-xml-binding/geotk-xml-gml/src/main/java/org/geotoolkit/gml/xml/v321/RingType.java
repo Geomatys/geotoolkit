@@ -20,11 +20,13 @@ package org.geotoolkit.gml.xml.v321;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.Ring;
 
 
@@ -64,11 +66,23 @@ public class RingType extends AbstractRingType implements Ring {
      * 
      * {@link CurvePropertyType }
      */
+    @Override
     public List<CurvePropertyType> getCurveMember() {
         if (curveMember == null) {
-            curveMember = new ArrayList<CurvePropertyType>();
+            curveMember = new ArrayList<>();
         }
         return this.curveMember;
+    }
+
+    public void setCurveMember(final List<CurvePropertyType> curveMember) {
+        this.curveMember = curveMember;
+    }
+
+    public void setCurveMember(final CurvePropertyType curveMember) {
+        if (this.curveMember == null) {
+            this.curveMember = new ArrayList<>();
+        }
+        this.curveMember.add(curveMember);
     }
 
     /**
@@ -95,4 +109,26 @@ public class RingType extends AbstractRingType implements Ring {
         this.aggregationType = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof RingType && super.equals(object, mode)) {
+            final RingType that = (RingType) object;
+
+            return Objects.equals(this.curveMember, that.curveMember);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.curveMember != null ? this.curveMember.hashCode() : 0);
+        return hash;
+    }
 }

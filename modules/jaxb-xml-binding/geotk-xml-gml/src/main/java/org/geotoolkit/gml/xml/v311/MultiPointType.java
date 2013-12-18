@@ -74,9 +74,10 @@ public class MultiPointType extends AbstractGeometricAggregateType implements Mu
     /**
      * Gets the value of the pointMember property.
      */
+    @Override
     public List<PointPropertyType> getPointMember() {
         if (pointMember == null) {
-            pointMember = new ArrayList<PointPropertyType>();
+            pointMember = new ArrayList<>();
         }
         return this.pointMember;
     }
@@ -94,7 +95,7 @@ public class MultiPointType extends AbstractGeometricAggregateType implements Mu
     public void setPointMember(final PointPropertyType pointMember) {
         if (pointMember != null) {
             if (this.pointMember == null) {
-                this.pointMember = new ArrayList<PointPropertyType>();
+                this.pointMember = new ArrayList<>();
             }
             this.pointMember.add(pointMember);
         }

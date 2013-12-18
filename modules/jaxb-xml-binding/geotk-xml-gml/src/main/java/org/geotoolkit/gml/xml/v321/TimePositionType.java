@@ -145,18 +145,25 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
      *
      *
      */
-    public List<String> getValue() {
+    public List<String> getValues() {
         if (value == null) {
-            value = new ArrayList<String>();
+            value = new ArrayList<>();
         }
         return this.value;
     }
-    
-    public String getSingleValue() {
+
+    public String getValue() {
         if (value != null && !value.isEmpty()) {
             return value.get(0);
         }
         return null;
+    }
+
+    public void setValue(final String val) {
+        if (value == null) {
+            value = new ArrayList<>();
+        }
+        this.value.add(val);
     }
 
     public final void setValue(final Date value) {
@@ -320,17 +327,9 @@ public class TimePositionType extends AbstractTimePosition implements Serializab
         }
 
         if (value != null) {
-            final SimpleDateFormat sdf = new SimpleDateFormat("d MMMMM yyyy HH:mm:ss z");
+            s.append("value:\n");
             for (String v : value) {
-                try {
-                    final Date date;
-                    synchronized (FORMATTERS.get(0)) {
-                        date = FORMATTERS.get(0).parse(v);
-                    }
-                    s.append(sdf.format(date));
-                } catch (ParseException ex) {
-                   LOGGER.log(Level.WARNING, null, ex);
-                }
+                s.append(v).append('\n');
             }
         }
         return s.toString();

@@ -212,6 +212,28 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
     }
 
     /**
+     * XML List based on XML Schema double type.
+     * An element of this type contains a space-separated list of double values Gets the value of the value property.
+     *
+     */
+    public void setValue(final List<Double> value) {
+        this.value = value;
+    }
+
+    /**
+     * XML List based on XML Schema double type.
+     * An element of this type contains a space-separated list of double values Gets the value of the value property.
+     *
+     */
+    public void setValue(final Double value) {
+        if (this.value == null) {
+            this.value = new ArrayList<Double>();
+        }
+        this.value.add(value);
+    }
+
+    
+    /**
      * Gets the value of the srsName property.
      *
      * @return

@@ -21,6 +21,7 @@ package org.geotoolkit.gml.xml.v321;
 import java.util.Objects;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -205,6 +206,28 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
     }
 
     /**
+     * Sets the value of the beginPosition property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link TimePositionType }
+     *
+     */
+    public void setBeginPosition(final Date value) {
+        this.beginPosition = new TimePositionType(value);
+    }
+
+    public void setBeginPosition(final TimeIndeterminateValueType value) {
+        this.beginPosition = new TimePositionType(value);
+    }
+
+    public void setBeginPosition(final TimeInstantType value) {
+        if (value != null) {
+            this.beginPosition = value.getTimePosition();
+        }
+    }
+
+    /**
      * Gets the value of the begin property.
      *
      * @return
@@ -240,6 +263,36 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         return endPosition;
     }
 
+    /**
+     * Sets the value of the endPosition property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link TimePositionType }
+     *
+     */
+    public void setEndPosition(final Date value) {
+        this.endPosition = new TimePositionType(value);
+    }
+
+    /**
+     * Sets the value of the beginPosition property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link TimePositionType }
+     *
+     */
+    public void setEndPosition(final TimeIndeterminateValueType value) {
+        this.endPosition = new TimePositionType(value);
+    }
+
+    public void setEndPosition(final TimeInstantType value) {
+        if (value != null) {
+            this.endPosition = value.getTimePosition();
+        }
+    }
+    
     /**
      * Sets the value of the endPosition property.
      *

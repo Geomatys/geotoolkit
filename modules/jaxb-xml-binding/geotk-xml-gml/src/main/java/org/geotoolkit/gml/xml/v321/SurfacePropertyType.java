@@ -20,6 +20,7 @@ package org.geotoolkit.gml.xml.v321;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -90,12 +91,25 @@ public class SurfacePropertyType implements SurfaceProperty {
         
     }
     
-    public SurfacePropertyType(final PolygonType polygon) {
-        if (polygon != null) {
-            final ObjectFactory factory = new ObjectFactory();
-            this.abstractSurface = factory.createPolygon(polygon);
+    public SurfacePropertyType(final AbstractSurfaceType surface) {
+        final ObjectFactory factory = new ObjectFactory();
+        if (surface instanceof OrientableSurfaceType) {
+            this.abstractSurface = factory.createOrientableSurface((OrientableSurfaceType)surface);
+        /*} else if (surface instanceof TriangulatedSurfaceType) {
+            this.abstractSurface = factory.createTriangulatedSurface((TriangulatedSurfaceType)surface);
+        } else if (surface instanceof PolyhedralSurfaceType) {
+            this.abstractSurface = factory.createPolyhedralSurface((PolyhedralSurfaceType)surface);
+        */} else if (surface instanceof PolygonType) {
+            this.abstractSurface = factory.createPolygon((PolygonType)surface);
+        } else if (surface instanceof TinType) {
+            this.abstractSurface = factory.createTin((TinType)surface);
+        } else if (surface instanceof SurfaceType) {
+            this.abstractSurface = factory.createSurface((SurfaceType)surface);
+        } else if (surface instanceof AbstractSurfaceType) {
+            this.abstractSurface = factory.createAbstractSurface((AbstractSurfaceType)surface);
         }
     }
+
     /**
      * Gets the value of the abstractSurface property.
      * 
@@ -154,6 +168,44 @@ public class SurfacePropertyType implements SurfaceProperty {
         }
         return null;
     }
+
+    /**
+     * Sets the value of the abstractSurface property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@code <}{@link SurfaceType }{@code >}
+     *     {@code <}{@link OrientableSurfaceType }{@code >}
+     *     {@code <}{@link AbstractSurfaceType }{@code >}
+     *     {@code <}{@link TriangulatedSurfaceType }{@code >}
+     *     {@code <}{@link PolyhedralSurfaceType }{@code >}
+     *     {@code <}{@link PolygonType }{@code >}
+     *     {@code <}{@link TinType }{@code >}
+     *
+     */
+    public void setAbstractSurface(AbstractSurfaceType value) {
+        if (value != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            if (value instanceof TinType) {
+                this.abstractSurface = factory.createTin((TinType) value);
+            } else if (value instanceof PolygonType) {
+                this.abstractSurface = factory.createPolygon((PolygonType) value);
+            /*} else if (value instanceof PolyhedralSurfaceType) {
+                this.abstractSurface = factory.createPolyhedralSurface((PolyhedralSurfaceType) value);
+            } else if (value instanceof TriangulatedSurfaceType) {
+                this.abstractSurface = factory.createTriangulatedSurface((TriangulatedSurfaceType) value);
+            */} else if (value instanceof SurfaceType) {
+                this.abstractSurface = factory.createSurface((SurfaceType) value);
+            } else if (value instanceof OrientableSurfaceType) {
+                this.abstractSurface = factory.createOrientableSurface((OrientableSurfaceType) value);
+            } else if (value instanceof AbstractSurfaceType) {
+                this.abstractSurface = factory.createAbstractSurface((AbstractSurfaceType) value);
+            }
+        } else {
+            value = null;
+        }
+    }
+
     
     /**
      * Gets the value of the owns property.
@@ -408,4 +460,75 @@ public class SurfacePropertyType implements SurfaceProperty {
         this.actuate = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SurfacePropertyType) {
+            final SurfacePropertyType that = (SurfacePropertyType) object;
+
+            return Objects.equals(this.actuate,              that.actuate)          &&
+                   Objects.equals(this.arcrole,              that.arcrole)          &&
+                   Objects.equals(this.type,                 that.type)             &&
+                   Objects.equals(this.href,                 that.href)             &&
+                   Objects.equals(this.remoteSchema,         that.remoteSchema)     &&
+                   Objects.equals(this.show,                 that.show)             &&
+                   Objects.equals(this.role,                 that.role)             &&
+                   Objects.equals(this.title,                that.title)            &&
+                   Objects.equals(this.getAbstractSurface(), that.getAbstractSurface());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 19 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 19 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 19 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 19 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 19 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 19 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 19 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 19 * hash + (this.getAbstractSurface() != null ? this.getAbstractSurface().hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[SurfacePropertyType]").append("\n");
+        if (abstractSurface != null) {
+            sb.append("abstractSurface: ").append(abstractSurface.getValue()).append('\n');
+        }
+        if (remoteSchema != null) {
+            sb.append("remoteSchema: ").append(remoteSchema).append('\n');
+        }
+        if (actuate != null) {
+            sb.append("actuate: ").append(actuate).append('\n');
+        }
+        if (arcrole != null) {
+            sb.append("actuate: ").append(arcrole).append('\n');
+        }
+        if (href != null) {
+            sb.append("href: ").append(href).append('\n');
+        }
+        if (role != null) {
+            sb.append("role: ").append(role).append('\n');
+        }
+        if (show != null) {
+            sb.append("show: ").append(show).append('\n');
+        }
+        if (title != null) {
+            sb.append("title: ").append(title).append('\n');
+        }
+        if (type != null) {
+            sb.append("type: ").append(type).append('\n');
+        }
+        return sb.toString();
+    }
 }

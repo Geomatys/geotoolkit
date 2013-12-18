@@ -20,9 +20,11 @@ package org.geotoolkit.gml.xml.v321;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.gml.xml.MultiSurface;
 import org.opengis.filter.expression.ExpressionVisitor;
 
@@ -74,12 +76,25 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType implements 
      * 
      * 
      */
+    @Override
     public List<SurfacePropertyType> getSurfaceMember() {
         if (surfaceMember == null) {
-            surfaceMember = new ArrayList<SurfacePropertyType>();
+            surfaceMember = new ArrayList<>();
         }
         return this.surfaceMember;
     }
+    
+    public void setSurfaceMember(final List<SurfacePropertyType> surfaceMember) {
+        this.surfaceMember = surfaceMember;
+    }
+
+    public void setSurfaceMember(final SurfacePropertyType surfaceMember) {
+        if (this.surfaceMember == null) {
+            this.surfaceMember = new ArrayList<>();
+        }
+        this.surfaceMember.add(surfaceMember);
+    }
+
 
     /**
      * Gets the value of the surfaceMembers property.
@@ -118,5 +133,45 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType implements 
     @Override
     public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof MultiSurfaceType && super.equals(object, mode)) {
+            final MultiSurfaceType that = (MultiSurfaceType) object;
+
+            return Objects.equals(this.surfaceMember,  that.surfaceMember) &&
+                   Objects.equals(this.surfaceMembers, that.surfaceMembers);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.surfaceMember != null ? this.surfaceMember.hashCode() : 0);
+        hash = 97 * hash + (this.surfaceMembers != null ? this.surfaceMembers.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (surfaceMembers != null) {
+            sb.append("surfaceMembers:").append(surfaceMembers).append('\n');
+        }
+        if (surfaceMember != null) {
+            sb.append("surfaceMember:").append('\n');
+            for (SurfacePropertyType sp : surfaceMember) {
+                sb.append(sp).append('\n');
+            }
+        }
+        return sb.toString();
     }
 }

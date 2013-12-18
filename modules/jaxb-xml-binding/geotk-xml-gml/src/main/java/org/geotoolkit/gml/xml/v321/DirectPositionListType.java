@@ -94,7 +94,7 @@ public class DirectPositionListType implements DirectPositionList {
      */
     public List<Double> getValue() {
         if (value == null) {
-            value = new ArrayList<Double>();
+            value = new ArrayList<>();
         }
         return this.value;
     }
@@ -111,6 +111,20 @@ public class DirectPositionListType implements DirectPositionList {
     }
 
 
+    /**
+     * XML List based on XML Schema double type.
+     * An element of this type contains a space-separated list of double values Gets the value of the value property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link Double }
+     */
+    public void setValue(final Double value) {
+        if (this.value == null) {
+            this.value = new ArrayList<>();
+        }
+        this.value.add(value);
+    }
+    
     /**
      * Gets the value of the count property.
      *

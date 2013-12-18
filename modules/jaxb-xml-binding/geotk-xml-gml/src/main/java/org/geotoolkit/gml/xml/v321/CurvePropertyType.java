@@ -90,18 +90,59 @@ public class CurvePropertyType implements CurveProperty {
         
     }
     
-    public CurvePropertyType(final LineStringType line) {
-        if (line != null) {
-            final ObjectFactory factory = new ObjectFactory();
-            this.abstractCurve = factory.createLineString(line);
+    public CurvePropertyType(final AbstractCurveType curve) {
+        if (curve != null) {
+            ObjectFactory factory = new ObjectFactory();
+            if (curve instanceof CurveType) {
+                abstractCurve = factory.createCurve((CurveType) curve);
+            } else if (curve instanceof OrientableCurveType) {
+                abstractCurve = factory.createOrientableCurve((OrientableCurveType) curve);
+            } else if (curve instanceof CompositeCurveType) {
+                abstractCurve = factory.createCompositeCurve((CompositeCurveType) curve);
+            } else if (curve instanceof LineStringType) {
+                abstractCurve = factory.createLineString((LineStringType) curve);
+            } else {
+                throw new IllegalArgumentException("unexpected subclasse of abstractCurveType");
+            }
         }
     }
     
+    @Override
     public AbstractCurveType getAbstractCurve() {
         if (abstractCurve != null) {
             return abstractCurve.getValue();
         }
         return null;
+    }
+
+    /**
+     * Sets the value of the abstractCurve property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link JAXBElement }{@code <}{@link LineStringType }{@code >}
+     *     {@link JAXBElement }{@code <}{@link CurveType }{@code >}
+     *     {@link JAXBElement }{@code <}{@link AbstractCurveType }{@code >}
+     *     {@link JAXBElement }{@code <}{@link OrientableCurveType }{@code >}
+     *
+     */
+    public void setAbstractCurve(final AbstractCurveType curve) {
+        if (curve != null) {
+            ObjectFactory factory = new ObjectFactory();
+            if (curve instanceof CurveType) {
+                abstractCurve = factory.createCurve((CurveType) curve);
+            } else if (curve instanceof OrientableCurveType) {
+                abstractCurve = factory.createOrientableCurve((OrientableCurveType) curve);
+            } else if (curve instanceof CompositeCurveType) {
+                abstractCurve = factory.createCompositeCurve((CompositeCurveType) curve);
+            } else if (curve instanceof LineStringType) {
+                abstractCurve = factory.createLineString((LineStringType) curve);
+            } else {
+                throw new IllegalArgumentException("unexpected subclasse of abstractCurveType");
+            }
+        } else {
+            abstractCurve = null;
+        }
     }
     
     /**

@@ -115,7 +115,7 @@ public class DirectPositionListType implements DirectPositionList {
      */
     public void setValue(final Double value) {
         if (this.value == null) {
-            this.value = new ArrayList<Double>();
+            this.value = new ArrayList<>();
         }
         this.value.add(value);
     }

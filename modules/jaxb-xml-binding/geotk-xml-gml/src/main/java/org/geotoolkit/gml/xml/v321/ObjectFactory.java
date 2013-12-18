@@ -4406,8 +4406,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "polygonPatches", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "patches")
-    public JAXBElement<SurfacePatchArrayPropertyType> createPolygonPatches(SurfacePatchArrayPropertyType value) {
-        return new JAXBElement<SurfacePatchArrayPropertyType>(_PolygonPatches_QNAME, SurfacePatchArrayPropertyType.class, null, value);
+    public JAXBElement<PolygonPatchArrayPropertyType> createPolygonPatches(PolygonPatchArrayPropertyType value) {
+        return new JAXBElement<PolygonPatchArrayPropertyType>(_PolygonPatches_QNAME, PolygonPatchArrayPropertyType.class, null, value);
     }
 
     /**
@@ -5774,8 +5774,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml/3.2", name = "trianglePatches", substitutionHeadNamespace = "http://www.opengis.net/gml/3.2", substitutionHeadName = "patches")
-    public JAXBElement<SurfacePatchArrayPropertyType> createTrianglePatches(SurfacePatchArrayPropertyType value) {
-        return new JAXBElement<SurfacePatchArrayPropertyType>(_TrianglePatches_QNAME, SurfacePatchArrayPropertyType.class, null, value);
+    public JAXBElement<TrianglePatchArrayPropertyType> createTrianglePatches(TrianglePatchArrayPropertyType value) {
+        return new JAXBElement<TrianglePatchArrayPropertyType>(_TrianglePatches_QNAME, TrianglePatchArrayPropertyType.class, null, value);
     }
 
     /**
