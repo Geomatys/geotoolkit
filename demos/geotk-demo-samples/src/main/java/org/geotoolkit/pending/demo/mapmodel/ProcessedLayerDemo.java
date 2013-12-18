@@ -6,7 +6,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.gui.swing.go2.JMap2DFrame;
+import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFinder;
-import org.geotoolkit.gui.swing.go2.JMap2DFrame;
+import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;

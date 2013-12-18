@@ -33,7 +33,7 @@ import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.gui.swing.chooser.JServerChooser.FactoryCellRenderer;
-import org.geotoolkit.gui.swing.misc.JOptionDialog;
+import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.gui.swing.resource.MessageBundle;

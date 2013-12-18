@@ -17,7 +17,7 @@
 package org.geotoolkit.gui.swing.render3d;
 
 import com.jogamp.opengl.util.FPSAnimator;
-import org.geotoolkit.gui.swing.BufferLayout;
+import org.geotoolkit.gui.swing.util.BufferLayout;
 
 import java.awt.*;
 import java.awt.event.KeyListener;

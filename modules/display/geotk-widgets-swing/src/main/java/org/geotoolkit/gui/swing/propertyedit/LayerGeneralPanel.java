@@ -42,7 +42,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.gui.swing.misc.ActionCell;
+import org.geotoolkit.gui.swing.util.ActionCell;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JTextExpressionPane;

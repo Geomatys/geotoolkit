@@ -28,7 +28,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
-import org.geotoolkit.gui.swing.WrapLayout;
+import org.geotoolkit.gui.swing.util.WrapLayout;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.Symbolizer;
 

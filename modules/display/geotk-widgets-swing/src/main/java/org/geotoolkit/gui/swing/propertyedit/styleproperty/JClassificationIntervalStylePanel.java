@@ -62,7 +62,7 @@ import javax.swing.table.TableCellEditor;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.gui.swing.misc.JOptionDialog;
+import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.JPropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.IconBundle;

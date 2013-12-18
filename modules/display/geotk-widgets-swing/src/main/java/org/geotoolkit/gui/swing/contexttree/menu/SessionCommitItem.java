@@ -22,7 +22,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.geotoolkit.gui.swing.contexttree.AbstractTreePopupItem;
-import org.geotoolkit.gui.swing.go2.control.edition.SessionCommitAction;
+import org.geotoolkit.gui.swing.render2d.control.edition.SessionCommitAction;
 import org.geotoolkit.map.FeatureMapLayer;
 
 /**

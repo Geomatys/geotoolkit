@@ -6,7 +6,7 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.filestore.FileCoverageStoreFactory;
-import org.geotoolkit.gui.swing.go2.JMap2DFrame;
+import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
 import org.geotoolkit.map.CoverageMapLayer;

@@ -32,7 +32,7 @@ import org.geotoolkit.process.chain.model.ClassFull;
 import org.geotoolkit.process.chain.model.DataLink;
 import org.geotoolkit.process.chain.model.Parameter;
 import org.geotoolkit.process.chain.model.Parameterized;
-import org.geotoolkit.util.SwingUtilities;
+import org.geotoolkit.gui.swing.util.SwingUtilities;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.parameter.ParameterDescriptor;
 

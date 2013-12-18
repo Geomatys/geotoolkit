@@ -24,7 +24,7 @@ import java.util.List;
 import javax.swing.JScrollPane;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.util.SwingUtilities;
+import org.geotoolkit.gui.swing.util.SwingUtilities;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterDescriptorGroup;

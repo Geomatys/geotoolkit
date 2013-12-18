@@ -3,7 +3,7 @@ package org.geotoolkit.pending.demo.clients.ignrm;
 
 import java.net.URL;
 import javax.swing.JOptionPane;
-import org.geotoolkit.gui.swing.go2.JMap2DFrame;
+import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.ignrm.IGNRMServer;
 import org.geotoolkit.ignrm.Token;
 import org.geotoolkit.ignrm.TokenClientSecurity;

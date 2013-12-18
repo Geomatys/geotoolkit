@@ -5,7 +5,7 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.db.postgres.PostgresFeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.gui.swing.go2.JMap2DFrame;
+import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.parameter.Parameters;

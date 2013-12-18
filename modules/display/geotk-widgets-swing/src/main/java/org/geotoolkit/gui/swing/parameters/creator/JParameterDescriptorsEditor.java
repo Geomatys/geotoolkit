@@ -21,7 +21,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
-import org.geotoolkit.util.SwingUtilities;
+import org.geotoolkit.gui.swing.util.SwingUtilities;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 

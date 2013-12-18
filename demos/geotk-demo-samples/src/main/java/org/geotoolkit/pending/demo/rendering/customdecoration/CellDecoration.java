@@ -15,7 +15,7 @@ import javax.swing.event.ChangeListener;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 
-import org.geotoolkit.gui.swing.go2.decoration.AbstractMapDecoration;
+import org.geotoolkit.gui.swing.render2d.decoration.AbstractMapDecoration;
 import org.opengis.geometry.BoundingBox;
 
 public class CellDecoration extends AbstractMapDecoration{

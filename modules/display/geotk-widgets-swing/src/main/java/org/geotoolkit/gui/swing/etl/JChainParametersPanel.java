@@ -40,7 +40,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
-import org.geotoolkit.gui.swing.misc.ActionCell;
+import org.geotoolkit.gui.swing.util.ActionCell;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.process.chain.model.ChainDataTypes;
@@ -48,7 +48,7 @@ import org.geotoolkit.process.chain.model.Parameter;
 import org.geotoolkit.process.chain.model.Parameterized;
 import org.geotoolkit.process.chain.model.event.ChainListener;
 import org.geotoolkit.process.chain.model.event.EventChain;
-import org.geotoolkit.util.SwingUtilities;
+import org.geotoolkit.gui.swing.util.SwingUtilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.jdesktop.swingx.JXTable;
 

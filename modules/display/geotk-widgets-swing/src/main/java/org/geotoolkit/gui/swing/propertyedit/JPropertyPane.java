@@ -46,7 +46,7 @@ import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.style.RandomStyleBuilder;
-import org.geotoolkit.util.SwingUtilities;
+import org.geotoolkit.gui.swing.util.SwingUtilities;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.PolygonSymbolizer;

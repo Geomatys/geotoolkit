@@ -34,7 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import org.geotoolkit.gui.swing.misc.JOptionDialog;
+import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JChannelSelectionPane;
 import org.geotoolkit.gui.swing.style.JContrastEnhancement;

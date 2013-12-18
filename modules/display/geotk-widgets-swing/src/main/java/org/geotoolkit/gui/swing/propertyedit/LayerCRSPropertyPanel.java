@@ -42,7 +42,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.geotoolkit.gui.swing.crschooser.JCRSList;
-import org.geotoolkit.gui.swing.misc.LoadingLockableUI;
+import org.geotoolkit.gui.swing.util.LoadingLockableUI;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;

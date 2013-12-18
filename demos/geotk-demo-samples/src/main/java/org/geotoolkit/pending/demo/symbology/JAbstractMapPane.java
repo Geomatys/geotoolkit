@@ -32,8 +32,8 @@ import org.geotoolkit.gui.swing.contexttree.menu.DeleteItem;
 import org.geotoolkit.gui.swing.contexttree.menu.LayerFeatureItem;
 import org.geotoolkit.gui.swing.contexttree.menu.LayerPropertyItem;
 import org.geotoolkit.gui.swing.contexttree.menu.SeparatorItem;
-import org.geotoolkit.gui.swing.go2.JMap2D;
-import org.geotoolkit.gui.swing.go2.decoration.JClassicNavigationDecoration;
+import org.geotoolkit.gui.swing.render2d.JMap2D;
+import org.geotoolkit.gui.swing.render2d.decoration.JClassicNavigationDecoration;
 import org.geotoolkit.gui.swing.propertyedit.ClearSelectionAction;
 import org.geotoolkit.gui.swing.propertyedit.LayerCRSPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.LayerFilterPropertyPanel;
@@ -184,14 +184,14 @@ public abstract class JAbstractMapPane extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
-        guiNavBar = new org.geotoolkit.gui.swing.go2.control.JNavigationBar();
-        guiInfoBar = new org.geotoolkit.gui.swing.go2.control.JInformationBar();
-        guiSelectionBar = new org.geotoolkit.gui.swing.go2.control.JSelectionBar();
-        guiEditBar = new org.geotoolkit.gui.swing.go2.control.JEditionBar();
-        guiConfigBar = new org.geotoolkit.gui.swing.go2.control.JConfigBar();
+        guiNavBar = new org.geotoolkit.gui.swing.render2d.control.JNavigationBar();
+        guiInfoBar = new org.geotoolkit.gui.swing.render2d.control.JInformationBar();
+        guiSelectionBar = new org.geotoolkit.gui.swing.render2d.control.JSelectionBar();
+        guiEditBar = new org.geotoolkit.gui.swing.render2d.control.JEditionBar();
+        guiConfigBar = new org.geotoolkit.gui.swing.render2d.control.JConfigBar();
         jSplitPane2 = new javax.swing.JSplitPane();
         panGeneral = new javax.swing.JPanel();
-        guiCoordBar = new org.geotoolkit.gui.swing.go2.control.JCoordinateBar();
+        guiCoordBar = new org.geotoolkit.gui.swing.render2d.control.JCoordinateBar();
         panTree = new javax.swing.JPanel();
         jScrollPane1 = new JContextTree();
 
@@ -266,12 +266,12 @@ public abstract class JAbstractMapPane extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private org.geotoolkit.gui.swing.go2.control.JConfigBar guiConfigBar;
-    private org.geotoolkit.gui.swing.go2.control.JCoordinateBar guiCoordBar;
-    private org.geotoolkit.gui.swing.go2.control.JEditionBar guiEditBar;
-    private org.geotoolkit.gui.swing.go2.control.JInformationBar guiInfoBar;
-    private org.geotoolkit.gui.swing.go2.control.JNavigationBar guiNavBar;
-    private org.geotoolkit.gui.swing.go2.control.JSelectionBar guiSelectionBar;
+    private org.geotoolkit.gui.swing.render2d.control.JConfigBar guiConfigBar;
+    private org.geotoolkit.gui.swing.render2d.control.JCoordinateBar guiCoordBar;
+    private org.geotoolkit.gui.swing.render2d.control.JEditionBar guiEditBar;
+    private org.geotoolkit.gui.swing.render2d.control.JInformationBar guiInfoBar;
+    private org.geotoolkit.gui.swing.render2d.control.JNavigationBar guiNavBar;
+    private org.geotoolkit.gui.swing.render2d.control.JSelectionBar guiSelectionBar;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;

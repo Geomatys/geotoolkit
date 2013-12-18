@@ -151,13 +151,13 @@ public class WidgetsDemo extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        guiMap = new org.geotoolkit.gui.swing.go2.JMap2D();
-        guiNavBar = new org.geotoolkit.gui.swing.go2.control.JNavigationBar();
-        guiEditBar = new org.geotoolkit.gui.swing.go2.control.JEditionBar();
-        guiCoordBar = new org.geotoolkit.gui.swing.go2.control.JCoordinateBar();
-        guiInfoBar = new org.geotoolkit.gui.swing.go2.control.JInformationBar();
+        guiMap = new org.geotoolkit.gui.swing.render2d.JMap2D();
+        guiNavBar = new org.geotoolkit.gui.swing.render2d.control.JNavigationBar();
+        guiEditBar = new org.geotoolkit.gui.swing.render2d.control.JEditionBar();
+        guiCoordBar = new org.geotoolkit.gui.swing.render2d.control.JCoordinateBar();
+        guiInfoBar = new org.geotoolkit.gui.swing.render2d.control.JInformationBar();
         guiTree = new org.geotoolkit.gui.swing.contexttree.JContextTree();
-        guiSelectBar = new org.geotoolkit.gui.swing.go2.control.JSelectionBar();
+        guiSelectBar = new org.geotoolkit.gui.swing.render2d.control.JSelectionBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -238,12 +238,12 @@ public class WidgetsDemo extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private org.geotoolkit.gui.swing.go2.control.JCoordinateBar guiCoordBar;
-    private org.geotoolkit.gui.swing.go2.control.JEditionBar guiEditBar;
-    private org.geotoolkit.gui.swing.go2.control.JInformationBar guiInfoBar;
-    private org.geotoolkit.gui.swing.go2.JMap2D guiMap;
-    private org.geotoolkit.gui.swing.go2.control.JNavigationBar guiNavBar;
-    private org.geotoolkit.gui.swing.go2.control.JSelectionBar guiSelectBar;
+    private org.geotoolkit.gui.swing.render2d.control.JCoordinateBar guiCoordBar;
+    private org.geotoolkit.gui.swing.render2d.control.JEditionBar guiEditBar;
+    private org.geotoolkit.gui.swing.render2d.control.JInformationBar guiInfoBar;
+    private org.geotoolkit.gui.swing.render2d.JMap2D guiMap;
+    private org.geotoolkit.gui.swing.render2d.control.JNavigationBar guiNavBar;
+    private org.geotoolkit.gui.swing.render2d.control.JSelectionBar guiSelectBar;
     private org.geotoolkit.gui.swing.contexttree.JContextTree guiTree;
     // End of variables declaration//GEN-END:variables
 

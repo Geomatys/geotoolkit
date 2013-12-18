@@ -34,7 +34,7 @@ import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.gui.swing.misc.JOptionDialog;
+import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.ComplexAttribute;

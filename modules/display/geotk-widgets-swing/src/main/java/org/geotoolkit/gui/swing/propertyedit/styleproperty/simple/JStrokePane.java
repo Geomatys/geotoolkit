@@ -32,7 +32,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import org.geotoolkit.gui.swing.misc.EmptyCellRenderer;
+import org.geotoolkit.gui.swing.util.EmptyCellRenderer;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JLineCapExpressionPane;
 import org.geotoolkit.gui.swing.style.JLineJoinExpressionPane;

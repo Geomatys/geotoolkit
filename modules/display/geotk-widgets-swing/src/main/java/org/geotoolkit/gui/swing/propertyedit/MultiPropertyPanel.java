@@ -37,7 +37,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-import org.geotoolkit.gui.swing.misc.JImagePane;
+import org.geotoolkit.gui.swing.util.JImagePane;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 

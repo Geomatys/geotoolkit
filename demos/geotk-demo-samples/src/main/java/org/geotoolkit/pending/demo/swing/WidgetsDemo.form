@@ -65,30 +65,30 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="org.geotoolkit.gui.swing.go2.JMap2D" name="guiMap">
+    <Component class="org.geotoolkit.gui.swing.render2d.JMap2D" name="guiMap">
     </Component>
-    <Container class="org.geotoolkit.gui.swing.go2.control.JNavigationBar" name="guiNavBar">
+    <Container class="org.geotoolkit.gui.swing.render2d.control.JNavigationBar" name="guiNavBar">
       <Properties>
         <Property name="rollover" type="boolean" value="true"/>
       </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
     </Container>
-    <Container class="org.geotoolkit.gui.swing.go2.control.JEditionBar" name="guiEditBar">
+    <Container class="org.geotoolkit.gui.swing.render2d.control.JEditionBar" name="guiEditBar">
       <Properties>
         <Property name="rollover" type="boolean" value="true"/>
       </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
     </Container>
-    <Container class="org.geotoolkit.gui.swing.go2.control.JCoordinateBar" name="guiCoordBar">
+    <Container class="org.geotoolkit.gui.swing.render2d.control.JCoordinateBar" name="guiCoordBar">
       <Properties>
         <Property name="rollover" type="boolean" value="true"/>
       </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
     </Container>
-    <Container class="org.geotoolkit.gui.swing.go2.control.JInformationBar" name="guiInfoBar">
+    <Container class="org.geotoolkit.gui.swing.render2d.control.JInformationBar" name="guiInfoBar">
       <Properties>
         <Property name="rollover" type="boolean" value="true"/>
       </Properties>
@@ -97,7 +97,7 @@
     </Container>
     <Component class="org.geotoolkit.gui.swing.contexttree.JContextTree" name="guiTree">
     </Component>
-    <Container class="org.geotoolkit.gui.swing.go2.control.JSelectionBar" name="guiSelectBar">
+    <Container class="org.geotoolkit.gui.swing.render2d.control.JSelectionBar" name="guiSelectBar">
       <Properties>
         <Property name="rollover" type="boolean" value="true"/>
       </Properties>

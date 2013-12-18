@@ -48,9 +48,9 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.gui.swing.go2.JMap2D;
-import org.geotoolkit.gui.swing.go2.control.JNavigationBar;
-import org.geotoolkit.gui.swing.go2.control.navigation.PanHandler;
+import org.geotoolkit.gui.swing.render2d.JMap2D;
+import org.geotoolkit.gui.swing.render2d.control.JNavigationBar;
+import org.geotoolkit.gui.swing.render2d.control.navigation.PanHandler;
 
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.io.X364;

@@ -45,7 +45,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.filter.function.FunctionFactory;
 import org.geotoolkit.filter.function.Functions;
-import org.geotoolkit.gui.swing.misc.JOptionDialog;
+import org.geotoolkit.gui.swing.util.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;

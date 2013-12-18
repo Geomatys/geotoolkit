@@ -28,7 +28,7 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class MessageBundle {
+public final class MessageBundle {
 
     private static final String PATH = "org/geotoolkit/gui/swing/resource/Bundle";
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(PATH);
@@ -76,4 +76,6 @@ public class MessageBundle {
         return new ResourceInternationalString(PATH, key);
     }
 
+    private MessageBundle(){}
+    
 }

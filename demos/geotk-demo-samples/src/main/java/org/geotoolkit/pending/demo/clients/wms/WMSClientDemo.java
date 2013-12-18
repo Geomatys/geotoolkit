@@ -4,7 +4,7 @@ package org.geotoolkit.pending.demo.clients.wms;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.geotoolkit.gui.swing.go2.JMap2DFrame;
+import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;

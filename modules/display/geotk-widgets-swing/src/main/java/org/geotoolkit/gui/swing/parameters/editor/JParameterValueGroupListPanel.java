@@ -39,7 +39,7 @@ import org.geotoolkit.gui.swing.resource.FontIconJButton;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.SwingUtilities;
+import org.geotoolkit.gui.swing.util.SwingUtilities;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.openide.util.NbBundle;

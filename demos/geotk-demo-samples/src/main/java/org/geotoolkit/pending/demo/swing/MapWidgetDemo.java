@@ -2,7 +2,7 @@
 package org.geotoolkit.pending.demo.swing;
 
 import javax.swing.JFrame;
-import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.pending.demo.Demos;
 
 public class MapWidgetDemo {

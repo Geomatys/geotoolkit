@@ -25,7 +25,7 @@ import javax.swing.tree.TreePath;
 
 import org.geotoolkit.gui.swing.contexttree.JContextTree;
 import org.geotoolkit.gui.swing.contexttree.TreePopupItem;
-import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.render2d.JMap2D;
 
 /**
  * Default popup control separator, use for JContextTreePopup

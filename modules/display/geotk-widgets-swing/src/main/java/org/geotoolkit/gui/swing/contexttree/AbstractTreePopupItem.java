@@ -21,7 +21,7 @@ import javax.swing.Action;
 import javax.swing.JMenuItem;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.render2d.JMap2D;
 
 /**
  *
