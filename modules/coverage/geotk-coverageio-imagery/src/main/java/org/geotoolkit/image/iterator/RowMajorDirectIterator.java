@@ -20,7 +20,6 @@ import java.awt.Rectangle;
 import java.awt.image.ComponentSampleModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
-import org.apache.sis.util.ArgumentChecks;
 import org.opengis.coverage.grid.SequenceType;
 
 /**
@@ -95,7 +94,7 @@ abstract class RowMajorDirectIterator extends PixelIterator {
         this.tY      = tMinY - 1;
         this.tX      = tMaxX - 1;
     }
-
+    
     /**
      * {@inheritDoc }.
      */
@@ -109,9 +108,12 @@ abstract class RowMajorDirectIterator extends PixelIterator {
                     updateCurrentRaster(tX, tY);
                     this.cRMinY = this.currentRaster.getMinY();
                     this.maxY   = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight());
+                } else {
+                    updateCurrentRaster(tX, tY);
                 }
+            } else {
+                updateCurrentRaster(tX, tY);
             }
-            updateCurrentRaster(tX, tY);
             this.cRMinX    = currentRaster.getMinX();
             this.maxX      = (Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX)*rasterNumBand;
             final int step = (row - cRMinY) * scanLineStride;
@@ -176,9 +178,7 @@ abstract class RowMajorDirectIterator extends PixelIterator {
             this.cRMinX = currentRaster.getMinX();
             this.cRMinY = currentRaster.getMinY();
         }
-//        updateCurrentRaster(tX, tY);
-//        this.cRMinX = currentRaster.getMinX();
-//        this.cRMinY = currentRaster.getMinY();
+        
         this.row = y;
         final int step = (row - cRMinY) * scanLineStride;
         this.maxX = (Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX) * rasterNumBand;
