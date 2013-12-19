@@ -139,85 +139,60 @@ public abstract class Interpolation {
      */
     public double[] getMinMaxValue(Rectangle area) {
         if (minMax != null) {
-            if ((area == null && precMinMax == null)
+            if ((area == null && precMinMax.equals(boundary))
               || area.equals(precMinMax)) return minMax;
         }
+        
         //compute minMax values
-        minMax = new double[6*numBands];
-        int band = 0;
-        double value;
-        if (area == null) {//iterate on all image
-            pixelIterator.rewind();
-            //first iteration
-            for (;band<numBands; band++) {
-                pixelIterator.next();
-                value = pixelIterator.getSampleDouble();
-                //min value, x, y coordinates
-                minMax[6*band]     = value;
-                minMax[6*band + 1] = pixelIterator.getX();
-                minMax[6*band + 2] = pixelIterator.getX();
-                //max value, x, y coordinates
-                minMax[6*band + 3] = value;
-                minMax[6*band + 4] = pixelIterator.getX();
-                minMax[6*band + 5] = pixelIterator.getX();
-            }
-            band = 0;
-            while (pixelIterator.next()) {
-                value = pixelIterator.getSampleDouble();
-                if (value < minMax[6*band]) {
-                    //min value, x, y coordinates
-                    minMax[6*band]     = value;
-                    minMax[6*band + 1] = pixelIterator.getX();
-                    minMax[6*band + 2] = pixelIterator.getX();
-                }
-                if (value > minMax[6*band + 3]) {
-                    //max value, x, y coordinates
-                    minMax[6*band + 3] = value;
-                    minMax[6*band + 4] = pixelIterator.getX();
-                    minMax[6*band + 5] = pixelIterator.getX();
-                }
-                if (++band == numBands) band = 0;
-            }
-        } else {//iterate within rectangle.
-            if (!getBoundary().contains(area))
+        minMax = new double[6 * numBands];
+        
+        //-- initialize min and max value for each band --//
+        for (int band = 0;band<numBands; band++) {
+            final int minBandOrdinate = 6 * band;
+            //min value, x, y coordinates
+            minMax[minBandOrdinate]     = Double.POSITIVE_INFINITY;
+            //max value, x, y coordinates
+            minMax[minBandOrdinate + 3] = Double.NEGATIVE_INFINITY;
+        }
+        
+        /*
+         * If area is null iterate on all image area.
+         */
+        final Rectangle areaIter = (area == null) ? boundary : area;
+        
+        if (!getBoundary().contains(areaIter))
                 throw new IllegalArgumentException("impossible to define min and max in area out of Iterate object boundary");
-            pixelIterator.moveTo(area.x, area.y, 0);
-            for (;band<numBands; band++) {
-                value = pixelIterator.getSampleDouble();
-                //min value, x, y coordinates
-                minMax[6*band]     = value;
-                minMax[6*band + 1] = pixelIterator.getX();
-                minMax[6*band + 2] = pixelIterator.getX();
-                //max value, x, y coordinates
-                minMax[6*band + 3] = value;
-                minMax[6*band + 4] = pixelIterator.getX();
-                minMax[6*band + 5] = pixelIterator.getX();
-                pixelIterator.next();
-            }
-            band = 0;
-            for (int y = area.y; y<area.y + area.height; y++) {
-                for (int x = area.x; x<area.x + area.width; x++) {
-                    pixelIterator.moveTo(x, y, 0);
-                    for (;band<numBands; band++) {
-                        value = pixelIterator.getSampleDouble();
-                        if (value < minMax[6*band]) {
-                            //min value, x, y coordinates
-                            minMax[6*band]     = value;
-                            minMax[6*band + 1] = pixelIterator.getX();
-                            minMax[6*band + 2] = pixelIterator.getX();
-                        }
-                        if (value > minMax[6*band + 3]) {
-                            //max value, x, y coordinates
-                            minMax[6*band + 3] = value;
-                            minMax[6*band + 4] = pixelIterator.getX();
-                            minMax[6*band + 5] = pixelIterator.getX();
-                        }
-                        pixelIterator.next();
+        
+        double value;
+        final int maxAreaX = areaIter.x + areaIter.width;
+        final int maxAreaY = areaIter.y + areaIter.height;
+        for (int y = areaIter.y; y < maxAreaY; y++) {
+            for (int x = areaIter.x; x < maxAreaX; x++) {
+                /*
+                 * Call moveTo at each pixel coordinates because we don't know Iterator implementation.
+                 * Iterate row by row or raster by raster has different comportements.
+                 */
+                pixelIterator.moveTo(x, y, 0);
+                for (int band = 0; band < numBands; band++) {
+                    value = pixelIterator.getSampleDouble();
+                    final int minBandOrdinate = 6 * band;
+                    if (value < minMax[minBandOrdinate]) {
+                        //min value, x, y coordinates
+                        minMax[minBandOrdinate]     = value;
+                        minMax[minBandOrdinate + 1] = x;
+                        minMax[minBandOrdinate + 2] = y;
                     }
+                    if (value > minMax[minBandOrdinate + 3]) {
+                        //max value, x, y coordinates
+                        minMax[minBandOrdinate + 3] = value;
+                        minMax[minBandOrdinate + 4] = x;
+                        minMax[minBandOrdinate + 5] = y;
+                    }
+                    pixelIterator.next();
                 }
             }
         }
-        precMinMax = area;
+        precMinMax = areaIter;
         return minMax;
     }
 
@@ -249,26 +224,28 @@ public abstract class Interpolation {
     protected void setInterpolateMin(double x, double y) {
         final int boundW = boundary.width;
         final int boundH = boundary.height;
-        final int bx = boundary.x;
-        final int by = boundary.y;
-        minX = (int) x;
-        minY = (int) y;
+        final int bx     = boundary.x;
+        final int by     = boundary.y;
+        minX  = (int) x;
+        minY  = (int) y;
 
-        //Adjust truncation.
-        if (x<minX) minX--;
-        if (y<minY) minY--;
+        //-- Adjust truncation.
+        if (x < minX) minX--;
+        if (y < minY) minY--;
 
-        //Adjust area interpolation on x, y center.
-        minX-= windowSide/2-1;
-        minY-= windowSide/2-1;
+        //-- Adjust area interpolation on x, y center.
+        minX -= windowSide / 2-1;
+        minY -= windowSide / 2-1;
 
-        //Adjust area from lower corner.
+        //-- Adjust area from lower corner.
         minX = Math.max(minX, bx);
         minY = Math.max(minY, by);
 
-        //Adjust area from upper corner.
-        while (minX + windowSide > bx + boundW) minX--;
-        while (minY + windowSide > by + boundH) minY--;
+        //-- Adjust area from upper corner.
+        final int maxDiffX = minX + windowSide - (bx + boundW);
+        final int maxDiffY = minY + windowSide - (by + boundH);
+        if (maxDiffX > 0) minX -= maxDiffX;
+        if (maxDiffY > 0) minY -= maxDiffY;
     }
 
     /**
