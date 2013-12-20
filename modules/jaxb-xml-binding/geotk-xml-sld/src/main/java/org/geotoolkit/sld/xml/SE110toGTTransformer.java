@@ -17,6 +17,10 @@
 package org.geotoolkit.sld.xml;
 
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -27,14 +31,19 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import net.iharder.Base64;
 
 import org.geotoolkit.display2d.ext.pattern.PatternSymbolizer;
 
@@ -115,6 +124,7 @@ import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.RecolorFunction;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.se.xml.v110.InlineContentType;
 
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
@@ -1073,11 +1083,34 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     public ExternalGraphic visit(final ExternalGraphicType externalGraphicType) {
         if(externalGraphicType == null) return null;
 
-        final OnlineResource resource = visitOnlineResource(externalGraphicType.getOnlineResource());
-        final Icon icon = null;
+        OnlineResource resource = null;
+        //check online resource
+        if(externalGraphicType.getOnlineResource()!=null){
+            resource = visitOnlineResource(externalGraphicType.getOnlineResource());
+        }
+        Icon icon = null;
+        //check inline content
+        if(externalGraphicType.getInlineContent() != null){
+            final InlineContentType ict = externalGraphicType.getInlineContent();
+            final List<Object> contents = ict.getContent();
+            for(Object obj : contents){
+                if(obj instanceof String){
+                    try{
+                        final byte[] b64 = Base64.decode((String)obj);
+                        final ByteArrayInputStream is = new ByteArrayInputStream(b64);
+                        final BufferedImage image = ImageIO.read(is);
+                        icon = new ImageIcon(image);
+                    }catch(IOException ex){
+                        Logging.getLogger(GTtoSE110Transformer.class.getName()).log(Level.WARNING, null, ex);
+                    }
+                }
+            }
+        }
+        
         final String format = externalGraphicType.getFormat();
-        final Collection<ColorReplacement> replaces = new ArrayList<ColorReplacement>();
-
+        
+        //rebuild color replacements
+        final Collection<ColorReplacement> replaces = new ArrayList<>();
         for(final ColorReplacementType crt : externalGraphicType.getColorReplacement()){
             final RecodeType rt = crt.getRecode();
 
@@ -1102,7 +1135,6 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             }
 
         }
-
 
         if (resource != null){
             return styleFactory.externalGraphic(resource, format, replaces);

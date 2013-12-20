@@ -19,6 +19,12 @@ package org.geotoolkit.sld.xml;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,12 +33,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
+import net.iharder.Base64;
+import org.apache.sis.util.logging.Logging;
 
 import org.geotoolkit.display2d.ext.pattern.PatternSymbolizer;
 import org.geotoolkit.factory.FactoryFinder;
@@ -111,6 +122,7 @@ import org.geotoolkit.se.xml.v110.GraphicStrokeType;
 import org.geotoolkit.se.xml.v110.GraphicType;
 import org.geotoolkit.se.xml.v110.HaloType;
 import org.geotoolkit.se.xml.v110.ImageOutlineType;
+import org.geotoolkit.se.xml.v110.InlineContentType;
 import org.geotoolkit.se.xml.v110.InterpolateType;
 import org.geotoolkit.se.xml.v110.InterpolationPointType;
 import org.geotoolkit.se.xml.v110.LabelPlacementType;
@@ -1406,8 +1418,31 @@ public class GTtoSE110Transformer implements StyleVisitor {
             mt.setFormat(mark.getExternalMark().getFormat());
             mt.setMarkIndex(new BigInteger(String.valueOf(mark.getExternalMark().getMarkIndex())));
 
-            //TODO insert the inline icone
-//            mt.setInlineContent(mark.getExternalMark().getInlineContent());
+            final ExternalMark em = mark.getExternalMark();
+            if(em!=null && em.getInlineContent() != null){
+                final Icon icon = em.getInlineContent();
+                
+                final InlineContentType ict = new InlineContentType();
+                ict.setEncoding(em.getFormat());
+                
+                final Image image;
+                if(icon instanceof ImageIcon){
+                    image = ((ImageIcon)icon).getImage();
+                }else{
+                    image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+                    icon.paintIcon(null, image.getGraphics(), 0, 0);
+                }
+                
+                try {
+                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    ImageIO.write((RenderedImage)image, "PNG", out);
+                    final String chars = Base64.encodeBytes(out.toByteArray());
+                    ict.getContent().add(chars);
+                    mt.setInlineContent(ict);
+                } catch (IOException ex) {
+                    Logging.getLogger(GTtoSE110Transformer.class.getName()).log(Level.WARNING, null, ex);
+                }
+            }
 
         } else {
             mt.setWellKnownName(mark.getWellKnownName().toString());
@@ -1429,11 +1464,35 @@ public class GTtoSE110Transformer implements StyleVisitor {
         final ExternalGraphicType egt = se_factory.createExternalGraphicType();
         egt.setFormat(externalGraphic.getFormat());
 
-        System.out.println(externalGraphic.getOnlineResource());
-        System.out.println(visit(externalGraphic.getOnlineResource(), null));
-
         if (externalGraphic.getInlineContent() != null) {
-            //TODO insert inline image
+            final Icon icon = externalGraphic.getInlineContent();
+
+            final InlineContentType ict = new InlineContentType();
+            ict.setEncoding("base64");
+
+            Image image;
+            if(icon instanceof ImageIcon){
+                image = ((ImageIcon)icon).getImage();
+            }else{
+                image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+                icon.paintIcon(null, image.getGraphics(), 0, 0);
+            }
+            
+            if(!(image instanceof BufferedImage)){
+                final BufferedImage bi = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+                bi.createGraphics().drawImage(image, new AffineTransform(), null);
+                image = bi;
+            }
+            
+            try {
+                final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ImageIO.write((RenderedImage)image, "PNG", out);
+                final String chars = Base64.encodeBytes(out.toByteArray());
+                ict.getContent().add(chars);
+                egt.setInlineContent(ict);
+            } catch (IOException ex) {
+                Logging.getLogger(GTtoSE110Transformer.class.getName()).log(Level.WARNING, null, ex);
+            }
         }
 
         if (externalGraphic.getOnlineResource() != null) {
