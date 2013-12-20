@@ -62,6 +62,7 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.algorithm.CGAlgorithms;
+import java.awt.Rectangle;
 import javax.vecmath.Vector3d;
 
 /**
@@ -558,6 +559,19 @@ public final class JTS {
                 envelope.getHeight());
     }
 
+    public static Polygon toGeometry(final Rectangle envelope) {
+        GeometryFactory gf = new GeometryFactory();
+
+        return gf.createPolygon(gf.createLinearRing(
+                new Coordinate[]{
+                    new Coordinate(envelope.getMinX(), envelope.getMinY()),
+                    new Coordinate(envelope.getMaxX(), envelope.getMinY()),
+                    new Coordinate(envelope.getMaxX(), envelope.getMaxY()),
+                    new Coordinate(envelope.getMinX(), envelope.getMaxY()),
+                    new Coordinate(envelope.getMinX(), envelope.getMinY())
+                }), null);
+    }
+    
     /**
      * Converts an envelope to a polygon. <p> The resulting polygon contains an
      * outer ring with verticies: (x1,y1),(x2,y1),(x2,y2),(x1,y2),(x1,y1)

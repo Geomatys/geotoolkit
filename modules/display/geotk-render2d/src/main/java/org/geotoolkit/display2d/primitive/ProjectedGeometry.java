@@ -16,9 +16,12 @@
  */
 package org.geotoolkit.display2d.primitive;
 
+import com.bric.geom.Clipper;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.awt.Shape;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -34,6 +37,7 @@ import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -54,6 +58,7 @@ public class ProjectedGeometry  {
     private final StatelessContextParams params;
     private MathTransform2D dataToObjective;
     private MathTransform2D dataToDisplay;
+    private Rectangle2D clipRectangle;
 
     //Geometry is data CRS
     private com.vividsolutions.jts.geom.Geometry    dataGeometryJTS = null;
@@ -109,6 +114,8 @@ public class ProjectedGeometry  {
                 dataCRS = CRSUtilities.getCRS2D(dataCRS);
                 dataToObjective = (MathTransform2D) CRS.findMathTransform(dataCRS, params.context.getObjectiveCRS2D());
                 dataToDisplay = (MathTransform2D) CRS.findMathTransform(dataCRS, params.displayCRS);
+                final Envelope env = CRS.transform(params.context.getCanvasObjectiveBounds2D(), dataCRS);
+                clipRectangle = new Rectangle2D.Double(env.getMinimum(0), env.getMinimum(1), env.getSpan(0), env.getSpan(1));
             }
         } catch (Exception ex) {
             Logger.getLogger(ProjectedGeometry.class.getName()).log(Level.WARNING, null, ex);
@@ -268,7 +275,11 @@ public class ProjectedGeometry  {
                 //demultiplied/clipped as necessary for the map wrap
                 displayShape = new JTSGeometryJ2D(getDisplayGeometryJTS());
             }else{
-                displayShape = ProjectedShape.wrap(getDataShape(), dataToDisplay);
+                Shape shape = getDataShape();
+                if(clipRectangle!=null && shape!=null){
+                    shape = Clipper.clipToRect(shape, clipRectangle);
+                }
+                displayShape = ProjectedShape.wrap(shape, dataToDisplay);
             }
         }
         return displayShape;

@@ -16,7 +16,9 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
+import com.vividsolutions.jts.geom.Polygon;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
@@ -24,6 +26,7 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
+import org.geotoolkit.geometry.jts.JTS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -42,6 +45,10 @@ public class StatelessContextParams<T extends MapLayer> {
     public CoordinateReferenceSystem objectiveCRS;
     public CoordinateReferenceSystem displayCRS;
 
+    //clipping geometries
+    public Rectangle2D displayClipRect;
+    public Polygon displayClip;
+    
     public StatelessContextParams(final AbstractCanvas2D canvas, final T layer){
         this.canvas = canvas;
         this.layer = layer;
@@ -67,6 +74,10 @@ public class StatelessContextParams<T extends MapLayer> {
             ((CoordinateSequenceMathTransformer)objToDisplayTransformer.getCSTransformer())
                     .setTransform(objtoDisp);
         }
+        
+        displayClipRect = context.getCanvasDisplayBounds();
+        displayClip = JTS.toGeometry(context.getCanvasDisplayBounds());
+        
     }
 
 }
