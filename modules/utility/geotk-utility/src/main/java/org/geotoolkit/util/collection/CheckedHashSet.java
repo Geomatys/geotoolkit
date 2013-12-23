@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import net.jcip.annotations.ThreadSafe;
-import org.apache.sis.util.Decorator;
 import org.apache.sis.util.resources.Errors;
 import org.apache.sis.util.collection.CheckedContainer;
 
@@ -180,7 +179,6 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedContai
      * @see CheckedHashSet#iterator()
      */
     @ThreadSafe
-    @Decorator(Iterator.class)
     private final class Iter implements Iterator<E> {
         /** The {@link LinkedHashSet} iterator. */
         private final Iterator<E> iterator;

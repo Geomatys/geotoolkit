@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.NoSuchElementException;
 import net.jcip.annotations.ThreadSafe;
-import org.apache.sis.util.Decorator;
 import org.apache.sis.util.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -348,7 +347,6 @@ public class CheckedHashMap<K,V> extends LinkedHashMap<K,V> implements Cloneable
      * This class wraps the iterator provided by the {@link LinkedHashMap} views.
      */
     @ThreadSafe
-    @Decorator(Iterator.class)
     private final class Iter<E> implements Iterator<E> {
         /** The {@link LinkedHashMap} iterator. */
         private final Iterator<E> iterator;
@@ -390,7 +388,6 @@ public class CheckedHashMap<K,V> extends LinkedHashMap<K,V> implements Cloneable
      * {@link Map#keySet()} or {@link Map#entrySet()} views.
      */
     @ThreadSafe
-    @Decorator(Collection.class)
     private class Sync<E> implements Collection<E> {
         /** The {@link Map#keySet()}, {@link Map#values()} or {@link Map#entrySet()} view. */
         private final Collection<E> view;
@@ -533,7 +530,6 @@ public class CheckedHashMap<K,V> extends LinkedHashMap<K,V> implements Cloneable
      * A set synchronized on the enclosing map {@linkplain #getLock() lock}.
      * This is used for wrapping {@link Map#keySet()} or {@link Map#entrySet()} views.
      */
-    @Decorator(Set.class)
     private final class SyncSet<E> extends Sync<E> implements Set<E> {
         /** Create a new synchronized wrapper for the given view. */
         SyncSet(final Set<E> set) {

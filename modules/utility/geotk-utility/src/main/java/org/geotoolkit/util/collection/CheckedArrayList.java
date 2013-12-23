@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 import net.jcip.annotations.ThreadSafe;
-import org.apache.sis.util.Decorator;
 import org.apache.sis.util.resources.Errors;
 import org.apache.sis.util.collection.CheckedContainer;
 
@@ -182,7 +181,6 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContaine
      * @see CheckedArrayList#iterator()
      */
     @ThreadSafe
-    @Decorator(Iterator.class)
     private class Iter<I extends Iterator<E>> implements Iterator<E> {
         /** The {@link ArrayList} iterator. */
         protected final I iterator;
@@ -225,7 +223,6 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContaine
      * @see CheckedArrayList#listIterator()
      * @see CheckedArrayList#listIterator(int)
      */
-    @Decorator(ListIterator.class)
     private class ListIter extends Iter<ListIterator<E>> implements ListIterator<E> {
         /** Creates a new wrapper for the given {@link ArrayList} list iterator. */
         ListIter(final ListIterator<E> iterator) {
