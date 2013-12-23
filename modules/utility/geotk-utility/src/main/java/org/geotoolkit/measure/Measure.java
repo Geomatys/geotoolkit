@@ -18,7 +18,6 @@
 package org.geotoolkit.measure;
 
 import javax.measure.unit.Unit;
-import org.apache.sis.util.Immutable;
 import org.apache.sis.internal.util.Numerics;
 
 // Related to JDK7
@@ -34,7 +33,6 @@ import java.util.Objects;
  * @since 2.1
  * @module
  */
-@Immutable
 public final class Measure extends Number {
     /**
      * For compatibility with different versions.
