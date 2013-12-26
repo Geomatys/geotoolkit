@@ -58,7 +58,7 @@ public class ProjectedGeometry  {
     private final StatelessContextParams params;
     private MathTransform2D dataToObjective;
     private MathTransform2D dataToDisplay;
-    private Rectangle2D clipRectangle;
+    private Rectangle2D dataClipRectangle;
 
     //Geometry is data CRS
     private com.vividsolutions.jts.geom.Geometry    dataGeometryJTS = null;
@@ -115,7 +115,11 @@ public class ProjectedGeometry  {
                 dataToObjective = (MathTransform2D) CRS.findMathTransform(dataCRS, params.context.getObjectiveCRS2D());
                 dataToDisplay = (MathTransform2D) CRS.findMathTransform(dataCRS, params.displayCRS);
                 final Envelope env = CRS.transform(params.context.getCanvasObjectiveBounds2D(), dataCRS);
-                clipRectangle = new Rectangle2D.Double(env.getMinimum(0), env.getMinimum(1), env.getSpan(0), env.getSpan(1));
+                final double marginX = env.getSpan(0)/10;
+                final double marginY = env.getSpan(1)/10;
+                dataClipRectangle = new Rectangle2D.Double(
+                        env.getMinimum(0)-marginX, env.getMinimum(1)-marginY, 
+                        env.getSpan(0)+marginX*2, env.getSpan(1)+marginY*2);
             }
         } catch (Exception ex) {
             Logger.getLogger(ProjectedGeometry.class.getName()).log(Level.WARNING, null, ex);
@@ -276,8 +280,8 @@ public class ProjectedGeometry  {
                 displayShape = new JTSGeometryJ2D(getDisplayGeometryJTS());
             }else{
                 Shape shape = getDataShape();
-                if(clipRectangle!=null && shape!=null){
-                    shape = Clipper.clipToRect(shape, clipRectangle);
+                if(dataClipRectangle!=null && shape!=null){
+                    shape = Clipper.clipToRect(shape, dataClipRectangle);
                 }
                 displayShape = ProjectedShape.wrap(shape, dataToDisplay);
             }
