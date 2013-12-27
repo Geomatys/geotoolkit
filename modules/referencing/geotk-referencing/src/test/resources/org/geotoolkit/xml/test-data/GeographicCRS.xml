@@ -27,12 +27,11 @@
     <gml:GeodeticDatum gml:id="EPSG6326">
       <gml:identifier codeSpace="EPSG">6326</gml:identifier>
       <gml:name>World Geodetic System 1984</gml:name>
-      <gml:realizationEpoch/>
       <gml:primeMeridian>
-        <gml:Ellipsoid gml:id="Greenwich">
+        <gml:PrimeMeridian gml:id="Greenwich">
           <gml:name>Greenwich</gml:name>
           <gml:greenwichLongitude>0.0</gml:greenwichLongitude>
-        </gml:Ellipsoid>
+        </gml:PrimeMeridian>
       </gml:primeMeridian>
       <gml:ellipsoid>
         <gml:Ellipsoid gml:id="WGS84">

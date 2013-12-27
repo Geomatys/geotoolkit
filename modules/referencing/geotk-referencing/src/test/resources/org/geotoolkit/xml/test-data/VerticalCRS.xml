@@ -121,7 +121,6 @@
                   <gml:verticalDatum>
                     <gml:VerticalDatum gml:id="Depth">
                       <gml:name>Depth</gml:name>
-                      <gml:realizationEpoch/>
                     </gml:VerticalDatum>
                   </gml:verticalDatum>
                 </gml:VerticalCRS>
