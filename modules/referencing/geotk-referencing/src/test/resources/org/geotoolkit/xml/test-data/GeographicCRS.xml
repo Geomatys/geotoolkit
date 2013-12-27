@@ -39,7 +39,7 @@
             <gml:semiMajorAxis uom="urn:ogc:def:uom:EPSG::9001">6378137.0</gml:semiMajorAxis>
             <gml:secondDefiningParameter>
               <gml:SecondDefiningParameter>
-                <gml:inverseFlattening uom="">298.257223563</gml:inverseFlattening>
+                <gml:inverseFlattening uom="urn:ogc:def:uom:EPSG::9201">298.257223563</gml:inverseFlattening>
               </gml:SecondDefiningParameter>
             </gml:secondDefiningParameter>
         </gml:Ellipsoid>
