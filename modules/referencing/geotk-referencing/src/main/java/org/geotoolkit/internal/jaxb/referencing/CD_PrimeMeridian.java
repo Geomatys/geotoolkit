@@ -74,7 +74,7 @@ public final class CD_PrimeMeridian extends PropertyType<CD_PrimeMeridian, Prime
      *
      * @return The metadata to be marshalled.
      */
-    @XmlElement(name = "Ellipsoid")
+    @XmlElement(name = "PrimeMeridian")
     public DefaultPrimeMeridian getElement() {
         return DefaultPrimeMeridian.castOrCopy(metadata);
     }
