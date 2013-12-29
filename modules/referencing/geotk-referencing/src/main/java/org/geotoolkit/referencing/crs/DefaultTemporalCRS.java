@@ -36,7 +36,7 @@ import org.opengis.referencing.datum.TemporalDatum;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.referencing.cs.DefaultTimeCS;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.AbstractReferenceSystem;
+import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
 
 

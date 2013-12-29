@@ -18,9 +18,6 @@
 package org.geotoolkit.io.wkt;
 
 import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
-import javax.measure.quantity.Angle;
-
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -32,11 +29,8 @@ import org.opengis.referencing.operation.CoordinateOperation;
 
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-
-import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 
 
 /**
@@ -54,7 +48,7 @@ import static javax.measure.unit.NonSI.DEGREE_ANGLE;
  * documented in the javadoc of each enum value.</p>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
+ * @version 4.00
  *
  * @see WKTFormat#getConvention()
  * @see WKTFormat#setConvention(Convention)
@@ -65,7 +59,7 @@ import static javax.measure.unit.NonSI.DEGREE_ANGLE;
  * @deprecated Moved to Apache SIS.
  */
  @Deprecated
-public enum Convention {
+public final class Convention {
     /**
      * The <A HREF="http://www.opengeospatial.org">Open Geospatial consortium</A> convention.
      * This is the default convention for all WKT formatting in the Geotk library.
@@ -80,7 +74,7 @@ public enum Convention {
      * @see Citations#OGC
      * @see #toConformCS(CoordinateSystem)
      */
-    OGC(null, false),
+    public static final org.apache.sis.io.wkt.Convention OGC = org.apache.sis.io.wkt.Convention.OGC;
 
     /**
      * The <A HREF="http://www.epsg.org">European Petroleum Survey Group</A> convention.
@@ -96,15 +90,7 @@ public enum Convention {
      * @see Citations#EPSG
      * @see #toConformCS(CoordinateSystem)
      */
-    EPSG(null, false) {
-        @Override
-        public CoordinateSystem toConformCS(CoordinateSystem cs) {
-            if (cs instanceof CartesianCS) {
-                cs = replace((CartesianCS) cs, false);
-            }
-            return cs;
-        }
-    },
+    public static final org.apache.sis.io.wkt.Convention EPSG = org.apache.sis.io.wkt.Convention.EPSG;
 
     /**
      * The <A HREF="http://www.esri.com">ESRI</A> convention.
@@ -121,7 +107,7 @@ public enum Convention {
      *
      * @see Citations#ESRI
      */
-    ESRI(DEGREE_ANGLE, true),
+    public static final org.apache.sis.io.wkt.Convention ESRI = org.apache.sis.io.wkt.Convention.ESRI;
 
     /**
      * The <A HREF="http://www.oracle.com">Oracle</A> convention.
@@ -138,7 +124,7 @@ public enum Convention {
      *
      * @see Citations#ORACLE
      */
-    ORACLE(null, true),
+    public static final org.apache.sis.io.wkt.Convention ORACLE = org.apache.sis.io.wkt.Convention.ORACLE;
 
     /**
      * The <A HREF="http://www.unidata.ucar.edu/software/netcdf-java">NetCDF</A> convention.
@@ -147,7 +133,7 @@ public enum Convention {
      *
      * @see Citations#NETCDF
      */
-    NETCDF(null, false),
+    public static final org.apache.sis.io.wkt.Convention NETCDF = org.apache.sis.io.wkt.Convention.NETCDF;
 
     /**
      * The <A HREF="http://www.remotesensing.org/geotiff/geotiff.html">GeoTIFF</A> convention.
@@ -156,7 +142,7 @@ public enum Convention {
      *
      * @see Citations#GEOTIFF
      */
-    GEOTIFF(null, false),
+    public static final org.apache.sis.io.wkt.Convention GEOTIFF = org.apache.sis.io.wkt.Convention.GEOTIFF;
 
     /**
      * The <A HREF="http://trac.osgeo.org/proj/">Proj.4</A> convention.
@@ -170,7 +156,7 @@ public enum Convention {
      *
      * @see Citations#PROJ4
      */
-    PROJ4(DEGREE_ANGLE, false),
+    public static final org.apache.sis.io.wkt.Convention PROJ4 = org.apache.sis.io.wkt.Convention.PROJ4;
 
     /**
      * A special convention for formatting objects as stored internally by Geotk. In the majority
@@ -183,20 +169,7 @@ public enum Convention {
      * @see Formatter#isInternalWKT()
      */
     @Debug
-    INTERNAL(null, false) {
-        @Override
-        public CoordinateSystem toConformCS(final CoordinateSystem cs) {
-            return cs; // Prevent any modification on the internal CS.
-        }
-
-        @Override
-        Citation createCitation() {
-            final DefaultCitation dc = new DefaultCitation("Internal WKT");
-            dc.setCitedResponsibleParties(Citations.GEOTOOLKIT.getCitedResponsibleParties());
-            dc.freeze();
-            return dc;
-        }
-    };
+    public static final org.apache.sis.io.wkt.Convention INTERNAL = org.apache.sis.io.wkt.Convention.INTERNAL;
 
     /**
      * A three-dimensional Cartesian CS with the legacy set of geocentric axes.
@@ -210,63 +183,7 @@ public enum Convention {
             new DefaultCoordinateSystemAxis("Y", AxisDirection.EAST,  SI.METRE),
             new DefaultCoordinateSystemAxis("Z", AxisDirection.NORTH, SI.METRE));
 
-    /**
-     * If non-null, forces {@code PRIMEM} and {@code PARAMETER} angular units to this field
-     * value instead than inferring it from the context. The standard value is {@code null},
-     * which mean that the angular units are inferred from the context as required by the
-     * <a href="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#PRIMEM">WKT specification</a>.
-     *
-     * @see ReferencingParser#getForcedAngularUnit()
-     */
-    public final Unit<Angle> forcedAngularUnit;
-
-    /**
-     * {@code true} if the convention uses US unit names instead of the international names.
-     * For example Americans said [@code "meter"} instead of {@code "metre"}.
-     */
-    final boolean unitUS;
-
-    /**
-     * The citation for this enumeration, fetched when first needed in order to avoid
-     * too early class loading.
-     */
-    private transient Citation citation;
-
-    /**
-     * Creates a new enum.
-     */
-    private Convention(final Unit<Angle> angularUnit, final boolean unitUS) {
-        this.forcedAngularUnit = angularUnit;
-        this.unitUS = unitUS;
-    }
-
-    /**
-     * Returns the citation for this enumeration. This method returns the {@link Citations}
-     * constant of the same name than this enum.
-     *
-     * @return The citation for this enum.
-     *
-     * @see WKTFormat#getAuthority()
-     */
-    public Citation getCitation() {
-        Citation c = citation;
-        if (c == null) {
-            // No need to synchronize - this is not a big deal if the field is fetched twice.
-            citation = c = createCitation();
-        }
-        return c;
-    }
-
-    /**
-     * Creates the citation. This method is overridden by the {@link #INTERNAL} enum.
-     */
-    Citation createCitation() {
-        try {
-            return (Citation) Citations.class.getField(name()).get(null);
-        } catch (ReflectiveOperationException e) {
-            // Should never happen.
-            throw new AssertionError(e);
-        }
+    private Convention() {
     }
 
     /**
@@ -278,15 +195,10 @@ public enum Convention {
      * @return The convention, or {@code null} if no matching convention were found and the
      *         {@code defaultConvention} argument is {@code null}.
      */
-    public static Convention forCitation(final Citation citation, final Convention defaultConvention) {
-        if (citation != null) {
-            for (final Convention candidate : values()) {
-                if (Citations.identifierMatches(candidate.getCitation(), citation)) {
-                    return candidate;
-                }
-            }
-        }
-        return defaultConvention;
+    public static org.apache.sis.io.wkt.Convention forCitation(Citation citation,
+            org.apache.sis.io.wkt.Convention defaultConvention)
+    {
+        return org.apache.sis.io.wkt.Convention.forCitation(citation, defaultConvention);
     }
 
     /**
@@ -298,46 +210,10 @@ public enum Convention {
      * @return The convention, or {@code null} if no matching convention were found and the
      *         {@code defaultConvention} argument is {@code null}.
      */
-    public static Convention forIdentifier(final String identifier, final Convention defaultConvention) {
-        if (identifier != null) {
-            for (final Convention candidate : values()) {
-                if (Citations.identifierMatches(candidate.getCitation(), identifier)) {
-                    return candidate;
-                }
-            }
-        }
-        return defaultConvention;
-    }
-
-    /**
-     * Makes the given coordinate system conform to this convention. This method is used mostly
-     * for converting between the legacy (OGC 01-009) {@link GeocentricCRS} axis directions, and
-     * the new (ISO 19111) directions. Those directions are:
-     * <p>
-     * <ul>
-     *   <li>OGC 01-009: Other,
-     *     {@linkplain DefaultCoordinateSystemAxis#EASTING Easting},
-     *     {@linkplain DefaultCoordinateSystemAxis#NORTHING Northing}.
-     *   </li>
-     *   <li>ISO 19111:
-     *     {@linkplain DefaultCoordinateSystemAxis#GEOCENTRIC_X Geocentric X},
-     *     {@linkplain DefaultCoordinateSystemAxis#GEOCENTRIC_Y Geocentric Y},
-     *     {@linkplain DefaultCoordinateSystemAxis#GEOCENTRIC_Z Geocentric Z}.
-     *   </li>
-     * </ul>
-     *
-     * @param  cs The coordinate system.
-     * @return A coordinate system equivalent to the given one but with conform axis names,
-     *         or the given {@code cs} if no change apply to the given coordinate system.
-     *
-     * @see #OGC
-     * @see #EPSG
-     */
-    public CoordinateSystem toConformCS(CoordinateSystem cs) {
-        if (cs instanceof CartesianCS) {
-            cs = replace((CartesianCS) cs, true);
-        }
-        return cs;
+    public static org.apache.sis.io.wkt.Convention forIdentifier(String identifier,
+            org.apache.sis.io.wkt.Convention defaultConvention)
+    {
+        return org.apache.sis.io.wkt.Convention.forIdentifier(identifier, defaultConvention);
     }
 
     /**

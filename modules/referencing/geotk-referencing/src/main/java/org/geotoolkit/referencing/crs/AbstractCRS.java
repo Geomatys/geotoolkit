@@ -29,19 +29,19 @@ import net.jcip.annotations.Immutable;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.measure.Measure;
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 import org.geotoolkit.referencing.cs.AbstractCS;
-import org.geotoolkit.referencing.AbstractReferenceSystem;
-import org.apache.sis.util.UnsupportedImplementationException;
+import org.apache.sis.referencing.AbstractIdentifiedObject;
+import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.NilReferencingObject;
 
-import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.Utilities.deepEquals;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -50,7 +50,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * Abstract coordinate reference system, usually defined by a coordinate system and a datum.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 4.00
  *
  * @see AbstractCS
  * @see org.geotoolkit.referencing.datum.AbstractDatum
@@ -63,7 +63,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = -7433284548909530047L;
+//  private static final long serialVersionUID = -7433284548909530047L;
 
     /**
      * The coordinate system. This field should be considered as final.
@@ -175,10 +175,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
     public Measure distance(final double[] coord1, final double[] coord2)
             throws UnsupportedOperationException, MismatchedDimensionException
     {
-        if (coordinateSystem instanceof AbstractCS) {
-            return ((AbstractCS) coordinateSystem).distance(coord1, coord2);
-        }
-        throw new UnsupportedImplementationException(coordinateSystem.getClass());
+        return AbstractCS.distance(coordinateSystem, coord1, coord2);
     }
 
     /**
@@ -212,11 +209,19 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
     }
 
     /**
+     * Returns the hash code for the given object in the given mode, or 0 if the given object is null.
+     */
+    static int hashCode(final IdentifiedObject object, final ComparisonMode mode) {
+        return (object instanceof AbstractIdentifiedObject) ?
+               ((AbstractIdentifiedObject) object).hashCode(mode) : Objects.hashCode(object);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
-    protected int computeHashCode() {
-        return hash(coordinateSystem, super.computeHashCode());
+    public int hashCode(final ComparisonMode mode) throws IllegalArgumentException {
+        return super.hashCode(mode) + 31*hashCode(coordinateSystem, mode);
     }
 
     /**
@@ -236,10 +241,10 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
      * @return The name of the WKT element type (e.g. {@code "GEOGCS"}).
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
+    public String formatTo(final Formatter formatter) {  // TODO: should be protected.
         formatDefaultWKT(formatter);
         // Will declares the WKT as invalid.
-        return super.formatWKT(formatter);
+        return super.formatTo(formatter);
     }
 
     /**
@@ -254,7 +259,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
             formatter.append(coordinateSystem.getAxis(i));
         }
         if (unit == null) {
-            formatter.setInvalidWKT(CoordinateReferenceSystem.class);
+            formatter.setInvalidWKT(coordinateSystem);
         }
     }
 }

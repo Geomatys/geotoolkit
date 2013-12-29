@@ -28,9 +28,9 @@ import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.GeneralParameterDescriptor;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.apache.sis.referencing.AbstractIdentifiedObject;
 
 import static org.geotoolkit.util.Utilities.hash;
 
@@ -56,7 +56,7 @@ public abstract class AbstractParameterDescriptor extends AbstractIdentifiedObje
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = -2630644278783845276L;
+//  private static final long serialVersionUID = -2630644278783845276L;
 
     /**
      * The minimum number of times that values for this parameter group or
@@ -169,8 +169,8 @@ public abstract class AbstractParameterDescriptor extends AbstractIdentifiedObje
      * {@inheritDoc}
      */
     @Override
-    protected int computeHashCode() {
-        return hash(minimumOccurs, super.computeHashCode());
+    public int hashCode(final ComparisonMode mode) throws IllegalArgumentException {
+        return hash(minimumOccurs, super.hashCode(mode));
     }
 
     /**
@@ -183,8 +183,8 @@ public abstract class AbstractParameterDescriptor extends AbstractIdentifiedObje
      * @return The WKT element name, which is "PARAMETER"
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
-        formatter.setInvalidWKT(GeneralParameterDescriptor.class);
+    protected String formatTo(final Formatter formatter) {
+        formatter.setInvalidWKT(this);
         return "PARAMETER";
     }
 }

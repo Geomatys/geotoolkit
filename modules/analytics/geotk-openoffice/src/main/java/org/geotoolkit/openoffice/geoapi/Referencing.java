@@ -47,7 +47,7 @@ import org.opengis.metadata.extent.Extent;
 import org.opengis.openoffice.XReferencing;
 
 import org.geotoolkit.parameter.ParameterGroup;
-import org.geotoolkit.io.wkt.FormattableObject;
+import org.apache.sis.io.wkt.FormattableObject;
 import org.geotoolkit.io.wkt.Convention;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -267,8 +267,8 @@ public final class Referencing extends Formulas implements XReferencing {
             authorityString = AnyConverter.toString(authority);
         }
         if (object instanceof FormattableObject) {
-            return ((FormattableObject) object).toWKT(
-                    Convention.forIdentifier(authorityString, Convention.OGC), 2);
+            return ((FormattableObject) object).toString(
+                    Convention.forIdentifier(authorityString, Convention.OGC));
         }
         if (object instanceof MathTransform) {
             return ((MathTransform) object).toWKT();

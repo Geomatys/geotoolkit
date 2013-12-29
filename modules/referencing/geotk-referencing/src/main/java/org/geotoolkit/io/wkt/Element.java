@@ -25,6 +25,7 @@ import java.text.ParsePosition;
 import java.text.ParseException;
 
 import org.geotoolkit.lang.Debug;
+import org.apache.sis.io.wkt.Symbols;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.CharSequences;
 import org.geotoolkit.resources.Errors;
@@ -109,7 +110,7 @@ final class Element {
             throw unparsableString(text, position);
         }
         final Symbols symbols = parser.getSymbols();
-        keyword = text.substring(lower, upper).toUpperCase(symbols.locale);
+        keyword = text.substring(lower, upper).toUpperCase(symbols.getLocale());
         position.setIndex(upper);
         /*
          * Parse the opening bracket. According CTS's specification, two characters
@@ -118,13 +119,14 @@ final class Element {
          * then we will require that the closing bracket is ']' and not ')'.
          */
         int bracketIndex = -1;
+        final int n = symbols.getNumPairedBracket();
         do {
-            if (++bracketIndex >= symbols.openingBrackets.length) {
+            if (++bracketIndex >= n) {
                 list = null;
                 return;
             }
         }
-        while (!parseOptionalSeparator(text, position, symbols.openingBrackets[bracketIndex]));
+        while (!parseOptionalSeparator(text, position, symbols.getOpeningBracket(bracketIndex)));
         list = new LinkedList<>();
         /*
          * Parse all elements inside the bracket. Elements are parsed sequentially
@@ -135,20 +137,23 @@ final class Element {
          *     element is parsed as a chidren Element.
          *   - Otherwise, the element is parsed as a number.
          */
+        final int separator  = symbols.getSeparator().codePointAt(0); // TODO: check for valid character.
+        final int openQuote  = symbols.getOpenQuote();
+        final int closeQuote = symbols.getCloseQuote();
         do {
             if (position.getIndex() >= length) {
-                throw missingCharacter(symbols.close, length);
+                throw missingCharacter(symbols.getClosingBracket(bracketIndex), length);
             }
             //
             // Try to parse the next element as a quoted string. We will take
             // it as a string if the first non-blank character is a quote.
             //
-            if (parseOptionalSeparator(text, position, symbols.quote)) {
+            if (parseOptionalSeparator(text, position, openQuote)) {
                 lower = position.getIndex();
-                upper = text.indexOf(symbols.quote, lower);
+                upper = text.indexOf(closeQuote, lower);
                 if (upper < lower) {
                     position.setErrorIndex(++lower);
-                    throw missingCharacter(symbols.quote, lower);
+                    throw missingCharacter(closeQuote, lower);
                 }
                 list.add(text.substring(lower, upper).trim());
                 position.setIndex(upper + 1);
@@ -184,8 +189,8 @@ final class Element {
             }
             // Otherwise, add the element as a child element.
             list.add(new Element(parser, text, position));
-        } while (parseOptionalSeparator(text, position, symbols.separator));
-        parseSeparator(text, position, symbols.closingBrackets[bracketIndex]);
+        } while (parseOptionalSeparator(text, position, separator));
+        parseSeparator(text, position, symbols.getClosingBracket(bracketIndex));
     }
 
     /**
@@ -202,18 +207,19 @@ final class Element {
      *         or {@code false} otherwise.
      */
     private static boolean parseOptionalSeparator(final String text, final ParsePosition position,
-                                                  final char separator)
+                                                  final int separator)
     {
         final int length = text.length();
         int index = position.getIndex();
         while (index < length) {
-            final char c = text.charAt(index);
+            final int c = text.codePointAt(index);
+            final int n = Character.charCount(c);
             if (Character.isWhitespace(c)) {
-                index++;
+                index += n;
                 continue;
             }
             if (c == separator) {
-                position.setIndex(++index);
+                position.setIndex(index += n);
                 return true;
             }
             break;
@@ -233,7 +239,7 @@ final class Element {
      * @param  separator  The character to search.
      * @throws ParseException if the separator was not found.
      */
-    private void parseSeparator(final String text, final ParsePosition position, final char separator)
+    private void parseSeparator(final String text, final ParsePosition position, final int separator)
             throws ParseException
     {
         if (!parseOptionalSeparator(text, position, separator)) {
@@ -293,9 +299,10 @@ final class Element {
      * @param c The missing character.
      * @param position The error position.
      */
-    private ParseException missingCharacter(final char c, final int position) {
+    private ParseException missingCharacter(final int c, final int position) {
+        final StringBuilder buffer = new StringBuilder(2).appendCodePoint(c);
         return trim("missingCharacter", new ParseException(complete(
-                Errors.format(Errors.Keys.MISSING_CHARACTER_1, Character.valueOf(c))), position));
+                Errors.format(Errors.Keys.MISSING_CHARACTER_1, buffer)), position));
     }
 
     /**

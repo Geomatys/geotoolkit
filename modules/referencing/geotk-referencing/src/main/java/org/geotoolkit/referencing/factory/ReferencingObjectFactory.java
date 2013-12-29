@@ -41,7 +41,7 @@ import org.opengis.util.FactoryException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.io.wkt.ReferencingParser;
-import org.geotoolkit.io.wkt.Symbols;
+import org.apache.sis.io.wkt.Symbols;
 import org.geotoolkit.lang.Buffered;
 import org.geotoolkit.referencing.cs.*;
 import org.geotoolkit.referencing.crs.*;
@@ -49,6 +49,7 @@ import org.geotoolkit.referencing.datum.*;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
+import org.apache.sis.referencing.cs.DefaultAffineCS;
 import org.apache.sis.util.collection.WeakHashSet;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;

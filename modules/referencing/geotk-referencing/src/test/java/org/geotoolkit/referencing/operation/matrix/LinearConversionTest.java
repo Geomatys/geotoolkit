@@ -48,7 +48,7 @@ public final strictfp class LinearConversionTest {
      */
     @Test
     public void testScaleAndSwapAxis() throws ConversionException {
-        final AbstractCS cs = new DefaultCartesianCS("Test",
+        final DefaultCartesianCS cs = new DefaultCartesianCS("Test",
               new DefaultCoordinateSystemAxis("y", SOUTH, SI.CENTIMETRE),
               new DefaultCoordinateSystemAxis("x", EAST,  SI.MILLIMETRE));
         Matrix matrix;

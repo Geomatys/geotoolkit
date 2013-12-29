@@ -33,7 +33,7 @@ import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.io.wkt.Symbols;
+import org.apache.sis.io.wkt.Symbols;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
@@ -188,9 +188,10 @@ public class ReferencingConsole extends InteractiveConsole {
     private void initialize() {
         super.setPrompt("geotk-ct \u25B6 ");
         final Symbols symbols = parser.getSymbols();
-        super.setSymbols(symbols.getOpeningBrackets(),
-                         symbols.getClosingBrackets(),
-                         symbols.getQuote());
+        super.setSymbols("[(".toCharArray(), "])".toCharArray(), '"');
+//        super.setSymbols(symbols.getOpeningBrackets(),
+//                         symbols.getClosingBrackets(),
+//                         symbols.getQuote());
     }
 
     /**

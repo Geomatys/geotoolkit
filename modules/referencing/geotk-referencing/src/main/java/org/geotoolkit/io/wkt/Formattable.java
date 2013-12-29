@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.io.wkt;
 
+import org.apache.sis.io.wkt.Formatter;
+
 
 /**
  * Interface for objects that can be formatted as <cite>Well Known Text</cite> (WKT).
@@ -35,7 +37,7 @@ package org.geotoolkit.io.wkt;
  *
  * @deprecated Moved to Apache SIS.
  */
- @Deprecated
+@Deprecated
 public interface Formattable {
     /**
      * Formats the inner part of a <cite>Well Known Text</cite> (WKT) element. This method is
@@ -54,5 +56,5 @@ public interface Formattable {
      * @param  formatter The formatter to use.
      * @return The name of the WKT element type (e.g. {@code "GEOGCS"}).
      */
-    String formatWKT(Formatter formatter);
+    String formatTo(Formatter formatter);
 }

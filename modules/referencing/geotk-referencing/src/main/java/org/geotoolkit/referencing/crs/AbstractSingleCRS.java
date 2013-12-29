@@ -27,14 +27,13 @@ import net.jcip.annotations.Immutable;
 import org.opengis.referencing.datum.Datum;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.geotoolkit.internal.referencing.NilReferencingObject;
-import org.geotoolkit.referencing.AbstractReferenceSystem;
+import org.apache.sis.referencing.AbstractIdentifiedObject;
+import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 
-import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.Utilities.deepEquals;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -75,7 +74,7 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = 1815712797774273L;
+//  private static final long serialVersionUID = 1815712797774273L;
 
     /**
      * The datum. This field should be considered as final.
@@ -184,8 +183,8 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
      * {@inheritDoc}
      */
     @Override
-    protected int computeHashCode() {
-        return hash(datum, super.computeHashCode());
+    public int hashCode(final ComparisonMode mode) throws IllegalArgumentException {
+        return super.hashCode(mode) + 31*hashCode(datum, mode);
     }
 
     /**

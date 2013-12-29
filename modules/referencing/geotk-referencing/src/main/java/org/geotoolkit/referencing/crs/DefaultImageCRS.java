@@ -32,7 +32,7 @@ import org.opengis.referencing.datum.ImageDatum;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.crs.ImageCRS;
 
-import org.geotoolkit.referencing.AbstractReferenceSystem;
+import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.datum.DefaultImageDatum;
 import org.geotoolkit.resources.Vocabulary;

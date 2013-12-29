@@ -33,7 +33,7 @@ import static java.lang.Math.*;
  * {@link #orthodromicDistance} method.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
+ * @version 4.00
  *
  * @since 2.0
  * @module
@@ -41,11 +41,6 @@ import static java.lang.Math.*;
 @Immutable
 @XmlTransient
 final class Spheroid extends DefaultEllipsoid {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = 7867565381280669821L;
-
     /**
      * Constructs a new object in which every attributes are set to a default value.
      * <strong>This is not a valid object.</strong> This constructor is strictly
@@ -64,7 +59,7 @@ final class Spheroid extends DefaultEllipsoid {
      * @param unit          The units of the radius value.
      */
     protected Spheroid(Map<String,?> properties, double radius, boolean ivfDefinitive, Unit<Length> unit) {
-        super(properties, check("radius", radius), radius, Double.POSITIVE_INFINITY, ivfDefinitive, unit);
+        super(properties, radius, radius, Double.POSITIVE_INFINITY, ivfDefinitive, unit);
     }
 
     /**

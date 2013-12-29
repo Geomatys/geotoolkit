@@ -32,7 +32,7 @@ import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.crs.DefaultGeocentricCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.datum.BursaWolfParameters;
+import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 
 import org.apache.sis.test.DependsOn;
@@ -122,10 +122,10 @@ public final strictfp class GeocentricTransformTest extends TransformTestBase {
         /*
          * Applies the datum shift.
          */
-        final BursaWolfParameters parameters = new BursaWolfParameters(null);
-        parameters.dx =  84.87;
-        parameters.dy =  96.49;
-        parameters.dz = 116.95;
+        final BursaWolfParameters parameters = new BursaWolfParameters(null, null);
+        parameters.tX =  84.87;
+        parameters.tY =  96.49;
+        parameters.tZ = 116.95;
         source = target;
         target = new double[] {
             3771878.84,

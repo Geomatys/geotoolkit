@@ -42,7 +42,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.geotoolkit.measure.Measure;
 import org.apache.sis.metadata.iso.extent.Extents;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.AbstractReferenceSystem;
+import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
@@ -50,7 +50,7 @@ import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.util.UnsupportedImplementationException;
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.measure.Units;
 
 
@@ -388,7 +388,7 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
      * @return The name of the WKT element type, which is {@code "GEOGCS"}.
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
+    public String formatTo(final Formatter formatter) {  // TODO: should be protected.
         final Unit<Angle> oldUnit = formatter.getAngularUnit();
         final Unit<Angle> unit = getAngularUnit(getCoordinateSystem());
         final GeodeticDatum datum = getDatum();
@@ -402,7 +402,7 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
             formatter.append(cs.getAxis(i));
         }
         if (!unit.equals(getUnit())) {
-            formatter.setInvalidWKT(GeographicCRS.class);
+            formatter.setInvalidWKT(this);
         }
         formatter.setAngularUnit(oldUnit);
         return "GEOGCS";

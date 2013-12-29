@@ -41,7 +41,7 @@ import org.opengis.parameter.InvalidParameterNameException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ComparisonMode;
@@ -57,7 +57,7 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.18
+ * @version 4.00
  *
  * @see ParameterGroup
  * @see DefaultParameterDescriptor
@@ -72,7 +72,7 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = -4613190550542423839L;
+//  private static final long serialVersionUID = -4613190550542423839L;
 
     /**
      * The maximum number of times that values for this parameter group or
@@ -335,8 +335,8 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
      * {@inheritDoc}
      */
     @Override
-    protected int computeHashCode() {
-        return hash(Arrays.hashCode(parameters), super.computeHashCode());
+    public int hashCode(final ComparisonMode mode) {
+        return hash(Arrays.hashCode(parameters), super.hashCode(mode));
     }
 
     /**

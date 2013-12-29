@@ -30,7 +30,7 @@ import org.opengis.geometry.DirectPosition;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.internal.referencing.DirectPositionView;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
@@ -575,7 +575,7 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
      *       using an affine transform to change the coordinates order.
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
+    public String formatTo(final Formatter formatter) {
         formatter.append(firstAffectedOrdinate);
         if (numTrailingOrdinates != 0) {
             formatter.append(numTrailingOrdinates);

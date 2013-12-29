@@ -28,20 +28,20 @@ import javax.measure.converter.ConversionException;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import net.jcip.annotations.Immutable;
-
+import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.geometry.MismatchedDimensionException;
-
 import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.referencing.cs.AxisRangeType;
+
+import static java.util.Collections.singletonMap;
+import static org.geotoolkit.referencing.cs.AbstractCS.name;
 
 
 /**
@@ -61,14 +61,12 @@ import org.geotoolkit.referencing.cs.AxisRangeType;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
-@Immutable
-public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = -1452492488902329211L;
-
+@Deprecated
+@XmlTransient
+public class DefaultEllipsoidalCS extends org.apache.sis.referencing.cs.DefaultEllipsoidalCS {
     /**
      * A two-dimensional ellipsoidal CS with
      * <var>{@linkplain DefaultCoordinateSystemAxis#GEODETIC_LONGITUDE geodetic longitude}</var>,
@@ -115,15 +113,6 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
     private transient DefaultEllipsoidalCS shifted;
 
     /**
-     * Constructs a new object in which every attributes are set to a default value.
-     * <strong>This is not a valid object.</strong> This constructor is strictly
-     * reserved to JAXB, which will assign values to the fields using reflexion.
-     */
-    private DefaultEllipsoidalCS() {
-        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
-    }
-
-    /**
      * Constructs a new coordinate system with the same values than the specified one.
      * This copy constructor provides a way to convert an arbitrary implementation into a
      * Geotk one or a user-defined one (as a subclass), usually in order to leverage
@@ -149,7 +138,7 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
                                 final CoordinateSystemAxis axis0,
                                 final CoordinateSystemAxis axis1)
     {
-        super(name, axis0, axis1);
+        super(singletonMap(NAME_KEY, name), axis0, axis1);
     }
 
     /**
@@ -165,7 +154,7 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
                                 final CoordinateSystemAxis axis1,
                                 final CoordinateSystemAxis axis2)
     {
-        super(name, axis0, axis1, axis2);
+        super(singletonMap(NAME_KEY, name), axis0, axis1, axis2);
     }
 
     /**
@@ -205,8 +194,12 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
     /**
      * For {@link #shiftAxisRange(AxisRangeType)} and {@link #usingUnit(Unit)} usage only.
      */
-    private DefaultEllipsoidalCS(final EllipsoidalCS parent, final CoordinateSystemAxis[] axis) {
-        super(IdentifiedObjects.getProperties(parent, null), axis);
+    static DefaultEllipsoidalCS create(final Map<String,?> properties, final CoordinateSystemAxis[] axis) {
+        switch (axis.length) {
+            case 2: return new DefaultEllipsoidalCS(properties, axis[0], axis[1]);
+            case 3: return new DefaultEllipsoidalCS(properties, axis[0], axis[1], axis[2]);
+            default: throw new IllegalArgumentException();
+        }
     }
 
     /**
@@ -225,37 +218,6 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
     public static DefaultEllipsoidalCS castOrCopy(final EllipsoidalCS object) {
         return (object == null) || (object instanceof DefaultEllipsoidalCS)
                 ? (DefaultEllipsoidalCS) object : new DefaultEllipsoidalCS(object);
-    }
-
-    /**
-     * Returns {@code true} if the specified axis direction is allowed for this coordinate
-     * system. The default implementation accepts only the following directions:
-     * {@link AxisDirection#NORTH NORTH}, {@link AxisDirection#SOUTH SOUTH},
-     * {@link AxisDirection#EAST  EAST},  {@link AxisDirection#WEST  WEST},
-     * {@link AxisDirection#UP    UP} and {@link AxisDirection#DOWN  DOWN}.
-     */
-    @Override
-    protected boolean isCompatibleDirection(AxisDirection direction) {
-        direction = AxisDirections.absolute(direction);
-        return AxisDirection.NORTH.equals(direction) ||
-               AxisDirection.EAST .equals(direction) ||
-               AxisDirection.UP   .equals(direction);
-    }
-
-    /**
-     * Returns {@code true} if the specified unit is an angular units, or a linear one in the
-     * special case of height. This method is invoked at construction time for checking units
-     * compatibility.
-     *
-     * @since 2.2
-     */
-    @Override
-    protected boolean isCompatibleUnit(AxisDirection direction, final Unit<?> unit) {
-        direction = AxisDirections.absolute(direction);
-        if (AxisDirection.UP.equals(direction)) {
-            return Units.isLinear(unit);
-        }
-        return Units.isAngular(unit);
     }
 
     /**
@@ -301,7 +263,7 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
      * @throws MismatchedDimensionException is the coordinate point doesn't have the expected dimension.
      */
     public double getLongitude(final double[] coordinates) throws MismatchedDimensionException {
-        ensureDimensionMatch("coordinates", coordinates);
+        AbstractCS.ensureDimensionMatch(this, "coordinates", coordinates);
         UnitConverter converter;
         synchronized (this) {
             converter = longitudeConverter;
@@ -322,7 +284,7 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
      * @throws MismatchedDimensionException is the coordinate point doesn't have the expected dimension.
      */
     public double getLatitude(final double[] coordinates) throws MismatchedDimensionException {
-        ensureDimensionMatch("coordinates", coordinates);
+        AbstractCS.ensureDimensionMatch(this, "coordinates", coordinates);
         UnitConverter converter;
         synchronized (this) {
             converter = latitudeConverter;
@@ -344,7 +306,7 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
      *         dimension.
      */
     public double getHeight(final double[] coordinates) throws MismatchedDimensionException {
-        ensureDimensionMatch("coordinates", coordinates);
+        AbstractCS.ensureDimensionMatch(this, "coordinates", coordinates);
         UnitConverter converter;
         synchronized (this) {
             converter = heightConverter;
@@ -421,7 +383,7 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
                 for (int i=axes.length; --i>=0;) {
                     axes[i] = (i != longitudeAxis) ? getAxis(i) : newAxis;
                 }
-                shifted = new DefaultEllipsoidalCS(this, axes);
+                shifted = create(IdentifiedObjects.getProperties(this, null), axes);
                 shifted.shifted = this;
             }
         }
@@ -442,13 +404,13 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
     public DefaultEllipsoidalCS usingUnit(final Unit<?> unit) throws IllegalArgumentException {
         final CoordinateSystemAxis[] axes;
         try {
-            axes = axisUsingUnit(unit, Units.isLinear(unit) ? SI.RADIAN : SI.METRE);
+            axes = AbstractCS.axisUsingUnit(this, unit, Units.isLinear(unit) ? SI.RADIAN : SI.METRE);
         } catch (ConversionException e) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_1, unit), e);
         }
         if (axes == null) {
             return this;
         }
-        return new DefaultEllipsoidalCS(this, axes);
+        return create(IdentifiedObjects.getProperties(this, null), axes);
     }
 }

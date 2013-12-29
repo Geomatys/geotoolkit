@@ -31,7 +31,7 @@ import org.apache.sis.xml.XML;
 import org.apache.sis.xml.Namespaces;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.internal.jaxb.referencing.SecondDefiningParameter;
+import org.apache.sis.internal.jaxb.referencing.SecondDefiningParameter;
 
 import org.junit.*;
 import static org.apache.sis.test.Assert.*;

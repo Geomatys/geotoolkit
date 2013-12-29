@@ -39,7 +39,7 @@ import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.io.wkt.Colors;
+import org.apache.sis.io.wkt.Colors;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -48,7 +48,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.datum.BursaWolfParameters;
+import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
@@ -389,19 +389,19 @@ final class ReferencingAction {
                 for (int j=0; j<params.length; j++) {
                     final BursaWolfParameters p = params[j];
                     table.setAlignment(TableWriter.ALIGN_LEFT);
-                    table.write(p.targetDatum.getName().getCode());
+                    table.write(p.getTargetDatum().getName().getCode());
                     table.nextColumn();
                     table.setAlignment(TableWriter.ALIGN_RIGHT);
                     double v;
                     for (int k=0; k<7; k++) {
                         switch (k) {
-                            case 0: v = p.dx;  break;
-                            case 1: v = p.dy;  break;
-                            case 2: v = p.dz;  break;
-                            case 3: v = p.ex;  break;
-                            case 4: v = p.ey;  break;
-                            case 5: v = p.ez;  break;
-                            case 6: v = p.ppm; break;
+                            case 0: v = p.tX; break;
+                            case 1: v = p.tY; break;
+                            case 2: v = p.tZ; break;
+                            case 3: v = p.rX; break;
+                            case 4: v = p.rY; break;
+                            case 5: v = p.rZ; break;
+                            case 6: v = p.dS; break;
                             default: throw new AssertionError(k);
                         }
                         table.write(nf.format(v));

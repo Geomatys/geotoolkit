@@ -44,7 +44,8 @@ import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.Utilities;
 import org.geotoolkit.io.wkt.Convention;
 import org.geotoolkit.io.wkt.Formattable;
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
+import org.apache.sis.io.wkt.FormattableObject;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.Utilities.hash;
@@ -951,7 +952,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * @return The WKT element name, which is {@code "CONCAT_MT"}.
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
+    public String formatTo(final Formatter formatter) {
         final List<? super MathTransform> transforms;
         if (formatter.getConvention() == Convention.INTERNAL) {
             transforms = getSteps();
@@ -964,13 +965,13 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
          * case this is no longer a CONCAT_MT.
          */
         if (transforms.size() == 1) {
-            return ((Formattable) transforms.get(0)).formatWKT(formatter);
+            return ((Formattable) transforms.get(0)).formatTo(formatter);
         }
         for (final Object step : transforms) {
             if (step instanceof MathTransform) {
                 formatter.append((MathTransform) step);
             } else {
-                formatter.append((Formattable) step);
+                formatter.append((FormattableObject) step);
             }
         }
         return "CONCAT_MT";

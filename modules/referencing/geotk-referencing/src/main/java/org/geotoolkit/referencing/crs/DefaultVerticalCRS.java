@@ -30,10 +30,10 @@ import org.opengis.referencing.cs.VerticalCS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.datum.VerticalDatum;
 
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.DefaultVerticalCS;
-import org.geotoolkit.referencing.AbstractReferenceSystem;
+import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
 
 
@@ -219,7 +219,7 @@ public class DefaultVerticalCRS extends AbstractSingleCRS implements VerticalCRS
      * @return The name of the WKT element type, which is {@code "VERT_CS"}.
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
+    public String formatTo(final Formatter formatter) { // TODO: should be protected.
         formatDefaultWKT(formatter);
         return "VERT_CS";
     }

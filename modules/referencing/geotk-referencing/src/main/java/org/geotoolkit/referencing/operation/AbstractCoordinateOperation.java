@@ -40,10 +40,12 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.InternationalString;
 import org.opengis.util.Record;
 
+import org.apache.sis.util.iso.Types;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.io.wkt.Formattable;
+import org.apache.sis.io.wkt.Formatter;
+import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.apache.sis.measure.Units;
@@ -52,6 +54,7 @@ import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
+import static org.apache.sis.util.collection.Containers.property;
 
 
 /**
@@ -79,11 +82,11 @@ import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
  * @module
  */
 @Immutable
-public class AbstractCoordinateOperation extends AbstractIdentifiedObject implements CoordinateOperation {
+public class AbstractCoordinateOperation extends AbstractIdentifiedObject implements CoordinateOperation, Formattable {
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = 1237358357729193885L;
+//  private static final long serialVersionUID = 1237358357729193885L;
 
     /**
      * An empty array of positional accuracy. This is useful for fetching accuracies as an array,
@@ -96,11 +99,6 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
      * @see #getCoordinateOperationAccuracy()
      */
     public static final PositionalAccuracy[] EMPTY_ACCURACY_ARRAY = new PositionalAccuracy[0];
-
-    /**
-     * List of localizable properties. To be given to {@link AbstractIdentifiedObject} constructor.
-     */
-    private static final String[] LOCALIZABLES = {SCOPE_KEY};
 
     /**
      * The source CRS, or {@code null} if not available.
@@ -205,25 +203,12 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
                                        final CoordinateReferenceSystem targetCRS,
                                        final MathTransform             transform)
     {
-        this(properties, new HashMap<String,Object>(), sourceCRS, targetCRS, transform);
-    }
-
-    /**
-     * Work around for RFE #4093999 in Sun's bug database
-     * ("Relax constraint on placement of this()/super() call in constructors").
-     */
-    private AbstractCoordinateOperation(final Map<String,?>            properties,
-                                        final Map<String,Object>    subProperties,
-                                        final CoordinateReferenceSystem sourceCRS,
-                                        final CoordinateReferenceSystem targetCRS,
-                                        final MathTransform             transform)
-    {
-        super(properties, subProperties, LOCALIZABLES);
+        super(properties);
         Object positionalAccuracy;
-        domainOfValidity   = (Extent)              subProperties.get(DOMAIN_OF_VALIDITY_KEY);
-        scope              = (InternationalString) subProperties.get(SCOPE_KEY);
-        operationVersion   = (String)              subProperties.get(OPERATION_VERSION_KEY);
-        positionalAccuracy =                       subProperties.get(COORDINATE_OPERATION_ACCURACY_KEY);
+        domainOfValidity   = property(properties, DOMAIN_OF_VALIDITY_KEY, Extent.class);
+        scope              = Types.toInternationalString(properties, SCOPE_KEY);
+        operationVersion   = property(properties, OPERATION_VERSION_KEY, String.class);
+        positionalAccuracy = properties.get(COORDINATE_OPERATION_ACCURACY_KEY);
         if (positionalAccuracy instanceof PositionalAccuracy[]) {
             final PositionalAccuracy[] accuracies = ((PositionalAccuracy[]) positionalAccuracy).clone();
             for (int i=0; i<accuracies.length; i++) {
@@ -598,8 +583,8 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
      * {@inheritDoc}
      */
     @Override
-    protected int computeHashCode() {
-        return hash(sourceCRS, hash(targetCRS, hash(transform, super.computeHashCode())));
+    public int hashCode(final ComparisonMode mode) {
+        return hash(sourceCRS, hash(targetCRS, hash(transform, super.hashCode(mode))));
     }
 
     /**
@@ -611,10 +596,10 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
      * @return The WKT element name.
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
+    public String formatTo(final Formatter formatter) {
         append(formatter, sourceCRS, "SOURCE");
         append(formatter, targetCRS, "TARGET");
-        return super.formatWKT(formatter);
+        return super.formatTo(formatter);
     }
 
     /**
@@ -633,7 +618,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
             properties.put(IdentifiedObject.IDENTIFIERS_KEY, formatter.getIdentifier(object));
             formatter.append((IdentifiedObject) new AbstractIdentifiedObject(properties) {
                 @Override
-                public String formatWKT(final Formatter formatter) {
+                protected String formatTo(final Formatter formatter) {
                     /*
                      * Do not invoke super.formatWKT(formatter), since it doesn't do anything
                      * more than invoking 'formatter.setInvalidWKT(...)' (we ignore the value

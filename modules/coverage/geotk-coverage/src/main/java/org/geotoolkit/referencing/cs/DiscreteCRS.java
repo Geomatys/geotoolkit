@@ -23,8 +23,8 @@ import java.io.Serializable;
 
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
-import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.io.wkt.FormattableObject;
+import org.apache.sis.io.wkt.Formatter;
+import org.apache.sis.io.wkt.FormattableObject;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
@@ -47,6 +47,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.MathTransform;
 
+import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.lang.Decorator;
 
 
@@ -68,7 +69,7 @@ import org.geotoolkit.lang.Decorator;
  */
 @Decorator(CoordinateReferenceSystem.class)
 class DiscreteCRS<T extends CoordinateReferenceSystem> extends FormattableObject
-        implements CoordinateReferenceSystem, GridGeometry, Serializable
+        implements CoordinateReferenceSystem, GridGeometry, Formattable, Serializable
 {
     /**
      * For cross-version compatibility.
@@ -252,11 +253,11 @@ class DiscreteCRS<T extends CoordinateReferenceSystem> extends FormattableObject
      * not changed.
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
-        if (crs instanceof FormattableObject) {
-            return ((FormattableObject) crs).formatWKT(formatter);
+    public String formatTo(final Formatter formatter) {
+        if (crs instanceof Formattable) {
+            return ((Formattable) crs).formatTo(formatter);
         } else {
-            return super.formatWKT(formatter);
+            return super.formatTo(formatter);
         }
     }
 

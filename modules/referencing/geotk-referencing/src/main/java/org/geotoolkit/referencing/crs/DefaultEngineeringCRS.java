@@ -32,12 +32,12 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.EngineeringCRS;
 import org.opengis.referencing.datum.EngineeringDatum;
 
-import org.geotoolkit.referencing.AbstractReferenceSystem;
+import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.datum.DefaultEngineeringDatum;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.util.ComparisonMode;
 
 
@@ -263,7 +263,7 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
      * @return The name of the WKT element type, which is {@code "LOCAL_CS"}.
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
+    public String formatTo(final Formatter formatter) { // TODO: should be protected.
         formatDefaultWKT(formatter);
         return "LOCAL_CS";
     }

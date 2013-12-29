@@ -29,7 +29,7 @@ import org.opengis.geometry.DirectPosition;
 
 import org.geotoolkit.lang.Decorator;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
 
@@ -217,9 +217,9 @@ public class MathTransformWrapper implements MathTransform, Formattable, Seriali
      * with Geotk implementations of math transform, so the exception is unlikely to be thrown.
      */
     @Override
-    public final String formatWKT(final Formatter formatter) {
+    public final String formatTo(final Formatter formatter) {
         if (transform instanceof Formattable) {
-            return ((Formattable) transform).formatWKT(formatter);
+            return ((Formattable) transform).formatTo(formatter);
         }
         throw new UnformattableObjectException(getClass());
     }

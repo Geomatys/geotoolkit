@@ -41,7 +41,7 @@ import org.opengis.test.report.AuthorityCodesReport;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.apache.sis.referencing.AbstractIdentifiedObject;
 
 import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
 

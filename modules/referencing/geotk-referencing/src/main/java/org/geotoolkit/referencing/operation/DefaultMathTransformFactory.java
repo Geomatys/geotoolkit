@@ -52,7 +52,7 @@ import org.opengis.util.NoSuchIdentifierException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryRegistry;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.io.wkt.Symbols;
+import org.apache.sis.io.wkt.Symbols;
 import org.geotoolkit.io.wkt.MathTransformParser;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
@@ -281,7 +281,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
         final MathTransformProvider[] providers = getAvailableMethods();
         for (int i=0; i<providers.length; i++) {
             final MathTransformProvider candidate = providers[i];
-            if (candidate.nameMatches(method)) {
+            if (candidate.isHeuristicMatchForName(method)) {
                 provider = candidate;
                 if (!isDeprecated(candidate, method)) {
                     break;

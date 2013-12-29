@@ -41,7 +41,7 @@ import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 import static org.geotoolkit.util.Utilities.hash;
@@ -68,7 +68,7 @@ import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.18
+ * @version 4.00
  *
  * @see Parameter
  * @see DefaultParameterDescriptorGroup
@@ -83,7 +83,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = -295668622297737705L;
+//  private static final long serialVersionUID = -295668622297737705L;
 
     /**
      * Some frequently used {@link Double} values. As of Java 6, those values don't
@@ -540,7 +540,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
                      * compared by the subclass.
                      */
                     final IdentifiedObject that = (IdentifiedObject) object;
-                    if (!nameMatches(that. getName().getCode()) &&
+                    if (!isHeuristicMatchForName(that. getName().getCode()) &&
                         !IdentifiedObjects.nameMatches(that, getName().getCode()))
                     {
                         return false;
@@ -572,9 +572,9 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
      * {@inheritDoc}
      */
     @Override
-    protected int computeHashCode() {
+    public int hashCode(final ComparisonMode mode) throws IllegalArgumentException {
         return hash(valueClass, hash(deepHashCode(defaultValue),
-               hash(minimum, hash(maximum, hash(unit, super.computeHashCode())))));
+               hash(minimum, hash(maximum, hash(unit, super.hashCode(mode))))));
     }
 
     /**

@@ -239,10 +239,6 @@ public final class IdentifiedObjects extends Static {
      */
     @Deprecated
     public static String getName(final IdentifiedObject info, final Citation authority) {
-        if (info instanceof AbstractIdentifiedObject) {
-            // Gives a chances to subclasses to get their overridden method invoked.
-            return ((AbstractIdentifiedObject) info).getName(authority);
-        }
         return org.apache.sis.referencing.IdentifiedObjects.getName(info, authority);
     }
 
@@ -378,10 +374,6 @@ public final class IdentifiedObjects extends Static {
      */
     @Deprecated
     public static ReferenceIdentifier getIdentifier(final IdentifiedObject object, final Citation authority) {
-        if (object instanceof AbstractIdentifiedObject) {
-            // Gives a chances to subclasses to get their overridden method invoked.
-            return ((AbstractIdentifiedObject) object).getIdentifier(authority);
-        }
         return org.apache.sis.referencing.IdentifiedObjects.getIdentifier(object, authority);
     }
 
@@ -595,11 +587,7 @@ public final class IdentifiedObjects extends Static {
      */
     @Deprecated
     public static boolean nameMatches(final IdentifiedObject object, final String name) {
-        if (object instanceof AbstractIdentifiedObject) {
-            return ((AbstractIdentifiedObject) object).nameMatches(name);
-        } else {
-            return org.apache.sis.referencing.IdentifiedObjects.isHeuristicMatchForName(object, name);
-        }
+        return org.apache.sis.referencing.IdentifiedObjects.isHeuristicMatchForName(object, name);
     }
 
     /**

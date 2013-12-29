@@ -30,6 +30,7 @@ import org.opengis.referencing.cs.*;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.cs.DefaultAffineCS;
 
 
 /**
@@ -83,8 +84,7 @@ final class PredefinedCS extends Static implements Comparator<CoordinateSystem> 
     public int compare(final CoordinateSystem object1, final CoordinateSystem object2) {
         final Class<? extends CoordinateSystem> type1 = object1.getClass();
         final Class<? extends CoordinateSystem> type2 = object2.getClass();
-        for (int i=0; i<types.length; i++) {
-            final Class<?> type = types[i];
+        for (final Class<?> type : types) {
             final boolean a1 = type.isAssignableFrom(type1);
             final boolean a2 = type.isAssignableFrom(type2);
             if (a1) return a2 ? 0 : -1;
@@ -101,22 +101,22 @@ final class PredefinedCS extends Static implements Comparator<CoordinateSystem> 
         if (cs instanceof CartesianCS) {
             switch (dimension) {
                 case 2: {
-                    if (DefaultCartesianCS.PROJECTED.axisColinearWith(cs)) {
+                    if (AbstractCS.axisColinearWith(DefaultCartesianCS.PROJECTED, cs)) {
                         return DefaultCartesianCS.PROJECTED;
                     }
-                    if (DefaultCartesianCS.GRID.axisColinearWith(cs)) {
+                    if (AbstractCS.axisColinearWith(DefaultCartesianCS.GRID, cs)) {
                         return DefaultCartesianCS.GRID;
                     }
-                    if (DefaultCartesianCS.GENERIC_2D.directionColinearWith(cs)) {
+                    if (AbstractCS.directionColinearWith(DefaultCartesianCS.GENERIC_2D, cs)) {
                         return DefaultCartesianCS.GENERIC_2D;
                     }
                     return rightHanded((CartesianCS) cs);
                 }
                 case 3: {
-                    if (DefaultCartesianCS.GEOCENTRIC.axisColinearWith(cs)) {
+                    if (AbstractCS.axisColinearWith(DefaultCartesianCS.GEOCENTRIC, cs)) {
                         return DefaultCartesianCS.GEOCENTRIC;
                     }
-                    if (DefaultCartesianCS.GENERIC_3D.directionColinearWith(cs)) {
+                    if (AbstractCS.directionColinearWith(DefaultCartesianCS.GENERIC_3D, cs)) {
                         return DefaultCartesianCS.GENERIC_3D;
                     }
                     return rightHanded((CartesianCS) cs);
@@ -212,8 +212,12 @@ final class PredefinedCS extends Static implements Comparator<CoordinateSystem> 
         }
         final Map<String,?> properties = IdentifiedObjects.getProperties(cs, null);
         if (cs instanceof CartesianCS) {
-            return new DefaultCartesianCS(properties, axis);
+            return DefaultCartesianCS.create(properties, axis);
         }
-        return new DefaultAffineCS(properties, axis);
+        switch (axis.length) {
+            case 2: return new DefaultAffineCS(properties, axis[0], axis[1]);
+            case 3: return new DefaultAffineCS(properties, axis[0], axis[1], axis[2]);
+            default: throw new AssertionError();
+        }
     }
 }

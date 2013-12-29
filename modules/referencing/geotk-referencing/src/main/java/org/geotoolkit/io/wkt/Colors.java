@@ -17,9 +17,8 @@
  */
 package org.geotoolkit.io.wkt;
 
-import java.util.EnumMap;
-import java.io.Serializable;
 import org.geotoolkit.io.X364;
+import org.apache.sis.io.wkt.ElementKind;
 
 
 /**
@@ -35,30 +34,8 @@ import org.geotoolkit.io.X364;
  *
  * @deprecated Moved to Apache SIS.
  */
- @Deprecated
-public class Colors implements Serializable {
-    /**
-     * For cross-version compatibility.
-     */
-    private static final long serialVersionUID = 256160285861027191L;
-
-    /**
-     * The immutable default set of colors.
-     */
-    public static final Colors DEFAULT = new Immutable();
-    static {
-        final EnumMap<Element,X364> map = DEFAULT.map;
-        map.put(Element.NUMBER,     X364.FOREGROUND_YELLOW);
-        map.put(Element.INTEGER,    X364.FOREGROUND_YELLOW);
-        map.put(Element.UNIT,       X364.FOREGROUND_YELLOW);
-        map.put(Element.AXIS,       X364.FOREGROUND_CYAN);
-        map.put(Element.CODE_LIST,  X364.FOREGROUND_CYAN);
-        map.put(Element.PARAMETER,  X364.FOREGROUND_GREEN);
-        map.put(Element.METHOD,     X364.FOREGROUND_GREEN);
-        map.put(Element.DATUM,      X364.FOREGROUND_GREEN);
-        map.put(Element.ERROR,      X364.BACKGROUND_RED);
-    }
-
+@Deprecated
+public class Colors extends org.apache.sis.io.wkt.Colors {
     /**
      * Keys for syntactic elements to be colorized.
      *
@@ -72,68 +49,65 @@ public class Colors implements Serializable {
      * @deprecated Moved to Apache SIS.
      */
     @Deprecated
-    public static enum Element {
+    public static final class Element {
         /**
          * Floating point numbers (excluding integer types).
          */
-        NUMBER,
+        public static final ElementKind NUMBER = ElementKind.NUMBER;
 
         /**
          * Integer numbers.
          */
-        INTEGER,
+        public static final ElementKind INTEGER = ElementKind.INTEGER;
 
         /**
          * {@linkplain javax.measure.unit.Unit Units of measurement}.
          * In referencing WKT, this is the text inside {@code UNIT} elements.
          */
-        UNIT,
+        public static final ElementKind UNIT = ElementKind.UNIT;
 
         /**
          * {@linkplain org.opengis.referencing.cs.CoordinateSystemAxis Axes}.
          * In referencing WKT, this is the text inside {@code AXIS} elements.
          */
-        AXIS,
+        public static final ElementKind AXIS = ElementKind.AXIS;
 
         /**
          * {@linkplain org.opengis.util.CodeList Code list} values.
          */
-        CODE_LIST,
+        public static final ElementKind CODE_LIST = ElementKind.CODE_LIST;
 
         /**
          * {@linkplain org.opengis.parameter.ParameterValue Parameter values}.
          * In referencing WKT, this is the text inside {@code PARAMETER} elements.
          */
-        PARAMETER,
+        public static final ElementKind PARAMETER = ElementKind.PARAMETER;
 
         /**
          * {@linkplain org.opengis.referencing.operation.OperationMethod Operation methods}.
          * In referencing WKT, this is the text inside {@code PROJECTION} elements.
          */
-        METHOD,
+        public static final ElementKind METHOD = ElementKind.METHOD;
 
         /**
          * {@linkplain org.opengis.referencing.datum.Datum Datum}.
          * In referencing WKT, this is the text inside {@code DATUM} elements.
          */
-        DATUM,
+        public static final ElementKind DATUM = ElementKind.DATUM;
 
         /**
          * Unformattable elements.
          */
-        ERROR
-    }
+        public static final ElementKind ERROR = ElementKind.ERROR;
 
-    /**
-     * The map of colors.
-     */
-    private final EnumMap<Element,X364> map;
+        private Element() {
+        }
+    }
 
     /**
      * Creates a new, initially empty, set of colors.
      */
     public Colors() {
-        map = new EnumMap<>(Element.class);
     }
 
     /**
@@ -142,8 +116,8 @@ public class Colors implements Serializable {
      * @param key   The syntactic element for which to set the color.
      * @param color The color to give to the specified element.
      */
-    public void set(final Element key, final X364 color) {
-        map.put(key, color);
+    public void set(final ElementKind key, final X364 color) {
+        super.setName(key, org.apache.sis.internal.util.X364.valueOf(color.name()).color);
     }
 
     /**
@@ -152,25 +126,9 @@ public class Colors implements Serializable {
      * @param key The syntactic element for which to get the color.
      * @return The color of the specified element, or {@code null} if none.
      */
-    public X364 get(final Element key) {
-        return map.get(key);
-    }
-
-    /**
-     * An immutable flavor of {@link Colors} for the {@link Colors#DEFAULT} constant.
-     */
-    private static final class Immutable extends Colors {
-        /**
-         * For cross-version compatibility.
-         */
-        private static final long serialVersionUID = -2349530616334766576L;
-
-        /**
-         * Do not allow color changes.
-         */
-        @Override
-        public void set(final Element key, final X364 color) {
-            throw new UnsupportedOperationException();
-        }
+    public X364 get(final ElementKind key) {
+        final String name = super.getName(key);
+        if (name == null) return null;
+        return X364.valueOf(org.apache.sis.internal.util.X364.forColorName(name).name());
     }
 }

@@ -228,7 +228,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
              */
             final String name = axis.getName().getCode();
             for (int i=0; i<RENAMEABLE.length; i++) {
-                if (RENAMEABLE[i].nameMatches(name)) {
+                if (RENAMEABLE[i].isHeuristicMatchForName(name)) {
                     for (i=0; i<RENAMEABLE.length; i++) { // NOSONAR: The outer loop will not continue.
                         final CoordinateSystemAxis candidate = RENAMEABLE[i];
                         if (newDirection.equals(candidate.getDirection())) {

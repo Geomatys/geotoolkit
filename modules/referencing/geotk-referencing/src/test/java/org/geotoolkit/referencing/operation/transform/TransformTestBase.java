@@ -51,7 +51,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.math.Statistics;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.wkt.Convention;
-import org.geotoolkit.io.wkt.FormattableObject;
+import org.apache.sis.io.wkt.FormattableObject;
 
 import static java.lang.StrictMath.*;
 import static org.geotoolkit.test.Assert.*;
@@ -321,7 +321,7 @@ public abstract strictfp class TransformTestBase extends TransformTestCase imple
         table.write(wkt);
         table.nextColumn();
         if (transform instanceof FormattableObject) {
-            wkt = ((FormattableObject) transform).toWKT(Convention.INTERNAL, 2);
+            wkt = ((FormattableObject) transform).toString(Convention.INTERNAL);
         } else {
             wkt = transform.toString();
         }

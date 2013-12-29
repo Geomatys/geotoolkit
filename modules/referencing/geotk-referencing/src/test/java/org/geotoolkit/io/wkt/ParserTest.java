@@ -29,6 +29,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.apache.sis.io.wkt.Symbols;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;

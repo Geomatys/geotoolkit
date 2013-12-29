@@ -36,7 +36,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.referencing.datum.BursaWolfParameters;
+import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.MolodenskyTransform;
 import org.geotoolkit.internal.referencing.MathTransformDecorator;

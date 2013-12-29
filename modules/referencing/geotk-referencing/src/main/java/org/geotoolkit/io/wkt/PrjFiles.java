@@ -30,6 +30,8 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.ContentFormatException;
+import org.apache.sis.io.wkt.Accessor;
+import org.apache.sis.io.wkt.FormattableObject;
 
 
 /**
@@ -179,7 +181,7 @@ public final class PrjFiles extends Static {
     private static String format(final CoordinateReferenceSystem crs) throws ContentFormatException {
         try {
             if (crs instanceof FormattableObject) {
-                return ((FormattableObject) crs).toWKT(Convention.OGC, WKTFormat.SINGLE_LINE);
+                return Accessor.formatWKT(((FormattableObject) crs), Convention.OGC, (byte) WKTFormat.SINGLE_LINE, false, true);
             } else {
                 return crs.toWKT();
             }

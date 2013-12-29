@@ -86,6 +86,8 @@
 })
 package org.geotoolkit.referencing.cs;
 
+import org.apache.sis.internal.jaxb.referencing.CS_AxisDirection;
+import org.apache.sis.internal.jaxb.referencing.CS_CoordinateSystemAxis;
 import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlSchema;

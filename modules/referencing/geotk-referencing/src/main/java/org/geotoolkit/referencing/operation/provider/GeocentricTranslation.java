@@ -25,7 +25,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.referencing.datum.BursaWolfParameters;
+import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
@@ -229,8 +229,8 @@ public class GeocentricTranslation extends PositionVector7Param {
      */
     @Override
     void fill(final BursaWolfParameters parameters, final ParameterValueGroup values) {
-        parameters.dx = Parameters.doubleValue(DX, values);
-        parameters.dy = Parameters.doubleValue(DY, values);
-        parameters.dz = Parameters.doubleValue(DZ, values);
+        parameters.tX = Parameters.doubleValue(DX, values);
+        parameters.tY = Parameters.doubleValue(DY, values);
+        parameters.tZ = Parameters.doubleValue(DZ, values);
     }
 }

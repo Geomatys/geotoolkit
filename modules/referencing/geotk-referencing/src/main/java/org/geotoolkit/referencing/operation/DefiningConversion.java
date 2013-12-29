@@ -29,7 +29,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
 
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 import org.geotoolkit.referencing.IdentifiedObjects;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -136,8 +136,8 @@ public class DefiningConversion extends DefaultConversion {
      * {@inheritDoc}
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
-        final String name = super.formatWKT(formatter);
+    public String formatTo(final Formatter formatter) {
+        final String name = super.formatTo(formatter);
         formatter.append(parameters);
         return name;
     }

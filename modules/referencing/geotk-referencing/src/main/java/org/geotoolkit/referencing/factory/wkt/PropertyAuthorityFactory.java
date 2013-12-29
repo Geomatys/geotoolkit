@@ -38,7 +38,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.DatumAuthorityFactory;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.io.wkt.Symbols;
+import org.apache.sis.io.wkt.Symbols;
 import org.apache.sis.internal.util.Citations;
 import org.geotoolkit.resources.Loggings;
 import org.apache.sis.util.logging.Logging;

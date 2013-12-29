@@ -75,7 +75,7 @@ import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
-import org.geotoolkit.referencing.datum.BursaWolfParameters;
+import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.DefaultSingleOperation;
@@ -169,13 +169,13 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             throw new FactoryException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_1, unit), e);
         }
         switch (code) {
-            case 8605: parameters.dx  = value; break;
-            case 8606: parameters.dy  = value; break;
-            case 8607: parameters.dz  = value; break;
-            case 8608: parameters.ex  = value; break;
-            case 8609: parameters.ey  = value; break;
-            case 8610: parameters.ez  = value; break;
-            case 8611: parameters.ppm = value; break;
+            case 8605: parameters.tX = value; break;
+            case 8606: parameters.tY = value; break;
+            case 8607: parameters.tZ = value; break;
+            case 8608: parameters.rX = value; break;
+            case 8609: parameters.rY = value; break;
+            case 8610: parameters.rZ = value; break;
+            case 8611: parameters.dS = value; break;
             default: throw new FactoryException(Errors.format(
                     Errors.Keys.UNEXPECTED_PARAMETER_1, code));
         }
@@ -1568,7 +1568,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             } finally {
                 safetyGuard.remove(code);
             }
-            final BursaWolfParameters parameters = new BursaWolfParameters(datum);
+            final BursaWolfParameters parameters = new BursaWolfParameters(datum, null);
             stmt.setInt(1, info.operation);
             stmt.setInt(2, info.method);
             try (ResultSet result = stmt.executeQuery()) {
@@ -1582,9 +1582,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             if (info.method == ROTATION_FRAME_CODE) {
                 // Coordinate frame rotation (9607): same as 9606,
                 // except for the sign of rotation parameters.
-                parameters.ex = -parameters.ex;
-                parameters.ey = -parameters.ey;
-                parameters.ey = -parameters.ey;
+                parameters.reverseRotation();
             }
             bwInfos.set(i, parameters);
         }

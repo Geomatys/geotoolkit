@@ -36,11 +36,10 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.SingleOperation;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.util.ArgumentChecks;
 
 import static org.geotoolkit.referencing.IdentifiedObjects.EMPTY_ALIAS_ARRAY;
@@ -295,12 +294,12 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
      * @return The WKT element name.
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
+    public String formatTo(final Formatter formatter) {
         final Class<? extends SingleOperation> type = getOperationType();
         if (Projection.class.isAssignableFrom(type)) {
-            return super.formatWKT(formatter);
+            return super.formatTo(formatter);
         }
-        formatter.setInvalidWKT(OperationMethod.class);
+        formatter.setInvalidWKT(this);
         return "OperationMethod";
     }
 }

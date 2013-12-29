@@ -36,7 +36,7 @@ import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ComparisonMode;
@@ -79,7 +79,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = -7386537348359343836L;
+//  private static final long serialVersionUID = -7386537348359343836L;
 
     /**
      * The default matrix size for the
@@ -456,7 +456,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
      * {@inheritDoc}
      */
     @Override
-    protected int computeHashCode() {
-        return hash(prefix, hash(separator, super.computeHashCode()));
+    public int hashCode(final ComparisonMode mode) {
+        return hash(prefix, hash(separator, super.hashCode(mode)));
     }
 }

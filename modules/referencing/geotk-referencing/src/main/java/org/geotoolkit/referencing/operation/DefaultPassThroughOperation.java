@@ -29,7 +29,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.PassThroughOperation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.util.UnsupportedImplementationException;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
 
@@ -153,8 +153,8 @@ public class DefaultPassThroughOperation extends DefaultSingleOperation implemen
      * {@inheritDoc}
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
-        final String name = super.formatWKT(formatter);
+    public String formatTo(final Formatter formatter) {
+        final String name = super.formatTo(formatter);
         try {
             final int[] ordinates = getModifiedCoordinates();
             for (int i=0; i<ordinates.length; i++) {
@@ -162,7 +162,7 @@ public class DefaultPassThroughOperation extends DefaultSingleOperation implemen
             }
         } catch (UnsupportedOperationException exception) {
             // Ignore: no indices will be formatted.
-            formatter.setInvalidWKT(PassThroughOperation.class);
+            formatter.setInvalidWKT(this);
         }
         formatter.append(operation);
         return name;

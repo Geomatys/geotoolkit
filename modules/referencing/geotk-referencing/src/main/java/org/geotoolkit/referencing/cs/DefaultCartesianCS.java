@@ -24,9 +24,8 @@ import java.util.Map;
 import javax.measure.unit.Unit;
 import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
-import net.jcip.annotations.Immutable;
+import javax.xml.bind.annotation.XmlTransient;
 
-import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -37,6 +36,9 @@ import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.IdentifiedObjects;
+
+import static java.util.Collections.singletonMap;
+import static org.geotoolkit.referencing.cs.AbstractCS.name;
 
 
 /**
@@ -62,14 +64,12 @@ import org.geotoolkit.referencing.IdentifiedObjects;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
-@Immutable
-public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = -6182037957705712945L;
-
+@Deprecated
+@XmlTransient
+public class DefaultCartesianCS extends org.apache.sis.referencing.cs.DefaultCartesianCS {
     /**
      * A two-dimensional Cartesian CS with
      * <var>{@linkplain DefaultCoordinateSystemAxis#EASTING Easting}</var>,
@@ -95,6 +95,9 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
                     DefaultCoordinateSystemAxis.GEOCENTRIC_X,
                     DefaultCoordinateSystemAxis.GEOCENTRIC_Y,
                     DefaultCoordinateSystemAxis.GEOCENTRIC_Z);
+    static {
+        org.apache.sis.referencing.cs.DefaultCartesianCS.GEOCENTRIC = GEOCENTRIC;
+    }
 
     /**
      * A two-dimensional Cartesian CS with
@@ -158,15 +161,6 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
     private transient volatile UnitConverter[] converters;
 
     /**
-     * Constructs a new object in which every attributes are set to a default value.
-     * <strong>This is not a valid object.</strong> This constructor is strictly
-     * reserved to JAXB, which will assign values to the fields using reflexion.
-     */
-    private DefaultCartesianCS() {
-        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
-    }
-
-    /**
      * Constructs a new coordinate system with the same values than the specified one.
      * This copy constructor provides a way to convert an arbitrary implementation into a
      * Geotk one or a user-defined one (as a subclass), usually in order to leverage
@@ -179,7 +173,6 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
      */
     public DefaultCartesianCS(final CartesianCS cs) {
         super(cs);
-        ensurePerpendicularAxis();
     }
 
     /**
@@ -193,8 +186,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
                               final CoordinateSystemAxis axis0,
                               final CoordinateSystemAxis axis1)
     {
-        super(name, axis0, axis1);
-        ensurePerpendicularAxis();
+        super(singletonMap(NAME_KEY, name), axis0, axis1);
     }
 
     /**
@@ -210,8 +202,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
                               final CoordinateSystemAxis axis1,
                               final CoordinateSystemAxis axis2)
     {
-        super(name, axis0, axis1, axis2);
-        ensurePerpendicularAxis();
+        super(singletonMap(NAME_KEY, name), axis0, axis1, axis2);
     }
 
     /**
@@ -228,7 +219,6 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
                               final CoordinateSystemAxis axis1)
     {
         super(properties, axis0, axis1);
-        ensurePerpendicularAxis();
     }
 
     /**
@@ -247,51 +237,17 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
                               final CoordinateSystemAxis axis2)
     {
         super(properties, axis0, axis1, axis2);
-        ensurePerpendicularAxis();
     }
 
     /**
      * For {@link #usingUnit(Unit)} and {@link PredefinedCS#rightHanded(AffineCS)} usage only.
      */
-    DefaultCartesianCS(final Map<String,?> properties, final CoordinateSystemAxis[] axis) {
-        super(properties, axis);
-        ensurePerpendicularAxis();
-    }
-
-    /**
-     * Ensures that all axis are perpendicular.
-     */
-    private void ensurePerpendicularAxis() throws IllegalArgumentException {
-        final int dimension = getDimension();
-        for (int i=0; i<dimension; i++) {
-            final AxisDirection axis0 = getAxis(i).getDirection();
-            for (int j=i; ++j<dimension;) {
-                final AxisDirection axis1 = getAxis(j).getDirection();
-                final double angle = DefaultCoordinateSystemAxis.getAngle(axis0, axis1);
-                if (Math.abs(Math.abs(angle) - 90) > 1E-10) {
-                    throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.NON_PERPENDICULAR_AXIS_2, axis0.name(), axis1.name()));
-                }
-            }
+    static DefaultCartesianCS create(final Map<String,?> properties, final CoordinateSystemAxis[] axis) {
+        switch (axis.length) {
+            case 2: return new DefaultCartesianCS(properties, axis[0], axis[1]);
+            case 3: return new DefaultCartesianCS(properties, axis[0], axis[1], axis[2]);
+            default: throw new IllegalArgumentException();
         }
-    }
-
-    /**
-     * Returns a Geotk coordinate system implementation with the same values than the given arbitrary
-     * implementation. If the given object is {@code null}, then this method returns {@code null}.
-     * Otherwise if the given object is already a Geotk implementation, then the given object is
-     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
-     * attribute values of the given object.
-     *
-     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return A Geotk implementation containing the values of the given object (may be the
-     *         given object itself), or {@code null} if the argument was null.
-     *
-     * @since 3.18
-     */
-    public static DefaultCartesianCS castOrCopy(final CartesianCS object) {
-        return (object == null) || (object instanceof DefaultCartesianCS)
-                ? (DefaultCartesianCS) object : new DefaultCartesianCS(object);
     }
 
     /**
@@ -303,12 +259,11 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
      * @throws UnsupportedOperationException if this coordinate system can't compute distances.
      * @throws MismatchedDimensionException if a coordinate doesn't have the expected dimension.
      */
-    @Override
     public Measure distance(final double[] coord1, final double[] coord2)
             throws UnsupportedOperationException, MismatchedDimensionException
     {
-        ensureDimensionMatch("coord1", coord1);
-        ensureDimensionMatch("coord2", coord2);
+        AbstractCS.ensureDimensionMatch(this, "coord1", coord1);
+        AbstractCS.ensureDimensionMatch(this, "coord2", coord2);
         final Unit<?> unit = getDistanceUnit();
         UnitConverter[] converters = this.converters; // Avoid the need for synchronization.
         if (converters == null) {
@@ -369,17 +324,16 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
      *
      * @since 2.2
      */
-    @Override
     public DefaultCartesianCS usingUnit(final Unit<?> unit) throws IllegalArgumentException {
         final CoordinateSystemAxis[] axes;
         try {
-            axes = axisUsingUnit(unit, null);
+            axes = AbstractCS.axisUsingUnit(this, unit, null);
         } catch (ConversionException e) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_1, unit), e);
         }
         if (axes == null) {
             return this;
         }
-        return new DefaultCartesianCS(IdentifiedObjects.getProperties(this, null), axes);
+        return create(IdentifiedObjects.getProperties(this, null), axes);
     }
 }

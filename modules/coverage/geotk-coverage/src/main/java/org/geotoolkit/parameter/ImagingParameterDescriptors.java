@@ -62,7 +62,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.internal.storage.IOUtilities;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.citation.DefaultContact;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -575,7 +575,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
      * {@inheritDoc}
      */
     @Override
-    protected int computeHashCode() {
-        return hash(descriptor, super.computeHashCode());
+    public int hashCode(final ComparisonMode mode) {
+        return hash(descriptor, super.hashCode(mode));
     }
 }

@@ -41,15 +41,14 @@ import org.opengis.referencing.datum.Datum;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.cs.DefaultCompoundCS;
-import org.geotoolkit.referencing.AbstractReferenceSystem;
+import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.collection.CheckedContainer;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 
-import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
@@ -391,8 +390,8 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
      * {@inheritDoc}
      */
     @Override
-    protected int computeHashCode() {
-        return hash(components, super.computeHashCode());
+    public int hashCode(final ComparisonMode mode) throws IllegalArgumentException {
+        return super.hashCode(mode) + 31*components.hashCode();
     }
 
     /**
@@ -404,7 +403,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
      * @return The name of the WKT element type, which is {@code "COMPD_CS"}.
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
+    public String formatTo(final Formatter formatter) { // TODO: should be protected.
         for (final CoordinateReferenceSystem element : components) {
             formatter.append(element);
         }

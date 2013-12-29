@@ -20,7 +20,7 @@ package org.geotoolkit.referencing.operation.provider;
 import net.jcip.annotations.Immutable;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.geotoolkit.referencing.datum.BursaWolfParameters;
+import org.apache.sis.referencing.datum.BursaWolfParameters;
 
 
 /**
@@ -269,8 +269,6 @@ public class CoordinateFrameRotation extends PositionVector7Param {
     @Override
     final void fill(final BursaWolfParameters parameters, final ParameterValueGroup values) {
         super.fill(parameters, values);
-        parameters.ex = -parameters.ex;
-        parameters.ey = -parameters.ey;
-        parameters.ez = -parameters.ez;
+        parameters.reverseRotation();
     }
 }

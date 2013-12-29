@@ -30,8 +30,8 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
-import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.io.wkt.Formattable;
+import org.apache.sis.io.wkt.Formatter;
+import org.apache.sis.io.wkt.FormattableObject;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.collection.WeakHashSet;
@@ -393,7 +393,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
          * normalize/denormalize} transforms respectively. The tuple of those 3 transforms
          * makes the full transform described by this {@code Parameters} object.
          */
-        final class WKT implements Formattable, Parameterized {
+        final class WKT extends FormattableObject implements Parameterized {
             /**
              * {@code true} for formatting the inverse transform. If {@code true}, will
              * be set to {@code false} temporarily for formatting the forward transform
@@ -432,7 +432,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
              * threads, but should not be needed with Geotk implementation.
              */
             @Override
-            public synchronized String formatWKT(final Formatter formatter) {
+            public synchronized String formatTo(final Formatter formatter) {
                 if (!inverse) {
                     final ParameterValueGroup parameters = getParameterValues();
                     formatter.append(formatter.getName(parameters.getDescriptor()));

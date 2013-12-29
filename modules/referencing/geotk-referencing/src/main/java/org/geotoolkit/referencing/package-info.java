@@ -74,4 +74,3 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.apache.sis.xml.Namespaces;
 import org.apache.sis.internal.jaxb.gco.*;
 import org.apache.sis.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.referencing.RS_Identifier;

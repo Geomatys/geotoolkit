@@ -20,38 +20,29 @@
  */
 package org.geotoolkit.referencing.cs;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
-import javax.measure.quantity.Angle;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAttribute;
-import net.jcip.annotations.Immutable;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.io.wkt.Formatter;
-import org.apache.sis.measure.Units;
+import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.referencing.cs.CoordinateSystems;
-import org.geotoolkit.internal.referencing.AxisDirections;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.apache.sis.util.ComparisonMode;
 
-import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static java.util.Collections.singletonMap;
 
 
 /**
@@ -75,14 +66,12 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
-@Immutable
-public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implements CoordinateSystemAxis {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = -7883614853277827689L;
-
+@Deprecated
+@XmlTransient
+public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis {
     /**
      * Number of directions from "North", "North-North-East", "North-East", etc.
      * This is verified by {@code DefaultCoordinateSystemAxisTest.testCompass}.
@@ -569,114 +558,10 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
             Vocabulary.Keys.UNDEFINED, "?", AxisDirection.OTHER, Unit.ONE);
 
     /**
-     * Same as {@link #UNDEFINED}, except that this axis is not localized and have no alias.
-     * It is used by JAXB constructor only, and the most important point is that it must not
-     * have any alias.
-     */
-    private static final DefaultCoordinateSystemAxis UNITIALIZED = new DefaultCoordinateSystemAxis(
-            "Undefined", "?", AxisDirection.OTHER, Unit.ONE);
-
-    /**
-     * Some names to be treated as equivalent. This is needed because axis names are the primary
-     * way to distinguish between {@link CoordinateSystemAxis} instances. Those names are strictly
-     * defined by ISO 19111 as "Geodetic latitude" and "Geodetic longitude" among others, but the
-     * legacy WKT specifications from OGC 01-009 defined the names as "Lon" and "Lat" for the same
-     * axis.
-     * <p>
-     * Keys in this map are names <strong>in lower cases</strong>. Values are the axis that the
-     * name is for. The actual axis instance doesn't matter (the algorithm using this map should
-     * work for any axis instance); it is just a way to differentiate latitude and longitude.
-     */
-    private static final Map<String,CoordinateSystemAxis> ALIASES = new HashMap<>(12);
-    static {
-        ALIASES.put("lat",                GEODETIC_LATITUDE);
-        ALIASES.put("latitude",           GEODETIC_LATITUDE);
-        ALIASES.put("geodetic latitude",  GEODETIC_LATITUDE);
-        ALIASES.put("lon",                GEODETIC_LONGITUDE);
-        ALIASES.put("long",               GEODETIC_LONGITUDE);
-        ALIASES.put("longitude",          GEODETIC_LONGITUDE);
-        ALIASES.put("geodetic longitude", GEODETIC_LONGITUDE);
-        /*
-         * "x" and "y" are sometime used in WKT for meaning "Easting" and "Northing".
-         * We could be tempted to add them as alias in this map, but experience shows
-         * that such alias have a lot of indesirable side effet. "x" and "y" are used
-         * for too many things ("Easting", "Westing", "Geocentric X", "Display right",
-         * "Display left", etc.) and declaring them as alias introduces confusion in
-         * AbstractCS constructor (during the check of axis directions), in
-         * PredefinedCS.standard(CoordinateSystem), etc.
-         */
-    }
-
-    /**
-     * Special cases for "x" and "y" names. "x" is considered equivalent to "Easting"
-     * or "Westing", but the converse is not true. Note: by avoiding to put "x" in the
-     * {@link #ALIASES} map, we avoid undesirable side effects like considering "Easting"
-     * as equivalent to "Westing".
-     *
-     * @param  xy   The name which may be "x" or "y".
-     * @param  name The second name to compare with.
-     * @return {@code true} if the second name is equivalent to "x" or "y" (depending on
-     *         the {@code xy} value), or {@code false} otherwise.
-     */
-    private static boolean nameMatchesXY(String xy, final String name) {
-        xy = xy.trim();
-        if (xy.length() == 1) {
-            final DefaultCoordinateSystemAxis axis;
-            switch (Character.toLowerCase(xy.charAt(0))) {
-                case 'x': axis = EASTING;  break;
-                case 'y': axis = NORTHING; break;
-                default : return false;
-            }
-            return axis.nameMatches(name) || axis.getOpposite().nameMatches(name);
-        }
-        return false;
-    }
-
-    /**
-     * The abbreviation used for this coordinate system axes. This abbreviation is also
-     * used to identify the ordinates in coordinate tuple. Examples are "<var>X</var>"
-     * and "<var>Y</var>".
-     */
-    @XmlElement(name = "axisAbbrev", required = true)
-    private final String abbreviation;
-
-    /**
-     * Direction of this coordinate system axis. In the case of Cartesian projected
-     * coordinates, this is the direction of this coordinate system axis locally.
-     */
-    @XmlElement(name = "axisDirection", required = true)
-    private final AxisDirection direction;
-
-    /**
-     * The unit of measure used for this coordinate system axis.
-     */
-    @XmlAttribute(name= "uom", required = true)
-    private final Unit<?> unit;
-
-    /**
-     * Minimal and maximal value for this axis.
-     */
-    private final double minimum, maximum;
-
-    /**
-     * The range meaning for this axis.
-     */
-    private final RangeMeaning rangeMeaning;
-
-    /**
      * The axis with opposite direction, or {@code null} if unknown.
      * Not serialized because only used for the predefined constants.
      */
     private transient DefaultCoordinateSystemAxis opposite;
-
-    /**
-     * Constructs a new object in which every attributes are set to a default value.
-     * <strong>This is not a valid object.</strong> This constructor is strictly
-     * reserved to JAXB, which will assign values to the fields using reflexion.
-     */
-    private DefaultCoordinateSystemAxis() {
-        this(UNITIALIZED);
-    }
 
     /**
      * Constructs a new coordinate system axis with the same values than the specified one.
@@ -691,12 +576,6 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
      */
     public DefaultCoordinateSystemAxis(final CoordinateSystemAxis axis) {
         super(axis);
-        abbreviation = axis.getAbbreviation();
-        direction    = axis.getDirection();
-        unit         = axis.getUnit();
-        minimum      = axis.getMinimumValue();
-        maximum      = axis.getMaximumValue();
-        rangeMeaning = axis.getRangeMeaning();
     }
 
     /**
@@ -724,20 +603,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
                                        final double        maximum,
                                        final RangeMeaning  rangeMeaning)
     {
-        super(properties);
-        this.abbreviation = abbreviation;
-        this.direction    = direction;
-        this.unit         = unit;
-        this.minimum      = minimum;
-        this.maximum      = maximum;
-        this.rangeMeaning = rangeMeaning;
-        ensureNonNull("abbreviation", abbreviation);
-        ensureNonNull("direction",    direction);
-        ensureNonNull("unit",         unit);
-        ensureNonNull("rangeMeaning", rangeMeaning);
-        if (!(minimum < maximum)) { // Use '!' for catching NaN
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_2, minimum, maximum));
-        }
+        super(properties, abbreviation, direction, unit, minimum, maximum, rangeMeaning);
     }
 
     /**
@@ -759,36 +625,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
                                        final AxisDirection direction,
                                        final Unit<?>       unit)
     {
-        // NOTE: we would invoke this(properties, abbreviation, ...) instead if Sun fixed
-        // RFE #4093999 ("Relax constraint on placement of this()/super() call in constructors").
-        super(properties);
-        this.abbreviation = abbreviation;
-        this.direction    = direction;
-        this.unit         = unit;
-        ensureNonNull("abbreviation", abbreviation);
-        ensureNonNull("direction",    direction);
-        ensureNonNull("unit",         unit);
-        if (Units.isAngular(unit)) {
-            final UnitConverter fromDegrees = NonSI.DEGREE_ANGLE.getConverterTo(unit.asType(Angle.class));
-            final AxisDirection dir = AxisDirections.absolute(direction);
-            if (dir.equals(AxisDirection.NORTH)) {
-                final double range = Math.abs(fromDegrees.convert(90));
-                minimum = -range;
-                maximum = +range;
-                rangeMeaning = RangeMeaning.EXACT; // 90°N do not wraps to 90°S
-                return;
-            }
-            if (dir.equals(AxisDirection.EAST)) {
-                final double range = Math.abs(fromDegrees.convert(180));
-                minimum = -range;
-                maximum = +range;
-                rangeMeaning = RangeMeaning.WRAPAROUND; // 180°E wraps to 180°W
-                return;
-            }
-        }
-        minimum = Double.NEGATIVE_INFINITY;
-        maximum = Double.POSITIVE_INFINITY;
-        rangeMeaning = RangeMeaning.EXACT;
+        super(properties, abbreviation, direction, unit);
     }
 
     /**
@@ -804,7 +641,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
                                        final AxisDirection direction,
                                        final Unit<?>       unit)
     {
-        this(Collections.singletonMap(NAME_KEY, abbreviation), abbreviation, direction, unit);
+        this(singletonMap(NAME_KEY, abbreviation), abbreviation, direction, unit);
     }
 
     /**
@@ -929,10 +766,10 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
                 continue;
             }
             // Reminder: case matter for abbreviation, so 'equalsIgnoreCase' is not allowed.
-            if (candidate.abbreviation.equals(name)) {
+            if (candidate.getAbbreviation().equals(name)) {
                 return candidate;
             }
-            if (found == null && candidate.nameMatches(name)) {
+            if (found == null && candidate.isHeuristicMatchForName(name)) {
                 /*
                  * We need to perform a special check for Geodetic longitude and latitude.
                  * Because of the ALIAS map, the "Geodetic latitude" and "Latitude" names
@@ -996,89 +833,6 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
         } catch (IllegalArgumentException e) {
             throw new NoSuchElementException(e.getMessage());
         }
-    }
-
-    /**
-     * Direction of this coordinate system axis. In the case of Cartesian projected
-     * coordinates, this is the direction of this coordinate system axis locally.
-     * Examples:
-     * {@linkplain AxisDirection#NORTH north} or {@linkplain AxisDirection#SOUTH south},
-     * {@linkplain AxisDirection#EAST  east}  or {@linkplain AxisDirection#WEST  west},
-     * {@linkplain AxisDirection#UP    up}    or {@linkplain AxisDirection#DOWN  down}.
-     * <p>
-     * Within any set of coordinate system axes, only one of each pair of terms
-     * can be used. For earth-fixed coordinate reference systems, this direction is often
-     * approximate and intended to provide a human interpretable meaning to the axis. When a
-     * geodetic datum is used, the precise directions of the axes may therefore vary slightly
-     * from this approximate direction.
-     * <p>
-     * Note that an {@link org.geotoolkit.referencing.crs.DefaultEngineeringCRS} often requires
-     * specific descriptions of the directions of its coordinate system axes.
-     */
-    @Override
-    public AxisDirection getDirection() {
-        return direction;
-    }
-
-    /**
-     * The abbreviation used for this coordinate system axes. This abbreviation is also
-     * used to identify the ordinates in coordinate tuple. Examples are "<var>X</var>"
-     * and "<var>Y</var>".
-     *
-     * @return The coordinate system axis abbreviation.
-     */
-    @Override
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    /**
-     * The unit of measure used for this coordinate system axis. The value of this
-     * coordinate in a coordinate tuple shall be recorded using this unit of measure,
-     * whenever those coordinates use a coordinate reference system that uses a
-     * coordinate system that uses this axis.
-     */
-    @Override
-    public Unit<?> getUnit() {
-        return unit;
-    }
-
-    /**
-     * Returns the minimum value normally allowed for this axis, in the
-     * {@linkplain #getUnit unit of measure for the axis}. If there is no minimum value, then
-     * this method returns {@linkplain Double#NEGATIVE_INFINITY negative infinity}.
-     *
-     * @since 2.3
-     */
-    @Override
-    public double getMinimumValue() {
-        return minimum;
-    }
-
-    /**
-     * Returns the maximum value normally allowed for this axis, in the
-     * {@linkplain #getUnit unit of measure for the axis}. If there is no maximum value, then
-     * this method returns {@linkplain Double#POSITIVE_INFINITY negative infinity}.
-     *
-     * @since 2.3
-     */
-    @Override
-    public double getMaximumValue() {
-        return maximum;
-    }
-
-    /**
-     * Returns the meaning of axis value range specified by the {@linkplain #getMinimumValue
-     * minimum} and {@linkplain #getMaximumValue maximum} values. This element shall be omitted
-     * when both minimum and maximum values are omitted. It may be included when minimum and/or
-     * maximum values are included. If this element is omitted when minimum or maximum values are
-     * included, the meaning is unspecified.
-     *
-     * @since 2.3
-     */
-    @Override
-    public RangeMeaning getRangeMeaning() {
-        return rangeMeaning;
     }
 
     /**
@@ -1180,157 +934,38 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
      * @throws ConversionException If the specified unit is incompatible with the expected one.
      */
     final DefaultCoordinateSystemAxis usingUnit(final Unit<?> newUnit) throws ConversionException {
+        final Unit<?> unit = getUnit();
         if (unit.equals(newUnit)) {
             return this;
         }
         final UnitConverter converter = unit.getConverterToAny(newUnit);
         return new DefaultCoordinateSystemAxis(IdentifiedObjects.getProperties(this, null),
-                    abbreviation, direction, newUnit, converter.convert(minimum), converter.convert(maximum), rangeMeaning);
+                    getAbbreviation(), getDirection(), newUnit,
+                    converter.convert(getMinimumValue()), converter.convert(getMaximumValue()), getRangeMeaning());
     }
 
     /**
-     * Returns {@code true} if either the {@linkplain #getName() primary name} or at least
-     * one {@linkplain #getAlias alias} matches the specified string. This method performs
-     * all the search done by the {@linkplain AbstractIdentifiedObject#nameMatches(String)
-     * super-class}, with the addition of special processing for latitudes and longitudes:
-     * <p>
-     * <ul>
-     *   <li>{@code "Lat"}, {@code "Latitude"} and {@code "Geodetic latitude"} are considered
-     *       equivalent.</li>
-     *   <li>{@code "Lon"}, {@code "Longitude"} and {@code "Geodetic longitude"} are considered
-     *       equivalent.</li>
-     * </ul>
-     * <p>
-     * The above special cases are needed in order to workaround a conflict in specifications:
-     * ISO 19111 states explicitly that the latitude and longitude axis names shall be
-     * "<cite>Geodetic latitude</cite>" and "<cite>Geodetic longitude</cite>", while the legacy
-     * OGC 01-009 (where the WKT format is defined) saids that the default values shall be
-     * "<cite>Lat</cite>" and "<cite>Lon</cite>".
-     *
-     * @param  name The name to compare.
-     * @return {@code true} if the primary name of at least one alias
-     *         matches the specified {@code name}.
+     * Equivalent to {@code super.equals(that, false, false)}.
      */
-    @Override
-    public boolean nameMatches(final String name) {
-        if (super.nameMatches(name)) {
-            return true;
-        }
-        /*
-         * The standard comparisons didn't worked. Check for the aliases. Note: we don't
-         * test for 'nameMatchesXY(...)' here because the "x" and "y" axis names are too
-         * generic. We test them only in the 'equals' method, which has the extra-safety
-         * of units comparison (so less risk to treat incompatible axis as equivalent).
-         */
-        final CoordinateSystemAxis type = ALIASES.get(name.trim().toLowerCase());
-        return (type != null) && (type == ALIASES.get(getName().getCode().trim().toLowerCase()));
-    }
-
-    /**
-     * Compares the specified object with this axis for equality.
-     *
-     * @param  object The object to compare to {@code this}.
-     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
-     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
-     *         relevant to transformations.
-     * @return {@code true} if both objects are equal.
-     */
-    @Override
-    public boolean equals(final Object object, final ComparisonMode mode) {
-        if (object == this) {
-            return true; // Slight optimization.
-        }
-        if (super.equals(object, mode)) {
-            final DefaultCoordinateSystemAxis that = castOrCopy((CoordinateSystemAxis) object);
-            return equals(that, mode.ordinal() < ComparisonMode.IGNORE_METADATA.ordinal(), true);
-        }
-        return false;
-    }
-
-    /**
-     * Compares the specified object with this axis for equality, with optional comparison
-     * of units. Units should always be compared (they are not just metadata), except in the
-     * particular case of {@link AbstractCS#axisColinearWith}, which is used as a first step
-     * toward units conversions through {@link AbstractCS#swapAndScaleAxis}.
-     */
-    final boolean equals(final DefaultCoordinateSystemAxis that,
-                         final boolean compareMetadata, final boolean compareUnit)
-    {
-        /*
-         * It is important to NOT compare the minimum and maximum values when we are in
-         * "ignore metadata" mode,  because we want CRS with a [-180 … +180]° longitude
-         * range to be considered equivalent, from a coordinate transformation point of
-         * view, to a CRS with a [0…360]° longitude range.
-         */
-        if (compareMetadata) {
-            if (!Objects.equals(this.abbreviation, that.abbreviation) ||
-                !Objects.equals(this.rangeMeaning, that.rangeMeaning) ||
-                Double.doubleToLongBits(minimum) != Double.doubleToLongBits(that.minimum) ||
-                Double.doubleToLongBits(maximum) != Double.doubleToLongBits(that.maximum))
-            {
+    final boolean equalsMetadata(final DefaultCoordinateSystemAxis that) {
+        final String thatName = that.getName().getCode();
+        if (!isHeuristicMatchForName(thatName)) {
+            final String thisName = getName().getCode();
+            if (!IdentifiedObjects.nameMatches(that, thisName)) {
                 return false;
             }
-        } else {
-            /*
-             * Checking the abbreviation is not sufficient. For example the polar angle and the
-             * spherical latitude have the same abbreviation (theta). Geotk extensions like
-             * "Longitude" (in addition of ISO 19111 "Geodetic longitude") bring more potential
-             * confusion. Furthermore, not all implementors will use the greek letters (even if
-             * they are part of ISO 19111). For example most CRS in WKT format use the "Lat"
-             * abbreviation instead of the greek letter phi. For comparisons without metadata,
-             * we ignore the unreliable abbreviation and check the axis name instead. These
-             * names are constrained by ISO 19111 specification (see class javadoc), so they
-             * should be reliable enough.
-             *
-             * Note: there is no need to execute this block if 'compareMetadata' is true,
-             *       because in this case a stricter check has already been performed by
-             *       the 'equals' method in the superclass.
-             */
-            final String thatName = that.getName().getCode();
-            if (!nameMatches(thatName)) {
-                // The above test checked for special cases ("Lat" / "Lon" aliases, etc.).
-                // The next line may not, but is tested anyway in case the user overridden
-                // the 'that.nameMatches(...)' method.
-                final String thisName = getName().getCode();
-                if (!IdentifiedObjects.nameMatches(that, thisName)) {
-                    // For the needs of AbstractCS.axisColinearWith(...), we must stop here.
-                    // In addition it may be safer to not test 'nameMatchesXY' when we don't
-                    // have the extra-safety of units comparison, because "x" and "y" names
-                    // are too generic.
-                    if (!compareUnit) {
-                        return false;
-                    }
-                    // Last chance: check for the special case of "x" and "y" axis names.
-                    if (!nameMatchesXY(thatName, thisName) && !nameMatchesXY(thisName, thatName)) {
-                        return false;
-                    }
-                }
-            }
         }
-        return Objects.equals(this.direction, that.direction) &&
-               (!compareUnit || Objects.equals(this.unit, that.unit));
+        return getDirection().equals(that.getDirection());
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected int computeHashCode() {
-        return hash(unit, hash(direction, super.computeHashCode()));
-    }
-
-    /**
-     * Format the inner part of a
-     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
-     * Known Text</cite> (WKT)</A> element. WKT is returned by the {@link #toString toString} method
-     * and looks like {@code AXIS["name", NORTH]}.
+     * Formats the inner part of a <cite>Well Known Text</cite> (WKT) element.
      *
      * @param  formatter The formatter to use.
      * @return The WKT element name, which is {@code "AXIS"}.
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
-        formatter.append(direction);
-        return "AXIS";
+    public String formatTo(final Formatter formatter) {
+        return super.formatTo(formatter);
     }
 }

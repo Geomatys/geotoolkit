@@ -40,8 +40,8 @@ import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.io.TableWriter;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.io.wkt.FormattableObject;
+import org.apache.sis.io.wkt.Formatter;
+import org.apache.sis.io.wkt.FormattableObject;
 import org.apache.sis.util.iso.DefaultNameSpace;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -51,7 +51,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * The root class of {@link ParameterValue} and {@link ParameterValueGroup} implementations.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 4.00
  *
  * @see AbstractParameterDescriptor
  *
@@ -356,7 +356,7 @@ public abstract class AbstractParameter extends FormattableObject
      * already know how to {@linkplain Formatter#append(GeneralParameterValue) format parameters}.
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
+    protected String formatTo(final Formatter formatter) {
         return "PARAMETER";
     }
 }

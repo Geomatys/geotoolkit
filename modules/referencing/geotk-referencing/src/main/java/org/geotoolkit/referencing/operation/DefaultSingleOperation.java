@@ -41,7 +41,7 @@ import org.geotoolkit.referencing.operation.transform.Parameterized;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
 import org.geotoolkit.internal.referencing.ParameterizedAffine;
 import org.geotoolkit.internal.referencing.Semaphores;
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.UnsupportedImplementationException;
@@ -331,8 +331,8 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
      * {@inheritDoc}
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
-        final String name = super.formatWKT(formatter);
+    public String formatTo(final Formatter formatter) {
+        final String name = super.formatTo(formatter);
         append(formatter, method, "METHOD");
         return name;
     }

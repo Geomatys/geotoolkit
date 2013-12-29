@@ -33,12 +33,12 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.datum.GeodeticDatum;
 
-import org.geotoolkit.referencing.AbstractReferenceSystem;
+import org.apache.sis.io.wkt.Formatter;
+import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultSphericalCS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.io.wkt.Formatter;
 
 
 /**
@@ -214,7 +214,7 @@ public class DefaultGeocentricCRS extends AbstractSingleCRS implements Geocentri
      * @return The name of the WKT element type, which is {@code "GEOCCS"}.
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
+    public String formatTo(final Formatter formatter) { // TODO: should be protected.
         final Unit<?> unit = getUnit();
         final GeodeticDatum datum = getDatum();
         formatter.append(datum);
@@ -222,14 +222,14 @@ public class DefaultGeocentricCRS extends AbstractSingleCRS implements Geocentri
         formatter.append(unit);
         final CoordinateSystem cs = formatter.getConvention().toConformCS(getCoordinateSystem());
         if (!(cs instanceof CartesianCS)) {
-            formatter.setInvalidWKT(CoordinateSystem.class);
+            formatter.setInvalidWKT(cs);
         }
         final int dimension = cs.getDimension();
         for (int i=0; i<dimension; i++) {
             formatter.append(cs.getAxis(i));
         }
         if (unit == null) {
-            formatter.setInvalidWKT(GeocentricCRS.class);
+            formatter.setInvalidWKT(this);
         }
         return "GEOCCS";
     }

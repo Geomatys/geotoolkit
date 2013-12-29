@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Formatter;
 import java.io.IOException;
 import javax.imageio.IIOException;
 import javax.measure.unit.SI;
@@ -56,6 +55,8 @@ import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.GridEnvelope;
 
 import org.apache.sis.measure.Units;
+import org.apache.sis.io.wkt.Formatter;
+
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.image.io.Warnings;
@@ -460,8 +461,8 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
          * Delegates to the Geotk formatting code.
          */
         @Override
-        public String formatWKT(final org.geotoolkit.io.wkt.Formatter formatter) {
-            return new DefaultCompoundCRS(this).formatWKT(formatter);
+        public String formatTo(final Formatter formatter) {
+            return new DefaultCompoundCRS(this).formatTo(formatter);
         }
     }
 
@@ -514,7 +515,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
                 final WarningProducer logger) throws IOException
         {
             if (!(axis instanceof CoordinateAxis1DTime) && file != null) {
-                final Formatter formatter = (logger != null) ? new Formatter() : null;
+                final java.util.Formatter formatter = (logger != null) ? new java.util.Formatter() : null;
                 axis = CoordinateAxis1DTime.factory(file, axis, formatter);
                 if (formatter != null) {
                     final StringBuilder buffer = (StringBuilder) formatter.out();
@@ -546,8 +547,8 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
          * Delegates to the Geotk formatting code.
          */
         @Override
-        public String formatWKT(final org.geotoolkit.io.wkt.Formatter formatter) {
-            return new DefaultTemporalCRS(this).formatWKT(formatter);
+        public String formatTo(final Formatter formatter) {
+            return new DefaultTemporalCRS(this).formatTo(formatter);
         }
     }
 
@@ -602,8 +603,8 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
          * Delegates to the Geotk formatting code.
          */
         @Override
-        public String formatWKT(final org.geotoolkit.io.wkt.Formatter formatter) {
-            return new DefaultVerticalCRS(this).formatWKT(formatter);
+        public String formatTo(final Formatter formatter) {
+            return new DefaultVerticalCRS(this).formatTo(formatter);
         }
     }
 
@@ -691,8 +692,8 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
          * Delegates to the Geotk formatting code.
          */
         @Override
-        public String formatWKT(final org.geotoolkit.io.wkt.Formatter formatter) {
-            return new DefaultGeographicCRS(this).formatWKT(formatter);
+        public String formatTo(final Formatter formatter) {
+            return new DefaultGeographicCRS(this).formatTo(formatter);
         }
     }
 
@@ -776,8 +777,8 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
          * Delegates to the Geotk formatting code.
          */
         @Override
-        public String formatWKT(final org.geotoolkit.io.wkt.Formatter formatter) {
-            return new DefaultProjectedCRS(this).formatWKT(formatter);
+        public String formatTo(final Formatter formatter) {
+            return new DefaultProjectedCRS(this).formatTo(formatter);
         }
     }
 }

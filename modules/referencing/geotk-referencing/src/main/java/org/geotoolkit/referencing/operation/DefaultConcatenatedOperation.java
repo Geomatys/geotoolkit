@@ -44,7 +44,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.Utilities.deepEquals;
@@ -349,16 +349,16 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
      * {@inheritDoc}
      */
     @Override
-    protected int computeHashCode() {
-        return hash(operations, super.computeHashCode());
+    public int hashCode(final ComparisonMode mode) {
+        return hash(operations, super.hashCode(mode));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
-        final String label = super.formatWKT(formatter);
+    public String formatTo(final Formatter formatter) {
+        final String label = super.formatTo(formatter);
         for (final CoordinateOperation op : operations) {
             formatter.append(op);
         }

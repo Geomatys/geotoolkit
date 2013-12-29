@@ -22,6 +22,9 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
 import java.text.ParseException;
+import org.apache.sis.io.wkt.Accessor;
+import org.apache.sis.io.wkt.Symbols;
+import org.apache.sis.io.wkt.Formatter;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -40,7 +43,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 4.00
  *
  * @since 2.0
  * @level advanced
@@ -83,7 +86,7 @@ public abstract class Parser {
     final void setSymbols(final Symbols symbols) {
         ensureNonNull("symbols", symbols);
         this.symbols = symbols;
-        this.numberFormat = (NumberFormat) symbols.numberFormat.clone();
+        this.numberFormat = Accessor.createNumberFormat(symbols);
         if (SCIENTIFIC_NOTATION && numberFormat instanceof DecimalFormat) {
             final DecimalFormat numberFormat = (DecimalFormat) this.numberFormat;
             String pattern = numberFormat.toPattern();
@@ -199,13 +202,13 @@ public abstract class Parser {
      *         or heading spaces.
      */
     final String keyword(final Element key) {
-        return key.keyword.trim().toUpperCase(symbols.locale);
+        return key.keyword.trim().toUpperCase(symbols.getLocale());
     }
 
     /**
      * Creates a new formatter using the same symbols and number format than this parser.
      */
     final Formatter formatter() {
-        return new Formatter(symbols, numberFormat);
+        return Accessor.newFormatter(symbols, numberFormat);
     }
 }

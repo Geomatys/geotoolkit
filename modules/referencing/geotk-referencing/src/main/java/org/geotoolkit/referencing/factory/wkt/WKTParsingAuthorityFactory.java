@@ -40,7 +40,7 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.io.wkt.Symbols;
+import org.apache.sis.io.wkt.Symbols;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.io.wkt.ReferencingParser;
 import org.geotoolkit.referencing.NamedIdentifier;

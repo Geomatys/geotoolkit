@@ -18,9 +18,10 @@
 package org.geotoolkit.referencing.crs;
 
 import org.geotoolkit.io.wkt.WKTFormat;
-import org.geotoolkit.io.wkt.Convention;
+import org.apache.sis.io.wkt.Convention;
 import org.geotoolkit.referencing.datum.DatumTest;
 import org.geotoolkit.referencing.cs.CoordinateSystemTest;
+import org.apache.sis.io.wkt.Accessor;
 
 import static org.geotoolkit.test.Commons.decodeQuotes;
 import static org.geotoolkit.referencing.Assert.*;
@@ -109,7 +110,7 @@ public final strictfp class CoordinateReferenceSystemTest extends ReferencingTes
                 "UNIT[“degree”, 0.017453292519943295], " +
                 "AXIS[“Geodetic longitude”, EAST], " +
                 "AXIS[“Geodetic latitude”, NORTH]]"),
-                WGS84.toWKT(Convention.OGC, WKTFormat.SINGLE_LINE));
+                Accessor.formatWKT(WGS84, Convention.OGC, (byte) WKTFormat.SINGLE_LINE, false, true));
     }
 
     /**

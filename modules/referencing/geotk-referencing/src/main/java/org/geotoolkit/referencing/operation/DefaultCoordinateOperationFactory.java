@@ -51,7 +51,7 @@ import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
-import org.geotoolkit.referencing.datum.BursaWolfParameters;
+import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrix4;
@@ -805,8 +805,8 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                  */
                 final Matrix shift = DefaultGeodeticDatum.getAffineTransform(sourceDatum, targetDatum);
                 if (shift != null) try {
-                    bursaWolf = new BursaWolfParameters(targetDatum);
-                    bursaWolf.setAffineTransform(shift, 1E-4);
+                    bursaWolf = new BursaWolfParameters(targetDatum, null);
+                    bursaWolf.setPositionVectorTransformation(shift, 1E-4);
                 } catch (IllegalArgumentException ignore) {
                     /*
                      * A matrix exists, but we are unable to retrofit it as a set of Bursa-Wolf
@@ -821,7 +821,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                      * us to perform the datum shift anyway. We will notify the user through
                      * positional accuracy, which is set indirectly through ELLIPSOID_SHIFT.
                      */
-                    bursaWolf  = new BursaWolfParameters(targetDatum);
+                    bursaWolf  = new BursaWolfParameters(targetDatum, null);
                     identifier = ELLIPSOID_SHIFT;
                 }
             }
@@ -845,9 +845,9 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                 parameters.parameter("src_semi_minor").setValue(sourceEllipsoid.getSemiMinorAxis());
                 parameters.parameter("tgt_semi_major").setValue(targetEllipsoid.getSemiMajorAxis());
                 parameters.parameter("tgt_semi_minor").setValue(targetEllipsoid.getSemiMinorAxis());
-                parameters.parameter("dx").setValue(bursaWolf.dx);
-                parameters.parameter("dy").setValue(bursaWolf.dy);
-                parameters.parameter("dz").setValue(bursaWolf.dz);
+                parameters.parameter("dx").setValue(bursaWolf.rX);
+                parameters.parameter("dy").setValue(bursaWolf.rY);
+                parameters.parameter("dz").setValue(bursaWolf.rZ);
                 parameters.parameter("dim").setValue(sourceDim);
                 boolean ready = true;
                 if (sourceDim != targetDim) try {

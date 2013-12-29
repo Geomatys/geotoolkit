@@ -100,8 +100,8 @@ public final strictfp class CoordinateSystemTest extends ReferencingTestBase {
      */
     @Test
     public void testAxisUsingUnit() throws ConversionException {
-        assertNull("Should detect that no axis change is needed", PROJECTED.axisUsingUnit(METRE, null));
-        final CoordinateSystemAxis[] axis = PROJECTED.axisUsingUnit(KILOMETRE, null);
+        assertNull("Should detect that no axis change is needed", AbstractCS.axisUsingUnit(PROJECTED, METRE, null));
+        final CoordinateSystemAxis[] axis = AbstractCS.axisUsingUnit(PROJECTED, KILOMETRE, null);
         assertNotNull(axis);
         assertEquals("Expected two-dimensional", 2, axis.length);
         assertEquals(KILOMETRE,           axis[0].getUnit());

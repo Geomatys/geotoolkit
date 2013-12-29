@@ -31,7 +31,7 @@ import org.opengis.referencing.crs.GeneralDerivedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.MismatchedDimensionException;
 
-import org.geotoolkit.referencing.AbstractReferenceSystem;
+import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.operation.DefaultConversion;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultSingleOperation;
@@ -40,10 +40,9 @@ import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.apache.sis.util.ComparisonMode;
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.Utilities.deepEquals;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
@@ -68,7 +67,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = -175151161496419854L;
+//  private static final long serialVersionUID = -175151161496419854L;
 
     /**
      * Key for the <code>{@value}</code> property to be given to the constructor.
@@ -323,7 +322,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
      * {@inheritDoc}
      */
     @Override
-    protected int computeHashCode() {
+    public int hashCode(final ComparisonMode mode) throws IllegalArgumentException {
         /*
          * Do not invoke 'conversionFromBase.hashCode()' in order to avoid a never-ending loop.
          * This is because Conversion inherits a 'sourceCRS' field from the CoordinateOperation
@@ -331,7 +330,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
          * work neither for the reason documented inside the DefaultSingleOperation.equals(...)
          * method body. The MathTransform is our best discriminant.
          */
-        return hash(baseCRS, hash(conversionFromBase.getMathTransform(), super.computeHashCode()));
+        return super.hashCode(mode) + 31*(hashCode(baseCRS, mode) + conversionFromBase.getMathTransform().hashCode());
     }
 
     /**
@@ -343,7 +342,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
      * @return The name of the WKT element type, which is {@code "FITTED_CS"}.
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
+    public String formatTo(final Formatter formatter) { // TODO: should be protected.
         MathTransform inverse = conversionFromBase.getMathTransform();
         try {
             inverse = inverse.inverse();

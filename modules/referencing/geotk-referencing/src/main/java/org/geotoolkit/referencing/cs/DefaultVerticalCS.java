@@ -21,14 +21,12 @@
 package org.geotoolkit.referencing.cs;
 
 import java.util.Map;
-import net.jcip.annotations.Immutable;
-
+import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.referencing.cs.VerticalCS;
-import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.internal.referencing.AxisDirections;
+
+import static java.util.Collections.singletonMap;
 
 
 /**
@@ -50,14 +48,12 @@ import org.geotoolkit.internal.referencing.AxisDirections;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
-@Immutable
-public class DefaultVerticalCS extends AbstractCS implements VerticalCS {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = 1201155778896630499L;
-
+@Deprecated
+@XmlTransient
+public class DefaultVerticalCS extends org.apache.sis.referencing.cs.DefaultVerticalCS {
     /**
      * A one-dimensional vertical CS with
      * <var>{@linkplain DefaultCoordinateSystemAxis#ELLIPSOIDAL_HEIGHT
@@ -83,15 +79,6 @@ public class DefaultVerticalCS extends AbstractCS implements VerticalCS {
      */
     public static final DefaultVerticalCS DEPTH = new DefaultVerticalCS(
                     DefaultCoordinateSystemAxis.DEPTH);
-
-    /**
-     * Constructs a new object in which every attributes are set to a default value.
-     * <strong>This is not a valid object.</strong> This constructor is strictly
-     * reserved to JAXB, which will assign values to the fields using reflexion.
-     */
-    private DefaultVerticalCS() {
-        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
-    }
 
     /**
      * Constructs a new coordinate system with the same values than the specified one.
@@ -127,7 +114,7 @@ public class DefaultVerticalCS extends AbstractCS implements VerticalCS {
      * @param axis  The axis.
      */
     public DefaultVerticalCS(final String name, final CoordinateSystemAxis axis) {
-        super(name, axis);
+        super(singletonMap(NAME_KEY, name), axis);
     }
 
     /**
@@ -139,33 +126,5 @@ public class DefaultVerticalCS extends AbstractCS implements VerticalCS {
      */
     public DefaultVerticalCS(final Map<String,?> properties, final CoordinateSystemAxis axis) {
         super(properties, axis);
-    }
-
-    /**
-     * Returns a Geotk coordinate system implementation with the same values than the given arbitrary
-     * implementation. If the given object is {@code null}, then this method returns {@code null}.
-     * Otherwise if the given object is already a Geotk implementation, then the given object is
-     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
-     * attribute values of the given object.
-     *
-     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return A Geotk implementation containing the values of the given object (may be the
-     *         given object itself), or {@code null} if the argument was null.
-     *
-     * @since 3.18
-     */
-    public static DefaultVerticalCS castOrCopy(final VerticalCS object) {
-        return (object == null) || (object instanceof DefaultVerticalCS)
-                ? (DefaultVerticalCS) object : new DefaultVerticalCS(object);
-    }
-
-    /**
-     * Returns {@code true} if the specified axis direction is allowed for this coordinate
-     * system. The default implementation accepts only vertical directions (i.e.
-     * {@link AxisDirection#UP UP} and {@link AxisDirection#DOWN DOWN}).
-     */
-    @Override
-    protected boolean isCompatibleDirection(final AxisDirection direction) {
-        return AxisDirection.UP.equals(AxisDirections.absolute(direction));
     }
 }

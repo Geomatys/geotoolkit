@@ -45,10 +45,11 @@ import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
-import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.io.wkt.FormattableObject;
+import org.apache.sis.io.wkt.Formatter;
+import org.apache.sis.io.wkt.FormattableObject;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.display.shape.ShapeUtilities;
+import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Utilities;
@@ -92,7 +93,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureDimensionMatches;
  */
 @ThreadSafe
 public abstract class AbstractMathTransform extends FormattableObject
-        implements MathTransform, Parameterized, LenientComparable
+        implements MathTransform, Parameterized, LenientComparable, Formattable
 {
     /**
      * Maximum buffer size when creating temporary arrays. Must not be too big, otherwise the
@@ -1222,7 +1223,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      * @return The WKT element name, which is {@code "PARAM_MT"} in the default implementation.
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
+    public String formatTo(final Formatter formatter) {
         final ParameterValueGroup parameters = getParameterValues();
         if (parameters != null) {
             formatter.append(formatter.getName(parameters.getDescriptor()));
@@ -1465,7 +1466,7 @@ public abstract class AbstractMathTransform extends FormattableObject
          *         {@code "INVERSE_MT"} in the default implementation.
          */
         @Override
-        public String formatWKT(final Formatter formatter) {
+        public String formatTo(final Formatter formatter) {
             final ParameterValueGroup parameters = getParameterValues();
             if (parameters != null) {
                 formatter.append(formatter.getName(parameters.getDescriptor()));

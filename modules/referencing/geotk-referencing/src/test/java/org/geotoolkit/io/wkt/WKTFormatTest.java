@@ -43,8 +43,10 @@ import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
 import org.geotoolkit.referencing.factory.DatumAliasesTest;
 
+import org.apache.sis.io.wkt.Symbols;
 import org.apache.sis.test.DependsOn;
 import org.junit.*;
+
 import static org.geotoolkit.test.Commons.*;
 import static org.geotoolkit.referencing.Assert.*;
 
@@ -425,7 +427,7 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“metre”, 1.0],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
-            crs.toWKT(Convention.OGC, 2));
+            crs.toString(Convention.OGC));
         /*
          * Formats using GeoTiff identifiers. We should get different strings in PROJECTION[...]
          * and PARAMETER[...] elements, but the other ones (especially DATUM[...]) are unchanged.
@@ -451,7 +453,7 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“metre”, 1.0],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
-            crs.toWKT(Convention.GEOTIFF, 2));
+            crs.toString(Convention.GEOTIFF));
         /*
          * Formats using ESRI identifiers. The most important change we are looking for is
          * the name inside DATUM[...].
@@ -475,7 +477,7 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“meter”, 1.0],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
-            crs.toWKT(Convention.ESRI, 2));
+            crs.toString(Convention.ESRI));
         /*
          * Formats using EPSG identifiers. We expect different names in
          * DATUM[...], PROJECTION[...] and PARAMETER[...].
@@ -499,7 +501,7 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“metre”, 1.0],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
-            crs.toWKT(Convention.EPSG, 2));
+            crs.toString(Convention.EPSG));
     }
 
     /**
@@ -526,7 +528,7 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“grade”, 0.015707963267948967],\n" +
             "  AXIS[“λ”, EAST],\n" +
             "  AXIS[“φ”, NORTH]]"),
-            crs.toWKT(Convention.OGC, 2));
+            crs.toString(Convention.OGC));
 
         // ESRI flavor: prime meridian in degrees.
         assertMultilinesEquals(decodeQuotes(
@@ -537,7 +539,7 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“grade”, 0.015707963267948967],\n" +
             "  AXIS[“λ”, EAST],\n" +
             "  AXIS[“φ”, NORTH]]"),
-            crs.toWKT(Convention.ESRI, 2));
+            crs.toString(Convention.ESRI));
     }
 
     /**

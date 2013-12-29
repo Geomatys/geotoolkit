@@ -21,10 +21,11 @@
 package org.geotoolkit.referencing.cs;
 
 import java.util.Map;
-import net.jcip.annotations.Immutable;
-
+import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.referencing.cs.LinearCS;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+
+import static java.util.Collections.singletonMap;
 
 
 /**
@@ -45,23 +46,12 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
-@Immutable
-public class DefaultLinearCS extends AbstractCS implements LinearCS {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = -6890723478287625763L;
-
-    /**
-     * Constructs a new object in which every attributes are set to a default value.
-     * <strong>This is not a valid object.</strong> This constructor is strictly
-     * reserved to JAXB, which will assign values to the fields using reflexion.
-     */
-    private DefaultLinearCS() {
-        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
-    }
-
+@Deprecated
+@XmlTransient
+public class DefaultLinearCS extends org.apache.sis.referencing.cs.DefaultLinearCS {
     /**
      * Constructs a new coordinate system with the same values than the specified one.
      * This copy constructor provides a way to convert an arbitrary implementation into a
@@ -84,7 +74,7 @@ public class DefaultLinearCS extends AbstractCS implements LinearCS {
      * @param axis  The axis.
      */
     public DefaultLinearCS(final String name, final CoordinateSystemAxis axis) {
-        super(name, axis);
+        super(singletonMap(NAME_KEY, name), axis);
     }
 
     /**
@@ -97,23 +87,5 @@ public class DefaultLinearCS extends AbstractCS implements LinearCS {
      */
     public DefaultLinearCS(final Map<String,?> properties, final CoordinateSystemAxis axis) {
         super(properties, axis);
-    }
-
-    /**
-     * Returns a Geotk coordinate system implementation with the same values than the given arbitrary
-     * implementation. If the given object is {@code null}, then this method returns {@code null}.
-     * Otherwise if the given object is already a Geotk implementation, then the given object is
-     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
-     * attribute values of the given object.
-     *
-     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return A Geotk implementation containing the values of the given object (may be the
-     *         given object itself), or {@code null} if the argument was null.
-     *
-     * @since 3.18
-     */
-    public static DefaultLinearCS castOrCopy(final LinearCS object) {
-        return (object == null) || (object instanceof DefaultLinearCS)
-                ? (DefaultLinearCS) object : new DefaultLinearCS(object);
     }
 }

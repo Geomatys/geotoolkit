@@ -103,4 +103,4 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.apache.sis.xml.Namespaces;
 import org.apache.sis.internal.jaxb.gco.*;
-import org.geotoolkit.internal.jaxb.referencing.*;
+import org.apache.sis.internal.jaxb.referencing.*;

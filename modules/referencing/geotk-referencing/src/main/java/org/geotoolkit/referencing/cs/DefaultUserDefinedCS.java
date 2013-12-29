@@ -21,10 +21,11 @@
 package org.geotoolkit.referencing.cs;
 
 import java.util.Map;
-import net.jcip.annotations.Immutable;
-
+import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.referencing.cs.UserDefinedCS;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+
+import static java.util.Collections.singletonMap;
 
 
 /**
@@ -41,23 +42,12 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
-@Immutable
-public class DefaultUserDefinedCS extends AbstractCS implements UserDefinedCS {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = -4904091898305706316L;
-
-    /**
-     * Constructs a new object in which every attributes are set to a default value.
-     * <strong>This is not a valid object.</strong> This constructor is strictly
-     * reserved to JAXB, which will assign values to the fields using reflexion.
-     */
-    private DefaultUserDefinedCS() {
-        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
-    }
-
+@Deprecated
+@XmlTransient
+public class DefaultUserDefinedCS extends org.apache.sis.referencing.cs.DefaultUserDefinedCS {
     /**
      * Constructs a new coordinate system with the same values than the specified one.
      * This copy constructor provides a way to convert an arbitrary implementation into a
@@ -84,7 +74,7 @@ public class DefaultUserDefinedCS extends AbstractCS implements UserDefinedCS {
                                 final CoordinateSystemAxis axis0,
                                 final CoordinateSystemAxis axis1)
     {
-        super(name, axis0, axis1);
+        super(singletonMap(NAME_KEY, name), axis0, axis1);
     }
 
     /**
@@ -100,7 +90,7 @@ public class DefaultUserDefinedCS extends AbstractCS implements UserDefinedCS {
                                 final CoordinateSystemAxis axis1,
                                 final CoordinateSystemAxis axis2)
     {
-        super(name, axis0, axis1, axis2);
+        super(singletonMap(NAME_KEY, name), axis0, axis1, axis2);
     }
 
     /**
@@ -135,23 +125,5 @@ public class DefaultUserDefinedCS extends AbstractCS implements UserDefinedCS {
                                 final CoordinateSystemAxis axis2)
     {
         super(properties, axis0, axis1, axis2);
-    }
-
-    /**
-     * Returns a Geotk coordinate system implementation with the same values than the given arbitrary
-     * implementation. If the given object is {@code null}, then this method returns {@code null}.
-     * Otherwise if the given object is already a Geotk implementation, then the given object is
-     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
-     * attribute values of the given object.
-     *
-     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return A Geotk implementation containing the values of the given object (may be the
-     *         given object itself), or {@code null} if the argument was null.
-     *
-     * @since 3.18
-     */
-    public static DefaultUserDefinedCS castOrCopy(final UserDefinedCS object) {
-        return (object == null) || (object instanceof DefaultUserDefinedCS)
-                ? (DefaultUserDefinedCS) object : new DefaultUserDefinedCS(object);
     }
 }

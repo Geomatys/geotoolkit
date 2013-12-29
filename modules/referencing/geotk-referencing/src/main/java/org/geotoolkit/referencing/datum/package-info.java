@@ -61,35 +61,11 @@
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.20
+ * @version 4.00
  *
  * @since 1.2
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
-@XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED, namespace = Namespaces.GML, xmlns = {
-    @XmlNs(prefix = "gmd", namespaceURI = Namespaces.GMD),
-    @XmlNs(prefix = "gco", namespaceURI = Namespaces.GCO),
-    @XmlNs(prefix = "xsi", namespaceURI = Namespaces.XSI)
-})
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(EX_Extent.class),
-    @XmlJavaTypeAdapter(CD_Ellipsoid.class),
-    @XmlJavaTypeAdapter(CD_PrimeMeridian.class),
-    @XmlJavaTypeAdapter(CD_VerticalDatumType.class),
-    @XmlJavaTypeAdapter(StringAdapter.class),
-    @XmlJavaTypeAdapter(InternationalStringConverter.class)
-})
 package org.geotoolkit.referencing.datum;
-
-import javax.xml.bind.annotation.XmlNs;
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
-import org.apache.sis.xml.Namespaces;
-import org.apache.sis.internal.jaxb.gco.*;
-import org.apache.sis.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.referencing.*;

@@ -49,7 +49,7 @@ import org.geotoolkit.referencing.operation.DefaultProjection;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 
 
 /**
@@ -278,7 +278,7 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
      * @return The name of the WKT element type, which is {@code "PROJCS"}.
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
+    public String formatTo(final Formatter formatter) { // TODO: should be protected
         final Ellipsoid ellipsoid = getDatum().getEllipsoid();
         @SuppressWarnings({"unchecked","rawtypes"}) // Formatter.setLinearUnit(...) will do the check for us.
         final Unit<Length> unit        = (Unit) getUnit();
@@ -318,7 +318,7 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
             formatter.append(cs.getAxis(i));
         }
         if (unit == null) {
-            formatter.setInvalidWKT(ProjectedCRS.class);
+            formatter.setInvalidWKT(this);
         }
         formatter.setAngularUnit(angularUnit);
         formatter.setLinearUnit(linearUnit);

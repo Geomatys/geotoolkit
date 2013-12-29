@@ -45,12 +45,13 @@ import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 
+import org.apache.sis.io.wkt.Symbols;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.referencing.datum.BursaWolfParameters;
-import org.geotoolkit.referencing.cs.AbstractCS;
+import org.apache.sis.referencing.datum.BursaWolfParameters;
+import org.apache.sis.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
@@ -246,7 +247,7 @@ public class ReferencingParser extends MathTransformParser {
          */
         final AxisDirection[] values = AxisDirection.values();
         Map<String,AxisDirection> directions = new HashMap<>(hashMapCapacity(values.length));
-        final Locale locale = symbols.locale;
+        final Locale locale = symbols.getLocale();
         for (int i=0; i<values.length; i++) {
             directions.put(values[i].name().trim().toUpperCase(locale), values[i]);
         }
@@ -666,15 +667,15 @@ public class ReferencingParser extends MathTransformParser {
         if (element == null) {
             return null;
         }
-        final BursaWolfParameters info = new BursaWolfParameters(WGS84);
-        info.dx = element.pullDouble("dx");
-        info.dy = element.pullDouble("dy");
-        info.dz = element.pullDouble("dz");
+        final BursaWolfParameters info = new BursaWolfParameters(WGS84, null);
+        info.tX = element.pullDouble("dx");
+        info.tY = element.pullDouble("dy");
+        info.tZ = element.pullDouble("dz");
         if (element.peek() != null) {
-            info.ex  = element.pullDouble("ex");
-            info.ey  = element.pullDouble("ey");
-            info.ez  = element.pullDouble("ez");
-            info.ppm = element.pullDouble("ppm");
+            info.rX = element.pullDouble("ex");
+            info.rY = element.pullDouble("ey");
+            info.rZ = element.pullDouble("ez");
+            info.dS = element.pullDouble("ppm");
         }
         element.close();
         return info;
@@ -820,14 +821,14 @@ public class ReferencingParser extends MathTransformParser {
         BursaWolfParameters toWGS84    = parseToWGS84(element); // Optional; may be null.
         Map<String,Object>  properties = parseAuthority(element, name);
         if (ALLOW_ORACLE_SYNTAX && (toWGS84 == null) && (element.peek() instanceof Number)) {
-            toWGS84     = new BursaWolfParameters(WGS84);
-            toWGS84.dx  = element.pullDouble("dx");
-            toWGS84.dy  = element.pullDouble("dy");
-            toWGS84.dz  = element.pullDouble("dz");
-            toWGS84.ex  = element.pullDouble("ex");
-            toWGS84.ey  = element.pullDouble("ey");
-            toWGS84.ez  = element.pullDouble("ez");
-            toWGS84.ppm = element.pullDouble("ppm");
+            toWGS84    = new BursaWolfParameters(WGS84, null);
+            toWGS84.tX = element.pullDouble("dx");
+            toWGS84.tY = element.pullDouble("dy");
+            toWGS84.tZ = element.pullDouble("dz");
+            toWGS84.rX = element.pullDouble("ex");
+            toWGS84.rY = element.pullDouble("ey");
+            toWGS84.rZ = element.pullDouble("ez");
+            toWGS84.dS = element.pullDouble("ppm");
         }
         element.close();
         if (toWGS84 != null) {

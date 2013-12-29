@@ -21,209 +21,35 @@
 package org.geotoolkit.referencing.cs;
 
 import java.util.Map;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Collections;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import javax.measure.unit.NonSI;
 import javax.measure.converter.ConversionException;
-import javax.xml.bind.annotation.XmlElement;
-import net.jcip.annotations.Immutable;
-
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.InternationalString;
-
-import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.measure.Measure;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.internal.referencing.AxisDirections;
-import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.referencing.cs.CoordinateSystems;
 
-import static org.geotoolkit.util.Utilities.hash;
-import static org.apache.sis.util.Utilities.deepEquals;
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.opengis.referencing.IdentifiedObject.*;
 
 
 /**
- * The set of coordinate system axes that spans a given coordinate space. A coordinate system (CS)
- * is derived from a set of (mathematical) rules for specifying how coordinates in a given space
- * are to be assigned to points. The coordinate values in a coordinate tuple shall be recorded in
- * the order in which the coordinate system axes are recorded, whenever those
- * coordinates use a coordinate reference system that uses this coordinate system.
- * <p>
- * This class is conceptually <cite>abstract</cite>, even if it is technically possible to
- * instantiate it. Typical applications should create instances of the most specific subclass with
- * {@code Default} prefix instead. An exception to this rule may occurs when it is not possible to
- * identify the exact type. For example it is not possible to infer the exact coordinate system from
- * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
- * Known Text</cite></A> is some cases (e.g. in a {@code LOCAL_CS} element). In such exceptional
- * situation, a plain {@code AbstractCS} object may be instantiated.
- *
- * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
- *
- * @see DefaultCoordinateSystemAxis
- * @see javax.measure.unit.Unit
- * @see org.geotoolkit.referencing.datum.AbstractDatum
- * @see org.geotoolkit.referencing.crs.AbstractCRS
+ * @deprecated Moved to Apache SIS.
  *
  * @since 2.0
  * @module
  */
-@Immutable
-public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSystem {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = 6757665252533744744L;
-
-    /**
-     * Base axis to use for checking directions. This is used in order to trap
-     * inconsistency like an axis named "Northing" with South direction.
-     */
-    private static final DefaultCoordinateSystemAxis[] DIRECTION_CHECKS = {
-        DefaultCoordinateSystemAxis.NORTHING,
-        DefaultCoordinateSystemAxis.EASTING,
-        DefaultCoordinateSystemAxis.SOUTHING,
-        DefaultCoordinateSystemAxis.WESTING
-    };
-
-    /**
-     * The axis for this coordinate system at the specified dimension.
-     */
-    @XmlElement
-    private final CoordinateSystemAxis[] axis;
-
-    /**
-     * Constructs a new object in which every attributes are set to a default value.
-     * <strong>This is not a valid object.</strong> This constructor is strictly
-     * reserved to JAXB, which will assign values to the fields using reflexion.
-     */
+@Deprecated
+public final class AbstractCS {
     private AbstractCS() {
-        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
-    }
-
-    /**
-     * Constructs a new coordinate system with the same values than the specified one.
-     * This copy constructor provides a way to convert an arbitrary implementation into a
-     * Geotk one or a user-defined one (as a subclass), usually in order to leverage
-     * some implementation-specific API. This constructor performs a shallow copy,
-     * i.e. the properties are not cloned.
-     *
-     * @param cs The coordinate system to copy.
-     *
-     * @since 2.2
-     */
-    public AbstractCS(final CoordinateSystem cs) {
-        super(cs);
-        if (cs instanceof AbstractCS) {
-            axis = ((AbstractCS) cs).axis;
-        } else {
-            axis = new CoordinateSystemAxis[cs.getDimension()];
-            for (int i=0; i<axis.length; i++) {
-                axis[i] = cs.getAxis(i);
-            }
-        }
-    }
-
-    /**
-     * Constructs a coordinate system from a name.
-     *
-     * @param name  The coordinate system name.
-     * @param axis  The set of axis.
-     */
-    public AbstractCS(final String name, final CoordinateSystemAxis... axis) {
-        this(Collections.singletonMap(NAME_KEY, name), axis);
-    }
-
-    /**
-     * Constructs a coordinate system from a set of properties. The properties map is given
-     * unchanged to the {@linkplain AbstractIdentifiedObject#AbstractIdentifiedObject(Map)
-     * super-class constructor}.
-     *
-     * @param properties   Set of properties. Should contains at least {@code "name"}.
-     * @param axis         The set of axis.
-     */
-    public AbstractCS(final Map<String,?> properties, final CoordinateSystemAxis... axis) {
-        super(properties);
-        ensureNonNull("axis", axis);
-        this.axis = axis.clone();
-        for (int i=0; i<axis.length; i++) {
-            ensureNonNull("axis", i, axis);
-            final AxisDirection direction = axis[i].getDirection();
-            ensureNonNull("direction", direction);
-            /*
-             * Ensures that axis direction and units are compatible with the
-             * coordinate system to be created. For example CartesianCS will
-             * accepts only linear or dimensionless units.
-             */
-            if (!isCompatibleDirection(direction)) {
-                // TOOD: localize name()
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_AXIS_ORIENTATION_2, direction.name(), getClass()));
-            }
-            final Unit<?> unit = axis[i].getUnit();
-            ensureNonNull("unit", unit);
-            if (!isCompatibleUnit(direction, unit)) {
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.INCOMPATIBLE_UNIT_1, unit));
-            }
-            /*
-             * Ensures there is no axis along the same direction
-             * (e.g. two North axis, or an East and a West axis).
-             */
-            final AxisDirection check = AxisDirections.absolute(direction);
-            if (!check.equals(AxisDirection.OTHER)) {
-                for (int j=i; --j>=0;) {
-                    if (check.equals(AxisDirections.absolute(axis[j].getDirection()))) {
-                        // TODO: localize name()
-                        final String nameI = axis[i].getDirection().name();
-                        final String nameJ = axis[j].getDirection().name();
-                        throw new IllegalArgumentException(Errors.format(
-                                Errors.Keys.COLINEAR_AXIS_2, nameI, nameJ));
-                    }
-                }
-            }
-            /*
-             * Checks for some inconsistency in naming and direction. For example if the axis
-             * is named "Northing", then the direction must be North. Exceptions to this rule
-             * are the directions along a meridian from a pole. For example a "Northing" axis
-             * may have a "South along 180 deg" direction.
-             */
-            final String name = axis[i].getName().getCode();
-            for (int j=0; j<DIRECTION_CHECKS.length; j++) {
-                final DefaultCoordinateSystemAxis candidate = DIRECTION_CHECKS[j];
-                if (candidate.nameMatches(name)) {
-                    final AxisDirection expected = candidate.getDirection();
-                    if (!direction.equals(expected)) {
-                        DirectionAlongMeridian m = DirectionAlongMeridian.parse(direction);
-                        /*
-                         * Note: for the check below, maybe it would have be nice to use:
-                         *
-                         * if (m == null || m.baseDirection.equals(AxisDirections.opposite(expected))
-                         *
-                         * but the EPSG database contains many axis named "Northing" with
-                         * direction like "South along 180 deg", so it doesn't seem to be
-                         * considered as a contradiction...
-                         */
-                        if (m == null) {
-                            throw new IllegalArgumentException(Errors.format(
-                                    Errors.Keys.INCONSISTENT_AXIS_ORIENTATION_2,
-                                    name, direction.name()));
-                        }
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -241,57 +67,6 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
         properties.put(NAME_KEY,  name.toString());
         properties.put(ALIAS_KEY, name);
         return properties;
-    }
-
-    /**
-     * Returns {@code true} if the specified axis direction is allowed for this coordinate
-     * system. This method is invoked at construction time for checking argument validity.
-     * The default implementation returns {@code true} for all axis directions. Subclasses
-     * will overrides this method in order to put more restrictions on allowed axis directions.
-     *
-     * @param direction The direction to test for compatibility.
-     * @return {@code true} if the given direction is compatible with this coordinate system.
-     */
-    protected boolean isCompatibleDirection(final AxisDirection direction) {
-        return true;
-    }
-
-    /**
-     * Returns {@code true} is the specified unit is legal for the specified axis direction.
-     * This method is invoked at construction time for checking units compatibility. The default
-     * implementation returns {@code true} in all cases. Subclasses can override this method and
-     * check for compatibility with {@linkplain SI#METRE metre} or
-     * {@linkplain NonSI#DEGREE_ANGLE degree} units.
-     *
-     * @param direction The direction of the axis having the given unit.
-     * @param unit The unit to test for compatibility.
-     * @return {@code true} if the given unit is compatible with this coordinate system.
-     *
-     * @since 2.2
-     */
-    protected boolean isCompatibleUnit(final AxisDirection direction, final Unit<?> unit) {
-        return true;
-    }
-
-    /**
-     * Returns the dimension of the coordinate system.
-     * This is the number of axis.
-     */
-    @Override
-    public int getDimension() {
-        return axis.length;
-    }
-
-    /**
-     * Returns the axis for this coordinate system at the specified dimension.
-     *
-     * @param  dimension The zero based index of axis.
-     * @return The axis at the specified dimension.
-     * @throws IndexOutOfBoundsException if {@code dimension} is out of bounds.
-     */
-    @Override
-    public CoordinateSystemAxis getAxis(final int dimension) throws IndexOutOfBoundsException {
-        return axis[dimension];
     }
 
     /**
@@ -375,13 +150,14 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
      * @param  coordinates The coordinate array to check.
      * @throws MismatchedDimensionException if the coordinate doesn't have the expected dimension.
      */
-    final void ensureDimensionMatch(final String name, final double[] coordinates)
+    static void ensureDimensionMatch(final CoordinateSystem cs, final String name, final double[] coordinates)
             throws MismatchedDimensionException
     {
-        if (coordinates.length != axis.length) {
+        final int dimension = cs.getDimension();
+        if (coordinates.length != dimension) {
             throw new MismatchedDimensionException(Errors.format(
                     Errors.Keys.MISMATCHED_DIMENSION_3,
-                    name, coordinates.length, axis.length));
+                    name, coordinates.length, dimension));
         }
     }
 
@@ -405,15 +181,19 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
      * @throws UnsupportedOperationException if this coordinate system can't compute distances.
      * @throws MismatchedDimensionException if a coordinate doesn't have the expected dimension.
      */
-    public Measure distance(final double[] coord1, final double[] coord2)
+    public static Measure distance(final CoordinateSystem cs, final double[] coord1, final double[] coord2)
             throws UnsupportedOperationException, MismatchedDimensionException
     {
-        ensureDimensionMatch("coord1", coord1);
-        ensureDimensionMatch("coord2", coord2);
-        if (axis.length == 1) {
-            return new Measure(Math.abs(coord1[0] - coord2[0]), axis[0].getUnit());
+        if (cs instanceof DefaultCartesianCS) {
+            // Temporary patch replacing method overriding until we completed the migration to Apache SIS.
+            return ((DefaultCartesianCS) cs).distance(coord1, coord2);
         }
-        throw new UnsupportedOperationException(Errors.format(Errors.Keys.UNSUPPORTED_COORDINATE_SYSTEM_1, getClass()));
+        ensureDimensionMatch(cs, "coord1", coord1);
+        ensureDimensionMatch(cs, "coord2", coord2);
+        if (cs.getDimension() == 1) {
+            return new Measure(Math.abs(coord1[0] - coord2[0]), cs.getAxis(0).getUnit());
+        }
+        throw new UnsupportedOperationException(Errors.format(Errors.Keys.UNSUPPORTED_COORDINATE_SYSTEM_1, cs.getClass()));
     }
 
     /**
@@ -429,18 +209,21 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
      * @see DefaultCartesianCS#usingUnit(Unit)
      * @see DefaultEllipsoidalCS#usingUnit(Unit)
      */
-    final CoordinateSystemAxis[] axisUsingUnit(final Unit<?> unit, final Unit<?> ignore) throws ConversionException {
+    static CoordinateSystemAxis[] axisUsingUnit(final CoordinateSystem cs, final Unit<?> unit, final Unit<?> ignore) throws ConversionException {
+        final int dimension = cs.getDimension();
         CoordinateSystemAxis[] newAxis = null;
-        for (int i=0; i<axis.length; i++) {
-            final CoordinateSystemAxis a = axis[i];
+        for (int i=0; i<dimension; i++) {
+            final CoordinateSystemAxis a = cs.getAxis(i);
             final Unit<?> current = a.getUnit();
             if (!unit.equals(current) && (ignore == null || !ignore.equals(unit.toSI()))) {
                 final DefaultCoordinateSystemAxis converted =
                         DefaultCoordinateSystemAxis.castOrCopy(a).usingUnit(unit);
                 if (converted != a) {
                     if (newAxis == null) {
-                        newAxis = new CoordinateSystemAxis[axis.length];
-                        System.arraycopy(axis, 0, newAxis, 0, i);
+                        newAxis = new CoordinateSystemAxis[dimension];
+                        for (int j=0; j<i; j++) {
+                            newAxis[j] = cs.getAxis(j);
+                        }
                     }
                     newAxis[i] = converted;
                 }
@@ -481,11 +264,11 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
      * when invoked on pre-defined CS declared in this package. {@link PredefinedCS} uses this
      * method only that way.
      */
-    final boolean axisColinearWith(final CoordinateSystem userCS) {
-        if (userCS.getDimension() != getDimension()) {
+    static boolean axisColinearWith(final CoordinateSystem standardCS, final CoordinateSystem userCS) {
+        if (userCS.getDimension() != standardCS.getDimension()) {
             return false;
         }
-        final DefaultCoordinateSystemAxis[] axis0 = getDefaultAxis(this);
+        final DefaultCoordinateSystemAxis[] axis0 = getDefaultAxis(standardCS);
         final DefaultCoordinateSystemAxis[] axis1 = getDefaultAxis(userCS);
 next:   for (int i=0; i<axis0.length; i++) {
             final DefaultCoordinateSystemAxis direct   = axis0[i];
@@ -493,8 +276,8 @@ next:   for (int i=0; i<axis0.length; i++) {
             for (int j=0; j<axis1.length; j++) {
                 final DefaultCoordinateSystemAxis candidate = axis1[j];
                 if (candidate != null) {
-                    if (candidate.equals(direct,   false, false) || (opposite != null &&
-                        candidate.equals(opposite, false, false)))
+                    if (candidate.equalsMetadata(direct) || (opposite != null &&
+                        candidate.equalsMetadata(opposite)))
                     {
                         axis1[j] = null; // Flags as already compared.
                         continue next;
@@ -503,23 +286,24 @@ next:   for (int i=0; i<axis0.length; i++) {
             }
             return false;
         }
-        assert directionColinearWith(userCS);
+        assert directionColinearWith(standardCS, userCS);
         return true;
     }
 
     /**
      * Compares directions only, without consideration for the axis name.
      */
-    final boolean directionColinearWith(final CoordinateSystem userCS) {
-        if (userCS.getDimension() != axis.length) {
+    static boolean directionColinearWith(final CoordinateSystem standardCS, final CoordinateSystem userCS) {
+        final int dimension = standardCS.getDimension();
+        if (userCS.getDimension() != dimension) {
             return false;
         }
-        final AxisDirection[] checks = new AxisDirection[axis.length];
+        final AxisDirection[] checks = new AxisDirection[dimension];
         for (int i=0; i<checks.length; i++) {
             checks[i] = AxisDirections.absolute(userCS.getAxis(i).getDirection());
         }
-next:   for (int i=0; i<axis.length; i++) {
-            final AxisDirection direction = AxisDirections.absolute(axis[i].getDirection());
+next:   for (int i=0; i<dimension; i++) {
+            final AxisDirection direction = AxisDirections.absolute(standardCS.getAxis(i).getDirection());
             for (int j=0; j<checks.length; j++) {
                 final AxisDirection candidate = checks[j];
                 if (candidate != null && candidate.equals(direction)) {
@@ -530,68 +314,5 @@ next:   for (int i=0; i<axis.length; i++) {
             return false;
         }
         return true;
-    }
-
-    /**
-     * Compares the specified object with this coordinate system for equality.
-     *
-     * @param  object The object to compare to {@code this}.
-     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
-     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
-     *         relevant to transformations.
-     * @return {@code true} if both objects are equal.
-     */
-    @Override
-    public boolean equals(final Object object, final ComparisonMode mode) {
-        if (object == this) {
-            return true; // Slight optimization.
-        }
-        if (super.equals(object, mode)) {
-            switch (mode) {
-                case STRICT: {
-                    final AbstractCS that = (AbstractCS) object;
-                    return Arrays.equals(this.axis, that.axis);
-                }
-                default: {
-                    final int dimension = getDimension();
-                    final CoordinateSystem that = (CoordinateSystem) object;
-                    if (dimension == that.getDimension()) {
-                        for (int i=0; i<dimension; i++) {
-                            if (!deepEquals(getAxis(i), that.getAxis(i), mode)) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected int computeHashCode() {
-        return hash(Arrays.hashCode(axis), super.computeHashCode());
-    }
-
-    /**
-     * Format the inner part of a
-     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
-     * Known Text</cite> (WKT)</A> element. Note that WKT is not yet defined for coordinate system.
-     * Current implementation list the axis contained in this CS.
-     *
-     * @param  formatter The formatter to use.
-     * @return The WKT element name. Current implementation default to the class name.
-     */
-    @Override
-    public String formatWKT(final Formatter formatter) {
-        for (int i=0; i<axis.length; i++) {
-            formatter.append(axis[i]);
-        }
-        formatter.setInvalidWKT(CoordinateSystem.class);
-        return super.formatWKT(formatter);
     }
 }

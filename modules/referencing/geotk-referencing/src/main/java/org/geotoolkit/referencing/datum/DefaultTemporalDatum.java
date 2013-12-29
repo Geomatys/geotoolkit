@@ -22,39 +22,28 @@ package org.geotoolkit.referencing.datum;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Collections;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlRootElement;
-import net.jcip.annotations.Immutable;
-
+import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.referencing.datum.TemporalDatum;
-
 import org.geotoolkit.resources.Vocabulary;
-import org.apache.sis.util.ComparisonMode;
 
-import static org.geotoolkit.util.Utilities.hash;
-import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.referencing.datum.AbstractDatum.name;
 
 
 /**
  * A temporal datum defines the origin of a temporal coordinate reference system.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
+ * @version 4.00
  *
  * @since 1.2
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
-@Immutable
-@XmlType(name = "TemporalDatumType")
-@XmlRootElement(name = "TemporalDatum")
-public class DefaultTemporalDatum extends AbstractDatum implements TemporalDatum {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = 3357241732140076884L;
-
+@Deprecated
+@XmlTransient
+public class DefaultTemporalDatum extends org.apache.sis.referencing.datum.DefaultTemporalDatum {
     /**
      * Datum for time measured since January 1st, 4713 BC at 12:00 UTC.
      *
@@ -111,20 +100,6 @@ public class DefaultTemporalDatum extends AbstractDatum implements TemporalDatum
             "UNIX", new Date(0));
 
     /**
-     * The date and time origin of this temporal datum.
-     */
-    private final long origin;
-
-    /**
-     * Constructs a new object in which every attributes are set to a default value.
-     * <strong>This is not a valid object.</strong> This constructor is strictly
-     * reserved to JAXB, which will assign values to the fields using reflexion.
-     */
-    private DefaultTemporalDatum() {
-        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
-    }
-
-    /**
      * Constructs a new datum with the same values than the specified one.
      * This copy constructor provides a way to convert an arbitrary implementation into a
      * Geotk one or a user-defined one (as a subclass), usually in order to leverage
@@ -137,7 +112,6 @@ public class DefaultTemporalDatum extends AbstractDatum implements TemporalDatum
      */
     public DefaultTemporalDatum(final TemporalDatum datum) {
         super(datum);
-        origin = datum.getOrigin().getTime();
     }
 
     /**
@@ -158,73 +132,6 @@ public class DefaultTemporalDatum extends AbstractDatum implements TemporalDatum
      * @param origin The date and time origin of this temporal datum.
      */
     public DefaultTemporalDatum(final Map<String,?> properties, final Date origin) {
-        super(properties);
-        ensureNonNull("origin", origin);
-        this.origin = origin.getTime();
-    }
-
-    /**
-     * Returns a Geotk datum implementation with the same values than the given arbitrary
-     * implementation. If the given object is {@code null}, then this method returns {@code null}.
-     * Otherwise if the given object is already a Geotk implementation, then the given object is
-     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
-     * attribute values of the given object.
-     *
-     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return A Geotk implementation containing the values of the given object (may be the
-     *         given object itself), or {@code null} if the argument was null.
-     *
-     * @since 3.18
-     */
-    public static DefaultTemporalDatum castOrCopy(final TemporalDatum object) {
-        return (object == null) || (object instanceof DefaultTemporalDatum)
-                ? (DefaultTemporalDatum) object : new DefaultTemporalDatum(object);
-    }
-
-    /**
-     * The date and time origin of this temporal datum.
-     *
-     * @return The date and time origin of this temporal datum.
-     */
-    @Override
-    public Date getOrigin() {
-        return new Date(origin);
-    }
-
-    /**
-     * Compares this temporal datum with the specified object for equality.
-     *
-     * @param  object The object to compare to {@code this}.
-     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
-     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
-     *         relevant to transformations.
-     * @return {@code true} if both objects are equal.
-     */
-    @Override
-    public boolean equals(final Object object, final ComparisonMode mode) {
-        if (object == this) {
-            return true; // Slight optimization.
-        }
-        if (super.equals(object, mode)) {
-            switch (mode) {
-                case STRICT: {
-                    final DefaultTemporalDatum that = (DefaultTemporalDatum) object;
-                    return this.origin == that.origin;
-                }
-                default: {
-                    final TemporalDatum that = (TemporalDatum) object;
-                    return Objects.equals(getOrigin(), that.getOrigin());
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected int computeHashCode() {
-        return hash(origin, super.computeHashCode());
+        super(properties, origin);
     }
 }

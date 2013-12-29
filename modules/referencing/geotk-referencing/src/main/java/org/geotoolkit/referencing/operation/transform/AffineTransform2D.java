@@ -30,7 +30,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.lang.Workaround;
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.Formattable;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
@@ -38,6 +38,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrix3;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.util.Cloneable;
+import org.apache.sis.io.wkt.FormattableObject;
 import org.apache.sis.util.ComparisonMode;
 
 import static org.apache.sis.util.ArgumentChecks.ensureDimensionMatches;
@@ -406,7 +407,7 @@ public class AffineTransform2D extends XAffineTransform
      * @return The WKT element name.
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
+    public String formatTo(final Formatter formatter) {
         final ParameterValueGroup parameters = getParameterValues();
         formatter.append(formatter.getName(parameters.getDescriptor()));
         formatter.append(parameters);
@@ -419,7 +420,11 @@ public class AffineTransform2D extends XAffineTransform
     @Override
     public String toWKT() {
         final Formatter formatter = new Formatter();
-        formatter.append((Formattable) this);
+        formatter.append(new FormattableObject() {
+            protected String formatTo(final Formatter formatter) {
+                return AffineTransform2D.this.formatTo(formatter);
+            }
+        });
         return formatter.toString();
     }
 

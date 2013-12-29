@@ -37,7 +37,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.referencing.datum.BursaWolfParameters;
+import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.GeocentricTransform;
@@ -530,7 +530,7 @@ public class PositionVector7Param extends MathTransformProvider {
     protected MathTransform createMathTransform(final ParameterValueGroup values)
             throws ParameterNotFoundException
     {
-        final BursaWolfParameters parameters = new BursaWolfParameters(null);
+        final BursaWolfParameters parameters = new BursaWolfParameters(null, null);
         fill(parameters, values);
         return concatenate(concatenate(new GeocentricAffineTransform(parameters, getParameters()),
                 values, SRC_SEMI_MAJOR, SRC_SEMI_MINOR, SRC_DIM),
@@ -545,13 +545,13 @@ public class PositionVector7Param extends MathTransformProvider {
      * @param values The parameter values to read. Those parameters will not be modified.
      */
     void fill(final BursaWolfParameters parameters, final ParameterValueGroup values) {
-        parameters.dx  = Parameters.doubleValue(DX, values);
-        parameters.dy  = Parameters.doubleValue(DY, values);
-        parameters.dz  = Parameters.doubleValue(DZ, values);
-        parameters.ex  = Parameters.doubleValue(EX, values);
-        parameters.ey  = Parameters.doubleValue(EY, values);
-        parameters.ez  = Parameters.doubleValue(EZ, values);
-        parameters.ppm = Parameters.doubleValue(PPM, values);
+        parameters.tX = Parameters.doubleValue(DX, values);
+        parameters.tY = Parameters.doubleValue(DY, values);
+        parameters.tZ = Parameters.doubleValue(DZ, values);
+        parameters.rX = Parameters.doubleValue(EX, values);
+        parameters.rY = Parameters.doubleValue(EY, values);
+        parameters.rZ = Parameters.doubleValue(EZ, values);
+        parameters.dS = Parameters.doubleValue(PPM, values);
     }
 
     /**

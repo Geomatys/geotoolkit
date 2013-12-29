@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
-import org.geotoolkit.referencing.datum.BursaWolfParameters;
+import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.operation.provider.CoordinateFrameRotation;
 import org.geotoolkit.referencing.operation.provider.GeocentricTranslation;
 import org.geotoolkit.referencing.operation.provider.PositionVector7Param;
@@ -102,7 +102,7 @@ public class GeocentricAffineTransform extends ProjectiveTransform {
      * @param parameters The Bursa-Wolf parameters to use for initializing the transformation.
      */
     public GeocentricAffineTransform(final BursaWolfParameters parameters) {
-        super(parameters.getAffineTransform());
+        super(parameters.getPositionVectorTransformation(null));
         type = parameters.isTranslation() ? TRANSLATION : SEVEN_PARAM;
     }
 
@@ -115,7 +115,7 @@ public class GeocentricAffineTransform extends ProjectiveTransform {
     public GeocentricAffineTransform(final BursaWolfParameters parameters,
                                      final ParameterDescriptorGroup descriptor)
     {
-        super(parameters.getAffineTransform());
+        super(parameters.getPositionVectorTransformation(null));
         final String name, value;
         if (GeocentricTranslation.PARAMETERS.equals(descriptor)) {
             if (parameters.isTranslation()) {
@@ -164,30 +164,28 @@ public class GeocentricAffineTransform extends ProjectiveTransform {
     @Override
     @SuppressWarnings("fallthrough")
     public ParameterValueGroup getParameterValues() {
-        final BursaWolfParameters parameters = new BursaWolfParameters(null);
-        parameters.setAffineTransform(getMatrix(), Double.POSITIVE_INFINITY);
+        final BursaWolfParameters parameters = new BursaWolfParameters(null, null);
+        parameters.setPositionVectorTransformation(getMatrix(), Double.POSITIVE_INFINITY);
         final FloatParameter[] param = new FloatParameter[type == TRANSLATION ? 3 : 7];
         switch (type) {
             default: {
                 throw new AssertionError(type);
             }
             case FRAME_ROTATION: {
-                parameters.ex = -parameters.ex;
-                parameters.ey = -parameters.ey;
-                parameters.ez = -parameters.ez;
+                parameters.reverseRotation();
                 // Fall through
             }
             case SEVEN_PARAM: {
-                param[3] = new FloatParameter(PositionVector7Param.EX,  parameters.ex);
-                param[4] = new FloatParameter(PositionVector7Param.EY,  parameters.ey);
-                param[5] = new FloatParameter(PositionVector7Param.EZ,  parameters.ez);
-                param[6] = new FloatParameter(PositionVector7Param.PPM, parameters.ppm);
+                param[3] = new FloatParameter(PositionVector7Param.EX,  parameters.rX);
+                param[4] = new FloatParameter(PositionVector7Param.EY,  parameters.rY);
+                param[5] = new FloatParameter(PositionVector7Param.EZ,  parameters.rZ);
+                param[6] = new FloatParameter(PositionVector7Param.PPM, parameters.dS);
                 // Fall through
             }
             case TRANSLATION: {
-                param[0] = new FloatParameter(PositionVector7Param.DX,  parameters.dx);
-                param[1] = new FloatParameter(PositionVector7Param.DY,  parameters.dy);
-                param[2] = new FloatParameter(PositionVector7Param.DZ,  parameters.dz);
+                param[0] = new FloatParameter(PositionVector7Param.DX,  parameters.rX);
+                param[1] = new FloatParameter(PositionVector7Param.DY,  parameters.rY);
+                param[2] = new FloatParameter(PositionVector7Param.DZ,  parameters.rZ);
                 break;
             }
         }

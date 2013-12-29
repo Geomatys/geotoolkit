@@ -26,7 +26,6 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.EOFException;
 import java.text.Format;
-import java.text.NumberFormat;
 import java.text.FieldPosition;
 import java.text.ParseException;
 import java.text.ParsePosition;
@@ -40,11 +39,16 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
+import org.apache.sis.io.wkt.Accessor;
+import org.apache.sis.io.wkt.Colors;
+import org.apache.sis.io.wkt.Symbols;
+import org.apache.sis.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Convention;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Strings;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.referencing.datum.BursaWolfParameters;
+import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.resources.Errors;
@@ -179,7 +183,7 @@ public class WKTFormat extends Format {
      * The same value is also stored in the {@linkplain #formatter}. It appears here for
      * serialization purpose.
      */
-    private int indentation = FormattableObject.defaultIndentation;
+    private byte indentation = 2; // TODO FormattableObject.defaultIndentation;
 
     /**
      * The map of definitions. Will be created only if used.
@@ -238,7 +242,7 @@ public class WKTFormat extends Format {
                 parser.setSymbols(symbols);
             }
             if (definitions != null) {
-                definitions.quote = symbols.quote;
+                definitions.quote = (char) symbols.getOpenQuote(); // TODO (need also close quote).
             }
         }
     }
@@ -267,7 +271,7 @@ public class WKTFormat extends Format {
     public void setColors(final Colors colors) {
         this.colors = colors;
         if (formatter != null) {
-            formatter.colors = colors;
+            Accessor.colors(formatter, colors);
         }
     }
 
@@ -310,13 +314,13 @@ public class WKTFormat extends Format {
      *
      * @return The expected authority.
      *
-     * @see Convention#getCitation()
+     * @see Convention#getAuthority()
      * @see Formatter#getName(IdentifiedObject)
      */
     public Citation getAuthority() {
         Citation result = authority;
         if (result == null) {
-            result = convention.getCitation();
+            result = convention.getAuthority();
         }
         return result;
     }
@@ -345,7 +349,7 @@ public class WKTFormat extends Format {
      */
     private void updateFormatter(final Formatter formatter) {
         if (formatter != null) {
-            formatter.setConvention(convention, authority);
+            Accessor.setConvention(formatter, convention, authority);
         }
     }
 
@@ -355,7 +359,7 @@ public class WKTFormat extends Format {
     private void updateParser() {
         if (parser instanceof ReferencingParser) {
             final ReferencingParser parser = (ReferencingParser) this.parser;
-            parser.setForcedAngularUnit((convention != null) ? convention.forcedAngularUnit : null);
+            parser.setForcedAngularUnit((convention != null) ? Accessor.forcedAngularUnit(convention) : null);
             parser.setAxisIgnored(convention == Convention.ESRI);
         }
     }
@@ -382,9 +386,10 @@ public class WKTFormat extends Format {
      * @param indentation The new indentation to use.
      */
     public void setIndentation(final int indentation) {
-        this.indentation = indentation;
+        ArgumentChecks.ensureBetween("indentation", WKTFormat.SINGLE_LINE, Byte.MAX_VALUE, indentation);
+        this.indentation = (byte) indentation;
         if (formatter != null) {
-            formatter.indentation = indentation;
+            Accessor.indentation(formatter, this.indentation);
         }
     }
 
@@ -397,7 +402,8 @@ public class WKTFormat extends Format {
      * @since 3.20 (derived from 3.00)
      */
     public static int getDefaultIndentation() {
-        return FormattableObject.defaultIndentation;
+// TODO return FormattableObject.defaultIndentation;
+        return 2;
     }
 
     /**
@@ -410,7 +416,7 @@ public class WKTFormat extends Format {
     @Configuration
     public static void setDefaultIndentation(final int indentation) {
         // No need to synchronize since setting a 32 bits integer is an atomic operation.
-        FormattableObject.defaultIndentation = indentation;
+// TODO FormattableObject.defaultIndentation = indentation;
     }
 
     /**
@@ -434,7 +440,7 @@ public class WKTFormat extends Format {
     public Map<String,String> definitions() {
         if (definitions == null) {
             definitions = new Definitions(this);
-            definitions.quote = symbols.quote;
+            definitions.quote = (char) symbols.getOpenQuote(); // TODO (need also close quote).
         }
         return definitions;
     }
@@ -569,12 +575,13 @@ public class WKTFormat extends Format {
                 // We do not want to expose the "scientific notation hack" to the formatter.
                 // TODO: Remove this block if some future version of J2SE provides something
                 //       like 'allowScientificNotationParsing(true)' in DecimalFormat.
-                formatter = new Formatter(symbols, (NumberFormat) symbols.numberFormat.clone());
+//              formatter = new Formatter(symbols, (NumberFormat) symbols.numberFormat.clone());
+                formatter = new Formatter(Convention.OGC, symbols, colors, indentation);
             } else {
                 formatter = getParser().formatter();
             }
-            formatter.colors      = colors;
-            formatter.indentation = indentation;
+            Accessor.colors(formatter, colors);
+            Accessor.indentation(formatter, indentation);
             updateFormatter(formatter);
             this.formatter = formatter;
         }
@@ -599,8 +606,8 @@ public class WKTFormat extends Format {
         final Formatter formatter = getFormatter();
         try {
             formatter.clear();
-            formatter.buffer = toAppendTo;
-            formatter.bufferBase = toAppendTo.length();
+            Accessor.buffer(formatter, toAppendTo);
+            Accessor.bufferBase(formatter, toAppendTo.length());
             if (object instanceof MathTransform) {
                 formatter.append((MathTransform) object);
             } else if (object instanceof GeneralParameterValue) {
@@ -613,7 +620,7 @@ public class WKTFormat extends Format {
             }
             return toAppendTo;
         } finally {
-            formatter.buffer = null;
+            Accessor.buffer(formatter, null);
         }
     }
 
@@ -637,12 +644,10 @@ public class WKTFormat extends Format {
     public void reformat(final Reader in, final Writer out, final PrintWriter err)
             throws IOException
     {
-        final StringBuilder buffer   = new StringBuilder();
-        final String lineSeparator   = System.lineSeparator();
-        final Symbols symbols        = getSymbols();
-        final char[] openingBrackets = symbols.openingBrackets;
-        final char[] closingBrackets = symbols.closingBrackets;
-        final int [] bracketCount    = new int[Math.max(openingBrackets.length, closingBrackets.length)];
+        final StringBuilder buffer = new StringBuilder();
+        final String lineSeparator = System.lineSeparator();
+        final Symbols symbols      = getSymbols();
+        final int[] bracketCount   = new int[symbols.getNumPairedBracket()];
         while (true) {
             /*
              * Skips whitespaces, stopping the method if EOF is reached.
@@ -667,18 +672,19 @@ copy:       while (true) {
                 }
                 c = (char) ci;
                 buffer.append(c);
-                for (int i=0; i<openingBrackets.length; i++) {
-                    if (c == openingBrackets[i]) {
+                for (int i=0; i<bracketCount.length; i++) {
+                    if (c == symbols.getOpeningBracket(i)) {
                         bracketCount[i]++;
                         continue copy;
                     }
                 }
-                for (int i=0; i<closingBrackets.length; i++) {
-                    if (c == closingBrackets[i]) {
+                for (int i=0; i<bracketCount.length; i++) {
+                    final int closingBracket = symbols.getClosingBracket(i);
+                    if (c == closingBracket) {
                         if (--bracketCount[i] < 0) {
                             throw new ContentFormatException(Errors.format(
                                     Errors.Keys.NON_EQUILIBRATED_PARENTHESIS_2,
-                                    closingBrackets[i], openingBrackets[i]));
+                                    closingBracket, symbols.getOpeningBracket(i)));
                         }
                         for (i=0; i<bracketCount.length; i++) { // NOSONAR: The outer loop will not continue.
                             if (bracketCount[i] != 0) {
@@ -722,13 +728,7 @@ copy:       while (true) {
      * @return The last warning, or {@code null} if none.
      */
     public String getWarning() {
-        if (formatter != null && formatter.isInvalidWKT()) {
-            if (formatter.warning != null) {
-                return formatter.warning;
-            }
-            return Errors.format(Errors.Keys.ILLEGAL_WKT_FORMAT_1, formatter.getUnformattableClass());
-        }
-        return null;
+        return (formatter != null) ? Accessor.getErrorMessage(formatter) : null;
     }
 
     /**

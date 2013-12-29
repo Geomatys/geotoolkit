@@ -21,7 +21,6 @@
 package org.geotoolkit.referencing.operation;
 
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Collections;
 import java.util.Objects;
 import net.jcip.annotations.Immutable;
@@ -41,14 +40,15 @@ import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.transform.Parameterized;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
+import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.io.wkt.Formatter;
+import org.apache.sis.io.wkt.Formatter;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.ArgumentChecks.*;
@@ -68,16 +68,11 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * @module
  */
 @Immutable
-public class DefaultOperationMethod extends AbstractIdentifiedObject implements OperationMethod {
+public class DefaultOperationMethod extends AbstractIdentifiedObject implements OperationMethod, Formattable {
     /**
      * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -8181774670648793964L;
-
-    /**
-     * List of localizable properties. To be given to {@link AbstractIdentifiedObject} constructor.
-     */
-    private static final String[] LOCALIZABLES = {FORMULA_KEY};
 
     /**
      * Formula(s) or procedure used by this operation method. This may be a reference to a
@@ -218,21 +213,8 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
                                   final Integer targetDimension,
                                   final ParameterDescriptorGroup parameters)
     {
-        this(properties, new HashMap<String,Object>(), sourceDimension, targetDimension, parameters);
-    }
-
-    /**
-     * Work around for RFE #4093999 in Sun's bug database
-     * ("Relax constraint on placement of this()/super() call in constructors").
-     */
-    private DefaultOperationMethod(final Map<String,?> properties,
-                                   final Map<String,Object> subProperties,
-                                   final Integer sourceDimension,
-                                   final Integer targetDimension,
-                                   ParameterDescriptorGroup parameters)
-    {
-        super(properties, subProperties, LOCALIZABLES);
-        Object formula = subProperties.get(FORMULA_KEY);
+        super(properties);
+        Object formula = properties.get(FORMULA_KEY);
         if (formula != null) {
             if (formula instanceof Citation) {
                 formula = new DefaultFormula((Citation) formula);
@@ -357,8 +339,8 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
      * {@inheritDoc}
      */
     @Override
-    protected int computeHashCode() {
-        return hash(sourceDimension, hash(targetDimension, hash(parameters, super.computeHashCode())));
+    public int hashCode(final ComparisonMode mode) {
+        return hash(sourceDimension, hash(targetDimension, hash(parameters, super.hashCode(mode))));
     }
 
     /**
@@ -370,11 +352,11 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
      * @return The WKT element name.
      */
     @Override
-    public String formatWKT(final Formatter formatter) {
+    public String formatTo(final Formatter formatter) {
         if (Projection.class.isAssignableFrom(getOperationType())) {
             return "PROJECTION";
         }
-        return super.formatWKT(formatter);
+        return super.formatTo(formatter);
     }
 
     /**
