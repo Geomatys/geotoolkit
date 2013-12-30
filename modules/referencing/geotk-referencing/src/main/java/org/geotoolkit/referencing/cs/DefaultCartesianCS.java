@@ -95,9 +95,6 @@ public class DefaultCartesianCS extends org.apache.sis.referencing.cs.DefaultCar
                     DefaultCoordinateSystemAxis.GEOCENTRIC_X,
                     DefaultCoordinateSystemAxis.GEOCENTRIC_Y,
                     DefaultCoordinateSystemAxis.GEOCENTRIC_Z);
-    static {
-        org.apache.sis.referencing.cs.DefaultCartesianCS.GEOCENTRIC = GEOCENTRIC;
-    }
 
     /**
      * A two-dimensional Cartesian CS with

@@ -59,6 +59,10 @@ public abstract class Parser {
      */
     static final boolean SCIENTIFIC_NOTATION = true;
 
+    static {
+        Accessor.init();
+    }
+
     /**
      * The symbols to use for parsing WKT.
      */

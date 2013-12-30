@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Collection;
 import java.text.ParseException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.LineNumberReader;
 import java.io.FileNotFoundException;
 import javax.measure.unit.NonSI;
@@ -29,6 +30,8 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.LenientComparable;
 import org.apache.sis.io.wkt.Symbols;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
@@ -80,12 +83,13 @@ public final strictfp class ParserTest {
                 try {
                     parsed = parser.parseObject(line);
                 } catch (ParseException exception) {
-                    System.err.println();
-                    System.err.println("-----------------------------");
-                    System.err.println("Parse failed. Dump WKT below.");
-                    System.err.println("-----------------------------");
-                    System.err.println(line);
-                    System.err.println();
+                    final PrintStream out = System.err;
+                    out.println();
+                    out.println("-----------------------------");
+                    out.println("Parse failed. Dump WKT below.");
+                    out.println("-----------------------------");
+                    out.println(line);
+                    out.println();
                     throw exception;
                 }
                 assertNotNull("Parsing returns null.",                 parsed);
@@ -102,22 +106,28 @@ public final strictfp class ParserTest {
                 try {
                     again = parser.parseObject(formatted);
                 } catch (ParseException exception) {
-                    System.err.println();
-                    System.err.println("------------------------------------");
-                    System.err.println("Second parse failed. Dump WKT below.");
-                    System.err.println("------------------------------------");
-                    System.err.println(line);
-                    System.err.println();
-                    System.err.println("------ Reformatted WKT below -------");
-                    System.err.println();
-                    System.err.println(formatted);
-                    System.err.println();
+                    final PrintStream out = System.err;
+                    out.println();
+                    out.println("------------------------------------");
+                    out.println("Second parse failed. Dump WKT below.");
+                    out.println("------------------------------------");
+                    out.println(line);
+                    out.println();
+                    out.println("------ Reformatted WKT below -------");
+                    out.println();
+                    out.println(formatted);
+                    out.println();
                     throw exception;
                 }
-                assertEquals("Second parsing produced different objects (line " +
-                        reader.getLineNumber() + ").", parsed, again);
-                assertTrue("Inconsistent hashCode or equals method (line " +
-                        reader.getLineNumber() + ").", pool.contains(again));
+                final LenientComparable c = (LenientComparable) parsed;
+                try {
+                    assertTrue  ("Second parsing produced different objects.", c.equals(again, ComparisonMode.DEBUG));
+                    assertEquals("Second parsing produced different objects.", c, again);
+                    assertTrue  ("Inconsistent hashCode or equals method.", pool.contains(again));
+                } catch (AssertionError e) {
+                    System.err.println("Error at line " + reader.getLineNumber());
+                    throw e;
+                }
             }
         }
     }
@@ -186,16 +196,14 @@ public final strictfp class ParserTest {
              " GEOGCS [ \"Datum 73\"," +
                " DATUM[\"Datum 73 (EPSG ID 6274)\"," +
                  " SPHEROID [\"International 1924 (EPSG ID 7022)\", 6378388, 297]," +
-                 " -231, 102.6, 29.8, .6149999999999993660366746131394108039579," +
-                 " -.1979999999999997958947342656936639661522," +
-                  " .8809999999999990918346509498793836069706, .99999821]," +
+                 " -231, 102.6, 29.8, 0.615, -0.198, 0.881, .99999821]," +
                " PRIMEM [ \"Greenwich\", 0.000000 ]," +
                " UNIT [\"Decimal Degree\", 0.01745329251994328]]," +
              " PROJECTION[\"Transverse_Mercator\"]," +
 //           " PROJECTION[\"Modified Portuguese Grid (EPSG OP 19974)\"]," +
 // TODO: The real projection is "Modified Portugues", but it is not yet implemented in Geotk.
-             " PARAMETER[\"Latitude_Of_Origin\", 39.66666666666666666666666666666666666667]," +
-             " PARAMETER[\"Central_Meridian\", -8.13190611111111111111111111111111111111]," +
+             " PARAMETER[\"Latitude_Of_Origin\", 39.666666666666667]," +
+             " PARAMETER[\"Central_Meridian\", -8.13190611111111]," +
              " PARAMETER[\"Scale_Factor\", 1]," +
              " PARAMETER [\"False_Easting\", 180.598]," +
              " PARAMETER[\"False_Northing\", -86.99]," +
@@ -203,10 +211,12 @@ public final strictfp class ParserTest {
 
         assertFalse(Symbols.DEFAULT.containsAxis(wkt));
         final ReferencingParser parser = new ReferencingParser();
-        CoordinateReferenceSystem crs1 = parser.parseCoordinateReferenceSystem(wkt);
+        final CoordinateReferenceSystem crs1 = parser.parseCoordinateReferenceSystem(wkt);
         final String check = crs1.toWKT();
         assertTrue(check.indexOf("TOWGS84[-231") >= 0);
-        CoordinateReferenceSystem crs2 = parser.parseCoordinateReferenceSystem(check);
+        final CoordinateReferenceSystem crs2 = parser.parseCoordinateReferenceSystem(check);
+        assertTrue(((LenientComparable) crs1).equals(crs2, ComparisonMode.DEBUG));
+        assertTrue(((LenientComparable) crs1).equals(crs2, ComparisonMode.BY_CONTRACT));
         assertEquals(crs1, crs2);
         assertFalse(check.contains("semi_major"));
         assertFalse(check.contains("semi_minor"));

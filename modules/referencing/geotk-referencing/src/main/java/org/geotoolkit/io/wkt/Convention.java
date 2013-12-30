@@ -17,11 +17,8 @@
  */
 package org.geotoolkit.io.wkt;
 
-import javax.measure.unit.SI;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.operation.OperationMethod;
@@ -29,8 +26,8 @@ import org.opengis.referencing.operation.CoordinateOperation;
 
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.io.wkt.Accessor;
 
 
 /**
@@ -60,6 +57,10 @@ import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
  */
  @Deprecated
 public final class Convention {
+    static {
+        Accessor.init();
+    }
+
     /**
      * The <A HREF="http://www.opengeospatial.org">Open Geospatial consortium</A> convention.
      * This is the default convention for all WKT formatting in the Geotk library.
@@ -171,18 +172,6 @@ public final class Convention {
     @Debug
     public static final org.apache.sis.io.wkt.Convention INTERNAL = org.apache.sis.io.wkt.Convention.INTERNAL;
 
-    /**
-     * A three-dimensional Cartesian CS with the legacy set of geocentric axes.
-     * Those axes were defined in OGC 01-009 as <var>Other</var>,
-     * <var>{@linkplain DefaultCoordinateSystemAxis#EASTING Easting}</var>,
-     * <var>{@linkplain DefaultCoordinateSystemAxis#NORTHING Northing}</var>
-     * in metres, where the "Other" axis is toward prime meridian.
-     */
-    private static final DefaultCartesianCS LEGACY = new DefaultCartesianCS("Legacy",
-            new DefaultCoordinateSystemAxis("X", AxisDirection.OTHER, SI.METRE),
-            new DefaultCoordinateSystemAxis("Y", AxisDirection.EAST,  SI.METRE),
-            new DefaultCoordinateSystemAxis("Z", AxisDirection.NORTH, SI.METRE));
-
     private Convention() {
     }
 
@@ -214,29 +203,5 @@ public final class Convention {
             org.apache.sis.io.wkt.Convention defaultConvention)
     {
         return org.apache.sis.io.wkt.Convention.forIdentifier(identifier, defaultConvention);
-    }
-
-    /**
-     * Returns the axes to use instead of the ones in the given coordinate system.
-     * If the coordinate system axes should be used as-is, returns {@code cs}.
-     *
-     * @param  cs The coordinate system for which to compare the axis directions.
-     * @param  legacy {@code true} for replacing ISO directions by the legacy ones,
-     *         or {@code false} for the other way around.
-     * @return The axes to use instead of the ones in the given CS,
-     *         or {@code cs} if the CS axes should be used as-is.
-     */
-    static CartesianCS replace(final CartesianCS cs, final boolean legacy) {
-        final CartesianCS check = legacy ? DefaultCartesianCS.GEOCENTRIC : LEGACY;
-        final int dimension = check.getDimension();
-        if (cs.getDimension() != dimension) {
-            return cs;
-        }
-        for (int i=0; i<dimension; i++) {
-            if (!cs.getAxis(i).getDirection().equals(check.getAxis(i).getDirection())) {
-                return cs;
-            }
-        }
-        return legacy ? LEGACY : DefaultCartesianCS.GEOCENTRIC;
     }
 }
