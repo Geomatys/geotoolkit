@@ -36,10 +36,10 @@ import org.geotoolkit.referencing.crs.AbstractSingleCRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
-import org.geotoolkit.referencing.cs.AbstractCS;
+import org.apache.sis.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
-import org.geotoolkit.referencing.datum.AbstractDatum;
+import org.apache.sis.referencing.datum.AbstractDatum;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.apache.sis.util.ArgumentChecks;
@@ -69,7 +69,7 @@ public final class WMSUtilities {
     static {
         PERIOD_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT+0"));
     }
-    
+
     private WMSUtilities() {}
 
     /**

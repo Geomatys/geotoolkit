@@ -65,7 +65,7 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
-import static org.geotoolkit.referencing.AbstractIdentifiedObject.*;
+import static org.apache.sis.referencing.AbstractIdentifiedObject.*;
 import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
@@ -558,14 +558,14 @@ final class GeoTiffCRSWriter {
         stack.addShort(
                 (model == 0) ? GeogAngularUnitsGeoKey : ProjLinearUnitsGeoKey,
                 GTUserDefinedGeoKey);
-        
+
         try {
             // citation
             stack.addAscii(GeogCitationGeoKey, unit.toString());
         } catch(Exception ex) {
-            // do nothing unit is unamed. Adding citation is useless. 
+            // do nothing unit is unamed. Adding citation is useless.
         }
-        
+
 
         final Unit base;
         if (SI.METRE.isCompatible(unit)) {

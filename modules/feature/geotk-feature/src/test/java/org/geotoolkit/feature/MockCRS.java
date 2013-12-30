@@ -14,17 +14,17 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author geoadmin
  */
 public class MockCRS extends AbstractCRS{
-    
+
     public MockCRS(Map<String, ?> map){
 
         super(map, new MockCS());
     }
-    
+
     @Override
     public boolean equals(final Object object, final ComparisonMode mode) {
         if(object instanceof CoordinateReferenceSystem){
             CoordinateReferenceSystem tmp = (CoordinateReferenceSystem) object;
-            if(this.nameMatches(tmp.getName().toString()))
+            if(this.isHeuristicMatchForName(tmp.getName().toString()))
                 return true;
         }
         return false;

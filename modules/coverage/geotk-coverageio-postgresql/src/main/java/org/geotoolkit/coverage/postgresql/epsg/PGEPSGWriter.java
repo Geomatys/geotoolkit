@@ -42,7 +42,7 @@ import org.opengis.referencing.operation.Projection;
 import org.opengis.util.FactoryException;
 import static org.geotoolkit.coverage.postgresql.epsg.PGEPSGQueries.*;
 import org.geotoolkit.referencing.EPSGWriter;
-import org.geotoolkit.referencing.datum.AbstractDatum;
+import org.apache.sis.referencing.datum.AbstractDatum;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.apache.sis.util.ComparisonMode;
@@ -62,11 +62,11 @@ import org.opengis.referencing.datum.VerticalDatum;
 
 /**
  * EPSG Writer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class PGEPSGWriter implements EPSGWriter {
-    
+
     private final PGCoverageStore store;
     private final DataSource source;
     private final ThreadedEpsgFactory factory;
@@ -76,7 +76,7 @@ public class PGEPSGWriter implements EPSGWriter {
         this.source = store.getDataSource();
         this.factory = store.getEPSGFactory();
     }
-    
+
     /**
      * Use sequence in database to ensure having a unique code.
      * @return next free epsg code in range >= 32768 et < 60 000 000
@@ -95,25 +95,25 @@ public class PGEPSGWriter implements EPSGWriter {
         }finally{
             store.closeSafe(cnx, stmt, rs);
         }
-        
+
     }
-    
+
     private String searchSimilar(Class clazz, IdentifiedObject candidate) throws FactoryException{
         final IdentifiedObjectFinder finder = factory.getIdentifiedObjectFinder(clazz);
         finder.setComparisonMode(ComparisonMode.APPROXIMATIVE);
         final String code = finder.findIdentifier(candidate);
         return code;
     }
-    
+
     @Override
     public int getOrCreateCoordinateReferenceSystem(final CoordinateReferenceSystem candidate) throws FactoryException{
-        
+
         //search if this object already exist
         final String code = searchSimilar(CoordinateReferenceSystem.class, candidate);
         if(code != null){
             return codeToID(code);
         }
-        
+
         //all required parameters
         final Integer coord_ref_sys_code;
         final String coord_ref_sys_name = candidate.getName().getCode();
@@ -132,17 +132,17 @@ public class PGEPSGWriter implements EPSGWriter {
         final String change_id = "";
         final Integer show_crs = 1;
         final Integer deprecated = 0;
-        
+
         if(candidate instanceof CompoundCRS){
             coord_ref_sys_kind = "compound";
             coord_sys_code = null;
             datum_code = null;
             source_geogcrs_code = null;
             projection_conv_code = null;
-            
+
             final CompoundCRS compound = (CompoundCRS) candidate;
             final List<CoordinateReferenceSystem> parts = compound.getComponents();
-            
+
             cmpd_horizcrs_code = getOrCreateCoordinateReferenceSystem(parts.get(0));
             if(parts.size() == 2){
                 cmpd_vertcrs_code = getOrCreateCoordinateReferenceSystem(parts.get(1));
@@ -155,11 +155,11 @@ public class PGEPSGWriter implements EPSGWriter {
                 final CompoundCRS secondPart = new DefaultCompoundCRS("Split-"+candidate.getName().getCode(), toSplit);
                 cmpd_vertcrs_code = getOrCreateCoordinateReferenceSystem(secondPart);
             }
-            
+
         }else{
             cmpd_horizcrs_code = null;
             cmpd_vertcrs_code = null;
-            
+
             final CoordinateSystem cs = candidate.getCoordinateSystem();
             coord_sys_code = getOrCreateCoordinateSystem(cs);
 
@@ -169,62 +169,62 @@ public class PGEPSGWriter implements EPSGWriter {
                 datum_code = getOrCreateDatum(geocrs.getDatum());
                 source_geogcrs_code = null; //TODO this can be non-null, when ?
                 projection_conv_code = null; //TODO this can be non-null, when ?
-                
+
             }else if(candidate instanceof ProjectedCRS){
                 final ProjectedCRS projcrs = (ProjectedCRS) candidate;
                 coord_ref_sys_kind = "projected";
                 datum_code = null;
                 source_geogcrs_code = getOrCreateCoordinateReferenceSystem(projcrs.getBaseCRS());
                 projection_conv_code = getOrCreateProjection(projcrs.getConversionFromBase());
-                
+
             }else if(candidate instanceof TemporalCRS){
                 final TemporalCRS tempcrs = (TemporalCRS) candidate;
                 coord_ref_sys_kind = "temporal";
                 datum_code = getOrCreateDatum(tempcrs.getDatum());
                 source_geogcrs_code = null;
                 projection_conv_code = null;
-                
+
             }else if(candidate instanceof VerticalCRS){
                 final VerticalCRS vertcrs = (VerticalCRS) candidate;
                 coord_ref_sys_kind = "vertical";
                 datum_code = getOrCreateDatum(vertcrs.getDatum());
                 source_geogcrs_code = null;
                 projection_conv_code = null;
-                
+
             }else if(candidate instanceof SingleCRS){
                 final SingleCRS singlecrs = (SingleCRS) candidate;
                 coord_ref_sys_kind = "single";
                 datum_code = getOrCreateDatum(singlecrs.getDatum());
                 source_geogcrs_code = null;
                 projection_conv_code = null;
-                
+
             }else{
                 throw new FactoryException("Can not store given crs : " +candidate);
             }
-            
+
         }
-        
-        
+
+
         //save object
         Connection cnx = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        try{            
+        try{
             cnx = source.getConnection();
-            
+
             //find similar
-            final Integer similar = findSimilar(cnx, FIND_COORDINATE_REFERENCE_SYSTEM, 
+            final Integer similar = findSimilar(cnx, FIND_COORDINATE_REFERENCE_SYSTEM,
                     coord_ref_sys_kind,coord_sys_code,datum_code,source_geogcrs_code,
                     projection_conv_code,cmpd_horizcrs_code,cmpd_vertcrs_code);
             if(similar != null){ return similar; }
-            
-            
+
+
             final Integer area_of_use_code = getOrCreateArea(candidate.getDomainOfValidity());
-            
+
             cnx.setReadOnly(false);
             coord_ref_sys_code = getNextCode();
             stmt = cnx.prepareStatement(CREATE_COORDINATE_REFERENCE_SYSTEM.query());
-            CREATE_COORDINATE_REFERENCE_SYSTEM.fillStatement(stmt, 
+            CREATE_COORDINATE_REFERENCE_SYSTEM.fillStatement(stmt,
                     coord_ref_sys_code,
                     coord_ref_sys_name,
                     area_of_use_code,
@@ -249,19 +249,19 @@ public class PGEPSGWriter implements EPSGWriter {
         }finally{
             store.closeSafe(cnx, stmt, rs);
         }
-        
+
         return coord_ref_sys_code;
     }
-    
+
     @Override
     public int getOrCreateCoordinateSystem(final CoordinateSystem candidate) throws FactoryException{
-        
+
         //search if this object already exist
         final String code = searchSimilar(CoordinateSystem.class, candidate);
         if(code != null){
             return codeToID(code);
         }
-        
+
         final Integer coord_sys_code;
         final String coord_sys_name = candidate.getName().getCode();
         final String coord_sys_type = getCoordinateSystemType(candidate);
@@ -272,23 +272,23 @@ public class PGEPSGWriter implements EPSGWriter {
         final Date revision_date = new Date(System.currentTimeMillis());
         final String change_id = "";
         final Integer deprecated = 0;
-        
-        
+
+
         //save object
         Connection cnx = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        try{            
+        try{
             cnx = source.getConnection();
-            
+
             //find similar
             final Integer similar = findSimilarCoordinateSystem(candidate, cnx);
             if(similar != null){ return similar; }
-                        
+
             cnx.setReadOnly(false);
             coord_sys_code = getNextCode();
             stmt = cnx.prepareStatement(CREATE_COORDINATE_SYSTEM.query());
-            CREATE_COORDINATE_SYSTEM.fillStatement(stmt, 
+            CREATE_COORDINATE_SYSTEM.fillStatement(stmt,
                     coord_sys_code,
                     coord_sys_name,
                     coord_sys_type,
@@ -306,19 +306,19 @@ public class PGEPSGWriter implements EPSGWriter {
         }finally{
             store.closeSafe(cnx, stmt, rs);
         }
-        
+
         //generate axis
         for(int i=0;i<dimension;i++){
             final CoordinateSystemAxis axis = candidate.getAxis(i);
             createCoordinateSystemAxis(coord_sys_code,i+1,axis);
         }
-        
+
         return coord_sys_code;
     }
-    
-    private int createCoordinateSystemAxis(final int csid, final int axisOrder, 
+
+    private int createCoordinateSystemAxis(final int csid, final int axisOrder,
             final CoordinateSystemAxis candidate) throws FactoryException{
-                
+
         final Integer coord_axis_code;
         final Integer coord_sys_code = csid;
         final Integer coord_axis_name_code = createCoordinateSystemAxisName(candidate);
@@ -326,18 +326,18 @@ public class PGEPSGWriter implements EPSGWriter {
         final String coord_axis_abbreviation = candidate.getAbbreviation();
         final Integer uom_code = getOrCreateUOM(candidate.getUnit());
         final Integer coord_axis_order = axisOrder;
-        
+
         //save object
         Connection cnx = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        try{          
-            coord_axis_code = getNextCode();  
-            
+        try{
+            coord_axis_code = getNextCode();
+
             cnx = source.getConnection();
             cnx.setReadOnly(false);
             stmt = cnx.prepareStatement(CREATE_COORDINATE_AXIS.query());
-            CREATE_COORDINATE_AXIS.fillStatement(stmt, 
+            CREATE_COORDINATE_AXIS.fillStatement(stmt,
                     coord_axis_code,
                     coord_sys_code,
                     coord_axis_name_code,
@@ -352,12 +352,12 @@ public class PGEPSGWriter implements EPSGWriter {
         }finally{
             store.closeSafe(cnx, stmt, rs);
         }
-        
+
         return coord_axis_code;
     }
-    
+
     private int createCoordinateSystemAxisName(final CoordinateSystemAxis candidate) throws FactoryException{
-                
+
         final Integer coord_axis_name_code;
         final String coord_axis_name = candidate.getName().getCode();
         final String description = (candidate.getRemarks() == null)? null : candidate.getRemarks().toString();
@@ -367,18 +367,18 @@ public class PGEPSGWriter implements EPSGWriter {
         final Date revision_date = new Date(System.currentTimeMillis());
         final String change_id = "";
         final Integer deprecated = 0;
-        
+
         //save object
         Connection cnx = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try{
             coord_axis_name_code = getNextCode();
-            
+
             cnx = source.getConnection();
             cnx.setReadOnly(false);
             stmt = cnx.prepareStatement(CREATE_COORDINATE_AXIS_NAME.query());
-            CREATE_COORDINATE_AXIS_NAME.fillStatement(stmt, 
+            CREATE_COORDINATE_AXIS_NAME.fillStatement(stmt,
                     coord_axis_name_code,
                     coord_axis_name,
                     description,
@@ -395,19 +395,19 @@ public class PGEPSGWriter implements EPSGWriter {
         }finally{
             store.closeSafe(cnx, stmt, rs);
         }
-        
+
         return coord_axis_name_code;
     }
-    
+
     @Override
     public int getOrCreateDatum(final Datum candidate) throws FactoryException{
-        
+
         //search if this object already exist
         final String code = searchSimilar(Datum.class, candidate);
         if(code != null){
             return codeToID(code);
         }
-        
+
         final Integer datum_code;
         final String datum_name = candidate.getName().getCode();
         final String datum_type;
@@ -422,7 +422,7 @@ public class PGEPSGWriter implements EPSGWriter {
         final Date revision_date = new Date(System.currentTimeMillis());
         final String change_id = "";
         final Integer deprecated = 0;
-        
+
         if(candidate.getRealizationEpoch() == null){
             realization_epoch = null;
         }else{
@@ -430,21 +430,21 @@ public class PGEPSGWriter implements EPSGWriter {
             c.setTime(candidate.getRealizationEpoch());
             realization_epoch = c.get(Calendar.YEAR);
         }
-        
+
         if(candidate instanceof GeodeticDatum){
             final GeodeticDatum gd = (GeodeticDatum) candidate;
             origin_description = "";
             datum_type = "geodetic";
             ellipsoid_code = getOrCreateEllipsoid(gd.getEllipsoid());
             prime_meridian_code = getOrCreatePrimeMeridian(gd.getPrimeMeridian());
-            
+
         }else if(candidate instanceof VerticalDatum){
             final VerticalDatum vd = (VerticalDatum) candidate;
             origin_description = "";
             datum_type = "vertical";
             ellipsoid_code = null;
             prime_meridian_code = null;
-            
+
         }else if(candidate instanceof TemporalDatum){
             final TemporalDatum td = (TemporalDatum) candidate;
             origin_description = TemporalUtilities.toISO8601Z(td.getOrigin(), TimeZone.getTimeZone("GMT+0"));
@@ -460,14 +460,14 @@ public class PGEPSGWriter implements EPSGWriter {
         }else {
             throw new FactoryException("Can not store given datum : " +candidate);
         }
-        
+
         //save object
         Connection cnx = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        try{            
+        try{
             cnx = source.getConnection();
-            
+
             //find similar
             if (!(candidate instanceof VerticalDatum)) {
                 final Integer similar = findSimilar(cnx, FIND_DATUM, datum_type,origin_description,ellipsoid_code,prime_meridian_code);
@@ -475,11 +475,11 @@ public class PGEPSGWriter implements EPSGWriter {
             }
 
             final Integer area_of_use_code = getOrCreateArea(candidate.getDomainOfValidity());
-            
+
             cnx.setReadOnly(false);
             datum_code = getNextCode();
             stmt = cnx.prepareStatement(CREATE_DATUM.query());
-            CREATE_DATUM.fillStatement(stmt, 
+            CREATE_DATUM.fillStatement(stmt,
                     datum_code,
                     datum_name,
                     datum_type,
@@ -502,23 +502,23 @@ public class PGEPSGWriter implements EPSGWriter {
         }finally{
             store.closeSafe(cnx, stmt, rs);
         }
-        
+
         return datum_code;
     }
-    
+
     @Override
     public int getOrCreateProjection(final Projection candidate) throws FactoryException{
-        
+
         //search if this object already exist
         final String code = searchSimilar(Projection.class, candidate);
         if(code != null){
             return codeToID(code);
         }
-        
+
         throw new FactoryException("No supported yet.");
-        
+
 //        final ParameterValueGroup parameters = candidate.getParameterValues();
-//        
+//
 //        final Integer coord_op_code;
 //        final String coord_op_name;
 //        final String coord_op_type;
@@ -539,17 +539,17 @@ public class PGEPSGWriter implements EPSGWriter {
 //        final String change_id = "";
 //        final Integer show_operation = 1;
 //        final Integer deprecated = 0;
-//        
+//
 //        //save object
 //        Connection cnx = null;
 //        PreparedStatement stmt = null;
 //        ResultSet rs = null;
 //        try{
 //            coord_op_code = getNextCode();
-//            
+//
 //            cnx = source.getConnection();
 //            stmt = cnx.prepareStatement(CREATE_COORDINATE_OPERATION.query());
-//            CREATE_COORDINATE_OPERATION.fillStatement(stmt, 
+//            CREATE_COORDINATE_OPERATION.fillStatement(stmt,
 //                    coord_op_code,
 //                    coord_op_name,
 //                    coord_op_type,
@@ -577,17 +577,17 @@ public class PGEPSGWriter implements EPSGWriter {
 //        }finally{
 //            store.closeSafe(cnx, stmt, rs);
 //        }
-//        
+//
 //        return coord_op_code;
     }
-    
+
     @Override
     public int getOrCreateArea(final Extent candidate) throws FactoryException{
         if(candidate == null){
             //world extent
             return 1262;
         }
-        
+
         if(candidate instanceof IdentifiedObject){
             final IdentifiedObject ie = (IdentifiedObject) candidate;
             final String code = searchSimilar(ie.getClass(), ie);
@@ -595,19 +595,19 @@ public class PGEPSGWriter implements EPSGWriter {
                 return codeToID(code);
             }
         }
-        
+
         //TODO save object, return code
         //return world extent for now
         return 1262;
     }
-    
+
     @Override
     public int getOrCreateUOM(final Unit candidate) throws FactoryException{
-        
+
         final Integer uom_code;
         final String unit_of_meas_name = candidate.toString();
         final String unit_of_meas_type;
-        Integer target_uom_code = null; 
+        Integer target_uom_code = null;
         final Double factor_b = 1d; //TODO must check if unit is derivate and extract scale
         final Double factor_c = 1d; //TODO must check if unit is derivate and extract offset
         final String remarks = "";
@@ -616,7 +616,7 @@ public class PGEPSGWriter implements EPSGWriter {
         final Date revision_date = new Date(System.currentTimeMillis());
         final String change_id = "";
         final Integer deprecated = 0;
-        
+
         //save object
         Connection cnx = null;
         PreparedStatement stmt = null;
@@ -635,15 +635,15 @@ public class PGEPSGWriter implements EPSGWriter {
             }else if(candidate.isCompatible(SI.SECOND)){
                 selfDefined = true;
                 //refer to self, epsg does not contain any temporal unit we could refer to
-                unit_of_meas_type = "temp";            
+                unit_of_meas_type = "temp";
             }else{
                 selfDefined = true;
                 //refer to self
-                unit_of_meas_type = "unknown";      
+                unit_of_meas_type = "unknown";
             }
-        
+
             cnx = source.getConnection();
-            
+
             //find similar
             final Integer similar;
             if(selfDefined){
@@ -652,15 +652,15 @@ public class PGEPSGWriter implements EPSGWriter {
                 similar = findSimilar(cnx, FIND_UNIT_OF_MEASURE, unit_of_meas_name, unit_of_meas_type,target_uom_code,factor_b,factor_c);
             }
             if(similar != null){ return similar; }
-            
+
             cnx.setReadOnly(false);
             uom_code = getNextCode();
-            if(selfDefined){ 
-                target_uom_code = uom_code; 
+            if(selfDefined){
+                target_uom_code = uom_code;
             }
-            
+
             stmt = cnx.prepareStatement(CREATE_UNIT_OF_MEASURE.query());
-            CREATE_UNIT_OF_MEASURE.fillStatement(stmt, 
+            CREATE_UNIT_OF_MEASURE.fillStatement(stmt,
                     uom_code,
                     unit_of_meas_name,
                     unit_of_meas_type,
@@ -680,18 +680,18 @@ public class PGEPSGWriter implements EPSGWriter {
         }finally{
             store.closeSafe(cnx, stmt, rs);
         }
-        
+
         return uom_code;
     }
- 
+
     @Override
     public int getOrCreateEllipsoid(final Ellipsoid candidate) throws FactoryException{
-        
+
         final String code = searchSimilar(Ellipsoid.class, candidate);
         if(code != null){
             return codeToID(code);
         }
-        
+
         final Integer ellipsoid_code;
         final String ellipsoid_name = candidate.getName().getCode();
         final Double semi_major_axis = candidate.getSemiMajorAxis();
@@ -705,23 +705,23 @@ public class PGEPSGWriter implements EPSGWriter {
         final Date revision_date = new Date(System.currentTimeMillis());
         final String change_id = "";
         final Integer deprecated = 0;
-        
+
         //save object
         Connection cnx = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try{
-            
+
             cnx = source.getConnection();
-            
+
             //find similar
             final Integer similar = findSimilar(cnx, FIND_ELLIPSOID, semi_major_axis,uom_code,inv_flattening,semi_minor_axis,ellipsoid_shape);
             if(similar != null){ return similar; }
-            
+
             cnx.setReadOnly(false);
             ellipsoid_code = getNextCode();
             stmt = cnx.prepareStatement(CREATE_UNIT_OF_MEASURE.query());
-            CREATE_UNIT_OF_MEASURE.fillStatement(stmt, 
+            CREATE_UNIT_OF_MEASURE.fillStatement(stmt,
                     ellipsoid_code,
                     ellipsoid_name,
                     semi_major_axis,
@@ -742,18 +742,18 @@ public class PGEPSGWriter implements EPSGWriter {
         }finally{
             store.closeSafe(cnx, stmt, rs);
         }
-        
+
         return ellipsoid_code;
     }
-    
+
     @Override
     public int getOrCreatePrimeMeridian(final PrimeMeridian candidate) throws FactoryException{
-        
+
         final String code = searchSimilar(PrimeMeridian.class, candidate);
         if(code != null){
             return codeToID(code);
         }
-        
+
         final Integer prime_meridian_code;
         final String prime_meridian_name = candidate.getName().getCode();
         final Double greenwich_longitude = candidate.getGreenwichLongitude();
@@ -764,23 +764,23 @@ public class PGEPSGWriter implements EPSGWriter {
         final Date revision_date = new Date(System.currentTimeMillis());
         final String change_id = "";
         final Integer deprecated = 0;
-        
+
         //save object
         Connection cnx = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try{
-            
+
             cnx = source.getConnection();
-            
+
             //find similar
             final Integer similar = findSimilar(cnx, FIND_PRIME_MERIDIAN, prime_meridian_name,greenwich_longitude,uom_code);
             if(similar != null){ return similar; }
-            
+
             cnx.setReadOnly(false);
             prime_meridian_code = getNextCode();
             stmt = cnx.prepareStatement(CREATE_PRIME_MERIDIAN.query());
-            CREATE_PRIME_MERIDIAN.fillStatement(stmt, 
+            CREATE_PRIME_MERIDIAN.fillStatement(stmt,
                     prime_meridian_code,
                     prime_meridian_name,
                     greenwich_longitude,
@@ -798,14 +798,14 @@ public class PGEPSGWriter implements EPSGWriter {
         }finally{
             store.closeSafe(cnx, stmt, rs);
         }
-        
+
         return prime_meridian_code;
     }
-    
+
     private int codeToID(String code){
         return Integer.valueOf(code.split(":")[1]);
     }
-    
+
     private String getCoordinateSystemType(CoordinateSystem candidate) throws FactoryException{
         if(candidate instanceof CartesianCS){
             return "Cartesian";
@@ -819,16 +819,16 @@ public class PGEPSGWriter implements EPSGWriter {
             return "abstract";
         }
     }
-    
+
     /**
      * Search for a similar record in the database.
      */
     private Integer findSimilar(final Connection cnx, final PGEPSGQueries query, final Object ... parameters) throws SQLException{
         Integer similar = null;
-        
+
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        
+
         try{
             stmt = query.createStatement(cnx, parameters);
             rs = stmt.executeQuery();
@@ -838,67 +838,67 @@ public class PGEPSGWriter implements EPSGWriter {
         }finally{
             store.closeSafe(null, stmt, rs);
         }
-        
+
         return similar;
     }
-    
+
     /**
      * Find a similar Coordinate sysmtem, will check axis
      */
-    private Integer findSimilarCoordinateSystem(final CoordinateSystem candidate, 
+    private Integer findSimilarCoordinateSystem(final CoordinateSystem candidate,
             final Connection cnx) throws SQLException, FactoryException{
         Integer similar = null;
-        
+
         final String coord_sys_name = candidate.getName().getCode();
         final String coord_sys_type = getCoordinateSystemType(candidate);
         final Integer dimension = candidate.getDimension();
-        
+
         final int nbDim = candidate.getDimension();
-        
+
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        
+
         try{
             stmt = FIND_COORDINATE_SYSTEM.createStatement(cnx, coord_sys_name,coord_sys_type,dimension);
             rs = stmt.executeQuery();
-            
+
             search:
             while(rs.next()){
                 //check each candidate axis
-                
+
                 boolean match = true;
                 for(int i=0;i<nbDim;i++){
                     final CoordinateSystemAxis axis = candidate.getAxis(i);
                     final String expectedOrientation = axis.getDirection().name();
                     final String expectedAbbreviation = axis.getAbbreviation();
                     final int expectedUomCode = getOrCreateUOM(axis.getUnit());
-                    
+
                     final int coord_sys_code = rs.getInt(1);
                     final String coord_axis_orientation = rs.getString(2);
                     final String coord_axis_abbreviation = rs.getString(3);
                     final int uomCode = rs.getInt(4);
-                    
+
                     if(!(expectedOrientation.equalsIgnoreCase(coord_axis_orientation) &&
                        expectedAbbreviation.equalsIgnoreCase(coord_axis_abbreviation) &&
                        expectedUomCode == uomCode)){
                         match = false;
-                    }                    
-                    
+                    }
+
                     if(i==nbDim-1 && match){
                         //last axis, and all axis match
                         similar = coord_sys_code;
                         break search;
                     }
-                    
+
                     if(!rs.next()){ break; }
                 }
             }
-            
+
         }finally{
             store.closeSafe(null, stmt, rs);
         }
-        
+
         return similar;
     }
-    
+
 }

@@ -20,7 +20,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.datum.BursaWolfParameters;
+import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.opengis.referencing.datum.DatumAuthorityFactory;
@@ -129,19 +129,19 @@ public final class DatumIdentifier {
             }
             BursaWolfParameters bwParams = ((DefaultGeodeticDatum) source).getBursaWolfParameters(DefaultGeodeticDatum.WGS84);
             if(bwParams == null) {
-                bwParams = new BursaWolfParameters(DefaultGeodeticDatum.WGS84);
+                bwParams = new BursaWolfParameters(DefaultGeodeticDatum.WGS84, null);
             }
 
             // search in the handed-built list
             double[] comparisonParams = new double[]{
                     ellipsoidCode,
-                    bwParams.dx,
-                    bwParams.dy,
-                    bwParams.dz,
-                    bwParams.ex,
-                    bwParams.ey,
-                    bwParams.ez,
-                    bwParams.ppm,
+                    bwParams.tX,
+                    bwParams.tY,
+                    bwParams.tZ,
+                    bwParams.rX,
+                    bwParams.rY,
+                    bwParams.rZ,
+                    bwParams.dS,
                     primeShift};
             for(Map.Entry<Integer, Map.Entry<String, double[]>> entry : HANDED_DATUM_TABLE.entrySet()) {
                 if(Arrays.equals(comparisonParams, entry.getValue().getValue())) {
@@ -156,13 +156,13 @@ public final class DatumIdentifier {
                 // build a custom CRS.
                 builder .append(customCode).append(", ")
                         .append(ellipsoidCode).append(", ")
-                        .append(bwParams.dx).append(", ")
-                        .append(bwParams.dy).append(", ")
-                        .append(bwParams.dz).append(", ")
-                        .append(bwParams.ex).append(", ")
-                        .append(bwParams.ey).append(", ")
-                        .append(bwParams.ez).append(", ")
-                        .append(bwParams.ppm);
+                        .append(bwParams.tX).append(", ")
+                        .append(bwParams.tY).append(", ")
+                        .append(bwParams.tZ).append(", ")
+                        .append(bwParams.rX).append(", ")
+                        .append(bwParams.rY).append(", ")
+                        .append(bwParams.rZ).append(", ")
+                        .append(bwParams.dS);
                 if(primeShift != 0) {
                     builder.append(", ").append(primeShift);
                 }
@@ -213,7 +213,7 @@ public final class DatumIdentifier {
      * @throws FactoryException If we've got a problem while ellipsoid building.
      */
     public static GeodeticDatum buildCustomDatum(String name, double[] parameters) throws DataStoreException, FactoryException {
-        BursaWolfParameters bwParams = new BursaWolfParameters(DefaultGeodeticDatum.WGS84);
+        BursaWolfParameters bwParams = new BursaWolfParameters(DefaultGeodeticDatum.WGS84, null);
         if(parameters.length < 1) {
             throw new DataStoreException("There's not enough parameters to build a valid datum. An ellipsoid code is required.");
         }
@@ -223,16 +223,16 @@ public final class DatumIdentifier {
         Ellipsoid ellipse = EllipsoidIdentifier.getEllipsoid(ellipsoidCode);
 
         if(parameters.length > 3) {
-            bwParams.dx = parameters[1];
-            bwParams.dy = parameters[2];
-            bwParams.dz = parameters[3];
+            bwParams.tX = parameters[1];
+            bwParams.tY = parameters[2];
+            bwParams.tZ = parameters[3];
         }
 
         if(parameters.length > 7) {
-            bwParams.ex  = parameters[4];
-            bwParams.ey  = parameters[5];
-            bwParams.ez  = parameters[6];
-            bwParams.ppm = parameters[7];
+            bwParams.rX = parameters[4];
+            bwParams.rY = parameters[5];
+            bwParams.rZ = parameters[6];
+            bwParams.dS = parameters[7];
         }
 
         // If we've got 9 parameters, the datum is not based on Greenwich meridian.
