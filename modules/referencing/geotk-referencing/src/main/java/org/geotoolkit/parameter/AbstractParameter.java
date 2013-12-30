@@ -38,6 +38,7 @@ import org.opengis.parameter.InvalidParameterValueException;
 
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.io.TableWriter;
+import org.geotoolkit.io.wkt.Formattable;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.io.wkt.Formatter;
@@ -59,7 +60,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @module
  */
 public abstract class AbstractParameter extends FormattableObject
-           implements GeneralParameterValue, Serializable, Cloneable
+           implements GeneralParameterValue, Serializable, Cloneable, Formattable
 {
     /**
      * Serial number for inter-operability with different versions.
@@ -356,7 +357,7 @@ public abstract class AbstractParameter extends FormattableObject
      * already know how to {@linkplain Formatter#append(GeneralParameterValue) format parameters}.
      */
     @Override
-    protected String formatTo(final Formatter formatter) {
+    public String formatTo(final Formatter formatter) {
         return "PARAMETER";
     }
 }

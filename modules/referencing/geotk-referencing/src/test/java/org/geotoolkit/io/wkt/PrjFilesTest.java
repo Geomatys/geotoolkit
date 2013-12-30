@@ -38,8 +38,8 @@ public final strictfp class PrjFilesTest {
      * The {@code WGS84} CRS as WKT on a single line.
      */
     private static final String WKT = "GEOGCS[\"WGS84(DD)\", " +
-            "DATUM[\"WGS84\", SPHEROID[\"WGS84\", 6378137.0, 298.257223563, AUTHORITY[\"EPSG\",\"7030\"]], AUTHORITY[\"EPSG\",\"6326\"]], " +
-            "PRIMEM[\"Greenwich\", 0.0, AUTHORITY[\"EPSG\",\"8901\"]], UNIT[\"degree\", 0.017453292519943295], " +
+            "DATUM[\"WGS84\", SPHEROID[\"WGS84\", 6378137.0, 298.257223563, AUTHORITY[\"EPSG\", \"7030\"]], AUTHORITY[\"EPSG\", \"6326\"]], " +
+            "PRIMEM[\"Greenwich\", 0.0, AUTHORITY[\"EPSG\", \"8901\"]], UNIT[\"degree\", 0.017453292519943295], " +
             "AXIS[\"Geodetic longitude\", EAST], AXIS[\"Geodetic latitude\", NORTH]]\n";
 
     /**

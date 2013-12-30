@@ -38,6 +38,7 @@ import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.operation.MathTransforms;
 
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
+import org.geotoolkit.io.wkt.Formattable;
 import static org.geotoolkit.referencing.operation.transform.ConcatenatedTransform.IDENTITY_TOLERANCE;
 
 
@@ -393,7 +394,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
          * normalize/denormalize} transforms respectively. The tuple of those 3 transforms
          * makes the full transform described by this {@code Parameters} object.
          */
-        final class WKT extends FormattableObject implements Parameterized {
+        final class WKT extends FormattableObject implements Parameterized, Formattable {
             /**
              * {@code true} for formatting the inverse transform. If {@code true}, will
              * be set to {@code false} temporarily for formatting the forward transform

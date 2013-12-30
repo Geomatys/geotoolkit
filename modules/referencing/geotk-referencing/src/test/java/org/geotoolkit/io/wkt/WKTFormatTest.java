@@ -316,9 +316,9 @@ public final strictfp class WKTFormatTest {
         String wkt = decodeQuotes(
                 "GEOCCS[“" + name + "”,\n" +
                 "  DATUM[“WGS84”,\n" +
-                "    SPHEROID[“WGS84”, 6378137.0, 298.257223563, AUTHORITY[“EPSG”,“7030”]],\n" +
-                "    AUTHORITY[“EPSG”,“6326”]],\n" +
-                "  PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”,“8901”]],\n" +
+                "    SPHEROID[“WGS84”, 6378137.0, 298.257223563, AUTHORITY[“EPSG”, “7030”]],\n" +
+                "    AUTHORITY[“EPSG”, “6326”]],\n" +
+                "  PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”, “8901”]],\n" +
                 "  UNIT[“metre”, 1.0],\n" +
                 "  AXIS[“Geocentric X”, GEOCENTRIC_X],\n" +
                 "  AXIS[“Geocentric Y”, GEOCENTRIC_Y],\n" +
@@ -332,9 +332,9 @@ public final strictfp class WKTFormatTest {
         wkt = decodeQuotes(
                 "GEOCCS[“" + name + "”,\n" +
                 "  DATUM[“WGS84”,\n" +
-                "    SPHEROID[“WGS84”, 6378137.0, 298.257223563, AUTHORITY[“EPSG”,“7030”]],\n" +
-                "    AUTHORITY[“EPSG”,“6326”]],\n" +
-                "  PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”,“8901”]],\n" +
+                "    SPHEROID[“WGS84”, 6378137.0, 298.257223563, AUTHORITY[“EPSG”, “7030”]],\n" +
+                "    AUTHORITY[“EPSG”, “6326”]],\n" +
+                "  PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”, “8901”]],\n" +
                 "  UNIT[“metre”, 1.0],\n" +
                 "  AXIS[“X”, OTHER],\n" +
                 "  AXIS[“Y”, EAST],\n" +
@@ -523,7 +523,7 @@ public final strictfp class WKTFormatTest {
         assertMultilinesEquals(decodeQuotes(
             "GEOGCS[“NTF (Paris)”,\n" +
             "  DATUM[“Nouvelle Triangulation Francaise (Paris)”,\n" +
-            "    SPHEROID[“Clarke 1866”, 6378206.4, 294.9786982138982, AUTHORITY[“EPSG”,“7008”]]],\n" +
+            "    SPHEROID[“Clarke 1866”, 6378206.4, 294.9786982138982, AUTHORITY[“EPSG”, “7008”]]],\n" +
             "  PRIMEM[“Paris”, 2.5969213],\n" +
             "  UNIT[“grade”, 0.015707963267948967],\n" +
             "  AXIS[“λ”, EAST],\n" +
@@ -534,7 +534,7 @@ public final strictfp class WKTFormatTest {
         assertMultilinesEquals(decodeQuotes(
             "GEOGCS[“NTF (Paris)”,\n" +
             "  DATUM[“Nouvelle Triangulation Francaise (Paris)”,\n" +
-            "    SPHEROID[“Clarke 1866”, 6378206.4, 294.9786982138982, AUTHORITY[“EPSG”,“7008”]]],\n" +
+            "    SPHEROID[“Clarke 1866”, 6378206.4, 294.9786982138982, AUTHORITY[“EPSG”, “7008”]]],\n" +
             "  PRIMEM[“Paris”, 2.33722917],\n" +
             "  UNIT[“grade”, 0.015707963267948967],\n" +
             "  AXIS[“λ”, EAST],\n" +
