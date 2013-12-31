@@ -22,20 +22,17 @@ package org.geotoolkit.referencing.crs;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Objects;
 import javax.measure.unit.Unit;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.measure.Measure;
 import org.apache.sis.io.wkt.Formatter;
 import org.geotoolkit.referencing.cs.AbstractCS;
-import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Vocabulary;
@@ -196,8 +193,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
         if (super.equals(object, mode)) {
             switch (mode) {
                 case STRICT: {
-                    final AbstractCRS that = (AbstractCRS) object;
-                    return Objects.equals(this.coordinateSystem, that.coordinateSystem);
+                    return coordinateSystem.equals(((AbstractCRS) object).coordinateSystem);
                 }
                 default: {
                     final CoordinateReferenceSystem that = (CoordinateReferenceSystem) object;
@@ -209,19 +205,11 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
     }
 
     /**
-     * Returns the hash code for the given object in the given mode, or 0 if the given object is null.
-     */
-    static int hashCode(final IdentifiedObject object, final ComparisonMode mode) {
-        return (object instanceof AbstractIdentifiedObject) ?
-               ((AbstractIdentifiedObject) object).hashCode(mode) : Objects.hashCode(object);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
-    public int hashCode(final ComparisonMode mode) throws IllegalArgumentException {
-        return super.hashCode(mode) + 31*hashCode(coordinateSystem, mode);
+    protected long computeHashCode() {
+        return super.computeHashCode() + 31*coordinateSystem.hashCode();
     }
 
     /**

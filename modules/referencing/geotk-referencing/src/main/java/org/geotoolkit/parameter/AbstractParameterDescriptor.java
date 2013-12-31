@@ -32,8 +32,6 @@ import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 
-import static org.geotoolkit.util.Utilities.hash;
-
 
 /**
  * The root class of {@link org.opengis.parameter.ParameterDescriptor} and
@@ -169,8 +167,8 @@ public abstract class AbstractParameterDescriptor extends AbstractIdentifiedObje
      * {@inheritDoc}
      */
     @Override
-    public int hashCode(final ComparisonMode mode) throws IllegalArgumentException {
-        return hash(minimumOccurs, super.hashCode(mode));
+    protected long computeHashCode() {
+        return super.computeHashCode() + minimumOccurs;
     }
 
     /**

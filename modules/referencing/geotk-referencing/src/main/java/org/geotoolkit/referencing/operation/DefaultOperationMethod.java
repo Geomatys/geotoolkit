@@ -50,7 +50,6 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.io.wkt.Formatter;
 
-import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.ArgumentChecks.*;
 
 
@@ -339,8 +338,8 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
      * {@inheritDoc}
      */
     @Override
-    public int hashCode(final ComparisonMode mode) {
-        return hash(sourceDimension, hash(targetDimension, hash(parameters, super.hashCode(mode))));
+    protected long computeHashCode() {
+        return super.computeHashCode() + Objects.hash(sourceDimension, targetDimension, parameters);
     }
 
     /**

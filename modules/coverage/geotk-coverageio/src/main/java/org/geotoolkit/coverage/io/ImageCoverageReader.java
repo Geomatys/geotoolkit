@@ -850,7 +850,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             final IIOMetadata metadata = imageReader.getImageMetadata(index, GEOTK_FORMAT_NAME, METADATA_NODES);
             if (metadata == null || metadata instanceof SpatialMetadata) {
                 imageMetadata = (SpatialMetadata) metadata;
-            } else if (metadata != null) {
+            } else {
                 imageMetadata = new SpatialMetadata(false, imageReader, metadata);
             }
             imageMetadataIndex = index;

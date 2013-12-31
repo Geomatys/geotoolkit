@@ -50,7 +50,6 @@ import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.apache.sis.measure.Units;
 
-import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
@@ -583,8 +582,8 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
      * {@inheritDoc}
      */
     @Override
-    public int hashCode(final ComparisonMode mode) {
-        return hash(sourceCRS, hash(targetCRS, hash(transform, super.hashCode(mode))));
+    protected long computeHashCode() {
+        return super.computeHashCode() + Objects.hash(sourceCRS, targetCRS, transform);
     }
 
     /**

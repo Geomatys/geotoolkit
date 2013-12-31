@@ -21,7 +21,6 @@
 package org.geotoolkit.referencing.crs;
 
 import java.util.Map;
-import java.util.Objects;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.Datum;
@@ -29,7 +28,6 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.cs.CoordinateSystem;
 
 import org.geotoolkit.internal.referencing.NilReferencingObject;
-import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.io.wkt.Formatter;
@@ -167,8 +165,7 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
         if (super.equals(object, mode)) {
             switch (mode) {
                 case STRICT: {
-                    final AbstractSingleCRS that = (AbstractSingleCRS) object;
-                    return Objects.equals(this.datum, that.datum);
+                    return datum.equals(((AbstractSingleCRS) object).datum);
                 }
                 default: {
                     final SingleCRS that = (SingleCRS) object;
@@ -183,8 +180,8 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
      * {@inheritDoc}
      */
     @Override
-    public int hashCode(final ComparisonMode mode) throws IllegalArgumentException {
-        return super.hashCode(mode) + 31*hashCode(datum, mode);
+    protected long computeHashCode() {
+        return super.computeHashCode() + 31*datum.hashCode();
     }
 
     /**

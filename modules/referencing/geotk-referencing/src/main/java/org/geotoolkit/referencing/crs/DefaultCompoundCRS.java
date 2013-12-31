@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Objects;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import net.jcip.annotations.Immutable;
@@ -374,8 +373,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
         if (super.equals(object, mode)) {
             switch (mode) {
                 case STRICT: {
-                    final DefaultCompoundCRS that = (DefaultCompoundCRS) object;
-                    return Objects.equals(this.components, that.components);
+                    return components.equals(((DefaultCompoundCRS) object).components);
                 }
                 default: {
                     final CompoundCRS that = (CompoundCRS) object;
@@ -390,8 +388,8 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
      * {@inheritDoc}
      */
     @Override
-    public int hashCode(final ComparisonMode mode) throws IllegalArgumentException {
-        return super.hashCode(mode) + 31*components.hashCode();
+    protected long computeHashCode() {
+        return super.computeHashCode() + 31*components.hashCode();
     }
 
     /**

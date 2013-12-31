@@ -42,7 +42,6 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
@@ -456,7 +455,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
      * {@inheritDoc}
      */
     @Override
-    public int hashCode(final ComparisonMode mode) {
-        return hash(prefix, hash(separator, super.hashCode(mode)));
+    protected long computeHashCode() {
+        return super.computeHashCode() + prefix.hashCode() + separator;
     }
 }

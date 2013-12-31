@@ -116,7 +116,8 @@ public final class Measure extends Number {
      */
     @Override
     public int hashCode() {
-        return Numerics.hash(value, Objects.hashCode(unit));
+        final long hash = Double.doubleToLongBits(value) + Objects.hashCode(unit);
+        return ((int) hash) ^ (int) (hash >>> Integer.SIZE);
     }
 
     /**

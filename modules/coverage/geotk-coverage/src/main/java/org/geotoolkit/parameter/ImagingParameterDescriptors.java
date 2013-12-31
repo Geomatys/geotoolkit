@@ -69,7 +69,6 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
 import org.apache.sis.metadata.iso.citation.DefaultResponsibleParty;
 
-import static org.geotoolkit.util.Utilities.hash;
 import static javax.media.jai.registry.RenderedRegistryMode.MODE_NAME;
 
 
@@ -575,7 +574,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
      * {@inheritDoc}
      */
     @Override
-    public int hashCode(final ComparisonMode mode) {
-        return hash(descriptor, super.hashCode(mode));
+    protected long computeHashCode() {
+        return super.computeHashCode() + descriptor.hashCode();
     }
 }

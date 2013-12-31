@@ -322,7 +322,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
      * {@inheritDoc}
      */
     @Override
-    public int hashCode(final ComparisonMode mode) throws IllegalArgumentException {
+    protected long computeHashCode() {
         /*
          * Do not invoke 'conversionFromBase.hashCode()' in order to avoid a never-ending loop.
          * This is because Conversion inherits a 'sourceCRS' field from the CoordinateOperation
@@ -330,7 +330,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
          * work neither for the reason documented inside the DefaultSingleOperation.equals(...)
          * method body. The MathTransform is our best discriminant.
          */
-        return super.hashCode(mode) + 31*(hashCode(baseCRS, mode) + conversionFromBase.getMathTransform().hashCode());
+        return super.computeHashCode() + 31*baseCRS.hashCode() + conversionFromBase.getMathTransform().hashCode();
     }
 
     /**

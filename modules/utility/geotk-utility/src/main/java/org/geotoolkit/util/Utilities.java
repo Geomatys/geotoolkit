@@ -18,7 +18,6 @@
 package org.geotoolkit.util;
 
 import java.util.Arrays;
-import java.io.Serializable;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.Version;
 

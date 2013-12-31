@@ -46,7 +46,6 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ComparisonMode;
 
-import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
@@ -335,8 +334,8 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
      * {@inheritDoc}
      */
     @Override
-    public int hashCode(final ComparisonMode mode) {
-        return hash(Arrays.hashCode(parameters), super.hashCode(mode));
+    protected long computeHashCode() {
+        return Arrays.hashCode(parameters) + super.computeHashCode();
     }
 
     /**

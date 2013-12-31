@@ -46,7 +46,6 @@ import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.io.wkt.Formatter;
 
-import static org.geotoolkit.util.Utilities.hash;
 import static org.apache.sis.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
@@ -349,8 +348,8 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
      * {@inheritDoc}
      */
     @Override
-    public int hashCode(final ComparisonMode mode) {
-        return hash(operations, super.hashCode(mode));
+    protected long computeHashCode() {
+        return super.computeHashCode() + operations.hashCode();
     }
 
     /**

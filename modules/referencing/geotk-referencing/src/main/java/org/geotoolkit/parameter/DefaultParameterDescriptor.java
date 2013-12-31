@@ -572,9 +572,9 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
      * {@inheritDoc}
      */
     @Override
-    public int hashCode(final ComparisonMode mode) throws IllegalArgumentException {
+    protected long computeHashCode() {
         return hash(valueClass, hash(deepHashCode(defaultValue),
-               hash(minimum, hash(maximum, hash(unit, super.hashCode(mode))))));
+               hash(minimum, hash(maximum, hash(unit, 0))))) + super.computeHashCode();
     }
 
     /**
