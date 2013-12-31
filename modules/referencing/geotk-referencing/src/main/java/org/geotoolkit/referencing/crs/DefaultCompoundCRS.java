@@ -370,7 +370,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (super.equals(object, mode)) {
+        if (object instanceof CompoundCRS && super.equals(object, mode)) {
             switch (mode) {
                 case STRICT: {
                     return components.equals(((DefaultCompoundCRS) object).components);

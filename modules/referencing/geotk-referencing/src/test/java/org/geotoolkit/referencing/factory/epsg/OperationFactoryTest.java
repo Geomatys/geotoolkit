@@ -34,6 +34,7 @@ import org.geotoolkit.referencing.operation.CachingCoordinateOperationFactory;
 
 import org.apache.sis.util.Classes;
 import org.junit.*;
+
 import static org.junit.Assume.*;
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.decodeQuotes;

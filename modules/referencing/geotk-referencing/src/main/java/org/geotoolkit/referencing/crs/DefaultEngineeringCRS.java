@@ -96,7 +96,7 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
          */
         @Override
         public boolean equals(final Object object, final ComparisonMode mode) {
-            if (super.equals(object, mode)) {
+            if (object instanceof EngineeringCRS && super.equals(object, mode)) {
                 switch (mode) {
                     case STRICT:
                     case BY_CONTRACT: {

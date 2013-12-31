@@ -48,7 +48,7 @@ public interface Formattable {
      * show below:
      *
      * {@preformat text
-     *     GEOGCS["WGS 84", AUTHORITY["EPSG","4326"]]
+     *     GEOGCS["WGS 84", AUTHORITY["EPSG", "4326"]]
      *                    ↑
      *            (insertion point)
      * }

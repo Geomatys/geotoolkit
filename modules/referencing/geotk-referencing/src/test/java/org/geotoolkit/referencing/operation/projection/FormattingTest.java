@@ -451,19 +451,19 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
         String wkt = decodeQuotes(
                 "PROJCS[“OSGB 1936 / British National Grid”,\n" +
                 "  GEOGCS[“OSGB 1936”,DATUM[“OSGB_1936”,\n" +
-                "    SPHEROID[“Airy 1830”,6377563.396,299.3249646,AUTHORITY[“EPSG”,“7001”]],\n" +
-                "    TOWGS84[375,-111,431,0,0,0,0],AUTHORITY[“EPSG”,“6277”]],\n" +
-                "    PRIMEM[“Greenwich”,0,AUTHORITY[“EPSG”,“8901”]],\n" +
-                "    UNIT[“DMSH”,0.0174532925199433,AUTHORITY[“EPSG”,“9108”]],\n" +
-                "    AXIS[“Lat”,NORTH],AXIS[“Long”,EAST],AUTHORITY[“EPSG”,“4277”]],\n" +
+                "    SPHEROID[“Airy 1830”,6377563.396,299.3249646,AUTHORITY[“EPSG”, “7001”]],\n" +
+                "    TOWGS84[375,-111,431,0,0,0,0],AUTHORITY[“EPSG”, “6277”]],\n" +
+                "    PRIMEM[“Greenwich”,0,AUTHORITY[“EPSG”, “8901”]],\n" +
+                "    UNIT[“DMSH”,0.0174532925199433,AUTHORITY[“EPSG”, “9108”]],\n" +
+                "    AXIS[“Lat”,NORTH],AXIS[“Long”,EAST],AUTHORITY[“EPSG”, “4277”]],\n" +
                 "  PROJECTION[“Transverse_Mercator”],\n" +
                 "  PARAMETER[“latitude_of_origin”,49],\n" +
                 "  PARAMETER[“central_meridian”,-2],\n" +
                 "  PARAMETER[“scale_factor”,0.999601272],\n" +
                 "  PARAMETER[“false_easting”,400000],\n" +
                 "  PARAMETER[“false_northing”,-100000],\n" +
-                "  UNIT[“metre”,1,AUTHORITY[“EPSG”,“9001”]],\n" +
-                "  AXIS[“E”,EAST],AXIS[“N”,NORTH],AUTHORITY[“EPSG”,“27700”]]");
+                "  UNIT[“metre”,1,AUTHORITY[“EPSG”, “9001”]],\n" +
+                "  AXIS[“E”,EAST],AXIS[“N”,NORTH],AUTHORITY[“EPSG”, “27700”]]");
 
         final ProjectedCRS parsedCRS = (ProjectedCRS) crsFactory.createFromWKT(wkt);
         wkt = parsedCRS.toWKT();

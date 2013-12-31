@@ -190,7 +190,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
      */
     @Override
     public boolean equals(final Object object, final ComparisonMode mode) {
-        if (super.equals(object, mode)) {
+        if (object instanceof CoordinateReferenceSystem && super.equals(object, mode)) {
             switch (mode) {
                 case STRICT: {
                     return coordinateSystem.equals(((AbstractCRS) object).coordinateSystem);

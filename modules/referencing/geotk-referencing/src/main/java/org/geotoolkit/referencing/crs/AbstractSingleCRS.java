@@ -162,7 +162,7 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
      */
     @Override
     public boolean equals(final Object object, final ComparisonMode mode) {
-        if (super.equals(object, mode)) {
+        if (object instanceof SingleCRS && super.equals(object, mode)) {
             switch (mode) {
                 case STRICT: {
                     return datum.equals(((AbstractSingleCRS) object).datum);

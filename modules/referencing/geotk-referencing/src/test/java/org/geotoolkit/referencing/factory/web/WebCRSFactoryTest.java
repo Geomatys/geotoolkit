@@ -141,14 +141,14 @@ public final strictfp class WebCRSFactoryTest {
     public void tesWKT() throws FactoryException {
         GeographicCRS crs = factory.createGeographicCRS("CRS:84");
         assertMultilinesEquals(decodeQuotes(
-            "GEOGCS[“WGS84”, \n" +
-            "  DATUM[“WGS84”, \n" +
-            "    SPHEROID[“WGS84”, 6378137.0, 298.257223563, AUTHORITY[“EPSG”,“7030”]]], \n" +
-            "  PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”,“8901”]], \n" +
-            "  UNIT[“degree”, 0.017453292519943295], \n" +
-            "  AXIS[“Geodetic longitude”, EAST], \n" +
-            "  AXIS[“Geodetic latitude”, NORTH], \n" +
-            "  AUTHORITY[“CRS”,“84”]]"), crs.toWKT());
+            "GEOGCS[“WGS84”,\n" +
+            "  DATUM[“WGS84”,\n" +
+            "    SPHEROID[“WGS84”, 6378137.0, 298.257223563, AUTHORITY[“EPSG”, “7030”]]],\n" +
+            "  PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”, “8901”]],\n" +
+            "  UNIT[“degree”, 0.017453292519943295],\n" +
+            "  AXIS[“Geodetic longitude”, EAST],\n" +
+            "  AXIS[“Geodetic latitude”, NORTH],\n" +
+            "  AUTHORITY[“CRS”, “84”]]"), crs.toWKT());
     }
 
     /**

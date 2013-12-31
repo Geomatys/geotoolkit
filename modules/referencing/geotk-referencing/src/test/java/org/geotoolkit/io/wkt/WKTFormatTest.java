@@ -161,22 +161,22 @@ public final strictfp class WKTFormatTest {
                "PROJCS[“OSGB 1936 / British National Grid”,\n" +
                "  GEOGCS[“OSGB 1936”,\n" +
                "    DATUM[“OSGB_1936”,\n" +
-               "      SPHEROID[“Airy 1830”, 6377563.396, 299.3249646, AUTHORITY[“EPSG”,”7001”]],\n" +
+               "      SPHEROID[“Airy 1830”, 6377563.396, 299.3249646, AUTHORITY[“EPSG”, “7001”]],\n" +
                "      TOWGS84[375.0, -111.0, 431.0, 0.0, 0.0, 0.0, 0.0],\n" +
-               "      AUTHORITY[“EPSG”,”6277”]],\n" +
-               "    PRIMEM[“Greenwich”,0.0, AUTHORITY[“EPSG”,”8901”]],\n" +
-               "    UNIT[“DMSH”,0.0174532925199433, AUTHORITY[“EPSG”,”9108”]],\n" +
-               "    AXIS[“Lat”,NORTH],AXIS[“Long”,EAST], AUTHORITY[“EPSG”,”4277”]],\n" +
+               "      AUTHORITY[“EPSG”, “6277”]],\n" +
+               "    PRIMEM[“Greenwich”,0.0, AUTHORITY[“EPSG”, “8901”]],\n" +
+               "    UNIT[“DMSH”,0.0174532925199433, AUTHORITY[“EPSG”, “9108”]],\n" +
+               "    AXIS[“Lat”,NORTH],AXIS[“Long”,EAST], AUTHORITY[“EPSG”, “4277”]],\n" +
                "  PROJECTION[“Transverse_Mercator”],\n" +
                "  PARAMETER[“latitude_of_origin”, 49.0],\n" +
                "  PARAMETER[“central_meridian”, -2.0],\n" +
                "  PARAMETER[“scale_factor”, 0.999601272],\n" +
                "  PARAMETER[“false_easting”, 400000.0],\n" +
                "  PARAMETER[“false_northing”, -100000.0],\n" +
-               "  UNIT[“metre”, 1.0, AUTHORITY[“EPSG”,”9001”]],\n" +
+               "  UNIT[“metre”, 1.0, AUTHORITY[“EPSG”, “9001”]],\n" +
                "  AXIS[“E”,EAST],\n" +
                "  AXIS[“N”,NORTH],\n" +
-               "  AUTHORITY[“EPSG”,”27700”]]\n");
+               "  AUTHORITY[“EPSG”, “27700”]]\n");
         assertTrue(Symbols.DEFAULT.containsAxis(wkt1));
         final WKTFormat wktFormat = new WKTFormat();
         final DefaultProjectedCRS crs1  = (DefaultProjectedCRS) wktFormat.parseObject(wkt1);
@@ -214,7 +214,7 @@ public final strictfp class WKTFormatTest {
                "    AXIS[“Longitude”, EAST],\n" +
                "    AXIS[“Latitude”, NORTH]],\n" +
                "  PROJECTION[“Transverse_Mercator”,\n" +
-               "    AUTHORITY[“OGC”,”Transverse_Mercator”]],\n" +
+               "    AUTHORITY[“OGC”, “Transverse_Mercator”]],\n" +
                "  PARAMETER[“central_meridian”, 170.0],\n" +
                "  PARAMETER[“latitude_of_origin”, 50.0],\n" +
                "  PARAMETER[“scale_factor”, 0.95],\n" +
@@ -254,7 +254,7 @@ public final strictfp class WKTFormatTest {
                "  SPHEROID[“GRS 1980”, 6378137, 298.257222101]],\n" +
                "  PRIMEM[“Greenwich”, 0],\n" +
                "  UNIT[“Decimal_Second”, 4.84813681109536e-06],\n" +
-               "  AUTHORITY[“EPSG”, ”100001”]]");
+               "  AUTHORITY[“EPSG”, “100001”]]");
         assertFalse(Symbols.DEFAULT.containsAxis(wkt1));
         final WKTFormat wktFormat = new WKTFormat();
         final String wkt2 = wktFormat.format(wktFormat.parseObject(wkt1));

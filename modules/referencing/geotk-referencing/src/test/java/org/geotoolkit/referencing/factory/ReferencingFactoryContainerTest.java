@@ -95,9 +95,9 @@ public final strictfp class ReferencingFactoryContainerTest {
             "  PROJCS[“NTF 3D”,\n" +
             "    GEOGCS[“NTF (Paris) (3D)”,\n" +
             "      DATUM[“Nouvelle Triangulation Francaise (Paris)”,\n" +
-            "        SPHEROID[“Clarke 1880 (IGN)”, 6378249.2, 293.4660212936269, AUTHORITY[“EPSG”,“7011”]],\n" +
-            "        AUTHORITY[“EPSG”,“6807”]],\n" +
-            "      PRIMEM[“Paris”, 2.5969213, AUTHORITY[“EPSG”,“8903”]],\n" +
+            "        SPHEROID[“Clarke 1880 (IGN)”, 6378249.2, 293.4660212936269, AUTHORITY[“EPSG”, “7011”]],\n" +
+            "        AUTHORITY[“EPSG”, “6807”]],\n" +
+            "      PRIMEM[“Paris”, 2.5969213, AUTHORITY[“EPSG”, “8903”]],\n" +
             "      UNIT[“grade”, 0.015707963267948967],\n" +
             "      AXIS[“Geodetic latitude”, NORTH],\n" +
             "      AXIS[“Geodetic longitude”, EAST],\n" +

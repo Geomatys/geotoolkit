@@ -294,7 +294,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (super.equals(object, mode)) {
+        if (object instanceof GeneralDerivedCRS && super.equals(object, mode)) {
             final boolean strict = (mode == ComparisonMode.STRICT);
             if (deepEquals(strict ? baseCRS : getBaseCRS(),
                            strict ? ((AbstractDerivedCRS) object).baseCRS
