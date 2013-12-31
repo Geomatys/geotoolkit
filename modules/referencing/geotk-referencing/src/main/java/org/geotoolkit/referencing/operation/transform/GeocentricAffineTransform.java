@@ -183,9 +183,9 @@ public class GeocentricAffineTransform extends ProjectiveTransform {
                 // Fall through
             }
             case TRANSLATION: {
-                param[0] = new FloatParameter(PositionVector7Param.DX,  parameters.rX);
-                param[1] = new FloatParameter(PositionVector7Param.DY,  parameters.rY);
-                param[2] = new FloatParameter(PositionVector7Param.DZ,  parameters.rZ);
+                param[0] = new FloatParameter(PositionVector7Param.DX,  parameters.tX);
+                param[1] = new FloatParameter(PositionVector7Param.DY,  parameters.tY);
+                param[2] = new FloatParameter(PositionVector7Param.DZ,  parameters.tZ);
                 break;
             }
         }

@@ -428,7 +428,7 @@ public final class IdentifiedObjects extends Static {
      */
     @Deprecated
     public static String getIdentifier(final IdentifiedObject object) {
-        return org.apache.sis.referencing.IdentifiedObjects.getIdentifierCode(object);
+        return org.apache.sis.referencing.IdentifiedObjects.getIdentifierOrName(object);
     }
 
     /**
