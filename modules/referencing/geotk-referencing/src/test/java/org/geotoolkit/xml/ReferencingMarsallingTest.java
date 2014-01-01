@@ -31,6 +31,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 
+import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.metadata.identification.CharacterSet;
 import org.opengis.metadata.identification.DataIdentification;
@@ -56,13 +57,13 @@ import org.apache.sis.metadata.iso.spatial.DefaultVectorSpatialRepresentation;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
-import org.geotoolkit.referencing.cs.DefaultVerticalCS;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
-import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
+import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
+import org.apache.sis.referencing.cs.DefaultEllipsoidalCS;
+import org.apache.sis.referencing.cs.DefaultVerticalCS;
+import org.apache.sis.referencing.datum.DefaultEllipsoid;
+import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
+import org.apache.sis.referencing.datum.DefaultPrimeMeridian;
+import org.apache.sis.referencing.datum.DefaultVerticalDatum;
 import org.geotoolkit.test.LocaleDependantTestBase;
 import org.geotoolkit.test.TestData;
 
@@ -203,6 +204,8 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
         final DefaultMetadata result = (DefaultMetadata) obj;
         final ReferenceIdentifier expectedID = getSingleton(expected.getReferenceSystemInfo()).getName();
         final ReferenceIdentifier   resultID = getSingleton(  result.getReferenceSystemInfo()).getName();
+        final Extent expectedExtent = getSingleton(((DataIdentification) getSingleton(expected.getIdentificationInfo())).getExtents());
+        final Extent resultExtent   = getSingleton(((DataIdentification) getSingleton(result  .getIdentificationInfo())).getExtents());
         /*
          * Ensure that we have a vertical CRS.
          *
@@ -220,12 +223,15 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
         assertEquals("gmd:language",                  expected  .getLanguage(),                  result  .getLanguage());
         assertEquals("gmd:characterSet",              expected  .getCharacterSet(),              result  .getCharacterSet());
         assertEquals("gmd:spatialRepresentationInfo", expected  .getSpatialRepresentationInfo(), result  .getSpatialRepresentationInfo());
+        assertEquals("gmd:geographicElement",         expectedExtent.getGeographicElements(),    resultExtent.getGeographicElements());
+        assertEquals("gmd:verticalElement",           expectedExtent.getVerticalElements(),      resultExtent.getVerticalElements());
+        assertEquals("gmd:extent",                    expectedExtent,                            resultExtent);
         assertEquals("gmd:code",                      expectedID.getCode(),                      resultID.getCode());
         assertEquals("gmd:codeSpace",                 expectedID.getCodeSpace(),                 resultID.getCodeSpace());
-//      assertEquals("gmd:authority",                 expectedID.getAuthority(),                 resultID.getAuthority());
-//      assertEquals("gmd:referenceSystemInfo",       expected  .getReferenceSystemInfo(),       result  .getReferenceSystemInfo());
+        assertEquals("gmd:authority",                 expectedID.getAuthority(),                 resultID.getAuthority());
+        assertEquals("gmd:referenceSystemInfo",       expected  .getReferenceSystemInfo(),       result  .getReferenceSystemInfo());
         assertEquals("gmd:identificationInfo",        expected  .getIdentificationInfo(),        result  .getIdentificationInfo());
-//      assertEquals("gmd:MD_Metadata",               expected,                                  result);
+        assertEquals("gmd:MD_Metadata",               expected,                                  result);
     }
 
     /**
@@ -278,11 +284,7 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
          * Geographic Extent.
          */
         final DefaultExtent extent = new DefaultExtent();
-        final double west  = Double.parseDouble( "4.55");
-        final double east  = Double.parseDouble( "4.55");
-        final double south = Double.parseDouble("44.22");
-        final double north = Double.parseDouble("44.22");
-        final GeographicExtent geo = new DefaultGeographicBoundingBox(west, east, south, north);
+        final GeographicExtent geo = new DefaultGeographicBoundingBox(4.55, 4.55, 44.22, 44.22);
         extent.setGeographicElements(Collections.singleton(geo));
         /*
          * Vertical extent.

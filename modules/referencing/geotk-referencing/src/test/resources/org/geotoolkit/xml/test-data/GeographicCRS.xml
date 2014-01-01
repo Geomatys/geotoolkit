@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<gml:GeographicCRS gml:id="WGS84(DD)"
+<gml:GeographicCRS gml:id="WGS84DD"
         xmlns:gml = "http://www.opengis.net/gml/3.2"
         xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation = "http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/datums.xsd">
   <gml:name>WGS84(DD)</gml:name>
   <gml:ellipsoidalCS>
-    <gml:EllipsoidalCS gml:id="Géodésique 2D">
+    <gml:EllipsoidalCS gml:id="Géodésique2D">
       <gml:name>Géodésique 2D</gml:name>
       <gml:axis>
-        <gml:CoordinateSystemAxis uom="deg" gml:id="Geodetic longitude">
+        <gml:CoordinateSystemAxis uom="deg" gml:id="Geodeticlongitude">
           <gml:name>Geodetic longitude</gml:name>
           <gml:axisAbbrev>λ</gml:axisAbbrev>
           <gml:axisDirection codeSpace="EPSG">east</gml:axisDirection>
         </gml:CoordinateSystemAxis>
       </gml:axis>
       <gml:axis>
-        <gml:CoordinateSystemAxis uom="deg" gml:id="Geodetic latitude">
+        <gml:CoordinateSystemAxis uom="deg" gml:id="Geodeticlatitude">
           <gml:name>Geodetic latitude</gml:name>
           <gml:axisAbbrev>φ</gml:axisAbbrev>
           <gml:axisDirection codeSpace="EPSG">north</gml:axisDirection>
@@ -24,8 +24,8 @@
     </gml:EllipsoidalCS>
   </gml:ellipsoidalCS>
   <gml:geodeticDatum>
-    <gml:GeodeticDatum gml:id="EPSG6326">
-      <gml:identifier codeSpace="EPSG">6326</gml:identifier>
+    <gml:GeodeticDatum gml:id="epsg-datum-6326">
+      <gml:identifier codeSpace="EPSG">urn:ogc:def:datum:EPSG::6326</gml:identifier>
       <gml:name>World Geodetic System 1984</gml:name>
       <gml:primeMeridian>
         <gml:PrimeMeridian gml:id="Greenwich">

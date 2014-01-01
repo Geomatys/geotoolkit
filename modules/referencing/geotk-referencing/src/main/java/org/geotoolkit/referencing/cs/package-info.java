@@ -71,31 +71,4 @@
  * @since 2.0
  * @module
  */
-@XmlSchema(elementFormDefault= XmlNsForm.QUALIFIED, namespace = Namespaces.GML, xmlns = {
-    @XmlNs(prefix = "gmd", namespaceURI = Namespaces.GMD),
-    @XmlNs(prefix = "xsi", namespaceURI = Namespaces.XSI),
-    @XmlNs(prefix = "gml", namespaceURI = Namespaces.GML)
-})
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(CS_AxisDirection.class),
-    @XmlJavaTypeAdapter(CS_CoordinateSystemAxis.class),
-
-    // Java types, primitive types and basic OGC types handling
-    @XmlJavaTypeAdapter(UnitAdapter.class)
-})
 package org.geotoolkit.referencing.cs;
-
-import org.apache.sis.internal.jaxb.referencing.CS_AxisDirection;
-import org.apache.sis.internal.jaxb.referencing.CS_CoordinateSystemAxis;
-import javax.xml.bind.annotation.XmlNs;
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
-
-import org.apache.sis.xml.Namespaces;
-import org.apache.sis.internal.jaxb.gco.*;
-import org.geotoolkit.internal.jaxb.referencing.*;
