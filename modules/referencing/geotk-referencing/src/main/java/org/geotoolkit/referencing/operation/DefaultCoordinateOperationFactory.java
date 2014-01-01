@@ -845,9 +845,9 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                 parameters.parameter("src_semi_minor").setValue(sourceEllipsoid.getSemiMinorAxis());
                 parameters.parameter("tgt_semi_major").setValue(targetEllipsoid.getSemiMajorAxis());
                 parameters.parameter("tgt_semi_minor").setValue(targetEllipsoid.getSemiMinorAxis());
-                parameters.parameter("dx").setValue(bursaWolf.rX);
-                parameters.parameter("dy").setValue(bursaWolf.rY);
-                parameters.parameter("dz").setValue(bursaWolf.rZ);
+                parameters.parameter("dx").setValue(bursaWolf.tX);
+                parameters.parameter("dy").setValue(bursaWolf.tY);
+                parameters.parameter("dz").setValue(bursaWolf.tZ);
                 parameters.parameter("dim").setValue(sourceDim);
                 boolean ready = true;
                 if (sourceDim != targetDim) try {

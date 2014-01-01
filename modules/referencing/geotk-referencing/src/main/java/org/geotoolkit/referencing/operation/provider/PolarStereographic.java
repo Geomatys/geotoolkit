@@ -483,9 +483,9 @@ public class PolarStereographic extends Stereographic {
                 new ReferenceIdentifier[] {
                     new NamedIdentifier(Citations.EPSG, "Polar Stereographic (variant B)"),
                     new IdentifierCode (Citations.EPSG,  9829),
-                    new NamedIdentifier(Citations.S57,  "Polar stereographic"),
-                    new NamedIdentifier(Citations.S57,  "PST"),
-                    new IdentifierCode (Citations.S57,   11),
+//                    new NamedIdentifier(Citations.S57,  "Polar stereographic"),
+//                    new NamedIdentifier(Citations.S57,  "PST"),
+//                    new IdentifierCode (Citations.S57,   11),
                     sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
                 }, excludes, new ParameterDescriptor<?>[] {
                     sameParameterAs(PseudoMercator.PARAMETERS, "semi_major"),
