@@ -204,6 +204,21 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
     }
 
     /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The SIS implementation returns {@code CompoundCRS.class}.
+     *
+     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
+     *        <code>CompoundCRS</code> sub-interface. Overriding possibility is left mostly for
+     *        implementors who wish to extend GeoAPI with their own set of interfaces.}
+     *
+     * @return {@code CompoundCRS.class} or a user-defined sub-interface.
+     */
+    @Override
+    public Class<? extends CompoundCRS> getInterface() {
+        return CompoundCRS.class;
+    }
+
+    /**
      * The ordered list of coordinate reference systems.
      *
      * @return The coordinate reference systems as an unmodifiable list.
@@ -370,7 +385,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (object instanceof CompoundCRS && super.equals(object, mode)) {
+        if (super.equals(object, mode)) {
             switch (mode) {
                 case STRICT: {
                     return components.equals(((DefaultCompoundCRS) object).components);

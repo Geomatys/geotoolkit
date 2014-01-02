@@ -242,6 +242,21 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
     }
 
     /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The SIS implementation returns {@code OperationMethod.class}.
+     *
+     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
+     *        <code>OperationMethod</code> sub-interface. Overriding possibility is left mostly for
+     *        implementors who wish to extend GeoAPI with their own set of interfaces.}
+     *
+     * @return {@code OperationMethod.class} or a user-defined sub-interface.
+     */
+    @Override
+    public Class<? extends OperationMethod> getInterface() {
+        return OperationMethod.class;
+    }
+
+    /**
      * Formula(s) or procedure used by this operation method. This may be a reference to a
      * publication. Note that the operation method may not be analytic, in which case this
      * attribute references or contains the procedure, not an analytic formula.

@@ -239,6 +239,21 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
     }
 
     /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The SIS implementation returns {@code EngineeringCRS.class}.
+     *
+     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
+     *        <code>EngineeringCRS</code> sub-interface. Overriding possibility is left mostly for
+     *        implementors who wish to extend GeoAPI with their own set of interfaces.}
+     *
+     * @return {@code EngineeringCRS.class} or a user-defined sub-interface.
+     */
+    @Override
+    public Class<? extends EngineeringCRS> getInterface() {
+        return EngineeringCRS.class;
+    }
+
+    /**
      * Returns the datum.
      */
     @Override

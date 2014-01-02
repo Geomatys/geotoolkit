@@ -99,6 +99,18 @@ public abstract class AbstractParameterDescriptor extends AbstractIdentifiedObje
     }
 
     /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The default implementation returns {@code GeneralParameterDescriptor.class}.
+     * Subclasses implementing a more specific GeoAPI interface shall override this method.
+     *
+     * @return The parameter descriptor interface implemented by this class.
+     */
+    @Override
+    public Class<? extends GeneralParameterDescriptor> getInterface() {
+        return GeneralParameterDescriptor.class;
+    }
+
+    /**
      * Creates a new instance of {@linkplain AbstractParameter parameter value or group} initialized
      * with the {@linkplain DefaultParameterDescriptor#getDefaultValue default value(s)}.
      * The {@linkplain AbstractParameter#getDescriptor parameter value descriptor} for the

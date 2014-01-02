@@ -210,6 +210,21 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
     }
 
     /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The SIS implementation returns {@code ProjectedCRS.class}.
+     *
+     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
+     *        <code>ProjectedCRS</code> sub-interface. Overriding possibility is left mostly for
+     *        implementors who wish to extend GeoAPI with their own set of interfaces.}
+     *
+     * @return {@code ProjectedCRS.class} or a user-defined sub-interface.
+     */
+    @Override
+    public Class<? extends ProjectedCRS> getInterface() {
+        return ProjectedCRS.class;
+    }
+
+    /**
      * Returns the coordinate system.
      */
     @Override

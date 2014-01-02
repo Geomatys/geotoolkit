@@ -91,4 +91,19 @@ public class DefaultConicProjection extends DefaultProjection implements ConicPr
     {
         super(properties, sourceCRS, targetCRS, transform, method);
     }
+
+    /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The SIS implementation returns {@code ConicProjection.class}.
+     *
+     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
+     *        <code>ConicProjection</code> sub-interface. Overriding possibility is left mostly for
+     *        implementors who wish to extend GeoAPI with their own set of interfaces.}
+     *
+     * @return {@code ConicProjection.class} or a user-defined sub-interface.
+     */
+    @Override
+    public Class<? extends ConicProjection> getInterface() {
+        return ConicProjection.class;
+    }
 }

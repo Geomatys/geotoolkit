@@ -162,4 +162,16 @@ public class DefaultConversion extends DefaultSingleOperation implements Convers
         }
         return new DefaultConversion(definition, sourceCRS, targetCRS, transform);
     }
+
+    /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The default implementation returns {@code Conversion.class}.
+     * Subclasses implementing a more specific GeoAPI interface shall override this method.
+     *
+     * @return The conversion interface implemented by this class.
+     */
+    @Override
+    public Class<? extends Conversion> getInterface() {
+        return Conversion.class;
+    }
 }

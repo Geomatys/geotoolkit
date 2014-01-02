@@ -124,6 +124,18 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
     }
 
     /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The default implementation returns {@code SingleCRS.class}.
+     * Subclasses implementing a more specific GeoAPI interface shall override this method.
+     *
+     * @return The coordinate reference system interface implemented by this class.
+     */
+    @Override
+    public Class<? extends SingleCRS> getInterface() {
+        return SingleCRS.class;
+    }
+
+    /**
      * Returns the datum.
      *
      * @return The datum.
@@ -162,7 +174,7 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
      */
     @Override
     public boolean equals(final Object object, final ComparisonMode mode) {
-        if (object instanceof SingleCRS && super.equals(object, mode)) {
+        if (super.equals(object, mode)) {
             switch (mode) {
                 case STRICT: {
                     return datum.equals(((AbstractSingleCRS) object).datum);

@@ -91,4 +91,19 @@ public class DefaultCylindricalProjection extends DefaultProjection implements C
     {
         super(properties, sourceCRS, targetCRS, transform, method);
     }
+
+    /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The SIS implementation returns {@code CylindricalProjection.class}.
+     *
+     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
+     *        <code>CylindricalProjection</code> sub-interface. Overriding possibility is left mostly
+     *        for implementors who wish to extend GeoAPI with their own set of interfaces.}
+     *
+     * @return {@code CylindricalProjection.class} or a user-defined sub-interface.
+     */
+    @Override
+    public Class<? extends CylindricalProjection> getInterface() {
+        return CylindricalProjection.class;
+    }
 }

@@ -304,6 +304,21 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
     }
 
     /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The SIS implementation returns {@code ConcatenatedOperation.class}.
+     *
+     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
+     *        <code>ConcatenatedOperation</code> sub-interface. Overriding possibility is left mostly
+     *        for implementors who wish to extend GeoAPI with their own set of interfaces.}
+     *
+     * @return {@code ConcatenatedOperation.class} or a user-defined sub-interface.
+     */
+    @Override
+    public Class<? extends ConcatenatedOperation> getInterface() {
+        return ConcatenatedOperation.class;
+    }
+
+    /**
      * Returns the sequence of operations.
      */
     @Override

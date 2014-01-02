@@ -411,6 +411,21 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
     }
 
     /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The SIS implementation returns {@code ParameterDescriptor.class}.
+     *
+     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
+     *        <code>ParameterDescriptor</code> sub-interface. Overriding possibility is left mostly
+     *        for implementors who wish to extend GeoAPI with their own set of interfaces.}
+     *
+     * @return {@code ParameterDescriptor.class} or a user-defined sub-interface.
+     */
+    @Override
+    public Class<? extends ParameterDescriptor<T>> getInterface() {
+        return (Class) ParameterDescriptor.class;
+    }
+
+    /**
      * The maximum number of times that values for this parameter group or parameter can be
      * included. For a {@linkplain DefaultParameterDescriptor single parameter}, the value
      * is always 1.

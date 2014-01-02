@@ -91,4 +91,19 @@ public class DefaultPlanarProjection extends DefaultProjection implements Planar
     {
         super(properties, sourceCRS, targetCRS, transform, method);
     }
+
+    /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The SIS implementation returns {@code PlanarProjection.class}.
+     *
+     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
+     *        <code>PlanarProjection</code> sub-interface. Overriding possibility is left mostly
+     *        for implementors who wish to extend GeoAPI with their own set of interfaces.}
+     *
+     * @return {@code PlanarProjection.class} or a user-defined sub-interface.
+     */
+    @Override
+    public Class<? extends PlanarProjection> getInterface() {
+        return PlanarProjection.class;
+    }
 }

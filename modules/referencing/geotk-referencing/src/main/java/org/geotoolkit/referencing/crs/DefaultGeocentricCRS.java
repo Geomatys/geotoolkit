@@ -190,6 +190,21 @@ public class DefaultGeocentricCRS extends AbstractSingleCRS implements Geocentri
     }
 
     /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The SIS implementation returns {@code GeocentricCRS.class}.
+     *
+     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
+     *        <code>GeocentricCRS</code> sub-interface. Overriding possibility is left mostly for
+     *        implementors who wish to extend GeoAPI with their own set of interfaces.}
+     *
+     * @return {@code GeocentricCRS.class} or a user-defined sub-interface.
+     */
+    @Override
+    public Class<? extends GeocentricCRS> getInterface() {
+        return GeocentricCRS.class;
+    }
+
+    /**
      * Returns the datum.
      */
     @Override

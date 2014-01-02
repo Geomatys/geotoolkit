@@ -128,6 +128,18 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
     }
 
     /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The default implementation returns {@code CoordinateReferenceSystem.class}.
+     * Subclasses implementing a more specific GeoAPI interface shall override this method.
+     *
+     * @return The coordinate reference system interface implemented by this class.
+     */
+    @Override
+    public Class<? extends CoordinateReferenceSystem> getInterface() {
+        return CoordinateReferenceSystem.class;
+    }
+
+    /**
      * Returns the coordinate system.
      */
     @Override
@@ -190,7 +202,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
      */
     @Override
     public boolean equals(final Object object, final ComparisonMode mode) {
-        if (object instanceof CoordinateReferenceSystem && super.equals(object, mode)) {
+        if (super.equals(object, mode)) {
             switch (mode) {
                 case STRICT: {
                     return coordinateSystem.equals(((AbstractCRS) object).coordinateSystem);

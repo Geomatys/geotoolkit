@@ -102,4 +102,16 @@ public class DefaultProjection extends DefaultConversion implements Projection {
     {
         super(properties, sourceCRS, targetCRS, transform, method);
     }
+
+    /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The default implementation returns {@code Projection.class}.
+     * Subclasses implementing a more specific GeoAPI interface shall override this method.
+     *
+     * @return The conversion interface implemented by this class.
+     */
+    @Override
+    public Class<? extends Projection> getInterface() {
+        return Projection.class;
+    }
 }

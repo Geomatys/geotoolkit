@@ -192,6 +192,21 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
     }
 
     /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The SIS implementation returns {@code ParameterDescriptorGroup.class}.
+     *
+     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
+     *        <code>ParameterDescriptorGroup</code> sub-interface. Overriding possibility is left mostly
+     *        for implementors who wish to extend GeoAPI with their own set of interfaces.}
+     *
+     * @return {@code ParameterDescriptorGroup.class} or a user-defined sub-interface.
+     */
+    @Override
+    public Class<? extends ParameterDescriptorGroup> getInterface() {
+        return ParameterDescriptorGroup.class;
+    }
+
+    /**
      * The maximum number of times that values for this parameter group are required.
      *
      * @see #getMinimumOccurs

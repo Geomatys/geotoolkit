@@ -209,6 +209,18 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
     }
 
     /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The default implementation returns {@code SingleOperation.class}.
+     * Subclasses implementing a more specific GeoAPI interface shall override this method.
+     *
+     * @return The single coordinate operation interface implemented by this class.
+     */
+    @Override
+    public Class<? extends SingleOperation> getInterface() {
+        return SingleOperation.class;
+    }
+
+    /**
      * Returns the operation method.
      */
     @Override

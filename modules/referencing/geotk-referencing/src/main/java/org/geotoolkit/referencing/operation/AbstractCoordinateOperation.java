@@ -267,6 +267,18 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
     }
 
     /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The default implementation returns {@code CoordinateOperation.class}.
+     * Subclasses implementing a more specific GeoAPI interface shall override this method.
+     *
+     * @return The coordinate operation interface implemented by this class.
+     */
+    @Override
+    public Class<? extends CoordinateOperation> getInterface() {
+        return CoordinateOperation.class;
+    }
+
+    /**
      * Returns the source CRS.
      */
     @Override

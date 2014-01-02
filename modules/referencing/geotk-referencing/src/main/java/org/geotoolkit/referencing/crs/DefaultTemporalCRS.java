@@ -232,6 +232,21 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
     }
 
     /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The SIS implementation returns {@code TemporalCRS.class}.
+     *
+     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
+     *        <code>TemporalCRS</code> sub-interface. Overriding possibility is left mostly for
+     *        implementors who wish to extend GeoAPI with their own set of interfaces.}
+     *
+     * @return {@code TemporalCRS.class} or a user-defined sub-interface.
+     */
+    @Override
+    public Class<? extends TemporalCRS> getInterface() {
+        return TemporalCRS.class;
+    }
+
+    /**
      * Initialize the fields required for {@link #toDate} and {@link #toValue} operations.
      */
     private void initializeConverter() {

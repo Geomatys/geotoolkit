@@ -253,6 +253,18 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
     }
 
     /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The default implementation returns {@code GeneralDerivedCRS.class}.
+     * Subclasses implementing a more specific GeoAPI interface shall override this method.
+     *
+     * @return The coordinate reference system interface implemented by this class.
+     */
+    @Override
+    public Class<? extends GeneralDerivedCRS> getInterface() {
+        return GeneralDerivedCRS.class;
+    }
+
+    /**
      * Returns the base coordinate reference system.
      *
      * @return The base coordinate reference system.
@@ -294,7 +306,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (object instanceof GeneralDerivedCRS && super.equals(object, mode)) {
+        if (super.equals(object, mode)) {
             final boolean strict = (mode == ComparisonMode.STRICT);
             if (deepEquals(strict ? baseCRS : getBaseCRS(),
                            strict ? ((AbstractDerivedCRS) object).baseCRS

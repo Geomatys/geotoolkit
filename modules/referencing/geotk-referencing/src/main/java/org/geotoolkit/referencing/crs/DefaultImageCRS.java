@@ -156,6 +156,21 @@ public class DefaultImageCRS extends AbstractSingleCRS implements ImageCRS {
     }
 
     /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The SIS implementation returns {@code ImageCRS.class}.
+     *
+     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
+     *        <code>ImageCRS</code> sub-interface. Overriding possibility is left mostly for
+     *        implementors who wish to extend GeoAPI with their own set of interfaces.}
+     *
+     * @return {@code ImageCRS.class} or a user-defined sub-interface.
+     */
+    @Override
+    public Class<? extends ImageCRS> getInterface() {
+        return ImageCRS.class;
+    }
+
+    /**
      * Returns the coordinate system.
      */
     @Override

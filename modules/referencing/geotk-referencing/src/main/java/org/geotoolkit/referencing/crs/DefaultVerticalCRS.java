@@ -179,6 +179,21 @@ public class DefaultVerticalCRS extends AbstractSingleCRS implements VerticalCRS
     }
 
     /**
+     * Returns the GeoAPI interface implemented by this class.
+     * The SIS implementation returns {@code VerticalCRS.class}.
+     *
+     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
+     *        <code>VerticalCRS</code> sub-interface. Overriding possibility is left mostly for
+     *        implementors who wish to extend GeoAPI with their own set of interfaces.}
+     *
+     * @return {@code VerticalCRS.class} or a user-defined sub-interface.
+     */
+    @Override
+    public Class<? extends VerticalCRS> getInterface() {
+        return VerticalCRS.class;
+    }
+
+    /**
      * Returns the coordinate system.
      */
     @Override
