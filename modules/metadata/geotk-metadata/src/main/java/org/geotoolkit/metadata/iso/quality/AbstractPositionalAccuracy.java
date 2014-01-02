@@ -20,7 +20,7 @@
  */
 package org.geotoolkit.metadata.iso.quality;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.quality.Result;
 import org.opengis.metadata.quality.PositionalAccuracy;
@@ -41,7 +41,7 @@ import org.geotoolkit.resources.Descriptions;
  * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @Deprecated
-@XmlRootElement(name = "DQ_PositionalAccuracy")
+@XmlTransient
 public class AbstractPositionalAccuracy extends org.apache.sis.metadata.iso.quality.AbstractPositionalAccuracy {
     /**
      * Serial number for inter-operability with different versions.

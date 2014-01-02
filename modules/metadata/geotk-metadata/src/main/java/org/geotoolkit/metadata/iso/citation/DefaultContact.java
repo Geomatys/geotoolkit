@@ -20,7 +20,7 @@
  */
 package org.geotoolkit.metadata.iso.citation;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.metadata.citation.Contact;
 import org.opengis.metadata.citation.OnlineResource;
 
@@ -39,7 +39,7 @@ import org.opengis.metadata.citation.OnlineResource;
  * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @Deprecated
-@XmlRootElement(name = "CI_Contact")
+@XmlTransient
 public class DefaultContact extends org.apache.sis.metadata.iso.citation.DefaultContact {
     /**
      * Serial number for inter-operability with different versions.

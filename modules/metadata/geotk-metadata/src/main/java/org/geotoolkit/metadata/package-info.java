@@ -58,8 +58,4 @@
  * @since 2.0
  * @module
  */
-@XmlAccessorType(XmlAccessType.NONE)
 package org.geotoolkit.metadata;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;

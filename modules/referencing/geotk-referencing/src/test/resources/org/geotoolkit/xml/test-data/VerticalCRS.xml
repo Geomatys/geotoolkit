@@ -110,7 +110,7 @@
                     <gml:VerticalCS gml:id="meters">
                       <gml:name>meters</gml:name>
                       <gml:axis>
-                        <gml:CoordinateSystemAxis uom="m" gml:id="meters">
+                        <gml:CoordinateSystemAxis uom="urn:ogc:def:uom:EPSG::9001" gml:id="meters">
                           <gml:name>meters</gml:name>
                           <gml:axisAbbrev>meters</gml:axisAbbrev>
                           <gml:axisDirection codeSpace="EPSG">down</gml:axisDirection>

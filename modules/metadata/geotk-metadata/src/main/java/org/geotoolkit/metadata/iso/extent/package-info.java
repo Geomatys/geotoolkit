@@ -42,39 +42,4 @@
  * @since 2.1
  * @module
  */
-@XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED, namespace = Namespaces.GMD, xmlns = {
-    @XmlNs(prefix = "gmd", namespaceURI = Namespaces.GMD),
-    @XmlNs(prefix = "gco", namespaceURI = Namespaces.GCO),
-    @XmlNs(prefix = "xsi", namespaceURI = Namespaces.XSI)
-})
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(EX_GeographicBoundingBox.class),
-    @XmlJavaTypeAdapter(EX_GeographicExtent.class),
-    @XmlJavaTypeAdapter(EX_TemporalExtent.class),
-    @XmlJavaTypeAdapter(EX_VerticalExtent.class),
-    @XmlJavaTypeAdapter(GM_Object.class),
-    @XmlJavaTypeAdapter(MD_Identifier.class),
-    @XmlJavaTypeAdapter(SC_VerticalCRS.class),
-    @XmlJavaTypeAdapter(TM_Primitive.class),
-
-    // Java types, primitive types and basic OGC types handling
-    @XmlJavaTypeAdapter(InternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(GO_Boolean.class), @XmlJavaTypeAdapter(type=boolean.class, value=GO_Boolean.class),
-    @XmlJavaTypeAdapter(GO_Decimal.class), @XmlJavaTypeAdapter(type=double.class,  value=GO_Decimal.class)
-})
 package org.geotoolkit.metadata.iso.extent;
-
-import javax.xml.bind.annotation.XmlNs;
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
-
-import org.apache.sis.xml.Namespaces;
-import org.apache.sis.internal.jaxb.gco.*;
-import org.apache.sis.internal.jaxb.metadata.*;
-import org.apache.sis.internal.jaxb.gml.*;
-import org.apache.sis.internal.jaxb.geometry.GM_Object;

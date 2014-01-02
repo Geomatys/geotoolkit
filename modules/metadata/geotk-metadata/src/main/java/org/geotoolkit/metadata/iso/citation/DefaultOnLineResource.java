@@ -21,7 +21,7 @@
 package org.geotoolkit.metadata.iso.citation;
 
 import java.net.URI;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.metadata.citation.OnLineFunction;
 import org.opengis.metadata.citation.OnlineResource;
 
@@ -41,7 +41,7 @@ import org.opengis.metadata.citation.OnlineResource;
  * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @Deprecated
-@XmlRootElement(name = "CI_OnlineResource")
+@XmlTransient
 public class DefaultOnlineResource extends org.apache.sis.metadata.iso.citation.DefaultOnlineResource {
     /**
      * Serial number for inter-operability with different versions.

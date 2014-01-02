@@ -22,7 +22,7 @@ package org.geotoolkit.metadata.iso.quality;
 
 import java.util.Collections;
 import java.io.ObjectStreamException;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.quality.EvaluationMethodType;
 import org.opengis.metadata.quality.AbsoluteExternalPositionalAccuracy;
@@ -51,7 +51,7 @@ import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
  */
 @Deprecated
 @Workaround(library="JDK", version="1.6")
-@XmlRootElement(name = "DQ_AbsoluteExternalPositionalAccuracy")
+@XmlTransient
 final class PositionalAccuracyConstant extends AbstractPositionalAccuracy
        implements AbsoluteExternalPositionalAccuracy
 {

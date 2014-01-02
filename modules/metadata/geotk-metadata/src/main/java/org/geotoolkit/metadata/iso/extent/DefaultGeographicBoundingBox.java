@@ -23,7 +23,7 @@ package org.geotoolkit.metadata.iso.extent;
 import java.util.Locale;
 import java.text.FieldPosition;
 import java.awt.geom.Rectangle2D;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.operation.TransformException;
@@ -50,7 +50,7 @@ import org.apache.sis.measure.AngleFormat;
  * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @Deprecated
-@XmlRootElement(name = "EX_GeographicBoundingBox")
+@XmlTransient
 public class DefaultGeographicBoundingBox extends org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox {
     /**
      * Serial number for inter-operability with different versions.

@@ -8,17 +8,23 @@
     <gml:EllipsoidalCS gml:id="Géodésique2D">
       <gml:name>Géodésique 2D</gml:name>
       <gml:axis>
-        <gml:CoordinateSystemAxis uom="deg" gml:id="Geodeticlongitude">
+        <gml:CoordinateSystemAxis uom="urn:ogc:def:uom:EPSG::9102" gml:id="Geodeticlongitude">
           <gml:name>Geodetic longitude</gml:name>
           <gml:axisAbbrev>λ</gml:axisAbbrev>
           <gml:axisDirection codeSpace="EPSG">east</gml:axisDirection>
+          <gml:minimumValue>-180</gml:minimumValue>
+          <gml:maximumValue>+180</gml:maximumValue>
+          <gml:rangeMeaning codeSpace="EPSG">wraparound</gml:rangeMeaning>
         </gml:CoordinateSystemAxis>
       </gml:axis>
       <gml:axis>
-        <gml:CoordinateSystemAxis uom="deg" gml:id="Geodeticlatitude">
+        <gml:CoordinateSystemAxis uom="urn:ogc:def:uom:EPSG::9102" gml:id="Geodeticlatitude">
           <gml:name>Geodetic latitude</gml:name>
           <gml:axisAbbrev>φ</gml:axisAbbrev>
           <gml:axisDirection codeSpace="EPSG">north</gml:axisDirection>
+          <gml:minimumValue>-90</gml:minimumValue>
+          <gml:maximumValue>+90</gml:maximumValue>
+          <gml:rangeMeaning codeSpace="EPSG">exact</gml:rangeMeaning>
         </gml:CoordinateSystemAxis>
       </gml:axis>
     </gml:EllipsoidalCS>

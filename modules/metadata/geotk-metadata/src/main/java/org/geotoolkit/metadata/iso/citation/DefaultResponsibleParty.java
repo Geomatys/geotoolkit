@@ -21,7 +21,7 @@
 package org.geotoolkit.metadata.iso.citation;
 
 import java.net.URI;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.citation.OnLineFunction;
 import org.opengis.metadata.citation.OnlineResource;
@@ -45,7 +45,7 @@ import org.apache.sis.util.iso.SimpleInternationalString;
  * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @Deprecated
-@XmlRootElement(name = "CI_ResponsibleParty")
+@XmlTransient
 public class DefaultResponsibleParty extends org.apache.sis.metadata.iso.citation.DefaultResponsibleParty {
     /**
      * Serial number for inter-operability with different versions.

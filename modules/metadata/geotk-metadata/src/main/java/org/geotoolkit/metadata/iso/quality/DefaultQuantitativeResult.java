@@ -22,7 +22,7 @@ package org.geotoolkit.metadata.iso.quality;
 
 import java.util.List;
 import java.util.Arrays;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.metadata.quality.QuantitativeResult;
 import org.opengis.util.Record;
 import org.opengis.util.RecordType;
@@ -41,7 +41,7 @@ import org.opengis.util.RecordType;
  * @deprecated Moved to the {@link org.apache.sis.metadata.iso} package.
  */
 @Deprecated
-@XmlRootElement(name = "DQ_QuantitativeResult")
+@XmlTransient
 public class DefaultQuantitativeResult extends org.apache.sis.metadata.iso.quality.DefaultQuantitativeResult {
     /**
      * Serial number for compatibility with different versions.

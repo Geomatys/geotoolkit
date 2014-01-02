@@ -41,45 +41,4 @@
  * @since 2.1
  * @module
  */
-@XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED, namespace = Namespaces.GMD, xmlns = {
-    @XmlNs(prefix = "gmd", namespaceURI = Namespaces.GMD),
-    @XmlNs(prefix = "gco", namespaceURI = Namespaces.GCO),
-    @XmlNs(prefix = "xsi", namespaceURI = Namespaces.XSI)
-})
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(CI_Address.class),
-    @XmlJavaTypeAdapter(CI_Contact.class),
-    @XmlJavaTypeAdapter(CI_Date.class),
-    @XmlJavaTypeAdapter(CI_DateTypeCode.class),
-    @XmlJavaTypeAdapter(CI_OnLineFunctionCode.class),
-    @XmlJavaTypeAdapter(CI_OnlineResource.class),
-    @XmlJavaTypeAdapter(CI_PresentationFormCode.class),
-    @XmlJavaTypeAdapter(CI_ResponsibleParty.class),
-    @XmlJavaTypeAdapter(CI_RoleCode.class),
-    @XmlJavaTypeAdapter(CI_Series.class),
-    @XmlJavaTypeAdapter(CI_Telephone.class),
-    @XmlJavaTypeAdapter(MD_Identifier.class),
-
-    // Java types, primitive types and basic OGC types handling
-    @XmlJavaTypeAdapter(GO_URL.class),
-    @XmlJavaTypeAdapter(GO_DateTime.class),
-    @XmlJavaTypeAdapter(StringAdapter.class),
-    @XmlJavaTypeAdapter(InternationalStringAdapter.class)
-})
 package org.geotoolkit.metadata.iso.citation;
-
-import javax.xml.bind.annotation.XmlNs;
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
-
-import org.apache.sis.xml.Namespaces;
-import org.apache.sis.internal.jaxb.gco.*;
-import org.apache.sis.internal.jaxb.gmd.*;
-import org.apache.sis.internal.jaxb.code.*;
-import org.apache.sis.internal.jaxb.metadata.*;
-import org.apache.sis.internal.jaxb.gmd.GO_URL;
