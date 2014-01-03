@@ -20,15 +20,21 @@ package org.geotoolkit.data.nmea;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.Date;
+import java.util.TimeZone;
 import static junit.framework.Assert.*;
 import org.junit.Test;
 import org.opengis.feature.Feature;
+import org.junit.BeforeClass;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public class NMEAFileTest {
+    @BeforeClass
+    public static void setTimeZone() {
+        TimeZone.setDefault(TimeZone.getTimeZone("CET"));
+    }
 
     @Test
     public void readTest(){

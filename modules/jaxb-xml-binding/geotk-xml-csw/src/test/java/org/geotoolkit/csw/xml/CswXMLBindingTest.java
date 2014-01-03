@@ -24,6 +24,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.logging.Logger;
 import org.xml.sax.SAXException;
 
@@ -87,6 +88,10 @@ import static org.junit.Assert.*;
  * @module pending
  */
 public class CswXMLBindingTest {
+   @BeforeClass
+   public static void setTimeZone() {
+       TimeZone.setDefault(TimeZone.getTimeZone("CET"));
+   }
 
     private static final Logger LOGGER = Logging.getLogger(CswXMLBindingTest.class);
 

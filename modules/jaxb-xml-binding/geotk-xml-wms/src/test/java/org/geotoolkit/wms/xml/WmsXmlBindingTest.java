@@ -30,6 +30,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 import org.opengis.metadata.citation.Citation;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -83,6 +84,10 @@ import org.apache.sis.xml.XML;
  * @module pending
  */
 public class WmsXmlBindingTest {
+   @BeforeClass
+   public static void setTimeZone() {
+       TimeZone.setDefault(TimeZone.getTimeZone("CET"));
+   }
 
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;
