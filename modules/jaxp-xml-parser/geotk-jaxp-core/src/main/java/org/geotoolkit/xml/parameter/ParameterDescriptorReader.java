@@ -26,7 +26,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.sis.util.iso.DefaultInternationalString;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.xml.StaxStreamReader;
 import static org.geotoolkit.xml.parameter.ParameterConstants.*;

@@ -22,7 +22,7 @@ import java.util.GregorianCalendar;
 import java.util.Objects;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.object.DefaultCalendarDate;
 import org.geotoolkit.temporal.object.DefaultDateAndTime;
 import org.geotoolkit.temporal.object.DefaultJulianDate;

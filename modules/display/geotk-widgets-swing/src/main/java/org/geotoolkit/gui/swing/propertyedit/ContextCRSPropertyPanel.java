@@ -43,7 +43,7 @@ import org.geotoolkit.gui.swing.crschooser.JCRSList;
 import org.geotoolkit.gui.swing.util.LoadingLockableUI;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.io.wkt.UnformattableObjectException;
+import org.apache.sis.io.wkt.UnformattableObjectException;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Vocabulary;
 import org.jdesktop.swingx.JXBusyLabel;

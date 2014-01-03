@@ -21,7 +21,7 @@ import java.util.Calendar;
 import java.util.Date;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.reference.DefaultOrdinalEra;
 import org.geotoolkit.temporal.reference.DefaultTemporalReferenceSystem;
 import org.junit.After;

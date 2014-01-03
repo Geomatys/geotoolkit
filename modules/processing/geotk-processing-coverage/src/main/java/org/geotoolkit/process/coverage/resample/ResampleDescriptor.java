@@ -30,7 +30,7 @@ import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.coverage.CoverageProcessingRegistry;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.parameter.ParameterDescriptor;

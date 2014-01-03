@@ -20,7 +20,7 @@ package org.geotoolkit.temporal.object;
 import java.util.GregorianCalendar;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.temporal.reference.DefaultTemporalCoordinateSystem;
 import org.junit.After;
 import org.junit.Before;

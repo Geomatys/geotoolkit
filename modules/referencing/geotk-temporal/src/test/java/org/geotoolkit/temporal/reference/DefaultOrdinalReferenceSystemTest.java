@@ -20,7 +20,7 @@ package org.geotoolkit.temporal.reference;
 import org.geotoolkit.temporal.reference.DefaultOrdinalReferenceSystem;
 import java.util.Collection;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
