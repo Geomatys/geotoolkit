@@ -8,7 +8,7 @@
     <gml:EllipsoidalCS gml:id="Géodésique2D">
       <gml:name>Géodésique 2D</gml:name>
       <gml:axis>
-        <gml:CoordinateSystemAxis uom="urn:ogc:def:uom:EPSG::9102" gml:id="Geodeticlongitude">
+        <gml:CoordinateSystemAxis uom="urn:ogc:def:uom:EPSG::9122" gml:id="Geodeticlongitude">
           <gml:name>Geodetic longitude</gml:name>
           <gml:axisAbbrev>λ</gml:axisAbbrev>
           <gml:axisDirection codeSpace="EPSG">east</gml:axisDirection>
@@ -18,7 +18,7 @@
         </gml:CoordinateSystemAxis>
       </gml:axis>
       <gml:axis>
-        <gml:CoordinateSystemAxis uom="urn:ogc:def:uom:EPSG::9102" gml:id="Geodeticlatitude">
+        <gml:CoordinateSystemAxis uom="urn:ogc:def:uom:EPSG::9122" gml:id="Geodeticlatitude">
           <gml:name>Geodetic latitude</gml:name>
           <gml:axisAbbrev>φ</gml:axisAbbrev>
           <gml:axisDirection codeSpace="EPSG">north</gml:axisDirection>
