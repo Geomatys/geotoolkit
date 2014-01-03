@@ -39,7 +39,7 @@ import org.opengis.referencing.IdentifiedObject;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;

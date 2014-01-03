@@ -69,7 +69,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultQuantitativeResult;
 import org.apache.sis.metadata.iso.quality.DefaultAbsoluteExternalPositionalAccuracy;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;

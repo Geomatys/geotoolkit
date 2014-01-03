@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform1D;
 
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.LogarithmicTransform1D;
 import org.geotoolkit.metadata.iso.citation.Citations;

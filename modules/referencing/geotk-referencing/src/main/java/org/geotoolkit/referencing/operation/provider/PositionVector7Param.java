@@ -36,7 +36,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.MathTransformProvider;

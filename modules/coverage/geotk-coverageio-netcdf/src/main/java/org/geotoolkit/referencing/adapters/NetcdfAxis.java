@@ -45,7 +45,7 @@ import org.apache.sis.io.wkt.Formatter;
 
 import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.resources.Errors;
 

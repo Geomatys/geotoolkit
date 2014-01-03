@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.PlanarProjection;
 
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 

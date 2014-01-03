@@ -42,7 +42,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.util.iso.Types;
 import org.apache.sis.util.iso.DefaultNameFactory;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.internal.Threads;

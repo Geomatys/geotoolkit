@@ -47,6 +47,7 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
+import org.apache.sis.referencing.NamedIdentifier;
 
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.IdentifiedObject.IDENTIFIERS_KEY;

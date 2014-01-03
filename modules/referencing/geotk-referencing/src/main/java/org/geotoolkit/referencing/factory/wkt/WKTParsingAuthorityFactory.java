@@ -43,7 +43,7 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.io.wkt.Symbols;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.io.wkt.ReferencingParser;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.util.collection.DerivedSet;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.collection.BackingStoreException;

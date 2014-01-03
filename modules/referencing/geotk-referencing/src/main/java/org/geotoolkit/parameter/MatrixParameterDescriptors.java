@@ -35,7 +35,7 @@ import org.opengis.parameter.InvalidParameterNameException;
 import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.apache.sis.internal.util.UnmodifiableArrayList;

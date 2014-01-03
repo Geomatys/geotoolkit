@@ -30,7 +30,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.Projection;
 
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.metadata.iso.citation.Citations;
 

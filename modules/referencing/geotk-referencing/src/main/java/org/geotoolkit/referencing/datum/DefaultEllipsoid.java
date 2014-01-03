@@ -29,7 +29,7 @@ import javax.measure.unit.Unit;
 import javax.measure.quantity.Length;
 import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.referencing.datum.Ellipsoid;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 

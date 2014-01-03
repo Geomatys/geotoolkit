@@ -42,7 +42,7 @@ import org.opengis.referencing.operation.*;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.WeakHashSet;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.ReferencingFactory;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;

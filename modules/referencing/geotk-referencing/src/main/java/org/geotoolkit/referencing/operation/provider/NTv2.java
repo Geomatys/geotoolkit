@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.Transformation;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.transform.NTv2Transform;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 

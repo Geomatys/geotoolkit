@@ -35,7 +35,7 @@ import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.ComparisonMode;
 
 import static org.apache.sis.util.Utilities.deepEquals;

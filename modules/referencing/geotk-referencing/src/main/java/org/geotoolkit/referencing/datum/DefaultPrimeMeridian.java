@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.opengis.referencing.datum.PrimeMeridian;
 
-import org.geotoolkit.referencing.NamedIdentifier;
+import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
