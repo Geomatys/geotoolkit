@@ -176,7 +176,7 @@ public class SpatialDatabase extends Database {
         this.horizontalSRID = 4326;
         this.horizontalCRS  = DefaultGeographicCRS.WGS84;
         this.verticalCRS    = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
-        this.temporalCRS    = DefaultTemporalCRS.castOrCopy(temporalCRS);
+        this.temporalCRS    = (DefaultTemporalCRS) temporalCRS; // TODO DefaultTemporalCRS.castOrCopy(temporalCRS);
         this.spatialCRS     = DefaultGeographicCRS.WGS84_3D;
         spatioTemporalCRS   = createSpatioTemporalCRS(spatialCRS,    temporalCRS, true);
         horizTemporalCRS    = createSpatioTemporalCRS(horizontalCRS, temporalCRS, true);
@@ -229,7 +229,7 @@ public class SpatialDatabase extends Database {
         ensureNonNull("spatialCRS", spatialCRS);
         this.horizontalCRS = CRS.getHorizontalCRS(spatialCRS);
         this.verticalCRS   = CRS.getVerticalCRS(spatialCRS);
-        this.temporalCRS   = DefaultTemporalCRS.castOrCopy(temporalCRS);
+        this.temporalCRS   = (DefaultTemporalCRS) temporalCRS; // TODO DefaultTemporalCRS.castOrCopy(temporalCRS);
         this.spatialCRS    = spatialCRS;
         this.pixelInCell   = PixelInCell.CELL_CORNER;
         horizTemporalCRS   = createSpatioTemporalCRS(horizontalCRS, temporalCRS, false);

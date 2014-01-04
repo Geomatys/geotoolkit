@@ -40,7 +40,7 @@ import org.opengis.referencing.datum.PixelInCell;
 
 import org.apache.sis.measure.Range;
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;

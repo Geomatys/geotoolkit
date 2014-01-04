@@ -56,7 +56,7 @@ import org.apache.sis.metadata.iso.spatial.DefaultGeometricObjects;
 import org.apache.sis.metadata.iso.spatial.DefaultVectorSpatialRepresentation;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
+import org.apache.sis.referencing.crs.DefaultVerticalCRS;
 import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.referencing.cs.DefaultEllipsoidalCS;
 import org.apache.sis.referencing.cs.DefaultVerticalCS;

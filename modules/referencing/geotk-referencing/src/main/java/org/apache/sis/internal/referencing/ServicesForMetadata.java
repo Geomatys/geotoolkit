@@ -40,7 +40,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.TransformPathNotFoundException;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;

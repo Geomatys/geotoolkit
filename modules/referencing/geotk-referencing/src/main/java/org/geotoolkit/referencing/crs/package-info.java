@@ -89,7 +89,8 @@
     @XmlJavaTypeAdapter(CS_VerticalCS.class),
 
     // Java types, primitive types and basic OGC types handling
-    @XmlJavaTypeAdapter(StringAdapter.class)
+    @XmlJavaTypeAdapter(StringAdapter.class),
+    @XmlJavaTypeAdapter(InternationalStringConverter.class)
 })
 package org.geotoolkit.referencing.crs;
 

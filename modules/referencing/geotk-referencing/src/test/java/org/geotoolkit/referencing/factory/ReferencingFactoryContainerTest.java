@@ -112,7 +112,7 @@ public final strictfp class ReferencingFactoryContainerTest {
             "    AXIS[“Easting”, EAST],\n" +
             "    AXIS[“Northing”, NORTH],\n" +
             "    AXIS[“Ellipsoidal height”, UP]],\n" +
-            "  TemporalCRS[“Modified Julian”,\n" +
+            "  DefaultTemporalCRS[“Modified Julian”,\n" +
             "    DefaultTemporalDatum[“Modified Julian”, 0],\n" +
             "    UNIT[“day”, 86400.0],\n" +
             "    AXIS[“Time”, FUTURE]]]"), result.toString());

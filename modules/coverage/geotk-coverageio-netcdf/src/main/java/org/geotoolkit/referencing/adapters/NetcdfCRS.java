@@ -548,7 +548,11 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
          */
         @Override
         public String formatTo(final Formatter formatter) {
-            return new DefaultTemporalCRS(this).formatTo(formatter);
+            return new DefaultTemporalCRS(this) {
+                @Override public String formatTo(final Formatter formatter) {
+                    return super.formatTo(formatter);
+                }
+            }.formatTo(formatter);
         }
     }
 
@@ -604,7 +608,11 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
          */
         @Override
         public String formatTo(final Formatter formatter) {
-            return new DefaultVerticalCRS(this).formatTo(formatter);
+            return new DefaultVerticalCRS(this) {
+                @Override public String formatTo(final Formatter formatter) {
+                    return super.formatTo(formatter);
+                }
+            }.formatTo(formatter);
         }
     }
 

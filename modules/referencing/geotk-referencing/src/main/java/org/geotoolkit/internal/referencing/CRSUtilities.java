@@ -32,6 +32,9 @@ import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 import org.opengis.geometry.Envelope;
 
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.ReferencingUtilities;
+
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.referencing.CRS;
@@ -40,7 +43,6 @@ import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 
@@ -167,20 +169,12 @@ public final class CRSUtilities extends Static {
      * @return The unit for all axis in the given coordinate system, or {@code null}.
      *
      * @since 2.2
+     *
+     * @deprecated Moved to {@link ReferencingUtilities}.
      */
+    @Deprecated
     public static Unit<?> getUnit(final CoordinateSystem cs) {
-        Unit<?> unit = null;
-        for (int i=cs.getDimension(); --i>=0;) {
-            final Unit<?> candidate = cs.getAxis(i).getUnit();
-            if (candidate != null) {
-                if (unit == null) {
-                    unit = candidate;
-                } else if (!unit.equals(candidate)) {
-                    return null;
-                }
-            }
-        }
-        return unit;
+        return ReferencingUtilities.getUnit(cs);
     }
 
     /**

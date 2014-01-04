@@ -22,19 +22,15 @@ package org.geotoolkit.referencing.crs;
 
 import java.util.Map;
 import java.util.Collections;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import net.jcip.annotations.Immutable;
-
 import org.opengis.referencing.cs.VerticalCS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.datum.VerticalDatum;
-
-import org.apache.sis.io.wkt.Formatter;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.DefaultVerticalCS;
 import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
+import javax.xml.bind.annotation.XmlTransient;
 
 
 /**
@@ -61,15 +57,13 @@ import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
  *
  * @since 1.2
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
 @Immutable
-@XmlRootElement(name = "VerticalCRS")
-public class DefaultVerticalCRS extends AbstractSingleCRS implements VerticalCRS {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = 3565878468719941800L;
-
+@Deprecated
+@XmlTransient
+public class DefaultVerticalCRS extends org.apache.sis.referencing.crs.DefaultVerticalCRS {
     /**
      * Default vertical coordinate reference system using ellipsoidal datum.
      * Ellipsoidal heights are measured along the normal to the ellipsoid
@@ -93,15 +87,6 @@ public class DefaultVerticalCRS extends AbstractSingleCRS implements VerticalCRS
     public static final DefaultVerticalCRS GEOIDAL_HEIGHT = new DefaultVerticalCRS(
             IdentifiedObjects.getProperties(DefaultVerticalCS.GRAVITY_RELATED_HEIGHT),
             DefaultVerticalDatum.GEOIDAL, DefaultVerticalCS.GRAVITY_RELATED_HEIGHT);
-
-    /**
-     * Constructs a new object in which every attributes are set to a default value.
-     * <strong>This is not a valid object.</strong> This constructor is strictly
-     * reserved to JAXB, which will assign values to the fields using reflexion.
-     */
-    private DefaultVerticalCRS() {
-        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
-    }
 
     /**
      * Constructs a new vertical CRS with the same values than the specified one.
@@ -158,84 +143,5 @@ public class DefaultVerticalCRS extends AbstractSingleCRS implements VerticalCRS
                               final VerticalCS    cs)
     {
         super(properties, datum, cs);
-    }
-
-    /**
-     * Returns a Geotk CRS implementation with the same values than the given arbitrary
-     * implementation. If the given object is {@code null}, then this method returns {@code null}.
-     * Otherwise if the given object is already a Geotk implementation, then the given object is
-     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
-     * attribute values of the given object.
-     *
-     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return A Geotk implementation containing the values of the given object (may be the
-     *         given object itself), or {@code null} if the argument was null.
-     *
-     * @since 3.18
-     */
-    public static DefaultVerticalCRS castOrCopy(final VerticalCRS object) {
-        return (object == null) || (object instanceof DefaultVerticalCRS)
-                ? (DefaultVerticalCRS) object : new DefaultVerticalCRS(object);
-    }
-
-    /**
-     * Returns the GeoAPI interface implemented by this class.
-     * The SIS implementation returns {@code VerticalCRS.class}.
-     *
-     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
-     *        <code>VerticalCRS</code> sub-interface. Overriding possibility is left mostly for
-     *        implementors who wish to extend GeoAPI with their own set of interfaces.}
-     *
-     * @return {@code VerticalCRS.class} or a user-defined sub-interface.
-     */
-    @Override
-    public Class<? extends VerticalCRS> getInterface() {
-        return VerticalCRS.class;
-    }
-
-    /**
-     * Returns the coordinate system.
-     */
-    @Override
-    @XmlElement(name = "verticalCS")
-    public VerticalCS getCoordinateSystem() {
-        return (VerticalCS) super.getCoordinateSystem();
-    }
-
-    /**
-     * Used by JAXB only (invoked by reflection).
-     */
-    final void setCoordinateSystem(final VerticalCS cs) {
-        super.setCoordinateSystem(cs);
-    }
-
-    /**
-     * Returns the datum.
-     */
-    @Override
-    @XmlElement(name = "verticalDatum")
-    public VerticalDatum getDatum() {
-        return (VerticalDatum) super.getDatum();
-    }
-
-    /**
-     * Used by JAXB only (invoked by reflection).
-     */
-    final void setDatum(final VerticalDatum datum) {
-        super.setDatum(datum);
-    }
-
-    /**
-     * Formats the inner part of a
-     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#VERT_CS"><cite>Well
-     * Known Text</cite> (WKT)</A> element.
-     *
-     * @param  formatter The formatter to use.
-     * @return The name of the WKT element type, which is {@code "VERT_CS"}.
-     */
-    @Override
-    public String formatTo(final Formatter formatter) { // TODO: should be protected.
-        formatDefaultWKT(formatter);
-        return "VERT_CS";
     }
 }
