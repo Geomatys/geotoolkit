@@ -2,7 +2,7 @@
 <gml:GeographicCRS gml:id="WGS84DD"
         xmlns:gml = "http://www.opengis.net/gml/3.2"
         xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation = "http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/datums.xsd">
+        xsi:schemaLocation = "http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/coordinateReferenceSystems.xsd">
   <gml:name>WGS84(DD)</gml:name>
   <gml:ellipsoidalCS>
     <gml:EllipsoidalCS gml:id="Géodésique2D">

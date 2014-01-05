@@ -22,8 +22,7 @@ package org.geotoolkit.referencing.crs;
 
 import java.util.Map;
 import java.util.Collections;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.AffineCS;
@@ -36,6 +35,8 @@ import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.datum.DefaultImageDatum;
 import org.geotoolkit.resources.Vocabulary;
+
+import static org.geotoolkit.referencing.crs.AbstractCRS.name;
 
 
 /**
@@ -55,15 +56,13 @@ import org.geotoolkit.resources.Vocabulary;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
+@Deprecated
 @Immutable
-@XmlRootElement(name = "ImageCRS")
-public class DefaultImageCRS extends AbstractSingleCRS implements ImageCRS {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = 7312452786096397847L;
-
+@XmlTransient
+public class DefaultImageCRS extends org.apache.sis.referencing.crs.DefaultImageCRS {
     /**
      * A two-dimensional Cartesian coordinate reference system with
      * {@linkplain org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis#COLUMN column},
@@ -82,15 +81,6 @@ public class DefaultImageCRS extends AbstractSingleCRS implements ImageCRS {
         final Map<String,?> properties = name(Vocabulary.Keys.GRID);
         GRID_2D = new DefaultImageCRS(properties, new DefaultImageDatum(properties,
                 PixelInCell.CELL_CENTER), DefaultCartesianCS.GRID);
-    }
-
-    /**
-     * Constructs a new object in which every attributes are set to a default value.
-     * <strong>This is not a valid object.</strong> This constructor is strictly
-     * reserved to JAXB, which will assign values to the fields using reflexion.
-     */
-    private DefaultImageCRS() {
-        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
     }
 
     /**
@@ -135,70 +125,5 @@ public class DefaultImageCRS extends AbstractSingleCRS implements ImageCRS {
                            final AffineCS      cs)
     {
         super(properties, datum, cs);
-    }
-
-    /**
-     * Returns a Geotk CRS implementation with the same values than the given arbitrary
-     * implementation. If the given object is {@code null}, then this method returns {@code null}.
-     * Otherwise if the given object is already a Geotk implementation, then the given object is
-     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
-     * attribute values of the given object.
-     *
-     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return A Geotk implementation containing the values of the given object (may be the
-     *         given object itself), or {@code null} if the argument was null.
-     *
-     * @since 3.18
-     */
-    public static DefaultImageCRS castOrCopy(final ImageCRS object) {
-        return (object == null) || (object instanceof DefaultImageCRS)
-                ? (DefaultImageCRS) object : new DefaultImageCRS(object);
-    }
-
-    /**
-     * Returns the GeoAPI interface implemented by this class.
-     * The SIS implementation returns {@code ImageCRS.class}.
-     *
-     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
-     *        <code>ImageCRS</code> sub-interface. Overriding possibility is left mostly for
-     *        implementors who wish to extend GeoAPI with their own set of interfaces.}
-     *
-     * @return {@code ImageCRS.class} or a user-defined sub-interface.
-     */
-    @Override
-    public Class<? extends ImageCRS> getInterface() {
-        return ImageCRS.class;
-    }
-
-    /**
-     * Returns the coordinate system.
-     */
-    @Override
-    @XmlElement(name="cartesianCS")
-    public AffineCS getCoordinateSystem() {
-        return (AffineCS) super.getCoordinateSystem();
-    }
-
-    /**
-     * Used by JAXB only (invoked by reflection).
-     */
-    final void setCoordinateSystem(final AffineCS cs) {
-        super.setCoordinateSystem(cs);
-    }
-
-    /**
-     * Returns the datum.
-     */
-    @Override
-    @XmlElement(name="imageDatum")
-    public ImageDatum getDatum() {
-        return (ImageDatum) super.getDatum();
-    }
-
-    /**
-     * Used by JAXB only (invoked by reflection).
-     */
-    final void setDatum(final ImageDatum datum) {
-        super.setDatum(datum);
     }
 }
