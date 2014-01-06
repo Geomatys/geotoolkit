@@ -79,8 +79,8 @@ public abstract class Object3D extends SceneNode3D {
         if (this.verticesb.hasArray()){
             return this.verticesb.array();
         } else {
-            final float[] vertices = new float[this.verticesb.capacity()];
-            this.verticesb.position(0);
+            final float[] vertices = new float[this.verticesb.limit()];
+            this.verticesb.rewind();
             this.verticesb.get(vertices);
             return vertices;
         }
@@ -165,8 +165,8 @@ public abstract class Object3D extends SceneNode3D {
         if (this.indicesb.hasArray()){
             return this.indicesb.array();
         } else {
-            final int[] indices = new int[this.indicesb.capacity()];
-            this.indicesb.position(0);
+            final int[] indices = new int[this.indicesb.limit()];
+            this.indicesb.rewind();
             this.indicesb.get(indices);
             return indices;
         }
@@ -174,7 +174,7 @@ public abstract class Object3D extends SceneNode3D {
 
     public int getNumIndices(){
         if (this.indicesb != null) {
-            return this.indicesb.capacity();
+            return this.indicesb.limit();
         }
         return 0;
     }

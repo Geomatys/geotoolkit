@@ -73,8 +73,8 @@ public abstract class TexturedObject3D extends Object3D {
         if (this.uvsb.hasArray()){
             return this.uvsb.array();
         } else {
-            final float[] uvs = new float[this.uvsb.capacity()];
-            this.uvsb.position(0);
+            final float[] uvs = new float[this.uvsb.limit()];
+            this.uvsb.rewind();
             this.uvsb.get(uvs);
             return uvs;
         }

@@ -60,10 +60,10 @@ public class Mesh3D extends TexturedObject3D {
             }
 
             gl2.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-            gl2.glVertexPointer(3, GL.GL_FLOAT, 0, this.verticesb.position(0));
+            gl2.glVertexPointer(3, GL.GL_FLOAT, 0, this.verticesb.rewind());
             gl2.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-            gl2.glTexCoordPointer(2, GL.GL_FLOAT, 0, this.uvsb.position(0));
-            gl2.glDrawElements(GL2.GL_TRIANGLES, this.getNumIndices(), GL2.GL_UNSIGNED_INT, this.indicesb.position(0));
+            gl2.glTexCoordPointer(2, GL.GL_FLOAT, 0, this.uvsb.rewind());
+            gl2.glDrawElements(GL2.GL_TRIANGLES, this.getNumIndices(), GL2.GL_UNSIGNED_INT, this.indicesb.rewind());
         }
     }
 }

@@ -52,8 +52,8 @@ public class Point3D extends ColoredObject3D {
             gl2.glColor4f(this.getColor()[0], this.getColor()[1], this.getColor()[2], this.getColor()[3]);
 
             gl2.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-            gl2.glVertexPointer(3, GL.GL_FLOAT, 0, this.verticesb.position(0));
-            gl2.glDrawElements(GL2.GL_POINTS, this.getNumIndices(), GL2.GL_UNSIGNED_INT, this.indicesb.position(0));
+            gl2.glVertexPointer(3, GL.GL_FLOAT, 0, this.verticesb.rewind());
+            gl2.glDrawElements(GL2.GL_POINTS, this.getNumIndices(), GL2.GL_UNSIGNED_INT, this.indicesb.rewind());
 
             gl2.glColor4f(1.0f,1.0f,1.0f,1.0f);
         }
