@@ -36,7 +36,7 @@ import org.opengis.geometry.Envelope;
 import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.crs.AbstractCRS;
+import org.apache.sis.referencing.crs.AbstractCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;

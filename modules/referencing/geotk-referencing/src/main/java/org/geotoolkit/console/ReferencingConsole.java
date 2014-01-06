@@ -39,7 +39,7 @@ import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.crs.AbstractCRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -545,9 +545,9 @@ public class ReferencingConsole extends InteractiveConsole {
             table.nextColumn();
         }
         if (position2 != null) {
-            if (crs instanceof AbstractCRS) try {
+            if (crs instanceof DefaultGeographicCRS) try {
                 final Measure distance;
-                distance = ((AbstractCRS) crs).distance(position1.getCoordinate(),
+                distance = ((DefaultGeographicCRS) crs).distance(position1.getCoordinate(),
                                                         position2.getCoordinate());
                 table.setAlignment(TableWriter.ALIGN_RIGHT);
                 table.write(numberFormat.format(distance.doubleValue()));

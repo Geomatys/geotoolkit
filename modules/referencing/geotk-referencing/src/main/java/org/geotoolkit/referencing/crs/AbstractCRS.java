@@ -171,23 +171,6 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
     }
 
     /**
-     * Computes the distance between two points. This convenience method delegates the work to
-     * the underlying {@linkplain AbstractCS coordinate system}, if possible.
-     *
-     * @param  coord1 Coordinates of the first point.
-     * @param  coord2 Coordinates of the second point.
-     * @return The distance between {@code coord1} and {@code coord2}.
-     * @throws UnsupportedOperationException if this coordinate reference system can't compute
-     *         distances.
-     * @throws MismatchedDimensionException if a coordinate doesn't have the expected dimension.
-     */
-    public Measure distance(final double[] coord1, final double[] coord2)
-            throws UnsupportedOperationException, MismatchedDimensionException
-    {
-        return AbstractCS.distance(coordinateSystem, coord1, coord2);
-    }
-
-    /**
      * Compares this coordinate reference system with the specified object for equality.
      * If the {@code mode} argument value is {@link ComparisonMode#STRICT STRICT} or
      * {@link ComparisonMode#BY_CONTRACT BY_CONTRACT}, then all available properties are

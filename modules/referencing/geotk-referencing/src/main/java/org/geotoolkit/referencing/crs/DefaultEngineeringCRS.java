@@ -24,8 +24,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import javax.measure.unit.SI;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -37,8 +36,9 @@ import org.geotoolkit.referencing.datum.DefaultEngineeringDatum;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.resources.Vocabulary;
-import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.util.ComparisonMode;
+
+import static org.geotoolkit.referencing.crs.AbstractCRS.name;
 
 
 /**
@@ -68,15 +68,13 @@ import org.apache.sis.util.ComparisonMode;
  *
  * @since 1.2
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
+@Deprecated
 @Immutable
-@XmlRootElement(name = "EngineeringCRS")
-public class DefaultEngineeringCRS extends AbstractSingleCRS implements EngineeringCRS {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = 6695541732063382701L;
-
+@XmlTransient
+public class DefaultEngineeringCRS extends org.apache.sis.referencing.crs.DefaultEngineeringCRS {
     /**
      * A Cartesian local coordinate system.
      */
@@ -168,15 +166,6 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
             new Cartesian(Vocabulary.Keys.GENERIC_CARTESIAN_3D, DefaultCartesianCS.GENERIC_3D);
 
     /**
-     * Constructs a new object in which every attributes are set to a default value.
-     * <strong>This is not a valid object.</strong> This constructor is strictly
-     * reserved to JAXB, which will assign values to the fields using reflexion.
-     */
-    private DefaultEngineeringCRS() {
-        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
-    }
-
-    /**
      * Constructs a new enginnering CRS with the same values than the specified one.
      * This copy constructor provides a way to convert an arbitrary implementation into a
      * Geotk one or a user-defined one (as a subclass), usually in order to leverage
@@ -218,68 +207,5 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
                                  final CoordinateSystem      cs)
     {
         super(properties, datum, cs);
-    }
-
-    /**
-     * Returns a Geotk CRS implementation with the same values than the given arbitrary
-     * implementation. If the given object is {@code null}, then this method returns {@code null}.
-     * Otherwise if the given object is already a Geotk implementation, then the given object is
-     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
-     * attribute values of the given object.
-     *
-     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return A Geotk implementation containing the values of the given object (may be the
-     *         given object itself), or {@code null} if the argument was null.
-     *
-     * @since 3.18
-     */
-    public static DefaultEngineeringCRS castOrCopy(final EngineeringCRS object) {
-        return (object == null) || (object instanceof DefaultEngineeringCRS)
-                ? (DefaultEngineeringCRS) object : new DefaultEngineeringCRS(object);
-    }
-
-    /**
-     * Returns the GeoAPI interface implemented by this class.
-     * The SIS implementation returns {@code EngineeringCRS.class}.
-     *
-     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
-     *        <code>EngineeringCRS</code> sub-interface. Overriding possibility is left mostly for
-     *        implementors who wish to extend GeoAPI with their own set of interfaces.}
-     *
-     * @return {@code EngineeringCRS.class} or a user-defined sub-interface.
-     */
-    @Override
-    public Class<? extends EngineeringCRS> getInterface() {
-        return EngineeringCRS.class;
-    }
-
-    /**
-     * Returns the datum.
-     */
-    @Override
-    @XmlElement(name="engineeringDatum")
-    public EngineeringDatum getDatum() {
-        return (EngineeringDatum) super.getDatum();
-    }
-
-    /**
-     * Used by JAXB only (invoked by reflection).
-     */
-    final void setDatum(final EngineeringDatum datum) {
-        super.setDatum(datum);
-    }
-
-    /**
-     * Formats the inner part of a
-     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#LOCAL_CS"><cite>Well
-     * Known Text</cite> (WKT)</A> element.
-     *
-     * @param  formatter The formatter to use.
-     * @return The name of the WKT element type, which is {@code "LOCAL_CS"}.
-     */
-    @Override
-    public String formatTo(final Formatter formatter) { // TODO: should be protected.
-        formatDefaultWKT(formatter);
-        return "LOCAL_CS";
     }
 }

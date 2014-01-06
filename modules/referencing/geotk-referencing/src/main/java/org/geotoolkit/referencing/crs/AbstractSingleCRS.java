@@ -70,11 +70,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 @Immutable
 public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
     /**
-     * Serial number for inter-operability with different versions.
-     */
-//  private static final long serialVersionUID = 1815712797774273L;
-
-    /**
      * The datum. This field should be considered as final.
      * It is modified only by JAXB at unmarshalling time.
      */

@@ -26,8 +26,7 @@ import java.util.Map;
 import javax.measure.unit.Unit;
 import javax.measure.unit.NonSI;
 import javax.measure.quantity.Angle;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.AxisDirection;
@@ -49,8 +48,8 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.cs.AbstractCS;
 import org.apache.sis.util.UnsupportedImplementationException;
-import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.measure.Units;
 
 
@@ -70,15 +69,13 @@ import org.apache.sis.measure.Units;
  *
  * @since 1.2
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
+@Deprecated
 @Immutable
-@XmlRootElement(name = "GeographicCRS")
-public class DefaultGeographicCRS extends AbstractSingleCRS implements GeographicCRS {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = 861224913438092335L;
-
+@XmlTransient
+public class DefaultGeographicCRS extends org.apache.sis.referencing.crs.DefaultGeographicCRS {
     /**
      * A two-dimensional geographic coordinate reference system using the WGS84 datum.
      * This CRS uses (<var>longitude</var>, <var>latitude</var>) ordinates with longitude values
@@ -152,15 +149,6 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
      * @since 3.20
      */
     private transient DefaultGeographicCRS[] shifted;
-
-    /**
-     * Constructs a new object in which every attributes are set to a default value.
-     * <strong>This is not a valid object.</strong> This constructor is strictly
-     * reserved to JAXB, which will assign values to the fields using reflexion.
-     */
-    private DefaultGeographicCRS() {
-        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
-    }
 
     /**
      * Constructs a new geographic CRS with the same values than the specified one.
@@ -238,53 +226,6 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
     }
 
     /**
-     * Returns the GeoAPI interface implemented by this class.
-     * The SIS implementation returns {@code GeographicCRS.class}.
-     *
-     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
-     *        <code>GeographicCRS</code> sub-interface. Overriding possibility is left mostly for
-     *        implementors who wish to extend GeoAPI with their own set of interfaces.}
-     *
-     * @return {@code GeographicCRS.class} or a user-defined sub-interface.
-     */
-    @Override
-    public Class<? extends GeographicCRS> getInterface() {
-        return GeographicCRS.class;
-    }
-
-    /**
-     * Returns the coordinate system.
-     */
-    @Override
-    @XmlElement(name="ellipsoidalCS")
-    public EllipsoidalCS getCoordinateSystem() {
-        return (EllipsoidalCS) super.getCoordinateSystem();
-    }
-
-    /**
-     * Used by JAXB only (invoked by reflection).
-     */
-    final void setCoordinateSystem(final EllipsoidalCS cs) {
-        super.setCoordinateSystem(cs);
-    }
-
-    /**
-     * Returns the datum.
-     */
-    @Override
-    @XmlElement(name="geodeticDatum")
-    public GeodeticDatum getDatum() {
-        return (GeodeticDatum) super.getDatum();
-    }
-
-    /**
-     * Used by JAXB only (invoked by reflection).
-     */
-    final void setDatum(final GeodeticDatum datum) {
-        super.setDatum(datum);
-    }
-
-    /**
      * Computes the orthodromic distance between two points. This convenience method delegates
      * the work to the underlying {@linkplain DefaultEllipsoid ellipsoid}, if possible.
      *
@@ -295,7 +236,6 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
      *         distances.
      * @throws MismatchedDimensionException if a coordinate doesn't have the expected dimension.
      */
-    @Override
     public Measure distance(final double[] coord1, final double[] coord2)
             throws UnsupportedOperationException, MismatchedDimensionException
     {
@@ -314,7 +254,7 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
              * Not yet implemented (an exception will be thrown later).
              * We should probably revisit the way we compute distances.
              */
-            return super.distance(coord1, coord2);
+            return AbstractCS.distance(coordinateSystem, coord1, coord2);
         }
         return new Measure(e.orthodromicDistance(cs.getLongitude(coord1),
                                                  cs.getLatitude (coord1),
@@ -392,34 +332,5 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
             }
         }
         return crs;
-    }
-
-    /**
-     * Formats the inner part of a
-     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#GEOGCS"><cite>Well
-     * Known Text</cite> (WKT)</A> element.
-     *
-     * @param  formatter The formatter to use.
-     * @return The name of the WKT element type, which is {@code "GEOGCS"}.
-     */
-    @Override
-    public String formatTo(final Formatter formatter) {  // TODO: should be protected.
-        final Unit<Angle> oldUnit = formatter.getAngularUnit();
-        final Unit<Angle> unit = getAngularUnit(getCoordinateSystem());
-        final GeodeticDatum datum = getDatum();
-        formatter.setAngularUnit(unit);
-        formatter.append(datum);
-        formatter.append(datum.getPrimeMeridian());
-        formatter.append(unit);
-        final EllipsoidalCS cs = getCoordinateSystem();
-        final int dimension = cs.getDimension();
-        for (int i=0; i<dimension; i++) {
-            formatter.append(cs.getAxis(i));
-        }
-        if (!unit.equals(getUnit())) {
-            formatter.setInvalidWKT(this);
-        }
-        formatter.setAngularUnit(oldUnit);
-        return "GEOGCS";
     }
 }

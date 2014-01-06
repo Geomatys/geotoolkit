@@ -22,23 +22,21 @@ package org.geotoolkit.referencing.crs;
 
 import java.util.Collections;
 import java.util.Map;
-import javax.measure.unit.Unit;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.SphericalCS;
-import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.datum.GeodeticDatum;
 
-import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultSphericalCS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.resources.Vocabulary;
+
+import static org.geotoolkit.referencing.crs.AbstractCRS.name;
 
 
 /**
@@ -58,15 +56,13 @@ import org.geotoolkit.resources.Vocabulary;
  *
  * @since 1.2
  * @module
+ *
+ * @deprecated Moved to Apache SIS.
  */
+@Deprecated
 @Immutable
-@XmlRootElement(name = "GeocentricCRS")
-public class DefaultGeocentricCRS extends AbstractSingleCRS implements GeocentricCRS {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = 6784642848287659827L;
-
+@XmlTransient
+public class DefaultGeocentricCRS extends org.apache.sis.referencing.crs.DefaultGeocentricCRS {
     /**
      * The default geocentric CRS with a
      * {@linkplain DefaultCartesianCS#GEOCENTRIC Cartesian coordinate system}.
@@ -87,15 +83,6 @@ public class DefaultGeocentricCRS extends AbstractSingleCRS implements Geocentri
     public static final DefaultGeocentricCRS SPHERICAL = new DefaultGeocentricCRS(
                         name(Vocabulary.Keys.SPHERICAL),
                         DefaultGeodeticDatum.WGS84, DefaultSphericalCS.GEOCENTRIC);
-
-    /**
-     * Constructs a new object in which every attributes are set to a default value.
-     * <strong>This is not a valid object.</strong> This constructor is strictly
-     * reserved to JAXB, which will assign values to the fields using reflexion.
-     */
-    private DefaultGeocentricCRS() {
-        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
-    }
 
     /**
      * Constructs a new geocentric CRS with the same values than the specified one.
@@ -169,83 +156,5 @@ public class DefaultGeocentricCRS extends AbstractSingleCRS implements Geocentri
                                 final SphericalCS   cs)
     {
         super(properties, datum, cs);
-    }
-
-    /**
-     * Returns a Geotk CRS implementation with the same values than the given arbitrary
-     * implementation. If the given object is {@code null}, then this method returns {@code null}.
-     * Otherwise if the given object is already a Geotk implementation, then the given object is
-     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
-     * attribute values of the given object.
-     *
-     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return A Geotk implementation containing the values of the given object (may be the
-     *         given object itself), or {@code null} if the argument was null.
-     *
-     * @since 3.18
-     */
-    public static DefaultGeocentricCRS castOrCopy(final GeocentricCRS object) {
-        return (object == null) || (object instanceof DefaultGeocentricCRS)
-                ? (DefaultGeocentricCRS) object : new DefaultGeocentricCRS(object);
-    }
-
-    /**
-     * Returns the GeoAPI interface implemented by this class.
-     * The SIS implementation returns {@code GeocentricCRS.class}.
-     *
-     * {@note Subclasses usually do not need to override this method since GeoAPI does not define
-     *        <code>GeocentricCRS</code> sub-interface. Overriding possibility is left mostly for
-     *        implementors who wish to extend GeoAPI with their own set of interfaces.}
-     *
-     * @return {@code GeocentricCRS.class} or a user-defined sub-interface.
-     */
-    @Override
-    public Class<? extends GeocentricCRS> getInterface() {
-        return GeocentricCRS.class;
-    }
-
-    /**
-     * Returns the datum.
-     */
-    @Override
-    @XmlElement(name="geodeticDatum")
-    public GeodeticDatum getDatum() {
-        return (GeodeticDatum) super.getDatum();
-    }
-
-    /**
-     * Used by JAXB only (invoked by reflection).
-     */
-    final void setDatum(final GeodeticDatum datum) {
-        super.setDatum(datum);
-    }
-
-    /**
-     * Formats the inner part of a
-     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#GEOCCS"><cite>Well
-     * Known Text</cite> (WKT)</A> element.
-     *
-     * @param  formatter The formatter to use.
-     * @return The name of the WKT element type, which is {@code "GEOCCS"}.
-     */
-    @Override
-    public String formatTo(final Formatter formatter) { // TODO: should be protected.
-        final Unit<?> unit = getUnit();
-        final GeodeticDatum datum = getDatum();
-        formatter.append(datum);
-        formatter.append(datum.getPrimeMeridian());
-        formatter.append(unit);
-        final CoordinateSystem cs = formatter.getConvention().toConformCS(getCoordinateSystem());
-        if (!(cs instanceof CartesianCS)) {
-            formatter.setInvalidWKT(cs);
-        }
-        final int dimension = cs.getDimension();
-        for (int i=0; i<dimension; i++) {
-            formatter.append(cs.getAxis(i));
-        }
-        if (unit == null) {
-            formatter.setInvalidWKT(this);
-        }
-        return "GEOCCS";
     }
 }
