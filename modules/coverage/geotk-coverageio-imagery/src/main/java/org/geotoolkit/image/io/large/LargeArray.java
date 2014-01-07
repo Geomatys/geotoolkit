@@ -19,7 +19,6 @@ package org.geotoolkit.image.io.large;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.IllegalImageDimensionException;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.util.FileUtilities;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -31,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
+import org.geotoolkit.util.FileUtilities;
 
 /**
  * Stock all {@link java.awt.image.Raster} contained from define {@link java.awt.image.RenderedImage}.
