@@ -44,12 +44,10 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ImageDatumType", propOrder = {
+@XmlType(propOrder = {
     "pixelInCell"
 })
-public class ImageDatumType
-    extends AbstractDatumType
-{
+public class ImageDatumType extends AbstractDatumType {
 
     @XmlElement(required = true)
     private CodeWithAuthorityType pixelInCell;

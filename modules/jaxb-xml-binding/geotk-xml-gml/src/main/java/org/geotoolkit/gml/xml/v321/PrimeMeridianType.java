@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PrimeMeridianType", propOrder = {
+@XmlType(propOrder = {
     "greenwichLongitude"
 })
 public class PrimeMeridianType

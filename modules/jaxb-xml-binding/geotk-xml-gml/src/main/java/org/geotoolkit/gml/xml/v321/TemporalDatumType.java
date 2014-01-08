@@ -46,7 +46,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TemporalDatumType", propOrder = {
+@XmlType(propOrder = {
     "origin"
 })
 public class TemporalDatumType

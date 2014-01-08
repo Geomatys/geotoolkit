@@ -58,7 +58,7 @@ import org.geotoolkit.gml.xml.EngineeringDatumRef;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "EngineeringCRSType", propOrder = {
+@XmlType(propOrder = {
     "affineCSProperty",
     "cartesianCSProperty",
     "cylindricalCSProperty",

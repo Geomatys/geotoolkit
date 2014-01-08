@@ -50,7 +50,7 @@ import org.geotoolkit.gml.xml.Code;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CodeType", propOrder = {
+@XmlType(propOrder = {
     "value"
 })
 @XmlSeeAlso({

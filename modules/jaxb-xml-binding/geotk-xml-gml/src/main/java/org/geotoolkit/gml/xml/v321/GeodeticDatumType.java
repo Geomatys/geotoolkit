@@ -46,13 +46,11 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "GeodeticDatumType", propOrder = {
+@XmlType(propOrder = {
     "primeMeridianProperty",
     "ellipsoidProperty"
 })
-public class GeodeticDatumType
-    extends AbstractDatumType
-{
+public class GeodeticDatumType extends AbstractDatumType {
 
     @XmlElementRef(name = "primeMeridianProperty", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private JAXBElement<PrimeMeridianPropertyType> primeMeridianProperty;

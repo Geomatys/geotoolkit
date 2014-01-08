@@ -46,13 +46,11 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "VerticalCRSType", propOrder = {
+@XmlType(propOrder = {
     "verticalCSProperty",
     "verticalDatumProperty"
 })
-public class VerticalCRSType
-    extends AbstractCRSType
-{
+public class VerticalCRSType extends AbstractCRSType {
 
     @XmlElementRef(name = "verticalCSProperty", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private JAXBElement<VerticalCSPropertyType> verticalCSProperty;

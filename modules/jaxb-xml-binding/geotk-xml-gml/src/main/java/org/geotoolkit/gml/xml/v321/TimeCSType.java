@@ -21,7 +21,6 @@ package org.geotoolkit.gml.xml.v321;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 
 /**
@@ -41,10 +40,6 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TimeCSType")
-public class TimeCSType
-    extends AbstractCoordinateSystemType implements Serializable
-{
-
+public class TimeCSType extends AbstractCoordinateSystemType implements Serializable {
 
 }

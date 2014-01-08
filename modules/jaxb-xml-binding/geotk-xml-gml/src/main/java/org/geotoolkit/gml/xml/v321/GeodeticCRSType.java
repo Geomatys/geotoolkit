@@ -52,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "GeodeticCRSType", propOrder = {
+@XmlType(propOrder = {
     "ellipsoidalCSProperty",
     "cartesianCSProperty",
     "sphericalCSProperty",

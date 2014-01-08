@@ -50,15 +50,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ImageCRSType", propOrder = {
+@XmlType(propOrder = {
     "cartesianCSProperty",
     "affineCSProperty",
     "usesObliqueCartesianCS",
     "imageDatumProperty"
 })
-public class ImageCRSType
-    extends AbstractCRSType
-{
+public class ImageCRSType extends AbstractCRSType {
 
     @XmlElementRef(name = "cartesianCSProperty", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private JAXBElement<CartesianCSPropertyType> cartesianCSProperty;

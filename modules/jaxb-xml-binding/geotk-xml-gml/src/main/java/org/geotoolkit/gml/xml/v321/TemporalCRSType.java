@@ -49,14 +49,12 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TemporalCRSType", propOrder = {
+@XmlType(propOrder = {
     "timeCSProperty",
     "usesTemporalCS",
     "temporalDatumProperty"
 })
-public class TemporalCRSType
-    extends AbstractCRSType
-{
+public class TemporalCRSType extends AbstractCRSType {
 
     @XmlElementRef(name = "timeCSProperty", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private JAXBElement<TimeCSPropertyType> timeCSProperty;

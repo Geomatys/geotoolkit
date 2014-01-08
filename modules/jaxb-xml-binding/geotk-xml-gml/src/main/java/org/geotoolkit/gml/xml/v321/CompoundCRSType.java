@@ -49,12 +49,10 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CompoundCRSType", propOrder = {
+@XmlType(propOrder = {
     "componentReferenceSystem"
 })
-public class CompoundCRSType
-    extends AbstractCRSType
-{
+public class CompoundCRSType extends AbstractCRSType {
 
     @XmlElementRef(name = "componentReferenceSystem", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private List<JAXBElement<SingleCRSPropertyType>> componentReferenceSystem;
@@ -64,20 +62,6 @@ public class CompoundCRSType
     /**
      * Gets the value of the componentReferenceSystem property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the componentReferenceSystem property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getComponentReferenceSystem().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link SingleCRSPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link SingleCRSPropertyType }{@code >}

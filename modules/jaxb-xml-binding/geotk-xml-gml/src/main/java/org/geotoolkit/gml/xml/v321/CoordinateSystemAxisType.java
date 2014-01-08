@@ -50,16 +50,14 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CoordinateSystemAxisType", propOrder = {
+@XmlType(propOrder = {
     "axisAbbrev",
     "axisDirection",
     "minimumValue",
     "maximumValue",
     "rangeMeaning"
 })
-public class CoordinateSystemAxisType
-    extends IdentifiedObjectType
-{
+public class CoordinateSystemAxisType extends IdentifiedObjectType {
 
     @XmlElement(required = true)
     private CodeType axisAbbrev;

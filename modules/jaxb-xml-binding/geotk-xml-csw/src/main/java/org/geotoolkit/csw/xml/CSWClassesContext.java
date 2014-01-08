@@ -87,10 +87,10 @@ public class CSWClassesContext {
         classeList.add(org.geotoolkit.gml.xml.v321.ObjectFactory.class);
 
         // vertical CRS
-//        try {
-//            Class vcrsClass = Class.forName("org.geotoolkit.referencing.crs.DefaultVerticalCRS");
-//            classeList.add(vcrsClass);
-//        } catch (ClassNotFoundException ex) {}
+        try {
+            Class vcrsClass = Class.forName("org.apache.sis.referencing.crs.DefaultVerticalCRS");
+            classeList.add(vcrsClass);
+        } catch (ClassNotFoundException ex) {}
 
         // we add the extensions classes
         classeList.add(org.geotoolkit.service.ServiceIdentificationImpl.class);

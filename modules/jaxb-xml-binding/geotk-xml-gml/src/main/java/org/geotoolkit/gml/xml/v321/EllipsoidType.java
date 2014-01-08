@@ -45,13 +45,11 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "EllipsoidType", propOrder = {
+@XmlType(propOrder = {
     "semiMajorAxis",
     "secondDefiningParameter"
 })
-public class EllipsoidType
-    extends IdentifiedObjectType
-{
+public class EllipsoidType extends IdentifiedObjectType {
 
     @XmlElement(required = true)
     private MeasureType semiMajorAxis;

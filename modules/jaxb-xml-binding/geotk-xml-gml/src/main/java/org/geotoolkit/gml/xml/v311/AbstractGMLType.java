@@ -222,6 +222,8 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     public void setId(final String value) {
         if (value != null) {
             getIdentifierMap().put(IdentifierSpace.ID, value);
+        } else {
+            getIdentifierMap().remove(IdentifierSpace.ID);
         }
         this.id = value;
     }

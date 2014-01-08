@@ -50,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AbstractCoordinateSystemType", propOrder = {
+@XmlType(propOrder = {
     "axis"
 })
 @XmlSeeAlso({
@@ -67,9 +67,7 @@ import javax.xml.bind.annotation.XmlType;
     UserDefinedCSType.class,
     PolarCSType.class
 })
-public abstract class AbstractCoordinateSystemType
-    extends IdentifiedObjectType
-{
+public abstract class AbstractCoordinateSystemType extends IdentifiedObjectType {
 
     @XmlElementRef(name = "axis", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private List<JAXBElement<CoordinateSystemAxisPropertyType>> axis;
@@ -79,20 +77,6 @@ public abstract class AbstractCoordinateSystemType
     /**
      * Gets the value of the axis property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the axis property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAxis().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link CoordinateSystemAxisPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link CoordinateSystemAxisPropertyType }{@code >}
