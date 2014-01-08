@@ -305,7 +305,7 @@ class LargeMap2D {
      *
      * @param parentDirectory directory which will be cleaned.
      */
-    private void cleanDirectory(File parentDirectory) {
+    public static void cleanDirectory(File parentDirectory) {
         for (File file : parentDirectory.listFiles()) {
             if (file.isDirectory()) cleanDirectory(file);
             file.delete();

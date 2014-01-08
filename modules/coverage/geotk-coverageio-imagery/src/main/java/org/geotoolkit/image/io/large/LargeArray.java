@@ -30,7 +30,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
-import org.geotoolkit.util.FileUtilities;
 
 /**
  * Stock all {@link java.awt.image.Raster} contained from define {@link java.awt.image.RenderedImage}.
@@ -218,7 +217,7 @@ class LargeArray {
         }
         stack.clear();
         final File removeFile = new File(dirPath);
-        FileUtilities.deleteDirectory(removeFile);
+        LargeMap2D.cleanDirectory(removeFile);
     }
 
     /**
