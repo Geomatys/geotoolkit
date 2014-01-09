@@ -70,7 +70,7 @@ public final strictfp class ExponentialTransform1DTest extends TransformTestBase
         for (int i=0; i<source.length; i++) {
             target[i] = SCALE * pow(BASE, source[i]);
         }
-        tolerance = 1E-15;
+        tolerance = 1E-12;
         verifyTransform(source, target);
         stress(source);
 

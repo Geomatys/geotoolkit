@@ -139,6 +139,6 @@ public class NamedIdentifier extends org.apache.sis.referencing.NamedIdentifier 
      * @param version   The version, or {@code null} if none.
      */
     public NamedIdentifier(final Citation authority, final String code, final String version) {
-        super(authority, code, version);
+        super(authority, Citations.getIdentifier(authority), code, version, null);
     }
 }
