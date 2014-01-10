@@ -287,6 +287,14 @@ public class UnNamedDomainType {
         this.defaultValue = value;
     }
 
+    public void setDefaultValue(final String value) {
+        if (value != null) {
+            this.defaultValue = new ValueType(value);
+        } else {
+            this.defaultValue = null;
+        }
+    }
+
     /**
      * Meaning metadata should be referenced or included for
      *           each quantity.

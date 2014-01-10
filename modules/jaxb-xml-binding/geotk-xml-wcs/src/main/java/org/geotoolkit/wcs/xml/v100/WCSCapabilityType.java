@@ -236,6 +236,12 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
     }
 
     @Override
+    public AbstractDomain getParameter(String name) {
+        //no constraint
+        return null;
+    }
+
+    @Override
     public AbstractDomain getConstraint(String name) {
         //no constraint
         return null;
@@ -320,7 +326,7 @@ public class WCSCapabilityType implements AbstractOperationsMetadata {
          */
         public List<String> getFormat() {
             if (format == null) {
-                format = new ArrayList<String>();
+                format = new ArrayList<>();
             }
             return this.format;
         }

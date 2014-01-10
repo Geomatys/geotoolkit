@@ -79,19 +79,19 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     public OperationsMetadata(final OperationsMetadata that){
         if (that != null)  {
             if (that.constraint != null) {
-                this.constraint = new ArrayList<DomainType>();
+                this.constraint = new ArrayList<>();
                 for (DomainType d : that.constraint) {
                     this.constraint.add(new DomainType(d));
                 }
             }
             if (that.parameter != null) {
-                this.parameter = new ArrayList<DomainType>();
+                this.parameter = new ArrayList<>();
                 for (DomainType d : that.parameter) {
                     this.parameter.add(new DomainType(d));
                 }
             }
             if (that.operation != null) {
-                this.operation = new ArrayList<Operation>();
+                this.operation = new ArrayList<>();
                 for (Operation d : that.operation) {
                     this.operation.add(new Operation(d));
                 }
@@ -109,13 +109,14 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      */
     public List<Operation> getOperation() {
         if (operation == null) {
-            operation = new ArrayList<Operation>();
+            operation = new ArrayList<>();
         }
         return this.operation;
     }
 
     /**
      * Return the operation for the specified name
+     * @param operationName
      */
     @Override
     public Operation getOperation(final String operationName) {
@@ -148,9 +149,22 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      */
     public List<DomainType> getParameter() {
         if (parameter == null) {
-            parameter = new ArrayList<DomainType>();
+            parameter = new ArrayList<>();
         }
         return this.parameter;
+    }
+
+    @Override
+    public DomainType getParameter(final String name) {
+        if (parameter == null) {
+            parameter = new ArrayList<>();
+        }
+        for (DomainType d : parameter) {
+            if (d.getName().equalsIgnoreCase(name)) {
+                return d;
+            }
+        }
+        return null;
     }
 
     /**
@@ -159,7 +173,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      */
     public List<DomainType> getConstraint() {
         if (constraint == null) {
-            constraint = new ArrayList<DomainType>();
+            constraint = new ArrayList<>();
         }
         return this.constraint;
     }
@@ -167,7 +181,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     @Override
     public DomainType getConstraint(final String name) {
         if (constraint == null) {
-            constraint = new ArrayList<DomainType>();
+            constraint = new ArrayList<>();
         }
         for (DomainType d : constraint) {
             if (d.getName().equalsIgnoreCase(name)) {
@@ -180,7 +194,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     @Override
     public void addConstraint(final AbstractDomain domain) {
         if (constraint == null) {
-            constraint = new ArrayList<DomainType>();
+            constraint = new ArrayList<>();
         }
         if (domain instanceof DomainType) {
             constraint.add((DomainType)domain);
@@ -192,7 +206,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     @Override
     public void removeConstraint(final String name) {
         if (constraint == null) {
-            constraint = new ArrayList<DomainType>();
+            constraint = new ArrayList<>();
         }
         for (DomainType d : constraint) {
             if (d.getName().equalsIgnoreCase(name)) {

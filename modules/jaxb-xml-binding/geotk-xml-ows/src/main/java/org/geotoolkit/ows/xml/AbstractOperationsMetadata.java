@@ -37,6 +37,8 @@ public interface AbstractOperationsMetadata {
     void removeOperation(final String operationName);
     
     AbstractDomain getConstraint(final String name);
+
+    AbstractDomain getParameter(final String name);
     
     void removeConstraint(final String name);
     

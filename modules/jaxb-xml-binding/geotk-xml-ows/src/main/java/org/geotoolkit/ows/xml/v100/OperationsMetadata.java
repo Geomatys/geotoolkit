@@ -82,6 +82,10 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     
     /**
      * Build a new operation metadata.
+     * @param operation
+     * @param parameter
+     * @param constraint
+     * @param extendedCapabilities
      */
     public OperationsMetadata(final List<Operation> operation, final List<DomainType> parameter, final List<DomainType> constraint,
             final MultiLingualCapabilities extendedCapabilities){
@@ -95,19 +99,19 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     public OperationsMetadata(final OperationsMetadata that){
         if (that != null)  {
             if (that.constraint != null) {
-                this.constraint = new ArrayList<DomainType>();
+                this.constraint = new ArrayList<>();
                 for (DomainType d : that.constraint) {
                     this.constraint.add(new DomainType(d));
                 }
             }
             if (that.parameter != null) {
-                this.parameter = new ArrayList<DomainType>();
+                this.parameter = new ArrayList<>();
                 for (DomainType d : that.parameter) {
                     this.parameter.add(new DomainType(d));
                 }
             }
             if (that.operation != null) {
-                this.operation = new ArrayList<Operation>();
+                this.operation = new ArrayList<>();
                 for (Operation d : that.operation) {
                     this.operation.add(new Operation(d));
                 }
@@ -127,13 +131,14 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      */
     public List<Operation> getOperation() {
         if (operation == null) {
-            operation = new ArrayList<Operation>();
+            operation = new ArrayList<>();
         }
         return operation;
     }
     
     /**
-     * Return the operation for the specified name
+     * @param operationName
+     * @return the operation for the specified name
      */
     @Override
     public Operation getOperation(final String operationName) {
@@ -164,8 +169,6 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * Update all the url in a OWS capabilities document.
      *
      * @param url The url of the web application.
-     * @param service the initials of the web serviceType (WMS, SOS, WCS, CSW, ...).
-     * This string correspound to the resource name in lower case.
      */
     @Override
     public void updateURL(final String url) {
@@ -183,9 +186,22 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      */
     public List<DomainType> getParameter() {
         if (parameter == null) {
-            parameter = new ArrayList<DomainType>();
+            parameter = new ArrayList<>();
         }
         return Collections.unmodifiableList(parameter);
+    }
+
+    @Override
+    public DomainType getParameter(final String name) {
+        if (parameter == null) {
+            parameter = new ArrayList<>();
+        }
+        for (DomainType d : parameter) {
+            if (d.getName().equalsIgnoreCase(name)) {
+                return d;
+            }
+        }
+        return null;
     }
 
     /**
@@ -193,7 +209,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      */
     public List<DomainType> getConstraint() {
         if (constraint == null) {
-            constraint = new ArrayList<DomainType>();
+            constraint = new ArrayList<>();
         }
         return constraint;
     }
@@ -201,7 +217,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     @Override
     public DomainType getConstraint(final String name) {
         if (constraint == null) {
-            constraint = new ArrayList<DomainType>();
+            constraint = new ArrayList<>();
         }
         for (DomainType d : constraint) {
             if (d.getName().equalsIgnoreCase(name)) {
@@ -214,7 +230,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     @Override
     public void addConstraint(final AbstractDomain domain) {
         if (constraint == null) {
-            constraint = new ArrayList<DomainType>();
+            constraint = new ArrayList<>();
         }
         if (domain instanceof DomainType) {
             constraint.add((DomainType)domain);
@@ -226,7 +242,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     @Override
     public void removeConstraint(final String name) {
         if (constraint == null) {
-            constraint = new ArrayList<DomainType>();
+            constraint = new ArrayList<>();
         }
         for (DomainType d : constraint) {
             if (d.getName().equalsIgnoreCase(name)) {
@@ -237,7 +253,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     
      public void removeConstraint(final DomainType constraint) {
         if (this.constraint == null) {
-            this.constraint = new ArrayList<DomainType>();
+            this.constraint = new ArrayList<>();
         }
         for (DomainType d : this.constraint) {
             if (d.equals(constraint)) {

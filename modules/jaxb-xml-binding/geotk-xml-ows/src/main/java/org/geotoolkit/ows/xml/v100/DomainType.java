@@ -99,6 +99,8 @@ public class DomainType implements AbstractDomain {
 
     /**
      * Build a new Domain with the specified list of values.
+     * @param name
+     * @param value
      */
     public DomainType(final String name, final List<String> value) {
         this.name  = name;
@@ -107,6 +109,8 @@ public class DomainType implements AbstractDomain {
     
     /**
      * Build a new Domain with the a single value.
+     * @param name
+     * @param value
      */
     public DomainType(final String name, final String value) {
         this.name  = name;
@@ -123,7 +127,12 @@ public class DomainType implements AbstractDomain {
     public String getDefaultValue() {
         return defaultValue;
     }
-            
+
+    @Override
+    public void setDefaultValue(final String value) {
+        this.defaultValue = value;
+    }
+
     /**
      * Gets the value of the value property.
      */
