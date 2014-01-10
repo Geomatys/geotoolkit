@@ -54,14 +54,6 @@
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-referencing</artifactId>
-    </dependency>
-    <dependency>
-     <groupId>org.geotoolkit</groupId>
-     <artifactId>geotk-metadata</artifactId>
-    </dependency>
-    <dependency>
      <groupId>org.geotoolkit.pending</groupId>
      <artifactId>geotk-utility-pending</artifactId>
      <version>${project.version}</version>
