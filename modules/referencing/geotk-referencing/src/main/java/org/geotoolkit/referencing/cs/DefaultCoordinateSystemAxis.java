@@ -35,6 +35,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.util.InternationalString;
 
+import org.apache.sis.measure.Angle;
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.referencing.cs.CoordinateSystems;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
@@ -888,7 +889,8 @@ public class DefaultCoordinateSystemAxis extends org.apache.sis.referencing.cs.D
      */
     @Deprecated
     public static double getAngle(final AxisDirection source, final AxisDirection target) {
-        return CoordinateSystems.angle(source, target);
+        final Angle angle = CoordinateSystems.angle(source, target);
+        return (angle != null) ? angle.degrees() : Double.NaN;
     }
 
     /**
