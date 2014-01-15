@@ -749,14 +749,6 @@
   <!-- ================================================================== -->
   <repositories>
     <repository>
-      <id>apache.snapshots</id>
-      <name>Apache Snapshot Repository</name>
-      <url>http://repository.apache.org/snapshots</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-    <repository>
       <id>maven2-repository.dev.java.net</id>
       <name>Java.net repository</name>
       <url>http://download.java.net/maven/2</url>
@@ -773,14 +765,6 @@
     </repository>
   </repositories>
   <pluginRepositories>
-    <pluginRepository>
-      <id>apache.snapshots</id>
-      <name>Apache Snapshot Repository</name>
-      <url>http://repository.apache.org/snapshots</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </pluginRepository>
     <pluginRepository>
       <id>geotoolkit</id>
       <name>Builds from Geotoolkit</name>
