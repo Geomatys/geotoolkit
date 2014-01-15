@@ -843,14 +843,6 @@
        ================================================================== -->
   <repositories>
     <repository>
-      <id>apache.snapshots</id>
-      <name>Apache Snapshot Repository</name>
-      <url>http://repository.apache.org/snapshots</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-    <repository>
       <id>geotoolkit.org</id>
       <name>Geotoolkit.org repository</name>
       <url>http://maven.geotoolkit.org</url>
@@ -858,14 +850,6 @@
   </repositories>
 
   <pluginRepositories>
-    <pluginRepository>
-      <id>apache.snapshots</id>
-      <name>Apache Snapshot Repository</name>
-      <url>http://repository.apache.org/snapshots</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </pluginRepository>
     <pluginRepository>
       <id>geotoolkit.org</id>
       <name>Geotoolkit.org repository</name>
