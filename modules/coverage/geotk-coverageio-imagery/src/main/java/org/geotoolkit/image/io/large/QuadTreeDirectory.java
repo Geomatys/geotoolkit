@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.image.io.large;
 
-import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.util.FileUtilities;
+import org.apache.sis.util.ArgumentChecks;
 
 import java.io.File;
 import java.io.IOException;
@@ -240,7 +239,7 @@ public class QuadTreeDirectory {
             throw new IOException("Current path represents a file, but a directory is needed here : "+path);
         }
         if (!toCheck.exists()) {
-            final File parent = FileUtilities.getExistingParent(toCheck);
+            final File parent = getExistingParent(toCheck);
             if (parent != null && !parent.canWrite()) {
                 throw new IOException("Cannot create folder : "+path+", because application does not possess writing authorisation on parent folder : "+ parent.getAbsolutePath());
             } else {
@@ -250,5 +249,19 @@ public class QuadTreeDirectory {
         if (!toCheck.canWrite() || ! toCheck.canRead()) {
             throw new IOException("Given directory ("+ path +") for Quad-tree does not possess sufficient rights.");
         }
+    }
+
+    /**
+     * Search a parent folder for input file, one which actually exists on the file system.
+     *
+     * @param child The file to search parent for.
+     * @return the first exising parent folder of the given file, or null if we cannot find any.
+     */
+    private File getExistingParent(File child) {
+        final File parent = child.getParentFile();
+        if (parent != null && !parent.exists()) {
+            return getExistingParent(parent);
+        }
+        return parent;
     }
 }
