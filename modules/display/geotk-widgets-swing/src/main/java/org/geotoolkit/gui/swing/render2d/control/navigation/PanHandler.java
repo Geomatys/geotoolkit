@@ -19,7 +19,6 @@ package org.geotoolkit.gui.swing.render2d.control.navigation;
 
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -36,7 +35,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
  */
 public class PanHandler extends AbstractNavigationHandler {
 
-    private static  final Cursor CUR_ZOOM_PAN = Toolkit.getDefaultToolkit().createCustomCursor(PanAction.ICON.getImage(),new Point(8, 8),"zoompan");
+    private static  final Cursor CUR_ZOOM_PAN = cleanCursor(PanAction.ICON.getImage(),new Point(8, 8),"zoompan");
     private final MouseListen mouseInputListener = new MouseListen();
     private double zoomFactor = 2;
 

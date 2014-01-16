@@ -1,0 +1,23 @@
+# Creation tools ###############################################################
+org.geotoolkit.gui.swing.render2d.control.edition.PointCreationTool
+org.geotoolkit.gui.swing.render2d.control.edition.LineCreationTool
+org.geotoolkit.gui.swing.render2d.control.edition.PolygonCreationTool
+org.geotoolkit.gui.swing.render2d.control.edition.MultiPointCreationTool
+org.geotoolkit.gui.swing.render2d.control.edition.MultiLineCreationTool
+org.geotoolkit.gui.swing.render2d.control.edition.MultiPolygonCreationTool
+# Geometry collection tools ####################################################
+org.geotoolkit.gui.swing.render2d.control.edition.MultiPointPartCreationTool
+org.geotoolkit.gui.swing.render2d.control.edition.MultiLinePartCreationTool
+org.geotoolkit.gui.swing.render2d.control.edition.MultiPolygonPartCreationTool
+org.geotoolkit.gui.swing.render2d.control.edition.GeometryCollectionPartDeleteTool
+# Coverage tools ###############################################################
+org.geotoolkit.gui.swing.render2d.control.edition.CoverageEditionTool
+# Other tools ##################################################################
+org.geotoolkit.gui.swing.render2d.control.edition.FeatureEditTool
+org.geotoolkit.gui.swing.render2d.control.edition.PolygonHoleCreationTool
+org.geotoolkit.gui.swing.render2d.control.edition.PolygonHoleDeleteTool
+org.geotoolkit.gui.swing.render2d.control.edition.GeometryMoveTool
+org.geotoolkit.gui.swing.render2d.control.edition.GeometryNodeTool
+org.geotoolkit.gui.swing.render2d.control.edition.GeometryFromWKTTool
+org.geotoolkit.gui.swing.render2d.control.edition.GeometryFromClipboardTool
+org.geotoolkit.gui.swing.render2d.control.edition.GeometrySimplificationTool

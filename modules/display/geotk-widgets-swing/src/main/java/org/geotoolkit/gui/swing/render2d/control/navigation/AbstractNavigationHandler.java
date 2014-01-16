@@ -17,12 +17,20 @@
  */
 package org.geotoolkit.gui.swing.render2d.control.navigation;
 
+import java.awt.Color;
 import org.geotoolkit.gui.swing.render2d.CanvasHandler;
 import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.J2DCanvasSwing;
@@ -132,4 +140,35 @@ public class AbstractNavigationHandler implements CanvasHandler{
         map.removeDecoration(decorationPane);
     }
 
+    public static Cursor cleanCursor(Image icon, Point focusPoint, String cursorname){
+        final int width = icon.getWidth(null);
+        final int height = icon.getHeight(null);
+        
+        final BufferedImage bufferARGB = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D g = bufferARGB.createGraphics();
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, width, height);
+        g.drawImage(icon, new AffineTransform(), null);
+        
+          for (int y = 0 ; y < height ; y++) {
+            for (int x = 0 ; x < width ; x++) {
+
+                int rgb = bufferARGB.getRGB(x, y);
+
+                int blue = rgb & 0xff;
+                int green = (rgb & 0xff00) >> 8;
+                int red = (rgb & 0xff0000) >> 16;
+                //int alpha = (rgb & 0xff000000) >> 24;
+
+                if (red == 255 && green == 255 && blue == 255) {
+                    // make white transparent
+                    bufferARGB.setRGB(x, y, 0);
+                }
+
+            }
+        }
+        
+        return Toolkit.getDefaultToolkit().createCustomCursor(bufferARGB,focusPoint,cursorname);
+    }
+    
 }

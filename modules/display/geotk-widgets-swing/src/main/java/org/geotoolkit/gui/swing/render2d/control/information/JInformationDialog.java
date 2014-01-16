@@ -103,7 +103,9 @@ public class JInformationDialog extends JDialog {
 
         final Object candidate = selecteds.get(index);
         currentComponent = presenter.createComponent(candidate,context,area);
-        contentPane.add(BorderLayout.CENTER,currentComponent);
+        if(currentComponent!=null){
+            contentPane.add(BorderLayout.CENTER,currentComponent);
+        }
 
         previousAction.setEnabled(index != 0);
         nextAction.setEnabled(index < (selecteds.size()-1));

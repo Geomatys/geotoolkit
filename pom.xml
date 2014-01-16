@@ -758,11 +758,11 @@
       <name>Geotoolkit repository</name>
       <url>http://maven.geotoolkit.org/</url>
     </repository>
-    <repository>
+    <!--repository>
       <id>geomatys</id>
       <name>Geomatys repository</name>
       <url>http://maven2.geomatys.com/repository/public</url>
-    </repository>
+    </repository-->
   </repositories>
   <pluginRepositories>
     <pluginRepository>

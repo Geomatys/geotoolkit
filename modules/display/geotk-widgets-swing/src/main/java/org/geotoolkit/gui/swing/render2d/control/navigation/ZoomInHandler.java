@@ -20,11 +20,10 @@ package org.geotoolkit.gui.swing.render2d.control.navigation;
 
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.Point;
-import java.awt.Toolkit;
 import javax.swing.event.MouseInputListener;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 
@@ -36,7 +35,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
  */
 public class ZoomInHandler extends AbstractNavigationHandler {
 
-    private static final Cursor CUR_ZOOM_IN = Toolkit.getDefaultToolkit().createCustomCursor(ZoomInAction.ICON.getImage(),new Point(0, 0),"zoomin");
+    private static final Cursor CUR_ZOOM_IN = cleanCursor(ZoomInAction.ICON.getImage(),new Point(0,0),"zoomin");
     private final MouseListen mouseInputListener = new MouseListen();
     private double zoomFactor = 2;
 
