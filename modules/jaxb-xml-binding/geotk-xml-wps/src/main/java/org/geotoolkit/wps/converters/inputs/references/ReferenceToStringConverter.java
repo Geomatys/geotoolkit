@@ -20,13 +20,9 @@ import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Implementation of ObjectConverter to convert a reference into a String.
