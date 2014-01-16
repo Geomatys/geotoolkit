@@ -324,10 +324,10 @@ public class TiffImageReader extends SpatialImageReader {
             selectImage(imageIndex);
         }
 
-        //if there are not geotiff tag return null
+        //-- if there are not geotiff tag return null
         boolean isGeotiff = false;
         for(int key : headProperties.keySet()) {
-            if (key == 34735) { // if geotiff tag exist
+            if (key == 34735) { //-- if geotiff tag exist
                 isGeotiff = true;
                 break;
             }
@@ -1742,6 +1742,9 @@ public class TiffImageReader extends SpatialImageReader {
             int yref                  = srcRegion.y;
             int xref, bankStepBefore, bankStepAfter;
 
+            //-- channel size to do not exceed channel size during Buffer reading.
+            final int channelSize = (int) channel.size();
+            
             while (ypos < srcMaxy) {
                 if (ypos >= currentMaxRowperStrip) {
                     currentStripOffset++;
@@ -1766,8 +1769,9 @@ public class TiffImageReader extends SpatialImageReader {
                 int b = 0;
                 while (xpos < sourceScanlineStride) {
                     //-- adjust buffer to read currentByteLength at currentBuffPos position
-                    ensureBufferContains(currentBuffPos, Math.min(sourceScanlineStride - xpos, buffCapacity), Math.max(sourceScanlineStride - xpos, 1024));
-                    sourceBuffer.limit(buffer.limit()).position(buffer.position());
+                    final int minBuff = Math.min(channelSize-currentBuffPos, sourceScanlineStride - xpos + 1);
+                    ensureBufferContains(currentBuffPos, Math.min(minBuff, buffCapacity), Math.max(sourceScanlineStride - xpos, 1024));
+                    sourceBuffer.limit(buffer.limit()).position(buffer.position());                   
                     
                     int n = ((ByteBuffer)sourceBuffer).get();
                     if (n >= -127 && n <= - 1) {
