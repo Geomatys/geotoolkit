@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C)2012 - 2013, Geomatys
+ *    (C)2012 - 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,40 +17,51 @@
 package org.geotoolkit.gui.swing.render2d.control;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.measure.unit.Unit;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+import javax.swing.OverlayLayout;
 import javax.swing.SwingConstants;
+import org.geotoolkit.gui.swing.navigator.DateRenderer;
+import org.geotoolkit.gui.swing.navigator.DoubleRenderer;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
-import org.geotoolkit.gui.swing.resource.IconBundle;
-import org.geotoolkit.map.ContextListener;
+import org.geotoolkit.gui.swing.util.BufferLayout;
+import org.geotoolkit.gui.swing.util.JOptionDialog;
+import org.geotoolkit.gui.swing.util.JTabHeader;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.FeatureMapLayer.DimensionDef;
-import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
-import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
@@ -60,72 +71,113 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class JAdditionalAxisNavigator extends JPanel implements ContextListener{
+public class JAdditionalAxisNavigator extends JPanel {
 
+    private static final ImageIcon ICON_ADD = IconBuilder.createIcon(FontAwesomeIcons.ICON_PLUS_SIGN, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_SEPARATE = IconBuilder.createIcon(FontAwesomeIcons.ICON_LIST_OL, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_VERT = IconBuilder.createIcon(FontAwesomeIcons.ICON_LEVEL_UP, 16, FontAwesomeIcons.DEFAULT_COLOR);
+    private static final ImageIcon ICON_DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_REMOVE, 14, FontAwesomeIcons.DEFAULT_COLOR);
+    
     private class AxisDef{
-        private final JPanel pane = new JPanel(new BorderLayout());
-        private JButton guiDel = new JButton("-");
+        private final CoordinateReferenceSystem axis;
+        private final ActionListener closeAction = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removeAxis(AxisDef.this);
+            }
+        };
         private JMapAxisLine nav;
 
         public AxisDef(final CoordinateReferenceSystem axis){
+            this.axis = axis;
             nav = new JMapAxisLine(axis);
-
-            pane.add(BorderLayout.NORTH,guiDel);
-            pane.add(BorderLayout.CENTER,nav);
-
-            guiDel.setIcon(IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH, 16, Color.BLACK));
-            guiDel.setText(axis.getName().getCode());
+            if(axis instanceof TemporalCRS){
+                nav.setModelRenderer(new DateRenderer());
+                long now = System.currentTimeMillis();
+                nav.getModel().translate(-now);
+                nav.getModel().scale(0.0000001d, 0);
+            }else{
+                nav.setModelRenderer(new DoubleRenderer());
+            }
+        }
+        
+        private String getAxisShortName(){
+            return axis.getName().getCode();
+        }
+        
+        private JPanel buildButton(boolean vertical){
+            final JPanel panel = new JPanel(new BorderLayout());
+            panel.setOpaque(false);
+            
+            final JButton guiDel = new JButton("",ICON_DELETE);
             guiDel.setMargin(new Insets(0, 0, 0, 0));
             guiDel.setVerticalTextPosition(SwingConstants.BOTTOM);
-
-            guiDel.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    removeAxis(AxisDef.this);
+            guiDel.addActionListener(closeAction);
+            
+            final JLabel lbl = new JLabel();
+            
+            String text = getAxisShortName();
+            if(vertical){
+                final StringBuilder sb = new StringBuilder();
+                sb.append("<html>");
+                for(int i=0;i<text.length();i++){
+                    sb.append(text.charAt(i));
+                    sb.append("<br/>");
                 }
-            });
+                sb.append("</html>");
+                text = sb.toString();
+            }
+            lbl.setText(text);
+            
+            if(vertical){
+                panel.add(BorderLayout.CENTER,lbl);
+                panel.add(BorderLayout.NORTH,guiDel);
+            }else{
+                panel.add(BorderLayout.CENTER,lbl);
+                panel.add(BorderLayout.WEST,guiDel);
+            }
+            
+            return panel;
         }
+                
     }
 
-    private final List<AxisDef> axis = new ArrayList<AxisDef>();
-    private final JPanel grid = new JPanel(new GridLayout(1, 0));
-    private final JComboBox guiAxis = new JComboBox();
+    private final List<AxisDef> axis = new ArrayList<>();
+    private final JToolBar toolbar = new JToolBar(JToolBar.VERTICAL);
+    private final JPanel content = new JPanel();
+    private JTabbedPane tabPane = new JTabbedPane(JTabbedPane.RIGHT);
+    private final JList guiAxis = new JList();
+    
     private volatile JMap2D map = null;
 
-    private final JButton addButton = new JButton(IconBuilder.createIcon(FontAwesomeIcons.ICON_PLUS_SIGN, 16, Color.BLACK));
+    private final Action addButton = new AbstractAction("", ICON_ADD) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            showSelectAxisPane();
+        }
+    };
+    private final JToggleButton separateAction = new JToggleButton(new AbstractAction("", ICON_SEPARATE) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            updateLayout();
+        }
+    });
+    private final JToggleButton verticalAction = new JToggleButton(new AbstractAction("", ICON_VERT) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            updateLayout();
+        }
+    });
 
+    
     public JAdditionalAxisNavigator(){
         super(new BorderLayout());
-
-        addButton.setMargin(new Insets(0, 0, 0, 0));
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addAxis();
-                addButton.setEnabled(false);
-            }
-        });
-
-        guiAxis.setEditable(false);
-        guiAxis.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-
-                for (AxisDef tmp : axis) {
-                    if (CRS.equalsIgnoreMetadata(guiAxis.getSelectedItem(), tmp.nav.getCrs())) {
-                        addButton.setEnabled(false);
-                        return;
-                    }
-                }
-                addButton.setEnabled(true);
-            }
-        });
-
-        updateModel();
-
-        guiAxis.setRenderer(new DefaultListCellRenderer(){
-
+        toolbar.setFloatable(false);
+        toolbar.add(addButton);
+        toolbar.add(separateAction);
+        toolbar.add(verticalAction);
+        
+        guiAxis.setCellRenderer(new DefaultListCellRenderer(){
             @Override
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 final Object tmpVal = value;
@@ -160,29 +212,117 @@ public class JAdditionalAxisNavigator extends JPanel implements ContextListener{
                     final CoordinateSystemAxis axis = (CoordinateSystemAxis) tmpVal;
                     lbl.setText(axis.getName().getCode());
                 }
-
                 return lbl;
             }
 
         });
 
-        final JPanel addPan = new JPanel(new BorderLayout());
-        addPan.add(BorderLayout.CENTER,guiAxis);
-        addPan.add(BorderLayout.EAST,addButton);
-        add(BorderLayout.NORTH,addPan);
-        add(BorderLayout.CENTER,grid);
+        add(BorderLayout.WEST,toolbar);
+        add(BorderLayout.CENTER,content);
+    }
+
+    public JToolBar getToolbar() {
+        return toolbar;
     }
 
     private void updateModel() {
-        final List<CoordinateReferenceSystem> values = new ArrayList<CoordinateReferenceSystem>();
+        final List<CoordinateReferenceSystem> values = new ArrayList<>();
         values.add(DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
+        values.add(DefaultTemporalCRS.JAVA);
         if (map != null) {
             getDimensions(map.getContainer().getContext(), values);
         }
         guiAxis.setModel(new ListComboBoxModel(values));
     }
 
-    private void getDimensions(final MapItem source, final List<CoordinateReferenceSystem> toFill) {
+    private void updateLayout(){
+        content.removeAll();
+        
+        if(separateAction.isSelected()){
+            if(verticalAction.isSelected()){
+                content.setLayout(new GridLayout(1,0));
+                for (AxisDef def : axis) {
+                    def.nav.setOrientation(verticalAction.isSelected() ? SwingConstants.WEST : SwingConstants.SOUTH);
+                    //change model scale if needed
+                    final double scale = def.nav.getModel().getScale();
+                    //scale is going down, must be negative
+                    if(scale>0){
+                        def.nav.getModel().scale(-1, 0);
+                    }
+
+                    final JPanel over = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+                    over.setOpaque(false);
+                    over.add(def.buildButton(verticalAction.isSelected()));
+                    
+                    final JPanel stack = new JPanel(){
+                        @Override
+                        public boolean isOptimizedDrawingEnabled() {
+                            return false;
+                        }
+                    };
+                    stack.setLayout(new OverlayLayout(stack));
+                    stack.add(over);
+                    stack.add(def.nav);
+                    content.add(stack);
+                }
+                
+            }else{
+                content.setLayout(new GridLayout(0,1));
+                for (AxisDef def : axis) {
+                    def.nav.setOrientation(verticalAction.isSelected() ? SwingConstants.WEST : SwingConstants.SOUTH);
+                    //change model scale if needed
+                    final double scale = def.nav.getModel().getScale();
+                    //scale is going down, must be negative
+                    if(scale<0){
+                        def.nav.getModel().scale(-1, 0);
+                    }
+
+                    final JPanel over = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                    over.setOpaque(false);
+                    over.add(def.buildButton(verticalAction.isSelected()));
+                    
+                    final JPanel stack = new JPanel(){
+                        @Override
+                        public boolean isOptimizedDrawingEnabled() {
+                            return false;
+                        }
+                    };
+                    stack.setLayout(new OverlayLayout(stack));
+                    stack.add(over);
+                    stack.add(def.nav);
+                    content.add(stack);
+                }
+                
+            }
+            
+        }else{
+            content.setLayout(new BorderLayout());
+            //create a tab view
+            if(tabPane != null){
+                tabPane.removeAll();
+            }
+            
+            if(verticalAction.isSelected()){
+                tabPane = new JTabbedPane(JTabbedPane.TOP);
+            }else{
+                tabPane = new JTabbedPane(JTabbedPane.LEFT);
+            }
+            content.add(BorderLayout.CENTER,tabPane);
+            
+            for(int i=0;i<axis.size();i++) {
+                final AxisDef def = axis.get(i);
+                def.nav.setOrientation(verticalAction.isSelected() ? SwingConstants.WEST : SwingConstants.SOUTH);
+                
+                tabPane.addTab(def.getAxisShortName(), def.nav);
+                tabPane.setTabComponentAt(i, new JTabHeader(tabPane,def.closeAction));
+            }
+        }
+        
+        content.revalidate();
+        content.repaint();
+    }
+    
+    private static void getDimensions(final MapItem source, final List<CoordinateReferenceSystem> toFill) {
         if (source == null) {
             return;
         }
@@ -234,37 +374,37 @@ browseCRS:          for (CoordinateReferenceSystem part : parts) {
         for(AxisDef def : axis){
             def.nav.setMap(map);
         }
-        if (map != null) {
-            final MapContext ctx = map.getContainer().getContext();
-            if(ctx != null){
-                ctx.addContextListener(new  Weak(this));
-            }
-        }
 
-        updateModel();
         repaint();
     }
 
+    private void showSelectAxisPane(){
+        updateModel();
+        
+        final int result = JOptionDialog.show(this, new JScrollPane(guiAxis), JOptionPane.OK_CANCEL_OPTION);
+        if(result == JOptionPane.OK_OPTION){
+            addAxis();
+        }
+        
+    }
+    
     private void addAxis(){
-        final Object obj = guiAxis.getSelectedItem();
+        final Object obj = guiAxis.getSelectedValue();
         final CoordinateReferenceSystem axi = (CoordinateReferenceSystem) obj;
-
+        if(axi == null) return;
+        
+        //check the axis is not already in the list
+        for (AxisDef tmp : axis) {
+            if (CRS.equalsIgnoreMetadata(guiAxis.getSelectedValue(), tmp.nav.getCrs())) {
+                return;
+            }
+        }
+        
         final AxisDef def = new AxisDef(axi);
         def.nav.setMap(map);
-        def.guiDel.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (def.nav.getCrs().equals(guiAxis.getSelectedItem())) {
-                    addButton.setEnabled(true);
-                }
-            }
-        });
-
         axis.add(def);
-        grid.add(def.pane);
-        grid.revalidate();
-        grid.repaint();
+        
+        updateLayout();
     }
 
     private void removeAxis(AxisDef def){
@@ -279,23 +419,8 @@ browseCRS:          for (CoordinateReferenceSystem part : parts) {
 
         def.nav.setMap(null);
         axis.remove(def);
-        grid.remove(def.pane);
-        grid.revalidate();
-        grid.repaint();
-    }
-
-    @Override
-    public void layerChange(CollectionChangeEvent<MapLayer> event) {
-        updateModel();
-    }
-
-    @Override
-    public void itemChange(CollectionChangeEvent<MapItem> event) {
-        updateModel();
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
+        
+        updateLayout();
     }
 
 }

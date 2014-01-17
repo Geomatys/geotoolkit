@@ -246,7 +246,8 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                     final Map<Expression,Expression> th = ((Categorize)fct).getThresholds();
                     model = new CategorizeColorModel(th);
                 }else{
-                    throw new IllegalArgumentException("Unknowned colormap function : "+fct);
+                    model = new InterpolateColorModel(Collections.EMPTY_LIST);
+                    LOGGER.log(Level.WARNING, "Unknowned colormap function : {0}", fct);
                 }
             }else{
                 //create an empty interpolate colormodel

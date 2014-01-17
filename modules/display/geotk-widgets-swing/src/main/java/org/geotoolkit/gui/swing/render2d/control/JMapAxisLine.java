@@ -161,8 +161,6 @@ import org.opengis.referencing.operation.TransformException;
         animation.setSpeedFactor(10);
         setModelRenderer(new DoubleRenderer());
         getModel().setCRS(crs);
-        setOrientation(SwingConstants.WEST);
-        getModel().scale(-1, 0);
 
         modelHaut = new SpinnerNumberModel();
         modelHaut.setStepSize(10);
@@ -196,8 +194,10 @@ import org.opengis.referencing.operation.TransformException;
             public void setVisible(boolean b) {
                 if(b){
                     final Point pt = MouseInfo.getPointerInfo().getLocation();
-                    final int y = pt.y - JMapAxisLine.this.getLocationOnScreen().y;
-                    popupEdit = getModel().getDimensionValueAt(y);
+                    pt.x -= JMapAxisLine.this.getLocationOnScreen().x;
+                    pt.y -= JMapAxisLine.this.getLocationOnScreen().y;
+                    final int coord = getCoord(pt);
+                    popupEdit = getModel().getDimensionValueAt(coord);
                 }
                 super.setVisible(b);
             }
@@ -435,6 +435,25 @@ import org.opengis.referencing.operation.TransformException;
         }
         repaint();
     }
+    
+    /**
+     * Get value checking orientation.
+     * 
+     * @param me
+     * @return 
+     */
+    private int getCoord(Point me){
+        final int coord;
+        final int orientation = getOrientation();
+        if(orientation == SwingConstants.SOUTH || orientation == SwingConstants.NORTH){
+            coord = (int)me.getX();
+        }else if(orientation == SwingConstants.EAST || orientation == SwingConstants.WEST){
+            coord = (int)me.getY();
+        }else{
+            throw new IllegalArgumentException("Invalid orientation : "+orientation);
+        }
+        return coord;
+    }
 
     //handle mouse event for dragging range ends -------------------------------
 
@@ -452,17 +471,18 @@ import org.opengis.referencing.operation.TransformException;
             final Double[] range = getMap().getCanvas().getAxisRange(axisIndexFinder);
 
             if(range != null){
-                final int y = e.getY();
-
+                
+                final int coord = getCoord(e.getPoint());
+                
                 if(range[0] != null){
                     int pos = (int)getModel().getGraphicValueAt(range[0]);
-                    if( Math.abs(y-pos) < LIMIT_WIDTH*2 ){
+                    if( Math.abs(coord-pos) < LIMIT_WIDTH*2 ){
                         selected = 0;
                     }
                 }
                 if(range[1] != null){
                     int pos = (int)getModel().getGraphicValueAt(range[1]);
-                    if( Math.abs(y-pos) < LIMIT_WIDTH*2 ){
+                    if( Math.abs(coord-pos) < LIMIT_WIDTH*2 ){
                         selected = 2;
                     }
                 }
@@ -471,7 +491,7 @@ import org.opengis.referencing.operation.TransformException;
                               getModel().getGraphicValueAt(range[0])
                             + getModel().getGraphicValueAt(range[1])
                             ) / 2);
-                    if( Math.abs(y-pos) < LIMIT_WIDTH*4 ){
+                    if( Math.abs(coord-pos) < LIMIT_WIDTH*4 ){
                         selected = 1;
                     }
                 }
@@ -517,7 +537,8 @@ import org.opengis.referencing.operation.TransformException;
 
         if(selected >= 0){
             //drag one limit
-            edit = getModel().getDimensionValueAt(e.getY());
+            final int coord = getCoord(e.getPoint());
+            edit = getModel().getDimensionValueAt(coord);
 
             //ensure we do not go over the other limit
             final Double[] range = getMap().getCanvas().getAxisRange(axisIndexFinder);
@@ -580,10 +601,9 @@ import org.opengis.referencing.operation.TransformException;
         }
     }
 
-
     @Override
-    protected void paintChildren(final Graphics g) {
-        super.paintChildren(g);
+    public void paint(final Graphics g) {
+        super.paint(g);
 
         if(map == null) return;
 
@@ -593,10 +613,22 @@ import org.opengis.referencing.operation.TransformException;
 
         if(range[0] == null && range[1] == null) return;
 
-        double start = getHeight() +5;
-        double end = -5;
-        double center = -5;
-
+        double start;
+        double end;
+        double center;
+        final int orientation = getOrientation();
+        if(orientation == SwingConstants.SOUTH || orientation == SwingConstants.NORTH){
+            start = -5;
+            end = getWidth() +5;
+            center = -5;
+        }else if(orientation == SwingConstants.EAST || orientation == SwingConstants.WEST){
+            start = getHeight() +5;
+            end = -5;
+            center = -5;
+        }else{
+            throw new IllegalArgumentException("Invalid orientation : "+orientation);
+        }
+        
         if(range[0] != null) start = getModel().getGraphicValueAt(range[0]);
         if(range[1] != null) end = getModel().getGraphicValueAt(range[1]);
 
@@ -607,8 +639,8 @@ import org.opengis.referencing.operation.TransformException;
             }else if(selected == 2){
                 end = getModel().getGraphicValueAt(edit);
             }else if(selected == 1){
-                double middleDate = (range[0] + range[1]) / 2l;
-                double step = edit - middleDate;
+                double middle = (range[0] + range[1]) / 2l;
+                double step = edit - middle;
                 start = getModel().getGraphicValueAt(range[0] + step);
                 end = getModel().getGraphicValueAt(range[1] + step);
             }
@@ -625,16 +657,31 @@ import org.opengis.referencing.operation.TransformException;
         }
 
         final Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(SECOND);
-        g2d.fillRect(0,(int)start,getWidth(),(int)(end-start));
+        
+        if(orientation == SwingConstants.SOUTH || orientation == SwingConstants.NORTH){
+            g2d.setColor(SECOND);
+            g2d.fillRect((int)start,0,(int)(end-start),getHeight());
 
-        g2d.setColor(MAIN);
-        g2d.setStroke(new BasicStroke(LIMIT_WIDTH*2));
-        g2d.drawLine(0, (int)start, getWidth(), (int)start);
-        g2d.drawLine(0, (int)end,  getWidth(), (int)end);
+            g2d.setColor(MAIN);
+            g2d.setStroke(new BasicStroke(LIMIT_WIDTH*2));
+            g2d.drawLine((int)start,0, (int)start, getHeight());
+            g2d.drawLine((int)end,0,  (int)end, getHeight());
+            g2d.setStroke(new BasicStroke(LIMIT_WIDTH*4));
+            g2d.drawLine((int)center,0,  (int)center, getHeight());
+            
+        }else if(orientation == SwingConstants.EAST || orientation == SwingConstants.WEST){
+            g2d.setColor(SECOND);
+            g2d.fillRect(0,(int)start,getWidth(),(int)(end-start));
 
-        g2d.setStroke(new BasicStroke(LIMIT_WIDTH*4));
-        g2d.drawLine(0, (int)center, getWidth(), (int)center);
+            g2d.setColor(MAIN);
+            g2d.setStroke(new BasicStroke(LIMIT_WIDTH*2));
+            g2d.drawLine(0, (int)start, getWidth(), (int)start);
+            g2d.drawLine(0, (int)end,  getWidth(), (int)end);
+
+            g2d.setStroke(new BasicStroke(LIMIT_WIDTH*4));
+            g2d.drawLine(0, (int)center, getWidth(), (int)center);
+        }        
+        
     }
 
     /**

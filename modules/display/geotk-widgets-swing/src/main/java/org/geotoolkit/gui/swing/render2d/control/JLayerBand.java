@@ -497,9 +497,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             JNavigator navi = JLayerBand.this.getNavigator();
-                            if (navi instanceof JMapTimeLine) {
-                                ((JMapTimeLine) navi).moveTo(new Date(pc.longValue()));
-                            } else if (navi instanceof JMapAxisLine) {
+                            if (navi instanceof JMapAxisLine) {
                                 ((JMapAxisLine) navi).moveTo(pc);
                             }
                         }

@@ -94,7 +94,7 @@ public class DateRenderer implements NavigatorRenderer{
             final TimeSubdivision sub = subdivisions.get(i);
             final double textsize = sub.getTextLength(fm);
             final double scale = sub.getUnitLength();
-            final double stepWidth = (scale / (1/model.getScale()));
+            final double stepWidth = scale * model.getScale();
 
             final boolean showLine = stepWidth > 15 ;
             final boolean showText = stepWidth > textsize ;
