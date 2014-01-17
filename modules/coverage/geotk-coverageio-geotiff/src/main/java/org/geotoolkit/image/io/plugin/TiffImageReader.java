@@ -281,6 +281,9 @@ public class TiffImageReader extends SpatialImageReader {
      * In big tiff specification : {@link Long#SIZE} / {@link Byte#SIZE}.
      */
     private int offsetSize;
+    
+    Rectangle srcRegion;
+    Rectangle dstRegion;
 
     /**
      * Creates a new reader.
@@ -420,7 +423,12 @@ public class TiffImageReader extends SpatialImageReader {
         } else {
             buffer.clear();
             if (position != filePosition) {
-                channel.position(position);
+                try {
+                    channel.position(position);
+                } catch (Exception ex) {
+                    System.out.println("pos de merde : "+position);
+                }
+                
             }
             readFully(min, Math.max(min, max));
         }
@@ -607,10 +615,12 @@ public class TiffImageReader extends SpatialImageReader {
                     final Map<String, Object> iwObj   = headProperties.get(ImageWidth);
                     final Map<String, Object> ihObj   = headProperties.get(ImageLength);
                     final Map<String, Object> isppObj = headProperties.get(SamplesPerPixel);
+                    final Map<String, Object> ibpsObj = headProperties.get(BitsPerSample);
 
                     imageWidth      = (int) ((iwObj == null)   ? -1 : ((long[]) iwObj.get(ATT_VALUE))[0]);
                     imageHeight     = (int) ((ihObj == null)   ? -1 : ((long[]) ihObj.get(ATT_VALUE))[0]);
                     samplesPerPixel = (int) ((isppObj == null) ? -1 : ((long[]) isppObj.get(ATT_VALUE))[0]);
+                    bitsPerSample   =  ((long[]) ibpsObj.get(ATT_VALUE));
 
                     final Map<String, Object> twObj   =  headProperties.get(TileWidth);
                     final Map<String, Object> thObj   =  headProperties.get(TileLength);
@@ -845,10 +855,8 @@ public class TiffImageReader extends SpatialImageReader {
                 final int den = buffer.getInt();
                 return num / (double) den;
             }
-            case TYPE_DOUBLE :   {
-                return buffer.getDouble();
-            }
-            case TYPE_FLOAT : return buffer.getFloat();
+            case TYPE_DOUBLE : return buffer.getDouble();
+            case TYPE_FLOAT  : return buffer.getFloat();
             default: throw new AssertionError(type);
         }
     }
@@ -1050,7 +1058,13 @@ public class TiffImageReader extends SpatialImageReader {
             while (currentPos < maxBuffPos) {
                 final int currentByteLength = Math.min(currentPos + buffCapacity, maxBuffPos) - currentPos;
                 assert currentByteLength % dataSize == 0 : "current length = "+currentByteLength+" samplesize = "+dataSize;
+                try {
                     ensureBufferContains(currentPos, Math.min(currentByteLength, buffCapacity), Math.max(currentByteLength, 1024));
+                } catch (Exception ex) {
+                    System.out.println("");
+                }
+                
+//                    ensureBufferContains(currentPos, Math.min(currentByteLength, buffCapacity), Math.max(currentByteLength, 1024));
                     final int dataNumber = currentByteLength / dataSize;
                     assert buffer.remaining() >= currentByteLength;
 
@@ -1301,7 +1315,8 @@ public class TiffImageReader extends SpatialImageReader {
                     final long[] index  = (long[]) colorMod.get(ATT_VALUE);
                     final int[] indexes = buildColorMapArray(index);
                     final ColorModel cm = new IndexColorModel(bitpersampl, indexes.length, indexes, 0, true, -1, databufferType);
-                    rawImageType        = new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(imageWidth, imageHeight));
+//                    rawImageType        = new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(imageWidth, imageHeight));
+                    rawImageType        = new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(dstRegion.width, dstRegion.height));
                     return rawImageType;
                 }
                 default : {
@@ -1354,7 +1369,7 @@ public class TiffImageReader extends SpatialImageReader {
             final boolean hasAlpha = bits.length > cs.getNumComponents();
             final ColorModel cm = new ComponentColorModel(cs, bits, hasAlpha, false,
                     hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, type);
-            rawImageType = new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(imageWidth, imageHeight));
+            rawImageType = new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(dstRegion.width, dstRegion.height));
         }
         return rawImageType;
     }
@@ -1427,14 +1442,18 @@ public class TiffImageReader extends SpatialImageReader {
     @Override
     public BufferedImage read(final int imageIndex, final ImageReadParam param) throws IOException {
         selectImage(imageIndex);
-        final BufferedImage image = getDestination(param, getImageTypes(imageIndex), imageWidth, imageHeight);// creer une image vide du bon type
-        final Rectangle srcRegion = new Rectangle();
-        final Rectangle dstRegion = new Rectangle();
+        srcRegion = new Rectangle();
+        dstRegion = new Rectangle();
+        computeRegions(param, imageWidth, imageHeight, null, srcRegion, dstRegion);
+        
+        final BufferedImage image = getImageTypes(imageIndex).next().createBufferedImage(dstRegion.width, dstRegion.height);
+//        final BufferedImage image = getDestination(param, getImageTypes(imageIndex), imageWidth, imageHeight);// creer une image vide du bon type
+        
 
         /*
          * compute region : ajust les 2 rectangles src region et dest region en fonction des coeff subsampling present dans Imagereadparam.
          */
-        computeRegions(param, imageWidth, imageHeight, image, srcRegion, dstRegion);// calculer une region de l'image sur le fichier que l'on doit lire
+//        computeRegions(param, imageWidth, imageHeight, image, srcRegion, dstRegion);// calculer une region de l'image sur le fichier que l'on doit lire
         if (compression == 32773) {
             assert stripOffsets != null : "with compression 32773 (packbits) : image should be writen in strip offset use case.";
             readFromStrip32773(image.getRaster(), param, srcRegion, dstRegion);
@@ -1487,8 +1506,8 @@ public class TiffImageReader extends SpatialImageReader {
         final int[] bankOffsets        = dataBuffer.getOffsets();
         final int dataType             = dataBuffer.getDataType();
         final int sampleSize           = DataBuffer.getDataTypeSize(dataType) / Byte.SIZE;
-        final int sourcePixelStride    = sampleSize * samplesPerPixel;
-        final int targetPixelStride    = sampleSize * numBands;
+        final int sourcePixelStride    = /*sampleSize */ samplesPerPixel;
+        final int targetPixelStride    = /*sampleSize */ numBands;
         final int sourceScanlineStride = sourcePixelStride * imageWidth;
         final int targetScanlineStride = SampleModels.getScanlineStride(raster.getSampleModel());
 
@@ -1556,13 +1575,16 @@ public class TiffImageReader extends SpatialImageReader {
             }
 
             srcStepY              = sourceYSubsampling;
-            final int buffStepX   = (sourceXSubsampling - 1) * sourcePixelStride;
+            
+            //-- shift in X direction exprimate in Byte unit.
+            final int buffStepX   = (sourceXSubsampling - 1) * sourcePixelStride * sampleSize;
             /*
              * Iterate over the strip to read, in sequential file access order (which is not
              * necessarily the same than row indices order).
              */
             int currentMaxRowPerStrip = -1;
-            int currentStripOffset, srcBuffPos = -1;
+            int currentStripOffset = -1;
+            long srcBuffPos = -1;
 
             final int srcMaxx = srcRegion.x + srcRegion.width;
             final int srcMaxy = srcRegion.y + srcRegion.height;
@@ -1570,17 +1592,19 @@ public class TiffImageReader extends SpatialImageReader {
             //-- target start
             int bankID = bankOffsets[bank] + targetScanlineStride * dstRegion.y;
 
-            //-- step on x axis in source window (srcRegion)
-            final int srcStepBeforeReadX = srcRegion.x * sourcePixelStride;
-            final int srcStepAfterReadX  = (sourceScanlineStride - (srcRegion.x + srcRegion.width) * targetPixelStride);
+            //-- step on x axis in source window (srcRegion) exprimate in (Byte).
+            final int srcStepBeforeReadX = srcRegion.x * sourcePixelStride * sampleSize;
+            final int srcStepAfterReadX  = (sourceScanlineStride - (srcRegion.x + srcRegion.width) * targetPixelStride) * sampleSize;
 
-            //-- step on x axis in target window (dstRegion)
+            //-- step on x axis in target window (dstRegion) exprimate in sample unit.
             final int dstStepBeforeReadX = dstRegion.x * numBands;
-            final int dstStepAfterReadX  = (targetScanlineStride - (dstRegion.x + dstRegion.width) * targetPixelStride) / sampleSize;
+            final int dstStepAfterReadX  = (targetScanlineStride - (dstRegion.x + dstRegion.width) * targetPixelStride); // sampleSize;
 
             //-- byte number read for each buffer read action.
             final int srcBuffReadLength = readLength * sampleSize;
 
+//            assert srcStepBeforeReadX + srcBuffReadLength + srcStepAfterReadX == (sourceScanlineStride * sampleSize) : "expected "+(sourceScanlineStride * sampleSize)+" found = "+(srcStepBeforeReadX + srcBuffReadLength + srcStepAfterReadX);
+            
             //-- buffer.capacity
             final int buffCapacity = buffer.capacity();
 
@@ -1588,7 +1612,8 @@ public class TiffImageReader extends SpatialImageReader {
                 if (y >= currentMaxRowPerStrip) {
                     currentStripOffset    = y / rowsPerStrip;
                     currentMaxRowPerStrip = currentStripOffset + rowsPerStrip;
-                    srcBuffPos = (int) stripOffsets[currentStripOffset] + (y - currentStripOffset * rowsPerStrip) * sourceScanlineStride;
+                    //-- row begining exprimate in byte.
+                    srcBuffPos = stripOffsets[currentStripOffset] + (y - currentStripOffset * rowsPerStrip) * sourceScanlineStride;
                 }
 
                 //-- move at correct table position from dstRegion.x begin position.
@@ -1600,20 +1625,21 @@ public class TiffImageReader extends SpatialImageReader {
 
                 for (int x = srcRegion.x; x < srcMaxx; x += srcStepX) {
                     //-- adjust read length in function of buffer capacity.
-                    int currentPos       = srcBuffPos;
-                    final int maxBuffPos = srcBuffPos + srcBuffReadLength;
+                    long currentPos       = srcBuffPos;
+                    final long maxBuffPos = srcBuffPos + srcBuffReadLength;
                     while (currentPos < maxBuffPos) {
-                        final int currentByteLength = Math.min(currentPos + buffCapacity, maxBuffPos) - currentPos;
+                        final long currentByteLength = Math.min(currentPos + buffCapacity, maxBuffPos) - currentPos;
                         assert currentByteLength % sampleSize == 0 : "current length = "+currentByteLength+" samplesize = "+sampleSize;
 
                         //-- adjust buffer to read currentByteLength at srcBuff position
-                        ensureBufferContains(srcBuffPos, Math.min(currentByteLength, buffCapacity), Math.max(currentByteLength, 1024));
-                        sourceBuffer.limit(buffer.limit()).position(buffer.position());
+                        //-- position in Byte unit
+                        ensureBufferContains(srcBuffPos, (int) Math.min(currentByteLength, buffCapacity), (int) Math.max(currentByteLength, 1024));
+                        sourceBuffer.limit(buffer.limit() / sampleSize).position(buffer.position() / sampleSize);
 
                         assert currentByteLength % sampleSize == 0;
 
                         //-- sample number red
-                        final int samplesLenght = currentByteLength / sampleSize;
+                        final int samplesLenght = (int) (currentByteLength / sampleSize);
 
                         switch (dataType) {
                             case DataBuffer.TYPE_BYTE   : ((ByteBuffer)   sourceBuffer).get((byte[])   targetArray, bankID, samplesLenght); break;
@@ -1628,7 +1654,7 @@ public class TiffImageReader extends SpatialImageReader {
                         currentPos += currentByteLength;
                     }
 
-                    //-- move bank index and source buffer position by read length.
+                    //-- move buffer position by read length (exprimate in Byte).
                     srcBuffPos += srcBuffReadLength;
                     /*
                      * jump pixel which are not read caused by subsampling X.
@@ -1640,7 +1666,10 @@ public class TiffImageReader extends SpatialImageReader {
                 //-- advance bank index from end destination window (dstRegion.x + dstRegion.width) to end of row.
                 bankID     += dstStepAfterReadX;
 
-                //-- move at correct buffer position from end source window (srcRegion.x + srcRegion.width) to end of row.
+                /*
+                 * move at correct buffer position from end source window (srcRegion.x + srcRegion.width) to end of row.
+                 * Exprimate in Byte unit. 
+                 */
                 srcBuffPos += srcStepAfterReadX;
             }
         }
