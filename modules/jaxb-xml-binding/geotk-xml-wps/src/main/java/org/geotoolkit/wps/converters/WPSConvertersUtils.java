@@ -736,4 +736,45 @@ public class WPSConvertersUtils {
 
         return null;
     }
+
+    /**
+     * Unzip an archive which must contain a coverage (1 image + 0-->n metadata files). The decompression is made in a
+     * temporary directory.
+     * @param archive The archive to unzip.
+     * @return The image file of the archive.
+     * @throws IOException If there's a problem while decompression, or if we can't create a new temporary folder.
+     */
+    public static File unzipCoverage(File archive) throws IOException {
+        File inputFile = null;
+        // User should have sent data as a zip archive. What we need to do is unzip it in a folder and identify the image.
+        if (archive == null || !archive.exists()) {
+            throw new IOException("No input data have been found.");
+        }
+        String tmpDirPath = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + UUID.randomUUID();
+        File tmpDir = new File(tmpDirPath);
+        tmpDir.mkdir();
+
+        List<File> inputFiles = null;
+
+        inputFiles = FileUtilities.unzip(archive, tmpDir, null);
+
+        // Try to find the image file to treat
+        // TODO : Change for a better verification. Here we should get a specific parameter with the image file name.
+        for (File f : inputFiles) {
+            String path = f.getAbsolutePath();
+            if (path.endsWith(".tif") || path.endsWith(".TIF") || path.endsWith(".tiff") || path.endsWith(".TIFF")
+                    || path.endsWith("jp2") || path.endsWith("JP2")
+                    || path.endsWith(".png") || path.endsWith(".PNG")
+                    || path.endsWith(".jpg") || path.endsWith(".JPG")) {
+                inputFile = f;
+                break;
+            }
+        }
+        //If list is empty, the source file is not an archive, so we put it as only file for input.
+        if(inputFile == null && (inputFiles == null || inputFiles.isEmpty())) {
+            inputFile = archive;
+        }
+        return inputFile;
+    }
+
 }
