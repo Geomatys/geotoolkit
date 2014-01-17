@@ -43,21 +43,21 @@ public class GenericResampleDescriptor extends AbstractProcessDescriptor {
     public static final ParameterDescriptorGroup OUTPUT_DESC;
 
     static {
-        IN_COVERAGE = new DefaultParameterDescriptor<ImageReader>
+        IN_COVERAGE = new DefaultParameterDescriptor<>
                 ("image", "The image to resample", ImageReader.class, null, true);
-        OPERATOR = new DefaultParameterDescriptor<MathTransform>
+        OPERATOR = new DefaultParameterDescriptor<>
                 ("operation", "The transformation to apply on source coverage.", MathTransform.class, null, true);
-        INTERPOLATOR = new DefaultParameterDescriptor<String>
+        INTERPOLATOR = new DefaultParameterDescriptor<>
                 ("interpolation", "The interpolation to apply on pixel transfer.", String.class, "bilinear", true);
-        OUT_WIDTH = new DefaultParameterDescriptor<Integer>
+        OUT_WIDTH = new DefaultParameterDescriptor<>
                 ("width", "The width to set for the result image.", Integer.class, null, true);
-        OUT_HEIGHT = new DefaultParameterDescriptor<Integer>
+        OUT_HEIGHT = new DefaultParameterDescriptor<>
                 ("height", "The height to set for the result image.", Integer.class, null, true);
-        OUT_LOC = new DefaultParameterDescriptor<String>("outputLocation", "An absolute path to specify where target ortho-Image should be saved (future file path or its parent directory)." +
+        OUT_LOC = new DefaultParameterDescriptor<>("outputLocation", "An absolute path to specify where target ortho-Image should be saved (future file path or its parent directory)." +
                     " If this parameter is not specified, a temporary file is created.", String.class, null, false);
-        THREAD_COUNT = new DefaultParameterDescriptor<Integer>
+        THREAD_COUNT = new DefaultParameterDescriptor<>
                 ("threadCount", "The number of threads to use for orthorectification computing.", Integer.class, null, false);
-        BLOCK_SIZE = new DefaultParameterDescriptor<Long>
+        BLOCK_SIZE = new DefaultParameterDescriptor<>
                 ("blockSize", "The size (in bytes) of the reading block for input image. If not set, a default size of 4 Mo will be taken.", Long.class, null, false);
         INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + ".input",
                 IN_COVERAGE,
@@ -70,7 +70,7 @@ public class GenericResampleDescriptor extends AbstractProcessDescriptor {
                 BLOCK_SIZE);
 
 
-        OUT_COVERAGE = new DefaultParameterDescriptor<File>
+        OUT_COVERAGE = new DefaultParameterDescriptor<>
                 ("image", "The image to store the resampled result.", File.class, null, true);
 
         OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + ".output", OUT_COVERAGE);

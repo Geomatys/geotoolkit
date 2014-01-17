@@ -97,6 +97,16 @@ public abstract class Interpolation {
         result          = new double[numBands];
     }
 
+    public Interpolation(Interpolation source) {
+        this.pixelIterator = source.pixelIterator;
+        this.numBands   = source.getNumBands();
+        this.boundary   = source.getBoundary();
+        this.minMax     = source.minMax;
+        this.windowSide = source.windowSide;
+        this.data       = new double[windowSide * windowSide * numBands];
+        result          = new double[numBands];
+    }
+
     /**
      * Return interpolate value from x, y pixel coordinate.
      *
@@ -216,8 +226,6 @@ public abstract class Interpolation {
      *
      * @param x pixel x coordinate.
      * @param y pixel y coordinate.
-     * @param width interpolate area width.
-     * @param height interpolate area height.
      * @throws IllegalArgumentException if there are necessary pixels out of boundary.
      * @return appropriate interpolation minX and minY coordinates.
      */

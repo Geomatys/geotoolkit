@@ -37,7 +37,6 @@ import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform;
 
-
 /**
  * A resample operation using a provided MathTransform to convert a source coverage.
  *
