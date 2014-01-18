@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.internal.referencing;
 
-import org.opengis.referencing.cs.AxisDirection;
-
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 
@@ -40,14 +38,6 @@ public final strictfp class CRSUtilitiesTest {
      */
     @Test
     public void testDimensionColinearWith() {
-        assertEquals(1, AxisDirections.indexOf(
-                DefaultGeographicCRS.WGS84_3D.getCoordinateSystem(),
-                AxisDirection.NORTH));
-
-        assertEquals(1, AxisDirections.indexOf(
-                DefaultGeographicCRS.WGS84_3D.getCoordinateSystem(),
-                AxisDirection.SOUTH));
-
         assertEquals(0, CRSUtilities.dimensionColinearWith(
                 DefaultGeographicCRS.WGS84_3D.getCoordinateSystem(),
                 DefaultGeographicCRS.WGS84.getCoordinateSystem()));

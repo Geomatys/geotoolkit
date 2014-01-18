@@ -136,7 +136,10 @@ public final class AbstractCS {
      * @throws IllegalArgumentException if the specified coordinate system is unknown to this method.
      *
      * @since 2.2
+     *
+     * @deprecated Replaced by {@link org.apache.sis.referencing.cs.AxesConvention#NORMALIZED}.
      */
+    @Deprecated
     public static CoordinateSystem standard(final CoordinateSystem cs)
             throws IllegalArgumentException
     {

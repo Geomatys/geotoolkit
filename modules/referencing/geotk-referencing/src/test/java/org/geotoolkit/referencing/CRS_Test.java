@@ -29,7 +29,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.OperationNotFoundException;
 
-import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.apache.sis.geometry.DirectPosition2D;
@@ -38,7 +37,6 @@ import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.crs.CoordinateReferenceSystemTest;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 
 import org.junit.*;
@@ -56,7 +54,6 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  *
  * @since 3.00
  */
-@DependsOn(CoordinateReferenceSystemTest.class)
 public final strictfp class CRS_Test extends ReferencingTestBase {
     /**
      * Tests the {@link CRS#getSupportedAuthorities} method.

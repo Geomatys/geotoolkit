@@ -46,7 +46,10 @@ import org.geotoolkit.internal.referencing.AxisDirections;
  *
  * @since 3.20
  * @module
+ *
+ * @deprecated Replaced by {@link org.apache.sis.referencing.cs.AxesConvention}
  */
+@Deprecated
 public enum AxisRangeType {
     /**
      * The coordinate system uses positive and negative longitude values, typically

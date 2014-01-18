@@ -38,19 +38,15 @@ import org.opengis.util.GenericName;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 
-import org.geotoolkit.referencing.datum.DatumTest;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
-import org.geotoolkit.referencing.cs.CartesianTest;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.crs.CoordinateReferenceSystemTest;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
 
-import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
@@ -66,7 +62,6 @@ import static org.geotoolkit.referencing.Assert.*;
  *
  * @since 2.0
  */
-@DependsOn({DatumTest.class, CartesianTest.class, CoordinateReferenceSystemTest.class, FactoryFinderTest.class})
 public final strictfp class ReferencingObjectFactoryTest extends ReferencingTestBase {
     /**
      * Convenience method creating a map with only the "{@code name"} property.
