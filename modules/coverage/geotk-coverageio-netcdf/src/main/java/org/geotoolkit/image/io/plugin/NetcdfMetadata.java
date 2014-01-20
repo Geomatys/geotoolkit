@@ -53,6 +53,7 @@ import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
@@ -61,7 +62,8 @@ import org.geotoolkit.internal.image.io.SampleMetadataFormat;
 import org.geotoolkit.internal.image.io.DiscoveryAccessor;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
-import org.geotoolkit.internal.referencing.AxisDirections;
+import org.geotoolkit.internal.image.io.IrregularGridConverter;
+import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.referencing.adapters.NetcdfCRS;
 import org.geotoolkit.referencing.adapters.NetcdfCRSBuilder;
@@ -310,7 +312,7 @@ final class NetcdfMetadata extends SpatialMetadata {
      * @throws IOException If an I/O operation was needed and failed.
      */
     private void setCoordinateSystem(final NetcdfImageReader reader, final NetcdfDataset file,
-            List<Dimension> domain, final CoordinateSystem cs, CoordinateReferenceSystem crs,
+            final List<Dimension> domain, final CoordinateSystem cs, CoordinateReferenceSystem crs,
             AffineTransform gridToCRS) throws IOException
     {
         /*
@@ -323,9 +325,9 @@ final class NetcdfMetadata extends SpatialMetadata {
             if (builder == null) {
                 reader.crsBuilder = builder = new NetcdfCRSBuilder(file, reader);
             }
-            domain = new ArrayList<>(domain);
-            Collections.reverse(domain);
-            builder.setDomain(domain);
+            final List<Dimension> rd = new ArrayList<>(domain);
+            Collections.reverse(rd);
+            builder.setDomain(rd);
             builder.setCoordinateSystem(cs);
             builder.sortAxesAccordingDomain();
             final NetcdfCRS netcdfCRS = builder.getNetcdfCRS();
@@ -358,6 +360,26 @@ final class NetcdfMetadata extends SpatialMetadata {
             }
             if (crs == null) {
                 crs = regularCRS;
+            }
+        }
+        /*
+         * ======== HACK !!!! ============================================
+         * If we have been unable to build a CRS, try a few special cases.
+         * This is a hack which will need to be replaced by more generic
+         * approach later.
+         * ===============================================================
+         */
+        if (gridToCRS == null && crs == null) {
+            final IrregularGridConverter c = new IrregularGridConverter(file, domain, null);
+            try {
+                GeneralGridGeometry g = c.forROM();
+                if (g != null) {
+                    gridToCRS = (AffineTransform) g.getGridToCRS();
+                    crs = g.getCoordinateReferenceSystem();
+                }
+            } catch (Exception e) {
+                // We haven been unable to create a CRS. Do not write CRS metadata
+                // and continue reading. TODO: we should log a warning here.
             }
         }
         if (gridToCRS != null) {
