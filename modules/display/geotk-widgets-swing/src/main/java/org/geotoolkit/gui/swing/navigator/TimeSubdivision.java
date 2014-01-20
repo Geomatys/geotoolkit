@@ -100,15 +100,15 @@ public interface TimeSubdivision {
         @Override
         public long[] getSteps(long begin, long end) {
             final GregorianCalendar calendar = new GregorianCalendar();
-            calendar.setTimeInMillis(begin);
             calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+            calendar.setTimeInMillis(begin);
             calendar.set(Calendar.MONTH, 0);
             calendar.set(Calendar.DAY_OF_MONTH, 1);
             calendar.set(Calendar.HOUR_OF_DAY, 0);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.MILLISECOND, 1);
 
-            final List<Long> steps = new ArrayList<Long>();
+            final List<Long> steps = new ArrayList<>();
             steps.add(calendar.getTimeInMillis());
             calendar.add(Calendar.YEAR, 1);
             while(calendar.getTimeInMillis() <= end){
@@ -158,14 +158,14 @@ public interface TimeSubdivision {
         @Override
         public long[] getSteps(long begin, long end) {
             final GregorianCalendar calendar = new GregorianCalendar();
-            calendar.setTimeInMillis(begin);
             calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+            calendar.setTimeInMillis(begin);
             calendar.set(Calendar.DAY_OF_MONTH, 1);
             calendar.set(Calendar.HOUR_OF_DAY, 0);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.MILLISECOND, 1);
 
-            final List<Long> steps = new ArrayList<Long>();
+            final List<Long> steps = new ArrayList<>();
             steps.add(calendar.getTimeInMillis());
             calendar.add(Calendar.MONTH, 1);
             while(calendar.getTimeInMillis() <= end){
@@ -207,21 +207,21 @@ public interface TimeSubdivision {
         @Override
         public String getText(long milliseconds) {
             final GregorianCalendar calendar = new GregorianCalendar();
-            calendar.setTimeInMillis(milliseconds);
             calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+            calendar.setTimeInMillis(milliseconds);
             return String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
         }
 
         @Override
         public long[] getSteps(long begin, long end) {
             final GregorianCalendar calendar = new GregorianCalendar();
-            calendar.setTimeInMillis(begin);
             calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+            calendar.setTimeInMillis(begin);
             calendar.set(Calendar.HOUR_OF_DAY, 0);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.MILLISECOND, 1);
 
-            final List<Long> steps = new ArrayList<Long>();
+            final List<Long> steps = new ArrayList<>();
             steps.add(calendar.getTimeInMillis());
             calendar.add(Calendar.DAY_OF_MONTH, 1);
             while(calendar.getTimeInMillis() <= end){
@@ -263,20 +263,20 @@ public interface TimeSubdivision {
         @Override
         public String getText(long milliseconds) {
             final GregorianCalendar calendar = new GregorianCalendar();
-            calendar.setTimeInMillis(milliseconds);
             calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+            calendar.setTimeInMillis(milliseconds);
             return String.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
         }
 
         @Override
         public long[] getSteps(long begin, long end) {
             final GregorianCalendar calendar = new GregorianCalendar();
-            calendar.setTimeInMillis(begin);
             calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+            calendar.setTimeInMillis(begin);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.MILLISECOND, 1);
 
-            final List<Long> steps = new ArrayList<Long>();
+            final List<Long> steps = new ArrayList<>();
             steps.add(calendar.getTimeInMillis());
             calendar.add(Calendar.HOUR_OF_DAY, 1);
             while(calendar.getTimeInMillis() <= end){
@@ -318,20 +318,20 @@ public interface TimeSubdivision {
         @Override
         public String getText(long milliseconds) {
             final GregorianCalendar calendar = new GregorianCalendar();
-            calendar.setTimeInMillis(milliseconds);
             calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+            calendar.setTimeInMillis(milliseconds);
             return String.valueOf(calendar.get(Calendar.MINUTE));
         }
 
         @Override
         public long[] getSteps(long begin, long end) {
             final GregorianCalendar calendar = new GregorianCalendar();
-            calendar.setTimeInMillis(begin);
             calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+            calendar.setTimeInMillis(begin);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.MILLISECOND, 1);
 
-            final List<Long> steps = new ArrayList<Long>();
+            final List<Long> steps = new ArrayList<>();
             steps.add(calendar.getTimeInMillis());
             calendar.add(Calendar.MINUTE, 15);
             while(calendar.getTimeInMillis() <= end){
@@ -373,20 +373,20 @@ public interface TimeSubdivision {
         @Override
         public String getText(long milliseconds) {
             final GregorianCalendar calendar = new GregorianCalendar();
-            calendar.setTimeInMillis(milliseconds);
             calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+            calendar.setTimeInMillis(milliseconds);
             return String.valueOf(calendar.get(Calendar.MINUTE));
         }
 
         @Override
         public long[] getSteps(long begin, long end) {
             final GregorianCalendar calendar = new GregorianCalendar();
-            calendar.setTimeInMillis(begin);
             calendar.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+            calendar.setTimeInMillis(begin);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.MILLISECOND, 1);
 
-            final List<Long> steps = new ArrayList<Long>();
+            final List<Long> steps = new ArrayList<>();
             steps.add(calendar.getTimeInMillis());
             calendar.add(Calendar.MINUTE, 1);
             while(calendar.getTimeInMillis() <= end){
