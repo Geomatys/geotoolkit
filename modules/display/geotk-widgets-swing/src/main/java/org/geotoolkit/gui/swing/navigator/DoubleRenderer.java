@@ -38,9 +38,9 @@ import static javax.swing.SwingConstants.*;
  */
 public class DoubleRenderer implements NavigatorRenderer{
 
-    private final Color Cbase = Color.GRAY;
-    private final Color Ctop = Cbase.brighter();
-    private final Color Clast = Cbase.darker();
+    private static final Color CBASE = Color.GRAY;
+    private static final Color CTOP = CBASE.brighter();
+    private static final Color CLAST = CBASE.darker();
 
     public DoubleRenderer(){
 
@@ -73,8 +73,8 @@ public class DoubleRenderer implements NavigatorRenderer{
         }
 
         final GradientPaint mask = new GradientPaint(
-                sx, sy, Cbase,
-                ex, ey, Ctop);
+                sx, sy, CBASE,
+                ex, ey, CTOP);
         g.setPaint(mask);
         g.fill(area);
 
@@ -109,11 +109,11 @@ public class DoubleRenderer implements NavigatorRenderer{
 
             if(tickIte.isMajorTick()){
                 g.setStroke(new BasicStroke(2.5f));
-                g.setColor(Ctop);
+                g.setColor(CTOP);
                 g.setFont(new Font("Serif", Font.BOLD, 12));
             }else{
                 g.setStroke(new BasicStroke(1f));
-                g.setColor(Ctop);
+                g.setColor(CTOP);
                 g.setFont(new Font("Serif", Font.PLAIN, 10));
             }
 
@@ -134,4 +134,8 @@ public class DoubleRenderer implements NavigatorRenderer{
 
     }
 
+    private int toVal(){
+        return 0;
+    }
+    
 }

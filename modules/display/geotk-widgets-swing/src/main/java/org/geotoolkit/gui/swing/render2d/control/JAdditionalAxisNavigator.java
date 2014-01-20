@@ -245,8 +245,8 @@ public class JAdditionalAxisNavigator extends JPanel {
                     def.nav.setOrientation(verticalAction.isSelected() ? SwingConstants.WEST : SwingConstants.SOUTH);
                     //change model scale if needed
                     final double scale = def.nav.getModel().getScale();
-                    //scale is going down, must be negative
                     if(scale>0){
+                        //scale is going up, must be negative
                         def.nav.getModel().scale(-1, 0);
                     }
 
@@ -272,8 +272,8 @@ public class JAdditionalAxisNavigator extends JPanel {
                     def.nav.setOrientation(verticalAction.isSelected() ? SwingConstants.WEST : SwingConstants.SOUTH);
                     //change model scale if needed
                     final double scale = def.nav.getModel().getScale();
-                    //scale is going down, must be negative
                     if(scale<0){
+                        //scale is going down, must be negative
                         def.nav.getModel().scale(-1, 0);
                     }
 
@@ -312,6 +312,11 @@ public class JAdditionalAxisNavigator extends JPanel {
             for(int i=0;i<axis.size();i++) {
                 final AxisDef def = axis.get(i);
                 def.nav.setOrientation(verticalAction.isSelected() ? SwingConstants.WEST : SwingConstants.SOUTH);
+                final double scale = def.nav.getModel().getScale();
+                    if((verticalAction.isSelected() && scale>0) || (!verticalAction.isSelected() && scale<0)){
+                        //scale must be inverted
+                        def.nav.getModel().scale(-1, 0);
+                    }
                 
                 tabPane.addTab(def.getAxisShortName(), def.nav);
                 tabPane.setTabComponentAt(i, new JTabHeader(tabPane,def.closeAction));

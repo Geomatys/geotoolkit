@@ -26,10 +26,8 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.List;
-import static javax.swing.SwingConstants.EAST;
 import static javax.swing.SwingConstants.NORTH;
 import static javax.swing.SwingConstants.SOUTH;
-import static javax.swing.SwingConstants.WEST;
 
 /**
  * Model renderer displaying dates for JNavigator component.
@@ -60,25 +58,9 @@ public class DateRenderer implements NavigatorRenderer{
     @Override
     public void render(final JNavigator nav, final Graphics2D g2, final Rectangle area) {
 
-        final int extent;
         final int orientation = nav.getOrientation();
         final boolean horizontal = orientation == NORTH || orientation == SOUTH;
-        final boolean flipText = orientation == NORTH || orientation == WEST;
-        
-        //draw the background gradient -----------------------------------------
-
-        int sx = 0;
-        int sy = 0;
-        int ex = 0;
-        int ey = 0;
-        switch(orientation){
-            case NORTH : sx=0;sy=0;ex=0;ey=area.height;break;
-            case SOUTH : sx=0;sy=area.height;ex=0;ey=0;break;
-            case EAST : sx=area.width;sy=0;ex=0;ey=0;break;
-            case WEST : sx=0;sy=0;ex=area.width;ey=0;break;
-        }
-        
-        
+                
         Color lineColor = Color.GRAY;
         Color textColor = Color.GRAY;
 
@@ -207,16 +189,15 @@ public class DateRenderer implements NavigatorRenderer{
             g2.setPaint(mask2);
             g2.fillRect(0, 0, compactBandWidth, height);
 
-
-            final long beginInterval = (long) model.getDimensionValueAt(0);
-            final long endInterval = (long) model.getDimensionValueAt(height);
+            final long beginInterval = (long) model.getDimensionValueAt(height);
+            final long endInterval = (long) model.getDimensionValueAt(0);
 
             final List<TimeSubdivision> compact = new ArrayList<>();
 
             for(int i=0;i<subdivisions.size();i++){
                 final TimeSubdivision sub = subdivisions.get(i);
                 final double scale = sub.getUnitLength();
-                final double stepWidth = scale * model.getScale();
+                final double stepWidth = -scale * model.getScale();
 
                 final boolean showLine = stepWidth > 15 ;
                 final boolean showText = stepWidth > fontHeight ;
@@ -244,7 +225,7 @@ public class DateRenderer implements NavigatorRenderer{
                     if(showText){
                         final String text = sub.getText((long)step);
                         g2.setColor(textColor);
-                        g2.drawString(text, compactBandWidth+3, (float)y+fm.getMaxAscent());
+                        g2.drawString(text, compactBandWidth+3, (float)y-fm.getDescent());
                     }
                 }
 
@@ -264,7 +245,7 @@ public class DateRenderer implements NavigatorRenderer{
 
                 //draw text
                 g2.setColor(textColor);
-                final String text = sub.getText(beginInterval)+sub.getUnitText();
+                final String text = sub.getText(endInterval)+sub.getUnitText();
                 g2.drawString(text, 2, y+fm.getAscent());
                 y += fontHeight;
 
@@ -281,7 +262,7 @@ public class DateRenderer implements NavigatorRenderer{
 
                         if(ly > y){
                             g2.setColor(textColor);
-                            g2.drawString(lt, 3, (float)ly+fm.getMaxAscent());
+                            g2.drawString(lt, 3, (float)ly-fm.getDescent());
                         }
 
                     }
