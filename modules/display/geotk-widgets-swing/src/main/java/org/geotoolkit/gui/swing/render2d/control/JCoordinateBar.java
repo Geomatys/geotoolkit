@@ -45,6 +45,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -55,16 +56,14 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
-
-import org.geotoolkit.display2d.GO2Hints;
-import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.apache.sis.geometry.DirectPosition2D;
 import org.geotoolkit.display.canvas.AbstractCanvas;
+import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -333,12 +332,12 @@ public class JCoordinateBar extends AbstractMapControlBar {
         constraints.gridx = x++;
         bottom.add(guiCRS,constraints);
 
-        setMap(candidate);
-
         paneTemp.setVisible(false);
         verticalSplit.setDividerSize(2);
-        verticalSplit.setTopComponent(new JComponent() {});
+        verticalSplit.setTopComponent(new JLabel());
         verticalSplit.setBottomComponent(paneTemp);
+        
+        setMap(candidate);
     }
 
     private Container baseMapContainer;
