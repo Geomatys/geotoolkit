@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.render2d.control;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -36,28 +37,29 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
-
-import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
+import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.render2d.control.selection.DefaultSelectionHandler;
+import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
+import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.GeotkClipboard;
-import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.display.container.GraphicContainer;
-import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
-import org.geotoolkit.gui.swing.resource.IconBuilder;
+import org.opengis.feature.Feature;
+import org.opengis.feature.GeometryAttribute;
 import org.opengis.filter.Filter;
 import org.openide.awt.DropDownButtonFactory;
 
@@ -118,13 +120,13 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
         menu.add(new JMenuItem(new AbstractAction(MessageBundle.getString("copyselection")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                copyToClipboard(false,false);
+                copyToClipboard(true,false);
             }
         }));
         menu.add(new JMenuItem(new AbstractAction(MessageBundle.getString("copyselectionappend")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                copyToClipboard(false,true);
+                copyToClipboard(true,true);
             }
         }));
 
@@ -196,8 +198,12 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
                             if(systemclipboard){
                                 ite = col.iterator();
                                 while(ite.hasNext()){
-                                    sb.append(ite.next());
-                                    sb.append("\n");
+                                    final Feature f = ite.next();
+                                    final GeometryAttribute gt = f.getDefaultGeometryProperty();
+                                    if(gt != null && gt.getValue() instanceof Geometry){
+                                        sb.append(gt.getValue().toString());
+                                        sb.append("\n");
+                                    }
                                 }
                             }
                         } catch (DataStoreException | FeatureStoreRuntimeException ex) {
@@ -213,18 +219,18 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
 
             if(systemclipboard){
                 GeotkClipboard.setSystemClipboardValue(sb.toString());
-            }else{
-                Transferable trs = GeotkClipboard.INSTANCE.getContents(this);
-
-                if(append && trs instanceof FeatureCollectionListTransferable){
-                    final List lst = ((FeatureCollectionListTransferable)trs).selections;
-                    lst.addAll(selections);
-                }else{
-                    trs = new FeatureCollectionListTransferable(selections);
-                    GeotkClipboard.INSTANCE.setContents(trs, null);
-                }
             }
-
+            
+            //push value in geotk clipboard
+            Transferable trs = GeotkClipboard.INSTANCE.getContents(this);
+            if(append && trs instanceof FeatureCollectionListTransferable){
+                final List lst = ((FeatureCollectionListTransferable)trs).selections;
+                lst.addAll(selections);
+            }else{
+                trs = new FeatureCollectionListTransferable(selections);
+                GeotkClipboard.INSTANCE.setContents(trs, null);
+            }
+            
         }
     }
 
