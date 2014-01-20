@@ -42,8 +42,10 @@ public class DefaultBoundingBox extends GeneralEnvelope implements BoundingBox,E
     }
 
     public DefaultBoundingBox(final BoundingBox bounds, final CoordinateReferenceSystem crs){
-        super(crs);
-        setBounds(bounds);
+        super(bounds.getLowerCorner().getCoordinate(), bounds.getUpperCorner().getCoordinate());
+        if(crs != null){
+            setCoordinateReferenceSystem(crs);
+        }
     }
 
     public DefaultBoundingBox(final double[] min, final double[] max){

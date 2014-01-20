@@ -217,7 +217,16 @@ public class FeatureStoreUtilities {
                     if(env != null){
                         env.include(bbox);
                     }else{
-                        env = new DefaultBoundingBox(bbox, bbox.getCoordinateReferenceSystem());
+                        CoordinateReferenceSystem crs = bbox.getCoordinateReferenceSystem();
+                        if(crs == null){
+                            crs = f.getType().getCoordinateReferenceSystem();
+                        }
+                        if(crs == null){
+                            //what should we do ?
+                            //we choose to continue, assuming it is normal and the 
+                            //features are in cartesian space. or it's a temporary work collection.
+                        }
+                        env = new DefaultBoundingBox(bbox, crs);
                     }
                 }
             }
