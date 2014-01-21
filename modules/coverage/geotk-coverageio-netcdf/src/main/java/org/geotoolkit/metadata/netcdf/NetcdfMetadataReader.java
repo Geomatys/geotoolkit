@@ -381,10 +381,20 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
      */
     private Unit<?> getUnitValue(final Group group, final String name) {
         final String unit = getStringValue(group, name);
-        if (unit != null) try {
-            return Units.valueOf(unit);
-        } catch (IllegalArgumentException e) {
-            warning("getUnitValue", e);
+        if (unit != null) {
+            switch (unit) {
+                /*
+                 * A few cases found in NetCDF file. This is a temporary patch
+                 * while we wait for a more efficient Unit parser.
+                 */
+                case "meter second-1":  return SI.METRES_PER_SECOND;
+                case "meter2 second-1": return SI.METRE.times(SI.METRES_PER_SECOND);
+            }
+            try {
+                return Units.valueOf(unit);
+            } catch (IllegalArgumentException e) {
+                warning("getUnitValue", e);
+            }
         }
         return null;
     }
