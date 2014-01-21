@@ -18,12 +18,9 @@
 package org.geotoolkit.gui.swing.render2d.control;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -54,6 +51,7 @@ import org.geotoolkit.gui.swing.resource.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.IconBuilder;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.util.FeatureCollectionListTransferable;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -224,7 +222,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
             //push value in geotk clipboard
             Transferable trs = GeotkClipboard.INSTANCE.getContents(this);
             if(append && trs instanceof FeatureCollectionListTransferable){
-                final List lst = ((FeatureCollectionListTransferable)trs).selections;
+                final List lst = ((FeatureCollectionListTransferable)trs).getSelections();
                 lst.addAll(selections);
             }else{
                 trs = new FeatureCollectionListTransferable(selections);
@@ -232,34 +230,6 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
             }
             
         }
-    }
-
-
-    private static class FeatureCollectionListTransferable implements Transferable{
-
-        private static final String MIME = "geotk/featurecollectionList";
-        private static final DataFlavor FLAVOR = new DataFlavor(List.class,MIME);
-        private final List<FeatureCollection> selections;
-
-        public FeatureCollectionListTransferable(List<FeatureCollection> selections) {
-            this.selections = selections;
-        }
-
-        @Override
-        public DataFlavor[] getTransferDataFlavors() {
-            return new DataFlavor[]{FLAVOR};
-        }
-
-        @Override
-        public boolean isDataFlavorSupported(DataFlavor flavor) {
-            return FLAVOR.match(flavor);
-        }
-
-        @Override
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-            return selections;
-        }
-
     }
 
 }
