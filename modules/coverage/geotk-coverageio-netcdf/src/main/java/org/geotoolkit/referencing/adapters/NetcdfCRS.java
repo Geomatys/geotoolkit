@@ -200,14 +200,13 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     }
 
     /**
-     * Creates a new {@code NetcdfCRS} object wrapping the given axes of the given NetCDF
-     * coordinate system.
+     * Creates a new {@code NetcdfCRS} object wrapping the given axes of the given NetCDF coordinate system.
      *
      * @param  netcdfCS The NetCDF coordinate system to wrap.
      * @param  domain Dimensions of the variable for which we are wrapping a coordinate system,
      *         in natural order (reverse of NetCDF order). They are often, but not necessarily,
      *         the coordinate system domain except for order.
-     * @param  The axes to add, in natural order (i.e. reverse of NetCDF order).
+     * @param  netcdfAxes The axes to add, in natural order (i.e. reverse of NetCDF order).
      *         Some axes may be ignored if their domain is not contained in the {@code variableDomain}.
      * @throws IIOException If an axis domain is not contained in the given variable domain,
      *         or if a unit can not be parsed.

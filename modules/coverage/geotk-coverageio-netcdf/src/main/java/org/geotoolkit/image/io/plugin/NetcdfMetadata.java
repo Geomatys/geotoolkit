@@ -53,6 +53,7 @@ import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.opengis.referencing.operation.MathTransform;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
@@ -352,34 +353,38 @@ final class NetcdfMetadata extends SpatialMetadata {
             /*
              * The above was only a check. Now perform the metadata writing.
              */
-            final CoordinateReferenceSystem regularCRS = netcdfCRS.regularize();
+            GridGeometry gridGeometry = null;
+            CoordinateReferenceSystem regularCRS = netcdfCRS.regularize();
             if (regularCRS instanceof GridGeometry) {
+                gridGeometry = (GridGeometry) regularCRS;
+            }
+            if (regularCRS == netcdfCRS) {
+                /*
+                 * ======== HACK !!!! ================================
+                 * Try a few special cases. This is a hack which will
+                 * need to be replaced by more generic approach later.
+                 * ===================================================
+                 */
+                final IrregularGridConverter c = new IrregularGridConverter(file, domain, netcdfCRS, null);
+                try {
+                    final CoordinateReferenceSystem candidate = c.forROM();
+                    if (candidate != null) {
+                        regularCRS = candidate;
+                        gridGeometry = c.getGridToCRS(regularCRS);
+                    }
+                } catch (Exception e) {
+                    // We haven been unable to create a CRS. Do not write CRS metadata
+                    // and continue reading. TODO: we should log a warning here.
+                }
+                // End of hack.
+            }
+            if (gridGeometry != null) {
                 final GridDomainAccessor accessor = new GridDomainAccessor(this);
-                accessor.setGridGeometry((GridGeometry) regularCRS, null, null);
+                accessor.setGridGeometry(gridGeometry, null, null);
                 gridToCRS = null;
             }
             if (crs == null) {
                 crs = regularCRS;
-            }
-        }
-        /*
-         * ======== HACK !!!! ============================================
-         * If we have been unable to build a CRS, try a few special cases.
-         * This is a hack which will need to be replaced by more generic
-         * approach later.
-         * ===============================================================
-         */
-        if (gridToCRS == null && crs == null) {
-            final IrregularGridConverter c = new IrregularGridConverter(file, domain, null);
-            try {
-                GeneralGridGeometry g = c.forROM();
-                if (g != null) {
-                    gridToCRS = (AffineTransform) g.getGridToCRS();
-                    crs = g.getCoordinateReferenceSystem();
-                }
-            } catch (Exception e) {
-                // We haven been unable to create a CRS. Do not write CRS metadata
-                // and continue reading. TODO: we should log a warning here.
             }
         }
         if (gridToCRS != null) {

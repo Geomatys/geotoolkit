@@ -19,35 +19,33 @@ package org.geotoolkit.internal.image.io;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.io.IOException;
 import java.awt.geom.Point2D;
-import javax.measure.unit.Unit;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.datum.VerticalDatumType;
+import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CRSFactory;
-import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.crs.ProjectedCRS;
+import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
+import org.apache.sis.referencing.operation.matrix.Matrices;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
-import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.cs.DefaultTimeCS;
-import org.geotoolkit.referencing.cs.DefaultVerticalCS;
+import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import ucar.ma2.Array;
 import ucar.nc2.Dimension;
@@ -97,17 +95,26 @@ public final class IrregularGridConverter {
     private AffineTransform2D gridToCRS;
 
     /**
+     * The CRS to replace by the one to be created by this class.
+     */
+    private final CoordinateReferenceSystem toReplace;
+
+    /**
      * Creates a new converter.
      *
-     * @param file   The NetCDF file to inspect.
-     * @param domain The variable for which to find a CRS.
-     * @param hints  An optional set of hints for determining the factories to use.
+     * @param file      The NetCDF file to inspect.
+     * @param domain    The variable for which to find a CRS.
+     * @param toReplace CRS to replace by the one to be created by this class.
+     * @param hints     An optional set of hints for determining the factories to use.
      */
-    public IrregularGridConverter(final NetcdfFile file, final List<Dimension> domain, final Hints hints) {
-        this.file   = file;
-        this.domain = domain;
-        mtFactory   = FactoryFinder.getMathTransformFactory(hints);
-        crsFactory  = FactoryFinder.getCRSFactory(hints);
+    public IrregularGridConverter(final NetcdfFile file, final List<Dimension> domain,
+            final CoordinateReferenceSystem toReplace, final Hints hints)
+    {
+        this.file      = file;
+        this.domain    = domain;
+        this.toReplace = toReplace;
+        mtFactory      = FactoryFinder.getMathTransformFactory(hints);
+        crsFactory     = FactoryFinder.getCRSFactory(hints);
     }
 
     /**
@@ -138,9 +145,9 @@ public final class IrregularGridConverter {
      * @throws IOException        If the NetCDF file can not be read.
      * @throws FactoryException   If the map projection can not be created.
      * @throws TransformException If an error occurred during the map projection of a coordinate.
-     * @return The grid geometry if there is a match, or {@code null} otherwise.
+     * @return The CRS if there is a match, or {@code null} otherwise.
      */
-    public GeneralGridGeometry forROM() throws IOException, FactoryException, TransformException {
+    public CoordinateReferenceSystem forROM() throws IOException, FactoryException, TransformException {
         if (endsWith("eta_rho", "xi_rho")) {
             final VariableIF longitudes = file.findVariable("lon_rho");
             if (longitudes != null) {
@@ -157,7 +164,9 @@ public final class IrregularGridConverter {
                     if (matches((MathTransform2D) mtFactory.createParameterizedTransform(p),
                                 longitudes.read(), latitudes.read(), 1E-4))
                     {
-                        return createGridGeometry(p);
+                        return replace(crsFactory.createProjectedCRS(singletonMap(NAME_KEY, "ROM"),
+                                DefaultGeographicCRS.SPHERE, new DefiningConversion("ROM", p),
+                                DefaultCartesianCS.PROJECTED));
                     }
                 }
             }
@@ -206,16 +215,38 @@ public final class IrregularGridConverter {
     }
 
     /**
-     * Creates a grid geometry from the current value of {@link #gridEnvelope}, {@link #gridToCRS}
-     * and {@link #projection}.
-     *
-     * @todo We should ensure that the GeographicCRS uses the same ellipsoid than the map projection one.
+     * If the {@link #toReplace} CRS is a compound one, replace its geographic component by the given one.
      */
-    @SuppressWarnings("fallthrough")
-    private GeneralGridGeometry createGridGeometry(final ParameterValueGroup p) throws FactoryException {
-        final int dim = domain.size();
+    private CoordinateReferenceSystem replace(final ProjectedCRS crs) throws FactoryException {
+        if (toReplace instanceof CompoundCRS) {
+            final CoordinateReferenceSystem[] components = ((CompoundCRS) toReplace)
+                    .getComponents().toArray(new CoordinateReferenceSystem[2]);
+            if (components[0] instanceof GeographicCRS) {
+                components[0] = crs;
+                return crsFactory.createCompoundCRS(IdentifiedObjects.getProperties(toReplace), components);
+            }
+        }
+        if (toReplace instanceof GeographicCRS) {
+            return crs;
+        }
+        /*
+         * TODO: it is a little bit to realize that computing the CRS was useless.
+         *       But actually this case should never happen. Should we log a warning?
+         */
+        return null;
+    }
+
+    /**
+     * Return the grid to CRS transform.
+     *
+     * @param  crs The CRS created by {@link #forROM()}.
+     * @return The grid to CRS transform.
+     */
+    public GeneralGridGeometry getGridToCRS(final CoordinateReferenceSystem crs) {
+        final CoordinateSystem cs = toReplace.getCoordinateSystem();
+        final int dim = cs.getDimension();
         final int[] upper = new int[dim];
-        final GeneralMatrix m = new GeneralMatrix(dim + 1);
+        final MatrixSIS m = Matrices.createIdentity(dim + 1);
         for (int i=0; i<dim; i++) {
             upper[i] = domain.get((dim - 1) - i).getLength();
             switch (i) {
@@ -231,38 +262,24 @@ public final class IrregularGridConverter {
                     m.setElement(1, dim, gridToCRS.getTranslateY());
                     break;
                 }
-            }
-        }
-        final Map<String,?> properties = singletonMap(NAME_KEY, "ROM");
-        CoordinateReferenceSystem crs = crsFactory.createProjectedCRS(properties, DefaultGeographicCRS.SPHERE,
-                new DefiningConversion("ROW", p), DefaultCartesianCS.PROJECTED);
-        if (dim >= 3) {
-            // TODO: need to create a better VerticalCRS.
-            final CoordinateReferenceSystem[] components = new CoordinateReferenceSystem[dim - 1];
-            switch (components.length) {
                 default: {
-                    throw new UnsupportedOperationException();
-                }
-                case 3: {
-                    final Map<String,?> cp = singletonMap(NAME_KEY, "Ocean time");
-                    components[2] = new DefaultTemporalCRS(cp, new DefaultTemporalDatum(cp, new Date(0)), // TODO 1980-01-01 00:00:00
-                            DefaultTimeCS.SECONDS);
-                }
-                case 2: {
-                    final Map<String,?> cp = singletonMap(NAME_KEY, "Sigma level");
-                    components[1] = new DefaultVerticalCRS(cp,
-                            new DefaultVerticalDatum(cp, VerticalDatumType.OTHER_SURFACE),
-                            new DefaultVerticalCS(cp, new DefaultCoordinateSystemAxis(cp, "s", AxisDirection.DOWN, Unit.ONE)));
-                    // Fallthrough
-                }
-                case 1: {
-                    components[0] = crs;
-                }
-                case 0: {
-                    break;
+                    // TODO: following code is unsafe and inacurate.
+                    final DiscreteCoordinateSystemAxis<?> axis = (DiscreteCoordinateSystemAxis<?>) cs.getAxis(i);
+                    final int n = axis.length() - 1;
+                    final double start, end;
+                    if (Date.class.isAssignableFrom(axis.getElementType())) {
+                        // TODO: there is no guarantee that we get the right CRS here.
+                        final DefaultTemporalCRS c = DefaultTemporalCRS.castOrCopy(CRS.getTemporalCRS(toReplace));
+                        start = c.toValue((Date) axis.getOrdinateAt(0));
+                        end   = c.toValue((Date) axis.getOrdinateAt(n));
+                    } else {
+                        start = ((Number) axis.getOrdinateAt(0)).doubleValue();
+                        end = ((Number) axis.getOrdinateAt(n)).doubleValue();
+                    }
+                    m.setElement(i, dim, start);
+                    m.setElement(i, i, (end - start) / n);
                 }
             }
-            crs = crsFactory.createCompoundCRS(properties, components);
         }
         return new GeneralGridGeometry(new GeneralGridEnvelope(new int[dim], upper, false), MathTransforms.linear(m), crs);
     }
