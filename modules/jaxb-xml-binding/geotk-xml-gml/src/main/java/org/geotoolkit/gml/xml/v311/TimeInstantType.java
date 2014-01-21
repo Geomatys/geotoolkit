@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
+import org.opengis.filter.expression.Literal;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.Position;
@@ -56,7 +57,7 @@ import org.opengis.temporal.Position;
 @XmlType(name = "TimeInstantType", propOrder = {
     "timePosition"
 })
-public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implements Instant, Serializable {
+public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implements Instant, Serializable, Literal {
 
     @XmlElement(required = true)
     private TimePositionType timePosition;
@@ -165,6 +166,14 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         return sb.toString();
     }
 
+    @Override
+    public Object getValue() {
+        if (timePosition != null) {
+            return timePosition.getValue();
+        }
+        return null;
+    }
+    
     /**
      * Verify that this entry is identical to the specified object.
      */
