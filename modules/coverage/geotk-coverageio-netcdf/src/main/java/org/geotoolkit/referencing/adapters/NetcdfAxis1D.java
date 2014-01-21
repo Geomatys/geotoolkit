@@ -86,8 +86,13 @@ final class NetcdfAxis1D extends NetcdfAxis implements DiscreteCoordinateSystemA
      */
     NetcdfAxis1D(final CoordinateAxis1D axis, final Dimension[] domain) throws IIOException {
         super(axis);
-        iDim = indexOfDimension(axis, 0, domain);
-        length = axis.getShape(0);
+        if (axis.isScalar()) {
+            iDim = 0;
+            length = 1;
+        } else {
+            iDim = indexOfDimension(axis, 0, domain);
+            length = axis.getShape(0);
+        }
     }
 
     /**

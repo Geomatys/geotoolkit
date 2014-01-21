@@ -131,9 +131,11 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
             throws IIOException
     {
         final Dimension toSearch = axis.getDimension(index);
-        for (int i=0; i<domain.length; i++) {
-            if (toSearch.equals(domain[i])) {
-                return i;
+        if (toSearch != null) { // Null if the variable is a scalar.
+            for (int i=0; i<domain.length; i++) {
+                if (toSearch.equals(domain[i])) {
+                    return i;
+                }
             }
         }
         final StringBuilder buffer = new StringBuilder(40);
