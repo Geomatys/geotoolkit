@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.data.shapefile;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
@@ -33,11 +34,13 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.geometry.jts.JTS;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Experimental  FeatureReader<SimpleFeatureType, SimpleFeature> that always takes the first column of the
@@ -73,6 +76,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
     protected final SimpleFeatureType schema;
     protected final FeatureIDReader fidReader;
     protected final Object[] buffer;
+    protected final CoordinateReferenceSystem geomCRS;
     /**
      * if the attributs between reader and schema are the same but not in the same order.
      */
@@ -118,6 +122,8 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
 
         this.schema = schema;
         this.buffer = new Object[attributeReader.getPropertyCount()];
+
+        geomCRS = schema.getCoordinateReferenceSystem();
 
         // init the tracer if we need to debug a connection leak
         assert (creationStack = new IllegalStateException().fillInStackTrace()) != null;
@@ -283,6 +289,11 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
                 throw new DataStoreException(ex);
             }
 
+            //set crs on geometry
+            if(buffer[0] instanceof Geometry){
+                JTS.setCRS((Geometry)buffer[0], geomCRS);
+            }
+
             if (attributIndexes.length == 0) {
                 builder.addAll(buffer);
             } else {
@@ -318,6 +329,11 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
                 attributeReader.read(buffer);
             } catch (IOException ex) {
                 throw new DataStoreException(ex);
+            }
+
+            //set crs on geometry
+            if(buffer[0] instanceof Geometry){
+                JTS.setCRS((Geometry)buffer[0], geomCRS);
             }
 
             if (attributIndexes.length == 0) {
