@@ -6,18 +6,12 @@ import org.opengis.referencing.cs.CartesianCS;
 import javax.measure.quantity.Angle;
 import javax.measure.unit.Unit;
 
-import static org.geotoolkit.referencing.cs.DefaultCartesianCS.GEOCENTRIC;
-
 
 /**
  * Temporary accessor to Apache SIS package-private methods, to be removed after we completed migration to SIS.
  */
 public final class Accessor {
     private Accessor() {
-    }
-
-    static {
-        Legacy.STANDARD = GEOCENTRIC;
     }
 
     public static void init() { // Dummy method for forcing class initialization by the caller.
