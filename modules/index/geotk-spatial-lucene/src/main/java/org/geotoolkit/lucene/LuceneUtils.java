@@ -43,7 +43,7 @@ import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.lucene.tree.NamedEnvelope;
+import org.geotoolkit.index.tree.manager.tree.NamedEnvelope;
 import org.opengis.filter.Filter;
 import org.opengis.filter.spatial.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

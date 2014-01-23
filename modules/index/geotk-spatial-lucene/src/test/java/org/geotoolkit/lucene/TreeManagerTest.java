@@ -19,7 +19,7 @@ package org.geotoolkit.lucene;
 
 import java.io.File;
 import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.lucene.tree.RtreeManager;
+import org.geotoolkit.index.tree.manager.tree.RtreeManager;
 import org.geotoolkit.util.FileUtilities;
 
 import org.junit.*;

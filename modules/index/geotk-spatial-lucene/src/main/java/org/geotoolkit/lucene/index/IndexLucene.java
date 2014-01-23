@@ -31,8 +31,8 @@ import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.tree.StoreIndexException;
-import org.geotoolkit.lucene.tree.NamedEnvelope;
-import org.geotoolkit.lucene.tree.RtreeManager;
+import org.geotoolkit.index.tree.manager.tree.NamedEnvelope;
+import org.geotoolkit.index.tree.manager.tree.RtreeManager;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

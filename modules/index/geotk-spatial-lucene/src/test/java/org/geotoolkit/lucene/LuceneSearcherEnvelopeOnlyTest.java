@@ -41,12 +41,13 @@ import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeElementMapper;
+import org.geotoolkit.index.tree.manager.tree.NamedEnvelope;
+import org.geotoolkit.index.tree.manager.tree.RtreeManager;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
-import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
 import org.geotoolkit.lucene.index.LuceneIndexSearcher;
@@ -54,7 +55,6 @@ import org.geotoolkit.util.FileUtilities;
 
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
 import static org.geotoolkit.lucene.LuceneSearcherTest.getresultsfromID;
-import org.geotoolkit.lucene.tree.RtreeManager;
 
 import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

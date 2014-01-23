@@ -36,11 +36,11 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.SpatialFilterType;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.index.tree.TreeElementMapper;
 import org.geotoolkit.index.tree.TreeX;
+import org.geotoolkit.index.tree.manager.tree.NamedEnvelope;
 
 import static org.geotoolkit.lucene.LuceneUtils.*;
         

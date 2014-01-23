@@ -39,13 +39,13 @@ import org.apache.lucene.util.Version;
 
 // Geotoolkit dependencies
 import org.geotoolkit.index.tree.StoreIndexException;
+import org.geotoolkit.index.tree.manager.tree.NamedEnvelope;
+import org.geotoolkit.index.tree.manager.tree.RtreeManager;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.LuceneUtils;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
 import static org.geotoolkit.lucene.index.IndexLucene.LOGGER;
-import org.geotoolkit.lucene.tree.NamedEnvelope;
-import org.geotoolkit.lucene.tree.RtreeManager;
 import org.geotoolkit.util.FileUtilities;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 
