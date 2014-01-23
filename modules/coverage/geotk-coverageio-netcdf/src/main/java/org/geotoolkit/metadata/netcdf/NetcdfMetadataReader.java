@@ -387,8 +387,11 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                  * A few cases found in NetCDF file. This is a temporary patch
                  * while we wait for a more efficient Unit parser.
                  */
-                case "meter second-1":  return SI.METRES_PER_SECOND;
                 case "meter2 second-1": return SI.METRE.times(SI.METRES_PER_SECOND);
+                case "meter second-1":  // Fall through
+                case "m s**-1":         return SI.METRES_PER_SECOND;
+                case "kg m**-2":        return SI.KILOGRAM.times(SI.METRE.pow(-2));
+                case "m of water":      return SI.METRE;
             }
             try {
                 return Units.valueOf(unit);

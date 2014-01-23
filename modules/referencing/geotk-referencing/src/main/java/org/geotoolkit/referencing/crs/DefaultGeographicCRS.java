@@ -87,7 +87,7 @@ public class DefaultGeographicCRS extends org.apache.sis.referencing.crs.Default
      *
      * @see DefaultGeodeticDatum#WGS84
      *
-     * @deprecated Replaced by {@link org.apache.sis.referencing.GeodeticObjects#WGS84}.{@code normalizedGeographic()}
+     * @deprecated Replaced by {@link org.apache.sis.referencing.CommonCRS#WGS84}.{@code normalizedGeographic()}
      */
     @Deprecated
     public static final DefaultGeographicCRS WGS84;
