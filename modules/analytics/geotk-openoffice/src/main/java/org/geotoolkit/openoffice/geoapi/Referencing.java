@@ -256,6 +256,8 @@ public final class Referencing extends Formulas implements XReferencing {
      * @return The Well Know Text (WKT) for the specified object.
      * @throws IllegalArgumentException if {@code authority} is not a string value or void.
      * @throws UnsupportedOperationException if the object can't be formatted.
+     *
+     * @todo Use a formatter in order to set the authority, or remove the authority argument.
      */
     private static String toWKT(final Object object, final Object authority)
             throws IllegalArgumentException, UnsupportedOperationException
@@ -267,8 +269,7 @@ public final class Referencing extends Formulas implements XReferencing {
             authorityString = AnyConverter.toString(authority);
         }
         if (object instanceof FormattableObject) {
-            return ((FormattableObject) object).toString(
-                    Convention.forIdentifier(authorityString, Convention.OGC));
+            return ((FormattableObject) object).toString(Convention.OGC);
         }
         if (object instanceof MathTransform) {
             return ((MathTransform) object).toWKT();

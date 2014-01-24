@@ -164,7 +164,7 @@ public strictfp final class Assert extends org.geotoolkit.test.Assert {
             assertNotNull(object);
             final String wkt;
             if (isSingleLine(expected) && (object instanceof FormattableObject)) {
-                wkt = Accessor.formatWKT((FormattableObject) object, Convention.OGC, (byte) WKTFormat.SINGLE_LINE, false, true);
+                wkt = Accessor.formatWKT((FormattableObject) object, Convention.WKT1, (byte) WKTFormat.SINGLE_LINE, false, true);
             } else {
                 wkt = object.toWKT();
             }

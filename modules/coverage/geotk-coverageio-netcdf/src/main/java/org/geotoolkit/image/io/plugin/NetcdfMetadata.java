@@ -53,8 +53,6 @@ import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.opengis.referencing.operation.MathTransform;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;

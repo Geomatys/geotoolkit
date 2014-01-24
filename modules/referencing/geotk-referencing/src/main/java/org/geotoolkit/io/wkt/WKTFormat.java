@@ -25,13 +25,10 @@ import java.io.Writer;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.EOFException;
-import java.text.Format;
-import java.text.FieldPosition;
 import java.text.ParseException;
 import java.text.ParsePosition;
+import javax.measure.quantity.Angle;
 
-import org.opengis.metadata.citation.Citation;
-import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
@@ -39,15 +36,12 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
-import org.apache.sis.io.wkt.Accessor;
-import org.apache.sis.io.wkt.Colors;
 import org.apache.sis.io.wkt.Symbols;
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.io.wkt.Convention;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Strings;
 import org.apache.sis.util.CharSequences;
-import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.lang.Configuration;
@@ -107,19 +101,11 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  * @since 3.00
  * @module
  */
-public class WKTFormat extends Format {
+public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
     /**
      * For cross-version compatibility.
      */
     private static final long serialVersionUID = -2909110214650709560L;
-
-    /**
-     * The indentation value to give to the {@link #setIndentation(int)}
-     * method for formatting the complete object on a single line.
-     *
-     * @since 3.30 (derived from 2.6)
-     */
-    public static final int SINGLE_LINE = -1;
 
     /**
      * The mapping between WKT element name and the object class to be created.
@@ -150,42 +136,6 @@ public class WKTFormat extends Format {
     }
 
     /**
-     * The symbols to use for this formatter. The same object is also referenced in
-     * the {@linkplain #parser} and {@linkplain #formatter}. But it appears here
-     * for serialization purpose.
-     */
-    private Symbols symbols = Symbols.DEFAULT;
-
-    /**
-     * The colors to use for this formatter, or {@code null} for no syntax coloring.
-     * The same object is also referenced in the {@linkplain #formatter}. It appears
-     * here for serialization purpose.
-     */
-    private Colors colors = null;
-
-    /**
-     * The convention to use. The same object is also referenced in the {@linkplain #formatter}.
-     * It appears here for serialization purpose.
-     *
-     * @since 3.20
-     */
-    private Convention convention;
-
-    /**
-     * The preferred authority for objects or parameter names. A {@code null} value
-     * means that the authority shall be inferred from the {@linkplain #convention}.
-     */
-    private Citation authority;
-
-    /**
-     * The amount of spaces to use in indentation, or
-     * {@value org.geotoolkit.io.wkt.WKTFormat#SINGLE_LINE} if indentation is disabled.
-     * The same value is also stored in the {@linkplain #formatter}. It appears here for
-     * serialization purpose.
-     */
-    private byte indentation = 2; // TODO FormattableObject.defaultIndentation;
-
-    /**
      * The map of definitions. Will be created only if used.
      */
     private Definitions definitions;
@@ -194,12 +144,6 @@ public class WKTFormat extends Format {
      * The parser. Will be created when first needed.
      */
     private transient Parser parser;
-
-    /**
-     * A formatter using the same symbols than the {@linkplain #parser}.
-     * Will be created by the {@link #format} method when first needed.
-     */
-    private transient Formatter formatter;
 
     /**
      * Constructs a format using the default factories.
@@ -215,17 +159,8 @@ public class WKTFormat extends Format {
      */
     public WKTFormat(final Hints hints) {
         if (!isNullOrEmpty(hints)) {
-            parser = new ReferencingParser(symbols, hints);
+            parser = new ReferencingParser(super.getSymbols(), hints);
         }
-    }
-
-    /**
-     * Returns the symbols used for parsing and formatting WKT.
-     *
-     * @return The current set of symbols used for parsing and formatting WKT.
-     */
-    public Symbols getSymbols() {
-        return symbols;
     }
 
     /**
@@ -233,11 +168,11 @@ public class WKTFormat extends Format {
      *
      * @param symbols The new set of symbols to use for parsing and formatting WKT.
      */
+    @Override
     public void setSymbols(final Symbols symbols) {
-        ArgumentChecks.ensureNonNull("symbols", symbols);
-        if (!symbols.equals(this.symbols)) {
-            this.symbols = symbols;
-            formatter = null;
+        final Symbols old = super.getSymbols();
+        super.setSymbols(symbols);
+        if (!symbols.equals(old)) {
             if (parser != null) {
                 parser.setSymbols(symbols);
             }
@@ -248,50 +183,6 @@ public class WKTFormat extends Format {
     }
 
     /**
-     * Returns the set of colors to use for syntax coloring, or {@code null} if none.
-     * If non-null, the set of colors are escape sequences for ANSI X3.64 (aka ECMA-48
-     * and ISO/IEC 6429) compatible terminal. By default there is no syntax coloring.
-     *
-     * @return The set of colors for syntax coloring, or {@code null} if none.
-     */
-    public Colors getColors() {
-        return colors;
-    }
-
-    /**
-     * Sets the colors to use for syntax coloring on ANSI X3.64 (aka ECMA-48 and ISO/IEC 6429)
-     * compatible terminal. This apply only when formatting text.
-     * <p>
-     * Newly created {@code WKTFormat} have no syntax coloring. If the {@link Colors#DEFAULT DEFAULT}
-     * set of colors is given to this method, then the {@link #format format} method tries to highlight
-     * most of the elements that are relevant to {@link org.geotoolkit.referencing.CRS#equalsIgnoreMetadata}.
-     *
-     * @param colors The set of colors for syntax coloring, or {@code null} if none.
-     */
-    public void setColors(final Colors colors) {
-        this.colors = colors;
-        if (formatter != null) {
-            Accessor.colors(formatter, colors);
-        }
-    }
-
-    /**
-     * Returns the convention for parsing and formatting WKT entities.
-     * The default value is {@link Convention#OGC}.
-     *
-     * @return The convention to use for formatting WKT entities (never {@code null}).
-     *
-     * @since 3.20
-     */
-    public Convention getConvention() {
-        Convention c = convention;
-        if (c == null) {
-            c = Convention.forCitation(authority, Convention.OGC);
-        }
-        return c;
-    }
-
-    /**
      * Sets the convention for parsing and formatting WKT entities.
      * The convention given to this method can not be null.
      *
@@ -299,97 +190,20 @@ public class WKTFormat extends Format {
      *
      * @since 3.20
      */
+    @Override
     public void setConvention(final Convention convention) {
-        ArgumentChecks.ensureNonNull("convention", convention);
-        this.convention = convention;
-        updateFormatter(formatter);
+        super.setConvention(convention);
         updateParser();
-    }
-
-    /**
-     * Returns the preferred authority for choosing the projection and parameter names.
-     * If no authority were {@linkplain #setAuthority(Citation) explicitely set}, then
-     * this method returns the authority associated to the {@linkplain #getConvention()
-     * convention}.
-     *
-     * @return The expected authority.
-     *
-     * @see Convention#getAuthority()
-     * @see Formatter#getName(IdentifiedObject)
-     */
-    public Citation getAuthority() {
-        Citation result = authority;
-        if (result == null) {
-            result = convention.getAuthority();
-        }
-        return result;
-    }
-
-    /**
-     * Sets the preferred authority for choosing the projection and parameter names.
-     * If non-null, the given priority will have precedence over the authority usually
-     * associated to the {@linkplain #getConvention() convention}. A {@code null} value
-     * restore the default behavior.
-     *
-     * @param authority The new authority, or {@code null} for inferring it from the
-     *        {@linkplain #getConvention() convention}
-     *
-     * @see Formatter#getName(IdentifiedObject)
-     */
-    public void setAuthority(final Citation authority) {
-        this.authority = authority;
-        updateFormatter(formatter);
-        // No need to update the parser.
-    }
-
-    /**
-     * Updates the formatter convention and authority according the current state of this
-     * {@code WKTFormat}. The authority may be null, in which case it will be inferred from
-     * the convention when first needed.
-     */
-    private void updateFormatter(final Formatter formatter) {
-        if (formatter != null) {
-            Accessor.setConvention(formatter, convention, authority);
-        }
     }
 
     /**
      * Updates the parser convention according the current state of this {@code WKTFormat}.
      */
     private void updateParser() {
+        final ReferencingParser parser = (ReferencingParser) this.parser;
         if (parser instanceof ReferencingParser) {
-            final ReferencingParser parser = (ReferencingParser) this.parser;
-            parser.setForcedAngularUnit((convention != null) ? Accessor.forcedAngularUnit(convention) : null);
-            parser.setAxisIgnored(convention == Convention.ESRI);
-        }
-    }
-
-    /**
-     * Returns the current indentation to be used for formatting objects. The
-     * {@value org.geotoolkit.io.wkt.WKTFormat#SINGLE_LINE} value means
-     * that the whole WKT is to be formatted on a single line.
-     *
-     * @return The current indentation.
-     */
-    public int getIndentation() {
-        return indentation;
-    }
-
-    /**
-     * Sets a new indentation to be used for formatting objects. The
-     * {@value org.geotoolkit.io.wkt.WKTFormat#SINGLE_LINE} value
-     * means that the whole WKT is to be formatted on a single line.
-     * <p>
-     * If this method is never invoked, then the default value is
-     * {@link #getDefaultIndentation()}.
-     *
-     * @param indentation The new indentation to use.
-     */
-    public void setIndentation(final int indentation) {
-        ArgumentChecks.ensureBetween("indentation", WKTFormat.SINGLE_LINE, Byte.MAX_VALUE, indentation);
-        this.indentation = (byte) indentation;
-        if (formatter != null) {
-            Accessor.indentation(formatter, this.indentation);
+            final Convention convention = super.getConvention();
+            parser.setForcedAngularUnit((convention != null) ? convention.getForcedUnit(Angle.class) : null);
         }
     }
 
@@ -440,7 +254,7 @@ public class WKTFormat extends Format {
     public Map<String,String> definitions() {
         if (definitions == null) {
             definitions = new Definitions(this);
-            definitions.quote = (char) symbols.getOpenQuote(); // TODO (need also close quote).
+            definitions.quote = (char) getSymbols().getOpenQuote(); // TODO (need also close quote).
         }
         return definitions;
     }
@@ -455,7 +269,7 @@ public class WKTFormat extends Format {
      */
     public void printDefinitions(final Writer out) throws IOException {
         if (!isNullOrEmpty(definitions)) {
-            definitions.print(out, colors != null);
+            definitions.print(out, getColors() != null);
         }
     }
 
@@ -559,69 +373,10 @@ public class WKTFormat extends Format {
      */
     private Parser getParser() {
         if (parser == null) {
-            parser = new ReferencingParser(symbols, (Hints) null);
+            parser = new ReferencingParser(super.getSymbols(), (Hints) null);
             updateParser();
         }
         return parser;
-    }
-
-    /**
-     * Returns the formatter, creating it if needed.
-     */
-    private Formatter getFormatter() {
-        Formatter formatter = this.formatter;
-        if (formatter == null) {
-            if (Parser.SCIENTIFIC_NOTATION) {
-                // We do not want to expose the "scientific notation hack" to the formatter.
-                // TODO: Remove this block if some future version of J2SE provides something
-                //       like 'allowScientificNotationParsing(true)' in DecimalFormat.
-//              formatter = new Formatter(symbols, (NumberFormat) symbols.numberFormat.clone());
-                formatter = new Formatter(Convention.OGC, symbols, colors, indentation);
-            } else {
-                formatter = getParser().formatter();
-            }
-            Accessor.colors(formatter, colors);
-            Accessor.indentation(formatter, indentation);
-            updateFormatter(formatter);
-            this.formatter = formatter;
-        }
-        return formatter;
-    }
-
-    /**
-     * Formats the specified object as a Well Know Text.
-     * Formatting will uses the same set of symbols than the one used for parsing.
-     *
-     * @param object     The object to format.
-     * @param toAppendTo Where the text is to be appended.
-     * @param pos        An identification of a field in the formatted text.
-     *
-     * @see #getWarning
-     */
-    @Override
-    public StringBuffer format(final Object        object,
-                               final StringBuffer  toAppendTo,
-                               final FieldPosition pos)
-    {
-        final Formatter formatter = getFormatter();
-        try {
-            formatter.clear();
-            Accessor.buffer(formatter, toAppendTo);
-            Accessor.bufferBase(formatter, toAppendTo.length());
-            if (object instanceof MathTransform) {
-                formatter.append((MathTransform) object);
-            } else if (object instanceof GeneralParameterValue) {
-                // Special processing for parameter values, which is formatted
-                // directly in 'Formatter'. Note that in GeoAPI, this interface
-                // doesn't share the same parent interface than other interfaces.
-                formatter.append((GeneralParameterValue) object);
-            } else {
-                formatter.append((IdentifiedObject) object);
-            }
-            return toAppendTo;
-        } finally {
-            Accessor.buffer(formatter, null);
-        }
     }
 
     /**
@@ -718,17 +473,6 @@ copy:       while (true) {
             out.write(lineSeparator);
             out.flush();
         }
-    }
-
-    /**
-     * If a warning occurred during the last WKT {@linkplain #format formatting},
-     * returns the warning. Otherwise returns {@code null}. The warning is cleared
-     * every time a new object is formatted.
-     *
-     * @return The last warning, or {@code null} if none.
-     */
-    public String getWarning() {
-        return (formatter != null) ? Accessor.getErrorMessage(formatter) : null;
     }
 
     /**

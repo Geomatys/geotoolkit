@@ -75,7 +75,7 @@ public final class Convention {
      * @see Citations#OGC
      * @see #toConformCS(CoordinateSystem)
      */
-    public static final org.apache.sis.io.wkt.Convention OGC = org.apache.sis.io.wkt.Convention.OGC;
+    public static final org.apache.sis.io.wkt.Convention OGC = org.apache.sis.io.wkt.Convention.WKT1;
 
     /**
      * The <A HREF="http://www.epsg.org">European Petroleum Survey Group</A> convention.
@@ -90,8 +90,11 @@ public final class Convention {
      *
      * @see Citations#EPSG
      * @see #toConformCS(CoordinateSystem)
+     *
+     * @deprecated This enum has been mapped to the Apache SIS {@code WKT2} enum,
+     *             which is similar in projection and parameter names but different in syntax.
      */
-    public static final org.apache.sis.io.wkt.Convention EPSG = org.apache.sis.io.wkt.Convention.EPSG;
+    public static final org.apache.sis.io.wkt.Convention EPSG = org.apache.sis.io.wkt.Convention.WKT2;
 
     /**
      * The <A HREF="http://www.esri.com">ESRI</A> convention.
@@ -107,8 +110,11 @@ public final class Convention {
      * </ul>
      *
      * @see Citations#ESRI
+     *
+     * @deprecated This enum has been mapped to the Apache SIS {@code WKT1_COMMON_UNITS} enum,
+     *             which is similar in syntax but different in projection and parameter names.
      */
-    public static final org.apache.sis.io.wkt.Convention ESRI = org.apache.sis.io.wkt.Convention.ESRI;
+    public static final org.apache.sis.io.wkt.Convention ESRI = org.apache.sis.io.wkt.Convention.WKT1_COMMON_UNITS;
 
     /**
      * The <A HREF="http://www.oracle.com">Oracle</A> convention.
@@ -124,8 +130,11 @@ public final class Convention {
      * </ul>
      *
      * @see Citations#ORACLE
+     *
+     * @deprecated This enum has been mapped to the Apache SIS {@code WKT1_COMMON_UNITS} enum,
+     *             which is similar in syntax but different in projection and parameter names.
      */
-    public static final org.apache.sis.io.wkt.Convention ORACLE = org.apache.sis.io.wkt.Convention.ORACLE;
+    public static final org.apache.sis.io.wkt.Convention ORACLE = org.apache.sis.io.wkt.Convention.WKT1_COMMON_UNITS;
 
     /**
      * The <A HREF="http://www.unidata.ucar.edu/software/netcdf-java">NetCDF</A> convention.
@@ -133,8 +142,11 @@ public final class Convention {
      * projection names.
      *
      * @see Citations#NETCDF
+     *
+     * @deprecated This enum has been mapped to the Apache SIS {@code WKT1_COMMON_UNITS} enum,
+     *             which is similar in syntax but different in projection and parameter names.
      */
-    public static final org.apache.sis.io.wkt.Convention NETCDF = org.apache.sis.io.wkt.Convention.NETCDF;
+    public static final org.apache.sis.io.wkt.Convention NETCDF = org.apache.sis.io.wkt.Convention.WKT1_COMMON_UNITS;
 
     /**
      * The <A HREF="http://www.remotesensing.org/geotiff/geotiff.html">GeoTIFF</A> convention.
@@ -142,8 +154,11 @@ public final class Convention {
      * projection names.
      *
      * @see Citations#GEOTIFF
+     *
+     * @deprecated This enum has been mapped to the Apache SIS {@code WKT1_COMMON_UNITS} enum,
+     *             which is similar in syntax but different in projection and parameter names.
      */
-    public static final org.apache.sis.io.wkt.Convention GEOTIFF = org.apache.sis.io.wkt.Convention.GEOTIFF;
+    public static final org.apache.sis.io.wkt.Convention GEOTIFF = org.apache.sis.io.wkt.Convention.WKT1_COMMON_UNITS;
 
     /**
      * The <A HREF="http://trac.osgeo.org/proj/">Proj.4</A> convention.
@@ -156,8 +171,11 @@ public final class Convention {
      * </ul>
      *
      * @see Citations#PROJ4
+     *
+     * @deprecated This enum has been mapped to the Apache SIS {@code WKT1_COMMON_UNITS} enum,
+     *             which is similar in syntax but different in projection and parameter names.
      */
-    public static final org.apache.sis.io.wkt.Convention PROJ4 = org.apache.sis.io.wkt.Convention.PROJ4;
+    public static final org.apache.sis.io.wkt.Convention PROJ4 = org.apache.sis.io.wkt.Convention.WKT1_COMMON_UNITS;
 
     /**
      * A special convention for formatting objects as stored internally by Geotk. In the majority
@@ -173,35 +191,5 @@ public final class Convention {
     public static final org.apache.sis.io.wkt.Convention INTERNAL = org.apache.sis.io.wkt.Convention.INTERNAL;
 
     private Convention() {
-    }
-
-    /**
-     * Returns the convention for the given citation.
-     *
-     * @param  citation The citation for which to get the convention, or {@code null}.
-     * @param  defaultConvention The default convention to return if none where found for
-     *         the given citation. May be {@code null}.
-     * @return The convention, or {@code null} if no matching convention were found and the
-     *         {@code defaultConvention} argument is {@code null}.
-     */
-    public static org.apache.sis.io.wkt.Convention forCitation(Citation citation,
-            org.apache.sis.io.wkt.Convention defaultConvention)
-    {
-        return org.apache.sis.io.wkt.Convention.forCitation(citation, defaultConvention);
-    }
-
-    /**
-     * Returns the convention for the given identifier.
-     *
-     * @param  identifier The identifier for which to get the convention, or {@code null}.
-     * @param  defaultConvention The default convention to return if none where found for
-     *         the given identifier. May be {@code null}.
-     * @return The convention, or {@code null} if no matching convention were found and the
-     *         {@code defaultConvention} argument is {@code null}.
-     */
-    public static org.apache.sis.io.wkt.Convention forIdentifier(String identifier,
-            org.apache.sis.io.wkt.Convention defaultConvention)
-    {
-        return org.apache.sis.io.wkt.Convention.forIdentifier(identifier, defaultConvention);
     }
 }

@@ -87,7 +87,7 @@ public final strictfp class MatrixParametersTest extends ParameterTestBase {
      */
     @Test
     public void testFormatting() {
-        final Formatter  formatter = new Formatter(Convention.OGC, Symbols.DEFAULT, null, WKTFormat.SINGLE_LINE);
+        final Formatter  formatter = new Formatter(Convention.WKT1, Symbols.DEFAULT, null, WKTFormat.SINGLE_LINE);
         final GeneralMatrix matrix = new GeneralMatrix(4);
         matrix.setElement(0,2,  4);
         matrix.setElement(1,0, -2);

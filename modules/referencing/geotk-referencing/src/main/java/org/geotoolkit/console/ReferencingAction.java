@@ -121,7 +121,7 @@ final class ReferencingAction {
                 format.setAuthority(Citations.fromName(authority));
             }
             if (Boolean.TRUE.equals(cmd.colors)) {
-                format.setColors(Colors.DEFAULT);
+                format.setColors(Colors.CONSOLE);
             }
             format.setIndentation(cmd.indent);
         }
