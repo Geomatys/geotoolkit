@@ -40,8 +40,9 @@ public class ColorCellEditor extends AbstractCellEditor implements TableCellEdit
 
     public ColorCellEditor() {
         button.setBorderPainted(false);
-        button.setContentAreaFilled(true);
+        button.setContentAreaFilled(false);
         button.addActionListener(this);
+        button.setOpaque(true);
     }
 
     @Override
