@@ -29,6 +29,7 @@ import java.text.ParseException;
 import java.text.ParsePosition;
 import javax.measure.quantity.Angle;
 
+import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
@@ -161,6 +162,20 @@ public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
         if (!isNullOrEmpty(hints)) {
             parser = new ReferencingParser(super.getSymbols(), hints);
         }
+    }
+
+    /**
+     * @deprecated Renamed {@code getNameAuthority()}.
+     */
+    public Citation getAuthority() {
+        return getNameAuthority();
+    }
+
+    /**
+     * @deprecated Renamed {@code setNameAuthority(Citation)}.
+     */
+    public void setAuthority(final Citation authority) {
+        setNameAuthority(authority);
     }
 
     /**
@@ -386,7 +401,7 @@ public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
      * formatted to the specified error stream.
      * <p>
      * This method is useful for {@linkplain #setIndentation changing the indentation}, rewriting
-     * the WKT using parameter names specified by a {@linkplain #setAuthority different authority},
+     * the WKT using parameter names specified by a {@link #setNameAuthority different authority},
      * for {@linkplain #setColors adding syntax coloring}, expanding the WKT strings according the
      * {@linkplain #definitions() definitions}, <i>etc.</i>
      *

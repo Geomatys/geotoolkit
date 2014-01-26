@@ -49,6 +49,7 @@ import org.apache.sis.io.wkt.Symbols;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
+import org.apache.sis.internal.referencing.Legacy;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.apache.sis.referencing.cs.AbstractCS;
@@ -57,7 +58,6 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
-import org.apache.sis.io.wkt.Accessor;
 
 import static java.util.Collections.singletonMap;
 import static javax.measure.unit.SI.METRE;
@@ -973,7 +973,7 @@ public class ReferencingParser extends MathTransformParser {
             }
             element.close();
             CartesianCS cs = csFactory.createCartesianCS(properties, axis0, axis1, axis2);
-            cs = Accessor.replace(cs, false);
+            cs = Legacy.forGeocentricCRS(cs, false);
             return crsFactory.createGeocentricCRS(properties, datum, cs);
         } catch (FactoryException exception) {
             throw element.parseFailed(exception, null);

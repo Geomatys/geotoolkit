@@ -161,7 +161,7 @@ public class ReferencingConsole extends InteractiveConsole {
         final WKTFormat format = new WKTFormat();
         final String authority = commands.authority; // NOSONAR: field is initialized by reflection.
         if (authority != null) {
-            format.setAuthority(Citations.fromName(authority));
+            format.setNameAuthority(Citations.fromName(authority));
         }
         if (Boolean.TRUE.equals(commands.colors)) {
             format.setColors(Colors.CONSOLE);

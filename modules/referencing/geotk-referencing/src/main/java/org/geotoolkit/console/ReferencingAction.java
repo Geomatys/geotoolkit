@@ -118,7 +118,7 @@ final class ReferencingAction {
             format = new WKTFormat();
             final String authority = cmd.authority;
             if (authority != null) {
-                format.setAuthority(Citations.fromName(authority));
+                format.setNameAuthority(Citations.fromName(authority));
             }
             if (Boolean.TRUE.equals(cmd.colors)) {
                 format.setColors(Colors.CONSOLE);

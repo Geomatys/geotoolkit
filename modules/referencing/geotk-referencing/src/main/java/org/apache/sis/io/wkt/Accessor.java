@@ -1,7 +1,6 @@
 package org.apache.sis.io.wkt;
 
 import java.text.NumberFormat;
-import org.opengis.referencing.cs.CartesianCS;
 
 
 /**
@@ -30,9 +29,5 @@ public final class Accessor {
             Convention convention, byte indentation, boolean colorize, boolean strict)
     {
         return object.formatWKT(convention, indentation, colorize, strict);
-    }
-
-    public static CartesianCS replace(final CartesianCS cs, final boolean toLegacy) {
-        return Legacy.replace(cs, toLegacy);
     }
 }
