@@ -40,12 +40,7 @@ import org.geotoolkit.lang.Workaround;
  *
  * @since 2.0
  * @module
- *
- * @deprecated The {@linkplain org.apache.sis.util.collection.TreeTable tree model in Apache SIS}
- *             is no longer based on Swing tree interfaces. Swing dependencies will be phased out
- *             since Swing itself is likely to be replaced by JavaFX in future JDK versions.
  */
-@Deprecated
 @Workaround(library="JDK", version="1.4")
 public class DefaultMutableTreeNode extends javax.swing.tree.DefaultMutableTreeNode
         implements MutableTreeNode, Localized
