@@ -29,4 +29,8 @@ public class GetCapabilities100 extends AbstractGetCapabilities{
     public GetCapabilities100(final String serverURL, final ClientSecurity security){
         super(serverURL, "1.0.0", security);
     }
+
+    public GetCapabilities100(final String serverURL, final ClientSecurity security, final boolean doGET){
+        super(serverURL, "1.0.0", security, doGET);
+    }
 }

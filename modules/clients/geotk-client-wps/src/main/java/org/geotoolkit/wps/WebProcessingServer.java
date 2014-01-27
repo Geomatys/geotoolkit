@@ -110,6 +110,8 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
     private String storageDirectory;
     private String storageURL;
 
+    private boolean forceGET = true;
+
     /**
      * Static enumeration of WPS server versions.
      */
@@ -158,7 +160,19 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
      * @param version
      */
     public WebProcessingServer(final URL serverURL, final String version) throws CapabilitiesException {
-        this(serverURL, null, version);
+        this(serverURL, null, version, true);
+    }
+
+    /**
+     * Costructor with forceGET tunning.
+     *
+     * @param serverURL
+     * @param version
+     * @param forceGET if true, GetCapabilities and DescribeProcess will be request in GET, otherwise POST is used.
+     * @throws CapabilitiesException
+     */
+    public WebProcessingServer(final URL serverURL, final String version, final boolean forceGET) throws CapabilitiesException {
+        this(serverURL, null, version, forceGET);
     }
 
     /**
@@ -167,6 +181,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
      * @param serverURL
      * @param security
      * @param version
+     * @throws CapabilitiesException
      */
     public WebProcessingServer(final URL serverURL, final ClientSecurity security, final String version) throws CapabilitiesException {
         super(create(WPSServerFactory.PARAMETERS, serverURL, security));
@@ -185,6 +200,30 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
      * @param serverURL
      * @param security
      * @param version
+     * @param forceGET if true, GetCapabilities and DescribeProcess will be request in GET, otherwise POST is used.
+     * @throws CapabilitiesException
+     */
+    public WebProcessingServer(final URL serverURL, final ClientSecurity security, final String version, final boolean forceGET)
+            throws CapabilitiesException {
+        super(create(WPSServerFactory.PARAMETERS, serverURL, security));
+        if (version.equals("1.0.0")) {
+            Parameters.getOrCreate(WPSServerFactory.VERSION, parameters).setValue(WPSVersion.v100.getCode());
+        } else {
+            throw new IllegalArgumentException("Unknown version : " + version);
+        }
+        this.forceGET = forceGET;
+
+        getCapabilities();
+        LOGGER.log(Level.INFO, "Web processing client initialization complete.");
+    }
+
+    /**
+     * Constructor
+     *
+     * @param serverURL
+     * @param security
+     * @param version
+     * @throws CapabilitiesException
      */
     public WebProcessingServer(final URL serverURL, final ClientSecurity security, final WPSVersion version) throws CapabilitiesException {
         super(create(WPSServerFactory.PARAMETERS, serverURL, security));
@@ -318,7 +357,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
 
         switch (getVersion()) {
             case v100:
-                return new GetCapabilities100(serverURL.toString(), getClientSecurity());
+                return new GetCapabilities100(serverURL.toString(), getClientSecurity(), forceGET);
             default:
                 throw new IllegalArgumentException("Version not defined or unsupported.");
         }
@@ -332,7 +371,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
     public DescribeProcessRequest createDescribeProcess() {
         switch (getVersion()) {
             case v100:
-                return new DescribeProcess100(serverURL.toString(), getClientSecurity());
+                return new DescribeProcess100(serverURL.toString(), getClientSecurity(), forceGET);
             default:
                 throw new IllegalArgumentException("Version was not defined or unsupported.");
         }

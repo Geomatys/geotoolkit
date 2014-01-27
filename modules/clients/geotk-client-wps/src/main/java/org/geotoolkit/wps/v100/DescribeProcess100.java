@@ -32,6 +32,10 @@ public class DescribeProcess100 extends AbstractDescribeProcess {
         super(serverURL, "1.0.0", security);
     }
 
+    public DescribeProcess100(final String serverURL, final ClientSecurity security, final boolean doGET){
+        super(serverURL, "1.0.0", security, doGET);
+    }
+
     @Override
     protected void prepareParameters() {
         super.prepareParameters();
