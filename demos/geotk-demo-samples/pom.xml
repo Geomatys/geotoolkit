@@ -112,9 +112,14 @@
             <artifactId>geotk-client-wmts</artifactId>
             <version>${project.version}</version>
         </dependency>
-	<dependency>
+	    <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-client-sos</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-client-wps</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
