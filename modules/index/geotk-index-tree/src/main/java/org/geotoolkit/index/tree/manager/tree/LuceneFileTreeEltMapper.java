@@ -79,7 +79,7 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
      * @throws IOException if pblem during head file writing.
      */
     public LuceneFileTreeEltMapper(final CoordinateReferenceSystem crs, final File mapperOutPut) throws IOException {
-        super(mapperOutPut, ((crs.getCoordinateSystem().getDimension() << 1) * Double.SIZE + Integer.SIZE) >> 3);
+        super(mapperOutPut, ((crs.getCoordinateSystem().getDimension() << 1) * Double.SIZE + Integer.SIZE + Integer.SIZE) >> 3);
         final File idMapOutPut = new File(mapperOutPut.getParent(), ID_MAP_NAME);
         idMapInOutStream = new RandomAccessFile(idMapOutPut, "rw");
         
@@ -140,6 +140,7 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
         idMapInOutStream.writeUTF(neID);
         idMapCurrentPosition = (int) idMapInOutStream.getChannel().position();
         byteBuffer.putInt(mapIndex);
+        byteBuffer.putInt(Object.getNbEnv());
         for (int d = 0; d < dim; d++) {
             byteBuffer.putDouble(Object.getLower(d));
             byteBuffer.putDouble(Object.getUpper(d));
@@ -163,8 +164,8 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
             cuMI++;
         }
         assert (neID != null) : "stored Named Envelope should not have a null identifier. Problem during identifier reading."; 
-            
-        final NamedEnvelope resultEnvelope = new NamedEnvelope(crs, neID);
+        final int nbEnvelope = byteBuffer.getInt();
+        final NamedEnvelope resultEnvelope = new NamedEnvelope(crs, neID, nbEnvelope);
         for (int d = 0; d < dim; d++) {
             final double lower = byteBuffer.getDouble();
             final double upper = byteBuffer.getDouble();

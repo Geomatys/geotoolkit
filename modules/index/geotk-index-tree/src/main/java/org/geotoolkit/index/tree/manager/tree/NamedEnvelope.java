@@ -39,6 +39,11 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
     private String id;
 
     /**
+     * Used for multiple envelope correspunding to the same metadata.
+     */
+    private int nbEnv = 0;
+
+    /**
      * Empty constructor required by the externalizable pattern.
      */
     public NamedEnvelope() {
@@ -51,6 +56,15 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
     public NamedEnvelope(final CoordinateReferenceSystem crs, final String id) {
         super(crs);
         this.id = id;
+    }
+
+    /**
+     * Build a new envelope with the specified CRS and name.
+     */
+    public NamedEnvelope(final CoordinateReferenceSystem crs, final String id, final int nbEnv) {
+        super(crs);
+        this.id = id;
+        this.nbEnv = nbEnv;
     }
 
     /**
@@ -68,6 +82,17 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
         return id;
     }
 
+    public void setId(final String id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the number of envelope in the index for the same metadata.
+     */
+    public int getNbEnv() {
+        return nbEnv;
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -77,6 +102,7 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
         stream.writeDouble(super.getLower(1));
         stream.writeDouble(super.getUpper(0));
         stream.writeDouble(super.getUpper(1));
+        stream.writeInt(nbEnv);
         stream.writeUTF(id);
     }
 
@@ -89,6 +115,7 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
         final double miny = stream.readDouble();
         final double maxx = stream.readDouble();
         final double maxy = stream.readDouble();
+        this.nbEnv        = stream.readInt();
         this.id           = stream.readUTF();
         setRange(0, minx, maxx);
         setRange(1, miny, maxy);
