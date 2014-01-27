@@ -240,7 +240,7 @@ public class JCRSChooser extends javax.swing.JDialog {
 
     private void setIdentifiedObject(final IdentifiedObject item) {
         final WKTFormat formatter = new WKTFormat();
-        formatter.setColors(Colors.DEFAULT);
+        formatter.setColors(Colors.CONSOLE);
 
         final StringBuilder buffer = new StringBuilder();
         /*
