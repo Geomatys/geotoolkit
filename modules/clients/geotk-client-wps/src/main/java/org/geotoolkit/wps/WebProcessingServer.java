@@ -397,7 +397,14 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
 scan:   for (final ProcessBriefType processBriefType : processBrief) {
 
             final String processIdentifier = processBriefType.getIdentifier().getValue();
-            final InternationalString processAbstract = new DefaultInternationalString(processBriefType.getAbstract().getValue());
+
+            final InternationalString processAbstract;
+            if (processBriefType.getAbstract() != null) {
+                processAbstract = new DefaultInternationalString(processBriefType.getAbstract().getValue());
+            } else {
+                processAbstract = new DefaultInternationalString("");
+            }
+
             final List<ParameterDescriptor> inputDescriptors = new ArrayList<ParameterDescriptor>();
             final List<ParameterDescriptor> outputDescriptors = new ArrayList<ParameterDescriptor>();
             final Map<String, String> inputTypes = new HashMap<String, String>();
