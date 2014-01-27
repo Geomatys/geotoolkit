@@ -38,10 +38,16 @@ import org.geotoolkit.wps.xml.v100.GetCapabilities;
 public abstract class AbstractGetCapabilities extends AbstractRequest implements GetCapabilitiesRequest{
 
     protected final String version;
+    protected final boolean doGET;
 
     protected AbstractGetCapabilities(final String serverURL,final String version, final ClientSecurity security){
+        this(serverURL, version, security, true);
+    }
+
+    protected AbstractGetCapabilities(final String serverURL,final String version, final ClientSecurity security, final boolean doGET){
         super(serverURL,security,null);
         this.version = version;
+        this.doGET = doGET;
     }
 
     @Override
@@ -60,25 +66,36 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
 
         final GetCapabilities request = makeRequest();
 
-        final URL url = new URL(serverURL);
-        URLConnection conec = url.openConnection();
-        conec = security.secure(conec);
+        if (doGET) {
 
-        conec.setDoOutput(true);
-        conec.setRequestProperty("Content-Type", "text/xml");
+            //GET
+            final URL url = getURL(); //build GET request
+            URLConnection conec = url.openConnection();
+            conec = security.secure(conec);
+            return conec.getInputStream();
 
-        OutputStream stream = conec.getOutputStream();
-        stream = security.encrypt(stream);
-        Marshaller marshaller = null;
-        try {
-            marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
-            marshaller.marshal(request, stream);
-            WPSMarshallerPool.getInstance().recycle(marshaller);
-        } catch (JAXBException ex) {
-            throw new IOException(ex);
+        } else {
+
+            //POST
+            final URL url = new URL(serverURL);
+            URLConnection conec = url.openConnection();
+            conec = security.secure(conec);
+            conec.setDoOutput(true);
+            conec.setRequestProperty("Content-Type", "text/xml");
+
+            OutputStream stream = conec.getOutputStream();
+            stream = security.encrypt(stream);
+            Marshaller marshaller = null;
+            try {
+                marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
+                marshaller.marshal(request, stream);
+                WPSMarshallerPool.getInstance().recycle(marshaller);
+            } catch (JAXBException ex) {
+                throw new IOException(ex);
+            }
+            stream.close();
+            return security.decrypt(conec.getInputStream());
         }
-        stream.close();
-        return security.decrypt(conec.getInputStream());
     }
 
     public GetCapabilities makeRequest(){

@@ -41,11 +41,16 @@ public abstract class AbstractDescribeProcess extends AbstractRequest implements
 
     protected final String version;
     protected List<String> identifiers;
-
+    protected final boolean doGET;
 
     protected AbstractDescribeProcess(final String serverURL,final String version, final ClientSecurity security){
+        this(serverURL, version, security, true);
+    }
+
+    protected AbstractDescribeProcess(final String serverURL,final String version, final ClientSecurity security, final boolean doGET){
         super(serverURL,security,null);
         this.version = version;
+        this.doGET = doGET;
     }
 
     /**
@@ -83,26 +88,36 @@ public abstract class AbstractDescribeProcess extends AbstractRequest implements
 
         final DescribeProcess request = makeRequest();
 
-        final URL url = new URL(serverURL);
-        URLConnection conec = url.openConnection();
-        conec = security.secure(conec);
+        if (doGET) {
 
-        conec.setDoOutput(true);
-        conec.setRequestProperty("Content-Type", "text/xml");
+            //GET
+            final URL url = getURL(); //build GET request
+            URLConnection conec = url.openConnection();
+            conec = security.secure(conec);
+            return conec.getInputStream();
+        } else {
 
-        OutputStream stream = conec.getOutputStream();
-        stream = security.encrypt(stream);
-        Marshaller marshaller = null;
-        try {
-            marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
-            marshaller.marshal(request, stream);
-            //marshaller.marshal(request, System.out);
-            WPSMarshallerPool.getInstance().recycle(marshaller);
-        } catch (JAXBException ex) {
-            throw new IOException(ex);
+            //POST
+            final URL url = new URL(serverURL);
+            URLConnection conec = url.openConnection();
+            conec = security.secure(conec);
+            conec.setDoOutput(true);
+            conec.setRequestProperty("Content-Type", "text/xml");
+
+            OutputStream stream = conec.getOutputStream();
+            stream = security.encrypt(stream);
+            Marshaller marshaller = null;
+            try {
+                marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
+                marshaller.marshal(request, stream);
+                //marshaller.marshal(request, System.out);
+                WPSMarshallerPool.getInstance().recycle(marshaller);
+            } catch (JAXBException ex) {
+                throw new IOException(ex);
+            }
+            stream.close();
+            return security.decrypt(conec.getInputStream());
         }
-        stream.close();
-        return security.decrypt(conec.getInputStream());
     }
 
     public DescribeProcess makeRequest(){
