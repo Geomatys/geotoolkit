@@ -138,8 +138,8 @@ final class Element {
          *   - Otherwise, the element is parsed as a number.
          */
         final int separator  = symbols.getSeparator().codePointAt(0); // TODO: check for valid character.
-        final int openQuote  = symbols.getOpenQuote();
-        final int closeQuote = symbols.getCloseQuote();
+        final int openQuote  = symbols.getOpeningQuote(0);
+        final int closeQuote = symbols.getClosingQuote(0);
         do {
             if (position.getIndex() >= length) {
                 throw missingCharacter(symbols.getClosingBracket(bracketIndex), length);

@@ -192,7 +192,7 @@ public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
                 parser.setSymbols(symbols);
             }
             if (definitions != null) {
-                definitions.quote = (char) symbols.getOpenQuote(); // TODO (need also close quote).
+                definitions.quote = (char) symbols.getOpeningQuote(0); // TODO (need also close quote).
             }
         }
     }
@@ -269,7 +269,7 @@ public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
     public Map<String,String> definitions() {
         if (definitions == null) {
             definitions = new Definitions(this);
-            definitions.quote = (char) getSymbols().getOpenQuote(); // TODO (need also close quote).
+            definitions.quote = (char) getSymbols().getOpeningQuote(0); // TODO (need also close quote).
         }
         return definitions;
     }
