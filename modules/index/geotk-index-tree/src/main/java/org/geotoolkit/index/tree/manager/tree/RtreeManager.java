@@ -44,6 +44,18 @@ public class RtreeManager {
 
     private static final Logger LOGGER = Logging.getLogger(RtreeManager.class);
 
+    public static final CoordinateReferenceSystem DEFAULT_CRS;
+
+    static {
+        CoordinateReferenceSystem crs = null;
+        try {
+            crs = CRS.decode("CRS:84");
+        } catch (FactoryException ex) {
+            LOGGER.log(Level.SEVERE, "Error while reading CRS:84", ex);
+        }
+        DEFAULT_CRS = crs;
+    }
+
     public static void close(final File directory, final Tree rTree, final Object owner) throws StoreIndexException, IOException {
         final List<Object> owners = TREE_OWNERS.get(directory);
         owners.remove(owner);
@@ -94,16 +106,13 @@ public class RtreeManager {
     private static Tree buildNewTree(final File directory) {
         if (directory.exists()) {
             try {
-                final CoordinateReferenceSystem crs = CRS.decode("CRS:84");
                 //creating tree (R-Tree)------------------------------------------------
                 final File treeFile   = new File(directory, "tree.bin");
                 final File mapperFile = new File(directory, "mapper.bin");
                 treeFile.createNewFile();
                 mapperFile.createNewFile();
-                return new FileStarRTree(treeFile, 5, crs, new LuceneFileTreeEltMapper(crs, mapperFile));
+                return new FileStarRTree(treeFile, 5, DEFAULT_CRS, new LuceneFileTreeEltMapper(DEFAULT_CRS, mapperFile));
 
-            } catch (FactoryException ex) {
-                LOGGER.log(Level.WARNING, "Unable to get the CRS:84 CRS", ex);
             } catch (IOException ex) {
                 LOGGER.log(Level.WARNING, "Unable to create file to write Tree", ex);
             } catch (org.geotoolkit.index.tree.StoreIndexException ex) {
