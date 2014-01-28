@@ -45,6 +45,8 @@ public interface ProjectedObject<T> extends Graphic {
 
     /**
      * Get a Projected geometry for rendering purpose.
+     * The geometry may be repeated if it overlaps the map world wrap limit or
+     * if the scale is too high.
      *
      * @param name of the wanted geometry.
      * @return ProjectedGeometry or null if the named geometry attribute doesn't exist

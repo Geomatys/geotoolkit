@@ -105,45 +105,47 @@ public class DefaultLabelRenderer implements LabelRenderer{
         final int textHeight = metric.getHeight();
         final int textWidth = metric.stringWidth(label.getText());
 
-        final Shape geom;
+        final Shape[] geoms;
         try {
-            geom = label.getGeometry().getDisplayShape();
+            geoms = label.getGeometry().getDisplayShape();
         } catch (TransformException ex) {
             Logging.getLogger(DefaultLabelRenderer.class).log(Level.WARNING, null, ex);
             return;
         }
 
-        float refX = (float) geom.getBounds2D().getCenterX();
-        float refY = (float) geom.getBounds2D().getCenterY();
+        for(Shape geom : geoms){
+            float refX = (float) geom.getBounds2D().getCenterX();
+            float refY = (float) geom.getBounds2D().getCenterY();
 
-        //adjust displacement---------------------------------------------------
-        //displacement is oriented above and to the right
-        refX = refX + label.getDisplacementX();
-        refY = refY - label.getDisplacementY();
+            //adjust displacement---------------------------------------------------
+            //displacement is oriented above and to the right
+            refX = refX + label.getDisplacementX();
+            refY = refY - label.getDisplacementY();
 
-        //rotation--------------------------------------------------------------
-        final float rotate = (float) Math.toRadians(label.getRotation());
-        g2.rotate(rotate, refX, refY);
+            //rotation--------------------------------------------------------------
+            final float rotate = (float) Math.toRadians(label.getRotation());
+            g2.rotate(rotate, refX, refY);
 
-        //adjust anchor---------------------------------------------------------
-        refX = refX - (label.getAnchorX()*textWidth);
-        //text is draw above reference point so use +
-        refY = refY + (label.getAnchorY()*textHeight);
+            //adjust anchor---------------------------------------------------------
+            refX = refX - (label.getAnchorX()*textWidth);
+            //text is draw above reference point so use +
+            refY = refY + (label.getAnchorY()*textHeight);
 
-        //paint halo------------------------------------------------------------
-        if(label.getHaloWidth() > 0){
-            final FontRenderContext fontContext = g2.getFontRenderContext();
-            final GlyphVector glyph = label.getTextFont().createGlyphVector(fontContext, label.getText());
-            final Shape shape = glyph.getOutline(refX,refY);
-            g2.setPaint(label.getHaloPaint());
-            g2.setStroke(new BasicStroke(label.getHaloWidth()*2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
-            g2.draw(shape);
+            //paint halo------------------------------------------------------------
+            if(label.getHaloWidth() > 0){
+                final FontRenderContext fontContext = g2.getFontRenderContext();
+                final GlyphVector glyph = label.getTextFont().createGlyphVector(fontContext, label.getText());
+                final Shape shape = glyph.getOutline(refX,refY);
+                g2.setPaint(label.getHaloPaint());
+                g2.setStroke(new BasicStroke(label.getHaloWidth()*2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+                g2.draw(shape);
+            }
+
+            //paint text------------------------------------------------------------
+            g2.setPaint(label.getTextPaint());
+            g2.setFont(label.getTextFont());
+            g2.drawString(label.getText(), refX, refY);
         }
-
-        //paint text------------------------------------------------------------
-        g2.setPaint(label.getTextPaint());
-        g2.setFont(label.getTextFont());
-        g2.drawString(label.getText(), refX, refY);
 
     }
 
@@ -153,27 +155,29 @@ public class DefaultLabelRenderer implements LabelRenderer{
         final TextStroke stroke = new TextStroke(label.getText(), label.getTextFont(), label.isRepeated(),
                 label.getOffSet(), label.getInitialGap(), label.getGap(),context.getCanvasDisplayBounds());
 
-        final Shape geom;
+        final Shape[] geoms;
         try {
-            geom = label.getGeometry().getDisplayShape();
+            geoms = label.getGeometry().getDisplayShape();
         } catch (TransformException ex) {
             Logging.getLogger(DefaultLabelRenderer.class).log(Level.WARNING, null, ex);
             return;
         }
 
-        final Shape shape = stroke.createStrokedShape(geom);
+        for(Shape geom : geoms){
+            final Shape shape = stroke.createStrokedShape(geom);
 
-        //paint halo
-        if(label.getHaloWidth() > 0){
-            g2.setStroke(new BasicStroke(label.getHaloWidth(),BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND) );
-            g2.setPaint(label.getHaloPaint());
-            g2.draw(shape);
+            //paint halo
+            if(label.getHaloWidth() > 0){
+                g2.setStroke(new BasicStroke(label.getHaloWidth(),BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND) );
+                g2.setPaint(label.getHaloPaint());
+                g2.draw(shape);
+            }
+
+            //paint text
+            g2.setStroke(new BasicStroke(0));
+            g2.setPaint(label.getTextPaint());
+            g2.fill(shape);
         }
-
-        //paint text
-        g2.setStroke(new BasicStroke(0));
-        g2.setPaint(label.getTextPaint());
-        g2.fill(shape);
     }
 
     @Override

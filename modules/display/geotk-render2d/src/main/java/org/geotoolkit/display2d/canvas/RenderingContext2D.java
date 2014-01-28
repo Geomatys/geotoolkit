@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2013, Geomatys
+ *    (C) 2008 - 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.display2d.canvas;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -25,12 +27,10 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -83,6 +83,8 @@ public class RenderingContext2D implements RenderingContext{
     private static final int OBJECTIVE_TRS = 1;
     private static final int OTHER_TRS = 2;
     private int current = DISPLAY_TRS;
+    
+    public final GeometryFactory GF = new GeometryFactory();
 
     /**
      * The originating canvas.
@@ -144,15 +146,12 @@ public class RenderingContext2D implements RenderingContext{
     /**
      * Multiple repetition if there is a world wrap
      */
-    public DirectPosition[] wrapPoints = null;
-    public com.vividsolutions.jts.geom.Polygon wrapArea = null;
-    public AffineTransform2D[] wrapsObjectiveToDisplay = null;
-    public AffineTransform2D[] wrapsObjectives = null;
+    public RenderingWrapParams wraps = null;
 
     /**
      * The affine transform from {@link #objectiveCRS} to {@code deviceCRS}. Used by
      * {@link #setGraphicsCRS} when the CRS is {@link #objectiveCRS}. This is a pretty common case,
-     * and unfortunatly one that is badly optimized by {@link ReferencedCanvas#getMathTransform}.
+     * and unfortunately one that is badly optimized by {@link ReferencedCanvas#getMathTransform}.
      */
     private AffineTransform objectiveToDevice = null;
 
@@ -311,16 +310,15 @@ public class RenderingContext2D implements RenderingContext{
             getCanvasDisplayBounds());
 
         //prepare informations for possible map repetition ---------------------
-        this.wrapPoints = null;
-        this.wrapArea = null;
-        this.wrapsObjectiveToDisplay = null;
-        this.wrapsObjectives = null;
+        wraps = null;
         try {
             //test if wrap is possible
-            wrapPoints = ReferencingUtilities.findWrapAround(objectiveCRS2D);
+            final DirectPosition[] wrapPoints = ReferencingUtilities.findWrapAround(objectiveCRS2D);
 
             if(wrapPoints != null){
                 //search the multiples transformations
+                wraps = new RenderingWrapParams();
+                wraps.wrapPoints = wrapPoints;
 
                 //project the 4 canvas bounds points on the wrap line
                 final double[] projs = new double[8];
@@ -372,43 +370,68 @@ public class RenderingContext2D implements RenderingContext{
                 int nbRight = (int) Math.ceil(kRight);
                 if(nbLeft<0)nbLeft=0;
                 if(nbRight<0)nbRight=0;
+                if(nbLeft >MAX_WRAP) nbLeft  = MAX_WRAP;
+                if(nbRight>MAX_WRAP) nbRight = MAX_WRAP;
+                wraps.wrapDecNb = nbLeft;
+                wraps.wrapIncNb = nbRight;
                 
-                if(nbLeft>0 || nbRight>0){
-                    final List<AffineTransform2D> objDisps = new ArrayList<>(nbLeft+nbRight+1);
-                    final List<AffineTransform2D> objs = new ArrayList<>(nbLeft+nbRight+1);
-                    objDisps.add(objToDisp);
-                    objs.add(new AffineTransform2D(new AffineTransform()));
-
-                    //rebuild transforms on the left and right
-                    final AffineTransform dif = new AffineTransform();
-                    final AffineTransform step = new AffineTransform(objToDisp);
-                    dif.setToTranslation(x2-x1,y2-y1);
-                    for(int i=0;i<MAX_WRAP && i<nbRight;i++){
-                        step.concatenate(dif);
-                        objs.add(new AffineTransform2D(1, 0, 0, 1, (x2-x1)*(i+1), (y2-y1)*(i+1)));
-                        objDisps.add(new AffineTransform2D(step));
-                    }
-                    step.setTransform(objToDisp);
-                    dif.setToTranslation(x1-x2,y1-y2);
-                    for(int i=0;i<MAX_WRAP && i<nbLeft;i++){
-                        step.concatenate(dif);
-                        objs.add(new AffineTransform2D(1, 0, 0, 1, (x1-x2)*(i+1), (y1-y2)*(i+1)));
-                        objDisps.add(new AffineTransform2D(step));
-                    }
-
-                    //build the wrap rectangle
-                    final GeneralEnvelope env = new GeneralEnvelope(objectiveCRS2D);
-                    env.add(wrapPoints[0]);
-                    env.add(wrapPoints[1]);
-                    if(env.getSpan(0) == 0){
-                        env.setRange(1, canvasObjectiveBBox2D.getMinimum(0), canvasObjectiveBBox2D.getMaximum(0));
-                    }else{
-                        env.setRange(1, canvasObjectiveBBox2D.getMinimum(1), canvasObjectiveBBox2D.getMaximum(1));
-                    }
-                    wrapArea = (com.vividsolutions.jts.geom.Polygon)JTS.toGeometry(env);
-                    wrapsObjectiveToDisplay = objDisps.toArray(new AffineTransform2D[0]);
-                    wrapsObjectives = objs.toArray(new AffineTransform2D[0]);
+                //increment by one for possible geometry overlaping the meridian
+                //those will need and extra repetition
+                nbLeft++;
+                nbRight++;
+                
+                //normal transforms
+                wraps.wrapObj = new AffineTransform2D(new AffineTransform());
+                wraps.wrapObjToDisp = objToDisp;
+                
+                //decreasing and increasing wraps
+                wraps.wrapDecObjToDisp = new AffineTransform2D[nbLeft];
+                wraps.wrapDecObj       = new AffineTransform2D[nbLeft];
+                wraps.wrapIncObjToDisp = new AffineTransform2D[nbRight];
+                wraps.wrapIncObj       = new AffineTransform2D[nbRight];
+                
+                final AffineTransform dif = new AffineTransform();
+                final AffineTransform step = new AffineTransform(objToDisp);
+                dif.setToTranslation(x2-x1,y2-y1);
+                for(int i=0;i<nbRight;i++){
+                    step.concatenate(dif);
+                    wraps.wrapIncObj[i] = new AffineTransform2D(1, 0, 0, 1, (x2-x1)*(i+1), (y2-y1)*(i+1));
+                    wraps.wrapIncObjToDisp[i] = new AffineTransform2D(step);
                 }
+                step.setTransform(objToDisp);
+                dif.setToTranslation(x1-x2,y1-y2);
+                for(int i=0;i<nbLeft;i++){
+                    step.concatenate(dif);
+                    wraps.wrapDecObj[i] = new AffineTransform2D(1, 0, 0, 1, (x1-x2)*(i+1), (y1-y2)*(i+1));
+                    wraps.wrapDecObjToDisp[i] = new AffineTransform2D(step);
+                }
+
+                //build the wrap rectangle
+                final GeneralEnvelope env = new GeneralEnvelope(objectiveCRS2D);
+                env.add(wrapPoints[0]);
+                env.add(wrapPoints[1]);
+                if(env.getSpan(0) == 0){
+                    final double min = canvasObjectiveBBox2D.getMinimum(0);
+                    final double max = canvasObjectiveBBox2D.getMaximum(0);
+                    env.setRange(0, min, max);
+                    wraps.wrapDecLine = GF.createLineString(new Coordinate[]{
+                        new Coordinate(min, env.getMinimum(1)), 
+                        new Coordinate(max, env.getMinimum(1))});
+                    wraps.wrapIncLine = GF.createLineString(new Coordinate[]{
+                        new Coordinate(min, env.getMaximum(1)), 
+                        new Coordinate(max, env.getMaximum(1))});
+                }else{
+                    final double min = canvasObjectiveBBox2D.getMinimum(1);
+                    final double max = canvasObjectiveBBox2D.getMaximum(1);
+                    env.setRange(1, min, max);
+                    wraps.wrapDecLine = GF.createLineString(new Coordinate[]{
+                        new Coordinate(env.getMinimum(0), min), 
+                        new Coordinate(env.getMinimum(0), max)});
+                    wraps.wrapIncLine = GF.createLineString(new Coordinate[]{
+                        new Coordinate(env.getMaximum(0), min), 
+                        new Coordinate(env.getMaximum(0), max)});
+                }
+                wraps.wrapArea = (com.vividsolutions.jts.geom.Polygon)JTS.toGeometry(env);
 
                 //fix the envelopes, normalize them using wrap infos
                 canvasObjectiveBBox = ReferencingUtilities.wrapNormalize(canvasObjectiveBBox, wrapPoints);
@@ -418,7 +441,6 @@ public class RenderingContext2D implements RenderingContext{
                 paintingObjectiveBBox = ReferencingUtilities.wrapNormalize(paintingObjectiveBBox, wrapPoints);
                 paintingObjectiveBBox2D = ReferencingUtilities.wrapNormalize(paintingObjectiveBBox2D, wrapPoints);
                 paintingObjectiveBBox2DB = new DefaultBoundingBox(paintingObjectiveBBox2D);
-
             }
 
         } catch (TransformException ex) {

@@ -45,9 +45,14 @@ public class LinearLabelCandidateRenderer implements LabelCandidateRenderer<Line
     }
 
     @Override
-    public Candidate generateCandidat(final LinearLabelDescriptor descriptor) {
+    public Candidate[] generateCandidat(final LinearLabelDescriptor descriptor) {
         try {
-            return new LinearCandidate(descriptor,descriptor.getGeometry().getDisplayShape());
+            final Shape[] shapes = descriptor.getGeometry().getDisplayShape();
+            final Candidate[] candidates = new Candidate[shapes.length];
+            for(int i=0;i<shapes.length;i++){
+                candidates[i] = new LinearCandidate(descriptor,shapes[i]);
+            }
+            return candidates;
         } catch (TransformException ex) {
             Logger.getLogger(LinearLabelCandidateRenderer.class.getName()).log(Level.WARNING, null, ex);
         }

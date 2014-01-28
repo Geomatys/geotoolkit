@@ -48,41 +48,47 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
     }
 
     @Override
-    public Candidate generateCandidat(final PointLabelDescriptor label) {
+    public Candidate[] generateCandidat(final PointLabelDescriptor label) {
 
-        Shape shape = null;
+        Shape[] shapes = null;
 
         try {
-            shape = label.getGeometry().getDisplayShape();
+            shapes = label.getGeometry().getDisplayShape();
         } catch (TransformException ex) {
             Logger.getLogger(PointLabelCandidateRenderer.class.getName()).log(Level.WARNING, null, ex);
         }
+        if(shapes == null) return null;
 
-        if(shape == null) return null;
+        final Candidate[] candidates = new Candidate[shapes.length];
+        
+        for(int i=0; i<shapes.length; i++){
+            Shape shape = shapes[i];
 
+            final FontMetrics metric = context.getFontMetrics(label.getTextFont());
+            final int textUpper = metric.getAscent();
+            final int textLower = metric.getDescent();
+            final int textWidth = metric.stringWidth(label.getText());
+            final Rectangle2D rect = shape.getBounds2D();
+            if(rect == null) return null;
 
-        final FontMetrics metric = context.getFontMetrics(label.getTextFont());
-        final int textUpper = metric.getAscent();
-        final int textLower = metric.getDescent();
-        final int textWidth = metric.stringWidth(label.getText());
-        final Rectangle2D rect = shape.getBounds2D();
-        if(rect == null) return null;
+            float refX = (float) rect.getCenterX();
+            float refY = (float) rect.getCenterY();
+            refX = refX + label.getDisplacementX();
+            refY = refY - label.getDisplacementY();
 
-        float refX = (float) rect.getCenterX();
-        float refY = (float) rect.getCenterY();
-        refX = refX + label.getDisplacementX();
-        refY = refY - label.getDisplacementY();
+            refX = refX - (label.getAnchorX()*textWidth);
+            //text is draw above reference point so use +
+            refY = refY + (label.getAnchorY()*(textUpper));
 
-        refX = refX - (label.getAnchorX()*textWidth);
-        //text is draw above reference point so use +
-        refY = refY + (label.getAnchorY()*(textUpper));
-
-        return new PointCandidate(label,
-                textWidth,
-                textUpper,
-                textLower,
-                refX,refY
-                );
+            candidates[i] = new PointCandidate(label,
+                    textWidth,
+                    textUpper,
+                    textLower,
+                    refX,refY
+                    );
+        }
+        
+        return candidates;
     }
 
     @Override

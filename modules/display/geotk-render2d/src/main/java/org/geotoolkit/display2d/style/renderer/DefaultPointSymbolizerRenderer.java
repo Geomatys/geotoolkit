@@ -97,76 +97,77 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
         disps[0] *= coeff ;
         disps[1] *= coeff ;
 
-        final Geometry geom;
+        final Geometry[] geoms;
         try {
-            geom = projectedGeometry.getDisplayGeometryJTS();
+            geoms = projectedGeometry.getDisplayGeometryJTS();
         } catch (TransformException ex) {
             throw new PortrayalException("Could not calculate display projected geometry",ex);
         }
 
-        if(geom == null){
+        if(geoms == null){
             //no geometry
             return;
         }
         
-        
         final double rot = XAffineTransform.getRotation(renderingContext.getObjectiveToDisplay());
         
-        if(rot==0){
-            if(geom instanceof Point || geom instanceof MultiPoint){
-                //TODO use generalisation on multipoints
+        for(Geometry geom : geoms){
+            if(rot==0){
+                if(geom instanceof Point || geom instanceof MultiPoint){
+                    //TODO use generalisation on multipoints
 
-                final Coordinate[] coords = geom.getCoordinates();
-                for(int i=0, n = coords.length; i<n ; i++){
-                    final Coordinate coord = coords[i];
-                    final int x = (int) (-img.getWidth()*anchor[0] + coord.x + disps[0]);
-                    final int y = (int) (-img.getHeight()*anchor[1] + coord.y - disps[1]);
+                    final Coordinate[] coords = geom.getCoordinates();
+                    for(int i=0, n = coords.length; i<n ; i++){
+                        final Coordinate coord = coords[i];
+                        final int x = (int) (-img.getWidth()*anchor[0] + coord.x + disps[0]);
+                        final int y = (int) (-img.getHeight()*anchor[1] + coord.y - disps[1]);
+                        g2d.drawImage(img, x, y, null);
+                    }
+
+                }else{
+                    final Point pt2d = geom.getCentroid();
+                    if(pt2d == null || pt2d.isEmpty()){
+                        //no geometry
+                        return;
+                    }
+
+                    final int x = (int) (-img.getWidth()*anchor[0] + pt2d.getX() + disps[0]);
+                    final int y = (int) (-img.getHeight()*anchor[1] + pt2d.getY() - disps[1]);
                     g2d.drawImage(img, x, y, null);
                 }
-
             }else{
-                final Point pt2d = geom.getCentroid();
-                if(pt2d == null || pt2d.isEmpty()){
-                    //no geometry
-                    return;
-                }
+                if(geom instanceof Point || geom instanceof MultiPoint){
+                    //TODO use generalisation on multipoints
 
-                final int x = (int) (-img.getWidth()*anchor[0] + pt2d.getX() + disps[0]);
-                final int y = (int) (-img.getHeight()*anchor[1] + pt2d.getY() - disps[1]);
-                g2d.drawImage(img, x, y, null);
-            }
-        }else{
-            if(geom instanceof Point || geom instanceof MultiPoint){
-                //TODO use generalisation on multipoints
+                    final Coordinate[] coords = geom.getCoordinates();
+                    for(int i=0, n = coords.length; i<n ; i++){
+                        final Coordinate coord = coords[i];
 
-                final Coordinate[] coords = geom.getCoordinates();
-                for(int i=0, n = coords.length; i<n ; i++){
-                    final Coordinate coord = coords[i];
+                        final int postx = (int) (-img.getWidth()*anchor[0] + disps[0]);
+                        final int posty = (int) (-img.getHeight()*anchor[1] - disps[1]);
+                        final AffineTransform ptrs = new AffineTransform();
+                        ptrs.rotate(-rot);
+                        ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, coord.x, coord.y));
+                        ptrs.concatenate(new AffineTransform(1, 0, 0, 1, postx, posty));
+
+                        g2d.drawImage(img, ptrs, null);
+                    }
+                }else{
+                    final Point pt2d = geom.getCentroid();
+                    if(pt2d == null || pt2d.isEmpty()){
+                        //no geometry
+                        return;
+                    }
 
                     final int postx = (int) (-img.getWidth()*anchor[0] + disps[0]);
                     final int posty = (int) (-img.getHeight()*anchor[1] - disps[1]);
                     final AffineTransform ptrs = new AffineTransform();
                     ptrs.rotate(-rot);
-                    ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, coord.x, coord.y));
+                    ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, pt2d.getX(), pt2d.getY()));
                     ptrs.concatenate(new AffineTransform(1, 0, 0, 1, postx, posty));
 
                     g2d.drawImage(img, ptrs, null);
                 }
-            }else{
-                final Point pt2d = geom.getCentroid();
-                if(pt2d == null || pt2d.isEmpty()){
-                    //no geometry
-                    return;
-                }
-
-                final int postx = (int) (-img.getWidth()*anchor[0] + disps[0]);
-                final int posty = (int) (-img.getHeight()*anchor[1] - disps[1]);
-                final AffineTransform ptrs = new AffineTransform();
-                ptrs.rotate(-rot);
-                ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, pt2d.getX(), pt2d.getY()));
-                ptrs.concatenate(new AffineTransform(1, 0, 0, 1, postx, posty));
-
-                g2d.drawImage(img, ptrs, null);
             }
         }
 
@@ -228,58 +229,60 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
             disps[0] *= coeff ;
             disps[1] *= coeff ;
 
-            final Geometry geom;
+            final Geometry[] geoms;
             try {
-                geom = projectedGeometry.getDisplayGeometryJTS();
+                geoms = projectedGeometry.getDisplayGeometryJTS();
             } catch (TransformException ex) {
                 throw new PortrayalException("Could not calculate display projected geometry",ex);
             }
 
-            if(geom instanceof Point || geom instanceof MultiPoint){
+            for(Geometry geom : geoms){
 
-                //TODO use generalisation on multipoints
+                if(geom instanceof Point || geom instanceof MultiPoint){
 
-                final Coordinate[] coords = geom.getCoordinates();
-                for(int i=0, n = coords.length; i<n ; i++){
-                    final Coordinate coord = coords[i];
+                    //TODO use generalisation on multipoints
+
+                    final Coordinate[] coords = geom.getCoordinates();
+                    for(int i=0, n = coords.length; i<n ; i++){
+                        final Coordinate coord = coords[i];
+                        if(rot==0){
+                            imgTrs.setToTranslation(
+                                    -img.getWidth()*anchor[0] + coord.x + disps[0], 
+                                    -img.getHeight()*anchor[1] + coord.y - disps[1]);
+                            g2d.drawRenderedImage(img, imgTrs);
+                        }else{
+                            final int postx = (int) (-img.getWidth()*anchor[0] + disps[0]);
+                            final int posty = (int) (-img.getHeight()*anchor[1] - disps[1]);
+                            final AffineTransform ptrs = new AffineTransform(mapRotationTrs);
+                            ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, coord.x, coord.y));
+                            ptrs.concatenate(new AffineTransform(1, 0, 0, 1, postx, posty));
+                            g2d.drawImage(img, ptrs, null);
+                        }
+                    }
+
+                }else if(geom!=null){
+
+                    final Point pt2d = geom.getCentroid();
+                    if(pt2d == null || pt2d.isEmpty()){
+                        //no geometry
+                        return;
+                    }
                     if(rot==0){
                         imgTrs.setToTranslation(
-                                -img.getWidth()*anchor[0] + coord.x + disps[0], 
-                                -img.getHeight()*anchor[1] + coord.y - disps[1]);
+                                    -img.getWidth()*anchor[0] + pt2d.getX() + disps[0], 
+                                    -img.getHeight()*anchor[1] + pt2d.getY() - disps[1]);
                         g2d.drawRenderedImage(img, imgTrs);
                     }else{
                         final int postx = (int) (-img.getWidth()*anchor[0] + disps[0]);
                         final int posty = (int) (-img.getHeight()*anchor[1] - disps[1]);
                         final AffineTransform ptrs = new AffineTransform(mapRotationTrs);
-                        ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, coord.x, coord.y));
+                        ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, pt2d.getX(), pt2d.getY()));
                         ptrs.concatenate(new AffineTransform(1, 0, 0, 1, postx, posty));
                         g2d.drawImage(img, ptrs, null);
                     }
                 }
-
-            }else if(geom!=null){
-
-                final Point pt2d = geom.getCentroid();
-                if(pt2d == null || pt2d.isEmpty()){
-                    //no geometry
-                    return;
-                }
-                if(rot==0){
-                    imgTrs.setToTranslation(
-                                -img.getWidth()*anchor[0] + pt2d.getX() + disps[0], 
-                                -img.getHeight()*anchor[1] + pt2d.getY() - disps[1]);
-                    g2d.drawRenderedImage(img, imgTrs);
-                }else{
-                    final int postx = (int) (-img.getWidth()*anchor[0] + disps[0]);
-                    final int posty = (int) (-img.getHeight()*anchor[1] - disps[1]);
-                    final AffineTransform ptrs = new AffineTransform(mapRotationTrs);
-                    ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, pt2d.getX(), pt2d.getY()));
-                    ptrs.concatenate(new AffineTransform(1, 0, 0, 1, postx, posty));
-                    g2d.drawImage(img, ptrs, null);
-                }
             }
         }
-
     }
 
     /**
@@ -333,23 +336,47 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
         final float[] anchor = new float[2];
         symbol.getAnchor(candidate,anchor);
 
-        final Geometry geom;
+        final Geometry[] geoms;
         try {
-            geom = projectedGeometry.getDisplayGeometryJTS();
+            geoms = projectedGeometry.getDisplayGeometryJTS();
         } catch (TransformException ex) {
             ex.printStackTrace();
             return false;
         }
 
-        if(geom instanceof Point || geom instanceof MultiPoint){
+        for(Geometry geom : geoms){
+            if(geom instanceof Point || geom instanceof MultiPoint){
 
-            //TODO use generalisation on multipoints
+                //TODO use generalisation on multipoints
 
-            final Coordinate[] coords = geom.getCoordinates();
-            for(int i=0, n = coords.length; i<n ; i++){
-                final Coordinate coord = coords[i];
-                final int x = (int) (-img.getWidth()*anchor[0] + coord.x + disps[0]);
-                final int y = (int) (-img.getHeight()*anchor[1] + coord.y - disps[1]);
+                final Coordinate[] coords = geom.getCoordinates();
+                for(int i=0, n = coords.length; i<n ; i++){
+                    final Coordinate coord = coords[i];
+                    final int x = (int) (-img.getWidth()*anchor[0] + coord.x + disps[0]);
+                    final int y = (int) (-img.getHeight()*anchor[1] + coord.y - disps[1]);
+
+                    switch(filter){
+                        case INTERSECTS :
+                            if(mask.intersects(x,y,img.getWidth(),img.getHeight())){
+                                //TODO should make a better test for the alpha pixel values in image
+                                return true;
+                            }
+                            break;
+                        case WITHIN :
+                            if(mask.contains(x,y,img.getWidth(),img.getHeight())){
+                                //TODO should make a better test for the alpha pixel values in image
+                                return true;
+                            }
+                            break;
+                    }
+
+                }
+
+            }else{
+                Point pt2d = geom.getCentroid();
+
+                final int x = (int) (-img.getWidth()*anchor[0] + pt2d.getX() + disps[0]);
+                final int y = (int) (-img.getHeight()*anchor[1] + pt2d.getY() - disps[1]);
 
                 switch(filter){
                     case INTERSECTS :
@@ -367,28 +394,6 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                 }
 
             }
-
-        }else{
-            Point pt2d = geom.getCentroid();
-
-            final int x = (int) (-img.getWidth()*anchor[0] + pt2d.getX() + disps[0]);
-            final int y = (int) (-img.getHeight()*anchor[1] + pt2d.getY() - disps[1]);
-
-            switch(filter){
-                case INTERSECTS :
-                    if(mask.intersects(x,y,img.getWidth(),img.getHeight())){
-                        //TODO should make a better test for the alpha pixel values in image
-                        return true;
-                    }
-                    break;
-                case WITHIN :
-                    if(mask.contains(x,y,img.getWidth(),img.getHeight())){
-                        //TODO should make a better test for the alpha pixel values in image
-                        return true;
-                    }
-                    break;
-            }
-
         }
 
         return false;

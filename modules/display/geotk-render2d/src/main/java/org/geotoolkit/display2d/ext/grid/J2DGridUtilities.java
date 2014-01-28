@@ -156,8 +156,8 @@ public class J2DGridUtilities {
                     g.setPaint(template.getLinePaint());
                     g.setStroke(template.getLineStroke());
                 }
-                g.draw(pg.getDisplayShape());
-
+                for(Shape ds : pg.getDisplayShape()) g.draw(ds);
+                
 
                 //clip geometry to avoid text outside visible area
                 geom = JTS.transform(geom, gridToObj);
@@ -223,7 +223,7 @@ public class J2DGridUtilities {
                     g.setPaint(template.getLinePaint());
                     g.setStroke(template.getLineStroke());
                 }
-                g.draw(pg.getDisplayShape());
+                for(Shape ds : pg.getDisplayShape()) g.draw(ds);
 
                 //clip geometry to avoid text outside visible area
                 geom = JTS.transform(geom, gridToObj);

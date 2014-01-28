@@ -4,6 +4,7 @@
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2010 - 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -28,6 +29,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.NumberFormat;
@@ -98,62 +100,69 @@ public class AreaDecoration extends AbstractGeometryDecoration {
     protected void paintGeometry(final Graphics2D g2, final RenderingContext2D context, final ProjectedGeometry projectedGeom) throws TransformException {
         context.switchToDisplayCRS();
 
-        final Geometry objectiveGeom = projectedGeom.getObjectiveGeometryJTS();
+        final Geometry[] objectiveGeoms = projectedGeom.getObjectiveGeometryJTS();
+        final Shape[] displayGeoms = projectedGeom.getDisplayShape();
 
-        if(objectiveGeom instanceof Point){
-            //draw a single cross
-            final Point p = (Point) objectiveGeom;
-            final double[] crds = toDisplay(p.getCoordinate());
-            paintCross(g2, crds);
+        for(int i=0;i<objectiveGeoms.length;i++){
+            
+            final Geometry objectiveGeom = objectiveGeoms[i];
+            final Shape displayGeom = displayGeoms[i];
+            
+            if(objectiveGeom instanceof Point){
+                //draw a single cross
+                final Point p = (Point) objectiveGeom;
+                final double[] crds = toDisplay(p.getCoordinate());
+                paintCross(g2, crds);
 
-        }else if(objectiveGeom instanceof LineString){
-            final LineString line = (LineString)objectiveGeom;
+            }else if(objectiveGeom instanceof LineString){
+                final LineString line = (LineString)objectiveGeom;
 
-            g2.setStroke(new BasicStroke(2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
-            //draw a shadow
-            g2.translate(SHADOW_STEP,SHADOW_STEP);
-            g2.setColor(SHADOW_COLOR);
-            g2.draw(projectedGeom.getDisplayShape());
-            //draw the lines
-            g2.translate(-SHADOW_STEP, -SHADOW_STEP);
-            g2.setColor(MAIN_COLOR);
-            g2.draw(projectedGeom.getDisplayShape());
+                g2.setStroke(new BasicStroke(2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+                //draw a shadow
+                g2.translate(SHADOW_STEP,SHADOW_STEP);
+                g2.setColor(SHADOW_COLOR);
+                g2.draw(displayGeom);
+                //draw the lines
+                g2.translate(-SHADOW_STEP, -SHADOW_STEP);
+                g2.setColor(MAIN_COLOR);
+                g2.draw(displayGeom);
 
-            //draw start cross
-            Point p = line.getStartPoint();
-            double[] crds = toDisplay(p.getCoordinate());
-            paintCross(g2, crds);
+                //draw start cross
+                Point p = line.getStartPoint();
+                double[] crds = toDisplay(p.getCoordinate());
+                paintCross(g2, crds);
 
-            //draw end cross
-            p = line.getEndPoint();
-            crds = toDisplay(p.getCoordinate());
-            paintCross(g2, crds);
-        }else if(objectiveGeom instanceof Polygon){
-            final Polygon poly = (Polygon)objectiveGeom;
+                //draw end cross
+                p = line.getEndPoint();
+                crds = toDisplay(p.getCoordinate());
+                paintCross(g2, crds);
+            }else if(objectiveGeom instanceof Polygon){
+                final Polygon poly = (Polygon)objectiveGeom;
 
-            g2.setStroke(new BasicStroke(2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
-            //draw a shadow
-            g2.translate(SHADOW_STEP, SHADOW_STEP);
-            g2.setColor(SHADOW_COLOR);
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
-            g2.fill(projectedGeom.getDisplayShape());
+                g2.setStroke(new BasicStroke(2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+                //draw a shadow
+                g2.translate(SHADOW_STEP, SHADOW_STEP);
+                g2.setColor(SHADOW_COLOR);
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+                g2.fill(displayGeom);
 
-            //draw the lines
-            g2.translate(-SHADOW_STEP, -SHADOW_STEP);
-            g2.setColor(MAIN_COLOR);
-            g2.fill(projectedGeom.getDisplayShape());
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-            g2.draw(projectedGeom.getDisplayShape());
+                //draw the lines
+                g2.translate(-SHADOW_STEP, -SHADOW_STEP);
+                g2.setColor(MAIN_COLOR);
+                g2.fill(displayGeom);
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+                g2.draw(displayGeom);
 
-            //draw start cross
-            Point p = poly.getExteriorRing().getStartPoint();
-            double[] crds = toDisplay(p.getCoordinate());
-            paintCross(g2, crds);
+                //draw start cross
+                Point p = poly.getExteriorRing().getStartPoint();
+                double[] crds = toDisplay(p.getCoordinate());
+                paintCross(g2, crds);
 
-            //draw end cross
-            p = poly.getExteriorRing().getPointN(poly.getExteriorRing().getNumPoints()-2);
-            crds = toDisplay(p.getCoordinate());
-            paintCross(g2, crds);
+                //draw end cross
+                p = poly.getExteriorRing().getPointN(poly.getExteriorRing().getNumPoints()-2);
+                crds = toDisplay(p.getCoordinate());
+                paintCross(g2, crds);
+            }
         }
 
     }

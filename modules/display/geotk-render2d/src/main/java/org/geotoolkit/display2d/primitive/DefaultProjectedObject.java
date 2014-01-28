@@ -16,21 +16,12 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import com.vividsolutions.jts.geom.Geometry;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import org.geotoolkit.display.canvas.AbstractCanvas2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
-import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.CRS;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 
 /**
@@ -106,50 +97,6 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
 
         return proj;
     }
-
-    /**
-     * Returns the geometry is objective crs.
-     * @param name
-     * @return Geometry
-     */
-    private Geometry getGeometryObjective(final String name){
-        Geometry geom = GO2Utilities.getGeometry(candidate, name);
-
-        if(geom == null){
-            return null;
-        }
-
-        //we don't know in which crs it is, try to find it
-        CoordinateReferenceSystem crs = null;
-        try{
-            crs = JTS.findCoordinateReferenceSystem(geom);
-        }catch(IllegalArgumentException ex){
-            params.context.getMonitor().exceptionOccured(ex, Level.FINE);
-        }catch(NoSuchAuthorityCodeException ex){
-            params.context.getMonitor().exceptionOccured(ex, Level.FINE);
-        }catch(FactoryException ex){
-            params.context.getMonitor().exceptionOccured(ex, Level.FINE);
-        }
-
-        //if we don't know the crs, we will assume it's the objective crs already
-        if(crs != null){
-            //reproject in objective crs if needed
-            if(!CRS.equalsIgnoreMetadata(params.objectiveCRS,crs)){
-                try {
-                    geom = JTS.transform(geom, CRS.findMathTransform(crs, params.objectiveCRS));
-                } catch (MismatchedDimensionException ex) {
-                    params.context.getMonitor().exceptionOccured(ex, Level.WARNING);
-                } catch (TransformException ex) {
-                    params.context.getMonitor().exceptionOccured(ex, Level.WARNING);
-                } catch (FactoryException ex) {
-                    params.context.getMonitor().exceptionOccured(ex, Level.WARNING);
-                }
-            }
-        }
-
-        return geom;
-    }
-
 
     @Override
     public T getCandidate(){

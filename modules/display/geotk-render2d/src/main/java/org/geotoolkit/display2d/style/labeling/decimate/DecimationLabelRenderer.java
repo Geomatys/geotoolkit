@@ -118,20 +118,26 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
             @Override
             public boolean add(LabelDescriptor label) {
                 if(label instanceof PointLabelDescriptor){
-                    final PointCandidate pc = (PointCandidate)pointRenderer.generateCandidat((PointLabelDescriptor) label);
-                    if(pc == null) return true;
-                    pc.setPriority(1);
-                    synchronized(candidates){
-                        if(!LabelingUtilities.intersects(pc,candidates)){
-                            candidates.add(pc);
-                        }else{
+                    final Candidate[] pcs = pointRenderer.generateCandidat((PointLabelDescriptor) label);
+                    if(pcs == null) return true;
+                    for(Candidate c : pcs){
+                        final PointCandidate pc = (PointCandidate) c;
+                        pc.setPriority(1);
+                        synchronized(candidates){
+                            if(!LabelingUtilities.intersects(pc,candidates)){
+                                candidates.add(pc);
+                            }else{
+                            }
                         }
                     }
                 }else if(label instanceof LinearLabelDescriptor){
-                    final LinearCandidate lc = (LinearCandidate)LinearRenderer.generateCandidat((LinearLabelDescriptor) label);
-                    lc.setPriority(1);
-                    synchronized(candidates){
-                        candidates.add(lc);
+                    final Candidate[] lcs = LinearRenderer.generateCandidat((LinearLabelDescriptor) label);
+                    for(Candidate c : lcs){
+                        final LinearCandidate lc = (LinearCandidate) c;
+                        lc.setPriority(1);
+                        synchronized(candidates){
+                            candidates.add(lc);
+                        }
                     }
                 }
                 return true;

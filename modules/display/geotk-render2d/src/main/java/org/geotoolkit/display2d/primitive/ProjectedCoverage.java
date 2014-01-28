@@ -111,7 +111,7 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
     }
 
     /**
-     * Get the projecte geometry representation of the coverage border.
+     * Get the projected geometry representation of the coverage border.
      *
      * @return ProjectedGeometry
      */

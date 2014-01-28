@@ -4,7 +4,7 @@
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Johann Sorel
- *    (C) 2011, Geomatys
+ *    (C) 2011 - 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -98,9 +98,12 @@ public final class EditionDecoration extends AbstractGeometryDecoration {
             params.update(context);
             projected.setDataGeometry(new GeometryFactory().createPoint(coord), null);
             try {
-                final Point p = (Point) projected.getDisplayGeometryJTS();
-                final double[] crds = new double[]{p.getX(),p.getY()};
-                paintRound(g2,crds);
+                final Geometry[] ps = projected.getDisplayGeometryJTS();
+                for(Geometry c : ps){
+                    final Point p = (Point) c;
+                    final double[] crds = new double[]{p.getX(),p.getY()};
+                    paintRound(g2,crds);
+                }
             } catch (TransformException ex) {
                 getLogger().log(Level.WARNING, null, ex);
             }
@@ -114,9 +117,12 @@ public final class EditionDecoration extends AbstractGeometryDecoration {
             params.update(context);
             projected.setDataGeometry(new GeometryFactory().createPoint(coord), null);
             try {
-                final Point p = (Point) projected.getDisplayGeometryJTS();
-                final double[] crds = new double[]{p.getX(),p.getY()};
-                paintRound(g2,crds);
+                final Geometry[] ps = projected.getDisplayGeometryJTS();
+                for(Geometry c : ps){
+                    final Point p = (Point) c;
+                    final double[] crds = new double[]{p.getX(),p.getY()};
+                    paintRound(g2,crds);
+                }
             } catch (TransformException ex) {
                 getLogger().log(Level.WARNING, null, ex);
             }
@@ -128,28 +134,32 @@ public final class EditionDecoration extends AbstractGeometryDecoration {
     protected void paintGeometry(final Graphics2D g2, final RenderingContext2D context, final ProjectedGeometry projectedGeom) throws TransformException {
         context.switchToDisplayCRS();
 
-        final Geometry objectiveGeom = projectedGeom.getDisplayGeometryJTS();
-
-        if(objectiveGeom instanceof Point){
-            paintPoint(g2, (Point)objectiveGeom);
-        }else if(objectiveGeom instanceof LineString){
-            paintLineString(g2, (LineString)objectiveGeom, projectedGeom.getDisplayShape());
-        }else if(objectiveGeom instanceof Polygon){
-            paintPolygon(g2, (Polygon)objectiveGeom, projectedGeom.getDisplayShape());
-        }else if(objectiveGeom instanceof MultiPoint){
-            MultiPoint mp = (MultiPoint) objectiveGeom;
-            for(int i=0,n=mp.getNumGeometries();i<n;i++){
-                paintPoint(g2,(Point) mp.getGeometryN(i));
-            }
-        }else if(objectiveGeom instanceof MultiLineString){
-            MultiLineString mp = (MultiLineString) objectiveGeom;
-            for(int i=0,n=mp.getNumGeometries();i<n;i++){
-                paintLineString(g2,(LineString) mp.getGeometryN(i),GO2Utilities.toJava2D(mp.getGeometryN(i)));
-            }
-        }else if(objectiveGeom instanceof MultiPolygon){
-            MultiPolygon mp = (MultiPolygon) objectiveGeom;
-            for(int i=0,n=mp.getNumGeometries();i<n;i++){
-                paintPolygon(g2,(Polygon) mp.getGeometryN(i),GO2Utilities.toJava2D(mp.getGeometryN(i)));
+        final Geometry[] objectiveGeoms = projectedGeom.getDisplayGeometryJTS();
+        final Shape[] displayShapes = projectedGeom.getDisplayShape();
+        
+        for(int k=0;k<objectiveGeoms.length;k++){
+            final Geometry objectiveGeom = objectiveGeoms[k];
+            if(objectiveGeom instanceof Point){
+                paintPoint(g2, (Point)objectiveGeom);
+            }else if(objectiveGeom instanceof LineString){
+                paintLineString(g2, (LineString)objectiveGeom, displayShapes[k]);
+            }else if(objectiveGeom instanceof Polygon){
+                paintPolygon(g2, (Polygon)objectiveGeom, displayShapes[k]);
+            }else if(objectiveGeom instanceof MultiPoint){
+                MultiPoint mp = (MultiPoint) objectiveGeom;
+                for(int i=0,n=mp.getNumGeometries();i<n;i++){
+                    paintPoint(g2,(Point) mp.getGeometryN(i));
+                }
+            }else if(objectiveGeom instanceof MultiLineString){
+                MultiLineString mp = (MultiLineString) objectiveGeom;
+                for(int i=0,n=mp.getNumGeometries();i<n;i++){
+                    paintLineString(g2,(LineString) mp.getGeometryN(i),GO2Utilities.toJava2D(mp.getGeometryN(i)));
+                }
+            }else if(objectiveGeom instanceof MultiPolygon){
+                MultiPolygon mp = (MultiPolygon) objectiveGeom;
+                for(int i=0,n=mp.getNumGeometries();i<n;i++){
+                    paintPolygon(g2,(Polygon) mp.getGeometryN(i),GO2Utilities.toJava2D(mp.getGeometryN(i)));
+                }
             }
         }
 

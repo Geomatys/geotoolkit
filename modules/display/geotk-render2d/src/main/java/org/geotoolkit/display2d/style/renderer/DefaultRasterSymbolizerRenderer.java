@@ -230,13 +230,18 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             RenderedImage img = applyStyle(dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), symbol.getSource(), hints, isReprojected);
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
 
-            if(renderingContext.wrapArea == null){
+            if(renderingContext.wraps == null){
                 //single rendering
                 renderCoverage(projectedCoverage, img, trs2D);
             }else{
-                final AffineTransform2D[] trss = renderingContext.wrapsObjectiveToDisplay;
-                for(AffineTransform2D trs : trss){
-                    g2d.setTransform(trs);
+                renderCoverage(projectedCoverage, img, trs2D);
+                //repetition of incresing and decreasing sides.
+                for(int i=0;i<renderingContext.wraps.wrapDecNb;i++){
+                    g2d.setTransform(renderingContext.wraps.wrapDecObjToDisp[i]);
+                    renderCoverage(projectedCoverage, img, trs2D);
+                }
+                for(int i=0;i<renderingContext.wraps.wrapIncNb;i++){
+                    g2d.setTransform(renderingContext.wraps.wrapIncObjToDisp[i]);
                     renderCoverage(projectedCoverage, img, trs2D);
                 }
             }

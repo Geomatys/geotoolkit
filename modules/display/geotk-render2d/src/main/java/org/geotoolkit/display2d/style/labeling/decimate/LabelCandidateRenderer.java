@@ -28,7 +28,7 @@ import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
  */
 public interface LabelCandidateRenderer<T extends LabelDescriptor> {
 
-    Candidate generateCandidat(T descriptor);
+    Candidate[] generateCandidat(T descriptor);
 
     void render(Candidate candidate);
 

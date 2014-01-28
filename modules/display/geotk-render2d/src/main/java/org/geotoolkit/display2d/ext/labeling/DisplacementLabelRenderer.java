@@ -93,19 +93,21 @@ public class DisplacementLabelRenderer extends DefaultLabelRenderer{
         int priority = layers.size();
         for(final LabelLayer layer : layers){
             for(LabelDescriptor label : layer.labels()){
-                Candidate c = null;
+                Candidate[] cs = null;
 
                 if(label instanceof PointLabelDescriptor){
-                    c = pointRenderer.generateCandidat((PointLabelDescriptor) label);
+                    cs = pointRenderer.generateCandidat((PointLabelDescriptor) label);
                 }else if(label instanceof LinearLabelDescriptor){
-                    c = LinearRenderer.generateCandidat((LinearLabelDescriptor) label);
+                    cs = LinearRenderer.generateCandidat((LinearLabelDescriptor) label);
                 }else{
-                    c = null;
+                    cs = null;
                 }
 
-                if(c != null){
-                    c.setPriority(priority);
-                    candidates.add(c);
+                if(cs != null){
+                    for(Candidate c : cs){
+                        c.setPriority(priority);
+                        candidates.add(c);
+                    }
                 }
             }
             priority--;

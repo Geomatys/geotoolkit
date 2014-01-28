@@ -92,9 +92,9 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
         final Shape mask = search.getDisplayShape();
-        final Shape shape;
+        final Shape[] shapes;
         try {
-            shape = projectedCoverage.getEnvelopeGeometry().getDisplayShape();
+            shapes = projectedCoverage.getEnvelopeGeometry().getDisplayShape();
         } catch (TransformException ex) {
             LOGGER.log(Level.WARNING, null, ex);
             return false;
@@ -102,14 +102,18 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         final Area area = new Area(mask);
 
-        switch(filter){
-            case INTERSECTS :
-                area.intersect(new Area(shape));
-                return !area.isEmpty();
-            case WITHIN :
-                Area start = new Area(area);
-                area.add(new Area(shape));
-                return start.equals(area);
+        for(Shape shape : shapes){
+            switch(filter){
+                case INTERSECTS :
+                    area.intersect(new Area(shape));
+                    if(!area.isEmpty()) return true;
+                    break;
+                case WITHIN :
+                    Area start = new Area(area);
+                    area.add(new Area(shape));
+                    if(start.equals(area)) return true;
+                    break;
+            }
         }
 
         return false;

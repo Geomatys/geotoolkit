@@ -94,7 +94,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
     private void portray(final ProjectedGeometry projectedGeometry, final Object candidate) throws PortrayalException{
 
         final float offset = symbol.getOffset(candidate, coeff);
-        final Shape shape;
+        final Shape[] shapes;
 
         //calculate displacement
         final float[] disps = symbol.getDisplacement(candidate);
@@ -106,11 +106,11 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         try {
             if(dispGeom){
                 renderingContext.switchToDisplayCRS();
-                shape = (offset != 0) ? bufferDisplayGeometry(renderingContext, projectedGeometry, offset)
+                shapes = (offset != 0) ? bufferDisplayGeometry(renderingContext, projectedGeometry, offset)
                                       : projectedGeometry.getDisplayShape();
             }else{
                 renderingContext.switchToObjectiveCRS();
-                shape = (offset != 0) ? bufferObjectiveGeometry(renderingContext, projectedGeometry, symbolUnit, offset)
+                shapes = (offset != 0) ? bufferObjectiveGeometry(renderingContext, projectedGeometry, symbolUnit, offset)
                                       : projectedGeometry.getObjectiveShape();
 
                 //adjust displacement, displacement is expressed in pixel units
@@ -121,80 +121,83 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
             throw new PortrayalException("Could not calculate projected geometry",ex);
         }
 
-        if(shape == null){
+        if(shapes == null){
             //no geometry, end here
             return;
         }
 
-        //we apply the displacement ---------------------------------------
-        if(dispStep != null){
-            g2d.translate(dispStep.getX(), dispStep.getY());
-        }
+        for(Shape shape : shapes){
+        
+            //we apply the displacement ---------------------------------------
+            if(dispStep != null){
+                g2d.translate(dispStep.getX(), dispStep.getY());
+            }
 
-        final int x;
-        final int y;
-        if(mosaic){
-            //we need the upperleft point to properly paint the polygon
-            final float margin = symbol.getMargin(candidate, coeff) /2f;
-            final Rectangle2D bounds = shape.getBounds2D();
-            if(bounds == null)return;
-            x = (int) (bounds.getMinX() - margin);
-            y = (int) (bounds.getMinY() - margin);
-        }else{
-            x=0;
-            y=0;
-        }
+            final int x;
+            final int y;
+            if(mosaic){
+                //we need the upperleft point to properly paint the polygon
+                final float margin = symbol.getMargin(candidate, coeff) /2f;
+                final Rectangle2D bounds = shape.getBounds2D();
+                if(bounds == null)return;
+                x = (int) (bounds.getMinX() - margin);
+                y = (int) (bounds.getMinY() - margin);
+            }else{
+                x=0;
+                y=0;
+            }
 
-        if(symbol.isFillVisible(candidate)){
-            g2d.setComposite( symbol.getJ2DFillComposite(candidate) );
-            g2d.setPaint( symbol.getJ2DFillPaint(candidate, x, y,coeff, hints) );
-            g2d.fill(shape);
-        }
+            if(symbol.isFillVisible(candidate)){
+                g2d.setComposite( symbol.getJ2DFillComposite(candidate) );
+                g2d.setPaint( symbol.getJ2DFillPaint(candidate, x, y,coeff, hints) );
+                g2d.fill(shape);
+            }
 
-        if(symbol.isStrokeVisible(candidate)){
-            final CachedStroke cachedStroke = symbol.getCachedStroke();
-            if(cachedStroke instanceof CachedStrokeSimple){
-                final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
-                g2d.setComposite(cs.getJ2DComposite(candidate));
-                g2d.setPaint(cs.getJ2DPaint(candidate, x, y, coeff, hints));
-                g2d.setStroke(cs.getJ2DStroke(candidate,coeff));
-                g2d.draw(shape);
-            }else if(cachedStroke instanceof CachedStrokeGraphic){
-                final CachedStrokeGraphic gc = (CachedStrokeGraphic)cachedStroke;
-                final float initGap = gc.getInitialGap(candidate);
-                final Point2D pt = new Point2D.Double();
-                final CachedGraphicStroke cgs = gc.getCachedGraphic();
-                final Image img = cgs.getImage(candidate, 1, hints);
-                final float imgWidth = img.getWidth(null);
-                final float imgHeight = img.getHeight(null);
-                final float gap = gc.getGap(candidate)+ imgWidth;
-                final AffineTransform trs = new AffineTransform();
+            if(symbol.isStrokeVisible(candidate)){
+                final CachedStroke cachedStroke = symbol.getCachedStroke();
+                if(cachedStroke instanceof CachedStrokeSimple){
+                    final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
+                    g2d.setComposite(cs.getJ2DComposite(candidate));
+                    g2d.setPaint(cs.getJ2DPaint(candidate, x, y, coeff, hints));
+                    g2d.setStroke(cs.getJ2DStroke(candidate,coeff));
+                    g2d.draw(shape);
+                }else if(cachedStroke instanceof CachedStrokeGraphic){
+                    final CachedStrokeGraphic gc = (CachedStrokeGraphic)cachedStroke;
+                    final float initGap = gc.getInitialGap(candidate);
+                    final Point2D pt = new Point2D.Double();
+                    final CachedGraphicStroke cgs = gc.getCachedGraphic();
+                    final Image img = cgs.getImage(candidate, 1, hints);
+                    final float imgWidth = img.getWidth(null);
+                    final float imgHeight = img.getHeight(null);
+                    final float gap = gc.getGap(candidate)+ imgWidth;
+                    final AffineTransform trs = new AffineTransform();
 
-                final PathIterator ite = shape.getPathIterator(null);
-                final PathWalker walker = new PathWalker(ite);
-                walker.walk(initGap);
-                while(!walker.isFinished()){
-                    //paint the motif --------------------------------------------------
-                    walker.getPosition(pt);
-                    final float angle = walker.getRotation();
-                    trs.setToTranslation(pt.getX(), pt.getY());
-                    trs.rotate(angle);
-                    final float[] anchor = cgs.getAnchor(candidate, null);
-                    final float[] disp = cgs.getDisplacement(candidate, null);
-                    trs.translate(-imgWidth*anchor[0], -imgHeight*anchor[1]);
-                    trs.translate(disp[0], -disp[1]);
+                    final PathIterator ite = shape.getPathIterator(null);
+                    final PathWalker walker = new PathWalker(ite);
+                    walker.walk(initGap);
+                    while(!walker.isFinished()){
+                        //paint the motif --------------------------------------------------
+                        walker.getPosition(pt);
+                        final float angle = walker.getRotation();
+                        trs.setToTranslation(pt.getX(), pt.getY());
+                        trs.rotate(angle);
+                        final float[] anchor = cgs.getAnchor(candidate, null);
+                        final float[] disp = cgs.getDisplacement(candidate, null);
+                        trs.translate(-imgWidth*anchor[0], -imgHeight*anchor[1]);
+                        trs.translate(disp[0], -disp[1]);
 
-                    g2d.drawImage(img, trs, null);
+                        g2d.drawImage(img, trs, null);
 
-                    //walk over the gap ------------------------------------------------
-                    walker.walk(gap);
+                        //walk over the gap ------------------------------------------------
+                        walker.walk(gap);
+                    }
                 }
             }
-        }
 
-        //restore the displacement
-        if(dispStep != null){
-            g2d.translate(-dispStep.getX(), -dispStep.getY());
+            //restore the displacement
+            if(dispStep != null){
+                g2d.translate(-dispStep.getX(), -dispStep.getY());
+            }
         }
 
     }
@@ -223,13 +226,13 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
 
         //we switch to  more appropriate context CRS for rendering -------------
         final Shape CRSShape;
-        final Shape j2dShape;
+        final Shape[] j2dShapes;
 
         try{
             if(dispGeom){
                 CRSShape = mask;
 
-                j2dShape = (offset != 0) ? bufferDisplayGeometry(renderingContext, projectedGeometry, offset)
+                j2dShapes = (offset != 0) ? bufferDisplayGeometry(renderingContext, projectedGeometry, offset)
                                          : projectedGeometry.getDisplayShape();
             }else{
                 try{
@@ -241,7 +244,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
                     return false;
                 }
 
-                j2dShape = (offset != 0) ? bufferObjectiveGeometry(renderingContext, projectedGeometry, symbolUnit, offset)
+                j2dShapes = (offset != 0) ? bufferObjectiveGeometry(renderingContext, projectedGeometry, symbolUnit, offset)
                                          : projectedGeometry.getObjectiveShape();
             }
         }catch (TransformException ex) {
@@ -262,35 +265,30 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         //todo must hanlde graphic stroke
         //final float strokeAlpha = symbol.getJ2DStrokeComposite(feature).getAlpha();
 
-        if(j2dShape == null){
+        if(j2dShapes == null){
             return false;
         }
 
-        final Area area ;
-        if(fillAlpha >= GO2Utilities.SELECTION_LOWER_ALPHA){
-            area = new Area(j2dShape);
-//            if(strokeAlpha >= GO2Utilities.SELECTION_LOWER_ALPHA){
-//                final java.awt.Stroke stroke = symbol.getJ2DStroke(feature,coeff);
-//                area.add( new Area(stroke.createStrokedShape(j2dShape) ));
-//            }
-        }
-//        else if(strokeAlpha >= GO2Utilities.SELECTION_LOWER_ALPHA){
-//            final java.awt.Stroke stroke = symbol.getJ2DStroke(feature,coeff);
-//            area = new Area(stroke.createStrokedShape(j2dShape));
-//        }
-        else{
+        if(fillAlpha < GO2Utilities.SELECTION_LOWER_ALPHA){
             //feature graphic is translucide, not selectable
             return false;
         }
-
-        switch(filter){
-            case INTERSECTS :
-                area.intersect(new Area(CRSShape));
-                return !area.isEmpty();
-            case WITHIN :
-                Area start = new Area(area);
-                area.add(new Area(CRSShape));
-                return start.equals(area);
+        
+        Area area ;
+        if(fillAlpha >= GO2Utilities.SELECTION_LOWER_ALPHA){
+            for(Shape j2dShape : j2dShapes){
+                area = new Area(j2dShape);
+                
+                switch(filter){
+                    case INTERSECTS :
+                        area.intersect(new Area(CRSShape));
+                        if(!area.isEmpty()) return true;
+                    case WITHIN :
+                        Area start = new Area(area);
+                        area.add(new Area(CRSShape));
+                        if(start.equals(area)) return true;
+                }
+            }
         }
 
         return false;
@@ -308,36 +306,40 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
      * Recalculate objective geometry with the given offset,
      * for polygon this act like a buffer
      */
-    private static Shape bufferObjectiveGeometry(final RenderingContext2D context, final ProjectedGeometry projectedFeature,
+    private static Shape[] bufferObjectiveGeometry(final RenderingContext2D context, final ProjectedGeometry projectedFeature,
             final Unit symbolUnit, final float offset) throws TransformException{
-        final Shape shape;
 
         //TODO use symbol unit to adjust offset
-        Geometry geom = projectedFeature.getObjectiveGeometry();
-        geom = geom.getBuffer(offset);
-        shape = GO2Utilities.toJava2D(geom);
+        final Geometry[] geoms = projectedFeature.getObjectiveGeometry();
+        final Shape[] shapes = new Shape[geoms.length];
+        for(int i=0;i<geoms.length;i++){
+            geoms[i] = geoms[i].getBuffer(offset);
+            shapes[i] = GO2Utilities.toJava2D(geoms[i]);
+        }
 
-        return shape;
+        return shapes;
     }
 
     /**
      * Recalculate display geometry with the given offset,
      * for polygon this act like a buffer
      */
-    private static  Shape bufferDisplayGeometry(final RenderingContext2D context, final ProjectedGeometry projectedFeature,
+    private static  Shape[] bufferDisplayGeometry(final RenderingContext2D context, final ProjectedGeometry projectedFeature,
             final float offset) throws TransformException{
-        final Shape shape;
 
-        Geometry geom = projectedFeature.getDisplayGeometry();
-        try{
-            geom = geom.getBuffer(offset);
-        }catch(IllegalArgumentException ex){
-            //can happen if the geometry has too few points, like a ring of 3points
-            LOGGER.log(Level.FINE, ex.getLocalizedMessage(), ex);
+        final Geometry[] geoms = projectedFeature.getDisplayGeometry();
+        final Shape[] shapes = new Shape[geoms.length];
+        for(int i=0;i<geoms.length;i++){
+            try{
+                geoms[i] = geoms[i].getBuffer(offset);
+            }catch(IllegalArgumentException ex){
+                //can happen if the geometry has too few points, like a ring of 3points
+                LOGGER.log(Level.FINE, ex.getLocalizedMessage(), ex);
+            }
+            shapes[i] = GO2Utilities.toJava2D(geoms[i]);
         }
-        shape = GO2Utilities.toJava2D(geom);
 
-        return shape;
+        return shapes;
     }
 
 }
