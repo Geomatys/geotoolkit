@@ -192,6 +192,35 @@ public class MeridianTest {
     }
     
     /**
+     * Test a geometry which makes a full width wrap around.
+     * Some geometry at the poles often have a line segment which makes a complete
+     * world wrap.
+     */
+    @Test
+    public void testFullWrapAroundGeometry() throws Exception{
+        
+        final Polygon poly = GF.createPolygon(new Coordinate[]{
+            new Coordinate(-180, +10),
+            new Coordinate(+180, +10),
+            new Coordinate(+180, -10),
+            new Coordinate(-180, -10),
+            new Coordinate(-180, +10)
+        });
+        
+        final MapContext context = createLayer(poly);
+        final SceneDef sceneDef = new SceneDef(context);
+        
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -180, +180);
+        env.setRange(1, -90, +90);
+        final ViewDef viewDef = new ViewDef(env);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        checkImage(image, new Rectangle(0, 80, 360, 20));
+    }
+    
+    /**
      * Test duplicated on left and right.
      */
     @Test

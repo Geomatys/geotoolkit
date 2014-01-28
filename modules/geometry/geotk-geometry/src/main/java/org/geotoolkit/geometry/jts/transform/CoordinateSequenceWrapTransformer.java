@@ -30,6 +30,7 @@ import org.opengis.referencing.operation.TransformException;
 public class CoordinateSequenceWrapTransformer implements CoordinateSequenceTransformer {
 
     private final CoordinateSequenceFactory csf;
+    private final double[] worldspan;
     private final double[] wrapdistance;
     private final double[] translation;
     private final boolean wrapOnX;
@@ -39,28 +40,27 @@ public class CoordinateSequenceWrapTransformer implements CoordinateSequenceTran
      * Default wrap coordinate sequence transformer.
      * @see CoordinateSequenceWrapTransformer#CoordinateSequenceWrapTransformer(com.vividsolutions.jts.geom.CoordinateSequenceFactory, double[], double[])
      */
-    public CoordinateSequenceWrapTransformer(final double[] wrapdistance, final double[] translation) {
-        this(null,wrapdistance, translation);
+    public CoordinateSequenceWrapTransformer(final double[] worldspan) {
+        this(null,worldspan);
     }
 
     /**
      * Wrap coordinate sequence transformer with given factory.
      *
      * @param csf
-     * @param wrapdistance
-     * @param translation
+     * @param worldspan world span on each axis, only one axis should have a value, the other must be zero.
      */
-    public CoordinateSequenceWrapTransformer(final CoordinateSequenceFactory csf, final double[] wrapdistance, final double[] translation) {
+    public CoordinateSequenceWrapTransformer(final CoordinateSequenceFactory csf, final double[] worldspan) {
         if(csf == null){
             this.csf = DEFAULT_CS_FACTORY;
         }else{
             this.csf = csf;
         }
-        this.wrapdistance = wrapdistance;
-        this.translation = translation;
+        this.worldspan = worldspan;
+        this.wrapdistance = new double[]{worldspan[0]/2.0,worldspan[1]/2.0};
+        this.translation = worldspan.clone();
         
         wrapOnX = (wrapdistance[0] != 0);
-        
     }
 
     @Override
@@ -77,7 +77,9 @@ public class CoordinateSequenceWrapTransformer implements CoordinateSequenceTran
             if(previous != null){
                 final double distance = Math.abs( wrapOnX ? current.x-previous.x : current.y-previous.y);
                 
-                if(wrapOnX && distance>=wrapdistance[0]){
+                //we test distance < worldspan[0], to avoid the case of lines which make a full world wrap
+                if(wrapOnX && distance>=wrapdistance[0] && distance < worldspan[0] ){
+                    
                     //assume it crosses the antimeridian
                     wrap = !wrap;
                     
@@ -93,7 +95,7 @@ public class CoordinateSequenceWrapTransformer implements CoordinateSequenceTran
                         }
                     }
                     
-                }else if(!wrapOnX && distance>=wrapdistance[1]){
+                }else if(!wrapOnX && distance>=wrapdistance[1] && distance < worldspan[1]){
                     wrap = !wrap;
                     
                     if(!directionChecked){

@@ -200,8 +200,7 @@ public class ProjectedGeometry  {
                     (dy>0 && (objEnv.getHeight() > (dy/2.0)))){
                     // this is a possible wrap around geometry
                     final double[] wrapTranslate = new double[]{dx,dy};
-                    final double[] wrapDistance = new double[]{dx/2,dy/2};
-                    final CoordinateSequenceWrapTransformer cstrs = new CoordinateSequenceWrapTransformer(wrapDistance, wrapTranslate);
+                    final CoordinateSequenceWrapTransformer cstrs = new CoordinateSequenceWrapTransformer(wrapTranslate);
                     final GeometryCSTransformer transformer = new GeometryCSTransformer(cstrs);
                     objBase = transformer.transform(objBase);
                     objBounds = objBase.getBoundary();
