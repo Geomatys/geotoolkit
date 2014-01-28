@@ -353,7 +353,7 @@ public final class CRS extends Static {
      *
      * @category factory
      */
-    public static Set<String> getSupportedCodes(final String authority) {
+    public static Set<String> getSupportedCodes(final String authority) { // LGPL
         ensureNonNull("authority", authority);
         return DefaultAuthorityFactory.getSupportedCodes(authority);
     }
@@ -1209,6 +1209,7 @@ check:      while (lower != 0 || upper != dimension) {
      *
      * @category transform
      */
+    // LGPL - we will define findOperation instead.
     public static MathTransform findMathTransform(final CoordinateReferenceSystem sourceCRS,
                                                   final CoordinateReferenceSystem targetCRS)
             throws FactoryException
@@ -1248,7 +1249,7 @@ check:      while (lower != 0 || upper != dimension) {
      */
     public static MathTransform findMathTransform(final CoordinateReferenceSystem sourceCRS,
                                                   final CoordinateReferenceSystem targetCRS,
-                                                  boolean lenient)
+                                                  boolean lenient) // LGPL
             throws FactoryException
     {
         if (equalsIgnoreMetadata(sourceCRS, targetCRS)) {
@@ -1257,8 +1258,7 @@ check:      while (lower != 0 || upper != dimension) {
         }
         ensureNonNull("sourceCRS", sourceCRS);
         ensureNonNull("targetCRS", targetCRS);
-        CoordinateOperationFactory operationFactory = getCoordinateOperationFactory(lenient);
-        return operationFactory.createOperation(sourceCRS, targetCRS).getMathTransform();
+        return getCoordinateOperationFactory(lenient).createOperation(sourceCRS, targetCRS).getMathTransform();
     }
 
     /**
