@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,17 +16,10 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import com.bric.geom.Clipper;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import java.awt.Shape;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.display.shape.ProjectedShape;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
@@ -35,9 +28,7 @@ import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceWrapTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.math.XMath;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -45,7 +36,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * convenient class to manipulate geometry in the go2 engine.
+ * convenient class to manipulate geometry in the 2d engine.
  * The geometry may be asked in different format depending of the needs.
  * </br>
  * For example it is interesting to use the java2d shape for painting and the
@@ -182,7 +173,7 @@ public class ProjectedGeometry  {
             
             objectiveGeometryJTS = new com.vividsolutions.jts.geom.Geometry[1];
             
-            final com.vividsolutions.jts.geom.Geometry objBase;
+            com.vividsolutions.jts.geom.Geometry objBase;
             if(dataToObjective == null){
                 //we assume data and objective are in the same crs
                 objBase = dataGeometryJTS;
@@ -194,20 +185,41 @@ public class ProjectedGeometry  {
             
             if(params.context.wraps != null){
                 
-                final com.vividsolutions.jts.geom.Geometry objEnv = objBase.getBoundary();
+                com.vividsolutions.jts.geom.Geometry objBounds = objBase.getBoundary();
+                final com.vividsolutions.jts.geom.Envelope objEnv = objBounds.getEnvelopeInternal();
+                final double dx = params.context.wraps.wrapPoints[1].getOrdinate(0) - params.context.wraps.wrapPoints[0].getOrdinate(0);
+                final double dy = params.context.wraps.wrapPoints[1].getOrdinate(1) - params.context.wraps.wrapPoints[0].getOrdinate(1);
                 
+                // fix the geometry if some points wrap around the meridian
+                // we expect the warp points to be axis aligned, TODO handle other cases
+                if(dx!=0 && dy!=0){
+                    throw new TransformException("Coordinate Reference System, wrap around points are not axis aligned.");
+                }
+                
+                if( (dx>0 && (objEnv.getWidth() > (dx/2.0))) || 
+                    (dy>0 && (objEnv.getHeight() > (dy/2.0)))){
+                    // this is a possible wrap around geometry
+                    final double[] wrapTranslate = new double[]{dx,dy};
+                    final double[] wrapDistance = new double[]{dx/2,dy/2};
+                    final CoordinateSequenceWrapTransformer cstrs = new CoordinateSequenceWrapTransformer(wrapDistance, wrapTranslate);
+                    final GeometryCSTransformer transformer = new GeometryCSTransformer(cstrs);
+                    objBase = transformer.transform(objBase);
+                    objBounds = objBase.getBoundary();
+                }
+                
+                //check if the geometry overlaps the meridian
                 int nbIncRep = params.context.wraps.wrapIncNb;
                 int nbDecRep = params.context.wraps.wrapDecNb;
                 
                 // geometry cross the far east meridian, geometry is like : 
                 // POLYGON(-179,10,  181,10,  181,-10,  179,-10)
-                if(objEnv.intersects(params.context.wraps.wrapIncLine)){
+                if(objBounds.intersects(params.context.wraps.wrapIncLine)){
                     //duplicate geometry on the other warp line
                     nbDecRep++;
                 }
                 // geometry cross the far west meridian, geometry is like : 
                 // POLYGON(-179,10, -181,10, -181,-10,  -179,-10)
-                else if(objEnv.intersects(params.context.wraps.wrapDecLine)){
+                else if(objBounds.intersects(params.context.wraps.wrapDecLine)){
                     //duplicate geometry on the other warp line
                     nbIncRep++;
                 }
@@ -215,65 +227,19 @@ public class ProjectedGeometry  {
                 objectiveGeometryJTS = new com.vividsolutions.jts.geom.Geometry[nbIncRep+nbDecRep+1];
                 int n=0;
                 for(int i=0;i<nbIncRep;i++){
-                    objectiveGeometryJTS[n++] = JTS.transform(dataGeometryJTS, params.context.wraps.wrapIncObj[i]);
+                    objectiveGeometryJTS[n++] = JTS.transform(objBase, params.context.wraps.wrapIncObj[i]);
                 }
-                objectiveGeometryJTS[n++] = dataGeometryJTS;
+                objectiveGeometryJTS[n++] = objBase;
                 for(int i=0;i<nbDecRep;i++){
-                    objectiveGeometryJTS[n++] = JTS.transform(dataGeometryJTS, params.context.wraps.wrapDecObj[i]);
+                    objectiveGeometryJTS[n++] = JTS.transform(objBase, params.context.wraps.wrapDecObj[i]);
                 }
                 
             }else{
                 //geometry is valid with no modifications or repetition
                 objectiveGeometryJTS = new com.vividsolutions.jts.geom.Geometry[1];
-                objectiveGeometryJTS[0] = dataGeometryJTS;
+                objectiveGeometryJTS[0] = objBase;
             }
             
-            
-            
-//            //check if geometries cross the meridian
-//            if(params.context.wrapArea != null){
-//                final double dx = params.context.wrapPoints[1].getOrdinate(0) - params.context.wrapPoints[0].getOrdinate(0);
-//                final double dy = params.context.wrapPoints[1].getOrdinate(1) - params.context.wrapPoints[0].getOrdinate(1);
-//                final double[] wrapTranslate = new double[]{-dx,-dy};
-//                final double[] wrapDistance = new double[]{dx/2,dy/2};
-//                final CoordinateSequenceWrapTransformer cstrs = new CoordinateSequenceWrapTransformer(wrapDistance,wrapTranslate);
-//                final GeometryCSTransformer transformer = new GeometryCSTransformer(cstrs);
-//                objectiveGeometryJTS = transformer.transform(objectiveGeometryJTS);
-//            }
-//
-//            //check if we need to demultiply the geometry
-//            if(params.context.wrapArea != null){
-//                final List<com.vividsolutions.jts.geom.Geometry> geoms = new  ArrayList();
-//                final GeometryFactory GF = new GeometryFactory();
-//                for(AffineTransform2D trs : params.context.wrapsObjectives){
-//                    final com.vividsolutions.jts.geom.Geometry g = JTS.transform(objectiveGeometryJTS, trs);
-//                    if(g instanceof GeometryCollection){
-//                        GeometryCollection gc = (GeometryCollection) g;
-//                        for(int i=0;i<gc.getNumGeometries();i++){
-//                            geoms.add(gc.getGeometryN(i));
-//                        }
-//                    }else{
-//                        geoms.add(g);
-//                    }
-//                }
-//
-//                if(objectiveGeometryJTS instanceof com.vividsolutions.jts.geom.Point){
-//                    objectiveGeometryJTS = GF.createMultiPoint(geoms.toArray(new com.vividsolutions.jts.geom.Point[0]));
-//                }else if(objectiveGeometryJTS instanceof com.vividsolutions.jts.geom.LineString){
-//                    objectiveGeometryJTS = GF.createMultiLineString(geoms.toArray(new com.vividsolutions.jts.geom.LineString[0]));
-//                }else if(objectiveGeometryJTS instanceof com.vividsolutions.jts.geom.Polygon){
-//                    objectiveGeometryJTS = GF.createMultiPolygon(geoms.toArray(new com.vividsolutions.jts.geom.Polygon[0]));
-//                }else if(objectiveGeometryJTS instanceof com.vividsolutions.jts.geom.MultiPoint){
-//                    objectiveGeometryJTS = GF.createMultiPoint(geoms.toArray(new com.vividsolutions.jts.geom.Point[0]));
-//                }else if(objectiveGeometryJTS instanceof com.vividsolutions.jts.geom.MultiLineString){
-//                    objectiveGeometryJTS = GF.createMultiLineString(geoms.toArray(new com.vividsolutions.jts.geom.LineString[0]));
-//                }else if(objectiveGeometryJTS instanceof com.vividsolutions.jts.geom.MultiPolygon){
-//                    objectiveGeometryJTS = GF.createMultiPolygon(geoms.toArray(new com.vividsolutions.jts.geom.Polygon[0]));
-//                }else{
-//                    objectiveGeometryJTS = GF.createGeometryCollection(geoms.toArray(new com.vividsolutions.jts.geom.Geometry[0]));
-//                }
-//            }
-
         }
         return objectiveGeometryJTS;
     }

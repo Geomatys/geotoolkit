@@ -23,19 +23,15 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import javax.imageio.ImageIO;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
@@ -46,7 +42,8 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.style.PolygonSymbolizer;
 
 /**
- *
+ * Test renderer support for datas crossing a wrap around axis.
+ * 
  * @author Johann Sorel (Geomatys)
  */
 public class MeridianTest {
@@ -55,18 +52,18 @@ public class MeridianTest {
     private static final DefaultStyleFactory SF = new DefaultStyleFactory();
     
     /**
-     * Test crossing the +180 meridian.
-     * @throws Exception 
+     * Sanity test.
+     * If this test fail, don't even bother looking at the others.
      */
     @Test
-    public void testP169toP191() throws Exception{
+    public void testSanity() throws Exception{
         
         final Polygon poly = GF.createPolygon(new Coordinate[]{
-            new Coordinate(+169, +10),
-            new Coordinate(+191, +10),
-            new Coordinate(+191, -10),
-            new Coordinate(+169, -10),
-            new Coordinate(+169, +10)
+            new Coordinate( 0,  0),
+            new Coordinate( 0, 10),
+            new Coordinate(20, 10),
+            new Coordinate(20,  0),
+            new Coordinate( 0,  0)
         });
         
         final MapContext context = createLayer(poly);
@@ -79,23 +76,49 @@ public class MeridianTest {
         final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
         
         final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
-        checkImage(image, new Rectangle(349, 80, 11, 20), 
-                          new Rectangle(0, 80, 11, 20));
+        checkImage(image, new Rectangle(180, 80, 20, 10));
+    }
+    
+    /**
+     * Test crossing the +180 meridian.
+     */
+    @Test
+    public void testCrossP170toP190() throws Exception{
+        
+        final Polygon poly = GF.createPolygon(new Coordinate[]{
+            new Coordinate(+170, +10),
+            new Coordinate(+190, +10),
+            new Coordinate(+190, -10),
+            new Coordinate(+170, -10),
+            new Coordinate(+170, +10)
+        });
+        
+        final MapContext context = createLayer(poly);
+        final SceneDef sceneDef = new SceneDef(context);
+        
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -180, +180);
+        env.setRange(1, -90, +90);
+        final ViewDef viewDef = new ViewDef(env);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        checkImage(image, new Rectangle(350, 80, 10, 20), 
+                          new Rectangle(0, 80, 10, 20));
     }
     
     /**
      * Test crossing the -180 meridian.
-     * @throws Exception 
      */
     @Test
-    public void testN169toN191() throws Exception{
+    public void testCrossN170toN190() throws Exception{
         
         final Polygon poly = GF.createPolygon(new Coordinate[]{
-            new Coordinate(-169, +10),
-            new Coordinate(-191, +10),
-            new Coordinate(-191, -10),
-            new Coordinate(-169, -10),
-            new Coordinate(-169, +10)
+            new Coordinate(-170, +10),
+            new Coordinate(-190, +10),
+            new Coordinate(-190, -10),
+            new Coordinate(-170, -10),
+            new Coordinate(-170, +10)
         });
         
         final MapContext context = createLayer(poly);
@@ -108,9 +131,127 @@ public class MeridianTest {
         final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
         
         final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
-        checkImage(image, new Rectangle(349, 80, 11, 20), 
-                          new Rectangle(0, 80, 11, 20));
+        checkImage(image, new Rectangle(350, 80, 10, 20), 
+                          new Rectangle(0, 80, 10, 20));
     }
+    
+    /**
+     * Test loop around the +180 meridian.
+     */
+    @Test
+    public void testLoopP170toN170() throws Exception{
+        
+        final Polygon poly = GF.createPolygon(new Coordinate[]{
+            new Coordinate(+170, +10),
+            new Coordinate(-170, +10),
+            new Coordinate(-170, -10),
+            new Coordinate(+170, -10),
+            new Coordinate(+170, +10)
+        });
+        
+        final MapContext context = createLayer(poly);
+        final SceneDef sceneDef = new SceneDef(context);
+        
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -180, +180);
+        env.setRange(1, -90, +90);
+        final ViewDef viewDef = new ViewDef(env);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        checkImage(image, new Rectangle(350, 80, 10, 20), 
+                          new Rectangle(0, 80, 10, 20));
+    }
+    
+    /**
+     * Test loop around the -180 meridian.
+     */
+    @Test
+    public void testLoopN170toP170() throws Exception{
+        
+        final Polygon poly = GF.createPolygon(new Coordinate[]{
+            new Coordinate(-170, +10),
+            new Coordinate(+170, +10),
+            new Coordinate(+170, -10),
+            new Coordinate(-170, -10),
+            new Coordinate(-170, +10)
+        });
+        
+        final MapContext context = createLayer(poly);
+        final SceneDef sceneDef = new SceneDef(context);
+        
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -180, +180);
+        env.setRange(1, -90, +90);
+        final ViewDef viewDef = new ViewDef(env);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
+        
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        checkImage(image, new Rectangle(350, 80, 10, 20), 
+                          new Rectangle(0, 80, 10, 20));
+    }
+    
+    /**
+     * Test duplicated on left and right.
+     */
+    @Test
+    public void testDuplicateExact() throws Exception{
+        
+        final Polygon poly = GF.createPolygon(new Coordinate[]{
+            new Coordinate( 0,  0),
+            new Coordinate( 0, 10),
+            new Coordinate(20, 10),
+            new Coordinate(20,  0),
+            new Coordinate( 0,  0)
+        });
+        
+        final MapContext context = createLayer(poly);
+        final SceneDef sceneDef = new SceneDef(context);
+        
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -540, +900); //1 on the left, 2 on the right
+        env.setRange(1, -90, +90);
+        final ViewDef viewDef = new ViewDef(env);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(360*4, 180), Color.WHITE);
+        
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        checkImage(image, new Rectangle(180     , 80, 20, 10),
+                          new Rectangle(180+ 360, 80, 20, 10),
+                          new Rectangle(180+ 720, 80, 20, 10),
+                          new Rectangle(180+1080, 80, 20, 10));
+    }
+    
+    /**
+     * Test partial duplicated on left and right.
+     */
+    @Test
+    public void testDuplicatePartial() throws Exception{
+        
+        final Polygon poly = GF.createPolygon(new Coordinate[]{
+            new Coordinate( 0,  0),
+            new Coordinate( 0, 10),
+            new Coordinate(20, 10),
+            new Coordinate(20,  0),
+            new Coordinate( 0,  0)
+        });
+        
+        final MapContext context = createLayer(poly);
+        final SceneDef sceneDef = new SceneDef(context);
+        
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -355, +725); //-175 on the left, +545 on the right
+        env.setRange(1, -90, +90);
+        final ViewDef viewDef = new ViewDef(env);
+        final CanvasDef canvasDef = new CanvasDef(new Dimension(1080, 180), Color.WHITE);
+        
+        final BufferedImage image = DefaultPortrayalService.portray(canvasDef, sceneDef, viewDef);
+        checkImage(image, new Rectangle(-5      , 80, 20, 10),
+                          new Rectangle(-5 + 360, 80, 20, 10),
+                          new Rectangle(-5 + 720, 80, 20, 10),
+                          new Rectangle(-5 +1080, 80, 20, 10));
+    }
+    
+    
     
     /**
      * Test the image content.

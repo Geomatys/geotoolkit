@@ -20,9 +20,7 @@ package org.geotoolkit.geometry.jts.transform;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
-import java.util.Arrays;
 import static org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer.DEFAULT_CS_FACTORY;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -34,6 +32,7 @@ public class CoordinateSequenceWrapTransformer implements CoordinateSequenceTran
     private final CoordinateSequenceFactory csf;
     private final double[] wrapdistance;
     private final double[] translation;
+    private final boolean wrapOnX;
     private boolean wrap = false;
 
     /**
@@ -59,6 +58,9 @@ public class CoordinateSequenceWrapTransformer implements CoordinateSequenceTran
         }
         this.wrapdistance = wrapdistance;
         this.translation = translation;
+        
+        wrapOnX = (wrapdistance[0] != 0);
+        
     }
 
     @Override
@@ -66,19 +68,47 @@ public class CoordinateSequenceWrapTransformer implements CoordinateSequenceTran
         final int size = sequence.size();
         final Coordinate[] tcs = new Coordinate[size];
 
+        boolean directionChecked = false;
         Coordinate previous = null;
         Coordinate current = null;
         for(int i= 0; i<size; i++){
             current = sequence.getCoordinate(i);
 
-            if(previous != null
-                && (wrapdistance[0]==0 || Math.abs(current.x-previous.x)>=wrapdistance[0])
-                && (wrapdistance[1]==0 || Math.abs(current.y-previous.y)>=wrapdistance[1])){
-                //assume it crosses the antimeridian
-                wrap = !wrap;
+            if(previous != null){
+                final double distance = Math.abs( wrapOnX ? current.x-previous.x : current.y-previous.y);
+                
+                if(wrapOnX && distance>=wrapdistance[0]){
+                    //assume it crosses the antimeridian
+                    wrap = !wrap;
+                    
+                    //this is the first warp we found, check in which direction we fix it
+                    //the objective is to regroup the points so the wrap distance must be smaller then the base distance
+                    if(!directionChecked){
+                        directionChecked = true;
+                        final double test = Math.abs((current.x+translation[0])-previous.x);
+                        if(test>distance){
+                            //inverse the translation values
+                            translation[0] = -translation[0];
+                            translation[1] = -translation[1];
+                        }
+                    }
+                    
+                }else if(!wrapOnX && distance>=wrapdistance[1]){
+                    wrap = !wrap;
+                    
+                    if(!directionChecked){
+                        directionChecked = true;
+                        final double test = Math.abs((current.y+translation[1])-previous.y);
+                        if(test>distance){
+                            //inverse the translation values
+                            translation[0] = -translation[0];
+                            translation[1] = -translation[1];
+                        }
+                    }
+                }                
             }
+            
             previous = current;
-
             if(wrap){
                 tcs[i] = new Coordinate(current.x+translation[0], current.y+translation[1], current.z);
             }else{

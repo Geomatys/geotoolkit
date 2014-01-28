@@ -164,8 +164,8 @@ public class VisitorTest {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
         final Dimension dim = new Dimension(360, 180);
-        Shape shparea = new Rectangle(195, 75, 2, 2); //starting at top left corner
-        ListVisitor visitor = new ListVisitor();
+        final Shape shparea = new Rectangle(195, 75, 2, 2); //starting at top left corner
+        final ListVisitor visitor = new ListVisitor();
 
         DefaultPortrayalService.visit(context, env, dim, true, null, shparea, visitor);
 
