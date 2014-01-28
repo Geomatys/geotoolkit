@@ -298,4 +298,9 @@ class TreeXElementMapperTest implements TreeElementMapper<Envelope> {
     public boolean isClosed() {
         return isClosed;
     }
+
+    @Override
+    public void flush() throws IOException {
+        // do nothing
+    }
 }

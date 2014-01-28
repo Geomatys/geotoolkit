@@ -256,6 +256,8 @@ public abstract class AbstractTreeTest extends TreeTest {
         }
         for (int i = 0,  s = lGE.size(); i < s; i++) {
             tree.insert(lGE.get(i));
+            tree.flush();
+            tEM.flush();
         }
         final GeneralEnvelope rG = new GeneralEnvelope(crs);
         rG.setEnvelope(gR);

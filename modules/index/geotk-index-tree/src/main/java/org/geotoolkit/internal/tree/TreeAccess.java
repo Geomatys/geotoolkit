@@ -21,8 +21,6 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.geotoolkit.index.tree.AbstractTree;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.StoreIndexException;
@@ -294,6 +292,15 @@ public abstract class TreeAccess {
      * close stream use in {@link TreeAccessFile} implementation.
      */
     public abstract void close() throws IOException;
+
+    /**
+     * Flush all stream and write current {@link ByteBuffer} use by {@link TreeAccessFile} implementation.<br/>
+     * In {@link TreeAccessMemory} implementation method is empty.
+     *
+     * @throws IOException if problem during write current {@link ByteBuffer} or
+     * flush stream use in {@link TreeAccessFile} implementation.
+     */
+    public abstract void flush() throws IOException;
     
     /**
      * Return true if {@link TreeAccess} has already been closed else false.

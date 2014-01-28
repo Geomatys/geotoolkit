@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
 import org.geotoolkit.index.tree.FileTreeElementMapper;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -56,12 +57,6 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
     private final RandomAccessFile idMapInOutStream;
     
     /**
-     * Integer which permit to found appropriate NamedEnvelope identifier.
-     * @see NamedEnvelope#id
-     */
-    private int mapIndex;
-    
-    /**
      * Byte file position of first stored {@link NamedEnvelope#id}. 
      */
     private final int beginPosition;
@@ -69,7 +64,7 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
     /**
      * Byte file position, just after last stored {@link NamedEnvelope#id}. 
      */
-    private int idMapCurrentPosition;
+    private long idMapCurrentPosition;
     
     /**
      * Create a new Tree Mapper adapted to Lucene Tree use case.
@@ -79,14 +74,12 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
      * @throws IOException if pblem during head file writing.
      */
     public LuceneFileTreeEltMapper(final CoordinateReferenceSystem crs, final File mapperOutPut) throws IOException {
-        super(mapperOutPut, ((crs.getCoordinateSystem().getDimension() << 1) * Double.SIZE + Integer.SIZE + Integer.SIZE) >> 3);
+        super(mapperOutPut, ((crs.getCoordinateSystem().getDimension() << 1) * Double.SIZE + Integer.SIZE + Long.SIZE) >> 3);
         final File idMapOutPut = new File(mapperOutPut.getParent(), ID_MAP_NAME);
         idMapInOutStream = new RandomAccessFile(idMapOutPut, "rw");
         
-        // prepare to store mapIndex during close() call.
-        idMapInOutStream.writeInt(-1);
         // prepare to store idMapCurrentPosition during close() call.
-        idMapInOutStream.writeInt(0);
+        idMapInOutStream.writeLong(-1);
         
         // write crs
         final ByteArrayOutputStream temp   = new ByteArrayOutputStream();
@@ -100,7 +93,6 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
         this.beginPosition = (int) idMapInOutStream.getChannel().position();
         this.dim           = crs.getCoordinateSystem().getDimension();
         this.crs           = crs;
-        this.mapIndex      = 0;
         this.idMapCurrentPosition = beginPosition;
     }
     
@@ -115,9 +107,8 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
         super(mapperInput);
         final File idMapOutPut = new File(mapperInput.getParent(), ID_MAP_NAME);
         idMapInOutStream = new RandomAccessFile(idMapOutPut, "rw");
-        this.mapIndex    = idMapInOutStream.readInt();
-        this.idMapCurrentPosition = idMapInOutStream.readInt();
-        if (mapIndex == -1)
+        this.idMapCurrentPosition = idMapInOutStream.readLong();
+        if (idMapCurrentPosition == -1)
             throw new IllegalStateException("You should call close method before.");
         // read CRS
         final int byteTabLength           = idMapInOutStream.readInt();
@@ -137,15 +128,14 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
     protected void writeObject(final NamedEnvelope Object) throws IOException {
         final String neID = Object.getId();
         idMapInOutStream.getChannel().position(idMapCurrentPosition);
+        byteBuffer.putLong(idMapCurrentPosition);
         idMapInOutStream.writeUTF(neID);
         idMapCurrentPosition = (int) idMapInOutStream.getChannel().position();
-        byteBuffer.putInt(mapIndex);
         byteBuffer.putInt(Object.getNbEnv());
         for (int d = 0; d < dim; d++) {
             byteBuffer.putDouble(Object.getLower(d));
             byteBuffer.putDouble(Object.getUpper(d));
         }
-        mapIndex++;
     }
 
     /**
@@ -155,14 +145,10 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
      */
     @Override
     protected NamedEnvelope readObject() throws IOException {
-        final int cuMapIndex = byteBuffer.getInt();
-        int cuMI = 0;
-        String neID = null;
-        idMapInOutStream.getChannel().position(beginPosition);
-        while (cuMI <= cuMapIndex) {
-            neID = idMapInOutStream.readUTF();
-            cuMI++;
-        }
+        final long idPos = byteBuffer.getLong();
+        final FileChannel idChan = idMapInOutStream.getChannel();
+        idChan.position(idPos);
+        final String neID = idMapInOutStream.readUTF();
         assert (neID != null) : "stored Named Envelope should not have a null identifier. Problem during identifier reading."; 
         final int nbEnvelope = byteBuffer.getInt();
         final NamedEnvelope resultEnvelope = new NamedEnvelope(crs, neID, nbEnvelope);
@@ -205,9 +191,23 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
     @Override
     public void clear() throws IOException {
         super.clear(); 
-        mapIndex = 0;
         idMapInOutStream.getChannel().position(beginPosition);
         idMapCurrentPosition = beginPosition;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void flush() throws IOException {
+        super.flush();
+        final long chanPos = idMapInOutStream.getChannel().position();
+        final long buffPos = byteBuffer.position();
+        idMapInOutStream.getChannel().position(0);
+        idMapInOutStream.writeLong(idMapCurrentPosition);
+        idMapInOutStream.getChannel().position(chanPos);
+
+        assert (chanPos + buffPos) == (idMapInOutStream.getChannel().position() + byteBuffer.position()): "LuceneTreeEltMapper.flush() expected : "+(chanPos + buffPos)+" found : "+(idMapInOutStream.getChannel().position() + byteBuffer.position());
     }
 
     /**
@@ -217,8 +217,7 @@ public final class LuceneFileTreeEltMapper extends FileTreeElementMapper<NamedEn
     public void close() throws IOException {
         super.close(); 
         idMapInOutStream.getChannel().position(0);
-        idMapInOutStream.writeInt(mapIndex);
-        idMapInOutStream.writeInt(idMapCurrentPosition);
+        idMapInOutStream.writeLong(idMapCurrentPosition);
         idMapInOutStream.close();
     }
 }

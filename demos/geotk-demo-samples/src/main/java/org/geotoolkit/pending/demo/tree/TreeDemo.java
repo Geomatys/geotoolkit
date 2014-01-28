@@ -150,6 +150,11 @@ public class TreeDemo {
             public boolean isClosed() {
                 return isClose;
             }
+
+            @Override
+            public void flush() throws IOException {
+                //do nothing
+            }
         };
         
         /*

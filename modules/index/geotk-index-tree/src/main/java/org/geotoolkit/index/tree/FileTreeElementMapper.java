@@ -319,6 +319,30 @@ public abstract class FileTreeElementMapper<E> implements TreeElementMapper<E> {
         inOutChannel.close();
         inOutStream.close();
     }
+
+    /**
+     * Close stream and FileChannel.
+     *
+     * @throws IOException
+     */
+    @Override
+    public synchronized void flush() throws IOException {
+        final long channelPos = inOutChannel.position();
+
+        byteBuffer.position(0);
+        byteBuffer.limit(writeBufferLimit);
+        int writtenByte = 0;
+        while (writtenByte != writeBufferLimit) {
+            writtenByte = inOutChannel.write(byteBuffer, currentBufferPosition);
+        }
+
+        //step mapper Identifier, byteOrder and object size.
+        inOutChannel.position(9);
+
+        inOutStream.writeInt(maxPosition);
+        inOutChannel.position(channelPos);
+        inOutChannel.read(byteBuffer, currentBufferPosition);
+    }
     
     /**
      * {@inheritDoc }

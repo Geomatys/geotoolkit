@@ -146,4 +146,9 @@ public class TreeAccessMemory extends TreeAccess {
     public synchronized boolean isClose() {
         return this.isClose;
     }
+
+    @Override
+    public void flush() throws IOException {
+        // do nothing
+    }
 }

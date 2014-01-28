@@ -70,6 +70,17 @@ public interface Tree<E> {
     boolean remove(final E object) throws StoreIndexException;
 
     /**
+     * flush all streams use to store RTree on hard drive.
+     * 
+     * <blockquote><font size=-1>
+     * <strong>NOTE: Method has no impact if RTree is not an FileRTree instance.</strong>
+     * </font></blockquote>
+     * 
+     * @throws StoreIndexException if problem during buffer writing.
+     */
+    void flush() throws StoreIndexException;
+
+    /**
      * Return {@link TreeElementMapper} use to store inserted data and their tree identifiers.
      * 
      * @return {@link TreeElementMapper} use to store inserted data and their tree identifiers.

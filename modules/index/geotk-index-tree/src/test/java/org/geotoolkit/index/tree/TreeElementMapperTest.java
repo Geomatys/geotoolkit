@@ -112,4 +112,9 @@ public class TreeElementMapperTest implements TreeElementMapper<double[]> {
     public boolean isClosed() {
         return isClosed;
     }
+
+    @Override
+    public void flush() throws IOException {
+        // do nothing
+    }
 }

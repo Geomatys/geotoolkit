@@ -513,7 +513,28 @@ public class TreeAccessFile extends TreeAccess {
         currentBufferPosition = beginPosition;
         writeBufferLimit = 0;
     }
-        
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+     public synchronized void flush() throws IOException {
+
+        byteBuffer.position(0);
+        byteBuffer.limit(writeBufferLimit);
+        int writtenByte = 0;
+        while (writtenByte != writeBufferLimit) {
+            writtenByte = inOutChannel.write(byteBuffer, currentBufferPosition);
+        }
+        // write nodeID
+        inOutChannel.position(22);
+        inOutStream.writeInt(nodeId);
+        inOutStream.writeInt(treeIdentifier);
+        inOutStream.writeInt(eltNumber);
+        adjustBuffer(nodeId);
+     }
+
+
     /**
      * {@inheritDoc }.
      */
