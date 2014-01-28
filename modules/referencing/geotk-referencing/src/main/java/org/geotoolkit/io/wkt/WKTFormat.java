@@ -417,7 +417,7 @@ public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
         final StringBuilder buffer = new StringBuilder();
         final String lineSeparator = System.lineSeparator();
         final Symbols symbols      = getSymbols();
-        final int[] bracketCount   = new int[symbols.getNumPairedBracket()];
+        final int[] bracketCount   = new int[symbols.getNumPairedBrackets()];
         while (true) {
             /*
              * Skips whitespaces, stopping the method if EOF is reached.

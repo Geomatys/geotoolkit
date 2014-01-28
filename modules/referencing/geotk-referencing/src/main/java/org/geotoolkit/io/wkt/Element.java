@@ -119,7 +119,7 @@ final class Element {
          * then we will require that the closing bracket is ']' and not ')'.
          */
         int bracketIndex = -1;
-        final int n = symbols.getNumPairedBracket();
+        final int n = symbols.getNumPairedBrackets();
         do {
             if (++bracketIndex >= n) {
                 list = null;
